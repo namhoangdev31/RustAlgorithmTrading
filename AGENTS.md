@@ -54,7 +54,6 @@
 
 This project uses SPARC (Specification, Pseudocode, Architecture, Refinement, Completion) methodology with Codex-Flow orchestration for systematic Test-Driven Development.
 
-
 ## 📌 PROJECT-SPECIFIC ADDENDUM (APPEND-ONLY, DO NOT REMOVE TEMPLATE SECTIONS)
 
 ### 0) Addendum Contract
@@ -79,6 +78,7 @@ Read in this exact order before making non-trivial changes:
 2. `/Users/hoangnam/Developer/RustAlgorithmTrading/README_VI.md`
 3. `/Users/hoangnam/Developer/RustAlgorithmTrading/PLAYBOOK.md`
 4. Domain docs by scope:
+
 - `docs/`
 - `rust/docs/`
 - `tests/docs/`
@@ -232,19 +232,23 @@ Run this process in order to avoid reading lan man:
 2. Open canonical docs first; avoid starting from historical reports.
 3. Produce an owner shortlist (max 3 modules).
 4. Search only within shortlisted modules:
+
 ```bash
 rg "error_or_keyword" src rust tests docs
 rg --files src rust tests docs | rg "module_or_feature_name"
 ```
+
 5. Confirm owner file by function/class/type hit, not filename guess alone.
-6. Identify nearest test file before code change.
-7. Reproduce with smallest failing test scope.
-8. Apply smallest edit set:
+2. Identify nearest test file before code change.
+3. Reproduce with smallest failing test scope.
+4. Apply smallest edit set:
+
 - single-module bug: 1-3 files
 - cross-runtime contract bug: patch both sides in one change
+
 9. Re-run nearest tests.
-10. Run targeted integration tests.
-11. Summarize evidence: doc -> code -> test.
+2. Run targeted integration tests.
+3. Summarize evidence: doc -> code -> test.
 
 ### 8) Path-Triggered Test Matrix (Minimum Required)
 
