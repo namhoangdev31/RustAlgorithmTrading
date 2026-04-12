@@ -385,3 +385,4 @@ NEVER create files unless they're absolutely necessary for achieving your goal.
 ALWAYS prefer editing an existing file to creating a new one.
 NEVER proactively create documentation files (*.md) or README files. Only create documentation files if explicitly requested by the User.
 Never save working files, text/mds and tests to the root folder.
+Whenever a new project file is created (source, config, script, test, or doc), update `PLAYBOOK.md` in the same change to include the new file and its role/class-or-type mapping. Exclude generated artifacts, caches, and runtime outputs.

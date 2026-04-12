@@ -49,27 +49,32 @@ docs/
 ## Quick Links
 
 ### Getting Started
+
 - [Quick Start Guide](guides/quickstart.md) - Get running in 10 minutes
 - [Installation Guide](guides/installation.md) - Detailed setup
 - [Configuration Guide](guides/configuration.md) - Configure the system
 
 ### Development
+
 - [Strategy Development](guides/strategy-development.md) - Build trading strategies
 - [Backtesting Guide](guides/backtesting.md) - Test your strategies
 - [ML Integration](guides/ml-integration.md) - Use machine learning
 
 ### Architecture
+
 - [System Overview](architecture/overview.md) - High-level architecture
 - [Component Design](architecture/components.md) - Detailed components
 - [Deployment Guide](architecture/deployment.md) - Production deployment
 
 ### API Reference
+
 - [Python API](api/python/index.md) - Python modules
 - [Rust API](api/rust/index.md) - Rust crates
 - [REST API](api/rest/index.md) - HTTP endpoints
 - [WebSocket API](api/websocket/index.md) - WebSocket protocol
 
 ### Developer
+
 - [Contributing](developer/contributing.md) - How to contribute
 - [Code Style](developer/code-style.md) - Coding standards
 - [Testing](developer/testing.md) - Testing strategies
