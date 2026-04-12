@@ -54,27 +54,241 @@
 
 This project uses SPARC (Specification, Pseudocode, Architecture, Refinement, Completion) methodology with Codex-Flow orchestration for systematic Test-Driven Development.
 
-## SPARC Commands
 
-### Core Commands
+## 📌 PROJECT-SPECIFIC ADDENDUM (APPEND-ONLY, DO NOT REMOVE TEMPLATE SECTIONS)
 
-- `npx Codex-flow sparc modes` - List available modes
-- `npx Codex-flow sparc run <mode> "<task>"` - Execute specific mode
-- `npx Codex-flow sparc tdd "<feature>"` - Run complete TDD workflow
-- `npx Codex-flow sparc info <mode>` - Get mode details
+### 0) Addendum Contract
 
-### Batchtools Commands
+- This block extends the generic template with repository-specific routing and diagnostics.
+- Do not delete or rewrite template sections above/below this addendum.
+- Add new project rules here; keep template examples for orchestration discipline.
+- When template guidance and project routing both apply, follow both together.
 
-- `npx Codex-flow sparc batch <modes> "<task>"` - Parallel execution
-- `npx Codex-flow sparc pipeline "<task>"` - Full pipeline processing
-- `npx Codex-flow sparc concurrent <mode> "<tasks-file>"` - Multi-task processing
+### 1) Rule Precedence For This Repository
 
-### Build Commands
+1. Safety and non-destructive edit rules.
+2. Template orchestration rules (parallel execution, Task/TodoWrite patterns).
+3. This addendum's doc/code/test routing rules.
+4. User request scope for current task.
 
-- `npm run build` - Build project
-- `npm run test` - Run tests
-- `npm run lint` - Linting
-- `npm run typecheck` - Type checking
+### 2) Canonical Reading Order (Must Follow)
+
+Read in this exact order before making non-trivial changes:
+
+1. `/Users/hoangnam/Developer/RustAlgorithmTrading/docs/DOCS_CANONICAL_MAP.md`
+2. `/Users/hoangnam/Developer/RustAlgorithmTrading/README_VI.md`
+3. `/Users/hoangnam/Developer/RustAlgorithmTrading/PLAYBOOK.md`
+4. Domain docs by scope:
+- `docs/`
+- `rust/docs/`
+- `tests/docs/`
+- `medium/`
+
+If a doc path from canonical map is missing in current tree, use nearest maintained equivalent and record it in final report.
+
+### 3) Project Compass: What Owns What
+
+#### Python ownership (`src/`)
+
+- `src/api/`: Alpaca clients, auth/rate-limit handling, paper trading adapters.
+- `src/data/`: fetch/load/preprocess/features/technical indicators.
+- `src/strategies/`: signal logic and strategy router.
+- `src/backtesting/`: engine, execution handler, portfolio/performance/metrics.
+- `src/bridge/`: Python side of Rust bridge and ZMQ handoff.
+- `src/observability/`: API, storage, logging, metrics collectors, dashboard.
+- `src/models/`, `src/utils/`: shared domain objects and utilities.
+
+#### Rust ownership (`rust/*/src`)
+
+- `rust/market-data`: websocket ingest, orderbook, aggregation, publisher.
+- `rust/signal-bridge`: indicators/features, Python bridge, signal transform.
+- `rust/risk-manager`: limits, stops, pnl, circuit breaker.
+- `rust/execution-engine`: router, retry, slippage, stop-loss execution.
+- `rust/database`: schema/migrations/models/query/connection.
+- `rust/common`: shared types/config/error/messaging/health/metrics/http.
+
+#### Test ownership (`tests/`)
+
+- `tests/unit/`: unit tests for Python and Rust.
+- `tests/integration/`: cross-module and cross-runtime behavior.
+- `tests/e2e/`: end-to-end system flows.
+- `tests/observability/`: observability API/storage/logging checks.
+- `tests/docs/`: testing strategy and coverage guidance.
+
+### 4) Build/Test Reality Check For This Repo (Validated 2026-04-13)
+
+- Root `package.json` is absent; template `npm run build/test/lint/typecheck` are generic examples, not primary project commands.
+- `python -m pytest --version` works.
+- `cd rust && cargo metadata --no-deps -q` works.
+- Python tests can fail at collection if optional deps are missing (example: `pandas`).
+
+#### Dependency bootstrap commands
+
+```bash
+# Python baseline
+python -m pip install -r requirements.txt
+
+# Python dev extras from pyproject
+python -m pip install -e ".[dev]"
+
+# Rust toolchain checks
+cd rust && cargo --version
+cd rust && cargo check --workspace
+```
+
+#### Primary execution commands
+
+```bash
+# Python slices
+python -m pytest tests/unit -q
+python -m pytest tests/integration -q
+python -m pytest tests/observability -q
+
+# Rust slices
+cd rust && cargo test --workspace
+cd rust && cargo test -p market-data -p signal-bridge
+cd rust && cargo test -p risk-manager -p execution-engine -p database -p common
+
+# Mixed critical path
+python -m pytest tests/integration/test_backtest_signal_flow.py -q
+python -m pytest tests/integration/test_observability_integration.py -q
+cd rust && cargo test -p signal-bridge -p execution-engine
+```
+
+### 5) Codex Command Packs (Project-Specific)
+
+Use these as templates when spawning agents or batching operations.
+
+#### Pack A: Diagnose bug in signal pipeline (Python + Rust)
+
+```javascript
+[Single Message]:
+  Task("Signal Research", "Map failing behavior to docs + owner files in src/strategies and rust/signal-bridge.", "researcher")
+  Task("Signal Fix", "Patch smallest edit set in strategy/indicator code paths.", "coder")
+  Task("Signal Tests", "Run nearest unit+integration tests for signal flow.", "tester")
+  TodoWrite { todos: [
+    {id: "1", content: "Read canonical docs and signal docs", status: "in_progress", priority: "high"},
+    {id: "2", content: "Locate owner files with rg", status: "in_progress", priority: "high"},
+    {id: "3", content: "Patch Python strategy if needed", status: "pending", priority: "high"},
+    {id: "4", content: "Patch Rust signal bridge if needed", status: "pending", priority: "high"},
+    {id: "5", content: "Run unit tests", status: "pending", priority: "medium"},
+    {id: "6", content: "Run integration flow tests", status: "pending", priority: "medium"},
+    {id: "7", content: "Summarize docs->code->test evidence", status: "pending", priority: "medium"}
+  ]}
+  Bash "rg \"signal|indicator|feature|router\" src rust tests docs"
+  Bash "python -m pytest tests/unit/test_strategy_signals.py -q || true"
+  Bash "cd rust && cargo test -p signal-bridge || true"
+```
+
+#### Pack B: Cross-runtime contract change (bridge/protocol)
+
+```javascript
+[Single Message]:
+  Task("Protocol Research", "Confirm message contract from docs/api/ZMQ_PROTOCOL.md and code contracts.", "researcher")
+  Task("Bridge Python", "Update src/bridge contract serialization/deserialization.", "coder")
+  Task("Bridge Rust", "Update rust/signal-bridge and related message types.", "coder")
+  Task("Contract Tests", "Run integration tests covering handoff path.", "tester")
+  TodoWrite { todos: [
+    {id: "1", content: "Open ZMQ protocol doc + architecture doc", status: "in_progress", priority: "high"},
+    {id: "2", content: "Patch Python bridge", status: "pending", priority: "high"},
+    {id: "3", content: "Patch Rust bridge", status: "pending", priority: "high"},
+    {id: "4", content: "Run backtest signal flow integration test", status: "pending", priority: "high"},
+    {id: "5", content: "Run rust signal-bridge tests", status: "pending", priority: "medium"}
+  ]}
+```
+
+#### Pack C: Observability/storage regression
+
+```javascript
+[Single Message]:
+  Task("Obs Research", "Map issue to observability API/storage/logging ownership.", "researcher")
+  Task("Obs Fix", "Patch src/observability owners only.", "coder")
+  Task("Obs Validation", "Run tests/observability and integration checks.", "tester")
+  Bash "rg \"duckdb|sqlite|metrics|structured_logger|websocket\" src/observability tests docs"
+  Bash "python -m pytest tests/observability -q"
+  Bash "python -m pytest tests/integration/test_observability_integration.py -q"
+```
+
+### 6) Fast Task Routing (Doc -> Code -> Test)
+
+| Task type | Read first | Inspect first | Validate first |
+|---|---|---|---|
+| Alpaca auth/rate limit/API errors | `docs/api/ALPACA_API.md`, `docs/API_DOCUMENTATION.md` | `src/api/alpaca_client.py`, `src/api/alpaca_paper_trading.py`, `rust/market-data/src/websocket.rs` | `tests/test_alpaca_*.py`, `tests/unit/test_alpaca_*.rs`, `tests/integration/test_alpaca_api.rs` |
+| Python-Rust signal handoff | `docs/architecture/python-rust-separation.md`, `docs/api/ZMQ_PROTOCOL.md` | `src/bridge/zmq_bridge.py`, `src/bridge/rust_bridge.py`, `rust/signal-bridge/src/bridge.rs`, `rust/common/src/messaging.rs` | `tests/integration/test_backtest_signal_flow.py`, `tests/integration/test_end_to_end.rs`, `tests/integration/test_risk_execution_observability.rs` |
+| Indicator/feature correctness | `docs/guides/strategy-development.md`, `medium/rsi-trading-strategy-framework-a-comprehensive-backtesting-implementation-with-bias-prevention.md` | `src/data/indicators.py`, `src/data/features.py`, `rust/signal-bridge/src/{indicators,features}.rs` | `tests/unit/python/test_features.py`, `tests/unit/test_strategy_signals.py`, `tests/integration/test_momentum_signal_generation.py` |
+| Risk logic/stop-loss/limits | `docs/guides/RISK_MANAGEMENT_GUIDE.md` | `rust/risk-manager/src/{limits,stops,pnl,circuit_breaker}.rs`, `src/strategies/strategy_router.py` | `tests/unit/test_risk_*.rs`, `tests/integration/test_stop_loss_integration.rs`, `tests/unit/test_week3_stop_loss_immediate_exit.py` |
+| Execution router/retry/slippage | `docs/architecture/component-interfaces.md` | `rust/execution-engine/src/{router,retry,slippage,stop_loss_executor}.rs`, `src/backtesting/execution_handler.py` | `tests/unit/test_execution_router.rs`, `tests/unit/test_retry.rs`, `tests/unit/test_slippage.rs` |
+| Market data/orderbook flow | `docs/architecture/RUST_MODULE_STRUCTURE.md`, `docs/architecture/SYSTEM_ARCHITECTURE.md` | `rust/market-data/src/{websocket,orderbook,aggregation,publisher}.rs`, `src/data/fetcher.py` | `tests/unit/test_orderbook.rs`, `tests/unit/test_market_data_orderbook.rs`, `tests/integration/test_websocket.rs` |
+| Backtesting regression | `docs/python-backtesting-guide.md` | `src/backtesting/{engine,portfolio_handler,performance,metrics,transaction_costs}.py`, `src/strategies/strategy_router.py` | `tests/test_backtest_integration.py`, `tests/unit/python/test_backtest_engine.py`, `tests/integration/test_backtest_signal_validation.py` |
+| Observability API/storage/logging | `docs/observability/BACKEND_API.md` | `src/observability/api/`, `src/observability/storage/`, `src/observability/logging/`, `src/observability/database/` | `tests/observability/test_*.py`, `tests/integration/test_observability_integration.py`, `tests/integration/test_duckdb_storage.rs` |
+| Rust persistence/schema/migrations | `rust/README.md`, `docs/architecture/database-persistence.md` | `rust/database/src/{schema,migrations,query,models,connection,error}.rs` | `rust/database/src/tests.rs`, `tests/integration/test_duckdb_storage.rs` |
+| Shared type/contract breakage | `docs/api/ZMQ_PROTOCOL.md`, `docs/architecture/component-interfaces.md` | `rust/common/src/{types,messaging,errors}.rs`, `src/models/*.py` | `tests/unit/test_types.rs`, `tests/unit/test_common_types.rs`, `tests/integration/test_end_to_end.rs` |
+
+### 7) Diagnostic Workflow: Find Correct File Before Edit
+
+Run this process in order to avoid reading lan man:
+
+1. Triage symptom category: `api`, `signal`, `risk`, `execution`, `backtest`, `observability`, `database`, `contract`.
+2. Open canonical docs first; avoid starting from historical reports.
+3. Produce an owner shortlist (max 3 modules).
+4. Search only within shortlisted modules:
+```bash
+rg "error_or_keyword" src rust tests docs
+rg --files src rust tests docs | rg "module_or_feature_name"
+```
+5. Confirm owner file by function/class/type hit, not filename guess alone.
+6. Identify nearest test file before code change.
+7. Reproduce with smallest failing test scope.
+8. Apply smallest edit set:
+- single-module bug: 1-3 files
+- cross-runtime contract bug: patch both sides in one change
+9. Re-run nearest tests.
+10. Run targeted integration tests.
+11. Summarize evidence: doc -> code -> test.
+
+### 8) Path-Triggered Test Matrix (Minimum Required)
+
+When touching these paths, run at least these tests:
+
+- `src/api/**` -> `python -m pytest tests/test_alpaca_*.py -q`
+- `src/data/**` -> `python -m pytest tests/unit/python/test_features.py -q`
+- `src/strategies/**` -> `python -m pytest tests/unit/test_strategy_signals.py -q`
+- `src/backtesting/**` -> `python -m pytest tests/test_backtest_integration.py -q`
+- `src/bridge/**` -> `python -m pytest tests/integration/test_backtest_signal_flow.py -q`
+- `src/observability/**` -> `python -m pytest tests/observability -q`
+- `rust/market-data/**` -> `cd rust && cargo test -p market-data`
+- `rust/signal-bridge/**` -> `cd rust && cargo test -p signal-bridge`
+- `rust/risk-manager/**` -> `cd rust && cargo test -p risk-manager`
+- `rust/execution-engine/**` -> `cd rust && cargo test -p execution-engine`
+- `rust/database/**` -> `cd rust && cargo test -p database`
+- `rust/common/**` -> `cd rust && cargo test -p common`
+
+For cross-runtime edits (`src/bridge/**`, `rust/signal-bridge/**`, `rust/common/src/messaging.rs`), run both Python integration and Rust crate tests.
+
+### 9) Reading Hygiene (Hard Limits)
+
+Do not spend baseline task time in:
+
+- `docs/legacy/` (contains old: fixes, review, reviews, analysis, research, strategy_comparison, migration, testing, troubleshooting)
+- `tests/logs/`
+- `**/__pycache__/`
+- `rust/target/`, `tests/target/`
+- backup snapshots `*.backup`, `*.week3`
+
+Only read `medium/` for strategy rationale or when user asks research context.
+
+### 10) Additional Project Orders (Strict)
+
+1. **Order A - Diagnose Before Edit**: No patch until owner module + target test are identified.
+2. **Order B - Canonical Docs First**: Start from canonical map and maintained docs, not reports.
+3. **Order C - Contract Symmetry**: Python-Rust message changes must update both sides.
+4. **Order D - Minimal Edit Set**: Avoid broad refactor when fixing scoped bug.
+5. **Order E - Evidence In Final Report**: Always report docs used, files touched, tests run/skipped.
+6. **Order F - PLAYBOOK Sync**: Any new project file must be added to `PLAYBOOK.md` in same change.
+7. **Order G - No Root Spillage**: Never create working docs/tests/scripts in repository root.
+8. **Order H - Ignore Generated Files**: Never patch caches/build artifacts.
+9. **Order I - Test Closest First**: Unit before integration before e2e.
+10. **Order J - Stop On Unexpected Drift**: If unrelated in-flight file changes appear, pause and realign.
 
 ## SPARC Workflow Phases
 
@@ -92,291 +306,7 @@ This project uses SPARC (Specification, Pseudocode, Architecture, Refinement, Co
 - **Clean Architecture**: Separate concerns
 - **Documentation**: Keep updated
 
-## 🚀 Available Agents (54 Total)
-
-### Core Development
-
-`coder`, `reviewer`, `tester`, `planner`, `researcher`
-
-### Swarm Coordination
-
-`hierarchical-coordinator`, `mesh-coordinator`, `adaptive-coordinator`, `collective-intelligence-coordinator`, `swarm-memory-manager`
-
-### Consensus & Distributed
-
-`byzantine-coordinator`, `raft-manager`, `gossip-coordinator`, `consensus-builder`, `crdt-synchronizer`, `quorum-manager`, `security-manager`
-
-### Performance & Optimization
-
-`perf-analyzer`, `performance-benchmarker`, `task-orchestrator`, `memory-coordinator`, `smart-agent`
-
-### GitHub & Repository
-
-`github-modes`, `pr-manager`, `code-review-swarm`, `issue-tracker`, `release-manager`, `workflow-automation`, `project-board-sync`, `repo-architect`, `multi-repo-swarm`
-
-### SPARC Methodology
-
-`sparc-coord`, `sparc-coder`, `specification`, `pseudocode`, `architecture`, `refinement`
-
-### Specialized Development
-
-`backend-dev`, `mobile-dev`, `ml-developer`, `cicd-engineer`, `api-docs`, `system-architect`, `code-analyzer`, `base-template-generator`
-
-### Testing & Validation
-
-`tdd-london-swarm`, `production-validator`
-
-### Migration & Planning
-
-`migration-planner`, `swarm-init`
-
-## 🎯 Codex vs MCP Tools
-
-### Codex Handles ALL EXECUTION
-
-- **Task tool**: Spawn and run agents concurrently for actual work
-- File operations (Read, Write, Edit, MultiEdit, Glob, Grep)
-- Code generation and programming
-- Bash commands and system operations
-- Implementation work
-- Project navigation and analysis
-- TodoWrite and task management
-- Git operations
-- Package management
-- Testing and debugging
-
-### MCP Tools ONLY COORDINATE
-
-- Swarm initialization (topology setup)
-- Agent type definitions (coordination patterns)
-- Task orchestration (high-level planning)
-- Memory management
-- Neural features
-- Performance tracking
-- GitHub integration
-
-**KEY**: MCP coordinates the strategy, Codex's Task tool executes with real agents.
-
-## 🚀 Quick Setup
-
-```bash
-# Add MCP servers (Codex Flow required, others optional)
-Codex mcp add Codex-flow npx Codex-flow@alpha mcp start
-Codex mcp add ruv-swarm npx ruv-swarm mcp start  # Optional: Enhanced coordination
-Codex mcp add flow-nexus npx flow-nexus@latest mcp start  # Optional: Cloud features
-```
-
-## MCP Tool Categories
-
-### Coordination
-
-`swarm_init`, `agent_spawn`, `task_orchestrate`
-
-### Monitoring
-
-`swarm_status`, `agent_list`, `agent_metrics`, `task_status`, `task_results`
-
-### Memory & Neural
-
-`memory_usage`, `neural_status`, `neural_train`, `neural_patterns`
-
-### GitHub Integration
-
-`github_swarm`, `repo_analyze`, `pr_enhance`, `issue_triage`, `code_review`
-
-### System
-
-`benchmark_run`, `features_detect`, `swarm_monitor`
-
-### Flow-Nexus MCP Tools (Optional Advanced Features)
-
-Flow-Nexus extends MCP capabilities with 70+ cloud-based orchestration tools:
-
-**Key MCP Tool Categories:**
-
-- **Swarm & Agents**: `swarm_init`, `swarm_scale`, `agent_spawn`, `task_orchestrate`
-- **Sandboxes**: `sandbox_create`, `sandbox_execute`, `sandbox_upload` (cloud execution)
-- **Templates**: `template_list`, `template_deploy` (pre-built project templates)
-- **Neural AI**: `neural_train`, `neural_patterns`, `seraphina_chat` (AI assistant)
-- **GitHub**: `github_repo_analyze`, `github_pr_manage` (repository management)
-- **Real-time**: `execution_stream_subscribe`, `realtime_subscribe` (live monitoring)
-- **Storage**: `storage_upload`, `storage_list` (cloud file management)
-
-**Authentication Required:**
-
-- Register: `mcp__flow-nexus__user_register` or `npx flow-nexus@latest register`
-- Login: `mcp__flow-nexus__user_login` or `npx flow-nexus@latest login`
-- Access 70+ specialized MCP tools for advanced orchestration
-
-## 🚀 Agent Execution Flow with Codex
-
-### The Correct Pattern
-
-1. **Optional**: Use MCP tools to set up coordination topology
-2. **REQUIRED**: Use Codex's Task tool to spawn agents that do actual work
-3. **REQUIRED**: Each agent runs hooks for coordination
-4. **REQUIRED**: Batch all operations in single messages
-
-### Example Full-Stack Development
-
-```javascript
-// Single message with all agent spawning via Codex's Task tool
-[Parallel Agent Execution]:
-  Task("Backend Developer", "Build REST API with Express. Use hooks for coordination.", "backend-dev")
-  Task("Frontend Developer", "Create React UI. Coordinate with backend via memory.", "coder")
-  Task("Database Architect", "Design PostgreSQL schema. Store schema in memory.", "code-analyzer")
-  Task("Test Engineer", "Write Jest tests. Check memory for API contracts.", "tester")
-  Task("DevOps Engineer", "Setup Docker and CI/CD. Document in memory.", "cicd-engineer")
-  Task("Security Auditor", "Review authentication. Report findings via hooks.", "reviewer")
-  
-  // All todos batched together
-  TodoWrite { todos: [...8-10 todos...] }
-  
-  // All file operations together
-  Write "backend/server.js"
-  Write "frontend/App.jsx"
-  Write "database/schema.sql"
-```
-
-## 📋 Agent Coordination Protocol
-
-### Every Agent Spawned via Task Tool MUST
-
-**1️⃣ BEFORE Work:**
-
-```bash
-npx Codex-flow@alpha hooks pre-task --description "[task]"
-npx Codex-flow@alpha hooks session-restore --session-id "swarm-[id]"
-```
-
-**2️⃣ DURING Work:**
-
-```bash
-npx Codex-flow@alpha hooks post-edit --file "[file]" --memory-key "swarm/[agent]/[step]"
-npx Codex-flow@alpha hooks notify --message "[what was done]"
-```
-
-**3️⃣ AFTER Work:**
-
-```bash
-npx Codex-flow@alpha hooks post-task --task-id "[task]"
-npx Codex-flow@alpha hooks session-end --export-metrics true
-```
-
-## 🎯 Concurrent Execution Examples
-
-### ✅ CORRECT WORKFLOW: MCP Coordinates, Codex Executes
-
-```javascript
-// Step 1: MCP tools set up coordination (optional, for complex tasks)
-[Single Message - Coordination Setup]:
-  mcp__claude-flow__swarm_init { topology: "mesh", maxAgents: 6 }
-  mcp__claude-flow__agent_spawn { type: "researcher" }
-  mcp__claude-flow__agent_spawn { type: "coder" }
-  mcp__claude-flow__agent_spawn { type: "tester" }
-
-// Step 2: Codex Task tool spawns ACTUAL agents that do the work
-[Single Message - Parallel Agent Execution]:
-  // Codex's Task tool spawns real agents concurrently
-  Task("Research agent", "Analyze API requirements and best practices. Check memory for prior decisions.", "researcher")
-  Task("Coder agent", "Implement REST endpoints with authentication. Coordinate via hooks.", "coder")
-  Task("Database agent", "Design and implement database schema. Store decisions in memory.", "code-analyzer")
-  Task("Tester agent", "Create comprehensive test suite with 90% coverage.", "tester")
-  Task("Reviewer agent", "Review code quality and security. Document findings.", "reviewer")
-  
-  // Batch ALL todos in ONE call
-  TodoWrite { todos: [
-    {id: "1", content: "Research API patterns", status: "in_progress", priority: "high"},
-    {id: "2", content: "Design database schema", status: "in_progress", priority: "high"},
-    {id: "3", content: "Implement authentication", status: "pending", priority: "high"},
-    {id: "4", content: "Build REST endpoints", status: "pending", priority: "high"},
-    {id: "5", content: "Write unit tests", status: "pending", priority: "medium"},
-    {id: "6", content: "Integration tests", status: "pending", priority: "medium"},
-    {id: "7", content: "API documentation", status: "pending", priority: "low"},
-    {id: "8", content: "Performance optimization", status: "pending", priority: "low"}
-  ]}
-  
-  // Parallel file operations
-  Bash "mkdir -p app/{src,tests,docs,config}"
-  Write "app/package.json"
-  Write "app/src/server.js"
-  Write "app/tests/server.test.js"
-  Write "app/docs/API.md"
-```
-
-### ❌ WRONG (Multiple Messages)
-
-```javascript
-Message 1: mcp__claude-flow__swarm_init
-Message 2: Task("agent 1")
-Message 3: TodoWrite { todos: [single todo] }
-Message 4: Write "file.js"
-// This breaks parallel coordination!
-```
-
-## Performance Benefits
-
-- **84.8% SWE-Bench solve rate**
-- **32.3% token reduction**
-- **2.8-4.4x speed improvement**
-- **27+ neural models**
-
-## Hooks Integration
-
-### Pre-Operation
-
-- Auto-assign agents by file type
-- Validate commands for safety
-- Prepare resources automatically
-- Optimize topology by complexity
-- Cache searches
-
-### Post-Operation
-
-- Auto-format code
-- Train neural patterns
-- Update memory
-- Analyze performance
-- Track token usage
-
-### Session Management
-
-- Generate summaries
-- Persist state
-- Track metrics
-- Restore context
-- Export workflows
-
-## Advanced Features (v2.0.0)
-
-- 🚀 Automatic Topology Selection
-- ⚡ Parallel Execution (2.8-4.4x speed)
-- 🧠 Neural Training
-- 📊 Bottleneck Analysis
-- 🤖 Smart Auto-Spawning
-- 🛡️ Self-Healing Workflows
-- 💾 Cross-Session Memory
-- 🔗 GitHub Integration
-
-## Integration Tips
-
-1. Start with basic swarm init
-2. Scale agents gradually
-3. Use memory for context
-4. Monitor progress regularly
-5. Train patterns from success
-6. Enable hooks automation
-7. Use GitHub tools first
-
-## Support
-
-- Documentation: <https://github.com/ruvnet/Codex-flow>
-- Issues: <https://github.com/ruvnet/Codex-flow/issues>
-- Flow-Nexus Platform: <https://flow-nexus.ruv.io> (registration required for cloud features)
-
 ---
-
-Remember: **Codex Flow coordinates, Codex creates!**
 
 # important-instruction-reminders
 
