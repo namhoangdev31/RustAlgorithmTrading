@@ -9,6 +9,7 @@
 Main client for interacting with Alpaca API.
 
 **Initialization:**
+
 ```python
 from src.api.alpaca_client import AlpacaClient
 
@@ -39,6 +40,7 @@ client = AlpacaClient(
 Fetches market data from Alpaca.
 
 **Initialization:**
+
 ```python
 from src.data.fetcher import DataFetcher
 
@@ -83,6 +85,7 @@ All strategies inherit from `Strategy` base class.
 **Built-in Strategies:**
 
 ##### MovingAverageCrossover
+
 ```python
 from src.strategies.moving_average import MovingAverageCrossover
 
@@ -94,6 +97,7 @@ strategy = MovingAverageCrossover(
 ```
 
 ##### MeanReversion
+
 ```python
 from src.strategies.mean_reversion import MeanReversion
 
@@ -107,6 +111,7 @@ strategy = MeanReversion(
 ```
 
 ##### MomentumStrategy
+
 ```python
 from src.strategies.momentum import MomentumStrategy
 
@@ -127,6 +132,7 @@ strategy = MomentumStrategy(
 Validates strategies on historical data.
 
 **Initialization:**
+
 ```python
 from src.backtesting.engine import BacktestEngine
 
@@ -142,6 +148,7 @@ engine = BacktestEngine(
 - `run(strategy, data, symbol) -> Dict[str, Any]` - Run backtest
 
 **Returns:**
+
 ```python
 {
     'symbol': str,
@@ -167,6 +174,7 @@ engine = BacktestEngine(
 Risk analysis using Monte Carlo simulations.
 
 **Initialization:**
+
 ```python
 from src.simulations.monte_carlo import MonteCarloSimulator
 
@@ -193,6 +201,7 @@ simulator = MonteCarloSimulator(
   - Get specific percentile scenarios
 
 **Returns from `simulate_strategy`:**
+
 ```python
 {
     'expected_return': float,
@@ -215,6 +224,7 @@ simulator = MonteCarloSimulator(
 Manages application configuration from .env file.
 
 **Usage:**
+
 ```python
 from config.config import get_config
 
@@ -240,6 +250,7 @@ config_dict = config.to_dict()
 ### 8. Utilities (`src/utils/`)
 
 #### Logger Setup
+
 ```python
 from src.utils.logger import setup_logger
 
@@ -252,6 +263,7 @@ setup_logger(
 ```
 
 #### Helper Functions
+
 ```python
 from src.utils.helpers import (
     calculate_position_size,
