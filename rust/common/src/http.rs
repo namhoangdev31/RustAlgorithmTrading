@@ -124,7 +124,7 @@ pub async fn start_health_server(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use tower::Service;
+    use tower::ServiceExt;
 
     #[tokio::test]
     async fn test_health_endpoint() {
@@ -137,10 +137,7 @@ mod tests {
             .body(axum::body::Body::empty())
             .unwrap();
 
-        let response = axum::Router::into_service(router)
-            .call(request)
-            .await
-            .unwrap();
+        let response = router.oneshot(request).await.unwrap();
 
         assert_eq!(response.status(), StatusCode::OK);
     }
@@ -157,10 +154,7 @@ mod tests {
             .body(axum::body::Body::empty())
             .unwrap();
 
-        let response = axum::Router::into_service(router)
-            .call(request)
-            .await
-            .unwrap();
+        let response = router.oneshot(request).await.unwrap();
 
         assert_eq!(response.status(), StatusCode::SERVICE_UNAVAILABLE);
     }
@@ -177,10 +171,7 @@ mod tests {
             .body(axum::body::Body::empty())
             .unwrap();
 
-        let response = axum::Router::into_service(router)
-            .call(request)
-            .await
-            .unwrap();
+        let response = router.oneshot(request).await.unwrap();
 
         // Liveness should always return OK even if unhealthy
         assert_eq!(response.status(), StatusCode::OK);

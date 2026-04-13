@@ -36,8 +36,14 @@ common = { path = "../common" }
 [dev-dependencies]
 mockall.workspace = true
 tokio = { workspace = true, features = ["test-util"] }
+tracing-subscriber.workspace = true
+tempfile.workspace = true
 
 [features]
 default = []
 migration-tools = []
 test-utilities = []
+
+[[example]]
+name = "migration_example"
+required-features = ["migration-tools"]

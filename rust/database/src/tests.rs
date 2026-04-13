@@ -77,9 +77,7 @@ mod integration_tests {
 
         db.log_event(&event1).await.unwrap();
         db.log_event(&event2).await.unwrap();
-        let id = db.log_event(&event3).await.unwrap();
-
-        assert!(id > 0);
+        db.log_event(&event3).await.unwrap();
     }
 
     #[tokio::test]

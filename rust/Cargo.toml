@@ -53,6 +53,7 @@ indexmap = "2.2"
 
 # Testing
 mockall = "0.12"
+tempfile = "3"
 
 [profile.release]
 opt-level = 3

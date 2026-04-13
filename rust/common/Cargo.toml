@@ -30,6 +30,7 @@ metrics.workspace = true
 
 [dev-dependencies]
 serde_test = "1.0"
+tower = { version = "0.4", features = ["util"] }
 
 [lib]
 name = "common"
