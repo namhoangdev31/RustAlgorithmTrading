@@ -1080,6 +1080,12 @@ Mỗi file có 3 phần:
   - StopLossTrigger (struct): Cấu trúc dữ liệu/domain state của module.
 - Test liên quan: tests/unit/test_risk_manager.rs, tests/unit/test_risk_limits.rs, tests/integration/test_stop_loss_integration.rs, tests/integration/test_risk_execution_observability.rs.
 
+### rust/risk-manager/tests/limit_bva_tests.rs
+
+- Vai trò file: Bộ test BVA cho Risk Limits v1, xác nhận ngưỡng `limit-1/limit/limit+1` cho symbol/strategy limits và guardrail hiệu năng lookup risk.
+- Type trong file: Không có type declaration (test cases mức crate/integration).
+- Test liên quan: `cd rust && cargo test -p risk-manager --test limit_bva_tests`, `cd rust && cargo test -p risk-manager`.
+
 ### rust/signal-bridge/src/bridge.rs
 
 - Vai trò file: Signal pipeline: feature/indicator compute, bridge với Python/runtime.
@@ -1375,6 +1381,54 @@ Mỗi file có 3 phần:
 - Vai trò file: Báo cáo tổng kết tuần 4 và gói khởi động tuần 5 (Risk Limits v1), chứa cả nhánh `GO` và recovery queue khi `NO-GO`.
 - Class/Type trong file: Không có class/type (tài liệu weekly closeout + handoff).
 - Test liên quan: Tổng hợp evidence từ baseline report, issue register, gate rehearsal để ra quyết định final và handoff tuần 5.
+
+### docs/roadmap/W05_OPERATIONS_PLAN.md
+
+- Vai trò file: Kế hoạch vận hành tuần 5 cho Risk Limits v1, tập trung enforce giới hạn theo symbol/strategy, chuẩn hóa reject semantics và gate Phase 2.
+- Class/Type trong file: Không có class/type (tài liệu điều phối implementation risk limits, triage và closeout).
+- Test liên quan: Điều phối command profile risk-focused (pytest integration + cargo test/check + health/compliance/correlation audits) và scenario matrix tuần 5.
+
+### docs/roadmap/week5/KPI_CHARTER_WEEK5.md
+
+- Vai trò file: KPI charter tuần 5 cho Risk Limits v1, định nghĩa ngưỡng duplicate-order rate, risk breach, limit compliance và governance consistency.
+- Class/Type trong file: Không có class/type (tài liệu KPI governance tuần 5).
+- Test liên quan: Dùng evidence từ baseline report, issue register và gate notes để tính KPI.
+
+### docs/roadmap/week5/RISK_LIMITS_BASELINE_REPORT.md
+
+- Vai trò file: Baseline report tuần 5 cho Risk Limits v1, chuẩn hóa matrix `expected/actual/status/evidence_id` cho command profile và risk scenarios.
+- Class/Type trong file: Không có class/type (tài liệu validation/baseline evidence).
+- Test liên quan: Tham chiếu trực tiếp `pytest integration`, `cargo test/check`, `health_check`, `compliance_audit.sh`, `audit_correlation.py` theo command profile tuần 5.
+
+### docs/roadmap/week5/RISK_LIMITS_IMPLEMENTATION_PLAN.md
+
+- Vai trò file: Kế hoạch triển khai Risk Limits v1 với dependency matrix theo lane, triage clusters A/B/C và rollback strategy cho regressions tuần 5.
+- Class/Type trong file: Không có class/type (tài liệu rollout/rollback strategy cho risk limits).
+- Test liên quan: Kiểm chứng limit compliance, reject semantics, duplicate-order guardrail và artifact consistency trước gate.
+
+### docs/roadmap/week5/ISSUE_REGISTER_WEEK5.md
+
+- Vai trò file: Sổ issue tuần 5 cho Risk Limits v1, có metadata đầy đủ (`ETA`, `evidence_id`, `blocking_of`) và mapping theo blockers Phase 2.
+- Class/Type trong file: Không có class/type (tài liệu governance/triage tuần 5).
+- Test liên quan: Map failure từ baseline/scenario matrix vào owner/ETA/mitigation và quyết định gate blockers.
+
+### docs/roadmap/week5/INTERFACE_RISK_LIMITS_SPEC.md
+
+- Vai trò file: Spec interface tuần 5 cho risk limits, giữ canonical envelope freeze và khóa behavioral rules cho reject semantics (`decision/reason_code/limit_snapshot`).
+- Class/Type trong file: Không có class/type code; định nghĩa policy contract freeze và error-handling/reject rules.
+- Test liên quan: Là đầu vào cho risk-limit checks, reject-path integration checks và observability audits tuần 5.
+
+### docs/roadmap/week5/GATE_REHEARSAL_NOTES.md
+
+- Vai trò file: Ghi chú rehearsal gate tuần 5, tổng hợp ngưỡng pass/fail cho Phase 2 (`duplicate order <= 0.1%`, `risk breach mới = 0`) và trạng thái checklist.
+- Class/Type trong file: Không có class/type (tài liệu gate review tuần 5).
+- Test liên quan: Xác nhận build/static/smoke, risk-limit matrix, correlation audit và artifact consistency.
+
+### docs/roadmap/week5/WEEK5_FINAL_REPORT_AND_WEEK6_START_PACK.md
+
+- Vai trò file: Báo cáo tổng kết tuần 5 và gói khởi động tuần 6 (Stop-loss coherence), chứa nhánh `GO` và recovery queue khi `NO-GO`.
+- Class/Type trong file: Không có class/type (tài liệu weekly closeout + handoff).
+- Test liên quan: Tổng hợp evidence từ baseline report, implementation plan, issue register và gate rehearsal để ra quyết định final tuần 5.
 
 ### scripts/compliance_audit.sh
 

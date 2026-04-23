@@ -55,6 +55,20 @@ pub struct RiskConfig {
     pub max_loss_threshold: f64,
 }
 
+impl Default for RiskConfig {
+    fn default() -> Self {
+        Self {
+            max_position_size: 10000.0,
+            max_notional_exposure: 50000.0,
+            max_open_positions: 5,
+            stop_loss_percent: 2.0,
+            trailing_stop_percent: 1.0,
+            enable_circuit_breaker: true,
+            max_loss_threshold: 500.0,
+        }
+    }
+}
+
 impl RiskConfig {
     /// Validate risk configuration
     pub fn validate(&self) -> Result<()> {

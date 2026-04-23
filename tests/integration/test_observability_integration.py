@@ -10,10 +10,13 @@ Tests the complete pipeline:
 import pytest
 import asyncio
 import aiohttp
+import logging
+import json
 from datetime import datetime
 
 from src.observability.metrics.rust_bridge import RustMetricsBridge
 from src.observability.metrics.market_data_collector import MarketDataCollector
+from src.observability.logging.formatters import JSONFormatter
 
 
 @pytest.mark.asyncio
@@ -228,6 +231,32 @@ def test_metrics_module_exports():
     assert "risk" in bridge.service_endpoints
 
     print("✓ Metrics bridge is correctly configured")
+
+
+def test_public_log_redacts_limit_snapshot():
+    """Week 5 hardening: public logs must redact limit_snapshot payload."""
+    formatter = JSONFormatter()
+    record = logging.LogRecord(
+        name="observability.risk",
+        level=logging.WARNING,
+        pathname=__file__,
+        lineno=0,
+        msg="Risk reject event",
+        args=(),
+        exc_info=None,
+    )
+    record.correlation_id = "cid-redaction-1"
+    record.limit_snapshot = {
+        "equity": 123_456.0,
+        "available_buying_power": 98_765.0,
+        "strategy_budget": 5_000.0,
+    }
+
+    payload = formatter.format(record)
+    structured = json.loads(payload)
+
+    assert "extra" in structured
+    assert structured["extra"]["limit_snapshot"] == "[REDACTED]"
 
 
 if __name__ == "__main__":

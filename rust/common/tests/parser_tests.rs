@@ -1,5 +1,6 @@
 use common::{Envelope, Message, SCHEMA_VERSION, ErrorPayload};
 use common::messaging::ErrorDisposition;
+use common::types::{RiskDecision, RiskReason};
 use chrono::Utc;
 use serde_json::json;
 
@@ -98,4 +99,13 @@ fn test_negative_parser_invalid_timestamp() {
 
     let result = serde_json::from_value::<Message>(malformed_payload);
     assert!(result.is_err());
+}
+
+#[test]
+fn test_risk_enum_canonical_serialization() {
+    let decision = serde_json::to_string(&RiskDecision::Reject).unwrap();
+    assert_eq!(decision, "\"REJECT\"");
+
+    let reason = serde_json::to_string(&RiskReason::StrategyAllocationLimitExceeded).unwrap();
+    assert_eq!(reason, "\"STRATEGY_ALLOCATION_LIMIT_EXCEEDED\"");
 }

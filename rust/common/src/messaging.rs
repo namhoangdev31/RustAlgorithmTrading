@@ -101,9 +101,11 @@ pub struct RiskCheckRequest {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RiskCheckResult {
     pub approved: bool,
+    pub decision: crate::types::RiskDecision,
     pub reason: Option<String>,
-    pub reason_code: Option<String>,
+    pub reason_code: Option<crate::types::RiskReason>,
     pub limit_snapshot: Option<serde_json::Value>,
+    pub disposition: Option<String>, // "ALLOW" or "REJECT"
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

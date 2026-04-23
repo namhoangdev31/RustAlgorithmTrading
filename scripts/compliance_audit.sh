@@ -103,6 +103,16 @@ if [[ "$CHECK_VERSIONING" == true ]]; then
   fi
 fi
 
+# Week 5: Redaction Check
+echo "[i] Running redaction compliance check..."
+REDACTION_LEAKS=$(grep -Ec 'limit_snapshot":\s*\{' "$LOG_FILE" || true)
+if [[ "$REDACTION_LEAKS" -eq 0 ]]; then
+  echo "[✓] Redaction compliance passed (0 leaks found)."
+else
+  echo "[x] Redaction compliance FAILED ($REDACTION_LEAKS potential leaks found)."
+  failed+=1
+fi
+
 if [[ "$failed" -gt 0 ]]; then
   echo "[x] Compliance audit failed ($failed check(s) failed)."
   exit 1

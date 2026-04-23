@@ -34,10 +34,36 @@ impl RiskManagerService {
     }
 
     pub fn check_order(&self, order: &Order) -> Result<bool> {
-        // Check all risk constraints
+        // Legacy compatibility wrapper
         self.limit_checker.check(order)?;
         self.circuit_breaker.check()?;
         Ok(true)
+    }
+
+    pub fn validate_order(&self, order: &Order, correlation_id: &str) -> common::types::RiskReport {
+        // Level 1: Limit Checker (Symbol/Strategy caps)
+        let report = self.limit_checker.check_with_report(order, correlation_id);
+        if report.decision == common::types::RiskDecision::Reject {
+            return report;
+        }
+
+        // Level 2: Circuit Breaker
+        if let Err(_) = self.circuit_breaker.check() {
+            return common::types::RiskReport {
+                decision: common::types::RiskDecision::Reject,
+                reason_code: Some(common::types::RiskReason::InvalidOrderParameters), // Map as necessary
+                limit_snapshot: None,
+                correlation_id: correlation_id.to_string(),
+            };
+        }
+
+        // Default: Allow
+        common::types::RiskReport {
+            decision: common::types::RiskDecision::Allow,
+            reason_code: None,
+            limit_snapshot: None,
+            correlation_id: correlation_id.to_string(),
+        }
     }
 
     pub fn update_position(&mut self, position: Position) -> Option<StopLossTrigger> {

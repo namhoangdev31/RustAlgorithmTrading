@@ -147,3 +147,34 @@ pub enum SignalDirection {
     Sell,
     Hold,
 }
+
+/// Risk decision outcomes for Week 5.
+/// Serialized in SCREAMING_SNAKE_CASE to keep wire semantics stable (ALLOW/REJECT).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum RiskDecision {
+    Allow,
+    Reject,
+}
+
+/// Detailed reason for risk rejection (W5 canonical enums).
+/// Keep compile-time canonical enum and stable wire tokens.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum RiskReason {
+    SymbolPositionLimitExceeded,
+    SymbolVolumeLimitExceeded,
+    StrategyMaxDrawdownBreach,
+    StrategyDailyLossLimitBreach,
+    StrategyAllocationLimitExceeded,
+    InvalidOrderParameters,
+}
+
+/// Structured outcome of a risk check (W5 canonical interface)
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RiskReport {
+    pub decision: RiskDecision,
+    pub reason_code: Option<RiskReason>,
+    pub limit_snapshot: Option<serde_json::Value>,
+    pub correlation_id: String,
+}

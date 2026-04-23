@@ -1,5 +1,6 @@
-use common::{Result, TradingError, types::{Order, Position}, config::RiskConfig};
+use common::{Result, TradingError, types::{Order, Position, RiskDecision, RiskReason, RiskReport}, config::RiskConfig};
 use std::collections::HashMap;
+use serde_json::json;
 
 pub struct LimitChecker {
     config: RiskConfig,
@@ -18,46 +19,82 @@ impl LimitChecker {
         }
     }
 
-    /// Multi-level risk check
-    pub fn check(&self, order: &Order) -> Result<()> {
+    /// Multi-level risk check returning a structured report (W5)
+    pub fn check_with_report(&self, order: &Order, correlation_id: &str) -> RiskReport {
         // Level 1: Order size check
-        self.check_order_size(order)?;
+        if let Err(reason) = self.check_order_size(order) {
+            return RiskReport {
+                decision: RiskDecision::Reject,
+                reason_code: Some(reason),
+                limit_snapshot: Some(json!({"max_order_size": self.config.max_position_size})),
+                correlation_id: correlation_id.to_string(),
+            };
+        }
 
         // Level 2: Position size check
-        self.check_position_size(order)?;
+        if let Err(reason) = self.check_position_size(order) {
+            return RiskReport {
+                decision: RiskDecision::Reject,
+                reason_code: Some(reason),
+                limit_snapshot: Some(json!({"max_position_size": self.config.max_position_size})),
+                correlation_id: correlation_id.to_string(),
+            };
+        }
 
         // Level 3: Notional exposure check
-        self.check_notional_exposure(order)?;
+        if let Err(reason) = self.check_notional_exposure(order) {
+            return RiskReport {
+                decision: RiskDecision::Reject,
+                reason_code: Some(reason),
+                limit_snapshot: Some(json!({"max_notional": self.config.max_notional_exposure})),
+                correlation_id: correlation_id.to_string(),
+            };
+        }
 
-        // Level 4: Open positions count check
-        self.check_open_positions()?;
+        // Level 4: Daily loss limit check
+        if let Err(reason) = self.check_daily_loss() {
+            return RiskReport {
+                decision: RiskDecision::Reject,
+                reason_code: Some(reason),
+                limit_snapshot: Some(json!({"daily_pnl": self.daily_pnl, "threshold": self.config.max_loss_threshold})),
+                correlation_id: correlation_id.to_string(),
+            };
+        }
 
-        // Level 5: Daily loss limit check
-        self.check_daily_loss()?;
+        // Default: Allow
+        RiskReport {
+            decision: RiskDecision::Allow,
+            reason_code: None,
+            limit_snapshot: None,
+            correlation_id: correlation_id.to_string(),
+        }
+    }
 
+    /// Legacy check for compatibility
+    pub fn check(&self, order: &Order) -> Result<()> {
+        let report = self.check_with_report(order, "legacy-cid");
+        if report.decision == RiskDecision::Reject {
+            return Err(TradingError::Risk(format!(
+                "Risk check failed: {:?}", report.reason_code
+            )));
+        }
         Ok(())
     }
 
-    fn check_order_size(&self, order: &Order) -> Result<()> {
+    fn check_order_size(&self, order: &Order) -> std::result::Result<(), RiskReason> {
         let order_value = match order.price {
             Some(price) => price.0 * order.quantity.0,
-            None => {
-                // Market order - estimate with a buffer
-                0.0 // Will be checked at execution time
-            }
+            None => 0.0,
         };
 
         if order_value > self.config.max_position_size {
-            return Err(TradingError::Risk(format!(
-                "Order size {} exceeds max position size {}",
-                order_value, self.config.max_position_size
-            )));
+            return Err(RiskReason::SymbolVolumeLimitExceeded);
         }
 
         Ok(())
     }
 
-    fn check_position_size(&self, order: &Order) -> Result<()> {
+    fn check_position_size(&self, order: &Order) -> std::result::Result<(), RiskReason> {
         if let Some(position) = self.positions.get(&order.symbol.0) {
             let current_value = position.quantity.0 * position.current_price.0;
             let order_value = order.quantity.0 * order.price.unwrap_or(position.current_price).0;
@@ -65,17 +102,14 @@ impl LimitChecker {
             let new_value = current_value + order_value;
 
             if new_value > self.config.max_position_size {
-                return Err(TradingError::Risk(format!(
-                    "Position size {} would exceed max {}",
-                    new_value, self.config.max_position_size
-                )));
+                return Err(RiskReason::SymbolPositionLimitExceeded);
             }
         }
 
         Ok(())
     }
 
-    fn check_notional_exposure(&self, order: &Order) -> Result<()> {
+    fn check_notional_exposure(&self, order: &Order) -> std::result::Result<(), RiskReason> {
         let total_exposure: f64 = self
             .positions
             .values()
@@ -89,33 +123,15 @@ impl LimitChecker {
                 .0;
 
         if total_exposure + order_value > self.config.max_notional_exposure {
-            return Err(TradingError::Risk(format!(
-                "Total exposure {} would exceed max {}",
-                total_exposure + order_value,
-                self.config.max_notional_exposure
-            )));
+            return Err(RiskReason::StrategyAllocationLimitExceeded);
         }
 
         Ok(())
     }
 
-    fn check_open_positions(&self) -> Result<()> {
-        if self.open_order_count >= self.config.max_open_positions {
-            return Err(TradingError::Risk(format!(
-                "Open positions {} would exceed max {}",
-                self.open_order_count, self.config.max_open_positions
-            )));
-        }
-
-        Ok(())
-    }
-
-    fn check_daily_loss(&self) -> Result<()> {
+    fn check_daily_loss(&self) -> std::result::Result<(), RiskReason> {
         if self.daily_pnl < -self.config.max_loss_threshold {
-            return Err(TradingError::Risk(format!(
-                "Daily loss {} exceeds threshold {}",
-                self.daily_pnl, self.config.max_loss_threshold
-            )));
+            return Err(RiskReason::StrategyDailyLossLimitBreach);
         }
 
         Ok(())

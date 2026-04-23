@@ -8,7 +8,8 @@ to identify bottlenecks causing 0% win rate.
 import pytest
 import pandas as pd
 import numpy as np
-from datetime import datetime, timedelta
+import json
+from datetime import datetime, timedelta, timezone
 from loguru import logger
 
 from src.strategies.momentum import MomentumStrategy
@@ -16,6 +17,83 @@ from src.strategies.mean_reversion import MeanReversion
 from src.strategies.base import SignalType
 from src.backtesting.portfolio_handler import PortfolioHandler, FixedAmountSizer
 from src.models.events import SignalEvent, OrderEvent, FillEvent
+from src.bridge.zmq_bridge import ZMQSubscriber, SCHEMA_VERSION
+
+
+class _FakeSubscriberSocket:
+    """Minimal async socket stub for ZMQSubscriber.receive_one tests."""
+
+    def __init__(self, raw_message: str):
+        self._raw_message = raw_message
+
+    async def recv_string(self) -> str:
+        return self._raw_message
+
+    def setsockopt(self, *_args, **_kwargs):
+        return None
+
+
+@pytest.mark.asyncio
+async def test_zmq_subscriber_fail_fast_reject_disposition():
+    """Week 5 hardening: REJECT disposition must be blocked before execution path."""
+    envelope = {
+        "schema_version": SCHEMA_VERSION,
+        "correlation_id": "cid-w5-failfast",
+        "event_type": "RiskCheckResult",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "payload": {
+            "type": "RiskCheckResult",
+            "data": {
+                "decision": "REJECT",
+                "disposition": "REJECT",
+                "reason_code": "STRATEGY_ALLOCATION_LIMIT_EXCEEDED",
+            },
+        },
+    }
+    raw = f"risk {json.dumps(envelope)}"
+
+    subscriber = ZMQSubscriber("inproc://week5-failfast")
+    subscriber.socket = _FakeSubscriberSocket(raw)
+    subscriber._connected = True
+
+    # Must be short-circuited by fail-fast rule (no downstream propagation).
+    try:
+        result = await subscriber.receive_one(timeout=0.01)
+        assert result is None
+    finally:
+        subscriber.context.term()
+
+
+@pytest.mark.asyncio
+async def test_zmq_subscriber_blocks_duplicate_reject_messages():
+    """Week 5 hardening: duplicate REJECT messages must not propagate downstream."""
+    envelope = {
+        "schema_version": SCHEMA_VERSION,
+        "correlation_id": "cid-w5-duplicate-reject",
+        "event_type": "RiskCheckResult",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "payload": {
+            "type": "RiskCheckResult",
+            "data": {
+                "decision": "REJECT",
+                "disposition": "REJECT",
+                "reason_code": "SYMBOL_VOLUME_LIMIT_EXCEEDED",
+            },
+        },
+    }
+    raw = f"risk {json.dumps(envelope)}"
+
+    subscriber = ZMQSubscriber("inproc://week5-duplicate-reject")
+    subscriber.socket = _FakeSubscriberSocket(raw)
+    subscriber._connected = True
+
+    try:
+        first = await subscriber.receive_one(timeout=0.01)
+        second = await subscriber.receive_one(timeout=0.01)
+        assert first is None
+        assert second is None
+    finally:
+        subscriber.context.term()
 
 
 class TestSignalToOrderFlow:

@@ -208,6 +208,27 @@ class ZMQSubscriber:
         self._running = False
         logger.info(f"[cid:INIT] ZMQ Subscriber initialized for {address}")
 
+    @staticmethod
+    def _normalize_decision_token(value: Any) -> str:
+        """Normalize decision/disposition token for robust fail-fast checks."""
+        if value is None:
+            return ""
+        return str(value).strip().upper()
+
+    @classmethod
+    def _is_reject_payload(cls, payload: Dict[str, Any]) -> bool:
+        """Detect reject disposition from payload or nested data block."""
+        top = cls._normalize_decision_token(payload.get("disposition") or payload.get("decision"))
+        if top == "REJECT":
+            return True
+
+        data = payload.get("data")
+        if isinstance(data, dict):
+            nested = cls._normalize_decision_token(data.get("disposition") or data.get("decision"))
+            if nested == "REJECT":
+                return True
+        return False
+
     async def connect(self, topics: Optional[List[str]] = None):
         """
         Connect to ZMQ endpoint and subscribe to topics.
@@ -267,18 +288,18 @@ class ZMQSubscriber:
                     
                     # Validate v1.0.0 Envelope
                     version = envelope.get("schema_version")
+                    cid = envelope.get("correlation_id", "INIT")
                     if version != SCHEMA_VERSION:
                         error_msg = f"Schema mismatch: expected {SCHEMA_VERSION}, got {version}"
                         if SCHEMA_STRICT_MODE:
-                            logger.error(f"[cid:INIT] STRICT_MODE REJECTION: {error_msg}")
+                            logger.error(f"[cid:{cid}] STRICT_MODE REJECTION: {error_msg}")
                             continue
                         else:
-                            logger.warning(f"LAX_MODE WARNING: {error_msg}")
+                            logger.warning(f"[cid:{cid}] LAX_MODE WARNING: {error_msg}")
                     
                     # Extract correlation ID and set context
-                    cid = envelope.get("correlation_id")
                     from observability.logging.correlations import set_correlation_id
-                    if cid:
+                    if envelope.get("correlation_id"):
                         set_correlation_id(cid)
                     
                     # Extract payload (Message enum variant)
@@ -300,6 +321,11 @@ class ZMQSubscriber:
                             data["strength"] = data.pop("confidence")
                         
                         payload["data"] = data
+
+                    # Week 5: Fail-fast for REJECT disposition on critical paths
+                    if self._is_reject_payload(payload):
+                        logger.warning(f"[cid:{cid}] FAIL-FAST: Blocking REJECT message from topic '{topic}'")
+                        continue
 
                     logger.debug(f"[cid:{cid}] Received {msg_type} on topic '{topic}'")
                     yield topic, payload
@@ -352,6 +378,12 @@ class ZMQSubscriber:
                 
                 # Payload extraction (simplified for receive_one)
                 payload = envelope.get("payload", {})
+                
+                # Week 5: Fail-fast for REJECT disposition
+                if self._is_reject_payload(payload):
+                    logger.warning(f"[cid:{cid}] FAIL-FAST (receive_one): Blocking REJECT message")
+                    return None
+                    
                 return topic, payload
 
             return None
