@@ -1,63 +1,60 @@
-# Week-3 Final Report + Week-4 Start Pack (Template + Schema Versioning)
+# Week-3 Final Report + Week-4 Start Pack
 
 ## 1) Executive Summary
-- Current gate status: `NO-GO (provisional)`
-- Top 3 achievements:
-  1. Kế hoạch schema versioning v1 và migration plan đã được chuẩn hóa.
-  2. Issue register v3 đã cover đầy đủ cụm schema/semantics/observability/policy.
-  3. Interface implementation spec v1 đã xác định rõ mapping Signal/Risk/Ack/Observability.
-- Top 3 risks:
-  1. V1 strict validation chưa có full baseline evidence.
-  2. Version mismatch regression có thể phát sinh trên legacy `v0` parse path.
-  3. `W3-ISS-009` cần đóng với evidence sync policy-checklist.
+- Current gate status: `NO-GO có điều kiện`.
+- Summary rule: Không claim `Done/Pass` nếu chưa có `Evidence ID` ở trạng thái `CAPTURED_PASS`.
+- Top risks hiện tại:
+  1. Parser/bridge evidence chưa capture đầy đủ.
+  2. Mapping Risk/Ack chưa có proof cross-runtime hoàn chỉnh.
+  3. `W3-ISS-009` chưa `DONE`.
 
 ## 2) KPI Snapshot
 
-| KPI Group | Target W3 | Actual | Status | Evidence |
+| KPI Group | Target W3 | Actual | Status | Evidence ID |
 |---|---|---|---|---|
-| Reliability | schema rerun stable | partial | AMBER | schema baseline report |
-| Contract Quality | v1 compliance + migration stability | partial | AMBER | migration plan + spec |
-| Risk | risk contract completeness | partial | AMBER | implementation spec + issue register |
-| Engineering | contract test matrix pass | partial | AMBER | command profile results |
-| Observability | trace envelope consistency | partial | AMBER | observability mapping evidence |
+| Reliability | no P0 open | P0 vẫn mở | RED | `EV-W3-301` |
+| Contract Quality | v1 matrix full pass | chưa capture đủ | AMBER | `EV-W3-201..209` |
+| Risk | risk decision completeness 100% | pending | AMBER | `EV-W3-208` |
+| Engineering | baseline rerun pass | pending | AMBER | `EV-W3-101..105` |
+| Observability | trace envelope consistency | pending | AMBER | `EV-W3-102,EV-W3-209` |
+| Drift Control | drift velocity <= 0.5 | pending | AMBER | `EV-W3-701` |
 
-## 3) Delivery Status (W3-T01..W3-T18)
-- Pha 1 (Contract Freeze): `Done/In Progress`
-- Pha 2 (Baseline Tests): `In Progress`
-- Pha 3 (Spec Mapping): `In Progress`
-- Pha 4 (Triage): `In Progress`
-- Pha 5 (Migration Validation): `Planned/In Progress`
-- Pha 6 (Gate Rehearsal): `Planned`
-- Pha 7 (Closeout): `Planned`
+## 3) Delivery status (W3-T01..W3-T18)
+- Pha 1: `IN_PROGRESS`
+- Pha 2: `PENDING_EXECUTION`
+- Pha 3: `NEW`
+- Pha 4: `NEW`
+- Pha 5: `NEW`
+- Pha 6: `NEW`
+- Pha 7: `NEW`
 
-## 4) Issue Register Snapshot
-- Xem chi tiết: `ISSUE_REGISTER_V3.md`.
-- P0 focus list:
+## 4) Issue register snapshot
+- Gate blockers:
   - `W3-ISS-001`
   - `W3-ISS-002`
   - `W3-ISS-003`
-- Governance focus:
-  - `W3-ISS-009` (policy drift sync)
+  - `W3-ISS-009`
+- Rule: Chỉ khi 4 issue trên đạt `DONE` với evidence hợp lệ mới được xét `GO`.
 
-## 5) Decision Log
-- Quyết định 01: Tuần 3 ưu tiên contract implementation, tránh refactor rộng ngoài critical path.
-- Quyết định 02: `v1` envelope là chuẩn bắt buộc, `v0` chỉ cho transition window.
-- Quyết định 03: Gate tuần 4 chỉ mở khi `W3-ISS-009` done và contract baseline pass.
+## 5) Decision log
+1. Tuần 3 giữ phạm vi implementation contract, không mở rộng refactor.
+2. Trục triển khai theo lane dependency (Signal -> Risk/Ack -> Observability).
+3. Kết luận gate tuần 3 hiện tại: `NO-GO có điều kiện`.
 
-## 6) Week-4 Start Pack (Top 5)
-1. Stabilize integration path sau schema rollout.
-2. Mở rộng contract tests cho edge-cases.
-3. Harden observability envelope checks.
-4. Theo dõi regressions trên signal/risk/execution handoff.
-5. Chốt week4 gate metrics và acceptance checklist.
+## 6) Week-4 Start Pack (conditioned)
+1. Chỉ khởi động tuần 4 khi gate tuần 3 đạt `GO` hợp lệ.
+2. Mở rộng edge-case tests sau khi baseline core đã pass.
+3. Harden observability dashboards dựa trên trace envelope đã ổn định.
+4. Theo dõi regression burn-down theo KPI drift.
+5. Đồng bộ policy checklist khi bump dependency.
 
 ## Go/No-Go criteria (final)
 - `GO` khi:
-  - Contract tests pass theo command profile chuẩn.
-  - Không còn mismatch P0 unowned.
-  - `W3-ISS-009` đã `Done` với evidence sync policy-checklist.
-  - Final artifacts không mâu thuẫn quyết định gate.
-- `NO-GO` nếu một trong các điều kiện trên chưa đạt.
+  - Không còn P0 ở `NEW/IN_PROGRESS/BLOCKED`.
+  - `W3-ISS-009` = `DONE`.
+  - Toàn bộ scenario bắt buộc = `CAPTURED_PASS`.
+  - Final/Gate/Baseline không mâu thuẫn.
+- `NO-GO` nếu bất kỳ điều kiện nào chưa đạt.
 
 ---
 Last updated: 2026-04-23

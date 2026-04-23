@@ -2,133 +2,163 @@
 
 ## 1) Mục tiêu tuần
 
-Mục tiêu tuần 3 là triển khai thực thi `schema_version v1` trên boundary Python-Rust, đóng semantic drift từ tuần 2, và chuẩn hóa trace envelope để sẵn sàng cho tuần 4 (integration stabilization).
+Tuần 3 là **Implementation Week**: triển khai thực thi `schema_version v1` trên boundary Python-Rust, đóng semantic drift từ tuần 2, và chuẩn hóa trace envelope để sẵn sàng tuần 4.
 
-Kết quả bắt buộc cuối tuần:
+Kết quả bắt buộc:
 
-1. Wire contract `v1` được khóa với acceptance criteria rõ.
-2. Migration path `v0 -> v1` có backward-compat policy rõ ràng.
-3. Contract test matrix (positive/negative/version mismatch) chạy được theo command profile chuẩn.
-4. Báo cáo cuối tuần có quyết định Go/No-Go duy nhất, không mâu thuẫn artifact.
+1. Contract `v1` được khóa ở mức wire-shape + runtime behavior.
+2. Migration path `v0 -> v1` có compatibility policy + rollback rule rõ ràng.
+3. Baseline test matrix có evidence capture cho positive/negative/versioning.
+4. Gate kết luận **duy nhất** theo rule chuẩn, không mâu thuẫn artifact.
 
-Ràng buộc tuần 3:
+Chuẩn trạng thái tuần 3:
 
-- Tuần 3 tập trung implementation contract, không mở rộng refactor ngoài integration-critical path.
-- Mọi mismatch mới phải có `issue_id + owner + ETA + mitigation` trong 24h.
-- Không bám mốc thời gian thực tế; dùng pha/ngày logic để tối đa throughput.
+- Mặc định: `NO-GO có điều kiện`.
+- Chỉ được set `GO` khi **đồng thời**:
+  1. Không còn P0 ở `NEW/IN_PROGRESS/BLOCKED`.
+  2. `W3-ISS-009` ở `DONE`.
+  3. Toàn bộ test scenario bắt buộc có evidence `CAPTURED_PASS`.
 
 ---
 
-## 2) Task board theo pha/ngày logic (W3-T01 -> W3-T18)
+## 2) Taxonomy & Evidence chuẩn (bắt buộc dùng xuyên suốt)
 
-### Pha 1: Freeze wire contract v1 + inventory migration
+### Issue/Task status
 
-- `W3-T01` Freeze wire contract `schema_version v1` cho toàn bộ message boundary.
-- `W3-T02` Chốt inventory migration cho các boundary Signal/Risk/Ack/Observability.
-- `W3-T03` Chốt policy backward-compat cho `v0` legacy parse path.
-- Đầu ra: `Schema Migration Plan v1`.
+- `NEW`
+- `IN_PROGRESS`
+- `BLOCKED`
+- `DONE`
 
-### Pha 2: Baseline schema tests
+### Evidence status
 
-- `W3-T04` Chạy baseline tests cho positive contract validation.
-- `W3-T05` Chạy negative cases: thiếu field/sai type/sai enum/sai timestamp.
-- `W3-T06` Chạy version mismatch tests (`v0` permissive vs `v1` strict).
-- Đầu ra: `Schema Version Baseline Report v1`.
+- `PENDING_EXECUTION`
+- `CAPTURED_PASS`
+- `CAPTURED_FAIL`
+- `BLOCKED_ENV`
 
-### Pha 3: Implement spec mapping cho Signal/Risk/Ack/Observability
+### Evidence ID
 
-- `W3-T07` Chuẩn hóa Signal mapping: `action`, `confidence`, ISO timestamp.
-- `W3-T08` Chuẩn hóa RiskDecision + ExecutionAck theo spec v1.
-- `W3-T09` Chuẩn hóa ObservabilityEvent envelope (`trace_id/component/severity`).
-- Đầu ra: `Interface Implementation Spec v1`.
+- Định dạng: `EV-W3-001`, `EV-W3-002`, ...
+- Mọi kết luận `PASS/DONE/GO` phải map ít nhất 1 `Evidence ID` hợp lệ.
 
-### Pha 4: Triage mismatch + owner/ETA/mitigation
+### Clean-slate rule
 
-- `W3-T10` Triage mismatch theo cụm: schema/semantics/compat/observability/docs.
-- `W3-T11` Gán severity, owner, ETA, mitigation cho từng mismatch.
-- `W3-T12` Soát P0/P1 không để unowned và xung đột trạng thái.
-- Đầu ra: `Issue Register v3`.
+Evidence chỉ hợp lệ nếu chạy trên clean-slate:
 
-### Pha 5: Migration validation + compatibility notes
+```bash
+find . -name "__pycache__" -exec rm -rf {} +
+cd rust && cargo clean -p common -p signal-bridge -p risk-manager -p execution-engine
+```
 
-- `W3-T13` Validate migration `v0 -> v1` trên critical path.
-- `W3-T14` Chốt compatibility notes cho local/dev/CI command profile.
-- Đầu ra: cập nhật `Schema Migration Plan v1` + baseline evidence.
+Ghi rõ `clean_slate=true/false` trong baseline report.
+
+---
+
+## 3) Task board theo pha (W3-T01 -> W3-T18)
+
+### Pha 1: Freeze contract + inventory
+
+- `W3-T01` Freeze envelope v1 và policy `v1 strict / v0 permissive`.
+- `W3-T02` Chốt inventory boundary Signal/Risk/Ack/Observability.
+- `W3-T03` Chốt rollback trigger/action cho từng lane.
+
+**Phase gate 1->2**
+
+- Có migration plan chứa lane dependency + rollback matrix.
+
+### Pha 2: Baseline & negative tests (không được vượt rào)
+
+- `W3-T04` Positive validation.
+- `W3-T05` Negative validation: missing field, wrong type, wrong enum, wrong timestamp.
+- `W3-T06` Versioning validation: `v0` compatibility path và `v1` strict path.
+
+**Phase gate 2->3**
+
+- Mọi scenario parser bắt buộc đã có evidence capture (không còn `PENDING_EXECUTION`).
+
+### Pha 3: Mapping implementation
+
+- `W3-T07` Signal mapping (`direction/strength` -> `action/confidence`, int -> ISO-8601).
+- `W3-T08` RiskDecision + ExecutionAck mapping.
+- `W3-T09` Observability tracing mapping (`correlation_id` -> `trace_id`, compatibility alias).
+
+**Phase gate 3->4**
+
+- Lane dependency được tôn trọng; lane sau không merge khi lane trước chưa pass.
+
+### Pha 4: Triage mismatch
+
+- `W3-T10` Triage mismatch theo cụm.
+- `W3-T11` Gán severity/owner/ETA/mitigation/evidence.
+- `W3-T12` Soát blocker và dependency chéo.
+
+### Pha 5: Migration validation
+
+- `W3-T13` Validate `v0 -> v1` critical path.
+- `W3-T14` Chốt compatibility notes cho local/dev/CI.
 
 ### Pha 6: Gate rehearsal
 
-- `W3-T15` Chạy rehearsal checklist tuần 3.
-- `W3-T16` Xác nhận gate conditions: contract tests pass + no P0 unowned + `W3-ISS-009 Done`.
-- Đầu ra: `Gate Rehearsal Notes`.
+- `W3-T15` Gate checklist + evidence check.
+- `W3-T16` Kết luận `NO-GO có điều kiện` hoặc `GO` theo rule cứng.
 
-### Pha 7: Final closeout + week4 pack
+### Pha 7: Final closeout
 
-- `W3-T17` Xuất báo cáo cuối tuần 3.
-- `W3-T18` Chốt Week-4 Start Pack cho integration stabilization.
-- Đầu ra: `Week-3 Final Report + Week-4 Start Pack`.
+- `W3-T17` Final report tuần 3.
+- `W3-T18` Week-4 start pack map từ blocker còn mở.
 
 ---
 
-## 3) Checklist vận hành
+## 4) Implementation Guide (Doc -> Code -> Test)
 
-### Checklist hằng ngày
+### 4.1 Bridge Python-Rust
 
-- Contract inventory được cập nhật khi có boundary mới.
-- Có ít nhất 1 baseline/schema test batch được cập nhật trạng thái.
-- Mismatch mới có severity + owner trong 24h.
-- Không có issue P0 ở trạng thái unowned.
-- Decision log cập nhật cuối pha.
+| File | Cần sửa | Bổ sung mới | Không được làm | Testcase bắt buộc | Evidence ID |
+|---|---|---|---|---|---|
+| `src/bridge/zmq_bridge.py` | Parse `envelope -> payload`, normalize v0->v1 (`direction/strength` -> `action/confidence`) | Structured error (`error_code`, `trace_id`, `reason`) | Không crash/panic, không bỏ qua lỗi im lặng | parser positive/negative/versioning + Python->Rust integration | `EV-W3-1xx` |
+| `rust/common/src/messaging.rs` | Envelope parser strict v1 + compatibility v0 | Structured parse error + safe drop policy | Không dùng parse mơ hồ gây deserialize crash | Rust unit parser tests + cross-runtime contract test | `EV-W3-1xx` |
 
-### Checklist cuối tuần (bắt buộc pass)
+### 4.2 Models/Types contract
 
-- Có migration plan v1 với rule `v0 -> v1` rõ ràng.
-- Có baseline report gồm positive/negative/version mismatch.
-- Có issue register v3 đầy đủ `issue_id/severity/owner/ETA/mitigation`.
-- Có implementation spec v1 cho 4 contract mục tiêu.
-- Có final report tuần 3 với quyết định Go/No-Go duy nhất.
+| File | Cần sửa | Bổ sung mới | Không được làm | Testcase bắt buộc | Evidence ID |
+|---|---|---|---|---|---|
+| Boundary Signal/Risk/Ack types | Signal: `action`, `confidence`, timestamp ISO; RiskDecision: `reason_code`, `limit_snapshot`; ExecutionAck: telemetry fields | Compatibility adapter cho transition window | Không đổi wire-shape tùy ý ngoài spec | Unit test từng contract + integration handshake | `EV-W3-2xx` |
+
+### 4.3 Observability tracing
+
+| File | Cần sửa | Bổ sung mới | Không được làm | Testcase bắt buộc | Evidence ID |
+|---|---|---|---|---|---|
+| Logger/decorators Python + Rust logging path | Chuẩn `trace_id` xuyên suốt; `correlation_id` chỉ alias | Mismatch log phải chứa `trace_id`, `error_code`, raw payload preview <=200 ký tự (redacted) | Không log dữ liệu nhạy cảm chưa redaction | Observability unit + integration log schema checks | `EV-W3-3xx` |
+
+### 4.4 Validation suite
+
+| File | Cần sửa | Bổ sung mới | Không được làm | Testcase bắt buộc | Evidence ID |
+|---|---|---|---|---|---|
+| Contract test suite tuần 3 | Bổ sung đầy đủ negative/versioning path | Mapping testcase -> issue_id -> gate item | Không dùng placeholder return/pass giả | Positive/Negative/Versioning/Cross-runtime/Observability | `EV-W3-4xx` |
 
 ---
 
-## 4) Issue tồn đọng khởi tạo tuần 3
+## 5) Error-handling protocol (bắt buộc)
 
-### P0 (bắt buộc có owner trong tuần 3)
-
-| ID | Issue | Tác động | Điều kiện đóng tuần 3 | Owner mặc định | Due |
-|---|---|---|---|---|---|
-| `W3-ISS-001` | `schema_version` v1 chưa được enforce nhất quán cross-runtime | Chặn contract rollout | V1 envelope enforce cho boundary critical path | `coder` | `Pha 2` |
-| `W3-ISS-002` | Signal mapping drift (`direction/strength` vs `action/confidence`) | Chặn signal handoff ổn định | Signal payload đồng nhất và test pass | `coder` | `Pha 3` |
-| `W3-ISS-003` | RiskDecision thiếu context chuẩn v1 | Chặn auditability/risk trace | Có `decision/reason_code/limit_snapshot` theo spec | `coder` | `Pha 3` |
-
-### P1 (phải có kế hoạch xử lý)
-
-| ID | Issue | Tác động | Điều kiện đóng tuần 3 | Owner mặc định | Due |
-|---|---|---|---|---|---|
-| `W3-ISS-004` | ExecutionAck telemetry chưa đủ (`latency_bucket/retry_count`) | Giảm chất lượng execution observability | Ack field chuẩn hóa và test pass | `reviewer` | `Pha 3` |
-| `W3-ISS-005` | ObservabilityEvent envelope chưa đồng nhất (`trace_id/component/severity`) | Giảm traceability | Event envelope chuẩn hóa xuyên service | `ops` | `Pha 3` |
-| `W3-ISS-006` | Version mismatch tests chưa phủ đủ negative paths | Risk regression khi migrate | Bộ negative tests tối thiểu pass | `tester` | `Pha 2` |
-| `W3-ISS-009` | Compatibility policy version drift (`COMPATIBILITY_POLICY_V1.md` vs `rust/Cargo.toml`) | Rủi ro false-green khi rerun | Policy doc khớp version/feature hiện hành + có rule update khi bump dependency | `tester + planner` | `Pha 5` |
-
-### P2 (theo dõi tuần sau)
-
-| ID | Issue | Tác động | Điều kiện đóng tuần 3 | Owner mặc định | Due |
-|---|---|---|---|---|---|
-| `W3-ISS-007` | Canonical/doc drift sau schema updates | Nhiễu source-of-truth | Tạo backlog hygiene có mapping thay thế | `planner` | `Pha 7` |
-| `W3-ISS-008` | Contract test matrix chưa mở rộng edge-case đầy đủ | Rủi ro coverage tuần 4 | Có expansion plan cho week4 integration | `tester` | `Pha 7` |
+1. `no panic` trên mismatch contract/version.
+2. Trả lỗi có cấu trúc: `error_code`, `trace_id`, `reason`, `disposition`.
+3. `disposition` mặc định: `DROP_SAFE` + issue mapping.
+4. Log kèm raw payload preview tối đa 200 ký tự, bắt buộc redaction dữ liệu nhạy cảm.
 
 ---
 
-## 5) Test plan tuần 3 (schema-versioning focused)
+## 6) Test plan tuần 3 (schema-focused)
 
-Mục tiêu tuần 3 là triển khai contract v1 và xác nhận migration path an toàn.
+### Nhóm bắt buộc
 
-Kịch bản bắt buộc:
+1. Positive: v1 payload hợp lệ.
+2. Negative: thiếu field/sai type/sai enum/sai timestamp.
+3. Versioning: `v0` legacy parse path và `v1` strict path.
+4. Cross-runtime: Python publish -> Rust consume, Rust emit -> Python parse.
+5. Observability: log contract mismatch có `trace_id` + structured error.
 
-1. Positive validation: payload v1 đủ field bắt buộc.
-2. Negative validation: thiếu field/sai type/sai enum/sai timestamp.
-3. Versioning checks: `v0` permissive parse path và `v1` strict parse path.
-4. Cross-runtime handshake: Python -> Rust và Rust -> Python cho boundary critical.
-
-Baseline commands tiêu chuẩn:
+### Baseline commands
 
 ```bash
 python -m pytest tests/integration/test_backtest_signal_flow.py -q
@@ -138,101 +168,18 @@ cd rust && PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1 cargo check --workspace
 bash scripts/health_check.sh
 ```
 
-Tiêu chí pass tuần 3:
+### Acceptance
 
-- Contract test baseline pass theo command profile chuẩn.
-- Không còn mismatch P0 unowned.
-- `W3-ISS-009` ở trạng thái `Done`.
-- Final report có quyết định Go/No-Go duy nhất.
+- Không ghi `Done/Pass` nếu chưa có `Evidence ID`.
+- Gate mặc định giữ `NO-GO có điều kiện` cho tới khi mọi điều kiện pass đồng thời.
 
 ---
 
-## 6) Mẫu báo cáo cuối tuần (Week-3 Final Report)
+## 7) Assumptions & defaults
 
-### 1. Executive Summary
-
-- Trạng thái tuần 3: `Go` hoặc `No-Go` vào tuần 4.
-- 3 kết quả lớn nhất.
-- 3 rủi ro lớn nhất.
-
-### 2. KPI Snapshot
-
-- Reliability / Contract Quality / Risk / Engineering / Observability.
-- So sánh `Target tuần 3` vs `Actual`.
-
-### 3. Delivery Status theo Task
-
-- Trạng thái `W3-T01..W3-T18`: `Done/In progress/Blocked` + bằng chứng.
-
-### 4. Issue Register
-
-- Danh sách P0/P1/P2, owner, ETA, mitigation, dependency.
-
-### 5. Decision Log
-
-- Quyết định đã chốt cho tuần 4.
-- Giả định còn mở cần xác nhận.
-
-### 6. Week-4 Start Pack
-
-- Top 5 task ưu tiên tuần 4.
-- Điều kiện khởi động integration stabilization.
+- Tuần 3 là implementation-critical path, không mở rộng refactor ngoài schema/integration.
+- Mọi mismatch mới phải map vào issue register trong 24h với `owner + ETA + mitigation`.
+- Toàn bộ artifact tuần 3 phải dùng đúng taxonomy/evidence chuẩn ở mục 2.
 
 ---
-
-## 7) KPI dictionary khuyến nghị cho tuần 3
-
-### Reliability
-
-- Contract rerun stability theo pha.
-- P0/P1 contract mismatch count.
-- MTTR cho schema blockers.
-
-### Contract Quality
-
-- V1 envelope compliance coverage.
-- Migration success rate (`v0 -> v1`).
-- Mismatch closure rate theo severity.
-
-### Risk
-
-- RiskDecision completeness coverage (`reason_code/limit_snapshot`).
-- Risk semantics mismatch count.
-- Reject/allow consistency theo test scenarios.
-
-### Engineering quality
-
-- Contract-focused unit/integration pass rate.
-- Build stability theo command profile chuẩn.
-- Regression count sau schema mapping updates.
-
-### Observability
-
-- `trace_id` coverage trên critical path.
-- Event envelope completeness (`component/severity/timestamp`).
-- Severity mapping consistency cross-service.
-
----
-
-## 8) Assumptions & defaults
-
-- Không bám lịch thực tế; vận hành theo pha/ngày logic.
-- Tuần 3 ưu tiên implementation contract, không mở rộng refactor lớn.
-- Mọi mismatch phải trace về issue register trong 24h.
-- Kế hoạch bám nguyên tắc `Doc -> Code -> Test`.
-
----
-
 Last updated: 2026-04-23
-
-## Execution artifacts (Week 3)
-
-Artifacts được tạo để vận hành thực tế tuần 3:
-
-- [week3/KPI_CHARTER_V3.md](week3/KPI_CHARTER_V3.md)
-- [week3/SCHEMA_VERSION_BASELINE_REPORT_V1.md](week3/SCHEMA_VERSION_BASELINE_REPORT_V1.md)
-- [week3/SCHEMA_MIGRATION_PLAN_V1.md](week3/SCHEMA_MIGRATION_PLAN_V1.md)
-- [week3/ISSUE_REGISTER_V3.md](week3/ISSUE_REGISTER_V3.md)
-- [week3/INTERFACE_IMPLEMENTATION_SPEC_V1.md](week3/INTERFACE_IMPLEMENTATION_SPEC_V1.md)
-- [week3/GATE_REHEARSAL_NOTES.md](week3/GATE_REHEARSAL_NOTES.md)
-- [week3/WEEK3_FINAL_REPORT_AND_WEEK4_START_PACK.md](week3/WEEK3_FINAL_REPORT_AND_WEEK4_START_PACK.md)
