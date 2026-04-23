@@ -7,21 +7,21 @@ Ma trận owner và compatibility boundary cho audit Python <-> Rust, tập trun
 
 | Boundary ID | Contract surface | Python owner file | Rust owner file | Primary tests | Status |
 |---|---|---|---|---|---|
-| `W2-BND-001` | ZMQ envelope + message framing | `src/bridge/zmq_bridge.py` | `rust/common/src/messaging.rs` | `tests/integration/test_backtest_signal_flow.py`, `cd rust && cargo test -p common` | `IN_AUDIT` |
-| `W2-BND-002` | Signal payload handoff | `src/bridge/rust_bridge.py` | `rust/signal-bridge/src/bridge.rs` | `tests/integration/test_backtest_signal_flow.py`, `cd rust && cargo test -p signal-bridge` | `IN_AUDIT` |
-| `W2-BND-003` | Risk decision semantics | `src/strategies/strategy_router.py` | `rust/risk-manager/src/limits.rs` | `tests/unit/test_strategy_signals.py`, `cd rust && cargo test -p risk-manager` | `IN_AUDIT` |
-| `W2-BND-004` | Execution acknowledgement fields | `src/backtesting/execution_handler.py` | `rust/execution-engine/src/router.rs` | `tests/test_backtest_integration.py`, `cd rust && cargo test -p execution-engine` | `IN_AUDIT` |
-| `W2-BND-005` | Observability event envelope | `src/observability/logging/structured_logger.py` | `rust/common/src/messaging.rs` | `tests/observability -q`, `tests/integration/test_observability_integration.py` | `IN_AUDIT` |
-| `W2-BND-006` | Runtime compatibility policy | `scripts/setup_python_deps.sh` | `rust/Cargo.toml` | `python -m pytest ...`, `cd rust && cargo check --workspace` | `IN_AUDIT` |
+| `W2-BND-001` | Messaging Envelope | `src/bridge/zmq_bridge.py` | `rust/common/src/messaging.rs` | `tests/integration/test_backtest_signal_flow.py` | `VERIFIED` |
+| `W2-BND-002` | Signal Payload | `src/bridge/zmq_bridge.py` (Signal) | `rust/common/src/types.rs` (Signal) | `cd rust && cargo test -p common` | `MISMATCH` |
+| `W2-BND-003` | Risk Decision | `src/strategies/strategy_router.py` | `rust/common/src/messaging.rs` | `cd rust && cargo test -p risk-manager` | `MISMATCH` |
+| `W2-BND-004` | Execution Ack | `src/backtesting/execution_handler.py` | `rust/execution-engine/src/router.rs` | `cd rust && cargo test -p execution-engine` | `MISMATCH` |
+| `W2-BND-005` | Logging Envelope | `src/observability/logging/structured_logger.py` | `rust/common/src/messaging.rs` | `tests/integration/test_observability_integration.py` | `MISMATCH` |
+| `W2-BND-006` | Runtime Policy | `scripts/setup_python_deps.sh` | `rust/Cargo.toml` | `bash scripts/audit_rerun.sh` | `VERIFIED` |
 
-## Contract fields coverage matrix
+## Contract fields coverage matrix (Audit Findings)
 
-| Contract type | Required fields | Current policy target | Audit owner |
+| Contract type | Mismatch Details | Severity | Mitigation Plan |
 |---|---|---|---|
-| `schema_version` envelope | `schema_version`, `trace_id`, `event_type`, `timestamp`, `payload` | strict required in `v1`, documented fallback for `v0` | planner + coder |
-| `RiskDecision` | `decision`, `reason_code`, `limit_snapshot` | reject nếu thiếu `reason_code` hoặc `limit_snapshot` | coder + reviewer |
-| `ExecutionAck` | `order_id`, `route`, `latency_bucket`, `retry_count` | ack phải có full telemetry fields | reviewer + coder |
-| `ObservabilityEvent` | `trace_id`, `component`, `severity`, `timestamp`, `payload` | thống nhất mapping severity cross-service | ops + reviewer |
+| `Signal` | `direction` vs `action`, `strength` vs `confidence`, `timestamp` (int vs DateTime) | P0 | Unify naming in `v1` interface spec |
+| `RiskDecision` | `approved`/`reason` (Rust) vs `decision`/`reason_code`/`limit_snapshot` (Spec) | P0 | Update Rust struct to include snapshots |
+| `ExecutionAck` | `FillEvent` (Py) vs `AlpacaOrderResponse` (Rust) mismatch | P1 | Map Alpaca fields to internal FillEvent |
+| `Observability` | `correlation_id` (Py) vs `trace_id` (Rust), `timestamp` format mismatch | P1 | Unify logging envelope in `messaging.rs` |
 
 ## Compatibility policy checkpoints
 - Runtime: dùng policy chuẩn cho PyO3/Python trong local/dev/CI.

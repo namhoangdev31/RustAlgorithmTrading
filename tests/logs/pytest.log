@@ -1,7 +1,14 @@
-2026-04-23 09:35:51 [    INFO] numexpr.utils: NumExpr defaulting to 10 threads.
-2026-04-23 09:35:51 [   DEBUG] matplotlib: matplotlib data path: /Users/hoangnam/Developer/RustAlgorithmTrading/.venv/lib/python3.12/site-packages/matplotlib/mpl-data
-2026-04-23 09:35:51 [   DEBUG] matplotlib: CONFIGDIR=/Users/hoangnam/.matplotlib
-2026-04-23 09:35:51 [   DEBUG] matplotlib: interactive is False
-2026-04-23 09:35:51 [   DEBUG] matplotlib: platform is darwin
-2026-04-23 09:35:51 [   DEBUG] matplotlib: CACHEDIR=/Users/hoangnam/.matplotlib
-2026-04-23 09:35:51 [   DEBUG] matplotlib.font_manager: Using fontManager instance from /Users/hoangnam/.matplotlib/fontlist-v390.json
+2026-04-23 09:52:34 [    INFO] numexpr.utils: NumExpr defaulting to 10 threads.
+2026-04-23 09:52:35 [   DEBUG] matplotlib: matplotlib data path: /Users/hoangnam/Developer/RustAlgorithmTrading/.venv/lib/python3.12/site-packages/matplotlib/mpl-data
+2026-04-23 09:52:35 [   DEBUG] matplotlib: CONFIGDIR=/Users/hoangnam/.matplotlib
+2026-04-23 09:52:35 [   DEBUG] matplotlib: interactive is False
+2026-04-23 09:52:35 [   DEBUG] matplotlib: platform is darwin
+2026-04-23 09:52:35 [   DEBUG] matplotlib: CACHEDIR=/Users/hoangnam/.matplotlib
+2026-04-23 09:52:35 [   DEBUG] matplotlib.font_manager: Using fontManager instance from /Users/hoangnam/.matplotlib/fontlist-v390.json
+2026-04-23 09:52:36 [   DEBUG] asyncio: Using selector: KqueueSelector
+2026-04-23 09:52:36 [   DEBUG] asyncio: Using selector: KqueueSelector
+2026-04-23 09:52:36 [   DEBUG] asyncio: Using selector: KqueueSelector
+2026-04-23 09:52:36 [   DEBUG] asyncio: Using selector: KqueueSelector
+2026-04-23 09:52:36 [   DEBUG] asyncio: Using selector: KqueueSelector
+2026-04-23 09:52:38 [   DEBUG] asyncio: Using selector: KqueueSelector
+2026-04-23 09:52:38 [   DEBUG] asyncio: Using selector: KqueueSelector

@@ -1,85 +1,36 @@
-# Contract Audit Baseline Report v1
+# Contract Audit Baseline Validation Report v1
 
-## Window
-- Week 2 contract baseline snapshot (kickoff template)
-- Planned capture: 2026-04-28 (+07)
+**Date**: 2026-04-23
+**Harness**: `scripts/contract_audit.sh`
+**Evidence Log**: `logs/contract_audit_20260423_094256.log`
 
-## Command Evidence Set
+## Executive Summary
+The automated baseline rerun **PASSED** across all 6 verified boundaries. However, a manual deep-dive into the code revealed significant **semantic and field-level mismatches** that must be resolved in Phase 3 (v1 Interface Spec).
 
-### 1) Python contract-adjacent unit baseline
-Command:
-```bash
-python -m pytest tests/unit/python/test_strategy_base.py -q --maxfail=1
-```
-Observed:
-- Status: `PENDING CAPTURE`
-- Mapping issue: `W2-ISS-001`
+## Boundary Results
 
-### 2) Python integration boundary baseline
-Command:
-```bash
-python -m pytest tests/integration/test_backtest_signal_flow.py -q
-```
-Observed:
-- Status: `PENDING CAPTURE`
-- Mapping issue: `W2-ISS-001`
-
-### 3) Rust workspace check (default env)
-Command:
-```bash
-cd rust && cargo check --workspace
-```
-Observed:
-- Status: `PENDING CAPTURE`
-- Mapping issue: `W2-ISS-002`
-
-### 4) Rust workspace check (compat policy)
-Command:
-```bash
-cd rust && PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1 cargo check --workspace
-```
-Observed:
-- Status: `PENDING CAPTURE`
-- Mapping issue: `W2-ISS-002`
-
-### 5) Rust contract crates test baseline
-Command:
-```bash
-cd rust && PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1 cargo test -p signal-bridge -p common
-```
-Observed:
-- Status: `PENDING CAPTURE`
-- Mapping issue: `W2-ISS-003`
-
-### 6) Runtime health traceability smoke
-Command:
-```bash
-bash scripts/health_check.sh
-```
-Observed:
-- Status: `PENDING CAPTURE`
-- Mapping issue: `W2-ISS-006`
-
-## Baseline Matrix Summary
-
-| Group | Command set | Status | Notes |
+| Boundary | Surface | Automated Status | Manual Audit Findings |
 |---|---|---|---|
-| Python Unit | contract-adjacent unit slice | PENDING | capture Day 2 |
-| Python Integration | signal flow boundary slice | PENDING | capture Day 2 |
-| Rust Build | workspace check (default + compat) | PENDING | capture Day 2/3 |
-| Rust Contract Test | signal-bridge/common slices | PENDING | capture Day 2 |
-| Runtime Smoke | health + traceability sample | PENDING | capture Day 2/3 |
+| `W2-BND-001` | Messaging Envelope | `PASSED` | Framing and JSON envelope unified. |
+| `W2-BND-002` | Signal Payload | `PASSED` | **MISMATCH**: `direction`/`strength` (Py) vs `action`/`confidence` (Rust). |
+| `W2-BND-003` | Risk Decision | `PASSED` | **MISMATCH**: missing `reason_code` and `limit_snapshot` in Rust struct. |
+| `W2-BND-004` | Execution Ack | `PASSED` | **MISMATCH**: Python `FillEvent` structure is flatter than Rust `AlpacaOrderResponse`. |
+| `W2-BND-005` | Observability | `PASSED` | **MISMATCH**: `correlation_id` (Py) vs `trace_id` (Rust). Timestamp precision drift. |
+| `W2-BND-006` | Runtime Policy | `PASSED` | ABI3 policy applied correctly. |
 
-## Mismatch taxonomy used in report
-- `schema`: thiếu/sai field contract.
-- `semantics`: value hợp lệ nhưng nghĩa không thống nhất.
-- `compat`: runtime/version/policy incompatibility.
-- `observability`: thiếu traceability/envelope fields.
-- `docs`: spec/canonical drift.
+## Critical Mismatches (P0)
 
-## Decision (initial)
-- Baseline này là template vận hành cho Day-2 capture.
-- Tất cả command sau khi capture phải map vào `issue_id + owner + ETA + mitigation`.
+### [Signal] Semantic Drift
+- **Python**: `Signal(symbol, direction, strength, timestamp)`
+- **Rust**: `Signal { symbol, action, confidence, features, timestamp }`
+- **Impact**: JSON parsing will fail due to field name mismatch (`direction` vs `action`).
 
----
-Last updated: 2026-04-23
+### [Risk] Missing Context
+- **Matrix V1 Req**: `decision`, `reason_code`, `limit_snapshot`.
+- **Rust Actual**: `approved` (bool), `reason` (Option<String>).
+- **Impact**: Auditability and limit verification logic in Python is stalled.
+
+## Next Steps
+1. **Triage Cluster**: Group mismatches into `Schema`, `Semantics`, and `Observability`.
+2. **Spec Delta**: Draft `INTERFACE_SPEC_DELTA_V1.md` to unify these fields.
+3. **Issue Update**: Assign owners in `ISSUE_REGISTER_V2.md`.

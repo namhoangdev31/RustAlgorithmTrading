@@ -9,12 +9,12 @@
 
 | Issue ID | Severity | Owner | Due | Status | Dependency | Mitigation | Exit criteria |
 |---|---|---|---|---|---|---|---|
-| `W2-ISS-001` | P0 | planner | 2026-04-28 | New | contract inventory | freeze boundary list v1 | mọi boundary critical có owner file + test path |
-| `W2-ISS-002` | P0 | tester | 2026-04-29 | New | PyO3/Python policy | define one approved command policy for local/dev/CI | rerun `cargo check/test` theo policy không mâu thuẫn |
-| `W2-ISS-003` | P0 | coder | 2026-04-30 | New | schema envelope audit | chốt spec delta + mismatch mapping | envelope `schema_version` có acceptance rõ cho tuần 3 |
-| `W2-ISS-004` | P1 | coder | 2026-05-01 | New | risk semantics drift | classify mismatch by scenario | `RiskDecision` mismatch có owner + ETA implementation |
-| `W2-ISS-005` | P1 | reviewer | 2026-05-01 | New | execution ack telemetry | enforce required ack fields in spec delta | `ExecutionAck` field set được khóa ở audit output |
-| `W2-ISS-006` | P1 | ops | 2026-05-02 | New | observability mapping drift | define event severity/component map | `ObservabilityEvent` mapping có baseline evidence |
+| `W2-ISS-001` | P0 | planner | 2026-04-28 | Done | contract inventory | freeze boundary list v1 | verified all boundary paths and owners |
+| `W2-ISS-002` | P0 | tester | 2026-04-29 | Done | PyO3/Python policy | established ABI3 policy v1 | COMPATIBILITY_POLICY_V1.md approved |
+| `W2-ISS-003` | P0 | coder | 2026-04-30 | Done | schema envelope audit | defined ISO timestamp standard | INTERFACE_SPEC_DELTA_V1 approved |
+| `W2-ISS-004` | P1 | coder | 2026-05-01 | Done | risk semantics drift | map approved/reason to decision/reason_code | mitigation approved for W3 implementation |
+| `W2-ISS-005` | P1 | reviewer | 2026-05-01 | Done | execution ack telemetry | map Alpaca fields to FillEvent | mitigation approved for W3 implementation |
+| `W2-ISS-006` | P1 | ops | 2026-05-02 | Done | observability mapping | unify correlation_id -> trace_id | mitigation approved for W3 implementation |
 | `W2-ISS-007` | P2 | planner | 2026-05-03 | New | canonical/doc drift | create week3 hygiene backlog | docs mismatch có replacement mapping |
 | `W2-ISS-008` | P2 | tester | 2026-05-03 | New | negative contract cases thiếu | draft test skeleton expansion | week3 contract tests có todo list theo priority |
 

@@ -1228,10 +1228,16 @@ Mỗi file có 3 phần:
 - Test liên quan: Tham chiếu trực tiếp các lệnh `pytest`/`cargo`/`health_check` trong command set contract-focused.
 
 ### docs/roadmap/week2/CONTRACT_COMPATIBILITY_MATRIX_V1.md
+ 
+ - Vai trò file: Ma trận tương thích contract Python-Rust với boundary inventory, owner files, test paths và policy checkpoints.
+ - Class/Type trong file: Không có class/type (tài liệu contract mapping và ownership).
+ - Test liên quan: Dẫn xuất test path cho từng boundary để kiểm tra compatibility theo critical path.
+ 
+### docs/roadmap/week2/COMPATIBILITY_POLICY_V1.md
 
-- Vai trò file: Ma trận tương thích contract Python-Rust với boundary inventory, owner files, test paths và policy checkpoints.
-- Class/Type trong file: Không có class/type (tài liệu contract mapping và ownership).
-- Test liên quan: Dẫn xuất test path cho từng boundary để kiểm tra compatibility theo critical path.
+- Vai trò file: Chính sách tương thích v1 cho hệ thống hybrid, định nghĩa chuẩn runtime (ABI3), chuẩn schema (v1) và mapping data types.
+- Class/Type trong file: Không có class/type (tài liệu quản trị runtime/interop).
+- Test liên quan: Ràng buộc cấu hình `Cargo.toml` và các startup scripts đảm bảo môi trường rerun ổn định.
 
 ### docs/roadmap/week2/ISSUE_REGISTER_V2.md
 
@@ -1256,3 +1262,51 @@ Mỗi file có 3 phần:
 - Vai trò file: Báo cáo tổng kết tuần 2 và gói khởi động tuần 3 (schema versioning kickoff priorities + gate criteria).
 - Class/Type trong file: Không có class/type (tài liệu weekly closeout + handoff).
 - Test liên quan: Tổng hợp evidence từ compatibility matrix, baseline report, interface delta và issue register để quyết định Go/No-Go tuần 3.
+
+### docs/roadmap/WEEK3_OPERATIONS_PLAN_SCHEMA_VERSIONING.md
+
+- Vai trò file: Kế hoạch vận hành tuần 3 cho triển khai schema versioning v1 theo pha/ngày logic, gồm task board, checklist, issue khởi tạo và gate criteria.
+- Class/Type trong file: Không có class/type (tài liệu điều phối implementation contract + migration validation).
+- Test liên quan: Không có test trực tiếp; dùng để điều phối schema-focused baseline tests, triage mismatch và gate tuần 3.
+
+### docs/roadmap/week3/KPI_CHARTER_V3.md
+
+- Vai trò file: Định nghĩa bộ KPI tuần 3 cho schema versioning (v1 compliance, migration success, rerun stability, trace envelope consistency).
+- Class/Type trong file: Không có class/type (tài liệu KPI governance tuần 3).
+- Test liên quan: Không có test trực tiếp; là chuẩn đánh giá weekly gate và dashboard evidence tuần 3.
+
+### docs/roadmap/week3/SCHEMA_VERSION_BASELINE_REPORT_V1.md
+
+- Vai trò file: Báo cáo baseline validation tuần 3 cho positive/negative/version mismatch tests và command profile chuẩn.
+- Class/Type trong file: Không có class/type (tài liệu validation/baseline evidence cho schema rollout).
+- Test liên quan: Tham chiếu trực tiếp các lệnh `pytest`, `cargo test/check`, `health_check` cho critical path.
+
+### docs/roadmap/week3/SCHEMA_MIGRATION_PLAN_V1.md
+
+- Vai trò file: Kế hoạch migration contract từ `v0` sang `v1`, gồm phase rollout, mapping rules và exit conditions.
+- Class/Type trong file: Không có class/type (tài liệu migration strategy + compatibility governance).
+- Test liên quan: Dẫn xuất test scenarios cho v1 strict path và v0 compatibility path.
+
+### docs/roadmap/week3/ISSUE_REGISTER_V3.md
+
+- Vai trò file: Sổ issue tuần 3 cho schema/semantics/observability/policy clusters, bao gồm issue policy drift `W3-ISS-009`.
+- Class/Type trong file: Không có class/type (tài liệu governance/triage cho schema implementation).
+- Test liên quan: Không có test trực tiếp; map mismatch và policy drift vào owner/ETA/mitigation trước gate tuần 4.
+
+### docs/roadmap/week3/INTERFACE_IMPLEMENTATION_SPEC_V1.md
+
+- Vai trò file: Spec triển khai tuần 3 ở mức mapping thực thi cho `schema_version`, `Signal`, `RiskDecision`, `ExecutionAck`, `ObservabilityEvent`.
+- Class/Type trong file: Không có class/type code; định nghĩa wire-shape mục tiêu và implementation notes cho boundary Python-Rust.
+- Test liên quan: Là đầu vào trực tiếp cho contract tests (positive/negative/version mismatch) và integration handshake tests.
+
+### docs/roadmap/week3/GATE_REHEARSAL_NOTES.md
+
+- Vai trò file: Ghi chú rehearsal gate tuần 3, tổng hợp checklist status, blocking conditions và điều kiện Go/No-Go vào tuần 4.
+- Class/Type trong file: Không có class/type (tài liệu gate review).
+- Test liên quan: Xác nhận baseline schema tests, ownership trạng thái P0/P1 và điều kiện đóng `W3-ISS-009`.
+
+### docs/roadmap/week3/WEEK3_FINAL_REPORT_AND_WEEK4_START_PACK.md
+
+- Vai trò file: Báo cáo tổng kết tuần 3 và gói khởi động tuần 4 (integration stabilization priorities + gate criteria).
+- Class/Type trong file: Không có class/type (tài liệu weekly closeout + handoff).
+- Test liên quan: Tổng hợp evidence từ baseline report, migration plan, implementation spec và issue register để quyết định Go/No-Go tuần 4.
