@@ -1292,7 +1292,7 @@ Mỗi file có 3 phần:
 - Class/Type trong file: Không có class/type (tài liệu weekly closeout + handoff).
 - Test liên quan: Tổng hợp evidence từ baseline report, cutover plan, implementation spec, hardening tasks (`W3-T19..W3-T23`) và issue register để quyết định Go/No-Go tuần 4.
 
-### docs/roadmap/WEEK3_OPERATIONS_PLAN_ONE_PASS.md
+### docs/roadmap/W03_OPERATIONS_PLAN.md
 
 - Vai trò file: Kế hoạch vận hành tuần 3 theo mô hình one-pass contract cutover, tập trung triển khai một chuẩn hợp đồng thống nhất trong một đợt với `schema_version` cố định.
 - Class/Type trong file: Không có class/type (tài liệu điều phối implementation, test matrix, gate criteria).
@@ -1327,6 +1327,54 @@ Mỗi file có 3 phần:
 - Vai trò file: Spec triển khai interface one-pass, định nghĩa wire envelope có `schema_version`, mapping contract và error-handling protocol fail-safe.
 - Class/Type trong file: Không có class/type code; định nghĩa contract fields và runtime behavior.
 - Test liên quan: Là đầu vào trực tiếp cho parser tests, cross-runtime tests và observability tests tuần 3.
+
+### docs/roadmap/W04_OPERATIONS_PLAN.md
+
+- Vai trò file: Kế hoạch vận hành tuần 4 cho integration stabilization, tập trung ổn định critical path `signal -> risk -> execution`, reconnect/rollback rehearsal và gate reconciliation.
+- Class/Type trong file: Không có class/type (tài liệu điều phối stabilization, issue closure, gate decision).
+- Test liên quan: Điều phối command profile tích hợp (pytest integration + cargo test/check + health/compliance/correlation audits) và scenario rehearsal tuần 4.
+
+### docs/roadmap/week4/KPI_CHARTER_WEEK4.md
+
+- Vai trò file: KPI charter tuần 4 cho integration stabilization, định nghĩa ngưỡng smoke/reconnect/rollback/correlation/governance để quyết định gate.
+- Class/Type trong file: Không có class/type (tài liệu KPI governance tuần 4).
+- Test liên quan: Dùng evidence từ baseline report, issue register và gate notes để tính KPI.
+
+### docs/roadmap/week4/INTEGRATION_BASELINE_REPORT.md
+
+- Vai trò file: Baseline report tuần 4 cho stabilization, chuẩn hóa matrix `expected/actual/status/evidence_id` cho command profile và scenario rehearsal.
+- Class/Type trong file: Không có class/type (tài liệu validation/baseline evidence).
+- Test liên quan: Tham chiếu trực tiếp `pytest integration`, `cargo test/check`, `health_check`, `compliance_audit.sh`, `audit_correlation.py` theo command profile tuần 4.
+
+### docs/roadmap/week4/STABILIZATION_PLAN.md
+
+- Vai trò file: Kế hoạch stabilization tuần 4 với dependency matrix theo lane, triage clusters A/B/C và rollback triggers cho reconnect/runtime failures.
+- Class/Type trong file: Không có class/type (tài liệu rollout stabilization/rollback strategy).
+- Test liên quan: Kiểm chứng reconnect rehearsal, rollback rehearsal, smoke rerun và artifact consistency trước gate.
+
+### docs/roadmap/week4/ISSUE_REGISTER_WEEK4.md
+
+- Vai trò file: Sổ issue tuần 4 cho integration stabilization, có metadata đầy đủ (`ETA`, `evidence_id`, `blocking_of`) và mapping carry-over từ tuần 3.
+- Class/Type trong file: Không có class/type (tài liệu governance/triage tuần 4).
+- Test liên quan: Map failure từ baseline/scenario matrix vào owner/ETA/mitigation và quyết định gate blockers.
+
+### docs/roadmap/week4/INTERFACE_STABILITY_SPEC.md
+
+- Vai trò file: Spec ổn định interface tuần 4, khóa canonical envelope (`schema_version`, `correlation_id`, `event_type`, `timestamp`, `payload`) và guardrail đổi type/interface.
+- Class/Type trong file: Không có class/type code; định nghĩa policy contract freeze và error-handling protocol.
+- Test liên quan: Là đầu vào cho parser/integration/observability checks trong stabilization pass.
+
+### docs/roadmap/week4/GATE_REHEARSAL_NOTES.md
+
+- Vai trò file: Ghi chú rehearsal gate tuần 4, tổng hợp ngưỡng pass/fail, trạng thái checklist và điều kiện chốt `GO/NO-GO` duy nhất.
+- Class/Type trong file: Không có class/type (tài liệu gate review tuần 4).
+- Test liên quan: Xác nhận build/lint/type/smoke, reconnect/rollback rehearsal, correlation audit và artifact consistency.
+
+### docs/roadmap/week4/WEEK4_FINAL_REPORT_AND_WEEK5_START_PACK.md
+
+- Vai trò file: Báo cáo tổng kết tuần 4 và gói khởi động tuần 5 (Risk Limits v1), chứa cả nhánh `GO` và recovery queue khi `NO-GO`.
+- Class/Type trong file: Không có class/type (tài liệu weekly closeout + handoff).
+- Test liên quan: Tổng hợp evidence từ baseline report, issue register, gate rehearsal để ra quyết định final và handoff tuần 5.
 
 ### scripts/compliance_audit.sh
 

@@ -1,12 +1,12 @@
-2026-04-23 22:43:03 [   DEBUG] matplotlib: matplotlib data path: /opt/homebrew/lib/python3.14/site-packages/matplotlib/mpl-data
-2026-04-23 22:43:03 [   DEBUG] matplotlib: CONFIGDIR=/Users/hoangnam/.matplotlib
-2026-04-23 22:43:03 [   DEBUG] matplotlib: interactive is False
-2026-04-23 22:43:03 [   DEBUG] matplotlib: platform is darwin
-2026-04-23 22:43:03 [   DEBUG] matplotlib: CACHEDIR=/Users/hoangnam/.matplotlib
-2026-04-23 22:43:03 [   DEBUG] matplotlib.font_manager: Using fontManager instance from /Users/hoangnam/.matplotlib/fontlist-v390.json
-2026-04-23 22:43:04 [   DEBUG] asyncio: Using selector: KqueueSelector
-2026-04-23 22:43:04 [   DEBUG] asyncio: Using selector: KqueueSelector
-2026-04-23 22:43:04 [   DEBUG] asyncio: Using selector: KqueueSelector
-2026-04-23 22:43:04 [   DEBUG] asyncio: Using selector: KqueueSelector
-2026-04-23 22:43:06 [   DEBUG] asyncio: Using selector: KqueueSelector
-2026-04-23 22:43:06 [   DEBUG] asyncio: Using selector: KqueueSelector
+2026-04-23 23:12:33 [   DEBUG] matplotlib: matplotlib data path: /opt/homebrew/lib/python3.14/site-packages/matplotlib/mpl-data
+2026-04-23 23:12:33 [   DEBUG] matplotlib: CONFIGDIR=/Users/hoangnam/.matplotlib
+2026-04-23 23:12:33 [   DEBUG] matplotlib: interactive is False
+2026-04-23 23:12:33 [   DEBUG] matplotlib: platform is darwin
+2026-04-23 23:12:33 [   DEBUG] matplotlib: CACHEDIR=/Users/hoangnam/.matplotlib
+2026-04-23 23:12:33 [   DEBUG] matplotlib.font_manager: Using fontManager instance from /Users/hoangnam/.matplotlib/fontlist-v390.json
+2026-04-23 23:12:33 [   DEBUG] asyncio: Using selector: KqueueSelector
+2026-04-23 23:12:33 [   DEBUG] asyncio: Using selector: KqueueSelector
+2026-04-23 23:12:33 [   DEBUG] asyncio: Using selector: KqueueSelector
+2026-04-23 23:12:33 [   DEBUG] asyncio: Using selector: KqueueSelector
+2026-04-23 23:12:35 [   DEBUG] asyncio: Using selector: KqueueSelector
+2026-04-23 23:12:35 [   DEBUG] asyncio: Using selector: KqueueSelector
