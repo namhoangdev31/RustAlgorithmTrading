@@ -296,8 +296,7 @@ mod tests {
         let qb = QueryBuilder::new();
         let malicious_input = "'; DROP TABLE trading_metrics; --";
         let query = qb.select_metrics(malicious_input, None, None, 10);
-        // Should escape single quotes
-        assert!(query.contains("''"));
-        assert!(!query.contains("DROP TABLE"));
+        // Should escape single quotes by doubling them
+        assert!(query.contains("''; DROP TABLE trading_metrics; --'"));
     }
 }

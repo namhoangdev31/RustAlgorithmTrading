@@ -164,9 +164,16 @@ check_python_packages() {
 
     REQUIRED_DEPS=$((REQUIRED_DEPS + ${#required_packages[@]}))
 
+    # Detect Python to use
+    local python_cmd="python3"
+    if [[ -f "$PROJECT_ROOT/.venv/bin/python" ]]; then
+        python_cmd="$PROJECT_ROOT/.venv/bin/python"
+        log_info "Using virtual environment Python: $python_cmd"
+    fi
+
     for package in "${required_packages[@]}"; do
-        if python3 -c "import $package" 2>/dev/null; then
-            local version=$(python3 -c "import $package; print(getattr($package, '__version__', 'unknown'))" 2>/dev/null)
+        if $python_cmd -c "import $package" &> /dev/null; then
+            local version=$($python_cmd -c "import $package; print(getattr($package, '__version__', 'unknown'))" 2>/dev/null)
             log_success_required "$package is installed ($version)"
         else
             log_error "$package is NOT installed - REQUIRED Python package"
@@ -325,8 +332,13 @@ check_dashboard() {
 check_databases() {
     log_info "Checking database files..."
 
+    local python_cmd="python3"
+    if [[ -f "$PROJECT_ROOT/.venv/bin/python" ]]; then
+        python_cmd="$PROJECT_ROOT/.venv/bin/python"
+    fi
+
     # DuckDB
-    if python3 -c "import duckdb" 2>/dev/null; then
+    if $python_cmd -c "import duckdb" 2>/dev/null; then
         log_success "DuckDB Python package installed"
 
         if [[ -f "$PROJECT_ROOT/data/metrics.duckdb" ]]; then
@@ -339,7 +351,7 @@ check_databases() {
     fi
 
     # SQLite (usually built into Python)
-    if python3 -c "import sqlite3" 2>/dev/null; then
+    if $python_cmd -c "import sqlite3" 2>/dev/null; then
         log_success "SQLite Python package available"
     else
         log_error "SQLite NOT available"

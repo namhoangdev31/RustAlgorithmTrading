@@ -52,6 +52,7 @@ impl r2d2::ManageConnection for ConnectionManager {
 }
 
 /// High-level database manager with connection pooling
+#[derive(Clone)]
 pub struct DatabaseManager {
     pool: Arc<ConnectionPool>,
     path: PathBuf,
@@ -227,14 +228,7 @@ impl DatabaseManager {
 
         let mut stmt = conn.prepare(&query)?;
         let rows = stmt.query_map([], |row| {
-            let timestamp_str: String = row.get(0)?;
-            let timestamp = timestamp_str
-                .parse()
-                .map_err(|e| duckdb::Error::FromSqlConversionFailure(
-                    0,
-                    duckdb::types::Type::Text,
-                    Box::new(std::io::Error::new(std::io::ErrorKind::InvalidData, format!("Invalid timestamp format: {}", e)))
-                ))?;
+            let timestamp: DateTime<Utc> = row.get(0)?;
 
             Ok(MetricRecord {
                 timestamp,
@@ -286,14 +280,7 @@ impl DatabaseManager {
 
         let mut stmt = conn.prepare(&query)?;
         let rows = stmt.query_map([], |row| {
-            let timestamp_str: String = row.get(0)?;
-            let timestamp = timestamp_str
-                .parse()
-                .map_err(|e| duckdb::Error::FromSqlConversionFailure(
-                    0,
-                    duckdb::types::Type::Text,
-                    Box::new(std::io::Error::new(std::io::ErrorKind::InvalidData, format!("Invalid timestamp format in candle: {}", e)))
-                ))?;
+            let timestamp: DateTime<Utc> = row.get(0)?;
 
             Ok(CandleRecord {
                 timestamp,
@@ -324,14 +311,7 @@ impl DatabaseManager {
 
         let mut stmt = conn.prepare(&query)?;
         let rows = stmt.query_map([], |row| {
-            let time_bucket_str: String = row.get(0)?;
-            let time_bucket = time_bucket_str
-                .parse()
-                .map_err(|e| duckdb::Error::FromSqlConversionFailure(
-                    0,
-                    duckdb::types::Type::Text,
-                    Box::new(std::io::Error::new(std::io::ErrorKind::InvalidData, format!("Invalid time_bucket format in aggregated metric: {}", e)))
-                ))?;
+            let time_bucket: DateTime<Utc> = row.get(0)?;
 
             Ok(AggregatedMetric {
                 time_bucket,
@@ -419,19 +399,21 @@ impl DatabaseManager {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use tempfile::NamedTempFile;
+    use tempfile::tempdir;
 
     #[tokio::test]
     async fn test_database_initialization() {
-        let temp_file = NamedTempFile::new().unwrap();
-        let db = DatabaseManager::new(temp_file.path()).await.unwrap();
+        let dir = tempdir().unwrap();
+        let db_path = dir.path().join("test.duckdb");
+        let db = DatabaseManager::new(db_path).await.unwrap();
         assert!(db.initialize().await.is_ok());
     }
 
     #[tokio::test]
     async fn test_metric_insertion() {
-        let temp_file = NamedTempFile::new().unwrap();
-        let db = DatabaseManager::new(temp_file.path()).await.unwrap();
+        let dir = tempdir().unwrap();
+        let db_path = dir.path().join("test_metric.duckdb");
+        let db = DatabaseManager::new(db_path).await.unwrap();
         db.initialize().await.unwrap();
 
         let metric = MetricRecord::new("test_metric", 42.5);
@@ -440,8 +422,9 @@ mod tests {
 
     #[tokio::test]
     async fn test_batch_insertion() {
-        let temp_file = NamedTempFile::new().unwrap();
-        let db = DatabaseManager::new(temp_file.path()).await.unwrap();
+        let dir = tempdir().unwrap();
+        let db_path = dir.path().join("test_batch.duckdb");
+        let db = DatabaseManager::new(db_path).await.unwrap();
         db.initialize().await.unwrap();
 
         let metrics: Vec<MetricRecord> = (0..100)

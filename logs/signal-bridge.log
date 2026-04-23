@@ -1,0 +1,10 @@
+[2m2026-04-23T02:36:20.210035Z[0m [32m INFO[0m [2msignal_bridge[0m[2m:[0m Signal Bridge Service starting...
+[2m2026-04-23T02:36:20.210269Z[0m [32m INFO[0m [2msignal_bridge[0m[2m:[0m Configuration loaded successfully - Environment: development
+[2m2026-04-23T02:36:20.210280Z[0m [32m INFO[0m [2msignal_bridge[0m[2m:[0m Signal Configuration:
+[2m2026-04-23T02:36:20.210285Z[0m [32m INFO[0m [2msignal_bridge[0m[2m:[0m   Model Path: models/trading_model.pkl
+[2m2026-04-23T02:36:20.210290Z[0m [32m INFO[0m [2msignal_bridge[0m[2m:[0m   Features: ["rsi", "macd", "macd_signal", "macd_histogram", "bollinger_bands", "bollinger_upper", "bollinger_lower", "moving_average_20", "moving_average_50", "moving_average_200", "volume_ratio", "price_momentum", "atr", "obv"]
+[2m2026-04-23T02:36:20.210297Z[0m [32m INFO[0m [2msignal_bridge[0m[2m:[0m   Update Interval: 500ms
+[2m2026-04-23T02:36:20.210301Z[0m [32m INFO[0m [2msignal_bridge[0m[2m:[0m   ZMQ Subscribe: tcp://127.0.0.1:5555
+[2m2026-04-23T02:36:20.210305Z[0m [32m INFO[0m [2msignal_bridge[0m[2m:[0m   ZMQ Publish: tcp://127.0.0.1:5556
+[2m2026-04-23T02:36:20.210312Z[0m [32m INFO[0m [2msignal_bridge[0m[2m:[0m ✓ Signal Bridge initialized successfully
+[2m2026-04-23T02:36:20.210318Z[0m [32m INFO[0m [2msignal_bridge[0m[2m:[0m 🚀 Signal Bridge ready for Python integration

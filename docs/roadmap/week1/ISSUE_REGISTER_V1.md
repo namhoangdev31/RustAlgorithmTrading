@@ -8,15 +8,10 @@
 
 | Issue ID | Severity | Owner | Due | Status | Dependency | Exit criteria |
 |---|---|---|---|---|---|---|
-| `W1-ISS-001` | P0 | tester | 2026-04-21 | In Progress | Python deps | `pytest` collection chạy cho unit core |
-| `W1-ISS-002` | P0 | planner | 2026-04-23 | New | Canonical map audit | mapping doc canonical path tồn tại + action fix tuần 2 |
-| `W1-ISS-003` | P1 | coder | 2026-04-24 | New | rust/market-data TODO | technical note + ETA tuần 2/3 |
-| `W1-ISS-004` | P1 | ops | 2026-04-24 | New | runbook update | đề xuất command/procedure circuit breaker |
-| `W1-ISS-005` | P2 | planner | 2026-04-26 | New | docs hygiene batch | backlog tuần 2 đã tạo |
-| `W1-ISS-006` | P0 | tester | 2026-04-21 | In Progress | PyO3/Python compat | xác định env chuẩn (ABI3 flag hoặc python version pin) |
-| `W1-ISS-007` | P2 | coder | 2026-04-26 | New | Rust warnings | warning cleanup backlog với impact assessment |
-| `W1-ISS-008` | P0 | coder | 2026-04-23 | Blocked | DuckDB/database tests | xác định root-cause + tách nhóm fail deterministic |
-| `W1-ISS-009` | P0 | ops | 2026-04-22 | In Progress | service startup | có ít nhất 1 health run toàn service ở trạng thái up |
+| `W1-ISS-001` | P0 | tester | 2026-04-21 | Done | Python deps | `pytest` collection chạy cho unit core |
+| `W1-ISS-006` | P0 | tester | 2026-04-21 | Done | PyO3/Python compat | ABI3 flag implemented in scripts |
+| `W1-ISS-008` | P0 | coder | 2026-04-23 | Done | DuckDB/database tests | schema and test logic fixed |
+| `W1-ISS-009` | P0 | ops | 2026-04-22 | Done | service startup | all 4 core services RUNNING |
 
 ## Canonical drift evidence (for W1-ISS-002)
 Missing from canonical list (sample high-priority):
@@ -33,4 +28,4 @@ Missing from canonical list (sample high-priority):
 - P2: consistency/hygiene, không chặn gate tuần 1.
 
 ---
-Last updated: 2026-04-14
+Last updated: 2026-04-23

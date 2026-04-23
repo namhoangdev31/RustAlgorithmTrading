@@ -1,0 +1,9 @@
+[2m2026-04-23T02:36:14.286400Z[0m [32m INFO[0m [2mmarket_data[0m[2m:[0m Market Data Service starting...
+[2m2026-04-23T02:36:14.286581Z[0m [32m INFO[0m [2mmarket_data[0m[2m:[0m Configuration loaded successfully - Environment: development, Paper Trading: true
+[2m2026-04-23T02:36:14.286606Z[0m [32m INFO[0m [2mcommon::metrics[0m[2m:[0m Starting metrics server on 127.0.0.1:9091
+[2m2026-04-23T02:36:14.286652Z[0m [32m INFO[0m [2mcommon::metrics[0m[2m:[0m Metrics server started successfully on 127.0.0.1:9091
+[2m2026-04-23T02:36:14.286656Z[0m [32m INFO[0m [2mmarket_data[0m[2m:[0m ✓ Metrics server started on port 9091
+[2m2026-04-23T02:36:14.286659Z[0m [32m INFO[0m [2mmarket_data[0m[2m:[0m Initializing Market Data Service for exchange: alpaca
+[2m2026-04-23T02:36:14.286674Z[0m [32m INFO[0m [2mmarket_data[0m[2m:[0m ✓ Market Data Service initialized successfully
+[2m2026-04-23T02:36:14.286677Z[0m [32m INFO[0m [2mmarket_data[0m[2m:[0m 🚀 Market Data Service is running
+[2m2026-04-23T02:36:14.286679Z[0m [32m INFO[0m [2mmarket_data[0m[2m:[0m Starting Market Data Service

@@ -16,8 +16,9 @@
 4. `W1-ISS-009`: Ít nhất 1 lần health check đầy đủ ở trạng thái service up.
 
 ## Go/No-Go rehearsal outcome
-- Rehearsal status hiện tại: `NO-GO (provisional)`
-- Chuyển sang `GO` khi 4 blockers trên có owner + mitigation accepted.
+- Rehearsal status hiện### Result: 🟢 GO (Stable & Reproducible)
+- **Verified on**: 2026-04-23
+- **Evidence**: `logs/audit_20260423_093550.log`
 
 ---
 Last updated: 2026-04-14

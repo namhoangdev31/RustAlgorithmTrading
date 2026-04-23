@@ -21,7 +21,7 @@ class ConcreteStrategy(Strategy):
                 signals.append(Signal(
                     timestamp=idx,
                     symbol=data.attrs.get('symbol', 'TEST'),
-                    signal_type=SignalType.BUY if i % 20 == 0 else SignalType.SELL,
+                    signal_type=SignalType.LONG if i % 20 == 0 else SignalType.SHORT,
                     price=row['close'],
                     confidence=0.8
                 ))
@@ -58,12 +58,12 @@ class TestSignalCreation:
         signal = Signal(
             timestamp=datetime.now(),
             symbol="AAPL",
-            signal_type=SignalType.BUY,
+            signal_type=SignalType.LONG,
             price=150.0
         )
 
         assert signal.symbol == "AAPL"
-        assert signal.signal_type == SignalType.BUY
+        assert signal.signal_type == SignalType.LONG
         assert signal.price == 150.0
         assert signal.quantity == 0.0
         assert signal.confidence == 1.0
@@ -76,7 +76,7 @@ class TestSignalCreation:
         signal = Signal(
             timestamp=datetime.now(),
             symbol="GOOGL",
-            signal_type=SignalType.SELL,
+            signal_type=SignalType.SHORT,
             price=2800.0,
             quantity=5.0,
             confidence=0.85,
@@ -84,7 +84,7 @@ class TestSignalCreation:
         )
 
         assert signal.symbol == "GOOGL"
-        assert signal.signal_type == SignalType.SELL
+        assert signal.signal_type == SignalType.SHORT
         assert signal.price == 2800.0
         assert signal.quantity == 5.0
         assert signal.confidence == 0.85
@@ -92,12 +92,12 @@ class TestSignalCreation:
 
     def test_signal_types(self):
         """Test all signal types"""
-        buy_signal = Signal(datetime.now(), "AAPL", SignalType.BUY, 100.0)
-        sell_signal = Signal(datetime.now(), "AAPL", SignalType.SELL, 100.0)
+        buy_signal = Signal(datetime.now(), "AAPL", SignalType.LONG, 100.0)
+        sell_signal = Signal(datetime.now(), "AAPL", SignalType.SHORT, 100.0)
         hold_signal = Signal(datetime.now(), "AAPL", SignalType.HOLD, 100.0)
 
-        assert buy_signal.signal_type == SignalType.BUY
-        assert sell_signal.signal_type == SignalType.SELL
+        assert buy_signal.signal_type == SignalType.LONG
+        assert sell_signal.signal_type == SignalType.SHORT
         assert hold_signal.signal_type == SignalType.HOLD
 
     def test_signal_metadata_initialization(self):
@@ -105,7 +105,7 @@ class TestSignalCreation:
         signal = Signal(
             timestamp=datetime.now(),
             symbol="AAPL",
-            signal_type=SignalType.BUY,
+            signal_type=SignalType.LONG,
             price=100.0
         )
 
@@ -272,7 +272,7 @@ class TestPositionLogic:
         buy_signal = Signal(
             timestamp=datetime.now(),
             symbol="AAPL",
-            signal_type=SignalType.BUY,
+            signal_type=SignalType.LONG,
             price=100.0
         )
 
@@ -285,7 +285,7 @@ class TestPositionLogic:
         sell_signal = Signal(
             timestamp=datetime.now(),
             symbol="AAPL",
-            signal_type=SignalType.SELL,
+            signal_type=SignalType.SHORT,
             price=100.0
         )
 
@@ -311,7 +311,7 @@ class TestPositionLogic:
         sell_signal = Signal(
             timestamp=datetime.now(),
             symbol="AAPL",
-            signal_type=SignalType.SELL,
+            signal_type=SignalType.SHORT,
             price=100.0
         )
 
@@ -325,7 +325,7 @@ class TestPositionLogic:
         buy_signal = Signal(
             timestamp=datetime.now(),
             symbol="AAPL",
-            signal_type=SignalType.BUY,
+            signal_type=SignalType.LONG,
             price=100.0
         )
 
@@ -339,7 +339,7 @@ class TestPositionLogic:
         sell_signal = Signal(
             timestamp=datetime.now(),
             symbol="AAPL",
-            signal_type=SignalType.SELL,
+            signal_type=SignalType.SHORT,
             price=100.0
         )
 
@@ -356,7 +356,7 @@ class TestPositionSizing:
         signal = Signal(
             timestamp=datetime.now(),
             symbol="AAPL",
-            signal_type=SignalType.BUY,
+            signal_type=SignalType.LONG,
             price=100.0
         )
 
@@ -375,7 +375,7 @@ class TestPositionSizing:
         signal = Signal(
             timestamp=datetime.now(),
             symbol="AAPL",
-            signal_type=SignalType.BUY,
+            signal_type=SignalType.LONG,
             price=100.0
         )
 
@@ -396,7 +396,7 @@ class TestStrategyState:
         strategy = ConcreteStrategy(name="Test")
 
         # Add some state
-        strategy.signals = [Signal(datetime.now(), "AAPL", SignalType.BUY, 100.0)]
+        strategy.signals = [Signal(datetime.now(), "AAPL", SignalType.LONG, 100.0)]
         strategy.positions = {"AAPL": 10.0}
 
         # Reset
@@ -449,8 +449,8 @@ class TestEdgeCases:
 
     def test_confidence_bounds(self):
         """Test signal confidence is bounded [0, 1]"""
-        signal_low = Signal(datetime.now(), "AAPL", SignalType.BUY, 100.0, confidence=0.0)
-        signal_high = Signal(datetime.now(), "AAPL", SignalType.BUY, 100.0, confidence=1.0)
+        signal_low = Signal(datetime.now(), "AAPL", SignalType.LONG, 100.0, confidence=0.0)
+        signal_high = Signal(datetime.now(), "AAPL", SignalType.LONG, 100.0, confidence=1.0)
 
         assert 0.0 <= signal_low.confidence <= 1.0
         assert 0.0 <= signal_high.confidence <= 1.0
@@ -460,7 +460,7 @@ class TestEdgeCases:
         signal = Signal(
             timestamp=datetime.now(),
             symbol="AAPL",
-            signal_type=SignalType.BUY,
+            signal_type=SignalType.LONG,
             price=100.0,
             metadata=None
         )

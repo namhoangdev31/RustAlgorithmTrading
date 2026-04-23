@@ -21,13 +21,14 @@ impl Schema {
     /// Stores time-series metrics for market data, strategy performance, execution, and system metrics.
     fn create_metrics_table(conn: &Connection) -> Result<()> {
         conn.execute_batch(
-            "CREATE TABLE IF NOT EXISTS trading_metrics (
+            "CREATE SEQUENCE IF NOT EXISTS metrics_seq;
+            CREATE TABLE IF NOT EXISTS trading_metrics (
+                id BIGINT PRIMARY KEY DEFAULT nextval('metrics_seq'),
                 timestamp TIMESTAMP NOT NULL,
                 metric_name VARCHAR NOT NULL,
                 value DOUBLE NOT NULL,
                 symbol VARCHAR,
-                labels JSON,
-                PRIMARY KEY (timestamp, metric_name, symbol)
+                labels JSON
             )",
         )?;
 
@@ -83,7 +84,7 @@ impl Schema {
         conn.execute_batch(
             "CREATE INDEX IF NOT EXISTS idx_metrics_timestamp ON trading_metrics(timestamp DESC);
             CREATE INDEX IF NOT EXISTS idx_metrics_name_symbol ON trading_metrics(metric_name, symbol);
-            CREATE INDEX IF NOT EXISTS idx_metrics_symbol ON trading_metrics(symbol) WHERE symbol IS NOT NULL;",
+            CREATE INDEX IF NOT EXISTS idx_metrics_symbol ON trading_metrics(symbol);",
         )?;
 
         // Candles indexes

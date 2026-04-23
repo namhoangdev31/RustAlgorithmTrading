@@ -1208,3 +1208,51 @@ Mỗi file có 3 phần:
 - Vai trò file: Báo cáo tổng kết tuần 1 và gói khởi động tuần 2 (top priorities + điều kiện start day-1).
 - Class/Type trong file: Không có class/type (tài liệu weekly closeout + handoff).
 - Test liên quan: Tổng hợp bằng chứng từ baseline/test matrix và quyết định Go/No-Go tuần 2.
+
+### docs/roadmap/WEEK2_OPERATIONS_PLAN_2026-04-27_to_2026-05-03.md
+
+- Vai trò file: Kế hoạch vận hành chi tiết tuần 2 cho Contract Audit, gồm task board theo ngày, checklist, issue khởi tạo và gate criteria.
+- Class/Type trong file: Không có class/type (tài liệu điều phối audit/spec/policy).
+- Test liên quan: Không có test trực tiếp; dùng để điều phối contract-focused baseline checks và triage mismatch tuần 2.
+
+### docs/roadmap/week2/KPI_CHARTER_V2.md
+
+- Vai trò file: Định nghĩa bộ KPI contract-focused tuần 2 (inventory coverage, schema compliance, rerun stability, mismatch closure).
+- Class/Type trong file: Không có class/type (tài liệu KPI governance tuần 2).
+- Test liên quan: Không có test trực tiếp; là tiêu chuẩn đánh giá weekly gate và KPI board coverage tuần 2.
+
+### docs/roadmap/week2/CONTRACT_AUDIT_BASELINE_REPORT_V1.md
+
+- Vai trò file: Báo cáo baseline contract audit tuần 2, chuẩn hóa command evidence, taxonomy mismatch và baseline matrix.
+- Class/Type trong file: Không có class/type (tài liệu validation/baseline evidence).
+- Test liên quan: Tham chiếu trực tiếp các lệnh `pytest`/`cargo`/`health_check` trong command set contract-focused.
+
+### docs/roadmap/week2/CONTRACT_COMPATIBILITY_MATRIX_V1.md
+
+- Vai trò file: Ma trận tương thích contract Python-Rust với boundary inventory, owner files, test paths và policy checkpoints.
+- Class/Type trong file: Không có class/type (tài liệu contract mapping và ownership).
+- Test liên quan: Dẫn xuất test path cho từng boundary để kiểm tra compatibility theo critical path.
+
+### docs/roadmap/week2/ISSUE_REGISTER_V2.md
+
+- Vai trò file: Sổ issue tuần 2 theo mismatch clusters, có severity/owner/ETA/mitigation/exit criteria.
+- Class/Type trong file: Không có class/type (tài liệu governance/triage cho Contract Audit).
+- Test liên quan: Không có test trực tiếp; map failure/mismatch từ baseline command set vào issue có owner.
+
+### docs/roadmap/week2/INTERFACE_SPEC_DELTA_V1.md
+
+- Vai trò file: Delta spec tuần 2 cho `schema_version`, `RiskDecision`, `ExecutionAck`, `ObservabilityEvent` và compatibility policy.
+- Class/Type trong file: Không có class/type code; định nghĩa contract fields/policy/acceptance cho tuần 3 implementation.
+- Test liên quan: Làm đầu vào cho contract tests (positive/negative/version mismatch) và integration handshake tuần 3.
+
+### docs/roadmap/week2/GATE_REHEARSAL_NOTES.md
+
+- Vai trò file: Ghi chú rehearsal gate tuần 2, tổng hợp checklist status, blocking conditions và quyết định Go/No-Go provisional.
+- Class/Type trong file: Không có class/type (tài liệu gate review).
+- Test liên quan: Xác nhận khả năng rerun baseline contract checks và tình trạng ownership của mismatch P0/P1.
+
+### docs/roadmap/week2/WEEK2_FINAL_REPORT_AND_WEEK3_START_PACK.md
+
+- Vai trò file: Báo cáo tổng kết tuần 2 và gói khởi động tuần 3 (schema versioning kickoff priorities + gate criteria).
+- Class/Type trong file: Không có class/type (tài liệu weekly closeout + handoff).
+- Test liên quan: Tổng hợp evidence từ compatibility matrix, baseline report, interface delta và issue register để quyết định Go/No-Go tuần 3.

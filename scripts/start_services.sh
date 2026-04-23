@@ -8,12 +8,15 @@ if [ -f ".env" ]; then
     export $(cat .env | grep -v '^#' | xargs)
 fi
 
+# Fix PyO3 compatibility for Python 3.14
+export PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1
+
 # Check environment
 ENVIRONMENT=${TRADING_ENV:-development}
 echo "Starting services in $ENVIRONMENT mode..."
 
 # Select configuration
-CONFIG_FILE="config/system.json"
+CONFIG_FILE="config/system.development.json"
 if [ "$ENVIRONMENT" = "staging" ]; then
     CONFIG_FILE="config/system.staging.json"
 elif [ "$ENVIRONMENT" = "production" ]; then
@@ -28,6 +31,7 @@ fi
 echo "Using configuration: $CONFIG_FILE"
 
 # Create symlink for active config
+rm -f config/system.json
 ln -sf $(basename $CONFIG_FILE) config/system.json
 
 # Build services
@@ -38,28 +42,28 @@ cargo build --release
 # Start services in background
 echo ""
 echo "Starting Market Data Service..."
-RUST_LOG=info ./target/release/market-data > logs/market-data.log 2>&1 &
+RUST_LOG=info ./target/release/market-data > ../logs/market-data.log 2>&1 &
 MARKET_DATA_PID=$!
 echo "  PID: $MARKET_DATA_PID"
 
 sleep 2
 
 echo "Starting Risk Manager..."
-RUST_LOG=info ./target/release/risk-manager > logs/risk-manager.log 2>&1 &
+RUST_LOG=info ./target/release/risk-manager > ../logs/risk-manager.log 2>&1 &
 RISK_MANAGER_PID=$!
 echo "  PID: $RISK_MANAGER_PID"
 
 sleep 2
 
 echo "Starting Execution Engine..."
-RUST_LOG=info ./target/release/execution-engine > logs/execution-engine.log 2>&1 &
+RUST_LOG=info ./target/release/execution-engine > ../logs/execution-engine.log 2>&1 &
 EXECUTION_PID=$!
 echo "  PID: $EXECUTION_PID"
 
 sleep 2
 
 echo "Starting Signal Bridge..."
-RUST_LOG=info ./target/release/signal-bridge > logs/signal-bridge.log 2>&1 &
+RUST_LOG=info ./target/release/signal-bridge > ../logs/signal-bridge.log 2>&1 &
 SIGNAL_BRIDGE_PID=$!
 echo "  PID: $SIGNAL_BRIDGE_PID"
 

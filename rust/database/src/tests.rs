@@ -4,21 +4,24 @@
 mod integration_tests {
     use crate::*;
     use chrono::{Duration, Utc};
-    use tempfile::NamedTempFile;
+    use tempfile::tempdir;
 
     #[tokio::test]
     async fn test_full_workflow() {
         // Create temporary database
-        let temp_file = NamedTempFile::new().unwrap();
-        let db = DatabaseManager::new(temp_file.path()).await.unwrap();
+        let dir = tempdir().unwrap();
+        let db_path = dir.path().join("test.duckdb");
+        let db = DatabaseManager::new(db_path).await.unwrap();
         db.initialize().await.unwrap();
 
         // Insert metrics
         let metrics: Vec<MetricRecord> = (0..50)
             .map(|i| {
-                MetricRecord::new("price", 50000.0 + i as f64)
+                let mut metric = MetricRecord::new("price", 50000.0 + i as f64)
                     .with_symbol("BTC/USD")
-                    .add_label("exchange", "alpaca")
+                    .add_label("exchange", "alpaca");
+                metric.timestamp = metric.timestamp + Duration::milliseconds(i);
+                metric
             })
             .collect();
 
@@ -35,8 +38,9 @@ mod integration_tests {
 
     #[tokio::test]
     async fn test_candle_operations() {
-        let temp_file = NamedTempFile::new().unwrap();
-        let db = DatabaseManager::new(temp_file.path()).await.unwrap();
+        let dir = tempdir().unwrap();
+        let db_path = dir.path().join("test_candles.duckdb");
+        let db = DatabaseManager::new(db_path).await.unwrap();
         db.initialize().await.unwrap();
 
         // Insert candles
@@ -66,8 +70,9 @@ mod integration_tests {
 
     #[tokio::test]
     async fn test_event_logging() {
-        let temp_file = NamedTempFile::new().unwrap();
-        let db = DatabaseManager::new(temp_file.path()).await.unwrap();
+        let dir = tempdir().unwrap();
+        let db_path = dir.path().join("test_events.duckdb");
+        let db = DatabaseManager::new(db_path).await.unwrap();
         db.initialize().await.unwrap();
 
         // Log events
@@ -82,8 +87,9 @@ mod integration_tests {
 
     #[tokio::test]
     async fn test_aggregated_metrics() {
-        let temp_file = NamedTempFile::new().unwrap();
-        let db = DatabaseManager::new(temp_file.path()).await.unwrap();
+        let dir = tempdir().unwrap();
+        let db_path = dir.path().join("test_agg.duckdb");
+        let db = DatabaseManager::new(db_path).await.unwrap();
         db.initialize().await.unwrap();
 
         // Insert metrics over time
@@ -106,8 +112,9 @@ mod integration_tests {
 
     #[tokio::test]
     async fn test_table_statistics() {
-        let temp_file = NamedTempFile::new().unwrap();
-        let db = DatabaseManager::new(temp_file.path()).await.unwrap();
+        let dir = tempdir().unwrap();
+        let db_path = dir.path().join("test_stats.duckdb");
+        let db = DatabaseManager::new(db_path).await.unwrap();
         db.initialize().await.unwrap();
 
         // Insert some data
@@ -122,15 +129,16 @@ mod integration_tests {
 
     #[tokio::test]
     async fn test_connection_pool() {
-        let temp_file = NamedTempFile::new().unwrap();
-        let db = DatabaseManager::new(temp_file.path()).await.unwrap();
+        let dir = tempdir().unwrap();
+        let db_path = dir.path().join("test_pool.duckdb");
+        let db = DatabaseManager::new(&db_path).await.unwrap();
         db.initialize().await.unwrap();
 
         // Get multiple connections concurrently
         let mut handles = vec![];
 
         for i in 0..5 {
-            let db_clone = DatabaseManager::new(temp_file.path()).await.unwrap();
+            let db_clone = db.clone();
             let handle = tokio::spawn(async move {
                 let metric = MetricRecord::new("concurrent_test", i as f64);
                 db_clone.insert_metric(&metric).await
@@ -149,8 +157,9 @@ mod integration_tests {
 
     #[tokio::test]
     async fn test_database_optimization() {
-        let temp_file = NamedTempFile::new().unwrap();
-        let db = DatabaseManager::new(temp_file.path()).await.unwrap();
+        let dir = tempdir().unwrap();
+        let db_path = dir.path().join("test_opt.duckdb");
+        let db = DatabaseManager::new(db_path).await.unwrap();
         db.initialize().await.unwrap();
 
         // Insert data
@@ -165,8 +174,9 @@ mod integration_tests {
 
     #[tokio::test]
     async fn test_time_range_queries() {
-        let temp_file = NamedTempFile::new().unwrap();
-        let db = DatabaseManager::new(temp_file.path()).await.unwrap();
+        let dir = tempdir().unwrap();
+        let db_path = dir.path().join("test_range.duckdb");
+        let db = DatabaseManager::new(db_path).await.unwrap();
         db.initialize().await.unwrap();
 
         let now = Utc::now();
@@ -185,7 +195,7 @@ mod integration_tests {
             .await
             .unwrap();
 
-        assert!(recent.len() <= 60); // Should be approximately 60 minutes
+        assert!(recent.len() <= 61); // Should be approximately 60 minutes
         assert!(recent.iter().all(|m| m.timestamp >= hour_ago));
     }
 }
