@@ -145,7 +145,11 @@ Mỗi file có 3 phần:
   - Position: Data object/domain object cho event, signal, position hoặc metric.
   - ZMQPublisher: Lớp nghiệp vụ trong module.
   - ZMQSubscriber: Lớp nghiệp vụ trong module.
-- Test liên quan: tests/test_alpaca_*.py, tests/integration/test_alpaca_api.rs, tests/integration/test_end_to_end.rs, tests/integration/test_concurrent.rs.
+- Contract behavior (Week 3 one-pass):
+  - Envelope bắt buộc có `schema_version=v1.0.0`, `correlation_id`, `event_type`, `timestamp`, `payload`.
+  - Parse flow: `envelope -> payload`, reject có cấu trúc khi mismatch và không crash pipeline.
+  - Legacy normalization (nội bộ): `direction/strength -> action/confidence`.
+- Test liên quan: tests/test_alpaca_*.py, tests/integration/test_alpaca_api.rs, tests/integration/test_end_to_end.rs, tests/integration/test_concurrent.rs, tests/integration/test_backtest_signal_flow.py.
 
 ### src/data/__init__.py
 
@@ -371,6 +375,9 @@ Mỗi file có 3 phần:
 - Class trong file:
   - LoggerMetrics: Lớp logging/formatting cho quan sát hệ thống.
   - StructuredLogger: Lớp logging/formatting cho quan sát hệ thống.
+- Contract behavior (Week 3 one-pass):
+  - Context bắt buộc: `correlation_id` và `schema_version`.
+  - Error triage log bắt buộc: `error_code`, `reason`, `disposition`, `payload_preview` (redacted <= 200 chars).
 - Test liên quan: tests/observability/*.py, tests/integration/test_observability_integration.py, tests/integration/test_duckdb_storage.rs.
 
 ### src/observability/metrics/__init__.py
@@ -840,7 +847,11 @@ Mỗi file có 3 phần:
   - RiskCheckRequest (struct): DTO cho API/messaging boundary.
   - RiskCheckResult (struct): Cấu trúc dữ liệu/domain state của module.
   - Heartbeat (struct): Cấu trúc dữ liệu/domain state của module.
-- Test liên quan: tests/unit/test_common_types.rs, tests/unit/test_types.rs, tests/unit/test_errors.rs, tests/unit/test_common_health.rs.
+- Contract behavior (Week 3 one-pass):
+  - Parser 2 bước: validate envelope trước, parse payload sau.
+  - Zero-panic policy cho malformed JSON/invalid UTF-8: trả lỗi có `disposition=QUARANTINE`.
+  - Structured parse error: `error_code`, `correlation_id`, `reason`, `disposition`, `payload_preview`.
+- Test liên quan: tests/unit/test_common_types.rs, tests/unit/test_types.rs, tests/unit/test_errors.rs, tests/unit/test_common_health.rs, tests/integration/test_risk_execution_observability.rs.
 
 ### rust/common/src/metrics.rs
 
@@ -1161,6 +1172,12 @@ Mỗi file có 3 phần:
 - Class/Type trong file: Không có class/type (tài liệu kế hoạch triển khai).
 - Test liên quan: Không có test trực tiếp; dùng như execution baseline cho lựa chọn test theo từng tuần/phase gate.
 
+### docs/roadmap/CHECKLIST_GATE_W01_W24.md
+
+- Vai trò file: Checklist vận hành tổng hợp W01->W24 để team tick trực tiếp cho từng tuần và final-phase gates.
+- Class/Type trong file: Không có class/type (tài liệu checklist, evidence tracking, Go/No-Go decision).
+- Test liên quan: Ràng buộc weekly compile/static/lint/type/smoke checks (W01-W20) và full-suite gates (W21-W24), kèm rule test ownership theo codebase.
+
 ### docs/roadmap/WEEK1_OPERATIONS_PLAN_2026-04-20_to_2026-04-26.md
 
 - Vai trò file: Kế hoạch vận hành chi tiết tuần 1 với task theo ngày, checklist, issue register và mẫu báo cáo cuối tuần.
@@ -1263,50 +1280,63 @@ Mỗi file có 3 phần:
 - Class/Type trong file: Không có class/type (tài liệu weekly closeout + handoff).
 - Test liên quan: Tổng hợp evidence từ compatibility matrix, baseline report, interface delta và issue register để quyết định Go/No-Go tuần 3.
 
-### docs/roadmap/WEEK3_OPERATIONS_PLAN_SCHEMA_VERSIONING.md
-
-- Vai trò file: Kế hoạch vận hành tuần 3 cho triển khai schema versioning v1 theo pha/ngày logic, gồm task board, checklist, issue khởi tạo và gate criteria.
-- Class/Type trong file: Không có class/type (tài liệu điều phối implementation contract + migration validation).
-- Test liên quan: Không có test trực tiếp; dùng để điều phối schema-focused baseline tests, triage mismatch và gate tuần 3.
-
-### docs/roadmap/week3/KPI_CHARTER_V3.md
-
-- Vai trò file: Định nghĩa bộ KPI tuần 3 cho schema versioning (v1 compliance, migration success, rerun stability, trace envelope consistency).
-- Class/Type trong file: Không có class/type (tài liệu KPI governance tuần 3).
-- Test liên quan: Không có test trực tiếp; là chuẩn đánh giá weekly gate và dashboard evidence tuần 3.
-
-### docs/roadmap/week3/SCHEMA_VERSION_BASELINE_REPORT_V1.md
-
-- Vai trò file: Báo cáo baseline validation tuần 3 cho positive/negative/version mismatch tests và command profile chuẩn.
-- Class/Type trong file: Không có class/type (tài liệu validation/baseline evidence cho schema rollout).
-- Test liên quan: Tham chiếu trực tiếp các lệnh `pytest`, `cargo test/check`, `health_check` cho critical path.
-
-### docs/roadmap/week3/SCHEMA_MIGRATION_PLAN_V1.md
-
-- Vai trò file: Kế hoạch migration contract từ `v0` sang `v1`, gồm phase rollout, mapping rules và exit conditions.
-- Class/Type trong file: Không có class/type (tài liệu migration strategy + compatibility governance).
-- Test liên quan: Dẫn xuất test scenarios cho v1 strict path và v0 compatibility path.
-
-### docs/roadmap/week3/ISSUE_REGISTER_V3.md
-
-- Vai trò file: Sổ issue tuần 3 cho schema/semantics/observability/policy clusters, bao gồm issue policy drift `W3-ISS-009`.
-- Class/Type trong file: Không có class/type (tài liệu governance/triage cho schema implementation).
-- Test liên quan: Không có test trực tiếp; map mismatch và policy drift vào owner/ETA/mitigation trước gate tuần 4.
-
-### docs/roadmap/week3/INTERFACE_IMPLEMENTATION_SPEC_V1.md
-
-- Vai trò file: Spec triển khai tuần 3 ở mức mapping thực thi cho `schema_version`, `Signal`, `RiskDecision`, `ExecutionAck`, `ObservabilityEvent`.
-- Class/Type trong file: Không có class/type code; định nghĩa wire-shape mục tiêu và implementation notes cho boundary Python-Rust.
-- Test liên quan: Là đầu vào trực tiếp cho contract tests (positive/negative/version mismatch) và integration handshake tests.
-
 ### docs/roadmap/week3/GATE_REHEARSAL_NOTES.md
 
-- Vai trò file: Ghi chú rehearsal gate tuần 3, tổng hợp checklist status, blocking conditions và điều kiện Go/No-Go vào tuần 4.
+- Vai trò file: Ghi chú rehearsal gate tuần 3, tổng hợp checklist status, blocking conditions và điều kiện Go/No-Go vào tuần 4, bao gồm hardening checks `W3-T19..W3-T23`.
 - Class/Type trong file: Không có class/type (tài liệu gate review).
-- Test liên quan: Xác nhận baseline schema tests, ownership trạng thái P0/P1 và điều kiện đóng `W3-ISS-009`.
+- Test liên quan: Xác nhận baseline schema tests, fuzzing no-panic, extreme negative tests, shadow log audit, network disconnect simulation, playbook sync và điều kiện đóng `W3-ISS-009`.
 
 ### docs/roadmap/week3/WEEK3_FINAL_REPORT_AND_WEEK4_START_PACK.md
 
-- Vai trò file: Báo cáo tổng kết tuần 3 và gói khởi động tuần 4 (integration stabilization priorities + gate criteria).
+- Vai trò file: Báo cáo tổng kết tuần 3 và gói khởi động tuần 4 (integration stabilization priorities + gate criteria), có KPI hiệu năng baseline và kết luận `NO-GO có điều kiện` khi evidence chưa đủ.
 - Class/Type trong file: Không có class/type (tài liệu weekly closeout + handoff).
-- Test liên quan: Tổng hợp evidence từ baseline report, migration plan, implementation spec và issue register để quyết định Go/No-Go tuần 4.
+- Test liên quan: Tổng hợp evidence từ baseline report, cutover plan, implementation spec, hardening tasks (`W3-T19..W3-T23`) và issue register để quyết định Go/No-Go tuần 4.
+
+### docs/roadmap/WEEK3_OPERATIONS_PLAN_ONE_PASS.md
+
+- Vai trò file: Kế hoạch vận hành tuần 3 theo mô hình one-pass contract cutover, tập trung triển khai một chuẩn hợp đồng thống nhất trong một đợt với `schema_version` cố định.
+- Class/Type trong file: Không có class/type (tài liệu điều phối implementation, test matrix, gate criteria).
+- Test liên quan: Điều phối command profile baseline, compliance audit script, correlation source audit, fuzzing/shadow-audit, network simulation và performance watermark cho gate tuần 3.
+
+### docs/roadmap/week3/KPI_CHARTER_WEEK3.md
+
+- Vai trò file: KPI charter cho one-pass cutover, bổ sung chỉ số drift/burn-down, ngưỡng auto-block và performance baseline (avg/p95/max latency).
+- Class/Type trong file: Không có class/type (tài liệu KPI governance tuần 3).
+- Test liên quan: Dùng evidence từ baseline report, issue register, gate notes để tính KPI.
+
+### docs/roadmap/week3/CONTRACT_BASELINE_REPORT.md
+
+- Vai trò file: Baseline report cho one-pass cutover, chứa preflight clean-slate, command evidence set, matrix expected/actual/evidence, hardening tests và performance baseline.
+- Class/Type trong file: Không có class/type (tài liệu validation/baseline evidence).
+- Test liên quan: Tham chiếu trực tiếp `pytest`, `cargo test/check`, `health_check`, `compliance_audit.sh`, `audit_correlation.py` theo command profile tuần 3.
+
+### docs/roadmap/week3/CUTOVER_PLAN.md
+
+- Vai trò file: Kế hoạch cutover one-pass với dependency matrix giữa các lane, triage clusters A/B/C và rollback drill từ snapshot trước cutover.
+- Class/Type trong file: Không có class/type (tài liệu rollout/rollback strategy).
+- Test liên quan: Kiểm chứng dependency gate và rollback rehearsal evidence (`EV-W3-5xx`).
+
+### docs/roadmap/week3/ISSUE_REGISTER_WEEK3.md
+
+- Vai trò file: Sổ issue tuần 3 cho one-pass cutover, có metadata mở rộng (`ETA`, `evidence_id`, `blocking_of`) và phân cụm triage A/B/C.
+- Class/Type trong file: Không có class/type (tài liệu governance/triage).
+- Test liên quan: Map lỗi từ baseline/test matrix, source audit, network rehearsal vào owner/ETA/mitigation và gate blockers.
+
+### docs/roadmap/week3/INTERFACE_IMPLEMENTATION_SPEC.md
+
+- Vai trò file: Spec triển khai interface one-pass, định nghĩa wire envelope có `schema_version`, mapping contract và error-handling protocol fail-safe.
+- Class/Type trong file: Không có class/type code; định nghĩa contract fields và runtime behavior.
+- Test liên quan: Là đầu vào trực tiếp cho parser tests, cross-runtime tests và observability tests tuần 3.
+
+### scripts/compliance_audit.sh
+
+- Vai trò file: Script auto-gate kiểm tra coverage của `correlation_id` và `schema_version` trên log evidence theo cơ chế fail-fast.
+- Class/Type trong file: Script shell (không có class/type), hỗ trợ cờ `--check-correlation`, `--check-versioning`, `--log-file`.
+- Test liên quan: Chạy trong command profile tuần 3 và map trực tiếp vào gate evidence `EV-W3-106`.
+
+### scripts/audit_correlation.py
+
+- Vai trò file: Script static audit quét logging call ở core paths Python/Rust để phát hiện thiếu `correlation_id` context.
+- Class/Type trong file:
+  - `Finding` (dataclass): lưu thông tin lỗ hổng theo `path:line:reason`.
+- Test liên quan: Chạy trong command profile tuần 3, yêu cầu `0 findings`, map trực tiếp vào evidence `EV-W3-107`.

@@ -1,14 +1,14 @@
-# Interface Spec Draft v0 (Week 1)
+# Interface Spec Draft v0 (W01)
 
 ## Scope
-Spec-only cho tuần 2-3. Không thay đổi production API trong tuần 1.
+Spec-only cho W02-W03. Không thay đổi production API trong W01.
 
 ## 1) ZMQ envelope with schema_version
 
 ```json
 {
   "schema_version": "v1",
-  "trace_id": "string",
+  "correlation_id": "string",
   "event_type": "string",
   "timestamp": "ISO-8601",
   "payload": {}
@@ -36,7 +36,7 @@ Acceptance criteria:
 
 Acceptance criteria:
 - Mọi reject đều có `reason_code`.
-- `limit_snapshot` phải đủ để replay quyết định risk.
+- `limit_snapshot` đủ để replay quyết định risk.
 
 ## 3) ExecutionAck
 
@@ -57,7 +57,7 @@ Acceptance criteria:
 
 ```json
 {
-  "trace_id": "string",
+  "correlation_id": "string",
   "component": "market-data|signal-bridge|risk-manager|execution-engine|observability",
   "severity": "DEBUG|INFO|WARNING|ERROR|CRITICAL",
   "timestamp": "ISO-8601",
@@ -66,13 +66,13 @@ Acceptance criteria:
 ```
 
 Acceptance criteria:
-- Có trace continuity từ signal đến execution cho luồng smoke.
+- Có correlation continuity từ signal tới execution cho luồng smoke.
 - Severity mapping thống nhất với logging policy.
 
-## Test mapping for Week 2-3
+## Test mapping for W02-W03
 - Contract tests: validate required fields for all 4 payloads.
 - Integration tests: verify schema handshake across Python <-> Rust.
-- Observability tests: verify trace coverage and severity semantics.
+- Observability tests: verify correlation coverage and severity semantics.
 
 ---
-Last updated: 2026-04-14
+Last updated: W01 no-date mode sync

@@ -1,58 +1,39 @@
-# Baseline Validation Report v1
+# Baseline Validation Report v1 (W01)
 
 ## Window
-- Week 1 baseline snapshot (pre-kickoff run)
-- Captured at: 2026-04-14 (+07)
+- W01 baseline snapshot (pre-gate run)
 
 ## Command Evidence
 
 ### 1) Python unit collection baseline
-Command:
 ```bash
 python -m pytest tests/unit/python/test_strategy_base.py -q --maxfail=1
 ```
 Observed:
-- [✓] `python -m pytest tests/unit/python/test_strategy_base.py -q` passed (33/33)
 - Status: `PASSED`
 - Mapping issue: `W1-ISS-001`
 
-### 2) Rust workspace check baseline (default env)
-Command:
+### 2) Rust workspace check baseline
 ```bash
 cd rust && cargo check --workspace
 ```
 Observed:
-- Pass with `PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1`
-- Status: `PASSED`
+- Status: `PASSED` (compat flag khi cần)
 - Mapping issue: `W1-ISS-006`
 
-### 3) Rust workspace check baseline (compat flag)
-Command:
-```bash
-cd rust && PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1 cargo check --workspace
-```
-Observed:
-- Check `PASSED`
-- Có warnings ở `market-data`, `execution-engine`, `signal-bridge`
-- Mapping issue: `W1-ISS-007` (warning cleanup backlog)
-
-### 4) Rust workspace test baseline (compat flag)
-Command:
+### 3) Rust workspace test baseline
 ```bash
 cd rust && PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1 cargo test --workspace -- --nocapture
 ```
 Observed:
-- `common` and `database` tests pass (22/22 for database)
 - Status: `PASSED`
 - Mapping issue: `W1-ISS-008`
 
-### 5) Health/observability baseline
-Command:
+### 4) Health/observability baseline
 ```bash
 bash scripts/health_check.sh
 ```
 Observed:
-- market-data, risk-manager, execution-engine, signal-bridge all `RUNNING`
 - Status: `PASSED`
 - Mapping issue: `W1-ISS-009`
 
@@ -60,15 +41,14 @@ Observed:
 
 | Group | Command set | Status | Notes |
 |---|---|---|---|
-| Python Unit | pytest single critical unit file | PASSED | 33/33 passing |
-| Rust Build | cargo check workspace | PASSED | using ABI3 forward flag |
-| Rust Test | cargo test workspace | PASSED | all crates passing |
-| Observability Smoke | health_check script | PASSED | 4 core services running |
-| Integration Smoke | signal->risk->execution runtime chain | PASSED | verified by health check |
+| Python Unit | pytest critical unit file | PASSED | baseline captured |
+| Rust Build | cargo check workspace | PASSED | compat path documented |
+| Rust Test | cargo test workspace | PASSED | crates pass in baseline |
+| Observability Smoke | health_check script | PASSED | core services reachable |
+| Integration Smoke | signal->risk->execution | PASSED | smoke evidence captured |
 
 ## Decision
-- Week 1 baseline has reached **GREEN** status.
-- All P0 blockers resolved. Ready for Week 2 kickoff.
+- W01 baseline đạt trạng thái `GREEN` cho gate khởi động W02.
 
 ---
-Last updated: 2026-04-14
+Last updated: W01 no-date mode sync

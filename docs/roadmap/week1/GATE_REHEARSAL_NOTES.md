@@ -1,24 +1,23 @@
-# Gate Rehearsal Notes - Week 1
+# Gate Rehearsal Notes - Week 1 (No-Date Mode)
 
 ## Checklist rehearsal
 
 | Gate item | Status | Evidence | Notes |
 |---|---|---|---|
-| KPI coverage đủ dữ liệu? | AMBER | KPI charter đã có, chưa full EOD data | cần 2-3 ngày thu thập liên tục |
-| Baseline test matrix lặp lại được? | AMBER | Baseline report v1 có command + output | còn blocker deps/env |
-| P0/P1 có owner + ETA? | AMBER | Issue register v1 | còn issue mới cần xác nhận owner cuối |
-| Interface spec đủ mở tuần 2? | GREEN | Interface draft v0 | đủ để bắt đầu contract audit |
+| KPI coverage đủ dữ liệu? | AMBER | KPI charter + EOD snapshots | cần duy trì liên tục |
+| Baseline matrix lặp lại được? | AMBER | baseline report v1 | còn dependency hygiene |
+| P0/P1 có owner + ETA? | AMBER | issue register v1 | cần soát owner cuối chu kỳ |
+| Interface spec đủ mở W02? | GREEN | interface draft v0 | đủ để bắt đầu contract audit |
 
-## Blocking conditions trước Go tuần 2
-1. `W1-ISS-001`: Python dependency blocker phải có fix path rõ.
-2. `W1-ISS-006`: PyO3/Python compat phải chốt chuẩn env chính thức.
-3. `W1-ISS-008`: Database test failure phải phân loại root-cause + risk.
-4. `W1-ISS-009`: Ít nhất 1 lần health check đầy đủ ở trạng thái service up.
+## Blocking conditions trước GO W02
+1. `W1-ISS-001`: dependency blocker có fix path rõ.
+2. `W1-ISS-006`: compatibility env chuẩn hóa.
+3. `W1-ISS-008`: database test risk có root-cause note.
+4. `W1-ISS-009`: có health check full-service up.
 
 ## Go/No-Go rehearsal outcome
-- Rehearsal status hiện### Result: 🟢 GO (Stable & Reproducible)
-- **Verified on**: 2026-04-23
-- **Evidence**: `logs/audit_20260423_093550.log`
+- Rehearsal status hiện tại: `GO có điều kiện`.
+- Evidence set: baseline report + issue register + observability draft.
 
 ---
-Last updated: 2026-04-14
+Last updated: W01 no-date mode sync

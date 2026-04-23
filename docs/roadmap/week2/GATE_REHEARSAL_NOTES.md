@@ -1,27 +1,25 @@
-# Gate Rehearsal Notes: Week 2 (Contract Audit)
+# Gate Rehearsal Notes: Week 2 (Contract Audit, No-Date Mode)
 
-**Status**: 🟢 GO (Week 3 Kickoff Approved)
+**Status**: `GO` (W03 Kickoff Approved)
 
-## 1. Prerequisites Check
+## 1) Prerequisites Check
 
 | Checkpoint | Status | Evidence |
 |---|---|---|
-| Contract Inventory Frozen | 🟢 | `CONTRACT_COMPATIBILITY_MATRIX_V1.md` |
-| Compatibility Policy Approved | 🟢 | `COMPATIBILITY_POLICY_V1.md` |
-| Interface Spec Delta Drafted | 🟢 | `INTERFACE_SPEC_DELTA_V1.md` |
-| Baseline Audit (Rerun) Pass | 🟢 | `scripts/contract_audit.sh` SUCCESS |
-| ABI3 Compatibility Drift Fixed | 🟢 | `rust/Cargo.toml` updated to `abi3-py312` |
+| Contract Inventory Frozen | GREEN | `CONTRACT_COMPATIBILITY_MATRIX_V1.md` |
+| Compatibility Policy Approved | GREEN | `COMPATIBILITY_POLICY_V1.md` |
+| Interface Spec Delta Drafted | GREEN | `INTERFACE_SPEC_DELTA_V1.md` |
+| Baseline Audit (Rerun) Pass | GREEN | `scripts/contract_audit.sh` |
+| Runtime Compatibility Drift Fixed | GREEN | `rust/Cargo.toml` + policy sync |
 
-## 2. Mismatch Mitigation (P0/P1)
+## 2) Mismatch Mitigation (P0/P1)
+- Signal (P0): rename + timestamp normalization path defined.
+- Risk (P0): struct expansion path defined.
+- Observability (P1): canonical `correlation_id` policy locked.
 
-- **Signal (P0)**: Mitigation plan defined in Interface Spec Delta (Rename `direction` -> `action`).
-- **Risk (P0)**: Mitigation plan defined (Expand struct to include `limit_snapshot`).
-- **Observability (P1)**: Mitigation plan defined (Unify `correlation_id` -> `trace_id`).
-
-## 3. Go/No-Go Decision
-
-- **Decision**: **GO**
-- **Justification**: 6/6 boundaries mapped, P0 mismatches have clear mitigation paths in the V1 Spec, and the workspace policy drift is resolved.
+## 3) Go/No-Go Decision
+- **Decision**: `GO`
+- **Justification**: boundary inventory đầy đủ, P0 có mitigation path rõ, runtime policy đã đồng bộ.
 
 ---
-**Date**: 2026-04-23
+Last updated: W02 no-date mode sync
