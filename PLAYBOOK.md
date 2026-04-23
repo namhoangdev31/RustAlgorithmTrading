@@ -1150,3 +1150,61 @@ Mỗi file có 3 phần:
 - Đây là playbook chi tiết ở mức file/type để onboarding và code navigation.
 - Khi tài liệu docs/* mâu thuẫn, ưu tiên code hiện tại + docs/DOCS_CANONICAL_MAP.md.
 - Khuyến nghị cập nhật playbook này khi thêm file/class mới ở src/ hoặc rust/*/src/.
+
+---
+
+## 6) Tracking file docs mới (ngoài src/rust)
+
+### docs/roadmap/EXECUTION_PLAN_24_WEEKS_2026-04-20_to_2026-10-04.md
+
+- Vai trò file: Lộ trình thực thi 24 tuần cho Balanced Delivery (stability, risk/execution, observability, controlled live rollout).
+- Class/Type trong file: Không có class/type (tài liệu kế hoạch triển khai).
+- Test liên quan: Không có test trực tiếp; dùng như execution baseline cho lựa chọn test theo từng tuần/phase gate.
+
+### docs/roadmap/WEEK1_OPERATIONS_PLAN_2026-04-20_to_2026-04-26.md
+
+- Vai trò file: Kế hoạch vận hành chi tiết tuần 1 với task theo ngày, checklist, issue register và mẫu báo cáo cuối tuần.
+- Class/Type trong file: Không có class/type (tài liệu điều phối vận hành).
+- Test liên quan: Không có test trực tiếp; dùng để kiểm soát baseline test/build/observability và issue governance tuần 1.
+
+### docs/roadmap/week1/KPI_CHARTER_V1.md
+
+- Vai trò file: Định nghĩa bộ KPI tuần 1 theo 5 nhóm Reliability, Trading quality, Risk, Engineering, Observability.
+- Class/Type trong file: Không có class/type (tài liệu KPI governance).
+- Test liên quan: Không có test trực tiếp; là nguồn tham chiếu cho weekly gate checklist và KPI board coverage.
+
+### docs/roadmap/week1/BASELINE_VALIDATION_REPORT_V1.md
+
+- Vai trò file: Báo cáo baseline test/build Python + Rust, trạng thái pass/fail và mapping issue theo blocker.
+- Class/Type trong file: Không có class/type (tài liệu validation/baseline evidence).
+- Test liên quan: Tham chiếu kết quả từ `python -m pytest ...`, `cargo check --workspace`, `cargo test --workspace`.
+
+### docs/roadmap/week1/OBSERVABILITY_BASELINE_SLO_DRAFT.md
+
+- Vai trò file: Chụp baseline observability (health/log/metrics) và draft SLO tạm thời tuần 1.
+- Class/Type trong file: Không có class/type (tài liệu vận hành observability).
+- Test liên quan: Tham chiếu health-check script và test observability/integration khi vào tuần 2.
+
+### docs/roadmap/week1/ISSUE_REGISTER_V1.md
+
+- Vai trò file: Sổ đăng ký issue tuần 1 chuẩn hóa theo severity, owner, due date, dependency và exit criteria.
+- Class/Type trong file: Không có class/type (tài liệu governance/triage).
+- Test liên quan: Không có test trực tiếp; map từng failure baseline sang issue có owner + ETA.
+
+### docs/roadmap/week1/INTERFACE_SPEC_DRAFT_V0.md
+
+- Vai trò file: Draft spec interface tuần 2-3 cho `schema_version`, `RiskDecision`, `ExecutionAck`, `ObservabilityEvent`.
+- Class/Type trong file: Không có class/type code; chỉ định nghĩa contract fields/acceptance ở mức spec.
+- Test liên quan: Làm đầu vào cho contract test và integration scenarios tuần 2-3.
+
+### docs/roadmap/week1/GATE_REHEARSAL_NOTES.md
+
+- Vai trò file: Ghi chú rehearsal Go/No-Go gate tuần 1, tổng hợp coverage/checklist và blocker còn mở.
+- Class/Type trong file: Không có class/type (tài liệu gate review).
+- Test liên quan: Không có test trực tiếp; xác nhận baseline rerunability và tình trạng issue ownership.
+
+### docs/roadmap/week1/WEEK1_FINAL_REPORT_AND_WEEK2_START_PACK.md
+
+- Vai trò file: Báo cáo tổng kết tuần 1 và gói khởi động tuần 2 (top priorities + điều kiện start day-1).
+- Class/Type trong file: Không có class/type (tài liệu weekly closeout + handoff).
+- Test liên quan: Tổng hợp bằng chứng từ baseline/test matrix và quyết định Go/No-Go tuần 2.

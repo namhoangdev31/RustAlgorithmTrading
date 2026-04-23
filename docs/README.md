@@ -8,6 +8,9 @@ Welcome to the comprehensive documentation for the py_rt (Python + Rust Trading)
 docs/
 ├── README.md                    # This file
 ├── index.md                     # Documentation home
+├── roadmap/                     # Strategic delivery plans
+│   ├── EXECUTION_PLAN_24_WEEKS_2026-04-20_to_2026-10-04.md
+│   └── WEEK1_OPERATIONS_PLAN_2026-04-20_to_2026-04-26.md
 ├── guides/                      # User guides and tutorials
 │   ├── quickstart.md           # 10-minute quick start
 │   ├── installation.md         # Detailed installation
@@ -53,6 +56,12 @@ docs/
 - [Quick Start Guide](guides/quickstart.md) - Get running in 10 minutes
 - [Installation Guide](guides/installation.md) - Detailed setup
 - [Configuration Guide](guides/configuration.md) - Configure the system
+
+### Planning & Roadmap
+
+- [Execution Plan 24 Weeks (2026-04-20 to 2026-10-04)](roadmap/EXECUTION_PLAN_24_WEEKS_2026-04-20_to_2026-10-04.md) - Weekly execution plan for balanced delivery
+- [Week 1 Operations Plan (2026-04-20 to 2026-04-26)](roadmap/WEEK1_OPERATIONS_PLAN_2026-04-20_to_2026-04-26.md) - Daily tasks, checklists, issue register, and week-end report template
+- [Week 1 Execution Pack](roadmap/week1/) - KPI charter, baseline report, SLO draft, issue register, gate notes, and final report template
 
 ### Development
 
@@ -147,4 +156,4 @@ Documentation is licensed under the same Apache License 2.0 as the code.
 
 ---
 
-**Version**: 0.1.0 | **Last Updated**: 2025-10-14
+**Version**: 0.1.3 | **Last Updated**: 2026-04-14

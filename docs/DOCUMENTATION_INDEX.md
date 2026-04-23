@@ -1,8 +1,8 @@
 # Documentation Index
 ## Rust Algorithmic Trading System - Complete Documentation Guide
 
-**Version**: 1.0.0
-**Last Updated**: October 21, 2025
+**Version**: 1.1.1
+**Last Updated**: April 14, 2026
 **Documentation Specialist**: Hive Mind Swarm Agent
 **Status**: Production Ready
 
@@ -26,6 +26,20 @@ This index provides a comprehensive guide to all production documentation for th
 - Primary: [Operations Runbook](#5-operations-documentation)
 - Emergency: [Disaster Recovery](#5-operations-documentation)
 - Troubleshooting: [Operations Runbook - Common Issues](#5-operations-documentation)
+
+### Strategic Roadmap (Recommended for Tech Leads)
+- **Execution Plan 24 Weeks (2026-04-20 to 2026-10-04)**
+- **Location**: `/docs/roadmap/EXECUTION_PLAN_24_WEEKS_2026-04-20_to_2026-10-04.md`
+- **Purpose**: Weekly execution roadmap with phase gates for balanced delivery (stability, risk/execution, observability, and controlled live rollout)
+- **Estimated Reading Time**: 20-30 minutes
+- **Week-1 Operations Plan (2026-04-20 to 2026-04-26)**
+- **Location**: `/docs/roadmap/WEEK1_OPERATIONS_PLAN_2026-04-20_to_2026-04-26.md`
+- **Purpose**: Daily operating tasks, issue triage, checklist, and end-of-week reporting package for Week 1 gate
+- **Estimated Reading Time**: 15-20 minutes
+- **Week-1 Execution Pack**
+- **Location**: `/docs/roadmap/week1/`
+- **Purpose**: Operational artifacts package (KPI charter, baseline validation, SLO draft, issue register, interface draft, gate notes, week-end report)
+- **Estimated Reading Time**: 30-40 minutes
 
 ---
 
@@ -493,6 +507,17 @@ This index provides a comprehensive guide to all production documentation for th
 
 ```
 docs/
+├── roadmap/
+│   ├── EXECUTION_PLAN_24_WEEKS_2026-04-20_to_2026-10-04.md
+│   └── WEEK1_OPERATIONS_PLAN_2026-04-20_to_2026-04-26.md
+│   └── week1/
+│       ├── KPI_CHARTER_V1.md
+│       ├── BASELINE_VALIDATION_REPORT_V1.md
+│       ├── OBSERVABILITY_BASELINE_SLO_DRAFT.md
+│       ├── ISSUE_REGISTER_V1.md
+│       ├── INTERFACE_SPEC_DRAFT_V0.md
+│       ├── GATE_REHEARSAL_NOTES.md
+│       └── WEEK1_FINAL_REPORT_AND_WEEK2_START_PACK.md
 ├── deployment/
 │   └── PRODUCTION_DEPLOYMENT.md          # Complete deployment guide
 ├── operations/
@@ -616,7 +641,10 @@ scripts/
 | **Alpaca Integration Guide** | ✅ Complete | 2025-10-21 | 1.0.0 |
 | **System Architecture** | ✅ Complete | 2025-10-21 | 1.0.0 |
 | **Disaster Recovery Plan** | ✅ Complete | 2025-10-21 | 1.0.0 |
-| **Documentation Index** | ✅ Complete | 2025-10-21 | 1.0.0 |
+| **Documentation Index** | ✅ Complete | 2026-04-14 | 1.1.0 |
+| **Execution Plan 24 Weeks** | ✅ Complete | 2026-04-14 | 1.0.0 |
+| **Week 1 Operations Plan** | ✅ Complete | 2026-04-14 | 1.0.0 |
+| **Week 1 Execution Pack** | ✅ Complete | 2026-04-14 | 1.0.0 |
 | Performance Analysis | ✅ Complete | 2025-10-21 | 1.0.0 |
 | Security Audit Report | ✅ Complete | 2025-10-21 | 1.0.0 |
 | Production Readiness Report | ✅ Complete | 2025-10-21 | 1.0.0 |
@@ -645,7 +673,7 @@ This documentation suite provides comprehensive coverage for deploying and opera
 
 ---
 
-**Document Index Version**: 1.0.0
+**Document Index Version**: 1.1.1
 **Created**: October 21, 2025
 **Maintained By**: Documentation Specialist Agent (Hive Mind Swarm)
 **Status**: Production Ready ✅

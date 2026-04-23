@@ -272,6 +272,46 @@ Nhóm tài liệu quan trọng:
 - Testing: `tests/docs/COMPREHENSIVE_TESTING_STRATEGY.md`
 - Research context: `medium/*.md`
 
+## Lộ Trình Thực Thi 24 Tuần (04/2026-10/2026)
+
+Kế hoạch theo tuần đã được chốt và đặt tại:
+
+- [docs/roadmap/EXECUTION_PLAN_24_WEEKS_2026-04-20_to_2026-10-04.md](docs/roadmap/EXECUTION_PLAN_24_WEEKS_2026-04-20_to_2026-10-04.md)
+- [docs/roadmap/WEEK1_OPERATIONS_PLAN_2026-04-20_to_2026-04-26.md](docs/roadmap/WEEK1_OPERATIONS_PLAN_2026-04-20_to_2026-04-26.md)
+- [docs/roadmap/week1/](docs/roadmap/week1/) (Execution Pack tuần 1)
+
+Execution Pack tuần 1 gồm các artifact đã triển khai:
+
+- `KPI_CHARTER_V1.md`
+- `BASELINE_VALIDATION_REPORT_V1.md`
+- `OBSERVABILITY_BASELINE_SLO_DRAFT.md`
+- `ISSUE_REGISTER_V1.md`
+- `INTERFACE_SPEC_DRAFT_V0.md`
+- `GATE_REHEARSAL_NOTES.md`
+- `WEEK1_FINAL_REPORT_AND_WEEK2_START_PACK.md`
+
+Tóm tắt 6 phase:
+
+1. Tuần 1-4: baseline KPI + contract audit + integration stabilization.
+2. Tuần 5-8: risk limits, stop-loss coherence, circuit breaker, retry/slippage.
+3. Tuần 9-12: observability schema, API health/SLO, incident runbook, ops gate.
+4. Tuần 13-16: strategy governance, portfolio controls, capital allocation, reproducibility.
+5. Tuần 17-20: staging hardening, canary design, safety guardrails, canary launch.
+6. Tuần 21-24: canary tuning, scale readiness, reliability hardening, quarter closeout.
+
+Chuẩn thực thi xuyên suốt:
+
+- Doc -> Code -> Test.
+- Weekly exit criteria.
+- Phase gate 4 tuần với quyết định Go/No-Go.
+
+Tuần 1 có plan chi tiết vận hành theo ngày, gồm:
+
+- Task board `W1-T01..W1-T18`
+- Checklist hằng ngày và checklist cuối tuần
+- Issue register `W1-ISS-001..W1-ISS-005` có owner/due
+- Mẫu báo cáo `Week-1 Final Report` để chốt Go/No-Go tuần 2
+
 ## Bản Đồ Doc -> Code Path Thực Tế
 
 Section này đóng vai trò "navigator" khi bạn đọc doc và cần đi thẳng vào code đúng chỗ.
