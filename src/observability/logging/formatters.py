@@ -76,6 +76,10 @@ class JSONFormatter(logging.Formatter):
         if extra_fields:
             log_data['extra'] = extra_fields
 
+        # Add schema version if present
+        if hasattr(record, 'schema_version'):
+            log_data['schema_version'] = record.schema_version
+
         # Add exception info if present
         if record.exc_info and self.include_exc_info:
             log_data['exception'] = {
@@ -95,7 +99,7 @@ class JSONFormatter(logging.Formatter):
             'message', 'pathname', 'process', 'processName',
             'relativeCreated', 'thread', 'threadName', 'exc_info',
             'exc_text', 'stack_info', 'correlation_id', 'logger_name',
-            'timestamp'
+            'timestamp', 'schema_version'
         }
 
         extra = {}
@@ -164,9 +168,14 @@ class StructuredFormatter(logging.Formatter):
         if hasattr(record, 'correlation_id'):
             correlation_id = f"[{record.correlation_id}]"
 
+        # Format schema version if present
+        schema_info = ""
+        if hasattr(record, 'schema_version'):
+            schema_info = f"[{record.schema_version}]"
+
         # Main log line
         main_line = (
-            f"[{timestamp}] {level} {logger_name} {correlation_id} "
+            f"[{timestamp}] {level} {logger_name} {correlation_id}{schema_info} "
             f"{record.getMessage()}"
         )
 
@@ -194,7 +203,7 @@ class StructuredFormatter(logging.Formatter):
             'message', 'pathname', 'process', 'processName',
             'relativeCreated', 'thread', 'threadName', 'exc_info',
             'exc_text', 'stack_info', 'correlation_id', 'logger_name',
-            'timestamp'
+            'timestamp', 'schema_version'
         }
 
         extra = {}
@@ -223,5 +232,8 @@ class CompactJSONFormatter(JSONFormatter):
 
         if hasattr(record, 'correlation_id'):
             log_data['cid'] = record.correlation_id
+
+        if hasattr(record, 'schema_version'):
+            log_data['v'] = record.schema_version
 
         return log_data

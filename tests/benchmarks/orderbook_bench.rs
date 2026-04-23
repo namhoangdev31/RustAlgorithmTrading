@@ -43,7 +43,7 @@ fn create_order(quantity: f64) -> Order {
         client_order_id: "client_order".to_string(),
         symbol: Symbol("AAPL".to_string()),
         side: Side::Bid,
-        order_type: OrderType::Limit,
+        order_type: OrderType::Market,
         quantity: Quantity(quantity),
         price: Some(Price(100.0)),
         stop_price: None,
@@ -64,7 +64,13 @@ fn bench_orderbook_update(c: &mut Criterion) {
             let orderbook = create_orderbook(depth);
 
             b.iter(|| {
-                manager.update(black_box(orderbook.clone()));
+                let symbol = &orderbook.symbol.0;
+                for level in &orderbook.bids {
+                    manager.update_bid(symbol, level.price, level.quantity);
+                }
+                for level in &orderbook.asks {
+                    manager.update_ask(symbol, level.price, level.quantity);
+                }
             });
         });
     }
@@ -74,8 +80,8 @@ fn bench_orderbook_update(c: &mut Criterion) {
 
 fn bench_orderbook_retrieval(c: &mut Criterion) {
     let mut manager = OrderBookManager::new();
-    let orderbook = create_orderbook(100);
-    manager.update(orderbook);
+    let symbol = "AAPL";
+    manager.update_bid(symbol, Price(100.0), Quantity(10.0));
 
     c.bench_function("orderbook_get", |b| {
         b.iter(|| {
@@ -114,17 +120,11 @@ fn bench_multiple_orderbook_updates(c: &mut Criterion) {
     for num_symbols in [5, 10, 20, 50].iter() {
         group.bench_with_input(BenchmarkId::from_parameter(num_symbols), num_symbols, |b, &num_symbols| {
             let mut manager = OrderBookManager::new();
-            let orderbooks: Vec<_> = (0..num_symbols)
-                .map(|i| {
-                    let mut book = create_orderbook(100);
-                    book.symbol = Symbol(format!("SYM{}", i));
-                    book
-                })
-                .collect();
+            let symbols: Vec<String> = (0..num_symbols).map(|i| format!("SYM{}", i)).collect();
 
             b.iter(|| {
-                for book in &orderbooks {
-                    manager.update(black_box(book.clone()));
+                for symbol in &symbols {
+                    manager.update_bid(symbol, Price(100.0), Quantity(10.0));
                 }
             });
         });

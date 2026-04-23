@@ -30,6 +30,7 @@ mod error_handling_tests {
             rate_limit_per_second: 10,
             retry_attempts: 3,
             retry_delay_ms: 1000,
+            max_slippage_bps: 50.0,
         };
 
         let result = OrderRouter::new(config);
@@ -53,6 +54,7 @@ mod error_handling_tests {
             rate_limit_per_second: 10,
             retry_attempts: 3,
             retry_delay_ms: 1000,
+            max_slippage_bps: 50.0,
         };
 
         let result = OrderRouter::new(config);
@@ -76,6 +78,7 @@ mod error_handling_tests {
             rate_limit_per_second: 0, // Invalid: zero rate limit
             retry_attempts: 3,
             retry_delay_ms: 1000,
+            max_slippage_bps: 50.0,
         };
 
         let result = OrderRouter::new(config);
@@ -99,6 +102,7 @@ mod error_handling_tests {
             rate_limit_per_second: 10,
             retry_attempts: 3,
             retry_delay_ms: 1000,
+            max_slippage_bps: 50.0,
         };
 
         let router = OrderRouter::new(config).unwrap();
@@ -142,6 +146,7 @@ mod error_handling_tests {
             rate_limit_per_second: 10,
             retry_attempts: 3,
             retry_delay_ms: 1000,
+            max_slippage_bps: 50.0,
         };
 
         let result = OrderRouter::new(config);
@@ -333,6 +338,7 @@ mod error_handling_tests {
             rate_limit_per_second: 10,
             retry_attempts: 3,
             retry_delay_ms: 1000,
+            max_slippage_bps: 50.0,
         };
 
         let router = OrderRouter::new(config);
@@ -352,6 +358,7 @@ mod error_handling_tests {
             rate_limit_per_second: 2, // Very low limit for testing
             retry_attempts: 3,
             retry_delay_ms: 100,
+            max_slippage_bps: 50.0,
         };
 
         let router = OrderRouter::new(config).unwrap();
@@ -397,6 +404,7 @@ mod error_handling_tests {
             rate_limit_per_second: 10,
             retry_attempts: 3,
             retry_delay_ms: 100,
+            max_slippage_bps: 50.0,
         };
 
         let router = OrderRouter::new(config).unwrap();

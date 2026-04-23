@@ -1,6 +1,6 @@
 /// Comprehensive tests for OrderBook implementation
 use market_data::orderbook::OrderBookManager;
-use common::types::{PriceLevel, OrderBook};
+use common::types::{Price, Quantity, Symbol};
 
 #[cfg(test)]
 mod orderbook_manager_tests {
@@ -10,304 +10,137 @@ mod orderbook_manager_tests {
     fn test_orderbook_manager_creation() {
         let manager = OrderBookManager::new();
         // Manager should be created successfully
-        // This is a basic smoke test
         drop(manager);
     }
 
     #[test]
     fn test_add_bid_level() {
         let mut manager = OrderBookManager::new();
-        let symbol = "AAPL".to_string();
+        let symbol = "AAPL";
 
         // Add bid level at $150.00 with 1000 shares
-        let level = PriceLevel {
-            price: 150.00,
-            volume: 1000,
-        };
-
-        // This test assumes the OrderBookManager has methods to add levels
-        // Adjust based on actual implementation
-        // manager.add_bid(&symbol, level);
+        manager.update_bid(symbol, Price(150.00), Quantity(1000.0));
+        
+        let book = manager.get_snapshot(symbol, 1).unwrap();
+        assert_eq!(book.bids.len(), 1);
+        assert_eq!(book.bids[0].price, Price(150.00));
+        assert_eq!(book.bids[0].quantity, Quantity(1000.0));
     }
 
     #[test]
     fn test_add_ask_level() {
         let mut manager = OrderBookManager::new();
-        let symbol = "TSLA".to_string();
+        let symbol = "TSLA";
 
-        let level = PriceLevel {
-            price: 250.50,
-            volume: 500,
-        };
-
-        // manager.add_ask(&symbol, level);
+        manager.update_ask(symbol, Price(250.50), Quantity(500.0));
+        
+        let book = manager.get_snapshot(symbol, 1).unwrap();
+        assert_eq!(book.asks.len(), 1);
+        assert_eq!(book.asks[0].price, Price(250.50));
     }
 
     #[test]
     fn test_bid_ask_spread() {
         let mut manager = OrderBookManager::new();
-        let symbol = "NVDA".to_string();
+        let symbol = "NVDA";
 
-        let bid = PriceLevel {
-            price: 450.00,
-            volume: 2000,
-        };
+        manager.update_bid(symbol, Price(450.00), Quantity(2000.0));
+        manager.update_ask(symbol, Price(450.50), Quantity(1500.0));
 
-        let ask = PriceLevel {
-            price: 450.50,
-            volume: 1500,
-        };
-
-        // manager.add_bid(&symbol, bid);
-        // manager.add_ask(&symbol, ask);
-
-        let expected_spread = 0.50;
-        // let actual_spread = manager.get_spread(&symbol).unwrap();
-        // assert_eq!(actual_spread, expected_spread);
+        let book = manager.get_or_create(symbol);
+        let spread = book.spread_bps().unwrap();
+        assert!((spread - 11.11).abs() < 0.01); // (0.5 / 450.25) * 10000
     }
 
     #[test]
     fn test_orderbook_depth() {
         let mut manager = OrderBookManager::new();
-        let symbol = "GOOG".to_string();
+        let symbol = "GOOG";
 
         // Add multiple bid levels
         for i in 0..10 {
-            let level = PriceLevel {
-                price: 2500.00 - (i as f64 * 0.10),
-                volume: 100 * (i + 1),
-            };
-            // manager.add_bid(&symbol, level);
+            manager.update_bid(symbol, Price(2500.00 - (i as f64 * 0.10)), Quantity(100.0 * (i + 1) as f64));
         }
 
         // Add multiple ask levels
         for i in 0..10 {
-            let level = PriceLevel {
-                price: 2500.50 + (i as f64 * 0.10),
-                volume: 100 * (i + 1),
-            };
-            // manager.add_ask(&symbol, level);
+            manager.update_ask(symbol, Price(2500.50 + (i as f64 * 0.10)), Quantity(100.0 * (i + 1) as f64));
         }
 
-        // let book = manager.get_orderbook(&symbol).unwrap();
-        // assert_eq!(book.bids.len(), 10);
-        // assert_eq!(book.asks.len(), 10);
+        let book = manager.get_snapshot(symbol, 10).unwrap();
+        assert_eq!(book.bids.len(), 10);
+        assert_eq!(book.asks.len(), 10);
     }
 
     #[test]
     fn test_update_existing_level() {
         let mut manager = OrderBookManager::new();
-        let symbol = "MSFT".to_string();
+        let symbol = "MSFT";
 
-        let initial = PriceLevel {
-            price: 300.00,
-            volume: 1000,
-        };
+        manager.update_bid(symbol, Price(300.00), Quantity(1000.0));
+        manager.update_bid(symbol, Price(300.00), Quantity(1500.0));
 
-        let updated = PriceLevel {
-            price: 300.00,
-            volume: 1500,
-        };
-
-        // manager.add_bid(&symbol, initial);
-        // manager.update_bid(&symbol, updated);
-
-        // let book = manager.get_orderbook(&symbol).unwrap();
-        // let level = book.bids.iter().find(|b| b.price == 300.00).unwrap();
-        // assert_eq!(level.volume, 1500);
+        let book = manager.get_snapshot(symbol, 1).unwrap();
+        assert_eq!(book.bids[0].quantity, Quantity(1500.0));
     }
 
     #[test]
     fn test_remove_level() {
         let mut manager = OrderBookManager::new();
-        let symbol = "AMZN".to_string();
+        let symbol = "AMZN";
 
-        let level = PriceLevel {
-            price: 150.00,
-            volume: 500,
-        };
+        manager.update_bid(symbol, Price(150.00), Quantity(500.0));
+        manager.update_bid(symbol, Price(150.00), Quantity(0.0));
 
-        // manager.add_bid(&symbol, level);
-        // manager.remove_bid(&symbol, 150.00);
-
-        // let book = manager.get_orderbook(&symbol).unwrap();
-        // assert!(book.bids.is_empty());
+        let book = manager.get_snapshot(symbol, 1).unwrap();
+        assert!(book.bids.is_empty());
     }
 
     #[test]
-    fn test_best_bid() {
+    fn test_best_bid_ask() {
         let mut manager = OrderBookManager::new();
-        let symbol = "META".to_string();
+        let symbol = "META";
 
-        let bids = vec![
-            PriceLevel { price: 345.00, volume: 100 },
-            PriceLevel { price: 346.00, volume: 200 },
-            PriceLevel { price: 344.00, volume: 300 },
-        ];
+        manager.update_bid(symbol, Price(345.00), Quantity(100.0));
+        manager.update_bid(symbol, Price(346.00), Quantity(200.0));
+        manager.update_bid(symbol, Price(344.00), Quantity(300.0));
 
-        // for bid in bids {
-        //     manager.add_bid(&symbol, bid);
-        // }
+        {
+            let book = manager.get_or_create(symbol);
+            assert_eq!(book.best_bid(), Some(Price(346.00)));
+        }
 
-        // let best = manager.get_best_bid(&symbol).unwrap();
-        // assert_eq!(best.price, 346.00);
-    }
-
-    #[test]
-    fn test_best_ask() {
-        let mut manager = OrderBookManager::new();
-        let symbol = "AMD".to_string();
-
-        let asks = vec![
-            PriceLevel { price: 120.50, volume: 100 },
-            PriceLevel { price: 120.00, volume: 200 },
-            PriceLevel { price: 121.00, volume: 300 },
-        ];
-
-        // for ask in asks {
-        //     manager.add_ask(&symbol, ask);
-        // }
-
-        // let best = manager.get_best_ask(&symbol).unwrap();
-        // assert_eq!(best.price, 120.00);
+        manager.update_ask(symbol, Price(347.00), Quantity(100.0));
+        manager.update_ask(symbol, Price(346.50), Quantity(200.0));
+        
+        {
+            let book = manager.get_or_create(symbol);
+            assert_eq!(book.best_ask(), Some(Price(346.50)));
+        }
     }
 
     #[test]
     fn test_mid_price() {
         let mut manager = OrderBookManager::new();
-        let symbol = "NFLX".to_string();
+        let symbol = "NFLX";
 
-        let bid = PriceLevel { price: 400.00, volume: 100 };
-        let ask = PriceLevel { price: 402.00, volume: 100 };
+        manager.update_bid(symbol, Price(400.00), Quantity(100.0));
+        manager.update_ask(symbol, Price(402.00), Quantity(100.0));
 
-        // manager.add_bid(&symbol, bid);
-        // manager.add_ask(&symbol, ask);
-
-        // let mid = manager.get_mid_price(&symbol).unwrap();
-        // assert_eq!(mid, 401.00);
+        let book = manager.get_or_create(symbol);
+        assert_eq!(book.mid_price(), Some(Price(401.00)));
     }
 
     #[test]
-    fn test_empty_orderbook() {
-        let manager = OrderBookManager::new();
-        let symbol = "EMPTY".to_string();
-
-        // let book = manager.get_orderbook(&symbol);
-        // assert!(book.is_none() || book.unwrap().bids.is_empty());
-    }
-
-    #[test]
-    fn test_crossed_market() {
-        // Test for invalid state where bid > ask
+    fn test_cross_imbalance() {
         let mut manager = OrderBookManager::new();
-        let symbol = "CROSSED".to_string();
+        let symbol = "IMB";
 
-        let bid = PriceLevel { price: 100.50, volume: 100 };
-        let ask = PriceLevel { price: 100.00, volume: 100 };
+        manager.update_bid(symbol, Price(100.0), Quantity(300.0));
+        manager.update_ask(symbol, Price(101.0), Quantity(100.0));
 
-        // manager.add_bid(&symbol, bid);
-        // manager.add_ask(&symbol, ask);
-
-        // This should be detected as an error or handled
-        // assert!(manager.is_crossed(&symbol));
-    }
-}
-
-#[cfg(test)]
-mod orderbook_performance_tests {
-    use super::*;
-
-    #[test]
-    fn test_high_frequency_updates() {
-        let mut manager = OrderBookManager::new();
-        let symbol = "HFT_TEST".to_string();
-
-        // Simulate 10,000 rapid updates
-        for i in 0..10_000 {
-            let level = PriceLevel {
-                price: 100.00 + (i as f64 * 0.01),
-                volume: 100,
-            };
-            // manager.add_bid(&symbol, level);
-        }
-
-        // Orderbook should handle high-frequency updates efficiently
-    }
-
-    #[test]
-    fn test_large_orderbook() {
-        let mut manager = OrderBookManager::new();
-        let symbol = "DEEP".to_string();
-
-        // Add 1000 levels on each side
-        for i in 0..1000 {
-            let bid = PriceLevel {
-                price: 1000.00 - (i as f64 * 0.01),
-                volume: 100,
-            };
-            let ask = PriceLevel {
-                price: 1001.00 + (i as f64 * 0.01),
-                volume: 100,
-            };
-            // manager.add_bid(&symbol, bid);
-            // manager.add_ask(&symbol, ask);
-        }
-
-        // Should handle large orderbooks efficiently
-    }
-}
-
-#[cfg(test)]
-mod orderbook_edge_cases {
-    use super::*;
-
-    #[test]
-    fn test_zero_volume_level() {
-        let level = PriceLevel {
-            price: 100.00,
-            volume: 0,
-        };
-
-        // Zero volume might be used to remove a level
-        assert_eq!(level.volume, 0);
-    }
-
-    #[test]
-    fn test_very_small_spread() {
-        let bid = PriceLevel { price: 100.000, volume: 100 };
-        let ask = PriceLevel { price: 100.001, volume: 100 };
-
-        let spread = ask.price - bid.price;
-        assert!(spread < 0.01);
-    }
-
-    #[test]
-    fn test_very_large_volume() {
-        let level = PriceLevel {
-            price: 100.00,
-            volume: u64::MAX,
-        };
-
-        assert_eq!(level.volume, u64::MAX);
-    }
-
-    #[test]
-    fn test_fractional_prices() {
-        let level = PriceLevel {
-            price: 123.456789,
-            volume: 100,
-        };
-
-        assert_eq!(level.price, 123.456789);
-    }
-
-    #[test]
-    fn test_negative_spread() {
-        // Locked or crossed market
-        let bid = PriceLevel { price: 100.50, volume: 100 };
-        let ask = PriceLevel { price: 100.50, volume: 100 };
-
-        let spread = ask.price - bid.price;
-        assert_eq!(spread, 0.0);
+        let book = manager.get_or_create(symbol);
+        let imbalance = book.imbalance(1);
+        assert!((imbalance - 0.5).abs() < 0.01);
     }
 }

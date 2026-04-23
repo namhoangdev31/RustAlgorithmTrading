@@ -125,8 +125,8 @@ mod observability_integration_tests {
         // Query last hour
         let recent_metrics = db.get_metrics(
             "order_latency_ms",
+            None,
             Some(hour_ago),
-            Some(now),
             10
         ).await.unwrap();
 
@@ -239,7 +239,7 @@ mod observability_integration_tests {
         }
 
         // Query recent events
-        let recent_events = db.get_events(None, None, 10).await;
+        let recent_events = db.get_events(None, 10).await;
         assert!(recent_events.is_ok());
         assert_eq!(recent_events.unwrap().len(), 3);
 
@@ -362,7 +362,7 @@ mod observability_integration_tests {
         for symbol in &["AAPL", "MSFT", "GOOGL"] {
             for i in 0..5 {
                 let metric = MetricRecord::new("test_metric", i as f64)
-                    .with_symbol(symbol);
+                    .with_symbol(*symbol);
                 db.insert_metric(&metric).await.expect("Insert failed");
             }
         }
@@ -387,10 +387,11 @@ mod observability_integration_tests {
         }
 
         // Get table stats
-        let stats = db.get_table_stats("metrics").await;
+        let stats = db.get_table_stats().await;
         assert!(stats.is_ok());
 
-        let table_stats = stats.unwrap();
+        let all_stats = stats.unwrap();
+        let table_stats = all_stats.iter().find(|s| s.table_name == "metrics").expect("Metrics table not found");
         assert_eq!(table_stats.table_name, "metrics");
         assert!(table_stats.row_count >= 100);
 
@@ -442,7 +443,7 @@ mod observability_integration_tests {
         db.insert_metric(&fill_metric).await.expect("Metric insert failed");
 
         // Verify all data stored
-        let events = db.get_events(None, None, 10).await.unwrap();
+        let events = db.get_events(None, 10).await.unwrap();
         assert!(events.len() >= 1);
 
         let metrics = db.get_metrics("order_submit_latency_ms", None, None, 10).await.unwrap();
@@ -500,7 +501,7 @@ mod observability_integration_tests {
         assert_eq!(alerts.len(), 2);
 
         // Verify alerts were logged
-        let events = db.get_events(None, None, 10).await.unwrap();
+        let events = db.get_events(None, 10).await.unwrap();
         let warning_events: Vec<_> = events.iter()
             .filter(|e| e.severity == "warning")
             .collect();

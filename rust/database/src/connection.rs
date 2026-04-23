@@ -244,6 +244,15 @@ impl DatabaseManager {
         rows.collect::<std::result::Result<Vec<_>, _>>()
             .map_err(DatabaseError::from)
     }
+    /// Get metrics for a specific symbol
+    pub async fn get_metrics_by_symbol(
+        &self,
+        metric_name: &str,
+        symbol: &str,
+        limit: i64,
+    ) -> Result<Vec<MetricRecord>> {
+        self.get_metrics(metric_name, Some(symbol), None, limit).await
+    }
 
     /// Insert a candle record
     pub async fn insert_candle(&self, candle: &CandleRecord) -> Result<()> {
@@ -326,8 +335,78 @@ impl DatabaseManager {
             .map_err(DatabaseError::from)
     }
 
+    /// Insert a trade record
+    pub async fn insert_trade(&self, trade: &TradeRecord) -> Result<()> {
+        let conn = self.get_connection()?;
+
+        conn.execute(
+            "INSERT INTO trading_trades (trade_id, order_id, symbol, side, quantity, price, timestamp, commission, trade_value, liquidity) \
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            duckdb::params![
+                &trade.trade_id,
+                &trade.order_id,
+                &trade.symbol,
+                &trade.side,
+                trade.quantity,
+                trade.price,
+                trade.timestamp.to_rfc3339(),
+                trade.commission,
+                trade.trade_value,
+                &trade.liquidity
+            ],
+        )?;
+
+        metrics::counter!("database_trades_inserted_total").increment(1);
+        Ok(())
+    }
+
+    /// Get trades with filtering
+    pub async fn get_trades(
+        &self,
+        symbol: Option<&str>,
+        order_id: Option<&str>,
+        limit: i64,
+    ) -> Result<Vec<TradeRecord>> {
+        let conn = self.get_connection()?;
+        let mut query = "SELECT trade_id, order_id, symbol, side, quantity, price, timestamp, commission, trade_value, liquidity FROM trading_trades".to_string();
+        let mut filters = Vec::new();
+
+        if let Some(sym) = symbol {
+            filters.push(format!("symbol = '{}'", sym.replace('\'', "''")));
+        }
+        if let Some(oid) = order_id {
+            filters.push(format!("order_id = '{}'", oid.replace('\'', "''")));
+        }
+
+        if !filters.is_empty() {
+            query.push_str(" WHERE ");
+            query.push_str(&filters.join(" AND "));
+        }
+
+        query.push_str(&format!(" ORDER BY timestamp DESC LIMIT {}", limit));
+
+        let mut stmt = conn.prepare(&query)?;
+        let rows = stmt.query_map([], |row| {
+            Ok(TradeRecord {
+                trade_id: row.get(0)?,
+                order_id: row.get(1)?,
+                symbol: row.get(2)?,
+                side: row.get(3)?,
+                quantity: row.get(4)?,
+                price: row.get(5)?,
+                timestamp: row.get(6)?,
+                commission: row.get(7)?,
+                trade_value: row.get(8)?,
+                liquidity: row.get(9)?,
+            })
+        })?;
+
+        rows.collect::<std::result::Result<Vec<_>, _>>()
+            .map_err(DatabaseError::from)
+    }
+
     /// Log a system event
-    pub async fn log_event(&self, event: &SystemEvent) -> Result<()> {
+    pub async fn insert_event(&self, event: &SystemEvent) -> Result<()> {
         let conn = self.get_connection()?;
         let details_json = event
             .details
@@ -348,6 +427,38 @@ impl DatabaseManager {
 
         metrics::counter!("database_events_logged_total").increment(1);
         Ok(())
+    }
+
+    /// Alias for insert_event for backward compatibility or semantic logging
+    pub async fn log_event(&self, event: &SystemEvent) -> Result<()> {
+        self.insert_event(event).await
+    }
+
+    /// Get system events with filtering
+    pub async fn get_events(
+        &self,
+        severity: Option<&str>,
+        limit: i64,
+    ) -> Result<Vec<SystemEvent>> {
+        let conn = self.get_connection()?;
+        let query = QueryBuilder::new().select_events(severity, limit);
+
+        let mut stmt = conn.prepare(&query)?;
+        let rows = stmt.query_map([], |row| {
+            Ok(SystemEvent {
+                id: Some(row.get(0)?),
+                timestamp: row.get(1)?,
+                event_type: row.get(2)?,
+                severity: row.get(3)?,
+                message: row.get(4)?,
+                details: row
+                    .get::<_, Option<String>>(5)?
+                    .and_then(|s| serde_json::from_str(&s).ok()),
+            })
+        })?;
+
+        rows.collect::<std::result::Result<Vec<_>, _>>()
+            .map_err(DatabaseError::from)
     }
 
     /// Get database statistics

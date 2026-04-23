@@ -12,6 +12,7 @@ impl Schema {
         Self::create_metrics_table(conn)?;
         Self::create_candles_table(conn)?;
         Self::create_events_table(conn)?;
+        Self::create_trades_table(conn)?;
         Self::create_indexes(conn)?;
         Ok(())
     }
@@ -78,6 +79,29 @@ impl Schema {
         Ok(())
     }
 
+    /// Create trading_trades table
+    ///
+    /// Stores executed trade details.
+    fn create_trades_table(conn: &Connection) -> Result<()> {
+        conn.execute_batch(
+            "CREATE TABLE IF NOT EXISTS trading_trades (
+                trade_id VARCHAR PRIMARY KEY,
+                order_id VARCHAR NOT NULL,
+                symbol VARCHAR NOT NULL,
+                side VARCHAR NOT NULL,
+                quantity DOUBLE NOT NULL,
+                price DOUBLE NOT NULL,
+                timestamp TIMESTAMP NOT NULL,
+                commission DOUBLE NOT NULL,
+                trade_value DOUBLE NOT NULL,
+                liquidity VARCHAR
+            )",
+        )?;
+
+        tracing::debug!("Created trading_trades table");
+        Ok(())
+    }
+
     /// Create indexes for performance optimization
     fn create_indexes(conn: &Connection) -> Result<()> {
         // Metrics indexes
@@ -100,6 +124,12 @@ impl Schema {
             CREATE INDEX IF NOT EXISTS idx_events_type ON system_events(event_type);",
         )?;
 
+        // Trades indexes
+        conn.execute_batch(
+            "CREATE INDEX IF NOT EXISTS idx_trades_order_id ON trading_trades(order_id);
+            CREATE INDEX IF NOT EXISTS idx_trades_timestamp ON trading_trades(timestamp DESC);",
+        )?;
+
         tracing::debug!("Created database indexes");
         Ok(())
     }
@@ -111,7 +141,9 @@ impl Schema {
             "DROP TABLE IF EXISTS trading_metrics CASCADE;
             DROP TABLE IF EXISTS trading_candles CASCADE;
             DROP TABLE IF EXISTS system_events CASCADE;
-            DROP SEQUENCE IF EXISTS system_events_seq CASCADE;",
+            DROP TABLE IF EXISTS trading_trades CASCADE;
+            DROP SEQUENCE IF EXISTS system_events_seq CASCADE;
+            DROP SEQUENCE IF EXISTS metrics_seq CASCADE;",
         )?;
 
         tracing::warn!("Dropped all database tables");
@@ -121,7 +153,7 @@ impl Schema {
     /// Verify schema integrity
     pub fn verify(conn: &Connection) -> Result<()> {
         // Check if all tables exist
-        let tables = vec!["trading_metrics", "trading_candles", "system_events"];
+        let tables = vec!["trading_metrics", "trading_candles", "system_events", "trading_trades"];
 
         for table in tables {
             let mut stmt = conn.prepare(&format!(

@@ -32,6 +32,7 @@ mod performance_load_tests {
             rate_limit_per_second: 100, // High limit for throughput test
             retry_attempts: 3,
             retry_delay_ms: 1000,
+            max_slippage_bps: 50.0,
         };
 
         let router = Arc::new(OrderRouter::new(config).unwrap());
@@ -92,6 +93,7 @@ mod performance_load_tests {
             rate_limit_per_second: 50,
             retry_attempts: 3,
             retry_delay_ms: 1000,
+            max_slippage_bps: 50.0,
         };
 
         let router = Arc::new(OrderRouter::new(config).unwrap());
@@ -304,6 +306,7 @@ mod performance_load_tests {
             rate_limit_per_second: 50,
             retry_attempts: 3,
             retry_delay_ms: 1000,
+            max_slippage_bps: 50.0,
         };
 
         let router = OrderRouter::new(config).unwrap();
@@ -358,6 +361,7 @@ mod performance_load_tests {
             rate_limit_per_second: 10,
             retry_attempts: 3,
             retry_delay_ms: 1000,
+            max_slippage_bps: 50.0,
         };
 
         let router = Arc::new(OrderRouter::new(config).unwrap());
@@ -413,6 +417,7 @@ mod performance_load_tests {
             rate_limit_per_second: 100,
             retry_attempts: 3,
             retry_delay_ms: 1000,
+            max_slippage_bps: 50.0,
         };
 
         let router = Arc::new(OrderRouter::new(config).unwrap());

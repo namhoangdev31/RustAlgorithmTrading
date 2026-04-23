@@ -11,6 +11,7 @@ pub mod http;
 pub mod metrics;
 
 pub use types::*;
+pub use messaging::{Envelope, Message, ErrorPayload, SCHEMA_VERSION};
 pub use errors::{TradingError, Result};
 pub use health::{HealthCheck, HealthStatus, SystemHealth};
 pub use http::{create_health_router, start_health_server, HealthResponse};

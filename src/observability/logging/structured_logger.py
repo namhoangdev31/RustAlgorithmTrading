@@ -20,7 +20,7 @@ from .handlers import AsyncQueueHandler, RotatingFileHandlerAsync
 from ..config.logging_config import LoggingConfig
 
 # Context variable for correlation ID
-correlation_id_var: ContextVar[Optional[str]] = ContextVar('correlation_id', default=None)
+from .correlations import correlation_id_var
 
 # Global logger registry
 _logger_registry: Dict[str, 'StructuredLogger'] = {}
@@ -72,6 +72,9 @@ class LoggerMetrics:
             self._max_latency = 0.0
             self._min_latency = float('inf')
             self._error_count = 0
+
+
+SCHEMA_VERSION = "v1.0.0"
 
 
 class StructuredLogger:
@@ -151,6 +154,9 @@ class StructuredLogger:
         correlation_id = correlation_id_var.get()
         if correlation_id:
             context['correlation_id'] = correlation_id
+        
+        # Add schema version for One-pass traceability
+        context['schema_version'] = SCHEMA_VERSION
 
         # Add logger name
         context['logger_name'] = self.name

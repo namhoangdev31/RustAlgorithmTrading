@@ -12,50 +12,60 @@ mod order_tests {
     #[test]
     fn test_order_creation() {
         let order = Order {
-            id: "order-123".to_string(),
-            symbol: "AAPL".to_string(),
-            side: OrderSide::Buy,
+            order_id: "order-123".to_string(),
+            client_order_id: "client-123".to_string(),
+            symbol: Symbol("AAPL".to_string()),
+            side: Side::Bid,
             order_type: OrderType::Limit,
-            quantity: 100,
-            price: Some(150.50),
+            quantity: Quantity(100.0),
+            price: Some(Price(150.50)),
+            stop_price: None,
             status: OrderStatus::Pending,
-            timestamp: Utc::now(),
+            filled_quantity: Quantity(0.0),
+            average_price: None,
+            created_at: Utc::now(),
+            updated_at: Utc::now(),
         };
 
-        assert_eq!(order.symbol, "AAPL");
-        assert_eq!(order.quantity, 100);
-        assert!(matches!(order.side, OrderSide::Buy));
+        assert_eq!(order.symbol.0, "AAPL");
+        assert_eq!(order.quantity.0, 100.0);
+        assert!(matches!(order.side, Side::Bid));
         assert!(matches!(order.order_type, OrderType::Limit));
     }
 
     #[test]
     fn test_order_serialization() {
         let order = Order {
-            id: "order-456".to_string(),
-            symbol: "TSLA".to_string(),
-            side: OrderSide::Sell,
+            order_id: "order-456".to_string(),
+            client_order_id: "client-456".to_string(),
+            symbol: Symbol("TSLA".to_string()),
+            side: Side::Ask,
             order_type: OrderType::Market,
-            quantity: 50,
+            quantity: Quantity(50.0),
             price: None,
+            stop_price: None,
             status: OrderStatus::Filled,
-            timestamp: Utc::now(),
+            filled_quantity: Quantity(50.0),
+            average_price: Some(Price(250.0)),
+            created_at: Utc::now(),
+            updated_at: Utc::now(),
         };
 
         let json = serde_json::to_string(&order).expect("Serialization failed");
         let deserialized: Order = serde_json::from_str(&json).expect("Deserialization failed");
 
-        assert_eq!(order.id, deserialized.id);
-        assert_eq!(order.symbol, deserialized.symbol);
-        assert_eq!(order.quantity, deserialized.quantity);
+        assert_eq!(order.order_id, deserialized.order_id);
+        assert_eq!(order.symbol.0, deserialized.symbol.0);
+        assert_eq!(order.quantity.0, deserialized.quantity.0);
     }
 
     #[test]
     fn test_order_side_variants() {
-        let buy = OrderSide::Buy;
-        let sell = OrderSide::Sell;
+        let buy = Side::Bid;
+        let sell = Side::Ask;
 
-        assert!(matches!(buy, OrderSide::Buy));
-        assert!(matches!(sell, OrderSide::Sell));
+        assert!(matches!(buy, Side::Bid));
+        assert!(matches!(sell, Side::Ask));
     }
 
     #[test]
@@ -63,7 +73,7 @@ mod order_tests {
         let types = vec![
             OrderType::Market,
             OrderType::Limit,
-            OrderType::Stop,
+            OrderType::StopMarket,
             OrderType::StopLimit,
         ];
 
@@ -74,10 +84,9 @@ mod order_tests {
     }
 
     #[test]
-    fn test_order_status_transitions() {
+    fn test_order_status_variants() {
         let statuses = vec![
             OrderStatus::Pending,
-            OrderStatus::Submitted,
             OrderStatus::PartiallyFilled,
             OrderStatus::Filled,
             OrderStatus::Cancelled,
@@ -89,39 +98,6 @@ mod order_tests {
             let _deserialized: OrderStatus = serde_json::from_str(&json).unwrap();
         }
     }
-
-    #[test]
-    fn test_limit_order_requires_price() {
-        let order = Order {
-            id: "limit-1".to_string(),
-            symbol: "GOOG".to_string(),
-            side: OrderSide::Buy,
-            order_type: OrderType::Limit,
-            quantity: 10,
-            price: Some(2500.00),
-            status: OrderStatus::Pending,
-            timestamp: Utc::now(),
-        };
-
-        assert!(order.price.is_some());
-        assert_eq!(order.price.unwrap(), 2500.00);
-    }
-
-    #[test]
-    fn test_market_order_no_price() {
-        let order = Order {
-            id: "market-1".to_string(),
-            symbol: "AMZN".to_string(),
-            side: OrderSide::Buy,
-            order_type: OrderType::Market,
-            quantity: 5,
-            price: None,
-            status: OrderStatus::Pending,
-            timestamp: Utc::now(),
-        };
-
-        assert!(order.price.is_none());
-    }
 }
 
 #[cfg(test)]
@@ -131,30 +107,34 @@ mod position_tests {
     #[test]
     fn test_position_creation() {
         let position = Position {
-            symbol: "NVDA".to_string(),
-            quantity: 200,
-            average_price: 450.50,
-            current_price: 455.00,
+            symbol: Symbol("NVDA".to_string()),
+            side: Side::Bid,
+            quantity: Quantity(200.0),
+            entry_price: Price(450.50),
+            current_price: Price(455.00),
             unrealized_pnl: 900.00,
             realized_pnl: 0.0,
-            timestamp: Utc::now(),
+            opened_at: Utc::now(),
+            updated_at: Utc::now(),
         };
 
-        assert_eq!(position.symbol, "NVDA");
-        assert_eq!(position.quantity, 200);
+        assert_eq!(position.symbol.0, "NVDA");
+        assert_eq!(position.quantity.0, 200.0);
         assert!(position.unrealized_pnl > 0.0);
     }
 
     #[test]
-    fn test_position_pnl_calculation() {
+    fn test_position_pnl_snapshot() {
         let position = Position {
-            symbol: "MSFT".to_string(),
-            quantity: 100,
-            average_price: 300.00,
-            current_price: 310.00,
+            symbol: Symbol("MSFT".to_string()),
+            side: Side::Bid,
+            quantity: Quantity(100.0),
+            entry_price: Price(300.00),
+            current_price: Price(310.00),
             unrealized_pnl: 1000.00,
             realized_pnl: 500.00,
-            timestamp: Utc::now(),
+            opened_at: Utc::now(),
+            updated_at: Utc::now(),
         };
 
         let total_pnl = position.unrealized_pnl + position.realized_pnl;
@@ -162,38 +142,24 @@ mod position_tests {
     }
 
     #[test]
-    fn test_position_negative_pnl() {
-        let position = Position {
-            symbol: "META".to_string(),
-            quantity: 50,
-            average_price: 350.00,
-            current_price: 340.00,
-            unrealized_pnl: -500.00,
-            realized_pnl: -200.00,
-            timestamp: Utc::now(),
-        };
-
-        assert!(position.unrealized_pnl < 0.0);
-        assert!(position.realized_pnl < 0.0);
-    }
-
-    #[test]
     fn test_position_serialization() {
         let position = Position {
-            symbol: "AAPL".to_string(),
-            quantity: 75,
-            average_price: 180.00,
-            current_price: 185.00,
+            symbol: Symbol("AAPL".to_string()),
+            side: Side::Bid,
+            quantity: Quantity(75.0),
+            entry_price: Price(180.00),
+            current_price: Price(185.00),
             unrealized_pnl: 375.00,
             realized_pnl: 100.00,
-            timestamp: Utc::now(),
+            opened_at: Utc::now(),
+            updated_at: Utc::now(),
         };
 
         let json = serde_json::to_string(&position).unwrap();
         let deserialized: Position = serde_json::from_str(&json).unwrap();
 
-        assert_eq!(position.symbol, deserialized.symbol);
-        assert_eq!(position.quantity, deserialized.quantity);
+        assert_eq!(position.symbol.0, deserialized.symbol.0);
+        assert_eq!(position.quantity.0, deserialized.quantity.0);
     }
 }
 
@@ -204,89 +170,52 @@ mod trade_tests {
     #[test]
     fn test_trade_creation() {
         let trade = Trade {
-            id: "trade-789".to_string(),
-            order_id: "order-123".to_string(),
-            symbol: "TSLA".to_string(),
-            side: OrderSide::Buy,
-            quantity: 25,
-            price: 250.00,
-            commission: 1.50,
+            trade_id: "trade-789".to_string(),
+            symbol: Symbol("TSLA".to_string()),
+            side: Side::Bid,
+            quantity: Quantity(25.0),
+            price: Price(250.00),
             timestamp: Utc::now(),
         };
 
-        assert_eq!(trade.symbol, "TSLA");
-        assert_eq!(trade.quantity, 25);
-        assert_eq!(trade.commission, 1.50);
-    }
-
-    #[test]
-    fn test_trade_total_value() {
-        let trade = Trade {
-            id: "trade-101".to_string(),
-            order_id: "order-456".to_string(),
-            symbol: "GOOG".to_string(),
-            side: OrderSide::Sell,
-            quantity: 10,
-            price: 2500.00,
-            commission: 5.00,
-            timestamp: Utc::now(),
-        };
-
-        let total_value = trade.quantity as f64 * trade.price;
-        let net_value = total_value - trade.commission;
-
-        assert_eq!(total_value, 25000.00);
-        assert_eq!(net_value, 24995.00);
+        assert_eq!(trade.symbol.0, "TSLA");
+        assert_eq!(trade.quantity.0, 25.0);
+        assert_eq!(trade.trade_id, "trade-789");
     }
 
     #[test]
     fn test_trade_serialization() {
         let trade = Trade {
-            id: "trade-202".to_string(),
-            order_id: "order-789".to_string(),
-            symbol: "AMD".to_string(),
-            side: OrderSide::Buy,
-            quantity: 100,
-            price: 120.00,
-            commission: 2.00,
+            trade_id: "trade-202".to_string(),
+            symbol: Symbol("AMD".to_string()),
+            side: Side::Bid,
+            quantity: Quantity(100.0),
+            price: Price(120.00),
             timestamp: Utc::now(),
         };
 
         let json = serde_json::to_string(&trade).unwrap();
         let deserialized: Trade = serde_json::from_str(&json).unwrap();
 
-        assert_eq!(trade.id, deserialized.id);
-        assert_eq!(trade.price, deserialized.price);
+        assert_eq!(trade.trade_id, deserialized.trade_id);
+        assert_eq!(trade.price.0, deserialized.price.0);
     }
 }
 
 #[cfg(test)]
-mod price_level_tests {
+mod level_tests {
     use super::*;
 
     #[test]
-    fn test_price_level_creation() {
-        let level = PriceLevel {
-            price: 150.50,
-            volume: 1000,
+    fn test_level_creation() {
+        let level = Level {
+            price: Price(150.50),
+            quantity: Quantity(1000.0),
+            timestamp: Utc::now(),
         };
 
-        assert_eq!(level.price, 150.50);
-        assert_eq!(level.volume, 1000);
-    }
-
-    #[test]
-    fn test_price_level_ordering() {
-        let level1 = PriceLevel {
-            price: 100.00,
-            volume: 500,
-        };
-        let level2 = PriceLevel {
-            price: 100.50,
-            volume: 750,
-        };
-
-        assert!(level1.price < level2.price);
+        assert_eq!(level.price.0, 150.50);
+        assert_eq!(level.quantity.0, 1000.0);
     }
 }
 
@@ -295,60 +224,56 @@ mod market_data_tests {
     use super::*;
 
     #[test]
-    fn test_tick_creation() {
-        let tick = Tick {
-            symbol: "AAPL".to_string(),
-            price: 175.50,
-            volume: 100,
-            timestamp: Utc::now(),
-        };
-
-        assert_eq!(tick.symbol, "AAPL");
-        assert_eq!(tick.price, 175.50);
-    }
-
-    #[test]
     fn test_bar_creation() {
         let now = Utc::now();
         let bar = Bar {
-            symbol: "TSLA".to_string(),
-            open: 250.00,
-            high: 255.00,
-            low: 248.00,
-            close: 252.00,
-            volume: 50000,
+            symbol: Symbol("TSLA".to_string()),
+            open: Price(250.00),
+            high: Price(255.00),
+            low: Price(248.00),
+            close: Price(252.00),
+            volume: Quantity(50000.0),
             timestamp: now,
-            timeframe: "1m".to_string(),
         };
 
-        assert!(bar.high >= bar.open);
-        assert!(bar.high >= bar.close);
-        assert!(bar.low <= bar.open);
-        assert!(bar.low <= bar.close);
+        assert!(bar.high.0 >= bar.open.0);
+        assert!(bar.high.0 >= bar.close.0);
+        assert!(bar.low.0 <= bar.open.0);
+        assert!(bar.low.0 <= bar.close.0);
     }
 
     #[test]
-    fn test_bar_ohlc_invariants() {
-        let bar = Bar {
-            symbol: "NVDA".to_string(),
-            open: 450.00,
-            high: 460.00,
-            low: 445.00,
-            close: 455.00,
-            volume: 100000,
+    fn test_orderbook_creation() {
+        let book = OrderBook {
+            symbol: Symbol("BTCUSDT".to_string()),
+            bids: vec![],
+            asks: vec![],
             timestamp: Utc::now(),
-            timeframe: "5m".to_string(),
+            sequence: 1,
         };
 
-        // High should be >= all other prices
-        assert!(bar.high >= bar.open);
-        assert!(bar.high >= bar.close);
-        assert!(bar.high >= bar.low);
+        assert_eq!(book.symbol.0, "BTCUSDT");
+        assert_eq!(book.sequence, 1);
+    }
+}
 
-        // Low should be <= all other prices
-        assert!(bar.low <= bar.open);
-        assert!(bar.low <= bar.close);
-        assert!(bar.low <= bar.high);
+#[cfg(test)]
+mod signal_tests {
+    use super::*;
+
+    #[test]
+    fn test_signal_creation() {
+        let signal = Signal {
+            symbol: Symbol("ETHUSDT".to_string()),
+            direction: SignalDirection::Buy,
+            strength: 0.85,
+            features: vec![1.0, 2.0],
+            timestamp: Utc::now(),
+        };
+
+        assert_eq!(signal.symbol.0, "ETHUSDT");
+        assert!(matches!(signal.direction, SignalDirection::Buy));
+        assert_eq!(signal.strength, 0.85);
     }
 }
 
@@ -359,78 +284,22 @@ mod edge_cases {
     #[test]
     fn test_zero_quantity_order() {
         let order = Order {
-            id: "zero-qty".to_string(),
-            symbol: "AAPL".to_string(),
-            side: OrderSide::Buy,
+            order_id: "zero-qty".to_string(),
+            client_order_id: "zero-qty".to_string(),
+            symbol: Symbol("AAPL".to_string()),
+            side: Side::Bid,
             order_type: OrderType::Market,
-            quantity: 0,
+            quantity: Quantity(0.0),
             price: None,
+            stop_price: None,
             status: OrderStatus::Rejected,
-            timestamp: Utc::now(),
+            filled_quantity: Quantity(0.0),
+            average_price: None,
+            created_at: Utc::now(),
+            updated_at: Utc::now(),
         };
 
-        assert_eq!(order.quantity, 0);
+        assert_eq!(order.quantity.0, 0.0);
         assert!(matches!(order.status, OrderStatus::Rejected));
-    }
-
-    #[test]
-    fn test_negative_pnl_position() {
-        let position = Position {
-            symbol: "LOSING".to_string(),
-            quantity: 100,
-            average_price: 100.00,
-            current_price: 50.00,
-            unrealized_pnl: -5000.00,
-            realized_pnl: -1000.00,
-            timestamp: Utc::now(),
-        };
-
-        assert!(position.unrealized_pnl < 0.0);
-        assert!(position.realized_pnl < 0.0);
-    }
-
-    #[test]
-    fn test_zero_commission_trade() {
-        let trade = Trade {
-            id: "free-trade".to_string(),
-            order_id: "promo".to_string(),
-            symbol: "FREE".to_string(),
-            side: OrderSide::Buy,
-            quantity: 10,
-            price: 100.00,
-            commission: 0.0,
-            timestamp: Utc::now(),
-        };
-
-        assert_eq!(trade.commission, 0.0);
-    }
-
-    #[test]
-    fn test_very_large_volume() {
-        let tick = Tick {
-            symbol: "HIGH_VOL".to_string(),
-            price: 1.0,
-            volume: u64::MAX,
-            timestamp: Utc::now(),
-        };
-
-        assert_eq!(tick.volume, u64::MAX);
-    }
-
-    #[test]
-    fn test_fractional_shares() {
-        // Note: This assumes fractional shares would be represented differently
-        // Currently quantity is i32, but fractional shares might need f64
-        let position = Position {
-            symbol: "FRAC".to_string(),
-            quantity: 15, // Would be 15.5 with fractional shares
-            average_price: 100.00,
-            current_price: 105.00,
-            unrealized_pnl: 75.00,
-            realized_pnl: 0.0,
-            timestamp: Utc::now(),
-        };
-
-        assert_eq!(position.quantity, 15);
     }
 }

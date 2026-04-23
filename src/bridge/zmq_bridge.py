@@ -52,6 +52,10 @@ class Position:
     timestamp: int
 
 
+SCHEMA_VERSION = "v1.0.0"
+SCHEMA_STRICT_MODE = True  # Default to strict for W3 cutover
+
+
 class ZMQPublisher:
     """
     ZeroMQ publisher for sending messages to Rust components.
@@ -101,14 +105,28 @@ class ZMQPublisher:
             raise RuntimeError("Publisher not connected. Call connect() first.")
 
         try:
-            # Create message envelope matching Rust Message enum
+            # Create message envelope matching Rust Envelope struct (v1.0.0)
             from observability.logging.correlations import get_correlation_id
+            import datetime
+            
             cid = get_correlation_id()
+            if not cid:
+                import uuid
+                cid = str(uuid.uuid4())
+                logger.warning(f"No correlation_id found in context, generated new one: {cid}")
+
+            # Structured payload matching Rust Message enum
+            payload = {
+                "type": message_type.value,
+                "data": data
+            }
 
             envelope = {
-                "type": message_type.value,
-                "data": data,
-                "correlationId": cid
+                "schema_version": SCHEMA_VERSION,
+                "correlation_id": cid,
+                "event_type": message_type.value,
+                "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                "payload": payload
             }
 
             # Serialize to JSON
@@ -245,16 +263,46 @@ class ZMQSubscriber:
 
                 # Parse JSON
                 try:
-                    message = json.loads(json_str)
+                    envelope = json.loads(json_str)
                     
-                    # Extract correlation ID if present
+                    # Validate v1.0.0 Envelope
+                    version = envelope.get("schema_version")
+                    if version != SCHEMA_VERSION:
+                        error_msg = f"Schema mismatch: expected {SCHEMA_VERSION}, got {version}"
+                        if SCHEMA_STRICT_MODE:
+                            logger.error(f"STRICT_MODE REJECTION: {error_msg}")
+                            continue
+                        else:
+                            logger.warning(f"LAX_MODE WARNING: {error_msg}")
+                    
+                    # Extract correlation ID and set context
+                    cid = envelope.get("correlation_id")
                     from observability.logging.correlations import set_correlation_id
-                    cid = message.get("correlationId")
                     if cid:
                         set_correlation_id(cid)
+                    
+                    # Extract payload (Message enum variant)
+                    payload = envelope.get("payload", {})
+                    msg_type = payload.get("type", "Unknown")
+                    data = payload.get("data", {})
+
+                    # Normalization Layer: Handle legacy Signal formats and field names
+                    if msg_type == MessageType.SIGNAL_GENERATED.value:
+                        # Normalize direction: long/short/neutral -> Buy/Sell/Hold
+                        # Normalize field names: action/confidence -> direction/strength
+                        direction = data.get("direction", data.get("action"))
+                        if direction == "long": direction = "Buy"
+                        elif direction == "short": direction = "Sell"
+                        elif direction == "neutral": direction = "Hold"
+                        data["direction"] = direction
                         
-                    logger.debug(f"Received {message.get('type', 'Unknown')} on topic '{topic}'", correlation_id=cid)
-                    yield topic, message
+                        if "strength" not in data and "confidence" in data:
+                            data["strength"] = data.pop("confidence")
+                        
+                        payload["data"] = data
+
+                    logger.debug(f"Received {msg_type} on topic '{topic}'", correlation_id=cid)
+                    yield topic, payload
 
                 except json.JSONDecodeError as e:
                     logger.error(f"Failed to parse message JSON: {e}")
@@ -289,8 +337,21 @@ class ZMQSubscriber:
 
             if len(parts) == 2:
                 topic, json_str = parts
-                message = json.loads(json_str)
-                return topic, message
+                envelope = json.loads(json_str)
+                
+                # Validate v1.0.0 Envelope
+                version = envelope.get("schema_version")
+                if version != SCHEMA_VERSION:
+                    error_msg = f"Schema mismatch in receive_one: expected {SCHEMA_VERSION}, got {version}"
+                    if SCHEMA_STRICT_MODE:
+                        logger.error(f"STRICT_MODE REJECTION: {error_msg}")
+                        return None
+                    else:
+                        logger.warning(f"LAX_MODE WARNING: {error_msg}")
+                
+                # Payload extraction (simplified for receive_one)
+                payload = envelope.get("payload", {})
+                return topic, payload
 
             return None
 

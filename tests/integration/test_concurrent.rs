@@ -11,27 +11,27 @@ use tokio::task::JoinSet;
 use common::types::{Order, OrderStatus, OrderType, Price, Quantity, Side, Symbol};
 use chrono::Utc;
 
+fn create_test_order(id: usize, symbol: &str) -> Order {
+    Order {
+        order_id: format!("ord_{}", id),
+        client_order_id: format!("client_{}", id),
+        symbol: Symbol(symbol.to_string()),
+        side: Side::Bid,
+        order_type: OrderType::Market,
+        quantity: Quantity(100.0),
+        price: None,
+        stop_price: None,
+        status: OrderStatus::Pending,
+        filled_quantity: Quantity(0.0),
+        average_price: None,
+        created_at: Utc::now(),
+        updated_at: Utc::now(),
+    }
+}
+
 #[cfg(test)]
 mod concurrent_order_tests {
     use super::*;
-
-    fn create_test_order(id: usize, symbol: &str) -> Order {
-        Order {
-            order_id: format!("ord_{}", id),
-            client_order_id: format!("client_{}", id),
-            symbol: Symbol(symbol.to_string()),
-            side: Side::Bid,
-            order_type: OrderType::Market,
-            quantity: Quantity(100.0),
-            price: None,
-            stop_price: None,
-            status: OrderStatus::Pending,
-            filled_quantity: Quantity(0.0),
-            average_price: None,
-            created_at: Utc::now(),
-            updated_at: Utc::now(),
-        }
-    }
 
     #[tokio::test]
     async fn test_concurrent_order_creation() {

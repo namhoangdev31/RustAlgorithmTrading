@@ -55,14 +55,14 @@ mod integration_tests {
         // 1. Generate signal
         let signal = Signal {
             symbol: Symbol("AAPL".to_string()),
-            action: SignalAction::Buy,
-            confidence: 0.85,
+            direction: SignalDirection::Buy,
+            strength: 0.85,
             features: vec![1.0, 2.0, 3.0],
             timestamp: Utc::now(),
         };
 
-        assert_eq!(signal.action, SignalAction::Buy);
-        assert!(signal.confidence > 0.8);
+        assert_eq!(signal.direction, SignalDirection::Buy);
+        assert!(signal.strength > 0.8);
 
         // 2. Create order from signal
         let order = Order {
@@ -146,13 +146,13 @@ mod integration_tests {
         if should_buy {
             let signal = Signal {
                 symbol: bar.symbol.clone(),
-                action: SignalAction::Buy,
-                confidence: 0.7,
+                direction: SignalDirection::Buy,
+                strength: 0.7,
                 features: vec![bar.close.0, bar.volume.0],
                 timestamp: Utc::now(),
             };
 
-            assert_eq!(signal.action, SignalAction::Buy);
+            assert_eq!(signal.direction, SignalDirection::Buy);
             assert_eq!(signal.symbol, bar.symbol);
         }
 

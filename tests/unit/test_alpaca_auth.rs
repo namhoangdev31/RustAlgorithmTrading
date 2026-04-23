@@ -100,8 +100,8 @@ fn test_auth_response_with_extra_fields() {
 
 #[test]
 fn test_credential_validation_length() {
-    let valid_key = "PK" + &"A".repeat(18); // Typical Alpaca key format
-    let valid_secret = &"a".repeat(40); // Typical secret length
+    let valid_key = format!("PK{}", "A".repeat(18)); // Typical Alpaca key format
+    let valid_secret = "a".repeat(40); // Typical secret length
 
     assert!(valid_key.len() >= 20);
     assert!(valid_secret.len() >= 40);

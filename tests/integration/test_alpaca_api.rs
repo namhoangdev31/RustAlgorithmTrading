@@ -203,7 +203,7 @@ struct AlpacaPosition {
 
 impl AlpacaClient {
     /// Create new Alpaca client
-    fn new(config: AlpacaConfig) -> Result<Self, Box<dyn std::error::Error>> {
+    fn new(config: AlpacaConfig) -> Result<Self, Box<dyn std::error::Error + Send + Sync>> {
         let client = Client::builder()
             .timeout(std::time::Duration::from_secs(config.timeout_secs))
             .build()?;
@@ -234,7 +234,7 @@ impl AlpacaClient {
     async fn execute_with_retry<T>(
         &self,
         request_fn: impl Fn() -> reqwest::RequestBuilder,
-    ) -> Result<T, Box<dyn std::error::Error>>
+    ) -> Result<T, Box<dyn std::error::Error + Send + Sync>>
     where
         T: serde::de::DeserializeOwned,
     {
@@ -304,7 +304,7 @@ impl AlpacaClient {
     }
 
     /// Get account information
-    async fn get_account(&self) -> Result<AlpacaAccount, Box<dyn std::error::Error>> {
+    async fn get_account(&self) -> Result<AlpacaAccount, Box<dyn std::error::Error + Send + Sync>> {
         if !self.should_allow_request() {
             return Err("Circuit breaker is open".into());
         }
@@ -325,7 +325,7 @@ impl AlpacaClient {
         timeframe: &str,
         start: DateTime<Utc>,
         end: DateTime<Utc>,
-    ) -> Result<Vec<Bar>, Box<dyn std::error::Error>> {
+    ) -> Result<Vec<Bar>, Box<dyn std::error::Error + Send + Sync>> {
         if !self.should_allow_request() {
             return Err("Circuit breaker is open".into());
         }
@@ -367,7 +367,7 @@ impl AlpacaClient {
     }
 
     /// Get latest quote
-    async fn get_latest_quote(&self, symbol: &str) -> Result<AlpacaQuote, Box<dyn std::error::Error>> {
+    async fn get_latest_quote(&self, symbol: &str) -> Result<AlpacaQuote, Box<dyn std::error::Error + Send + Sync>> {
         if !self.should_allow_request() {
             return Err("Circuit breaker is open".into());
         }
@@ -382,7 +382,7 @@ impl AlpacaClient {
     }
 
     /// Get latest trade
-    async fn get_latest_trade(&self, symbol: &str) -> Result<AlpacaTrade, Box<dyn std::error::Error>> {
+    async fn get_latest_trade(&self, symbol: &str) -> Result<AlpacaTrade, Box<dyn std::error::Error + Send + Sync>> {
         if !self.should_allow_request() {
             return Err("Circuit breaker is open".into());
         }
@@ -400,7 +400,7 @@ impl AlpacaClient {
     async fn place_order(
         &self,
         order_req: AlpacaOrderRequest,
-    ) -> Result<AlpacaOrderResponse, Box<dyn std::error::Error>> {
+    ) -> Result<AlpacaOrderResponse, Box<dyn std::error::Error + Send + Sync>> {
         if !self.should_allow_request() {
             return Err("Circuit breaker is open".into());
         }
@@ -416,7 +416,7 @@ impl AlpacaClient {
     }
 
     /// Get order by ID
-    async fn get_order(&self, order_id: &str) -> Result<AlpacaOrderResponse, Box<dyn std::error::Error>> {
+    async fn get_order(&self, order_id: &str) -> Result<AlpacaOrderResponse, Box<dyn std::error::Error + Send + Sync>> {
         if !self.should_allow_request() {
             return Err("Circuit breaker is open".into());
         }
@@ -431,7 +431,7 @@ impl AlpacaClient {
     }
 
     /// Cancel order
-    async fn cancel_order(&self, order_id: &str) -> Result<(), Box<dyn std::error::Error>> {
+    async fn cancel_order(&self, order_id: &str) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         if !self.should_allow_request() {
             return Err("Circuit breaker is open".into());
         }
@@ -449,7 +449,7 @@ impl AlpacaClient {
     }
 
     /// Get all positions
-    async fn get_positions(&self) -> Result<Vec<AlpacaPosition>, Box<dyn std::error::Error>> {
+    async fn get_positions(&self) -> Result<Vec<AlpacaPosition>, Box<dyn std::error::Error + Send + Sync>> {
         if !self.should_allow_request() {
             return Err("Circuit breaker is open".into());
         }
@@ -464,7 +464,7 @@ impl AlpacaClient {
     }
 
     /// Get position for symbol
-    async fn get_position(&self, symbol: &str) -> Result<AlpacaPosition, Box<dyn std::error::Error>> {
+    async fn get_position(&self, symbol: &str) -> Result<AlpacaPosition, Box<dyn std::error::Error + Send + Sync>> {
         if !self.should_allow_request() {
             return Err("Circuit breaker is open".into());
         }
