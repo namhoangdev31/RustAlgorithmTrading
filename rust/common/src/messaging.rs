@@ -6,24 +6,74 @@ use crate::types::{Order, OrderBook, Trade, Bar, Signal, Position};
 #[serde(tag = "type")]
 pub enum Message {
     /// Market data messages
-    OrderBookUpdate(OrderBook),
-    TradeUpdate(Trade),
-    BarUpdate(Bar),
+    #[serde(rename_all = "camelCase")]
+    OrderBookUpdate { 
+        data: OrderBook, 
+        #[serde(default)] 
+        correlation_id: Option<String> 
+    },
+    #[serde(rename_all = "camelCase")]
+    TradeUpdate { 
+        data: Trade, 
+        #[serde(default)] 
+        correlation_id: Option<String> 
+    },
+    #[serde(rename_all = "camelCase")]
+    BarUpdate { 
+        data: Bar, 
+        #[serde(default)] 
+        correlation_id: Option<String> 
+    },
 
     /// Signal messages
-    SignalGenerated(Signal),
+    #[serde(rename_all = "camelCase")]
+    SignalGenerated { 
+        data: Signal, 
+        #[serde(default)] 
+        correlation_id: Option<String> 
+    },
 
     /// Execution messages
-    OrderRequest(Order),
-    OrderResponse(OrderResponse),
+    #[serde(rename_all = "camelCase")]
+    OrderRequest { 
+        data: Order, 
+        #[serde(default)] 
+        correlation_id: Option<String> 
+    },
+    #[serde(rename_all = "camelCase")]
+    OrderResponse { 
+        data: OrderResponse, 
+        #[serde(default)] 
+        correlation_id: Option<String> 
+    },
 
     /// Risk management messages
-    PositionUpdate(Position),
-    RiskCheck(RiskCheckRequest),
-    RiskCheckResult(RiskCheckResult),
+    #[serde(rename_all = "camelCase")]
+    PositionUpdate { 
+        data: Position, 
+        #[serde(default)] 
+        correlation_id: Option<String> 
+    },
+    #[serde(rename_all = "camelCase")]
+    RiskCheck { 
+        data: RiskCheckRequest, 
+        #[serde(default)] 
+        correlation_id: Option<String> 
+    },
+    #[serde(rename_all = "camelCase")]
+    RiskCheckResult { 
+        data: RiskCheckResult, 
+        #[serde(default)] 
+        correlation_id: Option<String> 
+    },
 
     /// System messages
-    Heartbeat(Heartbeat),
+    #[serde(rename_all = "camelCase")]
+    Heartbeat { 
+        data: Heartbeat, 
+        #[serde(default)] 
+        correlation_id: Option<String> 
+    },
     Shutdown,
 }
 
@@ -44,6 +94,8 @@ pub struct RiskCheckRequest {
 pub struct RiskCheckResult {
     pub approved: bool,
     pub reason: Option<String>,
+    pub reason_code: Option<String>,
+    pub limit_snapshot: Option<serde_json::Value>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

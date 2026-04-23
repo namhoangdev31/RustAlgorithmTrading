@@ -3,23 +3,23 @@
 ## 1) Executive Summary
 - Current gate status: `GO`.
 - Top achievements:
-  1. Operational plan + artifacts W01 chuẩn hóa.
-  2. Baseline command set có evidence thực tế.
-  3. Issue governance rõ severity/owner/ETA.
+  1. Toàn bộ 4 core services RUNNING và có Health Check baseline.
+  2. Baseline captured cho Python integration (2/5 pass) và Rust common (100% pass).
+  3. Môi trường Python đã được remediate (pandas, dotenv, pytz).
+  4. Interface Spec V0 đã sẵn sàng cho W02 Contract Audit.
 - Top risks:
-  1. Python dependency gap.
-  2. PyO3 compatibility drift.
-  3. Database test stability.
+  1. **Log Correlation Coverage**: 0% (W1-ISS-013). Cần xử lý ngay W02-D1.
+  2. Python test failures (3/5). Cần triage chi tiết trong W02.
 
 ## 2) KPI Snapshot
 
 | KPI Group | Target W01 | Actual | Status | Evidence |
 |---|---|---|---|---|
-| Reliability | baseline available | achieved | GREEN | health_check output |
-| Trading quality | baseline available | partial | AMBER | runtime logs |
-| Risk | baseline available | partial | AMBER | issue register |
+| Reliability | green | green | GREEN | health_check output |
+| Trading quality | baseline available | partial | AMBER | 2/5 smoke tests pass |
+| Risk | baseline available | partial | AMBER | baseline captured |
 | Engineering | baseline available | achieved | GREEN | baseline validation report |
-| Observability | baseline available | partial | AMBER | SLO draft + logs |
+| Observability | red | partial | RED | 0% correlation_id |
 
 ## 3) Delivery Status
 - W1-T01..T06: `Done`
@@ -27,7 +27,7 @@
 - W1-T13..T18: `Done`
 
 ## 4) Issue Snapshot
-- P0 focus: `W1-ISS-001`,`W1-ISS-006`,`W1-ISS-008`,`W1-ISS-009`.
+- P0 focus: `W1-ISS-013` (0% correlation), `W1-ISS-001`,`W1-ISS-006`,`W1-ISS-008`,`W1-ISS-009`.
 
 ## 5) Decision Log
 1. W01 giữ scope baseline, không refactor lớn.

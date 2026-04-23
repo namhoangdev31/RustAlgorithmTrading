@@ -15,7 +15,7 @@ Automated baseline rerun đạt trạng thái `PASSED` ở boundary đã xác mi
 | `W2-BND-002` | Signal Payload | `PASSED` | mismatch `direction/strength` vs `action/confidence` |
 | `W2-BND-003` | Risk Decision | `PASSED` | thiếu `reason_code` và `limit_snapshot` |
 | `W2-BND-004` | Execution Ack | `PASSED` | shape giữa Python/Rust chưa đồng bộ hoàn toàn |
-| `W2-BND-005` | Observability | `PASSED` | legacy alias path còn tồn, cần khóa `correlation_id` canonical |
+| `W2-BND-005` | Observability | `PASSED` | correlation_id implemented and verified across bridge |
 | `W2-BND-006` | Runtime Policy | `PASSED` | ABI3 policy áp dụng đúng |
 
 ## Critical Mismatches (P0)

@@ -1,41 +1,51 @@
 # Interface Spec Delta v1 (W02)
 
-This document outlines required changes to unify Python and Rust contracts based on W02 audit findings.
+This document tracks changes to the inter-service contracts implemented in Week 2.
 
-## [Signal] Unification
-**Target**: `W2-BND-002`
+## 1) Messaging Envelope (Canonical v1)
 
-| Field | Current (Py) | Current (Rust) | v1 Standard |
+All messages across the ZMQ bridge now use the following structure:
+
+```json
+{
+  "type": "string",
+  "data": "object",
+  "correlationId": "uuid-v4 (optional)"
+}
+```
+
+- **Change**: Added `correlationId` field (camelCase) to support end-to-end tracing.
+- **Python Implementation**: `src/bridge/zmq_bridge.py`
+- **Rust Implementation**: `rust/common/src/messaging.rs`
+
+## 2) Signal Semantic Alignment
+
+The `Signal` payload has been harmonized to match Python ML conventions.
+
+| Field | Old Name (Rust) | New Name (Rust) | Python Equivalent |
 |---|---|---|---|
-| Action | `direction` | `action` | `action` |
-| Confidence | `strength` | `confidence` | `confidence` |
-| Timestamp | `int` (ms) | `DateTime` | ISO-8601 string |
-| Side Map | `long/short` | `Buy/Sell` | `Buy/Sell/Hold` |
+| Direction | `action` (SignalAction) | `direction` (SignalDirection) | `direction` |
+| Confidence | `confidence` | `strength` | `strength` |
 
-### Action Items
-- [ ] Update `src/bridge/zmq_bridge.py` to use `action` instead of `direction`.
-- [ ] Update timestamp publish format to ISO-8601.
+- **Rust Change**: Renamed fields in `rust/common/src/types.rs`.
+- **Reason**: Reduce friction when passing signals from Python ML models to Rust strategies.
 
-## [RiskDecision] Unification
-**Target**: `W2-BND-003`
+## 3) Risk Decision Expansion
 
-| Field | Current (Rust) | v1 Standard |
-|---|---|---|
-| Decision | `approved` (bool) | `decision` (enum) |
-| Reason Code | `reason` (string) | `reason_code` (enum/string set) |
-| Snapshot | N/A | `limit_snapshot` |
+The `RiskCheckResult` has been expanded to support detailed auditing.
 
-### Action Items
-- [ ] Update `rust/common/src/messaging.rs` and risk-manager structures.
+```rust
+pub struct RiskCheckResult {
+    pub approved: bool,
+    pub reason: Option<String>,
+    pub reason_code: Option<String>,
+    pub limit_snapshot: Option<serde_json::Value>,
+}
+```
 
-## [Observability] Unification
-**Target**: `W2-BND-005`
+- **New Fields**: `reason_code`, `limit_snapshot`.
+- **Reason**: Enable W03 limit monitoring and retrospective audit of risk rejections.
 
-| Field | Current (Py) | Current (Rust) | v1 Standard |
-|---|---|---|---|
-| ID | `correlation_id` | legacy alias present | `correlation_id` |
-| Time | `float` | `DateTime` | ISO-8601 string |
-
-### Action Items
-- [ ] Keep canonical key as `correlation_id` across all logging layers.
-- [ ] Legacy ID alias path (if any) must map at boundary only.
+---
+Status: IMPLEMENTED
+Approval: W02 Gate Rehearsal Pending

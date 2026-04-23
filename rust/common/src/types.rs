@@ -135,14 +135,14 @@ pub struct Position {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Signal {
     pub symbol: Symbol,
-    pub action: SignalAction,
-    pub confidence: f64,
+    pub direction: SignalDirection,
+    pub strength: f64,
     pub features: Vec<f64>,
     pub timestamp: DateTime<Utc>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-pub enum SignalAction {
+pub enum SignalDirection {
     Buy,
     Sell,
     Hold,

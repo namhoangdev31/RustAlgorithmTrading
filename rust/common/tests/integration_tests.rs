@@ -436,15 +436,15 @@ mod signal_tests {
     fn test_signal_creation() {
         let signal = Signal {
             symbol: Symbol("AAPL".to_string()),
-            action: SignalAction::Buy,
-            confidence: 0.85,
+            direction: SignalDirection::Buy,
+            strength: 0.85,
             features: vec![1.2, 3.4, 5.6],
             timestamp: Utc::now(),
         };
 
         assert_eq!(signal.symbol.0, "AAPL");
-        assert_eq!(signal.action, SignalAction::Buy);
-        assert_eq!(signal.confidence, 0.85);
+        assert_eq!(signal.direction, SignalDirection::Buy);
+        assert_eq!(signal.strength, 0.85);
         assert_eq!(signal.features.len(), 3);
     }
 
@@ -452,44 +452,44 @@ mod signal_tests {
     fn test_signal_action_types() {
         let buy_signal = Signal {
             symbol: Symbol("TEST".to_string()),
-            action: SignalAction::Buy,
-            confidence: 0.9,
+            direction: SignalDirection::Buy,
+            strength: 0.9,
             features: vec![],
             timestamp: Utc::now(),
         };
 
         let sell_signal = Signal {
             symbol: Symbol("TEST".to_string()),
-            action: SignalAction::Sell,
-            confidence: 0.8,
+            direction: SignalDirection::Sell,
+            strength: 0.8,
             features: vec![],
             timestamp: Utc::now(),
         };
 
         let hold_signal = Signal {
             symbol: Symbol("TEST".to_string()),
-            action: SignalAction::Hold,
-            confidence: 0.5,
+            direction: SignalDirection::Hold,
+            strength: 0.5,
             features: vec![],
             timestamp: Utc::now(),
         };
 
-        assert_eq!(buy_signal.action, SignalAction::Buy);
-        assert_eq!(sell_signal.action, SignalAction::Sell);
-        assert_eq!(hold_signal.action, SignalAction::Hold);
+        assert_eq!(buy_signal.direction, SignalDirection::Buy);
+        assert_eq!(sell_signal.direction, SignalDirection::Sell);
+        assert_eq!(hold_signal.direction, SignalDirection::Hold);
     }
 
     #[test]
     fn test_signal_confidence_bounds() {
         let signal = Signal {
             symbol: Symbol("TEST".to_string()),
-            action: SignalAction::Buy,
-            confidence: 0.75,
+            direction: SignalDirection::Buy,
+            strength: 0.75,
             features: vec![],
             timestamp: Utc::now(),
         };
 
-        assert!(signal.confidence >= 0.0);
-        assert!(signal.confidence <= 1.0);
+        assert!(signal.strength >= 0.0);
+        assert!(signal.strength <= 1.0);
     }
 }

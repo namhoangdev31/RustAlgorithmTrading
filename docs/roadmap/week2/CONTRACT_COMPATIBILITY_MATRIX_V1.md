@@ -11,7 +11,7 @@ Ma trận owner + compatibility boundary cho audit Python <-> Rust trên critica
 | `W2-BND-002` | Signal Payload | `src/bridge/zmq_bridge.py` | `rust/common/src/types.rs` | `cd rust && cargo test -p common` | `MISMATCH` |
 | `W2-BND-003` | Risk Decision | `src/strategies/strategy_router.py` | `rust/common/src/messaging.rs` | `cd rust && cargo test -p risk-manager` | `MISMATCH` |
 | `W2-BND-004` | Execution Ack | `src/backtesting/execution_handler.py` | `rust/execution-engine/src/router.rs` | `cd rust && cargo test -p execution-engine` | `MISMATCH` |
-| `W2-BND-005` | Logging Envelope | `src/observability/logging/structured_logger.py` | `rust/common/src/messaging.rs` | `tests/integration/test_observability_integration.py` | `MISMATCH` |
+| `W2-BND-005` | Logging Envelope | `src/observability/logging/structured_logger.py` | `rust/common/src/messaging.rs` | `tests/integration/test_observability_integration.py` | `VERIFIED` |
 | `W2-BND-006` | Runtime Policy | `scripts/setup_python_deps.sh` | `rust/Cargo.toml` | `bash scripts/audit_rerun.sh` | `VERIFIED` |
 
 ## Contract fields coverage matrix

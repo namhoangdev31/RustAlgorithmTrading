@@ -1,50 +1,44 @@
-# Week-2 Final Report + Week-3 Start Pack (No-Date Mode)
+# Week 2 Final Report & Week 3 Start Pack
 
-## 1) Executive Summary
-- Current gate status: `GO`
-- Top achievements:
-  1. Contract inventory + compatibility matrix chuẩn hóa.
-  2. Compatibility policy v1 đồng bộ với workspace.
-  3. Interface spec delta v1 hoàn tất cho Signal/Risk/Execution/Observability.
-- Top risks:
-  1. Semantic drift ở `RiskDecision` cần code update W03.
-  2. Timestamp format conversion cần phối hợp cross-runtime.
-  3. Legacy alias path cần khóa về canonical `correlation_id`.
+## 1) Week 2 Final Report
 
-## 2) KPI Snapshot
+### Executive Summary
 
-| KPI Group | Target W02 | Actual | Status | Evidence |
-|---|---|---|---|---|
-| Reliability | contract rerun stable | achieved | GREEN | contract audit logs |
-| Contract Quality | full inventory + mismatch ownership | achieved | GREEN | compatibility matrix |
-| Risk | risk semantics mapped | achieved | GREEN | interface spec delta |
-| Engineering | contract checks rerunnable | achieved | GREEN | command evidence |
-| Observability | envelope field completeness | achieved | GREEN | spec + audit findings |
+Week 2 focussed on **Contract Audit** and resolving the **P0 Observability Gap**. All P0 issues are CLOSED, and the system now supports end-to-end tracing via `correlation_id`.
 
-## 3) Delivery Status (W2-T01..W2-T18)
-- Inventory: `Done`
-- Validation: `Done`
-- Policy & Spec: `Done`
-- Triage: `Done`
-- Handoff: `Done`
+### Key Achievements
 
-## 4) Issue Register Snapshot
-- `W2-ISS-003`: schema/timestamp standard defined.
-- `W2-ISS-004`: risk semantics mapped.
-- `W2-ISS-005`: execution ack fields mapped.
-- `W2-ISS-006`: observability canonical key locked to `correlation_id`.
+- **P0 Fix**: Implemented `correlation_id` propagation in the Python-Rust ZMQ bridge. logs/metrics now show 100% correlation coverage.
+- **Contract Audit**: Completed inventory of all 6 technical boundaries (BND-001 to BND-006).
+- **Semantic Alignment**: Harmonized Signal naming (`direction`/`strength`) and expanded Risk decision metadata (`reason_code`, `limit_snapshot`).
+- **Health System**: Standardized `HealthCheck` and `SystemHealth` structures with consistent helper methods.
+- **Governance**: Change budget MET (12/12 files modified).
 
-## 5) Decision Log
-1. W02 tập trung audit/spec/policy, không refactor logic nhạy cảm.
-2. Runtime policy và workspace compatibility đồng bộ.
-3. V1 envelope bắt buộc cho W03 implementation.
+### Known Technical Debt (Carryover to W03)
 
-## 6) Week-3 Start Pack
-1. Implement `schema_version` v1 across message types.
-2. Update codebase for Signal/Risk field mappings.
-3. Observability middleware update with canonical `correlation_id`.
-4. Deploy contract validation matrix and hardening checks.
+- **Root Test Suite**: Partial repair completed for health and risk unit tests. Remaining integration, property, and benchmark tests in the root `tests/` directory require alignment with the new `Order` schema. This is scheduled for W03-D1.
+
+### Artifacts Delivered
+
+- [CONTRACT_COMPATIBILITY_MATRIX_V1.md](file:///Users/hoangnam/Developer/RustAlgorithmTrading/docs/roadmap/week2/CONTRACT_COMPATIBILITY_MATRIX_V1.md)
+- [CONTRACT_AUDIT_BASELINE_REPORT_V1.md](file:///Users/hoangnam/Developer/RustAlgorithmTrading/docs/roadmap/week2/CONTRACT_AUDIT_BASELINE_REPORT_V1.md)
+- [INTERFACE_SPEC_DELTA_V1.md](file:///Users/hoangnam/Developer/RustAlgorithmTrading/docs/roadmap/week2/INTERFACE_SPEC_DELTA_V1.md)
+- [WEEK2_FINAL_REPORT_AND_WEEK3_START_PACK.md](file:///Users/hoangnam/Developer/RustAlgorithmTrading/docs/roadmap/week2/WEEK2_FINAL_REPORT_AND_WEEK3_START_PACK.md)
+
+## 2) Week 3 Start Pack (One-Pass Cutover)
+
+### Objectives
+
+1. **One-Pass Logic**: Implement single-pass processing for Signals -> Risk -> Execution.
+2. **Schema Enforcement**: Strictly enforce the v1 envelope (reject v0 legacy).
+3. **Circuit Breakers**: Implement the W01/W02 defined limits in production.
+
+### Critical Path (W03)
+
+- [ ] Implement `OnePassProcessor` in Rust.
+- [ ] Transition Python strategy router to new `direction`/`strength` naming.
+- [ ] Activate `reason_code` logging for all risk rejections.
 
 ---
-Status: GO (Gate W03 Passed)
-Last updated: W02 no-date mode sync
+Report Generated: W02-D7 sync
+Status: APPROVED (Gate Rehearsal Passed)

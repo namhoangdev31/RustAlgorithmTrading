@@ -102,9 +102,13 @@ class ZMQPublisher:
 
         try:
             # Create message envelope matching Rust Message enum
+            from observability.logging.correlations import get_correlation_id
+            cid = get_correlation_id()
+
             envelope = {
                 "type": message_type.value,
-                **data
+                "data": data,
+                "correlationId": cid
             }
 
             # Serialize to JSON
@@ -114,7 +118,7 @@ class ZMQPublisher:
             full_message = f"{topic} {message_json}"
             await self.socket.send_string(full_message)
 
-            logger.debug(f"Published {message_type.value} to topic '{topic}'")
+            logger.debug(f"Published {message_type.value} to topic '{topic}'", correlation_id=cid)
 
         except Exception as e:
             logger.error(f"Error publishing message: {e}")
@@ -242,7 +246,14 @@ class ZMQSubscriber:
                 # Parse JSON
                 try:
                     message = json.loads(json_str)
-                    logger.debug(f"Received {message.get('type', 'Unknown')} on topic '{topic}'")
+                    
+                    # Extract correlation ID if present
+                    from observability.logging.correlations import set_correlation_id
+                    cid = message.get("correlationId")
+                    if cid:
+                        set_correlation_id(cid)
+                        
+                    logger.debug(f"Received {message.get('type', 'Unknown')} on topic '{topic}'", correlation_id=cid)
                     yield topic, message
 
                 except json.JSONDecodeError as e:

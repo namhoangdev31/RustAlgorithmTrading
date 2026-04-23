@@ -71,8 +71,8 @@ mod fast_orderbook_tests {
         book.update_ask(Price(100.1), Quantity(100.0));
 
         let spread = book.spread_bps().unwrap();
-        // Spread = (100.1 - 100.0) / 100.05 * 10000 ≈ 99.95 bps
-        assert!((spread - 99.95).abs() < 1.0);
+        // Spread = (100.1 - 100.0) / 100.05 * 10000 ≈ 9.995 bps
+        assert!((spread - 9.995).abs() < 0.1);
     }
 
     #[test]

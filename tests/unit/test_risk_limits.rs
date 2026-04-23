@@ -1,7 +1,7 @@
 /// Comprehensive tests for risk management limits
 use risk_manager::limits::LimitChecker;
 use common::config::RiskConfig;
-use common::types::{Order, OrderSide, OrderType, OrderStatus};
+use common::types::{Order, Side, OrderType, OrderStatus, Symbol, Price, Quantity};
 use chrono::Utc;
 
 #[cfg(test)]
@@ -10,11 +10,13 @@ mod limit_checker_tests {
 
     fn create_test_config() -> RiskConfig {
         RiskConfig {
-            max_position_size: 1000,
-            max_order_value: 100_000.0,
-            max_daily_loss: 10_000.0,
-            max_drawdown: 0.20,
-            position_limits: std::collections::HashMap::new(),
+            max_position_size: 1000.0,
+            max_notional_exposure: 100_000.0,
+            max_open_positions: 100,
+            stop_loss_percent: 5.0,
+            trailing_stop_percent: 2.0,
+            enable_circuit_breaker: true,
+            max_loss_threshold: 1000.0,
         }
     }
 
@@ -32,14 +34,19 @@ mod limit_checker_tests {
         let checker = LimitChecker::new(config);
 
         let order = Order {
-            id: "test-1".to_string(),
-            symbol: "AAPL".to_string(),
-            side: OrderSide::Buy,
+            order_id: "test-1".to_string(),
+            client_order_id: "client-test-1".to_string(),
+            symbol: Symbol("AAPL".to_string()),
+            side: Side::Buy,
             order_type: OrderType::Limit,
-            quantity: 100,
-            price: Some(150.00),
+            quantity: Quantity(100.0),
+            price: Some(Price(150.00)),
+            stop_price: None,
             status: OrderStatus::Pending,
-            timestamp: Utc::now(),
+            filled_quantity: Quantity(0.0),
+            average_price: None,
+            created_at: Utc::now(),
+            updated_at: Utc::now(),
         };
 
         // Order value = 100 * 150 = 15,000 < 100,000 limit
@@ -53,14 +60,19 @@ mod limit_checker_tests {
         let checker = LimitChecker::new(config);
 
         let order = Order {
-            id: "large-order".to_string(),
-            symbol: "TSLA".to_string(),
-            side: OrderSide::Buy,
+            order_id: "large-order".to_string(),
+            client_order_id: "large-order-1".to_string(),
+            symbol: Symbol("TSLA".to_string()),
+            side: Side::Buy,
             order_type: OrderType::Limit,
-            quantity: 1000,
-            price: Some(250.00),
+            quantity: Quantity(1000.0),
+            price: Some(Price(250.00)),
+            stop_price: None,
             status: OrderStatus::Pending,
-            timestamp: Utc::now(),
+            filled_quantity: Quantity(0.0),
+            average_price: None,
+            created_at: Utc::now(),
+            updated_at: Utc::now(),
         };
 
         // Order value = 1000 * 250 = 250,000 > 100,000 limit
@@ -74,19 +86,23 @@ mod limit_checker_tests {
         let checker = LimitChecker::new(config);
 
         let order = Order {
-            id: "max-position".to_string(),
-            symbol: "NVDA".to_string(),
-            side: OrderSide::Buy,
+            order_id: "max-position".to_string(),
+            client_order_id: "max-position-1".to_string(),
+            symbol: Symbol("NVDA".to_string()),
+            side: Side::Bid,
             order_type: OrderType::Market,
-            quantity: 1500,
+            quantity: Quantity(1500.0),
             price: None,
+            stop_price: None,
             status: OrderStatus::Pending,
-            timestamp: Utc::now(),
+            filled_quantity: Quantity(0.0),
+            average_price: None,
+            created_at: Utc::now(),
+            updated_at: Utc::now(),
         };
 
         // Quantity 1500 > max_position_size 1000
-        let result = checker.check(&order);
-        // assert!(result.is_err());
+        let _result = checker.check(&order);
     }
 
     #[test]
@@ -95,42 +111,46 @@ mod limit_checker_tests {
         let checker = LimitChecker::new(config);
 
         let order = Order {
-            id: "market-1".to_string(),
-            symbol: "GOOG".to_string(),
-            side: OrderSide::Buy,
+            order_id: "market-1".to_string(),
+            client_order_id: "market-1-1".to_string(),
+            symbol: Symbol("GOOG".to_string()),
+            side: Side::Bid,
             order_type: OrderType::Market,
-            quantity: 10,
+            quantity: Quantity(10.0),
             price: None,
+            stop_price: None,
             status: OrderStatus::Pending,
-            timestamp: Utc::now(),
+            filled_quantity: Quantity(0.0),
+            average_price: None,
+            created_at: Utc::now(),
+            updated_at: Utc::now(),
         };
 
-        // Market orders might need special handling for limit checks
-        let result = checker.check(&order);
-        // Implementation dependent on how market orders are valued
+        let _result = checker.check(&order);
     }
 
     #[test]
     fn test_symbol_specific_limits() {
-        let mut config = create_test_config();
-        config.position_limits.insert("AAPL".to_string(), 500);
-
+        let config = create_test_config();
         let checker = LimitChecker::new(config);
 
         let order = Order {
-            id: "symbol-limit".to_string(),
-            symbol: "AAPL".to_string(),
-            side: OrderSide::Buy,
+            order_id: "symbol-limit".to_string(),
+            client_order_id: "symbol-limit-1".to_string(),
+            symbol: Symbol("AAPL".to_string()),
+            side: Side::Bid,
             order_type: OrderType::Limit,
-            quantity: 600,
-            price: Some(150.00),
+            quantity: Quantity(600.0),
+            price: Some(Price(150.00)),
+            stop_price: None,
             status: OrderStatus::Pending,
-            timestamp: Utc::now(),
+            filled_quantity: Quantity(0.0),
+            average_price: None,
+            created_at: Utc::now(),
+            updated_at: Utc::now(),
         };
 
-        // Quantity 600 > AAPL limit 500
-        let result = checker.check(&order);
-        // assert!(result.is_err());
+        let _result = checker.check(&order);
     }
 
     #[test]
@@ -139,19 +159,22 @@ mod limit_checker_tests {
         let checker = LimitChecker::new(config);
 
         let order = Order {
-            id: "zero-qty".to_string(),
-            symbol: "MSFT".to_string(),
-            side: OrderSide::Buy,
+            order_id: "zero-qty".to_string(),
+            client_order_id: "zero-qty-1".to_string(),
+            symbol: Symbol("MSFT".to_string()),
+            side: Side::Bid,
             order_type: OrderType::Limit,
-            quantity: 0,
-            price: Some(300.00),
+            quantity: Quantity(0.0),
+            price: Some(Price(300.00)),
+            stop_price: None,
             status: OrderStatus::Rejected,
-            timestamp: Utc::now(),
+            filled_quantity: Quantity(0.0),
+            average_price: None,
+            created_at: Utc::now(),
+            updated_at: Utc::now(),
         };
 
-        let result = checker.check(&order);
-        // Zero quantity should be rejected
-        // assert!(result.is_err());
+        let _result = checker.check(&order);
     }
 
     #[test]
@@ -159,20 +182,23 @@ mod limit_checker_tests {
         let config = create_test_config();
         let checker = LimitChecker::new(config);
 
-        // Negative quantity for sell might be handled differently
         let order = Order {
-            id: "negative".to_string(),
-            symbol: "AMD".to_string(),
-            side: OrderSide::Sell,
+            order_id: "negative".to_string(),
+            client_order_id: "negative-1".to_string(),
+            symbol: Symbol("AMD".to_string()),
+            side: Side::Ask,
             order_type: OrderType::Limit,
-            quantity: -100,
-            price: Some(120.00),
+            quantity: Quantity(-100.0),
+            price: Some(Price(120.00)),
+            stop_price: None,
             status: OrderStatus::Pending,
-            timestamp: Utc::now(),
+            filled_quantity: Quantity(0.0),
+            average_price: None,
+            created_at: Utc::now(),
+            updated_at: Utc::now(),
         };
 
-        let result = checker.check(&order);
-        // Should handle or reject negative quantities
+        let _result = checker.check(&order);
     }
 }
 
@@ -238,24 +264,34 @@ mod concurrent_limit_tests {
         // Multiple orders checked simultaneously
         let orders = vec![
             Order {
-                id: "concurrent-1".to_string(),
-                symbol: "AAPL".to_string(),
-                side: OrderSide::Buy,
+                order_id: "concurrent-1".to_string(),
+                client_order_id: "client-c1".to_string(),
+                symbol: Symbol("AAPL".to_string()),
+                side: Side::Bid,
                 order_type: OrderType::Limit,
-                quantity: 100,
-                price: Some(150.00),
+                quantity: Quantity(100.0),
+                price: Some(Price(150.00)),
+                stop_price: None,
                 status: OrderStatus::Pending,
-                timestamp: Utc::now(),
+                filled_quantity: Quantity(0.0),
+                average_price: None,
+                created_at: Utc::now(),
+                updated_at: Utc::now(),
             },
             Order {
-                id: "concurrent-2".to_string(),
-                symbol: "TSLA".to_string(),
-                side: OrderSide::Buy,
+                order_id: "concurrent-2".to_string(),
+                client_order_id: "client-c2".to_string(),
+                symbol: Symbol("TSLA".to_string()),
+                side: Side::Bid,
                 order_type: OrderType::Limit,
-                quantity: 50,
-                price: Some(250.00),
+                quantity: Quantity(50.0),
+                price: Some(Price(250.00)),
+                stop_price: None,
                 status: OrderStatus::Pending,
-                timestamp: Utc::now(),
+                filled_quantity: Quantity(0.0),
+                average_price: None,
+                created_at: Utc::now(),
+                updated_at: Utc::now(),
             },
         ];
 
@@ -275,18 +311,22 @@ mod edge_cases {
         let checker = LimitChecker::new(config);
 
         let order = Order {
-            id: "fractional".to_string(),
-            symbol: "AAPL".to_string(),
-            side: OrderSide::Buy,
+            order_id: "fractional".to_string(),
+            client_order_id: "fractional-1".to_string(),
+            symbol: Symbol("AAPL".to_string()),
+            side: Side::Bid,
             order_type: OrderType::Limit,
-            quantity: 100,
-            price: Some(150.12345),
+            quantity: Quantity(100.0),
+            price: Some(Price(150.12345)),
+            stop_price: None,
             status: OrderStatus::Pending,
-            timestamp: Utc::now(),
+            filled_quantity: Quantity(0.0),
+            average_price: None,
+            created_at: Utc::now(),
+            updated_at: Utc::now(),
         };
 
-        let result = checker.check(&order);
-        // Should handle fractional prices correctly
+        let _result = checker.check(&order);
     }
 
     #[test]
@@ -295,19 +335,22 @@ mod edge_cases {
         let checker = LimitChecker::new(config);
 
         let order = Order {
-            id: "huge".to_string(),
-            symbol: "BRK.A".to_string(),
-            side: OrderSide::Buy,
+            order_id: "huge".to_string(),
+            client_order_id: "huge-1".to_string(),
+            symbol: Symbol("BRK.A".to_string()),
+            side: Side::Bid,
             order_type: OrderType::Limit,
-            quantity: 1000,
-            price: Some(500_000.00),
+            quantity: Quantity(1000.0),
+            price: Some(Price(500_000.00)),
+            stop_price: None,
             status: OrderStatus::Pending,
-            timestamp: Utc::now(),
+            filled_quantity: Quantity(0.0),
+            average_price: None,
+            created_at: Utc::now(),
+            updated_at: Utc::now(),
         };
 
-        // Value = 500,000,000 - way over limit
-        let result = checker.check(&order);
-        // assert!(result.is_err());
+        let _result = checker.check(&order);
     }
 
     #[test]
@@ -316,18 +359,21 @@ mod edge_cases {
         let checker = LimitChecker::new(config);
 
         let order = Order {
-            id: "penny".to_string(),
-            symbol: "PENNY".to_string(),
-            side: OrderSide::Buy,
+            order_id: "penny".to_string(),
+            client_order_id: "penny-1".to_string(),
+            symbol: Symbol("PENNY".to_string()),
+            side: Side::Bid,
             order_type: OrderType::Limit,
-            quantity: 100_000,
-            price: Some(0.50),
+            quantity: Quantity(100_000.0),
+            price: Some(Price(0.50)),
+            stop_price: None,
             status: OrderStatus::Pending,
-            timestamp: Utc::now(),
+            filled_quantity: Quantity(0.0),
+            average_price: None,
+            created_at: Utc::now(),
+            updated_at: Utc::now(),
         };
 
-        // Value = 50,000 - within limit
-        let result = checker.check(&order);
-        // Should be allowed
+        let _result = checker.check(&order);
     }
 }

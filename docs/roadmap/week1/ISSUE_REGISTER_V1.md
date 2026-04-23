@@ -12,6 +12,9 @@
 | `W1-ISS-006` | P0 | tester | `W01-D2` | Done | PyO3/Python compat | ABI3 flag implemented in scripts |
 | `W1-ISS-008` | P0 | coder | `W01-D4` | Done | DuckDB/database tests | schema and test logic fixed |
 | `W1-ISS-009` | P0 | ops | `W01-D3` | Done | service startup | all 4 core services RUNNING |
+| `W1-ISS-011` | P1 | coder | `W02-D2` | Triage | Python tests | 3/5 integration tests failing |
+| `W1-ISS-012` | P1 | ops | `W02-D1` | Done | Env Drift | Missing pandas/dotenv/pytz |
+| `W1-ISS-013` | P0 | coder | `W02-D1` | New | Observability | 0% correlation_id coverage in logs |
 
 ## Canonical drift evidence (for W1-ISS-002)
 - `docs/QUICK_START_FIXED.md`
