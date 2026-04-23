@@ -39,7 +39,7 @@ async def get_system_health():
 
         return health
     except Exception as e:
-        logger.error(f"Error getting system health: {e}")
+        logger.error(f"[cid:INIT] Error getting system health: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -67,7 +67,7 @@ async def get_performance_metrics():
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error getting performance metrics: {e}")
+        logger.error(f"[cid:INIT] Error getting performance metrics: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -84,7 +84,7 @@ async def get_component_status():
                 status = await collector.get_status()
                 components[name] = status
             except Exception as e:
-                logger.error(f"Error getting {name} collector status: {e}")
+                logger.error(f"[cid:INIT] Error getting {name} collector status: {e}")
                 components[name] = {
                     "status": "error",
                     "error": str(e)
@@ -109,7 +109,7 @@ async def get_component_status():
             "timestamp": "utcnow"
         }
     except Exception as e:
-        logger.error(f"Error getting component status: {e}")
+        logger.error(f"[cid:INIT] Error getting component status: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -140,7 +140,7 @@ async def get_recent_logs(
             "level": level
         }
     except Exception as e:
-        logger.error(f"Error getting recent logs: {e}")
+        logger.error(f"[cid:INIT] Error getting recent logs: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -160,7 +160,7 @@ async def acknowledge_alert(alert_id: str):
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error acknowledging alert: {e}")
+        logger.error(f"[cid:INIT] Error acknowledging alert: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -188,10 +188,10 @@ async def get_system_statistics():
                 collector_stats = await collector.get_statistics()
                 stats["collectors"][name] = collector_stats
             except Exception as e:
-                logger.error(f"Error getting {name} stats: {e}")
+                logger.error(f"[cid:INIT] Error getting {name} stats: {e}")
                 stats["collectors"][name] = {"error": str(e)}
 
         return stats
     except Exception as e:
-        logger.error(f"Error getting system statistics: {e}")
+        logger.error(f"[cid:INIT] Error getting system statistics: {e}")
         raise HTTPException(status_code=500, detail=str(e))

@@ -35,11 +35,11 @@ class BaseCollector(ABC):
         Override in subclass to implement initialization logic
         (e.g., connect to data sources, start background tasks).
         """
-        logger.info(f"Starting {self.name} collector...")
+        logger.info(f"[cid:INIT] Starting {self.name} collector...")
         self.started = True
         self.start_time = datetime.utcnow()
         await self._start_impl()
-        logger.info(f"{self.name} collector started")
+        logger.info(f"[cid:INIT] {self.name} collector started")
 
     async def stop(self):
         """
@@ -48,10 +48,10 @@ class BaseCollector(ABC):
         Override in subclass to implement cleanup logic
         (e.g., disconnect from data sources, stop background tasks).
         """
-        logger.info(f"Stopping {self.name} collector...")
+        logger.info(f"[cid:INIT] Stopping {self.name} collector...")
         await self._stop_impl()
         self.started = False
-        logger.info(f"{self.name} collector stopped")
+        logger.info(f"[cid:INIT] {self.name} collector stopped")
 
     @abstractmethod
     async def _start_impl(self):

@@ -65,17 +65,17 @@ class SQLiteClient:
         # Create tables
         for table_name, schema_sql in SQLITE_SCHEMAS.items():
             await self._conn.executescript(schema_sql)
-            logger.debug(f"Created table: {table_name}")
+            logger.debug(f"[cid:INIT] Created table: {table_name}")
 
         await self._conn.commit()
-        logger.info(f"SQLite initialized: {self.db_path}")
+        logger.info(f"[cid:INIT] SQLite initialized: {self.db_path}")
 
     async def close(self) -> None:
         """Close database connection"""
         if self._conn:
             await self._conn.close()
             self._conn = None
-        logger.info("SQLite connection closed")
+        logger.info("[cid:INIT] SQLite connection closed")
 
     # ========== Trade Log Operations ==========
 
@@ -310,7 +310,7 @@ class SQLiteClient:
     async def vacuum(self) -> None:
         """Optimize database and reclaim space"""
         await self._conn.execute("VACUUM")
-        logger.info("Database vacuumed")
+        logger.info("[cid:INIT] Database vacuumed")
 
     async def get_db_size(self) -> int:
         """Get database file size in bytes"""

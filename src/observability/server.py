@@ -133,14 +133,14 @@ Examples:
 
     # Development mode configuration
     if args.dev:
-        logger.info("Starting in DEVELOPMENT mode with auto-reload")
+        logger.info("[cid:INIT] Starting in DEVELOPMENT mode with auto-reload")
         config.update({
             "reload": True,
             "reload_dirs": [str(Path(__file__).parent)],
             "reload_includes": ["*.py"],
         })
     else:
-        logger.info("Starting in PRODUCTION mode")
+        logger.info("[cid:INIT] Starting in PRODUCTION mode")
         config.update({
             "workers": args.workers,
             "loop": "uvloop",  # Use uvloop for better performance
@@ -150,43 +150,43 @@ Examples:
     # SSL/TLS configuration
     if args.ssl_keyfile and args.ssl_certfile:
         if not Path(args.ssl_keyfile).exists():
-            logger.error(f"SSL key file not found: {args.ssl_keyfile}")
+            logger.error(f"[cid:INIT] SSL key file not found: {args.ssl_keyfile}")
             sys.exit(1)
 
         if not Path(args.ssl_certfile).exists():
-            logger.error(f"SSL certificate file not found: {args.ssl_certfile}")
+            logger.error(f"[cid:INIT] SSL certificate file not found: {args.ssl_certfile}")
             sys.exit(1)
 
         config.update({
             "ssl_keyfile": args.ssl_keyfile,
             "ssl_certfile": args.ssl_certfile,
         })
-        logger.info("SSL/TLS enabled")
+        logger.info("[cid:INIT] SSL/TLS enabled")
 
     # Log configuration
-    logger.info(f"Server configuration:")
-    logger.info(f"  Host: {args.host}")
-    logger.info(f"  Port: {args.port}")
-    logger.info(f"  Workers: {args.workers if not args.dev else 'auto-reload'}")
-    logger.info(f"  Log level: {args.log_level}")
-    logger.info(f"  Access log: {args.access_log}")
+    logger.info(f"[cid:INIT] Server configuration:")
+    logger.info(f"[cid:INIT]   Host: {args.host}")
+    logger.info(f"[cid:INIT]   Port: {args.port}")
+    logger.info(f"[cid:INIT]   Workers: {args.workers if not args.dev else 'auto-reload'}")
+    logger.info(f"[cid:INIT]   Log level: {args.log_level}")
+    logger.info(f"[cid:INIT]   Access log: {args.access_log}")
 
     # Create data directory for DuckDB
     data_dir = Path("data")
     data_dir.mkdir(exist_ok=True)
-    logger.info(f"Data directory: {data_dir.absolute()}")
+    logger.info(f"[cid:INIT] Data directory: {data_dir.absolute()}")
 
     # Start server
     try:
-        logger.info("Starting Observability API server...")
-        logger.info(f"API docs available at: http://{args.host}:{args.port}/docs")
-        logger.info(f"WebSocket endpoint: ws://{args.host}:{args.port}/ws/metrics")
+        logger.info("[cid:INIT] Starting Observability API server...")
+        logger.info(f"[cid:INIT] API docs available at: http://{args.host}:{args.port}/docs")
+        logger.info(f"[cid:INIT] WebSocket endpoint: ws://{args.host}:{args.port}/ws/metrics")
 
         uvicorn.run(**config)
     except KeyboardInterrupt:
-        logger.info("Server shutdown requested")
+        logger.info("[cid:INIT] Server shutdown requested")
     except Exception as e:
-        logger.error(f"Server error: {e}")
+        logger.error(f"[cid:INIT] Server error: {e}")
         sys.exit(1)
 
 

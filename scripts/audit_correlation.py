@@ -57,19 +57,36 @@ def iter_files(base: Path, include_dirs: Iterable[str]) -> Iterable[Path]:
 def audit_file(path: Path) -> List[Finding]:
     findings: List[Finding] = []
     try:
-        lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
+        content = path.read_text(encoding="utf-8", errors="replace")
+        lines = content.splitlines()
     except OSError:
         return findings
 
+    # Simple multi-line detection: if a log call starts on line i, 
+    # check next few lines for correlation_id until we hit a closing bracket or semicolon.
     for idx, line in enumerate(lines, start=1):
         if SKIP_RE.search(line):
             continue
+        
+        is_log = False
         if path.suffix == ".py" and PY_LOG_RE.search(line):
-            if not CORR_RE.search(line):
-                findings.append(Finding(path, idx, line.strip(), "python log call missing correlation_id context"))
-        if path.suffix == ".rs" and RUST_LOG_RE.search(line):
-            if not CORR_RE.search(line):
-                findings.append(Finding(path, idx, line.strip(), "rust log macro missing correlation_id context"))
+            is_log = True
+            reason = "python log call missing correlation_id context"
+        elif path.suffix == ".rs" and RUST_LOG_RE.search(line):
+            is_log = True
+            reason = "rust log macro missing correlation_id context"
+            
+        if is_log:
+            # Look ahead for correlation_id in a 5-line window
+            found_corr = False
+            for j in range(idx - 1, min(idx + 4, len(lines))):
+                if CORR_RE.search(lines[j]):
+                    found_corr = True
+                    break
+            
+            if not found_corr:
+                findings.append(Finding(path, idx, line.strip(), reason))
+                
     return findings
 
 

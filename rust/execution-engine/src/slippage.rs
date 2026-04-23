@@ -55,7 +55,7 @@ impl SlippageEstimator {
         let elapsed = start.elapsed();
         if elapsed.as_micros() > 10 {
             tracing::warn!(
-                "Slippage estimation took {}μs (target: <10μs)",
+                "[cid:INIT] Slippage estimation took {}μs (target: <10μs)",
                 elapsed.as_micros()
             );
         }

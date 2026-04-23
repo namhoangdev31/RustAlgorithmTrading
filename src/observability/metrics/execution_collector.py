@@ -60,7 +60,7 @@ class ExecutionCollector(BaseCollector):
         # Start background collection
         self.collection_task = asyncio.create_task(self._collect_metrics())
 
-        logger.info("Execution collector started (mock mode)")
+        logger.info("[cid:INIT] Execution collector started (mock mode)")
 
     async def _stop_impl(self):
         """Stop execution metrics collection."""
@@ -71,7 +71,7 @@ class ExecutionCollector(BaseCollector):
             except asyncio.CancelledError:
                 pass
 
-        logger.info("Execution collector stopped")
+        logger.info("[cid:INIT] Execution collector stopped")
 
     async def _collect_metrics(self):
         """Background task to collect execution metrics."""
@@ -87,7 +87,7 @@ class ExecutionCollector(BaseCollector):
 
                 self._increment_metrics_count()
         except asyncio.CancelledError:
-            logger.info("Execution collection task cancelled")
+            logger.info("[cid:INIT] Execution collection task cancelled")
 
     def _generate_mock_execution_metrics(self):
         """Generate mock execution metrics for testing."""
@@ -141,7 +141,7 @@ class ExecutionCollector(BaseCollector):
 
             await self.db.insert_execution_metrics(metrics_data)
         except Exception as e:
-            logger.error(f"Error writing execution metrics to database: {e}")
+            logger.error(f"[cid:INIT] Error writing execution metrics to database: {e}")
 
     async def get_current_metrics(self) -> Dict[str, Any]:
         """Get current execution metrics."""

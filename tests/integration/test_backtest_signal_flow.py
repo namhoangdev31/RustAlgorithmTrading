@@ -165,7 +165,6 @@ class TestEndToEndBacktestFlow:
             macd_histogram_threshold=0.0005,
             volume_confirmation=False,
             use_trailing_stop=False,
-            min_holding_period=5,
         )
 
         # Create synthetic market data

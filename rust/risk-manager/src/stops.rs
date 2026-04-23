@@ -177,7 +177,7 @@ impl StopLossState {
                         let new_trigger = self.highest_price.0 * (1.0 - percentage / 100.0);
                         if new_trigger > self.trigger_price.0 {
                             debug!(
-                                "Trailing stop updated: {} -> {}",
+                                "[cid:INIT] Trailing stop updated: {} -> {}",
                                 self.trigger_price.0, new_trigger
                             );
                             self.trigger_price = Price(new_trigger);
@@ -188,7 +188,7 @@ impl StopLossState {
                         let new_trigger = self.lowest_price.0 * (1.0 + percentage / 100.0);
                         if new_trigger < self.trigger_price.0 {
                             debug!(
-                                "Trailing stop updated: {} -> {}",
+                                "[cid:INIT] Trailing stop updated: {} -> {}",
                                 self.trigger_price.0, new_trigger
                             );
                             self.trigger_price = Price(new_trigger);
@@ -230,7 +230,7 @@ pub struct StopManager {
 
 impl StopManager {
     pub fn new(config: RiskConfig) -> Self {
-        info!("Initializing StopManager with config: stop_loss={}%, trailing={}%",
+        info!("[cid:INIT] Initializing StopManager with config: stop_loss={}%, trailing={}%",
               config.stop_loss_percent, config.trailing_stop_percent);
         Self {
             config,
@@ -264,7 +264,7 @@ impl StopManager {
         let state = StopLossState::new(position, config)?;
 
         info!(
-            "Stop-loss set for {}: type={:?}, trigger_price={:.8}, entry_price={:.8}",
+            "[cid:INIT] Stop-loss set for {}: type={:?}, trigger_price={:.8}, entry_price={:.8}",
             symbol_key, state.config.stop_type, state.trigger_price.0, state.entry_price.0
         );
 
@@ -275,7 +275,7 @@ impl StopManager {
     /// Remove stop-loss for a symbol
     pub fn remove_stop(&mut self, symbol: &Symbol) {
         if self.stops.remove(&symbol.0).is_some() {
-            info!("Stop-loss removed for {}", symbol.0);
+            info!("[cid:INIT] Stop-loss removed for {}", symbol.0);
         }
     }
 
@@ -291,7 +291,7 @@ impl StopManager {
                     .expect("Valid stop-loss percentage from config");
 
                 if let Err(e) = self.set_stop(position, stop_config) {
-                    warn!("Failed to auto-configure stop for {}: {}", symbol_key, e);
+                    warn!("[cid:INIT] Failed to auto-configure stop for {}: {}", symbol_key, e);
                     return None;
                 }
             } else {
@@ -324,7 +324,7 @@ impl StopManager {
                 )
             };
 
-            warn!("STOP-LOSS TRIGGERED for {}: {}", symbol_key, reason);
+            warn!("[cid:INIT] STOP-LOSS TRIGGERED for {}: {}", symbol_key, reason);
 
             let trigger = StopLossTrigger {
                 symbol: position.symbol.clone(),

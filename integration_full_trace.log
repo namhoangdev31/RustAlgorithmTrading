@@ -1,0 +1,1216 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.14.3, pytest-9.0.2, pluggy-1.6.0 -- /opt/homebrew/opt/python@3.14/bin/python3.14
+cachedir: .pytest_cache
+rootdir: /Users/hoangnam/Developer/RustAlgorithmTrading/tests
+configfile: pytest.ini
+plugins: cov-7.1.0, asyncio-1.3.0, anyio-4.13.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 46 items
+
+tests/integration/test_autonomous_system.py::TestDataDownloadIntegration::test_download_script_exists PASSED [  2%]
+tests/integration/test_autonomous_system.py::TestDataDownloadIntegration::test_download_script_help FAILED [  4%]
+tests/integration/test_autonomous_system.py::TestDataDownloadIntegration::test_download_single_symbol SKIPPED [  6%]
+tests/integration/test_autonomous_system.py::TestDataLoadingIntegration::test_load_multiple_symbols PASSED [  8%]
+tests/integration/test_autonomous_system.py::TestDataLoadingIntegration::test_load_with_date_range PASSED [ 10%]
+tests/integration/test_autonomous_system.py::TestBacktestingIntegration::test_backtest_execution PASSED [ 13%]
+tests/integration/test_autonomous_system.py::TestBacktestingIntegration::test_backtest_with_no_data PASSED [ 15%]
+tests/integration/test_autonomous_system.py::TestAutonomousSystemScript::test_script_exists PASSED [ 17%]
+tests/integration/test_autonomous_system.py::TestAutonomousSystemScript::test_script_help FAILED [ 19%]
+tests/integration/test_autonomous_system.py::TestAutonomousSystemScript::test_backtest_only_mode SKIPPED [ 21%]
+tests/integration/test_autonomous_system.py::TestEndToEndDataFlow::test_csv_to_backtest_flow PASSED [ 23%]
+tests/integration/test_autonomous_system.py::TestEndToEndDataFlow::test_parquet_to_backtest_flow FAILED [ 26%]
+tests/integration/test_backtest_signal_flow.py::TestSignalToOrderFlow::test_long_signal_generates_buy_order PASSED [ 28%]
+tests/integration/test_backtest_signal_flow.py::TestSignalToOrderFlow::test_short_signal_generates_sell_order PASSED [ 30%]
+tests/integration/test_backtest_signal_flow.py::TestSignalToOrderFlow::test_exit_signal_closes_position PASSED [ 32%]
+tests/integration/test_backtest_signal_flow.py::TestEndToEndBacktestFlow::test_momentum_strategy_full_flow PASSED [ 34%]
+tests/integration/test_backtest_signal_flow.py::TestEndToEndBacktestFlow::test_mean_reversion_strategy_full_flow PASSED [ 36%]
+tests/integration/test_backtest_signal_flow.py::TestSignalExecutionBottlenecks::test_cash_constraint_bottleneck PASSED [ 39%]
+tests/integration/test_backtest_signal_flow.py::TestSignalExecutionBottlenecks::test_position_sizer_bottleneck PASSED [ 41%]
+tests/integration/test_backtest_signal_validation.py::TestBacktestSignalValidation::test_backtest_processes_valid_signal_types PASSED [ 43%]
+tests/integration/test_backtest_signal_validation.py::TestBacktestSignalValidation::test_signal_event_creation_from_strategy_signals PASSED [ 45%]
+tests/integration/test_backtest_signal_validation.py::TestBacktestSignalValidation::test_signal_event_rejects_invalid_type_from_strategy PASSED [ 47%]
+tests/integration/test_backtest_signal_validation.py::TestBacktestSignalValidation::test_multiple_signal_types_in_backtest PASSED [ 50%]
+tests/integration/test_backtest_signal_validation.py::TestBacktestSignalValidation::test_signal_validation_catches_case_sensitivity PASSED [ 52%]
+tests/integration/test_backtest_signal_validation.py::TestBacktestSignalValidation::test_backtest_signal_count_accuracy PASSED [ 54%]
+tests/integration/test_backtest_signal_validation.py::TestSignalTypeEdgeCases::test_signal_with_none_type PASSED [ 56%]
+tests/integration/test_backtest_signal_validation.py::TestSignalTypeEdgeCases::test_signal_with_numeric_type PASSED [ 58%]
+tests/integration/test_backtest_signal_validation.py::TestSignalTypeEdgeCases::test_signal_with_special_characters FAILED [ 60%]
+tests/integration/test_backtest_signal_validation.py::TestSignalTypeEdgeCases::test_signal_strength_edge_cases PASSED [ 63%]
+tests/integration/test_backtest_signal_validation.py::TestSignalValidationPerformance::test_rapid_signal_creation PASSED [ 65%]
+tests/integration/test_backtest_signal_validation.py::TestSignalValidationPerformance::test_validation_error_performance PASSED [ 67%]
+tests/integration/test_momentum_signal_generation.py::TestMomentumSignalGeneration::test_load_historical_data FAILED [ 69%]
+tests/integration/test_momentum_signal_generation.py::TestMomentumSignalGeneration::test_generate_signals_with_real_data FAILED [ 71%]
+tests/integration/test_momentum_signal_generation.py::TestMomentumSignalGeneration::test_signal_timing_distribution FAILED [ 73%]
+tests/integration/test_momentum_signal_generation.py::TestMomentumSignalGeneration::test_indicator_calculations FAILED [ 76%]
+tests/integration/test_momentum_signal_generation.py::TestMomentumSignalGeneration::test_position_sizing_with_signals FAILED [ 78%]
+tests/integration/test_momentum_signal_generation.py::TestMomentumSignalGeneration::test_signal_confidence_quality FAILED [ 80%]
+tests/integration/test_momentum_signal_generation.py::TestMomentumStrategyDiagnostics::test_basic_signal_structure FAILED [ 82%]
+tests/integration/test_momentum_signal_generation.py::TestMomentumStrategyDiagnostics::test_strategy_generates_signals_on_synthetic_data PASSED [ 84%]
+tests/integration/test_observability_integration.py::test_rust_metrics_endpoints_available PASSED [ 86%]
+tests/integration/test_observability_integration.py::test_rust_metrics_bridge_scraping PASSED [ 89%]
+tests/integration/test_observability_integration.py::test_prometheus_text_parsing PASSED [ 91%]
+tests/integration/test_observability_integration.py::test_market_data_collector_integration PASSED [ 93%]
+tests/integration/test_observability_integration.py::test_all_services_scraping PASSED [ 95%]
+tests/integration/test_observability_integration.py::test_continuous_scraping PASSED [ 97%]
+tests/integration/test_observability_integration.py::test_metrics_module_exports PASSED [100%]
+
+=================================== FAILURES ===================================
+____________ TestDataDownloadIntegration.test_download_script_help _____________
+
+self = <test_autonomous_system.TestDataDownloadIntegration object at 0x113fa0410>
+project_root = PosixPath('/Users/hoangnam/Developer/RustAlgorithmTrading')
+
+    def test_download_script_help(self, project_root):
+        """Test download script help output"""
+        script_path = project_root / "scripts" / "download_historical_data.py"
+    
+        result = subprocess.run(
+            ['python', str(script_path), '--help'],
+            capture_output=True,
+            text=True,
+        )
+    
+>       assert result.returncode == 0
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['python', '/Users/hoangnam/Developer/RustAlgorithmTrading/scripts/download_historical_data.py', '--help'], returncode=1, stdout='', stderr='Traceback (most recent call last):\n  File "/Users/hoangnam/Developer/RustAlgorithmTrading/scripts/download_historical_data.py", line 26, in <module>\n    import pyarrow as pa\nModuleNotFoundError: No module named \'pyarrow\'\n').returncode
+
+project_root = PosixPath('/Users/hoangnam/Developer/RustAlgorithmTrading')
+result     = CompletedProcess(args=['python', '/Users/hoangnam/Developer/RustAlgorithmTrading/scripts/download_historical_data.py', '--help'], returncode=1, stdout='', stderr='Traceback (most recent call last):\n  File "/Users/hoangnam/Developer/RustAlgorithmTrading/scripts/download_historical_data.py", line 26, in <module>\n    import pyarrow as pa\nModuleNotFoundError: No module named \'pyarrow\'\n')
+script_path = PosixPath('/Users/hoangnam/Developer/RustAlgorithmTrading/scripts/download_historical_data.py')
+self       = <test_autonomous_system.TestDataDownloadIntegration object at 0x113fa0410>
+
+tests/integration/test_autonomous_system.py:54: AssertionError
+_________________ TestAutonomousSystemScript.test_script_help __________________
+
+self = <test_autonomous_system.TestAutonomousSystemScript object at 0x113fa1090>
+project_root = PosixPath('/Users/hoangnam/Developer/RustAlgorithmTrading')
+
+    def test_script_help(self, project_root):
+        """Test script help/usage"""
+        script_path = project_root / "scripts" / "autonomous_trading_system.sh"
+    
+>       result = subprocess.run(
+            [str(script_path), '--mode=invalid'],
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+
+project_root = PosixPath('/Users/hoangnam/Developer/RustAlgorithmTrading')
+script_path = PosixPath('/Users/hoangnam/Developer/RustAlgorithmTrading/scripts/autonomous_trading_system.sh')
+self       = <test_autonomous_system.TestAutonomousSystemScript object at 0x113fa1090>
+
+tests/integration/test_autonomous_system.py:244: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py:556: in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        capture_output = True
+        check      = False
+        input      = None
+        kwargs     = {'stderr': -1, 'stdout': -1, 'text': True}
+        popenargs  = (['/Users/hoangnam/Developer/RustAlgorithmTrading/scripts/autonomous_trading_system.sh',
+  '--mode=invalid'],)
+        process    = <Popen: returncode: -9 args: ['/Users/hoangnam/Developer/RustAlgorithmTradin...>
+        timeout    = 10
+/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py:1220: in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        endtime    = 1598711.977986541
+        input      = None
+        self       = <Popen: returncode: -9 args: ['/Users/hoangnam/Developer/RustAlgorithmTradin...>
+        timeout    = 10
+/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py:2153: in _communicate
+    self._check_timeout(endtime, orig_timeout, stdout, stderr)
+        data       = (b'warning: `signal-bridge` (lib) generated 5 warnings (run `cargo fix --lib -p'
+ b' signal-bridge` to apply 1 suggestion)\n')
+        endtime    = 1598711.977986541
+        events     = 1
+        input      = None
+        key        = SelectorKey(fileobj=<_io.TextIOWrapper name=13 encoding='UTF-8'>, fd=13, events=1, data=None)
+        orig_timeout = 10
+        ready      = []
+        selector   = <selectors.PollSelector object at 0x114c51e50>
+        self       = <Popen: returncode: -9 args: ['/Users/hoangnam/Developer/RustAlgorithmTradin...>
+        stderr     = [b'   Compiling pyo3-build-config v0.21.2\n',
+ b'   Compiling common v0.1.0 (/Users/hoangnam/Developer/RustAlgorithmTrading/r'
+ b'ust/common)\n',
+ b'   Compiling pyo3-macros-backend v0.21.2\n',
+ b'   Compiling pyo3-ffi v0.21.2\n   Compiling pyo3 v0.21.2\n',
+ b'   Compiling market-data v0.1.0 (/Users/hoangnam/Developer/RustAlgorithmTrad'
+ b'ing/rust/market-data)\n   Compiling',
+ b' risk-manager v0.1.0 (/Users/hoangnam/Developer/RustAlgorithmTrading/rust/ri'
+ b'sk-manager)\n   Compiling execution-engine v0.1.0 (/Users/hoangnam/Develo'
+ b'per/RustAlgorithmTrading/rust/execution-engine)\n   Compiling database v0'
+ b'.1.0 (/Users/hoangnam/Developer/RustAlgorithmTrading/rust/database)\n',
+ b'warning: unused import: `Side`\n --> execution-engine/src/slippage.rs:1:3'
+ b'9\n  |\n1 | use common::types::{Order, OrderType, Side};\n  |              '
+ b'                         ^^^^\n  |\n  = note: `#[warn(unused_imports)]` (p'
+ b'art of `#[warn(unused)]`) on by default\n\n',
+ b'warning: unused import: `TradingError`\n --> market-data/src/publisher.rs'
+ b':1:22\n  |\n1 | use common::{Result, TradingError, messaging::Message};\n  '
+ b'|                      ^^^^^^^^^^^^\n  |\n  = note: `#[warn(unused_imports'
+ b')]` (part of `#[warn(unused)]`) on by default\n\n',
+ b'warning: unused import: `error`\n  --> market-data/src/lib.rs:17:21\n   |\n'
+ b'17 | use tracing::{info, error};\n   |                     ^^^^^\n\n',
+ b'warning: unused variable: `data`\n   --> market-data/src/websocket.rs:174'
+ b':31\n    |\n174 |                 Message::Ping(data) => {\n    |          '
+ b'                     ^^^^ help: if this is intentional, prefix it with an un'
+ b'derscore: `_data`\n    |\n    = note: `#[warn(unused_variables)]` (part of'
+ b' `#[warn(unused)]`) on by default\n\nwarning: unused variable: `assumed_mi'
+ b'd`\n  --> execution-engine/src/slippage.rs:99:17\n   |\n99 |             le'
+ b't assumed_mid = limit_price.0;\n   |                 ^^^^^^^^^^^ help: if'
+ b' this is intentional, prefix it with an underscore: `_assumed_mid`\n   |\n'
+ b'   = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by def'
+ b'ault\n\n',
+ b'warning: unused variable: `message`\n  --> market-data/src/publisher.rs:1'
+ b'4:27\n   |\n14 |     pub fn publish(&self, message: Message) -> Result<()>'
+ b' {\n   |                           ^^^^^^^ help: if this is intentional, '
+ b'prefix it with an underscore: `_message`\n\n',
+ b'warning: fields `ws_client`, `orderbook_manager`, `bar_aggregator`, and `pub'
+ b'lisher` are never read\n  --> market-data/src/lib.rs:21:5\n   |\n20 | pub s'
+ b'truct MarketDataService {\n   |            ----------------- fields in th'
+ b'is struct\n21 |     ws_client: WebSocketClient,\n   |     ^^^^^^^^^\n22 |  '
+ b'   orderbook_manager: OrderBookManager,\n   |     ^^^^^^^^^^^^^^^^^\n23 | '
+ b'    bar_aggregator: BarAggregator,\n   |     ^^^^^^^^^^^^^^\n24 |     publ'
+ b'isher: MarketDataPublisher,\n   |     ^^^^^^^^^\n   |\n   = note: `#[warn(d'
+ b'ead_code)]` (part of `#[warn(unused)]`) on by default\n\n',
+ b'warning: constant `HEARTBEAT_INTERVAL_MS` is never used\n  --> market-dat'
+ b'a/src/websocket.rs:12:7\n   |\n12 | const HEARTBEAT_INTERVAL_MS: u64 = 300'
+ b'00;\n   |       ^^^^^^^^^^^^^^^^^^^^^\n\n',
+ b'warning: field `address` is never read\n --> market-data/src/publisher.rs'
+ b':4:5\n  |\n3 | pub struct MarketDataPublisher {\n  |            -----------'
+ b'-------- field in this struct\n4 |     address: String,\n  |     ^^^^^^^\n\n',
+ b'warning: `execution-engine` (lib) generated 2 warnings (run `cargo fix --lib'
+ b' -p execution-engine` to apply 2 suggestions)\n',
+ b'   Compiling pyo3-macros v0.21.2\n',
+ b'warning: `market-data` (lib) generated 7 warnings (run `cargo fix --lib -p m'
+ b'arket-data` to apply 4 suggestions)\n',
+ b'   Compiling signal-bridge v0.1.0 (/Users/hoangnam/Developer/RustAlgorithmTr'
+ b'ading/rust/signal-bridge)\n',
+ b'warning: use of deprecated method `pyo3::deprecations::GilRefs::<T>::functio'
+ b"n_arg`: use `&Bound<'_, T>` instead for this function argument\n   --> si"
+ b'gnal-bridge/src/bridge.rs:111:51\n    |\n111 |     pub fn compute_batch(&s'
+ b'elf, py: Python, bars: &PyList) -> Py...\n    |                          '
+ b'                         ^\n    |\n    = note: `#[warn(deprecated)]` on by'
+ b' default\n\n',
+ b'warning: use of deprecated method `pyo3::deprecations::GilRefs::<T>::functio'
+ b"n_arg`: use `&Bound<'_, T>` instead for this function argument\n   --> si"
+ b'gnal-bridge/src/bridge.rs:197:31\n    |\n197 | fn signal_bridge(_py: Pytho'
+ b'n, m: &PyModule) -> PyResult<()> {\n    |                               ^'
+ b'\n\n',
+ b'warning: unused variable: `py`\n   --> signal-bridge/src/bridge.rs:111:33'
+ b'\n    |\n111 | ...n compute_batch(&self, py: Python, bars: &PyList) -> PyR'
+ b'esult...\n    |                           ^^ help: if this is intentional'
+ b', prefix it with an underscore: `_py`\n    |\n    = note: `#[warn(unused_v'
+ b'ariables)]` (part of `#[warn(unused)]`) on by default\n\n',
+ b'warning: field `feature_engine` is never read\n  --> signal-bridge/src/li'
+ b'b.rs:17:5\n   |\n16 | pub struct SignalBridgeService {\n   |            ---'
+ b'---------------- field in this struct\n17 |     feature_engine: FeatureEn'
+ b'gine,\n   |     ^^^^^^^^^^^^^^\n   |\n   = note: `#[warn(dead_code)]` (part'
+ b' of `#[warn(unused)]`) on by default\n\nwarning: field `engine` is never r'
+ b'ead\n  --> signal-bridge/src/bridge.rs:43:5\n   |\n42 |',
+ b' pub struct FeatureComputer {\n   |            --------------- field in t'
+ b'his struct\n43 |     engine: FeatureEngine,\n   |     ^^^^^^\n\n',
+ b'warning: `signal-bridge` (lib) generated 5 warnings (run `cargo fix --lib -p'
+ b' signal-bridge` to apply 1 suggestion)\n']
+        stdout     = [b'\x1b[0;34m[INFO]\x1b[0m 2026-04-23 22:30:26 - ============================'
+ b'==============\n',
+ b'\x1b[0;34m[INFO]\x1b[0m 2026-04-23 22:30:26 - AUTONOMOUS TRADING SYSTEM\n',
+ b'\x1b[0;34m[INFO]\x1b[0m 2026-04-23 22:30:26 - Mode: invalid\n',
+ b'\x1b[0;34m[INFO]\x1b[0m 2026-04-23 22:30:26 - ============================'
+ b'==============\n',
+ b'\x1b[0;34m[INFO]\x1b[0m 2026-04-23 22:30:26 - Setting up autonomous tradin'
+ b'g environment...\n',
+ b'\x1b[0;32m[SUCCESS]\x1b[0m 2026-04-23 22:30:26 - Environment setup complet'
+ b'e\n',
+ b'\x1b[0;34m[INFO]\x1b[0m 2026-04-23 22:30:26 - Validating system configurat'
+ b'ion...\n',
+ b'\x1b[0;32m[SUCCESS]\x1b[0m 2026-04-23 22:30:26 - Configuration validation '
+ b'complete\n',
+ b'\x1b[0;34m[INFO]\x1b[0m 2026-04-23 22:30:26 - Building Rust services in re'
+ b'lease mode...\n']
+        timeout    = 1.2155563330743462
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <Popen: returncode: -9 args: ['/Users/hoangnam/Developer/RustAlgorithmTradin...>
+endtime = 1598711.977986541, orig_timeout = 10
+stdout_seq = [b'\x1b[0;34m[INFO]\x1b[0m 2026-04-23 22:30:26 - ==========================================\n', b'\x1b[0;34m[INFO]\x1b...omous trading environment...\n', b'\x1b[0;32m[SUCCESS]\x1b[0m 2026-04-23 22:30:26 - Environment setup complete\n', ...]
+stderr_seq = [b'   Compiling pyo3-build-config v0.21.2\n', b'   Compiling common v0.1.0 (/Users/hoangnam/Developer/RustAlgorithmTra...execution-engine)\n   Compiling database v0.1.0 (/Users/hoangnam/Developer/RustAlgorithmTrading/rust/database)\n', ...]
+skip_check_and_raise = False
+
+    def _check_timeout(self, endtime, orig_timeout, stdout_seq, stderr_seq,
+                       skip_check_and_raise=False):
+        """Convenience for checking if a timeout has expired."""
+        if endtime is None:
+            return
+        if skip_check_and_raise or _time() > endtime:
+>           raise TimeoutExpired(
+                    self.args, orig_timeout,
+                    output=b''.join(stdout_seq) if stdout_seq else None,
+                    stderr=b''.join(stderr_seq) if stderr_seq else None)
+E           subprocess.TimeoutExpired: Command '['/Users/hoangnam/Developer/RustAlgorithmTrading/scripts/autonomous_trading_system.sh', '--mode=invalid']' timed out after 10 seconds
+
+endtime    = 1598711.977986541
+orig_timeout = 10
+self       = <Popen: returncode: -9 args: ['/Users/hoangnam/Developer/RustAlgorithmTradin...>
+skip_check_and_raise = False
+stderr_seq = [b'   Compiling pyo3-build-config v0.21.2\n',
+ b'   Compiling common v0.1.0 (/Users/hoangnam/Developer/RustAlgorithmTrading/r'
+ b'ust/common)\n',
+ b'   Compiling pyo3-macros-backend v0.21.2\n',
+ b'   Compiling pyo3-ffi v0.21.2\n   Compiling pyo3 v0.21.2\n',
+ b'   Compiling market-data v0.1.0 (/Users/hoangnam/Developer/RustAlgorithmTrad'
+ b'ing/rust/market-data)\n   Compiling',
+ b' risk-manager v0.1.0 (/Users/hoangnam/Developer/RustAlgorithmTrading/rust/ri'
+ b'sk-manager)\n   Compiling execution-engine v0.1.0 (/Users/hoangnam/Develo'
+ b'per/RustAlgorithmTrading/rust/execution-engine)\n   Compiling database v0'
+ b'.1.0 (/Users/hoangnam/Developer/RustAlgorithmTrading/rust/database)\n',
+ b'warning: unused import: `Side`\n --> execution-engine/src/slippage.rs:1:3'
+ b'9\n  |\n1 | use common::types::{Order, OrderType, Side};\n  |              '
+ b'                         ^^^^\n  |\n  = note: `#[warn(unused_imports)]` (p'
+ b'art of `#[warn(unused)]`) on by default\n\n',
+ b'warning: unused import: `TradingError`\n --> market-data/src/publisher.rs'
+ b':1:22\n  |\n1 | use common::{Result, TradingError, messaging::Message};\n  '
+ b'|                      ^^^^^^^^^^^^\n  |\n  = note: `#[warn(unused_imports'
+ b')]` (part of `#[warn(unused)]`) on by default\n\n',
+ b'warning: unused import: `error`\n  --> market-data/src/lib.rs:17:21\n   |\n'
+ b'17 | use tracing::{info, error};\n   |                     ^^^^^\n\n',
+ b'warning: unused variable: `data`\n   --> market-data/src/websocket.rs:174'
+ b':31\n    |\n174 |                 Message::Ping(data) => {\n    |          '
+ b'                     ^^^^ help: if this is intentional, prefix it with an un'
+ b'derscore: `_data`\n    |\n    = note: `#[warn(unused_variables)]` (part of'
+ b' `#[warn(unused)]`) on by default\n\nwarning: unused variable: `assumed_mi'
+ b'd`\n  --> execution-engine/src/slippage.rs:99:17\n   |\n99 |             le'
+ b't assumed_mid = limit_price.0;\n   |                 ^^^^^^^^^^^ help: if'
+ b' this is intentional, prefix it with an underscore: `_assumed_mid`\n   |\n'
+ b'   = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by def'
+ b'ault\n\n',
+ b'warning: unused variable: `message`\n  --> market-data/src/publisher.rs:1'
+ b'4:27\n   |\n14 |     pub fn publish(&self, message: Message) -> Result<()>'
+ b' {\n   |                           ^^^^^^^ help: if this is intentional, '
+ b'prefix it with an underscore: `_message`\n\n',
+ b'warning: fields `ws_client`, `orderbook_manager`, `bar_aggregator`, and `pub'
+ b'lisher` are never read\n  --> market-data/src/lib.rs:21:5\n   |\n20 | pub s'
+ b'truct MarketDataService {\n   |            ----------------- fields in th'
+ b'is struct\n21 |     ws_client: WebSocketClient,\n   |     ^^^^^^^^^\n22 |  '
+ b'   orderbook_manager: OrderBookManager,\n   |     ^^^^^^^^^^^^^^^^^\n23 | '
+ b'    bar_aggregator: BarAggregator,\n   |     ^^^^^^^^^^^^^^\n24 |     publ'
+ b'isher: MarketDataPublisher,\n   |     ^^^^^^^^^\n   |\n   = note: `#[warn(d'
+ b'ead_code)]` (part of `#[warn(unused)]`) on by default\n\n',
+ b'warning: constant `HEARTBEAT_INTERVAL_MS` is never used\n  --> market-dat'
+ b'a/src/websocket.rs:12:7\n   |\n12 | const HEARTBEAT_INTERVAL_MS: u64 = 300'
+ b'00;\n   |       ^^^^^^^^^^^^^^^^^^^^^\n\n',
+ b'warning: field `address` is never read\n --> market-data/src/publisher.rs'
+ b':4:5\n  |\n3 | pub struct MarketDataPublisher {\n  |            -----------'
+ b'-------- field in this struct\n4 |     address: String,\n  |     ^^^^^^^\n\n',
+ b'warning: `execution-engine` (lib) generated 2 warnings (run `cargo fix --lib'
+ b' -p execution-engine` to apply 2 suggestions)\n',
+ b'   Compiling pyo3-macros v0.21.2\n',
+ b'warning: `market-data` (lib) generated 7 warnings (run `cargo fix --lib -p m'
+ b'arket-data` to apply 4 suggestions)\n',
+ b'   Compiling signal-bridge v0.1.0 (/Users/hoangnam/Developer/RustAlgorithmTr'
+ b'ading/rust/signal-bridge)\n',
+ b'warning: use of deprecated method `pyo3::deprecations::GilRefs::<T>::functio'
+ b"n_arg`: use `&Bound<'_, T>` instead for this function argument\n   --> si"
+ b'gnal-bridge/src/bridge.rs:111:51\n    |\n111 |     pub fn compute_batch(&s'
+ b'elf, py: Python, bars: &PyList) -> Py...\n    |                          '
+ b'                         ^\n    |\n    = note: `#[warn(deprecated)]` on by'
+ b' default\n\n',
+ b'warning: use of deprecated method `pyo3::deprecations::GilRefs::<T>::functio'
+ b"n_arg`: use `&Bound<'_, T>` instead for this function argument\n   --> si"
+ b'gnal-bridge/src/bridge.rs:197:31\n    |\n197 | fn signal_bridge(_py: Pytho'
+ b'n, m: &PyModule) -> PyResult<()> {\n    |                               ^'
+ b'\n\n',
+ b'warning: unused variable: `py`\n   --> signal-bridge/src/bridge.rs:111:33'
+ b'\n    |\n111 | ...n compute_batch(&self, py: Python, bars: &PyList) -> PyR'
+ b'esult...\n    |                           ^^ help: if this is intentional'
+ b', prefix it with an underscore: `_py`\n    |\n    = note: `#[warn(unused_v'
+ b'ariables)]` (part of `#[warn(unused)]`) on by default\n\n',
+ b'warning: field `feature_engine` is never read\n  --> signal-bridge/src/li'
+ b'b.rs:17:5\n   |\n16 | pub struct SignalBridgeService {\n   |            ---'
+ b'---------------- field in this struct\n17 |     feature_engine: FeatureEn'
+ b'gine,\n   |     ^^^^^^^^^^^^^^\n   |\n   = note: `#[warn(dead_code)]` (part'
+ b' of `#[warn(unused)]`) on by default\n\nwarning: field `engine` is never r'
+ b'ead\n  --> signal-bridge/src/bridge.rs:43:5\n   |\n42 |',
+ b' pub struct FeatureComputer {\n   |            --------------- field in t'
+ b'his struct\n43 |     engine: FeatureEngine,\n   |     ^^^^^^\n\n',
+ b'warning: `signal-bridge` (lib) generated 5 warnings (run `cargo fix --lib -p'
+ b' signal-bridge` to apply 1 suggestion)\n']
+stdout_seq = [b'\x1b[0;34m[INFO]\x1b[0m 2026-04-23 22:30:26 - ============================'
+ b'==============\n',
+ b'\x1b[0;34m[INFO]\x1b[0m 2026-04-23 22:30:26 - AUTONOMOUS TRADING SYSTEM\n',
+ b'\x1b[0;34m[INFO]\x1b[0m 2026-04-23 22:30:26 - Mode: invalid\n',
+ b'\x1b[0;34m[INFO]\x1b[0m 2026-04-23 22:30:26 - ============================'
+ b'==============\n',
+ b'\x1b[0;34m[INFO]\x1b[0m 2026-04-23 22:30:26 - Setting up autonomous tradin'
+ b'g environment...\n',
+ b'\x1b[0;32m[SUCCESS]\x1b[0m 2026-04-23 22:30:26 - Environment setup complet'
+ b'e\n',
+ b'\x1b[0;34m[INFO]\x1b[0m 2026-04-23 22:30:26 - Validating system configurat'
+ b'ion...\n',
+ b'\x1b[0;32m[SUCCESS]\x1b[0m 2026-04-23 22:30:26 - Configuration validation '
+ b'complete\n',
+ b'\x1b[0;34m[INFO]\x1b[0m 2026-04-23 22:30:26 - Building Rust services in re'
+ b'lease mode...\n']
+
+/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py:1267: TimeoutExpired
+______________ TestEndToEndDataFlow.test_parquet_to_backtest_flow ______________
+
+self = <test_autonomous_system.TestEndToEndDataFlow object at 0x113fa1310>
+test_environment = {'data_dir': PosixPath('/private/var/folders/h9/_37f97bx28q57hg0p4dlwxcc0000gn/T/pytest-of-hoangnam/pytest-156/test_pa...private/var/folders/h9/_37f97bx28q57hg0p4dlwxcc0000gn/T/pytest-of-hoangnam/pytest-156/test_parquet_to_backtest_flow0')}
+
+    def test_parquet_to_backtest_flow(self, test_environment):
+        """Test loading Parquet data into backtest"""
+        data_dir = test_environment['data_dir']
+    
+        # Create Parquet data
+        df = pd.DataFrame({
+            'timestamp': pd.date_range('2024-01-01', periods=30, freq='D'),
+            'open': [100.0 + i for i in range(30)],
+            'high': [105.0 + i for i in range(30)],
+            'low': [99.0 + i for i in range(30)],
+            'close': [104.0 + i for i in range(30)],
+            'volume': [1000.0 * (i + 1) for i in range(30)],
+        })
+>       df.to_parquet(data_dir / "MSFT.parquet", index=False)
+
+data_dir   = PosixPath('/private/var/folders/h9/_37f97bx28q57hg0p4dlwxcc0000gn/T/pytest-of-hoangnam/pytest-156/test_parquet_to_backtest_flow0/data/historical')
+df         =     timestamp   open   high    low  close   volume
+0  2024-01-01  100.0  105.0   99.0  104.0   1000.0
+1  2024-01-02  101.0  106.0  100.0  105.0   2000.0
+2  2024-01-03  102.0  107.0  101.0  106.0   3000.0
+3  2024-01-04  103.0  108.0  102.0  107.0   4000.0
+4  2024-01-05  104.0  109.0  103.0  108.0   5000.0
+5  2024-01-06  105.0  110.0  104.0  109.0   6000.0
+6  2024-01-07  106.0  111.0  105.0  110.0   7000.0
+7  2024-01-08  107.0  112.0  106.0  111.0   8000.0
+8  2024-01-09  108.0  113.0  107.0  112.0   9000.0
+9  2024-01-10  109.0  114.0  108.0  113.0  10000.0
+10 2024-01-11  110.0  115.0  109.0  114.0  11000.0
+11 2024-01-12  111.0  116.0  110.0  115.0  12000.0
+12 2024-01-13  112.0  117.0  111.0  116.0  13000.0
+13 2024-01-14  113.0  118.0  112.0  117.0  14000.0
+14 2024-01-15  114.0  119.0  113.0  118.0  15000.0
+15 2024-01-16  115.0  120.0  114.0  119.0  16000.0
+16 2024-01-17  116.0  121.0  115.0  120.0  17000.0
+17 2024-01-18  117.0  122.0  116.0  121.0  18000.0
+18 2024-01-19  118.0  123.0  117.0  122.0  19000.0
+19 2024-01-20  119.0  124.0  118.0  123.0  20000.0
+20 2024-01-21  120.0  125.0  119.0  124.0  21000.0
+21 2024-01-22  121.0  126.0  120.0  125.0  22000.0
+22 2024-01-23  122.0  127.0  121.0  126.0  23000.0
+23 2024-01-24  123.0  128.0  122.0  127.0  24000.0
+24 2024-01-25  124.0  129.0  123.0  128.0  25000.0
+25 2024-01-26  125.0  130.0  124.0  129.0  26000.0
+26 2024-01-27  126.0  131.0  125.0  130.0  27000.0
+27 2024-01-28  127.0  132.0  126.0  131.0  28000.0
+28 2024-01-29  128.0  133.0  127.0  132.0  29000.0
+29 2024-01-30  129.0  134.0  128.0  133.0  30000.0
+self       = <test_autonomous_system.TestEndToEndDataFlow object at 0x113fa1310>
+test_environment = {'data_dir': PosixPath('/private/var/folders/h9/_37f97bx28q57hg0p4dlwxcc0000gn/T/pytest-of-hoangnam/pytest-156/test_parquet_to_backtest_flow0/data/historical'),
+ 'results_dir': PosixPath('/private/var/folders/h9/_37f97bx28q57hg0p4dlwxcc0000gn/T/pytest-of-hoangnam/pytest-156/test_parquet_to_backtest_flow0/data/backtest_results'),
+ 'root': PosixPath('/private/var/folders/h9/_37f97bx28q57hg0p4dlwxcc0000gn/T/pytest-of-hoangnam/pytest-156/test_parquet_to_backtest_flow0')}
+
+tests/integration/test_autonomous_system.py:341: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/lib/python3.14/site-packages/pandas/core/frame.py:3135: in to_parquet
+    return to_parquet(
+        compression = 'snappy'
+        engine     = 'auto'
+        filesystem = None
+        index      = False
+        kwargs     = {}
+        partition_cols = None
+        path       = PosixPath('/private/var/folders/h9/_37f97bx28q57hg0p4dlwxcc0000gn/T/pytest-of-hoangnam/pytest-156/test_parquet_to_backtest_flow0/data/historical/MSFT.parquet')
+        self       =     timestamp   open   high    low  close   volume
+0  2024-01-01  100.0  105.0   99.0  104.0   1000.0
+1  2024-01-02  101.0  106.0  100.0  105.0   2000.0
+2  2024-01-03  102.0  107.0  101.0  106.0   3000.0
+3  2024-01-04  103.0  108.0  102.0  107.0   4000.0
+4  2024-01-05  104.0  109.0  103.0  108.0   5000.0
+5  2024-01-06  105.0  110.0  104.0  109.0   6000.0
+6  2024-01-07  106.0  111.0  105.0  110.0   7000.0
+7  2024-01-08  107.0  112.0  106.0  111.0   8000.0
+8  2024-01-09  108.0  113.0  107.0  112.0   9000.0
+9  2024-01-10  109.0  114.0  108.0  113.0  10000.0
+10 2024-01-11  110.0  115.0  109.0  114.0  11000.0
+11 2024-01-12  111.0  116.0  110.0  115.0  12000.0
+12 2024-01-13  112.0  117.0  111.0  116.0  13000.0
+13 2024-01-14  113.0  118.0  112.0  117.0  14000.0
+14 2024-01-15  114.0  119.0  113.0  118.0  15000.0
+15 2024-01-16  115.0  120.0  114.0  119.0  16000.0
+16 2024-01-17  116.0  121.0  115.0  120.0  17000.0
+17 2024-01-18  117.0  122.0  116.0  121.0  18000.0
+18 2024-01-19  118.0  123.0  117.0  122.0  19000.0
+19 2024-01-20  119.0  124.0  118.0  123.0  20000.0
+20 2024-01-21  120.0  125.0  119.0  124.0  21000.0
+21 2024-01-22  121.0  126.0  120.0  125.0  22000.0
+22 2024-01-23  122.0  127.0  121.0  126.0  23000.0
+23 2024-01-24  123.0  128.0  122.0  127.0  24000.0
+24 2024-01-25  124.0  129.0  123.0  128.0  25000.0
+25 2024-01-26  125.0  130.0  124.0  129.0  26000.0
+26 2024-01-27  126.0  131.0  125.0  130.0  27000.0
+27 2024-01-28  127.0  132.0  126.0  131.0  28000.0
+28 2024-01-29  128.0  133.0  127.0  132.0  29000.0
+29 2024-01-30  129.0  134.0  128.0  133.0  30000.0
+        storage_options = None
+        to_parquet = <function to_parquet at 0x10dfc2140>
+/opt/homebrew/lib/python3.14/site-packages/pandas/io/parquet.py:486: in to_parquet
+    impl = get_engine(engine)
+           ^^^^^^^^^^^^^^^^^^
+        compression = 'snappy'
+        df         =     timestamp   open   high    low  close   volume
+0  2024-01-01  100.0  105.0   99.0  104.0   1000.0
+1  2024-01-02  101.0  106.0  100.0  105.0   2000.0
+2  2024-01-03  102.0  107.0  101.0  106.0   3000.0
+3  2024-01-04  103.0  108.0  102.0  107.0   4000.0
+4  2024-01-05  104.0  109.0  103.0  108.0   5000.0
+5  2024-01-06  105.0  110.0  104.0  109.0   6000.0
+6  2024-01-07  106.0  111.0  105.0  110.0   7000.0
+7  2024-01-08  107.0  112.0  106.0  111.0   8000.0
+8  2024-01-09  108.0  113.0  107.0  112.0   9000.0
+9  2024-01-10  109.0  114.0  108.0  113.0  10000.0
+10 2024-01-11  110.0  115.0  109.0  114.0  11000.0
+11 2024-01-12  111.0  116.0  110.0  115.0  12000.0
+12 2024-01-13  112.0  117.0  111.0  116.0  13000.0
+13 2024-01-14  113.0  118.0  112.0  117.0  14000.0
+14 2024-01-15  114.0  119.0  113.0  118.0  15000.0
+15 2024-01-16  115.0  120.0  114.0  119.0  16000.0
+16 2024-01-17  116.0  121.0  115.0  120.0  17000.0
+17 2024-01-18  117.0  122.0  116.0  121.0  18000.0
+18 2024-01-19  118.0  123.0  117.0  122.0  19000.0
+19 2024-01-20  119.0  124.0  118.0  123.0  20000.0
+20 2024-01-21  120.0  125.0  119.0  124.0  21000.0
+21 2024-01-22  121.0  126.0  120.0  125.0  22000.0
+22 2024-01-23  122.0  127.0  121.0  126.0  23000.0
+23 2024-01-24  123.0  128.0  122.0  127.0  24000.0
+24 2024-01-25  124.0  129.0  123.0  128.0  25000.0
+25 2024-01-26  125.0  130.0  124.0  129.0  26000.0
+26 2024-01-27  126.0  131.0  125.0  130.0  27000.0
+27 2024-01-28  127.0  132.0  126.0  131.0  28000.0
+28 2024-01-29  128.0  133.0  127.0  132.0  29000.0
+29 2024-01-30  129.0  134.0  128.0  133.0  30000.0
+        engine     = 'auto'
+        filesystem = None
+        index      = False
+        kwargs     = {}
+        partition_cols = None
+        path       = PosixPath('/private/var/folders/h9/_37f97bx28q57hg0p4dlwxcc0000gn/T/pytest-of-hoangnam/pytest-156/test_parquet_to_backtest_flow0/data/historical/MSFT.parquet')
+        storage_options = None
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+engine = 'auto'
+
+    def get_engine(engine: str) -> BaseImpl:
+        """return our implementation"""
+        if engine == "auto":
+            engine = get_option("io.parquet.engine")
+    
+        if engine == "auto":
+            # try engines in this order
+            engine_classes = [PyArrowImpl, FastParquetImpl]
+    
+            error_msgs = ""
+            for engine_class in engine_classes:
+                try:
+                    return engine_class()
+                except ImportError as err:
+                    error_msgs += "\n - " + str(err)
+    
+>           raise ImportError(
+                "Unable to find a usable engine; "
+                "tried using: 'pyarrow', 'fastparquet'.\n"
+                "A suitable version of "
+                "pyarrow or fastparquet is required for parquet "
+                "support.\n"
+                "Trying to import the above resulted in these errors:"
+                f"{error_msgs}"
+            )
+E           ImportError: Unable to find a usable engine; tried using: 'pyarrow', 'fastparquet'.
+E           A suitable version of pyarrow or fastparquet is required for parquet support.
+E           Trying to import the above resulted in these errors:
+E            - `Import pyarrow` failed. pyarrow is required for parquet support. Use pip or conda to install the pyarrow package.
+E            - `Import fastparquet` failed. fastparquet is required for parquet support. Use pip or conda to install the fastparquet package.
+
+engine     = 'auto'
+engine_class = <class 'pandas.io.parquet.FastParquetImpl'>
+engine_classes = [<class 'pandas.io.parquet.PyArrowImpl'>,
+ <class 'pandas.io.parquet.FastParquetImpl'>]
+error_msgs = ('\n'
+ ' - `Import pyarrow` failed. pyarrow is required for parquet support. Use pip '
+ 'or conda to install the pyarrow package.\n'
+ ' - `Import fastparquet` failed. fastparquet is required for parquet support. '
+ 'Use pip or conda to install the fastparquet package.')
+
+/opt/homebrew/lib/python3.14/site-packages/pandas/io/parquet.py:68: ImportError
+_________ TestSignalTypeEdgeCases.test_signal_with_special_characters __________
+
+self = <test_backtest_signal_validation.TestSignalTypeEdgeCases object at 0x113f95810>
+
+    def test_signal_with_special_characters(self):
+        """Test that signal types with special characters are rejected"""
+        invalid_types = ["LONG!", "SHORT@", "EXIT#", "L O N G", "LONG\n"]
+    
+        for invalid_type in invalid_types:
+>           with pytest.raises(ValidationError):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: DID NOT RAISE <class 'pydantic_core._pydantic_core.ValidationError'>
+
+invalid_type = 'LONG\n'
+invalid_types = ['LONG!', 'SHORT@', 'EXIT#', 'L O N G', 'LONG\n']
+self       = <test_backtest_signal_validation.TestSignalTypeEdgeCases object at 0x113f95810>
+
+tests/integration/test_backtest_signal_validation.py:288: Failed
+____________ TestMomentumSignalGeneration.test_load_historical_data ____________
+
+self = <test_momentum_signal_generation.TestMomentumSignalGeneration object at 0x113df3d90>
+historical_data_path = PosixPath('data/historical')
+
+    def test_load_historical_data(self, historical_data_path):
+        """Test that historical data can be loaded"""
+        data_file = historical_data_path / "AAPL.parquet"
+    
+        if not data_file.exists():
+            pytest.skip(f"Historical data not found: {data_file}")
+    
+        # Load data
+>       df = pd.read_parquet(data_file)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+data_file  = PosixPath('data/historical/AAPL.parquet')
+historical_data_path = PosixPath('data/historical')
+self       = <test_momentum_signal_generation.TestMomentumSignalGeneration object at 0x113df3d90>
+
+tests/integration/test_momentum_signal_generation.py:49: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/lib/python3.14/site-packages/pandas/io/parquet.py:668: in read_parquet
+    impl = get_engine(engine)
+           ^^^^^^^^^^^^^^^^^^
+        columns    = None
+        dtype_backend = <no_default>
+        engine     = 'auto'
+        filesystem = None
+        filters    = None
+        kwargs     = {}
+        path       = PosixPath('data/historical/AAPL.parquet')
+        storage_options = None
+        to_pandas_kwargs = None
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+engine = 'auto'
+
+    def get_engine(engine: str) -> BaseImpl:
+        """return our implementation"""
+        if engine == "auto":
+            engine = get_option("io.parquet.engine")
+    
+        if engine == "auto":
+            # try engines in this order
+            engine_classes = [PyArrowImpl, FastParquetImpl]
+    
+            error_msgs = ""
+            for engine_class in engine_classes:
+                try:
+                    return engine_class()
+                except ImportError as err:
+                    error_msgs += "\n - " + str(err)
+    
+>           raise ImportError(
+                "Unable to find a usable engine; "
+                "tried using: 'pyarrow', 'fastparquet'.\n"
+                "A suitable version of "
+                "pyarrow or fastparquet is required for parquet "
+                "support.\n"
+                "Trying to import the above resulted in these errors:"
+                f"{error_msgs}"
+            )
+E           ImportError: Unable to find a usable engine; tried using: 'pyarrow', 'fastparquet'.
+E           A suitable version of pyarrow or fastparquet is required for parquet support.
+E           Trying to import the above resulted in these errors:
+E            - `Import pyarrow` failed. pyarrow is required for parquet support. Use pip or conda to install the pyarrow package.
+E            - `Import fastparquet` failed. fastparquet is required for parquet support. Use pip or conda to install the fastparquet package.
+
+engine     = 'auto'
+engine_class = <class 'pandas.io.parquet.FastParquetImpl'>
+engine_classes = [<class 'pandas.io.parquet.PyArrowImpl'>,
+ <class 'pandas.io.parquet.FastParquetImpl'>]
+error_msgs = ('\n'
+ ' - `Import pyarrow` failed. pyarrow is required for parquet support. Use pip '
+ 'or conda to install the pyarrow package.\n'
+ ' - `Import fastparquet` failed. fastparquet is required for parquet support. '
+ 'Use pip or conda to install the fastparquet package.')
+
+/opt/homebrew/lib/python3.14/site-packages/pandas/io/parquet.py:68: ImportError
+______ TestMomentumSignalGeneration.test_generate_signals_with_real_data _______
+
+self = <test_momentum_signal_generation.TestMomentumSignalGeneration object at 0x113df3610>
+historical_data_path = PosixPath('data/historical')
+strategy = SimpleMomentumStrategy(symbols=['AAPL', 'MSFT', 'GOOGL'], rsi_period=14, position_size=0.1)
+
+    def test_generate_signals_with_real_data(self, historical_data_path, strategy):
+        """Test signal generation with real historical data"""
+        symbols = ['AAPL', 'MSFT', 'GOOGL']
+        all_signals = []
+    
+        for symbol in symbols:
+            data_file = historical_data_path / f"{symbol}.parquet"
+    
+            if not data_file.exists():
+                logger.warning(f"Skipping {symbol} - data file not found")
+                continue
+    
+            # Load data
+>           df = pd.read_parquet(data_file)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+all_signals = []
+data_file  = PosixPath('data/historical/AAPL.parquet')
+historical_data_path = PosixPath('data/historical')
+self       = <test_momentum_signal_generation.TestMomentumSignalGeneration object at 0x113df3610>
+strategy   = SimpleMomentumStrategy(symbols=['AAPL', 'MSFT', 'GOOGL'], rsi_period=14, position_size=0.1)
+symbol     = 'AAPL'
+symbols    = ['AAPL', 'MSFT', 'GOOGL']
+
+tests/integration/test_momentum_signal_generation.py:78: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/lib/python3.14/site-packages/pandas/io/parquet.py:668: in read_parquet
+    impl = get_engine(engine)
+           ^^^^^^^^^^^^^^^^^^
+        columns    = None
+        dtype_backend = <no_default>
+        engine     = 'auto'
+        filesystem = None
+        filters    = None
+        kwargs     = {}
+        path       = PosixPath('data/historical/AAPL.parquet')
+        storage_options = None
+        to_pandas_kwargs = None
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+engine = 'auto'
+
+    def get_engine(engine: str) -> BaseImpl:
+        """return our implementation"""
+        if engine == "auto":
+            engine = get_option("io.parquet.engine")
+    
+        if engine == "auto":
+            # try engines in this order
+            engine_classes = [PyArrowImpl, FastParquetImpl]
+    
+            error_msgs = ""
+            for engine_class in engine_classes:
+                try:
+                    return engine_class()
+                except ImportError as err:
+                    error_msgs += "\n - " + str(err)
+    
+>           raise ImportError(
+                "Unable to find a usable engine; "
+                "tried using: 'pyarrow', 'fastparquet'.\n"
+                "A suitable version of "
+                "pyarrow or fastparquet is required for parquet "
+                "support.\n"
+                "Trying to import the above resulted in these errors:"
+                f"{error_msgs}"
+            )
+E           ImportError: Unable to find a usable engine; tried using: 'pyarrow', 'fastparquet'.
+E           A suitable version of pyarrow or fastparquet is required for parquet support.
+E           Trying to import the above resulted in these errors:
+E            - `Import pyarrow` failed. pyarrow is required for parquet support. Use pip or conda to install the pyarrow package.
+E            - `Import fastparquet` failed. fastparquet is required for parquet support. Use pip or conda to install the fastparquet package.
+
+engine     = 'auto'
+engine_class = <class 'pandas.io.parquet.FastParquetImpl'>
+engine_classes = [<class 'pandas.io.parquet.PyArrowImpl'>,
+ <class 'pandas.io.parquet.FastParquetImpl'>]
+error_msgs = ('\n'
+ ' - `Import pyarrow` failed. pyarrow is required for parquet support. Use pip '
+ 'or conda to install the pyarrow package.\n'
+ ' - `Import fastparquet` failed. fastparquet is required for parquet support. '
+ 'Use pip or conda to install the fastparquet package.')
+
+/opt/homebrew/lib/python3.14/site-packages/pandas/io/parquet.py:68: ImportError
+---------------------------- Captured stderr setup -----------------------------
+2026-04-23 22:30:36.926 | INFO     | src.strategies.base:__init__:69 - Strategy 'MomentumStrategy' initialized with parameters: {'rsi_period': 14, 'rsi_oversold': 35, 'rsi_overbought': 65, 'ema_fast': 12, 'ema_slow': 26, 'macd_signal': 9, 'position_size': 0.1, 'stop_loss_pct': 0.02, 'take_profit_pct': 0.03, 'macd_histogram_threshold': 0.0005, 'volume_confirmation': True, 'volume_ma_period': 20, 'volume_multiplier': 1.05, 'use_trailing_stop': True, 'trailing_stop_pct': 0.015, 'use_atr_sizing': False, 'atr_period': 14, 'atr_multiplier': 1.5, 'use_adx_filter': True, 'adx_period': 14, 'adx_threshold': 25.0}
+2026-04-23 22:30:36.926 | INFO     | src.strategies.momentum:__init__:127 - ✅ ADX trending filter ENABLED: threshold=25.0
+2026-04-23 22:30:36.926 | INFO     | src.strategies.simple_momentum:__init__:66 - SimpleMomentumStrategy initialized for symbols: ['AAPL', 'MSFT', 'GOOGL'] (RSI: 14, Oversold: 35, Overbought: 65, Position: 10.0%)
+_________ TestMomentumSignalGeneration.test_signal_timing_distribution _________
+
+self = <test_momentum_signal_generation.TestMomentumSignalGeneration object at 0x1139482b0>
+historical_data_path = PosixPath('data/historical')
+strategy = SimpleMomentumStrategy(symbols=['AAPL', 'MSFT', 'GOOGL'], rsi_period=14, position_size=0.1)
+
+    def test_signal_timing_distribution(self, historical_data_path, strategy):
+        """Test that signals are distributed throughout the time period"""
+        symbol = 'AAPL'
+        data_file = historical_data_path / f"{symbol}.parquet"
+    
+        if not data_file.exists():
+            pytest.skip(f"Historical data not found for {symbol}")
+    
+>       df = pd.read_parquet(data_file)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+data_file  = PosixPath('data/historical/AAPL.parquet')
+historical_data_path = PosixPath('data/historical')
+self       = <test_momentum_signal_generation.TestMomentumSignalGeneration object at 0x1139482b0>
+strategy   = SimpleMomentumStrategy(symbols=['AAPL', 'MSFT', 'GOOGL'], rsi_period=14, position_size=0.1)
+symbol     = 'AAPL'
+
+tests/integration/test_momentum_signal_generation.py:142: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/lib/python3.14/site-packages/pandas/io/parquet.py:668: in read_parquet
+    impl = get_engine(engine)
+           ^^^^^^^^^^^^^^^^^^
+        columns    = None
+        dtype_backend = <no_default>
+        engine     = 'auto'
+        filesystem = None
+        filters    = None
+        kwargs     = {}
+        path       = PosixPath('data/historical/AAPL.parquet')
+        storage_options = None
+        to_pandas_kwargs = None
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+engine = 'auto'
+
+    def get_engine(engine: str) -> BaseImpl:
+        """return our implementation"""
+        if engine == "auto":
+            engine = get_option("io.parquet.engine")
+    
+        if engine == "auto":
+            # try engines in this order
+            engine_classes = [PyArrowImpl, FastParquetImpl]
+    
+            error_msgs = ""
+            for engine_class in engine_classes:
+                try:
+                    return engine_class()
+                except ImportError as err:
+                    error_msgs += "\n - " + str(err)
+    
+>           raise ImportError(
+                "Unable to find a usable engine; "
+                "tried using: 'pyarrow', 'fastparquet'.\n"
+                "A suitable version of "
+                "pyarrow or fastparquet is required for parquet "
+                "support.\n"
+                "Trying to import the above resulted in these errors:"
+                f"{error_msgs}"
+            )
+E           ImportError: Unable to find a usable engine; tried using: 'pyarrow', 'fastparquet'.
+E           A suitable version of pyarrow or fastparquet is required for parquet support.
+E           Trying to import the above resulted in these errors:
+E            - `Import pyarrow` failed. pyarrow is required for parquet support. Use pip or conda to install the pyarrow package.
+E            - `Import fastparquet` failed. fastparquet is required for parquet support. Use pip or conda to install the fastparquet package.
+
+engine     = 'auto'
+engine_class = <class 'pandas.io.parquet.FastParquetImpl'>
+engine_classes = [<class 'pandas.io.parquet.PyArrowImpl'>,
+ <class 'pandas.io.parquet.FastParquetImpl'>]
+error_msgs = ('\n'
+ ' - `Import pyarrow` failed. pyarrow is required for parquet support. Use pip '
+ 'or conda to install the pyarrow package.\n'
+ ' - `Import fastparquet` failed. fastparquet is required for parquet support. '
+ 'Use pip or conda to install the fastparquet package.')
+
+/opt/homebrew/lib/python3.14/site-packages/pandas/io/parquet.py:68: ImportError
+---------------------------- Captured stderr setup -----------------------------
+2026-04-23 22:30:36.940 | INFO     | src.strategies.base:__init__:69 - Strategy 'MomentumStrategy' initialized with parameters: {'rsi_period': 14, 'rsi_oversold': 35, 'rsi_overbought': 65, 'ema_fast': 12, 'ema_slow': 26, 'macd_signal': 9, 'position_size': 0.1, 'stop_loss_pct': 0.02, 'take_profit_pct': 0.03, 'macd_histogram_threshold': 0.0005, 'volume_confirmation': True, 'volume_ma_period': 20, 'volume_multiplier': 1.05, 'use_trailing_stop': True, 'trailing_stop_pct': 0.015, 'use_atr_sizing': False, 'atr_period': 14, 'atr_multiplier': 1.5, 'use_adx_filter': True, 'adx_period': 14, 'adx_threshold': 25.0}
+2026-04-23 22:30:36.940 | INFO     | src.strategies.momentum:__init__:127 - ✅ ADX trending filter ENABLED: threshold=25.0
+2026-04-23 22:30:36.940 | INFO     | src.strategies.simple_momentum:__init__:66 - SimpleMomentumStrategy initialized for symbols: ['AAPL', 'MSFT', 'GOOGL'] (RSI: 14, Oversold: 35, Overbought: 65, Position: 10.0%)
+___________ TestMomentumSignalGeneration.test_indicator_calculations ___________
+
+self = <test_momentum_signal_generation.TestMomentumSignalGeneration object at 0x1139483e0>
+historical_data_path = PosixPath('data/historical')
+strategy = SimpleMomentumStrategy(symbols=['AAPL', 'MSFT', 'GOOGL'], rsi_period=14, position_size=0.1)
+
+    def test_indicator_calculations(self, historical_data_path, strategy):
+        """Test that indicators are calculated correctly"""
+        symbol = 'AAPL'
+        data_file = historical_data_path / f"{symbol}.parquet"
+    
+        if not data_file.exists():
+            pytest.skip(f"Historical data not found for {symbol}")
+    
+>       df = pd.read_parquet(data_file)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+data_file  = PosixPath('data/historical/AAPL.parquet')
+historical_data_path = PosixPath('data/historical')
+self       = <test_momentum_signal_generation.TestMomentumSignalGeneration object at 0x1139483e0>
+strategy   = SimpleMomentumStrategy(symbols=['AAPL', 'MSFT', 'GOOGL'], rsi_period=14, position_size=0.1)
+symbol     = 'AAPL'
+
+tests/integration/test_momentum_signal_generation.py:177: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/lib/python3.14/site-packages/pandas/io/parquet.py:668: in read_parquet
+    impl = get_engine(engine)
+           ^^^^^^^^^^^^^^^^^^
+        columns    = None
+        dtype_backend = <no_default>
+        engine     = 'auto'
+        filesystem = None
+        filters    = None
+        kwargs     = {}
+        path       = PosixPath('data/historical/AAPL.parquet')
+        storage_options = None
+        to_pandas_kwargs = None
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+engine = 'auto'
+
+    def get_engine(engine: str) -> BaseImpl:
+        """return our implementation"""
+        if engine == "auto":
+            engine = get_option("io.parquet.engine")
+    
+        if engine == "auto":
+            # try engines in this order
+            engine_classes = [PyArrowImpl, FastParquetImpl]
+    
+            error_msgs = ""
+            for engine_class in engine_classes:
+                try:
+                    return engine_class()
+                except ImportError as err:
+                    error_msgs += "\n - " + str(err)
+    
+>           raise ImportError(
+                "Unable to find a usable engine; "
+                "tried using: 'pyarrow', 'fastparquet'.\n"
+                "A suitable version of "
+                "pyarrow or fastparquet is required for parquet "
+                "support.\n"
+                "Trying to import the above resulted in these errors:"
+                f"{error_msgs}"
+            )
+E           ImportError: Unable to find a usable engine; tried using: 'pyarrow', 'fastparquet'.
+E           A suitable version of pyarrow or fastparquet is required for parquet support.
+E           Trying to import the above resulted in these errors:
+E            - `Import pyarrow` failed. pyarrow is required for parquet support. Use pip or conda to install the pyarrow package.
+E            - `Import fastparquet` failed. fastparquet is required for parquet support. Use pip or conda to install the fastparquet package.
+
+engine     = 'auto'
+engine_class = <class 'pandas.io.parquet.FastParquetImpl'>
+engine_classes = [<class 'pandas.io.parquet.PyArrowImpl'>,
+ <class 'pandas.io.parquet.FastParquetImpl'>]
+error_msgs = ('\n'
+ ' - `Import pyarrow` failed. pyarrow is required for parquet support. Use pip '
+ 'or conda to install the pyarrow package.\n'
+ ' - `Import fastparquet` failed. fastparquet is required for parquet support. '
+ 'Use pip or conda to install the fastparquet package.')
+
+/opt/homebrew/lib/python3.14/site-packages/pandas/io/parquet.py:68: ImportError
+---------------------------- Captured stderr setup -----------------------------
+2026-04-23 22:30:36.953 | INFO     | src.strategies.base:__init__:69 - Strategy 'MomentumStrategy' initialized with parameters: {'rsi_period': 14, 'rsi_oversold': 35, 'rsi_overbought': 65, 'ema_fast': 12, 'ema_slow': 26, 'macd_signal': 9, 'position_size': 0.1, 'stop_loss_pct': 0.02, 'take_profit_pct': 0.03, 'macd_histogram_threshold': 0.0005, 'volume_confirmation': True, 'volume_ma_period': 20, 'volume_multiplier': 1.05, 'use_trailing_stop': True, 'trailing_stop_pct': 0.015, 'use_atr_sizing': False, 'atr_period': 14, 'atr_multiplier': 1.5, 'use_adx_filter': True, 'adx_period': 14, 'adx_threshold': 25.0}
+2026-04-23 22:30:36.953 | INFO     | src.strategies.momentum:__init__:127 - ✅ ADX trending filter ENABLED: threshold=25.0
+2026-04-23 22:30:36.953 | INFO     | src.strategies.simple_momentum:__init__:66 - SimpleMomentumStrategy initialized for symbols: ['AAPL', 'MSFT', 'GOOGL'] (RSI: 14, Oversold: 35, Overbought: 65, Position: 10.0%)
+________ TestMomentumSignalGeneration.test_position_sizing_with_signals ________
+
+self = <test_momentum_signal_generation.TestMomentumSignalGeneration object at 0x112466690>
+strategy = SimpleMomentumStrategy(symbols=['AAPL', 'MSFT', 'GOOGL'], rsi_period=14, position_size=0.1)
+
+    def test_position_sizing_with_signals(self, strategy):
+        """Test position sizing calculations with generated signals"""
+        # Create a mock signal
+        from src.strategies.base import Signal
+    
+        signal = Signal(
+            timestamp=datetime.now(),
+            symbol='AAPL',
+>           signal_type=SignalType.BUY,
+                        ^^^^^^^^^^^^^^
+            price=230.0,
+            confidence=0.8
+        )
+E       AttributeError: type object 'SignalType' has no attribute 'BUY'
+
+Signal     = <class 'src.strategies.base.Signal'>
+self       = <test_momentum_signal_generation.TestMomentumSignalGeneration object at 0x112466690>
+strategy   = SimpleMomentumStrategy(symbols=['AAPL', 'MSFT', 'GOOGL'], rsi_period=14, position_size=0.1)
+
+tests/integration/test_momentum_signal_generation.py:213: AttributeError
+---------------------------- Captured stderr setup -----------------------------
+2026-04-23 22:30:36.970 | INFO     | src.strategies.base:__init__:69 - Strategy 'MomentumStrategy' initialized with parameters: {'rsi_period': 14, 'rsi_oversold': 35, 'rsi_overbought': 65, 'ema_fast': 12, 'ema_slow': 26, 'macd_signal': 9, 'position_size': 0.1, 'stop_loss_pct': 0.02, 'take_profit_pct': 0.03, 'macd_histogram_threshold': 0.0005, 'volume_confirmation': True, 'volume_ma_period': 20, 'volume_multiplier': 1.05, 'use_trailing_stop': True, 'trailing_stop_pct': 0.015, 'use_atr_sizing': False, 'atr_period': 14, 'atr_multiplier': 1.5, 'use_adx_filter': True, 'adx_period': 14, 'adx_threshold': 25.0}
+2026-04-23 22:30:36.970 | INFO     | src.strategies.momentum:__init__:127 - ✅ ADX trending filter ENABLED: threshold=25.0
+2026-04-23 22:30:36.970 | INFO     | src.strategies.simple_momentum:__init__:66 - SimpleMomentumStrategy initialized for symbols: ['AAPL', 'MSFT', 'GOOGL'] (RSI: 14, Oversold: 35, Overbought: 65, Position: 10.0%)
+_________ TestMomentumSignalGeneration.test_signal_confidence_quality __________
+
+self = <test_momentum_signal_generation.TestMomentumSignalGeneration object at 0x1137fb680>
+historical_data_path = PosixPath('data/historical')
+strategy = SimpleMomentumStrategy(symbols=['AAPL', 'MSFT', 'GOOGL'], rsi_period=14, position_size=0.1)
+
+    def test_signal_confidence_quality(self, historical_data_path, strategy):
+        """Test that signal confidence values are reasonable"""
+        all_confidences = []
+    
+        for symbol in ['AAPL', 'MSFT', 'GOOGL']:
+            data_file = historical_data_path / f"{symbol}.parquet"
+    
+            if not data_file.exists():
+                continue
+    
+>           df = pd.read_parquet(data_file)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+all_confidences = []
+data_file  = PosixPath('data/historical/AAPL.parquet')
+historical_data_path = PosixPath('data/historical')
+self       = <test_momentum_signal_generation.TestMomentumSignalGeneration object at 0x1137fb680>
+strategy   = SimpleMomentumStrategy(symbols=['AAPL', 'MSFT', 'GOOGL'], rsi_period=14, position_size=0.1)
+symbol     = 'AAPL'
+
+tests/integration/test_momentum_signal_generation.py:246: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/lib/python3.14/site-packages/pandas/io/parquet.py:668: in read_parquet
+    impl = get_engine(engine)
+           ^^^^^^^^^^^^^^^^^^
+        columns    = None
+        dtype_backend = <no_default>
+        engine     = 'auto'
+        filesystem = None
+        filters    = None
+        kwargs     = {}
+        path       = PosixPath('data/historical/AAPL.parquet')
+        storage_options = None
+        to_pandas_kwargs = None
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+engine = 'auto'
+
+    def get_engine(engine: str) -> BaseImpl:
+        """return our implementation"""
+        if engine == "auto":
+            engine = get_option("io.parquet.engine")
+    
+        if engine == "auto":
+            # try engines in this order
+            engine_classes = [PyArrowImpl, FastParquetImpl]
+    
+            error_msgs = ""
+            for engine_class in engine_classes:
+                try:
+                    return engine_class()
+                except ImportError as err:
+                    error_msgs += "\n - " + str(err)
+    
+>           raise ImportError(
+                "Unable to find a usable engine; "
+                "tried using: 'pyarrow', 'fastparquet'.\n"
+                "A suitable version of "
+                "pyarrow or fastparquet is required for parquet "
+                "support.\n"
+                "Trying to import the above resulted in these errors:"
+                f"{error_msgs}"
+            )
+E           ImportError: Unable to find a usable engine; tried using: 'pyarrow', 'fastparquet'.
+E           A suitable version of pyarrow or fastparquet is required for parquet support.
+E           Trying to import the above resulted in these errors:
+E            - `Import pyarrow` failed. pyarrow is required for parquet support. Use pip or conda to install the pyarrow package.
+E            - `Import fastparquet` failed. fastparquet is required for parquet support. Use pip or conda to install the fastparquet package.
+
+engine     = 'auto'
+engine_class = <class 'pandas.io.parquet.FastParquetImpl'>
+engine_classes = [<class 'pandas.io.parquet.PyArrowImpl'>,
+ <class 'pandas.io.parquet.FastParquetImpl'>]
+error_msgs = ('\n'
+ ' - `Import pyarrow` failed. pyarrow is required for parquet support. Use pip '
+ 'or conda to install the pyarrow package.\n'
+ ' - `Import fastparquet` failed. fastparquet is required for parquet support. '
+ 'Use pip or conda to install the fastparquet package.')
+
+/opt/homebrew/lib/python3.14/site-packages/pandas/io/parquet.py:68: ImportError
+---------------------------- Captured stderr setup -----------------------------
+2026-04-23 22:30:36.977 | INFO     | src.strategies.base:__init__:69 - Strategy 'MomentumStrategy' initialized with parameters: {'rsi_period': 14, 'rsi_oversold': 35, 'rsi_overbought': 65, 'ema_fast': 12, 'ema_slow': 26, 'macd_signal': 9, 'position_size': 0.1, 'stop_loss_pct': 0.02, 'take_profit_pct': 0.03, 'macd_histogram_threshold': 0.0005, 'volume_confirmation': True, 'volume_ma_period': 20, 'volume_multiplier': 1.05, 'use_trailing_stop': True, 'trailing_stop_pct': 0.015, 'use_atr_sizing': False, 'atr_period': 14, 'atr_multiplier': 1.5, 'use_adx_filter': True, 'adx_period': 14, 'adx_threshold': 25.0}
+2026-04-23 22:30:36.977 | INFO     | src.strategies.momentum:__init__:127 - ✅ ADX trending filter ENABLED: threshold=25.0
+2026-04-23 22:30:36.977 | INFO     | src.strategies.simple_momentum:__init__:66 - SimpleMomentumStrategy initialized for symbols: ['AAPL', 'MSFT', 'GOOGL'] (RSI: 14, Oversold: 35, Overbought: 65, Position: 10.0%)
+_________ TestMomentumStrategyDiagnostics.test_basic_signal_structure __________
+
+self = <test_momentum_signal_generation.TestMomentumStrategyDiagnostics object at 0x1134ea210>
+
+    def test_basic_signal_structure(self):
+        """Test that Signal objects have the correct structure"""
+        from src.strategies.base import Signal, SignalType
+    
+        signal = Signal(
+            timestamp=datetime.now(),
+            symbol='TEST',
+>           signal_type=SignalType.BUY,
+                        ^^^^^^^^^^^^^^
+            price=100.0,
+            confidence=0.8,
+            metadata={'rsi': 45.0, 'macd': 0.5}
+        )
+E       AttributeError: type object 'SignalType' has no attribute 'BUY'
+
+Signal     = <class 'src.strategies.base.Signal'>
+SignalType = <enum 'SignalType'>
+self       = <test_momentum_signal_generation.TestMomentumStrategyDiagnostics object at 0x1134ea210>
+
+tests/integration/test_momentum_signal_generation.py:286: AttributeError
+=============================== warnings summary ===============================
+../../../../opt/homebrew/lib/python3.14/site-packages/websockets/legacy/__init__.py:6
+  /opt/homebrew/lib/python3.14/site-packages/websockets/legacy/__init__.py:6: DeprecationWarning: websockets.legacy is deprecated; see https://websockets.readthedocs.io/en/stable/howto/upgrade.html for upgrade instructions
+    warnings.warn(  # deprecated in 14.0 - 2024-11-09
+
+src/observability/api/routes/trades.py:97
+  /Users/hoangnam/Developer/RustAlgorithmTrading/src/observability/api/routes/trades.py:97: FastAPIDeprecationWarning: `regex` has been deprecated, please use `pattern` instead
+    time_range: str = Query("24h", regex="^(1h|24h|7d|30d)$")
+
+integration/test_autonomous_system.py: 2 warnings
+integration/test_backtest_signal_flow.py: 7 warnings
+integration/test_backtest_signal_validation.py: 2 warnings
+  /opt/homebrew/lib/python3.14/site-packages/pydantic/main.py:250: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+
+integration/test_autonomous_system.py::TestBacktestingIntegration::test_backtest_execution
+integration/test_backtest_signal_validation.py::TestBacktestSignalValidation::test_backtest_processes_valid_signal_types
+integration/test_backtest_signal_validation.py::TestBacktestSignalValidation::test_backtest_signal_count_accuracy
+  /Users/hoangnam/Developer/RustAlgorithmTrading/src/backtesting/engine.py:79: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    start_time = datetime.utcnow()
+
+integration/test_autonomous_system.py::TestBacktestingIntegration::test_backtest_execution
+integration/test_backtest_signal_validation.py::TestBacktestSignalValidation::test_backtest_processes_valid_signal_types
+integration/test_backtest_signal_validation.py::TestBacktestSignalValidation::test_backtest_signal_count_accuracy
+  /Users/hoangnam/Developer/RustAlgorithmTrading/src/backtesting/engine.py:115: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    end_time = datetime.utcnow()
+
+integration/test_backtest_signal_validation.py::TestBacktestSignalValidation::test_backtest_processes_valid_signal_types
+integration/test_backtest_signal_validation.py::TestBacktestSignalValidation::test_backtest_signal_count_accuracy
+  /Users/hoangnam/Developer/RustAlgorithmTrading/tests/integration/test_backtest_signal_validation.py:72: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    dates = pd.date_range(end=datetime.utcnow(), periods=periods, freq='1D')
+
+integration/test_backtest_signal_validation.py::TestBacktestSignalValidation::test_signal_event_creation_from_strategy_signals
+  /Users/hoangnam/Developer/RustAlgorithmTrading/tests/integration/test_backtest_signal_validation.py:121: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    timestamp=datetime.utcnow(),
+
+integration/test_backtest_signal_validation.py::TestBacktestSignalValidation::test_signal_event_rejects_invalid_type_from_strategy
+  /Users/hoangnam/Developer/RustAlgorithmTrading/tests/integration/test_backtest_signal_validation.py:148: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    timestamp=datetime.utcnow(),
+
+integration/test_backtest_signal_validation.py::TestBacktestSignalValidation::test_multiple_signal_types_in_backtest
+  /Users/hoangnam/Developer/RustAlgorithmTrading/tests/integration/test_backtest_signal_validation.py:173: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    timestamp=datetime.utcnow(),
+
+integration/test_backtest_signal_validation.py::TestBacktestSignalValidation::test_multiple_signal_types_in_backtest
+  /Users/hoangnam/Developer/RustAlgorithmTrading/tests/integration/test_backtest_signal_validation.py:180: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    timestamp=datetime.utcnow() + timedelta(hours=1),
+
+integration/test_backtest_signal_validation.py::TestBacktestSignalValidation::test_multiple_signal_types_in_backtest
+  /Users/hoangnam/Developer/RustAlgorithmTrading/tests/integration/test_backtest_signal_validation.py:187: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    timestamp=datetime.utcnow() + timedelta(hours=2),
+
+integration/test_backtest_signal_validation.py::TestBacktestSignalValidation::test_signal_validation_catches_case_sensitivity
+  /Users/hoangnam/Developer/RustAlgorithmTrading/tests/integration/test_backtest_signal_validation.py:217: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    timestamp=datetime.utcnow(),
+
+integration/test_backtest_signal_validation.py::TestBacktestSignalValidation::test_signal_validation_catches_case_sensitivity
+  /Users/hoangnam/Developer/RustAlgorithmTrading/tests/integration/test_backtest_signal_validation.py:226: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    timestamp=datetime.utcnow(),
+
+integration/test_backtest_signal_validation.py::TestSignalTypeEdgeCases::test_signal_with_none_type
+  /Users/hoangnam/Developer/RustAlgorithmTrading/tests/integration/test_backtest_signal_validation.py:265: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    timestamp=datetime.utcnow(),
+
+integration/test_backtest_signal_validation.py::TestSignalTypeEdgeCases::test_signal_with_numeric_type
+  /Users/hoangnam/Developer/RustAlgorithmTrading/tests/integration/test_backtest_signal_validation.py:276: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    timestamp=datetime.utcnow(),
+
+integration/test_backtest_signal_validation.py::TestSignalTypeEdgeCases::test_signal_with_special_characters
+  /Users/hoangnam/Developer/RustAlgorithmTrading/tests/integration/test_backtest_signal_validation.py:290: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    timestamp=datetime.utcnow(),
+
+integration/test_backtest_signal_validation.py::TestSignalTypeEdgeCases::test_signal_strength_edge_cases
+  /Users/hoangnam/Developer/RustAlgorithmTrading/tests/integration/test_backtest_signal_validation.py:301: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    timestamp=datetime.utcnow(),
+
+integration/test_backtest_signal_validation.py::TestSignalTypeEdgeCases::test_signal_strength_edge_cases
+  /Users/hoangnam/Developer/RustAlgorithmTrading/tests/integration/test_backtest_signal_validation.py:311: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    timestamp=datetime.utcnow(),
+
+integration/test_backtest_signal_validation.py::TestSignalTypeEdgeCases::test_signal_strength_edge_cases
+  /Users/hoangnam/Developer/RustAlgorithmTrading/tests/integration/test_backtest_signal_validation.py:322: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    timestamp=datetime.utcnow(),
+
+integration/test_backtest_signal_validation.py::TestSignalTypeEdgeCases::test_signal_strength_edge_cases
+  /Users/hoangnam/Developer/RustAlgorithmTrading/tests/integration/test_backtest_signal_validation.py:332: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    timestamp=datetime.utcnow(),
+
+integration/test_backtest_signal_validation.py::TestSignalValidationPerformance::test_rapid_signal_creation
+  /Users/hoangnam/Developer/RustAlgorithmTrading/tests/integration/test_backtest_signal_validation.py:353: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    timestamp=datetime.utcnow(),
+
+integration/test_backtest_signal_validation.py::TestSignalValidationPerformance::test_validation_error_performance
+  /Users/hoangnam/Developer/RustAlgorithmTrading/tests/integration/test_backtest_signal_validation.py:377: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    timestamp=datetime.utcnow(),
+
+integration/test_observability_integration.py::test_rust_metrics_bridge_scraping
+integration/test_observability_integration.py::test_prometheus_text_parsing
+integration/test_observability_integration.py::test_market_data_collector_integration
+integration/test_observability_integration.py::test_all_services_scraping
+integration/test_observability_integration.py::test_continuous_scraping
+  /Users/hoangnam/Developer/RustAlgorithmTrading/src/observability/metrics/rust_bridge.py:103: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    "timestamp": datetime.utcnow(),
+
+integration/test_observability_integration.py::test_market_data_collector_integration
+  /Users/hoangnam/Developer/RustAlgorithmTrading/src/observability/metrics/collectors.py:40: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    self.start_time = datetime.utcnow()
+
+integration/test_observability_integration.py::test_market_data_collector_integration
+  /Users/hoangnam/Developer/RustAlgorithmTrading/src/observability/metrics/market_data_collector.py:197: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    timestamp = rust_metrics.get("timestamp", datetime.utcnow())
+
+integration/test_observability_integration.py::test_market_data_collector_integration
+  /Users/hoangnam/Developer/RustAlgorithmTrading/src/observability/metrics/collectors.py:88: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    uptime = (datetime.utcnow() - self.start_time).total_seconds()
+
+integration/test_observability_integration.py::test_market_data_collector_integration
+  /Users/hoangnam/Developer/RustAlgorithmTrading/src/observability/metrics/market_data_collector.py:156: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    "timestamp": datetime.utcnow().isoformat(),
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+SKIPPED [1] tests/integration/test_autonomous_system.py:57: Requires Alpaca API credentials
+SKIPPED [1] tests/integration/test_autonomous_system.py:255: Requires Alpaca API credentials and full environment
+FAILED tests/integration/test_autonomous_system.py::TestDataDownloadIntegration::test_download_script_help - assert 1 == 0
+ +  where 1 = CompletedProcess(args=['python', '/Users/hoangnam/Developer/RustAlgorithmTrading/scripts/download_historical_data.py', '--help'], returncode=1, stdout='', stderr='Traceback (most recent call last):\n  File "/Users/hoangnam/Developer/RustAlgorithmTrading/scripts/download_historical_data.py", line 26, in <module>\n    import pyarrow as pa\nModuleNotFoundError: No module named \'pyarrow\'\n').returncode
+FAILED tests/integration/test_autonomous_system.py::TestAutonomousSystemScript::test_script_help - subprocess.TimeoutExpired: Command '['/Users/hoangnam/Developer/RustAlgorithmTrading/scripts/autonomous_trading_system.sh', '--mode=invalid']' timed out after 10 seconds
+FAILED tests/integration/test_autonomous_system.py::TestEndToEndDataFlow::test_parquet_to_backtest_flow - ImportError: Unable to find a usable engine; tried using: 'pyarrow', 'fastparquet'.
+A suitable version of pyarrow or fastparquet is required for parquet support.
+Trying to import the above resulted in these errors:
+ - `Import pyarrow` failed. pyarrow is required for parquet support. Use pip or conda to install the pyarrow package.
+ - `Import fastparquet` failed. fastparquet is required for parquet support. Use pip or conda to install the fastparquet package.
+FAILED tests/integration/test_backtest_signal_validation.py::TestSignalTypeEdgeCases::test_signal_with_special_characters - Failed: DID NOT RAISE <class 'pydantic_core._pydantic_core.ValidationError'>
+FAILED tests/integration/test_momentum_signal_generation.py::TestMomentumSignalGeneration::test_load_historical_data - ImportError: Unable to find a usable engine; tried using: 'pyarrow', 'fastparquet'.
+A suitable version of pyarrow or fastparquet is required for parquet support.
+Trying to import the above resulted in these errors:
+ - `Import pyarrow` failed. pyarrow is required for parquet support. Use pip or conda to install the pyarrow package.
+ - `Import fastparquet` failed. fastparquet is required for parquet support. Use pip or conda to install the fastparquet package.
+FAILED tests/integration/test_momentum_signal_generation.py::TestMomentumSignalGeneration::test_generate_signals_with_real_data - ImportError: Unable to find a usable engine; tried using: 'pyarrow', 'fastparquet'.
+A suitable version of pyarrow or fastparquet is required for parquet support.
+Trying to import the above resulted in these errors:
+ - `Import pyarrow` failed. pyarrow is required for parquet support. Use pip or conda to install the pyarrow package.
+ - `Import fastparquet` failed. fastparquet is required for parquet support. Use pip or conda to install the fastparquet package.
+FAILED tests/integration/test_momentum_signal_generation.py::TestMomentumSignalGeneration::test_signal_timing_distribution - ImportError: Unable to find a usable engine; tried using: 'pyarrow', 'fastparquet'.
+A suitable version of pyarrow or fastparquet is required for parquet support.
+Trying to import the above resulted in these errors:
+ - `Import pyarrow` failed. pyarrow is required for parquet support. Use pip or conda to install the pyarrow package.
+ - `Import fastparquet` failed. fastparquet is required for parquet support. Use pip or conda to install the fastparquet package.
+FAILED tests/integration/test_momentum_signal_generation.py::TestMomentumSignalGeneration::test_indicator_calculations - ImportError: Unable to find a usable engine; tried using: 'pyarrow', 'fastparquet'.
+A suitable version of pyarrow or fastparquet is required for parquet support.
+Trying to import the above resulted in these errors:
+ - `Import pyarrow` failed. pyarrow is required for parquet support. Use pip or conda to install the pyarrow package.
+ - `Import fastparquet` failed. fastparquet is required for parquet support. Use pip or conda to install the fastparquet package.
+FAILED tests/integration/test_momentum_signal_generation.py::TestMomentumSignalGeneration::test_position_sizing_with_signals - AttributeError: type object 'SignalType' has no attribute 'BUY'
+FAILED tests/integration/test_momentum_signal_generation.py::TestMomentumSignalGeneration::test_signal_confidence_quality - ImportError: Unable to find a usable engine; tried using: 'pyarrow', 'fastparquet'.
+A suitable version of pyarrow or fastparquet is required for parquet support.
+Trying to import the above resulted in these errors:
+ - `Import pyarrow` failed. pyarrow is required for parquet support. Use pip or conda to install the pyarrow package.
+ - `Import fastparquet` failed. fastparquet is required for parquet support. Use pip or conda to install the fastparquet package.
+FAILED tests/integration/test_momentum_signal_generation.py::TestMomentumStrategyDiagnostics::test_basic_signal_structure - AttributeError: type object 'SignalType' has no attribute 'BUY'
+============ 11 failed, 33 passed, 2 skipped, 46 warnings in 17.25s ============

@@ -24,7 +24,7 @@ pub struct RiskManagerService {
 
 impl RiskManagerService {
     pub fn new(config: common::config::RiskConfig) -> Result<Self> {
-        info!("Initializing Risk Manager Service");
+        info!("[cid:INIT] Initializing Risk Manager Service");
         Ok(Self {
             limit_checker: LimitChecker::new(config.clone()),
             pnl_tracker: PnLTracker::new(),
@@ -48,7 +48,7 @@ impl RiskManagerService {
         let trigger = self.stop_manager.check(&position);
 
         if trigger.is_some() {
-            warn!("Stop-loss triggered for position: {:?}", position.symbol);
+            warn!("[cid:INIT] Stop-loss triggered for position: {:?}", position.symbol);
         }
 
         trigger

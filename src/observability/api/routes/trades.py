@@ -64,7 +64,7 @@ async def get_trade_history(
             offset=offset
         )
     except Exception as e:
-        logger.error(f"Error getting trade history: {e}")
+        logger.error(f"[cid:INIT] Error getting trade history: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -87,7 +87,7 @@ async def get_trade_details(trade_id: str):
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error getting trade details: {e}")
+        logger.error(f"[cid:INIT] Error getting trade details: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -134,7 +134,7 @@ async def get_trade_statistics(
 
         return stats
     except Exception as e:
-        logger.error(f"Error getting trade statistics: {e}")
+        logger.error(f"[cid:INIT] Error getting trade statistics: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -161,5 +161,5 @@ async def get_execution_quality_metrics():
 
         return quality_metrics
     except Exception as e:
-        logger.error(f"Error getting execution quality metrics: {e}")
+        logger.error(f"[cid:INIT] Error getting execution quality metrics: {e}")
         raise HTTPException(status_code=500, detail=str(e))

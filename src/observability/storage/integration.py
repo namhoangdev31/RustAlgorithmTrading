@@ -56,7 +56,7 @@ class StorageManager:
         await self._sqlite.initialize()
 
         self._initialized = True
-        logger.info("Storage manager initialized")
+        logger.info("[cid:INIT] Storage manager initialized")
 
     async def close(self) -> None:
         """Close all database connections"""
@@ -65,7 +65,7 @@ class StorageManager:
         if self._sqlite:
             await self._sqlite.close()
         self._initialized = False
-        logger.info("Storage manager closed")
+        logger.info("[cid:INIT] Storage manager closed")
 
     @property
     def duckdb(self) -> DuckDBClient:
@@ -114,7 +114,7 @@ class StorageManager:
                 symbol=symbol,
             )
         except Exception as e:
-            logger.error(f"Failed to get metrics: {e}")
+            logger.error(f"[cid:INIT] Failed to get metrics: {e}")
             raise HTTPException(status_code=500, detail=str(e))
 
     async def get_market_data(
@@ -141,7 +141,7 @@ class StorageManager:
                 limit=limit,
             )
         except Exception as e:
-            logger.error(f"Failed to get market data: {e}")
+            logger.error(f"[cid:INIT] Failed to get market data: {e}")
             raise HTTPException(status_code=500, detail=str(e))
 
     async def log_trade_execution(
@@ -166,7 +166,7 @@ class StorageManager:
                 metadata=metadata,
             )
         except Exception as e:
-            logger.error(f"Failed to log trade: {e}")
+            logger.error(f"[cid:INIT] Failed to log trade: {e}")
             raise HTTPException(status_code=500, detail=str(e))
 
     async def get_trading_summary(
@@ -189,7 +189,7 @@ class StorageManager:
                 "performance": performance,
             }
         except Exception as e:
-            logger.error(f"Failed to get trading summary: {e}")
+            logger.error(f"[cid:INIT] Failed to get trading summary: {e}")
             raise HTTPException(status_code=500, detail=str(e))
 
     async def get_system_health(self) -> Dict[str, Any]:
@@ -216,7 +216,7 @@ class StorageManager:
                 "recent_events": events,
             }
         except Exception as e:
-            logger.error(f"Failed to get system health: {e}")
+            logger.error(f"[cid:INIT] Failed to get system health: {e}")
             return {
                 "status": "unhealthy",
                 "error": str(e),
@@ -249,12 +249,12 @@ async def storage_lifespan(app):
     """
     storage = get_storage_manager()
     await storage.initialize()
-    logger.info("Storage initialized for FastAPI app")
+    logger.info("[cid:INIT] Storage initialized for FastAPI app")
 
     yield {"storage": storage}
 
     await storage.close()
-    logger.info("Storage closed for FastAPI app")
+    logger.info("[cid:INIT] Storage closed for FastAPI app")
 
 
 # Dependency injection for FastAPI routes

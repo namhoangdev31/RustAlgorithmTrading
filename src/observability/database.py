@@ -29,7 +29,7 @@ class ObservabilityDatabase:
         """
         self.db_path = db_path
         self._ensure_db_dir()
-        logger.info(f"Initialized ObservabilityDatabase: {db_path}")
+        logger.info(f"[cid:INIT] Initialized ObservabilityDatabase: {db_path}")
 
     def _ensure_db_dir(self):
         """Ensure the database directory exists."""
@@ -45,7 +45,7 @@ class ObservabilityDatabase:
         """
         # This is a placeholder - in production, use the Rust database module
         # via PyO3 bindings or direct DuckDB connection
-        logger.debug(f"Would insert {len(records)} market data records")
+        logger.debug(f"[cid:INIT] Would insert {len(records)} market data records")
 
     async def insert_execution_metrics(self, records: List[Dict[str, Any]]):
         """
@@ -54,7 +54,7 @@ class ObservabilityDatabase:
         Args:
             records: List of execution records
         """
-        logger.debug(f"Would insert {len(records)} execution records")
+        logger.debug(f"[cid:INIT] Would insert {len(records)} execution records")
 
     async def insert_risk_metrics(self, records: List[Dict[str, Any]]):
         """
@@ -63,7 +63,7 @@ class ObservabilityDatabase:
         Args:
             records: List of risk records
         """
-        logger.debug(f"Would insert {len(records)} risk records")
+        logger.debug(f"[cid:INIT] Would insert {len(records)} risk records")
 
     async def insert_system_metrics(self, records: List[Dict[str, Any]]):
         """
@@ -72,7 +72,7 @@ class ObservabilityDatabase:
         Args:
             records: List of system records
         """
-        logger.debug(f"Would insert {len(records)} system records")
+        logger.debug(f"[cid:INIT] Would insert {len(records)} system records")
 
     async def query_metrics(
         self,
@@ -93,7 +93,7 @@ class ObservabilityDatabase:
         Returns:
             List of metric records
         """
-        logger.debug(f"Would query {metric_name} from {start_time} to {end_time}")
+        logger.debug(f"[cid:INIT] Would query {metric_name} from {start_time} to {end_time}")
         return []
 
 

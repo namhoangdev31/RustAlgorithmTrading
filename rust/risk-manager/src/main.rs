@@ -14,32 +14,29 @@ async fn main() -> anyhow::Result<()> {
         .with(EnvFilter::from_default_env())
         .init();
 
-    tracing::info!("Risk Manager Service starting...");
+    tracing::info!("[cid:INIT] Risk Manager Service starting...");
 
     // Load configuration with validation
     let config = match SystemConfig::from_file("config/system.json") {
         Ok(cfg) => {
-            tracing::info!(
-                "Configuration loaded successfully - Environment: {}",
-                cfg.environment()
-            );
+            tracing::info!("[cid:INIT] Configuration loaded successfully - Environment: {}", cfg.environment());
             cfg
         }
         Err(e) => {
-            tracing::error!("Failed to load configuration: {}", e);
+            tracing::error!("[cid:INIT] Failed to load configuration: {}", e);
             return Err(anyhow::anyhow!("Configuration error: {}", e));
         }
     };
 
     // Log risk limits
-    tracing::info!("Risk Limits:");
-    tracing::info!("  Max Position Size: {}", config.risk.max_position_size);
-    tracing::info!("  Max Notional Exposure: ${}", config.risk.max_notional_exposure);
-    tracing::info!("  Max Open Positions: {}", config.risk.max_open_positions);
-    tracing::info!("  Stop Loss: {}%", config.risk.stop_loss_percent);
-    tracing::info!("  Trailing Stop: {}%", config.risk.trailing_stop_percent);
-    tracing::info!("  Circuit Breaker: {}", if config.risk.enable_circuit_breaker { "ENABLED" } else { "DISABLED" });
-    tracing::info!("  Max Loss Threshold: ${}", config.risk.max_loss_threshold);
+    tracing::info!("[cid:INIT] Risk Limits:");
+    tracing::info!("[cid:INIT]   Max Position Size: {}", config.risk.max_position_size);
+    tracing::info!("[cid:INIT]   Max Notional Exposure: ${}", config.risk.max_notional_exposure);
+    tracing::info!("[cid:INIT]   Max Open Positions: {}", config.risk.max_open_positions);
+    tracing::info!("[cid:INIT]   Stop Loss: {}%", config.risk.stop_loss_percent);
+    tracing::info!("[cid:INIT]   Trailing Stop: {}%", config.risk.trailing_stop_percent);
+    tracing::info!("[cid:INIT]   Circuit Breaker: {}", if config.risk.enable_circuit_breaker { "ENABLED" } else { "DISABLED" });
+    tracing::info!("[cid:INIT]   Max Loss Threshold: ${}", config.risk.max_loss_threshold);
 
     // Create health status tracker
     let health = Arc::new(RwLock::new(HealthCheck::healthy("risk-manager")));
@@ -48,11 +45,11 @@ async fn main() -> anyhow::Result<()> {
     let metrics_config = MetricsConfig::risk_manager();
     let metrics_handle = match start_metrics_server(metrics_config) {
         Ok(handle) => {
-            tracing::info!("✓ Metrics server started on port 9093");
+            tracing::info!("[cid:INIT] ✓ Metrics server started on port 9093");
             Some(handle)
         }
         Err(e) => {
-            tracing::warn!("Failed to start metrics server: {}. Continuing without metrics.", e);
+            tracing::warn!("[cid:INIT] Failed to start metrics server: {}. Continuing without metrics.", e);
             None
         }
     };
@@ -64,11 +61,11 @@ async fn main() -> anyhow::Result<()> {
     // Initialize service
     let _service = match RiskManagerService::new(config.risk) {
         Ok(svc) => {
-            tracing::info!("✓ Risk Manager initialized successfully");
+            tracing::info!("[cid:INIT] ✓ Risk Manager initialized successfully");
             svc
         }
         Err(e) => {
-            tracing::error!("Failed to initialize service: {}", e);
+            tracing::error!("[cid:INIT] Failed to initialize service: {}", e);
             let mut h = health.write().await;
             *h = HealthCheck::unhealthy("risk-manager", format!("Initialization failed: {}", e));
             return Err(anyhow::anyhow!("Service initialization error: {}", e));
@@ -84,16 +81,16 @@ async fn main() -> anyhow::Result<()> {
             .with_metric("max_positions", max_positions.to_string());
     }
 
-    tracing::info!("🚀 Risk Manager is monitoring");
+    tracing::info!("[cid:INIT] 🚀 Risk Manager is monitoring");
 
     // Keep service running
     tokio::signal::ctrl_c().await?;
-    tracing::info!("Shutdown signal received, stopping Risk Manager...");
+    tracing::info!("[cid:INIT] Shutdown signal received, stopping Risk Manager...");
 
     // Stop metrics server
     if let Some(handle) = metrics_handle {
         handle.abort();
-        tracing::info!("Metrics server stopped");
+        tracing::info!("[cid:INIT] Metrics server stopped");
     }
 
     Ok(())

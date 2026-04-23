@@ -63,7 +63,7 @@ class SystemCollector(BaseCollector):
         # Start background collection
         self.collection_task = asyncio.create_task(self._collect_metrics())
 
-        logger.info("System collector started")
+        logger.info("[cid:INIT] System collector started")
 
     async def _stop_impl(self):
         """Stop system metrics collection."""
@@ -74,7 +74,7 @@ class SystemCollector(BaseCollector):
             except asyncio.CancelledError:
                 pass
 
-        logger.info("System collector stopped")
+        logger.info("[cid:INIT] System collector stopped")
 
     async def _collect_metrics(self):
         """Background task to collect system metrics."""
@@ -95,9 +95,9 @@ class SystemCollector(BaseCollector):
 
                 self._increment_metrics_count()
         except asyncio.CancelledError:
-            logger.info("System collection task cancelled")
+            logger.info("[cid:INIT] System collection task cancelled")
         except Exception as e:
-            logger.error(f"Error collecting system metrics: {e}")
+            logger.error(f"[cid:INIT] Error collecting system metrics: {e}")
             self._increment_error_count()
 
     def _check_alerts(self):
@@ -127,7 +127,7 @@ class SystemCollector(BaseCollector):
                 "active": True
             }
             self.active_alerts.append(alert)
-            logger.warning(f"System alert: {message}")
+            logger.warning(f"[cid:INIT] System alert: {message}")
 
     async def _write_to_database(self):
         """Write system metrics to DuckDB."""
@@ -146,7 +146,7 @@ class SystemCollector(BaseCollector):
 
             await self.db.insert_system_metrics(metrics_data)
         except Exception as e:
-            logger.error(f"Error writing system metrics to database: {e}")
+            logger.error(f"[cid:INIT] Error writing system metrics to database: {e}")
 
     async def get_current_metrics(self) -> Dict[str, Any]:
         """Get current system metrics."""
@@ -230,7 +230,7 @@ class SystemCollector(BaseCollector):
             if alert["alert_id"] == alert_id:
                 alert["active"] = False
                 alert["acknowledged_at"] = datetime.utcnow().isoformat()
-                logger.info(f"Alert acknowledged: {alert_id}")
+                logger.info(f"[cid:INIT] Alert acknowledged: {alert_id}")
                 return
 
-        logger.warning(f"Alert not found: {alert_id}")
+        logger.warning(f"[cid:INIT] Alert not found: {alert_id}")

@@ -52,7 +52,7 @@ class StrategyCollector(BaseCollector):
         # Start background collection
         self.collection_task = asyncio.create_task(self._collect_metrics())
 
-        logger.info("Strategy collector started (mock mode)")
+        logger.info("[cid:INIT] Strategy collector started (mock mode)")
 
     async def _stop_impl(self):
         """Stop strategy metrics collection."""
@@ -63,7 +63,7 @@ class StrategyCollector(BaseCollector):
             except asyncio.CancelledError:
                 pass
 
-        logger.info("Strategy collector stopped")
+        logger.info("[cid:INIT] Strategy collector stopped")
 
     async def _collect_metrics(self):
         """Background task to collect strategy metrics."""
@@ -79,7 +79,7 @@ class StrategyCollector(BaseCollector):
 
                 self._increment_metrics_count()
         except asyncio.CancelledError:
-            logger.info("Strategy collection task cancelled")
+            logger.info("[cid:INIT] Strategy collection task cancelled")
 
     def _generate_mock_strategy_metrics(self):
         """Generate mock strategy metrics for testing."""
@@ -130,7 +130,7 @@ class StrategyCollector(BaseCollector):
             if records:
                 await self.db.insert_strategy_metrics(records)
         except Exception as e:
-            logger.error(f"Error writing strategy metrics to database: {e}")
+            logger.error(f"[cid:INIT] Error writing strategy metrics to database: {e}")
 
     async def get_current_metrics(self) -> Dict[str, Any]:
         """Get current strategy metrics."""

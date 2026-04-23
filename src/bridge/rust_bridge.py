@@ -37,8 +37,8 @@ class MarketBar:
                 timestamp=self.timestamp
             )
         except ImportError as e:
-            logger.error(f"Failed to import signal_bridge module: {e}")
-            logger.warning("Make sure the Rust library is built: cd rust && cargo build --release")
+            logger.error(f"[cid:INIT] Failed to import signal_bridge module: {e}")
+            logger.warning("[cid:INIT] Make sure the Rust library is built: cd rust && cargo build --release")
             raise
 
 
@@ -61,13 +61,13 @@ class RustFeatureComputer:
         try:
             from signal_bridge import FeatureComputer
             self._computer = FeatureComputer()
-            logger.info("Rust FeatureComputer initialized successfully")
+            logger.info("[cid:INIT] Rust FeatureComputer initialized successfully")
         except ImportError as e:
-            logger.error(f"Failed to import signal_bridge: {e}")
-            logger.error("Please build the Rust library:")
-            logger.error("  cd rust")
-            logger.error("  cargo build --release --package signal-bridge")
-            logger.error("  export PYTHONPATH=$PWD/target/release:$PYTHONPATH")
+            logger.error(f"[cid:INIT] Failed to import signal_bridge: {e}")
+            logger.error("[cid:INIT] Please build the Rust library:")
+            logger.error("[cid:INIT]   cd rust")
+            logger.error("[cid:INIT]   cargo build --release --package signal-bridge")
+            logger.error("[cid:INIT]   export PYTHONPATH=$PWD/target/release:$PYTHONPATH")
             raise RuntimeError("Rust signal_bridge module not available") from e
 
     def compute_streaming(self, bar: MarketBar) -> List[float]:
@@ -92,10 +92,10 @@ class RustFeatureComputer:
         try:
             rust_bar = bar.to_rust_bar()
             features = self._computer.compute_streaming(rust_bar)
-            logger.debug(f"Computed {len(features)} streaming features for {bar.symbol}")
+            logger.debug(f"[cid:INIT] Computed {len(features)} streaming features for {bar.symbol}")
             return features
         except Exception as e:
-            logger.error(f"Error computing streaming features: {e}")
+            logger.error(f"[cid:INIT] Error computing streaming features: {e}")
             raise
 
     def compute_batch(self, bars: List[MarketBar]) -> List[List[float]]:
@@ -120,10 +120,10 @@ class RustFeatureComputer:
         try:
             rust_bars = [bar.to_rust_bar() for bar in bars]
             features = self._computer.compute_batch(rust_bars)
-            logger.debug(f"Computed batch features for {len(bars)} bars")
+            logger.debug(f"[cid:INIT] Computed batch features for {len(bars)} bars")
             return features
         except Exception as e:
-            logger.error(f"Error computing batch features: {e}")
+            logger.error(f"[cid:INIT] Error computing batch features: {e}")
             raise
 
     def compute_microstructure(
@@ -150,16 +150,16 @@ class RustFeatureComputer:
             features = self._computer.compute_microstructure(
                 bid_price, ask_price, bid_depth, ask_depth
             )
-            logger.debug("Computed microstructure features")
+            logger.debug("[cid:INIT] Computed microstructure features")
             return features
         except Exception as e:
-            logger.error(f"Error computing microstructure features: {e}")
+            logger.error(f"[cid:INIT] Error computing microstructure features: {e}")
             raise
 
 
 def test_rust_bridge():
     """Test the Rust bridge functionality."""
-    logger.info("Testing Rust feature computation bridge...")
+    logger.info("[cid:INIT] Testing Rust feature computation bridge...")
 
     try:
         # Create feature computer
@@ -178,8 +178,8 @@ def test_rust_bridge():
 
         # Test streaming features
         streaming_features = computer.compute_streaming(bar)
-        logger.info(f"✓ Streaming features: {len(streaming_features)} values")
-        logger.info(f"  First 5 features: {streaming_features[:5]}")
+        logger.info(f"[cid:INIT] ✓ Streaming features: {len(streaming_features)} values")
+        logger.info(f"[cid:INIT]   First 5 features: {streaming_features[:5]}")
 
         # Test batch features
         bars = [
@@ -187,8 +187,8 @@ def test_rust_bridge():
             for i in range(20)
         ]
         batch_features = computer.compute_batch(bars)
-        logger.info(f"✓ Batch features: {len(batch_features)} bars processed")
-        logger.info(f"  Features per bar: {len(batch_features[0])}")
+        logger.info(f"[cid:INIT] ✓ Batch features: {len(batch_features)} bars processed")
+        logger.info(f"[cid:INIT]   Features per bar: {len(batch_features[0])}")
 
         # Test microstructure features
         micro_features = computer.compute_microstructure(
@@ -197,13 +197,13 @@ def test_rust_bridge():
             bid_depth=10000.0,
             ask_depth=8000.0
         )
-        logger.info(f"✓ Microstructure features: {micro_features}")
+        logger.info(f"[cid:INIT] ✓ Microstructure features: {micro_features}")
 
-        logger.info("✅ All Rust bridge tests passed!")
+        logger.info("[cid:INIT] ✅ All Rust bridge tests passed!")
         return True
 
     except Exception as e:
-        logger.error(f"❌ Rust bridge test failed: {e}")
+        logger.error(f"[cid:INIT] ❌ Rust bridge test failed: {e}")
         return False
 
 

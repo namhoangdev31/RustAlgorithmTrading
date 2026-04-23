@@ -85,3 +85,17 @@ fn test_negative_parser_wrong_type() {
     let result = serde_json::from_value::<Message>(malformed_payload);
     assert!(result.is_err());
 }
+
+#[test]
+fn test_negative_parser_invalid_timestamp() {
+    let malformed_payload = json!({
+        "type": "Heartbeat",
+        "data": {
+            "component": "market-data",
+            "timestamp": "not-a-timestamp"
+        }
+    });
+
+    let result = serde_json::from_value::<Message>(malformed_payload);
+    assert!(result.is_err());
+}

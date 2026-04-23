@@ -36,7 +36,7 @@ class ObservabilityAPI:
 
     async def start(self):
         """Start API services and metric collection."""
-        logger.info("Starting Observability API...")
+        logger.info("[cid:INIT] Starting Observability API...")
 
         # Start WebSocket manager
         await self.websocket_manager.start()
@@ -51,19 +51,19 @@ class ObservabilityAPI:
         for name, collector in self.collectors.items():
             try:
                 await collector.start()
-                logger.info(f"Started {name} collector")
+                logger.info(f"[cid:INIT] Started {name} collector")
             except Exception as e:
-                logger.error(f"Failed to start {name} collector: {e}")
+                logger.error(f"[cid:INIT] Failed to start {name} collector: {e}")
 
         # Start metric streaming task
         self.running = True
         self.metrics_task = asyncio.create_task(self._stream_metrics())
 
-        logger.info("Observability API started successfully")
+        logger.info("[cid:INIT] Observability API started successfully")
 
     async def stop(self):
         """Stop API services gracefully."""
-        logger.info("Stopping Observability API...")
+        logger.info("[cid:INIT] Stopping Observability API...")
 
         self.running = False
 
@@ -79,14 +79,14 @@ class ObservabilityAPI:
         for name, collector in self.collectors.items():
             try:
                 await collector.stop()
-                logger.info(f"Stopped {name} collector")
+                logger.info(f"[cid:INIT] Stopped {name} collector")
             except Exception as e:
-                logger.error(f"Error stopping {name} collector: {e}")
+                logger.error(f"[cid:INIT] Error stopping {name} collector: {e}")
 
         # Close all WebSocket connections
         await self.websocket_manager.disconnect_all()
 
-        logger.info("Observability API stopped")
+        logger.info("[cid:INIT] Observability API stopped")
 
     async def _stream_metrics(self):
         """Background task to stream metrics to connected clients at 10Hz."""
@@ -101,9 +101,9 @@ class ObservabilityAPI:
                 # 10Hz = 100ms interval
                 await asyncio.sleep(0.1)
         except asyncio.CancelledError:
-            logger.info("Metrics streaming task cancelled")
+            logger.info("[cid:INIT] Metrics streaming task cancelled")
         except Exception as e:
-            logger.error(f"Error in metrics streaming: {e}")
+            logger.error(f"[cid:INIT] Error in metrics streaming: {e}")
 
     async def _collect_all_metrics(self) -> dict:
         """Collect metrics from all collectors."""
@@ -130,7 +130,7 @@ class ObservabilityAPI:
             metrics["execution"] = results[2] if not isinstance(results[2], Exception) else {}
             metrics["system"] = results[3] if not isinstance(results[3], Exception) else {}
         except Exception as e:
-            logger.error(f"Error collecting metrics: {e}")
+            logger.error(f"[cid:INIT] Error collecting metrics: {e}")
 
         return metrics
 
@@ -190,11 +190,11 @@ async def websocket_metrics_endpoint(websocket: WebSocket):
                 elif data.startswith("subscribe:"):
                     # Handle selective metric subscriptions
                     topic = data.split(":", 1)[1]
-                    logger.info(f"Client {client_id} subscribed to {topic}")
+                    logger.info(f"[cid:INIT] Client {client_id} subscribed to {topic}")
             except WebSocketDisconnect:
                 break
             except Exception as e:
-                logger.error(f"WebSocket error for client {client_id}: {e}")
+                logger.error(f"[cid:INIT] WebSocket error for client {client_id}: {e}")
                 break
     finally:
         await api_state.websocket_manager.disconnect(client_id)

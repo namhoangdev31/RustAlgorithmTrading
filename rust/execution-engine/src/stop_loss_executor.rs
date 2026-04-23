@@ -16,7 +16,7 @@ pub struct StopLossExecutor {
 impl StopLossExecutor {
     pub fn new(use_market_orders: bool, slippage_tolerance: f64) -> Self {
         info!(
-            "Initializing StopLossExecutor: market_orders={}, slippage={}%",
+            "[cid:INIT] Initializing StopLossExecutor: market_orders={}, slippage={}%",
             use_market_orders, slippage_tolerance
         );
         Self {
@@ -47,7 +47,7 @@ impl StopLossExecutor {
         let client_order_id = format!("stop-loss-{}", Utc::now().timestamp_nanos_opt().unwrap_or(0));
 
         info!(
-            "Creating stop-loss order: {} {} {} @ {:?} (trigger: {:.8})",
+            "[cid:INIT] Creating stop-loss order: {} {} {} @ {:?} (trigger: {:.8})",
             order_id, close_side as u8, quantity.0, price, trigger_price.0
         );
 
@@ -100,7 +100,7 @@ impl StopLossExecutor {
         self.validate_stop_order(&order)?;
 
         info!(
-            "Executing stop-loss order: {} for {} {}",
+            "[cid:INIT] Executing stop-loss order: {} for {} {}",
             order.order_id, order.quantity.0, order.symbol.0
         );
 
@@ -108,7 +108,7 @@ impl StopLossExecutor {
         // For now, return the order as-is (would be filled by actual execution)
 
         warn!(
-            "Stop-loss execution stub - integrate with OrderRouter for live execution"
+            "[cid:INIT] Stop-loss execution stub - integrate with OrderRouter for live execution"
         );
 
         let mut executed_order = order;

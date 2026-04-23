@@ -77,7 +77,7 @@ class ZMQPublisher:
         self.context = zmq.asyncio.Context()
         self.socket: Optional[zmq.asyncio.Socket] = None
         self._connected = False
-        logger.info(f"ZMQ Publisher initialized for {address}")
+        logger.info(f"[cid:INIT] ZMQ Publisher initialized for {address}")
 
     async def connect(self):
         """Connect to ZMQ endpoint."""
@@ -87,9 +87,9 @@ class ZMQPublisher:
             self._connected = True
             # Small delay to allow subscribers to connect
             await asyncio.sleep(0.1)
-            logger.info(f"✓ Publisher connected to {self.address}")
+            logger.info(f"[cid:INIT] ✓ Publisher connected to {self.address}")
         except Exception as e:
-            logger.error(f"Failed to connect publisher: {e}")
+            logger.error(f"[cid:INIT] Failed to connect publisher: {e}")
             raise
 
     async def publish(self, topic: str, message_type: MessageType, data: Dict[str, Any]):
@@ -113,7 +113,7 @@ class ZMQPublisher:
             if not cid:
                 import uuid
                 cid = str(uuid.uuid4())
-                logger.warning(f"No correlation_id found in context, generated new one: {cid}")
+                logger.warning(f"[cid:{cid}] No correlation_id found in context, generated new one: {cid}")
 
             # Structured payload matching Rust Message enum
             payload = {
@@ -136,10 +136,10 @@ class ZMQPublisher:
             full_message = f"{topic} {message_json}"
             await self.socket.send_string(full_message)
 
-            logger.debug(f"Published {message_type.value} to topic '{topic}'", correlation_id=cid)
+            logger.debug(f"[cid:{cid}] Published {message_type.value} to topic '{topic}'")
 
         except Exception as e:
-            logger.error(f"Error publishing message: {e}")
+            logger.error(f"[cid:INIT] Error publishing message: {e}")
             raise
 
     async def publish_signal(self, signal: Signal):
@@ -171,7 +171,7 @@ class ZMQPublisher:
         if self.socket:
             self.socket.close()
             self._connected = False
-            logger.info("Publisher closed")
+            logger.info("[cid:INIT] Publisher closed")
 
     async def __aenter__(self):
         """Async context manager entry."""
@@ -206,7 +206,7 @@ class ZMQSubscriber:
         self.socket: Optional[zmq.asyncio.Socket] = None
         self._connected = False
         self._running = False
-        logger.info(f"ZMQ Subscriber initialized for {address}")
+        logger.info(f"[cid:INIT] ZMQ Subscriber initialized for {address}")
 
     async def connect(self, topics: Optional[List[str]] = None):
         """
@@ -223,17 +223,17 @@ class ZMQSubscriber:
             if topics is None or len(topics) == 0:
                 # Subscribe to all messages
                 self.socket.setsockopt_string(zmq.SUBSCRIBE, "")
-                logger.info("Subscribed to ALL topics")
+                logger.info("[cid:INIT] Subscribed to ALL topics")
             else:
                 for topic in topics:
                     self.socket.setsockopt_string(zmq.SUBSCRIBE, topic)
-                logger.info(f"Subscribed to topics: {topics}")
+                logger.info(f"[cid:INIT] Subscribed to topics: {topics}")
 
             self._connected = True
-            logger.info(f"✓ Subscriber connected to {self.address}")
+            logger.info(f"[cid:INIT] ✓ Subscriber connected to {self.address}")
 
         except Exception as e:
-            logger.error(f"Failed to connect subscriber: {e}")
+            logger.error(f"[cid:INIT] Failed to connect subscriber: {e}")
             raise
 
     async def receive(self):
@@ -256,7 +256,7 @@ class ZMQSubscriber:
                 # Split topic and message
                 parts = message_str.split(" ", 1)
                 if len(parts) != 2:
-                    logger.warning(f"Invalid message format: {message_str}")
+                    logger.warning(f"[cid:INIT] Invalid message format: {message_str}")
                     continue
 
                 topic, json_str = parts
@@ -270,7 +270,7 @@ class ZMQSubscriber:
                     if version != SCHEMA_VERSION:
                         error_msg = f"Schema mismatch: expected {SCHEMA_VERSION}, got {version}"
                         if SCHEMA_STRICT_MODE:
-                            logger.error(f"STRICT_MODE REJECTION: {error_msg}")
+                            logger.error(f"[cid:INIT] STRICT_MODE REJECTION: {error_msg}")
                             continue
                         else:
                             logger.warning(f"LAX_MODE WARNING: {error_msg}")
@@ -301,17 +301,17 @@ class ZMQSubscriber:
                         
                         payload["data"] = data
 
-                    logger.debug(f"Received {msg_type} on topic '{topic}'", correlation_id=cid)
+                    logger.debug(f"[cid:{cid}] Received {msg_type} on topic '{topic}'")
                     yield topic, payload
 
                 except json.JSONDecodeError as e:
-                    logger.error(f"Failed to parse message JSON: {e}")
+                    logger.error(f"[cid:INIT] Failed to parse message JSON: {e}")
                     continue
 
         except asyncio.CancelledError:
-            logger.info("Subscriber receive loop cancelled")
+            logger.info("[cid:INIT] Subscriber receive loop cancelled")
         except Exception as e:
-            logger.error(f"Error in receive loop: {e}")
+            logger.error(f"[cid:INIT] Error in receive loop: {e}")
             raise
 
     async def receive_one(self, timeout: Optional[float] = None) -> Optional[tuple]:
@@ -341,13 +341,14 @@ class ZMQSubscriber:
                 
                 # Validate v1.0.0 Envelope
                 version = envelope.get("schema_version")
+                cid = envelope.get("correlation_id", "INIT")
                 if version != SCHEMA_VERSION:
                     error_msg = f"Schema mismatch in receive_one: expected {SCHEMA_VERSION}, got {version}"
                     if SCHEMA_STRICT_MODE:
-                        logger.error(f"STRICT_MODE REJECTION: {error_msg}")
+                        logger.error(f"[cid:{cid}] STRICT_MODE REJECTION: {error_msg}")
                         return None
                     else:
-                        logger.warning(f"LAX_MODE WARNING: {error_msg}")
+                        logger.warning(f"[cid:{cid}] LAX_MODE WARNING: {error_msg}")
                 
                 # Payload extraction (simplified for receive_one)
                 payload = envelope.get("payload", {})
@@ -359,7 +360,7 @@ class ZMQSubscriber:
             # Timeout
             return None
         except Exception as e:
-            logger.error(f"Error receiving message: {e}")
+            logger.error(f"[cid:INIT] Error receiving message: {e}")
             raise
         finally:
             if timeout:
@@ -376,7 +377,7 @@ class ZMQSubscriber:
         if self.socket:
             self.socket.close()
             self._connected = False
-            logger.info("Subscriber closed")
+            logger.info("[cid:INIT] Subscriber closed")
 
     async def __aenter__(self):
         """Async context manager entry."""
@@ -389,7 +390,7 @@ class ZMQSubscriber:
 
 async def test_zmq_bridge():
     """Test ZMQ publisher and subscriber."""
-    logger.info("Testing ZMQ bridge...")
+    logger.info("[cid:INIT] Testing ZMQ bridge...")
 
     try:
         # Create publisher
@@ -414,24 +415,24 @@ async def test_zmq_bridge():
         await publisher.publish_heartbeat("python-test")
 
         # Receive messages (with timeout)
-        logger.info("Waiting for messages...")
+        logger.info("[cid:INIT] Waiting for messages...")
         result = await subscriber.receive_one(timeout=2.0)
 
         if result:
             topic, message = result
-            logger.info(f"✓ Received message: {message['type']} on topic '{topic}'")
+            logger.info(f"[cid:INIT] ✓ Received message: {message['type']} on topic '{topic}'")
         else:
-            logger.warning("No message received (timeout)")
+            logger.warning("[cid:INIT] No message received (timeout)")
 
         # Cleanup
         await publisher.close()
         await subscriber.close()
 
-        logger.info("✅ ZMQ bridge test passed!")
+        logger.info("[cid:INIT] ZMQ bridge test passed!")
         return True
 
     except Exception as e:
-        logger.error(f"❌ ZMQ bridge test failed: {e}")
+        logger.error(f"[cid:INIT] ZMQ bridge test failed: {e}")
         return False
 
 

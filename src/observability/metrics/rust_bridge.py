@@ -36,21 +36,21 @@ class RustMetricsBridge:
         self.scrape_interval = 1.0  # seconds
         self.running = False
 
-        logger.info(f"Initialized RustMetricsBridge with {len(service_endpoints)} services")
+        logger.info(f"[cid:INIT] Initialized RustMetricsBridge with {len(service_endpoints)} services")
 
     async def start(self):
         """Start the metrics bridge and HTTP session."""
         if self.session is None:
             timeout = aiohttp.ClientTimeout(total=5.0)
             self.session = aiohttp.ClientSession(timeout=timeout)
-            logger.info("Metrics bridge started")
+            logger.info("[cid:INIT] Metrics bridge started")
 
     async def stop(self):
         """Stop the metrics bridge and cleanup."""
         if self.session:
             await self.session.close()
             self.session = None
-            logger.info("Metrics bridge stopped")
+            logger.info("[cid:INIT] Metrics bridge stopped")
 
     async def scrape_service(self, service_name: str, endpoint_url: str) -> Optional[Dict[str, Any]]:
         """
@@ -64,7 +64,7 @@ class RustMetricsBridge:
             Dictionary of parsed metrics or None if scraping failed
         """
         if not self.session:
-            logger.error("Session not initialized. Call start() first.")
+            logger.error("[cid:INIT] Session not initialized. Call start() first.")
             return None
 
         try:
@@ -72,18 +72,18 @@ class RustMetricsBridge:
                 if response.status == 200:
                     text = await response.text()
                     metrics = self._parse_prometheus_text(text, service_name)
-                    logger.debug(f"Scraped {len(metrics)} metrics from {service_name}")
+                    logger.debug(f"[cid:INIT] Scraped {len(metrics)} metrics from {service_name}")
                     return metrics
                 else:
                     logger.warning(
-                        f"Failed to scrape {service_name}: HTTP {response.status}"
+                        f"[cid:INIT] Failed to scrape {service_name}: HTTP {response.status}"
                     )
                     return None
         except aiohttp.ClientError as e:
-            logger.debug(f"Connection error scraping {service_name}: {e}")
+            logger.debug(f"[cid:INIT] Connection error scraping {service_name}: {e}")
             return None
         except Exception as e:
-            logger.error(f"Unexpected error scraping {service_name}: {e}")
+            logger.error(f"[cid:INIT] Unexpected error scraping {service_name}: {e}")
             return None
 
     def _parse_prometheus_text(
@@ -155,7 +155,7 @@ class RustMetricsBridge:
                     try:
                         value = float(value_str)
                     except ValueError:
-                        logger.warning(f"Invalid metric value: {value_str}")
+                        logger.warning(f"[cid:INIT] Invalid metric value: {value_str}")
                         continue
 
                     # Store in appropriate category
@@ -189,7 +189,7 @@ class RustMetricsBridge:
                         metrics["histograms"][metric_key]["values"].append(value)
 
                 except Exception as e:
-                    logger.debug(f"Failed to parse metric line '{line}': {e}")
+                    logger.debug(f"[cid:INIT] Failed to parse metric line '{line}': {e}")
                     continue
 
         return metrics
@@ -253,7 +253,7 @@ class RustMetricsBridge:
         metrics_by_service = {}
         for (service_name, _), result in zip(self.service_endpoints.items(), results):
             if isinstance(result, Exception):
-                logger.error(f"Error scraping {service_name}: {result}")
+                logger.error(f"[cid:INIT] Error scraping {service_name}: {result}")
                 metrics_by_service[service_name] = None
             else:
                 metrics_by_service[service_name] = result
@@ -269,7 +269,7 @@ class RustMetricsBridge:
                      Signature: async def callback(metrics: Dict[str, Any])
         """
         self.running = True
-        logger.info(f"Starting continuous scrape (interval: {self.scrape_interval}s)")
+        logger.info(f"[cid:INIT] Starting continuous scrape (interval: {self.scrape_interval}s)")
 
         while self.running:
             try:
@@ -280,16 +280,16 @@ class RustMetricsBridge:
 
                 await asyncio.sleep(self.scrape_interval)
             except asyncio.CancelledError:
-                logger.info("Continuous scrape cancelled")
+                logger.info("[cid:INIT] Continuous scrape cancelled")
                 break
             except Exception as e:
-                logger.error(f"Error in continuous scrape: {e}")
+                logger.error(f"[cid:INIT] Error in continuous scrape: {e}")
                 await asyncio.sleep(self.scrape_interval)
 
     def stop_continuous_scrape(self):
         """Stop the continuous scraping loop."""
         self.running = False
-        logger.info("Stopping continuous scrape")
+        logger.info("[cid:INIT] Stopping continuous scrape")
 
 
 # Singleton instance for easy access

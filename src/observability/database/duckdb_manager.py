@@ -46,7 +46,7 @@ class DuckDBManager:
         # Create initial connection and schema
         self._init_database()
 
-        logger.info(f"DuckDB manager initialized: {db_path}")
+        logger.info(f"[cid:INIT] DuckDB manager initialized: {db_path}")
 
     def _get_connection(self) -> duckdb.DuckDBPyConnection:
         """Get or create connection for current thread."""
@@ -56,7 +56,7 @@ class DuckDBManager:
             with self._lock:
                 if thread_id not in self._connections:
                     self._connections[thread_id] = duckdb.connect(self.db_path)
-                    logger.debug(f"Created DuckDB connection for thread {thread_id}")
+                    logger.debug(f"[cid:INIT] Created DuckDB connection for thread {thread_id}")
 
         return self._connections[thread_id]
 
@@ -67,7 +67,7 @@ class DuckDBManager:
         try:
             yield conn
         except Exception as e:
-            logger.error(f"DuckDB error: {e}")
+            logger.error(f"[cid:INIT] DuckDB error: {e}")
             raise
 
     def _init_database(self):
@@ -177,7 +177,7 @@ class DuckDBManager:
                 ON trades(symbol)
             """)
 
-            logger.info("DuckDB schema initialized")
+            logger.info("[cid:INIT] DuckDB schema initialized")
 
     async def insert_market_data(self, data: List[Dict[str, Any]]):
         """
@@ -212,9 +212,9 @@ class DuckDBManager:
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 """, values)
 
-                logger.debug(f"Inserted {len(data)} market data records")
+                logger.debug(f"[cid:INIT] Inserted {len(data)} market data records")
         except Exception as e:
-            logger.error(f"Error inserting market data: {e}")
+            logger.error(f"[cid:INIT] Error inserting market data: {e}")
             raise
 
     async def insert_strategy_metrics(self, data: List[Dict[str, Any]]):
@@ -243,9 +243,9 @@ class DuckDBManager:
                     VALUES (?, ?, ?, ?, ?, ?, ?)
                 """, values)
 
-                logger.debug(f"Inserted {len(data)} strategy metrics records")
+                logger.debug(f"[cid:INIT] Inserted {len(data)} strategy metrics records")
         except Exception as e:
-            logger.error(f"Error inserting strategy metrics: {e}")
+            logger.error(f"[cid:INIT] Error inserting strategy metrics: {e}")
             raise
 
     async def insert_execution_metrics(self, data: Dict[str, Any]):
@@ -268,9 +268,9 @@ class DuckDBManager:
                     data.get("avg_slippage_bps", 0.0)
                 ))
 
-                logger.debug("Inserted execution metrics")
+                logger.debug("[cid:INIT] Inserted execution metrics")
         except Exception as e:
-            logger.error(f"Error inserting execution metrics: {e}")
+            logger.error(f"[cid:INIT] Error inserting execution metrics: {e}")
             raise
 
     async def insert_system_metrics(self, data: Dict[str, Any]):
@@ -292,9 +292,9 @@ class DuckDBManager:
                     data.get("active_alerts", 0)
                 ))
 
-                logger.debug("Inserted system metrics")
+                logger.debug("[cid:INIT] Inserted system metrics")
         except Exception as e:
-            logger.error(f"Error inserting system metrics: {e}")
+            logger.error(f"[cid:INIT] Error inserting system metrics: {e}")
             raise
 
     async def insert_trade(self, trade: Dict[str, Any]):
@@ -318,9 +318,9 @@ class DuckDBManager:
                     trade.get("strategy")
                 ))
 
-                logger.debug(f"Inserted trade: {trade['trade_id']}")
+                logger.debug(f"[cid:INIT] Inserted trade: {trade['trade_id']}")
         except Exception as e:
-            logger.error(f"Error inserting trade: {e}")
+            logger.error(f"[cid:INIT] Error inserting trade: {e}")
             raise
 
     async def query_market_data(
@@ -389,7 +389,7 @@ class DuckDBManager:
                     for row in result
                 ]
         except Exception as e:
-            logger.error(f"Error querying market data: {e}")
+            logger.error(f"[cid:INIT] Error querying market data: {e}")
             return []
 
     async def query_strategy_metrics(
@@ -433,7 +433,7 @@ class DuckDBManager:
                     for row in result
                 ]
         except Exception as e:
-            logger.error(f"Error querying strategy metrics: {e}")
+            logger.error(f"[cid:INIT] Error querying strategy metrics: {e}")
             return []
 
     async def close(self):
@@ -442,13 +442,13 @@ class DuckDBManager:
             for thread_id, conn in self._connections.items():
                 try:
                     conn.close()
-                    logger.debug(f"Closed DuckDB connection for thread {thread_id}")
+                    logger.debug(f"[cid:INIT] Closed DuckDB connection for thread {thread_id}")
                 except Exception as e:
-                    logger.error(f"Error closing connection: {e}")
+                    logger.error(f"[cid:INIT] Error closing connection: {e}")
 
             self._connections.clear()
 
-        logger.info("DuckDB manager closed")
+        logger.info("[cid:INIT] DuckDB manager closed")
 
 
 # Global database instance

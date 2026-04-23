@@ -54,7 +54,7 @@ impl RetryPolicy {
                     let capped_delay = backoff_delay.min(self.max_delay_ms);
 
                     tracing::warn!(
-                        "Retry attempt {}/{} after {:?}, error: {:?}",
+                        "[cid:INIT] Retry attempt {}/{} after {:?}, error: {:?}",
                         attempts,
                         self.max_attempts,
                         Duration::from_millis(capped_delay),
@@ -103,7 +103,7 @@ impl RetryPolicy {
                     let capped_delay = backoff_delay.min(self.max_delay_ms);
 
                     tracing::warn!(
-                        "Retry attempt {}/{} after {:?}, error: {:?}",
+                        "[cid:INIT] Retry attempt {}/{} after {:?}, error: {:?}",
                         attempts,
                         self.max_attempts,
                         Duration::from_millis(capped_delay),

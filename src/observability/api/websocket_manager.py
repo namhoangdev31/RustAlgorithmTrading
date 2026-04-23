@@ -44,7 +44,7 @@ class WebSocketConnection:
             return True
         except Exception as e:
             self.error_count += 1
-            logger.error(f"Failed to send to client {self.client_id}: {e}")
+            logger.error(f"[cid:INIT] Failed to send to client {self.client_id}: {e}")
             return False
 
     async def send_text(self, text: str) -> bool:
@@ -55,7 +55,7 @@ class WebSocketConnection:
             return True
         except Exception as e:
             self.error_count += 1
-            logger.error(f"Failed to send text to client {self.client_id}: {e}")
+            logger.error(f"[cid:INIT] Failed to send text to client {self.client_id}: {e}")
             return False
 
     def update_ping(self):
@@ -127,7 +127,7 @@ class WebSocketManager:
             self.total_connections += 1
 
         logger.info(
-            f"WebSocket connected: {client_id} "
+            f"[cid:INIT] WebSocket connected: {client_id} "
             f"(total: {len(self.connections)}/{self.max_connections})"
         )
 
@@ -150,12 +150,12 @@ class WebSocketManager:
                 try:
                     await connection.websocket.close()
                 except Exception as e:
-                    logger.error(f"Error closing WebSocket for {client_id}: {e}")
+                    logger.error(f"[cid:INIT] Error closing WebSocket for {client_id}: {e}")
 
                 del self.connections[client_id]
 
                 logger.info(
-                    f"WebSocket disconnected: {client_id} "
+                    f"[cid:INIT] WebSocket disconnected: {client_id} "
                     f"(uptime: {connection.uptime():.1f}s, "
                     f"messages: {connection.message_count}, "
                     f"errors: {connection.error_count})"
@@ -163,7 +163,7 @@ class WebSocketManager:
 
     async def disconnect_all(self):
         """Disconnect all clients gracefully."""
-        logger.info(f"Disconnecting all {len(self.connections)} WebSocket clients...")
+        logger.info(f"[cid:INIT] Disconnecting all {len(self.connections)} WebSocket clients...")
 
         # Cancel background tasks
         if self._heartbeat_task:
@@ -176,7 +176,7 @@ class WebSocketManager:
         for client_id in client_ids:
             await self.disconnect(client_id)
 
-        logger.info("All WebSocket clients disconnected")
+        logger.info("[cid:INIT] All WebSocket clients disconnected")
 
     async def broadcast(self, data: dict, topic: Optional[str] = None):
         """
@@ -191,7 +191,7 @@ class WebSocketManager:
         try:
             self._message_queue.put_nowait({"data": data, "topic": topic})
         except asyncio.QueueFull:
-            logger.warning("Message queue full, dropping message (backpressure)")
+            logger.warning("[cid:INIT] Message queue full, dropping message (backpressure)")
             self.total_errors += 1
 
     async def _process_message_queue(self):
@@ -225,12 +225,12 @@ class WebSocketManager:
                     failure_count = len(results) - success_count
                     if failure_count > len(results) * 0.1:  # > 10% failure rate
                         logger.warning(
-                            f"High broadcast failure rate: {failure_count}/{len(results)} failed"
+                            f"[cid:INIT] High broadcast failure rate: {failure_count}/{len(results)} failed"
                         )
 
                 self._message_queue.task_done()
         except asyncio.CancelledError:
-            logger.info("Message queue processor cancelled")
+            logger.info("[cid:INIT] Message queue processor cancelled")
 
     async def _heartbeat_loop(self):
         """
@@ -258,10 +258,10 @@ class WebSocketManager:
 
                 # Disconnect stale clients
                 for client_id in stale_clients:
-                    logger.warning(f"Disconnecting stale client: {client_id}")
+                    logger.warning(f"[cid:INIT] Disconnecting stale client: {client_id}")
                     await self.disconnect(client_id)
         except asyncio.CancelledError:
-            logger.info("Heartbeat loop cancelled")
+            logger.info("[cid:INIT] Heartbeat loop cancelled")
 
     def connection_count(self) -> int:
         """Get current number of connected clients."""

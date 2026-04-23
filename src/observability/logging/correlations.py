@@ -30,11 +30,11 @@ def correlation_id(cid: Optional[str] = None) -> Generator[str, None, None]:
 
     Example:
         >>> with correlation_id() as cid:
-        ...     logger.info("Processing request")  # Includes correlation_id
+        ...     logger.info("[cid:INIT] Processing request")  # Includes correlation_id
         ...     await process_data()  # Nested calls inherit correlation_id
 
         >>> with correlation_id("custom-id-123") as cid:
-        ...     logger.info("Processing with custom ID")
+        ...     logger.info("[cid:INIT] Processing with custom ID")
     """
     # Generate new correlation ID if not provided
     if cid is None:
@@ -97,9 +97,9 @@ class CorrelationContext:
     Example:
         >>> ctx = CorrelationContext()
         >>> ctx.enter()
-        >>> logger.info("Processing")  # Has correlation ID
+        >>> logger.info("[cid:INIT] Processing")  # Has correlation ID
         >>> ctx.exit()
-        >>> logger.info("Done")  # No correlation ID
+        >>> logger.info("[cid:INIT] Done")  # No correlation ID
     """
 
     def __init__(self, cid: Optional[str] = None):

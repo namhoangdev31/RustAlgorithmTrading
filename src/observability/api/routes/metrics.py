@@ -42,7 +42,7 @@ async def get_current_metrics():
             system=metrics.get("system", {})
         )
     except Exception as e:
-        logger.error(f"Error getting current metrics: {e}")
+        logger.error(f"[cid:INIT] Error getting current metrics: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -101,7 +101,7 @@ async def get_metrics_history(request: MetricsHistoryRequest):
             data.extend([{"type": "strategy", **record} for record in strategy_data])
 
         logger.info(
-            f"Querying metrics history: {start_time} to {end_time}, "
+            f"[cid:INIT] Querying metrics history: {start_time} to {end_time}, "
             f"types={request.metric_types}, interval={request.interval}, "
             f"found {len(data)} records"
         )
@@ -114,7 +114,7 @@ async def get_metrics_history(request: MetricsHistoryRequest):
             count=len(data)
         )
     except Exception as e:
-        logger.error(f"Error querying metrics history: {e}")
+        logger.error(f"[cid:INIT] Error querying metrics history: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -135,7 +135,7 @@ async def get_tracked_symbols():
             "count": len(symbols)
         }
     except Exception as e:
-        logger.error(f"Error getting tracked symbols: {e}")
+        logger.error(f"[cid:INIT] Error getting tracked symbols: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -181,5 +181,5 @@ async def get_metrics_summary():
 
         return summary
     except Exception as e:
-        logger.error(f"Error getting metrics summary: {e}")
+        logger.error(f"[cid:INIT] Error getting metrics summary: {e}")
         raise HTTPException(status_code=500, detail=str(e))

@@ -59,7 +59,7 @@ class MarketDataCollector(BaseCollector):
         # Start background aggregation task
         self.aggregation_task = asyncio.create_task(self._aggregate_metrics())
 
-        logger.info("Market data collector started - connected to Rust service on port 9091")
+        logger.info("[cid:INIT] Market data collector started - connected to Rust service on port 9091")
 
     async def _stop_impl(self):
         """Stop market data collection."""
@@ -70,7 +70,7 @@ class MarketDataCollector(BaseCollector):
             except asyncio.CancelledError:
                 pass
 
-        logger.info("Market data collector stopped")
+        logger.info("[cid:INIT] Market data collector stopped")
 
     async def _aggregate_metrics(self):
         """Background task to aggregate metrics periodically."""
@@ -90,14 +90,14 @@ class MarketDataCollector(BaseCollector):
                     self._increment_metrics_count()
                 else:
                     # Fallback to mock data if Rust service unavailable
-                    logger.debug("Rust service unavailable, using mock data")
+                    logger.debug("[cid:INIT] Rust service unavailable, using mock data")
                     self._generate_mock_metrics()
 
                 # Write to DuckDB in batches
                 await self._flush_to_database()
 
         except asyncio.CancelledError:
-            logger.info("Market data aggregation task cancelled")
+            logger.info("[cid:INIT] Market data aggregation task cancelled")
             # Flush remaining data
             await self._flush_to_database()
 
@@ -148,7 +148,7 @@ class MarketDataCollector(BaseCollector):
                     await self.db.insert_market_data(self.batch_buffer)
                     self.batch_buffer.clear()
                 except Exception as e:
-                    logger.error(f"Error flushing market data to database: {e}")
+                    logger.error(f"[cid:INIT] Error flushing market data to database: {e}")
 
     async def get_current_metrics(self) -> Dict[str, Any]:
         """Get current market data metrics."""
@@ -179,13 +179,13 @@ class MarketDataCollector(BaseCollector):
                 "trades": 0,
                 "added_at": datetime.utcnow().isoformat()
             }
-            logger.info(f"Added symbol {symbol} to market data collector")
+            logger.info(f"[cid:INIT] Added symbol {symbol} to market data collector")
 
     async def remove_symbol(self, symbol: str):
         """Stop tracking a symbol."""
         if symbol in self.symbols:
             del self.symbols[symbol]
-            logger.info(f"Removed symbol {symbol} from market data collector")
+            logger.info(f"[cid:INIT] Removed symbol {symbol} from market data collector")
 
     async def _process_rust_metrics(self, rust_metrics: Dict[str, Any]):
         """

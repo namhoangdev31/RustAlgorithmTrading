@@ -49,7 +49,7 @@ pub fn start_metrics_server(config: MetricsConfig) -> Result<JoinHandle<()>, any
         .parse()
         .map_err(|e| anyhow::anyhow!("Invalid metrics address: {}", e))?;
 
-    info!("Starting metrics server on {}", addr);
+    info!("[cid:INIT] Starting metrics server on {}", addr);
 
     let app = Router::new().route("/metrics", get(metrics_handler));
 
@@ -62,12 +62,12 @@ pub fn start_metrics_server(config: MetricsConfig) -> Result<JoinHandle<()>, any
         )
         .await
         {
-            Ok(_) => info!("Metrics server stopped gracefully"),
-            Err(e) => error!("Metrics server error: {}", e),
+            Ok(_) => info!("[cid:INIT] Metrics server stopped gracefully"),
+            Err(e) => error!("[cid:INIT] Metrics server error: {}", e),
         }
     });
 
-    info!("Metrics server started successfully on {}", addr);
+    info!("[cid:INIT] Metrics server started successfully on {}", addr);
     Ok(handle)
 }
 

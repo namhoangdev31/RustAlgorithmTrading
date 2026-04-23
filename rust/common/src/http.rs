@@ -108,7 +108,7 @@ pub async fn start_health_server(
     let app = create_health_router(health);
 
     let addr = std::net::SocketAddr::from(([0, 0, 0, 0], port));
-    info!("Starting health check server on {}", addr);
+    info!("[cid:INIT] Starting health check server on {}", addr);
 
     let listener = tokio::net::TcpListener::bind(addr)
         .await

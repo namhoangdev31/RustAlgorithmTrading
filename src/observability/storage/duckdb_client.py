@@ -69,7 +69,7 @@ class DuckDBClient:
     async def initialize(self) -> None:
         """Initialize database and create tables"""
         await self._execute_sync(self._init_db)
-        logger.info(f"DuckDB initialized: {self.db_path}")
+        logger.info(f"[cid:INIT] DuckDB initialized: {self.db_path}")
 
     def _init_db(self) -> None:
         """Initialize database (sync operation)"""
@@ -86,7 +86,7 @@ class DuckDBClient:
         # Create tables
         for table_name, schema_sql in DUCKDB_SCHEMAS.items():
             self._conn.execute(schema_sql)
-            logger.debug(f"Created table: {table_name}")
+            logger.debug(f"[cid:INIT] Created table: {table_name}")
 
     async def close(self) -> None:
         """Close database connection"""
@@ -94,7 +94,7 @@ class DuckDBClient:
             await self._execute_sync(self._conn.close)
             self._conn = None
         self._executor.shutdown(wait=True)
-        logger.info("DuckDB connection closed")
+        logger.info("[cid:INIT] DuckDB connection closed")
 
     async def _execute_sync(self, func, *args, **kwargs) -> Any:
         """Execute sync function in thread pool"""
@@ -134,7 +134,7 @@ class DuckDBClient:
             )
 
         await self._execute_sync(_insert)
-        logger.debug(f"Inserted {len(metrics)} metrics")
+        logger.debug(f"[cid:INIT] Inserted {len(metrics)} metrics")
 
     async def insert_candle(self, candle: CandleRecord) -> None:
         """Insert single candle"""
@@ -165,7 +165,7 @@ class DuckDBClient:
             )
 
         await self._execute_sync(_insert)
-        logger.debug(f"Inserted {len(candles)} candles")
+        logger.debug(f"[cid:INIT] Inserted {len(candles)} candles")
 
     async def insert_performance(self, record: PerformanceRecord) -> None:
         """Insert performance record"""
@@ -420,7 +420,7 @@ class DuckDBClient:
         def _optimize():
             self._conn.execute("CHECKPOINT")
             self._conn.execute("VACUUM")
-            logger.info("Database optimized")
+            logger.info("[cid:INIT] Database optimized")
 
         await self._execute_sync(_optimize)
 

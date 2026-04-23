@@ -44,7 +44,7 @@ Triển khai contract cutover trong một lần với kiểm soát rủi ro rõ 
 
 ## Rollback evidence
 
-- Rollback rehearsal bắt buộc có `Evidence ID` riêng (`EV-W3-5xx`).
+- Rollback rehearsal bắt buộc có `Evidence ID` riêng (chuẩn dùng: `EV-W3-221`).
 - SLA rollback rehearsal: phục hồi về baseline trong dưới 5 phút.
 - Không được set `GO` nếu chưa capture rollback drill pass.
 

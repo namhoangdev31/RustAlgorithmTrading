@@ -1,0 +1,136 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.14.3, pytest-9.0.2, pluggy-1.6.0 -- /opt/homebrew/opt/python@3.14/bin/python3.14
+cachedir: .pytest_cache
+rootdir: /Users/hoangnam/Developer/RustAlgorithmTrading/tests
+configfile: pytest.ini
+plugins: cov-7.1.0, asyncio-1.3.0, anyio-4.13.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 7 items
+
+tests/integration/test_backtest_signal_flow.py::TestSignalToOrderFlow::test_long_signal_generates_buy_order 2026-04-23 22:31:00.992 | INFO     | src.backtesting.portfolio_handler:__init__:66 - Initialized PortfolioHandler with $100,000.00
+2026-04-23 22:31:00.992 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:110 - 📥 Signal received: LONG for TEST, confidence=0.80, strategy=test_strategy
+2026-04-23 22:31:00.992 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:121 - 📊 Current market price for TEST: $100.00
+2026-04-23 22:31:00.992 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:130 - 💼 Current position: 0 shares of TEST (value: $0.00)
+2026-04-23 22:31:00.992 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:189 - 💰 Cash status: portfolio=$100,000.00, reserved=$0.00, available=$100,000.00
+2026-04-23 22:31:00.992 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:208 - 🎯 Position sizing: signal=LONG, current=0, target=100, delta=100
+2026-04-23 22:31:00.992 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:260 - 💰 Reserved $10,015.00 for TEST BUY order (total reserved: $10,015.00)
+2026-04-23 22:31:00.992 | INFO     | src.backtesting.portfolio_handler:generate_orders:283 - ✅ ORDER GENERATED: BUY 100 TEST @ market | Signal: LONG, Position: 0→100, Cash: $100,000.00
+2026-04-23 22:31:00.992 | INFO     | test_backtest_signal_flow:test_long_signal_generates_buy_order:58 - ✅ LONG signal → BUY 100 shares
+PASSED
+tests/integration/test_backtest_signal_flow.py::TestSignalToOrderFlow::test_short_signal_generates_sell_order 2026-04-23 22:31:00.993 | INFO     | src.backtesting.portfolio_handler:__init__:66 - Initialized PortfolioHandler with $100,000.00
+2026-04-23 22:31:00.993 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:110 - 📥 Signal received: SHORT for TEST, confidence=0.80, strategy=test_strategy
+2026-04-23 22:31:00.993 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:121 - 📊 Current market price for TEST: $100.00
+2026-04-23 22:31:00.993 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:130 - 💼 Current position: 0 shares of TEST (value: $0.00)
+2026-04-23 22:31:00.993 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:189 - 💰 Cash status: portfolio=$100,000.00, reserved=$0.00, available=$100,000.00
+2026-04-23 22:31:00.993 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:208 - 🎯 Position sizing: signal=SHORT, current=0, target=-100, delta=-100
+2026-04-23 22:31:00.993 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:266 - 💵 SELL order for 100 shares of TEST (expected proceeds: ~$10,000.00)
+2026-04-23 22:31:00.993 | INFO     | src.backtesting.portfolio_handler:generate_orders:283 - ✅ ORDER GENERATED: SELL 100 TEST @ market | Signal: SHORT, Position: 0→-100, Cash: $100,000.00
+2026-04-23 22:31:00.993 | INFO     | test_backtest_signal_flow:test_short_signal_generates_sell_order:94 - ✅ SHORT signal → SELL 100 shares
+PASSED
+tests/integration/test_backtest_signal_flow.py::TestSignalToOrderFlow::test_exit_signal_closes_position 2026-04-23 22:31:00.993 | INFO     | src.backtesting.portfolio_handler:__init__:66 - Initialized PortfolioHandler with $100,000.00
+2026-04-23 22:31:00.993 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:110 - 📥 Signal received: LONG for TEST, confidence=0.80, strategy=test_strategy
+2026-04-23 22:31:00.993 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:121 - 📊 Current market price for TEST: $105.00
+2026-04-23 22:31:00.993 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:130 - 💼 Current position: 0 shares of TEST (value: $0.00)
+2026-04-23 22:31:00.993 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:189 - 💰 Cash status: portfolio=$100,000.00, reserved=$0.00, available=$100,000.00
+2026-04-23 22:31:00.993 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:208 - 🎯 Position sizing: signal=LONG, current=0, target=95, delta=95
+2026-04-23 22:31:00.993 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:260 - 💰 Reserved $9,989.96 for TEST BUY order (total reserved: $9,989.96)
+2026-04-23 22:31:00.993 | INFO     | src.backtesting.portfolio_handler:generate_orders:283 - ✅ ORDER GENERATED: BUY 95 TEST @ market | Signal: LONG, Position: 0→95, Cash: $100,000.00
+2026-04-23 22:31:00.993 | DEBUG    | src.backtesting.portfolio_handler:update_fill:310 - 📦 FILL RECEIVED: BUY 95 TEST @ $100.00 | Cost: $9,500.00, Commission: $10.00, Total: $9,510.00
+2026-04-23 22:31:00.993 | DEBUG    | src.backtesting.portfolio_handler:update_fill:359 - 📊 Position updated: TEST 0→95 shares, Cash: $90,490.00, Equity: $99,990.00
+2026-04-23 22:31:00.993 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:110 - 📥 Signal received: EXIT for TEST, confidence=1.00, strategy=test_strategy
+2026-04-23 22:31:00.993 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:121 - 📊 Current market price for TEST: $105.00
+2026-04-23 22:31:00.993 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:130 - 💼 Current position: 95 shares of TEST (value: $9,975.00)
+2026-04-23 22:31:00.993 | INFO     | src.backtesting.portfolio_handler:generate_orders:159 - 🚪 EXIT signal: selling long 95 shares of TEST (current: 95 → target: 0)
+2026-04-23 22:31:00.993 | INFO     | src.backtesting.portfolio_handler:generate_orders:175 - ✅ EXIT ORDER: SELL 95 TEST @ market | Expected proceeds: $9,975.00
+2026-04-23 22:31:00.993 | INFO     | test_backtest_signal_flow:test_exit_signal_closes_position:155 - ✅ EXIT signal → SELL 95 shares (closing position)
+PASSED
+tests/integration/test_backtest_signal_flow.py::TestEndToEndBacktestFlow::test_momentum_strategy_full_flow 2026-04-23 22:31:00.993 | INFO     | src.strategies.base:__init__:69 - Strategy 'MomentumStrategy' initialized with parameters: {'rsi_period': 14, 'rsi_oversold': 30, 'rsi_overbought': 70, 'ema_fast': 12, 'ema_slow': 26, 'macd_signal': 9, 'position_size': 0.15, 'stop_loss_pct': 0.02, 'take_profit_pct': 0.03, 'macd_histogram_threshold': 0.0005, 'volume_confirmation': False, 'volume_ma_period': 20, 'volume_multiplier': 1.05, 'use_trailing_stop': False, 'trailing_stop_pct': 0.015, 'use_atr_sizing': False, 'atr_period': 14, 'atr_multiplier': 1.5, 'use_adx_filter': True, 'adx_period': 14, 'adx_threshold': 25.0}
+2026-04-23 22:31:00.993 | INFO     | src.strategies.momentum:__init__:127 - ✅ ADX trending filter ENABLED: threshold=25.0
+2026-04-23 22:31:00.999 | DEBUG    | src.strategies.momentum:generate_signals:238 - ADX trending filter enabled with threshold=25.0
+2026-04-23 22:31:00.999 | DEBUG    | src.strategies.momentum:generate_signals:266 - 📈 Bar 31 (2024-02-01 00:00:00): TEST @ $120.59 | RSI=76.6, MACD=4.2453, Signal=4.0170, Hist=0.22822, SMA50=$nan
+2026-04-23 22:31:00.999 | DEBUG    | src.strategies.momentum:generate_signals:448 - ✅ ADX=54.7 >25.0 (trending market - momentum suitable)
+2026-04-23 22:31:00.999 | INFO     | src.strategies.momentum:generate_signals:503 - 🟢 LONG SIGNAL (4/5 conditions): TEST @ $120.59 | RSI=76.6 ✓, MACD ✓, Hist=✓ (0.22822), Trend ✗, Volume ✓, ADX=54.7
+2026-04-23 22:31:00.999 | INFO     | src.strategies.momentum:generate_signals:649 - Generated 1 signals for Momentum strategy (including 0 exits)
+2026-04-23 22:31:00.999 | INFO     | test_backtest_signal_flow:test_momentum_strategy_full_flow:192 - 📊 Generated 1 signals from Momentum strategy
+2026-04-23 22:31:00.999 | INFO     | src.backtesting.portfolio_handler:__init__:66 - Initialized PortfolioHandler with $100,000.00
+2026-04-23 22:31:00.999 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:110 - 📥 Signal received: LONG for TEST, confidence=0.42, strategy=momentum
+2026-04-23 22:31:00.999 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:121 - 📊 Current market price for TEST: $120.59
+2026-04-23 22:31:00.999 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:130 - 💼 Current position: 0 shares of TEST (value: $0.00)
+2026-04-23 22:31:00.999 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:189 - 💰 Cash status: portfolio=$100,000.00, reserved=$0.00, available=$100,000.00
+2026-04-23 22:31:00.999 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:208 - 🎯 Position sizing: signal=LONG, current=0, target=82, delta=82
+2026-04-23 22:31:00.999 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:260 - 💰 Reserved $9,903.08 for TEST BUY order (total reserved: $9,903.08)
+2026-04-23 22:31:00.999 | INFO     | src.backtesting.portfolio_handler:generate_orders:283 - ✅ ORDER GENERATED: BUY 82 TEST @ market | Signal: LONG, Position: 0→82, Cash: $100,000.00
+2026-04-23 22:31:00.999 | DEBUG    | src.backtesting.portfolio_handler:update_fill:310 - 📦 FILL RECEIVED: BUY 82 TEST @ $120.65 | Cost: $9,893.19, Commission: $9.89, Total: $9,903.08
+2026-04-23 22:31:00.999 | DEBUG    | src.backtesting.portfolio_handler:update_fill:359 - 📊 Position updated: TEST 0→82 shares, Cash: $90,096.92, Equity: $99,990.11
+2026-04-23 22:31:00.999 | DEBUG    | src.backtesting.portfolio_handler:clear_reserved_cash:380 - 🔄 Clearing reserved cash: $9,903.08
+2026-04-23 22:31:00.999 | INFO     | test_backtest_signal_flow:test_momentum_strategy_full_flow:273 - 📈 Backtest complete:
+2026-04-23 22:31:00.999 | INFO     | test_backtest_signal_flow:test_momentum_strategy_full_flow:274 -    Signals: 1
+2026-04-23 22:31:00.999 | INFO     | test_backtest_signal_flow:test_momentum_strategy_full_flow:275 -    Orders: 1
+2026-04-23 22:31:00.999 | INFO     | test_backtest_signal_flow:test_momentum_strategy_full_flow:276 -    Fills: 1
+2026-04-23 22:31:00.999 | INFO     | test_backtest_signal_flow:test_momentum_strategy_full_flow:277 -    Initial capital: $100,000.00
+2026-04-23 22:31:00.999 | INFO     | test_backtest_signal_flow:test_momentum_strategy_full_flow:278 -    Final equity: $99,990.11
+2026-04-23 22:31:00.999 | INFO     | test_backtest_signal_flow:test_momentum_strategy_full_flow:279 -    Total return: -0.01%
+2026-04-23 22:31:00.999 | INFO     | test_backtest_signal_flow:test_momentum_strategy_full_flow:281 - ✅ Momentum strategy full flow executed successfully
+PASSED
+tests/integration/test_backtest_signal_flow.py::TestEndToEndBacktestFlow::test_mean_reversion_strategy_full_flow 2026-04-23 22:31:01.000 | INFO     | src.strategies.base:__init__:69 - Strategy 'MeanReversion' initialized with parameters: {'bb_period': 20, 'bb_std': 2.0, 'position_size': 0.15, 'stop_loss_pct': 0.02, 'take_profit_pct': 0.03, 'touch_threshold': 1.001}
+2026-04-23 22:31:01.001 | INFO     | src.strategies.mean_reversion:generate_signals:217 - SHORT signal (mean reversion): price=95.81, upper_band=94.75, middle=88.09
+2026-04-23 22:31:01.001 | INFO     | src.strategies.mean_reversion:generate_signals:255 - Generated 1 signals for Mean Reversion strategy (including 0 exits)
+2026-04-23 22:31:01.001 | INFO     | test_backtest_signal_flow:test_mean_reversion_strategy_full_flow:311 - 📊 Generated 1 signals from Mean Reversion strategy
+2026-04-23 22:31:01.001 | INFO     | src.backtesting.portfolio_handler:__init__:66 - Initialized PortfolioHandler with $100,000.00
+2026-04-23 22:31:01.001 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:110 - 📥 Signal received: SHORT for TEST, confidence=1.00, strategy=mean_reversion
+2026-04-23 22:31:01.001 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:121 - 📊 Current market price for TEST: $95.81
+2026-04-23 22:31:01.001 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:130 - 💼 Current position: 0 shares of TEST (value: $0.00)
+2026-04-23 22:31:01.001 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:189 - 💰 Cash status: portfolio=$100,000.00, reserved=$0.00, available=$100,000.00
+2026-04-23 22:31:01.001 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:208 - 🎯 Position sizing: signal=SHORT, current=0, target=-104, delta=-104
+2026-04-23 22:31:01.001 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:266 - 💵 SELL order for 104 shares of TEST (expected proceeds: ~$9,964.11)
+2026-04-23 22:31:01.001 | INFO     | src.backtesting.portfolio_handler:generate_orders:283 - ✅ ORDER GENERATED: SELL 104 TEST @ market | Signal: SHORT, Position: 0→-104, Cash: $100,000.00
+2026-04-23 22:31:01.001 | DEBUG    | src.backtesting.portfolio_handler:update_fill:310 - 📦 FILL RECEIVED: SELL 104 TEST @ $95.76 | Cost: $9,959.13, Commission: $9.96, Total: $9,969.09
+2026-04-23 22:31:01.001 | DEBUG    | src.backtesting.portfolio_handler:update_fill:359 - 📊 Position updated: TEST 0→104 shares, Cash: $90,030.91, Equity: $99,990.04
+2026-04-23 22:31:01.001 | INFO     | test_backtest_signal_flow:test_mean_reversion_strategy_full_flow:392 - 📈 Backtest complete:
+2026-04-23 22:31:01.001 | INFO     | test_backtest_signal_flow:test_mean_reversion_strategy_full_flow:393 -    Signals: 1
+2026-04-23 22:31:01.001 | INFO     | test_backtest_signal_flow:test_mean_reversion_strategy_full_flow:394 -    Orders: 1
+2026-04-23 22:31:01.001 | INFO     | test_backtest_signal_flow:test_mean_reversion_strategy_full_flow:395 -    Fills: 1
+2026-04-23 22:31:01.001 | INFO     | test_backtest_signal_flow:test_mean_reversion_strategy_full_flow:396 -    Initial capital: $100,000.00
+2026-04-23 22:31:01.001 | INFO     | test_backtest_signal_flow:test_mean_reversion_strategy_full_flow:397 -    Final equity: $99,990.04
+2026-04-23 22:31:01.001 | INFO     | test_backtest_signal_flow:test_mean_reversion_strategy_full_flow:398 -    Total return: -0.01%
+2026-04-23 22:31:01.001 | INFO     | test_backtest_signal_flow:test_mean_reversion_strategy_full_flow:400 - ✅ Mean Reversion strategy full flow executed successfully
+PASSED
+tests/integration/test_backtest_signal_flow.py::TestSignalExecutionBottlenecks::test_cash_constraint_bottleneck 2026-04-23 22:31:01.001 | INFO     | src.backtesting.portfolio_handler:__init__:66 - Initialized PortfolioHandler with $1,000.00
+2026-04-23 22:31:01.001 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:110 - 📥 Signal received: LONG for TEST, confidence=0.80, strategy=test
+2026-04-23 22:31:01.001 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:121 - 📊 Current market price for TEST: $200.00
+2026-04-23 22:31:01.001 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:130 - 💼 Current position: 0 shares of TEST (value: $0.00)
+2026-04-23 22:31:01.001 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:189 - 💰 Cash status: portfolio=$1,000.00, reserved=$0.00, available=$1,000.00
+2026-04-23 22:31:01.001 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:208 - 🎯 Position sizing: signal=LONG, current=0, target=4, delta=4
+2026-04-23 22:31:01.001 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:260 - 💰 Reserved $801.20 for TEST BUY order (total reserved: $801.20)
+2026-04-23 22:31:01.001 | INFO     | src.backtesting.portfolio_handler:generate_orders:283 - ✅ ORDER GENERATED: BUY 4 TEST @ market | Signal: LONG, Position: 0→4, Cash: $1,000.00
+2026-04-23 22:31:01.001 | INFO     | test_backtest_signal_flow:test_cash_constraint_bottleneck:433 - Cash constraint test: generated 1 orders with $1k capital
+2026-04-23 22:31:01.001 | INFO     | test_backtest_signal_flow:test_cash_constraint_bottleneck:441 - ✅ Order adjusted for cash constraint: 4 shares
+PASSED
+tests/integration/test_backtest_signal_flow.py::TestSignalExecutionBottlenecks::test_position_sizer_bottleneck 2026-04-23 22:31:01.002 | INFO     | src.backtesting.portfolio_handler:__init__:66 - Initialized PortfolioHandler with $100,000.00
+2026-04-23 22:31:01.002 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:110 - 📥 Signal received: LONG for TEST, confidence=0.80, strategy=test
+2026-04-23 22:31:01.002 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:121 - 📊 Current market price for TEST: $200.00
+2026-04-23 22:31:01.002 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:130 - 💼 Current position: 0 shares of TEST (value: $0.00)
+2026-04-23 22:31:01.002 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:189 - 💰 Cash status: portfolio=$100,000.00, reserved=$0.00, available=$100,000.00
+2026-04-23 22:31:01.002 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:208 - 🎯 Position sizing: signal=LONG, current=0, target=0, delta=0
+2026-04-23 22:31:01.002 | DEBUG    | src.backtesting.portfolio_handler:generate_orders:217 - ⏸️ No order needed: target position already achieved for TEST
+2026-04-23 22:31:01.002 | INFO     | test_backtest_signal_flow:test_position_sizer_bottleneck:470 - Position sizer test: 0 orders with $10 target position
+2026-04-23 22:31:01.002 | WARNING  | test_backtest_signal_flow:test_position_sizer_bottleneck:474 - ⚠️ Position sizer returned 0 shares - potential bottleneck!
+PASSED
+
+=============================== warnings summary ===============================
+../../../../opt/homebrew/lib/python3.14/site-packages/websockets/legacy/__init__.py:6
+  /opt/homebrew/lib/python3.14/site-packages/websockets/legacy/__init__.py:6: DeprecationWarning: websockets.legacy is deprecated; see https://websockets.readthedocs.io/en/stable/howto/upgrade.html for upgrade instructions
+    warnings.warn(  # deprecated in 14.0 - 2024-11-09
+
+integration/test_backtest_signal_flow.py::TestSignalToOrderFlow::test_long_signal_generates_buy_order
+integration/test_backtest_signal_flow.py::TestSignalToOrderFlow::test_short_signal_generates_sell_order
+integration/test_backtest_signal_flow.py::TestSignalToOrderFlow::test_exit_signal_closes_position
+integration/test_backtest_signal_flow.py::TestEndToEndBacktestFlow::test_momentum_strategy_full_flow
+integration/test_backtest_signal_flow.py::TestEndToEndBacktestFlow::test_mean_reversion_strategy_full_flow
+integration/test_backtest_signal_flow.py::TestSignalExecutionBottlenecks::test_cash_constraint_bottleneck
+integration/test_backtest_signal_flow.py::TestSignalExecutionBottlenecks::test_position_sizer_bottleneck
+  /opt/homebrew/lib/python3.14/site-packages/pydantic/main.py:250: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 7 passed, 8 warnings in 1.22s =========================

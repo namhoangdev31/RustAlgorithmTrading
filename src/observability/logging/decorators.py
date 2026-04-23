@@ -76,7 +76,7 @@ def log_execution_time(
 
                     if error:
                         logger.error(
-                            f"Function {func.__name__} failed after {duration_ms:.2f}ms",
+                            f"[cid:INIT] Function {func.__name__} failed after {duration_ms:.2f}ms",
                             extra=extra
                         )
                     else:
@@ -116,7 +116,7 @@ def log_execution_time(
 
                     if error:
                         logger.error(
-                            f"Async function {func.__name__} failed after {duration_ms:.2f}ms",
+                            f"[cid:INIT] Async function {func.__name__} failed after {duration_ms:.2f}ms",
                             extra=extra
                         )
                     else:
@@ -189,7 +189,7 @@ def log_trade_decision(
         extra['correlation_id'] = cid
 
     logger.info(
-        f"Trade Decision: {strategy_name} - {action} {quantity} {symbol}" +
+        f"[cid:INIT] Trade Decision: {strategy_name} - {action} {quantity} {symbol}" +
         (f" @ {price}" if price else ""),
         extra=extra
     )
@@ -255,7 +255,7 @@ class LogContext:
 
     Example:
         >>> with LogContext({'order_id': '123', 'user_id': '456'}):
-        ...     logger.info("Processing order")  # Includes order_id and user_id
+        ...     logger.info("[cid:INIT] Processing order")  # Includes order_id and user_id
     """
 
     def __init__(self, context: Dict[str, Any]):
@@ -297,7 +297,7 @@ def with_correlation_id(func: Callable) -> Callable:
         >>> @with_correlation_id
         >>> async def handle_request(request):
         ...     # All logs in this function will have correlation_id
-        ...     logger.info("Processing request")
+        ...     logger.info("[cid:INIT] Processing request")
     """
     @functools.wraps(func)
     def sync_wrapper(*args, **kwargs):
