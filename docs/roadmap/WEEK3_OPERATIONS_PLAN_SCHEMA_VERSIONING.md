@@ -183,26 +183,31 @@ Tiêu chí pass tuần 3:
 ## 7) KPI dictionary khuyến nghị cho tuần 3
 
 ### Reliability
+
 - Contract rerun stability theo pha.
 - P0/P1 contract mismatch count.
 - MTTR cho schema blockers.
 
 ### Contract Quality
+
 - V1 envelope compliance coverage.
 - Migration success rate (`v0 -> v1`).
 - Mismatch closure rate theo severity.
 
 ### Risk
+
 - RiskDecision completeness coverage (`reason_code/limit_snapshot`).
 - Risk semantics mismatch count.
 - Reject/allow consistency theo test scenarios.
 
 ### Engineering quality
+
 - Contract-focused unit/integration pass rate.
 - Build stability theo command profile chuẩn.
 - Regression count sau schema mapping updates.
 
 ### Observability
+
 - `trace_id` coverage trên critical path.
 - Event envelope completeness (`component/severity/timestamp`).
 - Severity mapping consistency cross-service.
