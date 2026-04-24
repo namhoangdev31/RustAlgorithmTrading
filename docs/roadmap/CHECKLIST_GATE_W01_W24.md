@@ -124,7 +124,7 @@
 - [ ] Gate readiness pha vận hành hoàn tất.
 - [ ] Không còn blocker P0/P1 chưa owner.
 - [ ] Go/No-Go W12 đã chốt.
-- Evidence IDs: `____________________________`
+- Evidence IDs: `EV-W12-101..110, EV-W12-201..216, EV-W12-301..306, EV-W12-401..402`
 - Decision: [ ] GO  [ ] NO-GO
 
 ## W13 - Strategy Governance
@@ -132,7 +132,7 @@
 - [ ] OOS/walk-forward checklist enforcement hoạt động.
 - [ ] Strategy thiếu evidence bị block đúng rule.
 - [ ] Go/No-Go W13 đã chốt.
-- Evidence IDs: `____________________________`
+- Evidence IDs: `EV-W13-101..110, EV-W13-201..216, EV-W13-301..306, EV-W13-401..402`
 - Decision: [ ] GO  [ ] NO-GO
 
 ## W14 - Portfolio Controls

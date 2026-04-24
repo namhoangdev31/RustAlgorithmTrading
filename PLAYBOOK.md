@@ -1772,6 +1772,102 @@ Mỗi file có 3 phần:
 - Class/Type trong file: Không có class/type (tài liệu weekly closeout + handoff).
 - Test liên quan: Tổng hợp evidence từ baseline report, implementation plan, issue register và gate rehearsal để ra quyết định final tuần 11.
 
+### docs/roadmap/W12_OPERATIONS_PLAN.md
+
+- Vai trò file: Kế hoạch vận hành tuần 12 cho Ops Readiness Gate, tập trung readiness checklist, ownership/escalation readiness, rehearsal technical/operational/governance và W13 handoff.
+- Class/Type trong file: Không có class/type (tài liệu điều phối readiness gate, triage và closeout).
+- Test liên quan: Điều phối command profile readiness-focused (`tests/observability/test_api.py`, `tests/observability`, pytest integration, cargo test/check, health/compliance/correlation audits) và scenario matrix tuần 12.
+
+### docs/roadmap/week12/KPI_CHARTER_WEEK12.md
+
+- Vai trò file: KPI charter tuần 12 cho Ops Readiness Gate, định nghĩa ngưỡng readiness checklist completeness, ownership coverage, rehearsal pass rate, correlation/alert quality và artifact consistency.
+- Class/Type trong file: Không có class/type (tài liệu KPI governance tuần 12).
+- Test liên quan: Dùng evidence từ baseline report, issue register và gate notes để tính KPI.
+
+### docs/roadmap/week12/OPS_READINESS_BASELINE_REPORT.md
+
+- Vai trò file: Baseline report tuần 12 cho ops readiness, chuẩn hóa matrix `expected/actual/status/evidence_id` cho command profile, readiness rehearsals, regression guard và gate reconciliation.
+- Class/Type trong file: Không có class/type (tài liệu validation/baseline evidence).
+- Test liên quan: Tham chiếu trực tiếp `tests/observability/test_api.py`, `tests/observability`, `test_observability_integration.py`, `cargo test/check`, `health_check`, `compliance_audit.sh`, `audit_correlation.py` theo command profile tuần 12.
+
+### docs/roadmap/week12/OPS_READINESS_IMPLEMENTATION_PLAN.md
+
+- Vai trò file: Kế hoạch triển khai Ops Readiness Gate với file-level guide, readiness contract, rehearsal flow, rollback policy và dependency matrix tuần 12.
+- Class/Type trong file: Không có class/type (tài liệu rollout/rollback strategy cho readiness gate).
+- Test liên quan: Kiểm chứng readiness checklist, ownership/escalation, API/SLO readiness, incident/recovery readiness, regression guard và artifact consistency trước gate.
+
+### docs/roadmap/week12/ISSUE_REGISTER_WEEK12.md
+
+- Vai trò file: Sổ issue tuần 12 cho Ops Readiness Gate, có metadata đầy đủ (`ETA`, `evidence_id`, `blocking_of`) và mapping theo blockers Phase 3.
+- Class/Type trong file: Không có class/type (tài liệu governance/triage tuần 12).
+- Test liên quan: Map failure từ baseline/scenario matrix vào owner/ETA/mitigation và quyết định gate blockers.
+
+### docs/roadmap/week12/INTERFACE_OPS_READINESS_SPEC.md
+
+- Vai trò file: Spec interface tuần 12 cho ops readiness, giữ canonical envelope freeze và khóa behavioral rules cho readiness record, gate verdict contract và evidence linkage.
+- Class/Type trong file: Không có class/type code; định nghĩa policy contract freeze, readiness record contract và file-level edit contract.
+- Test liên quan: Là đầu vào cho readiness rehearsals, governance consistency checks, correlation/compliance audits và gate rehearsal tuần 12.
+
+### docs/roadmap/week12/GATE_REHEARSAL_NOTES.md
+
+- Vai trò file: Ghi chú rehearsal gate tuần 12, tổng hợp ngưỡng pass/fail cho Ops Readiness Gate (`mandatory checklist = 100%`, `P0 open = 0`, `P1 unowned = 0`) và trạng thái checklist.
+- Class/Type trong file: Không có class/type (tài liệu gate review tuần 12).
+- Test liên quan: Xác nhận build/static/smoke, readiness rehearsal matrix, W09-W11 regression, correlation audit và artifact consistency.
+
+### docs/roadmap/week12/WEEK12_FINAL_REPORT_AND_WEEK13_START_PACK.md
+
+- Vai trò file: Báo cáo tổng kết tuần 12 và gói khởi động tuần 13 (Strategy Governance), chứa nhánh `GO` và recovery queue khi `NO-GO`.
+- Class/Type trong file: Không có class/type (tài liệu weekly closeout + handoff).
+- Test liên quan: Tổng hợp evidence từ baseline report, implementation plan, issue register và gate rehearsal để ra quyết định final tuần 12.
+
+### docs/roadmap/W13_OPERATIONS_PLAN.md
+
+- Vai trò file: Kế hoạch vận hành tuần 13 cho Strategy Governance, tập trung OOS/walk-forward checklist enforcement, strategy evidence gate, decision traceability và W14 handoff.
+- Class/Type trong file: Không có class/type (tài liệu điều phối strategy governance, triage và closeout).
+- Test liên quan: Điều phối command profile strategy-governance-focused (`tests/unit/test_strategy_signals.py`, `tests/test_backtest_integration.py`, pytest integration, cargo test/check, health/compliance/correlation audits) và scenario matrix tuần 13.
+
+### docs/roadmap/week13/KPI_CHARTER_WEEK13.md
+
+- Vai trò file: KPI charter tuần 13 cho Strategy Governance, định nghĩa ngưỡng OOS/walk-forward completeness, strategy evidence gate enforcement, decision traceability, reproducibility drift và artifact consistency.
+- Class/Type trong file: Không có class/type (tài liệu KPI governance tuần 13).
+- Test liên quan: Dùng evidence từ baseline report, issue register và gate notes để tính KPI.
+
+### docs/roadmap/week13/STRATEGY_GOVERNANCE_BASELINE_REPORT.md
+
+- Vai trò file: Baseline report tuần 13 cho strategy governance, chuẩn hóa matrix `expected/actual/status/evidence_id` cho command profile, governance rehearsals, regression guard và gate reconciliation.
+- Class/Type trong file: Không có class/type (tài liệu validation/baseline evidence).
+- Test liên quan: Tham chiếu trực tiếp `tests/unit/test_strategy_signals.py`, `tests/test_backtest_integration.py`, integration tests, `cargo test/check`, `health_check`, `compliance_audit.sh`, `audit_correlation.py` theo command profile tuần 13.
+
+### docs/roadmap/week13/STRATEGY_GOVERNANCE_IMPLEMENTATION_PLAN.md
+
+- Vai trò file: Kế hoạch triển khai Strategy Governance với file-level guide, governance contract, rehearsal flow, rollback policy và dependency matrix tuần 13.
+- Class/Type trong file: Không có class/type (tài liệu rollout/rollback strategy cho strategy governance).
+- Test liên quan: Kiểm chứng OOS/walk-forward enforcement, strategy evidence gate, decision traceability, drift/risk guards, regression guard và artifact consistency trước gate.
+
+### docs/roadmap/week13/ISSUE_REGISTER_WEEK13.md
+
+- Vai trò file: Sổ issue tuần 13 cho Strategy Governance, có metadata đầy đủ (`ETA`, `evidence_id`, `blocking_of`) và mapping theo blockers Phase 4.
+- Class/Type trong file: Không có class/type (tài liệu governance/triage tuần 13).
+- Test liên quan: Map failure từ baseline/scenario matrix vào owner/ETA/mitigation và quyết định gate blockers.
+
+### docs/roadmap/week13/INTERFACE_STRATEGY_GOVERNANCE_SPEC.md
+
+- Vai trò file: Spec interface tuần 13 cho strategy governance, giữ canonical envelope freeze và khóa behavioral rules cho governance record, enforcement policy, gate verdict contract và evidence linkage.
+- Class/Type trong file: Không có class/type code; định nghĩa policy contract freeze, governance record contract và file-level edit contract.
+- Test liên quan: Là đầu vào cho governance rehearsals, strategy evidence gate checks, correlation/compliance audits và gate rehearsal tuần 13.
+
+### docs/roadmap/week13/GATE_REHEARSAL_NOTES.md
+
+- Vai trò file: Ghi chú rehearsal gate tuần 13, tổng hợp ngưỡng pass/fail cho Strategy Governance (`OOS/WF completeness = 100%`, `drift <=1%`, `new breach = 0`) và trạng thái checklist.
+- Class/Type trong file: Không có class/type (tài liệu gate review tuần 13).
+- Test liên quan: Xác nhận build/static/smoke, governance rehearsal matrix, W09-W12 regression, correlation audit và artifact consistency.
+
+### docs/roadmap/week13/WEEK13_FINAL_REPORT_AND_WEEK14_START_PACK.md
+
+- Vai trò file: Báo cáo tổng kết tuần 13 và gói khởi động tuần 14 (Portfolio Controls), chứa nhánh `GO` và recovery queue khi `NO-GO`.
+- Class/Type trong file: Không có class/type (tài liệu weekly closeout + handoff).
+- Test liên quan: Tổng hợp evidence từ baseline report, implementation plan, issue register và gate rehearsal để ra quyết định final tuần 13.
+
 ### scripts/compliance_audit.sh
 
 - Vai trò file: Script auto-gate kiểm tra coverage của `correlation_id` và `schema_version` trên log evidence theo cơ chế fail-fast.
