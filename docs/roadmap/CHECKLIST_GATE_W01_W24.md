@@ -18,66 +18,66 @@
 
 ## 3) Checklist chung (áp dụng mọi tuần)
 
-- [ ] Compile/check pass.
-- [ ] Static contract audit pass.
-- [ ] Lint/type check pass.
-- [ ] Smoke runtime critical path pass.
-- [ ] Không còn P0 mở.
-- [ ] Không có P1 unowned.
-- [ ] Evidence pack đầy đủ (`expected/actual/evidence_id`).
-- [ ] Artifact consistency pass (issue/gate/final report không mâu thuẫn).
-- [ ] Change budget trong ngưỡng hoặc có justification.
-- [ ] Rule test ownership được tuân thủ.
+- [x] Compile/check pass.
+- [x] Static contract audit pass.
+- [x] Lint/type check pass.
+- [x] Smoke runtime critical path pass.
+- [x] Không còn P0 mở.
+- [x] Không có P1 unowned.
+- [x] Evidence pack đầy đủ (`expected/actual/evidence_id`).
+- [x] Artifact consistency pass (issue/gate/final report không mâu thuẫn).
+- [x] Change budget trong ngưỡng hoặc có justification.
+- [x] Rule test ownership được tuân thủ.
 
 ---
 
 ## W01 - Baseline & KPI Foundation
 
-- [ ] KPI charter + baseline report + issue register hoàn tất.
-- [ ] Contract/interface draft v0 có canonical envelope.
-- [ ] Go/No-Go W01 đã chốt.
-- Evidence IDs: `____________________________`
-- Decision: [ ] GO  [ ] NO-GO
+- [x] KPI charter + baseline report + issue register hoàn tất.
+- [x] Contract/interface draft v0 có canonical envelope.
+- [x] Go/No-Go W01 đã chốt.
+- Evidence IDs: `EV-W01-001..110`
+- Decision: [x] GO  [ ] NO-GO
 
 ## W02 - Contract Audit
 
-- [ ] Compatibility matrix + baseline audit + interface spec delta hoàn tất.
-- [ ] Mismatch P0 có owner + ETA + mitigation.
-- [ ] Go/No-Go W02 đã chốt.
-- Evidence IDs: `____________________________`
-- Decision: [ ] GO  [ ] NO-GO
+- [x] Compatibility matrix + baseline audit + interface spec delta hoàn tất.
+- [x] Mismatch P0 có owner + ETA + mitigation.
+- [x] Go/No-Go W02 đã chốt.
+- Evidence IDs: `EV-W02-001..115`
+- Decision: [x] GO  [ ] NO-GO
 
 ## W03 - One-pass Contract Cutover
 
-- [ ] Parser hardening + mapping rollout + governance sync hoàn tất.
-- [ ] W3-T19/W3-T20/W3-T21/W3-T22/W3-T23 đã pass.
-- [ ] Go/No-Go W03 đã chốt.
-- Evidence IDs: `____________________________`
-- Decision: [ ] GO  [ ] NO-GO
+- [x] Parser hardening + mapping rollout + governance sync hoàn tất.
+- [x] W3-T19/W3-T20/W3-T21/W3-T22/W3-T23 đã pass.
+- [x] Go/No-Go W03 đã chốt.
+- Evidence IDs: `EV-W03-515..520`
+- Decision: [x] GO  [ ] NO-GO
 
 ## W04 - Integration Stabilization
 
-- [ ] Critical path signal->risk->execution ổn định.
-- [ ] Rollback path runnable và đã rehearsal.
-- [ ] Go/No-Go W04 đã chốt.
-- Evidence IDs: `____________________________`
-- Decision: [ ] GO  [ ] NO-GO
+- [x] Critical path signal->risk->execution ổn định.
+- [x] Rollback path runnable và đã rehearsal.
+- [x] Go/No-Go W04 đã chốt.
+- Evidence IDs: `EV-W04-101..105`
+- Decision: [x] GO  [ ] NO-GO
 
 ## W05 - Risk Limits v1
 
-- [ ] Risk limits theo symbol/strategy áp dụng đúng.
-- [ ] Reject semantics đúng policy.
-- [ ] Go/No-Go W05 đã chốt.
-- Evidence IDs: `____________________________`
-- Decision: [ ] GO  [ ] NO-GO
+- [x] Risk limits theo symbol/strategy áp dụng đúng.
+- [x] Reject semantics đúng policy.
+- [x] Go/No-Go W05 đã chốt.
+- Evidence IDs: `EV-W05-201..210`
+- Decision: [x] GO  [ ] NO-GO
 
 ## W06 - Stop-loss Coherence
 
-- [ ] Stop-loss logic Python/Rust đồng bộ.
-- [ ] Regression stop-loss không tạo side-effect lớn.
-- [ ] Go/No-Go W06 đã chốt.
-- Evidence IDs: `____________________________`
-- Decision: [ ] GO  [ ] NO-GO
+- [x] Stop-loss logic Python/Rust đồng bộ.
+- [x] Regression stop-loss không tạo side-effect lớn.
+- [x] Go/No-Go W06 đã chốt.
+- Evidence IDs: `EV-W6-110, EV-W6-215, EV-W6-307`
+- Decision: [x] GO  [ ] NO-GO
 
 ## W07 - Circuit Breaker Hardening
 
