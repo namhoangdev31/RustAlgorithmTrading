@@ -1724,6 +1724,54 @@ Mỗi file có 3 phần:
 - Class/Type trong file: Không có class/type (tài liệu weekly closeout + handoff).
 - Test liên quan: Tổng hợp evidence từ baseline report, implementation plan, issue register và gate rehearsal để ra quyết định final tuần 10.
 
+### docs/roadmap/W11_OPERATIONS_PLAN.md
+
+- Vai trò file: Kế hoạch vận hành tuần 11 cho Incident Runbook, tập trung P0/P1 response flow, escalation matrix, drill rehearsal, closeout evidence và W12 readiness handoff.
+- Class/Type trong file: Không có class/type (tài liệu điều phối ops readiness, triage và closeout).
+- Test liên quan: Điều phối command profile incident-runbook-focused (`tests/observability/test_api.py`, `tests/observability`, pytest integration, cargo test/check, health/compliance/correlation audits) và scenario matrix tuần 11.
+
+### docs/roadmap/week11/KPI_CHARTER_WEEK11.md
+
+- Vai trò file: KPI charter tuần 11 cho Incident Runbook, định nghĩa ngưỡng P0/P1 acknowledgement, owner assignment, drill completion, closeout evidence, postmortem coverage và alert quality.
+- Class/Type trong file: Không có class/type (tài liệu KPI governance tuần 11).
+- Test liên quan: Dùng evidence từ baseline report, issue register và gate notes để tính KPI.
+
+### docs/roadmap/week11/INCIDENT_RUNBOOK_BASELINE_REPORT.md
+
+- Vai trò file: Baseline report tuần 11 cho incident runbook, chuẩn hóa matrix `expected/actual/status/evidence_id` cho command profile, incident drills, escalation SLA, regression guard và gate reconciliation.
+- Class/Type trong file: Không có class/type (tài liệu validation/baseline evidence).
+- Test liên quan: Tham chiếu trực tiếp `tests/observability/test_api.py`, `tests/observability`, `test_observability_integration.py`, `cargo test/check`, `health_check`, `compliance_audit.sh`, `audit_correlation.py` theo command profile tuần 11.
+
+### docs/roadmap/week11/INCIDENT_RUNBOOK_IMPLEMENTATION_PLAN.md
+
+- Vai trò file: Kế hoạch triển khai Incident Runbook với file-level guide, severity/escalation contract, required drills, rollback/recovery policy và dependency matrix tuần 11.
+- Class/Type trong file: Không có class/type (tài liệu rollout/rollback strategy cho incident runbook).
+- Test liên quan: Kiểm chứng P0/P1 acknowledgement, escalation matrix, API degraded, execution alert, circuit breaker, stale stream, position/risk breach drills và artifact consistency trước gate.
+
+### docs/roadmap/week11/ISSUE_REGISTER_WEEK11.md
+
+- Vai trò file: Sổ issue tuần 11 cho Incident Runbook, có metadata đầy đủ (`ETA`, `evidence_id`, `blocking_of`) và mapping theo blockers Phase 3.
+- Class/Type trong file: Không có class/type (tài liệu governance/triage tuần 11).
+- Test liên quan: Map failure từ baseline/scenario matrix vào owner/ETA/mitigation và quyết định gate blockers.
+
+### docs/roadmap/week11/INTERFACE_INCIDENT_RUNBOOK_SPEC.md
+
+- Vai trò file: Spec interface tuần 11 cho incident runbook, giữ canonical envelope freeze và khóa behavioral rules cho incident record, status transition, escalation matrix và evidence policy.
+- Class/Type trong file: Không có class/type code; định nghĩa policy contract freeze, incident record contract và file-level edit contract.
+- Test liên quan: Là đầu vào cho incident drills, alert acknowledgement checks, correlation audits, postmortem evidence và gate rehearsal tuần 11.
+
+### docs/roadmap/week11/GATE_REHEARSAL_NOTES.md
+
+- Vai trò file: Ghi chú rehearsal gate tuần 11, tổng hợp ngưỡng pass/fail cho Phase 3 (`P0 ack <= 5m`, required drills 100%, critical false-negative = 0) và trạng thái checklist.
+- Class/Type trong file: Không có class/type (tài liệu gate review tuần 11).
+- Test liên quan: Xác nhận build/static/smoke, incident drill matrix, W05-W10 regression, correlation audit và artifact consistency.
+
+### docs/roadmap/week11/WEEK11_FINAL_REPORT_AND_WEEK12_START_PACK.md
+
+- Vai trò file: Báo cáo tổng kết tuần 11 và gói khởi động tuần 12 (Ops Readiness Gate), chứa nhánh `GO` và recovery queue khi `NO-GO`.
+- Class/Type trong file: Không có class/type (tài liệu weekly closeout + handoff).
+- Test liên quan: Tổng hợp evidence từ baseline report, implementation plan, issue register và gate rehearsal để ra quyết định final tuần 11.
+
 ### scripts/compliance_audit.sh
 
 - Vai trò file: Script auto-gate kiểm tra coverage của `correlation_id` và `schema_version` trên log evidence theo cơ chế fail-fast.

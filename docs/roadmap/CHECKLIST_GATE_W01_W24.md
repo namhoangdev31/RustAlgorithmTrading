@@ -116,7 +116,7 @@
 - [ ] Runbook P0/P1 + escalation matrix hoàn tất.
 - [ ] Drill theo runbook đạt kết quả mục tiêu.
 - [ ] Go/No-Go W11 đã chốt.
-- Evidence IDs: `____________________________`
+- Evidence IDs: `EV-W11-101..110, EV-W11-201..216, EV-W11-301..306, EV-W11-401..402`
 - Decision: [ ] GO  [ ] NO-GO
 
 ## W12 - Ops Readiness Gate
