@@ -1526,6 +1526,60 @@ Mỗi file có 3 phần:
 - Class/Type trong file: Không có class/type (tài liệu weekly closeout + handoff).
 - Test liên quan: Tổng hợp evidence từ baseline report, implementation plan, issue register và gate rehearsal để ra quyết định final tuần 6.
 
+### docs/roadmap/W07_OPERATIONS_PLAN.md
+
+- Vai trò file: Kế hoạch vận hành tuần 7 cho Circuit Breaker Hardening, tập trung state machine, cooldown/recovery, stress no loop-trip, execution guard và gate Phase 2.
+- Class/Type trong file: Không có class/type (tài liệu điều phối implementation circuit breaker, triage và closeout).
+- Test liên quan: Điều phối command profile circuit-breaker-focused (pytest integration + cargo test/check + health/compliance/correlation audits) và scenario matrix tuần 7.
+
+### docs/roadmap/week7/KPI_CHARTER_WEEK7.md
+
+- Vai trò file: KPI charter tuần 7 cho Circuit Breaker Hardening, định nghĩa ngưỡng transition coverage, loop-trip count, false reset, risk-off bypass và governance consistency.
+- Class/Type trong file: Không có class/type (tài liệu KPI governance tuần 7).
+- Test liên quan: Dùng evidence từ baseline report, issue register và gate notes để tính KPI.
+
+### docs/roadmap/week7/CIRCUIT_BREAKER_BASELINE_REPORT.md
+
+- Vai trò file: Baseline report tuần 7 cho circuit breaker, chuẩn hóa matrix `expected/actual/status/evidence_id` cho command profile, transition scenarios, stress và runbook drill.
+- Class/Type trong file: Không có class/type (tài liệu validation/baseline evidence).
+- Test liên quan: Tham chiếu trực tiếp `pytest integration`, `cargo test/check`, `health_check`, `compliance_audit.sh`, `audit_correlation.py` theo command profile tuần 7.
+
+### docs/roadmap/week7/CIRCUIT_BREAKER_IMPLEMENTATION_PLAN.md
+
+- Vai trò file: Kế hoạch triển khai Circuit Breaker Hardening với dependency matrix theo lane, triage clusters A/B/C và rollback strategy cho regressions tuần 7.
+- Class/Type trong file: Không có class/type (tài liệu rollout/rollback strategy cho circuit breaker).
+- Test liên quan: Kiểm chứng state transition, cooldown/recovery, execution side-effect guardrail, stress no loop-trip và artifact consistency trước gate.
+
+### rust/risk-manager/tests/circuit_breaker_tests.rs
+
+- Vai trò file: Bộ integration tests cho Week 7 Circuit Breaker Hardening, bao phủ state machine, cooldown, reset approval, half-open probe, hot-reload guard và correlation preservation.
+- Class/Type trong file: Không định nghĩa production class/type; dùng `RiskManagerService`, `CircuitBreakerState`, `TripReason` để kiểm chứng behavior public nội bộ crate.
+- Test liên quan: Chạy bằng `cd rust && PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1 cargo test -p risk-manager`.
+
+### docs/roadmap/week7/ISSUE_REGISTER_WEEK7.md
+
+- Vai trò file: Sổ issue tuần 7 cho Circuit Breaker Hardening, có metadata đầy đủ (`ETA`, `evidence_id`, `blocking_of`) và mapping theo blockers Phase 2.
+- Class/Type trong file: Không có class/type (tài liệu governance/triage tuần 7).
+- Test liên quan: Map failure từ baseline/scenario matrix vào owner/ETA/mitigation và quyết định gate blockers.
+
+### docs/roadmap/week7/INTERFACE_CIRCUIT_BREAKER_SPEC.md
+
+- Vai trò file: Spec interface tuần 7 cho circuit breaker, giữ canonical envelope freeze và khóa behavioral rules cho state/event semantics.
+- Class/Type trong file: Không có class/type code; định nghĩa policy contract freeze, state machine contract và error-handling/reset rules.
+- Test liên quan: Là đầu vào cho circuit breaker checks, execution reject-path checks, metrics và observability audits tuần 7.
+
+### docs/roadmap/week7/GATE_REHEARSAL_NOTES.md
+
+- Vai trò file: Ghi chú rehearsal gate tuần 7, tổng hợp ngưỡng pass/fail cho Phase 2 (`loop-trip count = 0`, risk-off bypass = 0, duplicate side-effect <= 0.1%) và trạng thái checklist.
+- Class/Type trong file: Không có class/type (tài liệu gate review tuần 7).
+- Test liên quan: Xác nhận build/static/smoke, transition matrix, cooldown/recovery, stress, correlation audit và artifact consistency.
+
+### docs/roadmap/week7/WEEK7_FINAL_REPORT_AND_WEEK8_START_PACK.md
+
+- Vai trò file: Báo cáo tổng kết tuần 7 và gói khởi động tuần 8 (Execution retry/slippage), chứa nhánh `GO` và recovery queue khi `NO-GO`.
+- Class/Type trong file: Không có class/type (tài liệu weekly closeout + handoff).
+- Test liên quan: Tổng hợp evidence từ baseline report, implementation plan, issue register và gate rehearsal để ra quyết định final tuần 7.
+
 ### scripts/compliance_audit.sh
 
 - Vai trò file: Script auto-gate kiểm tra coverage của `correlation_id` và `schema_version` trên log evidence theo cơ chế fail-fast.

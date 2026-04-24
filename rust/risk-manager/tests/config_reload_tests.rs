@@ -128,7 +128,7 @@ fn test_hot_reload_failure_keeps_previous_effective_config() {
     initial_cfg.max_position_size = 1_000.0;
     initial_cfg.max_notional_exposure = 100_000.0;
 
-    let service = RiskManagerService::new(initial_cfg).unwrap();
+    let mut service = RiskManagerService::new(initial_cfg).unwrap();
     let order = build_order("AAPL", 15.0, 100.0); // notional = 1500
 
     let before = service.validate_order(&order, "cid-failed-reload-before");

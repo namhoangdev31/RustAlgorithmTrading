@@ -7,7 +7,7 @@ pub mod pnl;
 pub mod reload;
 pub mod stops;
 
-pub use circuit_breaker::CircuitBreaker;
+pub use circuit_breaker::{CircuitBreaker, CircuitBreakerState, TripReason};
 pub use limits::LimitChecker;
 pub use pnl::PnLTracker;
 pub use stops::{StopLossConfig, StopLossTrigger, StopLossType, StopManager};
@@ -36,25 +36,21 @@ impl RiskManagerService {
         })
     }
 
-    pub fn check_order(&self, order: &Order) -> Result<bool> {
+    pub fn check_order(&mut self, order: &Order) -> Result<bool> {
         // Legacy compatibility wrapper
-        self.limit_checker.check(order)?;
         self.circuit_breaker.check()?;
+        self.limit_checker.check(order)?;
         Ok(true)
     }
 
-    pub fn validate_order(&self, order: &Order, correlation_id: &str) -> common::types::RiskReport {
-        // Level 1: Limit Checker (Symbol/Strategy caps)
-        let report = self.limit_checker.check_with_report(order, correlation_id);
-        if report.decision == common::types::RiskDecision::Reject {
-            common::metrics::risk::record_risk_check_result(
-                "REJECT",
-                &reason_label(report.reason_code),
-            );
-            return report;
-        }
-
-        // Level 2: Circuit Breaker
+    /// Primary entry point for order validation.
+    /// Changed to &mut self in CR-W07-001 to support stateful circuit breaker.
+    pub fn validate_order(
+        &mut self,
+        order: &Order,
+        correlation_id: &str,
+    ) -> common::types::RiskReport {
+        // Level 1: Circuit Breaker (Must be first gate in W07)
         if let Err(_) = self.circuit_breaker.check() {
             let reject_report = common::types::RiskReport {
                 decision: common::types::RiskDecision::Reject,
@@ -69,6 +65,16 @@ impl RiskManagerService {
             return reject_report;
         }
 
+        // Level 2: Limit Checker (Symbol/Strategy caps)
+        let report = self.limit_checker.check_with_report(order, correlation_id);
+        if report.decision == common::types::RiskDecision::Reject {
+            common::metrics::risk::record_risk_check_result(
+                "REJECT",
+                &reason_label(report.reason_code),
+            );
+            return report;
+        }
+
         // Default: Allow
         let allow_report = common::types::RiskReport {
             decision: common::types::RiskDecision::Allow,
@@ -80,12 +86,53 @@ impl RiskManagerService {
         allow_report
     }
 
+    // Circuit Breaker Management Methods (W07)
+
+    pub fn trip_circuit_breaker(&mut self, reason: TripReason, correlation_id: &str) {
+        let before = self.circuit_breaker.state();
+        self.circuit_breaker.trip(reason, correlation_id);
+        let after = self.circuit_breaker.state();
+
+        if after == CircuitBreakerState::Open && before != CircuitBreakerState::Disabled {
+            common::metrics::risk::record_circuit_breaker_trip(reason.as_token());
+            common::metrics::risk::set_circuit_breaker_status(true);
+        }
+    }
+
+    pub fn approve_circuit_breaker_reset(&mut self, correlation_id: &str) {
+        self.circuit_breaker.approve_reset(correlation_id);
+    }
+
+    pub fn record_circuit_breaker_probe_result(&mut self, success: bool, correlation_id: &str) {
+        self.circuit_breaker
+            .record_probe_result(success, correlation_id);
+        if success {
+            common::metrics::risk::set_circuit_breaker_status(false);
+        } else {
+            common::metrics::risk::record_circuit_breaker_trip("PROBE_FAILED");
+            common::metrics::risk::set_circuit_breaker_status(true);
+        }
+    }
+
+    pub fn circuit_breaker_state(&self) -> CircuitBreakerState {
+        self.circuit_breaker.state()
+    }
+
+    #[doc(hidden)]
+    pub fn set_circuit_breaker_tripped_at_for_test(&mut self, time: chrono::DateTime<chrono::Utc>) {
+        self.circuit_breaker.set_tripped_at_for_test(time);
+    }
+
     /// Reload runtime risk config for new decisions only.
     /// Existing active stop state is intentionally preserved.
     pub fn reload_risk_config(&mut self, config: common::config::RiskConfig) {
         self.limit_checker.update_config(config.clone());
         self.stop_manager.update_config(config.clone());
         self.circuit_breaker.update_config(config);
+
+        let tripped = self.circuit_breaker.state() != CircuitBreakerState::Closed
+            && self.circuit_breaker.state() != CircuitBreakerState::Disabled;
+        common::metrics::risk::set_circuit_breaker_status(tripped);
     }
 
     pub fn update_position(

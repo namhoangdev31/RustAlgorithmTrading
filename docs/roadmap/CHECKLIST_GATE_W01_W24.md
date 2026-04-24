@@ -81,11 +81,11 @@
 
 ## W07 - Circuit Breaker Hardening
 
-- [ ] Trip/recover/cooldown rules ổn định.
-- [ ] Không có loop-trip trong stress scenario.
-- [ ] Go/No-Go W07 đã chốt.
-- Evidence IDs: `____________________________`
-- Decision: [ ] GO  [ ] NO-GO
+- [x] Trip/recover/cooldown rules ổn định.
+- [x] Không có loop-trip trong stress scenario.
+- [x] Go/No-Go W07 đã chốt.
+- Evidence IDs: `EV-W7-101..108, EV-W7-201..215, EV-W7-301..306, EV-W7-401..402`
+- Decision: [x] GO  [ ] NO-GO
 
 ## W08 - Execution Retry/Slippage
 

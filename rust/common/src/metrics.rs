@@ -368,4 +368,15 @@ mod tests {
         assert!(output.contains("status=\"failed\""));
         assert!(output.contains("reason=\"DAILY_LOSS_MISMATCH\""));
     }
+
+    #[test]
+    fn test_circuit_breaker_metric_labels() {
+        let handle = test_prometheus_handle();
+        risk::record_circuit_breaker_trip("MANUAL");
+        risk::set_circuit_breaker_status(true);
+        let output = handle.render();
+        assert!(output.contains("risk_circuit_breaker_trips_total"));
+        assert!(output.contains("reason=\"MANUAL\""));
+        assert!(output.contains("risk_circuit_breaker_status"));
+    }
 }
