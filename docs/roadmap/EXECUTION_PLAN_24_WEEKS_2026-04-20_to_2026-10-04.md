@@ -30,6 +30,7 @@ Mục tiêu roadmap là đưa hệ thống giao dịch hybrid Python-Rust từ t
 | W21-W24 | `<= 15 files` và `<= 700 LOC net/week` (chế độ hard-gate) | mọi thay đổi interface/type mới; full-suite fail; release blockers |
 
 Escalation tối thiểu phải ghi:
+
 - trigger cụ thể
 - owner xử lý
 - mitigation trong cùng tuần
@@ -91,6 +92,7 @@ Trigger: P0/P1 risk hoặc blocker live-ready
 ```
 
 Điều kiện áp dụng CR:
+
 - Không có CR hợp lệ => không được merge thay đổi interface/type.
 - CR phải được link trong issue register + gate rehearsal notes tuần tương ứng.
 
@@ -156,6 +158,7 @@ Mỗi tuần bắt buộc đạt:
 - W24: full regression rerun + release-gate controlled live ready.
 
 Hard-gate rule:
+
 - Nếu một required suite fail ở W21-W24 => tuần đó mặc định `NO-GO`.
 - Không defer test debt sang tuần kế tiếp trong W21-W24.
 
