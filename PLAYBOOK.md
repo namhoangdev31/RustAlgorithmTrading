@@ -1676,6 +1676,54 @@ Mỗi file có 3 phần:
 - Class/Type trong file: Không có class/type (tài liệu weekly closeout + handoff).
 - Test liên quan: Tổng hợp evidence từ baseline report, implementation plan, issue register và gate rehearsal để ra quyết định final tuần 9.
 
+### docs/roadmap/W10_OPERATIONS_PLAN.md
+
+- Vai trò file: Kế hoạch vận hành tuần 10 cho API Health & SLO, tập trung health/readiness/liveness, component health, WebSocket heartbeat, alert profile và dashboard SLO panels.
+- Class/Type trong file: Không có class/type (tài liệu điều phối implementation API health/SLO, triage và closeout).
+- Test liên quan: Điều phối command profile API-health/SLO-focused (`tests/observability/test_api.py`, `tests/observability`, pytest integration, cargo test/check, health/compliance/correlation audits) và scenario matrix tuần 10.
+
+### docs/roadmap/week10/KPI_CHARTER_WEEK10.md
+
+- Vai trò file: KPI charter tuần 10 cho API Health & SLO, định nghĩa ngưỡng health latency, readiness/liveness correctness, WebSocket heartbeat, alert quality và dashboard SLO availability.
+- Class/Type trong file: Không có class/type (tài liệu KPI governance tuần 10).
+- Test liên quan: Dùng evidence từ baseline report, issue register và gate notes để tính KPI.
+
+### docs/roadmap/week10/API_HEALTH_SLO_BASELINE_REPORT.md
+
+- Vai trò file: Baseline report tuần 10 cho API health/SLO, chuẩn hóa matrix `expected/actual/status/evidence_id` cho command profile, health endpoint SLO, alert quality, dashboard SLO và regression guard.
+- Class/Type trong file: Không có class/type (tài liệu validation/baseline evidence).
+- Test liên quan: Tham chiếu trực tiếp `tests/observability/test_api.py`, `tests/observability`, `test_observability_integration.py`, `cargo test/check`, `health_check`, `compliance_audit.sh`, `audit_correlation.py` theo command profile tuần 10.
+
+### docs/roadmap/week10/API_HEALTH_SLO_IMPLEMENTATION_PLAN.md
+
+- Vai trò file: Kế hoạch triển khai API Health & SLO với dependency matrix theo lane, SLO dictionary, alert profile policy, dashboard SLO requirements và rollback strategy cho regressions tuần 10.
+- Class/Type trong file: Không có class/type (tài liệu rollout/rollback strategy cho API health/SLO).
+- Test liên quan: Kiểm chứng health/readiness/liveness, component health, WebSocket heartbeat, alert quality, dashboard SLO panels và artifact consistency trước gate.
+
+### docs/roadmap/week10/ISSUE_REGISTER_WEEK10.md
+
+- Vai trò file: Sổ issue tuần 10 cho API Health & SLO, có metadata đầy đủ (`ETA`, `evidence_id`, `blocking_of`) và mapping theo blockers Phase 3.
+- Class/Type trong file: Không có class/type (tài liệu governance/triage tuần 10).
+- Test liên quan: Map failure từ baseline/scenario matrix vào owner/ETA/mitigation và quyết định gate blockers.
+
+### docs/roadmap/week10/INTERFACE_API_HEALTH_SLO_SPEC.md
+
+- Vai trò file: Spec interface tuần 10 cho API health/SLO, giữ canonical envelope freeze và khóa behavioral rules cho health endpoints, alert profile, SLO dictionary và error handling.
+- Class/Type trong file: Không có class/type code; định nghĩa policy contract freeze, endpoint contract, alert profile và file-level edit contract.
+- Test liên quan: Là đầu vào cho API health tests, observability tests, WebSocket heartbeat checks, alert quality rehearsal và dashboard SLO validation tuần 10.
+
+### docs/roadmap/week10/GATE_REHEARSAL_NOTES.md
+
+- Vai trò file: Ghi chú rehearsal gate tuần 10, tổng hợp ngưỡng pass/fail cho Phase 3 (`/health p95 <= 100ms`, alert false-positive <= 15%, critical false-negative = 0) và trạng thái checklist.
+- Class/Type trong file: Không có class/type (tài liệu gate review tuần 10).
+- Test liên quan: Xác nhận build/static/smoke, API health/SLO matrix, W05-W09 regression, correlation audit và artifact consistency.
+
+### docs/roadmap/week10/WEEK10_FINAL_REPORT_AND_WEEK11_START_PACK.md
+
+- Vai trò file: Báo cáo tổng kết tuần 10 và gói khởi động tuần 11 (Incident Runbook), chứa nhánh `GO` và recovery queue khi `NO-GO`.
+- Class/Type trong file: Không có class/type (tài liệu weekly closeout + handoff).
+- Test liên quan: Tổng hợp evidence từ baseline report, implementation plan, issue register và gate rehearsal để ra quyết định final tuần 10.
+
 ### scripts/compliance_audit.sh
 
 - Vai trò file: Script auto-gate kiểm tra coverage của `correlation_id` và `schema_version` trên log evidence theo cơ chế fail-fast.

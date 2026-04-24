@@ -108,7 +108,7 @@
 - [ ] SLO/alert profile chuẩn hóa.
 - [ ] Alert quality đạt ngưỡng đã chốt.
 - [ ] Go/No-Go W10 đã chốt.
-- Evidence IDs: `____________________________`
+- Evidence IDs: `EV-W10-101..110, EV-W10-201..217, EV-W10-301..306, EV-W10-401..402`
 - Decision: [ ] GO  [ ] NO-GO
 
 ## W11 - Incident Runbook
