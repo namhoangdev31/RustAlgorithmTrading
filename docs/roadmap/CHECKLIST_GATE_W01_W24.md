@@ -148,7 +148,7 @@
 - [ ] Position sizing theo volatility/regime hoàn tất.
 - [ ] Drawdown policy adherence đạt ngưỡng.
 - [ ] Go/No-Go W15 đã chốt.
-- Evidence IDs: `____________________________`
+- Evidence IDs: `EV-W15-101..110, EV-W15-201..216, EV-W15-301..306, EV-W15-401..402`
 - Decision: [ ] GO  [ ] NO-GO
 
 ## W16 - Research Reproducibility
@@ -156,7 +156,7 @@
 - [ ] Reproducibility pack + seed control hoàn tất.
 - [ ] Rerun nằm trong ngưỡng cho phép.
 - [ ] Go/No-Go W16 đã chốt.
-- Evidence IDs: `____________________________`
+- Evidence IDs: `EV-W16-101..110, EV-W16-201..216, EV-W16-301..306, EV-W16-401..402`
 - Decision: [ ] GO  [ ] NO-GO
 
 ## W17 - Staging Hardening

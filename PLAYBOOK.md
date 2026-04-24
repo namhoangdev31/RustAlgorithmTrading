@@ -1943,3 +1943,99 @@ Mỗi file có 3 phần:
 - Vai trò file: Script audit runtime quét log file (`trading.log`) để xác minh tính toàn vẹn của chuỗi correlation `signal -> stop_trigger -> execution`.
 - Class/Type trong file: Không có class (regex-based audit tool).
 - Test liên quan: `python scripts/audit_w6_correlation.py logs/trading.log`.
+
+### docs/roadmap/W15_OPERATIONS_PLAN.md
+
+- Vai trò file: Kế hoạch vận hành tuần 15 cho Capital Allocation, tập trung position sizing theo volatility/regime, drawdown adherence, cross-strategy allocation interactions và W16 handoff.
+- Class/Type trong file: Không có class/type (tài liệu điều phối capital allocation, triage và closeout).
+- Test liên quan: Điều phối command profile capital-allocation-focused (`tests/test_backtest_integration.py`, strategy/integration tests, cargo test/check, health/compliance/correlation audits) và scenario matrix tuần 15.
+
+### docs/roadmap/week15/KPI_CHARTER_WEEK15.md
+
+- Vai trò file: KPI charter tuần 15 cho Capital Allocation, định nghĩa ngưỡng volatility/regime sizing enforcement, drawdown adherence, cross-strategy coverage, drift/risk guard và artifact consistency.
+- Class/Type trong file: Không có class/type (tài liệu KPI governance tuần 15).
+- Test liên quan: Dùng evidence từ baseline report, issue register và gate notes để tính KPI.
+
+### docs/roadmap/week15/CAPITAL_ALLOCATION_BASELINE_REPORT.md
+
+- Vai trò file: Baseline report tuần 15 cho capital allocation, chuẩn hóa matrix `expected/actual/status/evidence_id` cho command profile, allocation rehearsals, regression guard và gate reconciliation.
+- Class/Type trong file: Không có class/type (tài liệu validation/baseline evidence).
+- Test liên quan: Tham chiếu trực tiếp backtest/strategy/integration tests, `cargo test/check`, `health_check`, `compliance_audit.sh`, `audit_correlation.py` theo command profile tuần 15.
+
+### docs/roadmap/week15/CAPITAL_ALLOCATION_IMPLEMENTATION_PLAN.md
+
+- Vai trò file: Kế hoạch triển khai Capital Allocation với file-level guide, allocation contract, rehearsal flow, rollback policy và dependency matrix tuần 15.
+- Class/Type trong file: Không có class/type (tài liệu rollout/rollback strategy cho capital allocation).
+- Test liên quan: Kiểm chứng volatility/regime sizing, drawdown adherence, cross-strategy interactions, decision traceability, drift/risk guards, regression guard và artifact consistency trước gate.
+
+### docs/roadmap/week15/ISSUE_REGISTER_WEEK15.md
+
+- Vai trò file: Sổ issue tuần 15 cho Capital Allocation, có metadata đầy đủ (`ETA`, `evidence_id`, `blocking_of`) và mapping theo blockers Phase 4.
+- Class/Type trong file: Không có class/type (tài liệu governance/triage tuần 15).
+- Test liên quan: Map failure từ baseline/scenario matrix vào owner/ETA/mitigation và quyết định gate blockers.
+
+### docs/roadmap/week15/INTERFACE_CAPITAL_ALLOCATION_SPEC.md
+
+- Vai trò file: Spec interface tuần 15 cho capital allocation, giữ canonical envelope freeze và khóa behavioral rules cho allocation record, enforcement policy, gate verdict contract và evidence linkage.
+- Class/Type trong file: Không có class/type code; định nghĩa policy contract freeze, allocation record contract và file-level edit contract.
+- Test liên quan: Là đầu vào cho allocation rehearsals, enforcement checks, correlation/compliance audits và gate rehearsal tuần 15.
+
+### docs/roadmap/week15/GATE_REHEARSAL_NOTES.md
+
+- Vai trò file: Ghi chú rehearsal gate tuần 15, tổng hợp ngưỡng pass/fail cho Capital Allocation (`volatility/regime sizing = 100%`, `drawdown adherence = 100%`, `new breaches = 0`) và trạng thái checklist.
+- Class/Type trong file: Không có class/type (tài liệu gate review tuần 15).
+- Test liên quan: Xác nhận build/static/smoke, allocation rehearsal matrix, W09-W14 regression, correlation audit và artifact consistency.
+
+### docs/roadmap/week15/WEEK15_FINAL_REPORT_AND_WEEK16_START_PACK.md
+
+- Vai trò file: Báo cáo tổng kết tuần 15 và gói khởi động tuần 16 (Research Reproducibility), chứa nhánh `GO` và recovery queue khi `NO-GO`.
+- Class/Type trong file: Không có class/type (tài liệu weekly closeout + handoff).
+- Test liên quan: Tổng hợp evidence từ baseline report, implementation plan, issue register và gate rehearsal để ra quyết định final tuần 15.
+
+### docs/roadmap/W16_OPERATIONS_PLAN.md
+
+- Vai trò file: Kế hoạch vận hành tuần 16 cho Research Reproducibility, tập trung seed control, deterministic rerun profile, consistency checks và W17 handoff.
+- Class/Type trong file: Không có class/type (tài liệu điều phối reproducibility, triage và closeout).
+- Test liên quan: Điều phối command profile reproducibility-focused (backtest/strategy/integration tests, cargo test/check, health/compliance/correlation audits) và scenario matrix tuần 16.
+
+### docs/roadmap/week16/KPI_CHARTER_WEEK16.md
+
+- Vai trò file: KPI charter tuần 16 cho Research Reproducibility, định nghĩa ngưỡng seed compliance, deterministic coverage, multi-rerun consistency, drift threshold và artifact consistency.
+- Class/Type trong file: Không có class/type (tài liệu KPI governance tuần 16).
+- Test liên quan: Dùng evidence từ baseline report, issue register và gate notes để tính KPI.
+
+### docs/roadmap/week16/RESEARCH_REPRODUCIBILITY_BASELINE_REPORT.md
+
+- Vai trò file: Baseline report tuần 16 cho research reproducibility, chuẩn hóa matrix `expected/actual/status/evidence_id` cho command profile, reproducibility rehearsals, regression guard và gate reconciliation.
+- Class/Type trong file: Không có class/type (tài liệu validation/baseline evidence).
+- Test liên quan: Tham chiếu trực tiếp backtest/strategy/integration tests, `cargo test/check`, `health_check`, `compliance_audit.sh`, `audit_correlation.py` theo command profile tuần 16.
+
+### docs/roadmap/week16/RESEARCH_REPRODUCIBILITY_IMPLEMENTATION_PLAN.md
+
+- Vai trò file: Kế hoạch triển khai Research Reproducibility với file-level guide, reproducibility contract, rehearsal flow, rollback policy và dependency matrix tuần 16.
+- Class/Type trong file: Không có class/type (tài liệu rollout/rollback strategy cho reproducibility).
+- Test liên quan: Kiểm chứng seed control, deterministic rerun, multi-rerun consistency, exception handling, drift guards, regression guard và artifact consistency trước gate.
+
+### docs/roadmap/week16/ISSUE_REGISTER_WEEK16.md
+
+- Vai trò file: Sổ issue tuần 16 cho Research Reproducibility, có metadata đầy đủ (`ETA`, `evidence_id`, `blocking_of`) và mapping theo blockers Phase 4.
+- Class/Type trong file: Không có class/type (tài liệu governance/triage tuần 16).
+- Test liên quan: Map failure từ baseline/scenario matrix vào owner/ETA/mitigation và quyết định gate blockers.
+
+### docs/roadmap/week16/INTERFACE_REPRODUCIBILITY_SPEC.md
+
+- Vai trò file: Spec interface tuần 16 cho reproducibility, giữ canonical envelope freeze và khóa behavioral rules cho reproducibility record, enforcement policy, gate verdict contract và evidence linkage.
+- Class/Type trong file: Không có class/type code; định nghĩa policy contract freeze, reproducibility record contract và file-level edit contract.
+- Test liên quan: Là đầu vào cho reproducibility rehearsals, enforcement checks, correlation/compliance audits và gate rehearsal tuần 16.
+
+### docs/roadmap/week16/GATE_REHEARSAL_NOTES.md
+
+- Vai trò file: Ghi chú rehearsal gate tuần 16, tổng hợp ngưỡng pass/fail cho Research Reproducibility (`seed compliance = 100%`, `deterministic coverage = 100%`, `drift <=1%`) và trạng thái checklist.
+- Class/Type trong file: Không có class/type (tài liệu gate review tuần 16).
+- Test liên quan: Xác nhận build/static/smoke, reproducibility rehearsal matrix, W09-W15 regression, correlation audit và artifact consistency.
+
+### docs/roadmap/week16/WEEK16_FINAL_REPORT_AND_WEEK17_START_PACK.md
+
+- Vai trò file: Báo cáo tổng kết tuần 16 và gói khởi động tuần 17 (Staging Hardening), chứa nhánh `GO` và recovery queue khi `NO-GO`.
+- Class/Type trong file: Không có class/type (tài liệu weekly closeout + handoff).
+- Test liên quan: Tổng hợp evidence từ baseline report, implementation plan, issue register và gate rehearsal để ra quyết định final tuần 16.
