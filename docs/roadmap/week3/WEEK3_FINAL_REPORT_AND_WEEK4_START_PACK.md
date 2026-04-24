@@ -1,6 +1,7 @@
 # Week 3 Final Report + Week 4 Start Pack (One-pass)
 
 ## 1) Executive summary
+
 - Current gate status: **GO**.
 - Final verdict: One-pass contract closeout completed, tất cả gate kỹ thuật Week 3 đạt điều kiện `GO`.
 - Key achievements:
@@ -21,12 +22,14 @@
 | Performance | bridge metrics captured | bridge `avg/p95/max` + signal->ack `avg/p95/max` đều captured | GREEN | `EV-W3-215..220` |
 
 ## 3) Delivery status
+
 - `W3-T01..T03`: `DONE` (contract/logging/error behavior freeze).
 - `W3-T04..T06`: `DONE` (parser validation + negative coverage pass).
 - `W3-T07..T18`: `DONE` (execution evidence + bridge integration pass).
 - `W3-T19..T23`: `DONE` (hardening/fuzzing/perf/rehearsal pass).
 
 ## 4) Issue snapshot
+
 - Đã đóng toàn bộ blocker kỹ thuật:
   - `W3-ISS-001` (parser timestamp negative gap) -> `DONE`.
   - `W3-ISS-003` (observability syntax fix) -> `DONE`.
@@ -38,12 +41,14 @@
 - Issue chuyển Week 4: `W3-ISS-008` (Non-critical edge-case cleanup).
 
 ## 5) Decision log
+
 1. One-pass cutover: Successfully unified all components to `v1.0.0` contract.
 2. Correlation ID: Standardized `[cid:INIT]` and trace context throughout Python and Rust.
 3. Strict Schema: Enforced `schema_version` validation at bridge level.
 4. Final conclusion: **GO** (Full transition to Week 4).
 
 ## 6) Recovery queue (Closed)
+
 1. [x] Sửa lỗi syntax tại `src/observability/api/main.py`.
 2. [x] Bổ sung testcase negative timestamp (parser).
 3. [x] Chạy shadow log audit (5 samples).
@@ -51,6 +56,7 @@
 5. [x] Capture đủ performance metrics (avg/p95/max).
 
 ## 7) Week 4 start pack
+
 - Backlog ưu tiên:
   1. Mở rộng bộ integration tests cho các edge cases mới.
   2. Implement real-time monitoring dashboard trên nền observability đã fixed.
@@ -60,6 +66,7 @@
   - Tuyệt đối giữ CID context trong mọi log loguru/tracing mới.
 
 ## 8) Final gate criteria
+
 - `GO` achieved based on:
   - no P0 open,
   - all baseline matrix `CAPTURED_PASS`,
