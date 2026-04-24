@@ -100,7 +100,7 @@
 - [ ] Logging/event schema thống nhất toàn pipeline.
 - [ ] Correlation continuity trên critical events.
 - [ ] Go/No-Go W09 đã chốt.
-- Evidence IDs: `____________________________`
+- Evidence IDs: `EV-W9-101..109, EV-W9-201..214, EV-W9-301..306, EV-W9-401..402`
 - Decision: [ ] GO  [ ] NO-GO
 
 ## W10 - API Health & SLO

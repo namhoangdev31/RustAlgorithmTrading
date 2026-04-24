@@ -1628,6 +1628,54 @@ Mỗi file có 3 phần:
 - Class/Type trong file: Không có class/type (tài liệu weekly closeout + handoff).
 - Test liên quan: Tổng hợp evidence từ baseline report, implementation plan, issue register và gate rehearsal để ra quyết định final tuần 8.
 
+### docs/roadmap/W09_OPERATIONS_PLAN.md
+
+- Vai trò file: Kế hoạch vận hành tuần 9 cho Observability Contract, tập trung structured logging schema, correlation continuity, redaction, dashboard/API schema sync và alert readiness.
+- Class/Type trong file: Không có class/type (tài liệu điều phối implementation observability contract, triage và closeout).
+- Test liên quan: Điều phối command profile observability-focused (`tests/observability`, pytest integration, cargo test/check, health/compliance/correlation audits) và scenario matrix tuần 9.
+
+### docs/roadmap/week9/KPI_CHARTER_WEEK9.md
+
+- Vai trò file: KPI charter tuần 9 cho Observability Contract, định nghĩa ngưỡng correlation coverage, structured log parseability, redaction leak count, dashboard availability và alert readiness.
+- Class/Type trong file: Không có class/type (tài liệu KPI governance tuần 9).
+- Test liên quan: Dùng evidence từ baseline report, issue register và gate notes để tính KPI.
+
+### docs/roadmap/week9/OBSERVABILITY_BASELINE_REPORT.md
+
+- Vai trò file: Baseline report tuần 9 cho observability contract, chuẩn hóa matrix `expected/actual/status/evidence_id` cho command profile, correlation coverage, schema parseability, redaction và alert readiness.
+- Class/Type trong file: Không có class/type (tài liệu validation/baseline evidence).
+- Test liên quan: Tham chiếu trực tiếp `tests/observability`, `test_observability_integration.py`, `cargo test/check`, `health_check`, `compliance_audit.sh`, `audit_correlation.py` theo command profile tuần 9.
+
+### docs/roadmap/week9/OBSERVABILITY_CONTRACT_IMPLEMENTATION_PLAN.md
+
+- Vai trò file: Kế hoạch triển khai Observability Contract với dependency matrix theo lane, critical event taxonomy, severity policy, redaction policy và rollback strategy cho regressions tuần 9.
+- Class/Type trong file: Không có class/type (tài liệu rollout/rollback strategy cho observability contract).
+- Test liên quan: Kiểm chứng structured logging, correlation continuity, Rust metrics/health metadata, dashboard/API schema sync, redaction và artifact consistency trước gate.
+
+### docs/roadmap/week9/ISSUE_REGISTER_WEEK9.md
+
+- Vai trò file: Sổ issue tuần 9 cho Observability Contract, có metadata đầy đủ (`ETA`, `evidence_id`, `blocking_of`) và mapping theo blockers Phase 3.
+- Class/Type trong file: Không có class/type (tài liệu governance/triage tuần 9).
+- Test liên quan: Map failure từ baseline/scenario matrix vào owner/ETA/mitigation và quyết định gate blockers.
+
+### docs/roadmap/week9/INTERFACE_OBSERVABILITY_CONTRACT_SPEC.md
+
+- Vai trò file: Spec interface tuần 9 cho observability contract, giữ canonical envelope freeze và khóa behavioral rules cho logging/event schema, severity, reason/disposition, component taxonomy và redaction.
+- Class/Type trong file: Không có class/type code; định nghĩa policy contract freeze, critical event metadata và file-level edit contract.
+- Test liên quan: Là đầu vào cho observability tests, correlation audits, redaction checks, dashboard/API checks và alert readiness rehearsal tuần 9.
+
+### docs/roadmap/week9/GATE_REHEARSAL_NOTES.md
+
+- Vai trò file: Ghi chú rehearsal gate tuần 9, tổng hợp ngưỡng pass/fail cho Phase 3 (`correlation coverage >= 99%`, redaction leak count = 0, critical alert false-negative = 0) và trạng thái checklist.
+- Class/Type trong file: Không có class/type (tài liệu gate review tuần 9).
+- Test liên quan: Xác nhận build/static/smoke, observability contract matrix, W05-W08 regression, correlation audit và artifact consistency.
+
+### docs/roadmap/week9/WEEK9_FINAL_REPORT_AND_WEEK10_START_PACK.md
+
+- Vai trò file: Báo cáo tổng kết tuần 9 và gói khởi động tuần 10 (API Health & SLO), chứa nhánh `GO` và recovery queue khi `NO-GO`.
+- Class/Type trong file: Không có class/type (tài liệu weekly closeout + handoff).
+- Test liên quan: Tổng hợp evidence từ baseline report, implementation plan, issue register và gate rehearsal để ra quyết định final tuần 9.
+
 ### scripts/compliance_audit.sh
 
 - Vai trò file: Script auto-gate kiểm tra coverage của `correlation_id` và `schema_version` trên log evidence theo cơ chế fail-fast.
