@@ -26,12 +26,18 @@ impl ExecutionEngineService {
         })
     }
 
-    pub async fn submit_order(&self, order: Order) -> Result<()> {
+    pub async fn submit_order(
+        &self, 
+        order: Order, 
+        cb_check_hook: Option<std::sync::Arc<dyn Fn() -> bool + Send + Sync>>
+    ) -> Result<()> {
         // Estimate slippage
         let _estimated_slippage = self.slippage_estimator.estimate(&order);
 
         // Route order (current market price would come from market data feed in production)
-        self.router.route(order, None).await?;
+        self.router
+            .route_with_cb_hook(order, None, cb_check_hook)
+            .await?;
 
         Ok(())
     }

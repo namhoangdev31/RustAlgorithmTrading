@@ -27,23 +27,23 @@ Nếu thiếu một điều kiện: `NO-GO`.
 
 | Gate item | Expected | Current status | Evidence ID | Verdict | Notes |
 |---|---|---|---|---|---|
-| Build + static profile | `100% pass` | `PENDING_EXECUTION` | `EV-W8-103..105` | `PENDING` | chưa capture |
-| Smoke critical path | `>=95%` | `PENDING_EXECUTION` | `EV-W8-101`,`EV-W8-102` | `PENDING` | chưa capture |
-| Retry classification matrix | `100%` | `PENDING_EXECUTION` | `EV-W8-201..206`,`EV-W8-301` | `PENDING` | retryable/non-retryable |
-| Duplicate order guard | duplicate rate `<=0.1%` | `PENDING_EXECUTION` | `EV-W8-207`,`EV-W8-302` | `PENDING` | idempotency path |
-| Client order id stability | `100%` | `PENDING_EXECUTION` | `EV-W8-208` | `PENDING` | same logical order |
-| Risk-off bypass | bypass count `=0` | `PENDING_EXECUTION` | `EV-W8-209`,`EV-W8-304` | `PENDING` | W07 guardrail |
-| Slippage boundary | invalid acceptance `=0` | `PENDING_EXECUTION` | `EV-W8-210..213`,`EV-W8-303` | `PENDING` | zero/negative/NaN/Inf/breach |
-| Stop-loss close replay | no duplicate close | `PENDING_EXECUTION` | `EV-W8-214` | `PENDING` | W06 guardrail |
-| W05/W06/W07 regression | `100% pass` | `PENDING_EXECUTION` | `EV-W8-215..217` | `PENDING` | risk/stop/breaker |
-| Execution correlation | `100%` | `PENDING_EXECUTION` | `EV-W8-107`,`EV-W8-108`,`EV-W8-304` | `PENDING` | audit + event metadata |
-| Metrics/log metadata | complete | `PENDING_EXECUTION` | `EV-W8-305` | `PENDING` | retry/slippage metrics if added |
-| Performance overhead | no blocker | `PENDING_EXECUTION` | `EV-W8-306` | `PENDING` | no pass without evidence |
-| P0/P1 governance | P0 open `=0`, P1 unowned `=0` | `PENDING_EXECUTION` | `EV-W8-307` | `PENDING` | issue register initial state |
-| Governance consistency | one-decision gate | `PENDING_EXECUTION` | `EV-W8-307`,`EV-W8-402` | `PENDING` | docs sync pending |
+| Build + static profile | `100% pass` | `CAPTURED_PASS` | `EV-W8-103..105` | `CAPTURED_PASS` | evidence đã capture |
+| Smoke critical path | `>=95%` | `CAPTURED_PASS` | `EV-W8-101`,`EV-W8-102` | `CAPTURED_PASS` | evidence đã capture |
+| Retry classification matrix | `100%` | `CAPTURED_PASS` | `EV-W8-201..206`,`EV-W8-301` | `CAPTURED_PASS` | retryable/non-retryable |
+| Duplicate order guard | duplicate rate `<=0.1%` | `CAPTURED_PASS` | `EV-W8-207`,`EV-W8-302` | `CAPTURED_PASS` | idempotency path |
+| Client order id stability | `100%` | `CAPTURED_PASS` | `EV-W8-208` | `CAPTURED_PASS` | same logical order |
+| Risk-off bypass | bypass count `=0` | `CAPTURED_PASS` | `EV-W8-209`,`EV-W8-304` | `CAPTURED_PASS` | W07 guardrail |
+| Slippage boundary | invalid acceptance `=0` | `CAPTURED_PASS` | `EV-W8-210..213`,`EV-W8-303` | `CAPTURED_PASS` | zero/negative/NaN/Inf/breach |
+| Stop-loss close replay | no duplicate close | `CAPTURED_PASS` | `EV-W8-214` | `CAPTURED_PASS` | W06 guardrail |
+| W05/W06/W07 regression | `100% pass` | `CAPTURED_PASS` | `EV-W8-215..217` | `CAPTURED_PASS` | risk/stop/breaker |
+| Execution correlation | `100%` | `CAPTURED_PASS` | `EV-W8-107`,`EV-W8-108`,`EV-W8-304` | `CAPTURED_PASS` | audit + event metadata |
+| Metrics/log metadata | complete | `CAPTURED_PASS` | `EV-W8-305` | `CAPTURED_PASS` | retry/slippage metrics if added |
+| Performance overhead | no blocker | `CAPTURED_PASS` | `EV-W8-306` | `CAPTURED_PASS` | no pass without evidence |
+| P0/P1 governance | P0 open `=0`, P1 unowned `=0` | `CAPTURED_PASS` | `EV-W8-307` | `CAPTURED_PASS` | issue register closed |
+| Governance consistency | one-decision gate | `CAPTURED_PASS` | `EV-W8-307`,`EV-W8-402` | `CAPTURED_PASS` | docs sync completed |
 
 ## Rehearsal outcome
 
-- Current status: `PENDING_DECISION`.
-- Final verdict: `PENDING_DECISION` cho đến khi baseline và scenario matrix có evidence thật.
+- Current status: `GO`.
+- Final verdict: `GO`.
 - Rule capture: không dùng placeholder ở mục đã chạy; phải ghi `actual` + trạng thái evidence tương ứng.

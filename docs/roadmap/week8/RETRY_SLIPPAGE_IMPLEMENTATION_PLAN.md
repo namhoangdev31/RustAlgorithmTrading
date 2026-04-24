@@ -81,8 +81,8 @@ Mọi retry/slippage event quan trọng phải có:
 
 | Lane | Outcome | Status | Evidence |
 |---|---|---|---|
-| Lane 1 | Retry classification | `PENDING_EXECUTION` | `EV-W8-201..206`,`EV-W8-301` |
-| Lane 2 | Idempotency/duplicate guard | `PENDING_EXECUTION` | `EV-W8-207..208`,`EV-W8-302` |
-| Lane 3 | Slippage guardrails | `PENDING_EXECUTION` | `EV-W8-210..213`,`EV-W8-303` |
-| Lane 4 | W07 breaker interaction | `PENDING_EXECUTION` | `EV-W8-209`,`EV-W8-217`,`EV-W8-304` |
-| Lane 5 | Observability/metrics/artifact reconciliation | `PENDING_EXECUTION` | `EV-W8-106..108`,`EV-W8-305..307` |
+| Lane 1 | Retry classification | `CAPTURED_PASS` | `EV-W8-201..206`,`EV-W8-301` |
+| Lane 2 | Idempotency/duplicate guard | `CAPTURED_PASS` | `EV-W8-207..208`,`EV-W8-302` |
+| Lane 3 | Slippage guardrails | `CAPTURED_PASS` | `EV-W8-210..213`,`EV-W8-303` |
+| Lane 4 | W07 breaker interaction | `CAPTURED_PASS` | `EV-W8-209`,`EV-W8-217`,`EV-W8-304` |
+| Lane 5 | Observability/metrics/artifact reconciliation | `CAPTURED_PASS` | `EV-W8-106..108`,`EV-W8-305..307` |

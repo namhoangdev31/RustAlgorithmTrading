@@ -32,7 +32,7 @@ Execution retry/slippage event bắt buộc có context sau trong log/event nộ
 Token chuẩn:
 
 - `disposition`: `ALLOW`, `RETRY`, `REJECT`, `DROP_SAFE`
-- `reason_code`: `NETWORK_TRANSIENT`, `RATE_LIMIT`, `EXCHANGE_5XX`, `RISK_OFF`, `SLIPPAGE_BREACH`, `ORDER_VALIDATION`, `CONFIGURATION`, `AUTH`, `PARSE_ERROR`, `MAX_ATTEMPTS_EXHAUSTED`
+- `reason_code`: `NETWORK_TRANSIENT`, `RATE_LIMIT`, `EXCHANGE_5XX`, `RISK_OFF`, `SLIPPAGE_BREACH`, `ORDER_VALIDATION`, `CONFIGURATION`, `AUTH`, `PARSE_ERROR`, `MAX_ATTEMPTS_EXHAUSTED`, `UNKNOWN_ERROR`
 
 ## 3) Retry behavior contract
 
@@ -40,9 +40,9 @@ Token chuẩn:
 2. Non-retryable errors phải return ngay, không sleep/retry.
 3. Attempt count không được vượt `max_attempts`.
 4. Backoff phải cap theo policy hiện hành.
-5. Mỗi retry cùng logical order phải giữ stable `client_order_id`.
-6. Unknown exchange outcome phải fail-safe; không blind duplicate submit nếu không có idempotency guard.
-7. Breaker risk-off từ W07 là terminal non-retryable condition.
+5. Mỗi retry cùng logical order phải giữ stable `client_order_id`. Phải có Idempotency Lock bằng bộ nhớ để khóa concurrency requests.
+6. Unknown exchange outcome, parsing error phải fail-safe rẽ sang Non-retryable; không được nhắm mắt thử lại ở sàn.
+7. Breaker risk-off từ W07 là terminal non-retryable condition. Check Breaker (is_open) phải diễn ra ngay SAU khi sleep backoff và TRƯỚC request thứ `N`.
 
 ## 4) Slippage behavior contract
 
@@ -73,7 +73,9 @@ Token chuẩn:
 ## 7) Error-handling protocol
 
 - Không panic.
-- Không retry non-retryable.
+- Không retry non-retryable (Kể cả nhóm lỗi Unknown/nghi ngờ).
+- Luôn giữ Request bị lock tại memory bằng `Idempotency Lock` trước khi rời logic.
+- Telemetry log (retry, slip) đẩy ngầm qua background (Async Channel) để giảm latency path.
 - Reject/drop-safe phải có structured reason.
 - Log lỗi phải có `correlation_id` và `client_order_id` khi available.
 - Raw payload/order preview nếu log phải redacted theo policy hiện hành.

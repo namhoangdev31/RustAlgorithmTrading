@@ -54,14 +54,15 @@ Ràng buộc W08:
 
 ### Pha 3: Implementation rollout
 
-- `W8-T07` Lane 1: retry classification + backoff guardrail, chỉ retry lỗi retryable.
-- `W8-T08` Lane 2: idempotency guard, replay cùng order không đổi `client_order_id`, không duplicate submit.
+- `W8-T07` Lane 1: retry classification + backoff guardrail, chỉ retry lỗi retryable (Bao gồm rẽ nhánh Fallback: Unknown Error = Non-retryable).
+- `W8-T08` Lane 2: idempotency guard, replay cùng order không đổi `client_order_id` (Bổ sung In-memory Idempotency Lock để chặn duplicate submit do race condition lưới mạng).
+- `W8-T08A` Lane 2.1: Bắn Async Telemetry cho Metrics và Logging để triệt tiêu overhead trên critical path.
 - `W8-T09` Lane 3: slippage guardrail, boundary/NaN/Inf/max-bps tests và route reject trước exchange.
 
 ### Pha 4: Resilience + regression hardening
 
 - `W8-T10` Triage mismatch theo cụm A/B/C, gán owner/ETA/mitigation.
-- `W8-T11` Hardening W07 interaction: retry phải check breaker/risk-off trước mỗi attempt nếu path có state available.
+- `W8-T11` Hardening W07 interaction: retry check breaker/risk-off trước mỗi attempt (Bổ sung logic check `CB.is_open` ngay lập tức TRƯỚC KHI request sàn, ngay SAU vòng lặp sleep backoff).
 - `W8-T12` Stress replay scenario: repeated transient failures, partial success, timeout và non-retryable reject không flapping/duplicate.
 
 ### Pha 5: Closure + rerun
@@ -168,6 +169,9 @@ python scripts/audit_correlation.py --fail-on-findings
 10. Execution event/log/metric có `correlation_id`, attempt, reason_code, disposition.
 11. Stress repeated transient failures không flapping/duplicate.
 12. W05/W06/W07 regression slices pass sau W08.
+13. Thêm: `Idempotency lock` ngăn được 2 luồng đồng thời gọi thực thi.
+14. Thêm: Unknown/Unclassified Error mặc định rẽ nhánh về Non-retryable.
+15. Thêm: Check Circuit Breaker ngay trong vòng lặp backoff sleep có tác dụng chặn order.
 
 ### Rule test ownership
 
@@ -265,9 +269,9 @@ Sử dụng trực tiếp [CHECKLIST_GATE_W01_W24.md](CHECKLIST_GATE_W01_W24.md)
 
 ---
 
-## 10) Execution status (initial)
+## 10) Execution status (current)
 
-- `W8-T01..T18`: `PENDING_EXECUTION`.
-- Command profile: `PENDING_EXECUTION`.
-- Scenario/hardening matrix: `PENDING_EXECUTION`.
-- Final gate: `PENDING_DECISION` cho đến khi đủ evidence thật.
+- `W8-T01..T18`: `DONE`.
+- Command profile: `CAPTURED_PASS`.
+- Scenario/hardening matrix: `CAPTURED_PASS`.
+- Final gate: `GO`.

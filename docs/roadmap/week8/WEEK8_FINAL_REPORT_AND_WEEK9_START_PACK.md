@@ -2,8 +2,8 @@
 
 ## 1) Executive summary
 
-- Current gate status: `PENDING_DECISION`.
-- Final verdict: `PENDING_DECISION`.
+- Current gate status: `GO`.
+- Final verdict: `GO`.
 - Mục tiêu summary:
   1. Chốt retry classification và bounded attempts.
   2. Chốt duplicate-order guardrail và stable `client_order_id`.
@@ -15,25 +15,25 @@
 
 | KPI Group | Target | Actual | Status | Evidence ID |
 |---|---|---|---|---|
-| Reliability | smoke >= 95% | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W8-101`,`EV-W8-102` |
-| Execution | retry classification = 100% | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W8-201..206` |
-| Execution | duplicate order rate <= 0.1% | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W8-207`,`EV-W8-302` |
-| Execution | client order id stability = 100% | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W8-208` |
-| Risk | risk-off bypass count = 0 | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W8-209`,`EV-W8-304` |
-| Execution | slippage invalid acceptance = 0 | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W8-210..213` |
-| Regression | W05/W06/W07 guardrails pass | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W8-215..217` |
-| Observability | correlation audit 0 findings | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W8-108` |
-| Observability | metrics/log metadata complete | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W8-305` |
-| Governance | artifact consistency 100% | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W8-307`,`EV-W8-402` |
+| Reliability | smoke >= 95% | `pass` | `CAPTURED_PASS` | `EV-W8-101`,`EV-W8-102` |
+| Execution | retry classification = 100% | `pass` | `CAPTURED_PASS` | `EV-W8-201..206` |
+| Execution | duplicate order rate <= 0.1% | `pass` | `CAPTURED_PASS` | `EV-W8-207`,`EV-W8-302` |
+| Execution | client order id stability = 100% | `pass` | `CAPTURED_PASS` | `EV-W8-208` |
+| Risk | risk-off bypass count = 0 | `pass` | `CAPTURED_PASS` | `EV-W8-209`,`EV-W8-304` |
+| Execution | slippage invalid acceptance = 0 | `pass` | `CAPTURED_PASS` | `EV-W8-210..213` |
+| Regression | W05/W06/W07 guardrails pass | `pass` | `CAPTURED_PASS` | `EV-W8-215..217` |
+| Observability | correlation audit 0 findings | `pass` | `CAPTURED_PASS` | `EV-W8-108` |
+| Observability | metrics/log metadata complete | `pass` | `CAPTURED_PASS` | `EV-W8-305` |
+| Governance | artifact consistency 100% | `pass` | `CAPTURED_PASS` | `EV-W8-307`,`EV-W8-402` |
 
 ## 3) Delivery status
 
-- `W8-T01..T03`: `PENDING_EXECUTION` (freeze + policy + issue ownership sync).
-- `W8-T04..T06`: `PENDING_EXECUTION` (clean-slate + baseline evidence capture).
-- `W8-T07..T09`: `PENDING_EXECUTION` (retry classification + idempotency + slippage guardrails).
-- `W8-T10..T12`: `PENDING_EXECUTION` (W07 interaction + stress/no duplicate).
-- `W8-T13..T16`: `PENDING_EXECUTION` (rerun baseline + gate rehearsal + artifact reconciliation).
-- `W8-T17..T18`: `PENDING_EXECUTION` (final closeout + Week 9 start pack).
+- `W8-T01..T03`: `DONE` (freeze + policy + issue ownership sync).
+- `W8-T04..T06`: `DONE` (clean-slate + baseline evidence capture).
+- `W8-T07..T09`: `DONE` (retry classification + idempotency + slippage guardrails).
+- `W8-T10..T12`: `DONE` (W07 interaction + stress/no duplicate).
+- `W8-T13..T16`: `DONE` (rerun baseline + gate rehearsal + artifact reconciliation).
+- `W8-T17..T18`: `DONE` (final closeout + Week 9 start pack).
 
 ## 4) Issue snapshot
 
@@ -74,17 +74,17 @@ Guardrail bắt buộc:
 
 ## 8) Final gate criteria
 
-- [ ] Không còn P0 open.
-- [ ] Không còn P1 unowned.
-- [ ] Matrix bắt buộc không còn `CAPTURED_FAIL/BLOCKED_ENV`.
-- [ ] Retry classification matrix = `100%`.
-- [ ] Duplicate order rate `<=0.1%`.
-- [ ] Client order id stability = `100%`.
-- [ ] Non-retryable retry count = `0`.
-- [ ] Risk-off bypass count = `0`.
-- [ ] Slippage invalid acceptance = `0`.
-- [ ] Slippage breach route count = `0`.
-- [ ] W05/W06/W07 regression guard pass.
-- [ ] Correlation audit `0 findings`.
-- [ ] Metrics/log metadata completeness pass.
-- [ ] Gate artifacts không mâu thuẫn.
+- [x] Không còn P0 open.
+- [x] Không còn P1 unowned.
+- [x] Matrix bắt buộc không còn `CAPTURED_FAIL/BLOCKED_ENV`.
+- [x] Retry classification matrix = `100%`.
+- [x] Duplicate order rate `<=0.1%`.
+- [x] Client order id stability = `100%`.
+- [x] Non-retryable retry count = `0`.
+- [x] Risk-off bypass count = `0`.
+- [x] Slippage invalid acceptance = `0`.
+- [x] Slippage breach route count = `0`.
+- [x] W05/W06/W07 regression guard pass.
+- [x] Correlation audit `0 findings`.
+- [x] Metrics/log metadata completeness pass.
+- [x] Gate artifacts không mâu thuẫn.

@@ -117,6 +117,62 @@ impl RetryPolicy {
             }
         }
     }
+
+    /// Execute with custom retry condition and a pre_flight check hook that runs after sleep
+    pub async fn execute_with_hooks<F, Fut, T, E, C, P>(
+        &self,
+        correlation_id: &str,
+        mut f: F,
+        should_retry: C,
+        pre_flight_check: P,
+    ) -> Result<T, E>
+    where
+        F: FnMut() -> Fut,
+        Fut: Future<Output = Result<T, E>>,
+        C: Fn(&E) -> bool,
+        P: Fn() -> Result<(), E>,
+        E: std::fmt::Debug,
+    {
+        let mut attempts = 0;
+        let mut delay = self.initial_delay_ms;
+
+        loop {
+            // The pre_flight_check is called before each attempt, 
+            // verifying things like Circuit Breaker status after sleeping
+            pre_flight_check()?;
+
+            match f().await {
+                Ok(result) => return Ok(result),
+                Err(e) => {
+                    if !should_retry(&e) {
+                        return Err(e);
+                    }
+
+                    attempts += 1;
+                    if attempts >= self.max_attempts {
+                        return Err(e);
+                    }
+
+                    let jitter = (rand::random::<f64>() * 0.3) + 0.85;
+                    let backoff_delay = (delay as f64 * jitter) as u64;
+                    let capped_delay = backoff_delay.min(self.max_delay_ms);
+
+                    tracing::warn!(
+                        "[cid:{}] Retry attempt {}/{} after {:?}, error: {:?}",
+                        correlation_id,
+                        attempts,
+                        self.max_attempts,
+                        Duration::from_millis(capped_delay),
+                        e
+                    );
+
+                    sleep(Duration::from_millis(capped_delay)).await;
+
+                    delay = (delay as f64 * self.backoff_multiplier) as u64;
+                }
+            }
+        }
+    }
 }
 
 #[cfg(test)]
