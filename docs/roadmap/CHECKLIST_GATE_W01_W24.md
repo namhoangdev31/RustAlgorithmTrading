@@ -140,7 +140,7 @@
 - [ ] Exposure/concentration controls hoạt động đúng.
 - [ ] Portfolio risk checks pass.
 - [ ] Go/No-Go W14 đã chốt.
-- Evidence IDs: `____________________________`
+- Evidence IDs: `EV-W14-101..110, EV-W14-201..216, EV-W14-301..306, EV-W14-401..402`
 - Decision: [ ] GO  [ ] NO-GO
 
 ## W15 - Capital Allocation

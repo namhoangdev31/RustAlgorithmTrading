@@ -11,13 +11,16 @@ This policy defines official compatibility requirements for the hybrid Python-Ru
 | Tooling | `cargo`, `uv` | synchronized `.venv` for development |
 
 ### Enforcement
+
 - All core scripts MUST export ABI3 flag where required.
 - Rust crates using `pyo3` MUST pin minimum Python compatibility in `Cargo.toml`.
 
 ## 2) Schema Versioning Policy
 
 ### Envelope Structure
+
 All cross-language messages MUST be wrapped in a v1 envelope:
+
 ```json
 {
   "schema_version": "1.0",
@@ -29,6 +32,7 @@ All cross-language messages MUST be wrapped in a v1 envelope:
 ```
 
 ### Backward Compatibility
+
 - `v1`: strict field validation.
 - `v0`: permissive parsing in controlled transition path only.
 

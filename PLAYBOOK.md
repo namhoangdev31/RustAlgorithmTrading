@@ -1868,6 +1868,54 @@ Mỗi file có 3 phần:
 - Class/Type trong file: Không có class/type (tài liệu weekly closeout + handoff).
 - Test liên quan: Tổng hợp evidence từ baseline report, implementation plan, issue register và gate rehearsal để ra quyết định final tuần 13.
 
+### docs/roadmap/W14_OPERATIONS_PLAN.md
+
+- Vai trò file: Kế hoạch vận hành tuần 14 cho Portfolio Controls, tập trung exposure/concentration controls enforcement, cross-strategy risk interactions, decision traceability và W15 handoff.
+- Class/Type trong file: Không có class/type (tài liệu điều phối portfolio controls, triage và closeout).
+- Test liên quan: Điều phối command profile portfolio-controls-focused (`tests/test_backtest_integration.py`, integration tests, cargo test/check, health/compliance/correlation audits) và scenario matrix tuần 14.
+
+### docs/roadmap/week14/KPI_CHARTER_WEEK14.md
+
+- Vai trò file: KPI charter tuần 14 cho Portfolio Controls, định nghĩa ngưỡng exposure/concentration enforcement, cross-strategy coverage, drift/risk guard và artifact consistency.
+- Class/Type trong file: Không có class/type (tài liệu KPI governance tuần 14).
+- Test liên quan: Dùng evidence từ baseline report, issue register và gate notes để tính KPI.
+
+### docs/roadmap/week14/PORTFOLIO_CONTROLS_BASELINE_REPORT.md
+
+- Vai trò file: Baseline report tuần 14 cho portfolio controls, chuẩn hóa matrix `expected/actual/status/evidence_id` cho command profile, controls rehearsals, regression guard và gate reconciliation.
+- Class/Type trong file: Không có class/type (tài liệu validation/baseline evidence).
+- Test liên quan: Tham chiếu trực tiếp backtest/integration tests, `cargo test/check`, `health_check`, `compliance_audit.sh`, `audit_correlation.py` theo command profile tuần 14.
+
+### docs/roadmap/week14/PORTFOLIO_CONTROLS_IMPLEMENTATION_PLAN.md
+
+- Vai trò file: Kế hoạch triển khai Portfolio Controls với file-level guide, controls contract, rehearsal flow, rollback policy và dependency matrix tuần 14.
+- Class/Type trong file: Không có class/type (tài liệu rollout/rollback strategy cho portfolio controls).
+- Test liên quan: Kiểm chứng exposure/concentration enforcement, cross-strategy interactions, decision traceability, drift/risk guards, regression guard và artifact consistency trước gate.
+
+### docs/roadmap/week14/ISSUE_REGISTER_WEEK14.md
+
+- Vai trò file: Sổ issue tuần 14 cho Portfolio Controls, có metadata đầy đủ (`ETA`, `evidence_id`, `blocking_of`) và mapping theo blockers Phase 4.
+- Class/Type trong file: Không có class/type (tài liệu governance/triage tuần 14).
+- Test liên quan: Map failure từ baseline/scenario matrix vào owner/ETA/mitigation và quyết định gate blockers.
+
+### docs/roadmap/week14/INTERFACE_PORTFOLIO_CONTROLS_SPEC.md
+
+- Vai trò file: Spec interface tuần 14 cho portfolio controls, giữ canonical envelope freeze và khóa behavioral rules cho control record, enforcement policy, gate verdict contract và evidence linkage.
+- Class/Type trong file: Không có class/type code; định nghĩa policy contract freeze, control record contract và file-level edit contract.
+- Test liên quan: Là đầu vào cho controls rehearsals, enforcement checks, correlation/compliance audits và gate rehearsal tuần 14.
+
+### docs/roadmap/week14/GATE_REHEARSAL_NOTES.md
+
+- Vai trò file: Ghi chú rehearsal gate tuần 14, tổng hợp ngưỡng pass/fail cho Portfolio Controls (`exposure/concentration enforcement = 100%`, `new breaches = 0`, `drift <=1%`) và trạng thái checklist.
+- Class/Type trong file: Không có class/type (tài liệu gate review tuần 14).
+- Test liên quan: Xác nhận build/static/smoke, controls rehearsal matrix, W09-W13 regression, correlation audit và artifact consistency.
+
+### docs/roadmap/week14/WEEK14_FINAL_REPORT_AND_WEEK15_START_PACK.md
+
+- Vai trò file: Báo cáo tổng kết tuần 14 và gói khởi động tuần 15 (Capital Allocation), chứa nhánh `GO` và recovery queue khi `NO-GO`.
+- Class/Type trong file: Không có class/type (tài liệu weekly closeout + handoff).
+- Test liên quan: Tổng hợp evidence từ baseline report, implementation plan, issue register và gate rehearsal để ra quyết định final tuần 14.
+
 ### scripts/compliance_audit.sh
 
 - Vai trò file: Script auto-gate kiểm tra coverage của `correlation_id` và `schema_version` trên log evidence theo cơ chế fail-fast.
