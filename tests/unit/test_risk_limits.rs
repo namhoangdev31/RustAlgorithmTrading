@@ -49,8 +49,9 @@ mod limit_checker_tests {
             updated_at: Utc::now(),
         };
 
-        // Order value = 100 * 150 = 15,000 < 100,000 limit
-        let _result = checker.check(&order);
+        // Order value = 100 * 150 = 15,000 > max_position_size (1,000)
+        let result = checker.check(&order);
+        assert!(result.is_err());
     }
 
     #[test]
@@ -74,8 +75,9 @@ mod limit_checker_tests {
             updated_at: Utc::now(),
         };
 
-        // Order value = 1000 * 250 = 250,000 > 100,000 limit
-        let _result = checker.check(&order);
+        // Order value = 1000 * 250 = 250,000 > max_position_size (1,000)
+        let result = checker.check(&order);
+        assert!(result.is_err());
     }
 
     #[test]
@@ -88,9 +90,9 @@ mod limit_checker_tests {
             client_order_id: "max-position-1".to_string(),
             symbol: Symbol("NVDA".to_string()),
             side: Side::Bid,
-            order_type: OrderType::Market,
+            order_type: OrderType::Limit,
             quantity: Quantity(1500.0),
-            price: None,
+            price: Some(Price(1.0)),
             stop_price: None,
             status: OrderStatus::Pending,
             filled_quantity: Quantity(0.0),
@@ -99,8 +101,9 @@ mod limit_checker_tests {
             updated_at: Utc::now(),
         };
 
-        // Quantity 1500 > max_position_size 1000
-        let _result = checker.check(&order);
+        // Order value = 1500 * 1 = 1500 > max_position_size 1000
+        let result = checker.check(&order);
+        assert!(result.is_err());
     }
 
     #[test]
@@ -124,7 +127,8 @@ mod limit_checker_tests {
             updated_at: Utc::now(),
         };
 
-        let _result = checker.check(&order);
+        let result = checker.check(&order);
+        assert!(result.is_ok());
     }
 
     #[test]
@@ -148,7 +152,8 @@ mod limit_checker_tests {
             updated_at: Utc::now(),
         };
 
-        let _result = checker.check(&order);
+        let result = checker.check(&order);
+        assert!(result.is_err());
     }
 
     #[test]
@@ -172,7 +177,8 @@ mod limit_checker_tests {
             updated_at: Utc::now(),
         };
 
-        let _result = checker.check(&order);
+        let result = checker.check(&order);
+        assert!(result.is_ok());
     }
 
     #[test]
@@ -196,7 +202,8 @@ mod limit_checker_tests {
             updated_at: Utc::now(),
         };
 
-        let _result = checker.check(&order);
+        let result = checker.check(&order);
+        assert!(result.is_ok());
     }
 }
 
@@ -265,7 +272,8 @@ mod concurrent_limit_tests {
         ];
 
         for order in orders {
-            let _result = checker.check(&order);
+            let result = checker.check(&order);
+            assert!(result.is_err());
         }
     }
 }
@@ -295,7 +303,8 @@ mod edge_cases {
             updated_at: Utc::now(),
         };
 
-        let _result = checker.check(&order);
+        let result = checker.check(&order);
+        assert!(result.is_err());
     }
 
     #[test]
@@ -319,7 +328,8 @@ mod edge_cases {
             updated_at: Utc::now(),
         };
 
-        let _result = checker.check(&order);
+        let result = checker.check(&order);
+        assert!(result.is_err());
     }
 
     #[test]
@@ -343,6 +353,7 @@ mod edge_cases {
             updated_at: Utc::now(),
         };
 
-        let _result = checker.check(&order);
+        let result = checker.check(&order);
+        assert!(result.is_err());
     }
 }

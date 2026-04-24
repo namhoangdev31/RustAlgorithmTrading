@@ -66,3 +66,13 @@ data/backtest_results/*.json
 
 # Tetrad - local database and cache
 .tetrad/
+
+# Generated runtime artifacts
+**/__pycache__/
+*.pyc
+*.pyo
+*.duckdb
+*.duckdb.wal
+*.log
+logs/
+tests/logs/

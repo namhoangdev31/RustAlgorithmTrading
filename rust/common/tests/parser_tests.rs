@@ -108,4 +108,7 @@ fn test_risk_enum_canonical_serialization() {
 
     let reason = serde_json::to_string(&RiskReason::StrategyAllocationLimitExceeded).unwrap();
     assert_eq!(reason, "\"STRATEGY_ALLOCATION_LIMIT_EXCEEDED\"");
+
+    let cb_reason = serde_json::to_string(&RiskReason::CircuitBreakerTripped).unwrap();
+    assert_eq!(cb_reason, "\"CIRCUIT_BREAKER_TRIPPED\"");
 }

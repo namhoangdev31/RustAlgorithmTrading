@@ -51,7 +51,7 @@ impl RiskManagerService {
         if let Err(_) = self.circuit_breaker.check() {
             return common::types::RiskReport {
                 decision: common::types::RiskDecision::Reject,
-                reason_code: Some(common::types::RiskReason::InvalidOrderParameters), // Map as necessary
+                reason_code: Some(common::types::RiskReason::CircuitBreakerTripped),
                 limit_snapshot: None,
                 correlation_id: correlation_id.to_string(),
             };
