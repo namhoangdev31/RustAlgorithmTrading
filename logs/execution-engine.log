@@ -1,7 +1,0 @@
-[2m2026-04-23T02:36:18.233144Z[0m [32m INFO[0m [2mexecution_engine[0m[2m:[0m Execution Engine Service starting...
-[2m2026-04-23T02:36:18.233590Z[0m [32m INFO[0m [2mexecution_engine[0m[2m:[0m Configuration loaded successfully - Environment: development, Paper Trading: true
-[2m2026-04-23T02:36:18.233661Z[0m [32m INFO[0m [2mcommon::metrics[0m[2m:[0m Starting metrics server on 127.0.0.1:9092
-[2m2026-04-23T02:36:18.233770Z[0m [32m INFO[0m [2mcommon::metrics[0m[2m:[0m Metrics server started successfully on 127.0.0.1:9092
-[2m2026-04-23T02:36:18.233782Z[0m [32m INFO[0m [2mexecution_engine[0m[2m:[0m ✓ Metrics server started on port 9092
-[2m2026-04-23T02:36:18.436059Z[0m [32m INFO[0m [2mexecution_engine[0m[2m:[0m ✓ Execution Engine initialized successfully
-[2m2026-04-23T02:36:18.436078Z[0m [32m INFO[0m [2mexecution_engine[0m[2m:[0m 🚀 Execution Engine is ready

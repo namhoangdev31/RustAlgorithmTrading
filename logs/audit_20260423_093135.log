@@ -1,7 +1,0 @@
-[0;34m[INFO] 09:31:35 - Phase 1: Environment Reproducibility[0m
-[0;34m[INFO] 09:31:35 - Using virtual environment (.venv)[0m
-[0;34m[INFO] 09:31:35 - Ensuring Python dependencies are present...[0m
-[0;32m[✓] 09:31:40 - Dependencies verified[0m
-[0;34m[INFO] 09:31:40 - Phase 2: Python Unit Tests[0m
-[0;32m[✓] 09:31:43 - Python unit tests passed[0m
-[0;34m[INFO] 09:31:43 - Phase 3: Rust Workspace Verification[0m

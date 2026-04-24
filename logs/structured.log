@@ -1,2 +1,0 @@
-{"schema_version": "v1.0.0", "correlation_id": "INIT", "message": "Startup"}
-{"timestamp": "2026-04-23T00:00:00Z", "level": "INFO", "logger": "risk", "message": "Reject", "correlation_id": "cid-1", "extra": {"limit_snapshot": "[REDACTED]"}}
