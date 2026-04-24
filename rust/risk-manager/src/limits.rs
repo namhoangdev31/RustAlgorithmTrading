@@ -1,8 +1,7 @@
 use common::{
-    Result,
-    TradingError,
     config::RiskConfig,
     types::{Order, Position, Price, RiskDecision, RiskReason, RiskReport, Side},
+    Result, TradingError,
 };
 use serde_json::json;
 use std::collections::HashMap;
@@ -22,6 +21,11 @@ impl LimitChecker {
             positions: HashMap::new(),
             daily_pnl: 0.0,
         }
+    }
+
+    /// Replace runtime risk limits with a new validated config.
+    pub fn update_config(&mut self, config: RiskConfig) {
+        self.config = config;
     }
 
     /// Multi-level risk check returning a structured report (W5)
@@ -222,7 +226,9 @@ impl LimitChecker {
     fn current_symbol_notional(&self, symbol: &str) -> f64 {
         self.positions
             .get(symbol)
-            .map(|position| Self::signed_position_quantity(position).abs() * position.current_price.0)
+            .map(|position| {
+                Self::signed_position_quantity(position).abs() * position.current_price.0
+            })
             .unwrap_or(0.0)
     }
 
@@ -233,7 +239,9 @@ impl LimitChecker {
     fn total_notional_exposure(&self) -> f64 {
         self.positions
             .values()
-            .map(|position| Self::signed_position_quantity(position).abs() * position.current_price.0)
+            .map(|position| {
+                Self::signed_position_quantity(position).abs() * position.current_price.0
+            })
             .sum()
     }
 

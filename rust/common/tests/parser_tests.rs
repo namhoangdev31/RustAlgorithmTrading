@@ -1,7 +1,7 @@
-use common::{Envelope, Message, SCHEMA_VERSION, ErrorPayload};
+use chrono::Utc;
 use common::messaging::ErrorDisposition;
 use common::types::{RiskDecision, RiskReason};
-use chrono::Utc;
+use common::{Envelope, ErrorPayload, Message, SCHEMA_VERSION};
 use serde_json::json;
 
 #[test]
@@ -13,10 +13,10 @@ fn test_envelope_serialization() {
             "timestamp": Utc::now().to_rfc3339()
         }
     });
-    
+
     let envelope = Envelope::new("Heartbeat", "test-corr-id", payload);
     let serialized = serde_json::to_string(&envelope).unwrap();
-    
+
     let deserialized: Envelope = serde_json::from_str(&serialized).unwrap();
     assert_eq!(deserialized.schema_version, SCHEMA_VERSION);
     assert_eq!(deserialized.correlation_id, "test-corr-id");
@@ -32,7 +32,7 @@ fn test_message_deserialization_from_payload() {
             "timestamp": Utc::now().to_rfc3339()
         }
     });
-    
+
     let message: Message = serde_json::from_value(raw_payload).unwrap();
     if let Message::Heartbeat { data } = message {
         assert_eq!(data.component, "market-data");
@@ -50,10 +50,10 @@ fn test_error_payload_serialization() {
         disposition: ErrorDisposition::Quarantine,
         payload_preview: Some("{\"type\": \"OrderBookUpdate\", ...}".to_string()),
     };
-    
+
     let message = Message::Error { data: error };
     let envelope = Envelope::new("Error", "err-123", serde_json::to_value(message).unwrap());
-    
+
     let serialized = serde_json::to_string(&envelope).unwrap();
     assert!(serialized.contains("SCHEMA_MISMATCH"));
     assert!(serialized.contains("QUARANTINE"));
@@ -68,7 +68,7 @@ fn test_negative_parser_missing_fields() {
         "timestamp": Utc::now().to_rfc3339(),
         "payload": {}
     });
-    
+
     let result = serde_json::from_value::<Envelope>(malformed_envelope);
     assert!(result.is_err());
 }
@@ -82,7 +82,7 @@ fn test_negative_parser_wrong_type() {
             "timestamp": Utc::now().to_rfc3339()
         }
     });
-    
+
     let result = serde_json::from_value::<Message>(malformed_payload);
     assert!(result.is_err());
 }

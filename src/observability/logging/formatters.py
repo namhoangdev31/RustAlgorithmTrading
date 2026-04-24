@@ -10,32 +10,9 @@ import json
 import logging
 import traceback
 from datetime import datetime
-from typing import Any, Dict, Set
+from typing import Any, Dict
 
-
-# Sensitive fields that must be redacted in public logs
-SENSITIVE_FIELDS: Set[str] = {
-    "limit_snapshot",
-    "payload_preview",
-    "api_key",
-    "api_secret",
-    "password",
-    "token"
-}
-
-
-def redact_sensitive_data(data: Any) -> Any:
-    """
-    Recursively redact sensitive fields from dictionary or list
-    """
-    if isinstance(data, dict):
-        return {
-            k: "[REDACTED]" if k in SENSITIVE_FIELDS else redact_sensitive_data(v)
-            for k, v in data.items()
-        }
-    elif isinstance(data, list):
-        return [redact_sensitive_data(item) for item in data]
-    return data
+from .redaction_handler import REDACTION_TOKEN, SENSITIVE_FIELDS, redact_sensitive_data
 
 
 class JSONFormatter(logging.Formatter):
@@ -132,7 +109,7 @@ class JSONFormatter(logging.Formatter):
             if key not in skip_fields:
                 val = value
                 if key in SENSITIVE_FIELDS:
-                    val = "[REDACTED]"
+                    val = REDACTION_TOKEN
                 else:
                     val = redact_sensitive_data(value)
 
@@ -241,7 +218,7 @@ class StructuredFormatter(logging.Formatter):
         for key, value in record.__dict__.items():
             if key not in skip_fields:
                 if key in SENSITIVE_FIELDS:
-                    extra[key] = "[REDACTED]"
+                    extra[key] = REDACTION_TOKEN
                 else:
                     extra[key] = redact_sensitive_data(value)
 

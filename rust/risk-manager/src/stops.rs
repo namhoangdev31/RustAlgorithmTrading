@@ -109,11 +109,8 @@ pub struct StopLossState {
 
 impl StopLossState {
     fn new(position: &Position, config: StopLossConfig) -> Result<Self> {
-        let trigger_price = Self::calculate_initial_trigger(
-            position.entry_price,
-            position.side,
-            &config,
-        )?;
+        let trigger_price =
+            Self::calculate_initial_trigger(position.entry_price, position.side, &config)?;
 
         Ok(Self {
             config,
@@ -148,13 +145,9 @@ impl StopLossState {
 
                 Ok(Price(trigger))
             }
-            StopLossType::Absolute => {
-                config.price_level.ok_or_else(|| {
-                    TradingError::Configuration(
-                        "Price level required for absolute stop".to_string(),
-                    )
-                })
-            }
+            StopLossType::Absolute => config.price_level.ok_or_else(|| {
+                TradingError::Configuration("Price level required for absolute stop".to_string())
+            }),
         }
     }
 
@@ -230,13 +223,21 @@ pub struct StopManager {
 
 impl StopManager {
     pub fn new(config: RiskConfig) -> Self {
-        info!("[cid:INIT] Initializing StopManager with config: stop_loss={}%, trailing={}%",
-              config.stop_loss_percent, config.trailing_stop_percent);
+        info!(
+            "[cid:INIT] Initializing StopManager with config: stop_loss={}%, trailing={}%",
+            config.stop_loss_percent, config.trailing_stop_percent
+        );
         Self {
             config,
             stops: HashMap::new(),
             triggered_stops: Vec::new(),
         }
+    }
+
+    /// Update default stop settings for future decisions.
+    /// Existing active stops remain untouched for runtime stability.
+    pub fn update_config(&mut self, config: RiskConfig) {
+        self.config = config;
     }
 
     /// Add or update stop-loss for a position
@@ -291,7 +292,10 @@ impl StopManager {
                     .expect("Valid stop-loss percentage from config");
 
                 if let Err(e) = self.set_stop(position, stop_config) {
-                    warn!("[cid:INIT] Failed to auto-configure stop for {}: {}", symbol_key, e);
+                    warn!(
+                        "[cid:INIT] Failed to auto-configure stop for {}: {}",
+                        symbol_key, e
+                    );
                     return None;
                 }
             } else {
@@ -309,7 +313,8 @@ impl StopManager {
             let reason = if price_triggered && loss_triggered {
                 format!(
                     "Price stop at {:.8} and max loss ${:.2} both triggered",
-                    state.trigger_price.0, state.config.max_loss_value.unwrap_or(0.0)
+                    state.trigger_price.0,
+                    state.config.max_loss_value.unwrap_or(0.0)
                 )
             } else if price_triggered {
                 format!(
@@ -324,7 +329,10 @@ impl StopManager {
                 )
             };
 
-            warn!("[cid:INIT] STOP-LOSS TRIGGERED for {}: {}", symbol_key, reason);
+            warn!(
+                "[cid:INIT] STOP-LOSS TRIGGERED for {}: {}",
+                symbol_key, reason
+            );
 
             let trigger = StopLossTrigger {
                 symbol: position.symbol.clone(),
@@ -405,7 +413,13 @@ mod tests {
     use super::*;
     use chrono::Utc;
 
-    fn create_test_position(symbol: &str, side: Side, entry: f64, current: f64, qty: f64) -> Position {
+    fn create_test_position(
+        symbol: &str,
+        side: Side,
+        entry: f64,
+        current: f64,
+        qty: f64,
+    ) -> Position {
         let entry_price = Price(entry);
         let current_price = Price(current);
         let quantity = common::types::Quantity(qty);

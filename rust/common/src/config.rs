@@ -1,6 +1,6 @@
+use crate::errors::{Result, TradingError};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use crate::errors::{Result, TradingError};
 
 /// Configuration for market data component
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -17,25 +17,27 @@ impl MarketDataConfig {
     pub fn validate(&self) -> Result<()> {
         if self.symbols.is_empty() {
             return Err(TradingError::Configuration(
-                "symbols list cannot be empty".to_string()
+                "symbols list cannot be empty".to_string(),
             ));
         }
 
         if !self.websocket_url.starts_with("ws://") && !self.websocket_url.starts_with("wss://") {
-            return Err(TradingError::Configuration(
-                format!("invalid websocket URL: {}", self.websocket_url)
-            ));
+            return Err(TradingError::Configuration(format!(
+                "invalid websocket URL: {}",
+                self.websocket_url
+            )));
         }
 
         if !self.zmq_publish_address.starts_with("tcp://") {
-            return Err(TradingError::Configuration(
-                format!("invalid ZMQ address: {}", self.zmq_publish_address)
-            ));
+            return Err(TradingError::Configuration(format!(
+                "invalid ZMQ address: {}",
+                self.zmq_publish_address
+            )));
         }
 
         if self.reconnect_delay_ms < 100 {
             return Err(TradingError::Configuration(
-                "reconnect_delay_ms must be at least 100ms".to_string()
+                "reconnect_delay_ms must be at least 100ms".to_string(),
             ));
         }
 
@@ -74,37 +76,37 @@ impl RiskConfig {
     pub fn validate(&self) -> Result<()> {
         if self.max_position_size <= 0.0 {
             return Err(TradingError::Configuration(
-                "max_position_size must be positive".to_string()
+                "max_position_size must be positive".to_string(),
             ));
         }
 
         if self.max_notional_exposure <= 0.0 {
             return Err(TradingError::Configuration(
-                "max_notional_exposure must be positive".to_string()
+                "max_notional_exposure must be positive".to_string(),
             ));
         }
 
         if self.max_open_positions == 0 {
             return Err(TradingError::Configuration(
-                "max_open_positions must be at least 1".to_string()
+                "max_open_positions must be at least 1".to_string(),
             ));
         }
 
         if self.stop_loss_percent <= 0.0 || self.stop_loss_percent > 100.0 {
             return Err(TradingError::Configuration(
-                "stop_loss_percent must be between 0 and 100".to_string()
+                "stop_loss_percent must be between 0 and 100".to_string(),
             ));
         }
 
         if self.trailing_stop_percent <= 0.0 || self.trailing_stop_percent > 100.0 {
             return Err(TradingError::Configuration(
-                "trailing_stop_percent must be between 0 and 100".to_string()
+                "trailing_stop_percent must be between 0 and 100".to_string(),
             ));
         }
 
         if self.max_loss_threshold <= 0.0 {
             return Err(TradingError::Configuration(
-                "max_loss_threshold must be positive".to_string()
+                "max_loss_threshold must be positive".to_string(),
             ));
         }
 
@@ -134,50 +136,51 @@ fn default_max_slippage_bps() -> f64 {
 impl ExecutionConfig {
     /// Validate execution configuration
     pub fn validate(&self) -> Result<()> {
-        if !self.exchange_api_url.starts_with("http://") && !self.exchange_api_url.starts_with("https://") {
-            return Err(TradingError::Configuration(
-                format!("invalid API URL: {}", self.exchange_api_url)
-            ));
+        if !self.exchange_api_url.starts_with("http://")
+            && !self.exchange_api_url.starts_with("https://")
+        {
+            return Err(TradingError::Configuration(format!(
+                "invalid API URL: {}",
+                self.exchange_api_url
+            )));
         }
 
         if self.rate_limit_per_second == 0 {
             return Err(TradingError::Configuration(
-                "rate_limit_per_second must be at least 1".to_string()
+                "rate_limit_per_second must be at least 1".to_string(),
             ));
         }
 
         if self.retry_attempts == 0 {
             return Err(TradingError::Configuration(
-                "retry_attempts must be at least 1".to_string()
+                "retry_attempts must be at least 1".to_string(),
             ));
         }
 
         if self.retry_delay_ms < 100 {
             return Err(TradingError::Configuration(
-                "retry_delay_ms must be at least 100ms".to_string()
+                "retry_delay_ms must be at least 100ms".to_string(),
             ));
         }
 
         // Validate max_slippage_bps: must be finite, positive and <= 500 bps (5%)
         if !self.max_slippage_bps.is_finite() {
             return Err(TradingError::Configuration(
-                "max_slippage_bps must be a finite number (not NaN or Infinity)".to_string()
+                "max_slippage_bps must be a finite number (not NaN or Infinity)".to_string(),
             ));
         }
 
         if self.max_slippage_bps <= 0.0 {
             return Err(TradingError::Configuration(
-                "max_slippage_bps must be positive".to_string()
+                "max_slippage_bps must be positive".to_string(),
             ));
         }
 
         if self.max_slippage_bps > 500.0 {
-            return Err(TradingError::Configuration(
-                format!(
-                    "max_slippage_bps ({}) exceeds maximum allowed (500 bps = 5%)",
-                    self.max_slippage_bps
-                )
-            ));
+            return Err(TradingError::Configuration(format!(
+                "max_slippage_bps ({}) exceeds maximum allowed (500 bps = 5%)",
+                self.max_slippage_bps
+            )));
         }
 
         Ok(())
@@ -186,15 +189,16 @@ impl ExecutionConfig {
     /// Load API credentials from environment variables
     pub fn load_credentials(&mut self) -> Result<()> {
         if self.api_key.is_none() {
-            let key = std::env::var("ALPACA_API_KEY")
-                .map_err(|_| TradingError::Configuration(
-                    "ALPACA_API_KEY environment variable not set".to_string()
-                ))?;
+            let key = std::env::var("ALPACA_API_KEY").map_err(|_| {
+                TradingError::Configuration(
+                    "ALPACA_API_KEY environment variable not set".to_string(),
+                )
+            })?;
 
             // Validate API key is not empty
             if key.trim().is_empty() {
                 return Err(TradingError::Configuration(
-                    "ALPACA_API_KEY cannot be empty".to_string()
+                    "ALPACA_API_KEY cannot be empty".to_string(),
                 ));
             }
 
@@ -202,15 +206,16 @@ impl ExecutionConfig {
         }
 
         if self.api_secret.is_none() {
-            let secret = std::env::var("ALPACA_SECRET_KEY")
-                .map_err(|_| TradingError::Configuration(
-                    "ALPACA_SECRET_KEY environment variable not set".to_string()
-                ))?;
+            let secret = std::env::var("ALPACA_SECRET_KEY").map_err(|_| {
+                TradingError::Configuration(
+                    "ALPACA_SECRET_KEY environment variable not set".to_string(),
+                )
+            })?;
 
             // Validate API secret is not empty
             if secret.trim().is_empty() {
                 return Err(TradingError::Configuration(
-                    "ALPACA_SECRET_KEY cannot be empty".to_string()
+                    "ALPACA_SECRET_KEY cannot be empty".to_string(),
                 ));
             }
 
@@ -224,25 +229,25 @@ impl ExecutionConfig {
     pub fn validate_credentials(&self) -> Result<()> {
         if !self.paper_trading {
             // In live trading mode, credentials are required
-            let key = self.api_key.as_ref()
-                .ok_or_else(|| TradingError::Configuration(
-                    "API key not configured for live trading".to_string()
-                ))?;
+            let key = self.api_key.as_ref().ok_or_else(|| {
+                TradingError::Configuration("API key not configured for live trading".to_string())
+            })?;
 
             if key.trim().is_empty() {
                 return Err(TradingError::Configuration(
-                    "API key cannot be empty".to_string()
+                    "API key cannot be empty".to_string(),
                 ));
             }
 
-            let secret = self.api_secret.as_ref()
-                .ok_or_else(|| TradingError::Configuration(
-                    "API secret not configured for live trading".to_string()
-                ))?;
+            let secret = self.api_secret.as_ref().ok_or_else(|| {
+                TradingError::Configuration(
+                    "API secret not configured for live trading".to_string(),
+                )
+            })?;
 
             if secret.trim().is_empty() {
                 return Err(TradingError::Configuration(
-                    "API secret cannot be empty".to_string()
+                    "API secret cannot be empty".to_string(),
                 ));
             }
         }
@@ -255,13 +260,11 @@ impl ExecutionConfig {
         if !self.paper_trading {
             // In live trading, enforce HTTPS
             if !self.exchange_api_url.starts_with("https://") {
-                return Err(TradingError::Configuration(
-                    format!(
-                        "API URL must use HTTPS for live trading. Got: {}. \
+                return Err(TradingError::Configuration(format!(
+                    "API URL must use HTTPS for live trading. Got: {}. \
                         This is required to protect API credentials from interception.",
-                        self.exchange_api_url
-                    )
-                ));
+                    self.exchange_api_url
+                )));
             }
         }
 
@@ -284,25 +287,27 @@ impl SignalConfig {
     pub fn validate(&self) -> Result<()> {
         if self.features.is_empty() {
             return Err(TradingError::Configuration(
-                "features list cannot be empty".to_string()
+                "features list cannot be empty".to_string(),
             ));
         }
 
         if !self.zmq_subscribe_address.starts_with("tcp://") {
-            return Err(TradingError::Configuration(
-                format!("invalid ZMQ subscribe address: {}", self.zmq_subscribe_address)
-            ));
+            return Err(TradingError::Configuration(format!(
+                "invalid ZMQ subscribe address: {}",
+                self.zmq_subscribe_address
+            )));
         }
 
         if !self.zmq_publish_address.starts_with("tcp://") {
-            return Err(TradingError::Configuration(
-                format!("invalid ZMQ publish address: {}", self.zmq_publish_address)
-            ));
+            return Err(TradingError::Configuration(format!(
+                "invalid ZMQ publish address: {}",
+                self.zmq_publish_address
+            )));
         }
 
         if self.update_interval_ms < 100 {
             return Err(TradingError::Configuration(
-                "update_interval_ms must be at least 100ms".to_string()
+                "update_interval_ms must be at least 100ms".to_string(),
             ));
         }
 
@@ -323,15 +328,13 @@ pub struct SystemConfig {
 impl SystemConfig {
     /// Load configuration from file and validate all components
     pub fn from_file(path: &str) -> Result<Self> {
-        let content = std::fs::read_to_string(path)
-            .map_err(|e| TradingError::Configuration(
-                format!("failed to read config file {}: {}", path, e)
-            ))?;
+        let content = std::fs::read_to_string(path).map_err(|e| {
+            TradingError::Configuration(format!("failed to read config file {}: {}", path, e))
+        })?;
 
-        let mut config: Self = serde_json::from_str(&content)
-            .map_err(|e| TradingError::Configuration(
-                format!("failed to parse config file {}: {}", path, e)
-            ))?;
+        let mut config: Self = serde_json::from_str(&content).map_err(|e| {
+            TradingError::Configuration(format!("failed to parse config file {}: {}", path, e))
+        })?;
 
         // Validate all components
         config.market_data.validate()?;
@@ -347,15 +350,13 @@ impl SystemConfig {
 
     /// Save configuration to file
     pub fn to_file(&self, path: &str) -> Result<()> {
-        let content = serde_json::to_string_pretty(self)
-            .map_err(|e| TradingError::Configuration(
-                format!("failed to serialize config: {}", e)
-            ))?;
+        let content = serde_json::to_string_pretty(self).map_err(|e| {
+            TradingError::Configuration(format!("failed to serialize config: {}", e))
+        })?;
 
-        std::fs::write(path, content)
-            .map_err(|e| TradingError::Configuration(
-                format!("failed to write config file {}: {}", path, e)
-            ))?;
+        std::fs::write(path, content).map_err(|e| {
+            TradingError::Configuration(format!("failed to write config file {}: {}", path, e))
+        })?;
 
         Ok(())
     }

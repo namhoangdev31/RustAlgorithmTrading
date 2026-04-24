@@ -4,8 +4,10 @@
 //! Metrics are exposed via HTTP endpoints and can be scraped by Prometheus or
 //! Python collectors.
 
-use axum::{routing::get, Router};
+use axum::{extract::State, routing::get, Router};
+use metrics_exporter_prometheus::{PrometheusBuilder, PrometheusHandle};
 use std::net::SocketAddr;
+use std::time::{SystemTime, UNIX_EPOCH};
 use tokio::task::JoinHandle;
 use tracing::{error, info};
 
@@ -49,19 +51,39 @@ pub fn start_metrics_server(config: MetricsConfig) -> Result<JoinHandle<()>, any
         .parse()
         .map_err(|e| anyhow::anyhow!("Invalid metrics address: {}", e))?;
 
+    let prometheus_handle = PrometheusBuilder::new()
+        .install_recorder()
+        .map_err(|e| anyhow::anyhow!("Failed to initialize Prometheus recorder: {}", e))?;
+
+    let process_start_time_seconds = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map(|d| d.as_secs())
+        .unwrap_or(0);
+
+    let state = MetricsState {
+        handle: prometheus_handle,
+        process_start_time_seconds,
+    };
+
     info!("[cid:INIT] Starting metrics server on {}", addr);
 
-    let app = Router::new().route("/metrics", get(metrics_handler));
+    let app = Router::new()
+        .route("/metrics", get(metrics_handler))
+        .with_state(state);
 
     let handle = tokio::spawn(async move {
-        match axum::serve(
-            tokio::net::TcpListener::bind(&addr).await.unwrap_or_else(|e| {
-                panic!("Failed to bind metrics server to {}: {}", addr, e)
-            }),
-            app,
-        )
-        .await
-        {
+        let listener = match tokio::net::TcpListener::bind(&addr).await {
+            Ok(listener) => listener,
+            Err(e) => {
+                error!(
+                    "[cid:INIT] Failed to bind metrics server to {}: {}",
+                    addr, e
+                );
+                return;
+            }
+        };
+
+        match axum::serve(listener, app).await {
             Ok(_) => info!("[cid:INIT] Metrics server stopped gracefully"),
             Err(e) => error!("[cid:INIT] Metrics server error: {}", e),
         }
@@ -71,28 +93,29 @@ pub fn start_metrics_server(config: MetricsConfig) -> Result<JoinHandle<()>, any
     Ok(handle)
 }
 
+#[derive(Clone)]
+struct MetricsState {
+    handle: PrometheusHandle,
+    process_start_time_seconds: u64,
+}
+
 /// Metrics endpoint handler
-async fn metrics_handler() -> String {
-    // Use metrics crate's encode function if available
-    // For now, return a simple Prometheus-formatted response
-    let mut output = String::new();
+async fn metrics_handler(State(state): State<MetricsState>) -> String {
+    let mut output = state.handle.render();
 
-    // Add standard process metrics
-    output.push_str("# HELP process_start_time_seconds Start time of the process\n");
-    output.push_str("# TYPE process_start_time_seconds gauge\n");
-    output.push_str(&format!(
-        "process_start_time_seconds {}\n",
-        std::time::SystemTime::now()
-            .duration_since(std::time::UNIX_EPOCH)
-            .map(|d| d.as_secs())
-            .unwrap_or(0)
-    ));
+    if !output.ends_with('\n') {
+        output.push('\n');
+    }
 
-    output.push('\n');
-
-    // The metrics crate will automatically append its metrics here
-    // This is a placeholder - in production, use metrics-exporter-prometheus
-    output.push_str("# Metrics exported via metrics crate\n");
+    // Ensure a stable process-start metric is always available for dashboards.
+    if !output.contains("process_start_time_seconds") {
+        output.push_str("# HELP process_start_time_seconds Start time of the process\n");
+        output.push_str("# TYPE process_start_time_seconds gauge\n");
+        output.push_str(&format!(
+            "process_start_time_seconds {}\n",
+            state.process_start_time_seconds
+        ));
+    }
 
     output
 }
@@ -139,7 +162,8 @@ pub mod market_data {
     /// Record price update
     pub fn record_price_update(symbol: &str, price: f64, volume: f64) {
         gauge!("market_data_price", "symbol" => symbol.to_string()).set(price);
-        counter!("market_data_volume_total", "symbol" => symbol.to_string()).increment(volume as u64);
+        counter!("market_data_volume_total", "symbol" => symbol.to_string())
+            .increment(volume as u64);
     }
 }
 
@@ -277,11 +301,41 @@ pub mod risk {
         histogram!("risk_check_duration_ms", "symbol" => symbol.to_string())
             .record(check_duration_ms);
     }
+
+    /// Record final risk decision outcome.
+    pub fn record_risk_check_result(disposition: &str, reason: &str) {
+        counter!(
+            "risk_check_result_total",
+            "disposition" => disposition.to_string(),
+            "reason" => reason.to_string()
+        )
+        .increment(1);
+    }
+
+    /// Record runtime config reload attempts for risk manager.
+    pub fn record_config_reload(status: &str, reason: &str) {
+        counter!(
+            "risk_config_reload_total",
+            "status" => status.to_string(),
+            "reason" => reason.to_string()
+        )
+        .increment(1);
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::sync::OnceLock;
+
+    fn test_prometheus_handle() -> &'static PrometheusHandle {
+        static HANDLE: OnceLock<PrometheusHandle> = OnceLock::new();
+        HANDLE.get_or_init(|| {
+            PrometheusBuilder::new()
+                .install_recorder()
+                .expect("failed to install test Prometheus recorder")
+        })
+    }
 
     #[test]
     fn test_metrics_config_creation() {
@@ -293,5 +347,25 @@ mod tests {
 
         let risk = MetricsConfig::risk_manager();
         assert_eq!(risk.port, 9093);
+    }
+
+    #[test]
+    fn test_risk_check_result_metric_labels() {
+        let handle = test_prometheus_handle();
+        risk::record_risk_check_result("REJECT", "STRATEGY_ALLOCATION_LIMIT_EXCEEDED");
+        let output = handle.render();
+        assert!(output.contains("risk_check_result_total"));
+        assert!(output.contains("disposition=\"REJECT\""));
+        assert!(output.contains("reason=\"STRATEGY_ALLOCATION_LIMIT_EXCEEDED\""));
+    }
+
+    #[test]
+    fn test_risk_config_reload_metric_labels() {
+        let handle = test_prometheus_handle();
+        risk::record_config_reload("failed", "DAILY_LOSS_MISMATCH");
+        let output = handle.render();
+        assert!(output.contains("risk_config_reload_total"));
+        assert!(output.contains("status=\"failed\""));
+        assert!(output.contains("reason=\"DAILY_LOSS_MISMATCH\""));
     }
 }

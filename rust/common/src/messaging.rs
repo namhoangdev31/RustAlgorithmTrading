@@ -1,6 +1,6 @@
-use serde::{Deserialize, Serialize};
-use crate::types::{Order, OrderBook, Trade, Bar, Signal, Position};
+use crate::types::{Bar, Order, OrderBook, Position, Signal, Trade};
 use chrono::{DateTime, Utc};
+use serde::{Deserialize, Serialize};
 
 /// Version of the message schema
 pub const SCHEMA_VERSION: &str = "v1.0.0";
@@ -51,37 +51,59 @@ pub enum ErrorDisposition {
 pub enum Message {
     /// Market data messages
     #[serde(rename_all = "camelCase")]
-    OrderBookUpdate { data: OrderBook },
+    OrderBookUpdate {
+        data: OrderBook,
+    },
     #[serde(rename_all = "camelCase")]
-    TradeUpdate { data: Trade },
+    TradeUpdate {
+        data: Trade,
+    },
     #[serde(rename_all = "camelCase")]
-    BarUpdate { data: Bar },
+    BarUpdate {
+        data: Bar,
+    },
 
     /// Signal messages
     #[serde(rename_all = "camelCase")]
-    SignalGenerated { data: Signal },
+    SignalGenerated {
+        data: Signal,
+    },
 
     /// Execution messages
     #[serde(rename_all = "camelCase")]
-    OrderRequest { data: Order },
+    OrderRequest {
+        data: Order,
+    },
     #[serde(rename_all = "camelCase")]
-    OrderResponse { data: OrderResponse },
+    OrderResponse {
+        data: OrderResponse,
+    },
 
     /// Risk management messages
     #[serde(rename_all = "camelCase")]
-    PositionUpdate { data: Position },
+    PositionUpdate {
+        data: Position,
+    },
     #[serde(rename_all = "camelCase")]
-    RiskCheck { data: RiskCheckRequest },
+    RiskCheck {
+        data: RiskCheckRequest,
+    },
     #[serde(rename_all = "camelCase")]
-    RiskCheckResult { data: RiskCheckResult },
+    RiskCheckResult {
+        data: RiskCheckResult,
+    },
 
     /// System messages
     #[serde(rename_all = "camelCase")]
-    Heartbeat { data: Heartbeat },
-    
+    Heartbeat {
+        data: Heartbeat,
+    },
+
     #[serde(rename_all = "camelCase")]
-    Error { data: ErrorPayload },
-    
+    Error {
+        data: ErrorPayload,
+    },
+
     Shutdown,
 }
 

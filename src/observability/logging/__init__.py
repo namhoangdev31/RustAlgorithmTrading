@@ -8,6 +8,7 @@ specialized log streams, and performance optimization.
 from .structured_logger import StructuredLogger, get_logger
 from .correlations import correlation_id
 from .formatters import JSONFormatter, StructuredFormatter
+from .redaction_handler import REDACTION_TOKEN, SENSITIVE_FIELDS, redact_sensitive_data
 from .handlers import AsyncQueueHandler, RotatingFileHandlerAsync
 from .streams import (
     MarketDataLogger,
@@ -28,6 +29,9 @@ __all__ = [
     "correlation_id",
     "JSONFormatter",
     "StructuredFormatter",
+    "SENSITIVE_FIELDS",
+    "REDACTION_TOKEN",
+    "redact_sensitive_data",
     "AsyncQueueHandler",
     "RotatingFileHandlerAsync",
     "MarketDataLogger",

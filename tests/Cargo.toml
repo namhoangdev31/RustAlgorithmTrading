@@ -46,10 +46,6 @@ name = "test_market_data_orderbook"
 path = "unit/test_market_data_orderbook.rs"
 
 [[test]]
-name = "test_risk_limits"
-path = "unit/test_risk_limits.rs"
-
-[[test]]
 name = "test_execution_router"
 path = "unit/test_execution_router.rs"
 

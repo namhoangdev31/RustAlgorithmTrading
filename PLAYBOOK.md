@@ -348,6 +348,12 @@ Mỗi file có 3 phần:
   - CompactJSONFormatter: Lớp logging/formatting cho quan sát hệ thống.
 - Test liên quan: tests/observability/*.py, tests/integration/test_observability_integration.py, tests/integration/test_duckdb_storage.rs.
 
+### src/observability/logging/redaction_handler.py
+
+- Vai trò file: Utility redaction dùng chung cho formatter và sink observability, đảm bảo mask nhất quán các field nhạy cảm.
+- Class trong file: Không có class (module-level constants/functions).
+- Test liên quan: tests/observability/test_structured_logger.py, tests/integration/test_observability_integration.py.
+
 ### src/observability/logging/handlers.py
 
 - Vai trò file: Structured logging stack: formatter/handler/context/stream loggers.
@@ -1039,27 +1045,34 @@ Mỗi file có 3 phần:
 - Vai trò file: Risk layer: limit checks, stop logic, PnL tracking, circuit breaker.
 - Type trong file:
   - CircuitBreaker (struct): Cấu trúc dữ liệu/domain state của module.
-- Test liên quan: tests/unit/test_risk_manager.rs, tests/unit/test_risk_limits.rs, tests/integration/test_stop_loss_integration.rs, tests/integration/test_risk_execution_observability.rs.
+- Test liên quan: rust/risk-manager/tests/limit_regression_tests.rs, rust/risk-manager/tests/config_reload_tests.rs, tests/integration/test_stop_loss_integration.rs, tests/integration/test_risk_execution_observability.rs.
 
 ### rust/risk-manager/src/lib.rs
 
 - Vai trò file: Risk layer: limit checks, stop logic, PnL tracking, circuit breaker.
 - Type trong file:
   - RiskManagerService (struct): Service coordinator/state holder cho component runtime.
-- Test liên quan: tests/unit/test_risk_manager.rs, tests/unit/test_risk_limits.rs, tests/integration/test_stop_loss_integration.rs, tests/integration/test_risk_execution_observability.rs.
+- Test liên quan: rust/risk-manager/tests/limit_bva_tests.rs, rust/risk-manager/tests/limit_regression_tests.rs, rust/risk-manager/tests/config_reload_tests.rs, tests/integration/test_risk_execution_observability.rs.
 
 ### rust/risk-manager/src/limits.rs
 
 - Vai trò file: Risk layer: limit checks, stop logic, PnL tracking, circuit breaker.
 - Type trong file:
   - LimitChecker (struct): Engine xử lý nghiệp vụ lõi theo domain.
-- Test liên quan: tests/unit/test_risk_manager.rs, tests/unit/test_risk_limits.rs, tests/integration/test_stop_loss_integration.rs, tests/integration/test_risk_execution_observability.rs.
+- Test liên quan: rust/risk-manager/tests/limit_bva_tests.rs, rust/risk-manager/tests/limit_regression_tests.rs, rust/risk-manager/tests/config_reload_tests.rs, tests/integration/test_risk_execution_observability.rs.
 
 ### rust/risk-manager/src/main.rs
 
 - Vai trò file: Risk layer: limit checks, stop logic, PnL tracking, circuit breaker.
 - Type trong file: Không có type declaration (thường là wiring, function helpers, hoặc entrypoint).
-- Test liên quan: tests/unit/test_risk_manager.rs, tests/unit/test_risk_limits.rs, tests/integration/test_stop_loss_integration.rs, tests/integration/test_risk_execution_observability.rs.
+- Test liên quan: rust/risk-manager/tests/config_reload_tests.rs, rust/risk-manager/tests/limit_bva_tests.rs, tests/integration/test_risk_execution_observability.rs.
+
+### rust/risk-manager/src/reload.rs
+
+- Vai trò file: Parser và mapper hot-reload cho `config/risk_limits.toml`, chuyển về `RiskConfig` runtime với rule fail-safe.
+- Type trong file:
+  - RiskLimitsToml (struct): DTO parse config TOML theo section.
+- Test liên quan: rust/risk-manager/tests/config_reload_tests.rs.
 
 ### rust/risk-manager/src/pnl.rs
 
@@ -1067,7 +1080,7 @@ Mỗi file có 3 phần:
 - Type trong file:
   - PositionState (struct): Cấu trúc dữ liệu/domain state của module.
   - PnLTracker (struct): Engine xử lý nghiệp vụ lõi theo domain.
-- Test liên quan: tests/unit/test_risk_manager.rs, tests/unit/test_risk_limits.rs, tests/integration/test_stop_loss_integration.rs, tests/integration/test_risk_execution_observability.rs.
+- Test liên quan: rust/risk-manager/tests/limit_regression_tests.rs, tests/integration/test_risk_execution_observability.rs.
 
 ### rust/risk-manager/src/stops.rs
 
@@ -1078,13 +1091,25 @@ Mỗi file có 3 phần:
   - StopLossState (struct): Cấu trúc dữ liệu/domain state của module.
   - StopManager (struct): Quản lý tài nguyên/lifecycle hoặc orchestration nội bộ.
   - StopLossTrigger (struct): Cấu trúc dữ liệu/domain state của module.
-- Test liên quan: tests/unit/test_risk_manager.rs, tests/unit/test_risk_limits.rs, tests/integration/test_stop_loss_integration.rs, tests/integration/test_risk_execution_observability.rs.
+- Test liên quan: rust/risk-manager/tests/limit_regression_tests.rs, rust/risk-manager/tests/config_reload_tests.rs, tests/integration/test_stop_loss_integration.rs.
 
 ### rust/risk-manager/tests/limit_bva_tests.rs
 
 - Vai trò file: Bộ test BVA cho Risk Limits v1, xác nhận ngưỡng `limit-1/limit/limit+1` cho symbol/strategy limits và guardrail hiệu năng lookup risk.
 - Type trong file: Không có type declaration (test cases mức crate/integration).
 - Test liên quan: `cd rust && cargo test -p risk-manager --test limit_bva_tests`, `cd rust && cargo test -p risk-manager`.
+
+### rust/risk-manager/tests/limit_regression_tests.rs
+
+- Vai trò file: Regression tests cho risk limits path (edge cases và projected-position behavior) sau khi hợp nhất từ legacy test suite.
+- Type trong file: Không có type declaration (test cases mức crate/integration).
+- Test liên quan: `cd rust && cargo test -p risk-manager --test limit_regression_tests`, `cd rust && cargo test -p risk-manager`.
+
+### rust/risk-manager/tests/config_reload_tests.rs
+
+- Vai trò file: Kiểm chứng parser TOML + behavior hot-reload (`SIGHUP`) theo rule fail-safe cho risk config.
+- Type trong file: Không có type declaration (test cases mức crate/integration).
+- Test liên quan: `cd rust && cargo test -p risk-manager --test config_reload_tests`, `cd rust && cargo test -p risk-manager`.
 
 ### rust/signal-bridge/src/bridge.rs
 
@@ -1145,7 +1170,8 @@ Mỗi file có 3 phần:
 ### Task: Sửa Risk / Stop Loss / Circuit Breaker
 - Code: rust/risk-manager/src/limits.rs, stops.rs, circuit_breaker.rs, pnl.rs
 - Test:
-  - cd tests && cargo test --test test_risk_manager --test test_risk_limits --test test_stop_loss_integration
+  - cd rust && cargo test -p risk-manager --test limit_bva_tests --test limit_regression_tests --test config_reload_tests
+  - cd tests && cargo test --test test_risk_manager --test test_stop_loss_integration
   - pytest tests/unit/test_week3_stop_loss_immediate_exit.py -q
 
 ### Task: Sửa Execution / Router / Slippage

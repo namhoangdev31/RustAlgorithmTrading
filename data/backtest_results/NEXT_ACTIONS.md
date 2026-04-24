@@ -15,7 +15,8 @@
 **Current Status**: 2/5 criteria (Win rate ✓, Trades ✓, Return ✗, Sharpe ✗, Max DD ✗)
 **Target**: Push to 4/5 criteria (80%)
 
-#### Quick Wins:
+#### Quick Wins
+
 1. **Reduce position size** from 15% to 13.5%
    - Expected impact: Max drawdown 39.0% → ~14.7% (PASS <15%)
    - File: `src/strategies/mean_reversion.py` line 45
@@ -41,20 +42,23 @@
 **Current Problem**: 69 trades (vs 30-40 target) = 73% excess
 **Root Cause**: RSI level-based logic (55-85 zone) stays active too long
 
-#### Options (Choose ONE):
+#### Options (Choose ONE)
 
 **Option A: Tighten RSI Zones** (RECOMMENDED)
+
 - File: `src/strategies/momentum.py` lines 352, 377
 - Change LONG: `current['rsi'] > 55 and current['rsi'] < 85` → `> 60 and < 80`
 - Change SHORT: `current['rsi'] < 45 and current['rsi'] > 15` → `< 40 and > 20`
 - Expected: ~35-45 trades (closer to target)
 
 **Option B: Add Signal Cooldown**
+
 - Add 5-bar minimum gap between signals for same symbol
 - Track last signal timestamp per symbol
 - Skip new signals if < 5 bars since last
 
 **Option C: Strengthen Confluence**
+
 - Require 4 of 5 conditions (vs current 3 of 5)
 - File: `src/strategies/momentum.py` line 358
 - Change: `long_conditions_met >= 3` → `>= 4`
@@ -65,7 +69,8 @@
 
 **Reason**: Catastrophic failure (0/5 criteria, -32.83% return, 50.7% drawdown)
 
-#### Actions:
+#### Actions
+
 1. Remove from testing pipeline
 2. Archive `src/strategies/momentum_simplified.py` → `src/strategies/archive/`
 3. Remove from validation script `scripts/week2_validation.py`
@@ -97,16 +102,19 @@ python scripts/week2_validation.py
 ## 📚 Key Files
 
 ### Reports
+
 - **Detailed Analysis**: `docs/testing/WEEK2_BACKTEST_RESULTS.md`
 - **Visual Summary**: `data/backtest_results/week2_summary.txt`
 - **Raw Data**: `data/backtest_results/week2_validation_20251029_133829.json`
 
 ### Strategy Files
+
 - **Mean Reversion** (BEST): `src/strategies/mean_reversion.py`
 - **Full Momentum**: `src/strategies/momentum.py`
 - **Simplified** (FAILED): `src/strategies/momentum_simplified.py`
 
 ### Test Scripts
+
 - **Validation**: `scripts/week2_validation.py`
 - **Individual Tests**: `scripts/test_strategy2_simple.py`, `scripts/backtest_strategy3.py`
 
@@ -115,10 +123,12 @@ python scripts/week2_validation.py
 ## 🔍 Memory Coordination
 
 Results stored in hive memory:
+
 - **Key**: `swarm/week2/backtest_results` (namespace: coordination)
 - **Summary**: `swarm/week2/summary`
 
 Query with:
+
 ```bash
 npx claude-flow@alpha memory query "week2" --namespace coordination
 ```
@@ -128,6 +138,7 @@ npx claude-flow@alpha memory query "week2" --namespace coordination
 ## 🎯 Success Criteria for Week 3 GO Decision
 
 **Minimum Requirements**:
+
 - ✅ At least ONE strategy meets **3/5 criteria** (60%)
 - ✅ Win rate **>40%**
 - ✅ Total return **>0%**
@@ -135,6 +146,7 @@ npx claude-flow@alpha memory query "week2" --namespace coordination
 - ✅ Trade count **30-40**
 
 **Current Best (Mean Reversion)**:
+
 - Win rate: 43.3% ✓ (above 40%)
 - Total trades: 30 ✓ (perfect)
 - Total return: -0.30% ✗ (barely negative - **FIX THIS**)
@@ -170,16 +182,19 @@ npx claude-flow@alpha memory query "week2" --namespace coordination
 ## 💡 Key Insights from Week 2
 
 ### What Worked ✓
+
 - Mean Reversion strategy dramatically improved (0% → 43.3% win rate)
 - SHORT signals now working correctly
 - Minimum holding period prevents premature exits
 
 ### What Failed ✗
+
 - Simplifying by removing filters destroyed performance
 - RSI level-based logic created overtrading
 - Volume filter (1.05x) too permissive
 
 ### Lesson Learned
+>
 > "Essential filters exist for a reason. Removing them to 'simplify' often backfires."
 
 ---

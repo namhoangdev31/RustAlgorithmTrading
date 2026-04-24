@@ -1,4 +1,4 @@
-use common::{Result, TradingError, config::RiskConfig};
+use common::{config::RiskConfig, Result, TradingError};
 
 pub struct CircuitBreaker {
     #[allow(dead_code)]
@@ -16,7 +16,9 @@ impl CircuitBreaker {
 
     pub fn check(&self) -> Result<()> {
         if self.is_tripped {
-            return Err(TradingError::RiskCheck("Circuit breaker tripped".to_string()));
+            return Err(TradingError::RiskCheck(
+                "Circuit breaker tripped".to_string(),
+            ));
         }
         Ok(())
     }
@@ -27,5 +29,10 @@ impl CircuitBreaker {
 
     pub fn reset(&mut self) {
         self.is_tripped = false;
+    }
+
+    /// Update runtime config for future circuit-breaker checks.
+    pub fn update_config(&mut self, config: RiskConfig) {
+        self.config = config;
     }
 }

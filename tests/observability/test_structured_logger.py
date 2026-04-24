@@ -344,5 +344,46 @@ class TestThreadSafety:
         assert metrics['total_logs'] == 500
 
 
+class TestRedactionHandler:
+    """Test standalone redaction utility behavior."""
+
+    def test_redact_nested_dict_and_list(self):
+        from src.observability.logging.redaction_handler import (
+            REDACTION_TOKEN,
+            redact_sensitive_data,
+        )
+
+        payload = {
+            "event": "risk_reject",
+            "limit_snapshot": {"equity": 12345.0},
+            "nested": {
+                "payload_preview": "{\"order\":\"AAPL\"}",
+                "safe_field": "ok",
+            },
+            "items": [
+                {"token": "abc123"},
+                {"safe": 1},
+            ],
+        }
+
+        redacted = redact_sensitive_data(payload)
+        assert redacted["limit_snapshot"] == REDACTION_TOKEN
+        assert redacted["nested"]["payload_preview"] == REDACTION_TOKEN
+        assert redacted["items"][0]["token"] == REDACTION_TOKEN
+        assert redacted["nested"]["safe_field"] == "ok"
+        assert redacted["items"][1]["safe"] == 1
+
+    def test_redaction_does_not_mask_non_sensitive_fields(self):
+        from src.observability.logging.redaction_handler import redact_sensitive_data
+
+        payload = {
+            "reason_code": "STRATEGY_ALLOCATION_LIMIT_EXCEEDED",
+            "correlation_id": "cid-123",
+            "meta": {"component": "risk-manager", "severity": "warning"},
+        }
+
+        assert redact_sensitive_data(payload) == payload
+
+
 if __name__ == '__main__':
     pytest.main([__file__, '-v'])
