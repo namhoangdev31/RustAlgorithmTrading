@@ -92,7 +92,7 @@
 - [ ] Retry/slippage guardrails hoàn tất.
 - [ ] Không duplicate order ở retry path.
 - [ ] Go/No-Go W08 đã chốt.
-- Evidence IDs: `____________________________`
+- Evidence IDs: `EV-W8-101..108, EV-W8-201..217, EV-W8-301..307, EV-W8-401..402`
 - Decision: [ ] GO  [ ] NO-GO
 
 ## W09 - Observability Contract

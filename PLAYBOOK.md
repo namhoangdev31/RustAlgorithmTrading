@@ -1580,6 +1580,54 @@ Mỗi file có 3 phần:
 - Class/Type trong file: Không có class/type (tài liệu weekly closeout + handoff).
 - Test liên quan: Tổng hợp evidence từ baseline report, implementation plan, issue register và gate rehearsal để ra quyết định final tuần 7.
 
+### docs/roadmap/W08_OPERATIONS_PLAN.md
+
+- Vai trò file: Kế hoạch vận hành tuần 8 cho Execution Retry/Slippage, tập trung retry classification, idempotency, slippage guardrails, W07 breaker interaction và gate Phase 2.
+- Class/Type trong file: Không có class/type (tài liệu điều phối implementation execution retry/slippage, triage và closeout).
+- Test liên quan: Điều phối command profile execution-focused (pytest integration + cargo test/check + health/compliance/correlation audits) và scenario matrix tuần 8.
+
+### docs/roadmap/week8/KPI_CHARTER_WEEK8.md
+
+- Vai trò file: KPI charter tuần 8 cho Execution Retry/Slippage, định nghĩa ngưỡng duplicate order rate, retry classification coverage, slippage boundary coverage và governance consistency.
+- Class/Type trong file: Không có class/type (tài liệu KPI governance tuần 8).
+- Test liên quan: Dùng evidence từ baseline report, issue register và gate notes để tính KPI.
+
+### docs/roadmap/week8/EXECUTION_RETRY_SLIPPAGE_BASELINE_REPORT.md
+
+- Vai trò file: Baseline report tuần 8 cho retry/slippage, chuẩn hóa matrix `expected/actual/status/evidence_id` cho command profile, retry classification, duplicate guard và slippage boundary.
+- Class/Type trong file: Không có class/type (tài liệu validation/baseline evidence).
+- Test liên quan: Tham chiếu trực tiếp `pytest integration`, `cargo test/check`, `health_check`, `compliance_audit.sh`, `audit_correlation.py` theo command profile tuần 8.
+
+### docs/roadmap/week8/RETRY_SLIPPAGE_IMPLEMENTATION_PLAN.md
+
+- Vai trò file: Kế hoạch triển khai Execution Retry/Slippage với dependency matrix theo lane, retry classification policy, idempotency policy và rollback strategy cho regressions tuần 8.
+- Class/Type trong file: Không có class/type (tài liệu rollout/rollback strategy cho execution retry/slippage).
+- Test liên quan: Kiểm chứng retry classification, duplicate-order guardrail, slippage boundary, W07 risk-off interaction và artifact consistency trước gate.
+
+### docs/roadmap/week8/ISSUE_REGISTER_WEEK8.md
+
+- Vai trò file: Sổ issue tuần 8 cho Execution Retry/Slippage, có metadata đầy đủ (`ETA`, `evidence_id`, `blocking_of`) và mapping theo blockers Phase 2.
+- Class/Type trong file: Không có class/type (tài liệu governance/triage tuần 8).
+- Test liên quan: Map failure từ baseline/scenario matrix vào owner/ETA/mitigation và quyết định gate blockers.
+
+### docs/roadmap/week8/INTERFACE_RETRY_SLIPPAGE_SPEC.md
+
+- Vai trò file: Spec interface tuần 8 cho retry/slippage, giữ canonical envelope freeze và khóa behavioral rules cho retry, slippage, idempotency và error handling.
+- Class/Type trong file: Không có class/type code; định nghĩa policy contract freeze, execution event semantics và file-level edit contract.
+- Test liên quan: Là đầu vào cho retry tests, slippage boundary checks, execution reject-path checks, metrics và observability audits tuần 8.
+
+### docs/roadmap/week8/GATE_REHEARSAL_NOTES.md
+
+- Vai trò file: Ghi chú rehearsal gate tuần 8, tổng hợp ngưỡng pass/fail cho Phase 2 (`duplicate order rate <= 0.1%`, risk-off bypass = 0, slippage invalid acceptance = 0) và trạng thái checklist.
+- Class/Type trong file: Không có class/type (tài liệu gate review tuần 8).
+- Test liên quan: Xác nhận build/static/smoke, retry classification, slippage boundary, W05/W06/W07 regression, correlation audit và artifact consistency.
+
+### docs/roadmap/week8/WEEK8_FINAL_REPORT_AND_WEEK9_START_PACK.md
+
+- Vai trò file: Báo cáo tổng kết tuần 8 và gói khởi động tuần 9 (Observability Contract), chứa nhánh `GO` và recovery queue khi `NO-GO`.
+- Class/Type trong file: Không có class/type (tài liệu weekly closeout + handoff).
+- Test liên quan: Tổng hợp evidence từ baseline report, implementation plan, issue register và gate rehearsal để ra quyết định final tuần 8.
+
 ### scripts/compliance_audit.sh
 
 - Vai trò file: Script auto-gate kiểm tra coverage của `correlation_id` và `schema_version` trên log evidence theo cơ chế fail-fast.
