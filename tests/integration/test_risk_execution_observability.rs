@@ -6,7 +6,7 @@
 //! - Observability metrics collection
 //! - Multi-component coordination
 
-use chrono::{Utc, Duration};
+use chrono::Utc;
 use common::types::*;
 use common::config::{RiskConfig, ExecutionConfig};
 use database::{DatabaseManager, MetricRecord, TradeRecord, SystemEvent};
@@ -161,7 +161,7 @@ mod risk_execution_observability_tests {
     #[tokio::test]
     async fn test_position_limit_enforcement_with_metrics() {
         // Test: Risk manager rejects order exceeding position limits, metrics recorded
-        let (_, router, db) = setup_test_environment().await;
+        let (_, _router, db) = setup_test_environment().await;
         let correlation_id = Uuid::new_v4().to_string();
 
         let max_position_size = 10000.0;
@@ -317,5 +317,47 @@ mod risk_execution_observability_tests {
         let metrics = db.get_metrics("realized_pnl", None, None, 10).await.unwrap();
         assert_eq!(metrics.len(), 1);
         assert!(metrics[0].value < 0.0); // Loss recorded
+    }
+
+    #[tokio::test]
+    async fn test_max_loss_trigger_workflow() {
+        // Test: Max-loss triggers -> Records P&L metrics with MAX_LOSS_EXCEEDED
+        let (mut stop_manager, _, db) = setup_test_environment().await;
+        let correlation_id = format!("max-loss-{}", Uuid::new_v4());
+
+        let position = Position {
+            symbol: Symbol("BTC/USD".to_string()),
+            side: Side::Bid,
+            quantity: Quantity(1.0),
+            entry_price: Price(60000.0),
+            current_price: Price(58500.0), // -1500 loss
+            unrealized_pnl: -1500.0,
+            realized_pnl: 0.0,
+            opened_at: Utc::now(),
+            updated_at: Utc::now(),
+        };
+
+        // Set max loss stop
+        let stop_config = StopLossConfig::max_loss_stop(1000.0).unwrap();
+        stop_manager.set_stop(&position, stop_config).expect("Set stop failed");
+
+        // Check trigger - should exceed $1000 threshold
+        let trigger = stop_manager.check(&position, &correlation_id);
+        assert!(trigger.is_some());
+
+        let event = trigger.unwrap();
+        assert_eq!(event.stop_type, StopLossType::MaxLoss);
+        assert_eq!(event.reason_code, RiskReason::MaxLossExceeded);
+
+        // Record P&L metric for audit
+        let pnl_metric = MetricRecord::new("max_loss_violation", position.unrealized_pnl)
+            .with_symbol("BTC/USD")
+            .add_label("correlation_id", &correlation_id);
+        db.insert_metric(&pnl_metric).await.expect("Metric insert failed");
+
+        // Verify metrics
+        let metrics = db.get_metrics("max_loss_violation", None, None, 10).await.unwrap();
+        assert_eq!(metrics.len(), 1);
+        assert_eq!(metrics[0].value, -1500.0);
     }
 }

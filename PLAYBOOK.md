@@ -3,10 +3,12 @@
 Tài liệu này là bản đồ triển khai chi tiết ở mức từng file và từng class/type cho code Python và Rust trong dự án.
 
 Phạm vi:
+
 - Python: toàn bộ src/**/*.py
 - Rust: toàn bộ rust/*/src/*.rs
 
 Mục tiêu sử dụng:
+
 1. Từ doc đi thẳng đến file code đúng.
 2. Hiểu vai trò từng class/type trước khi sửa.
 3. Chọn test phù hợp khi thay đổi.
@@ -16,6 +18,7 @@ Mục tiêu sử dụng:
 ## 1) Cách đọc playbook
 
 Mỗi file có 3 phần:
+
 - Vai trò file: file dùng để làm gì trong hệ thống.
 - Class/Type: các class (Python) hoặc struct/enum/trait (Rust) và ý nghĩa.
 - Test liên quan: nhóm test nên ưu tiên chạy khi sửa file này.
@@ -1119,6 +1122,12 @@ Mỗi file có 3 phần:
 - Type trong file: Không có type declaration (test cases mức crate/integration).
 - Test liên quan: `cd rust && cargo test -p risk-manager --test config_reload_tests`, `cd rust && cargo test -p risk-manager`.
 
+### rust/risk-manager/tests/stop_bench_tests.rs
+
+- Vai trò file: Dedicated micro-benchmark cho `StopManager::check`, xác nhận latency rủi ro luôn `<=0.2ms` dưới áp lực 1000+ positions.
+- Type trong file: Không có type declaration (harness performance test).
+- Test liên quan: `cd rust && cargo test -p risk-manager --test stop_bench_tests -- --nocapture`.
+
 ### rust/signal-bridge/src/bridge.rs
 
 - Vai trò file: Signal pipeline: feature/indicator compute, bridge với Python/runtime.
@@ -1163,6 +1172,7 @@ Mỗi file có 3 phần:
 ## 4) Doc -> Code -> Test nhanh (thực thi theo task)
 
 ### Task: Sửa Strategy/Signal
+
 - Code: src/strategies/*, src/backtesting/*, rust/signal-bridge/src/*
 - Test:
   - pytest tests/unit/python/test_strategies.py -q
@@ -1170,12 +1180,14 @@ Mỗi file có 3 phần:
   - pytest tests/integration/test_momentum_signal_generation.py -q
 
 ### Task: Sửa Market Data / Order Book
+
 - Code: rust/market-data/src/websocket.rs, orderbook.rs, aggregation.rs, publisher.rs
 - Test:
   - cd rust && cargo test -p market-data
   - cd tests && cargo test --test test_websocket --test test_end_to_end
 
 ### Task: Sửa Risk / Stop Loss / Circuit Breaker
+
 - Code: rust/risk-manager/src/limits.rs, stops.rs, circuit_breaker.rs, pnl.rs
 - Test:
   - cd rust && cargo test -p risk-manager --test limit_bva_tests --test limit_regression_tests --test config_reload_tests
@@ -1183,11 +1195,13 @@ Mỗi file có 3 phần:
   - pytest tests/unit/test_week3_stop_loss_immediate_exit.py -q
 
 ### Task: Sửa Execution / Router / Slippage
+
 - Code: rust/execution-engine/src/router.rs, retry.rs, slippage.rs, stop_loss_executor.rs
 - Test:
   - cd tests && cargo test --test test_execution_router --test test_retry --test test_slippage --test test_alpaca_api
 
 ### Task: Sửa Observability API/Storage
+
 - Code: src/observability/api/*, src/observability/metrics/*, src/observability/database/*, src/observability/storage/*
 - Test:
   - pytest tests/observability -q
@@ -1285,11 +1299,11 @@ Mỗi file có 3 phần:
 - Test liên quan: Tham chiếu trực tiếp các lệnh `pytest`/`cargo`/`health_check` trong command set contract-focused.
 
 ### docs/roadmap/week2/CONTRACT_COMPATIBILITY_MATRIX_V1.md
- 
- - Vai trò file: Ma trận tương thích contract Python-Rust với boundary inventory, owner files, test paths và policy checkpoints.
- - Class/Type trong file: Không có class/type (tài liệu contract mapping và ownership).
- - Test liên quan: Dẫn xuất test path cho từng boundary để kiểm tra compatibility theo critical path.
- 
+
+- Vai trò file: Ma trận tương thích contract Python-Rust với boundary inventory, owner files, test paths và policy checkpoints.
+- Class/Type trong file: Không có class/type (tài liệu contract mapping và ownership).
+- Test liên quan: Dẫn xuất test path cho từng boundary để kiểm tra compatibility theo critical path.
+
 ### docs/roadmap/week2/COMPATIBILITY_POLICY_V1.md
 
 - Vai trò file: Chính sách tương thích v1 cho hệ thống hybrid, định nghĩa chuẩn runtime (ABI3), chuẩn schema (v1) và mapping data types.
@@ -1533,3 +1547,9 @@ Mỗi file có 3 phần:
   - `PricePoint` (dataclass): một điểm giá/PnL trong stream kiểm thử.
   - `Scenario` (dataclass): scenario parity đầy đủ cho Python/Rust comparison.
 - Test liên quan: `python scripts/verify_parity_w6.py --fail-on-drift`, map vào Week 6 evidence `EV-W6-110`, `EV-W6-215`, `EV-W6-307`.
+
+### scripts/audit_w6_correlation.py
+
+- Vai trò file: Script audit runtime quét log file (`trading.log`) để xác minh tính toàn vẹn của chuỗi correlation `signal -> stop_trigger -> execution`.
+- Class/Type trong file: Không có class (regex-based audit tool).
+- Test liên quan: `python scripts/audit_w6_correlation.py logs/trading.log`.
