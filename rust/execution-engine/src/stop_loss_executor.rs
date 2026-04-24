@@ -1,8 +1,8 @@
+use chrono::Utc;
 use common::{
     types::{Order, OrderStatus, OrderType, Price, Quantity, Side, Symbol},
     Result, TradingError,
 };
-use chrono::Utc;
 use tracing::{info, warn};
 
 /// Handles execution of stop-loss triggered orders
@@ -33,6 +33,7 @@ impl StopLossExecutor {
         quantity: Quantity,
         current_price: Price,
         trigger_price: Price,
+        correlation_id: &str,
     ) -> Result<Order> {
         let (order_type, price, stop_price) = if self.use_market_orders {
             // Market order for immediate execution
@@ -44,11 +45,17 @@ impl StopLossExecutor {
         };
 
         let order_id = format!("stop-{}-{}", symbol.0, Utc::now().timestamp_millis());
-        let client_order_id = format!("stop-loss-{}", Utc::now().timestamp_nanos_opt().unwrap_or(0));
+        // Deterministic client_order_id based on correlation_id for idempotency
+        let client_order_id = format!("sl-{}", correlation_id);
 
         info!(
-            "[cid:INIT] Creating stop-loss order: {} {} {} @ {:?} (trigger: {:.8})",
-            order_id, close_side as u8, quantity.0, price, trigger_price.0
+            "[cid:{}] Creating stop-loss order: {} for {} {} @ {:?} (trigger: {:.8})",
+            correlation_id,
+            order_id,
+            side_label(close_side),
+            quantity.0,
+            price,
+            trigger_price.0
         );
 
         Ok(Order {
@@ -119,6 +126,13 @@ impl StopLossExecutor {
     }
 }
 
+fn side_label(side: Side) -> &'static str {
+    match side {
+        Side::Bid => "BUY",
+        Side::Ask => "SELL",
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -134,6 +148,7 @@ mod tests {
                 Quantity(1.0),
                 Price(50000.0),
                 Price(47500.0),
+                "test-cid",
             )
             .unwrap();
 
@@ -154,6 +169,7 @@ mod tests {
                 Quantity(1.0),
                 Price(50000.0),
                 Price(47500.0),
+                "test-cid",
             )
             .unwrap();
 
@@ -194,6 +210,7 @@ mod tests {
                 Quantity(1.0),
                 Price(50000.0),
                 Price(47500.0),
+                "test-cid",
             )
             .unwrap();
 
@@ -212,10 +229,40 @@ mod tests {
                 Quantity(1.0),
                 Price(50000.0),
                 Price(47500.0),
+                "test-cid",
             )
             .unwrap();
 
         order.price = None;
         assert!(executor.validate_stop_order(&order).is_err());
+    }
+
+    #[test]
+    fn test_replayed_stop_uses_same_client_order_id() {
+        let executor = StopLossExecutor::new(true, 0.5);
+
+        let first = executor
+            .create_stop_loss_order(
+                Symbol("BTCUSDT".to_string()),
+                Side::Ask,
+                Quantity(1.0),
+                Price(50000.0),
+                Price(47500.0),
+                "replay-cid",
+            )
+            .unwrap();
+        let replay = executor
+            .create_stop_loss_order(
+                Symbol("BTCUSDT".to_string()),
+                Side::Ask,
+                Quantity(1.0),
+                Price(50000.0),
+                Price(47500.0),
+                "replay-cid",
+            )
+            .unwrap();
+
+        assert_eq!(first.client_order_id, replay.client_order_id);
+        assert_eq!(first.client_order_id, "sl-replay-cid");
     }
 }

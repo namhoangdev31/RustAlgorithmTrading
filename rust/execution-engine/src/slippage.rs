@@ -19,7 +19,7 @@ pub struct SlippageEstimator {
 impl SlippageEstimator {
     pub fn new() -> Self {
         Self {
-            base_slippage_bps: 1.0,  // 1 basis point base slippage
+            base_slippage_bps: 1.0, // 1 basis point base slippage
             volatility_multiplier: 1.0,
         }
     }
@@ -97,14 +97,14 @@ impl SlippageEstimator {
             // Calculate how far limit price is from mid (in production, get from order book)
             // For now, assume we're pricing at mid
             let assumed_mid = limit_price.0;
-            let assumed_spread_bps = 2.0;  // 2bp spread assumption
+            let assumed_spread_bps = 2.0; // 2bp spread assumption
 
             // Limit orders capture spread but face queue position risk
             let queue_risk = self.base_slippage_bps * 0.5;
 
             // Adverse selection risk increases with order size
             let order_size = order.quantity.0;
-            let size_ratio = order_size / 100000.0;  // Relative to "normal" 100k shares
+            let size_ratio = order_size / 100000.0; // Relative to "normal" 100k shares
             let adverse_selection = self.base_slippage_bps * size_ratio.sqrt() * 0.3;
 
             assumed_spread_bps * 0.5 + queue_risk + adverse_selection
@@ -150,8 +150,8 @@ impl Default for SlippageEstimator {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use common::types::{OrderStatus, Price, Quantity, Symbol};
     use chrono::Utc;
+    use common::types::{OrderStatus, Price, Quantity, Symbol};
 
     fn create_test_order(qty: f64, price: Option<f64>, order_type: OrderType) -> Order {
         Order {
@@ -192,9 +192,12 @@ mod tests {
         let small_slippage = estimator.estimate(&small_order);
         let large_slippage = estimator.estimate(&large_order);
 
-        assert!(large_slippage > small_slippage,
+        assert!(
+            large_slippage > small_slippage,
             "Larger orders should have more slippage: {} vs {}",
-            large_slippage, small_slippage);
+            large_slippage,
+            small_slippage
+        );
     }
 
     #[test]
@@ -208,9 +211,12 @@ mod tests {
         let limit_slippage = estimator.estimate(&limit_order);
 
         // Limit orders typically have less slippage than market orders
-        assert!(limit_slippage <= market_slippage,
+        assert!(
+            limit_slippage <= market_slippage,
             "Limit order slippage should be <= market order: {} vs {}",
-            limit_slippage, market_slippage);
+            limit_slippage,
+            market_slippage
+        );
     }
 
     #[test]
@@ -223,8 +229,11 @@ mod tests {
         let low_vol_slippage = low_vol.estimate(&order);
         let high_vol_slippage = high_vol.estimate(&order);
 
-        assert!(high_vol_slippage > low_vol_slippage,
+        assert!(
+            high_vol_slippage > low_vol_slippage,
             "High volatility should increase slippage: {} vs {}",
-            high_vol_slippage, low_vol_slippage);
+            high_vol_slippage,
+            low_vol_slippage
+        );
     }
 }

@@ -168,6 +168,8 @@ pub enum RiskReason {
     StrategyDailyLossLimitBreach,
     StrategyAllocationLimitExceeded,
     CircuitBreakerTripped,
+    StopLossTriggered,
+    MaxLossExceeded,
     InvalidOrderParameters,
 }
 

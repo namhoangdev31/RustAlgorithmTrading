@@ -88,17 +88,27 @@ impl RiskManagerService {
         self.circuit_breaker.update_config(config);
     }
 
-    pub fn update_position(&mut self, position: Position) -> Option<StopLossTrigger> {
+    pub fn update_position(
+        &mut self,
+        position: Position,
+        correlation_id: &str,
+    ) -> Option<StopLossTrigger> {
         // Update P&L tracking
         self.pnl_tracker.update(&position);
+        self.limit_checker.update_position(position.clone());
+
+        if position.quantity.0.abs() <= 1e-12 {
+            self.stop_manager.remove_stop(&position.symbol);
+            return None;
+        }
 
         // Check stop-loss and return trigger if activated
-        let trigger = self.stop_manager.check(&position);
+        let trigger = self.stop_manager.check(&position, correlation_id);
 
         if trigger.is_some() {
             warn!(
-                "[cid:INIT] Stop-loss triggered for position: {:?}",
-                position.symbol
+                "[cid:{}] Stop-loss triggered for position: {:?}",
+                correlation_id, position.symbol
             );
         }
 
@@ -142,5 +152,87 @@ fn reason_label(reason: Option<common::types::RiskReason>) -> String {
             .map(|raw| raw.trim_matches('"').to_string())
             .unwrap_or_else(|_| "UNKNOWN".to_string()),
         None => "NONE".to_string(),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use chrono::Utc;
+    use common::types::{
+        Order, OrderStatus, OrderType, Position, Price, Quantity, RiskDecision, Side, Symbol,
+    };
+
+    fn test_config() -> common::config::RiskConfig {
+        common::config::RiskConfig {
+            max_position_size: 100_000.0,
+            max_notional_exposure: 250_000.0,
+            max_open_positions: 1,
+            stop_loss_percent: 5.0,
+            trailing_stop_percent: 3.0,
+            enable_circuit_breaker: true,
+            max_loss_threshold: 10_000.0,
+        }
+    }
+
+    fn position(symbol: &str, quantity: f64) -> Position {
+        Position {
+            symbol: Symbol(symbol.to_string()),
+            side: Side::Bid,
+            quantity: Quantity(quantity),
+            entry_price: Price(100.0),
+            current_price: Price(100.0),
+            unrealized_pnl: 0.0,
+            realized_pnl: 0.0,
+            opened_at: Utc::now(),
+            updated_at: Utc::now(),
+        }
+    }
+
+    fn order(symbol: &str) -> Order {
+        Order {
+            order_id: format!("order-{symbol}"),
+            client_order_id: format!("client-{symbol}"),
+            symbol: Symbol(symbol.to_string()),
+            side: Side::Bid,
+            order_type: OrderType::Limit,
+            quantity: Quantity(1.0),
+            price: Some(Price(100.0)),
+            stop_price: None,
+            status: OrderStatus::Pending,
+            filled_quantity: Quantity(0.0),
+            average_price: None,
+            created_at: Utc::now(),
+            updated_at: Utc::now(),
+        }
+    }
+
+    #[test]
+    fn update_position_closes_limit_checker_position() {
+        let mut service = RiskManagerService::new(test_config()).unwrap();
+        service.update_position(position("AAPL", 1.0), "cid-1");
+
+        let rejected = service.validate_order(&order("MSFT"), "cid-open");
+        assert_eq!(rejected.decision, RiskDecision::Reject);
+
+        service.update_position(position("AAPL", 0.0), "test-cid");
+
+        let allowed = service.validate_order(&order("MSFT"), "cid-closed");
+        assert_eq!(allowed.decision, RiskDecision::Allow);
+    }
+
+    #[test]
+    fn update_position_removes_stale_stop_when_position_closes() {
+        let mut service = RiskManagerService::new(test_config()).unwrap();
+        let open = position("AAPL", 1.0);
+
+        service
+            .set_stop_loss(&open, StopLossConfig::static_stop(5.0).unwrap())
+            .unwrap();
+        assert!(service.stop_manager().has_stop(&open.symbol));
+
+        service.update_position(position("AAPL", 0.0), "test-cid");
+
+        assert!(!service.stop_manager().has_stop(&open.symbol));
     }
 }

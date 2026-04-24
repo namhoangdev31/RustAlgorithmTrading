@@ -1067,6 +1067,14 @@ Mỗi file có 3 phần:
 - Type trong file: Không có type declaration (thường là wiring, function helpers, hoặc entrypoint).
 - Test liên quan: rust/risk-manager/tests/config_reload_tests.rs, rust/risk-manager/tests/limit_bva_tests.rs, tests/integration/test_risk_execution_observability.rs.
 
+### rust/risk-manager/src/bin/verify_stop.rs
+
+- Vai trò file: Helper CLI cho Week 6 parity harness, nhận JSON price stream từ Python và trả stop-loss trigger outcome của Rust risk-manager.
+- Type trong file:
+  - `ParityRequest` (struct): DTO input cho stop-loss parity check.
+  - `ParityResponse` (struct): DTO output chứa trigger status, `correlation_id`, `stop_type`, `reason_code` và trigger/current price.
+- Test liên quan: `python scripts/verify_parity_w6.py --fail-on-drift`, `cd rust && cargo test -p risk-manager`.
+
 ### rust/risk-manager/src/reload.rs
 
 - Vai trò file: Parser và mapper hot-reload cho `config/risk_limits.toml`, chuyển về `RiskConfig` runtime với rule fail-safe.
@@ -1456,6 +1464,54 @@ Mỗi file có 3 phần:
 - Class/Type trong file: Không có class/type (tài liệu weekly closeout + handoff).
 - Test liên quan: Tổng hợp evidence từ baseline report, implementation plan, issue register và gate rehearsal để ra quyết định final tuần 5.
 
+### docs/roadmap/W06_OPERATIONS_PLAN.md
+
+- Vai trò file: Kế hoạch vận hành tuần 6 cho Stop-loss coherence, tập trung đồng bộ stop-loss Python/Rust, execution side-effect guardrail và gate Phase 2.
+- Class/Type trong file: Không có class/type (tài liệu điều phối implementation stop-loss, triage và closeout).
+- Test liên quan: Điều phối command profile stop-loss-focused (pytest immediate stop regression + pytest integration + cargo test/check + health/compliance/correlation audits) và scenario matrix tuần 6.
+
+### docs/roadmap/week6/KPI_CHARTER_WEEK6.md
+
+- Vai trò file: KPI charter tuần 6 cho Stop-loss coherence, định nghĩa ngưỡng parity, duplicate stop-order, side-effect, stale cleanup và governance consistency.
+- Class/Type trong file: Không có class/type (tài liệu KPI governance tuần 6).
+- Test liên quan: Dùng evidence từ baseline report, issue register và gate notes để tính KPI.
+
+### docs/roadmap/week6/STOP_LOSS_BASELINE_REPORT.md
+
+- Vai trò file: Baseline report tuần 6 cho Stop-loss coherence, chuẩn hóa matrix `expected/actual/status/evidence_id` cho command profile và stop-loss scenarios.
+- Class/Type trong file: Không có class/type (tài liệu validation/baseline evidence).
+- Test liên quan: Tham chiếu trực tiếp immediate stop regression, `pytest integration`, `cargo test/check`, `health_check`, `compliance_audit.sh`, `audit_correlation.py` theo command profile tuần 6.
+
+### docs/roadmap/week6/STOP_LOSS_IMPLEMENTATION_PLAN.md
+
+- Vai trò file: Kế hoạch triển khai Stop-loss coherence với dependency matrix theo lane, triage clusters A/B/C và rollback strategy cho regressions tuần 6.
+- Class/Type trong file: Không có class/type (tài liệu rollout/rollback strategy cho stop-loss).
+- Test liên quan: Kiểm chứng Python/Rust stop semantics parity, execution side-effect guardrail, stale cleanup và artifact consistency trước gate.
+
+### docs/roadmap/week6/ISSUE_REGISTER_WEEK6.md
+
+- Vai trò file: Sổ issue tuần 6 cho Stop-loss coherence, có metadata đầy đủ (`ETA`, `evidence_id`, `blocking_of`) và mapping theo blockers Phase 2.
+- Class/Type trong file: Không có class/type (tài liệu governance/triage tuần 6).
+- Test liên quan: Map failure từ baseline/scenario matrix vào owner/ETA/mitigation và quyết định gate blockers.
+
+### docs/roadmap/week6/INTERFACE_STOP_LOSS_SPEC.md
+
+- Vai trò file: Spec interface tuần 6 cho stop-loss, giữ canonical envelope freeze và khóa behavioral rules cho stop event semantics.
+- Class/Type trong file: Không có class/type code; định nghĩa policy contract freeze và error-handling/stop event rules.
+- Test liên quan: Là đầu vào cho stop-loss checks, execution stop-path integration checks và observability audits tuần 6.
+
+### docs/roadmap/week6/GATE_REHEARSAL_NOTES.md
+
+- Vai trò file: Ghi chú rehearsal gate tuần 6, tổng hợp ngưỡng pass/fail cho Phase 2 (`duplicate stop-order <= 0.1%`, stop side-effect lớn = 0) và trạng thái checklist.
+- Class/Type trong file: Không có class/type (tài liệu gate review tuần 6).
+- Test liên quan: Xác nhận build/static/smoke, stop-loss parity matrix, correlation audit và artifact consistency.
+
+### docs/roadmap/week6/WEEK6_FINAL_REPORT_AND_WEEK7_START_PACK.md
+
+- Vai trò file: Báo cáo tổng kết tuần 6 và gói khởi động tuần 7 (Circuit breaker hardening), chứa nhánh `GO` và recovery queue khi `NO-GO`.
+- Class/Type trong file: Không có class/type (tài liệu weekly closeout + handoff).
+- Test liên quan: Tổng hợp evidence từ baseline report, implementation plan, issue register và gate rehearsal để ra quyết định final tuần 6.
+
 ### scripts/compliance_audit.sh
 
 - Vai trò file: Script auto-gate kiểm tra coverage của `correlation_id` và `schema_version` trên log evidence theo cơ chế fail-fast.
@@ -1468,3 +1524,12 @@ Mỗi file có 3 phần:
 - Class/Type trong file:
   - `Finding` (dataclass): lưu thông tin lỗ hổng theo `path:line:reason`.
 - Test liên quan: Chạy trong command profile tuần 3, yêu cầu `0 findings`, map trực tiếp vào evidence `EV-W3-107`.
+
+### scripts/verify_parity_w6.py
+
+- Vai trò file: Week 6 parity harness so sánh stop-loss behavior Python reference với Rust `risk-manager` trên cùng price stream và cùng `correlation_id`.
+- Class/Type trong file:
+  - `StopLossConfig` (dataclass): cấu hình stop-loss wire token (`STATIC/TRAILING/ABSOLUTE/MAX_LOSS`).
+  - `PricePoint` (dataclass): một điểm giá/PnL trong stream kiểm thử.
+  - `Scenario` (dataclass): scenario parity đầy đủ cho Python/Rust comparison.
+- Test liên quan: `python scripts/verify_parity_w6.py --fail-on-drift`, map vào Week 6 evidence `EV-W6-110`, `EV-W6-215`, `EV-W6-307`.

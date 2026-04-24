@@ -1,5 +1,5 @@
-use common::types::{Position, Price, Quantity, Side, Symbol, Trade};
 use chrono::Utc;
+use common::types::{Position, Price, Quantity, Side, Symbol, Trade};
 use std::collections::HashMap;
 
 #[derive(Debug, Clone)]
@@ -30,15 +30,16 @@ impl PnLTracker {
 
     /// Update position with a new trade
     pub fn update_with_trade(&mut self, symbol: &str, trade: &Trade) {
-        let position = self.positions.entry(symbol.to_string()).or_insert_with(|| {
-            PositionState {
+        let position = self
+            .positions
+            .entry(symbol.to_string())
+            .or_insert_with(|| PositionState {
                 quantity: Quantity(0.0),
                 avg_entry_price: Price(0.0),
                 side: trade.side,
                 realized_pnl: 0.0,
                 total_cost: 0.0,
-            }
-        });
+            });
 
         let trade_value = trade.price.0 * trade.quantity.0;
 
@@ -94,8 +95,8 @@ impl PnLTracker {
         if let Some(position) = self.positions.get(symbol) {
             let price_diff = current_price.0 - position.avg_entry_price.0;
             let multiplier = match position.side {
-                Side::Bid => 1.0,   // Long position
-                Side::Ask => -1.0,  // Short position
+                Side::Bid => 1.0,  // Long position
+                Side::Ask => -1.0, // Short position
             };
             price_diff * position.quantity.0 * multiplier
         } else {

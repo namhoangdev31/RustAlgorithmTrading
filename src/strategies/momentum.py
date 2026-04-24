@@ -55,6 +55,7 @@ class MomentumStrategy(Strategy):
         position_size: float = 0.15,
         stop_loss_pct: float = 0.02,
         take_profit_pct: float = 0.03,
+        min_holding_period: int = 10,
         # PHASE 1: Relaxed entry conditions
         macd_histogram_threshold: float = 0.0005,  # Reduced from 0.001
         # PHASE 2: Volume and trailing stops
@@ -99,6 +100,7 @@ class MomentumStrategy(Strategy):
             'position_size': position_size,
             'stop_loss_pct': stop_loss_pct,
             'take_profit_pct': take_profit_pct,
+            'min_holding_period': min_holding_period,
             'macd_histogram_threshold': macd_histogram_threshold,
             'volume_confirmation': volume_confirmation,
             'volume_ma_period': volume_ma_period,
@@ -246,21 +248,28 @@ class MomentumStrategy(Strategy):
 
         # CRITICAL FIX: Determine range - only process latest bar for live trading
         min_bars = max(rsi_period, ema_slow, macd_signal_period) + 1
-        if latest_only and len(data) > min_bars:
+        if symbol in self.active_positions:
+            # Risk exits must not wait for indicator warmup or latest-only gating.
+            start_idx = 0
+            position = self.active_positions[symbol]
+            call_highest_price = position.get('highest_price', position['entry_price'])
+            call_lowest_price = position.get('lowest_price', position['entry_price'])
+        elif latest_only and len(data) > min_bars:
             start_idx = len(data) - 1
         else:
             start_idx = min_bars
 
         for i in range(start_idx, len(data)):
             current = data.iloc[i]
-            previous = data.iloc[i - 1]
-
-            if pd.isna(current['rsi']) or pd.isna(current['macd']):
-                logger.debug(f"⏭️ Skipping bar {i}: NaN indicators (RSI or MACD)")
-                continue
-
+            previous = data.iloc[i - 1] if i > 0 else current
             current_price = float(current['close'])
             signal_type = SignalType.HOLD
+
+            if symbol not in self.active_positions and (
+                pd.isna(current['rsi']) or pd.isna(current['macd'])
+            ):
+                logger.debug(f"⏭️ Skipping bar {i}: NaN indicators (RSI or MACD)")
+                continue
 
             # ENHANCED LOGGING: Log current technical indicators
             logger.debug(
@@ -276,22 +285,32 @@ class MomentumStrategy(Strategy):
                 entry_price = position['entry_price']
                 entry_time = position['entry_time']  # CRITICAL: Define entry_time
                 position_type = position['type']
+                if current.name < entry_time:
+                    continue
+                highest_price = position.get('highest_price', entry_price)
+                lowest_price = position.get('lowest_price', entry_price)
+
+                # CRITICAL FIX: Calculate holding period FIRST to enforce minimum hold time
+                try:
+                    entry_index = data.index.get_loc(entry_time)
+                except KeyError:
+                    entry_index = 0
+                bars_held = max(0, i - entry_index)
+                min_holding_period = self.get_parameter('min_holding_period', 10)  # Hold at least 10 bars
 
                 # PHASE 2: Track highest/lowest price for trailing stops
                 use_trailing_stop = self.get_parameter('use_trailing_stop', True)
                 if use_trailing_stop:
                     if position_type == 'long':
-                        highest_price = position.get('highest_price', entry_price)
                         highest_price = max(highest_price, current_price)
+                        if bars_held < min_holding_period:
+                            highest_price = min(highest_price, entry_price * (1 + take_profit_pct))
                         self.active_positions[symbol]['highest_price'] = highest_price
                     else:  # short
-                        lowest_price = position.get('lowest_price', entry_price)
                         lowest_price = min(lowest_price, current_price)
+                        if bars_held < min_holding_period:
+                            lowest_price = max(lowest_price, entry_price * (1 - take_profit_pct))
                         self.active_positions[symbol]['lowest_price'] = lowest_price
-
-                # CRITICAL FIX: Calculate holding period FIRST to enforce minimum hold time
-                bars_held = i - data.index.get_loc(entry_time)
-                min_holding_period = self.get_parameter('min_holding_period', 10)  # Hold at least 10 bars
 
                 # Calculate P&L
                 if position_type == 'long':
@@ -336,19 +355,19 @@ class MomentumStrategy(Strategy):
                     trailing_stop_pct = self.get_parameter('trailing_stop_pct', 0.015)
 
                     if position_type == 'long':
-                        # Exit if price drops trailing_stop_pct from highest price
-                        if current_price < highest_price * (1 - trailing_stop_pct):
+                        # Exit only against the high known before this call; new highs are state for the next tick.
+                        if current_price < call_highest_price * (1 - trailing_stop_pct):
                             exit_triggered = True
                             exit_reason = "trailing_stop_loss"
-                            pnl_from_peak = (current_price - highest_price) / highest_price
-                            logger.info(f"📉 Trailing stop: price={current_price:.2f}, peak={highest_price:.2f}, drop={pnl_from_peak:.2%}")
+                            pnl_from_peak = (current_price - call_highest_price) / call_highest_price
+                            logger.info(f"📉 Trailing stop: price={current_price:.2f}, peak={call_highest_price:.2f}, drop={pnl_from_peak:.2%}")
                     else:  # short
-                        # Exit if price rises trailing_stop_pct from lowest price
-                        if current_price > lowest_price * (1 + trailing_stop_pct):
+                        # Exit only against the low known before this call; new lows are state for the next tick.
+                        if current_price > call_lowest_price * (1 + trailing_stop_pct):
                             exit_triggered = True
                             exit_reason = "trailing_stop_loss"
-                            pnl_from_trough = (lowest_price - current_price) / lowest_price
-                            logger.info(f"📈 Trailing stop: price={current_price:.2f}, trough={lowest_price:.2f}, rise={pnl_from_trough:.2%}")
+                            pnl_from_trough = (call_lowest_price - current_price) / call_lowest_price
+                            logger.info(f"📈 Trailing stop: price={current_price:.2f}, trough={call_lowest_price:.2f}, rise={pnl_from_trough:.2%}")
 
                 # 2. DELAYED EXITS (require minimum holding period to capture momentum):
 
@@ -375,6 +394,7 @@ class MomentumStrategy(Strategy):
                             'entry_price': entry_price,
                             'position_type': position_type,
                             'bars_held': bars_held,
+                            'holding_period_bypassed': bars_held < min_holding_period and exit_reason != 'take_profit',
                             'rsi': float(current['rsi']),
                             'macd': float(current['macd']),
                             'highest_price': float(highest_price) if position_type == 'long' else None,
@@ -388,6 +408,9 @@ class MomentumStrategy(Strategy):
                 # 3. Technical exit signals (only after minimum holding period)
                 # These are momentum reversal signals, not risk management
                 if bars_held < min_holding_period:
+                    continue
+
+                if pd.isna(current['rsi']) or pd.isna(current['macd']):
                     continue
 
                 if bars_held >= min_holding_period:

@@ -1,10 +1,10 @@
-use execution_engine::ExecutionEngineService;
-use tracing_subscriber::{fmt, prelude::*, EnvFilter};
 use common::config::SystemConfig;
 use common::health::HealthCheck;
-use common::metrics::{MetricsConfig, start_metrics_server};
+use common::metrics::{start_metrics_server, MetricsConfig};
+use execution_engine::ExecutionEngineService;
 use std::sync::Arc;
 use tokio::sync::RwLock;
+use tracing_subscriber::{fmt, prelude::*, EnvFilter};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -19,7 +19,11 @@ async fn main() -> anyhow::Result<()> {
     // Load configuration with validation
     let config = match SystemConfig::from_file("config/system.json") {
         Ok(cfg) => {
-            tracing::info!("[cid:INIT] Configuration loaded successfully - Environment: {}, Paper Trading: {}", cfg.environment(), cfg.is_paper_trading());
+            tracing::info!(
+                "[cid:INIT] Configuration loaded successfully - Environment: {}, Paper Trading: {}",
+                cfg.environment(),
+                cfg.is_paper_trading()
+            );
             cfg
         }
         Err(e) => {
@@ -49,7 +53,10 @@ async fn main() -> anyhow::Result<()> {
             Some(handle)
         }
         Err(e) => {
-            tracing::warn!("[cid:INIT] Failed to start metrics server: {}. Continuing without metrics.", e);
+            tracing::warn!(
+                "[cid:INIT] Failed to start metrics server: {}. Continuing without metrics.",
+                e
+            );
             None
         }
     };
@@ -67,7 +74,8 @@ async fn main() -> anyhow::Result<()> {
         Err(e) => {
             tracing::error!("[cid:INIT] Failed to initialize service: {}", e);
             let mut h = health.write().await;
-            *h = HealthCheck::unhealthy("execution-engine", format!("Initialization failed: {}", e));
+            *h =
+                HealthCheck::unhealthy("execution-engine", format!("Initialization failed: {}", e));
             return Err(anyhow::anyhow!("Service initialization error: {}", e));
         }
     };

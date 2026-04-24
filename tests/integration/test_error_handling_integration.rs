@@ -189,7 +189,7 @@ mod error_handling_tests {
         assert!(result.is_ok());
 
         // Even with network issues, stop manager should track state locally
-        let trigger = stop_manager.check(&position);
+        let trigger = stop_manager.check(&position, "test-cid");
         assert!(trigger.is_some()); // Stop should trigger regardless of network
     }
 

@@ -122,7 +122,13 @@ class SimplifiedMomentumStrategy(Strategy):
 
         # CRITICAL FIX: Determine range - only process latest bar for live trading
         min_bars = max(rsi_period, ema_slow, macd_signal_period) + 1
-        if latest_only and len(data) > min_bars:
+        if symbol in self.active_positions:
+            # Stop-loss paths are safety paths and must run even on short warmup slices.
+            start_idx = 0
+            position = self.active_positions[symbol]
+            call_highest_price = position.get('highest_price', position['entry_price'])
+            call_lowest_price = position.get('lowest_price', position['entry_price'])
+        elif latest_only and len(data) > min_bars:
             # Only process the latest bar
             start_idx = len(data) - 1
         else:
@@ -131,13 +137,14 @@ class SimplifiedMomentumStrategy(Strategy):
 
         for i in range(start_idx, len(data)):
             current = data.iloc[i]
-            previous = data.iloc[i - 1]
-
-            if pd.isna(current['rsi']) or pd.isna(current['macd']):
-                continue
-
+            previous = data.iloc[i - 1] if i > 0 else current
             current_price = float(current['close'])
             signal_type = SignalType.HOLD
+
+            if symbol not in self.active_positions and (
+                pd.isna(current['rsi']) or pd.isna(current['macd'])
+            ):
+                continue
 
             # Check for EXIT signals (stop-loss / take-profit / trailing stop)
             if symbol in self.active_positions:
@@ -145,21 +152,31 @@ class SimplifiedMomentumStrategy(Strategy):
                 entry_price = position['entry_price']
                 entry_time = position['entry_time']
                 position_type = position['type']
+                if current.name < entry_time:
+                    continue
+                highest_price = position.get('highest_price', entry_price)
+                lowest_price = position.get('lowest_price', entry_price)
+
+                # Calculate holding period
+                try:
+                    entry_index = data.index.get_loc(entry_time)
+                except KeyError:
+                    entry_index = 0
+                bars_held = max(0, i - entry_index)
 
                 # Track highest/lowest price for trailing stops
                 use_trailing_stop = self.get_parameter('use_trailing_stop', True)
                 if use_trailing_stop:
                     if position_type == 'long':
-                        highest_price = position.get('highest_price', entry_price)
                         highest_price = max(highest_price, current_price)
+                        if bars_held < min_holding_period:
+                            highest_price = min(highest_price, entry_price * (1 + take_profit_pct))
                         self.active_positions[symbol]['highest_price'] = highest_price
                     else:  # short
-                        lowest_price = position.get('lowest_price', entry_price)
                         lowest_price = min(lowest_price, current_price)
+                        if bars_held < min_holding_period:
+                            lowest_price = max(lowest_price, entry_price * (1 - take_profit_pct))
                         self.active_positions[symbol]['lowest_price'] = lowest_price
-
-                # Calculate holding period
-                bars_held = i - data.index.get_loc(entry_time)
 
                 # Calculate P&L
                 if position_type == 'long':
@@ -200,11 +217,11 @@ class SimplifiedMomentumStrategy(Strategy):
                     trailing_stop_pct = self.get_parameter('trailing_stop_pct', 0.015)
 
                     if position_type == 'long':
-                        if current_price < highest_price * (1 - trailing_stop_pct):
+                        if current_price < call_highest_price * (1 - trailing_stop_pct):
                             exit_triggered = True
                             exit_reason = "trailing_stop_loss"
                     else:  # short
-                        if current_price > lowest_price * (1 + trailing_stop_pct):
+                        if current_price > call_lowest_price * (1 + trailing_stop_pct):
                             exit_triggered = True
                             exit_reason = "trailing_stop_loss"
 
@@ -233,6 +250,7 @@ class SimplifiedMomentumStrategy(Strategy):
                             'entry_price': entry_price,
                             'position_type': position_type,
                             'bars_held': bars_held,
+                            'holding_period_bypassed': bars_held < min_holding_period and exit_reason != 'take_profit',
                         }
                     )
                     signals.append(signal)
@@ -242,6 +260,9 @@ class SimplifiedMomentumStrategy(Strategy):
                 # 3. Technical exit signals (only after minimum holding period)
                 # These are momentum reversal signals, not risk management
                 if bars_held < min_holding_period:
+                    continue
+
+                if pd.isna(current['rsi']) or pd.isna(current['macd']):
                     continue
 
                 if position_type == 'long':

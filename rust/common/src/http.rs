@@ -1,12 +1,7 @@
 /// HTTP health check and monitoring endpoints
 use crate::health::HealthCheck;
 use crate::Result;
-use axum::{
-    extract::State,
-    http::StatusCode,
-    routing::get,
-    Json, Router,
-};
+use axum::{extract::State, http::StatusCode, routing::get, Json, Router};
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use tokio::sync::RwLock;
@@ -75,9 +70,7 @@ async fn health_handler(
 }
 
 /// Readiness probe endpoint
-async fn ready_handler(
-    State(state): State<Arc<HealthState>>,
-) -> (StatusCode, Json<ReadyResponse>) {
+async fn ready_handler(State(state): State<Arc<HealthState>>) -> (StatusCode, Json<ReadyResponse>) {
     let health = state.health.read().await;
 
     let response = ReadyResponse {
@@ -101,10 +94,7 @@ async fn liveness_handler() -> (StatusCode, &'static str) {
 }
 
 /// Start health check HTTP server
-pub async fn start_health_server(
-    port: u16,
-    health: Arc<RwLock<HealthCheck>>,
-) -> Result<()> {
+pub async fn start_health_server(port: u16, health: Arc<RwLock<HealthCheck>>) -> Result<()> {
     let app = create_health_router(health);
 
     let addr = std::net::SocketAddr::from(([0, 0, 0, 0], port));
@@ -144,9 +134,10 @@ mod tests {
 
     #[tokio::test]
     async fn test_unhealthy_status() {
-        let health = Arc::new(RwLock::new(
-            HealthCheck::unhealthy("test-service", "Test failure".to_string())
-        ));
+        let health = Arc::new(RwLock::new(HealthCheck::unhealthy(
+            "test-service",
+            "Test failure".to_string(),
+        )));
         let router = create_health_router(health.clone());
 
         let request = axum::http::Request::builder()
@@ -161,9 +152,10 @@ mod tests {
 
     #[tokio::test]
     async fn test_liveness_always_ok() {
-        let health = Arc::new(RwLock::new(
-            HealthCheck::unhealthy("test-service", "Unhealthy".to_string())
-        ));
+        let health = Arc::new(RwLock::new(HealthCheck::unhealthy(
+            "test-service",
+            "Unhealthy".to_string(),
+        )));
         let router = create_health_router(health);
 
         let request = axum::http::Request::builder()

@@ -263,7 +263,7 @@ mod risk_execution_observability_tests {
         position.current_price = Price(142.0); // -5.3% loss
         position.unrealized_pnl = (142.0 - 150.0) * 100.0;
 
-        let trigger = stop_manager.check(&position);
+        let trigger = stop_manager.check(&position, &correlation_id);
         assert!(trigger.is_some());
 
         let trigger_event = trigger.unwrap();
@@ -276,7 +276,9 @@ mod risk_execution_observability_tests {
                 "trigger_price": trigger_event.trigger_price.0,
                 "current_price": trigger_event.current_price.0,
                 "unrealized_pnl": trigger_event.unrealized_pnl,
-                "stop_type": format!("{:?}", trigger_event.stop_type)
+                "stop_type": serde_json::to_value(trigger_event.stop_type).unwrap(),
+                "reason_code": serde_json::to_value(trigger_event.reason_code).unwrap(),
+                "disposition": "STOP_TRIGGERED"
             }));
         db.insert_event(&stop_log).await.expect("Event insert failed");
 

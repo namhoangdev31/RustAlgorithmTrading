@@ -1,6 +1,10 @@
-use common::{Result, TradingError, types::Order, config::ExecutionConfig};
 use crate::retry::RetryPolicy;
-use governor::{Quota, RateLimiter, clock::DefaultClock, state::{InMemoryState, NotKeyed}};
+use common::{config::ExecutionConfig, types::Order, Result, TradingError};
+use governor::{
+    clock::DefaultClock,
+    state::{InMemoryState, NotKeyed},
+    Quota, RateLimiter,
+};
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use std::num::NonZeroU32;
@@ -44,18 +48,16 @@ impl OrderRouter {
         // Validate credentials are present for live trading
         config.validate_credentials()?;
 
-        let retry_policy = RetryPolicy::new(
-            config.retry_attempts,
-            config.retry_delay_ms,
-        );
+        let retry_policy = RetryPolicy::new(config.retry_attempts, config.retry_delay_ms);
 
         // Create rate limiter with proper error handling
-        let quota = Quota::per_second(
-            NonZeroU32::new(config.rate_limit_per_second)
-                .ok_or_else(|| TradingError::Configuration(
-                    "rate_limit_per_second must be greater than 0".to_string()
-                ))?
-        );
+        let quota = Quota::per_second(NonZeroU32::new(config.rate_limit_per_second).ok_or_else(
+            || {
+                TradingError::Configuration(
+                    "rate_limit_per_second must be greater than 0".to_string(),
+                )
+            },
+        )?);
         let rate_limiter = Arc::new(RateLimiter::direct(quota));
 
         // Configure HTTP client with TLS requirements
@@ -75,7 +77,11 @@ impl OrderRouter {
     }
 
     /// Route and execute order with retry logic
-    pub async fn route(&self, order: Order, current_market_price: Option<f64>) -> Result<AlpacaOrderResponse> {
+    pub async fn route(
+        &self,
+        order: Order,
+        current_market_price: Option<f64>,
+    ) -> Result<AlpacaOrderResponse> {
         // Check slippage for limit orders
         if let Some(limit_price) = order.price {
             if let Some(market_price) = current_market_price {
@@ -129,7 +135,8 @@ impl OrderRouter {
                 let alpaca_order = self.build_alpaca_request(&order)?;
 
                 // Send to exchange
-                self.send_to_exchange(&http_client, &config, alpaca_order).await
+                self.send_to_exchange(&http_client, &config, alpaca_order)
+                    .await
             })
             .await
     }
@@ -179,22 +186,22 @@ impl OrderRouter {
         // Validate URL uses HTTPS before sending credentials
         if !config.exchange_api_url.starts_with("https://") {
             return Err(TradingError::Configuration(
-                "Cannot send API credentials over non-HTTPS connection".to_string()
+                "Cannot send API credentials over non-HTTPS connection".to_string(),
             ));
         }
 
         let url = format!("{}/v2/orders", config.exchange_api_url);
 
         // Get credentials with proper error handling
-        let api_key = config.api_key.as_ref()
-            .ok_or_else(|| TradingError::Configuration(
-                "API key not configured".to_string()
-            ))?;
+        let api_key = config
+            .api_key
+            .as_ref()
+            .ok_or_else(|| TradingError::Configuration("API key not configured".to_string()))?;
 
-        let api_secret = config.api_secret.as_ref()
-            .ok_or_else(|| TradingError::Configuration(
-                "API secret not configured".to_string()
-            ))?;
+        let api_secret = config
+            .api_secret
+            .as_ref()
+            .ok_or_else(|| TradingError::Configuration("API secret not configured".to_string()))?;
 
         let response = client
             .post(&url)
@@ -207,7 +214,9 @@ impl OrderRouter {
 
         if !response.status().is_success() {
             let status = response.status();
-            let text = response.text().await
+            let text = response
+                .text()
+                .await
                 .unwrap_or_else(|_| "<failed to read response body>".to_string());
             return Err(TradingError::Exchange(format!(
                 "Order rejected: {} - {}",
@@ -254,22 +263,23 @@ impl OrderRouter {
         // Validate HTTPS before sending credentials
         if !self.config.paper_trading && !self.config.exchange_api_url.starts_with("https://") {
             return Err(TradingError::Configuration(
-                "Cannot send API credentials over non-HTTPS connection".to_string()
+                "Cannot send API credentials over non-HTTPS connection".to_string(),
             ));
         }
 
         let url = format!("{}/v2/orders/{}", self.config.exchange_api_url, order_id);
 
         // Get credentials with proper error handling
-        let api_key = self.config.api_key.as_ref()
-            .ok_or_else(|| TradingError::Configuration(
-                "API key not configured".to_string()
-            ))?;
+        let api_key = self
+            .config
+            .api_key
+            .as_ref()
+            .ok_or_else(|| TradingError::Configuration("API key not configured".to_string()))?;
 
-        let api_secret = self.config.api_secret.as_ref()
-            .ok_or_else(|| TradingError::Configuration(
-                "API secret not configured".to_string()
-            ))?;
+        let api_secret =
+            self.config.api_secret.as_ref().ok_or_else(|| {
+                TradingError::Configuration("API secret not configured".to_string())
+            })?;
 
         let response = self
             .http_client
@@ -293,22 +303,23 @@ impl OrderRouter {
         // Validate HTTPS before sending credentials
         if !self.config.paper_trading && !self.config.exchange_api_url.starts_with("https://") {
             return Err(TradingError::Configuration(
-                "Cannot send API credentials over non-HTTPS connection".to_string()
+                "Cannot send API credentials over non-HTTPS connection".to_string(),
             ));
         }
 
         let url = format!("{}/v2/orders/{}", self.config.exchange_api_url, order_id);
 
         // Get credentials with proper error handling
-        let api_key = self.config.api_key.as_ref()
-            .ok_or_else(|| TradingError::Configuration(
-                "API key not configured".to_string()
-            ))?;
+        let api_key = self
+            .config
+            .api_key
+            .as_ref()
+            .ok_or_else(|| TradingError::Configuration("API key not configured".to_string()))?;
 
-        let api_secret = self.config.api_secret.as_ref()
-            .ok_or_else(|| TradingError::Configuration(
-                "API secret not configured".to_string()
-            ))?;
+        let api_secret =
+            self.config.api_secret.as_ref().ok_or_else(|| {
+                TradingError::Configuration("API secret not configured".to_string())
+            })?;
 
         self.http_client
             .delete(&url)

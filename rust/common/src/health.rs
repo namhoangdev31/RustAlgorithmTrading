@@ -1,5 +1,5 @@
-use serde::{Deserialize, Serialize};
 use chrono::{DateTime, Utc};
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 /// Health status of a service or component
@@ -119,9 +119,17 @@ impl SystemHealth {
     }
 
     fn update_status(&mut self) {
-        if self.components.iter().any(|c| c.status == HealthStatus::Unhealthy) {
+        if self
+            .components
+            .iter()
+            .any(|c| c.status == HealthStatus::Unhealthy)
+        {
             self.status = HealthStatus::Unhealthy;
-        } else if self.components.iter().any(|c| c.status == HealthStatus::Degraded) {
+        } else if self
+            .components
+            .iter()
+            .any(|c| c.status == HealthStatus::Degraded)
+        {
             self.status = HealthStatus::Degraded;
         } else {
             self.status = HealthStatus::Healthy;

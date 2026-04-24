@@ -255,7 +255,7 @@ mod performance_load_tests {
         let mut triggered = 0;
 
         for pos in &positions {
-            if stop_manager.check(pos).is_some() {
+            if stop_manager.check(pos, "perf-test-cid").is_some() {
                 triggered += 1;
             }
         }

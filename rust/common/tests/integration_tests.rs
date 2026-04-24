@@ -1,7 +1,7 @@
 // Integration tests for common types and messaging
-use common::types::*;
-use common::messaging::*;
 use chrono::Utc;
+use common::messaging::*;
+use common::types::*;
 
 #[cfg(test)]
 mod type_tests {
@@ -240,20 +240,16 @@ mod orderbook_tests {
     fn test_orderbook_creation() {
         let orderbook = OrderBook {
             symbol: Symbol("AAPL".to_string()),
-            bids: vec![
-                Level {
-                    price: Price(150.0),
-                    quantity: Quantity(100.0),
-                    timestamp: Utc::now(),
-                },
-            ],
-            asks: vec![
-                Level {
-                    price: Price(150.5),
-                    quantity: Quantity(50.0),
-                    timestamp: Utc::now(),
-                },
-            ],
+            bids: vec![Level {
+                price: Price(150.0),
+                quantity: Quantity(100.0),
+                timestamp: Utc::now(),
+            }],
+            asks: vec![Level {
+                price: Price(150.5),
+                quantity: Quantity(50.0),
+                timestamp: Utc::now(),
+            }],
             timestamp: Utc::now(),
             sequence: 1,
         };

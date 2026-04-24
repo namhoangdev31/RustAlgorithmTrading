@@ -1,18 +1,17 @@
+pub mod retry;
 /// Execution Engine Component
 ///
 /// Handles order routing, smart order execution, and slippage minimization.
-
 pub mod router;
-pub mod retry;
 pub mod slippage;
 pub mod stop_loss_executor;
 
-pub use router::OrderRouter;
 pub use retry::RetryPolicy;
+pub use router::OrderRouter;
 pub use slippage::SlippageEstimator;
 pub use stop_loss_executor::StopLossExecutor;
 
-use common::{Result, types::Order};
+use common::{types::Order, Result};
 
 pub struct ExecutionEngineService {
     router: OrderRouter,

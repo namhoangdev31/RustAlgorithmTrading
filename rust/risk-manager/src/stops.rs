@@ -9,6 +9,7 @@ use tracing::{debug, info, warn};
 
 /// Stop-loss type configuration
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum StopLossType {
     /// Static stop-loss at a fixed percentage from entry
     Static,
@@ -16,6 +17,8 @@ pub enum StopLossType {
     Trailing,
     /// Absolute stop-loss at a specific price level
     Absolute,
+    /// Maximum loss in absolute value (currency units)
+    MaxLoss,
 }
 
 /// Stop-loss configuration per position
@@ -74,6 +77,21 @@ impl StopLossConfig {
             percentage: None,
             price_level: Some(price_level),
             max_loss_value: None,
+        })
+    }
+
+    /// Create a maximum-loss stop-loss configuration
+    pub fn max_loss_stop(max_loss: f64) -> Result<Self> {
+        if max_loss <= 0.0 {
+            return Err(TradingError::Configuration(
+                "Maximum loss value must be positive".to_string(),
+            ));
+        }
+        Ok(Self {
+            stop_type: StopLossType::MaxLoss,
+            percentage: None,
+            price_level: None,
+            max_loss_value: Some(max_loss),
         })
     }
 
@@ -148,6 +166,14 @@ impl StopLossState {
             StopLossType::Absolute => config.price_level.ok_or_else(|| {
                 TradingError::Configuration("Price level required for absolute stop".to_string())
             }),
+            StopLossType::MaxLoss => {
+                if config.max_loss_value.is_none() {
+                    return Err(TradingError::Configuration(
+                        "Maximum loss value required for max-loss stop".to_string(),
+                    ));
+                }
+                Ok(entry_price)
+            }
         }
     }
 
@@ -197,6 +223,10 @@ impl StopLossState {
 
     /// Check if stop-loss is triggered
     fn is_triggered(&self, current_price: Price) -> bool {
+        if self.config.stop_type == StopLossType::MaxLoss {
+            return false;
+        }
+
         match self.side {
             Side::Bid => current_price.0 <= self.trigger_price.0, // Long: price dropped below stop
             Side::Ask => current_price.0 >= self.trigger_price.0, // Short: price rose above stop
@@ -222,6 +252,8 @@ pub struct StopManager {
 }
 
 impl StopManager {
+    const ZERO_POSITION_TOLERANCE: f64 = 1e-12;
+
     pub fn new(config: RiskConfig) -> Self {
         info!(
             "[cid:INIT] Initializing StopManager with config: stop_loss={}%, trailing={}%",
@@ -260,6 +292,13 @@ impl StopManager {
                     ));
                 }
             }
+            StopLossType::MaxLoss => {
+                if config.max_loss_value.is_none() {
+                    return Err(TradingError::Configuration(
+                        "Maximum loss value required for max-loss stop".to_string(),
+                    ));
+                }
+            }
         }
 
         let state = StopLossState::new(position, config)?;
@@ -281,8 +320,13 @@ impl StopManager {
     }
 
     /// Check position against stop-loss rules
-    pub fn check(&mut self, position: &Position) -> Option<StopLossTrigger> {
+    pub fn check(&mut self, position: &Position, correlation_id: &str) -> Option<StopLossTrigger> {
         let symbol_key = &position.symbol.0;
+
+        if position.quantity.0.abs() <= Self::ZERO_POSITION_TOLERANCE {
+            self.remove_stop(&position.symbol);
+            return None;
+        }
 
         // If no stop configured, use default from config
         if !self.stops.contains_key(symbol_key) {
@@ -310,28 +354,28 @@ impl StopManager {
         let loss_triggered = state.is_max_loss_exceeded(position.unrealized_pnl);
 
         if price_triggered || loss_triggered {
-            let reason = if price_triggered && loss_triggered {
-                format!(
-                    "Price stop at {:.8} and max loss ${:.2} both triggered",
-                    state.trigger_price.0,
-                    state.config.max_loss_value.unwrap_or(0.0)
-                )
-            } else if price_triggered {
-                format!(
-                    "{:?} stop triggered at {:.8} (current: {:.8})",
-                    state.config.stop_type, state.trigger_price.0, position.current_price.0
+            let (reason_code, reason) = if loss_triggered {
+                (
+                    common::types::RiskReason::MaxLossExceeded,
+                    format!(
+                        "Max loss ${:.2} exceeded (current loss: ${:.2})",
+                        state.config.max_loss_value.unwrap_or(0.0),
+                        -position.unrealized_pnl
+                    ),
                 )
             } else {
-                format!(
-                    "Max loss ${:.2} exceeded (current loss: ${:.2})",
-                    state.config.max_loss_value.unwrap_or(0.0),
-                    -position.unrealized_pnl
+                (
+                    common::types::RiskReason::StopLossTriggered,
+                    format!(
+                        "{:?} stop triggered at {:.8} (current: {:.8})",
+                        state.config.stop_type, state.trigger_price.0, position.current_price.0
+                    ),
                 )
             };
 
             warn!(
-                "[cid:INIT] STOP-LOSS TRIGGERED for {}: {}",
-                symbol_key, reason
+                "[cid:{}] STOP-LOSS TRIGGERED for {}: {}",
+                correlation_id, symbol_key, reason
             );
 
             let trigger = StopLossTrigger {
@@ -341,7 +385,9 @@ impl StopManager {
                 current_price: position.current_price,
                 unrealized_pnl: position.unrealized_pnl,
                 stop_type: state.config.stop_type,
+                reason_code,
                 reason: reason.clone(),
+                correlation_id: correlation_id.to_string(),
             };
 
             self.triggered_stops.push((position.symbol.clone(), reason));
@@ -390,7 +436,9 @@ pub struct StopLossTrigger {
     pub current_price: Price,
     pub unrealized_pnl: f64,
     pub stop_type: StopLossType,
+    pub reason_code: common::types::RiskReason,
     pub reason: String,
+    pub correlation_id: String,
 }
 
 impl StopLossTrigger {
@@ -412,6 +460,7 @@ impl StopLossTrigger {
 mod tests {
     use super::*;
     use chrono::Utc;
+    use common::types::RiskReason;
 
     fn create_test_position(
         symbol: &str,
@@ -465,11 +514,11 @@ mod tests {
         // Price hasn't hit stop
         let mut pos_updated = position.clone();
         pos_updated.current_price = Price(48000.0); // -4% loss
-        assert!(manager.check(&pos_updated).is_none());
+        assert!(manager.check(&pos_updated, "test-cid").is_none());
 
         // Price hits stop (5% loss)
         pos_updated.current_price = Price(47500.0);
-        let trigger = manager.check(&pos_updated);
+        let trigger = manager.check(&pos_updated, "test-cid");
         assert!(trigger.is_some());
 
         let trigger = trigger.unwrap();
@@ -488,11 +537,11 @@ mod tests {
         // Price hasn't hit stop
         let mut pos_updated = position.clone();
         pos_updated.current_price = Price(3100.0); // -3.3% loss
-        assert!(manager.check(&pos_updated).is_none());
+        assert!(manager.check(&pos_updated, "test-cid").is_none());
 
         // Price hits stop (5% loss)
         pos_updated.current_price = Price(3150.0);
-        let trigger = manager.check(&pos_updated);
+        let trigger = manager.check(&pos_updated, "test-cid");
         assert!(trigger.is_some());
 
         let trigger = trigger.unwrap();
@@ -511,7 +560,7 @@ mod tests {
         // Price moves up - stop should trail
         let mut pos_updated = position.clone();
         pos_updated.current_price = Price(52000.0);
-        assert!(manager.check(&pos_updated).is_none());
+        assert!(manager.check(&pos_updated, "test-cid").is_none());
 
         // Get updated state
         let state = manager.get_stop(&position.symbol).unwrap();
@@ -519,11 +568,11 @@ mod tests {
 
         // Price drops but not below new stop
         pos_updated.current_price = Price(51000.0);
-        assert!(manager.check(&pos_updated).is_none());
+        assert!(manager.check(&pos_updated, "test-cid").is_none());
 
         // Price drops below trailing stop
         pos_updated.current_price = Price(50000.0);
-        let trigger = manager.check(&pos_updated);
+        let trigger = manager.check(&pos_updated, "test-cid");
         assert!(trigger.is_some());
     }
 
@@ -538,11 +587,11 @@ mod tests {
         // Price above absolute stop
         let mut pos_updated = position.clone();
         pos_updated.current_price = Price(49000.0);
-        assert!(manager.check(&pos_updated).is_none());
+        assert!(manager.check(&pos_updated, "test-cid").is_none());
 
         // Price at absolute stop
         pos_updated.current_price = Price(48000.0);
-        let trigger = manager.check(&pos_updated);
+        let trigger = manager.check(&pos_updated, "test-cid");
         assert!(trigger.is_some());
     }
 
@@ -561,13 +610,56 @@ mod tests {
         let mut pos_updated = position.clone();
         pos_updated.current_price = Price(49000.0);
         pos_updated.unrealized_pnl = -1000.0;
-        assert!(manager.check(&pos_updated).is_none());
+        assert!(manager.check(&pos_updated, "test-cid").is_none());
 
         // Loss exceeds max value (even if price stop not hit)
         pos_updated.current_price = Price(47000.0);
         pos_updated.unrealized_pnl = -3000.0;
-        let trigger = manager.check(&pos_updated);
+        let trigger = manager.check(&pos_updated, "test-cid");
         assert!(trigger.is_some());
+        assert_eq!(trigger.unwrap().reason_code, RiskReason::MaxLossExceeded);
+    }
+
+    #[test]
+    fn test_max_loss_stop_type_triggers_by_pnl_only() {
+        let mut manager = StopManager::new(create_test_config());
+        let position = create_test_position("BTCUSDT", Side::Bid, 50000.0, 50000.0, 1.0);
+
+        let config = StopLossConfig::max_loss_stop(2000.0).unwrap();
+        manager.set_stop(&position, config).unwrap();
+
+        let mut pos_updated = position.clone();
+        pos_updated.current_price = Price(49999.0);
+        pos_updated.unrealized_pnl = -1500.0;
+        assert!(manager.check(&pos_updated, "test-cid").is_none());
+
+        pos_updated.unrealized_pnl = -2500.0;
+        let trigger = manager
+            .check(&pos_updated, "test-cid")
+            .expect("max loss should trigger");
+        assert_eq!(trigger.stop_type, StopLossType::MaxLoss);
+        assert_eq!(trigger.reason_code, RiskReason::MaxLossExceeded);
+        assert_eq!(trigger.close_side(), Side::Ask);
+    }
+
+    #[test]
+    fn test_stop_loss_type_serializes_as_screaming_snake_case() {
+        assert_eq!(
+            serde_json::to_string(&StopLossType::Static).unwrap(),
+            "\"STATIC\""
+        );
+        assert_eq!(
+            serde_json::to_string(&StopLossType::Trailing).unwrap(),
+            "\"TRAILING\""
+        );
+        assert_eq!(
+            serde_json::to_string(&StopLossType::Absolute).unwrap(),
+            "\"ABSOLUTE\""
+        );
+        assert_eq!(
+            serde_json::to_string(&StopLossType::MaxLoss).unwrap(),
+            "\"MAX_LOSS\""
+        );
     }
 
     #[test]
@@ -579,14 +671,14 @@ mod tests {
         let position = create_test_position("BTCUSDT", Side::Bid, 50000.0, 50000.0, 1.0);
 
         // First check auto-configures (doesn't trigger because price at entry)
-        let result = manager.check(&position);
+        let result = manager.check(&position, "test-cid");
         assert!(result.is_none());
         assert!(manager.has_stop(&position.symbol));
 
         // Second check should trigger (5% from config)
         let mut pos_updated = position.clone();
         pos_updated.current_price = Price(47400.0); // Just below 5% stop (47500 is the trigger)
-        let trigger = manager.check(&pos_updated);
+        let trigger = manager.check(&pos_updated, "test-cid");
         assert!(trigger.is_some());
     }
 
@@ -612,5 +704,36 @@ mod tests {
 
         let config = StopLossConfig::static_stop(5.0).unwrap();
         assert!(config.with_max_loss(-100.0).is_err());
+    }
+    #[test]
+    fn test_stop_trigger_boundary_tolerance() {
+        let mut manager = StopManager::new(create_test_config());
+        let position = create_test_position("BTCUSDT", Side::Bid, 50000.0, 50000.0, 1.0);
+
+        let config = StopLossConfig::static_stop(10.0).unwrap(); // 45000.0 trigger
+        manager.set_stop(&position, config).unwrap();
+
+        let mut pos_updated = position.clone();
+
+        // 1 tick above: Price(45000.00000001) -> No trigger
+        pos_updated.current_price = Price(45000.0 + 1e-8);
+        assert!(manager.check(&pos_updated, "test-cid").is_none());
+
+        // Exact boundary: Price(45000.0) -> Trigger
+        pos_updated.current_price = Price(45000.0);
+        let trigger = manager
+            .check(&pos_updated, "test-cid")
+            .expect("Exact boundary trigger");
+        assert_eq!(trigger.reason_code, RiskReason::StopLossTriggered);
+
+        // Reset and check 1 tick below
+        manager
+            .set_stop(&position, StopLossConfig::static_stop(10.0).unwrap())
+            .unwrap();
+        pos_updated.current_price = Price(45000.0 - 1e-8);
+        let trigger = manager
+            .check(&pos_updated, "test-cid")
+            .expect("Below boundary trigger");
+        assert_eq!(trigger.reason_code, RiskReason::StopLossTriggered);
     }
 }
