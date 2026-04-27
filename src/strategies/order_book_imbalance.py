@@ -5,14 +5,15 @@ Based on research showing that order book imbalance predicts short-term price mo
 The strategy uses the ratio of bid vs ask volume at various depth levels.
 
 References:
-- Cont, R., Kukanov, A., & Stoikov, S. (2014). The price impact of order book events
-- Cao, C., Hansch, O., & Wang, X. (2009). The information content of an open limit-order book
+- Cont, R., Kukanov, A., & Stoikov, S. (2014).
+  The price impact of order book events
+- Cao, C., Hansch, O., & Wang, X. (2009).
+  The information content of an open limit-order book
 """
 
 from typing import Dict, Any, List, Optional
 from dataclasses import dataclass
 import pandas as pd
-import numpy as np
 from loguru import logger
 
 from ..strategies.base import Strategy, Signal, SignalType

@@ -9,11 +9,8 @@ Provides comprehensive validation for ML trading models including:
 """
 
 import numpy as np
-import pandas as pd
-from typing import Dict, List, Tuple, Optional, Callable
+from typing import Dict, List, Tuple, Optional
 from dataclasses import dataclass
-from datetime import datetime
-
 
 @dataclass
 class ValidationConfig:

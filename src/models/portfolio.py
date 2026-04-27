@@ -3,7 +3,7 @@ Portfolio and position tracking models.
 """
 
 from datetime import datetime
-from typing import Dict, Optional
+from typing import Dict
 from pydantic import Field, computed_field
 
 from .base import BaseModel

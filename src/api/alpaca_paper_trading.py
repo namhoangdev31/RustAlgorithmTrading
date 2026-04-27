@@ -10,7 +10,7 @@ Provides comprehensive paper trading functionality with:
 """
 
 import os
-from typing import Optional, List, Dict, Any, Callable
+from typing import Optional, List, Dict, Any
 from datetime import datetime, timedelta
 from decimal import Decimal
 from dataclasses import dataclass, field
@@ -24,7 +24,7 @@ from alpaca.trading.requests import (
     StopOrderRequest,
     GetOrdersRequest
 )
-from alpaca.trading.enums import OrderSide, TimeInForce, OrderStatus, QueryOrderStatus
+from alpaca.trading.enums import OrderSide, TimeInForce, QueryOrderStatus
 from alpaca.data.historical import StockHistoricalDataClient
 from alpaca.data.requests import StockBarsRequest, StockLatestQuoteRequest
 from alpaca.data.timeframe import TimeFrame
@@ -131,6 +131,10 @@ class AlpacaPaperTrading:
 
         if validate_credentials:
             self.connect()
+
+    def _ensure_connected(self):
+        if not self._connected:
+            raise RuntimeError("Client not connected. Call connect() first.")
 
     def connect(self) -> bool:
         """

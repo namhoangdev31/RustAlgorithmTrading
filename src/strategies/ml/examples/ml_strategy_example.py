@@ -12,18 +12,18 @@ Demonstrates complete ML strategy workflow:
 
 import pandas as pd
 import numpy as np
-from typing import Dict, Tuple
+from typing import Dict
 import sys
 from pathlib import Path
 
 # Add parent directory to path
 sys.path.append(str(Path(__file__).parent.parent.parent.parent))
 
-from ..strategies.ml.features.feature_engineering import FeatureEngineer, FeatureConfig
-from ..strategies.ml.models.price_predictor import PricePredictor
-from ..strategies.ml.models.trend_classifier import TrendClassifier
-from ..strategies.ml.validation.model_validator import ModelValidator
-from ..strategies.ml.validation.cross_validator import CrossValidator
+from ..features.feature_engineering import FeatureEngineer, FeatureConfig
+from ..models.price_predictor import PricePredictor
+from ..models.trend_classifier import TrendClassifier
+from ..validation.model_validator import ModelValidator
+from ..validation.cross_validator import CrossValidator
 
 
 class MLTradingStrategy:
@@ -362,14 +362,14 @@ def main():
     strategy.prepare_datasets()
 
     # Train models with validation
-    train_results = strategy.train_models(validation_method='walk_forward')
+    strategy.train_models(validation_method='walk_forward')
 
     # Cross-validate
-    cv_results = strategy.cross_validate_models()
+    strategy.cross_validate_models()
 
     # Generate signals and backtest
     signals = strategy.generate_signals(confidence_threshold=0.6)
-    backtest_results = strategy.backtest(signals)
+    strategy.backtest(signals)
 
     # Save models
     strategy.save_models('models')

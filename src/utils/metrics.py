@@ -3,7 +3,6 @@ Performance metrics calculation utilities.
 """
 
 from typing import Dict, Any, cast
-import pandas as pd
 
 # Temporary workaround: tabulate installation failing
 try:
@@ -29,7 +28,6 @@ def calculate_metrics(results: Dict) -> Dict:
         Dictionary of calculated metrics
     """
     metrics = results['metrics']
-    equity_curve = results['equity_curve']
     exec_stats = results['execution_stats']
 
     # Extract key metrics

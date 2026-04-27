@@ -2,14 +2,12 @@
 Monte Carlo Simulation for risk analysis and strategy validation
 """
 
-from typing import Dict, Any, List, Optional, Callable
+from typing import Dict, Any, List, Optional
 import pandas as pd
 import numpy as np
-from datetime import datetime, timedelta
 from pathlib import Path
 from loguru import logger
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 from ..strategies.base import Strategy
 from ..backtesting.engine import BacktestEngine
@@ -282,7 +280,6 @@ class MonteCarloSimulator:
 
         # Sort returns for percentile calculations
         sorted_returns = sorted(returns)
-        sorted_equities = sorted(final_equities)
 
         # Calculate percentile indices
         alpha = 1 - self.confidence_level

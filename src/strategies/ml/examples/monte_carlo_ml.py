@@ -10,9 +10,9 @@ Implements Monte Carlo methods specifically designed for ML strategies:
 
 import numpy as np
 import pandas as pd
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, List, Optional
 from dataclasses import dataclass
-
+from ..models import PricePredictor
 
 @dataclass
 class MonteCarloConfig:
@@ -388,10 +388,7 @@ def main():
     X = np.random.randn(n_samples, n_features)
     y = X[:, 0] * 0.01 + np.random.randn(n_samples) * 0.02  # Noisy linear relationship
 
-    # Create and train simple model
-    from sklearn.ensemble import RandomForestRegressor
-    from ..strategies.ml.models import PricePredictor
-
+    # Create and train simple mode
     model = PricePredictor(model_type='random_forest', n_estimators=50)
     model.train(X[:800], y[:800])
 

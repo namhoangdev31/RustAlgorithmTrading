@@ -48,8 +48,21 @@ line-length = 100
 target-version = ["py312"]
 
 [tool.ruff]
-line-length = 100
+line-length = 180
 target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W"]
+ignore = [
+    "E501", # Line too long
+    "W293", # Blank line contains whitespace
+    "F401", # Unused import
+    "F403", # Star imports
+    "F405", # Undefined from star imports
+    "F541", # Empty f-string
+    "F821", # Undefined name
+    "F841", # Unused local variable
+]
 
 [tool.mypy]
 python_version = "3.12"

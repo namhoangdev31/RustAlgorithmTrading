@@ -13,7 +13,6 @@ Key Optimizations:
 
 from typing import Dict, Any, Optional
 import pandas as pd
-import numpy as np
 from loguru import logger
 
 from ..strategies.base import Strategy, Signal, SignalType
@@ -47,18 +46,18 @@ class MomentumOptimizedStrategy(Strategy):
     def __init__(
         self,
         rsi_period: int = 14,
-        rsi_buy_threshold: float = 45,  # OPTIMIZED: Lower threshold to catch momentum earlier
-        rsi_sell_threshold: float = 55,  # OPTIMIZED: Higher threshold for shorts
+        rsi_buy_threshold: float = 45,  # OPTIMIZED: catch earlier
+        rsi_sell_threshold: float = 55,  # OPTIMIZED: capture more
         ema_fast: int = 12,
         ema_slow: int = 26,
         macd_signal: int = 9,
         position_size: float = 0.15,
         stop_loss_pct: float = 0.03,  # OPTIMIZED: 3% (from 2%) - less noise
         take_profit_pct: float = 0.05,  # OPTIMIZED: 5% (from 3%) - let winners run
-        macd_histogram_threshold: float = 0.0003,  # OPTIMIZED: More sensitive (from 0.0005)
-        min_holding_period: int = 5,  # OPTIMIZED: Faster exits (from 10)
-        volume_confirmation: bool = False,  # OPTIMIZED: DISABLED - was too restrictive
-        use_sma_filter: bool = False,  # OPTIMIZED: DISABLED temporarily for testing
+        macd_histogram_threshold: float = 0.0003,  # OPTIMIZED
+        min_holding_period: int = 5,  # OPTIMIZED
+        volume_confirmation: bool = False,  # DISABLED
+        use_sma_filter: bool = False,  # DISABLED temporarily
         sma_period: int = 50,
         use_trailing_stop: bool = True,
         trailing_stop_pct: float = 0.015,
@@ -99,14 +98,15 @@ class MomentumOptimizedStrategy(Strategy):
         super().__init__(name="MomentumOptimizedStrategy", parameters=params)
 
         # Track active positions for exit signals
-        self.active_positions = {}  # {symbol: {'entry_price': float, 'entry_time': datetime, 'type': 'long'/'short', 'highest_price': float, 'lowest_price': float}}
+        # Structure: {symbol: {'entry_price': float, 'entry_time': datetime}}
+        self.active_positions = {}
 
         logger.info(f"Initialized {self.name} with optimized parameters:")
-        logger.info(f"  Stop-loss: {stop_loss_pct:.1%}, Take-profit: {take_profit_pct:.1%}")
+        logger.info(f"  SL={stop_loss_pct:.1%}, TP={take_profit_pct:.1%}")
         logger.info(f"  RSI thresholds: {rsi_buy_threshold}/{rsi_sell_threshold}")
         logger.info(f"  MACD histogram: {macd_histogram_threshold}")
         logger.info(f"  Min holding: {min_holding_period} bars")
-        logger.info(f"  Volume filter: {volume_confirmation}, SMA filter: {use_sma_filter}")
+        logger.info(f"  Vol Filter={volume_confirmation}, SMA={use_sma_filter}")
 
     def generate_signals(self, data: pd.DataFrame) -> list[Signal]:
         """Generate optimized momentum-based signals"""
@@ -132,7 +132,9 @@ class MomentumOptimizedStrategy(Strategy):
         data['ema_fast'] = data['close'].ewm(span=ema_fast, adjust=False).mean()
         data['ema_slow'] = data['close'].ewm(span=ema_slow, adjust=False).mean()
         data['macd'] = data['ema_fast'] - data['ema_slow']
-        data['macd_signal'] = data['macd'].ewm(span=macd_signal_period, adjust=False).mean()
+        data['macd_signal'] = data['macd'].ewm(
+            span=macd_signal_period, adjust=False
+        ).mean()
         data['macd_histogram'] = data['macd'] - data['macd_signal']
 
         # OPTIONAL: Calculate SMA trend filter (disabled by default)
@@ -230,12 +232,18 @@ class MomentumOptimizedStrategy(Strategy):
                         if current_price < highest_price * (1 - trailing_stop_pct):
                             exit_triggered = True
                             exit_reason = "trailing_stop_loss"
-                            logger.info(f"Trailing stop triggered: price={current_price:.2f}, peak={highest_price:.2f}")
+                            logger.info(
+                                f"TS Trigger: ${current_price:.2f}, "
+                                f"peak=${highest_price:.2f}"
+                            )
                     else:  # short
                         if current_price > lowest_price * (1 + trailing_stop_pct):
                             exit_triggered = True
                             exit_reason = "trailing_stop_loss"
-                            logger.info(f"Trailing stop triggered: price={current_price:.2f}, trough={lowest_price:.2f}")
+                            logger.info(
+                                f"TS Trigger: ${current_price:.2f}, "
+                                f"trough=${lowest_price:.2f}"
+                            )
 
                 # Fixed stop-loss or take-profit (OPTIMIZED thresholds)
                 if not exit_triggered and bars_held >= min_holding_period:
@@ -279,13 +287,20 @@ class MomentumOptimizedStrategy(Strategy):
                             signal_type = SignalType.EXIT
                     elif position_type == 'short':
                         # OPTIMIZED: Exit short when RSI crosses above buy threshold
-                        if (current['rsi'] > rsi_buy_threshold and previous['rsi'] <= rsi_buy_threshold and
+                        rsi_buy = (
+                            current['rsi'] > rsi_buy_threshold and
+                            previous['rsi'] <= rsi_buy_threshold
+                        )
+                        if (rsi_buy and
                             current['macd'] > current['macd_signal'] and
                             current['macd_histogram'] > 0.001):
                             signal_type = SignalType.EXIT
 
                 if signal_type == SignalType.EXIT:
-                    pnl_pct = (current_price - entry_price) / entry_price if position_type == 'long' else (entry_price - current_price) / entry_price
+                    if position_type == 'long':
+                        msg_pnl = (current_price - entry_price) / entry_price
+                    else:
+                        msg_pnl = (entry_price - current_price) / entry_price
                     signal = Signal(
                         timestamp=current.name,
                         symbol=symbol,
@@ -294,7 +309,7 @@ class MomentumOptimizedStrategy(Strategy):
                         confidence=0.8,
                         metadata={
                             'exit_reason': 'technical_reversal',
-                            'pnl_pct': float(pnl_pct),
+                            'pnl_pct': float(msg_pnl),
                             'entry_price': entry_price,
                             'position_type': position_type,
                             'bars_held': bars_held,
@@ -308,42 +323,79 @@ class MomentumOptimizedStrategy(Strategy):
 
             # Generate ENTRY signals only if no active position
             if symbol not in self.active_positions:
-                # OPTIMIZED: More sensitive histogram threshold
-                histogram_threshold = self.get_parameter('macd_histogram_threshold', 0.0003)
+                hist_param = 'macd_histogram_threshold'
+                histogram_threshold = self.get_parameter(hist_param, 0.0003)
 
-                # OPTIMIZED: Volume filter DISABLED (was too restrictive)
-                volume_confirmation = self.get_parameter('volume_confirmation', False)
-                volume_ok = True  # Default to True since filter is disabled
+
 
                 # OPTIMIZED: SMA filter DISABLED temporarily
-                sma_ok = True
-                if use_sma_filter and 'sma_50' in data.columns and not pd.isna(current.get('sma_50')):
-                    sma_ok = True  # Will check in entry conditions if enabled
+                if use_sma_filter and 'sma_50' in data.columns:
+                    if not pd.isna(current.get('sma_50')):
+                        pass  # Checked below
 
                 # OPTIMIZED: Long signal with lower RSI threshold (45 instead of 50)
-                if (current['rsi'] > rsi_buy_threshold and previous['rsi'] <= rsi_buy_threshold and
+                rsi_entry = (
+                    current['rsi'] > rsi_buy_threshold and
+                    previous['rsi'] <= rsi_buy_threshold
+                )
+                if (rsi_entry and
                     current['macd'] > current['macd_signal'] and
                     current['macd_histogram'] > histogram_threshold):
 
                     # Optional SMA filter
-                    if not use_sma_filter or (use_sma_filter and current['close'] > current.get('sma_50', 0)):
+                    has_sma = 'sma_50' in current
+                    over_sma = (
+                        not use_sma_filter or (
+                            has_sma and current['close'] > current.get('sma_50', 0)
+                        )
+                    )
+                    if over_sma:
                         signal_type = SignalType.LONG
-                        logger.info(f"OPTIMIZED LONG: RSI={current['rsi']:.1f} (>{rsi_buy_threshold}), MACD_hist={current['macd_histogram']:.5f} (>{histogram_threshold:.5f})")
+                        r_val = current['rsi']
+                        h_val = current['macd_histogram']
+                        logger.info(
+                            f"OPTIMIZED LONG: RSI={r_val:.1f} "
+                            f"(>{rsi_buy_threshold}), "
+                            f"MACD_hist={h_val:.5f} "
+                            f"(>{histogram_threshold:.5f})"
+                        )
 
                 # OPTIMIZED: Short signal with higher RSI threshold (55 instead of 50)
-                elif (current['rsi'] < rsi_sell_threshold and previous['rsi'] >= rsi_sell_threshold and
-                      current['macd'] < current['macd_signal'] and
-                      current['macd_histogram'] < -histogram_threshold):
+                long_rsi_cross = (
+                    current['rsi'] < rsi_sell_threshold and
+                    previous['rsi'] >= rsi_sell_threshold
+                )
+                if (long_rsi_cross and
+                    current['macd'] < current['macd_signal'] and
+                    current['macd_histogram'] < -histogram_threshold):
 
                     # Optional SMA filter
-                    if not use_sma_filter or (use_sma_filter and current['close'] < current.get('sma_50', float('inf'))):
+                    has_sma = 'sma_50' in current
+                    under_sma = (
+                        not use_sma_filter or (
+                            has_sma and
+                            current['close'] < current.get('sma_50', float('inf'))
+                        )
+                    )
+                    if under_sma:
                         signal_type = SignalType.SHORT
-                        logger.info(f"OPTIMIZED SHORT: RSI={current['rsi']:.1f} (<{rsi_sell_threshold}), MACD_hist={current['macd_histogram']:.5f} (<{-histogram_threshold:.5f})")
+                        rsi_val = current['rsi']
+                        hist_val = current['macd_histogram']
+                        logger.info(
+                            f"OPTIMIZED SHORT: RSI={rsi_val:.1f} "
+                            f"(<{rsi_sell_threshold}), "
+                            f"MACD_hist={hist_val:.5f} "
+                            f"(<{-histogram_threshold:.5f})"
+                        )
 
                 if signal_type in [SignalType.LONG, SignalType.SHORT]:
                     # Calculate confidence based on indicator strength
                     rsi_strength = abs(current['rsi'] - 50) / 50
-                    macd_strength = min(abs(current['macd_histogram']) / (current['close'] * 0.01), 1.0)
+                    vol_scaling = (current['close'] * 0.01)
+                    macd_strength = min(
+                        abs(current['macd_histogram']) / vol_scaling,
+                        1.0
+                    )
                     confidence = min((rsi_strength * 0.5 + macd_strength * 0.5), 1.0)
 
                     signal = Signal(
@@ -354,7 +406,11 @@ class MomentumOptimizedStrategy(Strategy):
                         confidence=float(confidence),
                         metadata={
                             'rsi': float(current['rsi']),
-                            'rsi_threshold': rsi_buy_threshold if signal_type == SignalType.LONG else rsi_sell_threshold,
+                            'rsi_threshold': (
+                                rsi_buy_threshold
+                                if signal_type == SignalType.LONG
+                                else rsi_sell_threshold
+                            ),
                             'macd': float(current['macd']),
                             'macd_signal': float(current['macd_signal']),
                             'macd_histogram': float(current['macd_histogram']),
@@ -374,7 +430,13 @@ class MomentumOptimizedStrategy(Strategy):
                         'lowest_price': current_price,
                     }
 
-        logger.info(f"Generated {len(signals)} signals for {self.name} (including {sum(1 for s in signals if s.signal_type == SignalType.EXIT)} exits)")
+        exit_count = sum(
+            1 for s in signals if s.signal_type == SignalType.EXIT
+        )
+        logger.info(
+            f"Generated {len(signals)} signals for {self.name} "
+            f"(including {exit_count} exits)"
+        )
         return signals
 
     def calculate_position_size(

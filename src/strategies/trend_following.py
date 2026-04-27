@@ -110,17 +110,23 @@ class TrendFollowingStrategy(Strategy):
         df['di_minus'] = 100 * (df['dm_minus_smooth'] / df['tr_smooth'])
 
         # DX and ADX
-        df['dx'] = 100 * abs(df['di_plus'] - df['di_minus']) / (df['di_plus'] + df['di_minus'])
+        dx_num = 100 * abs(df['di_plus'] - df['di_minus'])
+        df['dx'] = dx_num / (df['di_plus'] + df['di_minus'])
         df['adx'] = df['dx'].rolling(window=period).mean()
 
         return df
 
-    def generate_signals(self, data: pd.DataFrame, latest_only: bool = True) -> list[Signal]:
+    def generate_signals(
+        self,
+        data: pd.DataFrame,
+        latest_only: bool = True
+    ) -> list[Signal]:
         """Generate trend following signals
 
         Args:
             data: DataFrame with OHLCV data
-            latest_only: If True, only generate signal for the latest bar (default: True)
+            latest_only: (bool) If True, only generate signal for the
+                         latest bar (default: True)
         """
         if not self.validate_data(data):
             return []
@@ -227,12 +233,18 @@ class TrendFollowingStrategy(Strategy):
                 if not exit_triggered and bars_held >= min_holding_period:
                     if position_type == 'long':
                         # Exit if fast EMA crosses below medium EMA
-                        if current['ema_fast'] < current['ema_medium'] and previous['ema_fast'] >= previous['ema_medium']:
+                        if (
+                            current['ema_fast'] < current['ema_medium'] and
+                            previous['ema_fast'] >= previous['ema_medium']
+                        ):
                             exit_triggered = True
                             exit_reason = "ema_reversal"
                     else:
                         # Exit if fast EMA crosses above medium EMA
-                        if current['ema_fast'] > current['ema_medium'] and previous['ema_fast'] <= previous['ema_medium']:
+                        if (
+                            current['ema_fast'] > current['ema_medium'] and
+                            previous['ema_fast'] <= previous['ema_medium']
+                        ):
                             exit_triggered = True
                             exit_reason = "ema_reversal"
 
@@ -276,7 +288,8 @@ class TrendFollowingStrategy(Strategy):
                     signal_type = SignalType.LONG
                     logger.info(
                         f"LONG (trend): ADX={current['adx']:.1f}, "
-                        f"EMAs: {current['ema_fast']:.2f} > {current['ema_medium']:.2f} > {current['ema_slow']:.2f}"
+                        f"EMAs: {current['ema_fast']:.2f} > "
+                        f"{current['ema_medium']:.2f} > {current['ema_slow']:.2f}"
                     )
 
                 # SHORT: Strong downtrend with EMA alignment
@@ -293,12 +306,16 @@ class TrendFollowingStrategy(Strategy):
                     signal_type = SignalType.SHORT
                     logger.info(
                         f"SHORT (trend): ADX={current['adx']:.1f}, "
-                        f"EMAs: {current['ema_fast']:.2f} < {current['ema_medium']:.2f} < {current['ema_slow']:.2f}"
+                        f"EMAs: {current['ema_fast']:.2f} < "
+                        f"{current['ema_medium']:.2f} < {current['ema_slow']:.2f}"
                     )
 
                 if signal_type in [SignalType.LONG, SignalType.SHORT]:
                     # Calculate confidence based on ADX strength
-                    adx_strength = min((current['adx'] - adx_threshold) / (50 - adx_threshold), 1.0)
+                    adx_strength = (current['adx'] - adx_threshold) / (
+                        50 - adx_threshold
+                    )
+                    adx_strength = min(adx_strength, 1.0)
                     confidence = max(0.6, adx_strength)
 
                     signal = Signal(

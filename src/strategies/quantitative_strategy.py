@@ -17,7 +17,6 @@ Target: Sharpe Ratio >= 1.2
 import pandas as pd
 import numpy as np
 from typing import Dict, List, Optional, Any
-from datetime import datetime
 from loguru import logger
 from dataclasses import dataclass
 
@@ -113,13 +112,21 @@ class QuantitativeStrategy(Strategy):
             f"Shorts enabled: {enable_shorts}"
         )
 
-    def generate_signals_for_symbol(self, symbol: str, data: pd.DataFrame) -> List[Signal]:
+    def generate_signals_for_symbol(
+        self,
+        symbol: str,
+        data: pd.DataFrame
+    ) -> List[Signal]:
         """Generate signals for a specific symbol."""
         data = data.copy()
         data.attrs['symbol'] = symbol
         return self.generate_signals(data)
 
-    def generate_signals(self, data: pd.DataFrame, latest_only: bool = True) -> List[Signal]:
+    def generate_signals(
+        self,
+        data: pd.DataFrame,
+        latest_only: bool = True
+    ) -> List[Signal]:
         """Generate quantitative trading signals."""
         if not self.validate_data(data):
             return []
@@ -184,7 +191,10 @@ class QuantitativeStrategy(Strategy):
                     'entry_price': current_price,
                     'entry_time': current.name,
                     'entry_idx': i,
-                    'type': 'long' if entry_signal.signal_type == SignalType.LONG else 'short',
+                    'type': (
+                        'long' if entry_signal.signal_type == SignalType.LONG
+                        else 'short'
+                    ),
                     'highest_price': current_price,
                     'lowest_price': current_price,
                     'context': context
@@ -219,7 +229,9 @@ class QuantitativeStrategy(Strategy):
 
         # Volatility
         data['volatility'] = data['returns'].rolling(vol_lookback).std()
-        data['volatility_pct'] = data['volatility'] / data['close'].rolling(vol_lookback).mean()
+        data['volatility_pct'] = (
+            data['volatility'] / data['close'].rolling(vol_lookback).mean()
+        )
 
         # Momentum (rate of change)
         data['momentum'] = data['close'].pct_change(mom_lookback)
@@ -244,7 +256,10 @@ class QuantitativeStrategy(Strategy):
         bb_std = data['close'].rolling(20).std()
         data['bb_upper'] = bb_sma + (2 * bb_std)
         data['bb_lower'] = bb_sma - (2 * bb_std)
-        data['bb_position'] = (data['close'] - data['bb_lower']) / (data['bb_upper'] - data['bb_lower'] + 1e-10)
+        data['bb_position'] = (
+            (data['close'] - data['bb_lower']) /
+            (data['bb_upper'] - data['bb_lower'] + 1e-10)
+        )
 
         # Volume analysis
         data['volume_sma'] = data['volume'].rolling(20).mean()
@@ -291,9 +306,18 @@ class QuantitativeStrategy(Strategy):
         current = data.iloc[-1]
 
         # Trend analysis
-        if current['close'] > current['sma_50'] and current['ema_10'] > current['ema_20']:
+        cond_bull = (
+            current['close'] > current['sma_50'] and
+            current['ema_10'] > current['ema_20']
+        )
+        cond_bear = (
+            current['close'] < current['sma_50'] and
+            current['ema_10'] < current['ema_20']
+        )
+
+        if cond_bull:
             trend = 'bullish'
-        elif current['close'] < current['sma_50'] and current['ema_10'] < current['ema_20']:
+        elif cond_bear:
             trend = 'bearish'
         else:
             trend = 'neutral'
@@ -319,7 +343,8 @@ class QuantitativeStrategy(Strategy):
         zscore = current.get('zscore', 0)
         if pd.isna(zscore):
             zscore = 0
-        mean_reversion_signal = -np.clip(zscore / 3, -1, 1)  # Negative z-score = buy signal
+        # Negative z-score = buy signal
+        mean_reversion_signal = -np.clip(zscore / 3, -1, 1)
 
         # Momentum signal
         momentum = current.get('momentum', 0)
@@ -352,11 +377,9 @@ class QuantitativeStrategy(Strategy):
         idx: int
     ) -> Optional[Signal]:
         """Generate entry signal based on market context."""
-        zscore_threshold = self.get_parameter('zscore_entry_threshold', 1.5)
-        momentum_threshold = self.get_parameter('momentum_threshold', 0.02)
+        # Configuration
         enable_shorts = self.get_parameter('enable_shorts', True)
         short_vol_max = self.get_parameter('short_volatility_max', 0.025)
-        short_trend_required = self.get_parameter('short_trend_required', True)
 
         zscore = current.get('zscore', 0)
         if pd.isna(zscore):

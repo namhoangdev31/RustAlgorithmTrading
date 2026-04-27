@@ -5,7 +5,6 @@ Removes SMA filter and volume confirmation to reduce over-optimization
 
 from typing import Dict, Any, Optional
 import pandas as pd
-import numpy as np
 from loguru import logger
 
 from ..strategies.base import Strategy, Signal, SignalType
@@ -79,12 +78,16 @@ class SimplifiedMomentumStrategy(Strategy):
         # Track active positions
         self.active_positions = {}
 
-    def generate_signals(self, data: pd.DataFrame, latest_only: bool = True) -> list[Signal]:
+    def generate_signals(
+        self,
+        data: pd.DataFrame,
+        latest_only: bool = True
+    ) -> list[Signal]:
         """Generate simplified momentum-based signals
 
         Args:
             data: DataFrame with OHLCV data
-            latest_only: If True, only generate signal for the latest bar (default: True)
+            latest_only: Only process latest bar (default: True)
                         Set to False for full historical backtesting analysis
         """
         if not self.validate_data(data):
@@ -109,7 +112,10 @@ class SimplifiedMomentumStrategy(Strategy):
         data['ema_fast'] = data['close'].ewm(span=ema_fast, adjust=False).mean()
         data['ema_slow'] = data['close'].ewm(span=ema_slow, adjust=False).mean()
         data['macd'] = data['ema_fast'] - data['ema_slow']
-        data['macd_signal'] = data['macd'].ewm(span=macd_signal_period, adjust=False).mean()
+        data['macd_signal'] = data['macd'].ewm(
+            span=macd_signal_period,
+            adjust=False
+        ).mean()
         data['macd_histogram'] = data['macd'] - data['macd_signal']
 
         # NO SMA FILTER - REMOVED
@@ -170,12 +176,18 @@ class SimplifiedMomentumStrategy(Strategy):
                     if position_type == 'long':
                         highest_price = max(highest_price, current_price)
                         if bars_held < min_holding_period:
-                            highest_price = min(highest_price, entry_price * (1 + take_profit_pct))
+                            highest_price = min(
+                                highest_price,
+                                entry_price * (1 + take_profit_pct)
+                            )
                         self.active_positions[symbol]['highest_price'] = highest_price
                     else:  # short
                         lowest_price = min(lowest_price, current_price)
                         if bars_held < min_holding_period:
-                            lowest_price = max(lowest_price, entry_price * (1 - take_profit_pct))
+                            lowest_price = max(
+                                lowest_price,
+                                entry_price * (1 - take_profit_pct)
+                            )
                         self.active_positions[symbol]['lowest_price'] = lowest_price
 
                 # Calculate P&L
@@ -189,7 +201,8 @@ class SimplifiedMomentumStrategy(Strategy):
                 # - Take-profits: REQUIRE minimum holding period (avoid premature exits)
                 # - Trailing stops: IMMEDIATE exit (risk management tool)
                 #
-                # RATIONALE: Stop-losses are risk management - delays can turn -2% into -5.49%.
+                # RATIONALE: Stop-losses are risk management.
+                # Delay can turn -2% into -5.49%.
                 # Take-profits benefit from holding to capture full trend momentum.
 
                 exit_triggered = False
@@ -208,8 +221,8 @@ class SimplifiedMomentumStrategy(Strategy):
                     exit_triggered = True
                     exit_reason = "stop_loss"
                     logger.info(
-                        f"⚠️ IMMEDIATE STOP-LOSS: {symbol} @ ${current_price:.2f} | "
-                        f"Entry=${entry_price:.2f}, P&L={pnl_pct:.2%}, Bars={bars_held}"
+                        f"Entry=${entry_price:.2f}, P&L={pnl_pct:.2%}, "
+                        f"Bars={bars_held}"
                     )
 
                 # Trailing stop-loss (IMMEDIATE exit to lock in profits)
@@ -217,23 +230,26 @@ class SimplifiedMomentumStrategy(Strategy):
                     trailing_stop_pct = self.get_parameter('trailing_stop_pct', 0.015)
 
                     if position_type == 'long':
-                        if current_price < call_highest_price * (1 - trailing_stop_pct):
+                        limit_price = call_highest_price * (1 - trailing_stop_pct)
+                        if current_price < limit_price:
                             exit_triggered = True
                             exit_reason = "trailing_stop_loss"
                     else:  # short
-                        if current_price > call_lowest_price * (1 + trailing_stop_pct):
+                        limit_price = call_lowest_price * (1 + trailing_stop_pct)
+                        if current_price > limit_price:
                             exit_triggered = True
                             exit_reason = "trailing_stop_loss"
 
                 # 2. DELAYED EXITS (require minimum holding period to capture momentum):
 
-                # Take-profit (only after minimum holding period to avoid premature exits)
+                # Take-profit (after min holding period)
                 if not exit_triggered and bars_held >= min_holding_period:
                     if pnl_pct >= take_profit_pct:
                         exit_triggered = True
                         exit_reason = "take_profit"
                         logger.info(
-                            f"✅ TAKE-PROFIT (after {bars_held} bars): {symbol} @ ${current_price:.2f} | "
+                            f"✅ TAKE-PROFIT (after {bars_held} bars): "
+                            f"{symbol} @ ${current_price:.2f} | "
                             f"Entry=${entry_price:.2f}, P&L={pnl_pct:.2%}"
                         )
 
@@ -250,7 +266,10 @@ class SimplifiedMomentumStrategy(Strategy):
                             'entry_price': entry_price,
                             'position_type': position_type,
                             'bars_held': bars_held,
-                            'holding_period_bypassed': bars_held < min_holding_period and exit_reason != 'take_profit',
+                            'holding_period_bypassed': (
+                                bars_held < min_holding_period and
+                                exit_reason != 'take_profit'
+                            ),
                         }
                     )
                     signals.append(signal)
@@ -295,18 +314,24 @@ class SimplifiedMomentumStrategy(Strategy):
                     del self.active_positions[symbol]
                     continue
 
-            # Generate ENTRY signals (SIMPLIFIED - NO SMA, NO VOLUME)
-            # WEEK 2 FIX: Apply "2 of 3" scoring for simplified version (less conditions available)
+            # ENTRY signals (NO SMA, NO VOLUME)
+            # WEEK 2 FIX: 2 of 3 scoring (less conditions available)
             if symbol not in self.active_positions:
-                histogram_threshold = self.get_parameter('macd_histogram_threshold', 0.0005)
+                hist_threshold = self.get_parameter(
+                    'macd_histogram_threshold',
+                    0.0005
+                )
 
                 # LONG CONDITIONS (simplified - only 3 conditions, no SMA/volume)
                 # CRITICAL FIX Week 2: Changed RSI from crossover to level-based logic
-                # OLD: current['rsi'] > 50 and previous['rsi'] <= 50 (only triggers once)
-                # NEW: RSI in bullish zone (55-85) allows signals throughout uptrend
-                rsi_long_cond = current['rsi'] > 55 and current['rsi'] < 85  # Bullish zone, not overbought
+                # OLD: current['rsi'] > 50 and previous['rsi'] <= 50
+                # NEW: RSI in bullish zone (55-85)
+                rsi_long_cond = (
+                    current['rsi'] > 55 and
+                    current['rsi'] < 85
+                )  # Bullish zone
                 macd_long_cond = current['macd'] > current['macd_signal']
-                hist_long_cond = current['macd_histogram'] > histogram_threshold
+                hist_long_cond = current['macd_histogram'] > hist_threshold
 
                 # Count LONG conditions met (out of 3)
                 long_conditions_met = sum([
@@ -321,16 +346,18 @@ class SimplifiedMomentumStrategy(Strategy):
                     logger.info(
                         f"[{symbol}] LONG SIGNAL ({long_conditions_met}/3): "
                         f"Price=${current_price:.2f}, "
-                        f"RSI={current['rsi']:.1f} {'✓' if rsi_long_cond else '✗'}, "
-                        f"MACD {'✓' if macd_long_cond else '✗'}, "
-                        f"Hist={'✓' if hist_long_cond else '✗'} ({current['macd_histogram']:.5f})"
+                        f"RSI={current['rsi']:.1f} {'✓' if rsi_long_cond else '✗'} "
+                        f"MACD {'✓' if macd_long_cond else '✗'} "
+                        f"Hist={'✓' if hist_long_cond else '✗'} "
+                        f"({current['macd_histogram']:.5f})"
                     )
                 else:
                     # Debug: Log when close but not enough conditions
                     if long_conditions_met == 1:
                         logger.debug(
                             f"[{symbol}] Near LONG ({long_conditions_met}/3): "
-                            f"RSI={current['rsi']:.1f} {'✓' if rsi_long_cond else '✗'}, "
+                        f"RSI={current['rsi']:.1f} "
+                        f"{'✓' if rsi_long_cond else '✗'}, "
                             f"MACD {'✓' if macd_long_cond else '✗'}, "
                             f"Hist={'✓' if hist_long_cond else '✗'}"
                         )
@@ -356,12 +383,14 @@ class SimplifiedMomentumStrategy(Strategy):
                 # ============================================================
 
                 # SHORT CONDITIONS (simplified - only 3 conditions, no SMA/volume)
-                # CRITICAL FIX Week 2: Changed RSI from crossover to level-based logic
-                # OLD: current['rsi'] < 50 and previous['rsi'] >= 50 (only triggers once)
-                # NEW: RSI in bearish zone (15-45) allows signals throughout downtrend
-                rsi_short_cond = current['rsi'] < 45 and current['rsi'] > 15  # Bearish zone, not oversold
+                # OLD: current['rsi'] < 50 and previous['rsi'] >= 50
+                # NEW: RSI in bearish zone (15-45)
+                rsi_short_cond = (
+                    current['rsi'] < 45 and
+                    current['rsi'] > 15
+                )  # Bearish zone
                 macd_short_cond = current['macd'] < current['macd_signal']
-                hist_short_cond = current['macd_histogram'] < -histogram_threshold
+                hist_short_cond = current['macd_histogram'] < -hist_threshold
 
                 # Count SHORT conditions met (out of 3)
                 short_conditions_met = sum([
@@ -378,7 +407,8 @@ class SimplifiedMomentumStrategy(Strategy):
                         f"({short_conditions_met}/3): "
                         f"RSI={current['rsi']:.1f} {'✓' if rsi_short_cond else '✗'}, "
                         f"MACD {'✓' if macd_short_cond else '✗'}, "
-                        f"Hist={'✓' if hist_short_cond else '✗'} ({current['macd_histogram']:.5f}) | "
+                        f"Hist={'✓' if hist_short_cond else '✗'} "
+                        f"({current['macd_histogram']:.5f}) | "
                         f"Reason: 72.7% loss rate in Week 2 backtesting"
                     )
 
@@ -389,13 +419,18 @@ class SimplifiedMomentumStrategy(Strategy):
                 #         f"SIMPLIFIED SHORT ({short_conditions_met}/3): "
                 #         f"RSI={current['rsi']:.1f} {'✓' if rsi_short_cond else '✗'}, "
                 #         f"MACD {'✓' if macd_short_cond else '✗'}, "
-                #         f"Hist={'✓' if hist_short_cond else '✗'} ({current['macd_histogram']:.5f})"
+                #    f"Hist={'✓' if hist_short_cond else '✗'} "
+                #    f"({current['macd_histogram']:.5f})"
                 #     )
 
                 if signal_type in [SignalType.LONG, SignalType.SHORT]:
                     # Calculate confidence based on indicator strength
                     rsi_strength = abs(current['rsi'] - 50) / 50
-                    macd_strength = min(abs(current['macd_histogram']) / (current['close'] * 0.01), 1.0)
+                    vol_scaling = current['close'] * 0.01
+                    macd_strength = min(
+                        abs(current['macd_histogram']) / vol_scaling,
+                        1.0
+                    )
                     confidence = min((rsi_strength * 0.5 + macd_strength * 0.5), 1.0)
 
                     signal = Signal(
@@ -409,7 +444,7 @@ class SimplifiedMomentumStrategy(Strategy):
                             'macd': float(current['macd']),
                             'macd_signal': float(current['macd_signal']),
                             'macd_histogram': float(current['macd_histogram']),
-                            'histogram_threshold': float(histogram_threshold),
+                            'histogram_threshold': float(hist_threshold),
                             'strategy': 'simplified_momentum',
                         }
                     )
@@ -424,7 +459,10 @@ class SimplifiedMomentumStrategy(Strategy):
                         'lowest_price': current_price,
                     }
 
-        logger.info(f"Generated {len(signals)} signals for Simplified Momentum strategy")
+        msg = (
+            f"Generated {len(signals)} signals for Simplified Momentum strategy"
+        )
+        logger.info(msg)
         return signals
 
     def calculate_position_size(

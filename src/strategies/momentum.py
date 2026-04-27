@@ -134,7 +134,10 @@ class MomentumStrategy(Strategy):
 
         # Track active positions for exit signals
         # PHASE 2: Added highest_price for trailing stops
-        self.active_positions = {}  # {symbol: {'entry_price': float, 'entry_time': datetime, 'type': 'long'/'short', 'highest_price': float, 'lowest_price': float}}
+        self.active_positions = {}
+        # Format: {symbol: {'entry_price': float, 'entry_time': datetime,
+        #                  'type': 'long'/'short', 'highest_price': float,
+        #                  'lowest_price': float}}
 
     def generate_signals(self, data: pd.DataFrame, latest_only: bool = True) -> list[Signal]:
         """Generate momentum-based signals with exit logic and risk management
@@ -161,7 +164,7 @@ class MomentumStrategy(Strategy):
         try:
             rsi_period = int(rsi_period)
         except (TypeError, ValueError):
-            logger.warning(f"Invalid rsi_period type, using default 14")
+            logger.warning("Invalid rsi_period type, using default 14")
             rsi_period = 14
 
         if rsi_period < 1:
@@ -241,8 +244,6 @@ class MomentumStrategy(Strategy):
 
         # Get parameters
         signals = []
-        rsi_oversold = self.get_parameter('rsi_oversold', 30)
-        rsi_overbought = self.get_parameter('rsi_overbought', 70)
         stop_loss_pct = self.get_parameter('stop_loss_pct', 0.02)
         take_profit_pct = self.get_parameter('take_profit_pct', 0.03)
 
@@ -484,7 +485,11 @@ class MomentumStrategy(Strategy):
                     if 'volume_ma' in data.columns and not pd.isna(current.get('volume_ma')):
                         volume_ok = current['volume'] > current['volume_ma'] * volume_multiplier
                         if not volume_ok:
-                            logger.debug(f"Volume filter blocked entry: vol={current['volume']}, ma={current['volume_ma']}, required={current['volume_ma'] * volume_multiplier}")
+                            v_ma = current['volume_ma']
+                            logger.debug(
+                                f"Volume block: vol={current['volume']}, "
+                                f"ma={v_ma}, req={v_ma * volume_multiplier}"
+                            )
 
                 # CRITICAL FIX: Trend-following entries instead of contrarian
                 # PHASE 1: RELAXED histogram threshold (0.0005 instead of 0.001)
@@ -628,9 +633,7 @@ class MomentumStrategy(Strategy):
                     confidence = min((rsi_strength * 0.4 + macd_strength * 0.3 + volume_strength * 0.3), 1.0)
 
                     # PHASE 3: Calculate ATR-based position size multiplier
-                    atr_multiplier = 1.0
                     if use_atr_sizing and 'atr' in data.columns and not pd.isna(current.get('atr')):
-                        atr_multiplier = self.get_parameter('atr_multiplier', 1.5)
                         # Store ATR for position sizing
                         current_atr = current['atr']
                     else:
@@ -652,9 +655,17 @@ class MomentumStrategy(Strategy):
                             'macd_histogram': float(current['macd_histogram']),
                             'volume': float(current.get('volume', 0)),
                             'volume_ma': float(current.get('volume_ma', 0)) if 'volume_ma' in data.columns else None,
-                            'volume_ratio': float(current['volume'] / current['volume_ma']) if 'volume_ma' in data.columns and not pd.isna(current.get('volume_ma')) else None,
+                            'volume_ratio': (
+                                float(current['volume'] / current['volume_ma'])
+                                if 'volume_ma' in data.columns and not pd.isna(current.get('volume_ma'))
+                                else None
+                            ),
                             'atr': float(current_atr) if current_atr is not None else None,
-                            'adx': float(current_adx) if current_adx is not None and not pd.isna(current_adx) else None,
+                            'adx': (
+                                float(current_adx)
+                                if current_adx is not None and not pd.isna(current_adx)
+                                else None
+                            ),
                             'histogram_threshold': float(histogram_threshold),
                         }
                     )
@@ -669,7 +680,8 @@ class MomentumStrategy(Strategy):
                         'lowest_price': current_price,   # For trailing stop (short)
                     }
 
-        logger.info(f"Generated {len(signals)} signals for Momentum strategy (including {sum(1 for s in signals if s.signal_type == SignalType.EXIT)} exits)")
+        num_exits = sum(1 for s in signals if s.signal_type == SignalType.EXIT)
+        logger.info(f"Generated {len(signals)} signals (Exits: {num_exits})")
         return signals
 
     def calculate_position_size(
@@ -707,7 +719,12 @@ class MomentumStrategy(Strategy):
             volatility_factor = max(volatility_factor, 0.5)  # Floor at 0.5x
 
             shares *= volatility_factor
-            logger.debug(f"ATR sizing: ATR={atr:.2f}, ATR%={atr_pct:.2%}, vol_factor={volatility_factor:.2f}, final_shares={shares:.2f}")
+            logger.info(
+                f"Size: base={position_size_pct:.1%}, "
+                f"ATR%={atr_pct:.2%}, "
+                f"factor={volatility_factor:.2f}, "
+                f"shares={shares:.2f}"
+            )
 
         return round(shares, 2)
 

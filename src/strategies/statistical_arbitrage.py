@@ -1,8 +1,8 @@
 """
 Statistical Arbitrage Strategy using Cointegration
 
-This strategy identifies pairs of stocks that are cointegrated (move together in the long run)
-and trades mean reversion when they diverge.
+This strategy identifies pairs of stocks that are cointegrated
+(move together in the long run) and trades mean reversion when they diverge.
 
 Based on:
 - Engle-Granger cointegration test
@@ -10,11 +10,10 @@ Based on:
 - Kalman filter for dynamic hedge ratio estimation
 """
 
-from typing import Dict, Any, List, Optional, Tuple
+from typing import Dict, Any, List, Optional
 import pandas as pd
 import numpy as np
-from scipy import stats
-from statsmodels.tsa.stattools import coint, adfuller
+from statsmodels.tsa.stattools import coint
 from loguru import logger
 
 from ..strategies.base import Strategy, Signal, SignalType
@@ -304,7 +303,9 @@ class StatisticalArbitrageStrategy(Strategy):
 
             # AR(1) regression
             from scipy.stats import linregress
-            slope, intercept, _, _, _ = linregress(spread_lag.values, spread_diff.values)
+            slope, intercept, _, _, _ = linregress(
+                spread_lag.values, spread_diff.values
+            )
 
             # Half-life = -ln(2) / ln(1 + slope)
             if slope < 0:

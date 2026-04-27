@@ -10,7 +10,6 @@ This strategy trades mean reversion by:
 
 from typing import Dict, Any, Optional
 import pandas as pd
-import numpy as np
 from loguru import logger
 
 from ..strategies.base import Strategy, Signal, SignalType

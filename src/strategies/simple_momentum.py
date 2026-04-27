@@ -5,12 +5,12 @@ Simplified wrapper around MomentumStrategy for easy backtesting integration.
 Uses default RSI and MACD parameters optimized for paper trading.
 """
 
-from typing import List, Dict, Any, Optional
+from typing import List
 import pandas as pd
 from loguru import logger
 
 from .momentum import MomentumStrategy
-from .base import Strategy, Signal
+from .base import Signal
 
 
 class SimpleMomentumStrategy(MomentumStrategy):
@@ -65,7 +65,8 @@ class SimpleMomentumStrategy(MomentumStrategy):
 
         logger.info(
             f"SimpleMomentumStrategy initialized for symbols: {symbols} "
-            f"(RSI: {rsi_period}, Oversold: {rsi_oversold}, Overbought: {rsi_overbought}, "
+            f"(RSI: {rsi_period}, Oversold: {rsi_oversold}, "
+            f"Overbought: {rsi_overbought}, "
             f"Position: {position_size*100}%)"
         )
 
@@ -73,7 +74,11 @@ class SimpleMomentumStrategy(MomentumStrategy):
         """Get list of symbols this strategy trades"""
         return self.symbols
 
-    def generate_signals_for_symbol(self, symbol: str, data: pd.DataFrame) -> List[Signal]:
+    def generate_signals_for_symbol(
+        self,
+        symbol: str,
+        data: pd.DataFrame
+    ) -> List[Signal]:
         """
         Generate signals for a specific symbol
 
@@ -111,7 +116,9 @@ class SimpleMomentumStrategy(MomentumStrategy):
             Position size in shares
         """
         # Get base position size from parent
-        position_shares = super().calculate_position_size(signal, account_value, current_position)
+        position_shares = super().calculate_position_size(
+            signal, account_value, current_position
+        )
 
         # Additional safety: Don't over-leverage
         max_position_value = account_value * self.get_parameter('position_size', 0.1)

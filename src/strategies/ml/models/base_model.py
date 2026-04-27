@@ -5,7 +5,7 @@ Provides common functionality for all ML trading models.
 """
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, Optional
 import numpy as np
 import pickle
 import json

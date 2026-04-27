@@ -9,7 +9,7 @@ Detects market conditions to enable adaptive trading strategies:
 
 import pandas as pd
 import numpy as np
-from typing import Dict, Tuple, Optional
+from typing import Dict, Tuple
 from enum import Enum
 import logging
 
@@ -166,9 +166,17 @@ class MarketRegimeDetector:
         # Determine regime
         regime = []
         for i in range(len(data)):
-            adx_val = adx.iloc[i] if not pd.isna(adx.iloc[i]) else 0
-            trend_val = trend_direction.iloc[i] if not pd.isna(trend_direction.iloc[i]) else 0
-            volatile = is_volatile.iloc[i] if not pd.isna(is_volatile.iloc[i]) else False
+            adx_val = (
+                adx.iloc[i] if not pd.isna(adx.iloc[i]) else 0
+            )
+            trend_val = (
+                trend_direction.iloc[i]
+                if not pd.isna(trend_direction.iloc[i]) else 0
+            )
+            volatile = (
+                is_volatile.iloc[i]
+                if not pd.isna(is_volatile.iloc[i]) else False
+            )
 
             # Classify regime
             if adx_val >= self.adx_trending_threshold:
@@ -216,7 +224,10 @@ class MarketRegimeDetector:
 
         return stats
 
-    def get_current_regime(self, data: pd.DataFrame) -> Tuple[MarketRegime, Dict[str, float]]:
+    def get_current_regime(
+        self,
+        data: pd.DataFrame
+    ) -> Tuple[MarketRegime, Dict[str, float]]:
         """
         Get current market regime and supporting indicators
 
@@ -240,15 +251,15 @@ class MarketRegimeDetector:
                 f"Enabled: {strategy_config['enabled']}"
             )
 
-            # Special logging for ranging regime (mean reversion RE-ENABLED - Week 3.5 fix)
             if current_regime in [MarketRegime.RANGING, MarketRegime.VOLATILE_RANGING]:
-                logger.info(
-                    f"📊 RANGING MARKET DETECTED - Mean reversion strategy RE-ENABLED (Week 3.5: 43.3% win rate - BEST STRATEGY!) | "
+                msg = (
+                    "📊 RANGING MARKET DETECTED - Mean reversion strategy "
+                    "RE-ENABLED (Week 3.5: 43.3% win rate - BEST STRATEGY!) | "
                     f"Strategy: {strategy_config['strategy']} | "
                     f"Position size: {strategy_config['position_size']*100:.0f}%"
                 )
+                logger.info(msg)
 
-        # Get current indicator values
         adx = self.calculate_adx(data)
         atr = self.calculate_atr(data)
         trend = self.calculate_trend_direction(data)
@@ -289,12 +300,15 @@ def select_strategy_for_regime(regime: MarketRegime) -> Dict[str, any]:
             'enabled': True
         },
         MarketRegime.RANGING: {
-            'strategy': 'mean_reversion',  # RE-ENABLED: Week 3.5 - Best strategy (43.3% win rate)
+            # RE-ENABLED: Week 3.5 - Best strategy (43.3% win rate)
+            'strategy': 'mean_reversion',
             'direction': 'neutral',
             'stop_loss': 0.03,
-            'position_size': 0.15,  # 15% position - mean reversion RE-ENABLED
+            # 15% position - mean reversion RE-ENABLED
+            'position_size': 0.15,
             'take_profit': 0.03,  # 3% take profit for mean reversion
-            'enabled': True  # RE-ENABLED: Week 3 mistake - this was our BEST performing strategy!
+            # RE-ENABLED: Week 3 mistake - this was our BEST performing strategy!
+            'enabled': True
         },
         MarketRegime.VOLATILE_TRENDING_UP: {
             'strategy': 'momentum',

@@ -13,7 +13,7 @@ from typing import Dict, List, Any, Optional
 import pandas as pd
 from loguru import logger
 
-from ..strategies.base import Strategy, Signal
+from ..strategies.base import Strategy, Signal, SignalType
 from ..strategies.momentum_simplified import SimplifiedMomentumStrategy
 from ..strategies.mean_reversion import MeanReversion
 from ..strategies.trend_following import TrendFollowingStrategy
@@ -57,7 +57,8 @@ class StrategyRouter:
         }
 
         # Track routing decisions
-        self.routing_history = {}  # {symbol: [{'timestamp': ..., 'strategy': ..., 'regime': ...}]}
+        # {symbol: [{'timestamp': ..., 'strategy': ..., 'regime': ...}]}
+        self.routing_history = {}
 
         logger.info(
             f"StrategyRouter initialized with {len(self.strategies)} strategies | "
@@ -77,7 +78,11 @@ class StrategyRouter:
         """
         if not self.enable_regime_detection or len(data) < 100:
             # Default to momentum if regime detection disabled or insufficient data
-            logger.info(f"{symbol}: Using default Momentum strategy (regime detection disabled)")
+            msg = (
+                f"{symbol}: Using default Momentum strategy "
+                "(regime detection disabled)"
+            )
+            logger.info(msg)
             self._record_routing(symbol, 'momentum', MarketRegime.UNKNOWN, 0.0)
             return self.strategies['momentum']
 
@@ -91,7 +96,8 @@ class StrategyRouter:
             # Low confidence - use default momentum
             strategy_name = 'momentum'
             logger.info(
-                f"{symbol}: Low confidence ({confidence:.2f}) - using default Momentum strategy"
+                f"{symbol}: Low confidence ({confidence:.2f}) - "
+                "using default Momentum strategy"
             )
         else:
             # High confidence - use regime-optimal strategy
@@ -145,11 +151,23 @@ class StrategyRouter:
             try:
                 signals = strategy.generate_signals(data)
                 all_signals.extend(signals)
-                logger.info(f"{symbol}: Generated {len(signals)} signals using {strategy.name}")
+                log_success = (
+                    f"{symbol}: Generated {len(signals)} signals using "
+                    f"{strategy.name}"
+                )
+                logger.info(log_success)
             except Exception as e:
-                logger.error(f"{symbol}: Failed to generate signals with {strategy.name}: {e}")
+                log_msg = (
+                    f"{symbol}: Failed to generate signals with "
+                    f"{strategy.name}: {e}"
+                )
+                logger.error(log_msg)
 
-        logger.info(f"Total signals generated: {len(all_signals)} across {len(symbols_data)} symbols")
+        log_finish = (
+            f"Total signals generated: {len(all_signals)} across "
+            f"{len(symbols_data)} symbols"
+        )
+        logger.info(log_finish)
         return all_signals
 
     def _record_routing(
@@ -271,15 +289,24 @@ class StrategyRouter:
         # Generate signals
         try:
             signals = strategy.generate_signals(data)
-            logger.info(
-                f"[{symbol}] Generated {len(signals)} signals using {strategy.name} | "
-                f"LONG={sum(1 for s in signals if s.signal_type == SignalType.LONG)}, "
-                f"SHORT={sum(1 for s in signals if s.signal_type == SignalType.SHORT)}, "
-                f"EXIT={sum(1 for s in signals if s.signal_type == SignalType.EXIT)}"
+            num_long = sum(1 for s in signals if s.signal_type == SignalType.LONG)
+            num_short = sum(
+                1 for s in signals if s.signal_type == SignalType.SHORT
             )
+            num_exit = sum(1 for s in signals if s.signal_type == SignalType.EXIT)
+
+            log_msg = (
+                f"[{symbol}] Generated {len(signals)} signals using "
+                f"{strategy.name} | LONG={num_long}, SHORT={num_short}, "
+                f"EXIT={num_exit}"
+            )
+            logger.info(log_msg)
             return signals
         except Exception as e:
-            logger.error(f"[{symbol}] Failed to generate signals with {strategy.name}: {e}")
+            logger.error(
+                f"[{symbol}] Failed to generate signals with "
+                f"{strategy.name}: {e}"
+            )
             import traceback
             traceback.print_exc()
             return []

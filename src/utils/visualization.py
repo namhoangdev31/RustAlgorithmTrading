@@ -5,7 +5,6 @@ Visualization utilities for backtesting results.
 from typing import Optional
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
 from pathlib import Path
 
 
@@ -109,8 +108,18 @@ def plot_returns_distribution(
 
     # Histogram
     axes[0].hist(returns, bins=50, alpha=0.7, edgecolor='black')
-    axes[0].axvline(returns.mean(), color='r', linestyle='--', label=f'Mean: {returns.mean():.4f}')
-    axes[0].axvline(returns.median(), color='g', linestyle='--', label=f'Median: {returns.median():.4f}')
+    axes[0].axvline(
+        returns.mean(),
+        color='r',
+        linestyle='--',
+        label=f'Mean: {returns.mean():.4f}'
+    )
+    axes[0].axvline(
+        returns.median(),
+        color='g',
+        linestyle='--',
+        label=f'Median: {returns.median():.4f}'
+    )
     axes[0].set_xlabel('Returns')
     axes[0].set_ylabel('Frequency')
     axes[0].set_title('Returns Distribution')

@@ -16,7 +16,6 @@ Target: Sharpe Ratio >= 1.2
 import pandas as pd
 import numpy as np
 from typing import Dict, List, Optional, Any
-from datetime import datetime
 from loguru import logger
 
 from ..strategies.base import Strategy, Signal, SignalType
@@ -84,13 +83,21 @@ class TrendMomentumStrategy(Strategy):
             f"EMA: {ema_period}, Position Size: {position_size:.0%}"
         )
 
-    def generate_signals_for_symbol(self, symbol: str, data: pd.DataFrame) -> List[Signal]:
+    def generate_signals_for_symbol(
+        self,
+        symbol: str,
+        data: pd.DataFrame
+    ) -> List[Signal]:
         """Generate signals for a specific symbol."""
         data = data.copy()
         data.attrs['symbol'] = symbol
         return self.generate_signals(data)
 
-    def generate_signals(self, data: pd.DataFrame, latest_only: bool = True) -> List[Signal]:
+    def generate_signals(
+        self,
+        data: pd.DataFrame,
+        latest_only: bool = True
+    ) -> List[Signal]:
         """Generate trend-momentum trading signals."""
         if not self.validate_data(data):
             return []
@@ -147,7 +154,10 @@ class TrendMomentumStrategy(Strategy):
                     'entry_price': current_price,
                     'entry_time': current.name,
                     'entry_idx': i,
-                    'type': 'long' if entry_signal.signal_type == SignalType.LONG else 'short',
+                    'type': (
+                        'long' if entry_signal.signal_type == SignalType.LONG
+                        else 'short'
+                    ),
                     'highest_price': current_price,
                     'lowest_price': current_price,
                 }
@@ -157,7 +167,11 @@ class TrendMomentumStrategy(Strategy):
 
         return signals
 
-    def _calculate_indicators(self, data: pd.DataFrame, ema_period: int) -> pd.DataFrame:
+    def _calculate_indicators(
+        self,
+        data: pd.DataFrame,
+        ema_period: int
+    ) -> pd.DataFrame:
         """Calculate indicators."""
         # EMA
         data['ema'] = data['close'].ewm(span=ema_period).mean()

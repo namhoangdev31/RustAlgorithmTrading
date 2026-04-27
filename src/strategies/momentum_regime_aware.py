@@ -9,7 +9,6 @@ This enhanced momentum strategy adapts to market conditions:
 
 from typing import Dict, Any, Optional
 import pandas as pd
-import numpy as np
 from loguru import logger
 
 from ..strategies.base import Strategy, Signal, SignalType
@@ -122,25 +121,26 @@ class RegimeAwareMomentumStrategy(Strategy):
         use_regime_detection = self.get_parameter('use_regime_detection', True)
         current_regime = MarketRegime.UNKNOWN
         regime_config = None
-        regime_stop_loss = self.get_parameter('stop_loss_pct', 0.02)
-        regime_position_size = self.get_parameter('position_size', 0.15)
 
         if use_regime_detection and self.regime_detector:
             regimes = self.regime_detector.detect_regime(data)
             data['market_regime'] = regimes
-            current_regime = regimes.iloc[-1] if len(regimes) > 0 else MarketRegime.UNKNOWN
+            current_regime = (
+                regimes.iloc[-1] if len(regimes) > 0
+                else MarketRegime.UNKNOWN
+            )
             regime_config = select_strategy_for_regime(current_regime)
 
             logger.info(f"🔍 Market regime: {get_regime_display_name(current_regime)}")
             logger.info(f"📊 Strategy config: {regime_config}")
 
-            # Override stop-loss and position size based on regime
+            # Override stop-loss based on regime
             regime_stop_loss = regime_config.get('stop_loss', 0.02)
-            regime_position_size = regime_config.get('position_size', 1.0) * self.get_parameter('position_size', 0.15)
 
             # If regime says trading is disabled, exit any positions and return
             if not regime_config.get('enabled', False):
-                logger.warning(f"⛔ Trading disabled for regime: {current_regime.value}")
+                reg_val = current_regime.value
+                logger.warning(f"⛔ Trading disabled for regime: {reg_val}")
 
                 # Generate exit signals for any active positions
                 signals = []
@@ -169,7 +169,8 @@ class RegimeAwareMomentumStrategy(Strategy):
             # Check if regime allows the specific direction
             direction = regime_config.get('direction', 'neutral')
             if direction == 'neutral':
-                logger.warning(f"⚠️ Neutral direction for regime: {current_regime.value}")
+                reg_val = current_regime.value
+                logger.warning(f"⚠️ Neutral direction for regime: {reg_val}")
                 return []
 
         # Calculate technical indicators
@@ -177,8 +178,6 @@ class RegimeAwareMomentumStrategy(Strategy):
 
         # Generate signals with regime awareness
         signals = []
-        rsi_oversold = self.get_parameter('rsi_oversold', 30)
-        rsi_overbought = self.get_parameter('rsi_overbought', 70)
 
         for i in range(50, len(data)):  # Start after enough data for indicators
             current = data.iloc[i]
@@ -186,13 +185,12 @@ class RegimeAwareMomentumStrategy(Strategy):
 
             if pd.isna(current.get('rsi')) or pd.isna(current.get('macd')):
                 continue
-
-            current_price = float(current['close'])
-            signal_type = SignalType.HOLD
-
             # Check regime for this bar
             bar_regime = current.get('market_regime', MarketRegime.UNKNOWN)
-            bar_regime_config = select_strategy_for_regime(bar_regime) if bar_regime != MarketRegime.UNKNOWN else regime_config
+            if bar_regime != MarketRegime.UNKNOWN:
+                bar_regime_config = select_strategy_for_regime(bar_regime)
+            else:
+                bar_regime_config = regime_config
 
             # Handle EXIT signals first
             if symbol in self.active_positions:
@@ -205,7 +203,13 @@ class RegimeAwareMomentumStrategy(Strategy):
                     continue
 
             # Generate ENTRY signals if no active position
-            if symbol not in self.active_positions and bar_regime_config and bar_regime_config.get('enabled', False):
+            can_entry = (
+                symbol not in self.active_positions and
+                bar_regime_config and
+                bar_regime_config.get('enabled', False)
+            )
+
+            if can_entry:
                 entry_signal = self._check_entry_conditions(
                     symbol, i, current, previous, data,
                     bar_regime_config, current_regime
@@ -213,7 +217,12 @@ class RegimeAwareMomentumStrategy(Strategy):
                 if entry_signal:
                     signals.append(entry_signal)
 
-        logger.info(f"📈 Generated {len(signals)} signals ({sum(1 for s in signals if s.signal_type == SignalType.EXIT)} exits)")
+        exit_count = sum(
+            1 for s in signals if s.signal_type == SignalType.EXIT
+        )
+        logger.info(
+            f"📈 Generated {len(signals)} signals ({exit_count} exits)"
+        )
         return signals
 
     def _calculate_indicators(self, data: pd.DataFrame) -> pd.DataFrame:
@@ -234,7 +243,10 @@ class RegimeAwareMomentumStrategy(Strategy):
         data['ema_fast'] = data['close'].ewm(span=ema_fast, adjust=False).mean()
         data['ema_slow'] = data['close'].ewm(span=ema_slow, adjust=False).mean()
         data['macd'] = data['ema_fast'] - data['ema_slow']
-        data['macd_signal'] = data['macd'].ewm(span=macd_signal_period, adjust=False).mean()
+        data['macd_signal'] = data['macd'].ewm(
+            span=macd_signal_period,
+            adjust=False
+        ).mean()
         data['macd_histogram'] = data['macd'] - data['macd_signal']
 
         # SMA trend filter
@@ -251,7 +263,8 @@ class RegimeAwareMomentumStrategy(Strategy):
             data['high_low'] = data['high'] - data['low']
             data['high_close'] = abs(data['high'] - data['close'].shift())
             data['low_close'] = abs(data['low'] - data['close'].shift())
-            data['true_range'] = data[['high_low', 'high_close', 'low_close']].max(axis=1)
+            cols = ['high_low', 'high_close', 'low_close']
+            data['true_range'] = data[cols].max(axis=1)
             data['atr'] = data['true_range'].rolling(window=atr_period).mean()
 
         return data
@@ -414,13 +427,22 @@ class RegimeAwareMomentumStrategy(Strategy):
 
         # Calculate confidence
         rsi_strength = abs(current['rsi'] - 50) / 50
-        macd_strength = min(abs(current['macd_histogram']) / (current['close'] * 0.01), 1.0)
+        vol_scaling = current['close'] * 0.01
+        macd_strength = min(
+            abs(current['macd_histogram']) / vol_scaling,
+            1.0
+        )
         volume_strength = 0.5
         if 'volume_ma' in data.columns and not pd.isna(current.get('volume_ma')):
             volume_ratio = current['volume'] / current['volume_ma']
             volume_strength = min(volume_ratio / 2.0, 1.0)
 
-        confidence = min((rsi_strength * 0.4 + macd_strength * 0.3 + volume_strength * 0.3), 1.0)
+        conf_score = (
+            rsi_strength * 0.4 +
+            macd_strength * 0.3 +
+            volume_strength * 0.3
+        )
+        confidence = min(conf_score, 1.0)
 
         # Track position
         self.active_positions[symbol] = {
@@ -463,7 +485,8 @@ class RegimeAwareMomentumStrategy(Strategy):
         else:
             regime_multiplier = 1.0
 
-        position_size_pct = self.get_parameter('position_size', 0.15) * regime_multiplier
+        base_size = self.get_parameter('position_size', 0.15)
+        position_size_pct = base_size * regime_multiplier
         position_value = account_value * position_size_pct
         shares = position_value / signal.price
 
@@ -478,5 +501,9 @@ class RegimeAwareMomentumStrategy(Strategy):
             volatility_factor = min(max(volatility_factor, 0.5), 2.0)
             shares *= volatility_factor
 
-        logger.info(f"Position sizing: base={position_size_pct:.1%}, regime_mult={regime_multiplier:.2f}, shares={shares:.2f}")
+        logger.info(
+            f"Position sizing: base={position_size_pct:.1%}, "
+            f"regime_mult={regime_multiplier:.2f}, "
+            f"shares={shares:.2f}"
+        )
         return round(shares, 2)
