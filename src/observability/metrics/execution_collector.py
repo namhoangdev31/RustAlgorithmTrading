@@ -82,7 +82,10 @@ class ExecutionCollector(BaseCollector):
                 # TODO: Query execution engine for metrics
                 self._generate_mock_execution_metrics()
 
-                # Write to DuckDB
+                """
+                Initialize DuckDB client
+                Args:
+                """
                 await self._write_to_database()
 
                 self._increment_metrics_count()
@@ -168,7 +171,9 @@ class ExecutionCollector(BaseCollector):
 
         # Apply filters
         if filter.symbol:
-            filtered_trades = [t for t in filtered_trades if t["symbol"] == filter.symbol]
+            filtered_trades = [
+                t for t in filtered_trades if t["symbol"] == filter.symbol
+            ]
 
         if filter.side:
             filtered_trades = [t for t in filtered_trades if t["side"] == filter.side]
@@ -214,8 +219,12 @@ class ExecutionCollector(BaseCollector):
         return {
             "count": len(filtered_trades),
             "total_volume": sum(t["quantity"] * t["price"] for t in filtered_trades),
-            "avg_price": sum(t["price"] for t in filtered_trades) / len(filtered_trades),
-            "avg_size": sum(t["quantity"] for t in filtered_trades) / len(filtered_trades),
+            "avg_price": (
+                sum(t["price"] for t in filtered_trades) / len(filtered_trades)
+            ),
+            "avg_size": (
+                sum(t["quantity"] for t in filtered_trades) / len(filtered_trades)
+            ),
             "buy_count": sum(1 for t in filtered_trades if t["side"] == "buy"),
             "sell_count": sum(1 for t in filtered_trades if t["side"] == "sell")
         }

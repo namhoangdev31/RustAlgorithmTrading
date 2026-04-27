@@ -36,7 +36,10 @@ class RustMetricsBridge:
         self.scrape_interval = 1.0  # seconds
         self.running = False
 
-        logger.info(f"[cid:INIT] Initialized RustMetricsBridge with {len(service_endpoints)} services")
+        logger.info(
+            f"[cid:INIT] Initialized RustMetricsBridge with "
+            f"{len(service_endpoints)} services"
+        )
 
     async def start(self) -> None:
         """Start the metrics bridge and HTTP session."""
@@ -52,7 +55,9 @@ class RustMetricsBridge:
             self.session = None
             logger.info("[cid:INIT] Metrics bridge stopped")
 
-    async def scrape_service(self, service_name: str, endpoint_url: str) -> Optional[Dict[str, Any]]:
+    async def scrape_service(
+        self, service_name: str, endpoint_url: str
+    ) -> Optional[Dict[str, Any]]:
         """
         Scrape metrics from a single Rust service endpoint.
 
@@ -72,11 +77,14 @@ class RustMetricsBridge:
                 if response.status == 200:
                     text = await response.text()
                     metrics = self._parse_prometheus_text(text, service_name)
-                    logger.debug(f"[cid:INIT] Scraped {len(metrics)} metrics from {service_name}")
+                    logger.debug(
+                        f"[cid:INIT] Scraped {len(metrics)} metrics from {service_name}"
+                    )
                     return metrics
                 else:
                     logger.warning(
-                        f"[cid:INIT] Failed to scrape {service_name}: HTTP {response.status}"
+                        f"[cid:INIT] Failed to scrape {service_name}: "
+                        f"HTTP {response.status}"
                     )
                     return None
         except aiohttp.ClientError as e:
@@ -117,7 +125,11 @@ class RustMetricsBridge:
             line = line.strip()
 
             # Skip empty lines and comments that aren't HELP/TYPE
-            if not line or (line.startswith('#') and not line.startswith('# TYPE') and not line.startswith('# HELP')):
+            is_comment = line.startswith('#')
+            is_type_or_help = (
+                line.startswith('# TYPE') or line.startswith('# HELP')
+            )
+            if not line or (is_comment and not is_type_or_help):
                 continue
 
             # Parse TYPE declarations
@@ -143,12 +155,15 @@ class RustMetricsBridge:
                         continue
 
                     name_and_labels = parts[0]
-                    value_str = parts[1].split()[0]  # Take first part (value, ignore timestamp)
+                    # Take first part (value, ignore timestamp)
+                    value_str = parts[1].split()[0]
 
                     # Parse metric name and labels
                     if '{' in name_and_labels:
-                        metric_name = name_and_labels[:name_and_labels.index('{')]
-                        labels_str = name_and_labels[name_and_labels.index('{')+1:name_and_labels.index('}')]
+                        brace_idx = name_and_labels.index('{')
+                        close_brace_idx = name_and_labels.index('}')
+                        metric_name = name_and_labels[:brace_idx]
+                        labels_str = name_and_labels[brace_idx + 1:close_brace_idx]
                         labels = self._parse_labels(labels_str)
                     else:
                         metric_name = name_and_labels
@@ -164,7 +179,8 @@ class RustMetricsBridge:
                     # Store in appropriate category
                     metric_key = metric_name
                     if labels:
-                        label_str = ",".join(f"{k}={v}" for k, v in sorted(labels.items()))
+                        sorted_items = sorted(labels.items())
+                        label_str = ",".join(f"{k}={v}" for k, v in sorted_items)
                         metric_key = f"{metric_name}{{{label_str}}}"
 
                     # Determine type (use declared type or infer from name)
@@ -184,14 +200,14 @@ class RustMetricsBridge:
                             "value": value,
                             "labels": labels
                         }
-                    elif metric_type == "histogram":
                         if metric_key not in histograms:
                             histograms[metric_key] = {
                                 "name": metric_name,
                                 "values": [],
                                 "labels": labels
                             }
-                        cast(List[float], histograms[metric_key]["values"]).append(value)
+                        values = cast(List[float], histograms[metric_key]["values"])
+                        values.append(value)
 
                 except Exception as e:
                     logger.debug(

@@ -79,7 +79,8 @@ def log_execution_time(
 
                     if error:
                         logger.error(
-                            f"[cid:INIT] Function {func.__name__} failed after {duration_ms:.2f}ms",
+                            f"[cid:INIT] Function {func.__name__} failed after "
+                            f"{duration_ms:.2f}ms",
                             extra=extra
                         )
                     else:
@@ -119,12 +120,14 @@ def log_execution_time(
 
                     if error:
                         logger.error(
-                            f"[cid:INIT] Async function {func.__name__} failed after {duration_ms:.2f}ms",
+                            f"[cid:INIT] Async function {func.__name__} failed "
+                            f"after {duration_ms:.2f}ms",
                             extra=extra
                         )
                     else:
                         log_method(
-                            f"Async function {func.__name__} executed in {duration_ms:.2f}ms",
+                            f"Async function {func.__name__} executed in "
+                            f"{duration_ms:.2f}ms",
                             extra=extra
                         )
 
@@ -258,7 +261,8 @@ class LogContext:
 
     Example:
         >>> with LogContext({'order_id': '123', 'user_id': '456'}):
-        ...     logger.info("[cid:INIT] Processing order")  # Includes order_id and user_id
+        ...     # Includes order_id and user_id
+        ...     logger.info("[cid:INIT] Processing order")
     """
 
     def __init__(self, context: Dict[str, Any]) -> None:

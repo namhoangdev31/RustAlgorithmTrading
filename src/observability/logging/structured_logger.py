@@ -201,17 +201,37 @@ class StructuredLogger:
 
     # Public logging methods
 
-    def debug(self, msg: str, *args: Any, extra: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
+    def debug(
+        self,
+        msg: str,
+        *args: Any,
+        extra: Optional[Dict[str, Any]] = None,
+        **kwargs: Any
+    ) -> None:
         """Log debug message"""
         self._log_with_metrics(logging.DEBUG, msg, *args, extra=extra, **kwargs)
 
-    def info(self, msg: str, *args: Any, extra: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
+    def info(
+        self,
+        msg: str,
+        *args: Any,
+        extra: Optional[Dict[str, Any]] = None,
+        **kwargs: Any
+    ) -> None:
         """Log info message"""
         self._log_with_metrics(logging.INFO, msg, *args, extra=extra, **kwargs)
 
-    def warning(self, msg: str, *args: Any, extra: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
+    def warning(
+        self,
+        msg: str,
+        *args: Any,
+        extra: Optional[Dict[str, Any]] = None,
+        **kwargs: Any
+    ) -> None:
         """Log warning message"""
-        self._log_with_metrics(logging.WARNING, msg, *args, extra=extra, **kwargs)
+        self._log_with_metrics(
+            logging.WARNING, msg, *args, extra=extra, **kwargs
+        )
 
     def error(
         self,
@@ -239,7 +259,13 @@ class StructuredLogger:
             logging.CRITICAL, msg, *args, exc_info=exc_info, extra=extra, **kwargs
         )
 
-    def exception(self, msg: str, *args: Any, extra: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
+    def exception(
+        self,
+        msg: str,
+        *args: Any,
+        extra: Optional[Dict[str, Any]] = None,
+        **kwargs: Any
+    ) -> None:
         """Log exception with traceback"""
         self._log_with_metrics(
             logging.ERROR, msg, *args, exc_info=True, extra=extra, **kwargs

@@ -54,7 +54,10 @@ class WebSocketConnection:
             return True
         except Exception as e:
             self.error_count += 1
-            logger.error(f"[cid:INIT] Failed to send text to client {self.client_id}: {e}")
+            logger.error(
+                f"[cid:INIT] Failed to send text to client "
+                f"{self.client_id}: {e}"
+            )
             return False
 
     def update_ping(self) -> None:
@@ -151,7 +154,10 @@ class WebSocketManager:
                 try:
                     await connection.websocket.close()
                 except Exception as e:
-                    logger.error(f"[cid:INIT] Error closing WebSocket for {client_id}: {e}")
+                    logger.error(
+                        f"[cid:INIT] Error closing WebSocket for {client_id}: "
+                        f"{e}"
+                    )
 
                 del self.connections[client_id]
 
@@ -164,7 +170,10 @@ class WebSocketManager:
 
     async def disconnect_all(self) -> None:
         """Disconnect all clients gracefully."""
-        logger.info(f"[cid:INIT] Disconnecting all {len(self.connections)} WebSocket clients...")
+        logger.info(
+            f"[cid:INIT] Disconnecting all {len(self.connections)} "
+            f"WebSocket clients..."
+        )
 
         # Cancel background tasks
         if self._heartbeat_task:
@@ -192,7 +201,9 @@ class WebSocketManager:
         try:
             self._message_queue.put_nowait({"data": data, "topic": topic})
         except asyncio.QueueFull:
-            logger.warning("[cid:INIT] Message queue full, dropping message (backpressure)")
+            logger.warning(
+                "[cid:INIT] Message queue full, dropping message (backpressure)"
+            )
             self.total_errors += 1
 
     async def _process_message_queue(self) -> None:
@@ -210,7 +221,11 @@ class WebSocketManager:
                 tasks = []
                 for connection in list(self.connections.values()):
                     # Check topic subscription
-                    if topic and topic not in connection.subscriptions and "all" not in connection.subscriptions:
+                    subscribed = (
+                        topic in connection.subscriptions or
+                        "all" in connection.subscriptions
+                    )
+                    if topic and not subscribed:
                         continue
 
                     tasks.append(connection.send_json(data))
@@ -226,7 +241,8 @@ class WebSocketManager:
                     failure_count = len(results) - success_count
                     if failure_count > len(results) * 0.1:  # > 10% failure rate
                         logger.warning(
-                            f"[cid:INIT] High broadcast failure rate: {failure_count}/{len(results)} failed"
+                            f"[cid:INIT] High broadcast failure rate: "
+                            f"{failure_count}/{len(results)} failed"
                         )
 
                 self._message_queue.task_done()
@@ -237,7 +253,7 @@ class WebSocketManager:
         """
         Background task for heartbeat/ping-pong.
 
-        Sends ping every 30 seconds (reduced frequency) and disconnects stale connections.
+        Sends ping every 30 seconds and disconnects stale connections.
         """
         try:
             while True:
@@ -261,7 +277,9 @@ class WebSocketManager:
 
                 # Disconnect stale clients
                 for client_id in stale_clients:
-                    logger.warning(f"[cid:INIT] Disconnecting stale client: {client_id}")
+                    logger.warning(
+                        f"[cid:INIT] Disconnecting stale client: {client_id}"
+                    )
                     await self.disconnect(client_id)
         except asyncio.CancelledError:
             logger.info("[cid:INIT] Heartbeat loop cancelled")
@@ -284,7 +302,9 @@ class WebSocketManager:
             "total_connections": self.total_connections,
             "total_messages_sent": self.total_messages_sent,
             "total_errors": self.total_errors,
-            "heartbeat_success_rate": (self.total_pings_received / max(self.total_pings_sent, 1)) * 100,
+            "heartbeat_success_rate": (
+                self.total_pings_received / max(self.total_pings_sent, 1)
+            ) * 100,
             "queue_size": self._message_queue.qsize(),
             "connections": [
                 {

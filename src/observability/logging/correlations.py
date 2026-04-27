@@ -11,7 +11,9 @@ from contextvars import ContextVar, Token
 from typing import Generator, Optional, Any, Literal
 
 # Context variable for correlation ID (thread-safe and async-safe)
-correlation_id_var: ContextVar[Optional[str]] = ContextVar('correlation_id', default=None)
+correlation_id_var: ContextVar[Optional[str]] = ContextVar(
+    'correlation_id', default=None
+)
 
 
 @contextmanager

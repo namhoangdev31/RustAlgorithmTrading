@@ -105,7 +105,11 @@ class AsyncQueueHandler(logging.Handler):
 
             except Exception:
                 # Continue processing on error
-                self.handleError(record if 'record' in locals() else logging.LogRecord("", 0, "", 0, "", None, None))
+                record_to_handle = (
+                    record if 'record' in locals()
+                    else logging.LogRecord("", 0, "", 0, "", None, None)
+                )
+                self.handleError(record_to_handle)
 
         # Process remaining records on shutdown
         if batch:
@@ -250,7 +254,7 @@ class SyslogHandlerAsync(logging.handlers.SysLogHandler):
                 socktype = socket.SocketKind(socktype)
             except (ValueError, TypeError):
                 socktype = socket.SOCK_DGRAM
- 
+
         super().__init__(address=address, facility=facility, socktype=socktype)
         self._error_count = 0
         self._max_errors = 10

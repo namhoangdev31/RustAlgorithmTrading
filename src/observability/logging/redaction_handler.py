@@ -26,7 +26,10 @@ def redact_sensitive_data(data: Any) -> Any:
     """
     if isinstance(data, dict):
         return {
-            key: REDACTION_TOKEN if key in SENSITIVE_FIELDS else redact_sensitive_data(value)
+            key: (
+                REDACTION_TOKEN if key in SENSITIVE_FIELDS
+                else redact_sensitive_data(value)
+            )
             for key, value in data.items()
         }
     if isinstance(data, list):

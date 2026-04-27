@@ -159,7 +159,9 @@ Examples:
             sys.exit(1)
 
         if not Path(args.ssl_certfile).exists():
-            logger.error(f"[cid:INIT] SSL certificate file not found: {args.ssl_certfile}")
+            logger.error(
+                f"[cid:INIT] SSL certificate file not found: {args.ssl_certfile}"
+            )
             sys.exit(1)
 
         config.update({

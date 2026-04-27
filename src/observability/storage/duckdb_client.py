@@ -1,15 +1,13 @@
 """
-DuckDB Time-Series Storage Client
- 
-High-performance analytics database for time-series trading data.
+SQLite Operational Data Client
+Lightweight database for operational data and metadata (OLTP).
 Optimized for OLAP queries with blazing fast aggregations.
- 
 Performance targets:
 - Insert latency: <1ms
 - Query latency: <50ms for 1M records
 - Auto-optimization enabled
 """
- 
+
 import asyncio
 import duckdb
 from contextlib import asynccontextmanager
@@ -18,7 +16,7 @@ from pathlib import Path
 from typing import List, Dict, Any, Optional, cast
 from concurrent.futures import ThreadPoolExecutor
 import logging
- 
+
 from .schemas import (
     MetricRecord,
     CandleRecord,
@@ -26,15 +24,14 @@ from .schemas import (
     TimeInterval,
     DUCKDB_SCHEMAS,
 )
- 
- 
+
+
 logger = logging.getLogger(__name__)
- 
- 
+
+
 class DuckDBClient:
     """
     DuckDB client for time-series analytics
- 
     Features:
     - Embedded database (no server)
     - Blazing fast OLAP queries
@@ -42,7 +39,7 @@ class DuckDBClient:
     - Async operations via thread pool
     - Time-bucketed aggregations
     """
- 
+
     def __init__(
         self,
         db_path: str = "data/trading_metrics.duckdb",
@@ -51,7 +48,6 @@ class DuckDBClient:
     ):
         """
         Initialize DuckDB client
- 
         Args:
             db_path: Path to DuckDB database file
             read_only: Open in read-only mode
@@ -62,32 +58,32 @@ class DuckDBClient:
         self.threads = threads
         self._executor = ThreadPoolExecutor(max_workers=threads)
         self._conn: Optional[duckdb.DuckDBPyConnection] = None
- 
+
         # Ensure data directory exists
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
- 
+
     async def initialize(self) -> None:
         """Initialize database and create tables"""
         await self._execute_sync(self._init_db)
         logger.info(f"[cid:INIT] DuckDB initialized: {self.db_path}")
- 
+
     def _init_db(self) -> None:
         """Initialize database (sync operation)"""
         self._conn = duckdb.connect(
             str(self.db_path),
             read_only=self.read_only,
         )
- 
+
         # Configure for optimal performance
         self._conn.execute("PRAGMA threads=4")
         self._conn.execute("PRAGMA memory_limit='4GB'")
         self._conn.execute("PRAGMA enable_object_cache")
- 
+
         # Create tables
         for table_name, schema_sql in DUCKDB_SCHEMAS.items():
             self._conn.execute(schema_sql)
             logger.debug(f"[cid:INIT] Created table: {table_name}")
- 
+
     async def close(self) -> None:
         """Close database connection"""
         if self._conn:
@@ -95,27 +91,26 @@ class DuckDBClient:
             self._conn = None
         self._executor.shutdown(wait=True)
         logger.info("[cid:INIT] DuckDB connection closed")
- 
+
     async def _execute_sync(self, func: Any, *args: Any, **kwargs: Any) -> Any:
         """Execute sync function in thread pool"""
         loop = asyncio.get_running_loop()
         return await loop.run_in_executor(self._executor, func, *args, **kwargs)
- 
+
     # ========== Write Operations ==========
- 
+
     async def insert_metric(self, metric: MetricRecord) -> None:
         """Insert single metric record"""
         await self.insert_metrics([metric])
- 
+
     async def insert_metrics(self, metrics: List[MetricRecord]) -> None:
         """
         Batch insert metrics
- 
         Performance: <1ms per 1000 records
         """
         if not metrics:
             return
- 
+
         def _insert() -> None:
             if self._conn is None:
                 return
@@ -134,19 +129,19 @@ class DuckDBClient:
                     d["labels"],
                 ) for d in data]
             )
- 
+
         await self._execute_sync(_insert)
         logger.debug(f"[cid:INIT] Inserted {len(metrics)} metrics")
- 
+
     async def insert_candle(self, candle: CandleRecord) -> None:
         """Insert single candle"""
         await self.insert_candles([candle])
- 
+
     async def insert_candles(self, candles: List[CandleRecord]) -> None:
         """Batch insert candles"""
         if not candles:
             return
- 
+
         def _insert() -> None:
             if self._conn is None:
                 return
@@ -167,10 +162,10 @@ class DuckDBClient:
                     d["volume"],
                 ) for d in data]
             )
- 
+
         await self._execute_sync(_insert)
         logger.debug(f"[cid:INIT] Inserted {len(candles)} candles")
- 
+
     async def insert_performance(self, record: PerformanceRecord) -> None:
         """Insert performance record"""
         def _insert() -> None:
@@ -194,11 +189,11 @@ class DuckDBClient:
                     data["total_trades"],
                 )
             )
- 
+
         await self._execute_sync(_insert)
- 
+
     # ========== Query Operations ==========
- 
+
     async def get_metrics(
         self,
         metric_name: str,
@@ -209,11 +204,11 @@ class DuckDBClient:
     ) -> List[Dict[str, Any]]:
         """
         Query metrics with time range filtering
- 
+
         Performance: <50ms for 1M records
         """
         end_time = end_time or datetime.now(UTC)
- 
+
         def _query() -> List[Dict[str, Any]]:
             if self._conn is None:
                 return []
@@ -225,14 +220,14 @@ class DuckDBClient:
                   AND timestamp <= ?
             """
             params = [metric_name, start_time, end_time]
- 
+
             if symbol:
                 query += " AND symbol = ?"
                 params.append(symbol)
- 
+
             query += " ORDER BY timestamp DESC LIMIT ?"
             params.append(limit)
- 
+
             result = self._conn.execute(query, params).fetchall()
             result_list: List[Dict[str, Any]] = [
                 {
@@ -245,9 +240,9 @@ class DuckDBClient:
                 for row in result
             ]
             return result_list
- 
+
         return cast(List[Dict[str, Any]], await self._execute_sync(_query))
- 
+
     async def get_candles(
         self,
         symbol: str,
@@ -258,17 +253,19 @@ class DuckDBClient:
     ) -> List[Dict[str, Any]]:
         """
         Query candles with time-bucketing
- 
+
         Supports dynamic intervals: 1s, 1m, 1h, 1d, 1w, 1mo
         """
         end_time = end_time or datetime.now(UTC)
- 
+
         def _query() -> List[Dict[str, Any]]:
             if self._conn is None:
                 return []
             query = f"""
                 SELECT
-                    time_bucket(INTERVAL '{interval.duckdb_interval}', timestamp) as bucket,
+                    time_bucket(
+                        INTERVAL '{interval.duckdb_interval}', timestamp
+                    ) as bucket,
                     first(open) as open,
                     max(high) as high,
                     min(low) as low,
@@ -286,7 +283,7 @@ class DuckDBClient:
                 query,
                 [symbol, start_time, end_time, limit]
             ).fetchall()
- 
+
             result_list: List[Dict[str, Any]] = [
                 {
                     "timestamp": row[0],
@@ -299,9 +296,9 @@ class DuckDBClient:
                 for row in result
             ]
             return result_list
- 
+
         return cast(List[Dict[str, Any]], await self._execute_sync(_query))
- 
+
     async def get_performance_summary(
         self,
         start_time: datetime,
@@ -309,7 +306,7 @@ class DuckDBClient:
     ) -> Dict[str, Any]:
         """Get aggregated performance metrics"""
         end_time = end_time or datetime.now(UTC)
- 
+
         def _query() -> Dict[str, Any]:
             if self._conn is None:
                 return {}
@@ -328,10 +325,10 @@ class DuckDBClient:
                 """,
                 [start_time, end_time]
             ).fetchone()
- 
+
             if not result or result[0] is None:
                 return {}
- 
+
             return {
                 "start_value": result[0],
                 "end_value": result[1],
@@ -343,9 +340,9 @@ class DuckDBClient:
                 "return_pct": ((result[1] - result[0]) / result[0] * 100)
                               if result[0] else 0,
             }
- 
+
         return cast(Dict[str, Any], await self._execute_sync(_query))
- 
+
     async def get_aggregated_metrics(
         self,
         metric_name: str,
@@ -356,7 +353,7 @@ class DuckDBClient:
     ) -> List[Dict[str, Any]]:
         """
         Get time-bucketed aggregated metrics
- 
+
         Args:
             metric_name: Metric to aggregate
             interval: Time bucket size
@@ -365,11 +362,13 @@ class DuckDBClient:
             aggregation: avg, sum, min, max, count
         """
         end_time = end_time or datetime.now(UTC)
- 
+
         def _query() -> List[Dict[str, Any]]:
             query = f"""
                 SELECT
-                    time_bucket(INTERVAL '{interval.duckdb_interval}', timestamp) as bucket,
+                    time_bucket(
+                        INTERVAL '{interval.duckdb_interval}', timestamp
+                    ) as bucket,
                     {aggregation}(value) as agg_value,
                     count(*) as sample_count
                 FROM trading_metrics
@@ -385,7 +384,7 @@ class DuckDBClient:
                 query,
                 [metric_name, start_time, end_time]
             ).fetchall()
- 
+
             return [
                 {
                     "timestamp": row[0],
@@ -394,9 +393,9 @@ class DuckDBClient:
                 }
                 for row in result
             ]
- 
+
         return cast(List[Dict[str, Any]], await self._execute_sync(_query))
- 
+
     async def get_latest_metrics(
         self,
         limit: int = 100
@@ -418,7 +417,7 @@ class DuckDBClient:
                 """,
                 [limit]
             ).fetchall()
- 
+
             return [
                 {
                     "timestamp": row[0],
@@ -428,11 +427,11 @@ class DuckDBClient:
                 }
                 for row in result
             ]
- 
+
         return cast(List[Dict[str, Any]], await self._execute_sync(_query))
- 
+
     # ========== Optimization & Maintenance ==========
- 
+
     async def optimize(self) -> None:
         """Optimize database for better query performance"""
         def _optimize() -> None:
@@ -440,9 +439,9 @@ class DuckDBClient:
                 self._conn.execute("CHECKPOINT")
                 self._conn.execute("VACUUM")
                 logger.info("[cid:INIT] Database optimized")
- 
+
         await self._execute_sync(_optimize)
- 
+
     async def get_table_stats(self) -> Dict[str, Dict[str, Any]]:
         """Get storage statistics for all tables"""
         def _query() -> Dict[str, Dict[str, Any]]:
@@ -453,7 +452,7 @@ class DuckDBClient:
                 result = self._conn.execute(
                     f"SELECT COUNT(*), MIN(timestamp), MAX(timestamp) FROM {table}"
                 ).fetchone()
- 
+
                 if result:
                     stats[table] = {
                         "row_count": cast(int, result[0]),
@@ -461,10 +460,10 @@ class DuckDBClient:
                         "max_timestamp": cast(Any, result[2]),
                     }
             return stats
- 
+
         return cast(Dict[str, Dict[str, Any]], await self._execute_sync(_query))
- 
- 
+
+
 # Context manager for automatic connection handling
 @asynccontextmanager
 async def duckdb_session(db_path: str = "data/trading_metrics.duckdb") -> Any:

@@ -92,7 +92,10 @@ class ObservabilityDatabase:
         Returns:
             List of metric records
         """
-        logger.debug(f"[cid:INIT] Would query {metric_name} from {start_time} to {end_time}")
+        logger.debug(
+            f"[cid:INIT] Would query {metric_name} from {start_time} "
+            f"to {end_time}"
+        )
         return []
 
 

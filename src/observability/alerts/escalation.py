@@ -1,7 +1,8 @@
 """
 Incident Escalation Manager.
 
-Handles incident lifecycle: alert -> acknowledge -> triage -> mitigation -> verify -> closeout -> postmortem.
+Handles incident lifecycle: alert -> acknowledge -> triage -> mitigation ->
+verify -> closeout -> postmortem.
 Enforces SLA targets: P0 <= 5m, P1 <= 15m.
 """
 import time
@@ -67,7 +68,10 @@ class Incident:
             "correlation_id": self.correlation_id,
             "uptime_seconds": time.time() - self.created_at,
             "owner": self.owner,
-            "ack_time": self.acknowledged_at - self.created_at if self.acknowledged_at else None,
+            "ack_time": (
+                self.acknowledged_at - self.created_at
+                if self.acknowledged_at else None
+            ),
             "verify_evidence": self.verify_evidence,
         }
 
@@ -78,8 +82,14 @@ class EscalationManager:
     def __init__(self) -> None:
         self.incidents: Dict[str, Incident] = {}
         self.escalation_matrix = {
-            IncidentSeverity.P0: {"owner": "primary_on_call", "backup": "manager", "sla_ack": 300},  # 5m
-            IncidentSeverity.P1: {"owner": "secondary_on_call", "backup": "primary_on_call", "sla_ack": 900},  # 15m
+            IncidentSeverity.P0: {
+                "owner": "primary_on_call", "backup": "manager", "sla_ack": 300
+            },  # 5m
+            IncidentSeverity.P1: {
+                "owner": "secondary_on_call",
+                "backup": "primary_on_call",
+                "sla_ack": 900
+            },  # 15m
         }
 
     async def create_incident(self, alert_data: dict) -> Incident:
@@ -109,12 +119,15 @@ class EscalationManager:
             incident.owner = owner
 
             ack_time = incident.acknowledged_at - incident.created_at
-            sla_target = cast(int, self.escalation_matrix.get(incident.severity, {}).get("sla_ack", 3600))
- 
+            sla_target = cast(
+                int,
+                self.escalation_matrix.get(incident.severity, {}).get("sla_ack", 3600)
+            )
+
             status = "PASS" if ack_time <= sla_target else "FAIL"
             logger.info(
-                f"[cid:{incident.correlation_id}] Incident ACKNOWLEDGED by {owner}: {incident_id} "
-                f"(Ack Time: {ack_time:.1f}s, SLA: {status})"
+                f"[cid:{incident.correlation_id}] Incident ACKNOWLEDGED by {owner}: "
+                f"{incident_id} (Ack Time: {ack_time:.1f}s, SLA: {status})"
             )
             return True
         return False

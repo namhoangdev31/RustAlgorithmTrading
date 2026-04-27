@@ -58,7 +58,10 @@ class MarketDataCollector(BaseCollector):
         # Start background aggregation task
         self.aggregation_task = asyncio.create_task(self._aggregate_metrics())
 
-        logger.info("[cid:INIT] Market data collector started - connected to Rust service on port 9091")
+        logger.info(
+            "[cid:INIT] Market data collector started - "
+            "connected to Rust service on port 9091"
+        )
 
     async def _stop_impl(self) -> None:
         """Stop market data collection."""
@@ -77,7 +80,8 @@ class MarketDataCollector(BaseCollector):
             while True:
                 await asyncio.sleep(1)  # Aggregate every second
 
-                # Scrape metrics from Rust market-data service
+                # Collect system metrics - reduce sampling frequency to lower
+                # CPU overhead
                 rust_metrics = await self.rust_bridge.scrape_service(
                     "market_data",
                     "http://127.0.0.1:9091/metrics"
@@ -118,8 +122,12 @@ class MarketDataCollector(BaseCollector):
 
             # Simulate price changes
             self.symbols[symbol]["last_price"] += random.uniform(-0.5, 0.5)
-            self.symbols[symbol]["bid"] = self.symbols[symbol]["last_price"] - random.uniform(0.01, 0.1)
-            self.symbols[symbol]["ask"] = self.symbols[symbol]["last_price"] + random.uniform(0.01, 0.1)
+            self.symbols[symbol]["bid"] = (
+                self.symbols[symbol]["last_price"] - random.uniform(0.01, 0.1)
+            )
+            self.symbols[symbol]["ask"] = (
+                self.symbols[symbol]["last_price"] + random.uniform(0.01, 0.1)
+            )
             self.symbols[symbol]["volume"] += random.randint(100, 1000)
             self.symbols[symbol]["trades"] += random.randint(1, 10)
 
@@ -135,8 +143,10 @@ class MarketDataCollector(BaseCollector):
                 "ask": self.symbols[symbol]["ask"],
                 "volume": self.symbols[symbol]["volume"],
                 "trades": self.symbols[symbol]["trades"],
-                "spread_bps": (self.symbols[symbol]["ask"] - self.symbols[symbol]["bid"]) /
-                             self.symbols[symbol]["last_price"] * 10000
+                "spread_bps": (
+                    (self.symbols[symbol]["ask"] - self.symbols[symbol]["bid"]) /
+                    self.symbols[symbol]["last_price"] * 10000
+                )
             })
 
     async def _flush_to_database(self) -> None:
@@ -147,7 +157,9 @@ class MarketDataCollector(BaseCollector):
                     await self.db.insert_market_data(self.batch_buffer)
                     self.batch_buffer.clear()
                 except Exception as e:
-                    logger.error(f"[cid:INIT] Error flushing market data to database: {e}")
+                    logger.error(
+                        f"[cid:INIT] Error flushing market data to database: {e}"
+                    )
 
     async def get_current_metrics(self) -> Dict[str, Any]:
         """Get current market data metrics."""
@@ -184,7 +196,9 @@ class MarketDataCollector(BaseCollector):
         """Stop tracking a symbol."""
         if symbol in self.symbols:
             del self.symbols[symbol]
-            logger.info(f"[cid:INIT] Removed symbol {symbol} from market data collector")
+            logger.info(
+                f"[cid:INIT] Removed symbol {symbol} from market data collector"
+            )
 
     async def _process_rust_metrics(self, rust_metrics: Dict[str, Any]) -> None:
         """
@@ -239,6 +253,7 @@ class MarketDataCollector(BaseCollector):
 
         # Add processed data to batch buffer
         for symbol, data in self.symbols.items():
+            spread = (data.get("ask", 0.0) - data.get("bid", 0.0))
             self.batch_buffer.append({
                 "timestamp": timestamp,
                 "symbol": symbol,
@@ -247,6 +262,5 @@ class MarketDataCollector(BaseCollector):
                 "ask": data.get("ask", 0.0),
                 "volume": data.get("volume", 0),
                 "trades": data.get("trades", 0),
-                "spread_bps": (data.get("ask", 0.0) - data.get("bid", 0.0)) /
-                             max(data["last_price"], 0.01) * 10000
+                "spread_bps": spread / max(data["last_price"], 0.01) * 10000
             })

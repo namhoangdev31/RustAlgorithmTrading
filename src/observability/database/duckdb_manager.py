@@ -55,7 +55,10 @@ class DuckDBManager:
             with self._lock:
                 if thread_id not in self._connections:
                     self._connections[thread_id] = duckdb.connect(self.db_path)
-                    logger.debug(f"[cid:INIT] Created DuckDB connection for thread {thread_id}")
+                    logger.debug(
+                        f"[cid:INIT] Created DuckDB connection "
+                        f"for thread {thread_id}"
+                    )
 
         return self._connections[thread_id]
 
@@ -207,7 +210,8 @@ class DuckDBManager:
 
                 conn.executemany("""
                     INSERT OR REPLACE INTO market_data
-                    (timestamp, symbol, last_price, bid, ask, volume, trades, spread_bps)
+                    (timestamp, symbol, last_price, bid, ask,
+                     volume, trades, spread_bps)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 """, values)
 
@@ -238,11 +242,14 @@ class DuckDBManager:
 
                 conn.executemany("""
                     INSERT OR REPLACE INTO strategy_metrics
-                    (timestamp, strategy_name, pnl, daily_pnl, positions, signals, win_rate)
+                    (timestamp, strategy_name, pnl, daily_pnl,
+                     positions, signals, win_rate)
                     VALUES (?, ?, ?, ?, ?, ?, ?)
                 """, values)
 
-                logger.debug(f"[cid:INIT] Inserted {len(data)} strategy metrics records")
+                logger.debug(
+                    f"[cid:INIT] Inserted {len(data)} strategy metrics records"
+                )
         except Exception as e:
             logger.error(f"[cid:INIT] Error inserting strategy metrics: {e}")
             raise
@@ -398,7 +405,10 @@ class DuckDBManager:
         strategy_name: Optional[str] = None
     ) -> List[Dict[str, Any]]:
         """Query strategy metrics."""
-        strategy_filter = f"AND strategy_name = '{strategy_name}'" if strategy_name else ""
+        strategy_filter = (
+            f"AND strategy_name = '{strategy_name}'"
+            if strategy_name else ""
+        )
 
         query = f"""
             SELECT
@@ -441,7 +451,10 @@ class DuckDBManager:
             for thread_id, conn in self._connections.items():
                 try:
                     conn.close()
-                    logger.debug(f"[cid:INIT] Closed DuckDB connection for thread {thread_id}")
+                    logger.debug(
+                        f"[cid:INIT] Closed DuckDB connection for thread "
+                        f"{thread_id}"
+                    )
                 except Exception as e:
                     logger.error(f"[cid:INIT] Error closing connection: {e}")
 

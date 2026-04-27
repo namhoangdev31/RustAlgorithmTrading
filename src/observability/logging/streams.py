@@ -62,7 +62,8 @@ class MarketDataLogger(StructuredLogger):
     ) -> None:
         """Log order book update"""
         self.debug(
-            f"Order book: {symbol} bid={bid_price}/{bid_size} ask={ask_price}/{ask_size}",
+            f"Order book: {symbol} bid={bid_price}/{bid_size} "
+            f"ask={ask_price}/{ask_size}",
             extra={
                 'event_type': 'orderbook_update',
                 'symbol': symbol,
@@ -326,7 +327,8 @@ class RiskLogger(StructuredLogger):
     ) -> None:
         """Log risk limit violation"""
         self.error(
-            f"LIMIT VIOLATION: {limit_type} - limit={limit_value}, current={current_value}" +
+            f"LIMIT VIOLATION: {limit_type} - "
+            f"limit={limit_value}, current={current_value}" +
             (f" ({symbol})" if symbol else ""),
             extra={
                 'event_type': 'limit_violation',
@@ -542,7 +544,12 @@ class SystemLogger(StructuredLogger):
             }
         )
 
-    def log_shutdown(self, component: str, reason: Optional[str] = None, **kwargs: Any) -> None:
+    def log_shutdown(
+        self,
+        component: str,
+        reason: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """Log component shutdown"""
         self.info(
             f"Shutting down {component}" + (f": {reason}" if reason else ""),

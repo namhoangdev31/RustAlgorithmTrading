@@ -85,7 +85,8 @@ class SystemCollector(BaseCollector):
             while True:
                 await asyncio.sleep(1)  # Collect every second
 
-                # Collect system metrics - reduce sampling frequency to lower CPU overhead
+                # Collect system metrics - reduce sampling frequency to lower
+                # CPU overhead
                 # Non-blocking sample
                 self.cpu_percent = psutil.cpu_percent(interval=None)
                 self.memory_percent = psutil.virtual_memory().percent

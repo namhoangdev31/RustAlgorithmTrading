@@ -154,12 +154,16 @@ async def get_metrics_summary() -> Dict[str, Any]:
         summary = {
             "timestamp": datetime.utcnow(),
             "market": {
-                "symbols_tracked": len(metrics.get("market_data", {}).get("symbols", [])),
+                "symbols_tracked": len(
+                    metrics.get("market_data", {}).get("symbols", [])
+                ),
                 "total_trades": metrics.get("market_data", {}).get("total_trades", 0),
                 "total_volume": metrics.get("market_data", {}).get("total_volume", 0.0)
             },
             "strategy": {
-                "active_strategies": len(metrics.get("strategy", {}).get("strategies", [])),
+                "active_strategies": len(
+                    metrics.get("strategy", {}).get("strategies", [])
+                ),
                 "total_pnl": metrics.get("strategy", {}).get("total_pnl", 0.0),
                 "daily_pnl": metrics.get("strategy", {}).get("daily_pnl", 0.0),
                 "open_positions": metrics.get("strategy", {}).get("open_positions", 0)
@@ -167,8 +171,12 @@ async def get_metrics_summary() -> Dict[str, Any]:
             "execution": {
                 "orders_today": metrics.get("execution", {}).get("orders_today", 0),
                 "fills_today": metrics.get("execution", {}).get("fills_today", 0),
-                "fill_rate": metrics.get("execution", {}).get("fill_rate", 0.0),
-                "avg_latency_ms": metrics.get("execution", {}).get("avg_latency_ms", 0.0)
+                "fill_rate": metrics.get("execution", {}).get(
+                    "fill_rate", 0.0
+                ),
+                "avg_latency_ms": metrics.get("execution", {}).get(
+                    "avg_latency_ms", 0.0
+                )
             },
             "system": {
                 "cpu_usage": metrics.get("system", {}).get("cpu_percent", 0.0),
