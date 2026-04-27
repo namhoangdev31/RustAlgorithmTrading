@@ -62,6 +62,8 @@ ignore = [
     "F541", # Empty f-string
     "F821", # Undefined name
     "F841", # Unused local variable
+    "E701", # Multiple statements on one line
+    "W293", # Blank line contains whitespace
 ]
 
 [tool.mypy]

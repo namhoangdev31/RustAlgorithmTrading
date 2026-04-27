@@ -99,14 +99,20 @@ Mỗi file có 3 phần:
 
 ### src/backtesting/portfolio_handler.py
 
-- Vai trò file: Tầng mô phỏng giao dịch lịch sử, execution simulation, metrics và walk-forward.
+- Vai trò file: Tầng mô phỏng giao dịch lịch sử, quản lý danh mục và tiền mặt.
 - Class trong file:
-  - PortfolioHandler: Xử lý luồng dữ liệu/sự kiện trong module (execution, data, logging queue...).
-  - PositionSizer: Data object/domain object cho event, signal, position hoặc metric.
-  - FixedAmountSizer: Lớp nghiệp vụ trong module.
-  - PercentageOfEquitySizer: Lớp nghiệp vụ trong module.
-  - KellyPositionSizer: Data object/domain object cho event, signal, position hoặc metric.
+  - PortfolioHandler: Quản lý trạng thái danh mục, vị thế và tiền mặt trong backtesting.
 - Test liên quan: tests/unit/python/*, tests/unit/test_*strategy*.py, tests/integration/test_*signal*.py, tests/test_backtest_integration.py.
+
+### src/backtesting/position_sizer.py
+
+- Vai trò file: Định nghĩa các chiến lược tính toán kích thước vị thế (position sizing).
+- Class trong file:
+  - PositionSizer: Lớp cơ sở (abstract) cho các chiến lược position sizing.
+  - FixedAmountSizer: Kích thước vị thế dựa trên số tiền cố định.
+  - PercentageOfEquitySizer: Kích thước vị thế dựa trên tỷ lệ phần trăm vốn chủ sở hữu.
+  - KellyPositionSizer: Kích thước vị thế dựa trên tiêu chuẩn Kelly.
+- Test liên quan: tests/unit/python/*, tests/test_backtest_integration.py.
 
 ### src/backtesting/transaction_costs.py
 

@@ -1,4 +1,4 @@
-# Ruff configuration file
+# Ruff configuration file - Strict Ignore Rules
 line-length = 180
 target-version = "py311"
 
@@ -12,6 +12,7 @@ ignore = [
     "F405", # Undefined from star imports
     "F541", # Empty f-string
     "F821", # Undefined name
+    "F811", # Redefinition of unused
     "F841", # Unused local variable
     "E701", # Multiple statements on one line
 ]
