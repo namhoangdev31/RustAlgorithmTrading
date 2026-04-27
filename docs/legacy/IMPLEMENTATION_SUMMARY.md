@@ -79,7 +79,7 @@ Final = min(Adjusted, Max Position Size)
 ## Usage Example
 
 ```python
-from src.strategies.enhanced_momentum import (
+from ..strategies.enhanced_momentum import (
     EnhancedMomentumStrategy,
     SignalQuality,
     RiskParameters

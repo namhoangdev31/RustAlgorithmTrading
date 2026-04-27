@@ -8,10 +8,9 @@ Provides high-performance, embedded analytics database with:
 - Fast batch inserts
 - Time-series optimized queries
 """
-import asyncio
 import duckdb
 from typing import Dict, Any, List, Optional
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from loguru import logger
 from contextlib import contextmanager
@@ -61,7 +60,7 @@ class DuckDBManager:
         return self._connections[thread_id]
 
     @contextmanager
-    def get_connection(self):
+    def get_connection(self) -> Any:
         """Context manager for getting thread-safe connection."""
         conn = self._get_connection()
         try:
@@ -70,7 +69,7 @@ class DuckDBManager:
             logger.error(f"[cid:INIT] DuckDB error: {e}")
             raise
 
-    def _init_database(self):
+    def _init_database(self) -> None:
         """Initialize database schema."""
         with self.get_connection() as conn:
             # Market data metrics table
@@ -179,7 +178,7 @@ class DuckDBManager:
 
             logger.info("[cid:INIT] DuckDB schema initialized")
 
-    async def insert_market_data(self, data: List[Dict[str, Any]]):
+    async def insert_market_data(self, data: List[Dict[str, Any]]) -> None:
         """
         Insert market data metrics in batch.
 
@@ -217,7 +216,7 @@ class DuckDBManager:
             logger.error(f"[cid:INIT] Error inserting market data: {e}")
             raise
 
-    async def insert_strategy_metrics(self, data: List[Dict[str, Any]]):
+    async def insert_strategy_metrics(self, data: List[Dict[str, Any]]) -> None:
         """Insert strategy metrics in batch."""
         if not data:
             return
@@ -248,7 +247,7 @@ class DuckDBManager:
             logger.error(f"[cid:INIT] Error inserting strategy metrics: {e}")
             raise
 
-    async def insert_execution_metrics(self, data: Dict[str, Any]):
+    async def insert_execution_metrics(self, data: Dict[str, Any]) -> None:
         """Insert execution metrics."""
         try:
             with self.get_connection() as conn:
@@ -273,7 +272,7 @@ class DuckDBManager:
             logger.error(f"[cid:INIT] Error inserting execution metrics: {e}")
             raise
 
-    async def insert_system_metrics(self, data: Dict[str, Any]):
+    async def insert_system_metrics(self, data: Dict[str, Any]) -> None:
         """Insert system metrics."""
         try:
             with self.get_connection() as conn:
@@ -297,7 +296,7 @@ class DuckDBManager:
             logger.error(f"[cid:INIT] Error inserting system metrics: {e}")
             raise
 
-    async def insert_trade(self, trade: Dict[str, Any]):
+    async def insert_trade(self, trade: Dict[str, Any]) -> None:
         """Insert a single trade record."""
         try:
             with self.get_connection() as conn:
@@ -436,7 +435,7 @@ class DuckDBManager:
             logger.error(f"[cid:INIT] Error querying strategy metrics: {e}")
             return []
 
-    async def close(self):
+    async def close(self) -> None:
         """Close all database connections."""
         with self._lock:
             for thread_id, conn in self._connections.items():

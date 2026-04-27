@@ -10,8 +10,7 @@ Collects and aggregates metrics from market data feeds:
 """
 import asyncio
 from typing import Dict, Any, List, Optional
-from datetime import datetime, timedelta
-from collections import defaultdict
+from datetime import datetime
 
 from loguru import logger
 
@@ -30,7 +29,7 @@ class MarketDataCollector(BaseCollector):
     - Trade flow and market depth
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__("market_data")
 
         # Tracked symbols and their metrics
@@ -50,7 +49,7 @@ class MarketDataCollector(BaseCollector):
         self.batch_buffer: List[Dict[str, Any]] = []
         self.batch_size = 100
 
-    async def _start_impl(self):
+    async def _start_impl(self) -> None:
         """Start market data collection."""
         # Get Rust metrics bridge
         self.rust_bridge = get_rust_metrics_bridge()
@@ -61,7 +60,7 @@ class MarketDataCollector(BaseCollector):
 
         logger.info("[cid:INIT] Market data collector started - connected to Rust service on port 9091")
 
-    async def _stop_impl(self):
+    async def _stop_impl(self) -> None:
         """Stop market data collection."""
         if self.aggregation_task:
             self.aggregation_task.cancel()
@@ -72,7 +71,7 @@ class MarketDataCollector(BaseCollector):
 
         logger.info("[cid:INIT] Market data collector stopped")
 
-    async def _aggregate_metrics(self):
+    async def _aggregate_metrics(self) -> None:
         """Background task to aggregate metrics periodically."""
         try:
             while True:
@@ -101,7 +100,7 @@ class MarketDataCollector(BaseCollector):
             # Flush remaining data
             await self._flush_to_database()
 
-    def _generate_mock_metrics(self):
+    def _generate_mock_metrics(self) -> None:
         """Generate mock market data for testing."""
         import random
 
@@ -140,7 +139,7 @@ class MarketDataCollector(BaseCollector):
                              self.symbols[symbol]["last_price"] * 10000
             })
 
-    async def _flush_to_database(self):
+    async def _flush_to_database(self) -> None:
         """Flush batch buffer to DuckDB."""
         if len(self.batch_buffer) >= self.batch_size or not self.started:
             if self.batch_buffer:
@@ -168,7 +167,7 @@ class MarketDataCollector(BaseCollector):
         """Get metrics for a specific symbol."""
         return self.symbols.get(symbol)
 
-    async def add_symbol(self, symbol: str):
+    async def add_symbol(self, symbol: str) -> None:
         """Start tracking a new symbol."""
         if symbol not in self.symbols:
             self.symbols[symbol] = {
@@ -181,13 +180,13 @@ class MarketDataCollector(BaseCollector):
             }
             logger.info(f"[cid:INIT] Added symbol {symbol} to market data collector")
 
-    async def remove_symbol(self, symbol: str):
+    async def remove_symbol(self, symbol: str) -> None:
         """Stop tracking a symbol."""
         if symbol in self.symbols:
             del self.symbols[symbol]
             logger.info(f"[cid:INIT] Removed symbol {symbol} from market data collector")
 
-    async def _process_rust_metrics(self, rust_metrics: Dict[str, Any]):
+    async def _process_rust_metrics(self, rust_metrics: Dict[str, Any]) -> None:
         """
         Process metrics scraped from Rust service.
 

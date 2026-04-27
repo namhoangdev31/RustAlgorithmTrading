@@ -4,7 +4,6 @@ Database interface for observability data storage.
 Provides async interface to DuckDB for storing metrics collected
 from Rust services.
 """
-import asyncio
 from typing import List, Dict, Any, Optional
 from datetime import datetime
 from pathlib import Path

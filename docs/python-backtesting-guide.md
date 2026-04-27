@@ -50,9 +50,9 @@ Market Data → Signal Generation → Order Creation → Risk Check → Order Ex
 All models use Pydantic for validation:
 
 ```python
-from src.models.events import MarketEvent, SignalEvent, OrderEvent, FillEvent
-from src.models.portfolio import Portfolio, Position, PerformanceMetrics
-from src.models.market import Bar, Trade, Quote
+from ..models.events import MarketEvent, SignalEvent, OrderEvent, FillEvent
+from ..models.portfolio import Portfolio, Position, PerformanceMetrics
+from ..models.market import Bar, Trade, Quote
 ```
 
 ### Event Types
@@ -69,8 +69,8 @@ from src.models.market import Bar, Trade, Quote
 All strategies inherit from `BaseStrategy`:
 
 ```python
-from src.models.events import MarketEvent, SignalEvent
-from src.strategies.base import BaseStrategy
+from ..models.events import MarketEvent, SignalEvent
+from ..strategies.base import BaseStrategy
 
 class MyStrategy(BaseStrategy):
     def calculate_signals(self, event: MarketEvent) -> List[SignalEvent]:
@@ -102,7 +102,7 @@ class MyStrategy(BaseStrategy):
 Unified data loading with caching:
 
 ```python
-from src.data import DataLoader
+from ..data import DataLoader
 
 loader = DataLoader(data_dir='data/historical')
 df = loader.load_ohlcv(
@@ -118,7 +118,7 @@ df = loader.load_ohlcv(
 ML-ready feature engineering:
 
 ```python
-from src.data import FeatureEngine
+from ..data import FeatureEngine
 
 engine = FeatureEngine(
     include_indicators=True,
@@ -140,7 +140,7 @@ Features include:
 NumPy-vectorized indicator calculations:
 
 ```python
-from src.data import TechnicalIndicators
+from ..data import TechnicalIndicators
 
 indicators = TechnicalIndicators()
 
@@ -165,7 +165,7 @@ upper, middle, lower = indicators.bollinger_bands(prices, period=20, std=2)
 Example:
 
 ```python
-from src.backtesting.portfolio_handler import PercentageOfEquitySizer
+from ..backtesting.portfolio_handler import PercentageOfEquitySizer
 
 sizer = PercentageOfEquitySizer(percentage=0.33)  # 33% per position
 portfolio_handler = PortfolioHandler(
@@ -211,7 +211,7 @@ Avg Loss ($)           -189.34
 ### Built-in Plots
 
 ```python
-from src.utils.visualization import (
+from ..utils.visualization import (
     plot_equity_curve,
     plot_drawdown,
     plot_returns_distribution
@@ -245,13 +245,13 @@ plot_returns_distribution(
 from datetime import datetime
 from pathlib import Path
 
-from src.backtesting import (
+from ..backtesting import (
     BacktestEngine,
     HistoricalDataHandler,
     SimulatedExecutionHandler,
     PortfolioHandler,
 )
-from src.strategies.mean_reversion import MeanReversionStrategy
+from ..strategies.mean_reversion import MeanReversionStrategy
 
 # Configuration
 symbols = ['AAPL', 'MSFT']

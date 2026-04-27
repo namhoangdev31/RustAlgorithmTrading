@@ -55,7 +55,7 @@ RustAlgorithmTrading/
 ## 🚀 Quick Example
 
 ```python
-from src.strategies.ml.examples.ml_strategy_example import MLTradingStrategy
+from ..strategies.ml.examples.ml_strategy_example import MLTradingStrategy
 
 # Initialize and run complete strategy
 strategy = MLTradingStrategy('AAPL')
@@ -111,7 +111,7 @@ pytest tests/ml/ --cov=src/strategies/ml
 ### Basic Feature Engineering
 
 ```python
-from src.strategies.ml import FeatureEngineer
+from ..strategies.ml import FeatureEngineer
 import pandas as pd
 
 # Load OHLCV data
@@ -126,7 +126,7 @@ X, y = fe.prepare_ml_dataset(features)
 ### Train Price Predictor
 
 ```python
-from src.strategies.ml import PricePredictor, ModelValidator
+from ..strategies.ml import PricePredictor, ModelValidator
 
 # Initialize and train
 model = PricePredictor(model_type='random_forest')
@@ -140,7 +140,7 @@ print(validator.get_validation_report())
 ### Trend Classification
 
 ```python
-from src.strategies.ml import TrendClassifier
+from ..strategies.ml import TrendClassifier
 
 # Train classifier
 classifier = TrendClassifier(model_type='gradient_boosting')
@@ -155,7 +155,7 @@ predictions, confidence_mask = classifier.predict_with_confidence(
 ### Monte Carlo Simulation
 
 ```python
-from src.strategies.ml.examples.monte_carlo_ml import MLMonteCarloSimulator
+from ..strategies.ml.examples.monte_carlo_ml import MLMonteCarloSimulator
 
 # Run simulations
 simulator = MLMonteCarloSimulator()

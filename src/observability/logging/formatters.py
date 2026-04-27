@@ -9,7 +9,7 @@ Provides:
 import json
 import logging
 import traceback
-from datetime import datetime
+from datetime import datetime, UTC
 from typing import Any, Dict
 
 from .redaction_handler import REDACTION_TOKEN, SENSITIVE_FIELDS, redact_sensitive_data
@@ -49,7 +49,7 @@ class JSONFormatter(logging.Formatter):
         except (TypeError, ValueError) as e:
             # Fallback to simple format on serialization error
             return json.dumps({
-                'timestamp': datetime.utcnow().isoformat() + 'Z',
+                'timestamp': datetime.now(UTC).isoformat() + 'Z',
                 'level': record.levelname,
                 'logger': record.name,
                 'message': str(record.getMessage()),
@@ -60,7 +60,7 @@ class JSONFormatter(logging.Formatter):
         """Build log data dictionary from record"""
         # Base log data
         log_data = {
-            'timestamp': datetime.utcfromtimestamp(record.created).isoformat() + 'Z',
+            'timestamp': datetime.fromtimestamp(record.created, UTC).isoformat() + 'Z',
             'level': record.levelname,
             'logger': record.name,
             'message': record.getMessage(),
@@ -84,11 +84,13 @@ class JSONFormatter(logging.Formatter):
 
         # Add exception info if present
         if record.exc_info and self.include_exc_info:
-            log_data['exception'] = {
-                'type': record.exc_info[0].__name__,
-                'message': str(record.exc_info[1]),
-                'traceback': traceback.format_exception(*record.exc_info)
-            }
+            exc_type, exc_value, exc_tb = record.exc_info
+            if exc_type is not None and exc_value is not None:
+                log_data['exception'] = {
+                    'type': getattr(exc_type, '__name__', str(exc_type)),
+                    'message': str(exc_value),
+                    'traceback': traceback.format_exception(exc_type, exc_value, exc_tb)
+                }
 
         return log_data
 
@@ -117,7 +119,7 @@ class JSONFormatter(logging.Formatter):
                     # Attempt to serialize to ensure it's JSON-compatible
                     json.dumps(val, default=str)
                     extra[key] = val
-                except:
+                except Exception:
                     extra[key] = str(val)
 
         return extra
@@ -157,7 +159,7 @@ class StructuredFormatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
         """Format log record as human-readable structured text"""
         # Format timestamp
-        timestamp = datetime.utcfromtimestamp(record.created).strftime(
+        timestamp = datetime.fromtimestamp(record.created, UTC).strftime(
             '%Y-%m-%d %H:%M:%S.%f'
         )[:-3]  # Truncate to milliseconds
 
@@ -235,7 +237,7 @@ class CompactJSONFormatter(JSONFormatter):
     def _build_log_data(self, record: logging.LogRecord) -> Dict[str, Any]:
         """Build minimal log data dictionary"""
         log_data = {
-            'ts': datetime.utcfromtimestamp(record.created).isoformat() + 'Z',
+            'ts': datetime.fromtimestamp(record.created, UTC).isoformat() + 'Z',
             'lvl': record.levelname[0],  # Single letter: D, I, W, E, C
             'lgr': record.name.split('.')[-1],  # Last component only
             'msg': record.getMessage(),

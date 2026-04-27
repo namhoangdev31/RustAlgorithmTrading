@@ -12,12 +12,12 @@ import json
 from datetime import datetime, timedelta, timezone
 from loguru import logger
 
-from src.strategies.momentum import MomentumStrategy
-from src.strategies.mean_reversion import MeanReversion
-from src.strategies.base import SignalType
-from src.backtesting.portfolio_handler import PortfolioHandler, FixedAmountSizer
-from src.models.events import SignalEvent, OrderEvent, FillEvent
-from src.bridge.zmq_bridge import ZMQSubscriber, SCHEMA_VERSION
+from ..strategies.momentum import MomentumStrategy
+from ..strategies.mean_reversion import MeanReversion
+from ..strategies.base import SignalType
+from ..backtesting.portfolio_handler import PortfolioHandler, FixedAmountSizer
+from ..models.events import SignalEvent, OrderEvent, FillEvent
+from ..bridge.zmq_bridge import ZMQSubscriber, SCHEMA_VERSION
 
 
 class _FakeSubscriberSocket:

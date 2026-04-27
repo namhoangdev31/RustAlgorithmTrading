@@ -7,7 +7,8 @@ from typing import Optional
 import numpy as np
 from loguru import logger
 
-from src.models.events import OrderEvent, FillEvent
+from ..models.events import OrderEvent, FillEvent
+from .data_handler import HistoricalDataHandler
 
 
 class SimulatedExecutionHandler:
@@ -20,6 +21,7 @@ class SimulatedExecutionHandler:
     - Partial fill simulation
     - Market impact modeling
     """
+    data_handler: Optional[HistoricalDataHandler] = None
 
     def __init__(
         self,
@@ -88,7 +90,7 @@ class SimulatedExecutionHandler:
 
         return fill
 
-    def set_data_handler(self, data_handler):
+    def set_data_handler(self, data_handler: HistoricalDataHandler) -> None:
         """Set data handler for getting actual market prices."""
         self.data_handler = data_handler
 
@@ -123,17 +125,19 @@ class SimulatedExecutionHandler:
                 return 0.0
 
         # Calculate slippage (random within range)
-        slippage_factor = np.random.normal(self.slippage_bps / 10000.0, self.slippage_bps / 20000.0)
+        slippage_factor = float(np.random.normal(self.slippage_bps / 10000.0, self.slippage_bps / 20000.0))
 
         # Calculate market impact based on notional value
-        notional = abs(quantity * base_price)
+        # Base price is guaranteed to be a float here
+        actual_price = float(base_price)
+        notional = abs(quantity * actual_price)
         impact_factor = (notional / 1_000_000) * (self.market_impact_bps / 10000.0)
 
         # Apply slippage and impact (worse price for buyer, better for seller)
         if order.direction == 'BUY':
-            fill_price = base_price * (1 + slippage_factor + impact_factor)
+            fill_price = actual_price * (1 + slippage_factor + impact_factor)
         else:
-            fill_price = base_price * (1 - slippage_factor - impact_factor)
+            fill_price = actual_price * (1 - slippage_factor - impact_factor)
 
         return max(fill_price, 0.01)  # Ensure positive price
 

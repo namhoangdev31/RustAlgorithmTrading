@@ -19,11 +19,11 @@ from pathlib import Path
 # Add parent directory to path
 sys.path.append(str(Path(__file__).parent.parent.parent.parent))
 
-from src.strategies.ml.features.feature_engineering import FeatureEngineer, FeatureConfig
-from src.strategies.ml.models.price_predictor import PricePredictor
-from src.strategies.ml.models.trend_classifier import TrendClassifier
-from src.strategies.ml.validation.model_validator import ModelValidator
-from src.strategies.ml.validation.cross_validator import CrossValidator
+from ..strategies.ml.features.feature_engineering import FeatureEngineer, FeatureConfig
+from ..strategies.ml.models.price_predictor import PricePredictor
+from ..strategies.ml.models.trend_classifier import TrendClassifier
+from ..strategies.ml.validation.model_validator import ModelValidator
+from ..strategies.ml.validation.cross_validator import CrossValidator
 
 
 class MLTradingStrategy:

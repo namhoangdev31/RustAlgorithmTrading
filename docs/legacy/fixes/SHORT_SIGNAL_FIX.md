@@ -321,7 +321,7 @@ class MarketRegimeDetector:
             return 'sideways'
 
 # In momentum.py generate_signals:
-from src.utils.market_regime import MarketRegimeDetector
+from ..utils.market_regime import MarketRegimeDetector
 
 regime_detector = MarketRegimeDetector()
 regime = regime_detector.detect_regime(data)

@@ -112,7 +112,7 @@ initial_capital = 1000.0  # FIXED: Changed from $100,000 to $1,000
 ```python
 from datetime import datetime
 from pathlib import Path
-from src.backtesting.data_handler import HistoricalDataHandler
+from ..backtesting.data_handler import HistoricalDataHandler
 
 # Naive datetime (no timezone)
 start = datetime(2024, 1, 1)

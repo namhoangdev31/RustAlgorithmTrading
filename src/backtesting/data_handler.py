@@ -9,8 +9,8 @@ from typing import Dict, Optional
 import pandas as pd
 from loguru import logger
 
-from src.models.market import Bar
-from src.models.events import MarketEvent
+from ..models.market import Bar
+from ..models.events import MarketEvent
 
 
 class HistoricalDataHandler:

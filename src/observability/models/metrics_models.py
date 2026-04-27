@@ -5,7 +5,7 @@ These models represent the actual metric data collected
 by each collector type.
 """
 from datetime import datetime
-from typing import Dict, Any, Optional
+from typing import Optional
 from pydantic import BaseModel, Field
 
 
@@ -112,5 +112,7 @@ class SystemMetric(BaseModel):
     p99_latency_ms: Optional[float] = None
 
     # Health status
-    health_status: str = Field(description="Overall health: healthy, degraded, unhealthy")
+    health_status: str = Field(
+        description="Overall health: healthy, degraded, unhealthy"
+    )
     active_alerts: int = Field(default=0, description="Number of active alerts")

@@ -10,7 +10,6 @@ Features:
 - Multiple worker processes (production)
 - SSL/TLS support (optional)
 """
-import os
 import sys
 import argparse
 from pathlib import Path
@@ -22,14 +21,19 @@ import uvicorn
 from loguru import logger
 
 
-def configure_logging(log_level: str = "INFO"):
+def configure_logging(log_level: str = "INFO") -> None:
     """Configure logging for the server."""
     logger.remove()  # Remove default handler
 
     # Console logging with colors
     logger.add(
         sys.stdout,
-        format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan> - <level>{message}</level>",
+        format=(
+            "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | "
+            "<level>{level: <8}</level> | "
+            "<cyan>{name}</cyan>:<cyan>{function}</cyan> - "
+            "<level>{message}</level>"
+        ),
         level=log_level,
         colorize=True
     )
@@ -43,11 +47,12 @@ def configure_logging(log_level: str = "INFO"):
         rotation="100 MB",
         retention="10 days",
         level=log_level,
-        format="{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | {name}:{function} - {message}"
+        format="{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | "
+               "{name}:{function} - {message}"
     )
 
 
-def main():
+def main() -> None:
     """Main entry point for the server."""
     parser = argparse.ArgumentParser(
         description="Observability API Server",
@@ -164,10 +169,12 @@ Examples:
         logger.info("[cid:INIT] SSL/TLS enabled")
 
     # Log configuration
-    logger.info(f"[cid:INIT] Server configuration:")
+    logger.info("[cid:INIT] Server configuration:")
     logger.info(f"[cid:INIT]   Host: {args.host}")
     logger.info(f"[cid:INIT]   Port: {args.port}")
-    logger.info(f"[cid:INIT]   Workers: {args.workers if not args.dev else 'auto-reload'}")
+    logger.info(
+        f"[cid:INIT]   Workers: {args.workers if not args.dev else 'auto-reload'}"
+    )
     logger.info(f"[cid:INIT]   Log level: {args.log_level}")
     logger.info(f"[cid:INIT]   Access log: {args.access_log}")
 

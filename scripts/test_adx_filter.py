@@ -15,8 +15,8 @@ from datetime import datetime
 # Add src to path
 sys.path.insert(0, 'src')
 
-from src.strategies.momentum import MomentumStrategy
-from src.strategies.base import SignalType
+from ..strategies.momentum import MomentumStrategy
+from ..strategies.base import SignalType
 
 
 def create_trending_market_data(periods=100):

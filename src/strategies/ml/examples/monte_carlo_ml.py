@@ -390,7 +390,7 @@ def main():
 
     # Create and train simple model
     from sklearn.ensemble import RandomForestRegressor
-    from src.strategies.ml.models import PricePredictor
+    from ..strategies.ml.models import PricePredictor
 
     model = PricePredictor(model_type='random_forest', n_estimators=50)
     model.train(X[:800], y[:800])

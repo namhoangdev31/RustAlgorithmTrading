@@ -353,7 +353,7 @@ RustAlgorithmTrading/
 ### Basic Usage
 
 ```python
-from src.strategies.ml import FeatureEngineer, PricePredictor
+from ..strategies.ml import FeatureEngineer, PricePredictor
 import pandas as pd
 
 # Load data
@@ -375,7 +375,7 @@ predictions = model.predict(X_new)
 ### Complete Strategy
 
 ```python
-from src.strategies.ml.examples.ml_strategy_example import MLTradingStrategy
+from ..strategies.ml.examples.ml_strategy_example import MLTradingStrategy
 
 # Initialize strategy
 strategy = MLTradingStrategy('AAPL')
@@ -397,7 +397,7 @@ strategy.save_models('models/')
 ### Monte Carlo Simulation
 
 ```python
-from src.strategies.ml.examples.monte_carlo_ml import MLMonteCarloSimulator
+from ..strategies.ml.examples.monte_carlo_ml import MLMonteCarloSimulator
 
 # Initialize simulator
 simulator = MLMonteCarloSimulator()

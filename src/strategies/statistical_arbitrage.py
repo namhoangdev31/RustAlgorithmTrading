@@ -17,7 +17,7 @@ from scipy import stats
 from statsmodels.tsa.stattools import coint, adfuller
 from loguru import logger
 
-from src.strategies.base import Strategy, Signal, SignalType
+from ..strategies.base import Strategy, Signal, SignalType
 
 
 class StatisticalArbitrageStrategy(Strategy):

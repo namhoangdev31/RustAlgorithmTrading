@@ -16,7 +16,7 @@ The observability logging infrastructure provides production-grade, structured l
 ### Basic Usage
 
 ```python
-from src.observability import get_logger, correlation_id
+from ..observability import get_logger, correlation_id
 
 # Get a logger instance
 logger = get_logger("trading.my_component")
@@ -46,7 +46,7 @@ with correlation_id("req-123"):
 ### Using Specialized Loggers
 
 ```python
-from src.observability import (
+from ..observability import (
     MarketDataLogger,
     StrategyLogger,
     RiskLogger,
@@ -119,7 +119,7 @@ export LOG_JSON_OUTPUT="true"
 ```
 
 ```python
-from src.observability.config import LoggingConfig
+from ..observability.config import LoggingConfig
 
 # Load from environment
 config = LoggingConfig.from_env()
@@ -129,7 +129,7 @@ logger = get_logger("my_component", config=config)
 ### Programmatic Configuration
 
 ```python
-from src.observability.config import LoggingConfig
+from ..observability.config import LoggingConfig
 import logging
 
 # Development configuration
@@ -161,7 +161,7 @@ logger = get_logger("my_component", config=config)
 Correlation IDs enable tracking requests across async operations and service boundaries:
 
 ```python
-from src.observability import correlation_id, get_logger
+from ..observability import correlation_id, get_logger
 
 logger = get_logger("trading.api")
 
@@ -178,7 +178,7 @@ async def handle_request(request_id: str):
         logger.info(f"Request {cid} completed")
 
 # Extract from HTTP headers
-from src.observability.logging.correlations import (
+from ..observability.logging.correlations import (
     extract_correlation_id_from_headers,
     inject_correlation_id_into_headers,
 )
@@ -195,7 +195,7 @@ headers = inject_correlation_id_into_headers(headers)
 ### Performance Monitoring
 
 ```python
-from src.observability import log_execution_time
+from ..observability import log_execution_time
 
 # Decorator to log execution time
 @log_execution_time(threshold_ms=100, log_args=True)
@@ -218,7 +218,7 @@ logger.reset_metrics()
 ### Error Logging with Context
 
 ```python
-from src.observability import log_error_with_context
+from ..observability import log_error_with_context
 
 try:
     execute_trade(order)
@@ -239,7 +239,7 @@ except Exception as e:
 ### Custom Context Enrichment
 
 ```python
-from src.observability.logging.decorators import LogContext
+from ..observability.logging.decorators import LogContext
 
 # Add context to all logs within block
 with LogContext({'user_id': '123', 'session_id': 'abc'}):
@@ -247,7 +247,7 @@ with LogContext({'user_id': '123', 'session_id': 'abc'}):
     process_user_request()
 
 # Decorator for automatic correlation ID
-from src.observability.logging.decorators import with_correlation_id
+from ..observability.logging.decorators import with_correlation_id
 
 @with_correlation_id
 async def handle_request(data):
@@ -455,7 +455,7 @@ config = LoggingConfig(
 ### Syslog
 
 ```python
-from src.observability.logging.handlers import SyslogHandlerAsync
+from ..observability.logging.handlers import SyslogHandlerAsync
 
 # Add syslog handler to logger
 syslog_handler = SyslogHandlerAsync(
@@ -518,7 +518,7 @@ config.backup_count = 10  # Keep 10 backups
 
 ```python
 import pytest
-from src.observability import get_logger
+from ..observability import get_logger
 
 def test_logging(caplog):
     logger = get_logger("test")

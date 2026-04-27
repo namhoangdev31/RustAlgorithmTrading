@@ -9,8 +9,8 @@ import numpy as np
 from datetime import datetime, timedelta
 from decimal import Decimal
 
-from src.backtesting.engine import BacktestEngine, Trade, Position
-from src.strategies.base import Strategy, Signal, SignalType
+from ..backtesting.engine import BacktestEngine, Trade, Position
+from ..strategies.base import Strategy, Signal, SignalType
 
 
 class MockStrategy(Strategy):

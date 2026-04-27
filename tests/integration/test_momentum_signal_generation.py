@@ -15,8 +15,8 @@ from pathlib import Path
 from datetime import datetime
 from loguru import logger
 
-from src.strategies.simple_momentum import SimpleMomentumStrategy
-from src.strategies.base import SignalType
+from ..strategies.simple_momentum import SimpleMomentumStrategy
+from ..strategies.base import SignalType
 
 
 class TestMomentumSignalGeneration:
@@ -205,7 +205,7 @@ class TestMomentumSignalGeneration:
     def test_position_sizing_with_signals(self, strategy):
         """Test position sizing calculations with generated signals"""
         # Create a mock signal
-        from src.strategies.base import Signal
+        from ..strategies.base import Signal
 
         signal = Signal(
             timestamp=datetime.now(),
@@ -278,7 +278,7 @@ class TestMomentumStrategyDiagnostics:
 
     def test_basic_signal_structure(self):
         """Test that Signal objects have the correct structure"""
-        from src.strategies.base import Signal, SignalType
+        from ..strategies.base import Signal, SignalType
 
         signal = Signal(
             timestamp=datetime.now(),

@@ -942,7 +942,7 @@ class AdaptiveThresholdCalculator:
 import pytest
 import pandas as pd
 import numpy as np
-from src.utils.market_regime import MarketRegimeDetector, MarketRegime
+from ..utils.market_regime import MarketRegimeDetector, MarketRegime
 
 class TestMarketRegimeDetector:
     @pytest.fixture
@@ -1166,7 +1166,7 @@ STRATEGY_PERFORMANCE_TARGETS = {
 ### Example 1: Basic Regime Detection Usage
 
 ```python
-from src.utils.market_regime import MarketRegimeDetector
+from ..utils.market_regime import MarketRegimeDetector
 import pandas as pd
 
 # Load market data
@@ -1190,7 +1190,7 @@ print(f"ATR: {indicators['atr']:.2f}")
 print(f"Trend: {indicators['trend']}")
 
 # Get strategy configuration
-from src.utils.market_regime import select_strategy_for_regime
+from ..utils.market_regime import select_strategy_for_regime
 strategy_config = select_strategy_for_regime(current_regime)
 
 print(f"Recommended Strategy: {strategy_config['strategy']}")
@@ -1201,8 +1201,8 @@ print(f"Enabled: {strategy_config['enabled']}")
 ### Example 2: Strategy Integration
 
 ```python
-from src.strategies.momentum import MomentumStrategy
-from src.utils.market_regime import MarketRegimeDetector
+from ..strategies.momentum import MomentumStrategy
+from ..utils.market_regime import MarketRegimeDetector
 
 # Initialize detector
 detector = MarketRegimeDetector()
@@ -1221,8 +1221,8 @@ for signal in signals:
 ### Example 3: Backtesting with Regime Awareness
 
 ```python
-from src.backtesting.engine import BacktestEngine
-from src.utils.market_regime import MarketRegimeDetector
+from ..backtesting.engine import BacktestEngine
+from ..utils.market_regime import MarketRegimeDetector
 
 # Setup
 engine = BacktestEngine(initial_capital=10000)

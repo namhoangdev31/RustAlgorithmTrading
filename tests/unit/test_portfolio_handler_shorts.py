@@ -18,8 +18,8 @@ import numpy as np
 from datetime import datetime
 from decimal import Decimal
 
-from src.backtesting.portfolio_handler import PortfolioHandler
-from src.models.events import SignalEvent
+from ..backtesting.portfolio_handler import PortfolioHandler
+from ..models.events import SignalEvent
 
 
 class TestShortPositionEntry:
@@ -73,7 +73,7 @@ class TestShortPositionExit:
         """Create a portfolio with an existing short position."""
         portfolio = PortfolioHandler(initial_capital=100000.0)
         # Manually add a short position for testing
-        from src.models.portfolio import Position
+        from ..models.portfolio import Position
         portfolio.portfolio.positions['AAPL'] = Position(
             symbol='AAPL',
             quantity=-100,  # Negative = short
@@ -187,7 +187,7 @@ class TestExitSignalDirectionFix:
     def portfolio_with_long(self):
         """Create a portfolio with an existing long position."""
         portfolio = PortfolioHandler(initial_capital=100000.0)
-        from src.models.portfolio import Position
+        from ..models.portfolio import Position
         portfolio.portfolio.positions['AAPL'] = Position(
             symbol='AAPL',
             quantity=100,  # Positive = long
@@ -201,7 +201,7 @@ class TestExitSignalDirectionFix:
     def portfolio_with_short(self):
         """Create a portfolio with an existing short position."""
         portfolio = PortfolioHandler(initial_capital=100000.0)
-        from src.models.portfolio import Position
+        from ..models.portfolio import Position
         portfolio.portfolio.positions['AAPL'] = Position(
             symbol='AAPL',
             quantity=-100,  # Negative = short

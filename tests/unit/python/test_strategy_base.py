@@ -7,7 +7,7 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 
-from src.strategies.base import Strategy, Signal, SignalType
+from ..strategies.base import Strategy, Signal, SignalType
 
 
 class ConcreteStrategy(Strategy):

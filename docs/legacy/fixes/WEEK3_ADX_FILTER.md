@@ -44,7 +44,7 @@ adx_threshold: float = 25.0,  # ADX >25 = trending market
 
 1. ✅ **Import MarketRegimeDetector**:
    ```python
-   from src.utils.market_regime import MarketRegimeDetector
+   from ..utils.market_regime import MarketRegimeDetector
    ```
 
 2. ✅ **Initialize Regime Detector**:

@@ -4,11 +4,11 @@ Event-driven backtesting engine.
 
 from collections import deque
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 import pandas as pd
 from loguru import logger
 
-from src.models.events import Event, EventType, MarketEvent, SignalEvent
+from ..models.events import Event, EventType, MarketEvent, SignalEvent, OrderEvent, FillEvent
 from .data_handler import HistoricalDataHandler
 from .execution_handler import SimulatedExecutionHandler
 from .portfolio_handler import PortfolioHandler
@@ -28,7 +28,7 @@ class BacktestEngine:
         data_handler: HistoricalDataHandler,
         execution_handler: SimulatedExecutionHandler,
         portfolio_handler: PortfolioHandler,
-        strategy,
+        strategy: Any,
         start_date: Optional[datetime] = None,
         end_date: Optional[datetime] = None,
     ):
@@ -127,26 +127,26 @@ class BacktestEngine:
 
         return results
 
-    def _dispatch_event(self, event: Event):
+    def _dispatch_event(self, event: Event) -> None:
         """
         Dispatch event to appropriate handler.
 
         Args:
             event: Event to process
         """
-        if event.event_type == EventType.MARKET:
+        if event.event_type == EventType.MARKET and isinstance(event, MarketEvent):
             self._handle_market_event(event)
-        elif event.event_type == EventType.SIGNAL:
+        elif event.event_type == EventType.SIGNAL and isinstance(event, SignalEvent):
             self._handle_signal_event(event)
             self.signals_generated += 1
-        elif event.event_type == EventType.ORDER:
+        elif event.event_type == EventType.ORDER and isinstance(event, OrderEvent):
             self._handle_order_event(event)
             self.orders_placed += 1
-        elif event.event_type == EventType.FILL:
+        elif event.event_type == EventType.FILL and isinstance(event, FillEvent):
             self._handle_fill_event(event)
             self.fills_executed += 1
 
-    def _handle_market_event(self, event: MarketEvent):
+    def _handle_market_event(self, event: MarketEvent) -> None:
         """
         Handle market data update.
 
@@ -207,7 +207,7 @@ class BacktestEngine:
         except Exception as e:
             logger.error(f"Error generating signals from market event: {e}", exc_info=True)
 
-    def _handle_signal_event(self, event):
+    def _handle_signal_event(self, event: SignalEvent) -> None:
         """
         Handle trading signal.
 
@@ -221,7 +221,7 @@ class BacktestEngine:
         for order in orders:
             self.events.append(order)
 
-    def _handle_order_event(self, event):
+    def _handle_order_event(self, event: OrderEvent) -> None:
         """
         Handle order placement.
 
@@ -234,7 +234,7 @@ class BacktestEngine:
         if fill_event:
             self.events.append(fill_event)
 
-    def _handle_fill_event(self, event):
+    def _handle_fill_event(self, event: FillEvent) -> None:
         """
         Handle order fill.
 

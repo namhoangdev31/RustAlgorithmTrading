@@ -60,7 +60,7 @@ src/strategies/ml/
 The `FeatureEngineer` class transforms raw OHLCV data into ML-ready features.
 
 ```python
-from src.strategies.ml.features import FeatureEngineer, FeatureConfig
+from ..strategies.ml.features import FeatureEngineer, FeatureConfig
 
 # Configure feature engineering
 config = FeatureConfig(
@@ -158,7 +158,7 @@ X, y = fe.prepare_ml_dataset(
 Predicts future price returns using regression algorithms.
 
 ```python
-from src.strategies.ml.models import PricePredictor
+from ..strategies.ml.models import PricePredictor
 
 # Initialize model
 predictor = PricePredictor(
@@ -202,7 +202,7 @@ importance = predictor.get_feature_importance()
 Classifies market direction into up/down/neutral trends.
 
 ```python
-from src.strategies.ml.models import TrendClassifier
+from ..strategies.ml.models import TrendClassifier
 
 # Initialize model
 classifier = TrendClassifier(
@@ -247,7 +247,7 @@ test_metrics = classifier.evaluate(X_test, y_test)
 Implements multiple validation strategies to prevent overfitting.
 
 ```python
-from src.strategies.ml.validation import ModelValidator
+from ..strategies.ml.validation import ModelValidator
 
 validator = ModelValidator()
 
@@ -286,7 +286,7 @@ print(validator.get_validation_report())
 Provides time-series aware cross-validation.
 
 ```python
-from src.strategies.ml.validation import CrossValidator
+from ..strategies.ml.validation import CrossValidator
 
 cv = CrossValidator(n_splits=5)
 
@@ -332,7 +332,7 @@ print(cv.get_cv_report())
 ### Example 1: Basic Price Prediction
 
 ```python
-from src.strategies.ml import FeatureEngineer, PricePredictor, ModelValidator
+from ..strategies.ml import FeatureEngineer, PricePredictor, ModelValidator
 import pandas as pd
 
 # Load data
@@ -356,7 +356,7 @@ print(validator.get_validation_report())
 ### Example 2: Trend Classification with Confidence
 
 ```python
-from src.strategies.ml import TrendClassifier
+from ..strategies.ml import TrendClassifier
 
 # Initialize classifier
 classifier = TrendClassifier(

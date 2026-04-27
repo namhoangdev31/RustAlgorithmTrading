@@ -23,10 +23,10 @@ from loguru import logger
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from src.strategies.momentum_optimized import MomentumOptimizedStrategy
-from src.backtesting.engine import BacktestEngine
-from src.backtesting.portfolio_handler import PortfolioHandler
-from src.data.data_handler import DataHandler
+from ..strategies.momentum_optimized import MomentumOptimizedStrategy
+from ..backtesting.engine import BacktestEngine
+from ..backtesting.portfolio_handler import PortfolioHandler
+from ..data.data_handler import DataHandler
 
 
 def run_optimized_backtest():

@@ -8,13 +8,13 @@ Performance targets:
 
 import pytest
 import asyncio
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 from pathlib import Path
 import tempfile
 import time
 
-from src.observability.storage.duckdb_client import DuckDBClient, duckdb_session
-from src.observability.storage.schemas import (
+from ..observability.storage.duckdb_client import DuckDBClient, duckdb_session
+from ..observability.storage.schemas import (
     MetricRecord,
     CandleRecord,
     PerformanceRecord,
@@ -50,7 +50,7 @@ class TestDuckDBClient:
     async def test_insert_single_metric(self, temp_db):
         """Test single metric insertion"""
         metric = MetricRecord(
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(UTC),
             metric_name="test_latency",
             value=42.5,
             symbol="BTC/USD",
@@ -61,7 +61,7 @@ class TestDuckDBClient:
 
         metrics = await temp_db.get_metrics(
             "test_latency",
-            datetime.utcnow() - timedelta(hours=1),
+            datetime.now(UTC) - timedelta(hours=1),
         )
         assert len(metrics) == 1
         assert metrics[0]["value"] == 42.5
@@ -69,7 +69,7 @@ class TestDuckDBClient:
 
     async def test_batch_metric_insertion(self, temp_db):
         """Test batch metric insertion performance"""
-        now = datetime.utcnow()
+        now = datetime.now(UTC)
         metrics = [
             MetricRecord(
                 timestamp=now - timedelta(seconds=i),
@@ -97,7 +97,7 @@ class TestDuckDBClient:
 
     async def test_insert_candles(self, temp_db):
         """Test candle insertion and querying"""
-        now = datetime.utcnow()
+        now = datetime.now(UTC)
         candles = [
             CandleRecord(
                 timestamp=now - timedelta(minutes=i),
@@ -126,7 +126,7 @@ class TestDuckDBClient:
     async def test_performance_tracking(self, temp_db):
         """Test performance record insertion"""
         record = PerformanceRecord(
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(UTC),
             portfolio_value=100000.0,
             pnl=1500.0,
             sharpe_ratio=2.5,
@@ -138,14 +138,14 @@ class TestDuckDBClient:
         await temp_db.insert_performance(record)
 
         summary = await temp_db.get_performance_summary(
-            datetime.utcnow() - timedelta(hours=1),
+            datetime.now(UTC) - timedelta(hours=1),
         )
         assert summary["total_pnl"] == 1500.0
         assert summary["avg_sharpe"] == 2.5
 
     async def test_time_bucketing(self, temp_db):
         """Test time-bucketed aggregations"""
-        now = datetime.utcnow()
+        now = datetime.now(UTC)
 
         # Insert metrics every second for 5 minutes
         metrics = [
@@ -173,7 +173,7 @@ class TestDuckDBClient:
 
     async def test_query_performance(self, temp_db):
         """Test query performance on large dataset"""
-        now = datetime.utcnow()
+        now = datetime.now(UTC)
 
         # Insert 10k metrics
         metrics = [
@@ -201,7 +201,7 @@ class TestDuckDBClient:
 
     async def test_latest_metrics(self, temp_db):
         """Test getting latest metrics"""
-        now = datetime.utcnow()
+        now = datetime.now(UTC)
 
         # Insert various metrics
         metrics = [
@@ -224,7 +224,7 @@ class TestDuckDBClient:
         # Insert some data
         metrics = [
             MetricRecord(
-                timestamp=datetime.utcnow() - timedelta(seconds=i),
+                timestamp=datetime.now(UTC) - timedelta(seconds=i),
                 metric_name="test",
                 value=float(i),
             )
@@ -238,7 +238,7 @@ class TestDuckDBClient:
         # Verify data still accessible
         result = await temp_db.get_metrics(
             "test",
-            datetime.utcnow() - timedelta(hours=1),
+            datetime.now(UTC) - timedelta(hours=1),
         )
         assert len(result) == 1000
 
@@ -249,7 +249,7 @@ class TestDuckDBClient:
 
             async with duckdb_session(str(db_path)) as client:
                 metric = MetricRecord(
-                    timestamp=datetime.utcnow(),
+                    timestamp=datetime.now(UTC),
                     metric_name="test",
                     value=123.0,
                 )
@@ -260,7 +260,7 @@ class TestDuckDBClient:
             async with duckdb_session(str(db_path)) as client:
                 result = await client.get_metrics(
                     "test",
-                    datetime.utcnow() - timedelta(hours=1),
+                    datetime.now(UTC) - timedelta(hours=1),
                 )
                 assert len(result) == 1
 
@@ -271,7 +271,7 @@ class TestPerformanceBenchmarks:
 
     async def test_insert_throughput(self, temp_db):
         """Test insertion throughput"""
-        now = datetime.utcnow()
+        now = datetime.now(UTC)
         batch_size = 10000
 
         metrics = [
@@ -296,7 +296,7 @@ class TestPerformanceBenchmarks:
 
     async def test_query_throughput(self, temp_db):
         """Test query throughput"""
-        now = datetime.utcnow()
+        now = datetime.now(UTC)
 
         # Insert 100k metrics
         metrics = [

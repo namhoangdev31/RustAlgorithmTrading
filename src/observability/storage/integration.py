@@ -12,7 +12,7 @@ import logging
 
 from .duckdb_client import DuckDBClient
 from .sqlite_client import SQLiteClient
-from .schemas import MetricRecord, CandleRecord, PerformanceRecord, TimeInterval
+from .schemas import MetricRecord, TimeInterval
 
 
 logger = logging.getLogger(__name__)
@@ -237,13 +237,13 @@ def get_storage_manager() -> StorageManager:
 
 # FastAPI lifespan context manager
 @asynccontextmanager
-async def storage_lifespan(app):
+async def storage_lifespan(app: Any) -> Any:
     """
     FastAPI lifespan context manager
 
     Usage:
         from fastapi import FastAPI
-        from src.observability.storage.integration import storage_lifespan
+        from ..observability.storage.integration import storage_lifespan
 
         app = FastAPI(lifespan=storage_lifespan)
     """
@@ -264,7 +264,7 @@ async def get_storage() -> StorageManager:
 
     Usage:
         from fastapi import Depends
-        from src.observability.storage.integration import get_storage
+        from ..observability.storage.integration import get_storage
 
         @app.get("/metrics")
         async def get_metrics(storage: StorageManager = Depends(get_storage)):

@@ -76,11 +76,11 @@ class AlpacaClient:
         try:
             account = self.trading_client.get_account()
             return {
-                "cash": float(account.cash),
-                "portfolio_value": float(account.portfolio_value),
-                "buying_power": float(account.buying_power),
-                "equity": float(account.equity),
-                "status": account.status,
+                "cash": float(account.cash) if hasattr(account, "cash") and account.cash is not None else 0.0,
+                "portfolio_value": float(account.portfolio_value) if hasattr(account, "portfolio_value") and account.portfolio_value is not None else 0.0,
+                "buying_power": float(account.buying_power) if hasattr(account, "buying_power") and account.buying_power is not None else 0.0,
+                "equity": float(account.equity) if hasattr(account, "equity") and account.equity is not None else 0.0,
+                "status": account.status if hasattr(account, "status") else "unknown",
             }
         except Exception as e:
             logger.error(f"Failed to fetch account info: {e}")
@@ -97,15 +97,15 @@ class AlpacaClient:
             positions = self.trading_client.get_all_positions()
             return [
                 {
-                    "symbol": pos.symbol,
-                    "qty": float(pos.qty),
-                    "avg_entry_price": float(pos.avg_entry_price),
-                    "current_price": float(pos.current_price),
-                    "market_value": float(pos.market_value),
-                    "unrealized_pl": float(pos.unrealized_pl),
-                    "unrealized_plpc": float(pos.unrealized_plpc),
+                    "symbol": pos.symbol if hasattr(pos, "symbol") else "",
+                    "qty": float(pos.qty) if hasattr(pos, "qty") and pos.qty is not None else 0.0,
+                    "avg_entry_price": float(pos.avg_entry_price) if hasattr(pos, "avg_entry_price") and pos.avg_entry_price is not None else 0.0,
+                    "current_price": float(pos.current_price) if hasattr(pos, "current_price") and pos.current_price is not None else 0.0,
+                    "market_value": float(pos.market_value) if hasattr(pos, "market_value") and pos.market_value is not None else 0.0,
+                    "unrealized_pl": float(pos.unrealized_pl) if hasattr(pos, "unrealized_pl") and pos.unrealized_pl is not None else 0.0,
+                    "unrealized_plpc": float(pos.unrealized_plpc) if hasattr(pos, "unrealized_plpc") and pos.unrealized_plpc is not None else 0.0,
                 }
-                for pos in positions
+                for pos in positions if not isinstance(pos, str)
             ]
         except Exception as e:
             logger.error(f"Failed to fetch positions: {e}")
@@ -139,7 +139,11 @@ class AlpacaClient:
             )
 
             bars = self.data_client.get_stock_bars(request_params)
-            df = bars.df
+            if hasattr(bars, "df"):
+                df = bars.df
+            else:
+                import pandas as pd
+                df = pd.DataFrame()
 
             logger.info(f"Fetched {len(df)} bars for {symbol}")
             return df
@@ -188,13 +192,13 @@ class AlpacaClient:
             logger.info(f"Order placed: {side} {qty} {symbol}")
 
             return {
-                "id": str(order.id),
-                "symbol": order.symbol,
-                "qty": float(order.qty),
-                "side": order.side.value,
-                "type": order.type.value,
-                "status": order.status.value,
-                "created_at": order.created_at,
+                "id": str(order.id) if hasattr(order, "id") else "",
+                "symbol": order.symbol if hasattr(order, "symbol") else "",
+                "qty": float(order.qty) if hasattr(order, "qty") and order.qty is not None else 0.0,
+                "side": order.side.value if hasattr(order, "side") and order.side else "",
+                "type": order.type.value if hasattr(order, "type") and order.type else "",
+                "status": order.status.value if hasattr(order, "status") and order.status else "",
+                "created_at": order.created_at if hasattr(order, "created_at") else datetime.now(),
             }
 
         except Exception as e:
@@ -216,15 +220,15 @@ class AlpacaClient:
 
             return [
                 {
-                    "id": str(order.id),
-                    "symbol": order.symbol,
-                    "qty": float(order.qty),
-                    "side": order.side.value,
-                    "type": order.type.value,
-                    "status": order.status.value,
-                    "created_at": order.created_at,
+                    "id": str(order.id) if hasattr(order, "id") else "",
+                    "symbol": order.symbol if hasattr(order, "symbol") else "",
+                    "qty": float(order.qty) if hasattr(order, "qty") and order.qty is not None else 0.0,
+                    "side": order.side.value if hasattr(order, "side") and order.side else "",
+                    "type": order.type.value if hasattr(order, "type") and order.type else "",
+                    "status": order.status.value if hasattr(order, "status") and order.status else "",
+                    "created_at": order.created_at if hasattr(order, "created_at") else datetime.now(),
                 }
-                for order in orders
+                for order in orders if not isinstance(order, str)
             ]
 
         except Exception as e:

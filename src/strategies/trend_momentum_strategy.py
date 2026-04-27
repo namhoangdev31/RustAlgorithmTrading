@@ -19,7 +19,7 @@ from typing import Dict, List, Optional, Any
 from datetime import datetime
 from loguru import logger
 
-from src.strategies.base import Strategy, Signal, SignalType
+from ..strategies.base import Strategy, Signal, SignalType
 
 
 class TrendMomentumStrategy(Strategy):

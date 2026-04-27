@@ -13,7 +13,6 @@ import logging
 import threading
 import time
 from typing import Any, Dict, Optional, Union
-from contextvars import ContextVar
 
 from .formatters import JSONFormatter, StructuredFormatter
 from .handlers import AsyncQueueHandler, RotatingFileHandlerAsync
@@ -30,7 +29,7 @@ _registry_lock = threading.Lock()
 class LoggerMetrics:
     """Thread-safe performance metrics for logging operations"""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._lock = threading.Lock()
         self._total_logs = 0
         self._total_latency = 0.0
@@ -38,7 +37,7 @@ class LoggerMetrics:
         self._min_latency = float('inf')
         self._error_count = 0
 
-    def record_log(self, latency: float, error: bool = False):
+    def record_log(self, latency: float, error: bool = False) -> None:
         """Record a log operation with its latency"""
         with self._lock:
             self._total_logs += 1
@@ -64,7 +63,7 @@ class LoggerMetrics:
                               if self._total_logs > 0 else 0.0),
             }
 
-    def reset(self):
+    def reset(self) -> None:
         """Reset all metrics"""
         with self._lock:
             self._total_logs = 0
@@ -118,7 +117,7 @@ class StructuredLogger:
         if not self._logger.handlers:
             self._setup_handlers()
 
-    def _setup_handlers(self):
+    def _setup_handlers(self) -> None:
         """Set up async and file handlers with formatters"""
         # Console handler with structured format
         console_handler = logging.StreamHandler()
@@ -130,7 +129,7 @@ class StructuredLogger:
         if self.config.file_output_enabled:
             try:
                 file_handler = RotatingFileHandlerAsync(
-                    filename=self.config.get_log_file_path(self.name),
+                    filename=str(self.config.get_log_file_path(self.name)),
                     max_bytes=self.config.max_file_size,
                     backup_count=self.config.backup_count,
                 )
@@ -154,7 +153,7 @@ class StructuredLogger:
         correlation_id = correlation_id_var.get()
         if correlation_id:
             context['correlation_id'] = correlation_id
-        
+
         # Add schema version for One-pass traceability
         context['schema_version'] = SCHEMA_VERSION
 
@@ -170,11 +169,11 @@ class StructuredLogger:
         self,
         level: int,
         msg: str,
-        *args,
-        exc_info=None,
+        *args: Any,
+        exc_info: Any = None,
         extra: Optional[Dict[str, Any]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """Log with performance metrics tracking"""
         start_time = time.perf_counter()
         error = False
@@ -194,7 +193,7 @@ class StructuredLogger:
             # Graceful degradation: try basic logging
             try:
                 self._logger.log(level, f"[DEGRADED] {msg}: {e}")
-            except:
+            except Exception:
                 pass  # Silent failure in extreme cases
         finally:
             latency = time.perf_counter() - start_time
@@ -202,26 +201,26 @@ class StructuredLogger:
 
     # Public logging methods
 
-    def debug(self, msg: str, *args, extra: Optional[Dict[str, Any]] = None, **kwargs):
+    def debug(self, msg: str, *args: Any, extra: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
         """Log debug message"""
         self._log_with_metrics(logging.DEBUG, msg, *args, extra=extra, **kwargs)
 
-    def info(self, msg: str, *args, extra: Optional[Dict[str, Any]] = None, **kwargs):
+    def info(self, msg: str, *args: Any, extra: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
         """Log info message"""
         self._log_with_metrics(logging.INFO, msg, *args, extra=extra, **kwargs)
 
-    def warning(self, msg: str, *args, extra: Optional[Dict[str, Any]] = None, **kwargs):
+    def warning(self, msg: str, *args: Any, extra: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
         """Log warning message"""
         self._log_with_metrics(logging.WARNING, msg, *args, extra=extra, **kwargs)
 
     def error(
         self,
         msg: str,
-        *args,
-        exc_info=None,
+        *args: Any,
+        exc_info: Any = None,
         extra: Optional[Dict[str, Any]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """Log error message with optional exception info"""
         self._log_with_metrics(
             logging.ERROR, msg, *args, exc_info=exc_info, extra=extra, **kwargs
@@ -230,17 +229,17 @@ class StructuredLogger:
     def critical(
         self,
         msg: str,
-        *args,
-        exc_info=None,
+        *args: Any,
+        exc_info: Any = None,
         extra: Optional[Dict[str, Any]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """Log critical message with optional exception info"""
         self._log_with_metrics(
             logging.CRITICAL, msg, *args, exc_info=exc_info, extra=extra, **kwargs
         )
 
-    def exception(self, msg: str, *args, extra: Optional[Dict[str, Any]] = None, **kwargs):
+    def exception(self, msg: str, *args: Any, extra: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
         """Log exception with traceback"""
         self._log_with_metrics(
             logging.ERROR, msg, *args, exc_info=True, extra=extra, **kwargs
@@ -255,13 +254,13 @@ class StructuredLogger:
             **self._metrics.get_metrics()
         }
 
-    def reset_metrics(self):
+    def reset_metrics(self) -> None:
         """Reset performance metrics"""
         self._metrics.reset()
 
     # Utility methods
 
-    def set_level(self, level: Union[int, str]):
+    def set_level(self, level: Union[int, str]) -> None:
         """Set logging level"""
         if isinstance(level, str):
             level = getattr(logging, level.upper())
@@ -271,7 +270,12 @@ class StructuredLogger:
         """Check if logger is enabled for given level"""
         if isinstance(level, str):
             level = getattr(logging, level.upper())
-        return self._logger.isEnabledFor(level)
+        if isinstance(level, str):
+            level_num = logging.getLevelName(level.upper())
+            if not isinstance(level_num, int):
+                return False
+            return bool(self._logger.isEnabledFor(level_num))
+        return bool(self._logger.isEnabledFor(level))
 
     def get_child(self, suffix: str) -> 'StructuredLogger':
         """Create child logger with hierarchical name"""
@@ -310,7 +314,7 @@ def get_all_metrics() -> Dict[str, Dict[str, Any]]:
         }
 
 
-def reset_all_metrics():
+def reset_all_metrics() -> None:
     """Reset metrics for all registered loggers"""
     with _registry_lock:
         for logger in _logger_registry.values():

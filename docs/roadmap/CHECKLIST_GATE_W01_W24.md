@@ -97,35 +97,35 @@
 
 ## W09 - Observability Contract
 
-- [ ] Logging/event schema thống nhất toàn pipeline.
-- [ ] Correlation continuity trên critical events.
-- [ ] Go/No-Go W09 đã chốt.
+- [x] Logging/event schema thống nhất toàn pipeline.
+- [x] Correlation continuity trên critical events.
+- [x] Go/No-Go W09 đã chốt.
 - Evidence IDs: `EV-W9-101..109, EV-W9-201..214, EV-W9-301..306, EV-W9-401..402`
-- Decision: [ ] GO  [ ] NO-GO
+- Decision: [x] GO  [ ] NO-GO
 
 ## W10 - API Health & SLO
 
-- [ ] SLO/alert profile chuẩn hóa.
-- [ ] Alert quality đạt ngưỡng đã chốt.
-- [ ] Go/No-Go W10 đã chốt.
+- [x] SLO/alert profile chuẩn hóa.
+- [x] Alert quality đạt ngưỡng đã chốt.
+- [x] Go/No-Go W10 đã chốt.
 - Evidence IDs: `EV-W10-101..110, EV-W10-201..217, EV-W10-301..306, EV-W10-401..402`
-- Decision: [ ] GO  [ ] NO-GO
+- Decision: [x] GO  [ ] NO-GO
 
 ## W11 - Incident Runbook
 
-- [ ] Runbook P0/P1 + escalation matrix hoàn tất.
-- [ ] Drill theo runbook đạt kết quả mục tiêu.
-- [ ] Go/No-Go W11 đã chốt.
+- [x] Runbook P0/P1 + escalation matrix hoàn tất.
+- [x] Drill theo runbook đạt kết quả mục tiêu.
+- [x] Go/No-Go W11 đã chốt.
 - Evidence IDs: `EV-W11-101..110, EV-W11-201..216, EV-W11-301..306, EV-W11-401..402`
-- Decision: [ ] GO  [ ] NO-GO
+- Decision: [x] GO  [ ] NO-GO
 
 ## W12 - Ops Readiness Gate
 
-- [ ] Gate readiness pha vận hành hoàn tất.
-- [ ] Không còn blocker P0/P1 chưa owner.
-- [ ] Go/No-Go W12 đã chốt.
+- [x] Gate readiness pha vận hành hoàn tất.
+- [x] Không còn blocker P0/P1 chưa owner.
+- [x] Go/No-Go W12 đã chốt.
 - Evidence IDs: `EV-W12-101..110, EV-W12-201..216, EV-W12-301..306, EV-W12-401..402`
-- Decision: [ ] GO  [ ] NO-GO
+- Decision: [x] GO  [ ] NO-GO
 
 ## W13 - Strategy Governance
 

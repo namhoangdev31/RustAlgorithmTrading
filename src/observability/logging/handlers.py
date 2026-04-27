@@ -8,12 +8,11 @@ Provides:
 
 import logging
 import logging.handlers
-import os
 import queue
 import threading
 import time
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Dict, Any, List
 
 
 class AsyncQueueHandler(logging.Handler):
@@ -42,7 +41,7 @@ class AsyncQueueHandler(logging.Handler):
         """
         super().__init__()
         self.target_handler = target_handler
-        self.queue = queue.Queue(maxsize=queue_size)
+        self.queue: queue.Queue[logging.LogRecord] = queue.Queue(maxsize=queue_size)
         self.batch_size = batch_size
         self.flush_interval = flush_interval
 
@@ -61,7 +60,7 @@ class AsyncQueueHandler(logging.Handler):
         self._dropped_count = 0
         self._lock = threading.Lock()
 
-    def emit(self, record: logging.LogRecord):
+    def emit(self, record: logging.LogRecord) -> None:
         """
         Emit log record (async, non-blocking)
 
@@ -78,7 +77,7 @@ class AsyncQueueHandler(logging.Handler):
             with self._lock:
                 self._dropped_count += 1
 
-    def _process_queue(self):
+    def _process_queue(self) -> None:
         """Background worker thread to process queued records"""
         batch = []
         last_flush = time.time()
@@ -104,15 +103,15 @@ class AsyncQueueHandler(logging.Handler):
                     batch.clear()
                     last_flush = current_time
 
-            except Exception as e:
+            except Exception:
                 # Continue processing on error
-                self.handleError(record if 'record' in locals() else None)
+                self.handleError(record if 'record' in locals() else logging.LogRecord("", 0, "", 0, "", None, None))
 
         # Process remaining records on shutdown
         if batch:
             self._process_batch(batch)
 
-    def _process_batch(self, batch: list):
+    def _process_batch(self, batch: List[logging.LogRecord]) -> None:
         """Process a batch of records through target handler"""
         for record in batch:
             try:
@@ -122,7 +121,7 @@ class AsyncQueueHandler(logging.Handler):
             except Exception:
                 self.handleError(record)
 
-    def flush(self):
+    def flush(self) -> None:
         """Flush all pending records"""
         # Wait for queue to empty
         timeout = 5.0
@@ -132,14 +131,14 @@ class AsyncQueueHandler(logging.Handler):
 
         self.target_handler.flush()
 
-    def close(self):
+    def close(self) -> None:
         """Close handler and wait for worker thread"""
         self._stop_event.set()
         self._worker_thread.join(timeout=5.0)
         self.target_handler.close()
         super().close()
 
-    def get_stats(self) -> dict:
+    def get_stats(self) -> Dict[str, Any]:
         """Get handler statistics"""
         with self._lock:
             return {
@@ -196,16 +195,16 @@ class RotatingFileHandlerAsync(logging.handlers.RotatingFileHandler):
         # Thread-safe rotation
         self._rotation_lock = threading.Lock()
 
-    def doRollover(self):
+    def doRollover(self) -> None:
         """Perform thread-safe log rotation"""
         with self._rotation_lock:
             try:
                 super().doRollover()
-            except Exception as e:
+            except Exception:
                 # Graceful degradation: log error but continue
-                self.handleError(None)
+                self.handleError(logging.LogRecord("", 0, "", 0, "", None, None))
 
-    def emit(self, record: logging.LogRecord):
+    def emit(self, record: logging.LogRecord) -> None:
         """
         Emit record with graceful error handling
 
@@ -233,9 +232,9 @@ class SyslogHandlerAsync(logging.handlers.SysLogHandler):
 
     def __init__(
         self,
-        address: tuple = ('localhost', 514),
+        address: Any = ('localhost', 514),
         facility: int = logging.handlers.SysLogHandler.LOG_USER,
-        socktype: int = None,
+        socktype: Optional[int] = None,
     ):
         """
         Initialize syslog handler
@@ -245,11 +244,18 @@ class SyslogHandlerAsync(logging.handlers.SysLogHandler):
             facility: Syslog facility
             socktype: Socket type (SOCK_DGRAM or SOCK_STREAM)
         """
+        import socket
+        if socktype is not None and not isinstance(socktype, socket.SocketKind):
+            try:
+                socktype = socket.SocketKind(socktype)
+            except (ValueError, TypeError):
+                socktype = socket.SOCK_DGRAM
+ 
         super().__init__(address=address, facility=facility, socktype=socktype)
         self._error_count = 0
         self._max_errors = 10
 
-    def emit(self, record: logging.LogRecord):
+    def emit(self, record: logging.LogRecord) -> None:
         """Emit with error tracking and circuit breaker"""
         try:
             super().emit(record)
@@ -270,7 +276,7 @@ class NullHandler(logging.Handler):
     Useful for disabling logging in certain scenarios.
     """
 
-    def emit(self, record: logging.LogRecord):
+    def emit(self, record: logging.LogRecord) -> None:
         """Discard record"""
         pass
 

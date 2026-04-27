@@ -6,12 +6,16 @@ from typing import Dict, Any, List, Optional, Callable
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
+from pathlib import Path
 from loguru import logger
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from src.strategies.base import Strategy
-from src.backtesting.engine import BacktestEngine
+from ..strategies.base import Strategy
+from ..backtesting.engine import BacktestEngine
+from ..backtesting.data_handler import HistoricalDataHandler
+from ..backtesting.execution_handler import SimulatedExecutionHandler
+from ..backtesting.portfolio_handler import PortfolioHandler
 
 
 class MonteCarloSimulator:
@@ -129,17 +133,37 @@ class MonteCarloSimulator:
                 raise ValueError(f"Unknown resample method: {resample_method}")
 
             # Run backtest on synthetic data
-            engine = BacktestEngine(initial_capital=initial_capital)
-            backtest_results = engine.run(strategy, synthetic_data)
+            data_handler = HistoricalDataHandler(
+                symbols=[strategy.name],  # Using strategy name as dummy symbol for synthetic data
+                data_dir=Path("./data/synthetic"),
+                start_date=synthetic_data.index.min(),
+                end_date=synthetic_data.index.max()
+            )
+            # Inject synthetic data into handler
+            data_handler.symbol_data = {strategy.name: synthetic_data}
+            data_handler.continue_backtest = True
 
+            execution_handler = SimulatedExecutionHandler()
+            portfolio_handler = PortfolioHandler(initial_capital=initial_capital, data_handler=data_handler)
+            
+            engine = BacktestEngine(
+                data_handler=data_handler,
+                execution_handler=execution_handler,
+                portfolio_handler=portfolio_handler,
+                strategy=strategy
+            )
+            backtest_results = engine.run()
+
+            # Map results back to expected format
+            metrics = backtest_results['metrics']
             results.append({
                 'simulation_id': i,
-                'final_equity': backtest_results['final_equity'],
-                'total_return': backtest_results['total_return'],
-                'sharpe_ratio': backtest_results['sharpe_ratio'],
-                'max_drawdown_pct': backtest_results['max_drawdown_pct'],
-                'num_trades': backtest_results['total_trades'],
-                'win_rate': backtest_results['win_rate'],
+                'final_equity': backtest_results['equity_curve']['equity'].iloc[-1],
+                'total_return': metrics['total_return'],
+                'sharpe_ratio': metrics['sharpe_ratio'],
+                'max_drawdown_pct': metrics['max_drawdown_pct'],
+                'num_trades': backtest_results['execution_stats']['fills_executed'],
+                'win_rate': metrics.get('win_rate', 0.0),
             })
 
             if (i + 1) % 100 == 0:

@@ -1020,7 +1020,7 @@ def validate_alpaca_credentials():
 
 import pytest
 from datetime import datetime, timedelta
-from src.api.alpaca_client import AlpacaClient
+from ..api.alpaca_client import AlpacaClient
 
 def test_iex_data_access():
     """Test IEX data fetching."""
@@ -1083,8 +1083,8 @@ def test_data_quality_validation():
 ```python
 def test_end_to_end_data_pipeline():
     """Test complete data fetching pipeline."""
-    from src.api.alpaca_client import AlpacaClient
-    from src.data.fetcher import DataFetcher
+    from ..api.alpaca_client import AlpacaClient
+    from ..data.fetcher import DataFetcher
 
     client = AlpacaClient(paper=True)
     fetcher = DataFetcher(client)

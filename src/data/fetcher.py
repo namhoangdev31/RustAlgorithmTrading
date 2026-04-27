@@ -8,7 +8,7 @@ import pandas as pd
 from alpaca.data.timeframe import TimeFrame
 from loguru import logger
 
-from src.api.alpaca_client import AlpacaClient
+from ..api.alpaca_client import AlpacaClient
 
 
 class DataFetcher:

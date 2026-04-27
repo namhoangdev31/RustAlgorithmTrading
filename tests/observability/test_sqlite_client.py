@@ -4,11 +4,11 @@ Tests for SQLite Operational Storage
 
 import pytest
 import asyncio
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 from pathlib import Path
 import tempfile
 
-from src.observability.storage.sqlite_client import SQLiteClient, sqlite_session
+from ..observability.storage.sqlite_client import SQLiteClient, sqlite_session
 
 
 import pytest_asyncio
@@ -36,7 +36,7 @@ class TestSQLiteClient:
     async def test_log_trade(self, temp_db):
         """Test trade logging"""
         trade_id = await temp_db.log_trade(
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(UTC),
             symbol="BTC/USD",
             side="buy",
             quantity=0.5,
@@ -50,7 +50,7 @@ class TestSQLiteClient:
 
         # Query trade
         trades = await temp_db.get_trades(
-            start_time=datetime.utcnow() - timedelta(hours=1),
+            start_time=datetime.now(UTC) - timedelta(hours=1),
         )
         assert len(trades) == 1
         assert trades[0]["symbol"] == "BTC/USD"
@@ -59,7 +59,7 @@ class TestSQLiteClient:
 
     async def test_trade_stats(self, temp_db):
         """Test trade statistics"""
-        now = datetime.utcnow()
+        now = datetime.now(UTC)
 
         # Log multiple trades
         for i in range(10):
@@ -93,7 +93,7 @@ class TestSQLiteClient:
 
         # Query events
         events = await temp_db.get_events(
-            start_time=datetime.utcnow() - timedelta(hours=1),
+            start_time=datetime.now(UTC) - timedelta(hours=1),
         )
         assert len(events) == 1
         assert events[0]["event_type"] == "order"
@@ -101,7 +101,7 @@ class TestSQLiteClient:
 
     async def test_event_filtering(self, temp_db):
         """Test event filtering by type and severity"""
-        now = datetime.utcnow()
+        now = datetime.now(UTC)
 
         # Log various events
         await temp_db.log_event("order", "info", "Order placed", timestamp=now)
@@ -125,7 +125,7 @@ class TestSQLiteClient:
 
     async def test_event_counts(self, temp_db):
         """Test event count aggregation"""
-        now = datetime.utcnow()
+        now = datetime.now(UTC)
 
         # Log multiple events
         for _ in range(5):
@@ -150,7 +150,7 @@ class TestSQLiteClient:
 
             async with sqlite_session(str(db_path)) as client:
                 trade_id = await client.log_trade(
-                    timestamp=datetime.utcnow(),
+                    timestamp=datetime.now(UTC),
                     symbol="BTC/USD",
                     side="buy",
                     quantity=1.0,
@@ -161,14 +161,14 @@ class TestSQLiteClient:
             # Verify data persisted
             async with sqlite_session(str(db_path)) as client:
                 trades = await client.get_trades(
-                    start_time=datetime.utcnow() - timedelta(hours=1),
+                    start_time=datetime.now(UTC) - timedelta(hours=1),
                 )
                 assert len(trades) == 1
 
     async def test_database_size(self, temp_db):
         """Test database size tracking"""
         # Use unique context to avoid interference
-        cid = "SIZE_TEST_" + datetime.utcnow().strftime("%H%M%S")
+        cid = "SIZE_TEST_" + datetime.now(UTC).strftime("%H%M%S")
         
         # Initial size
         size_before = await temp_db.get_db_size()
@@ -177,7 +177,7 @@ class TestSQLiteClient:
         # 5000 trades with metadata typically exceeds 4KB pages
         for i in range(5000):
             await temp_db.log_trade(
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(UTC),
                 symbol="BTC/USD",
                 side="buy",
                 quantity=1.0,

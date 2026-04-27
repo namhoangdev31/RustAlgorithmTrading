@@ -16,7 +16,7 @@ def validate_imports():
     print("Validating imports...")
 
     try:
-        from src.observability.storage import (
+        from ..observability.storage import (
             DuckDBClient,
             SQLiteClient,
             MetricRecord,
@@ -30,7 +30,7 @@ def validate_imports():
         return False
 
     try:
-        from src.observability.storage.integration import (
+        from ..observability.storage.integration import (
             StorageManager,
             get_storage_manager,
             storage_lifespan,
@@ -48,7 +48,7 @@ def validate_schemas():
     """Validate schema definitions"""
     print("\nValidating schemas...")
 
-    from src.observability.storage.schemas import (
+    from ..observability.storage.schemas import (
         DUCKDB_SCHEMAS,
         SQLITE_SCHEMAS,
         TimeInterval,
@@ -81,8 +81,8 @@ def validate_client_structure():
     """Validate client class structure"""
     print("\nValidating client structure...")
 
-    from src.observability.storage.duckdb_client import DuckDBClient
-    from src.observability.storage.sqlite_client import SQLiteClient
+    from ..observability.storage.duckdb_client import DuckDBClient
+    from ..observability.storage.sqlite_client import SQLiteClient
 
     # Check DuckDB methods
     duckdb_methods = [
@@ -118,7 +118,7 @@ def validate_integration():
     """Validate integration layer"""
     print("\nValidating integration layer...")
 
-    from src.observability.storage.integration import StorageManager
+    from ..observability.storage.integration import StorageManager
 
     manager_methods = [
         "initialize", "close", "record_metric", "get_recent_metrics",

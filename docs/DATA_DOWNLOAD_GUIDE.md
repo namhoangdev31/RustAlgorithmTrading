@@ -634,7 +634,7 @@ The downloaded data works seamlessly with the backtesting engine:
 
 ```python
 from pathlib import Path
-from src.backtesting.data_handler import HistoricalDataHandler
+from ..backtesting.data_handler import HistoricalDataHandler
 
 # Initialize data handler
 data_handler = HistoricalDataHandler(

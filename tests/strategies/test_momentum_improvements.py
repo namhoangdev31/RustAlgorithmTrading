@@ -24,9 +24,9 @@ from typing import Dict, List, Tuple
 import json
 from pathlib import Path
 
-from src.strategies.momentum import MomentumStrategy
-from src.strategies.base import Signal, SignalType
-from src.backtesting.backtest import BacktestEngine
+from ..strategies.momentum import MomentumStrategy
+from ..strategies.base import Signal, SignalType
+from ..backtesting.backtest import BacktestEngine
 
 
 class TestParameterSensitivity:

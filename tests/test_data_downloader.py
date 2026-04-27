@@ -20,10 +20,10 @@ from unittest.mock import Mock, patch, MagicMock
 from alpaca.data.timeframe import TimeFrame
 
 # Import modules to test
-from src.api.alpaca_client import AlpacaClient
-from src.data.fetcher import DataFetcher
-from src.data.loader import DataLoader
-from src.backtesting.data_handler import HistoricalDataHandler
+from ..api.alpaca_client import AlpacaClient
+from ..data.fetcher import DataFetcher
+from ..data.loader import DataLoader
+from ..backtesting.data_handler import HistoricalDataHandler
 
 
 # ============================================================================

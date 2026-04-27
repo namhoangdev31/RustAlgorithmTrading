@@ -1,8 +1,8 @@
 """
 System health and performance API routes.
 """
-from typing import Dict
 
+from typing import Dict, Any, cast
 from fastapi import APIRouter, HTTPException
 from loguru import logger
 
@@ -12,7 +12,7 @@ router = APIRouter()
 
 
 @router.get("/health", response_model=SystemHealth)
-async def get_system_health():
+async def get_system_health() -> SystemHealth:
     """
     Get comprehensive system health status.
 
@@ -37,14 +37,14 @@ async def get_system_health():
 
         health = await system_collector.get_system_health()
 
-        return health
+        return cast(SystemHealth, health)
     except Exception as e:
         logger.error(f"[cid:INIT] Error getting system health: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/performance", response_model=PerformanceMetrics)
-async def get_performance_metrics():
+async def get_performance_metrics() -> PerformanceMetrics:
     """
     Get system performance metrics.
 
@@ -63,7 +63,7 @@ async def get_performance_metrics():
 
         performance = await system_collector.get_performance_metrics()
 
-        return performance
+        return cast(PerformanceMetrics, performance)
     except HTTPException:
         raise
     except Exception as e:
@@ -72,7 +72,7 @@ async def get_performance_metrics():
 
 
 @router.get("/components")
-async def get_component_status():
+async def get_component_status() -> Dict[str, Any]:
     """Get status of all system components."""
     try:
         from ..main import api_state
@@ -117,7 +117,7 @@ async def get_component_status():
 async def get_recent_logs(
     level: str = "INFO",
     limit: int = 100
-):
+) -> Dict[str, Any]:
     """
     Get recent log entries.
 
@@ -145,7 +145,7 @@ async def get_recent_logs(
 
 
 @router.post("/alerts/acknowledge/{alert_id}")
-async def acknowledge_alert(alert_id: str):
+async def acknowledge_alert(alert_id: str) -> Dict[str, str]:
     """Acknowledge a system alert."""
     try:
         from ..main import api_state
@@ -165,7 +165,7 @@ async def acknowledge_alert(alert_id: str):
 
 
 @router.get("/stats")
-async def get_system_statistics():
+async def get_system_statistics() -> Dict[str, Any]:
     """
     Get comprehensive system statistics.
 
@@ -189,7 +189,7 @@ async def get_system_statistics():
                 stats["collectors"][name] = collector_stats
             except Exception as e:
                 logger.error(f"[cid:INIT] Error getting {name} stats: {e}")
-                stats["collectors"][name] = {"error": str(e)}
+                stats["collectors"][name] = cast(Any, {"error": str(e)})
 
         return stats
     except Exception as e:

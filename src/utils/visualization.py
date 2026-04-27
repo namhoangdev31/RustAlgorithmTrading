@@ -13,7 +13,7 @@ def plot_equity_curve(
     equity_curve: pd.DataFrame,
     title: str = "Equity Curve",
     save_path: Optional[Path] = None,
-):
+) -> None:
     """
     Plot equity curve over time.
 
@@ -50,7 +50,7 @@ def plot_drawdown(
     equity_curve: pd.DataFrame,
     title: str = "Drawdown",
     save_path: Optional[Path] = None,
-):
+) -> None:
     """
     Plot drawdown over time.
 
@@ -93,7 +93,7 @@ def plot_returns_distribution(
     equity_curve: pd.DataFrame,
     title: str = "Returns Distribution",
     save_path: Optional[Path] = None,
-):
+) -> None:
     """
     Plot returns distribution and statistics.
 

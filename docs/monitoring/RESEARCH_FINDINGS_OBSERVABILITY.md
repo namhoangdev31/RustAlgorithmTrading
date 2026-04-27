@@ -1169,7 +1169,7 @@ tail -f logs/trading.json | jq .
    ```python
    # src/monitoring/dual_write.py
    from prometheus_client import Counter, Histogram
-   from src.data.timescale_client import TimescaleClient
+   from ..data.timescale_client import TimescaleClient
 
    # Write to both Prometheus and TimescaleDB
    order_latency = Histogram('order_latency_us', 'Order latency')

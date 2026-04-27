@@ -9,9 +9,9 @@ import pytest
 from datetime import datetime
 from unittest.mock import Mock
 
-from src.backtesting.portfolio_handler import PortfolioHandler, PercentageOfEquitySizer
-from src.models.events import SignalEvent
-from src.models.portfolio import Portfolio
+from ..backtesting.portfolio_handler import PortfolioHandler, PercentageOfEquitySizer
+from ..models.events import SignalEvent
+from ..models.portfolio import Portfolio
 
 
 class TestReservedCash:
@@ -233,7 +233,7 @@ class TestReservedCash:
 
     def test_sell_orders_dont_require_cash_reservation(self):
         """Test that SELL orders don't reserve cash."""
-        from src.models.portfolio import Position
+        from ..models.portfolio import Position
 
         handler = PortfolioHandler(
             initial_capital=10000.0,

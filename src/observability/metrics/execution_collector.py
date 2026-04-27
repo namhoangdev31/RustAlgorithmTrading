@@ -9,14 +9,14 @@ Tracks order execution and fill quality:
 - Broker/exchange performance
 """
 import asyncio
-from typing import Dict, Any, List, Optional
-from datetime import datetime, timedelta
+from typing import Dict, Any, List, Optional, cast
+from datetime import datetime
 from collections import deque
 
 from loguru import logger
 
 from .collectors import BaseCollector
-from ..models.schemas import Trade, TradeFilter
+from ..models.schemas import TradeFilter
 from ..database import get_db
 
 
@@ -30,7 +30,7 @@ class ExecutionCollector(BaseCollector):
     - Exchange/broker performance
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__("execution")
 
         # Order statistics
@@ -53,7 +53,7 @@ class ExecutionCollector(BaseCollector):
         # DuckDB instance
         self.db = get_db()
 
-    async def _start_impl(self):
+    async def _start_impl(self) -> None:
         """Start execution metrics collection."""
         # TODO: Connect to execution engine and order manager
 
@@ -62,7 +62,7 @@ class ExecutionCollector(BaseCollector):
 
         logger.info("[cid:INIT] Execution collector started (mock mode)")
 
-    async def _stop_impl(self):
+    async def _stop_impl(self) -> None:
         """Stop execution metrics collection."""
         if self.collection_task:
             self.collection_task.cancel()
@@ -73,7 +73,7 @@ class ExecutionCollector(BaseCollector):
 
         logger.info("[cid:INIT] Execution collector stopped")
 
-    async def _collect_metrics(self):
+    async def _collect_metrics(self) -> None:
         """Background task to collect execution metrics."""
         try:
             while True:
@@ -89,7 +89,7 @@ class ExecutionCollector(BaseCollector):
         except asyncio.CancelledError:
             logger.info("[cid:INIT] Execution collection task cancelled")
 
-    def _generate_mock_execution_metrics(self):
+    def _generate_mock_execution_metrics(self) -> None:
         """Generate mock execution metrics for testing."""
         import random
 
@@ -125,7 +125,7 @@ class ExecutionCollector(BaseCollector):
             # Write trade to database
             asyncio.create_task(self.db.insert_trade(mock_trade))
 
-    async def _write_to_database(self):
+    async def _write_to_database(self) -> None:
         """Write execution metrics to DuckDB."""
         try:
             metrics_data = {
@@ -184,8 +184,8 @@ class ExecutionCollector(BaseCollector):
     async def get_trade_by_id(self, trade_id: str) -> Optional[Dict[str, Any]]:
         """Get specific trade by ID."""
         for trade in self.recent_trades:
-            if trade["trade_id"] == trade_id:
-                return trade
+            if trade.get("trade_id") == trade_id:
+                return cast(Dict[str, Any], trade)
         return None
 
     async def get_trade_statistics(

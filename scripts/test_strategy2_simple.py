@@ -16,9 +16,9 @@ from loguru import logger
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from src.strategies.momentum_simplified import SimplifiedMomentumStrategy
-from src.strategies.base import SignalType
-from src.api.alpaca_client import AlpacaClient
+from ..strategies.momentum_simplified import SimplifiedMomentumStrategy
+from ..strategies.base import SignalType
+from ..api.alpaca_client import AlpacaClient
 
 
 def calculate_metrics(signals, market_data):

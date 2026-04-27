@@ -10,9 +10,8 @@ Tracks strategy execution and performance:
 - Sharpe ratio and other risk metrics
 """
 import asyncio
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, Optional
 from datetime import datetime
-from collections import defaultdict
 
 from loguru import logger
 
@@ -27,7 +26,7 @@ class StrategyCollector(BaseCollector):
     Monitors active strategies and aggregates performance data.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__("strategy")
 
         # Active strategies
@@ -45,7 +44,7 @@ class StrategyCollector(BaseCollector):
         # DuckDB instance
         self.db = get_db()
 
-    async def _start_impl(self):
+    async def _start_impl(self) -> None:
         """Start strategy metrics collection."""
         # TODO: Connect to strategy engine and position tracker
 
@@ -54,7 +53,7 @@ class StrategyCollector(BaseCollector):
 
         logger.info("[cid:INIT] Strategy collector started (mock mode)")
 
-    async def _stop_impl(self):
+    async def _stop_impl(self) -> None:
         """Stop strategy metrics collection."""
         if self.collection_task:
             self.collection_task.cancel()
@@ -65,7 +64,7 @@ class StrategyCollector(BaseCollector):
 
         logger.info("[cid:INIT] Strategy collector stopped")
 
-    async def _collect_metrics(self):
+    async def _collect_metrics(self) -> None:
         """Background task to collect strategy metrics."""
         try:
             while True:
@@ -81,7 +80,7 @@ class StrategyCollector(BaseCollector):
         except asyncio.CancelledError:
             logger.info("[cid:INIT] Strategy collection task cancelled")
 
-    def _generate_mock_strategy_metrics(self):
+    def _generate_mock_strategy_metrics(self) -> None:
         """Generate mock strategy metrics for testing."""
         import random
 
@@ -110,7 +109,7 @@ class StrategyCollector(BaseCollector):
         self.open_positions = sum(s["positions"] for s in self.strategies.values())
         self.signals_generated = sum(s["signals"] for s in self.strategies.values())
 
-    async def _write_to_database(self):
+    async def _write_to_database(self) -> None:
         """Write strategy metrics to DuckDB."""
         try:
             timestamp = datetime.utcnow()
@@ -143,7 +142,9 @@ class StrategyCollector(BaseCollector):
             "signals_generated": self.signals_generated
         }
 
-    async def get_strategy_performance(self, strategy_name: str) -> Optional[Dict[str, Any]]:
+    async def get_strategy_performance(
+        self, strategy_name: str
+    ) -> Optional[Dict[str, Any]]:
         """Get performance metrics for a specific strategy."""
         return self.strategies.get(strategy_name)
 

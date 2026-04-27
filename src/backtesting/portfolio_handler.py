@@ -7,8 +7,8 @@ from typing import Dict, List, Optional
 import pandas as pd
 from loguru import logger
 
-from src.models.portfolio import Portfolio, Position
-from src.models.events import SignalEvent, OrderEvent, FillEvent
+from ..models.portfolio import Portfolio, Position
+from ..models.events import SignalEvent, OrderEvent, FillEvent
 
 
 class PortfolioHandler:

@@ -2,9 +2,9 @@
 Metrics API routes for current and historical metrics.
 """
 from datetime import datetime, timedelta
-from typing import Optional, List
+from typing import Dict, Any
 
-from fastapi import APIRouter, Query, HTTPException
+from fastapi import APIRouter, HTTPException
 from loguru import logger
 
 from ...models.schemas import (
@@ -18,7 +18,7 @@ router = APIRouter()
 
 
 @router.get("/current", response_model=MetricsSnapshot)
-async def get_current_metrics():
+async def get_current_metrics() -> MetricsSnapshot:
     """
     Get current metrics snapshot across all collectors.
 
@@ -47,7 +47,7 @@ async def get_current_metrics():
 
 
 @router.post("/history", response_model=MetricsHistoryResponse)
-async def get_metrics_history(request: MetricsHistoryRequest):
+async def get_metrics_history(request: MetricsHistoryRequest) -> MetricsHistoryResponse:
     """
     Query historical metrics with time range and filters.
 
@@ -58,7 +58,6 @@ async def get_metrics_history(request: MetricsHistoryRequest):
     - Aggregation intervals (1m, 5m, 15m, 1h, 1d)
     """
     try:
-        from ..main import api_state
 
         # Determine time range
         if request.time_range:
@@ -88,7 +87,7 @@ async def get_metrics_history(request: MetricsHistoryRequest):
             market_data = await db.query_market_data(
                 start_time,
                 end_time,
-                symbol=request.symbol,
+                symbol=request.symbols[0] if request.symbols else None,
                 interval=request.interval or "1m"
             )
             data.extend([{"type": "market_data", **record} for record in market_data])
@@ -119,7 +118,7 @@ async def get_metrics_history(request: MetricsHistoryRequest):
 
 
 @router.get("/symbols")
-async def get_tracked_symbols():
+async def get_tracked_symbols() -> Dict[str, Any]:
     """Get list of symbols currently being tracked."""
     try:
         from ..main import api_state
@@ -140,7 +139,7 @@ async def get_tracked_symbols():
 
 
 @router.get("/summary")
-async def get_metrics_summary():
+async def get_metrics_summary() -> Dict[str, Any]:
     """
     Get high-level metrics summary.
 

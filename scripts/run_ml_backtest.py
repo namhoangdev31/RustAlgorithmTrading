@@ -17,11 +17,11 @@ from loguru import logger
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from src.backtesting.data_handler import HistoricalDataHandler
-from src.backtesting.execution_handler import SimulatedExecutionHandler
-from src.backtesting.portfolio_handler import PortfolioHandler
-from src.backtesting.engine import BacktestEngine
-from src.strategies.trend_momentum_strategy import TrendMomentumStrategy
+from ..backtesting.data_handler import HistoricalDataHandler
+from ..backtesting.execution_handler import SimulatedExecutionHandler
+from ..backtesting.portfolio_handler import PortfolioHandler
+from ..backtesting.engine import BacktestEngine
+from ..strategies.trend_momentum_strategy import TrendMomentumStrategy
 
 
 def run_ml_backtest(

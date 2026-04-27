@@ -199,7 +199,7 @@ class WebSocketMessage(BaseModel):
     """Base WebSocket message format."""
     type: str
     timestamp: datetime
-    data: Dict[str, Any]
+    data: Any
 
 
 class MetricsUpdate(WebSocketMessage):
@@ -217,4 +217,4 @@ class TradeNotification(WebSocketMessage):
 class AlertNotification(WebSocketMessage):
     """Real-time alert notification."""
     type: str = "alert_notification"
-    data: Dict[str, Any]
+    data: Any

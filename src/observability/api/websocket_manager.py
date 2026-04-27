@@ -10,7 +10,6 @@ Features:
 - < 50ms latency guarantee
 """
 import asyncio
-import json
 import time
 from typing import Dict, Set, Optional
 from uuid import uuid4
@@ -58,7 +57,7 @@ class WebSocketConnection:
             logger.error(f"[cid:INIT] Failed to send text to client {self.client_id}: {e}")
             return False
 
-    def update_ping(self):
+    def update_ping(self) -> None:
         """Update last ping timestamp."""
         self.last_ping = time.time()
 
@@ -96,13 +95,13 @@ class WebSocketManager:
         # Background tasks will be started by start() method
         self._started = False
 
-    async def start(self):
+    async def start(self) -> None:
         """Start WebSocket manager background tasks."""
         if not self._started:
             self._started = True
             await self._start_background_tasks()
 
-    async def _start_background_tasks(self):
+    async def _start_background_tasks(self) -> None:
         """Start heartbeat and queue processor tasks."""
         self._heartbeat_task = asyncio.create_task(self._heartbeat_loop())
         self._queue_processor_task = asyncio.create_task(self._process_message_queue())
@@ -143,7 +142,7 @@ class WebSocketManager:
 
         return client_id
 
-    async def disconnect(self, client_id: str):
+    async def disconnect(self, client_id: str) -> None:
         """Disconnect and remove a client connection."""
         async with self._lock:
             if client_id in self.connections:
@@ -163,7 +162,7 @@ class WebSocketManager:
                     f"errors: {connection.error_count})"
                 )
 
-    async def disconnect_all(self):
+    async def disconnect_all(self) -> None:
         """Disconnect all clients gracefully."""
         logger.info(f"[cid:INIT] Disconnecting all {len(self.connections)} WebSocket clients...")
 
@@ -180,7 +179,7 @@ class WebSocketManager:
 
         logger.info("[cid:INIT] All WebSocket clients disconnected")
 
-    async def broadcast(self, data: dict, topic: Optional[str] = None):
+    async def broadcast(self, data: dict, topic: Optional[str] = None) -> None:
         """
         Broadcast data to all connected clients (non-blocking).
 
@@ -196,7 +195,7 @@ class WebSocketManager:
             logger.warning("[cid:INIT] Message queue full, dropping message (backpressure)")
             self.total_errors += 1
 
-    async def _process_message_queue(self):
+    async def _process_message_queue(self) -> None:
         """Background task to process broadcast queue."""
         try:
             while True:
@@ -234,7 +233,7 @@ class WebSocketManager:
         except asyncio.CancelledError:
             logger.info("[cid:INIT] Message queue processor cancelled")
 
-    async def _heartbeat_loop(self):
+    async def _heartbeat_loop(self) -> None:
         """
         Background task for heartbeat/ping-pong.
 
@@ -271,7 +270,7 @@ class WebSocketManager:
         """Get current number of connected clients."""
         return len(self.connections)
 
-    def update_connection_ping(self, client_id: str):
+    def update_connection_ping(self, client_id: str) -> None:
         """Update last ping timestamp for a specific client."""
         if client_id in self.connections:
             self.total_pings_received += 1

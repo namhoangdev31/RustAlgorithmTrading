@@ -349,7 +349,7 @@ class PreTradeValidator:
 **File:** `/src/backtesting/portfolio_handler.py`
 
 ```python
-from src.backtesting.validators import PreTradeValidator
+from ..backtesting.validators import PreTradeValidator
 
 class PortfolioHandler:
     def __init__(
@@ -607,7 +607,7 @@ class BacktestConfig(BaseModel):
 
 ```python
 import pytest
-from src.backtesting.validators import PreTradeValidator
+from ..backtesting.validators import PreTradeValidator
 
 def test_validator_affordable_order():
     """Test that affordable orders pass validation unchanged."""
@@ -994,8 +994,8 @@ pending_orders_value = Gauge('backtest_pending_orders_value')
 ### Example 1: Simple Strategy Using Fixed Percentage
 
 ```python
-from src.backtesting.portfolio_handler import PortfolioHandler, PercentageOfEquitySizer
-from src.strategies.simple_momentum import SimpleMomentumStrategy
+from ..backtesting.portfolio_handler import PortfolioHandler, PercentageOfEquitySizer
+from ..strategies.simple_momentum import SimpleMomentumStrategy
 
 # Initialize portfolio with validation
 portfolio = PortfolioHandler(

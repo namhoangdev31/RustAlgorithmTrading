@@ -4,11 +4,9 @@ Incident Escalation Manager.
 Handles incident lifecycle: alert -> acknowledge -> triage -> mitigation -> verify -> closeout -> postmortem.
 Enforces SLA targets: P0 <= 5m, P1 <= 15m.
 """
-import asyncio
 import time
-from datetime import datetime
 from enum import Enum
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional, cast
 from uuid import uuid4
 
 from loguru import logger
@@ -56,7 +54,7 @@ class Incident:
         self.resolved_at: Optional[float] = None
         self.owner: Optional[str] = None
         self.verify_evidence: Optional[str] = None
-        self.actions: List[Dict[str, any]] = []
+        self.actions: List[Dict[str, Any]] = []
 
     def to_dict(self) -> dict:
         return {
@@ -77,7 +75,7 @@ class Incident:
 class EscalationManager:
     """Manage incident escalations and SLA enforcement."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.incidents: Dict[str, Incident] = {}
         self.escalation_matrix = {
             IncidentSeverity.P0: {"owner": "primary_on_call", "backup": "manager", "sla_ack": 300},  # 5m
@@ -95,24 +93,24 @@ class EscalationManager:
             correlation_id=alert_data.get("correlation_id", "UNKNOWN"),
         )
         self.incidents[incident.incident_id] = incident
-        
+
         logger.warning(
             f"[cid:{incident.correlation_id}] Incident CREATED: {incident.incident_id} "
             f"({severity.value}) for {incident.component}"
         )
         return incident
 
-    async def acknowledge_incident(self, incident_id: str, owner: str):
+    async def acknowledge_incident(self, incident_id: str, owner: str) -> bool:
         """Acknowledge an incident and stop SLA timer."""
         if incident_id in self.incidents:
             incident = self.incidents[incident_id]
             incident.status = IncidentStatus.ACKNOWLEDGED
             incident.acknowledged_at = time.time()
             incident.owner = owner
-            
+
             ack_time = incident.acknowledged_at - incident.created_at
-            sla_target = self.escalation_matrix.get(incident.severity, {}).get("sla_ack", 3600)
-            
+            sla_target = cast(int, self.escalation_matrix.get(incident.severity, {}).get("sla_ack", 3600))
+ 
             status = "PASS" if ack_time <= sla_target else "FAIL"
             logger.info(
                 f"[cid:{incident.correlation_id}] Incident ACKNOWLEDGED by {owner}: {incident_id} "
@@ -121,17 +119,17 @@ class EscalationManager:
             return True
         return False
 
-    async def resolve_incident(self, incident_id: str, verify_evidence: str):
+    async def resolve_incident(self, incident_id: str, verify_evidence: str) -> bool:
         """Resolve incident - REQUIRES evidence (Lane C)."""
         if incident_id in self.incidents:
             incident = self.incidents[incident_id]
             if not verify_evidence:
                 raise ValueError("Resolution REQUIRES verify_evidence (W11 hard-gate)")
-                
+
             incident.status = IncidentStatus.RESOLVED
             incident.verify_evidence = verify_evidence
             incident.resolved_at = time.time()
-            
+
             logger.success(
                 f"[cid:{incident.correlation_id}] Incident RESOLVED: {incident_id} "
                 f"(Evidence: {verify_evidence})"

@@ -2,7 +2,7 @@
 Trade history and execution API routes.
 """
 from datetime import datetime, timedelta
-from typing import Optional, List
+from typing import Optional, Dict, Any, cast
 
 from fastapi import APIRouter, Query, HTTPException
 from loguru import logger
@@ -24,7 +24,7 @@ async def get_trade_history(
     end_time: Optional[datetime] = Query(None, description="End time"),
     limit: int = Query(100, ge=1, le=1000, description="Max trades to return"),
     offset: int = Query(0, ge=0, description="Pagination offset")
-):
+) -> TradeHistoryResponse:
     """
     Get trade history with optional filters.
 
@@ -69,7 +69,7 @@ async def get_trade_history(
 
 
 @router.get("/{trade_id}", response_model=Trade)
-async def get_trade_details(trade_id: str):
+async def get_trade_details(trade_id: str) -> Trade:
     """Get detailed information for a specific trade."""
     try:
         from ..main import api_state
@@ -83,7 +83,7 @@ async def get_trade_details(trade_id: str):
         if not trade:
             raise HTTPException(status_code=404, detail="Trade not found")
 
-        return trade
+        return cast(Trade, trade)
     except HTTPException:
         raise
     except Exception as e:
@@ -95,7 +95,7 @@ async def get_trade_details(trade_id: str):
 async def get_trade_statistics(
     symbol: Optional[str] = Query(None),
     time_range: str = Query("24h", regex="^(1h|24h|7d|30d)$")
-):
+) -> Dict[str, Any]:
     """
     Get aggregated trade statistics.
 
@@ -132,14 +132,14 @@ async def get_trade_statistics(
             end_time=now
         )
 
-        return stats
+        return cast(Dict[str, Any], stats)
     except Exception as e:
         logger.error(f"[cid:INIT] Error getting trade statistics: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/execution/quality")
-async def get_execution_quality_metrics():
+async def get_execution_quality_metrics() -> Dict[str, Any]:
     """
     Get execution quality analysis.
 
@@ -159,7 +159,7 @@ async def get_execution_quality_metrics():
 
         quality_metrics = await execution_collector.get_execution_quality()
 
-        return quality_metrics
+        return cast(Dict[str, Any], quality_metrics)
     except Exception as e:
         logger.error(f"[cid:INIT] Error getting execution quality metrics: {e}")
         raise HTTPException(status_code=500, detail=str(e))

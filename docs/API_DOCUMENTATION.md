@@ -11,7 +11,7 @@ Main client for interacting with Alpaca API.
 **Initialization:**
 
 ```python
-from src.api.alpaca_client import AlpacaClient
+from ..api.alpaca_client import AlpacaClient
 
 client = AlpacaClient(
     api_key="your_key",          # Optional: reads from .env
@@ -42,7 +42,7 @@ Fetches market data from Alpaca.
 **Initialization:**
 
 ```python
-from src.data.fetcher import DataFetcher
+from ..data.fetcher import DataFetcher
 
 fetcher = DataFetcher(client)
 ```
@@ -87,7 +87,7 @@ All strategies inherit from `Strategy` base class.
 ##### MovingAverageCrossover
 
 ```python
-from src.strategies.moving_average import MovingAverageCrossover
+from ..strategies.moving_average import MovingAverageCrossover
 
 strategy = MovingAverageCrossover(
     fast_period=20,
@@ -99,7 +99,7 @@ strategy = MovingAverageCrossover(
 ##### MeanReversion
 
 ```python
-from src.strategies.mean_reversion import MeanReversion
+from ..strategies.mean_reversion import MeanReversion
 
 strategy = MeanReversion(
     bb_period=20,
@@ -113,7 +113,7 @@ strategy = MeanReversion(
 ##### MomentumStrategy
 
 ```python
-from src.strategies.momentum import MomentumStrategy
+from ..strategies.momentum import MomentumStrategy
 
 strategy = MomentumStrategy(
     rsi_period=14,
@@ -134,7 +134,7 @@ Validates strategies on historical data.
 **Initialization:**
 
 ```python
-from src.backtesting.engine import BacktestEngine
+from ..backtesting.engine import BacktestEngine
 
 engine = BacktestEngine(
     initial_capital=100000.0,
@@ -176,7 +176,7 @@ Risk analysis using Monte Carlo simulations.
 **Initialization:**
 
 ```python
-from src.simulations.monte_carlo import MonteCarloSimulator
+from ..simulations.monte_carlo import MonteCarloSimulator
 
 simulator = MonteCarloSimulator(
     num_simulations=1000,
@@ -252,7 +252,7 @@ config_dict = config.to_dict()
 #### Logger Setup
 
 ```python
-from src.utils.logger import setup_logger
+from ..utils.logger import setup_logger
 
 setup_logger(
     log_level="INFO",
@@ -265,7 +265,7 @@ setup_logger(
 #### Helper Functions
 
 ```python
-from src.utils.helpers import (
+from ..utils.helpers import (
     calculate_position_size,
     format_currency,
     calculate_kelly_criterion,
@@ -297,7 +297,7 @@ kelly = calculate_kelly_criterion(
 ## Signal Types
 
 ```python
-from src.strategies.base import SignalType
+from ..strategies.base import SignalType
 
 SignalType.BUY    # Buy signal
 SignalType.SELL   # Sell signal

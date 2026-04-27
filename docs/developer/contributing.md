@@ -276,7 +276,7 @@ All Python code must have:
 
 ```python
 import pytest
-from src.strategies.momentum import MomentumStrategy
+from ..strategies.momentum import MomentumStrategy
 
 class TestMomentumStrategy:
     """Test suite for momentum strategy."""

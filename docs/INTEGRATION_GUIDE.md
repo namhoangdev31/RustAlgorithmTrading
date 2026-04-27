@@ -94,7 +94,7 @@ python src/bridge/zmq_bridge.py
 
 **Python Side**:
 ```python
-from src.bridge import RustFeatureComputer, MarketBar
+from ..bridge import RustFeatureComputer, MarketBar
 
 # Initialize computer
 computer = RustFeatureComputer()
@@ -151,7 +151,7 @@ export PYTHONPATH=$PWD/target/release:$PYTHONPATH
 
 **Python**: Send trading signals to Rust execution engine
 ```python
-from src.bridge import ZMQPublisher, Signal
+from ..bridge import ZMQPublisher, Signal
 
 async with ZMQPublisher("tcp://127.0.0.1:5556") as pub:
     signal = Signal(
@@ -198,7 +198,7 @@ publisher.send(&format!("market {}", json), 0)?;
 
 **Python**: Receive market data
 ```python
-from src.bridge import ZMQSubscriber
+from ..bridge import ZMQSubscriber
 
 async with ZMQSubscriber("tcp://127.0.0.1:5555") as sub:
     await sub.connect(["market", "signal"])
@@ -220,7 +220,7 @@ async with ZMQSubscriber("tcp://127.0.0.1:5555") as sub:
 
 **Basic Usage**:
 ```python
-from src.api.alpaca_paper_trading import AlpacaPaperTrading, OrderType
+from ..api.alpaca_paper_trading import AlpacaPaperTrading, OrderType
 
 # Initialize (forced paper trading for safety)
 client = AlpacaPaperTrading()
@@ -361,8 +361,8 @@ async fn main() -> anyhow::Result<()> {
 
 ```python
 import asyncio
-from src.bridge import RustFeatureComputer, ZMQPublisher, ZMQSubscriber, Signal, MarketBar
-from src.api.alpaca_paper_trading import AlpacaPaperTrading, OrderType
+from ..bridge import RustFeatureComputer, ZMQPublisher, ZMQSubscriber, Signal, MarketBar
+from ..api.alpaca_paper_trading import AlpacaPaperTrading, OrderType
 
 async def trading_system():
     # 1. Initialize components

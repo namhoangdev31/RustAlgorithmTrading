@@ -12,8 +12,8 @@ import pandas as pd
 import numpy as np
 from loguru import logger
 
-from src.strategies.base import Strategy, Signal, SignalType
-from src.utils.market_regime import (
+from ..strategies.base import Strategy, Signal, SignalType
+from ..utils.market_regime import (
     MarketRegimeDetector,
     MarketRegime,
     select_strategy_for_regime,

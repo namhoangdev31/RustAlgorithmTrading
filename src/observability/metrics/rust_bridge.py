@@ -7,7 +7,7 @@ storage in DuckDB.
 """
 import asyncio
 import aiohttp
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, Optional, List, cast
 from datetime import datetime
 from loguru import logger
 
@@ -38,14 +38,14 @@ class RustMetricsBridge:
 
         logger.info(f"[cid:INIT] Initialized RustMetricsBridge with {len(service_endpoints)} services")
 
-    async def start(self):
+    async def start(self) -> None:
         """Start the metrics bridge and HTTP session."""
         if self.session is None:
             timeout = aiohttp.ClientTimeout(total=5.0)
             self.session = aiohttp.ClientSession(timeout=timeout)
             logger.info("[cid:INIT] Metrics bridge started")
 
-    async def stop(self):
+    async def stop(self) -> None:
         """Stop the metrics bridge and cleanup."""
         if self.session:
             await self.session.close()
@@ -99,7 +99,7 @@ class RustMetricsBridge:
         Returns:
             Dictionary of parsed metrics
         """
-        metrics = {
+        metrics: Dict[str, Any] = {
             "timestamp": datetime.utcnow(),
             "service": service_name,
             "counters": {},
@@ -107,7 +107,10 @@ class RustMetricsBridge:
             "histograms": {},
         }
 
-        current_metric_name = None
+        counters = cast(Dict[str, Dict[str, Any]], metrics["counters"])
+        gauges = cast(Dict[str, Dict[str, Any]], metrics["gauges"])
+        histograms = cast(Dict[str, Dict[str, Any]], metrics["histograms"])
+
         current_metric_type = None
 
         for line in text.split('\n'):
@@ -121,7 +124,7 @@ class RustMetricsBridge:
             if line.startswith('# TYPE'):
                 parts = line.split()
                 if len(parts) >= 4:
-                    current_metric_name = parts[2]
+                    # current_metric_name = parts[2]
                     current_metric_type = parts[3]
                 continue
 
@@ -165,44 +168,48 @@ class RustMetricsBridge:
                         metric_key = f"{metric_name}{{{label_str}}}"
 
                     # Determine type (use declared type or infer from name)
-                    metric_type = current_metric_type or self._infer_metric_type(metric_name)
+                    metric_type = current_metric_type or self._infer_metric_type(
+                        metric_name
+                    )
 
                     if metric_type == "counter":
-                        metrics["counters"][metric_key] = {
+                        counters[metric_key] = {
                             "name": metric_name,
                             "value": value,
                             "labels": labels
                         }
                     elif metric_type == "gauge":
-                        metrics["gauges"][metric_key] = {
+                        gauges[metric_key] = {
                             "name": metric_name,
                             "value": value,
                             "labels": labels
                         }
                     elif metric_type == "histogram":
-                        if metric_key not in metrics["histograms"]:
-                            metrics["histograms"][metric_key] = {
+                        if metric_key not in histograms:
+                            histograms[metric_key] = {
                                 "name": metric_name,
                                 "values": [],
                                 "labels": labels
                             }
-                        metrics["histograms"][metric_key]["values"].append(value)
+                        cast(List[float], histograms[metric_key]["values"]).append(value)
 
                 except Exception as e:
-                    logger.debug(f"[cid:INIT] Failed to parse metric line '{line}': {e}")
+                    logger.debug(
+                        f"[cid:INIT] Failed to parse metric line '{line}': {e}"
+                    )
                     continue
 
         return metrics
 
     def _parse_labels(self, labels_str: str) -> Dict[str, str]:
         """Parse Prometheus label string into dictionary."""
-        labels = {}
+        labels: Dict[str, str] = {}
         if not labels_str:
             return labels
 
         # Split by comma, but handle quoted values
-        parts = []
-        current = []
+        parts: List[str] = []
+        current: List[str] = []
         in_quotes = False
 
         for char in labels_str:
@@ -248,9 +255,9 @@ class RustMetricsBridge:
             self.scrape_service(name, url)
             for name, url in self.service_endpoints.items()
         ]
-        results = await asyncio.gather(*tasks, return_exceptions=True)
+        results: List[Any] = await asyncio.gather(*tasks, return_exceptions=True)
 
-        metrics_by_service = {}
+        metrics_by_service: Dict[str, Optional[Dict[str, Any]]] = {}
         for (service_name, _), result in zip(self.service_endpoints.items(), results):
             if isinstance(result, Exception):
                 logger.error(f"[cid:INIT] Error scraping {service_name}: {result}")
@@ -260,7 +267,7 @@ class RustMetricsBridge:
 
         return metrics_by_service
 
-    async def continuous_scrape(self, callback=None):
+    async def continuous_scrape(self, callback: Optional[Any] = None) -> None:
         """
         Continuously scrape metrics at regular intervals.
 
@@ -269,7 +276,10 @@ class RustMetricsBridge:
                      Signature: async def callback(metrics: Dict[str, Any])
         """
         self.running = True
-        logger.info(f"[cid:INIT] Starting continuous scrape (interval: {self.scrape_interval}s)")
+        logger.info(
+            f"[cid:INIT] Starting continuous scrape "
+            f"(interval: {self.scrape_interval}s)"
+        )
 
         while self.running:
             try:
@@ -286,7 +296,7 @@ class RustMetricsBridge:
                 logger.error(f"[cid:INIT] Error in continuous scrape: {e}")
                 await asyncio.sleep(self.scrape_interval)
 
-    def stop_continuous_scrape(self):
+    def stop_continuous_scrape(self) -> None:
         """Stop the continuous scraping loop."""
         self.running = False
         logger.info("[cid:INIT] Stopping continuous scrape")

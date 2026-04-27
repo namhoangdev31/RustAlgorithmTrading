@@ -585,8 +585,8 @@ def calculate_position_size(self, signal, portfolio) -> int:
 **Recommended:**
 ```python
 from typing import Optional
-from src.models.portfolio import Portfolio
-from src.models.events import SignalEvent
+from ..models.portfolio import Portfolio
+from ..models.events import SignalEvent
 
 def calculate_position_size(
     self,

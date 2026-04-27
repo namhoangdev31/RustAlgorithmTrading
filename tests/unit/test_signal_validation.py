@@ -12,7 +12,7 @@ import pytest
 from datetime import datetime
 from pydantic import ValidationError
 
-from src.models.events import SignalEvent, EventType
+from ..models.events import SignalEvent, EventType
 
 
 class TestSignalEventValidation:

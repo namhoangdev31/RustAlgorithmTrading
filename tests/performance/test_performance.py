@@ -21,7 +21,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from src.backtesting.data_handler import HistoricalDataHandler
+from ..backtesting.data_handler import HistoricalDataHandler
 
 
 class TestDataLoadingPerformance:

@@ -12,8 +12,8 @@ import pandas as pd
 from datetime import datetime, timedelta
 from loguru import logger
 
-from src.strategies.momentum import MomentumStrategy
-from src.data.alpaca_client import AlpacaDataClient
+from ..strategies.momentum import MomentumStrategy
+from ..data.alpaca_client import AlpacaDataClient
 
 
 def test_volume_filter_impact():

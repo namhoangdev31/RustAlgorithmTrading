@@ -21,7 +21,7 @@ from datetime import datetime
 from loguru import logger
 from dataclasses import dataclass
 
-from src.strategies.base import Strategy, Signal, SignalType
+from ..strategies.base import Strategy, Signal, SignalType
 
 
 @dataclass

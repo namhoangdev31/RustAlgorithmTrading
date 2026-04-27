@@ -2,7 +2,7 @@
 Performance metrics calculation utilities.
 """
 
-from typing import Dict
+from typing import Dict, Any, cast
 import pandas as pd
 
 # Temporary workaround: tabulate installation failing
@@ -10,7 +10,7 @@ try:
     from tabulate import tabulate
 except ImportError:
     # Fallback: Simple table formatting without tabulate
-    def tabulate(data, tablefmt='grid'):
+    def tabulate(data: Any, tablefmt: str = 'grid') -> str:
         """Simple fallback table formatter"""
         lines = []
         for row in data:
@@ -104,4 +104,4 @@ def format_metrics_table(metrics: Dict) -> str:
     output += "=" * 50 + "\n"
     output += tabulate(execution_metrics, tablefmt='grid') + "\n"
 
-    return output
+    return cast(str, output)

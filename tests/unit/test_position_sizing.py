@@ -14,15 +14,15 @@ import numpy as np
 from datetime import datetime
 from typing import List
 
-from src.backtesting.portfolio_handler import (
+from ..backtesting.portfolio_handler import (
     PortfolioHandler,
     FixedAmountSizer,
     PercentageOfEquitySizer,
     KellyPositionSizer,
     PositionSizer
 )
-from src.models.portfolio import Portfolio
-from src.models.events import SignalEvent, FillEvent
+from ..models.portfolio import Portfolio
+from ..models.events import SignalEvent, FillEvent
 
 
 class TestBasicPositionSizing:

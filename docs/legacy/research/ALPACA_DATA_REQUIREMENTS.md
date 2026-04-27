@@ -239,8 +239,8 @@ if end_date:
 ```python
 from datetime import datetime, timedelta
 from alpaca.data.timeframe import TimeFrame
-from src.api.alpaca_client import AlpacaClient
-from src.data.loader import DataLoader
+from ..api.alpaca_client import AlpacaClient
+from ..data.loader import DataLoader
 
 def download_and_save_data(
     symbols: List[str],
@@ -367,7 +367,7 @@ def update_historical_data(symbol: str):
 **Usage Pattern:**
 ```python
 from pathlib import Path
-from src.backtesting.data_handler import HistoricalDataHandler
+from ..backtesting.data_handler import HistoricalDataHandler
 
 # Initialize with data directory
 data_handler = HistoricalDataHandler(
@@ -424,7 +424,7 @@ class DataLoader:
 
 **Technical Indicators:**
 ```python
-from src.data.preprocessor import DataPreprocessor
+from ..data.preprocessor import DataPreprocessor
 
 # Add technical indicators
 df = DataPreprocessor.add_technical_indicators(df)
@@ -538,9 +538,9 @@ import pandas as pd
 from loguru import logger
 from alpaca.data.timeframe import TimeFrame
 
-from src.api.alpaca_client import AlpacaClient
-from src.data.loader import DataLoader
-from src.data.preprocessor import DataPreprocessor
+from ..api.alpaca_client import AlpacaClient
+from ..data.loader import DataLoader
+from ..data.preprocessor import DataPreprocessor
 
 
 def download_historical_data(
@@ -697,7 +697,7 @@ echo $ALPACA_API_KEY
 echo $ALPACA_SECRET_KEY
 
 # Verify credentials are valid
-python -c "from src.api.alpaca_client import AlpacaClient; client = AlpacaClient(); print(client.get_account())"
+python -c "from ..api.alpaca_client import AlpacaClient; client = AlpacaClient(); print(client.get_account())"
 
 # Check API status
 curl https://status.alpaca.markets/

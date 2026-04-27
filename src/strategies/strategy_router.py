@@ -13,11 +13,11 @@ from typing import Dict, List, Any, Optional
 import pandas as pd
 from loguru import logger
 
-from src.strategies.base import Strategy, Signal
-from src.strategies.momentum_simplified import SimplifiedMomentumStrategy
-from src.strategies.mean_reversion import MeanReversion
-from src.strategies.trend_following import TrendFollowingStrategy
-from src.strategies.market_regime import RegimeDetector, MarketRegime
+from ..strategies.base import Strategy, Signal
+from ..strategies.momentum_simplified import SimplifiedMomentumStrategy
+from ..strategies.mean_reversion import MeanReversion
+from ..strategies.trend_following import TrendFollowingStrategy
+from ..strategies.market_regime import RegimeDetector, MarketRegime
 
 
 class StrategyRouter:

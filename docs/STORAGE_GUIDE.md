@@ -60,7 +60,7 @@ pip install duckdb>=0.9.0 aiosqlite>=0.19.0
 ### 2. Initialize Storage
 
 ```python
-from src.observability.storage import DuckDBClient, SQLiteClient
+from ..observability.storage import DuckDBClient, SQLiteClient
 
 # DuckDB for analytics
 duckdb = DuckDBClient("data/trading_metrics.duckdb")
@@ -75,7 +75,7 @@ await sqlite.initialize()
 
 ```python
 from fastapi import FastAPI, Depends
-from src.observability.storage.integration import (
+from ..observability.storage.integration import (
     storage_lifespan,
     get_storage,
     StorageManager
@@ -97,7 +97,7 @@ async def get_metrics(
 ### Recording Metrics
 
 ```python
-from src.observability.storage.schemas import MetricRecord
+from ..observability.storage.schemas import MetricRecord
 from datetime import datetime
 
 # Single metric
@@ -126,7 +126,7 @@ await duckdb.insert_metrics(metrics)  # <1ms for 1000 records
 ### Recording Candles
 
 ```python
-from src.observability.storage.schemas import CandleRecord
+from ..observability.storage.schemas import CandleRecord
 
 candle = CandleRecord(
     timestamp=datetime.utcnow(),
@@ -248,7 +248,7 @@ events = await sqlite.get_events(
 Supported intervals for time-bucketing:
 
 ```python
-from src.observability.storage.schemas import TimeInterval
+from ..observability.storage.schemas import TimeInterval
 
 TimeInterval.SECOND  # "1s"
 TimeInterval.MINUTE  # "1m"

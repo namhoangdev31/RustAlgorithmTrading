@@ -10,7 +10,7 @@ pip install -r requirements.txt
 ## Basic Usage
 
 ```python
-from src.strategies.enhanced_momentum import (
+from ..strategies.enhanced_momentum import (
     EnhancedMomentumStrategy,
     SignalQuality
 )
@@ -42,7 +42,7 @@ for signal in signals:
 
 ### Conservative (Low Risk)
 ```python
-from src.strategies.enhanced_momentum import RiskParameters
+from ..strategies.enhanced_momentum import RiskParameters
 
 conservative = RiskParameters(
     max_position_size=0.10,      # 10% max per position
@@ -91,7 +91,7 @@ strategy = EnhancedMomentumStrategy(
 ## Position Sizing
 
 ```python
-from src.strategies.base import Signal, SignalType
+from ..strategies.base import Signal, SignalType
 from datetime import datetime
 
 # After generating signals
@@ -150,7 +150,7 @@ strategy = EnhancedMomentumStrategy(
 
 ### Custom Indicators
 ```python
-from src.strategies.enhanced_momentum import IndicatorThresholds
+from ..strategies.enhanced_momentum import IndicatorThresholds
 
 custom_indicators = IndicatorThresholds(
     rsi_period=21,           # Longer RSI

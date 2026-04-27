@@ -8,13 +8,12 @@ Provides:
 """
 
 import asyncio
+import logging
 import functools
-import importlib
 import inspect
-import sys
 import time
 import traceback
-from typing import Any, Callable, Dict, Optional
+from typing import Any, Callable, Dict, Optional, Literal
 from .structured_logger import get_logger
 from .correlations import correlation_id, get_correlation_id
 
@@ -25,7 +24,7 @@ def log_execution_time(
     threshold_ms: Optional[float] = None,
     log_args: bool = False,
     log_result: bool = False,
-):
+) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
     """
     Decorator to log function execution time
 
@@ -42,14 +41,14 @@ def log_execution_time(
         ...     # Logs if execution takes > 100ms
         ...     return await data_source.fetch(symbol)
     """
-    def decorator(func: Callable) -> Callable:
+    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
         # Get logger
         log_name = logger_name or f"{func.__module__}.{func.__name__}"
         logger = get_logger(log_name)
         log_method = getattr(logger, level)
 
         @functools.wraps(func)
-        def sync_wrapper(*args, **kwargs):
+        def sync_wrapper(*args: Any, **kwargs: Any) -> Any:
             start_time = time.perf_counter()
             error = None
             result = None
@@ -90,7 +89,7 @@ def log_execution_time(
                         )
 
         @functools.wraps(func)
-        async def async_wrapper(*args, **kwargs):
+        async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
             start_time = time.perf_counter()
             error = None
             result = None
@@ -147,7 +146,7 @@ def log_trade_decision(
     rationale: Optional[str] = None,
     context: Optional[Dict[str, Any]] = None,
     logger_name: str = "trading.strategy",
-):
+) -> None:
     """
     Helper function to log trade decisions with standard format
 
@@ -205,7 +204,7 @@ def log_error_with_context(
     logger_name: str = "trading.system",
     include_traceback: bool = True,
     severity: str = "error",
-):
+) -> None:
     """
     Helper function to log errors with full context
 
@@ -262,7 +261,7 @@ class LogContext:
         ...     logger.info("[cid:INIT] Processing order")  # Includes order_id and user_id
     """
 
-    def __init__(self, context: Dict[str, Any]):
+    def __init__(self, context: Dict[str, Any]) -> None:
         """
         Initialize log context
 
@@ -270,13 +269,13 @@ class LogContext:
             context: Context dictionary to add to all logs
         """
         self.context = context
-        self._original_factory = None
+        self._original_factory: Optional[Callable[..., logging.LogRecord]] = None
 
-    def __enter__(self):
+    def __enter__(self) -> 'LogContext':
         """Enter context and enrich log records"""
         old_factory = logging.getLogRecordFactory()
 
-        def record_factory(*args, **kwargs):
+        def record_factory(*args: Any, **kwargs: Any) -> logging.LogRecord:
             record = old_factory(*args, **kwargs)
             for key, value in self.context.items():
                 setattr(record, key, value)
@@ -286,14 +285,14 @@ class LogContext:
         logging.setLogRecordFactory(record_factory)
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> Literal[False]:
         """Exit context and restore original factory"""
         if self._original_factory:
             logging.setLogRecordFactory(self._original_factory)
         return False
 
 
-def with_correlation_id(func: Callable) -> Callable:
+def with_correlation_id(func: Callable[..., Any]) -> Callable[..., Any]:
     """
     Decorator to automatically create correlation ID for function
 
@@ -304,12 +303,12 @@ def with_correlation_id(func: Callable) -> Callable:
         ...     logger.info("[cid:INIT] Processing request")
     """
     @functools.wraps(func)
-    def sync_wrapper(*args, **kwargs):
+    def sync_wrapper(*args: Any, **kwargs: Any) -> Any:
         with correlation_id():
             return func(*args, **kwargs)
 
     @functools.wraps(func)
-    async def async_wrapper(*args, **kwargs):
+    async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
         with correlation_id():
             return await func(*args, **kwargs)
     if asyncio.iscoroutinefunction(func):

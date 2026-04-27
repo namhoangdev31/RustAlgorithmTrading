@@ -7,8 +7,8 @@ log aggregation across async operations and service boundaries.
 
 import uuid
 from contextlib import contextmanager
-from contextvars import ContextVar
-from typing import Generator, Optional
+from contextvars import ContextVar, Token
+from typing import Generator, Optional, Any, Literal
 
 # Context variable for correlation ID (thread-safe and async-safe)
 correlation_id_var: ContextVar[Optional[str]] = ContextVar('correlation_id', default=None)
@@ -110,7 +110,7 @@ class CorrelationContext:
             cid: Correlation ID (generates new if None)
         """
         self.cid = cid or generate_correlation_id()
-        self._token = None
+        self._token: Optional[Token[Optional[str]]] = None
 
     def enter(self) -> str:
         """Enter correlation context"""
@@ -127,7 +127,7 @@ class CorrelationContext:
         """Support context manager protocol"""
         return self.enter()
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> Literal[False]:
         """Support context manager protocol"""
         self.exit()
         return False
@@ -159,7 +159,8 @@ def extract_correlation_id_from_headers(headers: dict) -> Optional[str]:
 
     for header in header_names:
         if header in headers:
-            return headers[header]
+            val = headers[header]
+            return str(val) if val is not None else None
 
     return None
 

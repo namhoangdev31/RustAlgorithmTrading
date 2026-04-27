@@ -65,7 +65,7 @@ pytest tests/observability/ -m "not slow"
 # tests/observability/test_duckdb_client.py
 import pytest
 from datetime import datetime, timedelta
-from src.observability.storage import DuckDBClient, MetricRecord
+from ..observability.storage import DuckDBClient, MetricRecord
 
 @pytest.mark.asyncio
 async def test_insert_and_query_metrics(duckdb_client):
@@ -115,7 +115,7 @@ async def test_batch_insert_performance(duckdb_client):
 @pytest.mark.asyncio
 async def test_time_bucketing(duckdb_client):
     """Test time-bucketed aggregations"""
-    from src.observability.storage.schemas import TimeInterval
+    from ..observability.storage.schemas import TimeInterval
 
     # Insert metrics across time range
     base_time = datetime.utcnow()
@@ -148,7 +148,7 @@ async def test_time_bucketing(duckdb_client):
 import pytest
 import tempfile
 from pathlib import Path
-from src.observability.storage import DuckDBClient, SQLiteClient
+from ..observability.storage import DuckDBClient, SQLiteClient
 
 @pytest.fixture
 async def duckdb_client():
@@ -178,7 +178,7 @@ async def sqlite_client():
 def sample_metrics():
     """Generate sample metrics for testing"""
     from datetime import datetime
-    from src.observability.storage.schemas import MetricRecord
+    from ..observability.storage.schemas import MetricRecord
 
     return [
         MetricRecord(
@@ -199,7 +199,7 @@ def sample_metrics():
 # tests/observability/test_api_endpoints.py
 import pytest
 from httpx import AsyncClient
-from src.observability.api.main import app
+from ..observability.api.main import app
 
 @pytest.mark.asyncio
 async def test_health_endpoint():
@@ -239,7 +239,7 @@ async def test_metrics_history_endpoint():
 import pytest
 import asyncio
 from fastapi.testclient import TestClient
-from src.observability.api.main import app
+from ..observability.api.main import app
 
 @pytest.mark.asyncio
 async def test_websocket_streaming():
@@ -282,7 +282,7 @@ async def test_websocket_reconnection():
 import pytest
 import time
 import asyncio
-from src.observability.storage import DuckDBClient, MetricRecord
+from ..observability.storage import DuckDBClient, MetricRecord
 from datetime import datetime, timedelta
 
 @pytest.mark.benchmark
@@ -332,7 +332,7 @@ async def test_query_latency(benchmark, duckdb_client):
 @pytest.mark.asyncio
 async def test_aggregation_performance(benchmark, duckdb_client):
     """Benchmark: Time-bucketed aggregations"""
-    from src.observability.storage.schemas import TimeInterval
+    from ..observability.storage.schemas import TimeInterval
 
     # Insert test data
     await _insert_million_records(duckdb_client)
@@ -358,7 +358,7 @@ async def test_aggregation_performance(benchmark, duckdb_client):
 import pytest
 import asyncio
 from httpx import AsyncClient
-from src.observability.api.main import app
+from ..observability.api.main import app
 
 @pytest.mark.load
 @pytest.mark.asyncio
@@ -477,7 +477,7 @@ jobs:
 import pytest
 from hypothesis import given, strategies as st
 from datetime import datetime, timedelta
-from src.observability.storage import MetricRecord
+from ..observability.storage import MetricRecord
 
 @given(
     metric_name=st.text(min_size=1, max_size=50),

@@ -19,9 +19,9 @@ from datetime import datetime
 from loguru import logger
 from dataclasses import dataclass
 
-from src.strategies.base import Strategy, Signal, SignalType
-from src.strategies.ml.features.feature_engineering import FeatureEngineer, FeatureConfig
-from src.strategies.ml.models.trend_classifier import TrendClassifier
+from ..strategies.base import Strategy, Signal, SignalType
+from ..strategies.ml.features.feature_engineering import FeatureEngineer, FeatureConfig
+from ..strategies.ml.models.trend_classifier import TrendClassifier
 
 # Try importing XGBoost
 try:

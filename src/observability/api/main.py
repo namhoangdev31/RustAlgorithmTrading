@@ -10,9 +10,9 @@ Features:
 """
 import asyncio
 from contextlib import asynccontextmanager
-from typing import Dict, Optional
+from typing import Dict, Optional, Any
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from loguru import logger
@@ -23,19 +23,18 @@ from ..metrics.market_data_collector import MarketDataCollector
 from ..metrics.strategy_collector import StrategyCollector
 from ..metrics.execution_collector import ExecutionCollector
 from ..metrics.system_collector import SystemCollector
-from ..alerts.escalation import IncidentStatus
 
 
 class ObservabilityAPI:
     """Central API state and coordination."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.websocket_manager = WebSocketManager()
-        self.collectors: Dict[str, any] = {}
+        self.collectors: Dict[str, Any] = {}
         self.metrics_task: Optional[asyncio.Task] = None
         self.running = False
 
-    async def start(self):
+    async def start(self) -> None:
         """Start API services and metric collection."""
         logger.info("[cid:INIT] Starting Observability API...")
 
@@ -62,7 +61,7 @@ class ObservabilityAPI:
 
         logger.info("[cid:INIT] Observability API started successfully")
 
-    async def stop(self):
+    async def stop(self) -> None:
         """Stop API services gracefully."""
         logger.info("[cid:INIT] Stopping Observability API...")
 
@@ -89,7 +88,7 @@ class ObservabilityAPI:
 
         logger.info("[cid:INIT] Observability API stopped")
 
-    async def _stream_metrics(self):
+    async def _stream_metrics(self) -> None:
         """Background task to stream metrics to connected clients at 10Hz."""
         try:
             while self.running:
@@ -141,7 +140,7 @@ api_state = ObservabilityAPI()
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(app: FastAPI) -> Any:
     """Manage application lifecycle."""
     # Startup
     await api_state.start()
@@ -170,7 +169,7 @@ app.add_middleware(
 
 # WebSocket endpoint for real-time streaming
 @app.websocket("/ws/metrics")
-async def websocket_metrics_endpoint(websocket: WebSocket):
+async def websocket_metrics_endpoint(websocket: WebSocket) -> None:
     """
     WebSocket endpoint for real-time metric streaming.
 
@@ -206,13 +205,13 @@ async def websocket_metrics_endpoint(websocket: WebSocket):
 
 # Health check endpoints
 @app.get("/health")
-async def health_check():
+async def health_check() -> Dict[str, str]:
     """Basic health check."""
     return {"status": "healthy", "service": "observability-api"}
 
 
 @app.get("/health/ready")
-async def readiness_check():
+async def readiness_check() -> JSONResponse:
     """Readiness check - are all services ready?"""
     collectors_status = {}
     for name, collector in api_state.collectors.items():
@@ -221,10 +220,10 @@ async def readiness_check():
             "ready": collector.is_ready(),
             "status": status
         }
-    
+
     ready = all(s["ready"] for s in collectors_status.values())
     status_code = 200 if ready else 503
-    
+
     return JSONResponse(
         status_code=status_code,
         content={
@@ -236,7 +235,7 @@ async def readiness_check():
 
 
 @app.get("/health/live")
-async def liveness_check():
+async def liveness_check() -> Dict[str, Any]:
     """Liveness check - is the service alive?"""
     return {
         "alive": api_state.running,
@@ -253,39 +252,45 @@ app.include_router(system.router, prefix="/api/system", tags=["system"])
 
 # --- Incident Management ---
 @app.get("/incidents")
-async def get_incidents():
+async def get_incidents() -> Dict[str, Any]:
     """Retrieve active incidents (Lane A)."""
-    escalation = api_state.collectors.get("system").escalation
+    system_collector = api_state.collectors.get("system")
+    if not system_collector or not hasattr(system_collector, "escalation"):
+        return {}
+    escalation = system_collector.escalation
     return {k: v.to_dict() for k, v in escalation.incidents.items()}
 
 
 @app.post("/incidents/{incident_id}/acknowledge")
-async def acknowledge_incident(incident_id: str, owner: str):
+async def acknowledge_incident(incident_id: str, owner: str) -> Dict[str, str]:
     """Acknowledge incident (Phase 3)."""
-    escalation = api_state.collectors.get("system").escalation
+    system_collector = api_state.collectors.get("system")
+    if not system_collector or not hasattr(system_collector, "escalation"):
+        raise HTTPException(status_code=503, detail="Escalation service not available")
+    escalation = system_collector.escalation
     if not await escalation.acknowledge_incident(incident_id, owner):
-        from fastapi import HTTPException
         raise HTTPException(status_code=404, detail=f"Incident {incident_id} not found")
     return {"status": "ACKNOWLEDGED"}
 
 
 @app.post("/incidents/{incident_id}/resolve")
-async def resolve_incident(incident_id: str, evidence: str):
+async def resolve_incident(incident_id: str, evidence: str) -> Dict[str, str]:
     """Resolve incident with evidence (Lane C)."""
-    escalation = api_state.collectors.get("system").escalation
+    system_collector = api_state.collectors.get("system")
+    if not system_collector or not hasattr(system_collector, "escalation"):
+        raise HTTPException(status_code=503, detail="Escalation service not available")
+    escalation = system_collector.escalation
     try:
         if not await escalation.resolve_incident(incident_id, evidence):
-            from fastapi import HTTPException
             raise HTTPException(status_code=404, detail=f"Incident {incident_id} not found")
         return {"status": "RESOLVED"}
     except ValueError as e:
-        from fastapi import HTTPException
         raise HTTPException(status_code=400, detail=str(e))
 
 
 
 @app.get("/")
-async def root():
+async def root() -> Dict[str, Any]:
     """Root endpoint with API information."""
     return {
         "service": "Trading Observability API",

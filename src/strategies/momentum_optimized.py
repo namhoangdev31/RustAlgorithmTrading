@@ -16,7 +16,7 @@ import pandas as pd
 import numpy as np
 from loguru import logger
 
-from src.strategies.base import Strategy, Signal, SignalType
+from ..strategies.base import Strategy, Signal, SignalType
 
 
 class MomentumOptimizedStrategy(Strategy):

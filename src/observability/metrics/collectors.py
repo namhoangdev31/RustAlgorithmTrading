@@ -6,7 +6,7 @@ the standard interface for lifecycle management and data retrieval.
 """
 from abc import ABC, abstractmethod
 from typing import Dict, Any, Optional
-from datetime import datetime
+from datetime import datetime, UTC
 
 from loguru import logger
 
@@ -28,7 +28,7 @@ class BaseCollector(ABC):
         self.metrics_collected = 0
         self.errors = 0
 
-    async def start(self):
+    async def start(self) -> None:
         """
         Start the collector.
 
@@ -37,11 +37,11 @@ class BaseCollector(ABC):
         """
         logger.info(f"[cid:INIT] Starting {self.name} collector...")
         self.started = True
-        self.start_time = datetime.utcnow()
+        self.start_time = datetime.now(UTC)
         await self._start_impl()
         logger.info(f"[cid:INIT] {self.name} collector started")
 
-    async def stop(self):
+    async def stop(self) -> None:
         """
         Stop the collector gracefully.
 
@@ -54,12 +54,12 @@ class BaseCollector(ABC):
         logger.info(f"[cid:INIT] {self.name} collector stopped")
 
     @abstractmethod
-    async def _start_impl(self):
+    async def _start_impl(self) -> None:
         """Subclass-specific start implementation."""
         pass
 
     @abstractmethod
-    async def _stop_impl(self):
+    async def _stop_impl(self) -> None:
         """Subclass-specific stop implementation."""
         pass
 
@@ -85,7 +85,7 @@ class BaseCollector(ABC):
         """
         uptime = None
         if self.start_time:
-            uptime = (datetime.utcnow() - self.start_time).total_seconds()
+            uptime = (datetime.now(UTC) - self.start_time).total_seconds()
 
         status = "ready" if self.is_ready() else "stopped"
 
@@ -124,10 +124,10 @@ class BaseCollector(ABC):
             "error_rate": self.errors / max(self.metrics_collected, 1)
         }
 
-    def _increment_metrics_count(self):
+    def _increment_metrics_count(self) -> None:
         """Increment the metrics collected counter."""
         self.metrics_collected += 1
 
-    def _increment_error_count(self):
+    def _increment_error_count(self) -> None:
         """Increment the error counter."""
         self.errors += 1

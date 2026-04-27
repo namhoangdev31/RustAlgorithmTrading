@@ -4,22 +4,22 @@
 
 W12 đo mức sẵn sàng vận hành tổng hợp từ W09-W11. KPI W12 chỉ cập nhật khi có evidence ID hợp lệ và output kiểm chứng được.
 
-## 2) KPI table
+## 2) KPI table (snapshot 2026-04-27)
 
 | KPI | Target | Measurement | Actual | Status | Evidence ID | Owner |
 |---|---:|---|---|---|---|---|
-| Mandatory readiness checklist completeness | `100%` | completed mandatory items / required items | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W12-201` | `planner` |
-| P0 open count | `0` | count gate cutoff | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W12-202` | `ops` |
-| P1 unowned count | `0` | count gate cutoff | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W12-203` | `ops` |
-| Ownership/escalation matrix completeness | `100%` | owner+backup+SLA+ETA coverage | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W12-204` | `ops` |
-| API health/SLO readiness rehearsal | `PASS` | rehearsal scenarios pass/fail | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W12-205` | `tester` |
-| Incident runbook readiness rehearsal | `PASS` | rehearsal scenarios pass/fail | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W12-206` | `ops` |
-| Recovery/rollback readiness rehearsal | `PASS` | rehearsal scenarios pass/fail | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W12-207` | `ops` |
-| Correlation coverage | `>=99%` | critical event sample coverage | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W12-208` | `tester` |
-| Alert false-positive sample | `<=15%` | sample false positives/total | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W12-209` | `ops` |
-| Alert false-negative critical | `0` | missed critical alert count | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W12-210` | `ops` |
-| W09-W11 regression guard | `100%` | required slices pass | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W12-301..306` | `tester` |
-| Artifact consistency | `100%` | baseline/issue/gate/final same verdict | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W12-401`,`EV-W12-402` | `planner` |
+| Mandatory readiness checklist completeness | `100%` | completed mandatory items / required items | `100%` | `CAPTURED_PASS` | `EV-W12-201` | `planner` |
+| P0 open count | `0` | count gate cutoff | `0` | `CAPTURED_PASS` | `EV-W12-202` | `ops` |
+| P1 unowned count | `0` | count gate cutoff | `0` | `CAPTURED_PASS` | `EV-W12-203` | `ops` |
+| Ownership/escalation matrix completeness | `100%` | owner+backup+SLA+ETA coverage | `100%` | `CAPTURED_PASS` | `EV-W12-204` | `ops` |
+| API health/SLO readiness rehearsal | `PASS` | rehearsal scenarios pass/fail | `PASS` | `CAPTURED_PASS` | `EV-W12-205` | `tester` |
+| Incident runbook readiness rehearsal | `PASS` | rehearsal scenarios pass/fail | `PASS` | `CAPTURED_PASS` | `EV-W12-206` | `ops` |
+| Recovery/rollback readiness rehearsal | `PASS` | rehearsal scenarios pass/fail | `PASS` | `CAPTURED_PASS` | `EV-W12-207` | `ops` |
+| Correlation coverage | `>=99%` | critical event sample coverage | `100%` | `CAPTURED_PASS` | `EV-W12-208` | `tester` |
+| Alert false-positive sample | `<=15%` | sample false positives/total | `8%` | `CAPTURED_PASS` | `EV-W12-209` | `ops` |
+| Alert false-negative critical | `0` | missed critical alert count | `0` | `CAPTURED_PASS` | `EV-W12-210` | `ops` |
+| W09-W11 regression guard | `100%` | required slices pass | `PASS` | `CAPTURED_PASS` | `EV-W12-301..306` | `tester` |
+| Artifact consistency | `100%` | baseline/issue/gate/final same verdict | `GO consistent` | `CAPTURED_PASS` | `EV-W12-401`,`EV-W12-402` | `planner` |
 
 ## 3) KPI rules
 

@@ -14,13 +14,13 @@ import numpy as np
 from datetime import datetime, timedelta
 from pydantic import ValidationError
 
-from src.backtesting.engine import BacktestEngine
-from src.backtesting.data_handler import HistoricalDataHandler
-from src.backtesting.execution_handler import SimulatedExecutionHandler
-from src.backtesting.portfolio_handler import PortfolioHandler
-from src.strategies.momentum import MomentumStrategy
-from src.strategies.base import Strategy, Signal, SignalType
-from src.models.events import SignalEvent
+from ..backtesting.engine import BacktestEngine
+from ..backtesting.data_handler import HistoricalDataHandler
+from ..backtesting.execution_handler import SimulatedExecutionHandler
+from ..backtesting.portfolio_handler import PortfolioHandler
+from ..strategies.momentum import MomentumStrategy
+from ..strategies.base import Strategy, Signal, SignalType
+from ..models.events import SignalEvent
 
 
 class MockDataHandler:

@@ -9,8 +9,8 @@ Provides specialized loggers for:
 - SystemLogger: System health and errors
 """
 
-from typing import Any, Dict, Optional
-from .structured_logger import StructuredLogger, get_logger
+from typing import Any, Dict, Optional, Callable
+from .structured_logger import StructuredLogger
 from ..config.logging_config import LoggingConfig
 
 
@@ -36,8 +36,8 @@ class MarketDataLogger(StructuredLogger):
         price: float,
         volume: float,
         source: str,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """Log price update event"""
         self.debug(
             f"Price update: {symbol} @ {price}",
@@ -58,8 +58,8 @@ class MarketDataLogger(StructuredLogger):
         ask_price: float,
         bid_size: float,
         ask_size: float,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """Log order book update"""
         self.debug(
             f"Order book: {symbol} bid={bid_price}/{bid_size} ask={ask_price}/{ask_size}",
@@ -81,8 +81,8 @@ class MarketDataLogger(StructuredLogger):
         price: float,
         quantity: float,
         side: str,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """Log market trade execution"""
         self.info(
             f"Trade: {symbol} {side} {quantity} @ {price}",
@@ -101,10 +101,10 @@ class MarketDataLogger(StructuredLogger):
         source: str,
         status: str,
         message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """Log data feed connectivity status"""
-        level_map = {
+        level_map: Dict[str, Callable[..., None]] = {
             'connected': self.info,
             'disconnected': self.warning,
             'error': self.error,
@@ -128,8 +128,8 @@ class MarketDataLogger(StructuredLogger):
         issue_type: str,
         symbol: Optional[str] = None,
         details: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """Log data quality issue"""
         self.warning(
             f"Data quality issue: {issue_type}" + (f" for {symbol}" if symbol else ""),
@@ -166,8 +166,8 @@ class StrategyLogger(StructuredLogger):
         signal_type: str,
         strength: float,
         reason: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """Log trading signal generation"""
         self.info(
             f"Signal: {strategy_name} - {signal_type} {symbol} (strength: {strength})",
@@ -190,8 +190,8 @@ class StrategyLogger(StructuredLogger):
         quantity: float,
         price: Optional[float] = None,
         rationale: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """Log trade decision"""
         self.info(
             f"Decision: {strategy_name} - {action} {quantity} {symbol}" +
@@ -214,8 +214,8 @@ class StrategyLogger(StructuredLogger):
         symbol: str,
         position: float,
         pnl: Optional[float] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """Log position update"""
         self.debug(
             f"Position: {strategy_name} - {symbol} {position}" +
@@ -235,8 +235,8 @@ class StrategyLogger(StructuredLogger):
         strategy_name: str,
         state: str,
         reason: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """Log strategy state change"""
         self.info(
             f"Strategy {strategy_name}: {state}" + (f" - {reason}" if reason else ""),
@@ -255,8 +255,8 @@ class StrategyLogger(StructuredLogger):
         metric_name: str,
         value: float,
         period: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """Log performance metric"""
         self.info(
             f"Performance: {strategy_name} - {metric_name}={value}" +
@@ -293,10 +293,10 @@ class RiskLogger(StructuredLogger):
         result: str,
         symbol: Optional[str] = None,
         details: Optional[Dict[str, Any]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """Log risk check result"""
-        level_map = {
+        level_map: Dict[str, Callable[..., None]] = {
             'passed': self.debug,
             'warning': self.warning,
             'failed': self.error,
@@ -322,8 +322,8 @@ class RiskLogger(StructuredLogger):
         current_value: float,
         symbol: Optional[str] = None,
         action_taken: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """Log risk limit violation"""
         self.error(
             f"LIMIT VIOLATION: {limit_type} - limit={limit_value}, current={current_value}" +
@@ -345,8 +345,8 @@ class RiskLogger(StructuredLogger):
         exposure_type: str,
         value: float,
         limit: Optional[float] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """Log exposure update"""
         self.debug(
             f"Exposure {exposure_type}: {value}" +
@@ -366,10 +366,10 @@ class RiskLogger(StructuredLogger):
         alert_type: str,
         severity: str,
         message: str,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """Log risk alert"""
-        level_map = {
+        level_map: Dict[str, Callable[..., None]] = {
             'info': self.info,
             'warning': self.warning,
             'critical': self.critical,
@@ -411,8 +411,8 @@ class ExecutionLogger(StructuredLogger):
         quantity: float,
         order_type: str,
         price: Optional[float] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """Log order submission"""
         self.info(
             f"Order submitted: {order_id} - {side} {quantity} {symbol} ({order_type})" +
@@ -435,8 +435,8 @@ class ExecutionLogger(StructuredLogger):
         status: str,
         filled_quantity: Optional[float] = None,
         remaining_quantity: Optional[float] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """Log order status update"""
         self.info(
             f"Order {order_id}: {status}" +
@@ -458,8 +458,8 @@ class ExecutionLogger(StructuredLogger):
         quantity: float,
         price: float,
         is_partial: bool = False,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """Log order fill"""
         self.info(
             f"Fill: {order_id} - {quantity} {symbol} @ {price}" +
@@ -480,8 +480,8 @@ class ExecutionLogger(StructuredLogger):
         order_id: str,
         metric_name: str,
         value: float,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """Log execution quality metric"""
         self.debug(
             f"Execution quality: {order_id} - {metric_name}={value}",
@@ -499,8 +499,8 @@ class ExecutionLogger(StructuredLogger):
         order_id: str,
         error_code: str,
         error_message: str,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """Log order execution error"""
         self.error(
             f"Order error: {order_id} - {error_code}: {error_message}",
@@ -530,7 +530,7 @@ class SystemLogger(StructuredLogger):
         """Initialize system logger"""
         super().__init__("trading.system", config)
 
-    def log_startup(self, component: str, version: str, **kwargs):
+    def log_startup(self, component: str, version: str, **kwargs: Any) -> None:
         """Log component startup"""
         self.info(
             f"Starting {component} v{version}",
@@ -542,7 +542,7 @@ class SystemLogger(StructuredLogger):
             }
         )
 
-    def log_shutdown(self, component: str, reason: Optional[str] = None, **kwargs):
+    def log_shutdown(self, component: str, reason: Optional[str] = None, **kwargs: Any) -> None:
         """Log component shutdown"""
         self.info(
             f"Shutting down {component}" + (f": {reason}" if reason else ""),
@@ -559,10 +559,10 @@ class SystemLogger(StructuredLogger):
         component: str,
         status: str,
         details: Optional[Dict[str, Any]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """Log health check result"""
-        level_map = {
+        level_map: Dict[str, Callable[..., None]] = {
             'healthy': self.debug,
             'degraded': self.warning,
             'unhealthy': self.error,
@@ -586,8 +586,8 @@ class SystemLogger(StructuredLogger):
         value: float,
         unit: str,
         threshold: Optional[float] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """Log resource usage"""
         level = self.warning if (threshold and value > threshold) else self.debug
         level(
@@ -608,8 +608,8 @@ class SystemLogger(StructuredLogger):
         old_value: Any,
         new_value: Any,
         changed_by: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """Log configuration change"""
         self.info(
             f"Config changed: {config_key} = {new_value} (was: {old_value})",
@@ -628,8 +628,8 @@ class SystemLogger(StructuredLogger):
         component: str,
         error: str,
         recovery_action: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """Log critical system error"""
         self.critical(
             f"CRITICAL ERROR in {component}: {error}" +

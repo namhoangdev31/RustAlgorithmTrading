@@ -34,8 +34,8 @@ import numpy as np
 from loguru import logger
 from datetime import datetime
 
-from src.strategies.base import Strategy, Signal, SignalType
-from src.data.indicators import TechnicalIndicators
+from ..strategies.base import Strategy, Signal, SignalType
+from ..data.indicators import TechnicalIndicators
 
 
 class SignalQuality(Enum):

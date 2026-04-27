@@ -14,9 +14,9 @@ import pytest
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
-from src.strategies.momentum import MomentumStrategy
-from src.strategies.momentum_simplified import SimplifiedMomentumStrategy
-from src.strategies.base import SignalType
+from ..strategies.momentum import MomentumStrategy
+from ..strategies.momentum_simplified import SimplifiedMomentumStrategy
+from ..strategies.base import SignalType
 
 
 def create_test_data(

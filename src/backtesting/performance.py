@@ -2,14 +2,14 @@
 Performance analysis and metrics calculation.
 """
 
-from typing import Dict, List
-import numpy as np
 import pandas as pd
+import numpy as np
+from typing import Dict, List, cast
 from scipy import stats
 from loguru import logger
 
-from src.models.portfolio import PerformanceMetrics
-from src.models.events import FillEvent
+from ..models.portfolio import PerformanceMetrics
+from ..models.events import FillEvent
 
 
 class PerformanceAnalyzer:
@@ -35,7 +35,7 @@ class PerformanceAnalyzer:
 
         logger.info(f"Initialized PerformanceAnalyzer (rf={risk_free_rate})")
 
-    def record_fill(self, fill: FillEvent):
+    def record_fill(self, fill: FillEvent) -> None:
         """Record fill for trade analysis."""
         self.fills.append(fill)
 
@@ -123,7 +123,7 @@ class PerformanceAnalyzer:
         std_return = returns.std() * np.sqrt(252)
 
         sharpe = (mean_return - self.risk_free_rate) / std_return
-        return sharpe
+        return float(sharpe)
 
     def _calculate_sortino_ratio(self, returns: pd.Series) -> float:
         """
@@ -147,7 +147,7 @@ class PerformanceAnalyzer:
         downside_std = downside_returns.std() * np.sqrt(252)
 
         sortino = (mean_return - self.risk_free_rate) / downside_std
-        return sortino
+        return float(sortino)
 
     def _calculate_max_drawdown(self, equity: pd.Series) -> tuple[float, int]:
         """
@@ -253,9 +253,9 @@ class PerformanceAnalyzer:
                 'largest_loss': 0.0,
             }
 
-        trade_pnls = np.array(trade_pnls)
-        winning_trades = trade_pnls[trade_pnls > 0]
-        losing_trades = trade_pnls[trade_pnls < 0]
+        pnls = np.array(trade_pnls)
+        winning_trades = pnls[pnls > 0]
+        losing_trades = pnls[pnls < 0]
 
         total_trades = len(trade_pnls)
         winning_count = len(winning_trades)
