@@ -19,7 +19,7 @@
 | `W12-ISS-007` | P1 | `DONE` | `tester` | `2026-04-27` | Traceability readiness | `EV-W12-109`,`EV-W12-110`,`EV-W12-208`,`EV-W12-209`,`EV-W12-210` | fix audit findings and recapture | audit findings `0` |
 | `W12-ISS-008` | P1 | `DONE` | `tester` | `2026-04-27` | Regression guard | `EV-W12-301..306` | rerun W09-W11 guardrail slices | regression guard pass |
 | `W12-ISS-009` | P1 | `DONE` | `planner` | `2026-04-27` | W13 handoff | `EV-W12-213`,`EV-W12-402` | complete W13 start pack priorities/guardrails | start pack complete |
-| `W12-ISS-010` | P1 | `IN_PROGRESS` | `planner` | `2026-04-28` | Governance stability | `EV-W12-402` | track change budget and add escalation record if exceeded | budget ok or justified |
+| `W12-ISS-010` | P1 | `DONE` | `planner` | `2026-04-27` | Governance stability | `EV-W12-402` | track change budget and add escalation record if exceeded | budget ok or justified |
 | `W12-ISS-011` | P2 | `DONE` | `ops` | `2026-04-27` | Ops throughput | `EV-W12-214` | capture toil watermark and optimize checklist flow | toil watermark captured |
 | `W12-ISS-012` | P2 | `DONE` | `planner` | `2026-04-27` | Audit readiness | `EV-W12-212` | complete evidence linkage map | traceability complete |
 
