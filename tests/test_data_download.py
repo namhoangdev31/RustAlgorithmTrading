@@ -17,7 +17,6 @@ from datetime import datetime, timedelta
 import pandas as pd
 
 # Add src to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from scripts.download_market_data import MarketDataDownloader
 

@@ -18,7 +18,6 @@ import sys
 import os
 
 # Add scripts to path
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / 'scripts'))
 
 from download_historical_data import (
     DownloadConfig,

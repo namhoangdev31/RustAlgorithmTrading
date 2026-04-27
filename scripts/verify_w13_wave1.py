@@ -14,8 +14,8 @@ from datetime import datetime
 # Standardize path
 sys.path.insert(0, os.getcwd())
 
-from src.strategies.ml.validation.model_validator import ModelValidator
-from src.strategies.ml.validation.drift_detector import DriftDetector
+from ..strategies.ml.validation.model_validator import ModelValidator
+from ..strategies.ml.validation.drift_detector import DriftDetector
 
 class MockModel:
     def __init__(self, name="TestStrategy"):

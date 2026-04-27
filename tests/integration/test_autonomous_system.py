@@ -18,7 +18,6 @@ import pandas as pd
 import sys
 
 # Add src to path
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / 'src'))
 
 from backtesting.engine import BacktestEngine
 from backtesting.data_handler import HistoricalDataHandler

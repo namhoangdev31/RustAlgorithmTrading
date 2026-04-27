@@ -19,7 +19,6 @@ import pandas as pd
 from datetime import datetime
 import sys
 
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from ..backtesting.data_handler import HistoricalDataHandler
 
@@ -55,10 +54,10 @@ class TestMissingDataDirectory:
 class TestInvalidAPICredentials:
     """Test handling of invalid API credentials"""
 
-    @patch('download_historical_data.StockHistoricalDataClient')
+    @patch('scripts.download_historical_data.StockHistoricalDataClient')
     def test_invalid_credentials_raises_error(self, mock_client):
         """Test that invalid credentials are caught"""
-        from download_historical_data import AlpacaDataDownloader, DownloadConfig
+        from scripts.download_historical_data import AlpacaDataDownloader, DownloadConfig
 
         config = DownloadConfig(
             symbols=['AAPL'],
@@ -76,7 +75,7 @@ class TestInvalidAPICredentials:
 
     def test_missing_credentials_raises_error(self):
         """Test that missing credentials raise appropriate error"""
-        from download_historical_data import AlpacaDataDownloader, DownloadConfig
+        from scripts.download_historical_data import AlpacaDataDownloader, DownloadConfig
 
         # Clear environment variables
         with patch.dict(os.environ, {}, clear=True):
@@ -308,10 +307,10 @@ class TestMalformedData:
 class TestNetworkIssues:
     """Test handling of network-related issues"""
 
-    @patch('download_historical_data.StockHistoricalDataClient')
+    @patch('scripts.download_historical_data.StockHistoricalDataClient')
     def test_network_timeout(self, mock_client):
         """Test handling of network timeout"""
-        from download_historical_data import AlpacaDataDownloader, DownloadConfig
+        from scripts.download_historical_data import AlpacaDataDownloader, DownloadConfig
 
         config = DownloadConfig(
             symbols=['AAPL'],
@@ -334,10 +333,10 @@ class TestNetworkIssues:
 
         assert result is None
 
-    @patch('download_historical_data.StockHistoricalDataClient')
+    @patch('scripts.download_historical_data.StockHistoricalDataClient')
     def test_rate_limit_exceeded(self, mock_client):
         """Test handling of API rate limit"""
-        from download_historical_data import AlpacaDataDownloader, DownloadConfig
+        from scripts.download_historical_data import AlpacaDataDownloader, DownloadConfig
 
         config = DownloadConfig(
             symbols=['AAPL'],

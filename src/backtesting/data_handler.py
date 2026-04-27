@@ -251,10 +251,6 @@ class HistoricalDataHandler:
                         f"No data file found for {symbol}. "
                         f"Please download data using: python scripts/download_market_data.py --symbols {symbol}"
                     )
-                    raise FileNotFoundError(
-                        f"No data file found for {symbol} "
-                        f"(checked: {parquet_path}, {csv_path})"
-                    )
                     continue
 
                 # Validate required columns

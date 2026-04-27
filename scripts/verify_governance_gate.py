@@ -11,8 +11,8 @@ from datetime import datetime
 # Add project root to path (for `import src.*`)
 sys.path.insert(0, os.getcwd())
 
-from src.strategies.ml.validation.model_validator import ModelValidator, ValidationConfig
-from src.strategies.ml.validation.governance import GovernanceStatus
+from strategies.ml.validation.model_validator import ModelValidator, ValidationConfig
+from strategies.ml.validation.governance import GovernanceStatus
 
 class MockModel:
     """Mock model that implements the required interface."""

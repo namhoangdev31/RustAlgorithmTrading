@@ -9,11 +9,11 @@ import pytest
 from pathlib import Path
 from datetime import datetime, timedelta
 
-from src.backtesting.engine import BacktestEngine
-from src.backtesting.data_handler import HistoricalDataHandler
-from src.backtesting.execution_handler import SimulatedExecutionHandler
-from src.backtesting.portfolio_handler import PortfolioHandler
-from src.strategies.simple_momentum import SimpleMomentumStrategy
+from ..backtesting.engine import BacktestEngine
+from ..backtesting.data_handler import HistoricalDataHandler
+from ..backtesting.execution_handler import SimulatedExecutionHandler
+from ..backtesting.portfolio_handler import PortfolioHandler
+from ..strategies.simple_momentum import SimpleMomentumStrategy
 
 
 class TestBacktestingIntegration:

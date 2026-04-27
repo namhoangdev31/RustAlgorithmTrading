@@ -15,7 +15,6 @@ import shutil
 
 # Add src to path
 import sys
-sys.path.insert(0, str(Path(__file__).parent.parent / 'src'))
 
 from backtesting.data_handler import HistoricalDataHandler
 from models.market import Bar

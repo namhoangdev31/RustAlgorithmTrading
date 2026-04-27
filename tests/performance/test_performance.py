@@ -19,7 +19,6 @@ from datetime import datetime
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from ..backtesting.data_handler import HistoricalDataHandler
 
@@ -185,7 +184,7 @@ class TestDownloadPerformance:
     @pytest.fixture
     def mock_downloader(self, tmp_path):
         """Create mock downloader for testing"""
-        from download_historical_data import AlpacaDataDownloader, DownloadConfig
+        from scripts.download_historical_data import AlpacaDataDownloader, DownloadConfig
         from unittest.mock import patch
 
         config = DownloadConfig(
@@ -197,7 +196,7 @@ class TestDownloadPerformance:
             api_secret='test_secret',
         )
 
-        with patch('download_historical_data.StockHistoricalDataClient'):
+        with patch('scripts.download_historical_data.StockHistoricalDataClient'):
             return AlpacaDataDownloader(config)
 
     def test_save_csv_performance(self, mock_downloader):
@@ -248,7 +247,7 @@ class TestDataValidationPerformance:
 
     def test_validation_speed(self, tmp_path):
         """Test speed of data validation"""
-        from download_historical_data import AlpacaDataDownloader, DownloadConfig
+        from scripts.download_historical_data import AlpacaDataDownloader, DownloadConfig
         from unittest.mock import patch
 
         config = DownloadConfig(
@@ -260,12 +259,11 @@ class TestDataValidationPerformance:
             api_secret='test',
         )
 
-        with patch('download_historical_data.StockHistoricalDataClient'):
+        with patch('scripts.download_historical_data.StockHistoricalDataClient'):
             downloader = AlpacaDataDownloader(config)
 
-        # Create large DataFrame
         df = pd.DataFrame({
-            'timestamp': pd.date_range('2024-01-01', periods=100000),
+            'timestamp': pd.date_range('2024-01-01', periods=100000, freq='1min'),
             'open': [100.0] * 100000,
             'high': [105.0] * 100000,
             'low': [99.0] * 100000,
