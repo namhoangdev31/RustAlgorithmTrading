@@ -239,13 +239,18 @@ class LoggingConfig:
 
     @classmethod
     def for_testing(cls) -> 'LoggingConfig':
-        """Get testing configuration (minimal output)"""
+        """Get testing configuration (minimal output, enables DEBUG capture)"""
         return cls(
             base_log_dir="test_logs",
-            console_level=logging.WARNING,
+            console_level=logging.DEBUG,
             file_level=logging.DEBUG,
             file_output_enabled=False,
             async_enabled=False,
+            market_data_level=logging.DEBUG,
+            strategy_level=logging.DEBUG,
+            risk_level=logging.DEBUG,
+            execution_level=logging.DEBUG,
+            system_level=logging.DEBUG,
         )
 
     def to_dict(self) -> Dict:

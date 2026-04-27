@@ -34,7 +34,9 @@ def test_config():
 @pytest.fixture
 def test_logger(test_config):
     """Create test logger instance"""
-    return get_logger("test.logger", config=test_config)
+    logger = get_logger("test.logger", config=test_config)
+    logger._logger.propagate = True
+    return logger
 
 
 class TestStructuredLogger:
@@ -47,6 +49,7 @@ class TestStructuredLogger:
 
     def test_basic_logging(self, test_logger, caplog):
         """Test basic logging operations"""
+        test_logger.set_level(logging.DEBUG)
         with caplog.at_level(logging.DEBUG):
             test_logger.debug("Debug message")
             test_logger.info("Info message")
@@ -197,11 +200,14 @@ class TestLogDecorator:
 
     def test_sync_function_decorator(self, caplog):
         """Test decorator on sync function"""
-        @log_execution_time(logger_name="test.decorator")
+        @log_execution_time(logger_name="test.decorator", threshold_ms=0)
         def slow_function():
             time.sleep(0.01)
             return "result"
 
+        logger = get_logger("test.decorator")
+        logger.set_level(logging.DEBUG)
+        logger._logger.propagate = True
         with caplog.at_level(logging.DEBUG):
             result = slow_function()
 
@@ -212,11 +218,14 @@ class TestLogDecorator:
     @pytest.mark.asyncio
     async def test_async_function_decorator(self, caplog):
         """Test decorator on async function"""
-        @log_execution_time(logger_name="test.decorator")
+        @log_execution_time(logger_name="test.decorator", threshold_ms=0)
         async def async_slow_function():
             await asyncio.sleep(0.01)
             return "async_result"
 
+        logger = get_logger("test.decorator")
+        logger.set_level(logging.DEBUG)
+        logger._logger.propagate = True
         with caplog.at_level(logging.DEBUG):
             result = await async_slow_function()
 
@@ -242,6 +251,7 @@ class TestLogDecorator:
         def failing_function():
             raise ValueError("Test error")
 
+        get_logger("test.decorator")._logger.propagate = True
         with caplog.at_level(logging.ERROR):
             with pytest.raises(ValueError):
                 failing_function()
@@ -301,6 +311,8 @@ class TestThreadSafety:
     def test_concurrent_logging(self, test_logger):
         """Test logging from multiple threads"""
         import threading
+        
+        test_logger.reset_metrics()
 
         def log_worker(worker_id: int):
             for i in range(100):

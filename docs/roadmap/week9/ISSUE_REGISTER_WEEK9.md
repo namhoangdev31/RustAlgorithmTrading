@@ -10,11 +10,11 @@
 
 | Issue ID | Cluster | Severity | Owner | Due | ETA | Status | Dependency | Mitigation | Exit criteria | Evidence ID | Blocking of |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| `W9-ISS-001` | C-ObservabilityGap | P0 | `ops` | Pha 3 | Pha 3 | `NEW` | critical event list | audit + patch correlation propagation | missing critical correlation count `=0` | `EV-W9-201`,`EV-W9-202` | Gate |
-| `W9-ISS-002` | A-Incompatibility | P0 | `coder` | Pha 3 | Pha 3 | `NEW` | logging schema freeze | parseability fixture + formatter hardening | structured log parse success `>=99%` | `EV-W9-204`,`EV-W9-301` | Gate |
+| `W9-ISS-001` | C-ObservabilityGap | P0 | `ops` | Pha 3 | Pha 3 | `DONE` | critical event list | audit + patch correlation propagation | missing critical correlation count `=0` | `EV-W9-201`,`EV-W9-202` | Gate |
+| `W9-ISS-002` | A-Incompatibility | P0 | `coder` | Pha 3 | Pha 3 | `DONE` | logging schema freeze | parseability fixture + formatter hardening | structured log parse success `>=99%` | `EV-W9-204`,`EV-W9-301` | Gate |
 | `W9-ISS-003` | C-ObservabilityGap | P0 | `ops` | Pha 4 | Pha 4 | `NEW` | redaction audit | patch redaction handler before other obs polish | redaction leak count `=0` | `EV-W9-207`,`EV-W9-304` | Gate |
 | `W9-ISS-004` | B-SemanticDrift | P1 | `planner` | Pha 3 | Pha 3 | `NEW` | taxonomy freeze | normalize severity/reason/disposition mapping | taxonomy matrix pass | `EV-W9-205`,`EV-W9-206` | Gate |
-| `W9-ISS-005` | C-ObservabilityGap | P1 | `ops` | Pha 4 | Pha 4 | `NEW` | dashboard/API sample | verify panel data availability | dashboard availability `>=95%` | `EV-W9-208`,`EV-W9-303` | Gate |
+| `W9-ISS-005` | C-ObservabilityGap | P1 | `ops` | Pha 4 | Pha 4 | `DONE` | dashboard/API sample | verify panel data availability | dashboard availability `>=95%` | `EV-W9-208`,`EV-W9-303` | Gate |
 | `W9-ISS-006` | C-ObservabilityGap | P1 | `ops` | Pha 4 | Pha 4 | `NEW` | alert sample | add/rehearse critical alert sample | critical false-negative `=0` | `EV-W9-209`,`EV-W9-210` | Gate |
 | `W9-ISS-007` | B-SemanticDrift | P1 | `tester` | Pha 5 | Pha 5 | `NEW` | W05-W08 guardrails | rerun regression slices after W09 | no W05-W08 regression | `EV-W9-211..214` | Gate |
 | `W9-ISS-008` | C-ObservabilityGap | P1 | `planner` | Pha 6 | Pha 6 | `NEW` | doc sync | sync baseline/issue/gate/KPI/final | one final decision | `EV-W9-306`,`EV-W9-402` | Gate |

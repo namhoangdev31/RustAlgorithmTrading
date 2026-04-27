@@ -90,6 +90,8 @@ class WebSocketManager:
         self.total_connections = 0
         self.total_messages_sent = 0
         self.total_errors = 0
+        self.total_pings_sent = 0
+        self.total_pings_received = 0
 
         # Background tasks will be started by start() method
         self._started = False
@@ -236,11 +238,12 @@ class WebSocketManager:
         """
         Background task for heartbeat/ping-pong.
 
-        Sends ping every 15 seconds and disconnects stale connections.
+        Sends ping every 30 seconds (reduced frequency) and disconnects stale connections.
         """
         try:
             while True:
-                await asyncio.sleep(15)
+                await asyncio.sleep(25)  # Offset sleep to avoid sync with other tasks
+                await asyncio.sleep(5)
 
                 # Send ping to all connections
                 stale_clients = []
@@ -254,6 +257,7 @@ class WebSocketManager:
                     # Send ping
                     success = await connection.send_text("ping")
                     if success:
+                        self.total_pings_sent += 1
                         connection.update_ping()
 
                 # Disconnect stale clients
@@ -267,6 +271,12 @@ class WebSocketManager:
         """Get current number of connected clients."""
         return len(self.connections)
 
+    def update_connection_ping(self, client_id: str):
+        """Update last ping timestamp for a specific client."""
+        if client_id in self.connections:
+            self.total_pings_received += 1
+            self.connections[client_id].update_ping()
+
     def get_stats(self) -> dict:
         """Get WebSocket manager statistics."""
         return {
@@ -275,6 +285,7 @@ class WebSocketManager:
             "total_connections": self.total_connections,
             "total_messages_sent": self.total_messages_sent,
             "total_errors": self.total_errors,
+            "heartbeat_success_rate": (self.total_pings_received / max(self.total_pings_sent, 1)) * 100,
             "queue_size": self._message_queue.qsize(),
             "connections": [
                 {

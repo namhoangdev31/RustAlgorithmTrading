@@ -21,61 +21,68 @@ import websockets
 from loguru import logger
 
 
+@pytest.fixture
+def project_root() -> Path:
+    """Get project root directory."""
+    return Path(__file__).parent.parent.parent
+
+import pytest_asyncio
+
+@pytest_asyncio.fixture
+async def full_stack(project_root: Path):
+    """Start complete observability stack."""
+    # Ensure directories exist
+    (project_root / "data").mkdir(exist_ok=True)
+    (project_root / "logs").mkdir(exist_ok=True)
+
+    # Ensure fresh database
+    db_path = project_root / "data" / "observability.duckdb"
+    if db_path.exists():
+        db_path.unlink()
+
+    # Start API server
+    api_process = await asyncio.create_subprocess_exec(
+        "python",
+        "-m",
+        "uvicorn",
+        "src.observability.api.main:app",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8000",
+        cwd=str(project_root),
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+    )
+
+    # Wait for API to be ready
+    async with httpx.AsyncClient() as client:
+        for _ in range(30):
+            try:
+                response = await client.get(
+                    "http://localhost:8000/health",
+                    timeout=2.0
+                )
+                if response.status_code == 200:
+                    break
+            except (httpx.ConnectError, httpx.TimeoutException):
+                await asyncio.sleep(1)
+
+    yield {
+        "api_process": api_process,
+        "project_root": project_root,
+    }
+
+    # Cleanup
+    api_process.terminate()
+    try:
+        await asyncio.wait_for(api_process.wait(), timeout=5.0)
+    except asyncio.TimeoutError:
+        api_process.kill()
+        await api_process.wait()
+
 class TestObservabilityIntegration:
     """End-to-end integration tests for the complete observability pipeline."""
-
-    @pytest.fixture
-    def project_root(self) -> Path:
-        """Get project root directory."""
-        return Path(__file__).parent.parent.parent
-
-    @pytest.fixture
-    async def full_stack(self, project_root: Path):
-        """Start complete observability stack."""
-        # Ensure directories exist
-        (project_root / "data").mkdir(exist_ok=True)
-        (project_root / "logs").mkdir(exist_ok=True)
-
-        # Start API server
-        api_process = await asyncio.create_subprocess_exec(
-            "python",
-            "-m",
-            "uvicorn",
-            "src.observability.api.main:app",
-            "--host",
-            "0.0.0.0",
-            "--port",
-            "8000",
-            cwd=str(project_root),
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
-        )
-
-        # Wait for API to be ready
-        async with httpx.AsyncClient() as client:
-            for _ in range(30):
-                try:
-                    response = await client.get(
-                        "http://localhost:8000/health",
-                        timeout=2.0
-                    )
-                    if response.status_code == 200:
-                        break
-                except (httpx.ConnectError, httpx.TimeoutException):
-                    await asyncio.sleep(1)
-
-        yield {
-            "api_process": api_process,
-            "project_root": project_root,
-        }
-
-        # Cleanup
-        api_process.terminate()
-        try:
-            await asyncio.wait_for(api_process.wait(), timeout=5.0)
-        except asyncio.TimeoutError:
-            api_process.kill()
-            await api_process.wait()
 
     @pytest.mark.asyncio
     @pytest.mark.integration
@@ -147,6 +154,8 @@ class TestObservabilityIntegration:
 
                     if message not in ["ping", "pong"]:
                         data = json.loads(message)
+                        if data.get("type") == "connected":
+                            continue
                         assert "timestamp" in data
                         received = True
                         break
@@ -220,6 +229,9 @@ class TestObservabilityIntegration:
         messages_received = []
 
         async with websockets.connect(ws_url) as websocket:
+            # Skip initial connected message
+            await asyncio.wait_for(websocket.recv(), timeout=2.0)
+            
             # Collect messages for 1 second
             start_time = time.time()
 
@@ -254,6 +266,10 @@ class TestObservabilityIntegration:
     @pytest.mark.integration
     async def test_graceful_shutdown_preserves_data(self, project_root: Path):
         """Test that graceful shutdown preserves all data."""
+        db_path = project_root / "data" / "metrics_shutdown_test.duckdb"
+        if db_path.exists():
+            db_path.unlink()
+            
         # Start API
         api_process = await asyncio.create_subprocess_exec(
             "python",
@@ -392,16 +408,24 @@ class TestObservabilityIntegration:
         # Connect, disconnect, and reconnect
         for attempt in range(3):
             async with websockets.connect(ws_url) as websocket:
+                # Skip initial connected message
+                await websocket.recv()
+                
                 # Send ping
                 await websocket.send("ping")
 
-                # Receive pong
-                response = await asyncio.wait_for(
-                    websocket.recv(),
-                    timeout=2.0
-                )
+                # Receive pong (skip queued metric updates)
+                pong_received = False
+                for _ in range(10):
+                    response = await asyncio.wait_for(
+                        websocket.recv(),
+                        timeout=2.0
+                    )
+                    if response == "pong":
+                        pong_received = True
+                        break
 
-                assert response == "pong"
+                assert pong_received, "Did not receive pong"
 
                 logger.info(f"✓ Connection attempt {attempt + 1} successful")
 
@@ -462,6 +486,8 @@ class TestObservabilityIntegration:
             import duckdb
 
             db_path = project_root / "data" / "metrics_agg_test.duckdb"
+            if db_path.exists():
+                db_path.unlink()
             conn = duckdb.connect(str(db_path))
 
             # Create and populate metrics

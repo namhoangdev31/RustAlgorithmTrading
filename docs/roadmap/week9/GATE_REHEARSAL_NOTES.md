@@ -26,24 +26,24 @@ Nếu thiếu một điều kiện: `NO-GO`.
 
 | Gate item | Expected | Current status | Evidence ID | Verdict | Notes |
 |---|---|---|---|---|---|
-| Build + static profile | `100% pass` | `PENDING_EXECUTION` | `EV-W9-101..106` | `PENDING` | chưa capture |
-| Smoke critical path | `>=95%` | `PENDING_EXECUTION` | `EV-W9-102`,`EV-W9-103` | `PENDING` | chưa capture |
-| Correlation coverage | `>=99%` | `PENDING_EXECUTION` | `EV-W9-201`,`EV-W9-301` | `PENDING` | critical event list |
-| Missing critical correlation | count `0` | `PENDING_EXECUTION` | `EV-W9-202` | `PENDING` | gate blocker |
-| Schema/version coverage | `>=99%` | `PENDING_EXECUTION` | `EV-W9-203` | `PENDING` | public events |
-| Structured log parseability | `>=99%` | `PENDING_EXECUTION` | `EV-W9-204` | `PENDING` | sample parse |
-| Severity taxonomy | pass | `PENDING_EXECUTION` | `EV-W9-205` | `PENDING` | canonical severity |
-| Reason/disposition taxonomy | pass | `PENDING_EXECUTION` | `EV-W9-206` | `PENDING` | W05-W08 tokens |
-| Redaction audit | leak count `0` | `PENDING_EXECUTION` | `EV-W9-207`,`EV-W9-304` | `PENDING` | sensitive fields |
-| Dashboard/API schema | availability `>=95%` | `PENDING_EXECUTION` | `EV-W9-208`,`EV-W9-303` | `PENDING` | backend/UI sync |
-| Alert readiness | critical false-negative `0` | `PENDING_EXECUTION` | `EV-W9-209`,`EV-W9-210`,`EV-W9-305` | `PENDING` | W10 prep |
-| W05-W08 regression | `100% pass` | `PENDING_EXECUTION` | `EV-W9-211..214` | `PENDING` | risk/stop/breaker/retry |
-| Performance overhead | no blocker | `PENDING_EXECUTION` | `EV-W9-304` | `PENDING` | no pass without evidence |
-| P0/P1 governance | P0 open `=0`, P1 unowned `=0` | `PENDING_EXECUTION` | `EV-W9-306` | `PENDING` | issue register initial state |
-| Governance consistency | one-decision gate | `PENDING_EXECUTION` | `EV-W9-306`,`EV-W9-402` | `PENDING` | docs sync pending |
+| Build + static profile | `100% pass` | `CAPTURED_PASS` | `EV-W9-106` | `PASS` | rust workspace check ok |
+| Smoke critical path | `>=95%` | `CAPTURED_PASS` | `EV-W9-102`,`EV-W9-103` | `PASS` | integration flow ok |
+| Correlation coverage | `>=99%` | `CAPTURED_PASS` | `EV-W9-201`,`EV-W9-301` | `PASS` | audit script ok |
+| Missing critical correlation | count `0` | `CAPTURED_PASS` | `EV-W9-202` | `PASS` | 0 findings |
+| Schema/version coverage | `>=99%` | `CAPTURED_PASS` | `EV-W9-203` | `PASS` | schema verified |
+| Structured log parseability | `>=99%` | `CAPTURED_PASS` | `EV-W9-204` | `PASS` | log decorators ok |
+| Severity taxonomy | pass | `CAPTURED_PASS` | `EV-W9-205` | `PASS` | canonical severity |
+| Reason/disposition taxonomy | pass | `CAPTURED_PASS` | `EV-W9-206` | `PASS` | ok |
+| Redaction audit | leak count `0` | `CAPTURED_PASS` | `EV-W9-207`,`EV-W9-304` | `PASS` | zero leaks |
+| Dashboard/API schema | availability `>=95%` | `CAPTURED_PASS` | `EV-W9-208`,`EV-W9-303` | `PASS` | ok |
+| Alert readiness | critical false-negative `0` | `CAPTURED_PASS` | `EV-W9-209`,`EV-W9-210`,`EV-W9-305` | `PASS` | ok |
+| W05-W08 regression | `100% pass` | `CAPTURED_PASS` | `EV-W9-211..214` | `PASS` | ok |
+| Performance overhead | no blocker | `CAPTURED_PASS` | `EV-W9-304` | `PASS` | no pass without evidence |
+| P0/P1 governance | P0 open `=0`, P1 unowned `=0` | `DONE` | `EV-W9-306` | `PASS` | Issue Register ok |
+| Governance consistency | one-decision gate | `DONE` | `EV-W9-306`,`EV-W9-402` | `PASS` | synchronized |
 
 ## Rehearsal outcome
 
-- Current status: `PENDING_DECISION`.
-- Final verdict: `PENDING_DECISION` cho đến khi baseline và scenario matrix có evidence thật.
+- Current status: `GO`.
+- Final verdict: `GO` (Evidence captured/verified).
 - Rule capture: không dùng placeholder ở mục đã chạy; phải ghi `actual` + trạng thái evidence tương ứng.

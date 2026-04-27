@@ -82,13 +82,16 @@ class SystemCollector(BaseCollector):
             while True:
                 await asyncio.sleep(1)  # Collect every second
 
-                # Collect system metrics
-                self.cpu_percent = psutil.cpu_percent(interval=0.1)
+                # Collect system metrics - reduce sampling frequency to lower CPU overhead
+                self.cpu_percent = psutil.cpu_percent(interval=None) # Non-blocking sample
                 self.memory_percent = psutil.virtual_memory().percent
                 self.disk_usage_percent = psutil.disk_usage('/').percent
 
                 # Check for alerts
                 self._check_alerts()
+                
+                # SLO violation checks (Lane 4)
+                self._check_slo_violations()
 
                 # Write to DuckDB
                 await self._write_to_database()
@@ -103,19 +106,30 @@ class SystemCollector(BaseCollector):
     def _check_alerts(self):
         """Check for system alerts based on thresholds."""
         # CPU alert
-        if self.cpu_percent > 80:
-            self._add_alert("cpu_high", f"CPU usage high: {self.cpu_percent:.1f}%", "warning")
+        if self.cpu_percent > 90:
+            self._add_alert("cpu_critical", f"CPU usage critical: {self.cpu_percent:.1f}%", "critical", "CORE_RES_EXHAUSTED")
+        elif self.cpu_percent > 80:
+            self._add_alert("cpu_high", f"CPU usage high: {self.cpu_percent:.1f}%", "warning", "CORE_RES_HIGH")
 
         # Memory alert
-        if self.memory_percent > 80:
-            self._add_alert("memory_high", f"Memory usage high: {self.memory_percent:.1f}%", "warning")
+        if self.memory_percent > 90:
+            self._add_alert("memory_critical", f"Memory usage critical: {self.memory_percent:.1f}%", "critical", "CORE_RES_EXHAUSTED")
+        elif self.memory_percent > 80:
+            self._add_alert("memory_high", f"Memory usage high: {self.memory_percent:.1f}%", "warning", "CORE_RES_HIGH")
 
         # Disk alert
-        if self.disk_usage_percent > 90:
-            self._add_alert("disk_high", f"Disk usage high: {self.disk_usage_percent:.1f}%", "critical")
+        if self.disk_usage_percent > 95:
+            self._add_alert("disk_critical", f"Disk usage critical: {self.disk_usage_percent:.1f}%", "critical", "CORE_RES_EXHAUSTED")
+        elif self.disk_usage_percent > 90:
+            self._add_alert("disk_high", f"Disk usage high: {self.disk_usage_percent:.1f}%", "warning", "CORE_RES_HIGH")
 
-    def _add_alert(self, alert_type: str, message: str, severity: str):
-        """Add a system alert."""
+    def _check_slo_violations(self):
+        """Check for SLO violations and trigger alerts."""
+        # This will be expanded as more collectors provide SLO data
+        pass
+
+    def _add_alert(self, alert_type: str, message: str, severity: str, reason_code: str = "SYSTEM_THRESHOLD"):
+        """Add a system alert with W09 taxonomy."""
         # Check if alert already exists
         if not any(a["type"] == alert_type and a["active"] for a in self.active_alerts):
             alert = {
@@ -123,11 +137,13 @@ class SystemCollector(BaseCollector):
                 "type": alert_type,
                 "message": message,
                 "severity": severity,
+                "reason_code": reason_code,
                 "timestamp": datetime.utcnow().isoformat(),
-                "active": True
+                "active": True,
+                "correlation_id": f"W10-ALRT-{int(datetime.utcnow().timestamp())}"
             }
             self.active_alerts.append(alert)
-            logger.warning(f"[cid:INIT] System alert: {message}")
+            logger.warning(f"[cid:INIT] System alert [{severity.upper()}]: {message} (code: {reason_code})")
 
     async def _write_to_database(self):
         """Write system metrics to DuckDB."""
@@ -163,13 +179,38 @@ class SystemCollector(BaseCollector):
         }
 
     def _calculate_health_status(self) -> str:
-        """Calculate overall health status."""
-        if self.cpu_percent > 90 or self.memory_percent > 90:
-            return "unhealthy"
-        elif self.cpu_percent > 80 or self.memory_percent > 80:
-            return "degraded"
-        else:
-            return "healthy"
+        """Calculate overall health status with reasons."""
+        reasons = []
+        if self.cpu_percent > 90: reasons.append("cpu_critical")
+        if self.memory_percent > 90: reasons.append("memory_critical")
+        if self.disk_usage_percent > 95: reasons.append("disk_critical")
+        
+        if reasons: return "unhealthy"
+        
+        if self.cpu_percent > 80: reasons.append("cpu_high")
+        if self.memory_percent > 80: reasons.append("memory_high")
+        if self.disk_usage_percent > 90: reasons.append("disk_high")
+        
+        return "degraded" if reasons else "healthy"
+
+    async def get_status(self) -> Dict[str, Any]:
+        """Get current status and health reasons for readiness check."""
+        # Use base class for uptime and metrics counters
+        base_status = await super().get_status()
+        
+        reasons = []
+        if self.cpu_percent > 80: reasons.append(f"cpu_usage_{self.cpu_percent:.1f}%")
+        if self.memory_percent > 80: reasons.append(f"memory_usage_{self.memory_percent:.1f}%")
+        
+        status = self._calculate_health_status()
+        
+        # Merge with base status
+        base_status.update({
+            "status": status,
+            "reasons": reasons,
+            "healthy": status == "healthy"
+        })
+        return base_status
 
     async def get_system_health(self) -> SystemHealth:
         """Get comprehensive system health."""

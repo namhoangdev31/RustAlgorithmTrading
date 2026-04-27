@@ -19,43 +19,45 @@ import websockets
 from loguru import logger
 
 
+@pytest.fixture
+def project_root() -> Path:
+    """Get project root directory."""
+    return Path(__file__).parent.parent.parent
+
+import pytest_asyncio
+
+@pytest_asyncio.fixture
+async def api_server(project_root: Path):
+    """Start API server for performance testing."""
+    process = await asyncio.create_subprocess_exec(
+        "python",
+        "-m",
+        "uvicorn",
+        "src.observability.api.main:app",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8000",
+        cwd=str(project_root),
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+    )
+
+    # Wait for startup
+    await asyncio.sleep(3)
+
+    yield process
+
+    # Cleanup
+    process.terminate()
+    try:
+        await asyncio.wait_for(process.wait(), timeout=5.0)
+    except asyncio.TimeoutError:
+        process.kill()
+        await process.wait()
+
 class TestObservabilityPerformance:
     """Performance benchmarks and overhead validation."""
-
-    @pytest.fixture
-    def project_root(self) -> Path:
-        """Get project root directory."""
-        return Path(__file__).parent.parent.parent
-
-    @pytest.fixture
-    async def api_server(self, project_root: Path):
-        """Start API server for performance testing."""
-        process = await asyncio.create_subprocess_exec(
-            "python",
-            "-m",
-            "uvicorn",
-            "src.observability.api.main:app",
-            "--host",
-            "0.0.0.0",
-            "--port",
-            "8000",
-            cwd=str(project_root),
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
-        )
-
-        # Wait for startup
-        await asyncio.sleep(3)
-
-        yield process
-
-        # Cleanup
-        process.terminate()
-        try:
-            await asyncio.wait_for(process.wait(), timeout=5.0)
-        except asyncio.TimeoutError:
-            process.kill()
-            await process.wait()
 
     @pytest.mark.asyncio
     @pytest.mark.performance
@@ -242,6 +244,9 @@ class TestObservabilityPerformance:
 
             try:
                 async with websockets.connect(ws_url) as websocket:
+                    # Skip initial connected message
+                    await asyncio.wait_for(websocket.recv(), timeout=2.0)
+                    
                     await websocket.send("ping")
                     response = await asyncio.wait_for(
                         websocket.recv(),

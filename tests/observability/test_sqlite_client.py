@@ -11,7 +11,9 @@ import tempfile
 from src.observability.storage.sqlite_client import SQLiteClient, sqlite_session
 
 
-@pytest.fixture
+import pytest_asyncio
+
+@pytest_asyncio.fixture
 async def temp_db():
     """Create temporary database for testing"""
     with tempfile.TemporaryDirectory() as tmpdir:

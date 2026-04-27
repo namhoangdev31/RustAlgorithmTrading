@@ -71,12 +71,12 @@ Triển khai API Health & SLO theo hướng thay đổi tối thiểu, tập tru
 | Alert profile | alert spam or critical miss | block gate, patch profile before dashboard polish | rerun `EV-W10-208..210` |
 | Dashboard SLO | panel data drift | revert UI adapter, preserve API evidence | rerun `EV-W10-211` |
 
-## Lane outcomes (initial)
+## Lane outcomes (captured)
 
 | Lane | Outcome | Status | Evidence |
 |---|---|---|---|
-| Lane 1 | Health endpoint SLO | `PENDING_EXECUTION` | `EV-W10-201..203`,`EV-W10-301` |
-| Lane 2 | Component health SLO | `PENDING_EXECUTION` | `EV-W10-204..205`,`EV-W10-302` |
-| Lane 3 | WebSocket heartbeat SLO | `PENDING_EXECUTION` | `EV-W10-206`,`EV-W10-303` |
-| Lane 4 | Alert quality | `PENDING_EXECUTION` | `EV-W10-207..210`,`EV-W10-304` |
-| Lane 5 | Dashboard SLO/artifact reconciliation | `PENDING_EXECUTION` | `EV-W10-211`,`EV-W10-305..306` |
+| Lane 1 | Health endpoint SLO | `CAPTURED_PASS` | `EV-W10-201..203`,`EV-W10-301` |
+| Lane 2 | Component health SLO | `CAPTURED_PASS` | `EV-W10-204..205`,`EV-W10-302` |
+| Lane 3 | WebSocket heartbeat SLO | `CAPTURED_FAIL` | `EV-W10-206`,`EV-W10-303` |
+| Lane 4 | Alert quality | `BLOCKED_ENV` | `EV-W10-207..210`,`EV-W10-304` |
+| Lane 5 | Dashboard SLO/artifact reconciliation | `BLOCKED_ENV` | `EV-W10-211`,`EV-W10-305..306` |

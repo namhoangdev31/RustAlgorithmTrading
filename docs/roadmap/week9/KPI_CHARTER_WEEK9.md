@@ -8,22 +8,22 @@ Khóa KPI vận hành cho W09 để đo độ đầy đủ của observability c
 
 | KPI | Target | Actual | Status | Evidence ID | Owner |
 |---|---|---|---|---|---|
-| Compile/static/lint/type profile | `100% pass` | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W9-101..106` | `tester` |
-| Critical path smoke pass rate | `>=95%` | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W9-102`,`EV-W9-103` | `tester` |
-| Correlation coverage critical events | `>=99%` | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W9-201`,`EV-W9-301` | `ops` |
-| Critical missing correlation count | `0` | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W9-202` | `ops` |
-| Schema/version coverage | `>=99%` | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W9-203` | `coder` |
-| Structured log parse success | `>=99%` | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W9-204` | `coder` |
-| Severity taxonomy coverage | `100%` critical event types | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W9-205` | `planner` |
-| Reason/disposition taxonomy coverage | `100%` critical risk/execution events | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W9-206` | `planner` |
-| Redaction leak count | `0` | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W9-207`,`EV-W9-302` | `ops` |
-| Dashboard critical panel availability | `>=95%` | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W9-208`,`EV-W9-303` | `ops` |
-| Alert false-positive sample | `<=15%` if sample exists | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W9-209` | `ops` |
-| Alert false-negative critical | `0` | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W9-210` | `ops` |
-| W05-W08 regression guard | `100% pass` required slices | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W9-211..214` | `tester` |
-| Observability overhead | no critical regression | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W9-304` | `ops` |
-| Change budget compliance | `<=18 files`, `<=900 LOC net` | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W9-401` | `planner` |
-| Artifact consistency | one final decision | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W9-402` | `planner` |
+| Compile/static/lint/type profile | `100% pass` | `pass` | `GREEN` | `EV-W9-106` | `tester` |
+| Critical path smoke pass rate | `>=95%` | `100%` | `GREEN` | `EV-W9-102`,`EV-W9-103` | `tester` |
+| Correlation coverage critical events | `>=99%` | `100%` | `GREEN` | `EV-W9-201`,`EV-W9-301` | `ops` |
+| Critical missing correlation count | `0` | `0` | `GREEN` | `EV-W9-202` | `ops` |
+| Schema/version coverage | `>=99%` | `100%` | `GREEN` | `EV-W9-203` | `coder` |
+| Structured log parse success | `>=99%` | `100%` | `GREEN` | `EV-W9-204` | `coder` |
+| Severity taxonomy coverage | `100%` critical event types | `100%` | `GREEN` | `EV-W9-205` | `planner` |
+| Reason/disposition taxonomy coverage | `100%` critical risk/execution events | `100%` | `GREEN` | `EV-W9-206` | `planner` |
+| Redaction leak count | `0` | `0` | `GREEN` | `EV-W9-207`,`EV-W9-302` | `ops` |
+| Dashboard critical panel availability | `>=95%` | `100%` | `GREEN` | `EV-W9-208`,`EV-W9-303` | `ops` |
+| Alert false-positive sample | `<=15%` if sample exists | `0%` | `GREEN` | `EV-W9-209` | `ops` |
+| Alert false-negative critical | `0` | `0` | `GREEN` | `EV-W9-210` | `ops` |
+| W05-W08 regression guard | `100% pass` required slices | `100%` | `GREEN` | `EV-W9-211..214` | `tester` |
+| Observability overhead | no critical regression | `pass` | `GREEN` | `EV-W9-304` | `ops` |
+| Change budget compliance | `<=18 files`, `<=900 LOC net` | `pass` | `GREEN` | `EV-W9-401` | `planner` |
+| Artifact consistency | one final decision | `pass` | `GREEN` | `EV-W9-402` | `planner` |
 
 ## KPI interpretation
 

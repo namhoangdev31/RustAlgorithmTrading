@@ -33,7 +33,10 @@ class TestMarketDataLogger:
 
     @pytest.fixture
     def logger(self, test_config):
-        return MarketDataLogger(config=test_config)
+        l = MarketDataLogger(config=test_config)
+        l._logger.propagate = True
+        l.set_level(logging.DEBUG)
+        return l
 
     def test_price_update(self, logger, caplog):
         """Test price update logging"""
@@ -106,7 +109,9 @@ class TestStrategyLogger:
 
     @pytest.fixture
     def logger(self, test_config):
-        return StrategyLogger(config=test_config)
+        l = StrategyLogger(config=test_config)
+        l._logger.propagate = True
+        return l
 
     def test_signal_logging(self, logger, caplog):
         """Test signal logging"""
@@ -183,7 +188,9 @@ class TestRiskLogger:
 
     @pytest.fixture
     def logger(self, test_config):
-        return RiskLogger(config=test_config)
+        l = RiskLogger(config=test_config)
+        l._logger.propagate = True
+        return l
 
     def test_risk_check(self, logger, caplog):
         """Test risk check logging"""
@@ -242,7 +249,9 @@ class TestExecutionLogger:
 
     @pytest.fixture
     def logger(self, test_config):
-        return ExecutionLogger(config=test_config)
+        l = ExecutionLogger(config=test_config)
+        l._logger.propagate = True
+        return l
 
     def test_order_submitted(self, logger, caplog):
         """Test order submission logging"""
@@ -315,7 +324,9 @@ class TestSystemLogger:
 
     @pytest.fixture
     def logger(self, test_config):
-        return SystemLogger(config=test_config)
+        l = SystemLogger(config=test_config)
+        l._logger.propagate = True
+        return l
 
     def test_startup(self, logger, caplog):
         """Test startup logging"""

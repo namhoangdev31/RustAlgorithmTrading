@@ -2,91 +2,82 @@
 
 ## 1) Executive summary
 
-- Current gate status: `PENDING_DECISION`.
-- Final verdict: `PENDING_DECISION`.
-- Mục tiêu summary:
-  1. Chốt API health/readiness/liveness SLO.
-  2. Chốt component health và WebSocket heartbeat SLO.
-  3. Chốt alert profile và alert quality.
-  4. Chốt dashboard SLO panels.
-  5. Chốt evidence để mở W11 Incident Runbook.
+- Current gate status: `NO-GO`.
+- Final verdict: `NO-GO`.
+- Tóm tắt thực thi:
+  1. Health/readiness/liveness và system health SLO có evidence pass.
+  2. Regression guard W05-W09 pass.
+  3. WebSocket heartbeat/stability chưa đạt, alert quality chưa đủ sample, dashboard SLO chưa có runtime evidence.
 
 ## 2) KPI snapshot
 
 | KPI Group | Target | Actual | Status | Evidence ID |
 |---|---|---|---|---|
-| Reliability | smoke >= 95% | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W10-103`,`EV-W10-104` |
-| API Health | `/health` p95 <= 100ms | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W10-201` |
-| API Health | readiness correctness 100% | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W10-202` |
-| API Health | liveness correctness 100% | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W10-203` |
-| API Health | `/api/system/health` p95 <= 250ms | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W10-204` |
-| Streaming | WebSocket heartbeat >= 99% | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W10-206` |
-| Alert | event-to-alert latency <= 120s | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W10-207` |
-| Alert | false-positive <= 15% | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W10-208` |
-| Alert | critical false-negative = 0 | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W10-209` |
-| Dashboard | SLO panel availability >= 95% | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W10-211` |
-| Regression | W05-W09 guardrails pass | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W10-213..217` |
-| Governance | artifact consistency 100% | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W10-306`,`EV-W10-402` |
+| Reliability | smoke >= 95% | `2/2 slices pass` | `CAPTURED_PASS` | `EV-W10-103`,`EV-W10-104` |
+| API Health | `/health` p95 <= 100ms | `0.96ms` | `CAPTURED_PASS` | `EV-W10-201` |
+| API Health | readiness correctness 100% | `pass` | `CAPTURED_PASS` | `EV-W10-202` |
+| API Health | liveness correctness 100% | `pass` | `CAPTURED_PASS` | `EV-W10-203` |
+| API Health | `/api/system/health` p95 <= 250ms | `0.61ms` | `CAPTURED_PASS` | `EV-W10-204` |
+| Streaming | WebSocket heartbeat >= 99% | `unstable (1012 restart)` | `CAPTURED_FAIL` | `EV-W10-206` |
+| Alert | event-to-alert latency <= 120s | `not captured` | `BLOCKED_ENV` | `EV-W10-207` |
+| Alert | false-positive <= 15% | `not captured` | `BLOCKED_ENV` | `EV-W10-208` |
+| Alert | critical false-negative = 0 | `not captured` | `BLOCKED_ENV` | `EV-W10-209` |
+| Dashboard | SLO panel availability >= 95% | `not captured` | `BLOCKED_ENV` | `EV-W10-211` |
+| Regression | W05-W09 guardrails pass | `pass` | `CAPTURED_PASS` | `EV-W10-213..217` |
+| Governance | artifact consistency 100% | `single verdict NO-GO` | `CAPTURED_PASS` | `EV-W10-306`,`EV-W10-402` |
 
 ## 3) Delivery status
 
-- `W10-T01..T03`: `PENDING_EXECUTION` (freeze + policy + issue ownership sync).
-- `W10-T04..T06`: `PENDING_EXECUTION` (clean-slate + baseline evidence capture).
-- `W10-T07..T09`: `PENDING_EXECUTION` (health SLO + component health + WebSocket heartbeat).
-- `W10-T10..T12`: `PENDING_EXECUTION` (triage + alert profile + dashboard SLO panels).
-- `W10-T13..T16`: `PENDING_EXECUTION` (rerun baseline + gate rehearsal + artifact reconciliation).
-- `W10-T17..T18`: `PENDING_EXECUTION` (final closeout + Week 11 start pack).
+- `W10-T01..T03`: `DONE` (freeze + taxonomy + issue ownership sync).
+- `W10-T04..T06`: `DONE` (baseline capture completed).
+- `W10-T07..T09`: `IN_PROGRESS` (lane 1-2 done; lane 3 fail at ws stability).
+- `W10-T10..T12`: `BLOCKED` (alert quality + dashboard evidence blocked by missing harness/probe).
+- `W10-T13..T16`: `DONE` (rerun + gate rehearsal + artifact reconciliation).
+- `W10-T17..T18`: `DONE` (final closeout + recovery queue issued).
 
 ## 4) Issue snapshot
 
-- `W10-ISS-001..W10-ISS-012`: trạng thái chi tiết theo [ISSUE_REGISTER_WEEK10.md](ISSUE_REGISTER_WEEK10.md).
-- Rule chốt:
-  - P0 open phải về 0.
-  - P1 unowned phải về 0.
+- P0 open: `1` (`W10-ISS-001` BLOCKED).
+- P1 unowned: `0`.
+- WebSocket stability issue: `W10-ISS-010` BLOCKED.
+- Chi tiết trạng thái theo [ISSUE_REGISTER_WEEK10.md](/Users/hoangnam/Developer/RustAlgorithmTrading/docs/roadmap/week10/ISSUE_REGISTER_WEEK10.md).
 
 ## 5) Decision log
 
-1. Contract freeze vẫn giữ nguyên (`schema_version` + `correlation_id`).
-2. W10 ưu tiên API Health & SLO, không mở refactor lan rộng.
-3. W10 reuse W09 observability taxonomy.
-4. Alert spam và critical false-negative đều là blockers.
-5. SLO/alert changes không được thay đổi trading behavior.
-6. Gate decision chỉ dựa trên evidence đã capture.
+1. Contract freeze giữ nguyên (`schema_version` + `correlation_id`).
+2. Không mở refactor lan rộng hoặc thay đổi trading behavior.
+3. Quyết định gate dựa hoàn toàn trên evidence thật, không dùng placeholder.
+4. Vì còn `CAPTURED_FAIL/BLOCKED_ENV` ở mục bắt buộc, verdict bắt buộc là `NO-GO`.
 
-## 6) Week 11 start pack (nếu W10 = GO)
+## 6) Week 11 start pack (deferred)
 
-Backlog ưu tiên:
+Điều kiện để mở W11 Incident Runbook:
 
-1. Incident Runbook: P0/P1 response flow dựa trên alert profile W10.
-2. Escalation matrix: owner, ETA, severity, acknowledgement SLA.
-3. Drill scenario: API degraded, execution alert, circuit breaker alert, stale WebSocket stream.
-4. Runbook evidence: alert -> acknowledge -> triage -> mitigation -> closeout.
+1. Đóng `W10-ISS-001`: có critical incident replay và chứng minh false-negative `=0`.
+2. Đóng `W10-ISS-010`: ws heartbeat/restart stability đạt `>=99%` trong slice bắt buộc.
+3. Capture `EV-W10-207..209,211,212` bằng harness/probe chính thức.
 
-Guardrail bắt buộc:
+## 7) Recovery queue (W10 = NO-GO)
 
-- W11 không đổi public envelope nếu không có `CR-W11-###`.
-- W11 phải reuse W09 taxonomy và W10 alert/SLO profile.
-- W11 runbook không được ghi “resolved” nếu chưa có evidence.
-
-## 7) Recovery queue (nếu W10 = NO-GO)
-
-1. Ưu tiên unblock P0 trước, rồi P1.
-2. Mỗi blocker bắt buộc có owner + ETA + mitigation + evidence thiếu.
-3. Chỉ được chuyển trạng thái sau khi rerun command profile chuẩn.
+1. `P0` - `W10-ISS-001` (owner: `ops`, ETA: next cycle): dựng alert replay harness và chạy false-negative audit (`EV-W10-209`,`EV-W10-304`).
+2. `P1` - `W10-ISS-010` (owner: `coder`, ETA: next cycle): xử lý ws restart/stale-stream, rerun `EV-W10-206`,`EV-W10-303`.
+3. `P1` - `W10-ISS-005` (owner: `ops`, ETA: next cycle): bổ sung event-to-alert latency capture (`EV-W10-207`).
+4. `P1` - `W10-ISS-006` (owner: `ops`, ETA: next cycle): bổ sung dashboard runtime availability probe (`EV-W10-211`,`EV-W10-305`).
+5. `P1` - `W10-ISS-004` (owner: `ops`, ETA: next cycle): chốt false-positive sample method (`EV-W10-208`).
 
 ## 8) Final gate criteria
 
 - [ ] Không còn P0 open.
-- [ ] Không còn P1 unowned.
+- [x] Không còn P1 unowned.
 - [ ] Matrix bắt buộc không còn `CAPTURED_FAIL/BLOCKED_ENV`.
-- [ ] `/health` p95 latency `<=100ms`.
-- [ ] Readiness correctness `100%`.
-- [ ] Liveness correctness `100%`.
-- [ ] `/api/system/health` p95 latency `<=250ms`.
+- [x] `/health` p95 latency `<=100ms`.
+- [x] Readiness correctness `100%`.
+- [x] Liveness correctness `100%`.
+- [x] `/api/system/health` p95 latency `<=250ms`.
 - [ ] WebSocket heartbeat success `>=99%` sample.
 - [ ] Alert false-positive sample `<=15%`.
 - [ ] Alert false-negative critical `=0`.
 - [ ] Dashboard SLO panel availability `>=95%`.
-- [ ] W05-W09 regression guard pass.
-- [ ] Correlation audit `0 findings`.
-- [ ] Gate artifacts không mâu thuẫn.
+- [x] W05-W09 regression guard pass.
+- [x] Correlation audit `0 findings`.
+- [x] Gate artifacts không mâu thuẫn.

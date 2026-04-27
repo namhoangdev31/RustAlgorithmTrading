@@ -187,6 +187,9 @@ async def websocket_metrics_endpoint(websocket: WebSocket):
 
                 if data == "ping":
                     await websocket.send_text("pong")
+                elif data == "pong":
+                    # Client-side heartbeat response
+                    api_state.websocket_manager.update_connection_ping(client_id)
                 elif data.startswith("subscribe:"):
                     # Handle selective metric subscriptions
                     topic = data.split(":", 1)[1]
@@ -210,20 +213,23 @@ async def health_check():
 @app.get("/health/ready")
 async def readiness_check():
     """Readiness check - are all services ready?"""
-    ready = all(
-        collector.is_ready()
-        for collector in api_state.collectors.values()
-    )
-
+    collectors_status = {}
+    for name, collector in api_state.collectors.items():
+        status = await collector.get_status() if hasattr(collector, 'get_status') else {"status": "unknown"}
+        collectors_status[name] = {
+            "ready": collector.is_ready(),
+            "status": status
+        }
+    
+    ready = all(s["ready"] for s in collectors_status.values())
     status_code = 200 if ready else 503
+    
     return JSONResponse(
         status_code=status_code,
         content={
             "ready": ready,
-            "collectors": {
-                name: collector.is_ready()
-                for name, collector in api_state.collectors.items()
-            }
+            "collectors": collectors_status,
+            "timestamp": asyncio.get_event_loop().time()
         }
     )
 

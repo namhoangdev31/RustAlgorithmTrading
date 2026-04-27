@@ -274,9 +274,9 @@ Sử dụng trực tiếp [CHECKLIST_GATE_W01_W24.md](CHECKLIST_GATE_W01_W24.md)
 
 ---
 
-## 10) Execution status (initial)
+## 10) Execution status (captured)
 
-- `W10-T01..T18`: `PENDING_EXECUTION`.
-- Command profile: `PENDING_EXECUTION`.
-- Scenario/hardening matrix: `PENDING_EXECUTION`.
-- Final gate: `PENDING_DECISION` cho đến khi đủ evidence thật.
+- `W10-T01..T18`: `DONE` (with blockers documented in Week10 artifacts).
+- Command profile: `CAPTURED` (mixed pass/fail, mapped to EV-W10 evidence set).
+- Scenario/hardening matrix: `CAPTURED` (contains `CAPTURED_PASS/CAPTURED_FAIL/BLOCKED_ENV`).
+- Final gate: `NO-GO` theo rule bắt buộc (mandatory fail/blockers còn mở).

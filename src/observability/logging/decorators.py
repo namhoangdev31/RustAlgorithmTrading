@@ -7,7 +7,11 @@ Provides:
 - log_error_with_context: Helper to log errors with full context
 """
 
+import asyncio
 import functools
+import importlib
+import inspect
+import sys
 import time
 import traceback
 from typing import Any, Callable, Dict, Optional
@@ -126,7 +130,7 @@ def log_execution_time(
                         )
 
         # Return appropriate wrapper
-        if functools.iscoroutinefunction(func):
+        if inspect.iscoroutinefunction(func):
             return async_wrapper
         else:
             return sync_wrapper
@@ -308,8 +312,7 @@ def with_correlation_id(func: Callable) -> Callable:
     async def async_wrapper(*args, **kwargs):
         with correlation_id():
             return await func(*args, **kwargs)
-
-    if functools.iscoroutinefunction(func):
+    if asyncio.iscoroutinefunction(func):
         return async_wrapper
     else:
         return sync_wrapper
