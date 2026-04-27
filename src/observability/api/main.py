@@ -23,6 +23,7 @@ from ..metrics.market_data_collector import MarketDataCollector
 from ..metrics.strategy_collector import StrategyCollector
 from ..metrics.execution_collector import ExecutionCollector
 from ..metrics.system_collector import SystemCollector
+from ..alerts.escalation import IncidentStatus
 
 
 class ObservabilityAPI:
@@ -248,6 +249,39 @@ async def liveness_check():
 app.include_router(metrics.router, prefix="/api/metrics", tags=["metrics"])
 app.include_router(trades.router, prefix="/api/trades", tags=["trades"])
 app.include_router(system.router, prefix="/api/system", tags=["system"])
+
+
+# --- Incident Management ---
+@app.get("/incidents")
+async def get_incidents():
+    """Retrieve active incidents (Lane A)."""
+    escalation = api_state.collectors.get("system").escalation
+    return {k: v.to_dict() for k, v in escalation.incidents.items()}
+
+
+@app.post("/incidents/{incident_id}/acknowledge")
+async def acknowledge_incident(incident_id: str, owner: str):
+    """Acknowledge incident (Phase 3)."""
+    escalation = api_state.collectors.get("system").escalation
+    if not await escalation.acknowledge_incident(incident_id, owner):
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail=f"Incident {incident_id} not found")
+    return {"status": "ACKNOWLEDGED"}
+
+
+@app.post("/incidents/{incident_id}/resolve")
+async def resolve_incident(incident_id: str, evidence: str):
+    """Resolve incident with evidence (Lane C)."""
+    escalation = api_state.collectors.get("system").escalation
+    try:
+        if not await escalation.resolve_incident(incident_id, evidence):
+            from fastapi import HTTPException
+            raise HTTPException(status_code=404, detail=f"Incident {incident_id} not found")
+        return {"status": "RESOLVED"}
+    except ValueError as e:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=400, detail=str(e))
+
 
 
 @app.get("/")

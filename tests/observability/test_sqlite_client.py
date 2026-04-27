@@ -167,19 +167,27 @@ class TestSQLiteClient:
 
     async def test_database_size(self, temp_db):
         """Test database size tracking"""
+        # Use unique context to avoid interference
+        cid = "SIZE_TEST_" + datetime.utcnow().strftime("%H%M%S")
+        
         # Initial size
         size_before = await temp_db.get_db_size()
 
-        # Insert data
-        for i in range(100):
+        # Insert significant amount of data to force new pages
+        # 5000 trades with metadata typically exceeds 4KB pages
+        for i in range(5000):
             await temp_db.log_trade(
                 timestamp=datetime.utcnow(),
                 symbol="BTC/USD",
                 side="buy",
                 quantity=1.0,
                 price=50000.0,
+                metadata={"test_tag": "size_assertion_hardening_" + str(i)}
             )
 
-        # Size should increase
+        # Size MUST increase now
         size_after = await temp_db.get_db_size()
+        
+        # Logging for truth verification
+        print(f"DEBUG: SQLite size transition {size_before} -> {size_after}")
         assert size_after > size_before

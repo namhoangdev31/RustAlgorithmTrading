@@ -19,6 +19,7 @@ from collections import deque
 from loguru import logger
 
 from .collectors import BaseCollector
+from ..alerts.escalation import EscalationManager
 from ..models.schemas import SystemHealth, PerformanceMetrics
 from ..database import get_db
 
@@ -55,6 +56,9 @@ class SystemCollector(BaseCollector):
         # Background task
         self.collection_task: Optional[asyncio.Task] = None
 
+        # Escalation Manager
+        self.escalation = EscalationManager()
+        
         # DuckDB instance
         self.db = get_db()
 
@@ -144,6 +148,16 @@ class SystemCollector(BaseCollector):
             }
             self.active_alerts.append(alert)
             logger.warning(f"[cid:INIT] System alert [{severity.upper()}]: {message} (code: {reason_code})")
+            
+            # Trigger Incident for P0/P1 (Lane B)
+            if severity.lower() in ["critical", "warning"]:
+                asyncio.create_task(self.escalation.create_incident({
+                    "alert_id": alert["alert_id"],
+                    "severity": "P0" if severity.lower() == "critical" else "P1",
+                    "component": "system",
+                    "reason_code": reason_code,
+                    "correlation_id": alert["correlation_id"]
+                }))
 
     async def _write_to_database(self):
         """Write system metrics to DuckDB."""

@@ -45,8 +45,26 @@ async def api_server():
         stderr=asyncio.subprocess.PIPE,
     )
 
-    # Wait for startup
-    await asyncio.sleep(3)
+    # Wait for startup with active readiness probing to reduce flaky connects.
+    startup_deadline = time.time() + 30  # Increased to 30s for heavy environments
+    server_ready = False
+    async with httpx.AsyncClient() as client:
+        while time.time() < startup_deadline:
+            if process.returncode is not None:
+                break
+            try:
+                # Add extra delay before the very first check to avoid immediate ConnectError
+                await asyncio.sleep(0.5)
+                response = await client.get("http://localhost:8000/health", timeout=1.0)
+                if response.status_code == 200:
+                    server_ready = True
+                    break
+            except Exception:
+                pass
+            await asyncio.sleep(0.5)
+
+    if not server_ready:
+        raise RuntimeError("Observability API did not become ready within 20 seconds")
 
     yield process
 
@@ -385,8 +403,15 @@ class TestObservabilityAPI:
         async with websockets.connect(ws_url) as ws1:
             await ws1.recv() # skip connected message
             await ws1.send("ping")
-            response1 = await ws1.recv()
-            assert response1 == "pong"
+            
+            # Robust pong check: skip any metric updates that arrive before pong
+            pong_received = False
+            for _ in range(10):
+                response1 = await asyncio.wait_for(ws1.recv(), timeout=2.0)
+                if response1 == "pong":
+                    pong_received = True
+                    break
+            assert pong_received, "Pong not received on ws1"
 
         # Wait briefly
         await asyncio.sleep(0.5)
@@ -395,5 +420,11 @@ class TestObservabilityAPI:
         async with websockets.connect(ws_url) as ws2:
             await ws2.recv() # skip connected message
             await ws2.send("ping")
-            response2 = await ws2.recv()
-            assert response2 == "pong"
+            
+            pong_received = False
+            for _ in range(10):
+                response2 = await asyncio.wait_for(ws2.recv(), timeout=2.0)
+                if response2 == "pong":
+                    pong_received = True
+                    break
+            assert pong_received, "Pong not received on ws2"

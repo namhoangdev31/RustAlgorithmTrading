@@ -1772,6 +1772,36 @@ Mỗi file có 3 phần:
 - Class/Type trong file: Không có class/type (tài liệu weekly closeout + handoff).
 - Test liên quan: Tổng hợp evidence từ baseline report, implementation plan, issue register và gate rehearsal để ra quyết định final tuần 11.
 
+### docs/roadmap/week11/BASELINE_REPORT_W11.md
+
+- Vai trò file: Snapshot baseline thực thi W11 theo command profile runtime, lưu kết quả pass/fail và trạng thái gate từ evidence thật.
+- Class/Type trong file: Không có class/type (tài liệu evidence snapshot bổ sung cho incident runbook).
+- Test liên quan: Tổng hợp trực tiếp từ `test_logs/w11_run_20260427_full/*` cho pytest/cargo/health/compliance/correlation audit.
+
+### docs/roadmap/week11/DRILL_LOG_W11.md
+
+- Vai trò file: Nhật ký thực thi mandatory drill W11 (circuit breaker, API degraded, execution alert, stale stream, position/risk breach) và SLA capture trạng thái.
+- Class/Type trong file: Không có class/type (tài liệu drill evidence tracking).
+- Test liên quan: Dùng để map `EV-W11-205..209` và SLA evidence `EV-W11-201..204` vào gate checklist.
+
+### docs/roadmap/week11/FINAL_REPORT_W11.md
+
+- Vai trò file: Báo cáo tóm tắt final verdict W11 ở định dạng ngắn, phục vụ handoff nhanh cho vận hành.
+- Class/Type trong file: Không có class/type (tài liệu closeout summary).
+- Test liên quan: Ràng buộc với command profile W11 và issue register canonical trước khi tuyên bố verdict.
+
+### docs/roadmap/week11/ISSUE_REGISTER_W11.md
+
+- Vai trò file: Alias tương thích tên file ngắn cho sổ issue W11; trỏ về nguồn canonical `ISSUE_REGISTER_WEEK11.md`.
+- Class/Type trong file: Không có class/type (tài liệu alias/chuyển hướng).
+- Test liên quan: Không chứa matrix riêng; dùng verdict và trạng thái từ issue register canonical.
+
+### docs/roadmap/week11/INCIDENT_PLAYBOOKS.md
+
+- Vai trò file: Bộ playbook drill chuẩn hóa W11 theo từng scenario incident bắt buộc.
+- Class/Type trong file: Không có class/type (tài liệu quy trình phản ứng sự cố).
+- Test liên quan: Là đầu vào cho rehearsal `EV-W11-205..209`, closeout evidence và postmortem workflow.
+
 ### docs/roadmap/W12_OPERATIONS_PLAN.md
 
 - Vai trò file: Kế hoạch vận hành tuần 12 cho Ops Readiness Gate, tập trung readiness checklist, ownership/escalation readiness, rehearsal technical/operational/governance và W13 handoff.
