@@ -13,8 +13,8 @@ import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
 
-from ..strategies.base import Strategy, Signal, SignalType
-from ..strategies.momentum import MomentumStrategy
+from src.strategies.base import Strategy, Signal, SignalType
+from src.strategies.momentum import MomentumStrategy
 
 
 class TestSignalTypeEnum:

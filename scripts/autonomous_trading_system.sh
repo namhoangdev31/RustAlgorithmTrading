@@ -33,6 +33,7 @@ SIMULATION_RESULTS="$PROJECT_ROOT/data/simulation_results"
 # Mode configuration
 MODE="${1:-full}"
 MODE="${MODE#--mode=}"
+initial_capital=1000.0
 
 # Thresholds for validation
 MIN_SHARPE_RATIO=1.0
@@ -263,7 +264,7 @@ run_backtesting() {
     cd "$PROJECT_ROOT"
 
     # Use the new router-based backtest script
-    uv run python scripts/run_router_backtest.py
+    initial_capital="$initial_capital" uv run python scripts/run_router_backtest.py
 
     local backtest_status=$?
 
@@ -314,7 +315,8 @@ try:
         print("[SIMULATION] WARNING: No trades in backtest")
         returns = [0.01]  # Small positive return
     else:
-        returns = [trade.get('pnl', 0) / 100000 for trade in trades]
+        initial_capital = float(os.getenv('initial_capital', '1000.0'))
+        returns = [trade.get('pnl', 0) / max(initial_capital, 1.0) for trade in trades]
 
     # Monte Carlo simulation (1000 iterations)
     num_simulations = 1000

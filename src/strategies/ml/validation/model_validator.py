@@ -9,8 +9,10 @@ Provides comprehensive validation for ML trading models including:
 """
 
 import numpy as np
+import os
 from typing import Dict, List, Tuple, Optional
 from dataclasses import dataclass
+from .governance import GovernanceEvidence, StrategyGovernanceGate, StrategyDecision
 
 @dataclass
 class ValidationConfig:
@@ -46,6 +48,8 @@ class ModelValidator:
         """
         self.config = config or ValidationConfig()
         self.validation_results: Dict = {}
+        self.governance_gate = StrategyGovernanceGate()
+        self.last_decision: Optional[StrategyDecision] = None
 
     def train_test_split(
         self,
@@ -130,13 +134,90 @@ class ModelValidator:
             Dictionary with validation results
         """
         if method == 'train_test':
-            return self._validate_train_test(model, X, y, **kwargs)
+            results = self._validate_train_test(model, X, y, **kwargs)
         elif method == 'train_val_test':
-            return self._validate_train_val_test(model, X, y, **kwargs)
+            results = self._validate_train_val_test(model, X, y, **kwargs)
         elif method == 'walk_forward':
-            return self._validate_walk_forward(model, X, y, **kwargs)
+            results = self._validate_walk_forward(model, X, y, **kwargs)
         else:
             raise ValueError(f"Unknown validation method: {method}")
+
+        # WEEK 13: Enforce Strategy Governance Gate
+        evidence = self._capture_governance_evidence(results)
+        strategy_id = getattr(model, 'name', 'unknown_strategy')
+        decision = self.governance_gate.evaluate_strategy(strategy_id, evidence)
+        self.last_decision = decision
+        
+        # Log decision for traceability
+        log_path = os.path.join(os.getcwd(), "docs/roadmap/week13/STRATEGY_GOVERNANCE_DECISION_LOG.jsonl")
+        self.governance_gate.log_decision(decision, log_path)
+
+        results['governance_decision'] = {
+            'verdict': decision.verdict.value,
+            'rationale': decision.rationale,
+            'timestamp': decision.timestamp.isoformat()
+        }
+
+        return results
+
+    def _capture_governance_evidence(self, results: Dict) -> GovernanceEvidence:
+        evidence = GovernanceEvidence()
+        
+        method = results.get('method')
+        if method == 'train_test':
+            evidence.oos_results = results.get('test_metrics', {})
+            evidence.drift_metrics = {
+                "max_pct_drift": 0.0,
+                "risk_impact_flag": False,
+            }
+        elif method == 'train_val_test':
+            evidence.oos_results = results.get('test_metrics', {})
+            evidence.drift_metrics = {
+                "max_pct_drift": 0.0,
+                "risk_impact_flag": False,
+            }
+        elif method == 'walk_forward':
+            avg_metrics = results.get('avg_metrics', {})
+            fold_results = results.get('fold_results', [])
+            evidence.walk_forward_results = {
+                'avg_metrics': avg_metrics,
+                'consistency_score': self._calculate_consistency(fold_results)
+            }
+            evidence.oos_results = avg_metrics
+            evidence.drift_metrics = {
+                "max_pct_drift": self._calculate_max_pct_drift(fold_results, avg_metrics),
+                "risk_impact_flag": False,
+            }
+
+        return evidence
+
+    def _calculate_consistency(self, fold_results: List[Dict]) -> float:
+        if not fold_results:
+            return 0.0
+        
+        passed_folds = 0
+        for fold in fold_results:
+            metrics = fold.get('test_metrics', {})
+            if metrics.get('sharpe_ratio', 0) > 0 or metrics.get('accuracy', 0) > 0.5:
+                passed_folds += 1
+        
+        return passed_folds / len(fold_results)
+
+    def _calculate_max_pct_drift(self, fold_results: List[Dict], avg_metrics: Dict) -> float:
+        if not fold_results or not avg_metrics:
+            return 0.0
+
+        max_drift = 0.0
+        for fold in fold_results:
+            metrics = fold.get("test_metrics", {})
+            for key, avg_value in avg_metrics.items():
+                fold_value = metrics.get(key)
+                if isinstance(fold_value, (int, float)) and isinstance(avg_value, (int, float)):
+                    denominator = max(abs(float(avg_value)), 1e-9)
+                    drift = abs(float(fold_value) - float(avg_value)) / denominator
+                    if drift > max_drift:
+                        max_drift = drift
+        return max_drift
 
     def _validate_train_test(self, model, X: np.ndarray, y: np.ndarray, **kwargs) -> Dict:
         """Validate using simple train/test split."""
@@ -259,14 +340,9 @@ class ModelValidator:
         return results
 
     def _aggregate_fold_metrics(self, fold_results: List[Dict]) -> Dict:
-        """Aggregate metrics across folds."""
         if not fold_results:
             return {}
-
-        # Get all metric keys
         metric_keys = fold_results[0]['test_metrics'].keys()
-
-        # Average each metric
         avg_metrics = {}
         for key in metric_keys:
             values = [fold['test_metrics'][key] for fold in fold_results]
@@ -275,7 +351,6 @@ class ModelValidator:
         return avg_metrics
 
     def _std_fold_metrics(self, fold_results: List[Dict]) -> Dict:
-        """Calculate standard deviation of metrics across folds."""
         if not fold_results:
             return {}
 

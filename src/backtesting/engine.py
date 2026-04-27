@@ -8,7 +8,7 @@ from typing import Dict, List, Optional, Any
 import pandas as pd
 from loguru import logger
 
-from ..models.events import Event, EventType, MarketEvent, SignalEvent, OrderEvent, FillEvent
+from src.models.events import Event, EventType, MarketEvent, SignalEvent, OrderEvent, FillEvent
 from .data_handler import HistoricalDataHandler
 from .execution_handler import SimulatedExecutionHandler
 from .portfolio_handler import PortfolioHandler

@@ -76,3 +76,4 @@ data/backtest_results/*.json
 *.log
 logs/
 tests/logs/
+tests/reports/

@@ -2075,3 +2075,40 @@ Mỗi file có 3 phần:
 - Vai trò file: Báo cáo tổng kết tuần 16 và gói khởi động tuần 17 (Staging Hardening), chứa nhánh `GO` và recovery queue khi `NO-GO`.
 - Class/Type trong file: Không có class/type (tài liệu weekly closeout + handoff).
 - Test liên quan: Tổng hợp evidence từ baseline report, implementation plan, issue register và gate rehearsal để ra quyết định final tuần 16.
+
+### src/strategies/ml/validation/governance.py
+
+- Vai trò file: Strategy governance gate cho W13, enforce OOS/WF evidence, drift threshold, risk flag và decision traceability contract.
+- Class trong file:
+  - GovernanceStatus: Enum trạng thái governance (`PENDING/APPROVED/REJECTED/BLOCKED`).
+  - GovernanceEvidence: Data object chứa OOS/WF/drift/correlation evidence.
+  - StrategyDecision: Data object cho decision trace record.
+  - StrategyGovernanceGate: Lõi enforcement policy và logging decision JSONL.
+- Test liên quan: `tests/unit/test_strategy_signals.py`, `tests/integration/test_backtest_signal_flow.py`, `scripts/verify_governance_gate.py`, `scripts/verify_w13_wave1.py`.
+
+### src/strategies/ml/validation/drift_detector.py
+
+- Vai trò file: Utility tính reproducibility drift cho governance hardening (W13 phase C).
+- Class trong file:
+  - DriftDetector: Tính `% drift` giữa các lần rerun và đánh giá pass/fail theo tolerance.
+- Test liên quan: `scripts/verify_w13_wave1.py`, W13 governance evidence `EV-W13-205`.
+
+### scripts/verify_governance_gate.py
+
+- Vai trò file: Script verification cho OOS/WF evidence enforcement và decision logging trong W13.
+- Class/Type trong file:
+  - MockModel: test double cho validation flow.
+- Test liên quan: W13 governance evidence `EV-W13-201..204`,`EV-W13-214`.
+
+### scripts/verify_w13_wave1.py
+
+- Vai trò file: Script verification Wave-1 cho drift/risk/regression preflight của W13.
+- Class/Type trong file:
+  - MockModel: test double cho drift audit.
+- Test liên quan: W13 governance evidence `EV-W13-205`,`EV-W13-206`,`EV-W13-301`.
+
+### docs/roadmap/week13/STRATEGY_GOVERNANCE_DECISION_LOG.jsonl
+
+- Vai trò file: Audit log quyết định governance W13 (source-of-truth cho traceability + linkage).
+- Class/Type trong file: JSONL records gồm `strategy_id`, `verdict`, `owner`, `rationale`, `evidence_links`, `next_action`, `eta`, `block_reason`, `drift_value`, `risk_impact_flag`.
+- Test liên quan: W13 evidence `EV-W13-204`,`EV-W13-212`,`EV-W13-213`.

@@ -1,11 +1,11 @@
 """Trading strategy implementations"""
 
-from ..strategies.base import Strategy, Signal
-from ..strategies.moving_average import MovingAverageCrossover
-from ..strategies.mean_reversion import MeanReversion
-from ..strategies.momentum import MomentumStrategy
-from ..strategies.simple_momentum import SimpleMomentumStrategy
-from ..strategies.enhanced_momentum import (
+from .base import Strategy, Signal
+from .moving_average import MovingAverageCrossover
+from .mean_reversion import MeanReversion
+from .momentum import MomentumStrategy
+from .simple_momentum import SimpleMomentumStrategy
+from .enhanced_momentum import (
     EnhancedMomentumStrategy,
     SignalQuality,
     RiskParameters,

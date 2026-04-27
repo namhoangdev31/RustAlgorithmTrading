@@ -113,10 +113,17 @@ class HistoricalDataHandler:
         csv_path = self.data_dir / f"{symbol}.csv"
 
         if parquet_path.exists() or csv_path.exists():
-            # Check if file has data
+            # Check if file has data; tolerate parquet-engine gaps by falling back to CSV
             try:
                 if parquet_path.exists():
-                    df = pd.read_parquet(parquet_path)
+                    try:
+                        df = pd.read_parquet(parquet_path)
+                    except Exception as parquet_error:
+                        logger.debug(f"Error checking Parquet for {symbol}: {parquet_error}")
+                        if csv_path.exists():
+                            df = pd.read_csv(csv_path, nrows=5)
+                        else:
+                            return False
                 else:
                     df = pd.read_csv(csv_path, nrows=5)
 
@@ -222,9 +229,16 @@ class HistoricalDataHandler:
                     try:
                         df = pd.read_parquet(parquet_path)
                         logger.debug(f"Loaded {symbol} from Parquet: {parquet_path}")
-                    except Exception as e:
-                        logger.error(f"Failed to read Parquet file {parquet_path}: {e}")
-                        raise ValueError(f"Invalid Parquet file for {symbol}: {e}")
+                    except Exception as parquet_error:
+                        if csv_path.exists():
+                            logger.warning(
+                                f"Failed to read Parquet for {symbol} ({parquet_error}); falling back to CSV"
+                            )
+                            df = pd.read_csv(csv_path, parse_dates=['timestamp'])
+                            logger.debug(f"Loaded {symbol} from CSV fallback: {csv_path}")
+                        else:
+                            logger.error(f"Failed to read Parquet file {parquet_path}: {parquet_error}")
+                            raise ValueError(f"Invalid Parquet file for {symbol}: {parquet_error}")
                 elif csv_path.exists():
                     try:
                         df = pd.read_csv(csv_path, parse_dates=['timestamp'])

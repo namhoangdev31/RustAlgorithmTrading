@@ -6,18 +6,14 @@ with the fixed $1,000 initial capital.
 """
 
 import pytest
-import sys
 from pathlib import Path
 from datetime import datetime, timedelta
 
-# Add src to path
-sys.path.insert(0, str(Path(__file__).parent.parent / 'src'))
-
-from backtesting.engine import BacktestEngine
-from backtesting.data_handler import HistoricalDataHandler
-from backtesting.execution_handler import SimulatedExecutionHandler
-from backtesting.portfolio_handler import PortfolioHandler
-from strategies.simple_momentum import SimpleMomentumStrategy
+from src.backtesting.engine import BacktestEngine
+from src.backtesting.data_handler import HistoricalDataHandler
+from src.backtesting.execution_handler import SimulatedExecutionHandler
+from src.backtesting.portfolio_handler import PortfolioHandler
+from src.strategies.simple_momentum import SimpleMomentumStrategy
 
 
 class TestBacktestingIntegration:
@@ -109,7 +105,12 @@ class TestBacktestingIntegration:
                 print(f"Profit Factor: {metrics['profit_factor']:.2f}")
 
             equity = results.get('equity_curve', {}).get('equity', [initial_capital])
-            final_value = equity[-1] if equity else initial_capital
+            if hasattr(equity, 'iloc'):
+                final_value = float(equity.iloc[-1]) if len(equity) > 0 else initial_capital
+            elif isinstance(equity, (list, tuple)):
+                final_value = equity[-1] if len(equity) > 0 else initial_capital
+            else:
+                final_value = float(equity) if equity is not None else initial_capital
             total_return = ((final_value - initial_capital) / initial_capital) * 100
 
             print(f"\nInitial Capital: ${initial_capital:,.2f}")

@@ -129,11 +129,11 @@
 
 ## W13 - Strategy Governance
 
-- [ ] OOS/walk-forward checklist enforcement hoạt động.
-- [ ] Strategy thiếu evidence bị block đúng rule.
-- [ ] Go/No-Go W13 đã chốt.
+- [x] OOS/walk-forward checklist enforcement hoạt động.
+- [x] Strategy thiếu evidence bị block đúng rule.
+- [x] Go/No-Go W13 đã chốt.
 - Evidence IDs: `EV-W13-101..110, EV-W13-201..216, EV-W13-301..306, EV-W13-401..402`
-- Decision: [ ] GO  [ ] NO-GO
+- Decision: [x] GO  [ ] NO-GO
 
 ## W14 - Portfolio Controls
 
@@ -230,4 +230,4 @@
 - Decision: [ ] GO  [ ] NO-GO
 
 ---
-Last updated: W07 GO - Full re-verification complete (Circuit Breaker Hardening).
+Last updated: W13 GO - Strategy governance gate lock complete.

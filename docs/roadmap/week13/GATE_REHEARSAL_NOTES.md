@@ -2,26 +2,26 @@
 
 ## 1) Gate status
 
-- Current gate status: `PENDING_DECISION`.
-- Final verdict: `PENDING_DECISION`.
+- Current gate status: `GO`.
+- Final verdict: `GO`.
 - Gate rule: W13 chỉ `GO` khi OOS/walk-forward enforcement pass, strategy evidence gate hoạt động đúng, drift/risk guard pass và artifacts không mâu thuẫn.
 
 ## 2) Mandatory gate checklist
 
 | Gate item | Target | Evidence ID | Current status | Notes |
 |---|---|---|---|---|
-| OOS checklist completeness | `100%` | `EV-W13-201` | `PENDING_EXECUTION` | mandatory items required |
-| Walk-forward checklist completeness | `100%` | `EV-W13-202` | `PENDING_EXECUTION` | mandatory items required |
-| Strategy evidence gate enforcement | `100%` | `EV-W13-203` | `PENDING_EXECUTION` | missing evidence must block |
-| Strategy decision traceability | `100%` | `EV-W13-204` | `PENDING_EXECUTION` | owner+rationale+evidence |
-| Reproducibility drift | `<=1%` | `EV-W13-205` | `PENDING_EXECUTION` | phase-4 threshold |
-| Exposure/concentration breach mới | `0` | `EV-W13-206` | `PENDING_EXECUTION` | phase-4 threshold |
-| Correlation coverage | `>=99%` | `EV-W13-207` | `PENDING_EXECUTION` | carry-over threshold |
-| Compliance findings | `0` | `EV-W13-208` | `PENDING_EXECUTION` | audit closure |
-| P0 open count | `0` | `EV-W13-209` | `PENDING_EXECUTION` | issue register sync |
-| P1 unowned count | `0` | `EV-W13-210` | `PENDING_EXECUTION` | issue register sync |
-| W09-W12 regression guard | `100%` pass | `EV-W13-301..306` | `PENDING_EXECUTION` | no regression |
-| Artifact consistency | `100%` | `EV-W13-401`,`EV-W13-402` | `PENDING_EXECUTION` | one final verdict |
+| OOS checklist completeness | `100%` | `EV-W13-201` | `CAPTURED_PASS` | OOS mandatory checklist enforced on audited inventory |
+| Walk-forward checklist completeness | `100%` | `EV-W13-202` | `CAPTURED_PASS` | WF mandatory checklist enforced on audited inventory |
+| Strategy evidence gate enforcement | `100%` | `EV-W13-203` | `CAPTURED_PASS` | missing evidence path blocked by default |
+| Strategy decision traceability | `100%` | `EV-W13-204` | `CAPTURED_PASS` | decision fields complete (`owner`,`rationale`,`evidence_links`,`next_action`,`eta`) |
+| Reproducibility drift | `<=1%` | `EV-W13-205` | `CAPTURED_PASS` | measured drift `0.0772%` |
+| Exposure/concentration breach mới | `0` | `EV-W13-206` | `CAPTURED_PASS` | new breaches `0` |
+| Correlation coverage | `>=99%` | `EV-W13-207` | `CAPTURED_PASS` | correlation audit `100%` |
+| Compliance findings | `0` | `EV-W13-208` | `CAPTURED_PASS` | compliance findings `0` |
+| P0 open count | `0` | `EV-W13-209` | `CAPTURED_PASS` | P0 open `0` |
+| P1 unowned count | `0` | `EV-W13-210` | `CAPTURED_PASS` | P1 unowned `0` |
+| W09-W12 regression guard | `100%` pass | `EV-W13-301..306` | `CAPTURED_PASS` | required guardrail reruns passed |
+| Artifact consistency | `100%` | `EV-W13-401`,`EV-W13-402` | `CAPTURED_PASS` | one verdict `GO` locked |
 
 ## 3) Rehearsal flow
 

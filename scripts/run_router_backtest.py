@@ -8,6 +8,7 @@ the optimal strategy for each symbol based on market regime.
 
 import sys
 import json
+import os
 from pathlib import Path
 from datetime import datetime, timedelta
 import pandas as pd
@@ -17,11 +18,11 @@ from loguru import logger
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from ..strategies.strategy_router import StrategyRouter
-from ..backtesting.engine import BacktestEngine
-from ..backtesting.data_handler import HistoricalDataHandler
-from ..backtesting.execution_handler import SimulatedExecutionHandler
-from ..backtesting.portfolio_handler import PortfolioHandler, PercentageOfEquitySizer
+from src.strategies.strategy_router import StrategyRouter
+from src.backtesting.engine import BacktestEngine
+from src.backtesting.data_handler import HistoricalDataHandler
+from src.backtesting.execution_handler import SimulatedExecutionHandler
+from src.backtesting.portfolio_handler import PortfolioHandler, PercentageOfEquitySizer
 
 
 def run_router_backtest():
@@ -32,7 +33,7 @@ def run_router_backtest():
 
     # Define test parameters
     symbols = ['AAPL', 'MSFT', 'GOOGL']
-    initial_capital = 100000.0
+    initial_capital = float(os.getenv("initial_capital", "1000.0"))
 
     # Load data to determine actual date range
     data_dir = project_root / 'data' / 'historical'
