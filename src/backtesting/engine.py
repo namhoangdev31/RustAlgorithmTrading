@@ -75,22 +75,19 @@ class BacktestEngine:
         Returns:
             Dictionary containing performance metrics and equity curve
         """
-        logger.info("Starting backtest execution")
+        logger.info(f"Starting optimized backtest for {len(self.data_handler.symbols)} symbols...")
         start_time = datetime.utcnow()
 
-        # Process all market data events
         while self.continue_backtest:
             # Update market data bars
             if self.data_handler.continue_backtest:
                 self.data_handler.update_bars()
 
-                # FIXED: Create MarketEvent after updating bars
-                # Get latest bar from first symbol to trigger signal generation for all symbols
-                if self.data_handler.symbols:
-                    symbol = self.data_handler.symbols[0]
-                    latest_bars = self.data_handler.get_latest_bars(symbol, n=1)
-                    if latest_bars:
-                        bar = latest_bars[0]
+                # Optimized (Wave-3): Emit MarketEvent for ALL symbols to support parallel strategies
+                # This ensures each strategy gets data for all symbols it tracks
+                for symbol in self.data_handler.symbols:
+                    bar = self.data_handler.get_latest_bar(symbol)
+                    if bar:
                         market_event = MarketEvent(
                             timestamp=bar.timestamp,
                             symbol=symbol,
@@ -108,7 +105,6 @@ class BacktestEngine:
                 self.events_processed += 1
 
             # RACE FIX: Clear reserved cash after all events in bar are processed
-            # This resets the cash reservation system for the next bar
             self.portfolio_handler.clear_reserved_cash()
 
         # Calculate final performance metrics
@@ -119,10 +115,7 @@ class BacktestEngine:
 
         logger.info(
             f"Backtest completed in {duration:.2f}s. "
-            f"Processed {self.events_processed} events, "
-            f"Generated {self.signals_generated} signals, "
-            f"Placed {self.orders_placed} orders, "
-            f"Executed {self.fills_executed} fills"
+            f"Processed {self.events_processed} events"
         )
 
         return results
@@ -130,9 +123,6 @@ class BacktestEngine:
     def _dispatch_event(self, event: Event) -> None:
         """
         Dispatch event to appropriate handler.
-
-        Args:
-            event: Event to process
         """
         if event.event_type == EventType.MARKET and isinstance(event, MarketEvent):
             self._handle_market_event(event)
@@ -148,7 +138,7 @@ class BacktestEngine:
 
     def _handle_market_event(self, event: MarketEvent) -> None:
         """
-        Handle market data update.
+        Handle market data update for a specific symbol.
 
         Args:
             event: Market event
@@ -156,56 +146,87 @@ class BacktestEngine:
         # Update portfolio with latest prices
         self.portfolio_handler.update_timeindex(event.timestamp)
 
-        # FIXED: Convert MarketEvent to format strategy expects
         try:
-            # Get latest bars for all symbols from data handler
-            bars_data = {}
-            for symbol in self.data_handler.symbols:
-                # Get last N bars for technical indicators
-                bars = self.data_handler.get_latest_bars(symbol, n=50)
-                if bars:
-                    # Convert to DataFrame format
-                    df = pd.DataFrame([
-                        {
-                            'timestamp': bar.timestamp,
-                            'open': bar.open,
-                            'high': bar.high,
-                            'low': bar.low,
-                            'close': bar.close,
-                            'volume': bar.volume
-                        }
-                        for bar in bars
-                    ])
-                    df.set_index('timestamp', inplace=True)
-                    bars_data[symbol] = df
+            # OPTIMIZATION (Wave-3): Only process the symbol that triggered the event
+            symbol = event.symbol
+            
+            # Get latest bars for the specific symbol
+            bars = self.data_handler.get_latest_bars(symbol, n=50)
+            if not bars or len(bars) < 20:
+                return
 
-            # Generate signals for each symbol with enough data
-            all_signals = []
-            for symbol, df in bars_data.items():
-                if len(df) >= 20:  # Minimum bars for indicators
-                    # Call strategy's per-symbol signal generation
-                    if hasattr(self.strategy, 'generate_signals_for_symbol'):
-                        signals = self.strategy.generate_signals_for_symbol(symbol, df)
-                        all_signals.extend(signals)
-                    else:
-                        logger.warning(f"Strategy {self.strategy} doesn't support per-symbol signals")
+            # Convert to DataFrame format
+            df = pd.DataFrame([
+                {
+                    'timestamp': bar.timestamp,
+                    'open': bar.open,
+                    'high': bar.high,
+                    'low': bar.low,
+                    'close': bar.close,
+                    'volume': bar.volume
+                }
+                for bar in bars
+            ])
+            df.set_index('timestamp', inplace=True)
+            df.attrs['symbol'] = symbol
+
+            # Generate signals for this specific symbol
+            signals = []
+            is_portfolio = getattr(self.strategy, 'is_portfolio_strategy', False)
+            
+            if is_portfolio:
+                # For portfolio strategies, only run once per bar (e.g. using the first symbol)
+                if symbol != self.data_handler.symbols[0]:
+                    return
+                
+                # Try to build a combined dataframe if the strategy expects it
+                combined_df = None
+                
+                # Gather data
+                symbol_dfs = {}
+                for s in self.data_handler.symbols:
+                    s_bars = self.data_handler.get_latest_bars(s, n=50)
+                    if s_bars and len(s_bars) >= 20:
+                        s_df = pd.DataFrame([b.__dict__ for b in s_bars])
+                        s_df.set_index('timestamp', inplace=True)
+                        symbol_dfs[s] = s_df
+                
+                if not symbol_dfs:
+                    return
+                    
+                # StatArb specific logic (Pairs Trading) wants 'close' and 'close_y'
+                if len(symbol_dfs) == 2 and "StatisticalArbitrage" in self.strategy.name:
+                    sym1, sym2 = list(symbol_dfs.keys())
+                    combined_df = symbol_dfs[sym1].copy()
+                    combined_df['close_y'] = symbol_dfs[sym2]['close']
+                    combined_df.attrs['symbol'] = f"{sym1}-{sym2}"
+                    signals = self.strategy.generate_signals(combined_df)
+                else:
+                    # Pass dict for general portfolio strategies
+                    signals = self.strategy.generate_signals(symbol_dfs)
+                    
+            elif hasattr(self.strategy, 'generate_signals_for_symbol'):
+                signals = self.strategy.generate_signals_for_symbol(symbol, df)
+            elif hasattr(self.strategy, 'generate_signals'):
+                # Compatibility layer: just pass the single dataframe
+                signals = self.strategy.generate_signals(df)
+            else:
+                logger.warning(f"Strategy {self.strategy.name} does not support signal generation")
+                return
 
             # Add signal events to queue
-            if all_signals:
-                for signal in all_signals:
-                    # Convert Strategy Signal to SignalEvent
-                    # FIXED: Use signal_type.value instead of action attribute
-                    signal_event = SignalEvent(
-                        timestamp=event.timestamp,
-                        symbol=signal.symbol,
-                        signal_type=signal.signal_type.value,  # 'BUY', 'SELL', 'HOLD'
-                        strength=getattr(signal, 'confidence', 0.8),
-                        strategy_id=self.strategy.name
-                    )
-                    self.events.append(signal_event)
+            for signal in signals:
+                signal_event = SignalEvent(
+                    timestamp=event.timestamp,
+                    symbol=signal.symbol,
+                    signal_type=signal.signal_type.value,
+                    strength=getattr(signal, 'confidence', 0.8),
+                    strategy_id=self.strategy.name
+                )
+                self.events.append(signal_event)
 
         except Exception as e:
-            logger.error(f"Error generating signals from market event: {e}", exc_info=True)
+            logger.error(f"[Wave-3] Error in Optimized Engine: {e}", exc_info=True)
 
     def _handle_signal_event(self, event: SignalEvent) -> None:
         """

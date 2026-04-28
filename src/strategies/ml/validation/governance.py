@@ -9,8 +9,11 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Dict, List, Optional, Any
 from enum import Enum
+from loguru import logger
 import json
 import os
+import tomllib
+from pathlib import Path
 
 class GovernanceStatus(Enum):
     PENDING = "PENDING"
@@ -42,13 +45,30 @@ class StrategyDecision:
     eta: Optional[str] = None
 
 class StrategyGovernanceGate:
-    def __init__(self, threshold_configs: Optional[Dict] = None):
+    def __init__(self, threshold_configs: Optional[Dict] = None, risk_config_path: Optional[str] = None):
         self.thresholds = threshold_configs or {
             'min_oos_sharpe': 1.5,
             'max_oos_drawdown': 0.15,
             'min_wf_consistency': 0.7,
             'max_drift_pct': 0.01
         }
+        self.risk_limits = self._load_risk_limits(risk_config_path)
+
+    def _load_risk_limits(self, path: Optional[str]) -> Dict[str, Any]:
+        """Load risk limits from TOML file."""
+        if not path:
+            path = os.path.join(os.getcwd(), "config", "risk_limits.toml")
+        
+        if not os.path.exists(path):
+            logger.warning(f"Risk config not found at {path}, using default empty limits.")
+            return {}
+            
+        try:
+            with open(path, "rb") as f:
+                return tomllib.load(f)
+        except Exception as e:
+            logger.error(f"Failed to load risk limits from {path}: {e}")
+            return {}
 
     def evaluate_strategy(self, strategy_id: str, evidence: GovernanceEvidence) -> StrategyDecision:
         issues = []
@@ -72,7 +92,24 @@ class StrategyGovernanceGate:
             issues.append(f"EXCESSIVE_REPRODUCIBILITY_DRIFT: {drift_value:.4f} > {self.thresholds['max_drift_pct']:.4f}")
 
         risk_impact_flag = bool(evidence.drift_metrics.get("risk_impact_flag", False))
-        if risk_impact_flag:
+        
+        # Real Risk Limit Checks
+        if self.risk_limits:
+            oos_drawdown = evidence.oos_results.get('max_drawdown', 0.0)
+            allowed_drawdown = self.risk_limits.get('loss_limits', {}).get('drawdown_threshold_percent', 10.0) / 100.0
+            
+            if oos_drawdown > allowed_drawdown:
+                issues.append(f"RISK_LIMIT_EXCEEDED_DRAWDOWN: {oos_drawdown:.2%} > {allowed_drawdown:.2%}")
+                risk_impact_flag = True
+
+            # Check stop loss consistency
+            strategy_sl = evidence.oos_results.get('stop_loss_pct', 0.0)
+            max_sl = self.risk_limits.get('stop_loss', {}).get('max_stop_loss_percent', 10.0) / 100.0
+            if strategy_sl > max_sl:
+                issues.append(f"RISK_LIMIT_EXCEEDED_STOPLOSS: {strategy_sl:.2%} > {max_sl:.2%}")
+                risk_impact_flag = True
+
+        if risk_impact_flag and "RISK_IMPACT_FLAGGED" not in issues:
             issues.append("RISK_IMPACT_FLAGGED")
 
         block_reason = ",".join(issues) if issues else None

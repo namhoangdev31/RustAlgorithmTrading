@@ -623,11 +623,9 @@ class AlpacaPaperTrading:
             raise
 
     def _ensure_connected(self):
-        """Ensure client is connected."""
+        """Standard connection guard (Wave-3 optimized)."""
         if not self._connected or self.trading_client is None:
-            raise RuntimeError(
-                "Client not connected. Call connect() first."
-            )
+            raise RuntimeError("Alpaca Client not connected. Call connect() first.")
 
 
 # Convenience function for testing

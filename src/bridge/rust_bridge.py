@@ -61,6 +61,7 @@ class RustFeatureComputer:
         try:
             from signal_bridge import FeatureComputer
             self._computer = FeatureComputer()
+            self._call_counter = 0  # Wave-3: Sampling counter
             logger.info("[cid:INIT] Rust FeatureComputer initialized successfully")
         except ImportError as e:
             logger.error(f"[cid:INIT] Failed to import signal_bridge: {e}")
@@ -90,9 +91,14 @@ class RustFeatureComputer:
             - Price range %
         """
         try:
+            self._call_counter += 1
             rust_bar = bar.to_rust_bar()
             features = self._computer.compute_streaming(rust_bar)
-            logger.debug(f"[cid:INIT] Computed {len(features)} streaming features for {bar.symbol}")
+            
+            # Wave-3: Sampled logging (1 per 100)
+            if self._call_counter % 100 == 0:
+                logger.debug(f"[cid:INIT] Computed {len(features)} streaming features for {bar.symbol} (sampled)")
+                
             return features
         except Exception as e:
             logger.error(f"[cid:INIT] Error computing streaming features: {e}")

@@ -39,6 +39,8 @@ class Signal:
     timestamp: int
     features: Optional[List[float]] = None
     metadata: Optional[Dict[str, Any]] = None
+    governance_verdict: Optional[str] = None
+    governance_rationale: Optional[str] = None
 
 
 @dataclass

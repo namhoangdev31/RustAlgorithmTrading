@@ -58,57 +58,47 @@ class StatisticalArbitrageStrategy(Strategy):
             default_params.update(parameters)
 
         super().__init__(name, default_params)
-        self.hedge_ratio = None
-        self.spread_mean = None
-        self.spread_std = None
-        self.entry_bars = {}
+        self.is_portfolio_strategy = True
+        # Wave-3 Optimization: Calibration caching
+        self.calibration_frequency = 50
+        self._last_calibration_idx = -1
+        self._is_coint_valid = False
 
     def generate_signals(self, data: pd.DataFrame) -> List[Signal]:
         """
-        Generate signals for pairs trading
-
-        Args:
-            data: DataFrame with prices for both stocks
-                Columns should include: close, close_y (for the pair)
-
-        Returns:
-            List of trading signals
+        Generate signals for pairs trading (Optimized via Wave-3)
         """
         if not self._validate_pair_data(data):
             return []
 
         signals = []
         symbol = data.attrs.get('symbol', 'UNKNOWN')
+        current_idx = len(data) - 1
 
-        # Check for cointegration
-        if not self._test_cointegration(data):
-            logger.warning(f"Pair {symbol} is not cointegrated")
+        # PERIODIC RE-CALIBRATION: Only re-test cointegration every N bars
+        if current_idx - self._last_calibration_idx >= self.calibration_frequency:
+            logger.info(f"[Wave-3] Re-calibrating StatArb for {symbol} at idx {current_idx}")
+            self._is_coint_valid = self._test_cointegration(data)
+            if self._is_coint_valid:
+                self._spread_series = self._calculate_spread(data)
+            self._last_calibration_idx = current_idx
+
+        if not self._is_coint_valid or self._spread_series is None:
             return []
 
-        # Calculate spread
-        spread = self._calculate_spread(data)
-
-        if spread is None or len(spread) < self.get_parameter('lookback_period', 60):
-            return []
-
-        # Calculate half-life of mean reversion
-        half_life = self._calculate_half_life(spread)
-        min_hl = self.get_parameter('min_half_life', 1)
-        max_hl = self.get_parameter('max_half_life', 30)
-
-        if half_life < min_hl or half_life > max_hl:
-            logger.info(f"Half-life {half_life:.1f} outside acceptable range")
-            return []
-
-        logger.info(f"Spread half-life: {half_life:.1f} bars")
-
-        # Generate signals based on z-score
+        # Generate signals based on z-score for the CURRENT bar only (if streaming)
+        # or for the window if backtesting
         lookback = self.get_parameter('lookback_period', 60)
         entry_threshold = self.get_parameter('entry_threshold', 2.0)
         exit_threshold = self.get_parameter('exit_threshold', 0.5)
         max_holding = self.get_parameter('max_holding_period', 20)
 
-        for i in range(lookback, len(data)):
+        # Optimization: Use pre-calculated spread
+        spread = self._spread_series
+
+        # Process indices from starting point to end (usually just the last bar in event-driven)
+        start_scan = max(lookback, self._last_calibration_idx)
+        for i in range(start_scan, len(data)):
             current_time = data.index[i]
             current_price = data.iloc[i]['close']
 

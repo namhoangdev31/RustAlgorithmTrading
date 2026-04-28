@@ -674,6 +674,20 @@ Mỗi file có 3 phần:
   - ModelValidator: Lớp nghiệp vụ trong module.
 - Test liên quan: tests/unit/python/*, tests/unit/test_*strategy*.py, tests/integration/test_*signal*.py, tests/test_backtest_integration.py.
 
+### src/strategies/ml/validation/backtest_validator.py
+
+- Vai trò file: Validator chuyên biệt cho kết quả backtest ML, kiểm tra overfitting và data leakage.
+- Class trong file:
+  - BacktestValidator: Thực hiện các bài kiểm tra thống kê trên kết quả backtest (t-test, p-value).
+- Test liên quan: tests/unit/test_backtest_validator.py, scripts/verify_w13_wave2.py.
+
+### src/strategies/ml/validation/live_monitor.py
+
+- Vai trò file: Giám sát hiệu suất mô hình ML trong môi trường live/paper trading, so sánh logic thực tế vs dự kiến.
+- Class trong file:
+  - LiveModelMonitor: Theo dỗ drift và performance degradation theo thời gian thực.
+- Test liên quan: tests/unit/test_live_monitor.py, scripts/verify_w13_wave2.py.
+
 ### src/strategies/ml_ensemble_strategy.py
 
 - Vai trò file: Các chiến lược giao dịch và router chiến lược.
@@ -2112,3 +2126,15 @@ Mỗi file có 3 phần:
 - Vai trò file: Audit log quyết định governance W13 (source-of-truth cho traceability + linkage).
 - Class/Type trong file: JSONL records gồm `strategy_id`, `verdict`, `owner`, `rationale`, `evidence_links`, `next_action`, `eta`, `block_reason`, `drift_value`, `risk_impact_flag`.
 - Test liên quan: W13 evidence `EV-W13-204`,`EV-W13-212`,`EV-W13-213`.
+
+### scripts/verify_w13_wave2.py
+
+- Vai trò file: Script verification cho Wave-2 (ML validation hardening) của W13.
+- Class/Type trong file: Không có class (script-based verification).
+- Test liên quan: W13 evidence `EV-W13-401..405` (ML validation, backtest parity, monitor alerts).
+
+### scripts/verify_wave3_perf.py
+
+- Vai trò file: Script kiểm định hiệu suất (Performance Forensic) cho Wave-3, đo lường độ trễ và sự kiện xử lý mỗi giây.
+- Class/Type trong file: Không có class (performance benchmark tool).
+- Test liên quan: Wave-3 evidence `EV-W13-501..503` (latency target < 5s cho portfolio 50 symbols).
