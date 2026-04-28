@@ -1,14 +1,12 @@
 """Metric collectors for observability."""
+
 from .collectors import BaseCollector
 from .market_data_collector import MarketDataCollector
-from .strategy_collector import StrategyCollector
-from .execution_collector import ExecutionCollector
-from .system_collector import SystemCollector
+from .rust_bridge import RustMetricsBridge, get_rust_metrics_bridge
 
 __all__ = [
     "BaseCollector",
     "MarketDataCollector",
-    "StrategyCollector",
-    "ExecutionCollector",
-    "SystemCollector"
+    "RustMetricsBridge",
+    "get_rust_metrics_bridge",
 ]

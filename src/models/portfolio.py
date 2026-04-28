@@ -50,6 +50,8 @@ class Portfolio(BaseModel):
     initial_capital: float = Field(gt=0)
     cash: float = Field(ge=0)  # Changed from gt=0 to ge=0 to allow zero cash
     positions: Dict[str, Position] = Field(default_factory=dict)
+    max_equity: float = 0.0
+    max_drawdown: float = 0.0
     timestamp: datetime = Field(default_factory=datetime.utcnow)
 
     @computed_field
@@ -70,6 +72,21 @@ class Portfolio(BaseModel):
     def return_percentage(self) -> float:
         """Calculate total return percentage."""
         return ((self.equity - self.initial_capital) / self.initial_capital) * 100.0
+
+    def update_equity(self, current_prices: Dict[str, float]):
+        """ Update total equity and drawdown tracking. """
+        pos_value = sum(pos.quantity * current_prices.get(symbol, pos.current_price) 
+                        for symbol, pos in self.positions.items())
+        current_equity = self.cash + pos_value
+        
+        # Update drawdown tracking
+        if current_equity > self.max_equity:
+            self.max_equity = current_equity
+        
+        if self.max_equity > 0:
+            current_dd = (self.max_equity - current_equity) / self.max_equity
+            if current_dd > self.max_drawdown:
+                self.max_drawdown = current_dd
 
     def update_position(self, symbol: str, quantity: int, price: float):
         """

@@ -584,6 +584,14 @@ Mỗi file có 3 phần:
   - RegimeDetector: Lớp nghiệp vụ trong module.
 - Test liên quan: tests/unit/python/*, tests/unit/test_*strategy*.py, tests/integration/test_*signal*.py, tests/test_backtest_integration.py.
 
+### src/risk/allocation_manager.py
+
+- Vai trò file: Quản lý cấp phát vốn (Capital Allocation) theo Lane 1 (Volatility), Lane 2 (Regime), Lane 3 (Drawdown).
+- Class trong file:
+  - AllocationManager: Thực thi logic sizing và monitoring drawdown cho W15.
+  - AllocationPolicy: Định nghĩa các ngưỡng và rule cấp phát.
+- Test liên quan: tests/integration/test_backtest_signal_flow.py, tests/test_backtest_integration.py.
+
 ### src/strategies/mean_reversion.py
 
 - Vai trò file: Các chiến lược giao dịch và router chiến lược.
@@ -2124,6 +2132,26 @@ Mỗi file có 3 phần:
 - Vai trò file: Rehearsal verifier cho evidence W14 (`EV-W14-201..208`).
 - Class/Type trong file: Không có class nghiệp vụ; script orchestrate checks exposure/concentration/cross-strategy/drift.
 - Test liên quan: Chạy trực tiếp `python scripts/verify_w14_portfolio_controls.py`.
+
+### src/risk/allocation_manager.py
+
+- Vai trò file: Enforce W15 capital allocation controls theo volatility/regime/drawdown.
+- Class trong file:
+  - AllocationPolicy: Cấu hình policy band, regime multiplier, drawdown limits.
+  - AllocationManager: Lõi quyết định allocation và trả `ControlRecord`.
+- Test liên quan: `tests/unit/test_allocation_manager.py`, `scripts/verify_w15_capital_allocation.py`.
+
+### tests/unit/test_allocation_manager.py
+
+- Vai trò file: Unit tests cho W15 allocation manager (allow/reject/block + metadata contract).
+- Class/Type trong file: Không có class; nhóm test function theo scenario allocation.
+- Test liên quan: Chạy trực tiếp `python -m pytest tests/unit/test_allocation_manager.py -q`.
+
+### scripts/verify_w15_capital_allocation.py
+
+- Vai trò file: Rehearsal verifier cho evidence W15 (`EV-W15-201..208`).
+- Class/Type trong file: Không có class nghiệp vụ; script orchestrate checks volatility/regime/drawdown/cross-strategy/drift.
+- Test liên quan: Chạy trực tiếp `python scripts/verify_w15_capital_allocation.py`.
 
 ### src/strategies/ml/validation/governance.py
 

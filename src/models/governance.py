@@ -12,6 +12,7 @@ class ControlStatus(Enum):
 class ControlType(Enum):
     EXPOSURE = "EXPOSURE"
     CONCENTRATION = "CONCENTRATION"
+    ALLOCATION = "ALLOCATION"
 
 class ControlRecord(BaseModel):
     """

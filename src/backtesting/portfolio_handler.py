@@ -12,6 +12,8 @@ from models.portfolio import Portfolio, Position
 from models.events import SignalEvent, OrderEvent, FillEvent
 from models.market import Bar
 from backtesting.position_sizer import PositionSizer, FixedAmountSizer
+from risk.allocation_manager import AllocationManager, AllocationPolicy
+from models.governance import ControlStatus, ControlType
 
 if TYPE_CHECKING:
     from .data_handler import HistoricalDataHandler
@@ -30,6 +32,7 @@ class PortfolioHandler:
         initial_capital: float,
         position_sizer: Optional['PositionSizer'] = None,
         data_handler: Optional['HistoricalDataHandler'] = None,
+        allocation_manager: Optional[AllocationManager] = None,
     ):
         """
         Initialize portfolio handler.
@@ -56,6 +59,7 @@ class PortfolioHandler:
         self.initial_capital = initial_capital
         self.data_handler = data_handler
         self.position_sizer = position_sizer or FixedAmountSizer(10000.0)
+        self.allocation_manager = allocation_manager or AllocationManager(AllocationPolicy())
 
         self.portfolio = Portfolio(
             initial_capital=initial_capital,
@@ -85,6 +89,15 @@ class PortfolioHandler:
             raise TypeError(f"timestamp must be a datetime, got {type(timestamp).__name__}")
 
         self.portfolio.timestamp = timestamp
+        
+        # Update equity and drawdown state
+        current_prices = {}
+        if self.data_handler:
+            for symbol in self.portfolio.positions.keys():
+                bar = self.data_handler.get_latest_bar(symbol)
+                if bar:
+                    current_prices[symbol] = bar.close
+        self.portfolio.update_equity(current_prices)
 
         # Record equity curve point
         self.equity_curve.append({
@@ -218,6 +231,38 @@ class PortfolioHandler:
 
         # Calculate order quantity needed to reach target
         order_quantity = target_quantity - current_quantity
+
+        # Lane 1, 2, 3: Allocation Manager Enforcement
+        if order_quantity != 0 and signal.signal_type != 'EXIT':
+            # Simplified proxy for W15: Fetch volatility/regime/drawdown
+            # (In production, these would come from DataHandler/Portfolio state)
+            volatility = 0.015 # Proxy
+            regime = "NORMAL" # Proxy
+            if hasattr(self.data_handler, 'get_regime'):
+                regime = self.data_handler.get_regime(signal.symbol)
+            if hasattr(self.data_handler, 'get_volatility'):
+                volatility = self.data_handler.get_volatility(signal.symbol)
+                
+            allocation_record = self.allocation_manager.check_allocation(
+                strategy_id=signal.strategy_id,
+                symbol=signal.symbol,
+                requested_quantity=order_quantity,
+                price=current_price or 0.0,
+                volatility=volatility,
+                regime=regime,
+                current_drawdown=self.portfolio.max_drawdown,
+                total_equity=self.portfolio.equity
+            )
+            
+            if allocation_record.status == ControlStatus.REJECT:
+                logger.warning(f"🚫 ALLOCATION REJECTED: {allocation_record.decision_reason}")
+                return orders
+            elif allocation_record.status == ControlStatus.BLOCKED:
+                logger.error(f"🛑 ALLOCATION BLOCKED (DRAWDOWN HALT): {allocation_record.decision_reason}")
+                return orders
+                
+            # Log successful allocation check
+            logger.debug(f"✅ ALLOCATION ALLOWED: {allocation_record.decision_reason}")
 
         if order_quantity == 0:
             logger.debug(f"⏸️ No order needed: target position already achieved for {signal.symbol}")

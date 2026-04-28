@@ -14,6 +14,7 @@ from backtesting.execution_handler import SimulatedExecutionHandler
 from backtesting.portfolio_handler import PortfolioHandler
 from backtesting.performance import PerformanceAnalyzer
 from models.governance import ControlStatus
+from risk.allocation_manager import AllocationManager, AllocationPolicy
 
 
 class BacktestEngine:
@@ -64,6 +65,11 @@ class BacktestEngine:
         self.signals_generated = 0
         self.orders_placed = 0
         self.fills_executed = 0
+
+        # Initialize Allocation Manager
+        self.allocation_manager = AllocationManager(AllocationPolicy())
+        if hasattr(self.portfolio_handler, 'allocation_manager'):
+            self.portfolio_handler.allocation_manager = self.allocation_manager
 
         logger.info(
             f"Initialized BacktestEngine from {start_date} to {end_date}"

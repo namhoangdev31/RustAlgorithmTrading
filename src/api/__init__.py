@@ -1,5 +1,5 @@
 """API integration modules for connecting to trading platforms"""
 
-from api.alpaca_client import AlpacaClient
+from .alpaca_client import AlpacaClient
 
 __all__ = ["AlpacaClient"]

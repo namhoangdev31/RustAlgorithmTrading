@@ -145,11 +145,11 @@
 
 ## W15 - Capital Allocation
 
-- [ ] Position sizing theo volatility/regime hoàn tất.
-- [ ] Drawdown policy adherence đạt ngưỡng.
-- [ ] Go/No-Go W15 đã chốt.
+- [x] Position sizing theo volatility/regime hoàn tất.
+- [x] Drawdown policy adherence đạt ngưỡng.
+- [x] Go/No-Go W15 đã chốt.
 - Evidence IDs: `EV-W15-101..110, EV-W15-201..216, EV-W15-301..306, EV-W15-401..402`
-- Decision: [ ] GO  [ ] NO-GO
+- Decision: [x] GO  [ ] NO-GO
 
 ## W16 - Research Reproducibility
 
@@ -230,4 +230,4 @@
 - Decision: [ ] GO  [ ] NO-GO
 
 ---
-Last updated: W14 GO - Portfolio controls gate lock complete.
+Last updated: W15 GO - Capital allocation gate lock complete.

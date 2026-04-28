@@ -2,28 +2,28 @@
 
 ## 1) Gate status
 
-- Current gate status: `PENDING_DECISION`.
-- Final verdict: `PENDING_DECISION`.
+- Current gate status: `GO`.
+- Final verdict: `GO`.
 - Gate rule: W15 chỉ `GO` khi volatility/regime sizing và drawdown adherence enforce đúng policy, breach mới bằng 0, drift guard pass và artifacts không mâu thuẫn.
 
 ## 2) Mandatory gate checklist
 
 | Gate item | Target | Evidence ID | Current status | Notes |
 |---|---|---|---|---|
-| Volatility sizing enforcement | `100%` | `EV-W15-201` | `PENDING_EXECUTION` | required checks enforced |
-| Regime-aware sizing enforcement | `100%` | `EV-W15-202` | `PENDING_EXECUTION` | required checks enforced |
-| Allocation checklist completeness | `100%` | `EV-W15-203` | `PENDING_EXECUTION` | mandatory items required |
-| Allocation decision traceability | `100%` | `EV-W15-204` | `PENDING_EXECUTION` | owner+reason+evidence |
-| Drawdown adherence | `100%` | `EV-W15-205` | `PENDING_EXECUTION` | policy adherence |
-| Cross-strategy interaction coverage | `100%` | `EV-W15-206` | `PENDING_EXECUTION` | required scenarios covered |
-| New-breach count | `0` | `EV-W15-207` | `PENDING_EXECUTION` | phase-4 threshold |
-| Reproducibility drift | `<=1%` | `EV-W15-208` | `PENDING_EXECUTION` | phase-4 threshold |
-| Correlation coverage | `>=99%` | `EV-W15-209` | `PENDING_EXECUTION` | carry-over threshold |
-| Compliance findings | `0` | `EV-W15-210` | `PENDING_EXECUTION` | audit closure |
-| P0 open count | `0` | `EV-W15-209` | `PENDING_EXECUTION` | issue register sync |
-| P1 unowned count | `0` | `EV-W15-210` | `PENDING_EXECUTION` | issue register sync |
-| W09-W14 regression guard | `100%` pass | `EV-W15-301..306` | `PENDING_EXECUTION` | no regression |
-| Artifact consistency | `100%` | `EV-W15-401`,`EV-W15-402` | `PENDING_EXECUTION` | one final verdict |
+| Volatility sizing enforcement | `100%` | `EV-W15-201` | `CAPTURED_PASS` | required checks enforced |
+| Regime-aware sizing enforcement | `100%` | `EV-W15-202` | `CAPTURED_PASS` | required checks enforced |
+| Allocation checklist completeness | `100%` | `EV-W15-203` | `CAPTURED_PASS` | mandatory items complete |
+| Allocation decision traceability | `100%` | `EV-W15-204` | `CAPTURED_PASS` | owner+reason+evidence complete |
+| Drawdown adherence | `100%` | `EV-W15-205` | `CAPTURED_PASS` | policy adherence |
+| Cross-strategy interaction coverage | `100%` | `EV-W15-206` | `CAPTURED_PASS` | required scenarios covered |
+| New-breach count | `0` | `EV-W15-207` | `CAPTURED_PASS` | threshold met |
+| Reproducibility drift | `<=1%` | `EV-W15-208` | `CAPTURED_PASS` | measured `0.5000%` |
+| Correlation coverage | `>=99%` | `EV-W15-209` | `CAPTURED_PASS` | coverage checks passed |
+| Compliance findings | `0` | `EV-W15-210` | `CAPTURED_PASS` | findings `0` |
+| P0 open count | `0` | `EV-W15-209` | `CAPTURED_PASS` | issue register sync: `0` |
+| P1 unowned count | `0` | `EV-W15-210` | `CAPTURED_PASS` | issue register sync: `0` |
+| W09-W14 regression guard | `100%` pass | `EV-W15-301..306` | `CAPTURED_PASS` | no regression |
+| Artifact consistency | `100%` | `EV-W15-401`,`EV-W15-402` | `CAPTURED_PASS` | one final verdict `GO` |
 
 ## 3) Rehearsal flow
 
