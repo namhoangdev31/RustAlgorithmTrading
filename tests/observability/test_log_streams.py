@@ -12,14 +12,14 @@ Tests each specialized logger:
 import logging
 import pytest
 
-from ..observability.logging.streams import (
+from observability.logging.streams import (
     MarketDataLogger,
     StrategyLogger,
     RiskLogger,
     ExecutionLogger,
     SystemLogger,
 )
-from ..observability.config.logging_config import LoggingConfig
+from observability.config.logging_config import LoggingConfig
 
 
 @pytest.fixture

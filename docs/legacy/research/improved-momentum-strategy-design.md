@@ -526,8 +526,8 @@ def generate_momentum_signals(data: pd.DataFrame) -> List[Signal]:
 
 **Recommended Backtesting Setup**:
 ```python
-from ..backtesting.engine import BacktestEngine
-from ..backtesting.metrics import calculate_metrics
+from backtesting.engine import BacktestEngine
+from backtesting.metrics import calculate_metrics
 
 # Initialize backtesting engine with realistic costs
 engine = BacktestEngine(

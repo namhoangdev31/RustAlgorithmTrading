@@ -137,11 +137,11 @@
 
 ## W14 - Portfolio Controls
 
-- [ ] Exposure/concentration controls hoạt động đúng.
-- [ ] Portfolio risk checks pass.
-- [ ] Go/No-Go W14 đã chốt.
+- [x] Exposure/concentration controls hoạt động đúng.
+- [x] Portfolio risk checks pass.
+- [x] Go/No-Go W14 đã chốt.
 - Evidence IDs: `EV-W14-101..110, EV-W14-201..216, EV-W14-301..306, EV-W14-401..402`
-- Decision: [ ] GO  [ ] NO-GO
+- Decision: [x] GO  [ ] NO-GO
 
 ## W15 - Capital Allocation
 
@@ -230,4 +230,4 @@
 - Decision: [ ] GO  [ ] NO-GO
 
 ---
-Last updated: W13 GO - Strategy governance gate lock complete.
+Last updated: W14 GO - Portfolio controls gate lock complete.

@@ -90,7 +90,7 @@ from typing import Dict, List, Optional
 import pandas as pd  # ADDED
 from loguru import logger
 
-from ..models.events import Event, EventType, MarketEvent, SignalEvent  # Added SignalEvent
+from models.events import Event, EventType, MarketEvent, SignalEvent  # Added SignalEvent
 ```
 
 **Status**: ✅ **FIXED** - Import added

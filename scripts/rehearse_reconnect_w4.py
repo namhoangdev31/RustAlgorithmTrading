@@ -3,7 +3,7 @@ import time
 import uuid
 import sys
 import json
-from ..bridge.zmq_bridge import ZMQPublisher, ZMQSubscriber, MessageType
+from bridge.zmq_bridge import ZMQPublisher, ZMQSubscriber, MessageType
 
 async def rehearse_reconnect():
     print("[i] Starting Week 4 Reconnect Rehearsal...")

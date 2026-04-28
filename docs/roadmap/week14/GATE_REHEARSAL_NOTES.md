@@ -2,28 +2,28 @@
 
 ## 1) Gate status
 
-- Current gate status: `PENDING_DECISION`.
-- Final verdict: `PENDING_DECISION`.
+- Current gate status: `GO`.
+- Final verdict: `GO`.
 - Gate rule: W14 chỉ `GO` khi exposure/concentration controls enforce đúng policy, breach mới bằng 0, drift/risk guard pass và artifacts không mâu thuẫn.
 
 ## 2) Mandatory gate checklist
 
 | Gate item | Target | Evidence ID | Current status | Notes |
 |---|---|---|---|---|
-| Exposure control enforcement | `100%` | `EV-W14-201` | `PENDING_EXECUTION` | required checks enforced |
-| Concentration control enforcement | `100%` | `EV-W14-202` | `PENDING_EXECUTION` | required checks enforced |
-| Portfolio controls checklist completeness | `100%` | `EV-W14-203` | `PENDING_EXECUTION` | mandatory items required |
-| Portfolio decision traceability | `100%` | `EV-W14-204` | `PENDING_EXECUTION` | owner+reason+evidence |
-| Cross-strategy interaction coverage | `100%` | `EV-W14-205` | `PENDING_EXECUTION` | required scenarios covered |
-| Exposure breach mới | `0` | `EV-W14-206` | `PENDING_EXECUTION` | phase-4 threshold |
-| Concentration breach mới | `0` | `EV-W14-207` | `PENDING_EXECUTION` | phase-4 threshold |
-| Reproducibility drift | `<=1%` | `EV-W14-208` | `PENDING_EXECUTION` | phase-4 threshold |
-| Correlation coverage | `>=99%` | `EV-W14-209` | `PENDING_EXECUTION` | carry-over threshold |
-| Compliance findings | `0` | `EV-W14-210` | `PENDING_EXECUTION` | audit closure |
-| P0 open count | `0` | `EV-W14-209` | `PENDING_EXECUTION` | issue register sync |
-| P1 unowned count | `0` | `EV-W14-210` | `PENDING_EXECUTION` | issue register sync |
-| W09-W13 regression guard | `100%` pass | `EV-W14-301..306` | `PENDING_EXECUTION` | no regression |
-| Artifact consistency | `100%` | `EV-W14-401`,`EV-W14-402` | `PENDING_EXECUTION` | one final verdict |
+| Exposure control enforcement | `100%` | `EV-W14-201` | `CAPTURED_PASS` | required checks enforced |
+| Concentration control enforcement | `100%` | `EV-W14-202` | `CAPTURED_PASS` | required checks enforced |
+| Portfolio controls checklist completeness | `100%` | `EV-W14-203` | `CAPTURED_PASS` | mandatory items complete |
+| Portfolio decision traceability | `100%` | `EV-W14-204` | `CAPTURED_PASS` | owner+reason+evidence complete |
+| Cross-strategy interaction coverage | `100%` | `EV-W14-205` | `CAPTURED_PASS` | required scenarios covered |
+| Exposure breach mới | `0` | `EV-W14-206` | `CAPTURED_PASS` | phase-4 threshold met |
+| Concentration breach mới | `0` | `EV-W14-207` | `CAPTURED_PASS` | phase-4 threshold met |
+| Reproducibility drift | `<=1%` | `EV-W14-208` | `CAPTURED_PASS` | measured `0.5000%` |
+| Correlation coverage | `>=99%` | `EV-W14-209` | `CAPTURED_PASS` | no correlation gaps found |
+| Compliance findings | `0` | `EV-W14-210` | `CAPTURED_PASS` | findings `0` |
+| P0 open count | `0` | `EV-W14-209` | `CAPTURED_PASS` | issue register sync: `0` |
+| P1 unowned count | `0` | `EV-W14-210` | `CAPTURED_PASS` | issue register sync: `0` |
+| W09-W13 regression guard | `100%` pass | `EV-W14-301..306` | `CAPTURED_PASS` | no regression |
+| Artifact consistency | `100%` | `EV-W14-401`,`EV-W14-402` | `CAPTURED_PASS` | one final verdict `GO` |
 
 ## 3) Rehearsal flow
 

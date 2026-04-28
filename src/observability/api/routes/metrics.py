@@ -7,7 +7,7 @@ from typing import Dict, Any
 from fastapi import APIRouter, HTTPException
 from loguru import logger
 
-from ...models.schemas import (
+from .models.schemas import (
     MetricsSnapshot,
     MetricsHistoryRequest,
     MetricsHistoryResponse,
@@ -30,7 +30,7 @@ async def get_current_metrics() -> MetricsSnapshot:
     """
     try:
         # Import here to avoid circular dependency
-        from ..main import api_state
+        from main import api_state
 
         metrics = await api_state._collect_all_metrics()
 
@@ -77,7 +77,7 @@ async def get_metrics_history(request: MetricsHistoryRequest) -> MetricsHistoryR
             end_time = request.end_time or datetime.utcnow()
 
         # Query from DuckDB
-        from ...database import get_db
+        from .database import get_db
         db = get_db()
 
         data = []
@@ -121,7 +121,7 @@ async def get_metrics_history(request: MetricsHistoryRequest) -> MetricsHistoryR
 async def get_tracked_symbols() -> Dict[str, Any]:
     """Get list of symbols currently being tracked."""
     try:
-        from ..main import api_state
+        from main import api_state
 
         market_data_collector = api_state.collectors.get("market_data")
         if not market_data_collector:
@@ -146,7 +146,7 @@ async def get_metrics_summary() -> Dict[str, Any]:
     Returns aggregated statistics across all metrics.
     """
     try:
-        from ..main import api_state
+        from main import api_state
 
         metrics = await api_state._collect_all_metrics()
 

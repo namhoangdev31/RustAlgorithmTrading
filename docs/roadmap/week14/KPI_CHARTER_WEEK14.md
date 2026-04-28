@@ -4,22 +4,22 @@
 
 W14 đo mức trưởng thành của portfolio controls với trọng tâm exposure/concentration enforcement, cross-strategy risk interaction và governance consistency.
 
-## 2) KPI table
+## 2) KPI table (snapshot 2026-04-28, post-rerun)
 
 | KPI | Target | Measurement | Actual | Status | Evidence ID | Owner |
 |---|---:|---|---|---|---|---|
-| Exposure control enforcement rate | `100%` | enforced exposure checks / required checks | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W14-201` | `ops` |
-| Concentration control enforcement rate | `100%` | enforced concentration checks / required checks | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W14-202` | `ops` |
-| Portfolio controls checklist completeness | `100%` | completed mandatory items / required items | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W14-203` | `tester` |
-| Portfolio decision traceability completeness | `100%` | decisions with owner+reason+evidence / total decisions | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W14-204` | `planner` |
-| Cross-strategy interaction coverage | `100%` | rehearsed required scenarios / total required scenarios | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W14-205` | `ops` |
-| Exposure breach mới | `0` | new exposure breaches attributable to W14 | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W14-206` | `ops` |
-| Concentration breach mới | `0` | new concentration breaches attributable to W14 | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W14-207` | `ops` |
-| Reproducibility drift | `<=1%` | drift across reruns | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W14-208` | `tester` |
-| Correlation coverage | `>=99%` | critical event sample coverage | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W14-209` | `tester` |
-| Compliance findings | `0` | findings count | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W14-210` | `tester` |
-| W09-W13 regression guard | `100%` | required slices pass | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W14-301..306` | `tester` |
-| Artifact consistency | `100%` | baseline/issue/gate/final same verdict | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W14-401`,`EV-W14-402` | `planner` |
+| Exposure control enforcement rate | `100%` | enforced exposure checks / required checks | `100%` | `CAPTURED_PASS` | `EV-W14-201` | `ops` |
+| Concentration control enforcement rate | `100%` | enforced concentration checks / required checks | `100%` | `CAPTURED_PASS` | `EV-W14-202` | `ops` |
+| Portfolio controls checklist completeness | `100%` | completed mandatory items / required items | `100%` | `CAPTURED_PASS` | `EV-W14-203` | `tester` |
+| Portfolio decision traceability completeness | `100%` | decisions with owner+reason+evidence / total decisions | `100%` | `CAPTURED_PASS` | `EV-W14-204` | `planner` |
+| Cross-strategy interaction coverage | `100%` | rehearsed required scenarios / total required scenarios | `100%` | `CAPTURED_PASS` | `EV-W14-205` | `ops` |
+| Exposure breach mới | `0` | new exposure breaches attributable to W14 | `0` | `CAPTURED_PASS` | `EV-W14-206` | `ops` |
+| Concentration breach mới | `0` | new concentration breaches attributable to W14 | `0` | `CAPTURED_PASS` | `EV-W14-207` | `ops` |
+| Reproducibility drift | `<=1%` | drift across reruns | `0.5000%` | `CAPTURED_PASS` | `EV-W14-208` | `tester` |
+| Correlation coverage | `>=99%` | critical event sample coverage | `100%` (no correlation gaps found) | `CAPTURED_PASS` | `EV-W14-209` | `tester` |
+| Compliance findings | `0` | findings count | `0` | `CAPTURED_PASS` | `EV-W14-210` | `tester` |
+| W09-W13 regression guard | `100%` | required slices pass | `100%` | `CAPTURED_PASS` | `EV-W14-301..306` | `tester` |
+| Artifact consistency | `100%` | baseline/issue/gate/final same verdict | `GO consistent` | `CAPTURED_PASS` | `EV-W14-401`,`EV-W14-402` | `planner` |
 
 ## 3) KPI rules
 

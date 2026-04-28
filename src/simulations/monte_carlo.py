@@ -9,11 +9,11 @@ from pathlib import Path
 from loguru import logger
 import matplotlib.pyplot as plt
 
-from ..strategies.base import Strategy
-from ..backtesting.engine import BacktestEngine
-from ..backtesting.data_handler import HistoricalDataHandler
-from ..backtesting.execution_handler import SimulatedExecutionHandler
-from ..backtesting.portfolio_handler import PortfolioHandler
+from strategies.base import Strategy
+from backtesting.engine import BacktestEngine
+from backtesting.data_handler import HistoricalDataHandler
+from backtesting.execution_handler import SimulatedExecutionHandler
+from backtesting.portfolio_handler import PortfolioHandler
 
 
 class MonteCarloSimulator:

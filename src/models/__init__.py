@@ -6,6 +6,7 @@ from .base import *
 from .events import *
 from .market import *
 from .portfolio import *
+from .governance import *
 
 __all__ = [
     'BaseModel',
@@ -20,4 +21,7 @@ __all__ = [
     'Position',
     'Portfolio',
     'PerformanceMetrics',
+    'ControlStatus',
+    'ControlType',
+    'ControlRecord',
 ]

@@ -15,14 +15,14 @@ import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
 
-from ..strategies.enhanced_momentum import (
+from strategies.enhanced_momentum import (
     EnhancedMomentumStrategy,
     SignalQuality,
     RiskParameters,
     IndicatorThresholds,
     TradeRationale
 )
-from ..strategies.base import SignalType
+from strategies.base import SignalType
 
 
 @pytest.fixture
@@ -264,7 +264,7 @@ class TestPositionSizing:
 
     def test_position_size_respects_max_limit(self, strategy):
         """Test that position size doesn't exceed maximum"""
-        from ..strategies.base import Signal
+        from strategies.base import Signal
 
         account_value = 100000
         signal = Signal(
@@ -287,7 +287,7 @@ class TestPositionSizing:
 
     def test_position_size_scales_with_confidence(self, strategy):
         """Test that position size scales with signal confidence"""
-        from ..strategies.base import Signal
+        from strategies.base import Signal
 
         account_value = 100000
 
@@ -319,7 +319,7 @@ class TestPositionSizing:
 
     def test_position_size_risk_calculation(self, strategy):
         """Test that position size properly accounts for risk per trade"""
-        from ..strategies.base import Signal
+        from strategies.base import Signal
 
         account_value = 100000
         signal = Signal(

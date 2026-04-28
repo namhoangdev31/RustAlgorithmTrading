@@ -14,8 +14,8 @@ import numpy as np
 from datetime import datetime, timedelta
 from decimal import Decimal
 
-from ..backtesting.portfolio_handler import PortfolioHandler
-from ..data.data_handler import DataHandler
+from backtesting.portfolio_handler import PortfolioHandler
+from data.data_handler import DataHandler
 
 
 class TestRaceConditionFix:

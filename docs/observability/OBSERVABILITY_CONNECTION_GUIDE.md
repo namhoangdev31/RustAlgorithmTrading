@@ -217,7 +217,7 @@ let metrics_handle = start_metrics_server(metrics_config)?;
 **Usage Example**:
 
 ```python
-from ..observability.metrics.rust_bridge import get_rust_metrics_bridge
+from observability.metrics.rust_bridge import get_rust_metrics_bridge
 
 # Get singleton bridge instance
 bridge = get_rust_metrics_bridge()
@@ -415,7 +415,7 @@ curl http://localhost:9093/metrics
 **2. Test Python Bridge**:
 ```python
 import asyncio
-from ..observability.metrics.rust_bridge import get_rust_metrics_bridge
+from observability.metrics.rust_bridge import get_rust_metrics_bridge
 
 async def test():
     bridge = get_rust_metrics_bridge()

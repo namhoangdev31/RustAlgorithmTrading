@@ -119,7 +119,7 @@ Let's create a simple **Moving Average Crossover** strategy.
 ### Step 1: Define Strategy Class
 
 ```python
-from ..strategies.base import Strategy
+from strategies.base import Strategy
 import pandas as pd
 import numpy as np
 
@@ -185,7 +185,7 @@ class MovingAverageCrossover(Strategy):
 ### Step 2: Test with Sample Data
 
 ```python
-from ..data.fetcher import DataFetcher
+from data.fetcher import DataFetcher
 from datetime import datetime, timedelta
 
 # Fetch historical data
@@ -219,8 +219,8 @@ print(f"Sell signals: {len(signals[signals == -1])}")
 ### Step 3: Backtest Strategy
 
 ```python
-from ..backtesting.engine import BacktestEngine
-from ..backtesting.metrics import calculate_metrics
+from backtesting.engine import BacktestEngine
+from backtesting.metrics import calculate_metrics
 
 # Initialize backtest engine
 engine = BacktestEngine(
@@ -356,8 +356,8 @@ class Momentum(Strategy):
 ### Price Prediction Strategy
 
 ```python
-from ..strategies.ml.models.price_predictor import PricePredictor
-from ..strategies.ml.features.feature_engineering import FeatureEngineer
+from strategies.ml.models.price_predictor import PricePredictor
+from strategies.ml.features.feature_engineering import FeatureEngineer
 
 class MLPriceStrategy(Strategy):
     """ML-based price prediction strategy."""
@@ -470,7 +470,7 @@ wf_results = engine.run_walk_forward(
 )
 
 # Plot results
-from ..backtesting.visualization import plot_results
+from backtesting.visualization import plot_results
 
 plot_results(results, save_path="docs/images/backtest_results.png")
 ```

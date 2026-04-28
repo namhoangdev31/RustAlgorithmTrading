@@ -609,8 +609,8 @@ df = fetch_with_exponential_backoff(
 ### 5.1 Feeding Data to Backtesting Engine
 
 ```python
-from ..backtesting.engine import BacktestEngine
-from ..strategies.momentum import MomentumStrategy
+from backtesting.engine import BacktestEngine
+from strategies.momentum import MomentumStrategy
 
 # Download historical data
 downloader = DataDownloader(data_client)
@@ -857,8 +857,8 @@ for symbol, df in all_data.items():
 
 # 3. Run backtest
 print("\nStep 3: Running backtest...")
-from ..backtesting.engine import BacktestEngine
-from ..strategies.momentum import MomentumStrategy
+from backtesting.engine import BacktestEngine
+from strategies.momentum import MomentumStrategy
 
 engine = BacktestEngine(initial_capital=100000)
 for symbol, df in all_data.items():

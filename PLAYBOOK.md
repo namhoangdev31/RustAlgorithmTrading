@@ -2090,6 +2090,41 @@ Mỗi file có 3 phần:
 - Class/Type trong file: Không có class/type (tài liệu weekly closeout + handoff).
 - Test liên quan: Tổng hợp evidence từ baseline report, implementation plan, issue register và gate rehearsal để ra quyết định final tuần 16.
 
+### src/models/governance.py
+
+- Vai trò file: Contract model cho governance/control records W14 (portfolio controls).
+- Class trong file:
+  - ControlStatus: Enum trạng thái quyết định (`ALLOW`, `REJECT`, `DEFER`, `BLOCKED`).
+  - ControlType: Enum loại control (`EXPOSURE`, `CONCENTRATION`).
+  - ControlRecord: Schema bắt buộc cho decision traceability.
+- Test liên quan: `tests/unit/test_portfolio_controls.py`, `scripts/verify_w14_portfolio_controls.py`.
+
+### src/risk/__init__.py
+
+- Vai trò file: Export risk helpers cho portfolio controls domain.
+- Class trong file: Không có class (module-level exports).
+- Test liên quan: `tests/unit/test_portfolio_controls.py`.
+
+### src/risk/portfolio_controls.py
+
+- Vai trò file: Enforce exposure/concentration controls và sinh decision records có traceability đầy đủ.
+- Class trong file:
+  - PortfolioPolicy: Cấu hình limit policy cho exposure/concentration.
+  - RiskControlManager: Lõi kiểm tra exposure/concentration và trả `ControlRecord`.
+- Test liên quan: `tests/unit/test_portfolio_controls.py`, `scripts/verify_w14_portfolio_controls.py`.
+
+### tests/unit/test_portfolio_controls.py
+
+- Vai trò file: Unit tests cho W14 portfolio controls (enforcement + traceability fields).
+- Class/Type trong file: Không có class; nhóm test function theo scenario control.
+- Test liên quan: Chạy trực tiếp `python -m pytest tests/unit/test_portfolio_controls.py -q`.
+
+### scripts/verify_w14_portfolio_controls.py
+
+- Vai trò file: Rehearsal verifier cho evidence W14 (`EV-W14-201..208`).
+- Class/Type trong file: Không có class nghiệp vụ; script orchestrate checks exposure/concentration/cross-strategy/drift.
+- Test liên quan: Chạy trực tiếp `python scripts/verify_w14_portfolio_controls.py`.
+
 ### src/strategies/ml/validation/governance.py
 
 - Vai trò file: Strategy governance gate cho W13, enforce OOS/WF evidence, drift threshold, risk flag và decision traceability contract.

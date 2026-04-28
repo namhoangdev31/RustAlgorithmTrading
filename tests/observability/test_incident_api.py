@@ -4,16 +4,16 @@ Covers /incidents, /acknowledge, /resolve and error handling.
 """
 import pytest
 from fastapi.testclient import TestClient
-from ..observability.api.main import app
-from ..observability.alerts.escalation import IncidentSeverity
+from observability.api.main import app
+from observability.alerts.escalation import IncidentSeverity
 
 client = TestClient(app)
 
 @pytest.mark.asyncio
 async def test_incident_lifecycle_api():
     """Test full incident lifecycle via REST API."""
-    from ..observability.api.main import api_state
-    from ..observability.metrics.system_collector import SystemCollector
+    from observability.api.main import api_state
+    from observability.metrics.system_collector import SystemCollector
     
     # Initialize system collector for testing
     if "system" not in api_state.collectors:
@@ -29,7 +29,7 @@ async def test_incident_lifecycle_api():
     # We use a trick here since the API doesn't have a public "create_incident" route
     # but the system collector handles it. For testing, we'll manually trigger it
     # via the app instance if possible, or just mock it.
-    from ..observability.api.main import api_state
+    from observability.api.main import api_state
     system_collector = api_state.collectors.get("system")
     incident = await system_collector.escalation.create_incident({
         "alert_id": "TEST-001",
@@ -67,9 +67,9 @@ async def test_incident_lifecycle_api():
 @pytest.mark.asyncio
 async def test_incident_not_found():
     """Verify 404 behavior for missing incidents."""
-    from ..observability.api.main import api_state
+    from observability.api.main import api_state
     if "system" not in api_state.collectors:
-        from ..observability.metrics.system_collector import SystemCollector
+        from observability.metrics.system_collector import SystemCollector
         api_state.collectors["system"] = SystemCollector()
         await api_state.collectors["system"].start()
 

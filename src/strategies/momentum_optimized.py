@@ -15,7 +15,7 @@ from typing import Dict, Any, Optional
 import pandas as pd
 from loguru import logger
 
-from ..strategies.base import Strategy, Signal, SignalType
+from strategies.base import Strategy, Signal, SignalType
 
 
 class MomentumOptimizedStrategy(Strategy):

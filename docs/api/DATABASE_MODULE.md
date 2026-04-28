@@ -24,7 +24,7 @@ High-performance analytics database for time-series trading data.
 #### Initialization
 
 ```python
-from ..observability.storage import DuckDBClient
+from observability.storage import DuckDBClient
 
 client = DuckDBClient(
     db_path="data/trading_metrics.duckdb",  # Database file path
@@ -43,7 +43,7 @@ await client.initialize()
 Insert single metric record.
 
 ```python
-from ..observability.storage.schemas import MetricRecord
+from observability.storage.schemas import MetricRecord
 from datetime import datetime
 
 metric = MetricRecord(
@@ -82,7 +82,7 @@ await client.insert_metrics(metrics)
 Insert OHLCV candle data.
 
 ```python
-from ..observability.storage.schemas import CandleRecord
+from observability.storage.schemas import CandleRecord
 
 candle = CandleRecord(
     timestamp=datetime.utcnow(),
@@ -111,7 +111,7 @@ await client.insert_candles(candles)
 Insert portfolio performance snapshot.
 
 ```python
-from ..observability.storage.schemas import PerformanceRecord
+from observability.storage.schemas import PerformanceRecord
 
 perf = PerformanceRecord(
     timestamp=datetime.utcnow(),
@@ -163,7 +163,7 @@ metrics = await client.get_metrics(
 Query candles with time-bucketing.
 
 ```python
-from ..observability.storage.schemas import TimeInterval
+from observability.storage.schemas import TimeInterval
 
 # Get 1-minute candles
 candles = await client.get_candles(
@@ -286,7 +286,7 @@ await client.close()
 ### Context Manager
 
 ```python
-from ..observability.storage import duckdb_session
+from observability.storage import duckdb_session
 
 # Automatic connection management
 async with duckdb_session("data/metrics.duckdb") as client:
@@ -304,7 +304,7 @@ Operational database for transactional data (trade logs, system events).
 #### Initialization
 
 ```python
-from ..observability.storage import SQLiteClient
+from observability.storage import SQLiteClient
 
 client = SQLiteClient("data/trading_operational.db")
 await client.initialize()
@@ -449,7 +449,7 @@ class TimeInterval(str, Enum):
 
 ```python
 from fastapi import FastAPI, Depends
-from ..observability.storage.integration import (
+from observability.storage.integration import (
     storage_lifespan,
     get_storage,
     StorageManager
@@ -577,7 +577,7 @@ avg = sum(m["value"] for m in raw) / len(raw)
 
 ```python
 from datetime import datetime, timedelta
-from ..observability.storage import (
+from observability.storage import (
     DuckDBClient,
     MetricRecord,
     CandleRecord,

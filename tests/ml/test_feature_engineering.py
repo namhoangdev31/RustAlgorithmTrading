@@ -5,7 +5,7 @@ Unit tests for feature engineering module.
 import pytest
 import numpy as np
 import pandas as pd
-from ..strategies.ml.features import FeatureEngineer, FeatureConfig
+from strategies.ml.features import FeatureEngineer, FeatureConfig
 
 
 @pytest.fixture

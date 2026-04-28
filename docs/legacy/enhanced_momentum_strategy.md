@@ -53,7 +53,7 @@ Final Size = min(Adjusted Size, Max Position Size)
 ### Basic Usage
 
 ```python
-from ..strategies.enhanced_momentum import (
+from strategies.enhanced_momentum import (
     EnhancedMomentumStrategy,
     SignalQuality,
     RiskParameters
@@ -84,7 +84,7 @@ for signal in signals:
 ### Advanced Configuration
 
 ```python
-from ..strategies.enhanced_momentum import (
+from strategies.enhanced_momentum import (
     EnhancedMomentumStrategy,
     SignalQuality,
     RiskParameters,
@@ -383,8 +383,8 @@ For SELL signals:
 ### Backtesting Integration
 
 ```python
-from ..backtesting.engine import BacktestEngine
-from ..strategies.enhanced_momentum import EnhancedMomentumStrategy
+from backtesting.engine import BacktestEngine
+from strategies.enhanced_momentum import EnhancedMomentumStrategy
 
 # Create strategy
 strategy = EnhancedMomentumStrategy(
@@ -408,8 +408,8 @@ print(f"Max Drawdown: {results.max_drawdown:.2%}")
 ### Live Trading Integration
 
 ```python
-from ..api.alpaca_client import AlpacaClient
-from ..strategies.enhanced_momentum import EnhancedMomentumStrategy
+from api.alpaca_client import AlpacaClient
+from strategies.enhanced_momentum import EnhancedMomentumStrategy
 
 # Create clients and strategy
 client = AlpacaClient()

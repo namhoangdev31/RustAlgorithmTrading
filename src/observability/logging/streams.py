@@ -11,7 +11,7 @@ Provides specialized loggers for:
 
 from typing import Any, Dict, Optional, Callable
 from .structured_logger import StructuredLogger
-from ..config.logging_config import LoggingConfig
+from config.logging_config import LoggingConfig
 
 
 class MarketDataLogger(StructuredLogger):

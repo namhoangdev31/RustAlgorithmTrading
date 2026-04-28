@@ -268,7 +268,7 @@ def _handle_market_event(self, event: MarketEvent):
 import pandas as pd  # ADD THIS LINE
 from loguru import logger
 
-from ..models.events import Event, EventType, MarketEvent, SignalEvent
+from models.events import Event, EventType, MarketEvent, SignalEvent
 ```
 
 ---

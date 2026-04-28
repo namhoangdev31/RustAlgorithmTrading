@@ -742,8 +742,8 @@ Finds optimal stop-loss, take-profit, and MACD parameters
 
 import itertools
 import pandas as pd
-from ..strategies.momentum import MomentumStrategy
-from ..backtesting.engine import BacktestEngine
+from strategies.momentum import MomentumStrategy
+from backtesting.engine import BacktestEngine
 
 # Define parameter grid
 param_grid = {

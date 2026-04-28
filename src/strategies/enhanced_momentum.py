@@ -33,8 +33,8 @@ import pandas as pd
 from loguru import logger
 from datetime import datetime
 
-from ..strategies.base import Strategy, Signal, SignalType
-from ..data.indicators import TechnicalIndicators
+from strategies.base import Strategy, Signal, SignalType
+from data.indicators import TechnicalIndicators
 
 
 class SignalQuality(Enum):

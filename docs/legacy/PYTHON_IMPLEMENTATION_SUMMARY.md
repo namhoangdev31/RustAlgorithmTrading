@@ -213,8 +213,8 @@ Profit Factor         1.85
 
 ```python
 from datetime import datetime
-from ..backtesting import BacktestEngine, HistoricalDataHandler, SimulatedExecutionHandler, PortfolioHandler
-from ..strategies.mean_reversion import MeanReversionStrategy
+from backtesting import BacktestEngine, HistoricalDataHandler, SimulatedExecutionHandler, PortfolioHandler
+from strategies.mean_reversion import MeanReversionStrategy
 
 # Initialize components
 data_handler = HistoricalDataHandler(symbols=['AAPL'], data_dir='data')

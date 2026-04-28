@@ -37,10 +37,10 @@ Backtesting allows you to test trading strategies on historical data to evaluate
 ### Step 1: Import Required Modules
 
 ```python
-from ..backtesting.engine import BacktestEngine
-from ..backtesting.metrics import calculate_metrics
-from ..strategies.momentum import MomentumStrategy
-from ..data.fetcher import DataFetcher
+from backtesting.engine import BacktestEngine
+from backtesting.metrics import calculate_metrics
+from strategies.momentum import MomentumStrategy
+from data.fetcher import DataFetcher
 from datetime import datetime, timedelta
 import pandas as pd
 ```
@@ -129,7 +129,7 @@ Walk-forward analysis prevents overfitting by continuously training on historica
 ### Implementation
 
 ```python
-from ..backtesting.walk_forward import WalkForwardAnalysis
+from backtesting.walk_forward import WalkForwardAnalysis
 
 # Initialize walk-forward analyzer
 wf_analyzer = WalkForwardAnalysis(
@@ -341,7 +341,7 @@ Monte Carlo simulation estimates the probability distribution of strategy return
 ### Implementation
 
 ```python
-from ..simulations.monte_carlo import MonteCarloSimulation
+from simulations.monte_carlo import MonteCarloSimulation
 
 # Initialize Monte Carlo simulator
 mc_sim = MonteCarloSimulation(

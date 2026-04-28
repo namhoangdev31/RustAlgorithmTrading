@@ -10,7 +10,7 @@ This guide covers monitoring, troubleshooting, and optimizing the DuckDB-based o
 
 ```python
 # Get database statistics
-from ..observability.storage import DuckDBClient
+from observability.storage import DuckDBClient
 import asyncio
 
 async def check_database_health():

@@ -10,8 +10,8 @@ import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
 
-from ..strategies.momentum import MomentumStrategy
-from ..strategies.momentum_simplified import SimplifiedMomentumStrategy
+from strategies.momentum import MomentumStrategy
+from strategies.momentum_simplified import SimplifiedMomentumStrategy
 
 
 def create_uptrend_data_with_rsi_60_88():
@@ -70,7 +70,7 @@ def test_rsi_fix_momentum_strategy():
     signals = strategy.generate_signals(data)
 
     # Count entry signals (LONG/SHORT)
-    from ..strategies.base import SignalType
+    from strategies.base import SignalType
     entry_signals = [s for s in signals if s.signal_type in [SignalType.LONG, SignalType.SHORT]]
 
     # BEFORE FIX: 0-1 signals (only initial crossover)
@@ -109,7 +109,7 @@ def test_rsi_fix_simplified_strategy():
     signals = strategy.generate_signals(data)
 
     # Count entry signals
-    from ..strategies.base import SignalType
+    from strategies.base import SignalType
     entry_signals = [s for s in signals if s.signal_type in [SignalType.LONG, SignalType.SHORT]]
 
     print(f"\n📊 SimplifiedMomentumStrategy Results:")

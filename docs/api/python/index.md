@@ -66,8 +66,8 @@ uv sync --dev
 ### Strategy Development
 
 ```python
-from ..strategies.base import Strategy
-from ..data.fetcher import DataFetcher
+from strategies.base import Strategy
+from data.fetcher import DataFetcher
 import pandas as pd
 
 class MyStrategy(Strategy):
@@ -108,8 +108,8 @@ class MyStrategy(Strategy):
 ### Backtesting
 
 ```python
-from ..backtesting.engine import BacktestEngine
-from ..backtesting.metrics import calculate_metrics
+from backtesting.engine import BacktestEngine
+from backtesting.metrics import calculate_metrics
 from datetime import datetime, timedelta
 
 # Initialize backtest engine
@@ -145,8 +145,8 @@ print(f"Max Drawdown: {metrics['max_drawdown']:.2%}")
 ### ML Integration
 
 ```python
-from ..strategies.ml.models.price_predictor import PricePredictor
-from ..strategies.ml.features.feature_engineering import FeatureEngineer
+from strategies.ml.models.price_predictor import PricePredictor
+from strategies.ml.features.feature_engineering import FeatureEngineer
 
 # Create feature engineer
 feature_eng = FeatureEngineer()
@@ -337,7 +337,7 @@ settings = Settings()
 ## Error Handling
 
 ```python
-from ..utils.errors import (
+from utils.errors import (
     DataError,
     ValidationError,
     APIError,

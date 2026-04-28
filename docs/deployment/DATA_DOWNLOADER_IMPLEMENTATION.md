@@ -286,7 +286,7 @@ pytest tests/test_data_downloader.py -v
 The downloaded data is compatible with the backtesting engine:
 
 ```python
-from ..backtesting.data_handler import CSVDataHandler
+from backtesting.data_handler import CSVDataHandler
 
 # Load downloaded data
 data_handler = CSVDataHandler(

@@ -2,59 +2,60 @@
 
 ## 1) Executive summary
 
-- Current gate status: `PENDING_DECISION`.
-- Final verdict: `PENDING_DECISION`.
-- Mục tiêu summary:
-  1. Chốt exposure/concentration controls enforcement.
-  2. Chốt portfolio decision traceability + cross-strategy interaction guard.
-  3. Chốt drift/risk guard theo phase-4 threshold.
-  4. Chốt artifact consistency với một verdict duy nhất.
-  5. Chốt evidence để mở W15 Capital Allocation.
+- Current gate status: `GO`.
+- Final verdict: `GO`.
+- W14 objectives closed:
+  1. Exposure/concentration controls enforcement verified.
+  2. Portfolio decision traceability + cross-strategy guard verified.
+  3. Drift/risk guard met phase-4 threshold.
+  4. Artifact consistency locked with one final verdict.
+  5. Week 15 start pack ready.
 
 ## 2) KPI snapshot
 
 | KPI Group | Target | Actual | Status | Evidence ID |
 |---|---|---|---|---|
-| Controls | exposure enforcement 100% | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W14-201` |
-| Controls | concentration enforcement 100% | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W14-202` |
-| Governance | controls checklist completeness 100% | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W14-203` |
-| Governance | decision traceability 100% | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W14-204` |
-| Risk Guard | cross-strategy interaction coverage 100% | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W14-205` |
-| Risk Guard | exposure breach mới = 0 | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W14-206` |
-| Risk Guard | concentration breach mới = 0 | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W14-207` |
-| Quality | reproducibility drift <=1% | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W14-208` |
-| Observability | correlation coverage >=99% | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W14-209` |
-| Compliance | findings = 0 | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W14-210` |
-| Regression | W09-W13 guardrails pass | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W14-301..306` |
-| Governance | artifact consistency 100% | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W14-401`,`EV-W14-402` |
+| Controls | exposure enforcement 100% | `100%` | `CAPTURED_PASS` | `EV-W14-201` |
+| Controls | concentration enforcement 100% | `100%` | `CAPTURED_PASS` | `EV-W14-202` |
+| Governance | controls checklist completeness 100% | `100%` | `CAPTURED_PASS` | `EV-W14-203` |
+| Governance | decision traceability 100% | `100%` | `CAPTURED_PASS` | `EV-W14-204` |
+| Risk Guard | cross-strategy interaction coverage 100% | `100%` | `CAPTURED_PASS` | `EV-W14-205` |
+| Risk Guard | exposure breach mới = 0 | `0` | `CAPTURED_PASS` | `EV-W14-206` |
+| Risk Guard | concentration breach mới = 0 | `0` | `CAPTURED_PASS` | `EV-W14-207` |
+| Quality | reproducibility drift <=1% | `0.5000%` | `CAPTURED_PASS` | `EV-W14-208` |
+| Observability | correlation coverage >=99% | `100%` | `CAPTURED_PASS` | `EV-W14-209` |
+| Compliance | findings = 0 | `0` | `CAPTURED_PASS` | `EV-W14-210` |
+| Regression | W09-W13 guardrails pass | `100%` | `CAPTURED_PASS` | `EV-W14-301..306` |
+| Governance | artifact consistency 100% | `100%` | `CAPTURED_PASS` | `EV-W14-401`,`EV-W14-402` |
 
 ## 3) Delivery status
 
-- `W14-T01..T03`: `PENDING_EXECUTION` (freeze + controls taxonomy).
-- `W14-T04..T06`: `PENDING_EXECUTION` (clean-slate + baseline evidence capture).
-- `W14-T07..T09`: `PENDING_EXECUTION` (exposure/concentration rollout + decision trace).
-- `W14-T10..T12`: `PENDING_EXECUTION` (triage + cross-strategy + drift/risk hardening).
-- `W14-T13..T16`: `PENDING_EXECUTION` (rerun baseline + gate rehearsal + verdict lock).
-- `W14-T17..T18`: `PENDING_EXECUTION` (final closeout + Week 15 start pack).
+- `W14-T01..T03`: `DONE` (freeze + controls taxonomy).
+- `W14-T04..T06`: `DONE` (clean-slate + baseline evidence capture).
+- `W14-T07..T09`: `DONE` (exposure/concentration rollout + decision trace).
+- `W14-T10..T12`: `DONE` (triage + cross-strategy + drift/risk hardening).
+- `W14-T13..T16`: `DONE` (rerun baseline + gate rehearsal + verdict lock).
+- `W14-T17..T18`: `DONE` (final closeout + Week 15 start pack).
 
 ## 4) Issue snapshot
 
-- `W14-ISS-001..W14-ISS-012`: trạng thái chi tiết theo [ISSUE_REGISTER_WEEK14.md](ISSUE_REGISTER_WEEK14.md).
-- Rule chốt:
-  - P0 open phải về 0.
-  - P1 unowned phải về 0.
-  - Exposure/concentration controls phải enforce đúng policy.
+- `W14-ISS-001..W14-ISS-012`: all closed in issue register.
+- Gate closure:
+  - P0 open = `0`.
+  - P1 unowned = `0`.
+  - Exposure/concentration controls enforce đúng policy.
+  - Budget control: working-set exceeded file-count target, escalated and justified via `W14-ISS-010` (net LOC remained low: `+53`).
 
 ## 5) Decision log
 
-1. Contract freeze vẫn giữ nguyên (`schema_version` + `correlation_id`).
-2. W14 ưu tiên portfolio controls, không mở refactor production behavior.
+1. Contract freeze giữ nguyên (`schema_version` + `correlation_id`).
+2. W14 giữ scope portfolio controls, không mở refactor production behavior ngoài critical path.
 3. W14 dùng W13 governance verdict làm precondition.
-4. Portfolio decision phải truy vết được bằng evidence.
-5. Nếu còn blocker mandatory, W14 phải giữ `NO-GO`.
-6. Gate decision chỉ dựa trên evidence đã capture.
+4. Portfolio decisions truy vết được bằng evidence records.
+5. Mandatory blockers đã đóng theo evidence.
+6. Gate decision khóa theo evidence capture thực tế.
 
-## 6) Week 15 start pack (nếu W14 = GO)
+## 6) Week 15 start pack (W14 = GO)
 
 Backlog ưu tiên:
 
@@ -66,30 +67,32 @@ Backlog ưu tiên:
 Guardrail bắt buộc:
 
 - W15 không đổi public envelope nếu không có `CR-W15-###`.
-- W15 phải dùng W14 portfolio-controls verdict làm precondition.
+- W15 dùng W14 portfolio-controls verdict làm precondition.
 - W15 không chốt GO nếu capital-allocation checks thiếu evidence bắt buộc.
 
-## 7) Recovery queue (nếu W14 = NO-GO)
+## 7) Recovery queue (fallback policy)
+
+Nếu có rerun fail sau closeout:
 
 1. Ưu tiên unblock P0 trước, rồi P1.
 2. Mỗi blocker bắt buộc có owner + ETA + mitigation + evidence thiếu.
-3. Rehearsal fail phải rerun theo cùng scenario và lưu expected/actual/evidence_id.
-4. Chỉ được chuyển trạng thái sau khi rerun command profile chuẩn.
+3. Rehearsal fail phải rerun cùng scenario và lưu expected/actual/evidence_id.
+4. Chỉ chuyển trạng thái sau rerun command profile chuẩn.
 
 ## 8) Final gate criteria
 
-- [ ] Exposure control enforcement `100%`.
-- [ ] Concentration control enforcement `100%`.
-- [ ] Portfolio controls checklist completeness `100%`.
-- [ ] Portfolio decision traceability `100%`.
-- [ ] Cross-strategy interaction coverage `100%`.
-- [ ] Exposure breach mới `=0`.
-- [ ] Concentration breach mới `=0`.
-- [ ] Reproducibility drift `<=1%`.
-- [ ] Không còn P0 open.
-- [ ] Không còn P1 unowned.
-- [ ] Matrix bắt buộc không còn `CAPTURED_FAIL/BLOCKED_ENV`.
-- [ ] Correlation coverage `>=99%`.
-- [ ] Compliance findings `=0`.
-- [ ] W09-W13 regression guard pass.
-- [ ] Gate artifacts không mâu thuẫn.
+- [x] Exposure control enforcement `100%`.
+- [x] Concentration control enforcement `100%`.
+- [x] Portfolio controls checklist completeness `100%`.
+- [x] Portfolio decision traceability `100%`.
+- [x] Cross-strategy interaction coverage `100%`.
+- [x] Exposure breach mới `=0`.
+- [x] Concentration breach mới `=0`.
+- [x] Reproducibility drift `<=1%`.
+- [x] Không còn P0 open.
+- [x] Không còn P1 unowned.
+- [x] Matrix bắt buộc không còn `CAPTURED_FAIL/BLOCKED_ENV`.
+- [x] Correlation coverage `>=99%`.
+- [x] Compliance findings `=0`.
+- [x] W09-W13 regression guard pass.
+- [x] Gate artifacts không mâu thuẫn.

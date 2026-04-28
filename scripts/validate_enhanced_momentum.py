@@ -19,14 +19,14 @@ def test_imports():
     print("Testing imports...")
 
     try:
-        from ..strategies.enhanced_momentum import (
+        from strategies.enhanced_momentum import (
             EnhancedMomentumStrategy,
             SignalQuality,
             RiskParameters,
             IndicatorThresholds,
             TradeRationale
         )
-        from ..strategies.base import SignalType
+        from strategies.base import SignalType
         print("✓ All imports successful")
         return True
     except ImportError as e:
@@ -39,7 +39,7 @@ def test_strategy_creation():
     print("\nTesting strategy creation...")
 
     try:
-        from ..strategies.enhanced_momentum import (
+        from strategies.enhanced_momentum import (
             EnhancedMomentumStrategy,
             SignalQuality
         )
@@ -64,7 +64,7 @@ def test_risk_parameters():
     print("\nTesting custom risk parameters...")
 
     try:
-        from ..strategies.enhanced_momentum import (
+        from strategies.enhanced_momentum import (
             EnhancedMomentumStrategy,
             RiskParameters,
             SignalQuality
@@ -99,7 +99,7 @@ def test_indicator_calculation():
     try:
         import pandas as pd
         import numpy as np
-        from ..strategies.enhanced_momentum import EnhancedMomentumStrategy, SignalQuality
+        from strategies.enhanced_momentum import EnhancedMomentumStrategy, SignalQuality
 
         # Create sample data
         dates = pd.date_range(start='2024-01-01', periods=100, freq='1D')
@@ -146,7 +146,7 @@ def test_signal_generation():
     try:
         import pandas as pd
         import numpy as np
-        from ..strategies.enhanced_momentum import EnhancedMomentumStrategy, SignalQuality
+        from strategies.enhanced_momentum import EnhancedMomentumStrategy, SignalQuality
 
         # Create trending data for better signals
         dates = pd.date_range(start='2024-01-01', periods=150, freq='1D')
@@ -198,8 +198,8 @@ def test_position_sizing():
     print("\nTesting position sizing...")
 
     try:
-        from ..strategies.enhanced_momentum import EnhancedMomentumStrategy, SignalQuality
-        from ..strategies.base import Signal, SignalType
+        from strategies.enhanced_momentum import EnhancedMomentumStrategy, SignalQuality
+        from strategies.base import Signal, SignalType
         from datetime import datetime
 
         strategy = EnhancedMomentumStrategy(
@@ -250,7 +250,7 @@ def test_performance_summary():
     try:
         import pandas as pd
         import numpy as np
-        from ..strategies.enhanced_momentum import EnhancedMomentumStrategy, SignalQuality
+        from strategies.enhanced_momentum import EnhancedMomentumStrategy, SignalQuality
 
         strategy = EnhancedMomentumStrategy(
             symbols=['TEST'],

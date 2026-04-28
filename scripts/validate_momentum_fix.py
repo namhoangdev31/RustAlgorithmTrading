@@ -18,8 +18,8 @@ from datetime import datetime, timedelta
 # Add src to path
 sys.path.insert(0, '/mnt/c/Users/DaviCastroSamora/Documents/SamoraDC/RustAlgorithmTrading')
 
-from ..strategies.momentum import MomentumStrategy
-from ..strategies.base import SignalType
+from strategies.momentum import MomentumStrategy
+from strategies.base import SignalType
 
 
 def create_test_data():
@@ -159,7 +159,7 @@ def validate_position_sizing():
 
     strategy = MomentumStrategy(position_size=0.15)
 
-    from ..strategies.base import Signal
+    from strategies.base import Signal
 
     signal = Signal(
         timestamp=datetime.now(),

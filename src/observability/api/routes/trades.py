@@ -7,7 +7,7 @@ from typing import Optional, Dict, Any, cast
 from fastapi import APIRouter, Query, HTTPException
 from loguru import logger
 
-from ...models.schemas import (
+from .models.schemas import (
     Trade,
     TradeFilter,
     TradeHistoryResponse
@@ -34,7 +34,7 @@ async def get_trade_history(
     - P&L per trade
     """
     try:
-        from ..main import api_state
+        from main import api_state
 
         execution_collector = api_state.collectors.get("execution")
         if not execution_collector:
@@ -72,7 +72,7 @@ async def get_trade_history(
 async def get_trade_details(trade_id: str) -> Trade:
     """Get detailed information for a specific trade."""
     try:
-        from ..main import api_state
+        from main import api_state
 
         execution_collector = api_state.collectors.get("execution")
         if not execution_collector:
@@ -107,7 +107,7 @@ async def get_trade_statistics(
     - Execution quality metrics
     """
     try:
-        from ..main import api_state
+        from main import api_state
 
         execution_collector = api_state.collectors.get("execution")
         if not execution_collector:
@@ -151,7 +151,7 @@ async def get_execution_quality_metrics() -> Dict[str, Any]:
     - Market impact analysis
     """
     try:
-        from ..main import api_state
+        from main import api_state
 
         execution_collector = api_state.collectors.get("execution")
         if not execution_collector:

@@ -1294,7 +1294,7 @@ Dashboard: http://localhost:3000
    ./scripts/check_dependencies.sh
 
    # Verify Alpaca credentials
-   python -c "from ..api.alpaca_paper_trading import AlpacaPaperTrading; AlpacaPaperTrading().connect()"
+   python -c "from api.alpaca_paper_trading import AlpacaPaperTrading; AlpacaPaperTrading().connect()"
 
    # Check disk space
    df -h | grep data

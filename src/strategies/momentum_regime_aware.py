@@ -11,8 +11,8 @@ from typing import Dict, Any, Optional
 import pandas as pd
 from loguru import logger
 
-from ..strategies.base import Strategy, Signal, SignalType
-from ..utils.market_regime import (
+from strategies.base import Strategy, Signal, SignalType
+from utils.market_regime import (
     MarketRegimeDetector,
     MarketRegime,
     select_strategy_for_regime,

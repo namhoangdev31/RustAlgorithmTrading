@@ -14,10 +14,10 @@ import numpy as np
 from datetime import datetime, timedelta
 from loguru import logger
 
-from ..strategies.momentum import MomentumStrategy
-from ..strategies.mean_reversion import MeanReversion
-from ..backtesting.portfolio_handler import PortfolioHandler, FixedAmountSizer
-from ..models.events import SignalEvent
+from strategies.momentum import MomentumStrategy
+from strategies.mean_reversion import MeanReversion
+from backtesting.portfolio_handler import PortfolioHandler, FixedAmountSizer
+from models.events import SignalEvent
 
 
 class TestSignalExecutionBug:
@@ -115,7 +115,7 @@ class TestSignalExecutionBug:
 
     def test_signal_event_conversion(self):
         """Test SignalEvent creation from Strategy Signal"""
-        from ..strategies.base import Signal, SignalType
+        from strategies.base import Signal, SignalType
 
         # Create Strategy Signal
         strategy_signal = Signal(

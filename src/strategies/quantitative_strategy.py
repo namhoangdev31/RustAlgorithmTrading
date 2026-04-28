@@ -20,7 +20,7 @@ from typing import Dict, List, Optional, Any
 from loguru import logger
 from dataclasses import dataclass
 
-from ..strategies.base import Strategy, Signal, SignalType
+from strategies.base import Strategy, Signal, SignalType
 
 
 @dataclass

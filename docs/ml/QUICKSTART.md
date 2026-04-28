@@ -17,7 +17,7 @@ uv pip install scikit-learn numpy pandas matplotlib pytest
 ### 1. Import Libraries
 
 ```python
-from ..strategies.ml import FeatureEngineer, PricePredictor, ModelValidator
+from strategies.ml import FeatureEngineer, PricePredictor, ModelValidator
 import pandas as pd
 ```
 
@@ -28,7 +28,7 @@ import pandas as pd
 df = pd.read_csv('your_data.csv', index_col=0, parse_dates=True)
 
 # Or use the example with synthetic data
-from ..strategies.ml.examples.ml_strategy_example import MLTradingStrategy
+from strategies.ml.examples.ml_strategy_example import MLTradingStrategy
 
 strategy = MLTradingStrategy('AAPL')
 strategy.load_data()  # Generates synthetic data

@@ -103,7 +103,7 @@ mkdir -p data
 
 # Initialize database (automatic on first use)
 python3 <<EOF
-from ..observability.storage import DuckDBClient
+from observability.storage import DuckDBClient
 import asyncio
 
 async def init():
@@ -174,12 +174,12 @@ The observability stack already uses DuckDB by default. If you have custom code:
 
 ```python
 # OLD: TimescaleDB
-from ..data.timescale_client import TimescaleClient
+from data.timescale_client import TimescaleClient
 timescale = TimescaleClient(os.getenv('TIMESCALE_DSN'))
 await timescale.write_metric(...)
 
 # NEW: DuckDB
-from ..observability.storage import DuckDBClient
+from observability.storage import DuckDBClient
 duckdb = DuckDBClient("data/metrics.duckdb")
 await duckdb.initialize()
 await duckdb.insert_metric(...)
@@ -221,7 +221,7 @@ import asyncio
 import psycopg2
 import duckdb
 from datetime import datetime
-from ..observability.storage import DuckDBClient, MetricRecord
+from observability.storage import DuckDBClient, MetricRecord
 
 async def migrate_timescale_to_duckdb(
     timescale_dsn: str,
@@ -298,7 +298,7 @@ services:
 
 ```python
 # Python configuration
-from ..observability.storage import DuckDBClient
+from observability.storage import DuckDBClient
 
 client = DuckDBClient(
     db_path="data/metrics.duckdb",
@@ -373,7 +373,7 @@ EOF
 **Solution**:
 ```python
 # Use connection context manager
-from ..observability.storage import duckdb_session
+from observability.storage import duckdb_session
 
 async with duckdb_session("data/metrics.duckdb") as client:
     await client.insert_metric(...)

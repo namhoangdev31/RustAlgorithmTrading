@@ -8,10 +8,10 @@ from loguru import logger
 
 import pandas as pd
 
-from ..models.portfolio import Portfolio, Position
-from ..models.events import SignalEvent, OrderEvent, FillEvent
-from ..models.market import Bar
-from .position_sizer import PositionSizer, FixedAmountSizer
+from models.portfolio import Portfolio, Position
+from models.events import SignalEvent, OrderEvent, FillEvent
+from models.market import Bar
+from backtesting.position_sizer import PositionSizer, FixedAmountSizer
 
 if TYPE_CHECKING:
     from .data_handler import HistoricalDataHandler
@@ -385,5 +385,3 @@ class PortfolioHandler:
         if self.reserved_cash > 0:
             logger.debug(f"🔄 Clearing reserved cash: ${self.reserved_cash:,.2f}")
             self.reserved_cash = 0.0
-
-

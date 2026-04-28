@@ -109,7 +109,7 @@ sys.path.insert(0, '.')
 
 async def test_bridge():
     try:
-        from ..observability.metrics.rust_bridge import get_rust_metrics_bridge
+        from observability.metrics.rust_bridge import get_rust_metrics_bridge
 
         bridge = get_rust_metrics_bridge()
         await bridge.start()
@@ -158,7 +158,7 @@ sys.path.insert(0, '.')
 
 async def test_collector():
     try:
-        from ..observability.metrics.market_data_collector import MarketDataCollector
+        from observability.metrics.market_data_collector import MarketDataCollector
 
         collector = MarketDataCollector()
         await collector.start()

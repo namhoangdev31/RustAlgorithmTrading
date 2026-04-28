@@ -156,19 +156,19 @@ def select_strategy(symbol, data):
 
 ```python
 # Momentum Strategy
-from ..strategies.momentum_simplified import SimplifiedMomentumStrategy
+from strategies.momentum_simplified import SimplifiedMomentumStrategy
 
 strategy = SimplifiedMomentumStrategy()
 signals = strategy.generate_signals(data)
 
 # Mean Reversion
-from ..strategies.mean_reversion import MeanReversion
+from strategies.mean_reversion import MeanReversion
 
 strategy = MeanReversion()
 signals = strategy.generate_signals(data)
 
 # Trend Following
-from ..strategies.trend_following import TrendFollowingStrategy
+from strategies.trend_following import TrendFollowingStrategy
 
 strategy = TrendFollowingStrategy()
 signals = strategy.generate_signals(data)
@@ -177,7 +177,7 @@ signals = strategy.generate_signals(data)
 ### Strategy Router
 
 ```python
-from ..strategies.strategy_router import StrategyRouter
+from strategies.strategy_router import StrategyRouter
 
 # Criar router
 router = StrategyRouter(

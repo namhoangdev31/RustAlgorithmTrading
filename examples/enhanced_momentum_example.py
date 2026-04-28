@@ -13,13 +13,13 @@ import numpy as np
 from datetime import datetime, timedelta
 from loguru import logger
 
-from ..strategies.enhanced_momentum import (
+from strategies.enhanced_momentum import (
     EnhancedMomentumStrategy,
     SignalQuality,
     RiskParameters,
     IndicatorThresholds
 )
-from ..strategies.base import SignalType
+from strategies.base import SignalType
 
 
 def generate_sample_data(

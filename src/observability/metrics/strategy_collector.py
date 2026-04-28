@@ -16,7 +16,7 @@ from datetime import datetime
 from loguru import logger
 
 from .collectors import BaseCollector
-from ..database import get_db
+from database import get_db
 
 
 class StrategyCollector(BaseCollector):

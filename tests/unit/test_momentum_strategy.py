@@ -11,9 +11,9 @@ import numpy as np
 from datetime import datetime, timedelta
 from typing import List
 
-from ..strategies.momentum import MomentumStrategy
-from ..strategies.simple_momentum import SimpleMomentumStrategy
-from ..strategies.base import Signal, SignalType
+from strategies.momentum import MomentumStrategy
+from strategies.simple_momentum import SimpleMomentumStrategy
+from strategies.base import Signal, SignalType
 
 
 class TestRSICalculation:

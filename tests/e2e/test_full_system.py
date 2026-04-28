@@ -11,9 +11,9 @@ from unittest.mock import Mock, patch, MagicMock
 import pandas as pd
 import numpy as np
 
-from ..api.alpaca_client import AlpacaClient
-from ..backtesting.engine import BacktestEngine
-from ..strategies.mean_reversion import MeanReversionStrategy
+from api.alpaca_client import AlpacaClient
+from backtesting.engine import BacktestEngine
+from strategies.mean_reversion import MeanReversionStrategy
 
 
 @pytest.fixture

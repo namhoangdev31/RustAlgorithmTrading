@@ -12,8 +12,8 @@ import numpy as np
 from loguru import logger
 from datetime import datetime, timedelta
 
-from ..strategies.base import Strategy
-from ..backtesting.engine import BacktestEngine
+from strategies.base import Strategy
+from backtesting.engine import BacktestEngine
 
 
 @dataclass

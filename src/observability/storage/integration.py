@@ -243,7 +243,7 @@ async def storage_lifespan(app: Any) -> Any:
 
     Usage:
         from fastapi import FastAPI
-        from ..observability.storage.integration import storage_lifespan
+        from observability.storage.integration import storage_lifespan
 
         app = FastAPI(lifespan=storage_lifespan)
     """
@@ -264,7 +264,7 @@ async def get_storage() -> StorageManager:
 
     Usage:
         from fastapi import Depends
-        from ..observability.storage.integration import get_storage
+        from observability.storage.integration import get_storage
 
         @app.get("/metrics")
         async def get_metrics(storage: StorageManager = Depends(get_storage)):

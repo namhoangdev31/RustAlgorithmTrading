@@ -12,7 +12,7 @@ import numpy as np
 import pandas as pd
 from typing import Dict, List, Optional
 from dataclasses import dataclass
-from ..models import PricePredictor
+from models import PricePredictor
 
 @dataclass
 class MonteCarloConfig:

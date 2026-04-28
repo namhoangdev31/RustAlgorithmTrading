@@ -6,7 +6,7 @@ from typing import Dict, Any, cast
 from fastapi import APIRouter, HTTPException
 from loguru import logger
 
-from ...models.schemas import SystemHealth, PerformanceMetrics
+from .models.schemas import SystemHealth, PerformanceMetrics
 
 router = APIRouter()
 
@@ -24,7 +24,7 @@ async def get_system_health() -> SystemHealth:
     - Error rates and alerts
     """
     try:
-        from ..main import api_state
+        from main import api_state
 
         system_collector = api_state.collectors.get("system")
         if not system_collector:
@@ -55,7 +55,7 @@ async def get_performance_metrics() -> PerformanceMetrics:
     - Queue depths and backlogs
     """
     try:
-        from ..main import api_state
+        from main import api_state
 
         system_collector = api_state.collectors.get("system")
         if not system_collector:
@@ -78,7 +78,7 @@ async def get_performance_metrics() -> PerformanceMetrics:
 async def get_component_status() -> Dict[str, Any]:
     """Get status of all system components."""
     try:
-        from ..main import api_state
+        from main import api_state
 
         components = {}
 
@@ -130,7 +130,7 @@ async def get_recent_logs(
         limit: Maximum number of log entries
     """
     try:
-        from ..main import api_state
+        from main import api_state
 
         system_collector = api_state.collectors.get("system")
         if not system_collector:
@@ -152,7 +152,7 @@ async def get_recent_logs(
 async def acknowledge_alert(alert_id: str) -> Dict[str, str]:
     """Acknowledge a system alert."""
     try:
-        from ..main import api_state
+        from main import api_state
 
         system_collector = api_state.collectors.get("system")
         if not system_collector:
@@ -179,7 +179,7 @@ async def get_system_statistics() -> Dict[str, Any]:
     Returns aggregate stats across all components.
     """
     try:
-        from ..main import api_state
+        from main import api_state
 
         stats = {
             "api": {

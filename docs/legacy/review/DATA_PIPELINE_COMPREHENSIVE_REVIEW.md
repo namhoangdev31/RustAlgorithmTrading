@@ -1207,7 +1207,7 @@ class AlpacaClient:
 import pytest
 from unittest.mock import Mock, patch
 from datetime import datetime, timedelta
-from ..data.fetcher import DataFetcher
+from data.fetcher import DataFetcher
 
 class TestDataFetcher:
     @pytest.fixture

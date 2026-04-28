@@ -2,7 +2,7 @@ import asyncio
 import json
 import zmq
 import zmq.asyncio
-from ..bridge.zmq_bridge import SCHEMA_VERSION
+from bridge.zmq_bridge import SCHEMA_VERSION
 
 async def verify_drop_safe():
     print("[i] Starting Week 4 Drop-safe Rehearsal...")

@@ -28,9 +28,9 @@ from loguru import logger
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from ..strategies.momentum import MomentumStrategy
-from ..strategies.base import SignalType
-from ..api.alpaca_client import AlpacaClient
+from strategies.momentum import MomentumStrategy
+from strategies.base import SignalType
+from api.alpaca_client import AlpacaClient
 import numpy as np
 
 

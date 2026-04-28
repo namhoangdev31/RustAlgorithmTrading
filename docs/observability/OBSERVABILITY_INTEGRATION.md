@@ -618,7 +618,7 @@ A: Open http://localhost:8000 in your browser (auto-opens)
 A: DuckDB at `data/metrics.duckdb` and SQLite at `data/events.db`
 
 **Q: How do I export metrics?**
-A: Use DuckDB export: `COPY (SELECT * FROM ...) TO 'output.csv' (HEADER, DELIMITER ',')`
+A: Use DuckDB export: `COPY (SELECT * from .) TO 'output.csv' (HEADER, DELIMITER ',')`
 
 **Q: Can I use a different database?**
 A: Yes, modify collectors to use PostgreSQL, TimescaleDB, etc.

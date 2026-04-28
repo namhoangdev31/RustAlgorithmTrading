@@ -4,7 +4,7 @@ Unit tests for ML models.
 
 import pytest
 import numpy as np
-from ..strategies.ml.models import PricePredictor, TrendClassifier
+from strategies.ml.models import PricePredictor, TrendClassifier
 
 
 @pytest.fixture

@@ -16,7 +16,7 @@ from dataclasses import dataclass
 import pandas as pd
 from loguru import logger
 
-from ..strategies.base import Strategy, Signal, SignalType
+from strategies.base import Strategy, Signal, SignalType
 
 
 @dataclass

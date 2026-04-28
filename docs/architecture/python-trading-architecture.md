@@ -705,8 +705,8 @@ from datetime import datetime
 from typing import Dict, List, Optional
 from decimal import Decimal
 import pandas as pd
-from ..strategies.base import Strategy
-from ..data.schemas import BarData, Order, Position, Signal
+from strategies.base import Strategy
+from data.schemas import BarData, Order, Position, Signal
 from .portfolio import Portfolio
 from .execution.fills import FillSimulator
 
@@ -913,7 +913,7 @@ class BacktestEngine:
 
 from decimal import Decimal
 from typing import Dict, Optional
-from ..data.schemas import Position
+from data.schemas import Position
 
 class Portfolio:
     """Portfolio state tracker for backtesting"""
@@ -1038,7 +1038,7 @@ class Portfolio:
 
 from decimal import Decimal
 from typing import Dict, Optional
-from ...data.schemas import BarData, Order
+from .data.schemas import BarData, Order
 import random
 
 class FillSimulator:
@@ -1506,8 +1506,8 @@ from abc import ABC, abstractmethod
 from typing import List, Dict, Any
 from decimal import Decimal
 import pandas as pd
-from ..data.schemas import BarData, Signal, Position
-from ..backtesting.portfolio import Portfolio
+from data.schemas import BarData, Signal, Position
+from backtesting.portfolio import Portfolio
 
 class Strategy(ABC):
     """Abstract base class for trading strategies"""
@@ -1548,9 +1548,9 @@ class Strategy(ABC):
 
 from typing import List
 import pandas as pd
-from ..base import Strategy
-from ...data.schemas import BarData, Signal, Position
-from ...backtesting.portfolio import Portfolio
+from base import Strategy
+from .data.schemas import BarData, Signal, Position
+from .backtesting.portfolio import Portfolio
 from datetime import datetime
 
 class SMACompanyStrategy(Strategy):
@@ -1859,7 +1859,7 @@ from alpaca.trading.requests import MarketOrderRequest, LimitOrderRequest
 from alpaca.trading.enums import OrderSide, TimeInForce, OrderClass
 from typing import Optional
 from decimal import Decimal
-from ..data.schemas import Order
+from data.schemas import Order
 import uuid
 
 class AlpacaExecutor:

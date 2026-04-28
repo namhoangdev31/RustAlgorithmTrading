@@ -10,8 +10,8 @@ import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
 
-from ..strategies.momentum import MomentumStrategy
-from ..strategies.base import SignalType
+from strategies.momentum import MomentumStrategy
+from strategies.base import SignalType
 
 
 class TestADXFilter:

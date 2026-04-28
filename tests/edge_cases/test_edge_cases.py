@@ -20,7 +20,7 @@ from datetime import datetime
 import sys
 
 
-from ..backtesting.data_handler import HistoricalDataHandler
+from backtesting.data_handler import HistoricalDataHandler
 
 
 class TestMissingDataDirectory:

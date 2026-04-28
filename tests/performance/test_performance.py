@@ -20,7 +20,7 @@ import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
-from ..backtesting.data_handler import HistoricalDataHandler
+from backtesting.data_handler import HistoricalDataHandler
 
 
 class TestDataLoadingPerformance:

@@ -16,7 +16,7 @@ from typing import Any, Dict, Optional, Union
 
 from .formatters import JSONFormatter, StructuredFormatter
 from .handlers import AsyncQueueHandler, RotatingFileHandlerAsync
-from ..config.logging_config import LoggingConfig
+from config.logging_config import LoggingConfig
 
 # Context variable for correlation ID
 from .correlations import correlation_id_var

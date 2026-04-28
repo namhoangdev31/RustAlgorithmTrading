@@ -7,7 +7,7 @@ import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
 
-from ..utils.market_regime import (
+from utils.market_regime import (
     MarketRegimeDetector,
     MarketRegime,
     select_strategy_for_regime,

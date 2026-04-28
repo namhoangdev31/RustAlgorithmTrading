@@ -18,14 +18,14 @@ import numpy as np
 from datetime import datetime, timedelta
 from typing import List
 
-from ..strategies.enhanced_momentum import (
+from strategies.enhanced_momentum import (
     EnhancedMomentumStrategy,
     RiskParameters,
     IndicatorThresholds,
     SignalQuality,
     SignalType
 )
-from ..strategies.base import Signal
+from strategies.base import Signal
 
 
 class TestEnhancedMomentumStrategy:

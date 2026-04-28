@@ -337,7 +337,7 @@ market_data::record_orderbook_update(&symbol, depth);
 ### With Python Analytics
 
 ```python
-from ..observability.metrics.rust_bridge import get_rust_metrics_bridge
+from observability.metrics.rust_bridge import get_rust_metrics_bridge
 
 # Scrape current metrics
 bridge = get_rust_metrics_bridge()

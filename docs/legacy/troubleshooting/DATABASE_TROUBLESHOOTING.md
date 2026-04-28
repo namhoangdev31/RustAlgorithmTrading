@@ -11,7 +11,7 @@ ls -lh data/*.duckdb data/*.db
 
 # Test database connection
 python3 <<EOF
-from ..observability.storage import DuckDBClient
+from observability.storage import DuckDBClient
 import asyncio
 
 async def test():
@@ -373,7 +373,7 @@ chmod 755 data/
 # Solution 3: Reinitialize database
 rm data/metrics.duckdb
 python3 -c "
-from ..observability.storage import DuckDBClient
+from observability.storage import DuckDBClient
 import asyncio
 
 async def init():
@@ -553,7 +553,7 @@ rm data/metrics.duckdb data/events.db
 
 # 4. Reinitialize
 python3 <<EOF
-from ..observability.storage import DuckDBClient, SQLiteClient
+from observability.storage import DuckDBClient, SQLiteClient
 import asyncio
 
 async def reset():
@@ -586,7 +586,7 @@ pip list | grep -E "(duckdb|fastapi|uvicorn)"
 
 # Database status
 ls -lh data/
-python3 -c "from ..observability.storage import DuckDBClient; import asyncio; asyncio.run(DuckDBClient('data/metrics.duckdb').get_table_stats())"
+python3 -c "from observability.storage import DuckDBClient; import asyncio; asyncio.run(DuckDBClient('data/metrics.duckdb').get_table_stats())"
 
 # API logs
 tail -n 100 logs/observability/api.log

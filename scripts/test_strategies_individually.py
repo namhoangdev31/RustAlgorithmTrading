@@ -17,10 +17,10 @@ from loguru import logger
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from ..strategies.momentum_simplified import SimplifiedMomentumStrategy
-from ..strategies.trend_following import TrendFollowingStrategy
-from ..strategies.mean_reversion import MeanReversion
-from ..backtesting.engine import BacktestEngine
+from strategies.momentum_simplified import SimplifiedMomentumStrategy
+from strategies.trend_following import TrendFollowingStrategy
+from strategies.mean_reversion import MeanReversion
+from backtesting.engine import BacktestEngine
 
 
 def setup_logging():
@@ -125,9 +125,9 @@ def test_strategy(
         # Run backtest using event-driven engine
         logger.info(f"[{strategy_name}] Running backtest...")
 
-        from ..backtesting.data_handler import HistoricalDataHandler
-        from ..backtesting.execution_handler import SimulatedExecutionHandler
-        from ..backtesting.portfolio_handler import PortfolioHandler, PercentageOfEquitySizer
+        from backtesting.data_handler import HistoricalDataHandler
+        from backtesting.execution_handler import SimulatedExecutionHandler
+        from backtesting.portfolio_handler import PortfolioHandler, PercentageOfEquitySizer
 
         # Get date range from data
         start_date = data.index.min()

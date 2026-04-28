@@ -6,9 +6,9 @@ without going through position sizing logic.
 """
 
 from datetime import datetime
-from ..backtesting.portfolio_handler import PortfolioHandler, FixedAmountSizer
-from ..models.events import SignalEvent, FillEvent
-from ..models.portfolio import Portfolio
+from backtesting.portfolio_handler import PortfolioHandler, FixedAmountSizer
+from models.events import SignalEvent, FillEvent
+from models.portfolio import Portfolio
 
 
 class TestExitSignalFix:

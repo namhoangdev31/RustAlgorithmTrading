@@ -15,12 +15,12 @@ from loguru import logger
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from ..strategies.momentum_simplified import SimplifiedMomentumStrategy
-from ..backtesting.engine import BacktestEngine
-from ..backtesting.portfolio_handler import PortfolioHandler
-from ..backtesting.data_handler import HistoricalDataHandler
-from ..backtesting.execution_handler import SimulatedExecutionHandler
-from ..api.alpaca_client import AlpacaClient
+from strategies.momentum_simplified import SimplifiedMomentumStrategy
+from backtesting.engine import BacktestEngine
+from backtesting.portfolio_handler import PortfolioHandler
+from backtesting.data_handler import HistoricalDataHandler
+from backtesting.execution_handler import SimulatedExecutionHandler
+from api.alpaca_client import AlpacaClient
 
 
 def run_strategy2_test():
