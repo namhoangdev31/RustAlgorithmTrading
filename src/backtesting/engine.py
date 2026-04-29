@@ -15,6 +15,7 @@ from backtesting.portfolio_handler import PortfolioHandler
 from backtesting.performance import PerformanceAnalyzer
 from models.governance import ControlStatus
 from risk.allocation_manager import AllocationManager, AllocationPolicy
+from research.repro_manager import ReproducibilityManager
 
 
 class BacktestEngine:
@@ -66,8 +67,10 @@ class BacktestEngine:
         self.orders_placed = 0
         self.fills_executed = 0
 
-        # Initialize Allocation Manager
+        # Initialize Governance Managers
         self.allocation_manager = AllocationManager(AllocationPolicy())
+        self.reproducibility_manager = ReproducibilityManager()
+        
         if hasattr(self.portfolio_handler, 'allocation_manager'):
             self.portfolio_handler.allocation_manager = self.allocation_manager
 
@@ -75,13 +78,19 @@ class BacktestEngine:
             f"Initialized BacktestEngine from {start_date} to {end_date}"
         )
 
-    def run(self) -> Dict:
+    def run(self, seed_profile_id: Optional[str] = None) -> Dict:
         """
         Execute backtest and return performance metrics.
+        
+        Args:
+            seed_profile_id: Optional ID for deterministic seed profile (REPRO-GATED)
 
         Returns:
             Dictionary containing performance metrics and equity curve
         """
+        if seed_profile_id:
+            self.reproducibility_manager.apply_seed_profile(seed_profile_id)
+            
         logger.info(f"Starting optimized backtest for {len(self.data_handler.symbols)} symbols...")
         start_time = datetime.utcnow()
 

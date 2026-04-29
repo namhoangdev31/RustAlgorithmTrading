@@ -14,7 +14,7 @@ import os
 import sys
 from typing import Dict, List
 
-sys.path.insert(0, os.getcwd())
+from 
 
 from models.governance import ControlRecord, ControlStatus
 from risk.allocation_manager import AllocationManager, AllocationPolicy

@@ -2201,3 +2201,23 @@ Mỗi file có 3 phần:
 - Vai trò file: Script kiểm định hiệu suất (Performance Forensic) cho Wave-3, đo lường độ trễ và sự kiện xử lý mỗi giây.
 - Class/Type trong file: Không có class (performance benchmark tool).
 - Test liên quan: Wave-3 evidence `EV-W13-501..503` (latency target < 5s cho portfolio 50 symbols).
+
+### src/research/repro_manager.py
+
+- Vai trò file: Reproducibility manager cho W16, enforce seed control, drift validation và decision record contract.
+- Class trong file:
+  - ReproducibilityRecord: Data object contract cho `EV-W16` (`seed_profile_id`, `rerun_profile`, `drift_value`, `decision_reason`, `evidence_ids`, `next_action`, `eta`...).
+  - ReproducibilityManager: Lõi apply seed, tính drift, validate rerun status và build governance record.
+- Test liên quan: `tests/unit/test_repro_manager.py`, `scripts/verify_w16_reproducibility.py`, `tests/test_backtest_integration.py`.
+
+### tests/unit/test_repro_manager.py
+
+- Vai trò file: Unit tests cho W16 reproducibility manager (deterministic seeds, drift math, DEFER/BLOCKED/PASS policy, record fields).
+- Class/Type trong file: Không có class; nhóm test function theo rule enforcement.
+- Test liên quan: Chạy trực tiếp `python -m pytest tests/unit/test_repro_manager.py -q`.
+
+### scripts/verify_w16_reproducibility.py
+
+- Vai trò file: Rehearsal verifier cho evidence W16 (`EV-W16-201..208`) và throughput watermark (`EV-W16-213`).
+- Class/Type trong file: Không có class nghiệp vụ; script orchestrate seed/deterministic/checklist/traceability/exception checks.
+- Test liên quan: `python scripts/verify_w16_reproducibility.py`, `python -m pytest tests/unit/test_repro_manager.py -q`.

@@ -9,7 +9,7 @@ import numpy as np
 from datetime import datetime
 
 # Add project root to path (for `import src.*`)
-sys.path.insert(0, os.getcwd())
+from 
 
 from strategies.ml.validation.model_validator import ModelValidator, ValidationConfig
 from strategies.ml.validation.governance import GovernanceStatus

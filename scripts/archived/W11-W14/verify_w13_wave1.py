@@ -12,7 +12,7 @@ import numpy as np
 from datetime import datetime
 
 # Standardize path
-sys.path.insert(0, os.getcwd())
+from 
 
 from strategies.ml.validation.model_validator import ModelValidator
 from strategies.ml.validation.drift_detector import DriftDetector

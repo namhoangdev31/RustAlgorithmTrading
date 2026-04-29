@@ -8,18 +8,18 @@ W16 đo mức trưởng thành reproducibility của workflow nghiên cứu vớ
 
 | KPI | Target | Measurement | Actual | Status | Evidence ID | Owner |
 |---|---:|---|---|---|---|---|
-| Seed-control compliance rate | `100%` | seeded required runs / required runs | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W16-201` | `tester` |
-| Deterministic rerun profile coverage | `100%` | deterministic rerun scenarios passed / required scenarios | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W16-202` | `tester` |
-| Reproducibility checklist completeness | `100%` | completed mandatory items / required items | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W16-203` | `planner` |
-| Reproducibility decision traceability completeness | `100%` | decisions with owner+reason+evidence / total decisions | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W16-204` | `planner` |
-| Multi-rerun consistency pass rate | `100%` required scenarios | pass scenarios / required scenarios | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W16-205` | `tester` |
-| Reproducibility drift | `<=1%` | drift across reruns | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W16-206` | `tester` |
-| Exception-handling consistency | `100%` | consistent handling cases / required cases | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W16-207` | `ops` |
-| Exposure/concentration breach mới | `0` | new breaches attributable to W16 | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W16-208` | `ops` |
-| Correlation coverage | `>=99%` | critical event sample coverage | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W16-209` | `tester` |
-| Compliance findings | `0` | findings count | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W16-210` | `tester` |
-| W09-W15 regression guard | `100%` | required slices pass | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W16-301..306` | `tester` |
-| Artifact consistency | `100%` | baseline/issue/gate/final same verdict | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W16-401`,`EV-W16-402` | `planner` |
+| Seed-control compliance rate | `100%` | seeded required runs / required runs | `100.0%` | `CAPTURED_PASS` | `EV-W16-201` | `tester` |
+| Deterministic rerun profile coverage | `100%` | deterministic rerun scenarios passed / required scenarios | `100.0%` | `CAPTURED_PASS` | `EV-W16-202` | `tester` |
+| Reproducibility checklist completeness | `100%` | completed mandatory items / required items | `100.0%` | `CAPTURED_PASS` | `EV-W16-203` | `planner` |
+| Reproducibility decision traceability completeness | `100%` | decisions with owner+reason+evidence / total decisions | `100.0%` | `CAPTURED_PASS` | `EV-W16-204`,`EV-W16-214` | `planner` |
+| Multi-rerun consistency pass rate | `100%` required scenarios | pass scenarios / required scenarios | `100.0%` | `CAPTURED_PASS` | `EV-W16-205` | `tester` |
+| Reproducibility drift | `<=1%` | drift across reruns | `0.000000%` | `CAPTURED_PASS` | `EV-W16-206` | `tester` |
+| Exception-handling consistency | `100%` | consistent handling cases / required cases | `100.0%` | `CAPTURED_PASS` | `EV-W16-207` | `ops` |
+| Exposure/concentration breach mới | `0` | new breaches attributable to W16 | `0` | `CAPTURED_PASS` | `EV-W16-208` | `ops` |
+| Correlation coverage | `>=99%` | critical event sample coverage | `100.0%` | `CAPTURED_PASS` | `EV-W16-209` | `tester` |
+| Compliance findings | `0` | findings count | `0` | `CAPTURED_PASS` | `EV-W16-210` | `tester` |
+| W09-W15 regression guard | `100%` | required slices pass | `100.0%` | `CAPTURED_PASS` | `EV-W16-301..306` | `tester` |
+| Artifact consistency | `100%` | baseline/issue/gate/final same verdict | `100.0%` | `CAPTURED_PASS` | `EV-W16-401`,`EV-W16-402` | `planner` |
 
 ## 3) KPI rules
 

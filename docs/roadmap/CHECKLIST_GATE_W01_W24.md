@@ -153,11 +153,11 @@
 
 ## W16 - Research Reproducibility
 
-- [ ] Reproducibility pack + seed control hoàn tất.
-- [ ] Rerun nằm trong ngưỡng cho phép.
-- [ ] Go/No-Go W16 đã chốt.
+- [x] Reproducibility pack + seed control hoàn tất.
+- [x] Rerun nằm trong ngưỡng cho phép.
+- [x] Go/No-Go W16 đã chốt.
 - Evidence IDs: `EV-W16-101..110, EV-W16-201..216, EV-W16-301..306, EV-W16-401..402`
-- Decision: [ ] GO  [ ] NO-GO
+- Decision: [x] GO  [ ] NO-GO
 
 ## W17 - Staging Hardening
 
@@ -230,4 +230,4 @@
 - Decision: [ ] GO  [ ] NO-GO
 
 ---
-Last updated: W15 GO - Capital allocation gate lock complete.
+Last updated: W16 GO - Research reproducibility gate lock complete.

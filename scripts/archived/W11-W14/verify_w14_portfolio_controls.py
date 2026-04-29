@@ -13,7 +13,7 @@ import os
 import sys
 from typing import Dict, List
 
-sys.path.insert(0, os.getcwd())
+from 
 
 from models.governance import ControlRecord, ControlType, ControlStatus
 from risk.portfolio_controls import PortfolioPolicy, RiskControlManager
