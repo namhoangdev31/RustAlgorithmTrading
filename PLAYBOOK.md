@@ -2293,3 +2293,25 @@ Mỗi file có 3 phần:
 - `docs/roadmap/week22/INTERFACE_RELEASE_GATE2_SPEC.md`: interface freeze + gate2 contract rules W22.
 - `docs/roadmap/week22/GATE_REHEARSAL_NOTES.md`: gate checklist + rehearsal notes W22.
 - `docs/roadmap/week22/WEEK22_FINAL_REPORT_AND_WEEK23_START_PACK.md`: closeout + W23 handoff pack.
+
+## Roadmap Week 23 Companion Artifacts
+
+- `docs/roadmap/W23_OPERATIONS_PLAN.md`: Week 23 final-phase gate3 operations plan.
+- `docs/roadmap/week23/KPI_CHARTER_WEEK23.md`: KPI dictionary + thresholds cho W23.
+- `docs/roadmap/week23/FINAL_PHASE_GATE3_BASELINE_REPORT.md`: baseline + evidence matrix W23.
+- `docs/roadmap/week23/FINAL_PHASE_GATE3_IMPLEMENTATION_PLAN.md`: execution model + hard-gate3 workflow W23.
+- `docs/roadmap/week23/ISSUE_REGISTER_WEEK23.md`: issue governance W23 (severity/owner/ETA/evidence).
+- `docs/roadmap/week23/INTERFACE_RELEASE_GATE3_SPEC.md`: interface freeze + gate3 contract rules W23.
+- `docs/roadmap/week23/GATE_REHEARSAL_NOTES.md`: gate checklist + rehearsal notes W23.
+- `docs/roadmap/week23/WEEK23_FINAL_REPORT_AND_WEEK24_START_PACK.md`: closeout + W24 handoff pack.
+
+## Roadmap Week 24 Companion Artifacts
+
+- `docs/roadmap/W24_OPERATIONS_PLAN.md`: Week 24 final-phase gate4 operations plan.
+- `docs/roadmap/week24/KPI_CHARTER_WEEK24.md`: KPI dictionary + thresholds cho W24.
+- `docs/roadmap/week24/FINAL_PHASE_GATE4_BASELINE_REPORT.md`: baseline + evidence matrix W24.
+- `docs/roadmap/week24/FINAL_PHASE_GATE4_IMPLEMENTATION_PLAN.md`: execution model + release-gate workflow W24.
+- `docs/roadmap/week24/ISSUE_REGISTER_WEEK24.md`: issue governance W24 (severity/owner/ETA/evidence).
+- `docs/roadmap/week24/INTERFACE_RELEASE_GATE4_SPEC.md`: interface freeze + gate4 contract rules W24.
+- `docs/roadmap/week24/GATE_REHEARSAL_NOTES.md`: gate checklist + rehearsal notes W24.
+- `docs/roadmap/week24/WEEK24_FINAL_REPORT_AND_CONTROLLED_LIVE_READY_SIGNOFF.md`: final report + controlled live ready signoff.

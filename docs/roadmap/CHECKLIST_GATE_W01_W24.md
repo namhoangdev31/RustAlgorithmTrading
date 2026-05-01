@@ -216,7 +216,7 @@
 - [ ] Soak + fault-injection pass.
 - [ ] Test debt phát sinh mới trong W23 đã đóng.
 - [ ] Go/No-Go W23 đã chốt.
-- Evidence IDs: `____________________________`
+- Evidence IDs: `EV-W23-101..110, EV-W23-201..210, EV-W23-301..306, EV-W23-401..402`
 - Decision: [ ] GO  [ ] NO-GO
 
 ## W24 - Final-phase Gate 4
@@ -226,7 +226,7 @@
 - [ ] Gate artifacts cuối kỳ nhất quán hoàn toàn.
 - [ ] Không còn P0 mở, không có P1 unowned.
 - [ ] Final approval đã chốt.
-- Evidence IDs: `____________________________`
+- Evidence IDs: `EV-W24-101..110, EV-W24-201..210, EV-W24-301..306, EV-W24-401..402`
 - Decision: [ ] GO  [ ] NO-GO
 
 ---
