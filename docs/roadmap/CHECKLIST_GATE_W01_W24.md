@@ -161,11 +161,11 @@
 
 ## W17 - Staging Hardening
 
-- [ ] Soak test + ops hardening hoàn tất.
-- [ ] Không còn P0/P1 chưa xử lý.
-- [ ] Go/No-Go W17 đã chốt.
+- [x] Soak test + ops hardening hoàn tất.
+- [x] Không còn P0/P1 chưa xử lý.
+- [x] Go/No-Go W17 đã chốt.
 - Evidence IDs: `EV-W17-101..110, EV-W17-201..210, EV-W17-301..306, EV-W17-401..402`
-- Decision: [ ] GO  [ ] NO-GO
+- Decision: [x] GO  [ ] NO-GO
 
 ## W18 - Canary Design
 
@@ -230,4 +230,4 @@
 - Decision: [ ] GO  [ ] NO-GO
 
 ---
-Last updated: W16 GO - Research reproducibility gate lock complete.
+Last updated: W17 GO - Staging hardening gate lock complete.

@@ -11,8 +11,8 @@ import pandas as pd
 import numpy as np
 from loguru import logger
 
-from strategies.base import Strategy, Signal, SignalType
-from utils.market_regime import MarketRegimeDetector
+from ..strategies.base import Strategy, Signal, SignalType
+from ..utils.market_regime import MarketRegimeDetector
 
 
 class MomentumStrategy(Strategy):

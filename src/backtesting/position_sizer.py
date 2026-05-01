@@ -3,10 +3,10 @@ Position sizing strategies for backtesting.
 """
 
 from typing import Optional, TYPE_CHECKING
-from models.events import SignalEvent
+from ..models.events import SignalEvent
 
 if TYPE_CHECKING:
-    from models.portfolio import Portfolio
+    from ..models.portfolio import Portfolio
 
 
 class PositionSizer:

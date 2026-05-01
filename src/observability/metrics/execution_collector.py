@@ -16,8 +16,8 @@ from collections import deque
 from loguru import logger
 
 from .collectors import BaseCollector
-from models.schemas import TradeFilter
-from database import get_db
+from ...observability.models.schemas import TradeFilter
+from ...observability.database import get_db
 
 
 class ExecutionCollector(BaseCollector):

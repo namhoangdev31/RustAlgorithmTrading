@@ -264,7 +264,7 @@ async def get_storage() -> StorageManager:
 
     Usage:
         from fastapi import Depends
-        from observability.storage.integration import get_storage
+        from ...observability.storage.integration import get_storage
 
         @app.get("/metrics")
         async def get_metrics(storage: StorageManager = Depends(get_storage)):

@@ -8,7 +8,7 @@ from datetime import datetime, timedelta, UTC
 from pathlib import Path
 import tempfile
 
-from observability.storage.sqlite_client import SQLiteClient, sqlite_session
+from .observability.storage.sqlite_client import SQLiteClient, sqlite_session
 
 
 import pytest_asyncio

@@ -18,9 +18,9 @@ from collections import deque
 from loguru import logger
 
 from .collectors import BaseCollector
-from alerts.escalation import EscalationManager
-from models.schemas import SystemHealth, PerformanceMetrics, ComponentStatus
-from database import get_db
+from ...observability.alerts.escalation import EscalationManager
+from ...observability.models.schemas import SystemHealth, PerformanceMetrics, ComponentStatus
+from ...observability.database import get_db
 
 
 class SystemCollector(BaseCollector):

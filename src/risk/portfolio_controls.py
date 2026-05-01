@@ -1,6 +1,6 @@
 from typing import Dict
 from datetime import datetime
-from models.governance import ControlRecord, ControlStatus, ControlType
+from ..models.governance import ControlRecord, ControlStatus, ControlType
 
 class PortfolioPolicy:
     """ Chứa các ngưỡng limit cho danh mục. """

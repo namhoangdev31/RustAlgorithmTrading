@@ -829,6 +829,12 @@ Mỗi file có 3 phần:
 - Class trong file: Không có class (module-level functions/constants hoặc package init).
 - Test liên quan: tests/unit/python/*.py, tests/unit/test_types.rs, tests/unit/test_common_types.rs (nếu chạm contract liên ngôn ngữ).
 
+### src/utils/staging_manager.py
+
+- Vai trò file: Manager quản lý record hardening và policy enforcement (W17).
+- Class trong file: `StagingHardeningRecord`, `StagingHardeningManager`.
+- Test liên quan: `tests/unit/test_staging_hardening.py`, `scripts/verify_w17_staging_hardening.py`.
+
 ---
 
 ## 3) Rust Source Map (rust/*/src/*.rs)
@@ -2221,6 +2227,18 @@ Mỗi file có 3 phần:
 - Vai trò file: Rehearsal verifier cho evidence W16 (`EV-W16-201..208`) và throughput watermark (`EV-W16-213`).
 - Class/Type trong file: Không có class nghiệp vụ; script orchestrate seed/deterministic/checklist/traceability/exception checks.
 - Test liên quan: `python scripts/verify_w16_reproducibility.py`, `python -m pytest tests/unit/test_repro_manager.py -q`.
+
+### scripts/verify_w17_staging_hardening.py
+
+- Vai trò file: Script chính capture evidence EV-W17-201..210 (soak, kill-switch, rollback).
+- Class/Type trong file: Không có class nghiệp vụ; script thực thi rehearsal scenarios và báo cáo verdict GO/NO-GO.
+- Test liên quan: Chạy trực tiếp `python scripts/verify_w17_staging_hardening.py`.
+
+### tests/unit/test_staging_hardening.py
+
+- Vai trò file: Unit tests cho logic staging manager và threshold policy.
+- Class/Type trong file: Không có class; nhóm test function theo rule enforcement.
+- Test liên quan: `python -m pytest tests/unit/test_staging_hardening.py -q`.
 
 
 ## Roadmap Week 16 Companion Artifacts

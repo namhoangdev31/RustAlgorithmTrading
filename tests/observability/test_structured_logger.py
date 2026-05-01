@@ -16,13 +16,13 @@ import time
 from pathlib import Path
 from unittest.mock import Mock, patch
 
-from observability.logging import (
+from .observability.logging import (
     StructuredLogger,
     get_logger,
     correlation_id,
     log_execution_time,
 )
-from observability.config.logging_config import LoggingConfig
+from .observability.config.logging_config import LoggingConfig
 
 
 @pytest.fixture
@@ -131,7 +131,7 @@ class TestCorrelationID:
     def test_correlation_id_propagation(self, test_logger):
         """Test correlation ID propagates through nested calls"""
         def inner_function():
-            from observability.logging.correlations import get_correlation_id
+            from .observability.logging.correlations import get_correlation_id
             return get_correlation_id()
 
         with correlation_id("test-456"):
@@ -141,7 +141,7 @@ class TestCorrelationID:
     @pytest.mark.asyncio
     async def test_correlation_id_async(self, test_logger):
         """Test correlation ID works with async code"""
-        from observability.logging.correlations import get_correlation_id
+        from .observability.logging.correlations import get_correlation_id
 
         async def async_task():
             await asyncio.sleep(0.01)
@@ -284,7 +284,7 @@ class TestGracefulDegradation:
 
     def test_json_serialization_fallback(self, test_logger):
         """Test JSON formatter handles non-serializable objects"""
-        from observability.logging.formatters import JSONFormatter
+        from .observability.logging.formatters import JSONFormatter
 
         formatter = JSONFormatter()
 
@@ -360,7 +360,7 @@ class TestRedactionHandler:
     """Test standalone redaction utility behavior."""
 
     def test_redact_nested_dict_and_list(self):
-        from observability.logging.redaction_handler import (
+        from .observability.logging.redaction_handler import (
             REDACTION_TOKEN,
             redact_sensitive_data,
         )
@@ -386,7 +386,7 @@ class TestRedactionHandler:
         assert redacted["items"][1]["safe"] == 1
 
     def test_redaction_does_not_mask_non_sensitive_fields(self):
-        from observability.logging.redaction_handler import redact_sensitive_data
+        from .observability.logging.redaction_handler import redact_sensitive_data
 
         payload = {
             "reason_code": "STRATEGY_ALLOCATION_LIMIT_EXCEEDED",

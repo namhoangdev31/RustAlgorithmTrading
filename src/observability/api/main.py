@@ -19,10 +19,10 @@ from loguru import logger
 
 from .websocket_manager import WebSocketManager
 from .routes import metrics, trades, system
-from metrics.market_data_collector import MarketDataCollector
-from metrics.strategy_collector import StrategyCollector
-from metrics.execution_collector import ExecutionCollector
-from metrics.system_collector import SystemCollector
+from ..metrics.market_data_collector import MarketDataCollector
+from ..metrics.strategy_collector import StrategyCollector
+from ..metrics.execution_collector import ExecutionCollector
+from ..metrics.system_collector import SystemCollector
 
 
 class ObservabilityAPI:

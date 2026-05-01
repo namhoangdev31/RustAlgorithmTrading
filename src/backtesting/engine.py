@@ -8,14 +8,14 @@ from typing import Dict, List, Optional, Any
 import pandas as pd
 from loguru import logger
 
-from models.events import Event, EventType, MarketEvent, SignalEvent, OrderEvent, FillEvent
-from backtesting.data_handler import HistoricalDataHandler
-from backtesting.execution_handler import SimulatedExecutionHandler
-from backtesting.portfolio_handler import PortfolioHandler
-from backtesting.performance import PerformanceAnalyzer
-from models.governance import ControlStatus
-from risk.allocation_manager import AllocationManager, AllocationPolicy
-from research.repro_manager import ReproducibilityManager
+from ..models.events import Event, EventType, MarketEvent, SignalEvent, OrderEvent, FillEvent
+from ..backtesting.data_handler import HistoricalDataHandler
+from ..backtesting.execution_handler import SimulatedExecutionHandler
+from ..backtesting.portfolio_handler import PortfolioHandler
+from ..backtesting.performance import PerformanceAnalyzer
+from ..models.governance import ControlStatus
+from ..risk.allocation_manager import AllocationManager, AllocationPolicy
+from ..research.repro_manager import ReproducibilityManager
 
 
 class BacktestEngine:

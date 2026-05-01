@@ -16,7 +16,7 @@ import numpy as np
 from statsmodels.tsa.stattools import coint
 from loguru import logger
 
-from strategies.base import Strategy, Signal, SignalType
+from ..strategies.base import Strategy, Signal, SignalType
 
 
 class StatisticalArbitrageStrategy(Strategy):

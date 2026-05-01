@@ -5,14 +5,14 @@ Tests that ModelValidator enforces mandatory checklists and blocks strategies wi
 
 import sys
 import os
+from pathlib import Path
 import numpy as np
-from datetime import datetime
 
 # Add project root to path (for `import src.*`)
-from 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from strategies.ml.validation.model_validator import ModelValidator, ValidationConfig
-from strategies.ml.validation.governance import GovernanceStatus
+from .strategies.ml.validation.model_validator import ModelValidator
+from .strategies.ml.validation.governance import GovernanceStatus
 
 class MockModel:
     """Mock model that implements the required interface."""

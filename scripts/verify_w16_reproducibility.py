@@ -13,11 +13,14 @@ Captures rehearsal evidence for:
 """
 
 import random
+import sys
+from pathlib import Path
 from typing import Dict, List
 
 import numpy as np
 
-from research.repro_manager import ReproducibilityManager, ReproducibilityRecord
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from .research.repro_manager import ReproducibilityManager, ReproducibilityRecord
 
 
 def _deterministic_metrics(seed: int) -> Dict[str, float]:

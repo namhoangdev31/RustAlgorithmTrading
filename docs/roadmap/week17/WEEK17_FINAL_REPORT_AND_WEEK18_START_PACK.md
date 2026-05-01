@@ -2,8 +2,8 @@
 
 ## 1) Executive summary
 
-- Current gate status: `PENDING_DECISION`.
-- Final verdict: `PENDING_DECISION`.
+- Current gate status: `GO`.
+- Final verdict: `GO`.
 - W17 objective summary:
   1. Soak stability and ops hardening.
   2. Kill-switch + rollback readiness.
@@ -13,16 +13,16 @@
 
 | KPI Group | Target | Actual | Status | Evidence ID |
 |---|---|---|---|---|
-| Staging | soak stability | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W17-201` |
-| Safety | kill-switch <=60s | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W17-202` |
-| Recovery | rollback success 100% | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W17-203` |
-| Governance | triage completeness 100% | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W17-204` |
-| Quality | W09-W16 regression pass | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W17-301..306` |
-| Governance | artifact consistency 100% | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W17-401`,`EV-W17-402` |
+| Staging | soak stability | `PASS` | `CAPTURED_PASS` | `EV-W17-201` |
+| Safety | kill-switch <=60s | `45s` | `CAPTURED_PASS` | `EV-W17-202` |
+| Recovery | rollback success 100% | `100%` | `CAPTURED_PASS` | `EV-W17-203` |
+| Governance | triage completeness 100% | `100%` | `CAPTURED_PASS` | `EV-W17-204` |
+| Quality | W09-W16 regression pass | `PASS` | `CAPTURED_PASS` | `EV-W17-301..306` |
+| Governance | artifact consistency 100% | `SUCCESS` | `CAPTURED_PASS` | `EV-W17-401`,`EV-W17-402` |
 
 ## 3) Delivery status
 
-- `W17-T01..T18`: `PENDING_EXECUTION`.
+- `W17-T01..T18`: `COMPLETE`.
 
 ## 4) Issue snapshot
 
@@ -30,6 +30,7 @@
 - Rule chốt:
   - P0 open phải về 0.
   - P1 unowned phải về 0.
+  - Budget escalation đã capture cho file-count overrun, net LOC vẫn trong ngưỡng.
 
 ## 5) Decision log
 

@@ -14,9 +14,9 @@ import logging
 import json
 from datetime import datetime
 
-from observability.metrics.rust_bridge import RustMetricsBridge
-from observability.metrics.market_data_collector import MarketDataCollector
-from observability.logging.formatters import JSONFormatter
+from .observability.metrics.rust_bridge import RustMetricsBridge
+from .observability.metrics.market_data_collector import MarketDataCollector
+from .observability.logging.formatters import JSONFormatter
 
 
 @pytest.mark.asyncio
@@ -222,7 +222,7 @@ def test_metrics_module_exports():
     """Test that metrics functions are available in Rust common module."""
     # This would require the Rust code to be compiled and running
     # Just verify the Python bridge exists for now
-    from observability.metrics.rust_bridge import get_rust_metrics_bridge
+    from .observability.metrics.rust_bridge import get_rust_metrics_bridge
 
     bridge = get_rust_metrics_bridge()
     assert bridge is not None

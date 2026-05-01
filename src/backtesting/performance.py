@@ -8,8 +8,8 @@ from typing import Dict, List, cast
 from scipy import stats
 from loguru import logger
 
-from models.portfolio import PerformanceMetrics
-from models.events import FillEvent
+from ..models.portfolio import PerformanceMetrics
+from ..models.events import FillEvent
 
 
 class PerformanceAnalyzer:

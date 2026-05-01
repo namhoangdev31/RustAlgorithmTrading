@@ -13,8 +13,8 @@ from pathlib import Path
 import tempfile
 import time
 
-from observability.storage.duckdb_client import DuckDBClient, duckdb_session
-from observability.storage.schemas import (
+from .observability.storage.duckdb_client import DuckDBClient, duckdb_session
+from .observability.storage.schemas import (
     MetricRecord,
     CandleRecord,
     PerformanceRecord,

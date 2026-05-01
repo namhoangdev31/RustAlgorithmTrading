@@ -10,15 +10,15 @@ Captures rehearsal evidence for:
 - EV-W15-208: reproducibility drift <= 1%
 """
 
-import os
 import sys
+from pathlib import Path
 from typing import Dict, List
 
-from 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from models.governance import ControlRecord, ControlStatus
-from risk.allocation_manager import AllocationManager, AllocationPolicy
-from strategies.ml.validation.drift_detector import DriftDetector
+from .models.governance import ControlRecord, ControlStatus
+from .risk.allocation_manager import AllocationManager, AllocationPolicy
+from .strategies.ml.validation.drift_detector import DriftDetector
 
 
 MANDATORY_META_FIELDS = [
