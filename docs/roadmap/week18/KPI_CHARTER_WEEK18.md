@@ -1,26 +1,36 @@
-# KPI Charter W18 - Canary Design
+# KPI Charter Week 18 (Canary Design)
 
-## 1) Charter scope
+## 1) Reliability KPIs
 
-W18 đo mức trưởng thành canary design với trọng tâm scenario coverage, rollback recoverability, breach handling determinism và governance consistency.
+| KPI | Target | Current | Status | Evidence ID |
+|---|---|---|---|---|
+| Smoke Pass Rate | >= 95% | 0% | `PENDING` | `EV-W18-101..107` |
+| P0 Open Count | 0 | 0 | `PENDING` | `EV-W18-401` |
+| P1 Unowned Count | 0 | 0 | `PENDING` | `EV-W18-401` |
+| Regression Guard | 100% pass | 0% | `PENDING` | `EV-W18-301..306` |
 
-## 2) KPI table
+## 2) Canary Design KPIs
 
-| KPI | Target | Measurement | Actual | Status | Evidence ID | Owner |
-|---|---:|---|---|---|---|---|
-| Canary scenario coverage | `100%` mandatory scenarios | covered mandatory scenarios / required scenarios | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W18-201` | `tester` |
-| Rollback rehearsal success | `100%` | successful rollback drills / required drills | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W18-202` | `coder` |
-| Breach handling determinism | `100%` required drills | deterministic outcomes / required drills | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W18-203` | `ops` |
-| Kill-switch response | `<=60s` | max response latency | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W18-204` | `ops` |
-| Risk boundary integrity | unmitigated breach `=0` | unmitigated breaches count | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W18-205` | `planner` |
-| Fault-injection coverage | `100%` required scenarios | covered scenarios / required scenarios | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W18-206` | `tester` |
-| Correlation coverage | `>=99%` | critical event sample coverage | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W18-207` | `tester` |
-| Compliance findings | `0` | findings count | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W18-208` | `tester` |
-| W09-W17 regression guard | `100%` | required slices pass | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W18-301..306` | `tester` |
-| Artifact consistency | `100%` | baseline/issue/KPI/gate/final same verdict | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W18-401`,`EV-W18-402` | `planner` |
+| KPI | Target | Current | Status | Evidence ID |
+|---|---|---|---|---|
+| Canary Scenario Coverage | 100% mandatory | 0% | `PENDING` | `EV-W18-201` |
+| Rollback Rehearsal Success | 100% | 0% | `PENDING` | `EV-W18-202` |
+| Breach Handling Determinism | PASS | PENDING | `PENDING` | `EV-W18-203` |
+| Kill-switch Latency | <= 60s | 0s | `PENDING` | `EV-W18-204` |
+| Risk Boundary Integrity | 0 unmitigated | 0 | `PENDING` | `EV-W18-205` |
 
-## 3) KPI rules
+## 3) Observability & Quality KPIs
 
-- `CAPTURED_PASS` chỉ hợp lệ khi `actual` có dữ liệu numeric hoặc output command tương ứng.
-- `BLOCKED_ENV` bắt buộc có blocker, owner, ETA và điều kiện rerun.
-- KPI mandatory fail/block thì verdict mặc định `NO-GO`.
+| KPI | Target | Current | Status | Evidence ID |
+|---|---|---|---|---|
+| Correlation Coverage | >= 99% | 0% | `PENDING` | `EV-W18-207` |
+| Alert FP Rate | <= 15% | 0% | `PENDING` | `EV-W18-206` |
+| Alert FN Critical | 0 | 0 | `PENDING` | `EV-W18-206` |
+| Compliance Findings | 0 | 0 | `PENDING` | `EV-W18-208` |
+
+## 4) Engineering Quality
+
+| KPI | Target | Current | Status | Evidence ID |
+|---|---|---|---|---|
+| Change Budget Compliance | <= 25 files | 0 | `PENDING` | `EV-W18-402` |
+| Artifact Consistency | 100% | 0% | `PENDING` | `EV-W18-402` |

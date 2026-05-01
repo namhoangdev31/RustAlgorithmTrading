@@ -1,30 +1,28 @@
-# Issue Register W18 - Canary Design
+# Issue Register Week 18 (Canary Design)
 
-## 1) Status taxonomy
+## 1) P0 Blocker (Must close for GO)
 
-- Issue status: `NEW`, `IN_PROGRESS`, `BLOCKED`, `DONE`.
-- Evidence status: `PENDING_EXECUTION`, `CAPTURED_PASS`, `CAPTURED_FAIL`, `BLOCKED_ENV`.
-- Gate blockers: mọi P0 open hoặc P1 unowned đều chặn `GO`.
+| ID | Issue | Impact | Status | Owner | Evidence |
+|---|---|---|---|---|---|
+| `W18-ISS-001` | Canary scenario coverage thiếu mandatory items | Canary launch risk cao | `NEW` | `tester` | `EV-W18-201` |
+| `W18-ISS-002` | Rollback rehearsal fail | Không đảm bảo recoverability | `NEW` | `coder` | `EV-W18-202` |
+| `W18-ISS-003` | Canary breach handling không deterministic | Safety path không tin cậy | `NEW` | `ops` | `EV-W18-203` |
 
-## 2) Issues
+## 2) P1 Critical (Owner + ETA required for GO)
 
-| Issue ID | Severity | Status | Owner | ETA | Blocking of | Evidence ID | Mitigation | Exit criteria |
-|---|---|---|---|---|---|---|---|---|
-| `W18-ISS-001` | P0 | `NEW` | `tester` | `Pha 3` | Canary coverage | `EV-W18-201` | complete mandatory scenario matrix and rerun | coverage `100%` |
-| `W18-ISS-002` | P0 | `NEW` | `coder` | `Pha 3` | Rollback recoverability | `EV-W18-202` | harden rollback flows and rerun required drills | rollback success `100%` |
-| `W18-ISS-003` | P0 | `NEW` | `ops` | `Pha 3` | Breach handling determinism | `EV-W18-203` | enforce deterministic breach actions | breach handling pass |
-| `W18-ISS-004` | P1 | `NEW` | `ops` | `Pha 4` | Kill-switch SLA | `EV-W18-204` | optimize risk-off response chain | response `<=60s` |
-| `W18-ISS-005` | P1 | `NEW` | `planner` | `Pha 4` | Risk boundary integrity | `EV-W18-205` | lock boundaries + mitigation mapping | unmitigated breach `=0` |
-| `W18-ISS-006` | P1 | `NEW` | `tester` | `Pha 4` | Fault-injection coverage | `EV-W18-206` | expand required scenario drills | coverage `100%` |
-| `W18-ISS-007` | P1 | `NEW` | `tester` | `Pha 5` | Regression guard | `EV-W18-301..306` | rerun W09-W17 guardrail slices | regression guard pass |
-| `W18-ISS-008` | P1 | `NEW` | `planner` | `Pha 6` | Final verdict consistency | `EV-W18-401`,`EV-W18-402` | strict artifact reconciliation | one final verdict |
-| `W18-ISS-009` | P1 | `NEW` | `planner` | `Pha 7` | W19 handoff | `EV-W18-402` | complete W19 priorities/guardrails | start pack complete |
-| `W18-ISS-010` | P1 | `NEW` | `planner` | `Pha 5` | Budget governance | `EV-W18-106`,`EV-W18-402` | track budget and add escalation record if needed | budget within threshold or approved escalation |
-| `W18-ISS-011` | P2 | `NEW` | `ops` | `Pha 5` | Ops throughput | `EV-W18-209` | capture canary toil watermark | throughput watermark captured |
-| `W18-ISS-012` | P2 | `NEW` | `planner` | `Pha 6` | Audit linkage | `EV-W18-207`,`EV-W18-208` | complete evidence linkage | linkage complete |
+| ID | Issue | Impact | Status | Owner | ETA |
+|---|---|---|---|---|---|
+| `W18-ISS-004` | Kill-switch response vượt ngưỡng | Delay risk-off action | `NEW` | `ops` | `Pha 4` |
+| `W18-ISS-005` | Risk boundary definition drift | Canary acceptance mơ hồ | `NEW` | `planner` | `Pha 4` |
+| `W18-ISS-006` | Fault-injection scenario chưa phủ đủ | Hidden failure modes | `NEW` | `tester` | `Pha 4` |
+| `W18-ISS-007` | W09-W17 regression chưa rerun sau hardening | Regression risk tích lũy | `NEW` | `tester` | `Pha 5` |
+| `W18-ISS-008` | Gate artifacts mâu thuẫn trạng thái | Governance fail | `NEW` | `planner` | `Pha 6` |
+| `W18-ISS-009` | Week 19 handoff thiếu safety priorities | W19 kickoff mơ hồ | `NEW` | `planner` | `Pha 7` |
+| `W18-ISS-010` | Change budget vượt ngưỡng không escalation | Tăng regression risk | `NEW` | `planner` | `Pha 5` |
 
-## 3) Gate blocker policy
+## 3) P2 Normal (Monitor)
 
-- `W18-ISS-001..003` phải `DONE` trước gate lock.
-- `P0 open = 0`, `P1 unowned = 0`.
-- Không còn mandatory issue ở trạng thái `NEW/IN_PROGRESS/BLOCKED` tại gate cutoff.
+| ID | Issue | Impact | Status | Owner |
+|---|---|---|---|---|
+| `W18-ISS-011` | Canary toil/throughput chưa đo | Ops capacity khó dự báo | `NEW` | `ops` |
+| `W18-ISS-012` | Evidence linkage thiếu canary->rollback->gate | Audit chậm | `NEW` | `planner` |

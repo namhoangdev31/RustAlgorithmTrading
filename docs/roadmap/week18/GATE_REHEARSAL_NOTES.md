@@ -1,31 +1,31 @@
-# Gate Rehearsal Notes W18 - Canary Design
+# Gate Rehearsal Notes Week 18 (Canary Design)
 
-## 1) Gate status
+## 1) Gate Overview
 
-- Current gate status: `PENDING_DECISION`.
-- Final verdict: `PENDING_DECISION`.
-- Gate rule: W18 chỉ `GO` khi canary/rollback mandatory criteria đạt ngưỡng, regression guard pass và artifacts không mâu thuẫn.
+- **Verdict Rehearsal**: `PENDING_DECISION`
+- **Current Blocker Count**: 3 (P0)
+- **Mandatory Evidence Captured**: 0%
 
-## 2) Mandatory gate checklist
+## 2) Mandatory Gate Items
 
-| Gate item | Target | Evidence ID | Current status | Notes |
+| Item | Requirement | Evidence ID | Status | Notes |
 |---|---|---|---|---|
-| Canary scenario coverage | `100%` mandatory scenarios | `EV-W18-201` | `PENDING_EXECUTION` | scenario matrix |
-| Rollback rehearsal | success `100%` | `EV-W18-202` | `PENDING_EXECUTION` | required drills |
-| Breach handling determinism | pass required drills | `EV-W18-203` | `PENDING_EXECUTION` | deterministic outcomes |
-| Kill-switch response | `<=60s` | `EV-W18-204` | `PENDING_EXECUTION` | latency capture |
-| Risk boundary integrity | unmitigated breach `=0` | `EV-W18-205` | `PENDING_EXECUTION` | boundary checks |
-| Fault-injection coverage | `100%` required scenarios | `EV-W18-206` | `PENDING_EXECUTION` | scenario coverage |
-| Correlation coverage | `>=99%` | `EV-W18-207` | `PENDING_EXECUTION` | critical event coverage |
-| Compliance findings | `0` | `EV-W18-208` | `PENDING_EXECUTION` | compliance output |
-| W09-W17 regression guard | `100%` pass | `EV-W18-301..306` | `PENDING_EXECUTION` | guardrails |
-| Artifact consistency | one final verdict | `EV-W18-401`,`EV-W18-402` | `PENDING_EXECUTION` | reconciliation |
+| Canary scenario completeness | `100%` mandatory | `EV-W18-201` | `PENDING` | matrix check |
+| Rollback rehearsal success | `100%` success | `EV-W18-202` | `PENDING` | drill drill |
+| Breach handling determinism | PASS | `EV-W18-203` | `PENDING` | trace check |
+| Kill-switch response time | `<= 60s` | `EV-W18-204` | `PENDING` | SLA capture |
+| Risk boundary integrity | unmitigated=0 | `EV-W18-205` | `PENDING` | boundary check |
+| Fault-injection coverage | `100%` | `EV-W18-206` | `PENDING` | scenario check |
+| W09-W17 regression guard | PASS | `EV-W18-301..306` | `PENDING` | rerun profile |
+| Artifact consistency | 100% | `EV-W18-402` | `PENDING` | reconciliation |
 
-## 3) Rehearsal flow
+## 3) Decision Log
 
-1. Run command profile và capture baseline evidence.
-2. Run canary scenario + rollback rehearsals.
-3. Run breach handling and fault-injection checks.
-4. Rerun baseline sau hardening.
-5. Reconcile artifacts theo thứ tự cố định.
-6. Lock final verdict.
+- [ ] W18-T01: Scope freeze for Canary Design.
+- [ ] W18-T02: Canary taxonomy locked.
+- [ ] W18-T15: Final reconciliation of artifacts.
+
+## 4) Verdict Rehearsal
+
+- **Candidate Verdict**: `PENDING`
+- **Rationale**: Rehearsal not yet executed.

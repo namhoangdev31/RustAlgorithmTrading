@@ -2119,6 +2119,16 @@ Mỗi file có 3 phần:
 - Class trong file: Không có class (module-level exports).
 - Test liên quan: `tests/unit/test_portfolio_controls.py`.
 
+## Roadmap Week 17 Companion Artifacts
+
+- `docs/roadmap/W17_OPERATIONS_PLAN.md`: Week 17 staging hardening operations plan.
+- `docs/roadmap/week17/`: Week 17 KPI/baseline/implementation/issue/interface/gate/final artifacts.
+
+## Roadmap Week 18 Companion Artifacts
+
+- `docs/roadmap/W18_OPERATIONS_PLAN.md`: Week 18 canary design operations plan.
+- `docs/roadmap/week18/`: Week 18 KPI/baseline/implementation/issue/interface/gate/final artifacts.
+
 ### src/risk/portfolio_controls.py
 
 - Vai trò file: Enforce exposure/concentration controls và sinh decision records có traceability đầy đủ.
@@ -2233,6 +2243,24 @@ Mỗi file có 3 phần:
 - Vai trò file: Script chính capture evidence EV-W17-201..210 (soak, kill-switch, rollback).
 - Class/Type trong file: Không có class nghiệp vụ; script thực thi rehearsal scenarios và báo cáo verdict GO/NO-GO.
 - Test liên quan: Chạy trực tiếp `python scripts/verify_w17_staging_hardening.py`.
+
+### src/utils/canary_manager.py
+
+- Vai trò file: Canary design manager cho W18, quản lý scenario matrix và rollback drills evidence.
+- Class trong file: `CanaryDesignRecord`, `CanaryDesignManager`.
+- Test liên quan: `tests/unit/test_canary_design.py`, `scripts/verify_w18_canary_design.py`.
+
+### scripts/verify_w18_canary_design.py
+
+- Vai trò file: Script chính capture evidence EV-W18-201..210 (canary matrix, rollback, breach handling).
+- Class/Type trong file: Không có class nghiệp vụ; script thực thi canary design rehearsals.
+- Test liên quan: Chạy trực tiếp `python scripts/verify_w18_canary_design.py`.
+
+### tests/unit/test_canary_design.py
+
+- Vai trò file: Unit tests cho logic canary manager và threshold policy.
+- Class/Type trong file: Không có class; nhóm test function theo rule enforcement.
+- Test liên quan: `python -m pytest tests/unit/test_canary_design.py -q`.
 
 ### tests/unit/test_staging_hardening.py
 

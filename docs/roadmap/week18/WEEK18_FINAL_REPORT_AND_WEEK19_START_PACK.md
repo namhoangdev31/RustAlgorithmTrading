@@ -5,20 +5,19 @@
 - Current gate status: `PENDING_DECISION`.
 - Final verdict: `PENDING_DECISION`.
 - W18 objective summary:
-  1. Canary scenario design and ownership lock.
-  2. Rollback drills and breach handling guardrails.
-  3. Governance consistency for W19 Safety Guardrails kickoff.
+  1. Canary scenario matrix and taxonomy.
+  2. Rollback rehearsal and breach handling.
+  3. Governance readiness for W19 Safety Guardrails.
 
 ## 2) KPI snapshot
 
 | KPI Group | Target | Actual | Status | Evidence ID |
 |---|---|---|---|---|
-| Canary | scenario coverage 100% | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W18-201` |
-| Recovery | rollback success 100% | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W18-202` |
-| Safety | kill-switch <=60s | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W18-204` |
-| Risk | unmitigated breach = 0 | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W18-205` |
-| Quality | W09-W17 regression pass | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W18-301..306` |
-| Governance | artifact consistency 100% | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W18-401`,`EV-W18-402` |
+| Canary | 100% scenario coverage | `PENDING_CAPTURE` | `PENDING` | `EV-W18-201` |
+| Safety | kill-switch <=60s | `PENDING_CAPTURE` | `PENDING` | `EV-W18-204` |
+| Recovery | rollback success 100% | `PENDING_CAPTURE` | `PENDING` | `EV-W18-202` |
+| Quality | W09-W17 regression pass | `PENDING_CAPTURE` | `PENDING` | `EV-W18-301..306` |
+| Governance | artifact consistency 100% | `PENDING_CAPTURE` | `PENDING` | `EV-W18-402` |
 
 ## 3) Delivery status
 
@@ -27,31 +26,25 @@
 ## 4) Issue snapshot
 
 - `W18-ISS-001..012`: trạng thái chi tiết theo `ISSUE_REGISTER_WEEK18.md`.
-- Rule chốt:
-  - P0 open phải về 0.
-  - P1 unowned phải về 0.
 
 ## 5) Decision log
 
-1. Contract freeze giữ nguyên (`schema_version` + `correlation_id`).
-2. W18 giữ scope canary design, không mở refactor lan rộng.
-3. W18 handoff sang W19 chỉ hợp lệ khi verdict cuối đã lock.
+1. W18 focus on design rehearsal, no broad refactoring.
+2. Interface changes require `CR-W18-###`.
 
 ## 6) Week 19 start pack (nếu W18 = GO)
 
 Priorities:
 
-1. Safety guardrails consolidation.
-2. Kill-switch + risk-off playbook operationalization.
-3. Canary-to-safety operational bridge under controlled risk boundaries.
+1. Safety guardrails (T1/T2) implementation.
+2. Kill-switch playbook automation.
+3. Real-time breach monitoring.
 
 Guardrails:
 
-- W19 không đổi public envelope nếu không có `CR-W19-###`.
-- W19 không chốt `GO` nếu kill-switch/risk-off evidence thiếu mandatory items.
+- W19 does not bypass canary design boundaries.
 
 ## 7) Recovery queue (nếu W18 = NO-GO)
 
-1. Ưu tiên unblock P0 trước, rồi P1.
-2. Mỗi blocker bắt buộc có owner + ETA + mitigation + missing evidence.
-3. Chỉ đổi trạng thái sau khi rerun command profile chuẩn.
+1. Unblock P0 blockers first.
+2. Rerun command profile.
