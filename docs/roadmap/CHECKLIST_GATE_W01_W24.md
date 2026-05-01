@@ -164,7 +164,7 @@
 - [ ] Soak test + ops hardening hoàn tất.
 - [ ] Không còn P0/P1 chưa xử lý.
 - [ ] Go/No-Go W17 đã chốt.
-- Evidence IDs: `____________________________`
+- Evidence IDs: `EV-W17-101..110, EV-W17-201..210, EV-W17-301..306, EV-W17-401..402`
 - Decision: [ ] GO  [ ] NO-GO
 
 ## W18 - Canary Design
@@ -172,7 +172,7 @@
 - [ ] Canary scenario + rollback scenario hoàn tất.
 - [ ] Canary rollback rehearsal pass.
 - [ ] Go/No-Go W18 đã chốt.
-- Evidence IDs: `____________________________`
+- Evidence IDs: `EV-W18-101..110, EV-W18-201..210, EV-W18-301..306, EV-W18-401..402`
 - Decision: [ ] GO  [ ] NO-GO
 
 ## W19 - Safety Guardrails
@@ -180,7 +180,7 @@
 - [ ] Kill-switch + risk-off playbook hoàn tất.
 - [ ] Kill-switch response trong ngưỡng mục tiêu.
 - [ ] Go/No-Go W19 đã chốt.
-- Evidence IDs: `____________________________`
+- Evidence IDs: `EV-W19-101..110, EV-W19-201..210, EV-W19-301..306, EV-W19-401..402`
 - Decision: [ ] GO  [ ] NO-GO
 
 ## W20 - Canary Launch (Hẹp)
@@ -188,7 +188,7 @@
 - [ ] Controlled canary execution ổn định.
 - [ ] Không vượt risk boundary.
 - [ ] Go/No-Go W20 đã chốt.
-- Evidence IDs: `____________________________`
+- Evidence IDs: `EV-W20-101..110, EV-W20-201..210, EV-W20-301..306, EV-W20-401..402`
 - Decision: [ ] GO  [ ] NO-GO
 
 ## W21 - Final-phase Gate 1
@@ -198,7 +198,7 @@
 - [ ] Full unit baseline pass toàn repo.
 - [ ] Test debt phát sinh mới trong W21 đã đóng.
 - [ ] Go/No-Go W21 đã chốt.
-- Evidence IDs: `____________________________`
+- Evidence IDs: `EV-W21-101..110, EV-W21-201..210, EV-W21-301..306, EV-W21-401..402`
 - Decision: [ ] GO  [ ] NO-GO
 
 ## W22 - Final-phase Gate 2
@@ -207,7 +207,7 @@
 - [ ] Full Rust unit + integration pass.
 - [ ] Test debt phát sinh mới trong W22 đã đóng.
 - [ ] Go/No-Go W22 đã chốt.
-- Evidence IDs: `____________________________`
+- Evidence IDs: `EV-W22-101..110, EV-W22-201..210, EV-W22-301..306, EV-W22-401..402`
 - Decision: [ ] GO  [ ] NO-GO
 
 ## W23 - Final-phase Gate 3

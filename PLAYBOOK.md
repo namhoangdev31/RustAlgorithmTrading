@@ -2221,3 +2221,75 @@ Mỗi file có 3 phần:
 - Vai trò file: Rehearsal verifier cho evidence W16 (`EV-W16-201..208`) và throughput watermark (`EV-W16-213`).
 - Class/Type trong file: Không có class nghiệp vụ; script orchestrate seed/deterministic/checklist/traceability/exception checks.
 - Test liên quan: `python scripts/verify_w16_reproducibility.py`, `python -m pytest tests/unit/test_repro_manager.py -q`.
+
+
+## Roadmap Week 16 Companion Artifacts
+
+- `docs/roadmap/W16_OPERATIONS_PLAN.md`: Week 16 reproducibility operations plan.
+- `docs/roadmap/week16/`: Week 16 KPI/baseline/implementation/issue/interface/gate/final artifacts.
+
+## Roadmap Week 17 Companion Artifacts
+
+- `docs/roadmap/W17_OPERATIONS_PLAN.md`: Week 17 staging hardening operations plan.
+- `docs/roadmap/week17/KPI_CHARTER_WEEK17.md`: KPI dictionary + thresholds cho W17.
+- `docs/roadmap/week17/STAGING_HARDENING_BASELINE_REPORT.md`: baseline + evidence matrix W17.
+- `docs/roadmap/week17/STAGING_HARDENING_IMPLEMENTATION_PLAN.md`: execution model + hardening workflow W17.
+- `docs/roadmap/week17/ISSUE_REGISTER_WEEK17.md`: issue governance W17 (severity/owner/ETA/evidence).
+- `docs/roadmap/week17/INTERFACE_STAGING_HARDENING_SPEC.md`: interface freeze + staging contract rules W17.
+- `docs/roadmap/week17/GATE_REHEARSAL_NOTES.md`: gate checklist + rehearsal notes W17.
+- `docs/roadmap/week17/WEEK17_FINAL_REPORT_AND_WEEK18_START_PACK.md`: closeout + W18 handoff pack.
+
+## Roadmap Week 18 Companion Artifacts
+
+- `docs/roadmap/W18_OPERATIONS_PLAN.md`: Week 18 canary design operations plan.
+- `docs/roadmap/week18/KPI_CHARTER_WEEK18.md`: KPI dictionary + thresholds cho W18.
+- `docs/roadmap/week18/CANARY_DESIGN_BASELINE_REPORT.md`: baseline + evidence matrix W18.
+- `docs/roadmap/week18/CANARY_DESIGN_IMPLEMENTATION_PLAN.md`: execution model + canary workflow W18.
+- `docs/roadmap/week18/ISSUE_REGISTER_WEEK18.md`: issue governance W18 (severity/owner/ETA/evidence).
+- `docs/roadmap/week18/INTERFACE_CANARY_ROLLBACK_SPEC.md`: interface freeze + canary/rollback contract rules W18.
+- `docs/roadmap/week18/GATE_REHEARSAL_NOTES.md`: gate checklist + rehearsal notes W18.
+- `docs/roadmap/week18/WEEK18_FINAL_REPORT_AND_WEEK19_START_PACK.md`: closeout + W19 handoff pack.
+
+## Roadmap Week 19 Companion Artifacts
+
+- `docs/roadmap/W19_OPERATIONS_PLAN.md`: Week 19 safety guardrails operations plan.
+- `docs/roadmap/week19/KPI_CHARTER_WEEK19.md`: KPI dictionary + thresholds cho W19.
+- `docs/roadmap/week19/SAFETY_GUARDRAILS_BASELINE_REPORT.md`: baseline + evidence matrix W19.
+- `docs/roadmap/week19/SAFETY_GUARDRAILS_IMPLEMENTATION_PLAN.md`: execution model + safety workflow W19.
+- `docs/roadmap/week19/ISSUE_REGISTER_WEEK19.md`: issue governance W19 (severity/owner/ETA/evidence).
+- `docs/roadmap/week19/INTERFACE_SAFETY_GUARDRAILS_SPEC.md`: interface freeze + safety contract rules W19.
+- `docs/roadmap/week19/GATE_REHEARSAL_NOTES.md`: gate checklist + rehearsal notes W19.
+- `docs/roadmap/week19/WEEK19_FINAL_REPORT_AND_WEEK20_START_PACK.md`: closeout + W20 handoff pack.
+
+## Roadmap Week 20 Companion Artifacts
+
+- `docs/roadmap/W20_OPERATIONS_PLAN.md`: Week 20 controlled canary launch operations plan.
+- `docs/roadmap/week20/KPI_CHARTER_WEEK20.md`: KPI dictionary + thresholds cho W20.
+- `docs/roadmap/week20/CANARY_LAUNCH_BASELINE_REPORT.md`: baseline + evidence matrix W20.
+- `docs/roadmap/week20/CANARY_LAUNCH_IMPLEMENTATION_PLAN.md`: execution model + canary launch workflow W20.
+- `docs/roadmap/week20/ISSUE_REGISTER_WEEK20.md`: issue governance W20 (severity/owner/ETA/evidence).
+- `docs/roadmap/week20/INTERFACE_CANARY_LAUNCH_SPEC.md`: interface freeze + canary launch contract rules W20.
+- `docs/roadmap/week20/GATE_REHEARSAL_NOTES.md`: gate checklist + rehearsal notes W20.
+- `docs/roadmap/week20/WEEK20_FINAL_REPORT_AND_WEEK21_START_PACK.md`: closeout + W21 handoff pack.
+
+## Roadmap Week 21 Companion Artifacts
+
+- `docs/roadmap/W21_OPERATIONS_PLAN.md`: Week 21 final-phase gate1 operations plan.
+- `docs/roadmap/week21/KPI_CHARTER_WEEK21.md`: KPI dictionary + thresholds cho W21.
+- `docs/roadmap/week21/FINAL_PHASE_GATE1_BASELINE_REPORT.md`: baseline + evidence matrix W21.
+- `docs/roadmap/week21/FINAL_PHASE_GATE1_IMPLEMENTATION_PLAN.md`: execution model + hard-gate1 workflow W21.
+- `docs/roadmap/week21/ISSUE_REGISTER_WEEK21.md`: issue governance W21 (severity/owner/ETA/evidence).
+- `docs/roadmap/week21/INTERFACE_RELEASE_GATE1_SPEC.md`: interface freeze + gate1 contract rules W21.
+- `docs/roadmap/week21/GATE_REHEARSAL_NOTES.md`: gate checklist + rehearsal notes W21.
+- `docs/roadmap/week21/WEEK21_FINAL_REPORT_AND_WEEK22_START_PACK.md`: closeout + W22 handoff pack.
+
+## Roadmap Week 22 Companion Artifacts
+
+- `docs/roadmap/W22_OPERATIONS_PLAN.md`: Week 22 final-phase gate2 operations plan.
+- `docs/roadmap/week22/KPI_CHARTER_WEEK22.md`: KPI dictionary + thresholds cho W22.
+- `docs/roadmap/week22/FINAL_PHASE_GATE2_BASELINE_REPORT.md`: baseline + evidence matrix W22.
+- `docs/roadmap/week22/FINAL_PHASE_GATE2_IMPLEMENTATION_PLAN.md`: execution model + hard-gate2 workflow W22.
+- `docs/roadmap/week22/ISSUE_REGISTER_WEEK22.md`: issue governance W22 (severity/owner/ETA/evidence).
+- `docs/roadmap/week22/INTERFACE_RELEASE_GATE2_SPEC.md`: interface freeze + gate2 contract rules W22.
+- `docs/roadmap/week22/GATE_REHEARSAL_NOTES.md`: gate checklist + rehearsal notes W22.
+- `docs/roadmap/week22/WEEK22_FINAL_REPORT_AND_WEEK23_START_PACK.md`: closeout + W23 handoff pack.
