@@ -2513,3 +2513,15 @@ scripts/verify_w13_wave2.py
 - `scripts/verify_w10_api_health_slo.py`: Regression script for Week 10 API SLO.
 - `scripts/verify_w15_capital_allocation.py`: Regression script for Week 15 capital allocation.
 - `scripts/verify_w17_staging_hardening.py`: Regression script for Week 17 staging hardening.
+- `scripts/verify_w21_release_gate1.py`: Hard-gate verifier for Week 21 (Lint/Type/Unit).
+- `scripts/verify_w22_release_gate2.py`: Hard-gate verifier for Week 22 (Integration/Debt).
+- `scripts/verify_w24_release_gate4.py`: Final release gate verifier for Week 24 (Regression/Sign-off).
+
+## Maintenance & Optimization Records
+
+### Rust Clippy/Lint Hardening (W21-W24)
+
+- `rust/risk-manager/src/pnl.rs`: Optimized `.iter()` to `.keys()` for clippy compliance.
+- `rust/risk-manager/src/lib.rs`: Simplified redundant pattern matching in circuit breaker.
+- `rust/database/src/migrations.rs`: Fixed DuckDB error variant mismatch in migration parsing.
+- `rust/signal-bridge/src/bridge.rs`: Implemented `Default` for `FeatureComputer` and resolved `dead_code` warnings.

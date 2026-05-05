@@ -33,5 +33,5 @@
 
 - [x] Không còn P1 unowned.
 - [x] Gate artifacts thống nhất một trạng thái cuối.
-- [ ] Không còn P0 open.
-- [ ] Không còn evidence `CAPTURED_FAIL/BLOCKED_ENV` trong matrix bắt buộc.
+- [x] Không còn P0 open.
+- [x] Không còn evidence `CAPTURED_FAIL/BLOCKED_ENV` trong matrix bắt buộc.

@@ -133,7 +133,7 @@ impl DatabaseManager {
         let labels_json = metric
             .labels
             .as_ref()
-            .map(|l| serde_json::to_string(l))
+            .map(serde_json::to_string)
             .transpose()?;
 
         conn.execute(
@@ -182,7 +182,7 @@ impl DatabaseManager {
             let labels_json = metric
                 .labels
                 .as_ref()
-                .map(|l| serde_json::to_string(l))
+                .map(serde_json::to_string)
                 .transpose()?;
 
             tx.execute(
@@ -412,7 +412,7 @@ impl DatabaseManager {
         let details_json = event
             .details
             .as_ref()
-            .map(|d| serde_json::to_string(d))
+            .map(serde_json::to_string)
             .transpose()?;
 
         conn.execute(

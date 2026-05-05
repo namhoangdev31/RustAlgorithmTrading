@@ -107,8 +107,8 @@ impl PnLTracker {
     /// Get total unrealized P&L across all positions
     pub fn get_unrealized_pnl(&self, current_prices: &HashMap<String, Price>) -> f64 {
         self.positions
-            .iter()
-            .map(|(symbol, _)| {
+            .keys()
+            .map(|symbol| {
                 current_prices
                     .get(symbol)
                     .map(|&price| self.calculate_unrealized_pnl(symbol, price))

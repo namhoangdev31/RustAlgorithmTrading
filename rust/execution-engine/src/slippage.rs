@@ -1,4 +1,4 @@
-use common::types::{Order, OrderType, Side};
+use common::types::{Order, OrderType};
 
 /// CRITICAL BUG FIX: SlippageEstimator now implements proper market impact calculation
 ///
@@ -96,7 +96,7 @@ impl SlippageEstimator {
         if let Some(limit_price) = order.price {
             // Calculate how far limit price is from mid (in production, get from order book)
             // For now, assume we're pricing at mid
-            let assumed_mid = limit_price.0;
+            let _assumed_mid = limit_price.0;
             let assumed_spread_bps = 2.0; // 2bp spread assumption
 
             // Limit orders capture spread but face queue position risk
@@ -151,7 +151,7 @@ impl Default for SlippageEstimator {
 mod tests {
     use super::*;
     use chrono::Utc;
-    use common::types::{OrderStatus, Price, Quantity, Symbol};
+    use common::types::{OrderStatus, Price, Quantity, Side, Symbol};
 
     fn create_test_order(qty: f64, price: Option<f64>, order_type: OrderType) -> Order {
         Order {

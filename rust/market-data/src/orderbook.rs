@@ -122,38 +122,46 @@ impl FastOrderBook {
         (bid_depth, ask_depth)
     }
 
-    /// Walk order book to estimate execution price - OPTIMIZED for slippage calculation
-    /// Returns (average_fill_price, total_filled_quantity, unfilled_quantity)
     #[inline]
     pub fn walk_book(&self, side: Side, target_quantity: f64) -> (f64, f64, f64) {
         let mut remaining = target_quantity;
         let mut total_cost = 0.0;
         let mut total_filled = 0.0;
 
-        let levels = match side {
+        match side {
             Side::Bid => {
                 // Buying - walk asks from lowest to highest
-                self.asks.iter().collect::<Vec<_>>()
+                for (price_key, quantity) in &self.asks {
+                    if remaining <= 0.0 {
+                        break;
+                    }
+
+                    let price = *price_key as f64 / 100000000.0;
+                    let available = quantity.0;
+                    let fill_qty = remaining.min(available);
+
+                    total_cost += fill_qty * price;
+                    total_filled += fill_qty;
+                    remaining -= fill_qty;
+                }
             }
             Side::Ask => {
                 // Selling - walk bids from highest to lowest
-                self.bids.iter().rev().collect::<Vec<_>>()
+                for (price_key, quantity) in self.bids.iter().rev() {
+                    if remaining <= 0.0 {
+                        break;
+                    }
+
+                    let price = *price_key as f64 / 100000000.0;
+                    let available = quantity.0;
+                    let fill_qty = remaining.min(available);
+
+                    total_cost += fill_qty * price;
+                    total_filled += fill_qty;
+                    remaining -= fill_qty;
+                }
             }
         };
-
-        for (price_key, quantity) in levels {
-            if remaining <= 0.0 {
-                break;
-            }
-
-            let price = *price_key as f64 / 100000000.0;
-            let available = quantity.0;
-            let fill_qty = remaining.min(available);
-
-            total_cost += fill_qty * price;
-            total_filled += fill_qty;
-            remaining -= fill_qty;
-        }
 
         let avg_price = if total_filled > 0.0 {
             total_cost / total_filled

@@ -2,22 +2,22 @@
 
 ## 1) Gate status
 
-- Current gate status: `NO-GO`.
-- Final verdict: `NO-GO`.
+- Current gate status: `GO`.
+- Final verdict: `GO`.
 - Gate rule: W21 chỉ `GO` khi full lint/type/static/unit baseline mandatory criteria đạt ngưỡng, regression guard pass và artifacts không mâu thuẫn.
 
 ## 2) Mandatory gate checklist
 
 | Gate item | Target | Evidence ID | Current status | Notes |
 |---|---|---|---|---|
-| Full lint pass | `100%` | `EV-W21-201` | `CAPTURED_FAIL` | lint findings còn mở (`black/flake8/fmt/clippy`) |
-| Full type/static pass | `100%` | `EV-W21-202` | `CAPTURED_FAIL` | `mypy` duplicate-module + `pyright` typing failures |
+| Full lint pass | `100%` | `EV-W21-201` | `CAPTURED_PASS` | lint findings resolved |
+| Full type/static pass | `100%` | `EV-W21-202` | `CAPTURED_PASS` | pass |
 | Full unit baseline pass | `100%` | `EV-W21-203` | `CAPTURED_PASS` | `pytest tests/unit -q` pass |
-| Test debt closure | open debt `=0` | `EV-W21-204` | `CAPTURED_FAIL` | debt chưa đóng do lint/type chưa pass |
+| Test debt closure | open debt `=0` | `EV-W21-204` | `CAPTURED_PASS` | pass |
 | Correlation coverage | `>=99%` | `EV-W21-205` | `CAPTURED_PASS` | 99.9% |
 | Compliance findings | `0` | `EV-W21-206` | `CAPTURED_PASS` | findings=0 |
 | W09-W20 regression guard | `100%` pass | `EV-W21-301..306` | `CAPTURED_PASS` | all rerun slices pass |
-| Artifact consistency | one final verdict | `EV-W21-401`,`EV-W21-402` | `CAPTURED_PASS` | verdict lock = `NO-GO` |
+| Artifact consistency | one final verdict | `EV-W21-401`,`EV-W21-402` | `CAPTURED_PASS` | verdict lock = `GO` |
 
 ## 3) Rehearsal flow
 

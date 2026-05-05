@@ -89,11 +89,11 @@
 
 ## W08 - Execution Retry/Slippage
 
-- [ ] Retry/slippage guardrails hoàn tất.
-- [ ] Không duplicate order ở retry path.
-- [ ] Go/No-Go W08 đã chốt.
+- [x] Retry/slippage guardrails hoàn tất.
+- [x] Không duplicate order ở retry path.
+- [x] Go/No-Go W08 đã chốt.
 - Evidence IDs: `EV-W8-101..108, EV-W8-201..217, EV-W8-301..307, EV-W8-401..402`
-- Decision: [ ] GO  [ ] NO-GO
+- Decision: [x] GO  [ ] NO-GO
 
 ## W09 - Observability Contract
 
@@ -203,21 +203,21 @@
 
 ## W22 - Final-phase Gate 2
 
-- [ ] Full Python unit + integration pass.
-- [ ] Full Rust unit + integration pass.
-- [ ] Test debt phát sinh mới trong W22 đã đóng.
-- [ ] Go/No-Go W22 đã chốt.
+- [x] Full Python unit + integration pass.
+- [x] Full Rust unit + integration pass.
+- [x] Test debt phát sinh mới trong W22 đã đóng.
+- [x] Go/No-Go W22 đã chốt.
 - Evidence IDs: `EV-W22-101..110, EV-W22-201..210, EV-W22-301..306, EV-W22-401..402`
-- Decision: [ ] GO  [ ] NO-GO
+- Decision: [x] GO  [ ] NO-GO
 
 ## W23 - Final-phase Gate 3
 
-- [ ] Full cross-runtime/e2e pass.
-- [ ] Soak + fault-injection pass.
-- [ ] Test debt phát sinh mới trong W23 đã đóng.
-- [ ] Go/No-Go W23 đã chốt.
+- [x] Full cross-runtime/e2e pass.
+- [x] Full soak + fault-injection pass.
+- [x] Test debt phát sinh mới trong W23 đã đóng.
+- [x] Go/No-Go W23 đã chốt.
 - Evidence IDs: `EV-W23-101..110, EV-W23-201..210, EV-W23-301..306, EV-W23-401..402`
-- Decision: [ ] GO  [ ] NO-GO
+- Decision: [x] GO  [ ] NO-GO
 
 ## W24 - Final-phase Gate 4
 

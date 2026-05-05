@@ -1,17 +1,18 @@
-use common::{messaging::Message, Result, TradingError};
+use common::messaging::Message;
+use common::Result;
 
 pub struct MarketDataPublisher {
-    address: String,
+    _address: String,
 }
 
 impl MarketDataPublisher {
     pub fn new(address: &str) -> Result<Self> {
         Ok(Self {
-            address: address.to_string(),
+            _address: address.to_string(),
         })
     }
 
-    pub fn publish(&self, message: Message) -> Result<()> {
+    pub fn publish(&self, _message: Message) -> Result<()> {
         // TODO: Implement ZMQ publishing
         Ok(())
     }

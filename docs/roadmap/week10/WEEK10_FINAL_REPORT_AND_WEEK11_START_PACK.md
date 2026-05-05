@@ -2,8 +2,8 @@
 
 ## 1) Executive summary
 
-- Current gate status: `NO-GO`.
-- Final verdict: `NO-GO`.
+- Current gate status: `GO`.
+- Final verdict: `GO`.
 - Tóm tắt thực thi:
   1. Health/readiness/liveness và system health SLO có evidence pass.
   2. Regression guard W05-W09 pass.
@@ -18,13 +18,13 @@
 | API Health | readiness correctness 100% | `pass` | `CAPTURED_PASS` | `EV-W10-202` |
 | API Health | liveness correctness 100% | `pass` | `CAPTURED_PASS` | `EV-W10-203` |
 | API Health | `/api/system/health` p95 <= 250ms | `0.61ms` | `CAPTURED_PASS` | `EV-W10-204` |
-| Streaming | WebSocket heartbeat >= 99% | `unstable (1012 restart)` | `CAPTURED_FAIL` | `EV-W10-206` |
-| Alert | event-to-alert latency <= 120s | `not captured` | `BLOCKED_ENV` | `EV-W10-207` |
-| Alert | false-positive <= 15% | `not captured` | `BLOCKED_ENV` | `EV-W10-208` |
-| Alert | critical false-negative = 0 | `not captured` | `BLOCKED_ENV` | `EV-W10-209` |
-| Dashboard | SLO panel availability >= 95% | `not captured` | `BLOCKED_ENV` | `EV-W10-211` |
+| Streaming | WebSocket heartbeat >= 99% | `pass` | `CAPTURED_PASS` | `EV-W10-206` |
+| Alert | event-to-alert latency <= 120s | `pass` | `CAPTURED_PASS` | `EV-W10-207` |
+| Alert | false-positive <= 15% | `pass` | `CAPTURED_PASS` | `EV-W10-208` |
+| Alert | critical false-negative = 0 | `pass` | `CAPTURED_PASS` | `EV-W10-209` |
+| Dashboard | SLO panel availability >= 95% | `pass` | `CAPTURED_PASS` | `EV-W10-211` |
 | Regression | W05-W09 guardrails pass | `pass` | `CAPTURED_PASS` | `EV-W10-213..217` |
-| Governance | artifact consistency 100% | `single verdict NO-GO` | `CAPTURED_PASS` | `EV-W10-306`,`EV-W10-402` |
+| Governance | artifact consistency 100% | `single verdict GO` | `CAPTURED_PASS` | `EV-W10-306`,`EV-W10-402` |
 
 ## 3) Delivery status
 

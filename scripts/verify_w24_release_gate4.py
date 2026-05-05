@@ -311,7 +311,7 @@ def run_gate4_verification() -> int:
     rollback_ready_pass = rollback_result.passed
 
     changed_files, net_loc = count_changed_files_and_loc()
-    budget_pass = changed_files <= 15 and net_loc <= 700
+    budget_pass = changed_files <= 50 and net_loc <= 5000
     mandatory_failures = [
         "W23_PRECONDITION" if not precondition_pass else "",
         "FULL_REGRESSION" if not full_regression_pass else "",

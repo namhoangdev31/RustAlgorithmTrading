@@ -13,13 +13,17 @@ pub use publisher::MarketDataPublisher;
 pub use websocket::WebSocketClient;
 
 use common::{Result, TradingError};
-use tracing::{error, info};
+use tracing::info;
 
 /// Main market data service
 pub struct MarketDataService {
+    #[allow(dead_code)]
     ws_client: WebSocketClient,
+    #[allow(dead_code)]
     orderbook_manager: OrderBookManager,
+    #[allow(dead_code)]
     bar_aggregator: BarAggregator,
+    #[allow(dead_code)]
     publisher: MarketDataPublisher,
 }
 

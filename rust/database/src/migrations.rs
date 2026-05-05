@@ -48,7 +48,7 @@ impl MigrationManager {
 
     /// Apply a migration
     pub async fn apply(&self, migration: &Migration) -> Result<()> {
-        let conn = self.db.get_connection()?;
+        let mut conn = self.db.get_connection()?;
 
         // Check if already applied
         if self.is_applied(&migration.version).await? {
@@ -85,7 +85,7 @@ impl MigrationManager {
             .as_ref()
             .ok_or_else(|| DatabaseError::migration("No rollback SQL provided"))?;
 
-        let conn = self.db.get_connection()?;
+        let mut conn = self.db.get_connection()?;
 
         tracing::info!("Rolling back migration {}", migration.version);
 
@@ -123,9 +123,10 @@ impl MigrationManager {
         let rows = stmt.query_map([], |row| {
             let timestamp_str: String = row.get(2)?;
             let timestamp = timestamp_str.parse().map_err(|e| {
-                duckdb::Error::InvalidParameterType(
+                duckdb::Error::FromSqlConversionFailure(
                     2,
-                    format!("Invalid timestamp format in migration record: {}", e),
+                    duckdb::types::Type::Text,
+                    Box::new(e),
                 )
             })?;
             Ok((row.get(0)?, row.get(1)?, timestamp))

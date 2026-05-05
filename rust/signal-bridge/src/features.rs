@@ -134,9 +134,7 @@ impl FeatureEngine {
             features.push(imbalance);
         } else {
             // Fill with zeros if no order book data
-            for _ in 0..8 {
-                features.push(0.0);
-            }
+            features.extend(std::iter::repeat_n(0.0, 8));
         }
 
         // 5. SIMD-accelerated batch features (if enough bars)

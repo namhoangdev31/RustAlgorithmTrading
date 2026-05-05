@@ -51,7 +51,7 @@ impl RiskManagerService {
         correlation_id: &str,
     ) -> common::types::RiskReport {
         // Level 1: Circuit Breaker (Must be first gate in W07)
-        if let Err(_) = self.circuit_breaker.check() {
+        if self.circuit_breaker.check().is_err() {
             let reject_report = common::types::RiskReport {
                 decision: common::types::RiskDecision::Reject,
                 reason_code: Some(common::types::RiskReason::CircuitBreakerTripped),

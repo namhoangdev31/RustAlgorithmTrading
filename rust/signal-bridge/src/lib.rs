@@ -13,6 +13,7 @@ use common::Result;
 
 /// Main signal bridge service
 pub struct SignalBridgeService {
+    #[allow(dead_code)]
     feature_engine: FeatureEngine,
 }
 

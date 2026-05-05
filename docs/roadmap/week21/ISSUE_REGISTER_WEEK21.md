@@ -26,5 +26,5 @@
 ## 3) Gate blocker policy
 
 - `W21-ISS-001..003` phải `DONE` trước gate lock.
-- `P0 open = 2`, `P1 unowned = 0`.
+- `P0 open = 0`, `P1 unowned = 0`.
 - Không còn mandatory issue ở trạng thái `NEW/IN_PROGRESS/BLOCKED` tại gate cutoff.

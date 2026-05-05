@@ -48,7 +48,7 @@ impl Bar {
 
 #[pyclass]
 pub struct FeatureComputer {
-    engine: FeatureEngine,
+    _engine: FeatureEngine,
     rsi: RSI,
     macd: MACD,
     ema_fast: EMA,
@@ -56,18 +56,24 @@ pub struct FeatureComputer {
     sma: SMA,
 }
 
-#[pymethods]
-impl FeatureComputer {
-    #[new]
-    pub fn new() -> Self {
+impl Default for FeatureComputer {
+    fn default() -> Self {
         Self {
-            engine: FeatureEngine::new(),
+            _engine: FeatureEngine::new(),
             rsi: RSI::new(14),
             macd: MACD::new(12, 26, 9),
             ema_fast: EMA::new(12),
             ema_slow: EMA::new(26),
             sma: SMA::new(20),
         }
+    }
+}
+
+#[pymethods]
+impl FeatureComputer {
+    #[new]
+    pub fn new() -> Self {
+        Self::default()
     }
 
     /// Compute features from a single bar (streaming mode)
@@ -115,8 +121,11 @@ impl FeatureComputer {
         Ok(features)
     }
 
-    /// Compute features from a list of bars (batch mode)
-    pub fn compute_batch(&self, py: Python, bars: &PyList) -> PyResult<Vec<Vec<f64>>> {
+    pub fn compute_batch(
+        &self,
+        _pyyy: Python,
+        bars: &Bound<'_, PyList>,
+    ) -> PyResult<Vec<Vec<f64>>> {
         let bar_count = bars.len();
         let mut all_features = Vec::with_capacity(bar_count);
 
@@ -202,7 +211,7 @@ impl FeatureComputer {
 
 /// Python module initialization
 #[pymodule]
-fn signal_bridge(_py: Python, m: &PyModule) -> PyResult<()> {
+fn signal_bridge(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<FeatureComputer>()?;
     m.add_class::<Bar>()?;
     Ok(())

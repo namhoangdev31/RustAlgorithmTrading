@@ -9,7 +9,6 @@ use url::Url;
 
 const ALPACA_WSS_URL: &str = "wss://stream.data.alpaca.markets/v2/iex";
 const RECONNECT_DELAY_MS: u64 = 5000;
-const HEARTBEAT_INTERVAL_MS: u64 = 30000;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "T")]
@@ -171,7 +170,7 @@ impl WebSocketClient {
                 Message::Binary(data) => {
                     debug!("Received binary message: {} bytes", data.len());
                 }
-                Message::Ping(data) => {
+                Message::Ping(_data) => {
                     debug!("Received ping, sending pong");
                     // Pong is sent automatically by tokio-tungstenite
                 }
