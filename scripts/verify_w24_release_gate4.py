@@ -1,3 +1,4 @@
+import os
 import subprocess
 import sys
 import time
@@ -7,6 +8,12 @@ from typing import Iterable
 
 project_root = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(project_root))
+
+os.environ["PYTHONPATH"] = os.pathsep.join([
+    str(project_root / "src"),
+    str(project_root / "rust" / "target" / "debug"),
+    os.environ.get("PYTHONPATH", ""),
+]).rstrip(os.pathsep)
 
 from utils.final_release_manager import (  # noqa: E402
     ApprovalState,
@@ -40,10 +47,6 @@ class CommandResult:
 
 def run_command(evidence_id: str, command: str, timeout_sec: int = 900) -> CommandResult:
     started = time.monotonic()
-    
-    if "python " in command:
-        command = command.replace("python ", f"{sys.executable} ")
-        
     try:
         completed = subprocess.run(
             command,
@@ -209,11 +212,13 @@ def run_gate4_verification() -> int:
     for failure in precondition_failures:
         print(f"  - {failure}")
 
+    py = sys.executable  # Use the actual running interpreter (not broken .venv symlink)
+    
     command_results = [
-        run_command("EV-W24-101", "export PYTHONPATH=$PYTHONPATH:$(pwd)/rust/target/debug:$(pwd)/src && python -m pytest tests/unit -q", timeout_sec=900),
-        run_command("EV-W24-102", "export PYTHONPATH=$PYTHONPATH:$(pwd)/rust/target/debug:$(pwd)/src && python -m pytest tests/integration -q", timeout_sec=900),
-        run_command("EV-W24-103", "export PYTHONPATH=$PYTHONPATH:$(pwd)/rust/target/debug:$(pwd)/src && python -m pytest tests/e2e -q", timeout_sec=900),
-        run_command("EV-W24-104", "export PYTHONPATH=$PYTHONPATH:$(pwd)/rust/target/debug:$(pwd)/src && python -m pytest tests/observability -q", timeout_sec=900),
+        run_command("EV-W24-101", f"{py} -m pytest tests/unit -q", timeout_sec=900),
+        run_command("EV-W24-102", f"{py} -m pytest tests/integration -q", timeout_sec=900),
+        run_command("EV-W24-103", f"{py} -m pytest tests/e2e -q", timeout_sec=900),
+        run_command("EV-W24-104", f"{py} -m pytest tests/observability -q", timeout_sec=900),
         run_command(
             "EV-W24-105",
             "cd rust && PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1 cargo test --workspace",
@@ -232,7 +237,7 @@ def run_gate4_verification() -> int:
         ),
         run_command(
             "EV-W24-109",
-            "python scripts/audit_correlation.py --fail-on-findings",
+            f"{py} scripts/audit_correlation.py --fail-on-findings",
             timeout_sec=300,
         ),
     ]
@@ -243,22 +248,22 @@ def run_gate4_verification() -> int:
     rollback_result = run_command(
         "EV-W24-203",
         (
-            "python scripts/verify_w17_staging_hardening.py && "
-            "python scripts/verify_w18_canary_design.py && "
-            "python scripts/verify_w19_safety_guardrails.py && "
-            "python scripts/verify_w20_canary_launch.py"
+            f"{py} scripts/verify_w17_staging_hardening.py && "
+            f"{py} scripts/verify_w18_canary_design.py && "
+            f"{py} scripts/verify_w19_safety_guardrails.py && "
+            f"{py} scripts/verify_w20_canary_launch.py"
         ),
         timeout_sec=900,
     )
     guard_results = [
         run_command(
             "EV-W24-301",
-            "python scripts/verify_w10_api_health_slo.py && python -m pytest tests/observability/test_api.py -q",
+            f"{py} scripts/verify_w10_api_health_slo.py && {py} -m pytest tests/observability/test_api.py -q",
             timeout_sec=300,
         ),
         run_command(
             "EV-W24-302",
-            "python scripts/verify_w15_capital_allocation.py && python scripts/verify_w16_reproducibility.py",
+            f"{py} scripts/verify_w15_capital_allocation.py && {py} scripts/verify_w16_reproducibility.py",
             timeout_sec=300,
         ),
         CommandResult(
@@ -270,15 +275,15 @@ def run_gate4_verification() -> int:
         ),
         run_command(
             "EV-W24-304",
-            "python scripts/verify_w21_release_gate1.py",
+            f"{py} scripts/verify_w21_release_gate1.py",
             timeout_sec=1200,
         ),
         run_command(
             "EV-W24-305",
-            "python scripts/verify_w22_release_gate2.py",
+            f"{py} scripts/verify_w22_release_gate2.py",
             timeout_sec=900,
         ),
-        run_command("EV-W24-306", "python scripts/verify_w23_release_gate3.py", timeout_sec=300),
+        run_command("EV-W24-306", f"{py} scripts/verify_w23_release_gate3.py", timeout_sec=300),
     ]
     guards = result_map(guard_results)
 

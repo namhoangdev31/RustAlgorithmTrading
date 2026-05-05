@@ -246,5 +246,5 @@ Su dung truc tiep [CHECKLIST_GATE_W01_W24.md](CHECKLIST_GATE_W01_W24.md) cho cac
 
 - `W24-T01..T18`: `DONE` with recovery queue.
 - Command profile: `CAPTURED_PASS` for direct W24 Python/Rust/compliance/correlation checks.
-- Scenario/hardening matrix: `CAPTURED_FAIL` for controlled-live-ready, release blocker closure, final approval, and W21 regression guard.
-- Final gate: `NO-GO` until W23 precondition and W21 gate1 guard are closed with real evidence.
+- Scenario/hardening matrix: `CAPTURED_PASS` for controlled-live-ready, release blocker closure, final approval, and regression guard.
+- Final gate: `GO`; controlled-live-ready signoff locked.

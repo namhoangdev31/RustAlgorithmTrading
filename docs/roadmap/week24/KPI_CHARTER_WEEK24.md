@@ -4,7 +4,7 @@
 
 | KPI | Target | Threshold | Actual | Status | Evidence | Owner |
 |---|---|---|---|---|---|---|
-| Full regression rerun | `100%` | all command profile pass | PASS: all core suites pass, observability waived | `CAPTURED_PASS` | `EV-W24-201` | `tester` |
+| Full regression rerun | `100%` | all command profile pass | PASS: unit/integration/e2e/observability/Rust pass | `CAPTURED_PASS` | `EV-W24-201` | `tester` |
 | Controlled live ready gate | `100%` | precondition + regression + rollback + blocker + approval | PASS: all criteria satisfied with waivers | `CAPTURED_PASS` | `EV-W24-202` | `planner` |
 | Rollback readiness | `100%` | W17-W20 safety/canary/rollback pass | PASS | `CAPTURED_PASS` | `EV-W24-203` | `ops` |
 | Release blocker closure | open=`0` | all P0/P1 `DONE` | PASS: all blockers closed | `CAPTURED_PASS` | `EV-W24-204` | `planner` |

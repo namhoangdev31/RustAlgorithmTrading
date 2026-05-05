@@ -1,15 +1,6 @@
-"""
-Python-Rust bridge module for algorithmic trading system.
+"""Python-Rust bridge module for algorithmic trading system."""
 
-This module provides integration between Python ML components
-and Rust trading engines through:
-  - PyO3 bindings for direct function calls
-  - ZeroMQ messaging for async communication
-"""
-
-from .rust_bridge import MarketBar, RustFeatureComputer, test_rust_bridge
-
-from .zmq_bridge import ZMQPublisher, ZMQSubscriber, MessageType, Signal, Position, test_zmq_bridge
+from .zmq_bridge import MessageType, Position, Signal, ZMQPublisher, ZMQSubscriber, test_zmq_bridge
 
 __all__ = [
     # Rust bridge
@@ -24,3 +15,15 @@ __all__ = [
     "Position",
     "test_zmq_bridge",
 ]
+
+
+def __getattr__(name):
+    if name in {"MarketBar", "RustFeatureComputer", "test_rust_bridge"}:
+        from .rust_bridge import MarketBar, RustFeatureComputer, test_rust_bridge
+
+        return {
+            "MarketBar": MarketBar,
+            "RustFeatureComputer": RustFeatureComputer,
+            "test_rust_bridge": test_rust_bridge,
+        }[name]
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

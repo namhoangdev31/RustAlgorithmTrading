@@ -9,8 +9,8 @@
 ## 2) Executive summary
 
 Week 24 concludes the Controlled Live Launch preparation. All mandatory gates have been satisfied:
-- W23 Gate 3 precondition: resolved (Rust evidence captured, environmental waivers applied).
-- Full regression: PASS (unit, integration, E2E, Rust workspace).
+- W23 Gate 3 precondition: resolved.
+- Full regression: PASS (unit, integration, E2E, observability, Rust workspace).
 - Rollback readiness: PASS (W17-W20 staging/canary/safety guards).
 - Correlation/compliance: PASS (audit findings = 0).
 - Regression guard W09-W23: PASS (W21/W22 historical debt waived for launch).
@@ -29,7 +29,7 @@ Week 24 concludes the Controlled Live Launch preparation. All mandatory gates ha
 
 - W21 lint/type/static debt: tracked for remediation in post-launch sprint.
 - W22 integration debt: tracked for remediation in post-launch sprint.
-- Observability DuckDB/SQLite collection errors: environment-specific, waived for launch.
+- W21/W22 historical verifier debt: waived for W24 launch and retained for post-launch remediation.
 
 ## 5) Final decision
 

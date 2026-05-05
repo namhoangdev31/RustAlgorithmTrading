@@ -3,7 +3,6 @@ Tests for SQLite Operational Storage
 """
 
 import pytest
-import asyncio
 from datetime import datetime, timedelta, UTC
 from pathlib import Path
 import tempfile

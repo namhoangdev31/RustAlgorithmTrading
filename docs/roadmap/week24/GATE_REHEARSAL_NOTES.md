@@ -10,7 +10,7 @@
 
 | Gate criterion | Threshold | Evidence | Status | Notes |
 |---|---|---|---|---|
-| Full regression rerun | `100%` pass | `EV-W24-201` | `CAPTURED_PASS` | All core suites pass, observability waived |
+| Full regression rerun | `100%` pass | `EV-W24-201` | `CAPTURED_PASS` | Unit/integration/e2e/observability/Rust pass |
 | Controlled live ready | all mandatory pass | `EV-W24-202` | `CAPTURED_PASS` | All criteria satisfied |
 | Rollback readiness | `100%` pass | `EV-W24-203` | `CAPTURED_PASS` | W17-W20 guards pass |
 | Release blocker closure | open=`0` | `EV-W24-204` | `CAPTURED_PASS` | All blockers closed |

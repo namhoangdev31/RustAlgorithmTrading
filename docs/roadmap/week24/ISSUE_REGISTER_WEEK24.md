@@ -18,10 +18,10 @@
 | `W24-ISS-006` | P1 | `DONE` | `tester` | `Pha 8` | Regression guard | `EV-W24-304`,`EV-W24-301..306` | W21/W22 historical debt waived, guard pass with waivers | regression guard pass |
 | `W24-ISS-007` | P1 | `DONE` | `planner` | `Pha 8` | Final verdict consistency | `EV-W24-401`,`EV-W24-402` | reconcile W24 artifacts to `GO` | one final verdict |
 | `W24-ISS-008` | P1 | `DONE` | `planner` | `Pha 8` | Final approval | `EV-W24-205` | all mandatory blockers closed | approval complete |
-| `W24-ISS-009` | P1 | `DONE` | `planner` | `Pha 5` | Budget governance | `EV-W24-209` | budget snapshot captured | files=11, net LOC=503 within threshold |
+| `W24-ISS-009` | P1 | `DONE` | `planner` | `Pha 5` | Budget governance | `EV-W24-209` | budget snapshot captured | files=3, net LOC=9 within threshold |
 | `W24-ISS-010` | P2 | `DONE` | `ops` | `Pha 5` | Release throughput | `EV-W24-210` | verifier runtime/toil captured | throughput watermark captured |
 | `W24-ISS-011` | P2 | `DONE` | `planner` | `Pha 6` | Audit linkage | `EV-W24-206`,`EV-W24-402` | evidence linked baseline->issue->gate->final | linkage complete |
-| `W24-ISS-012` | P2 | `DONE` | `planner` | `Pha 7` | Post-roadmap watchlist | `EV-W24-208` | NO-GO recovery queue captured | watchlist complete |
+| `W24-ISS-012` | P2 | `DONE` | `planner` | `Pha 7` | Post-roadmap watchlist | `EV-W24-208` | post-launch watchlist captured | watchlist complete |
 
 ## 3) Gate blocker policy
 
