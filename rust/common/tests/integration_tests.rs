@@ -3,7 +3,6 @@ use chrono::Utc;
 use common::messaging::*;
 use common::types::*;
 
-#[cfg(test)]
 mod type_tests {
     use super::*;
 
@@ -89,7 +88,6 @@ mod type_tests {
     }
 }
 
-#[cfg(test)]
 mod level_tests {
     use super::*;
 
@@ -132,7 +130,6 @@ mod level_tests {
     }
 }
 
-#[cfg(test)]
 mod trade_tests {
     use super::*;
 
@@ -174,7 +171,6 @@ mod trade_tests {
     }
 }
 
-#[cfg(test)]
 mod bar_tests {
     use super::*;
 
@@ -232,7 +228,6 @@ mod bar_tests {
     }
 }
 
-#[cfg(test)]
 mod orderbook_tests {
     use super::*;
 
@@ -299,7 +294,6 @@ mod orderbook_tests {
     }
 }
 
-#[cfg(test)]
 mod order_tests {
     use super::*;
 
@@ -377,7 +371,6 @@ mod order_tests {
     }
 }
 
-#[cfg(test)]
 mod position_tests {
     use super::*;
 
@@ -424,7 +417,6 @@ mod position_tests {
     }
 }
 
-#[cfg(test)]
 mod signal_tests {
     use super::*;
 

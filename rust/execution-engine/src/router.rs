@@ -194,7 +194,7 @@ impl OrderRouter {
 
         let result = retry_policy
             .execute_with_hooks(
-                &cid.clone(),
+                &cid,
                 || async {
                     rate_limiter.until_ready().await;
                     let alpaca_order = self.build_alpaca_request(&order)?;

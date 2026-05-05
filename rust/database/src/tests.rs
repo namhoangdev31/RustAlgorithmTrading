@@ -1,6 +1,5 @@
 //! Integration tests for the database module
 
-#[cfg(test)]
 mod integration_tests {
     use crate::*;
     use chrono::{Duration, Utc};

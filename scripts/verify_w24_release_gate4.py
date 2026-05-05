@@ -15,7 +15,7 @@ os.environ["PYTHONPATH"] = os.pathsep.join([
     os.environ.get("PYTHONPATH", ""),
 ]).rstrip(os.pathsep)
 
-from utils.final_release_manager import (  # noqa: E402
+from src.utils.final_release_manager import (  # noqa: E402
     ApprovalState,
     FinalReleaseManager,
     ReleaseBlockerStatus,

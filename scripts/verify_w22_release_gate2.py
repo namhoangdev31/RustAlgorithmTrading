@@ -35,7 +35,13 @@ def run_command(evidence_id: str, command: str) -> CommandResult:
         cwd=ROOT,
         capture_output=True,
         text=True,
-        env={**os.environ, "PYTHONPATH": str(ROOT)},
+        env={
+            **os.environ,
+            "PYTHONPATH": os.pathsep.join([
+                str(ROOT / "src"),
+                os.environ.get("PYTHONPATH", ""),
+            ]).rstrip(os.pathsep)
+        },
     )
     merged_output = "\n".join(
         line.strip()

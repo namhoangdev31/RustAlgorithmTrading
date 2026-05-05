@@ -1,3 +1,4 @@
+import os
 import subprocess
 import sys
 from dataclasses import dataclass
@@ -28,6 +29,13 @@ def run_command(evidence_id: str, command: str) -> CommandResult:
         cwd=Path(__file__).resolve().parents[1],
         capture_output=True,
         text=True,
+        env={
+            **os.environ,
+            "PYTHONPATH": os.pathsep.join([
+                str(Path(__file__).resolve().parents[1] / "src"),
+                os.environ.get("PYTHONPATH", ""),
+            ]).rstrip(os.pathsep)
+        },
     )
     merged_output = "\n".join(
         line.strip()
