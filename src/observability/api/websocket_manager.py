@@ -246,31 +246,38 @@ class WebSocketManager:
         """
         Background task for heartbeat/ping-pong.
 
-        Sends ping every 30 seconds and disconnects stale connections.
+        Sends ping every 10 seconds and disconnects stale connections after 30 seconds.
         """
         try:
             while True:
-                await asyncio.sleep(25)  # Offset sleep to avoid sync with other tasks
-                await asyncio.sleep(5)
+                await asyncio.sleep(10)
 
                 # Send ping to all connections
                 stale_clients = []
 
-                for client_id, connection in list(self.connections.items()):
-                    # Check if connection is alive
-                    if not connection.is_alive(timeout=30.0):
-                        stale_clients.append(client_id)
-                        continue
+                async with self._lock:
+                    for client_id, connection in list(self.connections.items()):
+                        # Check if connection is alive (last ping within 30s)
+                        if not connection.is_alive(timeout=30.0):
+                            stale_clients.append(client_id)
+                            continue
 
-                    # Send ping
-                    success = await connection.send_text("ping")
-                    if success:
-                        self.total_pings_sent += 1
-                        connection.update_ping()
+                        # Send ping
+                        try:
+                            # Using send_text("ping") for simplicity,
+                            # or could use native WS ping if available
+                            success = await connection.send_text("ping")
+                            if success:
+                                self.total_pings_sent += 1
+                                # We don't update_ping here, we wait for the client's pong
+                        except Exception as e:
+                            logger.error(f"[cid:INIT] Error sending heartbeat to {client_id}: {e}")
 
                 # Disconnect stale clients
                 for client_id in stale_clients:
-                    logger.warning(f"[cid:INIT] Disconnecting stale client: {client_id}")
+                    logger.warning(
+                        f"[cid:INIT] Disconnecting stale client (heartbeat timeout): {client_id}"
+                    )
                     await self.disconnect(client_id)
         except asyncio.CancelledError:
             logger.info("[cid:INIT] Heartbeat loop cancelled")

@@ -127,8 +127,6 @@ class SimplifiedMomentumStrategy(Strategy):
             # Stop-loss paths are safety paths and must run even on short warmup slices.
             start_idx = 0
             position = self.active_positions[symbol]
-            call_highest_price = position.get("highest_price", position["entry_price"])
-            call_lowest_price = position.get("lowest_price", position["entry_price"])
         elif latest_only and len(data) > min_bars:
             # Only process the latest bar
             start_idx = len(data) - 1

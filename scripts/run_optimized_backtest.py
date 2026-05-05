@@ -37,7 +37,7 @@ def run_optimized_backtest():
     logger.info("=" * 80)
 
     # Configuration
-    symbols = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA']
+    symbols = ["AAPL", "MSFT", "GOOGL", "AMZN", "TSLA"]
     initial_capital = 100000.0
     end_date = datetime.now()
     start_date = end_date - timedelta(days=180)  # 6 months
@@ -65,10 +65,7 @@ def run_optimized_backtest():
     for symbol in symbols:
         try:
             data = data_handler.fetch_data(
-                symbol=symbol,
-                start_date=start_date,
-                end_date=end_date,
-                timeframe='1Day'
+                symbol=symbol, start_date=start_date, end_date=end_date, timeframe="1Day"
             )
             if data is not None and not data.empty:
                 all_data[symbol] = data
@@ -87,11 +84,7 @@ def run_optimized_backtest():
 
     # Run backtest
     logger.info("Running backtest...")
-    engine = BacktestEngine(
-        strategy=strategy,
-        portfolio=portfolio,
-        initial_capital=initial_capital
-    )
+    engine = BacktestEngine(strategy=strategy, portfolio=portfolio, initial_capital=initial_capital)
 
     results = engine.run(all_data)
 
@@ -113,17 +106,17 @@ def run_optimized_backtest():
         logger.info(f"Final Portfolio Value: ${results.get('final_value', 0):,.2f}")
 
         # Save results
-        output_dir = project_root / 'data' / 'backtest_results'
+        output_dir = project_root / "data" / "backtest_results"
         output_dir.mkdir(parents=True, exist_ok=True)
 
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        output_file = output_dir / f'optimized_strategy_{timestamp}.json'
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        output_file = output_dir / f"optimized_strategy_{timestamp}.json"
 
-        with open(output_file, 'w') as f:
+        with open(output_file, "w") as f:
             # Convert numpy types to native Python types for JSON serialization
             json_results = {}
             for key, value in results.items():
-                if hasattr(value, 'item'):  # numpy type
+                if hasattr(value, "item"):  # numpy type
                     json_results[key] = value.item()
                 elif isinstance(value, (list, dict)):
                     json_results[key] = value
@@ -140,9 +133,9 @@ def run_optimized_backtest():
         logger.info("TARGET METRICS COMPARISON")
         logger.info("=" * 80)
 
-        win_rate = results.get('win_rate', 0)
-        total_trades = results.get('total_trades', 0)
-        total_return = results.get('total_return', 0)
+        win_rate = results.get("win_rate", 0)
+        total_trades = results.get("total_trades", 0)
+        total_return = results.get("total_return", 0)
 
         logger.info(f"Win Rate: {win_rate:.1%} (Target: >35%)")
         if win_rate > 0.35:
@@ -176,7 +169,7 @@ if __name__ == "__main__":
     logger.add(
         sys.stdout,
         format="<green>{time:HH:mm:ss}</green> | <level>{level: <8}</level> | <level>{message}</level>",
-        level="INFO"
+        level="INFO",
     )
 
     results = run_optimized_backtest()

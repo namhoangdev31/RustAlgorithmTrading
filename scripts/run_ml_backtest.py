@@ -30,7 +30,7 @@ def run_ml_backtest(
     long_threshold: float = 0.58,
     short_threshold: float = 0.65,
     stop_loss: float = 0.02,
-    take_profit: float = 0.04
+    take_profit: float = 0.04,
 ):
     """
     Run ML Ensemble Strategy backtest.
@@ -49,7 +49,7 @@ def run_ml_backtest(
 
     if symbols is None:
         # Trade all 3 stocks for diversification
-        symbols = ['AAPL', 'MSFT', 'GOOGL']
+        symbols = ["AAPL", "MSFT", "GOOGL"]
 
     # Load historical data
     data_dir = project_root / "data" / "historical"
@@ -60,10 +60,10 @@ def run_ml_backtest(
         sample_df = pd.read_parquet(sample_file)
         # Ensure we have datetime index
         if not isinstance(sample_df.index, pd.DatetimeIndex):
-            if 'timestamp' in sample_df.columns:
-                sample_df = sample_df.set_index('timestamp')
-            elif 'date' in sample_df.columns:
-                sample_df = sample_df.set_index('date')
+            if "timestamp" in sample_df.columns:
+                sample_df = sample_df.set_index("timestamp")
+            elif "date" in sample_df.columns:
+                sample_df = sample_df.set_index("date")
         start_date = pd.to_datetime(sample_df.index.min())
         end_date = pd.to_datetime(sample_df.index.max())
     else:
@@ -78,22 +78,14 @@ def run_ml_backtest(
 
     # Initialize components
     data_handler = HistoricalDataHandler(
-        symbols=symbols,
-        start_date=start_date,
-        end_date=end_date,
-        data_dir=str(data_dir)
+        symbols=symbols, start_date=start_date, end_date=end_date, data_dir=str(data_dir)
     )
 
     execution_handler = SimulatedExecutionHandler(
-        commission_rate=0.001,
-        slippage_bps=5.0,
-        market_impact_bps=2.0
+        commission_rate=0.001, slippage_bps=5.0, market_impact_bps=2.0
     )
 
-    portfolio_handler = PortfolioHandler(
-        initial_capital=initial_capital,
-        data_handler=data_handler
-    )
+    portfolio_handler = PortfolioHandler(initial_capital=initial_capital, data_handler=data_handler)
 
     # Initialize Trend-Momentum Strategy - Best parameters for all 3 stocks
     strategy = TrendMomentumStrategy(
@@ -117,7 +109,7 @@ def run_ml_backtest(
         portfolio_handler=portfolio_handler,
         strategy=strategy,
         start_date=start_date,
-        end_date=end_date
+        end_date=end_date,
     )
 
     # Run backtest
@@ -132,7 +124,7 @@ def run_ml_backtest(
 
 def display_results(results: dict, initial_capital: float):
     """Display backtest results."""
-    metrics = results.get('metrics', {})
+    metrics = results.get("metrics", {})
 
     logger.info("\n" + "=" * 80)
     logger.info("BACKTEST RESULTS - Quantitative Strategy")
@@ -143,29 +135,29 @@ def display_results(results: dict, initial_capital: float):
 
     # Key metrics
     key_metrics = [
-        ('total_return', '%'),
-        ('sharpe_ratio', ''),
-        ('sortino_ratio', ''),
-        ('max_drawdown', '%'),
-        ('win_rate', '%'),
-        ('profit_factor', ''),
-        ('total_trades', ''),
-        ('winning_trades', ''),
-        ('losing_trades', ''),
-        ('average_win', '$'),
-        ('average_loss', '$'),
-        ('volatility', '%'),
-        ('calmar_ratio', '')
+        ("total_return", "%"),
+        ("sharpe_ratio", ""),
+        ("sortino_ratio", ""),
+        ("max_drawdown", "%"),
+        ("win_rate", "%"),
+        ("profit_factor", ""),
+        ("total_trades", ""),
+        ("winning_trades", ""),
+        ("losing_trades", ""),
+        ("average_win", "$"),
+        ("average_loss", "$"),
+        ("volatility", "%"),
+        ("calmar_ratio", ""),
     ]
 
     for metric_name, suffix in key_metrics:
         value = metrics.get(metric_name, 0)
         if isinstance(value, (int, float)):
-            if suffix == '%':
+            if suffix == "%":
                 logger.info(f"  {metric_name:30s}: {value:.2f}%")
-            elif suffix == '$':
+            elif suffix == "$":
                 logger.info(f"  {metric_name:30s}: ${value:.2f}")
-            elif metric_name in ['total_trades', 'winning_trades', 'losing_trades']:
+            elif metric_name in ["total_trades", "winning_trades", "losing_trades"]:
                 logger.info(f"  {metric_name:30s}: {int(value)}")
             else:
                 logger.info(f"  {metric_name:30s}: {value:.4f}")
@@ -176,11 +168,11 @@ def display_results(results: dict, initial_capital: float):
     logger.info("-" * 80)
 
     # Calculate additional stats from equity curve
-    equity_curve = results.get('equity_curve', pd.DataFrame())
+    equity_curve = results.get("equity_curve", pd.DataFrame())
     if not equity_curve.empty:
-        final_equity = equity_curve['equity'].iloc[-1]
-        peak_equity = equity_curve['equity'].max()
-        min_equity = equity_curve['equity'].min()
+        final_equity = equity_curve["equity"].iloc[-1]
+        peak_equity = equity_curve["equity"].max()
+        min_equity = equity_curve["equity"].min()
 
         logger.info(f"  {'Final Equity':30s}: ${final_equity:,.2f}")
         logger.info(f"  {'Peak Equity':30s}: ${peak_equity:,.2f}")
@@ -192,18 +184,18 @@ def display_results(results: dict, initial_capital: float):
     logger.info("DEPLOYMENT READINESS CHECK")
     logger.info("=" * 80)
 
-    sharpe = metrics.get('sharpe_ratio', 0)
-    total_return = metrics.get('total_return', 0)
-    win_rate = metrics.get('win_rate', 0)
-    max_dd = metrics.get('max_drawdown', 0)
-    total_trades = metrics.get('total_trades', 0)
+    sharpe = metrics.get("sharpe_ratio", 0)
+    total_return = metrics.get("total_return", 0)
+    win_rate = metrics.get("win_rate", 0)
+    max_dd = metrics.get("max_drawdown", 0)
+    total_trades = metrics.get("total_trades", 0)
 
     checks = {
-        'Sharpe Ratio >= 1.2': (sharpe >= 1.2, f"{sharpe:.2f}"),
-        'Total Return > 10%': (total_return > 10.0, f"{total_return:.2f}%"),
-        'Win Rate > 45%': (win_rate > 45.0, f"{win_rate:.2f}%"),
-        'Max Drawdown < 15%': (abs(max_dd) < 15.0, f"{max_dd:.2f}%"),
-        'Total Trades >= 30': (total_trades >= 30, f"{int(total_trades)}"),
+        "Sharpe Ratio >= 1.2": (sharpe >= 1.2, f"{sharpe:.2f}"),
+        "Total Return > 10%": (total_return > 10.0, f"{total_return:.2f}%"),
+        "Win Rate > 45%": (win_rate > 45.0, f"{win_rate:.2f}%"),
+        "Max Drawdown < 15%": (abs(max_dd) < 15.0, f"{max_dd:.2f}%"),
+        "Total Trades >= 30": (total_trades >= 30, f"{int(total_trades)}"),
     }
 
     all_passed = True
@@ -227,19 +219,27 @@ def display_results(results: dict, initial_capital: float):
     output_file = output_dir / f"ml_ensemble_backtest_{timestamp}.json"
 
     import json
-    with open(output_file, 'w') as f:
+
+    with open(output_file, "w") as f:
         # Convert non-serializable items
-        save_metrics = {k: float(v) if isinstance(v, (np.floating, np.integer)) else v
-                       for k, v in metrics.items()}
-        json.dump({
-            'metrics': save_metrics,
-            'parameters': {
-                'long_threshold': 0.58,
-                'short_threshold': 0.65,
-                'stop_loss': 0.02,
-                'take_profit': 0.04
-            }
-        }, f, indent=2, default=str)
+        save_metrics = {
+            k: float(v) if isinstance(v, (np.floating, np.integer)) else v
+            for k, v in metrics.items()
+        }
+        json.dump(
+            {
+                "metrics": save_metrics,
+                "parameters": {
+                    "long_threshold": 0.58,
+                    "short_threshold": 0.65,
+                    "stop_loss": 0.02,
+                    "take_profit": 0.04,
+                },
+            },
+            f,
+            indent=2,
+            default=str,
+        )
 
     logger.info(f"\nResults saved to: {output_file}")
 
@@ -261,8 +261,9 @@ def optimize_parameters():
     stop_losses = [0.015, 0.02, 0.025]
     take_profits = [0.03, 0.04, 0.05]
 
-    total_combinations = (len(long_thresholds) * len(short_thresholds) *
-                         len(stop_losses) * len(take_profits))
+    total_combinations = (
+        len(long_thresholds) * len(short_thresholds) * len(stop_losses) * len(take_profits)
+    )
     logger.info(f"Testing {total_combinations} parameter combinations...")
 
     iteration = 0
@@ -279,18 +280,18 @@ def optimize_parameters():
                             long_threshold=long_t,
                             short_threshold=short_t,
                             stop_loss=sl,
-                            take_profit=tp
+                            take_profit=tp,
                         )
 
                         if results:
-                            sharpe = results.get('metrics', {}).get('sharpe_ratio', -np.inf)
+                            sharpe = results.get("metrics", {}).get("sharpe_ratio", -np.inf)
                             if sharpe > best_sharpe:
                                 best_sharpe = sharpe
                                 best_params = {
-                                    'long_threshold': long_t,
-                                    'short_threshold': short_t,
-                                    'stop_loss': sl,
-                                    'take_profit': tp
+                                    "long_threshold": long_t,
+                                    "short_threshold": short_t,
+                                    "stop_loss": sl,
+                                    "take_profit": tp,
                                 }
                                 logger.info(f"New best Sharpe: {sharpe:.3f} with {best_params}")
 
@@ -311,11 +312,15 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(description="ML Ensemble Strategy Backtest")
-    parser.add_argument('--optimize', action='store_true', help='Run parameter optimization')
-    parser.add_argument('--long-threshold', type=float, default=0.58, help='Long confidence threshold')
-    parser.add_argument('--short-threshold', type=float, default=0.65, help='Short confidence threshold')
-    parser.add_argument('--stop-loss', type=float, default=0.02, help='Stop loss percentage')
-    parser.add_argument('--take-profit', type=float, default=0.04, help='Take profit percentage')
+    parser.add_argument("--optimize", action="store_true", help="Run parameter optimization")
+    parser.add_argument(
+        "--long-threshold", type=float, default=0.58, help="Long confidence threshold"
+    )
+    parser.add_argument(
+        "--short-threshold", type=float, default=0.65, help="Short confidence threshold"
+    )
+    parser.add_argument("--stop-loss", type=float, default=0.02, help="Stop loss percentage")
+    parser.add_argument("--take-profit", type=float, default=0.04, help="Take profit percentage")
 
     args = parser.parse_args()
 
@@ -326,11 +331,11 @@ if __name__ == "__main__":
             long_threshold=args.long_threshold,
             short_threshold=args.short_threshold,
             stop_loss=args.stop_loss,
-            take_profit=args.take_profit
+            take_profit=args.take_profit,
         )
 
         if results:
-            sharpe = results.get('metrics', {}).get('sharpe_ratio', 0)
+            sharpe = results.get("metrics", {}).get("sharpe_ratio", 0)
             if sharpe < 1.2:
                 logger.warning(f"\nSharpe ratio {sharpe:.2f} < 1.2 target")
                 logger.info("Consider running with --optimize to find better parameters")

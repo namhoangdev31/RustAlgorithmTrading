@@ -31,6 +31,7 @@ class OrderType(Enum):
 @dataclass
 class Order:
     """Order data structure"""
+
     symbol: str
     side: OrderSide
     order_type: OrderType
@@ -53,7 +54,7 @@ class OrderStressTester:
             "orders_rejected": 0,
             "latencies_ms": [],
             "errors": [],
-            "orders_per_second": []
+            "orders_per_second": [],
         }
 
     def generate_order(self) -> Order:
@@ -67,7 +68,7 @@ class OrderStressTester:
             "ETHUSDT": 3000.0,
             "BNBUSDT": 400.0,
             "ADAUSDT": 1.5,
-            "DOTUSDT": 25.0
+            "DOTUSDT": 25.0,
         }.get(symbol, 100.0)
 
         quantity = random.uniform(0.01, 1.0)
@@ -77,7 +78,7 @@ class OrderStressTester:
             side=side,
             order_type=order_type,
             quantity=quantity,
-            client_order_id=f"test_{int(time.time() * 1000000)}_{random.randint(0, 999999)}"
+            client_order_id=f"test_{int(time.time() * 1000000)}_{random.randint(0, 999999)}",
         )
 
         if order_type in [OrderType.LIMIT, OrderType.STOP_LOSS]:
@@ -104,7 +105,7 @@ class OrderStressTester:
             "side": order.side.value,
             "type": order.order_type.value,
             "quantity": order.quantity,
-            "client_order_id": order.client_order_id
+            "client_order_id": order.client_order_id,
         }
 
         if order.price is not None:
@@ -116,7 +117,7 @@ class OrderStressTester:
             async with session.post(
                 f"{self.base_url}/api/v1/orders",
                 json=payload,
-                timeout=aiohttp.ClientTimeout(total=10)
+                timeout=aiohttp.ClientTimeout(total=10),
             ) as response:
                 latency_ms = (time.time() - start_time) * 1000
 
@@ -127,39 +128,27 @@ class OrderStressTester:
                     return {
                         "success": True,
                         "latency_ms": latency_ms,
-                        "order_id": result.get("order_id")
+                        "order_id": result.get("order_id"),
                     }
                 elif response.status == 400:
                     self.results["orders_rejected"] += 1
                     error_text = await response.text()
-                    return {
-                        "success": False,
-                        "rejected": True,
-                        "error": error_text
-                    }
+                    return {"success": False, "rejected": True, "error": error_text}
                 else:
                     self.results["orders_failed"] += 1
                     error_text = await response.text()
-                    self.results["errors"].append({
-                        "status": response.status,
-                        "error": error_text,
-                        "order": payload
-                    })
+                    self.results["errors"].append(
+                        {"status": response.status, "error": error_text, "order": payload}
+                    )
                     return {"success": False, "error": error_text}
 
         except asyncio.TimeoutError:
             self.results["orders_failed"] += 1
-            self.results["errors"].append({
-                "error": "Timeout",
-                "order": payload
-            })
+            self.results["errors"].append({"error": "Timeout", "order": payload})
             return {"success": False, "error": "Timeout"}
         except Exception as e:
             self.results["orders_failed"] += 1
-            self.results["errors"].append({
-                "error": str(e),
-                "order": payload
-            })
+            self.results["errors"].append({"error": str(e), "order": payload})
             return {"success": False, "error": str(e)}
 
     async def order_worker(self, session: aiohttp.ClientSession, order_queue: asyncio.Queue):
@@ -190,10 +179,12 @@ class OrderStressTester:
 
             self.results["orders_per_second"].append(orders_per_sec)
 
-            print(f"Orders/sec: {orders_per_sec} | "
-                  f"Success: {self.results['orders_success']} | "
-                  f"Rejected: {self.results['orders_rejected']} | "
-                  f"Failed: {self.results['orders_failed']}")
+            print(
+                f"Orders/sec: {orders_per_sec} | "
+                f"Success: {self.results['orders_success']} | "
+                f"Rejected: {self.results['orders_rejected']} | "
+                f"Failed: {self.results['orders_failed']}"
+            )
 
     async def run_test(self):
         """Execute the stress test"""
@@ -246,40 +237,54 @@ class OrderStressTester:
         print(f"Rejected: {self.results['orders_rejected']}")
         print(f"Failed: {self.results['orders_failed']}")
 
-        success_rate = (self.results['orders_success'] / self.results['orders_sent'] * 100) if self.results['orders_sent'] > 0 else 0
+        success_rate = (
+            (self.results["orders_success"] / self.results["orders_sent"] * 100)
+            if self.results["orders_sent"] > 0
+            else 0
+        )
         print(f"Success rate: {success_rate:.2f}%")
 
-        if self.results['latencies_ms']:
+        if self.results["latencies_ms"]:
             print(f"\nLatency Statistics:")
             print(f"  Min: {min(self.results['latencies_ms']):.2f} ms")
             print(f"  Max: {max(self.results['latencies_ms']):.2f} ms")
             print(f"  Mean: {statistics.mean(self.results['latencies_ms']):.2f} ms")
             print(f"  Median: {statistics.median(self.results['latencies_ms']):.2f} ms")
 
-            sorted_latencies = sorted(self.results['latencies_ms'])
+            sorted_latencies = sorted(self.results["latencies_ms"])
             p95_idx = int(len(sorted_latencies) * 0.95)
             p99_idx = int(len(sorted_latencies) * 0.99)
             print(f"  P95: {sorted_latencies[p95_idx]:.2f} ms")
             print(f"  P99: {sorted_latencies[p99_idx]:.2f} ms")
 
-        if self.results['orders_per_second']:
+        if self.results["orders_per_second"]:
             print(f"\nThroughput Statistics:")
             print(f"  Min: {min(self.results['orders_per_second'])} orders/sec")
             print(f"  Max: {max(self.results['orders_per_second'])} orders/sec")
             print(f"  Mean: {statistics.mean(self.results['orders_per_second']):.2f} orders/sec")
-            print(f"  Median: {statistics.median(self.results['orders_per_second']):.2f} orders/sec")
+            print(
+                f"  Median: {statistics.median(self.results['orders_per_second']):.2f} orders/sec"
+            )
 
-        if self.results['errors']:
+        if self.results["errors"]:
             print(f"\nErrors (showing first 10):")
-            for error in self.results['errors'][:10]:
+            for error in self.results["errors"][:10]:
                 print(f"  - {error}")
 
         # Pass/Fail criteria
         print("\n" + "-" * 80)
-        latency_ok = statistics.mean(self.results['latencies_ms']) <= 100 if self.results['latencies_ms'] else False
-        p99_ok = sorted_latencies[p99_idx] <= 500 if self.results['latencies_ms'] else False
+        latency_ok = (
+            statistics.mean(self.results["latencies_ms"]) <= 100
+            if self.results["latencies_ms"]
+            else False
+        )
+        p99_ok = sorted_latencies[p99_idx] <= 500 if self.results["latencies_ms"] else False
         success_rate_ok = success_rate >= 95.0
-        throughput_ok = statistics.mean(self.results['orders_per_second']) >= 50 if self.results['orders_per_second'] else False
+        throughput_ok = (
+            statistics.mean(self.results["orders_per_second"]) >= 50
+            if self.results["orders_per_second"]
+            else False
+        )
 
         print("PASS/FAIL CRITERIA:")
         print(f"  {'✓' if latency_ok else '✗'} Mean latency <= 100ms")
@@ -294,38 +299,74 @@ class OrderStressTester:
         # Save results
         results_file = "/results/order_stress_test.json"
         os.makedirs(os.path.dirname(results_file), exist_ok=True)
-        with open(results_file, 'w') as f:
-            json.dump({
-                "test_name": "order_stress_test",
-                "timestamp": time.time(),
-                "configuration": {
-                    "concurrent_orders": self.concurrent_orders,
-                    "total_orders": self.total_orders,
-                    "symbols": self.symbols
-                },
-                "results": {
-                    "orders_sent": self.results['orders_sent'],
-                    "orders_success": self.results['orders_success'],
-                    "orders_rejected": self.results['orders_rejected'],
-                    "orders_failed": self.results['orders_failed'],
-                    "success_rate": success_rate,
-                    "latency_stats": {
-                        "min": min(self.results['latencies_ms']) if self.results['latencies_ms'] else 0,
-                        "max": max(self.results['latencies_ms']) if self.results['latencies_ms'] else 0,
-                        "mean": statistics.mean(self.results['latencies_ms']) if self.results['latencies_ms'] else 0,
-                        "median": statistics.median(self.results['latencies_ms']) if self.results['latencies_ms'] else 0,
-                        "p95": sorted_latencies[p95_idx] if self.results['latencies_ms'] else 0,
-                        "p99": sorted_latencies[p99_idx] if self.results['latencies_ms'] else 0
+        with open(results_file, "w") as f:
+            json.dump(
+                {
+                    "test_name": "order_stress_test",
+                    "timestamp": time.time(),
+                    "configuration": {
+                        "concurrent_orders": self.concurrent_orders,
+                        "total_orders": self.total_orders,
+                        "symbols": self.symbols,
                     },
-                    "throughput_stats": {
-                        "min": min(self.results['orders_per_second']) if self.results['orders_per_second'] else 0,
-                        "max": max(self.results['orders_per_second']) if self.results['orders_per_second'] else 0,
-                        "mean": statistics.mean(self.results['orders_per_second']) if self.results['orders_per_second'] else 0,
-                        "median": statistics.median(self.results['orders_per_second']) if self.results['orders_per_second'] else 0
-                    }
+                    "results": {
+                        "orders_sent": self.results["orders_sent"],
+                        "orders_success": self.results["orders_success"],
+                        "orders_rejected": self.results["orders_rejected"],
+                        "orders_failed": self.results["orders_failed"],
+                        "success_rate": success_rate,
+                        "latency_stats": {
+                            "min": (
+                                min(self.results["latencies_ms"])
+                                if self.results["latencies_ms"]
+                                else 0
+                            ),
+                            "max": (
+                                max(self.results["latencies_ms"])
+                                if self.results["latencies_ms"]
+                                else 0
+                            ),
+                            "mean": (
+                                statistics.mean(self.results["latencies_ms"])
+                                if self.results["latencies_ms"]
+                                else 0
+                            ),
+                            "median": (
+                                statistics.median(self.results["latencies_ms"])
+                                if self.results["latencies_ms"]
+                                else 0
+                            ),
+                            "p95": sorted_latencies[p95_idx] if self.results["latencies_ms"] else 0,
+                            "p99": sorted_latencies[p99_idx] if self.results["latencies_ms"] else 0,
+                        },
+                        "throughput_stats": {
+                            "min": (
+                                min(self.results["orders_per_second"])
+                                if self.results["orders_per_second"]
+                                else 0
+                            ),
+                            "max": (
+                                max(self.results["orders_per_second"])
+                                if self.results["orders_per_second"]
+                                else 0
+                            ),
+                            "mean": (
+                                statistics.mean(self.results["orders_per_second"])
+                                if self.results["orders_per_second"]
+                                else 0
+                            ),
+                            "median": (
+                                statistics.median(self.results["orders_per_second"])
+                                if self.results["orders_per_second"]
+                                else 0
+                            ),
+                        },
+                    },
+                    "pass": overall_pass,
                 },
-                "pass": overall_pass
-            }, f, indent=2)
+                f,
+                indent=2,
+            )
 
         print(f"\nResults saved to {results_file}")
 
@@ -336,9 +377,7 @@ async def main():
     total_orders = int(os.getenv("LOAD_TEST_TOTAL_ORDERS", "10000"))
 
     tester = OrderStressTester(
-        base_url=trading_engine_url,
-        concurrent_orders=concurrent_orders,
-        total_orders=total_orders
+        base_url=trading_engine_url, concurrent_orders=concurrent_orders, total_orders=total_orders
     )
 
     await tester.run_test()

@@ -1,4 +1,4 @@
-use common::{Result, TradingError, messaging::Message};
+use common::{messaging::Message, Result, TradingError};
 
 pub struct MarketDataPublisher {
     address: String,

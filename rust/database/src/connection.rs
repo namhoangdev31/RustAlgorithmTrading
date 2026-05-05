@@ -223,8 +223,7 @@ impl DatabaseManager {
         limit: i64,
     ) -> Result<Vec<MetricRecord>> {
         let conn = self.get_connection()?;
-        let query = QueryBuilder::new()
-            .select_metrics(metric_name, symbol, start_time, limit);
+        let query = QueryBuilder::new().select_metrics(metric_name, symbol, start_time, limit);
 
         let mut stmt = conn.prepare(&query)?;
         let rows = stmt.query_map([], |row| {
@@ -251,7 +250,8 @@ impl DatabaseManager {
         symbol: &str,
         limit: i64,
     ) -> Result<Vec<MetricRecord>> {
-        self.get_metrics(metric_name, Some(symbol), None, limit).await
+        self.get_metrics(metric_name, Some(symbol), None, limit)
+            .await
     }
 
     /// Insert a candle record
@@ -316,7 +316,8 @@ impl DatabaseManager {
         aggregation: &str,
     ) -> Result<Vec<AggregatedMetric>> {
         let conn = self.get_connection()?;
-        let query = QueryBuilder::new().aggregate_metrics(metric_name, interval, start_time, aggregation);
+        let query =
+            QueryBuilder::new().aggregate_metrics(metric_name, interval, start_time, aggregation);
 
         let mut stmt = conn.prepare(&query)?;
         let rows = stmt.query_map([], |row| {
@@ -435,11 +436,7 @@ impl DatabaseManager {
     }
 
     /// Get system events with filtering
-    pub async fn get_events(
-        &self,
-        severity: Option<&str>,
-        limit: i64,
-    ) -> Result<Vec<SystemEvent>> {
+    pub async fn get_events(&self, severity: Option<&str>, limit: i64) -> Result<Vec<SystemEvent>> {
         let conn = self.get_connection()?;
         let query = QueryBuilder::new().select_events(severity, limit);
 
@@ -471,8 +468,12 @@ impl DatabaseManager {
             Ok(TableStats {
                 table_name: row.get(0)?,
                 row_count: row.get(1)?,
-                min_timestamp: row.get::<_, Option<String>>(2)?.and_then(|s| s.parse().ok()),
-                max_timestamp: row.get::<_, Option<String>>(3)?.and_then(|s| s.parse().ok()),
+                min_timestamp: row
+                    .get::<_, Option<String>>(2)?
+                    .and_then(|s| s.parse().ok()),
+                max_timestamp: row
+                    .get::<_, Option<String>>(3)?
+                    .and_then(|s| s.parse().ok()),
                 size_bytes: row.get(4)?,
             })
         })?;

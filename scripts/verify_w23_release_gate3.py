@@ -116,9 +116,17 @@ def run_gate3_verification():
         "EV-W23-101..103": summary["suite_pass_rate"] == 1.0,
         "EV-W23-104": summary["open_e2e_fault_debt"] == 0,
         "EV-W23-201": summary["total_regressions"] == 0,
-        "EV-W23-207": any("EV-W23-207" in r.evidence_ids and r.metadata.get("coverage", 0) >= 0.99 for r in manager.records),
-        "EV-W23-208": any("EV-W23-208" in r.evidence_ids and r.metadata.get("findings") == 0 for r in manager.records),
-        "EV-W23-402": any("EV-W23-402" in r.evidence_ids and r.disposition == "PASS" for r in manager.records),
+        "EV-W23-207": any(
+            "EV-W23-207" in r.evidence_ids and r.metadata.get("coverage", 0) >= 0.99
+            for r in manager.records
+        ),
+        "EV-W23-208": any(
+            "EV-W23-208" in r.evidence_ids and r.metadata.get("findings") == 0
+            for r in manager.records
+        ),
+        "EV-W23-402": any(
+            "EV-W23-402" in r.evidence_ids and r.disposition == "PASS" for r in manager.records
+        ),
     }
 
     all_pass = True

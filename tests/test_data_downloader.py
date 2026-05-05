@@ -25,7 +25,6 @@ from data.fetcher import DataFetcher
 from data.loader import DataLoader
 from backtesting.data_handler import HistoricalDataHandler
 
-
 # ============================================================================
 # FIXTURES
 # ============================================================================

@@ -71,7 +71,7 @@ class AlpacaClient:
             Dict containing account details
         """
         try:
-            account = self.trading_client.get_account()
+            account: Any = self.trading_client.get_account()
             return {
                 "cash": (
                     float(account.cash)

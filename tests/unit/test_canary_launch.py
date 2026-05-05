@@ -1,4 +1,4 @@
-from src.utils.canary_launch_manager import (
+from utils.canary_launch_manager import (
     CanaryLaunchManager,
     LaunchTier,
     EscalationState,

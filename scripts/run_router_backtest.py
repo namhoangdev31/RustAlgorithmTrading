@@ -24,6 +24,7 @@ from backtesting.data_handler import HistoricalDataHandler
 from backtesting.execution_handler import SimulatedExecutionHandler
 from backtesting.portfolio_handler import PortfolioHandler, PercentageOfEquitySizer
 
+
 def run_router_backtest():
     """Run backtest with intelligent strategy router"""
     logger.info("=" * 80)
@@ -31,11 +32,11 @@ def run_router_backtest():
     logger.info("=" * 80)
 
     # Define test parameters
-    symbols = ['AAPL', 'MSFT', 'GOOGL']
+    symbols = ["AAPL", "MSFT", "GOOGL"]
     initial_capital = float(os.getenv("initial_capital", "1000.0"))
 
     # Load data to determine actual date range
-    data_dir = project_root / 'data' / 'historical'
+    data_dir = project_root / "data" / "historical"
 
     # First, load one file to check available date range
     sample_file = data_dir / f"{symbols[0]}.parquet"
@@ -44,8 +45,8 @@ def run_router_backtest():
 
         # Reset index if it's not a DatetimeIndex
         if not isinstance(sample_df.index, pd.DatetimeIndex):
-            if 'timestamp' in sample_df.columns:
-                sample_df.set_index('timestamp', inplace=True)
+            if "timestamp" in sample_df.columns:
+                sample_df.set_index("timestamp", inplace=True)
                 sample_df.index = pd.to_datetime(sample_df.index)
 
         actual_start = sample_df.index.min()
@@ -65,10 +66,7 @@ def run_router_backtest():
 
     # Initialize data handler
     data_handler = HistoricalDataHandler(
-        symbols=symbols,
-        data_dir=data_dir,
-        start_date=start_date,
-        end_date=end_date
+        symbols=symbols, data_dir=data_dir, start_date=start_date, end_date=end_date
     )
 
     # Load data for regime detection
@@ -86,15 +84,15 @@ def run_router_backtest():
             if parquet_file.exists():
                 df = pd.read_parquet(parquet_file)
             elif csv_file.exists():
-                df = pd.read_csv(csv_file, parse_dates=['timestamp'], index_col='timestamp')
+                df = pd.read_csv(csv_file, parse_dates=["timestamp"], index_col="timestamp")
             else:
                 logger.warning(f"No data found for {symbol}")
                 continue
 
             # Reset index if it's not a DatetimeIndex
             if not isinstance(df.index, pd.DatetimeIndex):
-                if 'timestamp' in df.columns:
-                    df.set_index('timestamp', inplace=True)
+                if "timestamp" in df.columns:
+                    df.set_index("timestamp", inplace=True)
                     df.index = pd.to_datetime(df.index)
 
             # Use all available data (no filtering)
@@ -109,10 +107,7 @@ def run_router_backtest():
         return None, None
 
     # Create strategy router
-    router = StrategyRouter(
-        enable_regime_detection=True,
-        min_confidence=0.5
-    )
+    router = StrategyRouter(enable_regime_detection=True, min_confidence=0.5)
 
     # Detect regimes for each symbol
     logger.info("\nMarket Regime Analysis:")
@@ -125,7 +120,7 @@ def run_router_backtest():
             f"{regime_info['recommendation']}"
         )
         # Only show metrics if available
-        if regime_info['metrics']:
+        if regime_info["metrics"]:
             logger.info(
                 f"        | ADX={regime_info['metrics'].get('adx', 0):.1f}, "
                 f"ATR={regime_info['metrics'].get('normalized_atr', 0):.3f}, "
@@ -141,7 +136,7 @@ def run_router_backtest():
             self.router = router
             self.symbols_data = symbols_data
             self.name = "StrategyRouter"
-            self.parameters = {'routing': 'intelligent'}
+            self.parameters = {"routing": "intelligent"}
             # Pre-select strategies for each symbol
             self.symbol_strategies = {}
             for symbol, data in symbols_data.items():
@@ -163,11 +158,11 @@ def run_router_backtest():
             else:
                 # Fallback to momentum if symbol not found
                 logger.warning(f"Symbol {symbol} not in pre-selected strategies, using momentum")
-                strategy = self.router.strategies['momentum']
+                strategy = self.router.strategies["momentum"]
 
             # Set symbol attribute on dataframe
             data = data.copy()
-            data.attrs['symbol'] = symbol
+            data.attrs["symbol"] = symbol
 
             # Generate signals with selected strategy
             signals = strategy.generate_signals(data)
@@ -181,7 +176,7 @@ def run_router_backtest():
     portfolio_handler = PortfolioHandler(
         initial_capital=initial_capital,
         position_sizer=PercentageOfEquitySizer(0.15),
-        data_handler=data_handler
+        data_handler=data_handler,
     )
 
     # Create backtest engine
@@ -195,7 +190,7 @@ def run_router_backtest():
         portfolio_handler=portfolio_handler,
         strategy=router_strategy,
         start_date=start_date,
-        end_date=end_date
+        end_date=end_date,
     )
 
     # Run backtest
@@ -206,21 +201,26 @@ def run_router_backtest():
     logger.info("BACKTEST RESULTS - Strategy Router")
     logger.info("=" * 80)
 
-    metrics = results.get('metrics', {})
+    metrics = results.get("metrics", {})
 
     logger.info("\nPerformance Metrics:")
     logger.info("-" * 80)
     for key, value in metrics.items():
         if isinstance(value, (int, float)):
-            if key.endswith('_ratio') or key.startswith('sharpe') or key.startswith('sortino') or key.startswith('calmar'):
+            if (
+                key.endswith("_ratio")
+                or key.startswith("sharpe")
+                or key.startswith("sortino")
+                or key.startswith("calmar")
+            ):
                 logger.info(f"  {key:30s}: {value:.2f}")
-            elif key == 'max_drawdown_duration':
+            elif key == "max_drawdown_duration":
                 # Duration is in bars, not percentage
                 logger.info(f"  {key:30s}: {int(value)} bars")
-            elif 'return' in key or 'drawdown' in key or 'rate' in key or key == 'volatility':
+            elif "return" in key or "drawdown" in key or "rate" in key or key == "volatility":
                 # Values are already in percentage form (e.g., 65.02 = 65.02%)
                 logger.info(f"  {key:30s}: {value:.2f}%")
-            elif 'trades' in key or 'total_' in key:
+            elif "trades" in key or "total_" in key:
                 logger.info(f"  {key:30s}: {int(value)}")
             else:
                 logger.info(f"  {key:30s}: {value:.4f}")
@@ -232,33 +232,30 @@ def run_router_backtest():
     output_dir = project_root / "data" / "backtest_results"
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    timestamp_str = datetime.now().strftime('%Y%m%d_%H%M%S')
+    timestamp_str = datetime.now().strftime("%Y%m%d_%H%M%S")
     output_file = output_dir / f"router_backtest_{timestamp_str}.json"
 
     # Prepare JSON-serializable results
     json_results = {
-        'strategy': 'StrategyRouter (Multi-Strategy)',
-        'timestamp': datetime.now().isoformat(),
-        'symbols': symbols,
-        'period': {
-            'start': start_date.isoformat(),
-            'end': end_date.isoformat()
-        },
-        'initial_capital': initial_capital,
-        'metrics': {},
-        'routing_summary': router.get_routing_summary(),
+        "strategy": "StrategyRouter (Multi-Strategy)",
+        "timestamp": datetime.now().isoformat(),
+        "symbols": symbols,
+        "period": {"start": start_date.isoformat(), "end": end_date.isoformat()},
+        "initial_capital": initial_capital,
+        "metrics": {},
+        "routing_summary": router.get_routing_summary(),
     }
 
     # Convert metrics
     for key, value in metrics.items():
         if isinstance(value, (int, float, str, bool, type(None))):
-            json_results['metrics'][key] = value
+            json_results["metrics"][key] = value
         elif isinstance(value, pd.Timestamp):
-            json_results['metrics'][key] = value.isoformat()
+            json_results["metrics"][key] = value.isoformat()
         else:
-            json_results['metrics'][key] = str(value)
+            json_results["metrics"][key] = str(value)
 
-    with open(output_file, 'w') as f:
+    with open(output_file, "w") as f:
         json.dump(json_results, f, indent=2)
 
     logger.info(f"\nResults saved to: {output_file}")
@@ -272,8 +269,8 @@ def run_router_backtest():
 def create_strategy_comparison(router_results: dict):
     """Create comparison report between router and individual strategies"""
 
-    metrics = router_results['metrics']
-    routing = router_results['routing_summary']
+    metrics = router_results["metrics"]
+    routing = router_results["routing_summary"]
 
     report = f"""# Strategy Router Backtest Results
 
@@ -409,7 +406,7 @@ Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
     docs_dir.mkdir(parents=True, exist_ok=True)
 
     report_file = docs_dir / "router_backtest_results.md"
-    with open(report_file, 'w') as f:
+    with open(report_file, "w") as f:
         f.write(report)
 
     logger.info(f"Strategy comparison report saved to: {report_file}")
@@ -425,10 +422,10 @@ if __name__ == "__main__":
             sys.exit(1)
 
         # Check if results meet thresholds for deployment
-        sharpe = metrics.get('sharpe_ratio', 0)
-        total_return = metrics.get('total_return', 0)
-        win_rate = metrics.get('win_rate', 0)
-        max_dd = metrics.get('max_drawdown', 0)
+        sharpe = metrics.get("sharpe_ratio", 0)
+        total_return = metrics.get("total_return", 0)
+        win_rate = metrics.get("win_rate", 0)
+        max_dd = metrics.get("max_drawdown", 0)
 
         logger.info("\n" + "=" * 80)
         logger.info("DEPLOYMENT READINESS CHECK")
@@ -436,10 +433,10 @@ if __name__ == "__main__":
 
         # Note: total_return, win_rate, max_dd are already in percentage form (e.g., 65.0 = 65%)
         checks = {
-            'Sharpe Ratio > 1.0': (sharpe > 1.0, f"{sharpe:.2f}"),
-            'Total Return > 5%': (total_return > 5.0, f"{total_return:.2f}%"),
-            'Win Rate > 50%': (win_rate > 50.0, f"{win_rate:.2f}%"),
-            'Max Drawdown < 20%': (abs(max_dd) < 20.0, f"{max_dd:.2f}%"),
+            "Sharpe Ratio > 1.0": (sharpe > 1.0, f"{sharpe:.2f}"),
+            "Total Return > 5%": (total_return > 5.0, f"{total_return:.2f}%"),
+            "Win Rate > 50%": (win_rate > 50.0, f"{win_rate:.2f}%"),
+            "Max Drawdown < 20%": (abs(max_dd) < 20.0, f"{max_dd:.2f}%"),
         }
 
         all_passed = True
@@ -459,5 +456,6 @@ if __name__ == "__main__":
     except Exception as e:
         logger.error(f"Router backtest failed: {e}")
         import traceback
+
         traceback.print_exc()
         sys.exit(1)

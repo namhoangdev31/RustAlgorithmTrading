@@ -56,7 +56,11 @@ impl MigrationManager {
             return Ok(());
         }
 
-        tracing::info!("Applying migration {}: {}", migration.version, migration.name);
+        tracing::info!(
+            "Applying migration {}: {}",
+            migration.version,
+            migration.name
+        );
 
         // Apply migration in a transaction
         let tx = conn.transaction()?;
@@ -65,11 +69,7 @@ impl MigrationManager {
         // Record migration
         tx.execute(
             "INSERT INTO schema_migrations (version, name, applied_at) VALUES (?, ?, ?)",
-            duckdb::params![
-                &migration.version,
-                &migration.name,
-                Utc::now().to_rfc3339()
-            ],
+            duckdb::params![&migration.version, &migration.name, Utc::now().to_rfc3339()],
         )?;
 
         tx.commit()?;
@@ -117,21 +117,18 @@ impl MigrationManager {
     /// Get all applied migrations
     pub async fn get_applied_migrations(&self) -> Result<Vec<(String, String, DateTime<Utc>)>> {
         let conn = self.db.get_connection()?;
-        let mut stmt = conn.prepare("SELECT version, name, applied_at FROM schema_migrations ORDER BY version")?;
+        let mut stmt = conn
+            .prepare("SELECT version, name, applied_at FROM schema_migrations ORDER BY version")?;
 
         let rows = stmt.query_map([], |row| {
             let timestamp_str: String = row.get(2)?;
-            let timestamp = timestamp_str
-                .parse()
-                .map_err(|e| duckdb::Error::InvalidParameterType(
+            let timestamp = timestamp_str.parse().map_err(|e| {
+                duckdb::Error::InvalidParameterType(
                     2,
-                    format!("Invalid timestamp format in migration record: {}", e)
-                ))?;
-            Ok((
-                row.get(0)?,
-                row.get(1)?,
-                timestamp,
-            ))
+                    format!("Invalid timestamp format in migration record: {}", e),
+                )
+            })?;
+            Ok((row.get(0)?, row.get(1)?, timestamp))
         })?;
 
         rows.collect::<std::result::Result<Vec<_>, _>>()
@@ -155,9 +152,10 @@ impl TimescaleMigrator {
         target_table: &str,
         conn: &Connection,
     ) -> Result<usize> {
-        let path_str = csv_path.as_ref().to_str().ok_or_else(|| {
-            DatabaseError::migration("Invalid path encoding")
-        })?;
+        let path_str = csv_path
+            .as_ref()
+            .to_str()
+            .ok_or_else(|| DatabaseError::migration("Invalid path encoding"))?;
 
         tracing::info!("Migrating data from {} to {}", path_str, target_table);
 
@@ -186,9 +184,10 @@ impl TimescaleMigrator {
         target_table: &str,
         conn: &Connection,
     ) -> Result<usize> {
-        let path_str = parquet_path.as_ref().to_str().ok_or_else(|| {
-            DatabaseError::migration("Invalid path encoding")
-        })?;
+        let path_str = parquet_path
+            .as_ref()
+            .to_str()
+            .ok_or_else(|| DatabaseError::migration("Invalid path encoding"))?;
 
         tracing::info!("Migrating data from {} to {}", path_str, target_table);
 

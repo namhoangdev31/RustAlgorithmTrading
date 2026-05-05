@@ -1,4 +1,4 @@
-from src.utils.e2e_gate_manager import (
+from utils.e2e_gate_manager import (
     E2EGateManager,
     E2ESuiteType,
     E2EDebtStatus,

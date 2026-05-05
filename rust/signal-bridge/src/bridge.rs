@@ -1,7 +1,7 @@
+use crate::features::FeatureEngine;
+use crate::indicators::{calculate_momentum_simd, calculate_returns_simd, EMA, MACD, RSI, SMA};
 use pyo3::prelude::*;
 use pyo3::types::PyList;
-use crate::features::FeatureEngine;
-use crate::indicators::{RSI, MACD, EMA, SMA, calculate_returns_simd, calculate_momentum_simd};
 
 #[pyclass]
 #[derive(Clone)]
@@ -25,7 +25,15 @@ pub struct Bar {
 #[pymethods]
 impl Bar {
     #[new]
-    fn new(symbol: String, open: f64, high: f64, low: f64, close: f64, volume: f64, timestamp: i64) -> Self {
+    fn new(
+        symbol: String,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: f64,
+        timestamp: i64,
+    ) -> Self {
         Self {
             symbol,
             open,

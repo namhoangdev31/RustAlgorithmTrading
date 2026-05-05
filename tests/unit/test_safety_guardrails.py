@@ -1,5 +1,5 @@
 import pytest
-from src.utils.safety_manager import (
+from utils.safety_manager import (
     SafetyGuardrailsManager,
     SafetyTriggerType,
 )

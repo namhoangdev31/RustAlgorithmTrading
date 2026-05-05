@@ -2310,6 +2310,12 @@ Mỗi file có 3 phần:
 - Class trong file: `SuiteType`, `DebtStatus`, `ReleaseGateRecord`, `ReleaseGateManager`.
 - Test liên quan: `tests/unit/test_release_gate1.py`, `scripts/verify_w21_release_gate1.py`.
 
+### scripts/verify_w10_api_health_slo.py
+
+- Vai trò file: Script capture evidence EV-W10-206..212, EV-W10-303..305, EV-W10-402 cho W10 API health & SLO.
+- Class/Type trong file: `W10ApiVerifier` class; nhóm các probe cho endpoint, websocket và alert latency.
+- Test liên quan: Chạy trực tiếp `python scripts/verify_w10_api_health_slo.py`.
+
 ### scripts/verify_w21_release_gate1.py
 
 - Vai trò file: Script chính capture evidence EV-W21-101..107 và EV-W21-201..210 (suite checks, regression, test debt).

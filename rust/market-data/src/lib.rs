@@ -1,20 +1,19 @@
+pub mod aggregation;
+pub mod orderbook;
+pub mod publisher;
 /// Market Data Feed Component
 ///
 /// Handles WebSocket connections to exchanges, order book reconstruction,
 /// and tick-to-bar aggregation. Publishes market data via ZMQ.
-
 pub mod websocket;
-pub mod orderbook;
-pub mod aggregation;
-pub mod publisher;
 
-pub use websocket::WebSocketClient;
-pub use orderbook::OrderBookManager;
 pub use aggregation::{BarAggregator, TimeWindow};
+pub use orderbook::OrderBookManager;
 pub use publisher::MarketDataPublisher;
+pub use websocket::WebSocketClient;
 
 use common::{Result, TradingError};
-use tracing::{info, error};
+use tracing::{error, info};
 
 /// Main market data service
 pub struct MarketDataService {
@@ -26,25 +25,24 @@ pub struct MarketDataService {
 
 impl MarketDataService {
     pub async fn new(config: common::config::MarketDataConfig) -> Result<Self> {
-        info!("Initializing Market Data Service for exchange: {}", config.exchange);
+        info!(
+            "Initializing Market Data Service for exchange: {}",
+            config.exchange
+        );
 
         // Load API credentials from environment
-        let api_key = std::env::var("ALPACA_API_KEY")
-            .map_err(|_| TradingError::Configuration(
-                "ALPACA_API_KEY environment variable not set".to_string()
-            ))?;
+        let api_key = std::env::var("ALPACA_API_KEY").map_err(|_| {
+            TradingError::Configuration("ALPACA_API_KEY environment variable not set".to_string())
+        })?;
 
-        let api_secret = std::env::var("ALPACA_SECRET_KEY")
-            .map_err(|_| TradingError::Configuration(
-                "ALPACA_SECRET_KEY environment variable not set".to_string()
-            ))?;
+        let api_secret = std::env::var("ALPACA_SECRET_KEY").map_err(|_| {
+            TradingError::Configuration(
+                "ALPACA_SECRET_KEY environment variable not set".to_string(),
+            )
+        })?;
 
         // Create WebSocket client with proper parameters
-        let ws_client = WebSocketClient::new(
-            api_key,
-            api_secret,
-            config.symbols.clone(),
-        )?;
+        let ws_client = WebSocketClient::new(api_key, api_secret, config.symbols.clone())?;
 
         let orderbook_manager = OrderBookManager::new();
 

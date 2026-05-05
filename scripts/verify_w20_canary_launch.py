@@ -141,16 +141,31 @@ def run_launch_verification():
     summary = manager.get_launch_summary()
 
     checks = {
-        "EV-W20-201": any("EV-W20-201" in r.evidence_ids and r.disposition == "PASS" for r in manager.records),
+        "EV-W20-201": any(
+            "EV-W20-201" in r.evidence_ids and r.disposition == "PASS" for r in manager.records
+        ),
         "EV-W20-202": summary["unmitigated_breach_count"] == 0,
         "EV-W20-203": summary["max_kill_switch_latency_sec"] <= 60.0,
         "EV-W20-204": summary["rollback_pass_rate"] == 1.0,
         "EV-W20-205": summary["escalation_pass_rate"] == 1.0,
-        "EV-W20-206": any("EV-W20-206" in r.evidence_ids and r.disposition == "PASS" for r in manager.records),
-        "EV-W20-207": any("EV-W20-207" in r.evidence_ids and r.metadata.get("coverage", 0) >= 0.99 for r in manager.records),
-        "EV-W20-208": any("EV-W20-208" in r.evidence_ids and r.metadata.get("findings") == 0 for r in manager.records),
-        "EV-W20-209": any("EV-W20-209" in r.evidence_ids and r.disposition == "PASS" for r in manager.records),
-        "EV-W20-210": any("EV-W20-210" in r.evidence_ids and r.metadata.get("throughput", 0) > 0 for r in manager.records),
+        "EV-W20-206": any(
+            "EV-W20-206" in r.evidence_ids and r.disposition == "PASS" for r in manager.records
+        ),
+        "EV-W20-207": any(
+            "EV-W20-207" in r.evidence_ids and r.metadata.get("coverage", 0) >= 0.99
+            for r in manager.records
+        ),
+        "EV-W20-208": any(
+            "EV-W20-208" in r.evidence_ids and r.metadata.get("findings") == 0
+            for r in manager.records
+        ),
+        "EV-W20-209": any(
+            "EV-W20-209" in r.evidence_ids and r.disposition == "PASS" for r in manager.records
+        ),
+        "EV-W20-210": any(
+            "EV-W20-210" in r.evidence_ids and r.metadata.get("throughput", 0) > 0
+            for r in manager.records
+        ),
     }
 
     all_pass = True
@@ -159,7 +174,9 @@ def run_launch_verification():
         all_pass &= passed
 
     print("\n--- Launch Metrics ---")
-    print(f"Kill-switch max latency: {summary['max_kill_switch_latency_sec']:.2f}s ({summary['max_kill_switch_latency_ms']}ms)")
+    print(
+        f"Kill-switch max latency: {summary['max_kill_switch_latency_sec']:.2f}s ({summary['max_kill_switch_latency_ms']}ms)"
+    )
     print(f"Escalation pass rate: {summary['escalation_pass_rate']*100:.1f}%")
     print(f"Rollback pass rate: {summary['rollback_pass_rate']*100:.1f}%")
     print(f"Unmitigated breaches: {summary['unmitigated_breach_count']}")

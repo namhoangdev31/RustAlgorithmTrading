@@ -1,5 +1,7 @@
+use crate::indicators::{
+    calculate_momentum_simd, calculate_returns_simd, BollingerBands, EMA, MACD, RSI, SMA,
+};
 use common::types::{Bar, OrderBook};
-use crate::indicators::{RSI, MACD, EMA, SMA, BollingerBands, calculate_returns_simd, calculate_momentum_simd};
 
 pub struct FeatureEngine {
     rsi_14: RSI,

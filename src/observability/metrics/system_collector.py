@@ -217,10 +217,11 @@ class SystemCollector(BaseCollector):
 
     async def get_current_metrics(self) -> Dict[str, Any]:
         """Get current system metrics."""
-        uptime = (datetime.utcnow() - self.process_start_time).total_seconds()
+        now = datetime.now(UTC)
+        uptime = (now - self.process_start_time).total_seconds()
 
         return {
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": now.isoformat(),
             "cpu_percent": self.cpu_percent,
             "memory_percent": self.memory_percent,
             "disk_usage_percent": self.disk_usage_percent,

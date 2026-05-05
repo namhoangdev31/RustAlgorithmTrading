@@ -51,6 +51,13 @@ class SignalEvent(Event):
     strength: float = Field(ge=0.0, le=1.0)
     strategy_id: str
 
+    @field_validator("signal_type", mode="before")
+    @classmethod
+    def reject_untrimmed_signal_type(cls, v: str) -> str:
+        if isinstance(v, str) and v != v.strip():
+            raise ValueError("Signal type must not contain leading/trailing whitespace")
+        return v
+
     @field_validator("signal_type")
     @classmethod
     def validate_signal_type(cls, v: str) -> str:

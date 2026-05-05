@@ -27,9 +27,9 @@ impl ExecutionEngineService {
     }
 
     pub async fn submit_order(
-        &self, 
-        order: Order, 
-        cb_check_hook: Option<std::sync::Arc<dyn Fn() -> bool + Send + Sync>>
+        &self,
+        order: Order,
+        cb_check_hook: Option<std::sync::Arc<dyn Fn() -> bool + Send + Sync>>,
     ) -> Result<()> {
         // Estimate slippage
         let _estimated_slippage = self.slippage_estimator.estimate(&order);

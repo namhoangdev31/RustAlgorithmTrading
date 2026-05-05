@@ -14,7 +14,6 @@ from .duckdb_client import DuckDBClient
 from .sqlite_client import SQLiteClient
 from .schemas import MetricRecord, TimeInterval
 
-
 logger = logging.getLogger(__name__)
 
 

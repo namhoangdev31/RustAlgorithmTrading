@@ -1,4 +1,4 @@
-from src.utils.final_release_manager import (
+from utils.final_release_manager import (
     FinalReleaseManager,
     ApprovalState,
     ReleaseBlockerStatus,

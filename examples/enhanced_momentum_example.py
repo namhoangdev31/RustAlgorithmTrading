@@ -17,16 +17,13 @@ from strategies.enhanced_momentum import (
     EnhancedMomentumStrategy,
     SignalQuality,
     RiskParameters,
-    IndicatorThresholds
+    IndicatorThresholds,
 )
 from strategies.base import SignalType
 
 
 def generate_sample_data(
-    symbol: str = "AAPL",
-    days: int = 200,
-    initial_price: float = 150.0,
-    volatility: float = 0.02
+    symbol: str = "AAPL", days: int = 200, initial_price: float = 150.0, volatility: float = 0.02
 ) -> pd.DataFrame:
     """
     Generate realistic sample OHLCV data for testing
@@ -42,7 +39,7 @@ def generate_sample_data(
     """
     logger.info(f"Generating {days} days of sample data for {symbol}")
 
-    dates = pd.date_range(end=datetime.now(), periods=days, freq='1D')
+    dates = pd.date_range(end=datetime.now(), periods=days, freq="1D")
     np.random.seed(42)
 
     # Generate realistic price movements with trend
@@ -50,36 +47,36 @@ def generate_sample_data(
     prices = initial_price * np.exp(np.cumsum(returns))
 
     # Create OHLC with realistic intraday movement
-    data = pd.DataFrame({
-        'open': prices * (1 + np.random.uniform(-0.01, 0.01, days)),
-        'high': prices * (1 + np.random.uniform(0.0, 0.02, days)),
-        'low': prices * (1 + np.random.uniform(-0.02, 0.0, days)),
-        'close': prices,
-        'volume': np.random.randint(50_000_000, 150_000_000, days)
-    }, index=dates)
+    data = pd.DataFrame(
+        {
+            "open": prices * (1 + np.random.uniform(-0.01, 0.01, days)),
+            "high": prices * (1 + np.random.uniform(0.0, 0.02, days)),
+            "low": prices * (1 + np.random.uniform(-0.02, 0.0, days)),
+            "close": prices,
+            "volume": np.random.randint(50_000_000, 150_000_000, days),
+        },
+        index=dates,
+    )
 
     # Ensure high >= open/close and low <= open/close
-    data['high'] = data[['high', 'open', 'close']].max(axis=1)
-    data['low'] = data[['low', 'open', 'close']].min(axis=1)
+    data["high"] = data[["high", "open", "close"]].max(axis=1)
+    data["low"] = data[["low", "open", "close"]].min(axis=1)
 
-    data.attrs['symbol'] = symbol
+    data.attrs["symbol"] = symbol
     return data
 
 
 def example_1_basic_usage():
     """Example 1: Basic strategy usage with default parameters"""
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("EXAMPLE 1: Basic Usage")
-    print("="*80)
+    print("=" * 80)
 
     # Create strategy with default parameters
-    strategy = EnhancedMomentumStrategy(
-        symbols=['AAPL'],
-        min_signal_quality=SignalQuality.MODERATE
-    )
+    strategy = EnhancedMomentumStrategy(symbols=["AAPL"], min_signal_quality=SignalQuality.MODERATE)
 
     # Generate sample data
-    data = generate_sample_data('AAPL', days=150)
+    data = generate_sample_data("AAPL", days=150)
 
     # Generate signals
     logger.info("Generating signals...")
@@ -106,29 +103,29 @@ def example_1_basic_usage():
 
 def example_2_conservative_strategy():
     """Example 2: Conservative strategy configuration"""
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("EXAMPLE 2: Conservative Strategy")
-    print("="*80)
+    print("=" * 80)
 
     # Conservative risk parameters
     conservative_risk = RiskParameters(
-        max_position_size=0.10,         # 10% max per position
-        risk_per_trade=0.01,            # 1% risk per trade
-        max_portfolio_exposure=0.40,    # 40% total exposure
-        stop_loss_atr_multiple=3.0,     # Wider stops
-        take_profit_atr_multiple=2.0,   # Conservative targets
-        min_risk_reward_ratio=1.0       # Any positive R:R
+        max_position_size=0.10,  # 10% max per position
+        risk_per_trade=0.01,  # 1% risk per trade
+        max_portfolio_exposure=0.40,  # 40% total exposure
+        stop_loss_atr_multiple=3.0,  # Wider stops
+        take_profit_atr_multiple=2.0,  # Conservative targets
+        min_risk_reward_ratio=1.0,  # Any positive R:R
     )
 
     strategy = EnhancedMomentumStrategy(
-        symbols=['SPY'],
+        symbols=["SPY"],
         risk_params=conservative_risk,
         min_signal_quality=SignalQuality.STRONG,  # Only best signals
         enable_volume_filter=True,
-        enable_trend_filter=True
+        enable_trend_filter=True,
     )
 
-    data = generate_sample_data('SPY', days=150, initial_price=450.0, volatility=0.015)
+    data = generate_sample_data("SPY", days=150, initial_price=450.0, volatility=0.015)
     signals = strategy.generate_signals(data)
 
     print(f"\nConservative Strategy Results:")
@@ -137,48 +134,48 @@ def example_2_conservative_strategy():
     print(f"Max Position Size: {conservative_risk.max_position_size:.1%}")
 
     if signals:
-        avg_rr = np.mean([s.metadata['risk_reward'] for s in signals])
+        avg_rr = np.mean([s.metadata["risk_reward"] for s in signals])
         print(f"Average Risk/Reward: {avg_rr:.2f}")
 
 
 def example_3_aggressive_strategy():
     """Example 3: Aggressive strategy for active trading"""
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("EXAMPLE 3: Aggressive Strategy")
-    print("="*80)
+    print("=" * 80)
 
     # Aggressive risk parameters
     aggressive_risk = RiskParameters(
-        max_position_size=0.25,         # 25% max per position
-        risk_per_trade=0.03,            # 3% risk per trade
-        max_portfolio_exposure=0.80,    # 80% total exposure
-        stop_loss_atr_multiple=1.5,     # Tighter stops
-        take_profit_atr_multiple=4.0,   # Larger targets
-        min_risk_reward_ratio=2.0       # Higher R:R requirement
+        max_position_size=0.25,  # 25% max per position
+        risk_per_trade=0.03,  # 3% risk per trade
+        max_portfolio_exposure=0.80,  # 80% total exposure
+        stop_loss_atr_multiple=1.5,  # Tighter stops
+        take_profit_atr_multiple=4.0,  # Larger targets
+        min_risk_reward_ratio=2.0,  # Higher R:R requirement
     )
 
     # More responsive indicator settings
     aggressive_indicators = IndicatorThresholds(
-        rsi_period=10,                  # Faster RSI
+        rsi_period=10,  # Faster RSI
         rsi_oversold=35,
         rsi_overbought=65,
         macd_fast=8,
         macd_slow=17,
         macd_signal=9,
         ema_fast=12,
-        ema_slow=26
+        ema_slow=26,
     )
 
     strategy = EnhancedMomentumStrategy(
-        symbols=['QQQ'],
+        symbols=["QQQ"],
         risk_params=aggressive_risk,
         indicator_thresholds=aggressive_indicators,
         min_signal_quality=SignalQuality.MODERATE,
-        enable_volume_filter=False,     # More signals
-        enable_trend_filter=False       # Trade both directions
+        enable_volume_filter=False,  # More signals
+        enable_trend_filter=False,  # Trade both directions
     )
 
-    data = generate_sample_data('QQQ', days=150, initial_price=380.0, volatility=0.025)
+    data = generate_sample_data("QQQ", days=150, initial_price=380.0, volatility=0.025)
     signals = strategy.generate_signals(data)
 
     print(f"\nAggressive Strategy Results:")
@@ -195,16 +192,13 @@ def example_3_aggressive_strategy():
 
 def example_4_position_sizing():
     """Example 4: Position sizing demonstration"""
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("EXAMPLE 4: Position Sizing")
-    print("="*80)
+    print("=" * 80)
 
-    strategy = EnhancedMomentumStrategy(
-        symbols=['MSFT'],
-        min_signal_quality=SignalQuality.MODERATE
-    )
+    strategy = EnhancedMomentumStrategy(symbols=["MSFT"], min_signal_quality=SignalQuality.MODERATE)
 
-    data = generate_sample_data('MSFT', days=100, initial_price=380.0)
+    data = generate_sample_data("MSFT", days=100, initial_price=380.0)
     signals = strategy.generate_signals(data)
 
     if not signals:
@@ -222,34 +216,30 @@ def example_4_position_sizing():
 
     print("\nPosition Sizes by Account Value:")
     for account_value in account_values:
-        position_size = strategy.calculate_position_size(
-            signal=signal,
-            account_value=account_value
-        )
+        position_size = strategy.calculate_position_size(signal=signal, account_value=account_value)
 
         position_value = position_size * signal.price
         position_pct = position_value / account_value
 
-        risk_per_share = abs(signal.price - signal.metadata['stop_loss'])
+        risk_per_share = abs(signal.price - signal.metadata["stop_loss"])
         total_risk = position_size * risk_per_share
         risk_pct = total_risk / account_value
 
         print(f"\nAccount: ${account_value:,}")
-        print(f"  Position: {position_size:.0f} shares = ${position_value:,.0f} ({position_pct:.1%})")
+        print(
+            f"  Position: {position_size:.0f} shares = ${position_value:,.0f} ({position_pct:.1%})"
+        )
         print(f"  Risk: ${total_risk:,.0f} ({risk_pct:.2%})")
 
 
 def example_5_multi_symbol_analysis():
     """Example 5: Multi-symbol portfolio analysis"""
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("EXAMPLE 5: Multi-Symbol Portfolio Analysis")
-    print("="*80)
+    print("=" * 80)
 
-    symbols = ['AAPL', 'MSFT', 'GOOGL', 'AMZN']
-    strategy = EnhancedMomentumStrategy(
-        symbols=symbols,
-        min_signal_quality=SignalQuality.MODERATE
-    )
+    symbols = ["AAPL", "MSFT", "GOOGL", "AMZN"]
+    strategy = EnhancedMomentumStrategy(symbols=symbols, min_signal_quality=SignalQuality.MODERATE)
 
     all_signals = {}
 
@@ -269,7 +259,7 @@ def example_5_multi_symbol_analysis():
             buy_count = sum(1 for s in signals if s.signal_type == SignalType.BUY)
             sell_count = sum(1 for s in signals if s.signal_type == SignalType.SELL)
             avg_confidence = np.mean([s.confidence for s in signals])
-            avg_rr = np.mean([s.metadata['risk_reward'] for s in signals])
+            avg_rr = np.mean([s.metadata["risk_reward"] for s in signals])
 
             print(f"\n{symbol}:")
             print(f"  Signals: {len(signals)} (Buy: {buy_count}, Sell: {sell_count})")
@@ -279,27 +269,24 @@ def example_5_multi_symbol_analysis():
 
 def example_6_signal_quality_analysis():
     """Example 6: Analyze signal quality distribution"""
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("EXAMPLE 6: Signal Quality Analysis")
-    print("="*80)
+    print("=" * 80)
 
     # Create strategies with different quality requirements
     strategies = {
-        'Permissive (WEAK+)': EnhancedMomentumStrategy(
-            symbols=['AAPL'],
-            min_signal_quality=SignalQuality.WEAK
+        "Permissive (WEAK+)": EnhancedMomentumStrategy(
+            symbols=["AAPL"], min_signal_quality=SignalQuality.WEAK
         ),
-        'Balanced (MODERATE+)': EnhancedMomentumStrategy(
-            symbols=['AAPL'],
-            min_signal_quality=SignalQuality.MODERATE
+        "Balanced (MODERATE+)": EnhancedMomentumStrategy(
+            symbols=["AAPL"], min_signal_quality=SignalQuality.MODERATE
         ),
-        'Strict (STRONG only)': EnhancedMomentumStrategy(
-            symbols=['AAPL'],
-            min_signal_quality=SignalQuality.STRONG
-        )
+        "Strict (STRONG only)": EnhancedMomentumStrategy(
+            symbols=["AAPL"], min_signal_quality=SignalQuality.STRONG
+        ),
     }
 
-    data = generate_sample_data('AAPL', days=200)
+    data = generate_sample_data("AAPL", days=200)
 
     print("\nComparing Signal Quality Requirements:\n")
     for name, strategy in strategies.items():
@@ -335,10 +322,10 @@ def main():
         except Exception as e:
             logger.error(f"Error in {name}: {e}")
 
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("All examples completed!")
-    print("="*80 + "\n")
+    print("=" * 80 + "\n")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

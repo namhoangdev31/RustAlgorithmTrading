@@ -1,5 +1,5 @@
-use common::types::{Bar, Price, Quantity, Symbol, Trade};
 use chrono::{DateTime, Duration, Utc};
+use common::types::{Bar, Price, Quantity, Symbol, Trade};
 use std::collections::HashMap;
 
 /// Time window for bar aggregation
@@ -131,12 +131,9 @@ impl BarAggregator {
             let key = (trade.symbol.0.clone(), window);
 
             // Get or create accumulator
-            let accumulator = self
-                .accumulators
-                .entry(key.clone())
-                .or_insert_with(|| {
-                    BarAccumulator::new(trade.symbol.clone(), window, trade.timestamp)
-                });
+            let accumulator = self.accumulators.entry(key.clone()).or_insert_with(|| {
+                BarAccumulator::new(trade.symbol.clone(), window, trade.timestamp)
+            });
 
             // Check if trade is in current window
             if !accumulator.is_in_window(trade.timestamp) {

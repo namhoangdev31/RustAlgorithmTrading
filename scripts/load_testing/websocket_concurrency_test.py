@@ -18,6 +18,7 @@ from dataclasses import dataclass
 @dataclass
 class WebSocketMetrics:
     """Metrics for a single WebSocket connection"""
+
     connection_id: int
     connected_at: float
     messages_received: int = 0
@@ -46,15 +47,12 @@ class WebSocketConcurrencyTester:
             "total_messages_sent": 0,
             "connection_latencies_ms": [],
             "message_latencies_ms": [],
-            "errors": []
+            "errors": [],
         }
 
     async def websocket_client(self, connection_id: int, stop_event: asyncio.Event):
         """Maintain a WebSocket connection and handle messages"""
-        metrics = WebSocketMetrics(
-            connection_id=connection_id,
-            connected_at=time.time()
-        )
+        metrics = WebSocketMetrics(connection_id=connection_id, connected_at=time.time())
         self.connections.append(metrics)
 
         ws_uri = f"{self.ws_url}/ws/market_data"
@@ -66,12 +64,14 @@ class WebSocketConcurrencyTester:
                 self.results["connection_latencies_ms"].append(connect_latency_ms)
                 self.results["connections_successful"] += 1
 
-                print(f"Connection {connection_id}: Connected (latency: {connect_latency_ms:.2f}ms)")
+                print(
+                    f"Connection {connection_id}: Connected (latency: {connect_latency_ms:.2f}ms)"
+                )
 
                 # Subscribe to market data
                 subscribe_msg = {
                     "action": "subscribe",
-                    "symbols": ["BTCUSDT", "ETHUSDT", "BNBUSDT"]
+                    "symbols": ["BTCUSDT", "ETHUSDT", "BNBUSDT"],
                 }
                 await websocket.send(json.dumps(subscribe_msg))
                 metrics.messages_sent += 1
@@ -81,10 +81,7 @@ class WebSocketConcurrencyTester:
                 while not stop_event.is_set():
                     try:
                         message_start = time.time()
-                        message = await asyncio.wait_for(
-                            websocket.recv(),
-                            timeout=1.0
-                        )
+                        message = await asyncio.wait_for(websocket.recv(), timeout=1.0)
 
                         message_latency_ms = (time.time() - message_start) * 1000
 
@@ -174,31 +171,39 @@ class WebSocketConcurrencyTester:
         print(f"  Successful: {self.results['connections_successful']}")
         print(f"  Failed: {self.results['connections_failed']}")
 
-        success_rate = (self.results['connections_successful'] / self.num_connections * 100) if self.num_connections > 0 else 0
+        success_rate = (
+            (self.results["connections_successful"] / self.num_connections * 100)
+            if self.num_connections > 0
+            else 0
+        )
         print(f"  Success rate: {success_rate:.2f}%")
 
         print(f"\nMessages:")
         print(f"  Total received: {self.results['total_messages_received']}")
         print(f"  Total sent: {self.results['total_messages_sent']}")
 
-        avg_messages_per_conn = self.results['total_messages_received'] / self.results['connections_successful'] if self.results['connections_successful'] > 0 else 0
+        avg_messages_per_conn = (
+            self.results["total_messages_received"] / self.results["connections_successful"]
+            if self.results["connections_successful"] > 0
+            else 0
+        )
         print(f"  Average per connection: {avg_messages_per_conn:.2f}")
 
-        if self.results['connection_latencies_ms']:
+        if self.results["connection_latencies_ms"]:
             print(f"\nConnection Latency Statistics:")
             print(f"  Min: {min(self.results['connection_latencies_ms']):.2f} ms")
             print(f"  Max: {max(self.results['connection_latencies_ms']):.2f} ms")
             print(f"  Mean: {statistics.mean(self.results['connection_latencies_ms']):.2f} ms")
             print(f"  Median: {statistics.median(self.results['connection_latencies_ms']):.2f} ms")
 
-        if self.results['message_latencies_ms']:
+        if self.results["message_latencies_ms"]:
             print(f"\nMessage Latency Statistics:")
             print(f"  Min: {min(self.results['message_latencies_ms']):.2f} ms")
             print(f"  Max: {max(self.results['message_latencies_ms']):.2f} ms")
             print(f"  Mean: {statistics.mean(self.results['message_latencies_ms']):.2f} ms")
             print(f"  Median: {statistics.median(self.results['message_latencies_ms']):.2f} ms")
 
-            sorted_msg_lat = sorted(self.results['message_latencies_ms'])
+            sorted_msg_lat = sorted(self.results["message_latencies_ms"])
             p95_idx = int(len(sorted_msg_lat) * 0.95)
             p99_idx = int(len(sorted_msg_lat) * 0.99)
             print(f"  P95: {sorted_msg_lat[p95_idx]:.2f} ms")
@@ -215,16 +220,20 @@ class WebSocketConcurrencyTester:
             print(f"  Mean messages: {statistics.mean(messages_per_conn):.2f}")
             print(f"  Median messages: {statistics.median(messages_per_conn):.2f}")
 
-        if self.results['errors']:
+        if self.results["errors"]:
             print(f"\nErrors (showing first 10):")
-            for error in self.results['errors'][:10]:
+            for error in self.results["errors"][:10]:
                 print(f"  - {error}")
 
         # Pass/Fail criteria
         print("\n" + "-" * 80)
         connection_success_ok = success_rate >= 95.0
-        message_throughput_ok = self.results['total_messages_received'] > 0
-        message_latency_ok = statistics.median(self.results['message_latencies_ms']) <= 100 if self.results['message_latencies_ms'] else False
+        message_throughput_ok = self.results["total_messages_received"] > 0
+        message_latency_ok = (
+            statistics.median(self.results["message_latencies_ms"]) <= 100
+            if self.results["message_latencies_ms"]
+            else False
+        )
         stable_connections = len(successful_connections) >= self.num_connections * 0.9
 
         print("PASS/FAIL CRITERIA:")
@@ -233,51 +242,100 @@ class WebSocketConcurrencyTester:
         print(f"  {'✓' if message_latency_ok else '✗'} Median message latency <= 100ms")
         print(f"  {'✓' if stable_connections else '✗'} Stable connections >= 90% of target")
 
-        overall_pass = connection_success_ok and message_throughput_ok and message_latency_ok and stable_connections
+        overall_pass = (
+            connection_success_ok
+            and message_throughput_ok
+            and message_latency_ok
+            and stable_connections
+        )
         print(f"\nOVERALL: {'PASS ✓' if overall_pass else 'FAIL ✗'}")
         print("=" * 80)
 
         # Save results
         results_file = "/results/websocket_concurrency_test.json"
         os.makedirs(os.path.dirname(results_file), exist_ok=True)
-        with open(results_file, 'w') as f:
-            json.dump({
-                "test_name": "websocket_concurrency_test",
-                "timestamp": time.time(),
-                "configuration": {
-                    "num_connections": self.num_connections,
-                    "duration_sec": self.duration_sec,
-                    "ws_url": self.ws_url
+        with open(results_file, "w") as f:
+            json.dump(
+                {
+                    "test_name": "websocket_concurrency_test",
+                    "timestamp": time.time(),
+                    "configuration": {
+                        "num_connections": self.num_connections,
+                        "duration_sec": self.duration_sec,
+                        "ws_url": self.ws_url,
+                    },
+                    "results": {
+                        "connections": {
+                            "attempted": self.num_connections,
+                            "successful": self.results["connections_successful"],
+                            "failed": self.results["connections_failed"],
+                            "success_rate": success_rate,
+                        },
+                        "messages": {
+                            "total_received": self.results["total_messages_received"],
+                            "total_sent": self.results["total_messages_sent"],
+                            "avg_per_connection": avg_messages_per_conn,
+                        },
+                        "connection_latency_stats": {
+                            "min": (
+                                min(self.results["connection_latencies_ms"])
+                                if self.results["connection_latencies_ms"]
+                                else 0
+                            ),
+                            "max": (
+                                max(self.results["connection_latencies_ms"])
+                                if self.results["connection_latencies_ms"]
+                                else 0
+                            ),
+                            "mean": (
+                                statistics.mean(self.results["connection_latencies_ms"])
+                                if self.results["connection_latencies_ms"]
+                                else 0
+                            ),
+                            "median": (
+                                statistics.median(self.results["connection_latencies_ms"])
+                                if self.results["connection_latencies_ms"]
+                                else 0
+                            ),
+                        },
+                        "message_latency_stats": {
+                            "min": (
+                                min(self.results["message_latencies_ms"])
+                                if self.results["message_latencies_ms"]
+                                else 0
+                            ),
+                            "max": (
+                                max(self.results["message_latencies_ms"])
+                                if self.results["message_latencies_ms"]
+                                else 0
+                            ),
+                            "mean": (
+                                statistics.mean(self.results["message_latencies_ms"])
+                                if self.results["message_latencies_ms"]
+                                else 0
+                            ),
+                            "median": (
+                                statistics.median(self.results["message_latencies_ms"])
+                                if self.results["message_latencies_ms"]
+                                else 0
+                            ),
+                            "p95": (
+                                sorted_msg_lat[p95_idx]
+                                if self.results["message_latencies_ms"]
+                                else 0
+                            ),
+                            "p99": (
+                                sorted_msg_lat[p99_idx]
+                                if self.results["message_latencies_ms"]
+                                else 0
+                            ),
+                        },
+                    },
+                    "pass": overall_pass,
                 },
-                "results": {
-                    "connections": {
-                        "attempted": self.num_connections,
-                        "successful": self.results['connections_successful'],
-                        "failed": self.results['connections_failed'],
-                        "success_rate": success_rate
-                    },
-                    "messages": {
-                        "total_received": self.results['total_messages_received'],
-                        "total_sent": self.results['total_messages_sent'],
-                        "avg_per_connection": avg_messages_per_conn
-                    },
-                    "connection_latency_stats": {
-                        "min": min(self.results['connection_latencies_ms']) if self.results['connection_latencies_ms'] else 0,
-                        "max": max(self.results['connection_latencies_ms']) if self.results['connection_latencies_ms'] else 0,
-                        "mean": statistics.mean(self.results['connection_latencies_ms']) if self.results['connection_latencies_ms'] else 0,
-                        "median": statistics.median(self.results['connection_latencies_ms']) if self.results['connection_latencies_ms'] else 0
-                    },
-                    "message_latency_stats": {
-                        "min": min(self.results['message_latencies_ms']) if self.results['message_latencies_ms'] else 0,
-                        "max": max(self.results['message_latencies_ms']) if self.results['message_latencies_ms'] else 0,
-                        "mean": statistics.mean(self.results['message_latencies_ms']) if self.results['message_latencies_ms'] else 0,
-                        "median": statistics.median(self.results['message_latencies_ms']) if self.results['message_latencies_ms'] else 0,
-                        "p95": sorted_msg_lat[p95_idx] if self.results['message_latencies_ms'] else 0,
-                        "p99": sorted_msg_lat[p99_idx] if self.results['message_latencies_ms'] else 0
-                    }
-                },
-                "pass": overall_pass
-            }, f, indent=2)
+                f,
+                indent=2,
+            )
 
         print(f"\nResults saved to {results_file}")
 
@@ -291,9 +349,7 @@ async def main():
     duration = int(os.getenv("LOAD_TEST_DURATION", "300"))
 
     tester = WebSocketConcurrencyTester(
-        ws_url=ws_url,
-        num_connections=num_connections,
-        duration_sec=duration
+        ws_url=ws_url, num_connections=num_connections, duration_sec=duration
     )
 
     await tester.run_test()

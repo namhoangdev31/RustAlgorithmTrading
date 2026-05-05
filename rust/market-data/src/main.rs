@@ -1,10 +1,10 @@
-use market_data::MarketDataService;
-use tracing_subscriber::{fmt, prelude::*, EnvFilter};
 use common::config::SystemConfig;
 use common::health::HealthCheck;
-use common::metrics::{MetricsConfig, start_metrics_server};
+use common::metrics::{start_metrics_server, MetricsConfig};
+use market_data::MarketDataService;
 use std::sync::Arc;
 use tokio::sync::RwLock;
+use tracing_subscriber::{fmt, prelude::*, EnvFilter};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -34,7 +34,9 @@ async fn main() -> anyhow::Result<()> {
 
     // Validate we're in the correct environment
     if config.is_production() && config.is_paper_trading() {
-        tracing::warn!("⚠️  Production environment with paper trading enabled - this may be unintended!");
+        tracing::warn!(
+            "⚠️  Production environment with paper trading enabled - this may be unintended!"
+        );
     }
 
     // Create health status tracker
@@ -48,7 +50,10 @@ async fn main() -> anyhow::Result<()> {
             Some(handle)
         }
         Err(e) => {
-            tracing::warn!("Failed to start metrics server: {}. Continuing without metrics.", e);
+            tracing::warn!(
+                "Failed to start metrics server: {}. Continuing without metrics.",
+                e
+            );
             None
         }
     };

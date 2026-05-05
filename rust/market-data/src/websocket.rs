@@ -2,7 +2,7 @@ use common::{Result, TradingError};
 use futures_util::{SinkExt, StreamExt};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use tokio::time::{Duration, sleep};
+use tokio::time::{sleep, Duration};
 use tokio_tungstenite::{connect_async, tungstenite::Message};
 use tracing::{debug, error, info, warn};
 use url::Url;
@@ -72,11 +72,7 @@ pub struct WebSocketClient {
 }
 
 impl WebSocketClient {
-    pub fn new(
-        api_key: String,
-        api_secret: String,
-        symbols: Vec<String>,
-    ) -> Result<Self> {
+    pub fn new(api_key: String, api_secret: String, symbols: Vec<String>) -> Result<Self> {
         let url = Url::parse(ALPACA_WSS_URL)
             .map_err(|e| TradingError::Configuration(format!("Invalid WebSocket URL: {}", e)))?;
 
@@ -100,7 +96,10 @@ impl WebSocketClient {
                     break;
                 }
                 Err(e) => {
-                    error!("WebSocket error: {:?}, reconnecting in {:?}...", e, self.reconnect_delay);
+                    error!(
+                        "WebSocket error: {:?}, reconnecting in {:?}...",
+                        e, self.reconnect_delay
+                    );
                     sleep(self.reconnect_delay).await;
                 }
             }
@@ -138,7 +137,8 @@ impl WebSocketClient {
 
         // Wait for auth confirmation
         if let Some(msg) = read.next().await {
-            let msg = msg.map_err(|e| TradingError::Network(format!("Auth response error: {}", e)))?;
+            let msg =
+                msg.map_err(|e| TradingError::Network(format!("Auth response error: {}", e)))?;
             debug!("Auth response: {:?}", msg);
         }
 
@@ -222,7 +222,8 @@ mod tests {
 
     #[test]
     fn test_parse_trade_message() {
-        let json = r#"[{"T":"t","S":"AAPL","p":150.25,"s":100,"t":"2024-01-01T10:00:00Z","i":12345}]"#;
+        let json =
+            r#"[{"T":"t","S":"AAPL","p":150.25,"s":100,"t":"2024-01-01T10:00:00Z","i":12345}]"#;
         let messages: Vec<AlpacaMessage> = serde_json::from_str(json).unwrap();
         assert_eq!(messages.len(), 1);
     }

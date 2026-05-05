@@ -1,9 +1,9 @@
-use signal_bridge::SignalBridgeService;
-use tracing_subscriber::{fmt, prelude::*, EnvFilter};
 use common::config::SystemConfig;
 use common::health::HealthCheck;
+use signal_bridge::SignalBridgeService;
 use std::sync::Arc;
 use tokio::sync::RwLock;
+use tracing_subscriber::{fmt, prelude::*, EnvFilter};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -18,7 +18,10 @@ async fn main() -> anyhow::Result<()> {
     // Load configuration with validation
     let config = match SystemConfig::from_file("config/system.json") {
         Ok(cfg) => {
-            tracing::info!("[cid:INIT] Configuration loaded successfully - Environment: {}", cfg.environment());
+            tracing::info!(
+                "[cid:INIT] Configuration loaded successfully - Environment: {}",
+                cfg.environment()
+            );
             cfg
         }
         Err(e) => {
@@ -31,9 +34,18 @@ async fn main() -> anyhow::Result<()> {
     tracing::info!("[cid:INIT] Signal Configuration:");
     tracing::info!("[cid:INIT]   Model Path: {}", config.signal.model_path);
     tracing::info!("[cid:INIT]   Features: {:?}", config.signal.features);
-    tracing::info!("[cid:INIT]   Update Interval: {}ms", config.signal.update_interval_ms);
-    tracing::info!("[cid:INIT]   ZMQ Subscribe: {}", config.signal.zmq_subscribe_address);
-    tracing::info!("[cid:INIT]   ZMQ Publish: {}", config.signal.zmq_publish_address);
+    tracing::info!(
+        "[cid:INIT]   Update Interval: {}ms",
+        config.signal.update_interval_ms
+    );
+    tracing::info!(
+        "[cid:INIT]   ZMQ Subscribe: {}",
+        config.signal.zmq_subscribe_address
+    );
+    tracing::info!(
+        "[cid:INIT]   ZMQ Publish: {}",
+        config.signal.zmq_publish_address
+    );
 
     // Create health status tracker
     let health = Arc::new(RwLock::new(HealthCheck::healthy("signal-bridge")));

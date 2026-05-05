@@ -1,4 +1,4 @@
-from src.utils.release_gate_manager import (
+from utils.release_gate_manager import (
     ReleaseGateManager,
     SuiteType,
     DebtStatus,

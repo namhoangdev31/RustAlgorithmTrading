@@ -301,7 +301,11 @@ pub fn macd(prices: &[f64], fast: usize, slow: usize, signal: usize) -> Vec<f64>
     results
 }
 
-pub fn bollinger_bands(prices: &[f64], period: usize, _std_dev: f64) -> (Vec<f64>, Vec<f64>, Vec<f64>) {
+pub fn bollinger_bands(
+    prices: &[f64],
+    period: usize,
+    _std_dev: f64,
+) -> (Vec<f64>, Vec<f64>, Vec<f64>) {
     let mut bb = BollingerBands::new(period);
     let mut lower = Vec::new();
     let mut middle = Vec::new();

@@ -16,7 +16,7 @@ import numpy as np
 from datetime import datetime, timedelta
 
 # Add src to path
-sys.path.insert(0, '/mnt/c/Users/DaviCastroSamora/Documents/SamoraDC/RustAlgorithmTrading')
+sys.path.insert(0, "/mnt/c/Users/DaviCastroSamora/Documents/SamoraDC/RustAlgorithmTrading")
 
 from strategies.momentum import MomentumStrategy
 from strategies.base import SignalType
@@ -24,24 +24,29 @@ from strategies.base import SignalType
 
 def create_test_data():
     """Create test data with clear patterns"""
-    dates = pd.date_range(start='2024-01-01', periods=200, freq='1D')
+    dates = pd.date_range(start="2024-01-01", periods=200, freq="1D")
 
     # Pattern: down -> up -> down -> up (should trigger all signal types)
-    prices = np.concatenate([
-        np.linspace(100, 85, 50),   # Downtrend to oversold
-        np.linspace(85, 105, 50),   # Strong uptrend (LONG entry)
-        np.linspace(105, 90, 50),   # Reversal down (EXIT, then SHORT entry)
-        np.linspace(90, 100, 50)    # Recovery (EXIT)
-    ])
+    prices = np.concatenate(
+        [
+            np.linspace(100, 85, 50),  # Downtrend to oversold
+            np.linspace(85, 105, 50),  # Strong uptrend (LONG entry)
+            np.linspace(105, 90, 50),  # Reversal down (EXIT, then SHORT entry)
+            np.linspace(90, 100, 50),  # Recovery (EXIT)
+        ]
+    )
 
-    data = pd.DataFrame({
-        'open': prices,
-        'high': prices + 2,
-        'low': prices - 2,
-        'close': prices,
-        'volume': [1000000] * 200
-    }, index=dates)
-    data.attrs['symbol'] = 'TEST'
+    data = pd.DataFrame(
+        {
+            "open": prices,
+            "high": prices + 2,
+            "low": prices - 2,
+            "close": prices,
+            "volume": [1000000] * 200,
+        },
+        index=dates,
+    )
+    data.attrs["symbol"] = "TEST"
 
     return data
 
@@ -55,11 +60,11 @@ def validate_parameters():
     strategy = MomentumStrategy()
 
     tests = [
-        ("RSI Oversold", strategy.get_parameter('rsi_oversold'), 30),
-        ("RSI Overbought", strategy.get_parameter('rsi_overbought'), 70),
-        ("Position Size", strategy.get_parameter('position_size'), 0.15),
-        ("Stop Loss %", strategy.get_parameter('stop_loss_pct'), 0.02),
-        ("Take Profit %", strategy.get_parameter('take_profit_pct'), 0.03),
+        ("RSI Oversold", strategy.get_parameter("rsi_oversold"), 30),
+        ("RSI Overbought", strategy.get_parameter("rsi_overbought"), 70),
+        ("Position Size", strategy.get_parameter("position_size"), 0.15),
+        ("Stop Loss %", strategy.get_parameter("stop_loss_pct"), 0.02),
+        ("Take Profit %", strategy.get_parameter("take_profit_pct"), 0.03),
     ]
 
     all_passed = True
@@ -135,7 +140,7 @@ def validate_exit_metadata():
         print("❌ FAIL No EXIT signals to validate")
         return False
 
-    required_fields = ['exit_reason', 'pnl_pct', 'entry_price', 'position_type']
+    required_fields = ["exit_reason", "pnl_pct", "entry_price", "position_type"]
 
     all_passed = True
     for i, signal in enumerate(exit_signals[:3]):  # Check first 3
@@ -143,7 +148,7 @@ def validate_exit_metadata():
         for field in required_fields:
             has_field = field in signal.metadata
             status = "✅" if has_field else "❌"
-            value = signal.metadata.get(field, 'MISSING')
+            value = signal.metadata.get(field, "MISSING")
             print(f"  {status} {field}: {value}")
             all_passed = all_passed and has_field
 
@@ -163,10 +168,10 @@ def validate_position_sizing():
 
     signal = Signal(
         timestamp=datetime.now(),
-        symbol='TEST',
+        symbol="TEST",
         signal_type=SignalType.LONG,
         price=100.0,
-        confidence=1.0
+        confidence=1.0,
     )
 
     account_value = 10000.0
@@ -197,8 +202,8 @@ def validate_reward_risk_ratio():
 
     strategy = MomentumStrategy()
 
-    stop_loss = strategy.get_parameter('stop_loss_pct')
-    take_profit = strategy.get_parameter('take_profit_pct')
+    stop_loss = strategy.get_parameter("stop_loss_pct")
+    take_profit = strategy.get_parameter("take_profit_pct")
     ratio = take_profit / stop_loss
 
     expected_ratio = 1.5
@@ -255,5 +260,5 @@ def main():
         return 1
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

@@ -25,7 +25,6 @@ from .schemas import (
     DUCKDB_SCHEMAS,
 )
 
-
 logger = logging.getLogger(__name__)
 
 

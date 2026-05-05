@@ -7,10 +7,10 @@ use governor::{
 };
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
+use std::collections::HashSet;
 use std::num::NonZeroU32;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};
-use std::collections::HashSet;
 use tokio::sync::mpsc;
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -113,7 +113,8 @@ impl OrderRouter {
         order: Order,
         current_market_price: Option<f64>,
     ) -> Result<AlpacaOrderResponse> {
-        self.route_with_cb_hook(order, current_market_price, None).await
+        self.route_with_cb_hook(order, current_market_price, None)
+            .await
     }
 
     /// Route and execute order with optional external circuit-breaker hook.
@@ -167,10 +168,7 @@ impl OrderRouter {
         let lock_key = order.client_order_id.clone();
         {
             let mut lock_set = self.idempotency_locks.lock().map_err(|_| {
-                TradingError::Execution(format!(
-                    "[cid:{}] Idempotency lock poisoned",
-                    lock_key
-                ))
+                TradingError::Execution(format!("[cid:{}] Idempotency lock poisoned", lock_key))
             })?;
             if !lock_set.insert(lock_key.clone()) {
                 let msg = format!(
@@ -200,22 +198,36 @@ impl OrderRouter {
                 || async {
                     rate_limiter.until_ready().await;
                     let alpaca_order = self.build_alpaca_request(&order)?;
-                    self.send_to_exchange(&http_client, &config, alpaca_order).await
+                    self.send_to_exchange(&http_client, &config, alpaca_order)
+                        .await
                 },
                 move |err| {
                     let err_msg = format!("{:?}", err).to_lowercase();
                     // Phase 3: Fail-safe unknown exchange error -> Non-retryable
                     if matches!(err, TradingError::Network(_)) {
-                        let _ = telemetry.try_send(format!("[cid:{}] Retryable error (Network): {:?}", cid, err));
+                        let _ = telemetry.try_send(format!(
+                            "[cid:{}] Retryable error (Network): {:?}",
+                            cid, err
+                        ));
                         return true;
                     }
                     if let TradingError::Exchange(_) = err {
-                        if err_msg.contains("429") || err_msg.contains("error 502") || err_msg.contains("error 503") || err_msg.contains("gateway timeout") {
-                            let _ = telemetry.try_send(format!("[cid:{}] Retryable error (Exchange Rate Limit / Transient): {:?}", cid, err));
+                        if err_msg.contains("429")
+                            || err_msg.contains("error 502")
+                            || err_msg.contains("error 503")
+                            || err_msg.contains("gateway timeout")
+                        {
+                            let _ = telemetry.try_send(format!(
+                                "[cid:{}] Retryable error (Exchange Rate Limit / Transient): {:?}",
+                                cid, err
+                            ));
                             return true;
                         }
                     }
-                    let _ = telemetry.try_send(format!("[cid:{}] Non-retryable error, failing immediately: {:?}", cid, err));
+                    let _ = telemetry.try_send(format!(
+                        "[cid:{}] Non-retryable error, failing immediately: {:?}",
+                        cid, err
+                    ));
                     false // Unknown error falls here, fail-safe!
                 },
                 || {
@@ -227,11 +239,13 @@ impl OrderRouter {
                     }
                     if let Some(hook) = &cb_check_hook {
                         if hook() {
-                            return Err(TradingError::RiskCheck("Circuit breaker is OPEN. Rejecting execution attempt.".to_string()));
+                            return Err(TradingError::RiskCheck(
+                                "Circuit breaker is OPEN. Rejecting execution attempt.".to_string(),
+                            ));
                         }
                     }
                     Ok(())
-                }
+                },
             )
             .await;
 
@@ -442,9 +456,9 @@ impl OrderRouter {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use common::config::ExecutionConfig;
-    use common::types::{Order, OrderType, Side, Symbol, Quantity, OrderStatus};
     use chrono::Utc;
+    use common::config::ExecutionConfig;
+    use common::types::{Order, OrderStatus, OrderType, Quantity, Side, Symbol};
 
     fn get_test_config() -> ExecutionConfig {
         ExecutionConfig {
@@ -482,9 +496,13 @@ mod tests {
         let router = OrderRouter::new(get_test_config()).unwrap();
         let order = get_dummy_order();
         let order_clone = order.clone();
-        
+
         // Manually hold the lock to simulate race condition where the first order is routing
-        let _test_lock_guard = router.idempotency_locks.lock().unwrap().insert(order.client_order_id.clone());
+        let _test_lock_guard = router
+            .idempotency_locks
+            .lock()
+            .unwrap()
+            .insert(order.client_order_id.clone());
 
         // Concurrency/Duplicate attempt
         let result2 = router.route(order_clone, None).await;
@@ -500,10 +518,10 @@ mod tests {
         let router = OrderRouter::new(get_test_config()).unwrap();
         let order = get_dummy_order();
         let hook: Arc<dyn Fn() -> bool + Send + Sync> = Arc::new(|| true);
-        
+
         // Simulating the caller passing a circuit breaker opened state
         let result = router.route_with_cb_hook(order, None, Some(hook)).await;
-        
+
         assert!(result.is_err());
         match result {
             Err(TradingError::RiskCheck(msg)) => assert!(msg.contains("Circuit breaker is OPEN")),
@@ -515,12 +533,18 @@ mod tests {
     async fn test_unknown_exchange_error_is_non_retryable() {
         // Just verify the logic of the fail-safe hook via mock
         let err1 = TradingError::Network("conn reset".to_string());
-        
+
         let should_retry = |err: &TradingError| -> bool {
             let err_msg = format!("{:?}", err).to_lowercase();
-            if matches!(err, TradingError::Network(_)) { return true; }
+            if matches!(err, TradingError::Network(_)) {
+                return true;
+            }
             if let TradingError::Exchange(_) = err {
-                if err_msg.contains("429") || err_msg.contains("error 502") || err_msg.contains("error 503") || err_msg.contains("gateway timeout") {
+                if err_msg.contains("429")
+                    || err_msg.contains("error 502")
+                    || err_msg.contains("error 503")
+                    || err_msg.contains("gateway timeout")
+                {
                     return true;
                 }
             }

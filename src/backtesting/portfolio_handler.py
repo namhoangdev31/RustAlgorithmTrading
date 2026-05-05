@@ -11,12 +11,25 @@ import pandas as pd
 from models.portfolio import Portfolio, Position
 from models.events import SignalEvent, OrderEvent, FillEvent
 from models.market import Bar
-from backtesting.position_sizer import PositionSizer, FixedAmountSizer
+from backtesting.position_sizer import (
+    PositionSizer,
+    FixedAmountSizer,
+    PercentageOfEquitySizer,
+    KellyPositionSizer,
+)
 from risk.allocation_manager import AllocationManager, AllocationPolicy
 from models.governance import ControlStatus, ControlType
 
 if TYPE_CHECKING:
     from .data_handler import HistoricalDataHandler
+
+__all__ = [
+    "PortfolioHandler",
+    "PositionSizer",
+    "FixedAmountSizer",
+    "PercentageOfEquitySizer",
+    "KellyPositionSizer",
+]
 
 
 class PortfolioHandler:
@@ -70,11 +83,9 @@ class PortfolioHandler:
             cash=initial_capital,
         )
 
-        # Track equity curve
         self.equity_curve: List[Dict] = []
         self.holdings_history: List[Dict] = []
 
-        # RACE FIX: Track reserved cash for pending orders in the same bar
         self.reserved_cash: float = 0.0
 
         logger.info(f"Initialized PortfolioHandler with ${initial_capital:,.2f}")
@@ -275,7 +286,9 @@ class PortfolioHandler:
             logger.debug(f"✅ ALLOCATION ALLOWED: {allocation_record.decision_reason}")
 
         if order_quantity == 0:
-            logger.debug(f"⏸️ No order needed: target position already achieved for {signal.symbol}")
+            logger.debug(
+                f"⏸️ No order needed: target position already achieved for {signal.symbol}"
+            )
             return orders
 
         # RACE FIX: For BUY orders, validate cash and reserve funds

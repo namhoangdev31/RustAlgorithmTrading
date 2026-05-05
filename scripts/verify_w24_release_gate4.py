@@ -106,9 +106,17 @@ def run_gate4_verification():
         "EV-W24-102": summary["rollback_ready_rate"] == 1.0,
         "EV-W24-103": summary["approval_rate"] == 1.0,
         "EV-W24-104": summary["open_release_blockers"] == 0,
-        "EV-W24-207": any("EV-W24-207" in r.evidence_ids and r.metadata.get("coverage", 0) >= 0.99 for r in manager.records),
-        "EV-W24-208": any("EV-W24-208" in r.evidence_ids and r.metadata.get("findings") == 0 for r in manager.records),
-        "EV-W24-402": any("EV-W24-402" in r.evidence_ids and r.disposition == "PASS" for r in manager.records),
+        "EV-W24-207": any(
+            "EV-W24-207" in r.evidence_ids and r.metadata.get("coverage", 0) >= 0.99
+            for r in manager.records
+        ),
+        "EV-W24-208": any(
+            "EV-W24-208" in r.evidence_ids and r.metadata.get("findings") == 0
+            for r in manager.records
+        ),
+        "EV-W24-402": any(
+            "EV-W24-402" in r.evidence_ids and r.disposition == "PASS" for r in manager.records
+        ),
     }
 
     all_pass = True

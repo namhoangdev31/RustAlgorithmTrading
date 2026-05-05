@@ -74,8 +74,7 @@ class DuckDBManager:
         """Initialize database schema."""
         with self.get_connection() as conn:
             # Market data metrics table
-            conn.execute(
-                """
+            conn.execute("""
                 CREATE TABLE IF NOT EXISTS market_data (
                     timestamp TIMESTAMP NOT NULL,
                     symbol VARCHAR NOT NULL,
@@ -87,20 +86,16 @@ class DuckDBManager:
                     spread_bps DOUBLE,
                     PRIMARY KEY (timestamp, symbol)
                 )
-            """
-            )
+            """)
 
             # Create index for time-based queries
-            conn.execute(
-                """
+            conn.execute("""
                 CREATE INDEX IF NOT EXISTS idx_market_data_timestamp
                 ON market_data(timestamp DESC)
-            """
-            )
+            """)
 
             # Strategy metrics table
-            conn.execute(
-                """
+            conn.execute("""
                 CREATE TABLE IF NOT EXISTS strategy_metrics (
                     timestamp TIMESTAMP NOT NULL,
                     strategy_name VARCHAR NOT NULL,
@@ -111,19 +106,15 @@ class DuckDBManager:
                     win_rate DOUBLE,
                     PRIMARY KEY (timestamp, strategy_name)
                 )
-            """
-            )
+            """)
 
-            conn.execute(
-                """
+            conn.execute("""
                 CREATE INDEX IF NOT EXISTS idx_strategy_timestamp
                 ON strategy_metrics(timestamp DESC)
-            """
-            )
+            """)
 
             # Execution metrics table
-            conn.execute(
-                """
+            conn.execute("""
                 CREATE TABLE IF NOT EXISTS execution_metrics (
                     timestamp TIMESTAMP NOT NULL,
                     orders_submitted INTEGER,
@@ -135,19 +126,15 @@ class DuckDBManager:
                     avg_slippage_bps DOUBLE,
                     PRIMARY KEY (timestamp)
                 )
-            """
-            )
+            """)
 
-            conn.execute(
-                """
+            conn.execute("""
                 CREATE INDEX IF NOT EXISTS idx_execution_timestamp
                 ON execution_metrics(timestamp DESC)
-            """
-            )
+            """)
 
             # System metrics table
-            conn.execute(
-                """
+            conn.execute("""
                 CREATE TABLE IF NOT EXISTS system_metrics (
                     timestamp TIMESTAMP NOT NULL,
                     cpu_percent DOUBLE,
@@ -158,19 +145,15 @@ class DuckDBManager:
                     active_alerts INTEGER,
                     PRIMARY KEY (timestamp)
                 )
-            """
-            )
+            """)
 
-            conn.execute(
-                """
+            conn.execute("""
                 CREATE INDEX IF NOT EXISTS idx_system_timestamp
                 ON system_metrics(timestamp DESC)
-            """
-            )
+            """)
 
             # Trades table
-            conn.execute(
-                """
+            conn.execute("""
                 CREATE TABLE IF NOT EXISTS trades (
                     trade_id VARCHAR PRIMARY KEY,
                     timestamp TIMESTAMP NOT NULL,
@@ -182,22 +165,17 @@ class DuckDBManager:
                     slippage_bps DOUBLE,
                     strategy VARCHAR
                 )
-            """
-            )
+            """)
 
-            conn.execute(
-                """
+            conn.execute("""
                 CREATE INDEX IF NOT EXISTS idx_trades_timestamp
                 ON trades(timestamp DESC)
-            """
-            )
+            """)
 
-            conn.execute(
-                """
+            conn.execute("""
                 CREATE INDEX IF NOT EXISTS idx_trades_symbol
                 ON trades(symbol)
-            """
-            )
+            """)
 
             logger.info("[cid:INIT] DuckDB schema initialized")
 

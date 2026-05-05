@@ -1,5 +1,5 @@
 import pytest
-from src.utils.canary_manager import CanaryDesignManager, ExposureTier, BreachClass
+from utils.canary_manager import CanaryDesignManager, ExposureTier, BreachClass
 
 
 def test_canary_record_policy_exposure_tier():

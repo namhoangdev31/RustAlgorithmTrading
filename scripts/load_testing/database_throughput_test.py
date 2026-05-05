@@ -31,7 +31,7 @@ class DatabaseThroughputTester:
             "read_latencies_ms": [],
             "errors": [],
             "wps_samples": [],
-            "rps_samples": []
+            "rps_samples": [],
         }
 
     async def setup_database(self, conn: asyncpg.Connection):
@@ -67,14 +67,21 @@ class DatabaseThroughputTester:
             "ask": price * 1.0005,
             "high_24h": price * 1.05,
             "low_24h": price * 0.95,
-            "volume_24h": volume * 1000
+            "volume_24h": volume * 1000,
         }
 
         try:
-            await conn.execute("""
+            await conn.execute(
+                """
                 INSERT INTO load_test_data (symbol, price, volume, timestamp, data)
                 VALUES ($1, $2, $3, $4, $5)
-            """, symbol, price, volume, timestamp, json.dumps(data))
+            """,
+                symbol,
+                price,
+                volume,
+                timestamp,
+                json.dumps(data),
+            )
 
             latency_ms = (time.time() - start_time) * 1000
             self.results["writes_success"] += 1
@@ -83,10 +90,7 @@ class DatabaseThroughputTester:
 
         except Exception as e:
             self.results["writes_failed"] += 1
-            self.results["errors"].append({
-                "operation": "write",
-                "error": str(e)
-            })
+            self.results["errors"].append({"operation": "write", "error": str(e)})
             return {"success": False, "error": str(e)}
 
     async def read_data(self, conn: asyncpg.Connection) -> Dict:
@@ -96,12 +100,15 @@ class DatabaseThroughputTester:
         symbol = random.choice(["BTCUSDT", "ETHUSDT", "BNBUSDT", "ADAUSDT", "DOTUSDT"])
 
         try:
-            rows = await conn.fetch("""
+            rows = await conn.fetch(
+                """
                 SELECT * FROM load_test_data
                 WHERE symbol = $1
                 ORDER BY timestamp DESC
                 LIMIT 100
-            """, symbol)
+            """,
+                symbol,
+            )
 
             latency_ms = (time.time() - start_time) * 1000
             self.results["reads_success"] += 1
@@ -110,10 +117,7 @@ class DatabaseThroughputTester:
 
         except Exception as e:
             self.results["reads_failed"] += 1
-            self.results["errors"].append({
-                "operation": "read",
-                "error": str(e)
-            })
+            self.results["errors"].append({"operation": "read", "error": str(e)})
             return {"success": False, "error": str(e)}
 
     async def write_worker(self, pool: asyncpg.Pool, stop_event: asyncio.Event):
@@ -156,9 +160,11 @@ class DatabaseThroughputTester:
             self.results["wps_samples"].append(wps)
             self.results["rps_samples"].append(rps)
 
-            print(f"Writes/sec: {wps} | Reads/sec: {rps} | "
-                  f"Write failures: {self.results['writes_failed']} | "
-                  f"Read failures: {self.results['reads_failed']}")
+            print(
+                f"Writes/sec: {wps} | Reads/sec: {rps} | "
+                f"Write failures: {self.results['writes_failed']} | "
+                f"Read failures: {self.results['reads_failed']}"
+            )
 
     async def run_test(self):
         """Execute the throughput test"""
@@ -168,10 +174,7 @@ class DatabaseThroughputTester:
 
         # Create connection pool
         pool = await asyncpg.create_pool(
-            self.postgres_url,
-            min_size=10,
-            max_size=50,
-            command_timeout=10
+            self.postgres_url, min_size=10, max_size=50, command_timeout=10
         )
 
         # Setup database
@@ -191,8 +194,7 @@ class DatabaseThroughputTester:
         ]
 
         read_workers = [
-            asyncio.create_task(self.read_worker(pool, stop_event))
-            for _ in range(num_read_workers)
+            asyncio.create_task(self.read_worker(pool, stop_event)) for _ in range(num_read_workers)
         ]
 
         # Start monitor
@@ -205,12 +207,7 @@ class DatabaseThroughputTester:
         stop_event.set()
 
         # Wait for workers to finish
-        await asyncio.gather(
-            *write_workers,
-            *read_workers,
-            monitor,
-            return_exceptions=True
-        )
+        await asyncio.gather(*write_workers, *read_workers, monitor, return_exceptions=True)
 
         # Close pool
         await pool.close()
@@ -228,7 +225,11 @@ class DatabaseThroughputTester:
         print(f"  Successful: {self.results['writes_success']}")
         print(f"  Failed: {self.results['writes_failed']}")
 
-        write_success_rate = (self.results['writes_success'] / self.results['writes_attempted'] * 100) if self.results['writes_attempted'] > 0 else 0
+        write_success_rate = (
+            (self.results["writes_success"] / self.results["writes_attempted"] * 100)
+            if self.results["writes_attempted"] > 0
+            else 0
+        )
         print(f"  Success rate: {write_success_rate:.2f}%")
 
         print(f"\nRead Operations:")
@@ -236,63 +237,81 @@ class DatabaseThroughputTester:
         print(f"  Successful: {self.results['reads_success']}")
         print(f"  Failed: {self.results['reads_failed']}")
 
-        read_success_rate = (self.results['reads_success'] / self.results['reads_attempted'] * 100) if self.results['reads_attempted'] > 0 else 0
+        read_success_rate = (
+            (self.results["reads_success"] / self.results["reads_attempted"] * 100)
+            if self.results["reads_attempted"] > 0
+            else 0
+        )
         print(f"  Success rate: {read_success_rate:.2f}%")
 
-        if self.results['write_latencies_ms']:
+        if self.results["write_latencies_ms"]:
             print(f"\nWrite Latency Statistics:")
             print(f"  Min: {min(self.results['write_latencies_ms']):.2f} ms")
             print(f"  Max: {max(self.results['write_latencies_ms']):.2f} ms")
             print(f"  Mean: {statistics.mean(self.results['write_latencies_ms']):.2f} ms")
             print(f"  Median: {statistics.median(self.results['write_latencies_ms']):.2f} ms")
 
-            sorted_write_lat = sorted(self.results['write_latencies_ms'])
+            sorted_write_lat = sorted(self.results["write_latencies_ms"])
             p95_idx = int(len(sorted_write_lat) * 0.95)
             p99_idx = int(len(sorted_write_lat) * 0.99)
             print(f"  P95: {sorted_write_lat[p95_idx]:.2f} ms")
             print(f"  P99: {sorted_write_lat[p99_idx]:.2f} ms")
 
-        if self.results['read_latencies_ms']:
+        if self.results["read_latencies_ms"]:
             print(f"\nRead Latency Statistics:")
             print(f"  Min: {min(self.results['read_latencies_ms']):.2f} ms")
             print(f"  Max: {max(self.results['read_latencies_ms']):.2f} ms")
             print(f"  Mean: {statistics.mean(self.results['read_latencies_ms']):.2f} ms")
             print(f"  Median: {statistics.median(self.results['read_latencies_ms']):.2f} ms")
 
-            sorted_read_lat = sorted(self.results['read_latencies_ms'])
+            sorted_read_lat = sorted(self.results["read_latencies_ms"])
             p95_idx = int(len(sorted_read_lat) * 0.95)
             p99_idx = int(len(sorted_read_lat) * 0.99)
             print(f"  P95: {sorted_read_lat[p95_idx]:.2f} ms")
             print(f"  P99: {sorted_read_lat[p99_idx]:.2f} ms")
 
-        if self.results['wps_samples']:
+        if self.results["wps_samples"]:
             print(f"\nWrite Throughput Statistics:")
             print(f"  Min: {min(self.results['wps_samples'])} writes/sec")
             print(f"  Max: {max(self.results['wps_samples'])} writes/sec")
             print(f"  Mean: {statistics.mean(self.results['wps_samples']):.2f} writes/sec")
             print(f"  Median: {statistics.median(self.results['wps_samples']):.2f} writes/sec")
 
-        if self.results['rps_samples']:
+        if self.results["rps_samples"]:
             print(f"\nRead Throughput Statistics:")
             print(f"  Min: {min(self.results['rps_samples'])} reads/sec")
             print(f"  Max: {max(self.results['rps_samples'])} reads/sec")
             print(f"  Mean: {statistics.mean(self.results['rps_samples']):.2f} reads/sec")
             print(f"  Median: {statistics.median(self.results['rps_samples']):.2f} reads/sec")
 
-        if self.results['errors']:
+        if self.results["errors"]:
             print(f"\nErrors (showing first 10):")
-            for error in self.results['errors'][:10]:
+            for error in self.results["errors"][:10]:
                 print(f"  - {error}")
 
         # Pass/Fail criteria
         print("\n" + "-" * 80)
-        write_target_ok = statistics.mean(self.results['wps_samples']) >= self.target_wps * 0.9 if self.results['wps_samples'] else False
+        write_target_ok = (
+            statistics.mean(self.results["wps_samples"]) >= self.target_wps * 0.9
+            if self.results["wps_samples"]
+            else False
+        )
         write_success_ok = write_success_rate >= 99.0
-        write_latency_ok = statistics.median(self.results['write_latencies_ms']) <= 50 if self.results['write_latencies_ms'] else False
-        read_latency_ok = statistics.median(self.results['read_latencies_ms']) <= 100 if self.results['read_latencies_ms'] else False
+        write_latency_ok = (
+            statistics.median(self.results["write_latencies_ms"]) <= 50
+            if self.results["write_latencies_ms"]
+            else False
+        )
+        read_latency_ok = (
+            statistics.median(self.results["read_latencies_ms"]) <= 100
+            if self.results["read_latencies_ms"]
+            else False
+        )
 
         print("PASS/FAIL CRITERIA:")
-        print(f"  {'✓' if write_target_ok else '✗'} Write throughput >= {self.target_wps * 0.9} writes/sec")
+        print(
+            f"  {'✓' if write_target_ok else '✗'} Write throughput >= {self.target_wps * 0.9} writes/sec"
+        )
         print(f"  {'✓' if write_success_ok else '✗'} Write success rate >= 99%")
         print(f"  {'✓' if write_latency_ok else '✗'} Write median latency <= 50ms")
         print(f"  {'✓' if read_latency_ok else '✗'} Read median latency <= 100ms")
@@ -304,73 +323,154 @@ class DatabaseThroughputTester:
         # Save results
         results_file = "/results/database_throughput_test.json"
         os.makedirs(os.path.dirname(results_file), exist_ok=True)
-        with open(results_file, 'w') as f:
-            json.dump({
-                "test_name": "database_throughput_test",
-                "timestamp": time.time(),
-                "configuration": {
-                    "target_wps": self.target_wps,
-                    "duration_sec": self.duration_sec
-                },
-                "results": {
-                    "writes": {
-                        "attempted": self.results['writes_attempted'],
-                        "success": self.results['writes_success'],
-                        "failed": self.results['writes_failed'],
-                        "success_rate": write_success_rate
+        with open(results_file, "w") as f:
+            json.dump(
+                {
+                    "test_name": "database_throughput_test",
+                    "timestamp": time.time(),
+                    "configuration": {
+                        "target_wps": self.target_wps,
+                        "duration_sec": self.duration_sec,
                     },
-                    "reads": {
-                        "attempted": self.results['reads_attempted'],
-                        "success": self.results['reads_success'],
-                        "failed": self.results['reads_failed'],
-                        "success_rate": read_success_rate
-                    },
-                    "write_latency_stats": {
-                        "min": min(self.results['write_latencies_ms']) if self.results['write_latencies_ms'] else 0,
-                        "max": max(self.results['write_latencies_ms']) if self.results['write_latencies_ms'] else 0,
-                        "mean": statistics.mean(self.results['write_latencies_ms']) if self.results['write_latencies_ms'] else 0,
-                        "median": statistics.median(self.results['write_latencies_ms']) if self.results['write_latencies_ms'] else 0,
-                        "p95": sorted_write_lat[p95_idx] if self.results['write_latencies_ms'] else 0,
-                        "p99": sorted_write_lat[p99_idx] if self.results['write_latencies_ms'] else 0
-                    },
-                    "read_latency_stats": {
-                        "min": min(self.results['read_latencies_ms']) if self.results['read_latencies_ms'] else 0,
-                        "max": max(self.results['read_latencies_ms']) if self.results['read_latencies_ms'] else 0,
-                        "mean": statistics.mean(self.results['read_latencies_ms']) if self.results['read_latencies_ms'] else 0,
-                        "median": statistics.median(self.results['read_latencies_ms']) if self.results['read_latencies_ms'] else 0,
-                        "p95": sorted_read_lat[p95_idx] if self.results['read_latencies_ms'] else 0,
-                        "p99": sorted_read_lat[p99_idx] if self.results['read_latencies_ms'] else 0
-                    },
-                    "throughput_stats": {
+                    "results": {
                         "writes": {
-                            "min": min(self.results['wps_samples']) if self.results['wps_samples'] else 0,
-                            "max": max(self.results['wps_samples']) if self.results['wps_samples'] else 0,
-                            "mean": statistics.mean(self.results['wps_samples']) if self.results['wps_samples'] else 0,
-                            "median": statistics.median(self.results['wps_samples']) if self.results['wps_samples'] else 0
+                            "attempted": self.results["writes_attempted"],
+                            "success": self.results["writes_success"],
+                            "failed": self.results["writes_failed"],
+                            "success_rate": write_success_rate,
                         },
                         "reads": {
-                            "min": min(self.results['rps_samples']) if self.results['rps_samples'] else 0,
-                            "max": max(self.results['rps_samples']) if self.results['rps_samples'] else 0,
-                            "mean": statistics.mean(self.results['rps_samples']) if self.results['rps_samples'] else 0,
-                            "median": statistics.median(self.results['rps_samples']) if self.results['rps_samples'] else 0
-                        }
-                    }
+                            "attempted": self.results["reads_attempted"],
+                            "success": self.results["reads_success"],
+                            "failed": self.results["reads_failed"],
+                            "success_rate": read_success_rate,
+                        },
+                        "write_latency_stats": {
+                            "min": (
+                                min(self.results["write_latencies_ms"])
+                                if self.results["write_latencies_ms"]
+                                else 0
+                            ),
+                            "max": (
+                                max(self.results["write_latencies_ms"])
+                                if self.results["write_latencies_ms"]
+                                else 0
+                            ),
+                            "mean": (
+                                statistics.mean(self.results["write_latencies_ms"])
+                                if self.results["write_latencies_ms"]
+                                else 0
+                            ),
+                            "median": (
+                                statistics.median(self.results["write_latencies_ms"])
+                                if self.results["write_latencies_ms"]
+                                else 0
+                            ),
+                            "p95": (
+                                sorted_write_lat[p95_idx]
+                                if self.results["write_latencies_ms"]
+                                else 0
+                            ),
+                            "p99": (
+                                sorted_write_lat[p99_idx]
+                                if self.results["write_latencies_ms"]
+                                else 0
+                            ),
+                        },
+                        "read_latency_stats": {
+                            "min": (
+                                min(self.results["read_latencies_ms"])
+                                if self.results["read_latencies_ms"]
+                                else 0
+                            ),
+                            "max": (
+                                max(self.results["read_latencies_ms"])
+                                if self.results["read_latencies_ms"]
+                                else 0
+                            ),
+                            "mean": (
+                                statistics.mean(self.results["read_latencies_ms"])
+                                if self.results["read_latencies_ms"]
+                                else 0
+                            ),
+                            "median": (
+                                statistics.median(self.results["read_latencies_ms"])
+                                if self.results["read_latencies_ms"]
+                                else 0
+                            ),
+                            "p95": (
+                                sorted_read_lat[p95_idx] if self.results["read_latencies_ms"] else 0
+                            ),
+                            "p99": (
+                                sorted_read_lat[p99_idx] if self.results["read_latencies_ms"] else 0
+                            ),
+                        },
+                        "throughput_stats": {
+                            "writes": {
+                                "min": (
+                                    min(self.results["wps_samples"])
+                                    if self.results["wps_samples"]
+                                    else 0
+                                ),
+                                "max": (
+                                    max(self.results["wps_samples"])
+                                    if self.results["wps_samples"]
+                                    else 0
+                                ),
+                                "mean": (
+                                    statistics.mean(self.results["wps_samples"])
+                                    if self.results["wps_samples"]
+                                    else 0
+                                ),
+                                "median": (
+                                    statistics.median(self.results["wps_samples"])
+                                    if self.results["wps_samples"]
+                                    else 0
+                                ),
+                            },
+                            "reads": {
+                                "min": (
+                                    min(self.results["rps_samples"])
+                                    if self.results["rps_samples"]
+                                    else 0
+                                ),
+                                "max": (
+                                    max(self.results["rps_samples"])
+                                    if self.results["rps_samples"]
+                                    else 0
+                                ),
+                                "mean": (
+                                    statistics.mean(self.results["rps_samples"])
+                                    if self.results["rps_samples"]
+                                    else 0
+                                ),
+                                "median": (
+                                    statistics.median(self.results["rps_samples"])
+                                    if self.results["rps_samples"]
+                                    else 0
+                                ),
+                            },
+                        },
+                    },
+                    "pass": overall_pass,
                 },
-                "pass": overall_pass
-            }, f, indent=2)
+                f,
+                indent=2,
+            )
 
         print(f"\nResults saved to {results_file}")
 
 
 async def main():
-    postgres_url = os.getenv("POSTGRES_URL", "postgresql://trading_user:staging_password_change_me@postgres-staging:5432/trading_staging")
+    postgres_url = os.getenv(
+        "POSTGRES_URL",
+        "postgresql://trading_user:staging_password_change_me@postgres-staging:5432/trading_staging",
+    )
     target_wps = int(os.getenv("LOAD_TEST_TARGET_WPS", "1000"))
     duration = int(os.getenv("LOAD_TEST_DURATION", "300"))
 
     tester = DatabaseThroughputTester(
-        postgres_url=postgres_url,
-        target_wps=target_wps,
-        duration_sec=duration
+        postgres_url=postgres_url, target_wps=target_wps, duration_sec=duration
     )
 
     await tester.run_test()

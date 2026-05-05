@@ -14,7 +14,9 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable, List
 
-PY_LOG_RE = re.compile(r"\b(logger|self\.logger)\.(debug|info|warning|error|exception|critical)\s*\(")
+PY_LOG_RE = re.compile(
+    r"\b(logger|self\.logger)\.(debug|info|warning|error|exception|critical)\s*\("
+)
 RUST_LOG_RE = re.compile(r"\b(?:tracing::)?(?:trace|debug|info|warn|error)!\s*\(")
 CORR_RE = re.compile(r"correlation_id|\bcid\b|\[cid:[^\]]+\]", re.IGNORECASE)
 SKIP_RE = re.compile(r"^\s*#|^\s*//")
@@ -62,12 +64,12 @@ def audit_file(path: Path) -> List[Finding]:
     except OSError:
         return findings
 
-    # Simple multi-line detection: if a log call starts on line i, 
+    # Simple multi-line detection: if a log call starts on line i,
     # check next few lines for correlation_id until we hit a closing bracket or semicolon.
     for idx, line in enumerate(lines, start=1):
         if SKIP_RE.search(line):
             continue
-        
+
         is_log = False
         if path.suffix == ".py" and PY_LOG_RE.search(line):
             is_log = True
@@ -75,7 +77,7 @@ def audit_file(path: Path) -> List[Finding]:
         elif path.suffix == ".rs" and RUST_LOG_RE.search(line):
             is_log = True
             reason = "rust log macro missing correlation_id context"
-            
+
         if is_log:
             # Look ahead for correlation_id in a 5-line window
             found_corr = False
@@ -83,10 +85,10 @@ def audit_file(path: Path) -> List[Finding]:
                 if CORR_RE.search(lines[j]):
                     found_corr = True
                     break
-            
+
             if not found_corr:
                 findings.append(Finding(path, idx, line.strip(), reason))
-                
+
     return findings
 
 

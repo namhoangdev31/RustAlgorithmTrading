@@ -28,12 +28,17 @@ mod integration_tests {
         db.insert_metrics(&metrics).await.unwrap();
 
         // Query metrics
-        let retrieved = db.get_metrics("price", Some("BTC/USD"), None, 100).await.unwrap();
+        let retrieved = db
+            .get_metrics("price", Some("BTC/USD"), None, 100)
+            .await
+            .unwrap();
         assert_eq!(retrieved.len(), 50);
 
         // Verify values
         assert!(retrieved.iter().any(|m| m.value == 50000.0));
-        assert!(retrieved.iter().all(|m| m.symbol == Some("BTC/USD".to_string())));
+        assert!(retrieved
+            .iter()
+            .all(|m| m.symbol == Some("BTC/USD".to_string())));
     }
 
     #[tokio::test]
@@ -151,7 +156,10 @@ mod integration_tests {
         }
 
         // Verify all were inserted
-        let metrics = db.get_metrics("concurrent_test", None, None, 100).await.unwrap();
+        let metrics = db
+            .get_metrics("concurrent_test", None, None, 100)
+            .await
+            .unwrap();
         assert_eq!(metrics.len(), 5);
     }
 

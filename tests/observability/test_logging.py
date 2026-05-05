@@ -17,7 +17,6 @@ import pytest
 
 from tests.observability.fixtures.sample_logs import LogDataGenerator, StructuredLogValidator
 
-
 # ============================================================================
 # UNIT TESTS: Structured Logging
 # ============================================================================

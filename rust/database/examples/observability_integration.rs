@@ -1,7 +1,7 @@
 //! Observability integration example showing metrics collection
 
-use database::{DatabaseManager, MetricRecord, SystemEvent};
 use chrono::{Duration, Utc};
+use database::{DatabaseManager, MetricRecord, SystemEvent};
 use std::collections::HashMap;
 
 #[tokio::main]
@@ -133,13 +133,11 @@ async fn main() -> anyhow::Result<()> {
     println!("\n🔍 Analyzing metrics...");
 
     // Get latest CPU metrics
-    let cpu_metrics = db
-        .get_metrics("system_cpu_percent", None, None, 10)
-        .await?;
+    let cpu_metrics = db.get_metrics("system_cpu_percent", None, None, 10).await?;
 
     if !cpu_metrics.is_empty() {
-        let avg_cpu: f64 = cpu_metrics.iter().map(|m| m.value).sum::<f64>()
-            / cpu_metrics.len() as f64;
+        let avg_cpu: f64 =
+            cpu_metrics.iter().map(|m| m.value).sum::<f64>() / cpu_metrics.len() as f64;
         println!("  CPU Usage (avg of last 10): {:.2}%", avg_cpu);
     }
 
@@ -173,8 +171,8 @@ async fn main() -> anyhow::Result<()> {
         .await?;
 
     if !aggregated.is_empty() {
-        let avg_latency: f64 = aggregated.iter().map(|m| m.value).sum::<f64>()
-            / aggregated.len() as f64;
+        let avg_latency: f64 =
+            aggregated.iter().map(|m| m.value).sum::<f64>() / aggregated.len() as f64;
         println!("  Order Latency (avg): {:.2}ms", avg_latency);
     }
 

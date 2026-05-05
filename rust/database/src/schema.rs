@@ -153,7 +153,12 @@ impl Schema {
     /// Verify schema integrity
     pub fn verify(conn: &Connection) -> Result<()> {
         // Check if all tables exist
-        let tables = vec!["trading_metrics", "trading_candles", "system_events", "trading_trades"];
+        let tables = vec![
+            "trading_metrics",
+            "trading_candles",
+            "system_events",
+            "trading_trades",
+        ];
 
         for table in tables {
             let mut stmt = conn.prepare(&format!(

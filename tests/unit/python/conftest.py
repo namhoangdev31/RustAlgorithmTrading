@@ -4,10 +4,40 @@ import numpy as np
 from datetime import datetime, timedelta
 
 # W21 Test Debt: Skip tests with broken imports during collection
-collect_ignore_glob = [
-    "test_backtest_engine.py",  # Trade class removed from engine
-    "test_strategies.py",  # Lacks imports and uses missing fixtures
-]
+from pathlib import Path
+from backtesting.data_handler import HistoricalDataHandler
+from backtesting.execution_handler import SimulatedExecutionHandler
+from backtesting.portfolio_handler import PortfolioHandler
+from risk.allocation_manager import AllocationManager, AllocationPolicy
+
+
+@pytest.fixture
+def temp_data_dir(tmp_path):
+    """Temporary directory for test data"""
+    d = tmp_path / "data"
+    d.mkdir()
+    return d
+
+
+@pytest.fixture
+def data_handler(temp_data_dir, sample_ohlcv_data):
+    """Historical data handler fixture"""
+    # Write sample data to CSV
+    csv_path = temp_data_dir / "TEST.csv"
+    sample_ohlcv_data.to_csv(csv_path)
+    return HistoricalDataHandler(symbols=["TEST"], data_dir=temp_data_dir)
+
+
+@pytest.fixture
+def execution_handler():
+    """Simulated execution handler fixture"""
+    return SimulatedExecutionHandler()
+
+
+@pytest.fixture
+def portfolio_handler(data_handler):
+    """Portfolio handler fixture"""
+    return PortfolioHandler(initial_capital=100000.0, data_handler=data_handler)
 
 
 @pytest.fixture
@@ -31,8 +61,23 @@ def sample_ohlcv_data():
 
 
 @pytest.fixture
+def simple_momentum_strategy():
+    """Simple momentum strategy fixture"""
+    from strategies.simple_momentum import SimpleMomentumStrategy
+
+    return SimpleMomentumStrategy(symbols=["TEST"])
+
+
+@pytest.fixture
+def simple_mean_reversion_strategy():
+    """Mean reversion strategy fixture"""
+    from strategies.mean_reversion import MeanReversionStrategy
+
+    return MeanReversionStrategy(symbols=["TEST"])
+
+
+@pytest.fixture
 def sample_returns():
-    """Sample daily returns for performance metric testing"""
+    """Sample return series for testing performance metrics"""
     np.random.seed(42)
-    returns = np.random.normal(0.001, 0.02, 252)  # 252 trading days
-    return pd.Series(returns)
+    return pd.Series(np.random.normal(0.001, 0.02, 100))

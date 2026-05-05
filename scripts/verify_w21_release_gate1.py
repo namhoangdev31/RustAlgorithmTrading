@@ -52,10 +52,14 @@ def run_gate1_verification() -> int:
         run_command("EV-W21-105A", "black --check src tests"),
         run_command("EV-W21-105B", "flake8 src tests --max-line-length=100"),
         run_command("EV-W21-105C", "cd rust && cargo fmt --all -- --check"),
-        run_command("EV-W21-105D", "cd rust && cargo clippy --all-targets --all-features -- -D warnings"),
+        run_command(
+            "EV-W21-105D", "cd rust && cargo clippy --all-targets --all-features -- -D warnings"
+        ),
         run_command("EV-W21-106A", "mypy src tests --ignore-missing-imports"),
         run_command("EV-W21-106B", "pyright src tests"),
-        run_command("EV-W21-108", "bash scripts/compliance_audit.sh --check-correlation --check-versioning"),
+        run_command(
+            "EV-W21-108", "bash scripts/compliance_audit.sh --check-correlation --check-versioning"
+        ),
         run_command("EV-W21-109", "python scripts/audit_correlation.py --fail-on-findings"),
     ]
 
@@ -67,7 +71,8 @@ def run_gate1_verification() -> int:
         and result_by_id["EV-W21-105D"].return_code == 0
     )
     type_pass = (
-        result_by_id["EV-W21-106A"].return_code == 0 and result_by_id["EV-W21-106B"].return_code == 0
+        result_by_id["EV-W21-106A"].return_code == 0
+        and result_by_id["EV-W21-106B"].return_code == 0
     )
     unit_pass = result_by_id["EV-W21-101"].return_code == 0
 

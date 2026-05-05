@@ -1,6 +1,6 @@
 // Comprehensive tests for order book functionality
-use market_data::orderbook::{FastOrderBook, OrderBookManager};
 use common::types::{Price, Quantity, Symbol};
+use market_data::orderbook::{FastOrderBook, OrderBookManager};
 
 #[cfg(test)]
 mod fast_orderbook_tests {

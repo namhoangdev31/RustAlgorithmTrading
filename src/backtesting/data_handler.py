@@ -2,6 +2,7 @@
 Historical data handler for backtesting.
 """
 
+import os
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -10,7 +11,6 @@ import pandas as pd
 from loguru import logger
 
 from models.market import Bar
-from models.events import MarketEvent
 
 
 class HistoricalDataHandler:
@@ -146,9 +146,12 @@ class HistoricalDataHandler:
         Returns:
             True if download was attempted
         """
+        if os.getenv("BACKTEST_AUTO_DOWNLOAD", "").lower() not in {"1", "true", "yes"}:
+            logger.info("Auto-download disabled; set BACKTEST_AUTO_DOWNLOAD=1 to enable it")
+            return False
+
         try:
             import subprocess
-            from datetime import datetime, timedelta
 
             logger.info("Attempting to auto-download missing data...")
 
@@ -206,13 +209,18 @@ class HistoricalDataHandler:
         """
         required_columns = ["timestamp", "open", "high", "low", "close", "volume"]
 
-        # Check data availability
-        missing_symbols = [s for s in self.symbols if not self._check_data_availability(s)]
+        missing_symbols = [
+            s
+            for s in self.symbols
+            if not (self.data_dir / f"{s}.parquet").exists()
+            and not (self.data_dir / f"{s}.csv").exists()
+        ]
 
         if missing_symbols:
             logger.warning(f"Missing data for {len(missing_symbols)} symbols: {missing_symbols}")
             logger.info("Attempting automatic data download...")
 
+            still_missing = missing_symbols
             if self._attempt_auto_download():
                 # Re-check availability after download
                 still_missing = [s for s in missing_symbols if not self._check_data_availability(s)]
@@ -224,6 +232,11 @@ class HistoricalDataHandler:
                 logger.error(
                     "Auto-download failed. Please run manually:\n"
                     f"  python scripts/download_market_data.py --symbols {' '.join(missing_symbols)}"
+                )
+
+            if still_missing:
+                raise FileNotFoundError(
+                    f"Missing historical data for symbols: {', '.join(still_missing)}"
                 )
 
         for symbol in self.symbols:
@@ -253,7 +266,9 @@ class HistoricalDataHandler:
                         df = pd.read_csv(csv_path, parse_dates=["timestamp"])
                         logger.debug(f"Loaded {symbol} from CSV: {csv_path}")
                     except Exception as e:
-                        logger.error(f"Failed to read CSV file {csv_path}: {e}")
+                        logger.error(
+                            f"Failed to load CSV for {symbol} from {csv_path}: {e}. Continuing..."
+                        )
                         raise ValueError(f"Invalid CSV file for {symbol}: {e}")
                 else:
                     logger.error(
@@ -323,6 +338,7 @@ class HistoricalDataHandler:
         Raises:
             ValueError: If bar data is invalid
         """
+        any_updated = False
         for symbol in self.symbols:
             if symbol not in self.symbol_data:
                 logger.debug(f"No data loaded for {symbol}, skipping update")
@@ -331,13 +347,13 @@ class HistoricalDataHandler:
             df = self.symbol_data[symbol]
 
             if self.bar_index >= len(df):
-                self.continue_backtest = False
                 logger.debug(f"Reached end of data for {symbol} at index {self.bar_index}")
                 continue
 
             try:
                 # Get next bar
                 row = df.iloc[self.bar_index]
+                any_updated = True
 
                 # Validate bar data
                 if pd.isna(row["open"]) or pd.isna(row["close"]):
@@ -370,6 +386,7 @@ class HistoricalDataHandler:
                 raise ValueError(f"Invalid bar data for {symbol}: {e}")
 
         self.bar_index += 1
+        self.continue_backtest = any_updated
 
     def get_latest_bar(self, symbol: str) -> Optional[Bar]:
         """
@@ -503,6 +520,8 @@ class HistoricalDataHandler:
                 if val is not None:
                     values.append(val)
             else:
-                logger.warning(f"Bar for {symbol} missing field '{field}'")
+                logger.warning(
+                    f"Empty CSV for {symbol} at {self.data_dir}. " "Continuing with empty data."
+                )
 
         return values

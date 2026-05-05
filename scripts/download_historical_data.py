@@ -23,26 +23,14 @@ from typing import List, Optional, Dict, Any
 from dataclasses import dataclass, asdict
 
 import pandas as pd
-import pyarrow as pa
-import pyarrow.parquet as pq
-from alpaca.data.historical import StockHistoricalDataClient
-from alpaca.data.requests import StockBarsRequest
-from alpaca.data.timeframe import TimeFrame
-from alpaca.data.enums import Adjustment
-from dotenv import load_dotenv
-from tqdm import tqdm
 
-# Load environment variables
-load_dotenv()
+Path("logs").mkdir(exist_ok=True)
 
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler('logs/data_downloader.log'),
-        logging.StreamHandler(sys.stdout)
-    ]
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[logging.FileHandler("logs/data_downloader.log"), logging.StreamHandler(sys.stdout)],
 )
 logger = logging.getLogger(__name__)
 
@@ -50,6 +38,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class DownloadConfig:
     """Configuration for data download"""
+
     symbols: List[str]
     start_date: str
     end_date: str
@@ -68,14 +57,14 @@ class DownloadConfig:
     adjustment: str = "all"  # Price adjustments: 'raw', 'split', 'dividend', or 'all'
 
     @classmethod
-    def from_dict(cls, config_dict: Dict[str, Any]) -> 'DownloadConfig':
+    def from_dict(cls, config_dict: Dict[str, Any]) -> "DownloadConfig":
         """Create config from dictionary"""
         return cls(**{k: v for k, v in config_dict.items() if k in cls.__annotations__})
 
     @classmethod
-    def from_file(cls, config_path: str) -> 'DownloadConfig':
+    def from_file(cls, config_path: str) -> "DownloadConfig":
         """Load config from JSON file"""
-        with open(config_path, 'r') as f:
+        with open(config_path, "r") as f:
             config_dict = json.load(f)
         return cls.from_dict(config_dict)
 
@@ -101,8 +90,8 @@ class AlpacaDataDownloader:
             config: DownloadConfig object with all settings
         """
         self.config = config
-        self.api_key = config.api_key or os.getenv('ALPACA_API_KEY')
-        self.api_secret = config.api_secret or os.getenv('ALPACA_SECRET_KEY')
+        self.api_key = config.api_key or os.getenv("ALPACA_API_KEY")
+        self.api_secret = config.api_secret or os.getenv("ALPACA_SECRET_KEY")
 
         if not self.api_key or not self.api_secret:
             raise ValueError(
@@ -110,6 +99,11 @@ class AlpacaDataDownloader:
                 "Set ALPACA_API_KEY and ALPACA_SECRET_KEY environment variables "
                 "or provide them in the config."
             )
+
+        from alpaca.data.historical import StockHistoricalDataClient
+        from dotenv import load_dotenv
+
+        load_dotenv()
 
         # Initialize Alpaca client
         self.client = StockHistoricalDataClient(self.api_key, self.api_secret)
@@ -123,14 +117,14 @@ class AlpacaDataDownloader:
 
         # Statistics tracking
         self.stats = {
-            'total_symbols': len(config.symbols),
-            'successful_downloads': 0,
-            'failed_downloads': 0,
-            'total_rows': 0,
-            'rate_limit_hits': 0,
-            'total_retries': 0,
-            'start_time': None,
-            'end_time': None
+            "total_symbols": len(config.symbols),
+            "successful_downloads": 0,
+            "failed_downloads": 0,
+            "total_rows": 0,
+            "rate_limit_hits": 0,
+            "total_retries": 0,
+            "start_time": None,
+            "end_time": None,
         }
 
         # Rate limit tracking
@@ -148,9 +142,9 @@ class AlpacaDataDownloader:
             self.parquet_dir.mkdir(parents=True, exist_ok=True)
 
         # Create logs directory
-        Path('logs').mkdir(exist_ok=True)
+        Path("logs").mkdir(exist_ok=True)
 
-    def _parse_timeframe(self, timeframe_str: str) -> TimeFrame:
+    def _parse_timeframe(self, timeframe_str: str):
         """
         Parse timeframe string to Alpaca TimeFrame object
 
@@ -160,6 +154,8 @@ class AlpacaDataDownloader:
         Returns:
             TimeFrame object
         """
+        from alpaca.data.timeframe import TimeFrame
+
         timeframe_mapping = {
             "1Min": TimeFrame.Minute,
             "5Min": TimeFrame(5, "Min"),
@@ -185,7 +181,7 @@ class AlpacaDataDownloader:
         Returns:
             True if valid, False otherwise
         """
-        required_columns = {'timestamp', 'open', 'high', 'low', 'close', 'volume'}
+        required_columns = {"timestamp", "open", "high", "low", "close", "volume"}
 
         if df.empty:
             logger.error(f"No data received for {symbol}")
@@ -199,14 +195,16 @@ class AlpacaDataDownloader:
         # Check for null values
         null_counts = df[list(required_columns)].isnull().sum()
         if null_counts.any():
-            logger.warning(f"Null values found in {symbol}: {null_counts[null_counts > 0].to_dict()}")
+            logger.warning(
+                f"Null values found in {symbol}: {null_counts[null_counts > 0].to_dict()}"
+            )
 
         # Validate price data
-        if (df['high'] < df['low']).any():
+        if (df["high"] < df["low"]).any():
             logger.error(f"Invalid price data for {symbol}: high < low")
             return False
 
-        if (df['open'] < 0).any() or (df['close'] < 0).any():
+        if (df["open"] < 0).any() or (df["close"] < 0).any():
             logger.error(f"Negative prices found for {symbol}")
             return False
 
@@ -229,7 +227,7 @@ class AlpacaDataDownloader:
         # Check for HTTP 429 status code
         if "429" in error_str:
             logger.warning("Rate limit detected: HTTP 429 Too Many Requests")
-            self.stats['rate_limit_hits'] += 1
+            self.stats["rate_limit_hits"] += 1
             return True
 
         # Check for rate limit keywords in error message
@@ -238,16 +236,16 @@ class AlpacaDataDownloader:
             "too many requests",
             "quota exceeded",
             "throttle",
-            "slow down"
+            "slow down",
         ]
 
         if any(keyword in error_str for keyword in rate_limit_keywords):
             logger.warning(f"Rate limit detected in error message: {error_str}")
-            self.stats['rate_limit_hits'] += 1
+            self.stats["rate_limit_hits"] += 1
             return True
 
         # Check response headers if available
-        if response and hasattr(response, 'headers'):
+        if response and hasattr(response, "headers"):
             self._check_rate_limit_headers(response.headers)
 
         return False
@@ -260,10 +258,10 @@ class AlpacaDataDownloader:
             headers: Response headers dictionary
         """
         rate_limit_headers = {
-            'X-RateLimit-Limit': 'total_limit',
-            'X-RateLimit-Remaining': 'remaining',
-            'X-RateLimit-Reset': 'reset_time',
-            'Retry-After': 'retry_after'
+            "X-RateLimit-Limit": "total_limit",
+            "X-RateLimit-Remaining": "remaining",
+            "X-RateLimit-Reset": "reset_time",
+            "Retry-After": "retry_after",
         }
 
         rate_info = {}
@@ -276,17 +274,19 @@ class AlpacaDataDownloader:
             logger.info(f"Rate limit info: {rate_info}")
 
             # Warn if getting close to limit
-            if 'remaining' in rate_info and 'total_limit' in rate_info:
-                remaining = int(rate_info['remaining'])
-                total = int(rate_info['total_limit'])
+            if "remaining" in rate_info and "total_limit" in rate_info:
+                remaining = int(rate_info["remaining"])
+                total = int(rate_info["total_limit"])
                 percentage = (remaining / total) * 100 if total > 0 else 0
 
                 if percentage < 20:
-                    logger.warning(f"Rate limit warning: Only {remaining}/{total} ({percentage:.1f}%) requests remaining")
+                    logger.warning(
+                        f"Rate limit warning: Only {remaining}/{total} ({percentage:.1f}%) requests remaining"
+                    )
 
             # Log reset time if available
-            if 'reset_time' in rate_info:
-                reset_timestamp = int(rate_info['reset_time'])
+            if "reset_time" in rate_info:
+                reset_timestamp = int(rate_info["reset_time"])
                 reset_time = datetime.fromtimestamp(reset_timestamp)
                 logger.info(f"Rate limit resets at: {reset_time}")
 
@@ -302,7 +302,7 @@ class AlpacaDataDownloader:
             Delay in seconds
         """
         # Base exponential backoff
-        base_delay = self.config.retry_delay * (2 ** attempt)
+        base_delay = self.config.retry_delay * (2**attempt)
 
         # Apply maximum delay cap
         capped_delay = min(base_delay, self.config.max_retry_delay)
@@ -315,8 +315,8 @@ class AlpacaDataDownloader:
         # If rate limited, use a longer delay
         if is_rate_limited:
             # Check for Retry-After header
-            if 'retry_after' in self.last_rate_limit_info:
-                retry_after = int(self.last_rate_limit_info['retry_after'])
+            if "retry_after" in self.last_rate_limit_info:
+                retry_after = int(self.last_rate_limit_info["retry_after"])
                 final_delay = max(final_delay, retry_after)
                 logger.info(f"Using Retry-After header value: {retry_after} seconds")
             else:
@@ -337,12 +337,15 @@ class AlpacaDataDownloader:
         """
         timeframe = self._parse_timeframe(self.config.timeframe)
 
+        from alpaca.data.enums import Adjustment
+        from alpaca.data.requests import StockBarsRequest
+
         # Map adjustment string to enum
         adjustment_mapping = {
             "raw": Adjustment.RAW,
             "split": Adjustment.SPLIT,
             "dividend": Adjustment.DIVIDEND,
-            "all": Adjustment.ALL
+            "all": Adjustment.ALL,
         }
         adjustment = adjustment_mapping.get(self.config.adjustment.lower(), Adjustment.ALL)
 
@@ -352,14 +355,18 @@ class AlpacaDataDownloader:
             start=self.config.start_date,
             end=self.config.end_date,
             feed=self.config.feed,
-            adjustment=adjustment
+            adjustment=adjustment,
         )
 
         for attempt in range(self.config.retry_attempts):
             try:
-                logger.info(f"Fetching data for {symbol} (attempt {attempt + 1}/{self.config.retry_attempts})")
-                logger.debug(f"Request parameters: timeframe={timeframe}, start={self.config.start_date}, "
-                           f"end={self.config.end_date}, feed={self.config.feed}, adjustment={adjustment}")
+                logger.info(
+                    f"Fetching data for {symbol} (attempt {attempt + 1}/{self.config.retry_attempts})"
+                )
+                logger.debug(
+                    f"Request parameters: timeframe={timeframe}, start={self.config.start_date}, "
+                    f"end={self.config.end_date}, feed={self.config.feed}, adjustment={adjustment}"
+                )
 
                 # Fetch data from Alpaca
                 bars = self.client.get_stock_bars(request_params)
@@ -370,15 +377,21 @@ class AlpacaDataDownloader:
 
                 if not bars:
                     self.consecutive_no_data += 1
-                    logger.error(f"No response from API for {symbol} (consecutive no-data count: {self.consecutive_no_data})")
-                    logger.error(f"This may indicate: 1) Invalid date range, 2) No trading data for period, "
-                               f"3) Data feed '{self.config.feed}' not available for paper trading account, "
-                               f"4) Potential rate limiting (check if many consecutive failures)")
+                    logger.error(
+                        f"No response from API for {symbol} (consecutive no-data count: {self.consecutive_no_data})"
+                    )
+                    logger.error(
+                        f"This may indicate: 1) Invalid date range, 2) No trading data for period, "
+                        f"3) Data feed '{self.config.feed}' not available for paper trading account, "
+                        f"4) Potential rate limiting (check if many consecutive failures)"
+                    )
 
                     # Warn if many consecutive no-data responses (possible rate limiting)
                     if self.consecutive_no_data >= 3:
-                        logger.warning(f"Detected {self.consecutive_no_data} consecutive 'No data' responses - "
-                                     f"this may indicate rate limiting. Adding extra delay...")
+                        logger.warning(
+                            f"Detected {self.consecutive_no_data} consecutive 'No data' responses - "
+                            f"this may indicate rate limiting. Adding extra delay..."
+                        )
                         time.sleep(10)  # Add extra delay
 
                     return None
@@ -393,7 +406,9 @@ class AlpacaDataDownloader:
                 if df is None or df.empty:
                     logger.error(f"No data in DataFrame for {symbol}")
                     logger.error(f"DataFrame is {'None' if df is None else 'empty'}")
-                    logger.error(f"Possible causes: 1) No trading data for date range 2) Weekend/holiday 3) Invalid date range")
+                    logger.error(
+                        f"Possible causes: 1) No trading data for date range 2) Weekend/holiday 3) Invalid date range"
+                    )
                     return None
 
                 # Reset index to get timestamp as column
@@ -404,14 +419,14 @@ class AlpacaDataDownloader:
 
                 # Rename columns to match expected format
                 column_mapping = {
-                    'timestamp': 'timestamp',
-                    'open': 'open',
-                    'high': 'high',
-                    'low': 'low',
-                    'close': 'close',
-                    'volume': 'volume',
-                    'trade_count': 'trade_count',
-                    'vwap': 'vwap'
+                    "timestamp": "timestamp",
+                    "open": "open",
+                    "high": "high",
+                    "low": "low",
+                    "close": "close",
+                    "volume": "volume",
+                    "trade_count": "trade_count",
+                    "vwap": "vwap",
                 }
 
                 # Only rename columns that exist
@@ -419,23 +434,33 @@ class AlpacaDataDownloader:
                 df = df.rename(columns=existing_columns)
 
                 # Add missing columns with default values
-                if 'vwap' not in df.columns:
-                    df['vwap'] = (df['high'] + df['low'] + df['close']) / 3
+                if "vwap" not in df.columns:
+                    df["vwap"] = (df["high"] + df["low"] + df["close"]) / 3
                     logger.info(f"Calculated VWAP for {symbol}")
 
-                if 'trade_count' not in df.columns:
-                    df['trade_count'] = 0
+                if "trade_count" not in df.columns:
+                    df["trade_count"] = 0
                     logger.info(f"Trade count not available for {symbol}, set to 0")
 
                 # Ensure timestamp is datetime
-                if 'timestamp' in df.columns:
-                    df['timestamp'] = pd.to_datetime(df['timestamp'])
+                if "timestamp" in df.columns:
+                    df["timestamp"] = pd.to_datetime(df["timestamp"])
 
                 # Add symbol column
-                df['symbol'] = symbol
+                df["symbol"] = symbol
 
                 # Reorder columns
-                column_order = ['timestamp', 'symbol', 'open', 'high', 'low', 'close', 'volume', 'vwap', 'trade_count']
+                column_order = [
+                    "timestamp",
+                    "symbol",
+                    "open",
+                    "high",
+                    "low",
+                    "close",
+                    "volume",
+                    "vwap",
+                    "trade_count",
+                ]
                 df = df[[col for col in column_order if col in df.columns]]
 
                 logger.info(f"Successfully fetched {len(df)} rows for {symbol}")
@@ -443,10 +468,13 @@ class AlpacaDataDownloader:
 
             except Exception as e:
                 import traceback
-                logger.error(f"Error fetching data for {symbol} (attempt {attempt + 1}/{self.config.retry_attempts}): {str(e)}")
+
+                logger.error(
+                    f"Error fetching data for {symbol} (attempt {attempt + 1}/{self.config.retry_attempts}): {str(e)}"
+                )
                 logger.debug(f"Full traceback: {traceback.format_exc()}")
 
-                self.stats['total_retries'] += 1
+                self.stats["total_retries"] += 1
 
                 # Detect rate limiting
                 is_rate_limited = self._is_rate_limited(e)
@@ -459,21 +487,31 @@ class AlpacaDataDownloader:
                 elif is_rate_limited:
                     logger.error(f"Rate limit exceeded - using extended backoff delay")
                 elif "feed" in str(e).lower():
-                    logger.error(f"Data feed error - try changing feed parameter from '{self.config.feed}' to 'sip' or 'iex'")
+                    logger.error(
+                        f"Data feed error - try changing feed parameter from '{self.config.feed}' to 'sip' or 'iex'"
+                    )
 
                 if attempt < self.config.retry_attempts - 1:
                     # Calculate delay with exponential backoff, jitter, and cap
                     delay = self._calculate_backoff_delay(attempt, is_rate_limited)
-                    logger.info(f"Retrying in {delay:.2f} seconds (attempt {attempt + 1}/{self.config.retry_attempts})...")
+                    logger.info(
+                        f"Retrying in {delay:.2f} seconds (attempt {attempt + 1}/{self.config.retry_attempts})..."
+                    )
                     time.sleep(delay)
                 else:
-                    logger.error(f"Failed to fetch data for {symbol} after {self.config.retry_attempts} attempts")
+                    logger.error(
+                        f"Failed to fetch data for {symbol} after {self.config.retry_attempts} attempts"
+                    )
                     logger.error(f"Suggestions:")
-                    logger.error(f"  1. Verify date range is valid (not weekends/holidays/future dates)")
+                    logger.error(
+                        f"  1. Verify date range is valid (not weekends/holidays/future dates)"
+                    )
                     logger.error(f"  2. Try feed='sip' instead of '{self.config.feed}'")
                     logger.error(f"  3. Check if paper trading account has data access")
                     logger.error(f"  4. Use recent dates (last 5 years for free data)")
-                    logger.error(f"  5. If seeing many failures, try increasing --inter-symbol-delay")
+                    logger.error(
+                        f"  5. If seeing many failures, try increasing --inter-symbol-delay"
+                    )
                     return None
 
         return None
@@ -490,7 +528,9 @@ class AlpacaDataDownloader:
             True if successful, False otherwise
         """
         try:
-            csv_path = self.csv_dir / f"{symbol}_{self.config.start_date}_{self.config.end_date}.csv"
+            csv_path = (
+                self.csv_dir / f"{symbol}_{self.config.start_date}_{self.config.end_date}.csv"
+            )
             df.to_csv(csv_path, index=False)
             logger.info(f"Saved CSV: {csv_path}")
             return True
@@ -510,7 +550,13 @@ class AlpacaDataDownloader:
             True if successful, False otherwise
         """
         try:
-            parquet_path = self.parquet_dir / f"{symbol}_{self.config.start_date}_{self.config.end_date}.parquet"
+            import pyarrow as pa
+            import pyarrow.parquet as pq
+
+            parquet_path = (
+                self.parquet_dir
+                / f"{symbol}_{self.config.start_date}_{self.config.end_date}.parquet"
+            )
 
             # Convert to PyArrow table for better control
             table = pa.Table.from_pandas(df)
@@ -519,9 +565,9 @@ class AlpacaDataDownloader:
             pq.write_table(
                 table,
                 parquet_path,
-                compression='snappy',
+                compression="snappy",
                 use_dictionary=True,
-                write_statistics=True
+                write_statistics=True,
             )
 
             logger.info(f"Saved Parquet: {parquet_path}")
@@ -546,12 +592,12 @@ class AlpacaDataDownloader:
         df = self._fetch_data_with_retry(symbol)
 
         if df is None or df.empty:
-            self.stats['failed_downloads'] += 1
+            self.stats["failed_downloads"] += 1
             return False
 
         # Validate data
         if not self._validate_dataframe(df, symbol):
-            self.stats['failed_downloads'] += 1
+            self.stats["failed_downloads"] += 1
             return False
 
         # Save in requested formats
@@ -564,11 +610,11 @@ class AlpacaDataDownloader:
             success &= self._save_parquet(df, symbol)
 
         if success:
-            self.stats['successful_downloads'] += 1
-            self.stats['total_rows'] += len(df)
+            self.stats["successful_downloads"] += 1
+            self.stats["total_rows"] += len(df)
             logger.info(f"Successfully processed {symbol}")
         else:
-            self.stats['failed_downloads'] += 1
+            self.stats["failed_downloads"] += 1
             logger.error(f"Failed to save data for {symbol}")
 
         return success
@@ -580,9 +626,13 @@ class AlpacaDataDownloader:
         Returns:
             Dictionary with download statistics
         """
-        self.stats['start_time'] = datetime.now()
+        self.stats["start_time"] = datetime.now()
         logger.info(f"Starting bulk download for {len(self.config.symbols)} symbols")
-        logger.info(f"Using inter-symbol delay of {self.config.inter_symbol_delay} seconds to prevent rate limiting")
+        logger.info(
+            f"Using inter-symbol delay of {self.config.inter_symbol_delay} seconds to prevent rate limiting"
+        )
+
+        from tqdm import tqdm
 
         # Download with progress bar
         with tqdm(total=len(self.config.symbols), desc="Downloading symbols") as pbar:
@@ -595,9 +645,9 @@ class AlpacaDataDownloader:
                 if i < len(self.config.symbols) - 1 and self.config.inter_symbol_delay > 0:
                     time.sleep(self.config.inter_symbol_delay)
 
-        self.stats['end_time'] = datetime.now()
-        duration = (self.stats['end_time'] - self.stats['start_time']).total_seconds()
-        self.stats['duration_seconds'] = duration
+        self.stats["end_time"] = datetime.now()
+        duration = (self.stats["end_time"] - self.stats["start_time"]).total_seconds()
+        self.stats["duration_seconds"] = duration
 
         # Log summary
         logger.info("=" * 80)
@@ -623,16 +673,18 @@ class AlpacaDataDownloader:
     def _save_statistics(self) -> None:
         """Save download statistics to JSON file"""
         try:
-            stats_path = self.output_dir / f"download_stats_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+            stats_path = (
+                self.output_dir / f"download_stats_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+            )
 
             # Convert datetime objects to strings
             stats_json = self.stats.copy()
-            if stats_json['start_time']:
-                stats_json['start_time'] = stats_json['start_time'].isoformat()
-            if stats_json['end_time']:
-                stats_json['end_time'] = stats_json['end_time'].isoformat()
+            if stats_json["start_time"]:
+                stats_json["start_time"] = stats_json["start_time"].isoformat()
+            if stats_json["end_time"]:
+                stats_json["end_time"] = stats_json["end_time"].isoformat()
 
-            with open(stats_path, 'w') as f:
+            with open(stats_path, "w") as f:
                 json.dump(stats_json, f, indent=2)
 
             logger.info(f"Saved statistics to {stats_path}")
@@ -643,7 +695,7 @@ class AlpacaDataDownloader:
 def parse_arguments() -> argparse.Namespace:
     """Parse command line arguments"""
     parser = argparse.ArgumentParser(
-        description='Download historical market data from Alpaca API',
+        description="Download historical market data from Alpaca API",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
@@ -658,106 +710,76 @@ Examples:
 
   # Save only Parquet format
   python download_historical_data.py --symbols AAPL --start 2024-01-01 --end 2024-12-31 --no-csv
-        """
+        """,
     )
 
     parser.add_argument(
-        '--symbols',
-        nargs='+',
-        help='List of stock symbols to download (e.g., AAPL MSFT GOOGL)'
+        "--symbols", nargs="+", help="List of stock symbols to download (e.g., AAPL MSFT GOOGL)"
     )
 
     parser.add_argument(
-        '--start',
-        '--start-date',
-        dest='start_date',
-        help='Start date (YYYY-MM-DD format)'
+        "--start", "--start-date", dest="start_date", help="Start date (YYYY-MM-DD format)"
+    )
+
+    parser.add_argument("--end", "--end-date", dest="end_date", help="End date (YYYY-MM-DD format)")
+
+    parser.add_argument(
+        "--timeframe",
+        default="1Day",
+        choices=["1Min", "5Min", "15Min", "1Hour", "1Day"],
+        help="Data timeframe (default: 1Day)",
     )
 
     parser.add_argument(
-        '--end',
-        '--end-date',
-        dest='end_date',
-        help='End date (YYYY-MM-DD format)'
+        "--output-dir", default="data", help="Output directory for downloaded data (default: data)"
     )
 
-    parser.add_argument(
-        '--timeframe',
-        default='1Day',
-        choices=['1Min', '5Min', '15Min', '1Hour', '1Day'],
-        help='Data timeframe (default: 1Day)'
-    )
+    parser.add_argument("--no-csv", action="store_true", help="Skip CSV output (Parquet only)")
+
+    parser.add_argument("--no-parquet", action="store_true", help="Skip Parquet output (CSV only)")
+
+    parser.add_argument("--config", help="Path to JSON configuration file")
 
     parser.add_argument(
-        '--output-dir',
-        default='data',
-        help='Output directory for downloaded data (default: data)'
-    )
-
-    parser.add_argument(
-        '--no-csv',
-        action='store_true',
-        help='Skip CSV output (Parquet only)'
-    )
-
-    parser.add_argument(
-        '--no-parquet',
-        action='store_true',
-        help='Skip Parquet output (CSV only)'
-    )
-
-    parser.add_argument(
-        '--config',
-        help='Path to JSON configuration file'
-    )
-
-    parser.add_argument(
-        '--retry-attempts',
+        "--retry-attempts",
         type=int,
         default=3,
-        help='Number of retry attempts on failure (default: 3)'
+        help="Number of retry attempts on failure (default: 3)",
     )
 
     parser.add_argument(
-        '--retry-delay',
-        type=int,
-        default=5,
-        help='Initial retry delay in seconds (default: 5)'
+        "--retry-delay", type=int, default=5, help="Initial retry delay in seconds (default: 5)"
     )
 
     parser.add_argument(
-        '--max-retry-delay',
+        "--max-retry-delay",
         type=int,
         default=60,
-        help='Maximum retry delay cap in seconds (default: 60)'
+        help="Maximum retry delay cap in seconds (default: 60)",
     )
 
     parser.add_argument(
-        '--inter-symbol-delay',
+        "--inter-symbol-delay",
         type=float,
         default=1.0,
-        help='Delay between symbol downloads in seconds to prevent rate limiting (default: 1.0)'
+        help="Delay between symbol downloads in seconds to prevent rate limiting (default: 1.0)",
     )
 
     parser.add_argument(
-        '--feed',
-        default='iex',
-        choices=['iex', 'sip', 'otc'],
-        help='Data feed source (default: iex). IEX is free for paper accounts, SIP requires subscription'
+        "--feed",
+        default="iex",
+        choices=["iex", "sip", "otc"],
+        help="Data feed source (default: iex). IEX is free for paper accounts, SIP requires subscription",
     )
 
     parser.add_argument(
-        '--adjustment',
-        default='all',
-        choices=['raw', 'split', 'dividend', 'all'],
-        help='Price adjustment type (default: all)'
+        "--adjustment",
+        default="all",
+        choices=["raw", "split", "dividend", "all"],
+        help="Price adjustment type (default: all)",
     )
 
-    parser.add_argument(
-        '--debug',
-        action='store_true',
-        help='Enable debug logging'
-    )
+    parser.add_argument("--debug", action="store_true", help="Enable debug logging")
 
     return parser.parse_args()
 
@@ -767,7 +789,7 @@ def main():
     args = parse_arguments()
 
     # Set debug logging if requested
-    if hasattr(args, 'debug') and args.debug:
+    if hasattr(args, "debug") and args.debug:
         logging.getLogger().setLevel(logging.DEBUG)
         logger.setLevel(logging.DEBUG)
         logger.debug("Debug logging enabled")
@@ -791,11 +813,11 @@ def main():
                 # CRITICAL FIX: Default to YESTERDAY to ensure complete market data
                 # Market data for "today" may not be available until after close
                 yesterday = (datetime.now() - timedelta(days=1)).date()
-                args.end_date = yesterday.strftime('%Y-%m-%d')
+                args.end_date = yesterday.strftime("%Y-%m-%d")
                 logger.info(f"No end date specified, using yesterday: {args.end_date}")
 
             # CRITICAL FIX: Validate and cap end_date to prevent future dates
-            end_date_parsed = datetime.strptime(args.end_date, '%Y-%m-%d').date()
+            end_date_parsed = datetime.strptime(args.end_date, "%Y-%m-%d").date()
             today = datetime.now().date()
 
             if end_date_parsed > today:
@@ -803,18 +825,22 @@ def main():
                 logger.warning(f"Today is {today}, capping end_date to yesterday")
                 # Use yesterday to ensure complete market data
                 yesterday = today - timedelta(days=1)
-                args.end_date = yesterday.strftime('%Y-%m-%d')
+                args.end_date = yesterday.strftime("%Y-%m-%d")
                 logger.info(f"Adjusted end_date to: {args.end_date}")
             elif end_date_parsed == today:
                 # Even if end_date is today, use yesterday for complete data
-                logger.info(f"End date is today ({today}), adjusting to yesterday for complete data")
+                logger.info(
+                    f"End date is today ({today}), adjusting to yesterday for complete data"
+                )
                 yesterday = today - timedelta(days=1)
-                args.end_date = yesterday.strftime('%Y-%m-%d')
+                args.end_date = yesterday.strftime("%Y-%m-%d")
 
             # Validate start_date < end_date
-            start_date_parsed = datetime.strptime(args.start_date, '%Y-%m-%d').date()
+            start_date_parsed = datetime.strptime(args.start_date, "%Y-%m-%d").date()
             if start_date_parsed >= end_date_parsed:
-                logger.error(f"CRITICAL: Start date {start_date_parsed} must be before end date {end_date_parsed}")
+                logger.error(
+                    f"CRITICAL: Start date {start_date_parsed} must be before end date {end_date_parsed}"
+                )
                 sys.exit(1)
 
             # Create config from arguments
@@ -828,10 +854,12 @@ def main():
                 save_parquet=not args.no_parquet,
                 retry_attempts=args.retry_attempts,
                 retry_delay=args.retry_delay,
-                max_retry_delay=args.max_retry_delay if hasattr(args, 'max_retry_delay') else 60,
-                inter_symbol_delay=args.inter_symbol_delay if hasattr(args, 'inter_symbol_delay') else 1.0,
-                feed=args.feed if hasattr(args, 'feed') else 'iex',
-                adjustment=args.adjustment if hasattr(args, 'adjustment') else 'all'
+                max_retry_delay=args.max_retry_delay if hasattr(args, "max_retry_delay") else 60,
+                inter_symbol_delay=(
+                    args.inter_symbol_delay if hasattr(args, "inter_symbol_delay") else 1.0
+                ),
+                feed=args.feed if hasattr(args, "feed") else "iex",
+                adjustment=args.adjustment if hasattr(args, "adjustment") else "all",
             )
 
         # Validate configuration
@@ -846,7 +874,7 @@ def main():
         stats = downloader.download_all()
 
         # Exit with appropriate code
-        if stats['failed_downloads'] > 0:
+        if stats["failed_downloads"] > 0:
             logger.warning(f"Completed with {stats['failed_downloads']} failures")
             sys.exit(1)
         else:
@@ -861,5 +889,5 @@ def main():
         sys.exit(1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

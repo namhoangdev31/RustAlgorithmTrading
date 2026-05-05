@@ -150,13 +150,28 @@ def run_safety_verification():
         "EV-W19-201": summary["max_kill_switch_latency_sec"] <= 60.0,
         "EV-W19-202": summary["risk_off_pass_rate"] == 1.0,
         "EV-W19-203": summary["rollback_pass_rate"] == 1.0,
-        "EV-W19-204": any("EV-W19-204" in r.evidence_ids and r.disposition == "PASS" for r in manager.records),
+        "EV-W19-204": any(
+            "EV-W19-204" in r.evidence_ids and r.disposition == "PASS" for r in manager.records
+        ),
         "EV-W19-205": summary["unmitigated_breach_count"] == 0,
-        "EV-W19-206": any("EV-W19-206" in r.evidence_ids and r.disposition == "PASS" for r in manager.records),
-        "EV-W19-207": any("EV-W19-207" in r.evidence_ids and r.metadata.get("coverage", 0) >= 0.99 for r in manager.records),
-        "EV-W19-208": any("EV-W19-208" in r.evidence_ids and r.metadata.get("findings") == 0 for r in manager.records),
-        "EV-W19-209": any("EV-W19-209" in r.evidence_ids and r.disposition == "PASS" for r in manager.records),
-        "EV-W19-210": any("EV-W19-210" in r.evidence_ids and r.metadata.get("throughput", 0) > 0 for r in manager.records),
+        "EV-W19-206": any(
+            "EV-W19-206" in r.evidence_ids and r.disposition == "PASS" for r in manager.records
+        ),
+        "EV-W19-207": any(
+            "EV-W19-207" in r.evidence_ids and r.metadata.get("coverage", 0) >= 0.99
+            for r in manager.records
+        ),
+        "EV-W19-208": any(
+            "EV-W19-208" in r.evidence_ids and r.metadata.get("findings") == 0
+            for r in manager.records
+        ),
+        "EV-W19-209": any(
+            "EV-W19-209" in r.evidence_ids and r.disposition == "PASS" for r in manager.records
+        ),
+        "EV-W19-210": any(
+            "EV-W19-210" in r.evidence_ids and r.metadata.get("throughput", 0) > 0
+            for r in manager.records
+        ),
     }
 
     all_pass = True
@@ -166,7 +181,9 @@ def run_safety_verification():
         all_pass &= passed
 
     print("\n--- Safety Metrics ---")
-    print(f"Kill-switch max latency: {summary['max_kill_switch_latency_sec']:.2f}s ({summary['max_kill_switch_latency_ms']}ms)")
+    print(
+        f"Kill-switch max latency: {summary['max_kill_switch_latency_sec']:.2f}s ({summary['max_kill_switch_latency_ms']}ms)"
+    )
     print(f"Risk-off pass rate: {summary['risk_off_pass_rate']*100:.1f}%")
     print(f"Rollback pass rate: {summary['rollback_pass_rate']*100:.1f}%")
     print(f"Unmitigated breaches: {summary['unmitigated_breach_count']}")

@@ -311,14 +311,12 @@ class TestObservabilityPerformance:
             conn = duckdb.connect(str(db_path))
 
             # Create table
-            conn.execute(
-                """
+            conn.execute("""
                 CREATE TABLE perf_metrics (
                     timestamp TIMESTAMP,
                     value DOUBLE
                 )
-                """
-            )
+                """)
 
             # Measure write performance
             from datetime import datetime

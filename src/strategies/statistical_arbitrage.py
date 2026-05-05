@@ -101,7 +101,7 @@ class StatisticalArbitrageStrategy(Strategy):
             current_price = data.iloc[i]["close"]
 
             # Calculate rolling statistics
-            window = spread[i - lookback : i]
+            window = spread.iloc[i - lookback : i]
             z_score = (spread.iloc[i] - window.mean()) / window.std()
 
             # Check if should exit

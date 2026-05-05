@@ -50,16 +50,14 @@ class TestDatabasePerformance:
         conn = duckdb.connect(str(duckdb_path))
 
         # Create test table
-        conn.execute(
-            """
+        conn.execute("""
             CREATE TABLE metrics (
                 timestamp TIMESTAMP,
                 metric_name VARCHAR,
                 value DOUBLE,
                 labels VARCHAR
             )
-            """
-        )
+            """)
 
         # Generate test data
         num_records = 10000
@@ -105,16 +103,14 @@ class TestDatabasePerformance:
         conn = duckdb.connect(str(duckdb_path))
 
         # Create and populate test table
-        conn.execute(
-            """
+        conn.execute("""
             CREATE TABLE metrics (
                 timestamp TIMESTAMP,
                 metric_name VARCHAR,
                 value DOUBLE,
                 labels VARCHAR
             )
-            """
-        )
+            """)
 
         # Insert test data
         test_data = [
@@ -165,8 +161,7 @@ class TestDatabasePerformance:
         cursor = conn.cursor()
 
         # Create trades table
-        cursor.execute(
-            """
+        cursor.execute("""
             CREATE TABLE trades (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 timestamp TEXT NOT NULL,
@@ -177,8 +172,7 @@ class TestDatabasePerformance:
                 execution_time_ms REAL,
                 strategy TEXT
             )
-            """
-        )
+            """)
         conn.commit()
 
         # Generate realistic trade data
@@ -241,14 +235,12 @@ class TestDatabasePerformance:
 
         # First connection: create and populate
         conn1 = duckdb.connect(str(duckdb_path))
-        conn1.execute(
-            """
+        conn1.execute("""
             CREATE TABLE persistent_data (
                 id INTEGER,
                 value VARCHAR
             )
-            """
-        )
+            """)
         conn1.execute("INSERT INTO persistent_data VALUES (1, 'test_value')")
         conn1.close()
 
@@ -269,14 +261,12 @@ class TestDatabasePerformance:
         conn1 = sqlite3.connect(str(sqlite_path))
         cursor1 = conn1.cursor()
 
-        cursor1.execute(
-            """
+        cursor1.execute("""
             CREATE TABLE persistent_trades (
                 id INTEGER PRIMARY KEY,
                 symbol TEXT
             )
-            """
-        )
+            """)
         cursor1.execute("INSERT INTO persistent_trades VALUES (1, 'AAPL')")
         conn1.commit()
         conn1.close()
@@ -304,15 +294,13 @@ class TestDatabasePerformance:
 
         # Setup database
         conn = duckdb.connect(str(duckdb_path))
-        conn.execute(
-            """
+        conn.execute("""
             CREATE TABLE concurrent_test (
                 id INTEGER,
                 thread_id INTEGER,
                 value DOUBLE
             )
-            """
-        )
+            """)
         conn.close()
 
         # Concurrent writes (DuckDB handles file locking)
@@ -364,22 +352,19 @@ class TestDatabasePerformance:
         conn = duckdb.connect(str(duckdb_path))
 
         # Create large dataset
-        conn.execute(
-            """
+        conn.execute("""
             CREATE TABLE large_metrics AS
             SELECT
                 CURRENT_TIMESTAMP + INTERVAL (i) SECOND as timestamp,
                 'metric_' || (i % 100)::VARCHAR as metric_name,
                 random() * 100 as value
             FROM range(1000000) t(i)
-            """
-        )
+            """)
 
         # Complex aggregation query
         start_time = time.perf_counter()
 
-        result = conn.execute(
-            """
+        result = conn.execute("""
             SELECT
                 metric_name,
                 COUNT(*) as count,
@@ -391,8 +376,7 @@ class TestDatabasePerformance:
             GROUP BY metric_name
             ORDER BY avg_value DESC
             LIMIT 10
-            """
-        ).fetchall()
+            """).fetchall()
 
         elapsed_ms = (time.perf_counter() - start_time) * 1000
 

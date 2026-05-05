@@ -230,7 +230,11 @@ def scenarios(tick: float) -> list[Scenario]:
             entry=50_000.0,
             quantity=1.0,
             config=StopLossConfig("TRAILING", percentage=3.0),
-            stream=[PricePoint(52_000.0, 2_000.0), PricePoint(51_000.0, 1_000.0), PricePoint(50_440.0, 440.0)],
+            stream=[
+                PricePoint(52_000.0, 2_000.0),
+                PricePoint(51_000.0, 1_000.0),
+                PricePoint(50_440.0, 440.0),
+            ],
         ),
         Scenario(
             name="trailing_short_trough_then_rise",
@@ -239,7 +243,11 @@ def scenarios(tick: float) -> list[Scenario]:
             entry=3_000.0,
             quantity=10.0,
             config=StopLossConfig("TRAILING", percentage=3.0),
-            stream=[PricePoint(2_850.0, 1_500.0), PricePoint(2_900.0, 1_000.0), PricePoint(2_935.5, 645.0)],
+            stream=[
+                PricePoint(2_850.0, 1_500.0),
+                PricePoint(2_900.0, 1_000.0),
+                PricePoint(2_935.5, 645.0),
+            ],
         ),
         Scenario(
             name="absolute_long_boundary",
@@ -264,8 +272,12 @@ def scenarios(tick: float) -> list[Scenario]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Verify Week 6 Python/Rust stop-loss parity.")
-    parser.add_argument("--fail-on-drift", action="store_true", help="Return non-zero when parity drift is found.")
-    parser.add_argument("--tick", type=float, default=DEFAULT_TICK, help="Maximum allowed numeric drift.")
+    parser.add_argument(
+        "--fail-on-drift", action="store_true", help="Return non-zero when parity drift is found."
+    )
+    parser.add_argument(
+        "--tick", type=float, default=DEFAULT_TICK, help="Maximum allowed numeric drift."
+    )
     args = parser.parse_args()
 
     all_errors: list[str] = []

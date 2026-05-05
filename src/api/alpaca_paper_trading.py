@@ -28,7 +28,6 @@ from alpaca.trading.enums import OrderSide, TimeInForce, QueryOrderStatus
 from alpaca.data.historical import StockHistoricalDataClient
 from alpaca.data.requests import StockBarsRequest, StockLatestQuoteRequest
 from alpaca.data.timeframe import TimeFrame
-from alpaca.data.live import StockDataStream
 
 from loguru import logger
 
@@ -126,7 +125,6 @@ class AlpacaPaperTrading:
 
         self.trading_client: Optional[TradingClient] = None
         self.data_client: Optional[StockHistoricalDataClient] = None
-        self.stream_client: Optional[StockDataStream] = None
         self._connected = False
 
         logger.info(f"AlpacaPaperTrading initialized (paper={paper})")
@@ -136,8 +134,9 @@ class AlpacaPaperTrading:
             self.connect()
 
     def _ensure_connected(self):
-        if not self._connected:
-            raise RuntimeError("Client not connected. Call connect() first.")
+        """Standard connection guard."""
+        if not self._connected or self.trading_client is None:
+            raise RuntimeError("Alpaca Client not connected. Call connect() first.")
 
     def connect(self) -> bool:
         """
@@ -152,7 +151,7 @@ class AlpacaPaperTrading:
         try:
             # Initialize trading client
             self.trading_client = TradingClient(
-                api_key=self.api_key, secret_key=self.secret_key, paper=True  # Always paper trading
+                api_key=self.api_key, secret_key=self.secret_key, paper=True
             )
 
             # Initialize data client
@@ -620,11 +619,6 @@ class AlpacaPaperTrading:
             logger.error(f"Failed to fetch historical bars for {symbol}: {e}")
             raise
 
-    def _ensure_connected(self):
-        """Standard connection guard (Wave-3 optimized)."""
-        if not self._connected or self.trading_client is None:
-            raise RuntimeError("Alpaca Client not connected. Call connect() first.")
-
 
 # Convenience function for testing
 def test_alpaca_paper_trading():
@@ -684,7 +678,8 @@ if __name__ == "__main__":
     logger.remove()
     logger.add(
         sys.stderr,
-        format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <level>{message}</level>",
+        format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | "
+        "<level>{level: <8}</level> | <level>{message}</level>",
         level="INFO",
     )
 

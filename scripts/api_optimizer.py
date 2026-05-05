@@ -12,7 +12,6 @@ from collections import deque
 from functools import wraps
 import threading
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -154,8 +153,7 @@ class DataCache:
 
         is_fresh = age < self.max_age
         logger.debug(
-            f"File {file_path.name}: age={age.total_seconds()/3600:.1f}h, "
-            f"fresh={is_fresh}"
+            f"File {file_path.name}: age={age.total_seconds()/3600:.1f}h, " f"fresh={is_fresh}"
         )
         return is_fresh
 
@@ -216,14 +214,14 @@ class CircuitBreaker:
 
     # Circuit states
     CLOSED = "closed"  # Normal operation
-    OPEN = "open"      # Failures detected, stop requests
+    OPEN = "open"  # Failures detected, stop requests
     HALF_OPEN = "half_open"  # Testing if service recovered
 
     def __init__(
         self,
         failure_threshold: int = 5,
         recovery_timeout: float = 60.0,
-        expected_exception: type = Exception
+        expected_exception: type = Exception,
     ):
         """
         Initialize circuit breaker.
@@ -306,9 +304,7 @@ class CircuitBreaker:
 
             if self.failure_count >= self.failure_threshold:
                 self.state = self.OPEN
-                logger.error(
-                    f"Circuit breaker OPEN after {self.failure_count} failures"
-                )
+                logger.error(f"Circuit breaker OPEN after {self.failure_count} failures")
 
     def reset(self):
         """Manually reset the circuit breaker."""
@@ -322,7 +318,7 @@ class CircuitBreaker:
         return {
             "state": self.state,
             "failure_count": self.failure_count,
-            "last_failure_time": self.last_failure_time
+            "last_failure_time": self.last_failure_time,
         }
 
 
@@ -346,8 +342,7 @@ class RequestBatcher:
         self.lock = threading.Lock()
 
         logger.info(
-            f"RequestBatcher initialized: batch_size={batch_size}, "
-            f"max_wait={max_wait}s"
+            f"RequestBatcher initialized: batch_size={batch_size}, " f"max_wait={max_wait}s"
         )
 
     def add(self, item: Any) -> List[Any]:
@@ -364,8 +359,8 @@ class RequestBatcher:
             self.pending.append(item)
 
             if len(self.pending) >= self.batch_size:
-                batch = self.pending[:self.batch_size]
-                self.pending = self.pending[self.batch_size:]
+                batch = self.pending[: self.batch_size]
+                self.pending = self.pending[self.batch_size :]
                 logger.debug(f"Batch ready: {len(batch)} items")
                 return batch
 
@@ -404,7 +399,7 @@ class ProgressiveRetry:
         max_retries: int = 3,
         base_delay: float = 1.0,
         max_delay: float = 60.0,
-        backoff_factor: float = 2.0
+        backoff_factor: float = 2.0,
     ):
         """
         Initialize progressive retry.
@@ -425,12 +420,7 @@ class ProgressiveRetry:
             f"base_delay={base_delay}s, backoff_factor={backoff_factor}"
         )
 
-    def execute(
-        self,
-        func: Callable,
-        *args,
-        **kwargs
-    ) -> Any:
+    def execute(self, func: Callable, *args, **kwargs) -> Any:
         """
         Execute function with progressive retry.
 
@@ -457,27 +447,23 @@ class ProgressiveRetry:
                 last_exception = e
 
                 if attempt < self.max_retries:
-                    delay = min(
-                        self.base_delay * (self.backoff_factor ** attempt),
-                        self.max_delay
-                    )
+                    delay = min(self.base_delay * (self.backoff_factor**attempt), self.max_delay)
                     logger.warning(
-                        f"Attempt {attempt + 1} failed: {e}. "
-                        f"Retrying in {delay:.2f}s..."
+                        f"Attempt {attempt + 1} failed: {e}. " f"Retrying in {delay:.2f}s..."
                     )
                     time.sleep(delay)
                 else:
-                    logger.error(
-                        f"All {self.max_retries + 1} attempts failed: {e}"
-                    )
+                    logger.error(f"All {self.max_retries + 1} attempts failed: {e}")
 
         raise last_exception
 
     def __call__(self, func: Callable) -> Callable:
         """Decorator for progressive retry."""
+
         @wraps(func)
         def wrapper(*args, **kwargs):
             return self.execute(func, *args, **kwargs)
+
         return wrapper
 
 
@@ -496,7 +482,7 @@ class APIOptimizer:
         circuit_threshold: int = 5,
         circuit_timeout: float = 60.0,
         batch_size: int = 10,
-        retry_attempts: int = 3
+        retry_attempts: int = 3,
     ):
         """
         Initialize API optimizer with all components.
@@ -520,12 +506,7 @@ class APIOptimizer:
         logger.info("APIOptimizer initialized with all components")
 
     def optimized_request(
-        self,
-        func: Callable,
-        symbol: str,
-        *args,
-        use_cache: bool = True,
-        **kwargs
+        self, func: Callable, symbol: str, *args, use_cache: bool = True, **kwargs
     ) -> Any:
         """
         Make an optimized API request with all protections.
@@ -566,12 +547,10 @@ class APIOptimizer:
         return {
             "rate_limiter": {
                 "optimal_delay": self.rate_limiter.get_optimal_delay(),
-                "tokens_available": self.rate_limiter.tokens
+                "tokens_available": self.rate_limiter.tokens,
             },
             "circuit_breaker": self.circuit_breaker.get_state(),
-            "batcher": {
-                "pending_count": self.batcher.get_pending_count()
-            }
+            "batcher": {"pending_count": self.batcher.get_pending_count()},
         }
 
 
@@ -595,15 +574,14 @@ def calculate_optimal_delays(max_requests_per_minute: int = 200) -> Dict[str, fl
         "safe_delay_seconds": safe_delay,
         "conservative_delay_seconds": conservative_delay,
         "requests_per_minute": max_requests_per_minute,
-        "requests_per_hour": max_requests_per_minute * 60
+        "requests_per_hour": max_requests_per_minute * 60,
     }
 
 
 if __name__ == "__main__":
     # Configure logging
     logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     )
 
     # Example: Calculate optimal delays for 200 req/min limit
@@ -615,10 +593,7 @@ if __name__ == "__main__":
 
     # Example: Initialize optimizer
     optimizer = APIOptimizer(
-        rate_limit=200,
-        rate_window=60.0,
-        cache_dir="data/historical",
-        cache_max_age=24
+        rate_limit=200, rate_window=60.0, cache_dir="data/historical", cache_max_age=24
     )
 
     print("\nOptimizer Status:")

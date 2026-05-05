@@ -1,5 +1,5 @@
-use common::types::{Level, OrderBook, Price, Quantity, Side, Symbol};
 use chrono::Utc;
+use common::types::{Level, OrderBook, Price, Quantity, Side, Symbol};
 use std::collections::{BTreeMap, HashMap};
 
 /// High-performance order book using BTreeMap (optimized from BinaryHeap)
@@ -8,8 +8,8 @@ use std::collections::{BTreeMap, HashMap};
 /// Targets <30μs p99 latency for updates (improved from 50μs)
 pub struct FastOrderBook {
     symbol: Symbol,
-    bids: BTreeMap<u64, Quantity>,  // price_key -> quantity (reverse sorted)
-    asks: BTreeMap<u64, Quantity>,  // price_key -> quantity (sorted)
+    bids: BTreeMap<u64, Quantity>, // price_key -> quantity (reverse sorted)
+    asks: BTreeMap<u64, Quantity>, // price_key -> quantity (sorted)
     sequence: u64,
     last_update_ns: i64,
 }
@@ -65,18 +65,20 @@ impl FastOrderBook {
     /// BTreeMap keeps entries sorted, just get the last (highest) key
     #[inline]
     pub fn best_bid(&self) -> Option<Price> {
-        self.bids.iter().next_back().map(|(price_key, _)| {
-            Price(*price_key as f64 / 100000000.0)
-        })
+        self.bids
+            .iter()
+            .next_back()
+            .map(|(price_key, _)| Price(*price_key as f64 / 100000000.0))
     }
 
     /// Get best ask price (lowest ask) - OPTIMIZED
     /// BTreeMap keeps entries sorted, just get the first (lowest) key
     #[inline]
     pub fn best_ask(&self) -> Option<Price> {
-        self.asks.iter().next().map(|(price_key, _)| {
-            Price(*price_key as f64 / 100000000.0)
-        })
+        self.asks
+            .iter()
+            .next()
+            .map(|(price_key, _)| Price(*price_key as f64 / 100000000.0))
     }
 
     /// Get mid price
@@ -105,7 +107,7 @@ impl FastOrderBook {
         let bid_depth: f64 = self
             .bids
             .iter()
-            .rev()  // Reverse to get highest bids first
+            .rev() // Reverse to get highest bids first
             .take(num_levels)
             .map(|(_, qty)| qty.0)
             .sum();
@@ -179,7 +181,7 @@ impl FastOrderBook {
         let bids: Vec<Level> = self
             .bids
             .iter()
-            .rev()  // Reverse to get highest bids first
+            .rev() // Reverse to get highest bids first
             .take(max_levels)
             .map(|(price_key, quantity)| Level {
                 price: Price(*price_key as f64 / 100000000.0),
@@ -245,7 +247,9 @@ impl OrderBookManager {
     }
 
     pub fn get_snapshot(&self, symbol: &str, max_levels: usize) -> Option<OrderBook> {
-        self.books.get(symbol).map(|book| book.to_snapshot(max_levels))
+        self.books
+            .get(symbol)
+            .map(|book| book.to_snapshot(max_levels))
     }
 }
 

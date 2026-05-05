@@ -8,7 +8,8 @@ Verifies that mean reversion strategy is properly disabled in RANGING regime.
 
 import sys
 import os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from utils.market_regime import MarketRegime, select_strategy_for_regime
 
@@ -33,20 +34,11 @@ def verify_mean_reversion_disabled():
     print("-" * 80)
 
     checks = [
-        ("Strategy is 'hold' (not 'mean_reversion')",
-         ranging_config['strategy'] == 'hold'),
-
-        ("Direction is 'neutral' (not 'both')",
-         ranging_config['direction'] == 'neutral'),
-
-        ("Strategy is disabled (enabled=False)",
-         ranging_config['enabled'] is False),
-
-        ("Position size is 0.0 (no positions)",
-         ranging_config['position_size'] == 0.0),
-
-        ("Stop loss is 0.03 (3%)",
-         ranging_config['stop_loss'] == 0.03),
+        ("Strategy is 'hold' (not 'mean_reversion')", ranging_config["strategy"] == "hold"),
+        ("Direction is 'neutral' (not 'both')", ranging_config["direction"] == "neutral"),
+        ("Strategy is disabled (enabled=False)", ranging_config["enabled"] is False),
+        ("Position size is 0.0 (no positions)", ranging_config["position_size"] == 0.0),
+        ("Stop loss is 0.03 (3%)", ranging_config["stop_loss"] == 0.03),
     ]
 
     all_passed = True

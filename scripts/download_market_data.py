@@ -36,10 +36,8 @@ load_dotenv()
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.StreamHandler(sys.stdout)
-    ]
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[logging.StreamHandler(sys.stdout)],
 )
 logger = logging.getLogger(__name__)
 
@@ -62,7 +60,7 @@ class MarketDataDownloader:
         data_dir: Path,
         days_back: int = 365,
         api_key: Optional[str] = None,
-        api_secret: Optional[str] = None
+        api_secret: Optional[str] = None,
     ):
         """
         Initialize market data downloader.
@@ -79,8 +77,8 @@ class MarketDataDownloader:
         self.days_back = days_back
 
         # Get API credentials
-        self.api_key = api_key or os.getenv('ALPACA_API_KEY')
-        self.api_secret = api_secret or os.getenv('ALPACA_SECRET_KEY')
+        self.api_key = api_key or os.getenv("ALPACA_API_KEY")
+        self.api_secret = api_secret or os.getenv("ALPACA_SECRET_KEY")
 
         if not self.api_key or not self.api_secret:
             raise ValueError(
@@ -96,11 +94,7 @@ class MarketDataDownloader:
         (self.data_dir / "historical").mkdir(exist_ok=True)
 
         # Statistics
-        self.stats = {
-            'successful': 0,
-            'failed': 0,
-            'total_rows': 0
-        }
+        self.stats = {"successful": 0, "failed": 0, "total_rows": 0}
 
         logger.info(f"Initialized downloader for {len(symbols)} symbols")
 
@@ -134,7 +128,9 @@ class MarketDataDownloader:
         # DOUBLE VALIDATION: ensure end_date never exceeds today
         today_datetime = datetime.combine(today, datetime.min.time())
         if end_date > today_datetime:
-            logger.warning(f"CRITICAL: End date {end_date.date()} exceeds today {today}, forcing to yesterday")
+            logger.warning(
+                f"CRITICAL: End date {end_date.date()} exceeds today {today}, forcing to yesterday"
+            )
             end_date = today_datetime - timedelta(days=1)
             # Re-adjust if yesterday was a weekend
             while end_date.weekday() >= 5:
@@ -144,11 +140,7 @@ class MarketDataDownloader:
         return start_date, end_date
 
     def _fetch_symbol_data(
-        self,
-        symbol: str,
-        start_date: datetime,
-        end_date: datetime,
-        retry_count: int = 3
+        self, symbol: str, start_date: datetime, end_date: datetime, retry_count: int = 3
     ) -> Optional[pd.DataFrame]:
         """
         Fetch data for a single symbol with retry logic.
@@ -170,7 +162,7 @@ class MarketDataDownloader:
                     symbol_or_symbols=[symbol],
                     timeframe=TimeFrame.Day,
                     start=start_date,
-                    end=end_date
+                    end=end_date,
                 )
 
                 bars = self.client.get_stock_bars(request)
@@ -182,7 +174,9 @@ class MarketDataDownloader:
                         logger.info(f"Retrying {symbol} with 90-day range")
                         new_start = end_date - timedelta(days=90)
                         remaining_retries = max(1, retry_count - 1)
-                        return self._fetch_symbol_data(symbol, new_start, end_date, remaining_retries)
+                        return self._fetch_symbol_data(
+                            symbol, new_start, end_date, remaining_retries
+                        )
                     continue
 
                 # Convert to DataFrame
@@ -196,7 +190,9 @@ class MarketDataDownloader:
                         logger.info(f"Retrying {symbol} with 90-day range")
                         new_start = end_date - timedelta(days=90)
                         remaining_retries = max(1, retry_count - 1)
-                        return self._fetch_symbol_data(symbol, new_start, end_date, remaining_retries)
+                        return self._fetch_symbol_data(
+                            symbol, new_start, end_date, remaining_retries
+                        )
                     continue
 
                 if isinstance(df.index, pd.MultiIndex):
@@ -205,32 +201,44 @@ class MarketDataDownloader:
                     df = df.reset_index()
 
                 # Standardize columns
-                df = df.rename(columns={
-                    'timestamp': 'timestamp',
-                    'open': 'open',
-                    'high': 'high',
-                    'low': 'low',
-                    'close': 'close',
-                    'volume': 'volume',
-                    'trade_count': 'trade_count',
-                    'vwap': 'vwap'
-                })
+                df = df.rename(
+                    columns={
+                        "timestamp": "timestamp",
+                        "open": "open",
+                        "high": "high",
+                        "low": "low",
+                        "close": "close",
+                        "volume": "volume",
+                        "trade_count": "trade_count",
+                        "vwap": "vwap",
+                    }
+                )
 
                 # Add missing columns
-                if 'vwap' not in df.columns:
-                    df['vwap'] = (df['high'] + df['low'] + df['close']) / 3
+                if "vwap" not in df.columns:
+                    df["vwap"] = (df["high"] + df["low"] + df["close"]) / 3
 
-                if 'trade_count' not in df.columns:
-                    df['trade_count'] = 0
+                if "trade_count" not in df.columns:
+                    df["trade_count"] = 0
 
                 # Ensure timestamp is datetime
-                df['timestamp'] = pd.to_datetime(df['timestamp'])
+                df["timestamp"] = pd.to_datetime(df["timestamp"])
 
                 # Add symbol column
-                df['symbol'] = symbol
+                df["symbol"] = symbol
 
                 # Reorder columns
-                columns = ['timestamp', 'symbol', 'open', 'high', 'low', 'close', 'volume', 'vwap', 'trade_count']
+                columns = [
+                    "timestamp",
+                    "symbol",
+                    "open",
+                    "high",
+                    "low",
+                    "close",
+                    "volume",
+                    "vwap",
+                    "trade_count",
+                ]
                 df = df[[col for col in columns if col in df.columns]]
 
                 logger.info(f"Successfully fetched {len(df)} rows for {symbol}")
@@ -245,21 +253,27 @@ class MarketDataDownloader:
                     logger.warning(f"Rate limit detected for {symbol}")
                     if attempt < retry_count - 1:
                         import time
+
                         # Longer delay for rate limits with exponential backoff
-                        delay = min(60, 5 * (2 ** attempt))  # 5s, 10s, 20s, capped at 60s
+                        delay = min(60, 5 * (2**attempt))  # 5s, 10s, 20s, capped at 60s
                         logger.info(f"Rate limit: waiting {delay} seconds before retry...")
                         time.sleep(delay)
                 elif "403" in error_message or "forbidden" in error_message.lower():
-                    logger.error(f"Authentication error - check ALPACA_API_KEY and ALPACA_SECRET_KEY in .env")
+                    logger.error(
+                        f"Authentication error - check ALPACA_API_KEY and ALPACA_SECRET_KEY in .env"
+                    )
                     return None  # Don't retry auth errors
                 elif attempt < retry_count - 1:
                     import time
-                    delay = 5 * (2 ** attempt)  # Exponential backoff: 5s, 10s, 20s
+
+                    delay = 5 * (2**attempt)  # Exponential backoff: 5s, 10s, 20s
                     logger.info(f"Retrying in {delay} seconds (exponential backoff)...")
                     time.sleep(delay)
 
         logger.error(f"Failed to fetch {symbol} after {retry_count} attempts")
-        logger.error(f"Possible causes: 1) Invalid date range 2) API credentials 3) Symbol not found 4) Rate limiting")
+        logger.error(
+            f"Possible causes: 1) Invalid date range 2) API credentials 3) Symbol not found 4) Rate limiting"
+        )
         return None
 
     def _validate_data(self, df: pd.DataFrame, symbol: str) -> bool:
@@ -277,7 +291,7 @@ class MarketDataDownloader:
             logger.error(f"No data for {symbol}")
             return False
 
-        required_columns = {'timestamp', 'open', 'high', 'low', 'close', 'volume'}
+        required_columns = {"timestamp", "open", "high", "low", "close", "volume"}
         missing = required_columns - set(df.columns)
 
         if missing:
@@ -285,11 +299,11 @@ class MarketDataDownloader:
             return False
 
         # Check for invalid prices
-        if (df['high'] < df['low']).any():
+        if (df["high"] < df["low"]).any():
             logger.error(f"Invalid price data for {symbol}: high < low")
             return False
 
-        if (df['open'] < 0).any() or (df['close'] < 0).any():
+        if (df["open"] < 0).any() or (df["close"] < 0).any():
             logger.error(f"Negative prices for {symbol}")
             return False
 
@@ -315,7 +329,7 @@ class MarketDataDownloader:
 
             # Save Parquet (for performance)
             parquet_path = self.data_dir / "historical" / f"{symbol}.parquet"
-            df.to_parquet(parquet_path, compression='snappy', index=False)
+            df.to_parquet(parquet_path, compression="snappy", index=False)
             logger.info(f"Saved Parquet: {parquet_path}")
 
             return True
@@ -340,15 +354,15 @@ class MarketDataDownloader:
         df = self._fetch_symbol_data(symbol, start_date, end_date)
 
         if not self._validate_data(df, symbol):
-            self.stats['failed'] += 1
+            self.stats["failed"] += 1
             return False
 
         if not self._save_data(df, symbol):
-            self.stats['failed'] += 1
+            self.stats["failed"] += 1
             return False
 
-        self.stats['successful'] += 1
-        self.stats['total_rows'] += len(df)
+        self.stats["successful"] += 1
+        self.stats["total_rows"] += len(df)
         return True
 
     def download_all(self) -> Dict[str, Any]:
@@ -382,60 +396,41 @@ class MarketDataDownloader:
 
 def main():
     """Main execution function"""
-    parser = argparse.ArgumentParser(
-        description='Download market data from Alpaca API'
-    )
+    parser = argparse.ArgumentParser(description="Download market data from Alpaca API")
 
     parser.add_argument(
-        '--symbols',
-        nargs='+',
-        default=['AAPL', 'MSFT', 'GOOGL'],
-        help='Stock symbols to download'
+        "--symbols", nargs="+", default=["AAPL", "MSFT", "GOOGL"], help="Stock symbols to download"
     )
 
-    parser.add_argument(
-        '--days',
-        type=int,
-        default=365,
-        help='Number of days of historical data'
-    )
+    parser.add_argument("--days", type=int, default=365, help="Number of days of historical data")
 
     parser.add_argument(
-        '--output-dir',
-        type=str,
-        default='data',
-        help='Output directory for data files'
+        "--output-dir", type=str, default="data", help="Output directory for data files"
     )
 
-    parser.add_argument(
-        '--config',
-        type=str,
-        help='Path to JSON configuration file'
-    )
+    parser.add_argument("--config", type=str, help="Path to JSON configuration file")
 
     args = parser.parse_args()
 
     try:
         # Load config if provided
         if args.config:
-            with open(args.config, 'r') as f:
+            with open(args.config, "r") as f:
                 config = json.load(f)
-                args.symbols = config.get('symbols', args.symbols)
-                args.days = config.get('days_back', args.days)
-                args.output_dir = config.get('output_dir', args.output_dir)
+                args.symbols = config.get("symbols", args.symbols)
+                args.days = config.get("days_back", args.days)
+                args.output_dir = config.get("output_dir", args.output_dir)
 
         # Initialize downloader
         downloader = MarketDataDownloader(
-            symbols=args.symbols,
-            data_dir=Path(args.output_dir),
-            days_back=args.days
+            symbols=args.symbols, data_dir=Path(args.output_dir), days_back=args.days
         )
 
         # Execute download
         stats = downloader.download_all()
 
         # Exit with appropriate code
-        if stats['failed'] > 0:
+        if stats["failed"] > 0:
             logger.warning(f"Completed with {stats['failed']} failures")
             sys.exit(1)
         else:
@@ -450,5 +445,5 @@ def main():
         sys.exit(1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

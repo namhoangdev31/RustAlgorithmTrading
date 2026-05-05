@@ -67,6 +67,11 @@ class MockDataHandler:
 
         return bars
 
+    def get_latest_bar(self, symbol: str):
+        """Get latest bar for engine compatibility."""
+        bars = self.get_latest_bars(symbol, 1)
+        return bars[-1] if bars else None
+
 
 class TestBacktestSignalValidation:
     """Integration tests for signal validation in backtest flow"""

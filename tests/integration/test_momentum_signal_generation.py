@@ -101,7 +101,7 @@ class TestMomentumSignalGeneration:
                 assert (
                     signal.symbol == symbol
                 ), f"Signal symbol mismatch: {signal.symbol} != {symbol}"
-                assert signal.signal_type in [SignalType.BUY, SignalType.SELL, SignalType.HOLD]
+                assert signal.signal_type in [SignalType.LONG, SignalType.SHORT, SignalType.HOLD]
                 assert signal.price > 0, f"Invalid signal price: {signal.price}"
                 assert 0 <= signal.confidence <= 1, f"Invalid confidence: {signal.confidence}"
                 assert "rsi" in signal.metadata, "Signal should have RSI metadata"
@@ -120,8 +120,8 @@ class TestMomentumSignalGeneration:
         assert len(all_signals) >= 1, "Should generate at least 1 signal with year of data"
 
         # Analyze signal distribution
-        buy_signals = [s for s in all_signals if s.signal_type == SignalType.BUY]
-        sell_signals = [s for s in all_signals if s.signal_type == SignalType.SELL]
+        buy_signals = [s for s in all_signals if s.signal_type == SignalType.LONG]
+        sell_signals = [s for s in all_signals if s.signal_type == SignalType.SHORT]
 
         logger.info(f"BUY signals: {len(buy_signals)}")
         logger.info(f"SELL signals: {len(sell_signals)}")
@@ -216,7 +216,7 @@ class TestMomentumSignalGeneration:
         signal = Signal(
             timestamp=datetime.now(),
             symbol="AAPL",
-            signal_type=SignalType.BUY,
+            signal_type=SignalType.LONG,
             price=230.0,
             confidence=0.8,
         )
@@ -293,7 +293,7 @@ class TestMomentumStrategyDiagnostics:
         signal = Signal(
             timestamp=datetime.now(),
             symbol="TEST",
-            signal_type=SignalType.BUY,
+            signal_type=SignalType.LONG,
             price=100.0,
             confidence=0.8,
             metadata={"rsi": 45.0, "macd": 0.5},
@@ -308,8 +308,8 @@ class TestMomentumStrategyDiagnostics:
         assert hasattr(signal, "metadata")
 
         # Verify signal_type is SignalType enum
-        assert signal.signal_type == SignalType.BUY
-        assert signal.signal_type.value == "buy"
+        assert signal.signal_type == SignalType.LONG
+        assert signal.signal_type.value == "LONG"
 
         logger.info(f"Signal structure: {signal}")
         logger.info(f"Signal type: {signal.signal_type} ({type(signal.signal_type)})")

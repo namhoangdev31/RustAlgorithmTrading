@@ -137,7 +137,7 @@ impl RetryPolicy {
         let mut delay = self.initial_delay_ms;
 
         loop {
-            // The pre_flight_check is called before each attempt, 
+            // The pre_flight_check is called before each attempt,
             // verifying things like Circuit Breaker status after sleeping
             pre_flight_check()?;
 

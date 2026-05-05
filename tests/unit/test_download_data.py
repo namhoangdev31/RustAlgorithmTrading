@@ -22,6 +22,8 @@ import sys
 import os
 
 # Add scripts to path
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(PROJECT_ROOT / "scripts"))
 
 from download_historical_data import (
     DownloadConfig,

@@ -1,4 +1,4 @@
-from src.utils.integration_gate_manager import (
+from utils.integration_gate_manager import (
     IntegrationGateManager,
     RuntimeScope,
     IntegrationSuiteType,

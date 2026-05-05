@@ -19,6 +19,7 @@ import os
 @dataclass
 class TickData:
     """Market tick data structure"""
+
     symbol: str
     price: float
     volume: float
@@ -39,7 +40,7 @@ class MarketDataFloodTester:
             "ticks_failed": 0,
             "latencies_ms": [],
             "errors": [],
-            "throughput_samples": []
+            "throughput_samples": [],
         }
 
     def generate_tick(self, symbol: str) -> TickData:
@@ -49,7 +50,7 @@ class MarketDataFloodTester:
             "ETHUSDT": 3000.0,
             "BNBUSDT": 400.0,
             "ADAUSDT": 1.5,
-            "DOTUSDT": 25.0
+            "DOTUSDT": 25.0,
         }.get(symbol, 100.0)
 
         # Add random price movement
@@ -62,7 +63,7 @@ class MarketDataFloodTester:
             volume=random.uniform(0.1, 10.0),
             timestamp=time.time(),
             bid=price - spread / 2,
-            ask=price + spread / 2
+            ask=price + spread / 2,
         )
 
     async def send_tick(self, session: aiohttp.ClientSession, tick: TickData) -> Dict:
@@ -78,9 +79,9 @@ class MarketDataFloodTester:
                     "volume": tick.volume,
                     "timestamp": tick.timestamp,
                     "bid": tick.bid,
-                    "ask": tick.ask
+                    "ask": tick.ask,
                 },
-                timeout=aiohttp.ClientTimeout(total=5)
+                timeout=aiohttp.ClientTimeout(total=5),
             ) as response:
                 latency_ms = (time.time() - start_time) * 1000
 
@@ -91,26 +92,18 @@ class MarketDataFloodTester:
                 else:
                     self.results["ticks_failed"] += 1
                     error_text = await response.text()
-                    self.results["errors"].append({
-                        "status": response.status,
-                        "error": error_text,
-                        "symbol": tick.symbol
-                    })
+                    self.results["errors"].append(
+                        {"status": response.status, "error": error_text, "symbol": tick.symbol}
+                    )
                     return {"success": False, "error": error_text}
 
         except asyncio.TimeoutError:
             self.results["ticks_failed"] += 1
-            self.results["errors"].append({
-                "error": "Timeout",
-                "symbol": tick.symbol
-            })
+            self.results["errors"].append({"error": "Timeout", "symbol": tick.symbol})
             return {"success": False, "error": "Timeout"}
         except Exception as e:
             self.results["ticks_failed"] += 1
-            self.results["errors"].append({
-                "error": str(e),
-                "symbol": tick.symbol
-            })
+            self.results["errors"].append({"error": str(e), "symbol": tick.symbol})
             return {"success": False, "error": str(e)}
 
     async def flood_worker(self, session: aiohttp.ClientSession, stop_event: asyncio.Event):
@@ -142,9 +135,11 @@ class MarketDataFloodTester:
 
             self.results["throughput_samples"].append(throughput)
 
-            print(f"Current throughput: {throughput} ticks/sec | "
-                  f"Success: {self.results['ticks_success']} | "
-                  f"Failed: {self.results['ticks_failed']}")
+            print(
+                f"Current throughput: {throughput} ticks/sec | "
+                f"Success: {self.results['ticks_success']} | "
+                f"Failed: {self.results['ticks_failed']}"
+            )
 
     async def run_test(self):
         """Execute the flood test"""
@@ -189,42 +184,58 @@ class MarketDataFloodTester:
         print(f"Successful: {self.results['ticks_success']}")
         print(f"Failed: {self.results['ticks_failed']}")
 
-        success_rate = (self.results['ticks_success'] / self.results['ticks_sent'] * 100) if self.results['ticks_sent'] > 0 else 0
+        success_rate = (
+            (self.results["ticks_success"] / self.results["ticks_sent"] * 100)
+            if self.results["ticks_sent"] > 0
+            else 0
+        )
         print(f"Success rate: {success_rate:.2f}%")
 
-        if self.results['latencies_ms']:
+        if self.results["latencies_ms"]:
             print(f"\nLatency Statistics:")
             print(f"  Min: {min(self.results['latencies_ms']):.2f} ms")
             print(f"  Max: {max(self.results['latencies_ms']):.2f} ms")
             print(f"  Mean: {statistics.mean(self.results['latencies_ms']):.2f} ms")
             print(f"  Median: {statistics.median(self.results['latencies_ms']):.2f} ms")
 
-            sorted_latencies = sorted(self.results['latencies_ms'])
+            sorted_latencies = sorted(self.results["latencies_ms"])
             p95_idx = int(len(sorted_latencies) * 0.95)
             p99_idx = int(len(sorted_latencies) * 0.99)
             print(f"  P95: {sorted_latencies[p95_idx]:.2f} ms")
             print(f"  P99: {sorted_latencies[p99_idx]:.2f} ms")
 
-        if self.results['throughput_samples']:
+        if self.results["throughput_samples"]:
             print(f"\nThroughput Statistics:")
             print(f"  Min: {min(self.results['throughput_samples'])} ticks/sec")
             print(f"  Max: {max(self.results['throughput_samples'])} ticks/sec")
             print(f"  Mean: {statistics.mean(self.results['throughput_samples']):.2f} ticks/sec")
-            print(f"  Median: {statistics.median(self.results['throughput_samples']):.2f} ticks/sec")
+            print(
+                f"  Median: {statistics.median(self.results['throughput_samples']):.2f} ticks/sec"
+            )
 
-        if self.results['errors']:
+        if self.results["errors"]:
             print(f"\nErrors (showing first 10):")
-            for error in self.results['errors'][:10]:
+            for error in self.results["errors"][:10]:
                 print(f"  - {error}")
 
         # Pass/Fail criteria
         print("\n" + "-" * 80)
-        target_achieved = statistics.mean(self.results['throughput_samples']) >= self.target_tps * 0.9 if self.results['throughput_samples'] else False
+        target_achieved = (
+            statistics.mean(self.results["throughput_samples"]) >= self.target_tps * 0.9
+            if self.results["throughput_samples"]
+            else False
+        )
         error_rate_ok = success_rate >= 99.0
-        latency_ok = statistics.median(self.results['latencies_ms']) <= 100 if self.results['latencies_ms'] else False
+        latency_ok = (
+            statistics.median(self.results["latencies_ms"]) <= 100
+            if self.results["latencies_ms"]
+            else False
+        )
 
         print("PASS/FAIL CRITERIA:")
-        print(f"  {'✓' if target_achieved else '✗'} Throughput >= {self.target_tps * 0.9} ticks/sec (90% of target)")
+        print(
+            f"  {'✓' if target_achieved else '✗'} Throughput >= {self.target_tps * 0.9} ticks/sec (90% of target)"
+        )
         print(f"  {'✓' if error_rate_ok else '✗'} Success rate >= 99%")
         print(f"  {'✓' if latency_ok else '✗'} Median latency <= 100ms")
 
@@ -235,37 +246,73 @@ class MarketDataFloodTester:
         # Save results to file
         results_file = "/results/market_data_flood_test.json"
         os.makedirs(os.path.dirname(results_file), exist_ok=True)
-        with open(results_file, 'w') as f:
-            json.dump({
-                "test_name": "market_data_flood_test",
-                "timestamp": time.time(),
-                "configuration": {
-                    "target_tps": self.target_tps,
-                    "duration_sec": self.duration_sec,
-                    "symbols": self.symbols
-                },
-                "results": {
-                    "ticks_sent": self.results['ticks_sent'],
-                    "ticks_success": self.results['ticks_success'],
-                    "ticks_failed": self.results['ticks_failed'],
-                    "success_rate": success_rate,
-                    "latency_stats": {
-                        "min": min(self.results['latencies_ms']) if self.results['latencies_ms'] else 0,
-                        "max": max(self.results['latencies_ms']) if self.results['latencies_ms'] else 0,
-                        "mean": statistics.mean(self.results['latencies_ms']) if self.results['latencies_ms'] else 0,
-                        "median": statistics.median(self.results['latencies_ms']) if self.results['latencies_ms'] else 0,
-                        "p95": sorted_latencies[p95_idx] if self.results['latencies_ms'] else 0,
-                        "p99": sorted_latencies[p99_idx] if self.results['latencies_ms'] else 0
+        with open(results_file, "w") as f:
+            json.dump(
+                {
+                    "test_name": "market_data_flood_test",
+                    "timestamp": time.time(),
+                    "configuration": {
+                        "target_tps": self.target_tps,
+                        "duration_sec": self.duration_sec,
+                        "symbols": self.symbols,
                     },
-                    "throughput_stats": {
-                        "min": min(self.results['throughput_samples']) if self.results['throughput_samples'] else 0,
-                        "max": max(self.results['throughput_samples']) if self.results['throughput_samples'] else 0,
-                        "mean": statistics.mean(self.results['throughput_samples']) if self.results['throughput_samples'] else 0,
-                        "median": statistics.median(self.results['throughput_samples']) if self.results['throughput_samples'] else 0
-                    }
+                    "results": {
+                        "ticks_sent": self.results["ticks_sent"],
+                        "ticks_success": self.results["ticks_success"],
+                        "ticks_failed": self.results["ticks_failed"],
+                        "success_rate": success_rate,
+                        "latency_stats": {
+                            "min": (
+                                min(self.results["latencies_ms"])
+                                if self.results["latencies_ms"]
+                                else 0
+                            ),
+                            "max": (
+                                max(self.results["latencies_ms"])
+                                if self.results["latencies_ms"]
+                                else 0
+                            ),
+                            "mean": (
+                                statistics.mean(self.results["latencies_ms"])
+                                if self.results["latencies_ms"]
+                                else 0
+                            ),
+                            "median": (
+                                statistics.median(self.results["latencies_ms"])
+                                if self.results["latencies_ms"]
+                                else 0
+                            ),
+                            "p95": sorted_latencies[p95_idx] if self.results["latencies_ms"] else 0,
+                            "p99": sorted_latencies[p99_idx] if self.results["latencies_ms"] else 0,
+                        },
+                        "throughput_stats": {
+                            "min": (
+                                min(self.results["throughput_samples"])
+                                if self.results["throughput_samples"]
+                                else 0
+                            ),
+                            "max": (
+                                max(self.results["throughput_samples"])
+                                if self.results["throughput_samples"]
+                                else 0
+                            ),
+                            "mean": (
+                                statistics.mean(self.results["throughput_samples"])
+                                if self.results["throughput_samples"]
+                                else 0
+                            ),
+                            "median": (
+                                statistics.median(self.results["throughput_samples"])
+                                if self.results["throughput_samples"]
+                                else 0
+                            ),
+                        },
+                    },
+                    "pass": overall_pass,
                 },
-                "pass": overall_pass
-            }, f, indent=2)
+                f,
+                indent=2,
+            )
 
         print(f"\nResults saved to {results_file}")
 
@@ -276,9 +323,7 @@ async def main():
     duration = int(os.getenv("LOAD_TEST_DURATION", "300"))
 
     tester = MarketDataFloodTester(
-        base_url=trading_engine_url,
-        target_tps=target_tps,
-        duration_sec=duration
+        base_url=trading_engine_url, target_tps=target_tps, duration_sec=duration
     )
 
     await tester.run_test()

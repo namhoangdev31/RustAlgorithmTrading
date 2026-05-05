@@ -112,10 +112,11 @@ class TestHistoricalDataHandlerInit:
         """Test initialization creates missing data directory"""
         data_dir = tmp_path / "nonexistent"
 
-        handler = HistoricalDataHandler(
-            symbols=["AAPL"],
-            data_dir=data_dir,
-        )
+        with pytest.raises(FileNotFoundError):
+            HistoricalDataHandler(
+                symbols=["AAPL"],
+                data_dir=data_dir,
+            )
 
         assert data_dir.exists()
 
@@ -197,13 +198,11 @@ class TestDataLoading:
 
     def test_load_missing_file(self, test_data_dir):
         """Test loading non-existent symbol"""
-        handler = HistoricalDataHandler(
-            symbols=["GOOGL"],
-            data_dir=test_data_dir,
-        )
-
-        # Should not raise error, just skip symbol
-        assert "GOOGL" not in handler.symbol_data
+        with pytest.raises(FileNotFoundError):
+            HistoricalDataHandler(
+                symbols=["GOOGL"],
+                data_dir=test_data_dir,
+            )
 
     def test_load_with_date_filter(self, test_data_dir):
         """Test loading with date range filter"""

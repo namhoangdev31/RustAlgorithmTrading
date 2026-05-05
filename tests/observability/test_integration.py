@@ -82,16 +82,14 @@ class TestObservabilityIntegration:
             conn = duckdb.connect(str(db_path))
 
             # Create metrics table
-            conn.execute(
-                """
+            conn.execute("""
                 CREATE TABLE IF NOT EXISTS metrics (
                     timestamp TIMESTAMP,
                     metric_name VARCHAR,
                     value DOUBLE,
                     labels VARCHAR
                 )
-                """
-            )
+                """)
 
             # Insert test metrics
             test_metrics = [
@@ -138,8 +136,7 @@ class TestObservabilityIntegration:
         conn = sqlite3.connect(str(trades_db))
         cursor = conn.cursor()
 
-        cursor.execute(
-            """
+        cursor.execute("""
             CREATE TABLE trades (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 timestamp TEXT NOT NULL,
@@ -149,8 +146,7 @@ class TestObservabilityIntegration:
                 quantity REAL NOT NULL,
                 price REAL NOT NULL
             )
-            """
-        )
+            """)
 
         # Insert test trade
         correlation_id = "corr-test-12345"
@@ -236,14 +232,12 @@ class TestObservabilityIntegration:
             db_path = project_root / "data" / "metrics_shutdown_test.duckdb"
             conn = duckdb.connect(str(db_path))
 
-            conn.execute(
-                """
+            conn.execute("""
                 CREATE TABLE IF NOT EXISTS test_data (
                     id INTEGER,
                     value VARCHAR
                 )
-                """
-            )
+                """)
 
             test_values = [(1, "value1"), (2, "value2"), (3, "value3")]
             conn.executemany("INSERT INTO test_data VALUES (?, ?)", test_values)
@@ -284,16 +278,14 @@ class TestObservabilityIntegration:
                 for i in range(10):
                     conn = duckdb.connect(str(db_path))
 
-                    conn.execute(
-                        """
+                    conn.execute("""
                         CREATE TABLE IF NOT EXISTS metrics (
                             timestamp TIMESTAMP,
                             metric_name VARCHAR,
                             value DOUBLE,
                             labels VARCHAR
                         )
-                        """
-                    )
+                        """)
 
                     conn.execute(
                         "INSERT INTO metrics VALUES (?, ?, ?, ?)",
@@ -422,16 +414,14 @@ class TestObservabilityIntegration:
             conn = duckdb.connect(str(db_path))
 
             # Create and populate metrics
-            conn.execute(
-                """
+            conn.execute("""
                 CREATE TABLE metrics (
                     timestamp TIMESTAMP,
                     metric_name VARCHAR,
                     value DOUBLE,
                     labels VARCHAR
                 )
-                """
-            )
+                """)
 
             # Insert time-series data
             metrics = [(datetime.now(), "latency_ms", float(i * 1.5), "{}") for i in range(100)]
@@ -439,8 +429,7 @@ class TestObservabilityIntegration:
             conn.executemany("INSERT INTO metrics VALUES (?, ?, ?, ?)", metrics)
 
             # Test aggregation query
-            result = conn.execute(
-                """
+            result = conn.execute("""
                 SELECT
                     metric_name,
                     AVG(value) as avg_value,
@@ -449,8 +438,7 @@ class TestObservabilityIntegration:
                     COUNT(*) as count
                 FROM metrics
                 GROUP BY metric_name
-                """
-            ).fetchone()
+                """).fetchone()
 
             assert result is not None
             assert result[0] == "latency_ms"

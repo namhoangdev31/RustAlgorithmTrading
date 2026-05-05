@@ -634,6 +634,16 @@ main() {
     log_info "Mode: $MODE"
     log_info "=========================================="
 
+    case "$MODE" in
+        "full"|"backtest-only"|"paper-only"|"continuous")
+            ;;
+        *)
+            log_error "Unknown mode: $MODE"
+            echo "Usage: $0 [--mode=full|backtest-only|paper-only|continuous]"
+            exit 1
+            ;;
+    esac
+
     # Setup
     setup_environment
     validate_configuration
@@ -685,9 +695,10 @@ main() {
 
 # Cleanup handler
 cleanup() {
+    local status=$?
     log_info "Cleanup triggered..."
     stop_all_services
-    exit 0
+    exit "$status"
 }
 
 trap cleanup EXIT INT TERM

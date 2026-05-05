@@ -1,6 +1,9 @@
 //! Migration example demonstrating schema versioning
 
-use database::{DatabaseManager, migrations::{MigrationManager, get_builtin_migrations}};
+use database::{
+    migrations::{get_builtin_migrations, MigrationManager},
+    DatabaseManager,
+};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {

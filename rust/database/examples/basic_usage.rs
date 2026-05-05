@@ -1,7 +1,7 @@
 //! Basic usage example for the database module
 
 use chrono::Utc;
-use database::{DatabaseManager, MetricRecord, CandleRecord, SystemEvent, TimeInterval};
+use database::{CandleRecord, DatabaseManager, MetricRecord, SystemEvent, TimeInterval};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -24,10 +24,7 @@ async fn main() -> anyhow::Result<()> {
 
     // Insert batch of metrics
     let metrics: Vec<MetricRecord> = (0..100)
-        .map(|i| {
-            MetricRecord::new("price", 50000.0 + i as f64)
-                .with_symbol("BTC/USD")
-        })
+        .map(|i| MetricRecord::new("price", 50000.0 + i as f64).with_symbol("BTC/USD"))
         .collect();
 
     db.insert_metrics(&metrics).await?;
@@ -35,7 +32,10 @@ async fn main() -> anyhow::Result<()> {
 
     // Query metrics
     let retrieved = db.get_metrics("price", Some("BTC/USD"), None, 10).await?;
-    println!("✓ Retrieved {} metrics (showing latest 10)", retrieved.len());
+    println!(
+        "✓ Retrieved {} metrics (showing latest 10)",
+        retrieved.len()
+    );
 
     for metric in retrieved.iter().take(3) {
         println!("  - {}: {}", metric.metric_name, metric.value);
@@ -74,7 +74,11 @@ async fn main() -> anyhow::Result<()> {
         println!("  Table: {}", stat.table_name);
         println!("    Rows: {}", stat.row_count);
         if let (Some(min), Some(max)) = (stat.min_timestamp, stat.max_timestamp) {
-            println!("    Time range: {} to {}", min.format("%Y-%m-%d %H:%M:%S"), max.format("%Y-%m-%d %H:%M:%S"));
+            println!(
+                "    Time range: {} to {}",
+                min.format("%Y-%m-%d %H:%M:%S"),
+                max.format("%Y-%m-%d %H:%M:%S")
+            );
         }
     }
 

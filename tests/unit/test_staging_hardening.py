@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 
-from src.utils.staging_manager import StagingHardeningManager
+from utils.staging_manager import StagingHardeningManager
 
 
 def test_staging_record_contract():

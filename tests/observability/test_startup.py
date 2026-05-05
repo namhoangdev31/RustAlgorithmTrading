@@ -165,15 +165,13 @@ class TestObservabilityStartup:
             import duckdb
 
             conn = duckdb.connect(str(db_path))
-            conn.execute(
-                """
+            conn.execute("""
                 CREATE TABLE IF NOT EXISTS test_metrics (
                     timestamp TIMESTAMP,
                     metric_name VARCHAR,
                     value DOUBLE
                 )
-                """
-            )
+                """)
             conn.close()
 
             # Verify database file exists
@@ -203,8 +201,7 @@ class TestObservabilityStartup:
         conn = sqlite3.connect(str(db_path))
         cursor = conn.cursor()
 
-        cursor.execute(
-            """
+        cursor.execute("""
             CREATE TABLE IF NOT EXISTS trades (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 timestamp TEXT NOT NULL,
@@ -213,8 +210,7 @@ class TestObservabilityStartup:
                 quantity REAL NOT NULL,
                 price REAL NOT NULL
             )
-            """
-        )
+            """)
         conn.commit()
 
         # Verify database file exists
