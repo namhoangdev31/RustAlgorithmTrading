@@ -85,6 +85,9 @@ class FeatureEngineer:
         """
         df = df.copy()
 
+        # Foundation features (always needed for lags/volatility)
+        df = self._add_return_features(df)
+
         # Technical indicators
         if "sma" in self.config.technical_indicators:
             df = self._add_sma_features(df)
@@ -98,8 +101,6 @@ class FeatureEngineer:
             df = self._add_bollinger_bands(df)
 
         # Statistical features
-        if "returns" in self.config.statistical_features:
-            df = self._add_return_features(df)
         if "volatility" in self.config.statistical_features:
             df = self._add_volatility_features(df)
         if "volume_ratio" in self.config.statistical_features:
@@ -239,11 +240,11 @@ class FeatureEngineer:
     def _handle_missing_values(self, df: pd.DataFrame) -> pd.DataFrame:
         """Handle missing values based on config."""
         if self.config.fill_na_method == "forward":
-            df = df.fillna(method="ffill")
+            df = df.ffill()
         elif self.config.fill_na_method == "backward":
-            df = df.fillna(method="bfill")
+            df = df.bfill()
         elif self.config.fill_na_method == "mean":
-            df = df.fillna(df.mean())
+            df = df.fillna(df.mean(numeric_only=True))
         elif self.config.fill_na_method == "zero":
             df = df.fillna(0)
 

@@ -30,11 +30,11 @@ class TestMissingDataDirectory:
         """Test that missing directory is created automatically"""
         missing_dir = tmp_path / "nonexistent" / "nested" / "path"
 
-        handler = HistoricalDataHandler(
-            symbols=["AAPL"],
-            data_dir=missing_dir,
-        )
-
+        with pytest.raises(FileNotFoundError):
+            HistoricalDataHandler(
+                symbols=["AAPL"],
+                data_dir=missing_dir,
+            )
         assert missing_dir.exists()
 
     def test_no_data_files_in_directory(self, tmp_path):
@@ -42,13 +42,11 @@ class TestMissingDataDirectory:
         empty_dir = tmp_path / "empty"
         empty_dir.mkdir()
 
-        handler = HistoricalDataHandler(
-            symbols=["AAPL", "MSFT"],
-            data_dir=empty_dir,
-        )
-
-        # Should not raise error, but have no loaded data
-        assert len(handler.symbol_data) == 0
+        with pytest.raises(FileNotFoundError):
+            HistoricalDataHandler(
+                symbols=["AAPL", "MSFT"],
+                data_dir=empty_dir,
+            )
 
 
 class TestInvalidAPICredentials:

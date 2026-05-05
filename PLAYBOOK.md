@@ -2206,7 +2206,26 @@ Mỗi file có 3 phần:
 - Class/Type trong file: JSONL records gồm `strategy_id`, `verdict`, `owner`, `rationale`, `evidence_links`, `next_action`, `eta`, `block_reason`, `drift_value`, `risk_impact_flag`.
 - Test liên quan: W13 evidence `EV-W13-204`,`EV-W13-212`,`EV-W13-213`.
 
-### scripts/verify_w13_wave2.py
+### src/utils/final_release_manager.py
+
+- Vai trò file: Quản lý quy trình Release Gate 4 (W24), thực thi policy phê duyệt và kiểm tra rollback.
+- Class trong file:
+  - ApprovalState: Enum trạng thái phê duyệt (PENDING, APPROVED, REJECTED).
+  - ReleaseBlockerStatus: Enum trạng thái blocker (NONE, OPEN, RESOLVED).
+  - RollbackReadiness: Enum trạng thái rollback (READY, NOT_READY).
+  - FinalReleaseManager: Logic trung tâm kiểm soát Gate 4.
+- Test liên quan: tests/unit/test_release_gate3.py, scripts/verify_w24_release_gate4.py.
+
+### src/utils/e2e_gate_manager.py
+
+- Vai trò file: Quản lý kết quả chạy test và audit cho các Release Gate (W21-W23).
+- Class trong file:
+  - E2ESuiteType: Phân loại suite (SMOKE, REGRESSION, SOAK, FAULT_INJECTION).
+  - E2EDisposition: Kết quả audit (PASS, FAIL, BLOCKED).
+  - E2EGateManager: Logic tính toán pass rate và verdict GO/NO-GO.
+- Test liên quan: tests/unit/test_release_gate3.py.
+
+scripts/verify_w13_wave2.py
 
 - Vai trò file: Script verification cho Wave-2 (ML validation hardening) của W13.
 - Class/Type trong file: Không có class (script-based verification).

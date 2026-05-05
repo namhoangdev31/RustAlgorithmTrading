@@ -2,7 +2,7 @@
 Event-driven architecture event types for backtesting.
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Optional
 from pydantic import Field, field_validator
@@ -23,7 +23,7 @@ class Event(BaseModel):
     """Base event class."""
 
     event_type: EventType
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class MarketEvent(Event):

@@ -15,6 +15,7 @@ def test_gate_policy_open_e2e_debt_blocked():
         component="TEST",
         correlation_id="corr-001",
         e2e_debt_status=E2EDebtStatus.OPEN,
+        evidence_ids=["EV-UNIT-001"],
     )
     assert record.disposition == "BLOCKED"
     assert record.reason_code == "OPEN_E2E_FAULT_DEBT"
@@ -30,6 +31,7 @@ def test_gate_policy_suite_failure_blocked():
         component="TEST",
         correlation_id="corr-002",
         suite_type=E2ESuiteType.FAULT_INJECTION,
+        evidence_ids=["EV-UNIT-002"],
     )
     assert record.disposition == "BLOCKED"
     assert record.reason_code == "FAULT_INJECTION_SUITE_FAIL"
@@ -45,6 +47,7 @@ def test_gate_policy_regression_detected_blocked():
         component="TEST",
         correlation_id="corr-003",
         regression_count=1,
+        evidence_ids=["EV-UNIT-003"],
     )
     assert record.disposition == "BLOCKED"
     assert record.reason_code == "REGRESSION_DETECTED"
@@ -75,6 +78,7 @@ def test_gate_summary_aggregation():
         component="TEST",
         correlation_id="corr-soak",
         suite_type=E2ESuiteType.SOAK,
+        evidence_ids=["EV-UNIT-004"],
     )
 
     manager.build_gate_record(
@@ -85,6 +89,7 @@ def test_gate_summary_aggregation():
         component="TEST",
         correlation_id="corr-debt",
         e2e_debt_status=E2EDebtStatus.CLOSED,
+        evidence_ids=["EV-UNIT-005"],
     )
 
     summary = manager.get_gate_summary()
