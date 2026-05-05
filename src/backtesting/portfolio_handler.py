@@ -8,12 +8,12 @@ from loguru import logger
 
 import pandas as pd
 
-from ..models.portfolio import Portfolio, Position
-from ..models.events import SignalEvent, OrderEvent, FillEvent
-from ..models.market import Bar
-from ..backtesting.position_sizer import PositionSizer, FixedAmountSizer
-from ..risk.allocation_manager import AllocationManager, AllocationPolicy
-from ..models.governance import ControlStatus, ControlType
+from models.portfolio import Portfolio, Position
+from models.events import SignalEvent, OrderEvent, FillEvent
+from models.market import Bar
+from backtesting.position_sizer import PositionSizer, FixedAmountSizer
+from risk.allocation_manager import AllocationManager, AllocationPolicy
+from models.governance import ControlStatus, ControlType
 
 if TYPE_CHECKING:
     from .data_handler import HistoricalDataHandler

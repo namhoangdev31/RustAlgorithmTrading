@@ -2,7 +2,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from .utils.staging_manager import StagingHardeningManager
+from src.utils.staging_manager import StagingHardeningManager
 
 def run_staging_verification():
     manager = StagingHardeningManager(owner="tester")

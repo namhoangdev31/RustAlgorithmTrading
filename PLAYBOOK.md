@@ -2268,6 +2268,114 @@ Mỗi file có 3 phần:
 - Class/Type trong file: Không có class; nhóm test function theo rule enforcement.
 - Test liên quan: `python -m pytest tests/unit/test_staging_hardening.py -q`.
 
+### src/utils/safety_manager.py
+
+- Vai trò file: Safety guardrails manager cho W19, quản lý kill-switch/risk-off/rollback evidence.
+- Class trong file: `SafetyTriggerType`, `SafetyGuardrailsRecord`, `SafetyGuardrailsManager`.
+- Test liên quan: `tests/unit/test_safety_guardrails.py`, `scripts/verify_w19_safety_guardrails.py`.
+
+### scripts/verify_w19_safety_guardrails.py
+
+- Vai trò file: Script chính capture evidence EV-W19-201..210 (kill-switch, risk-off, rollback, boundary).
+- Class/Type trong file: Không có class nghiệp vụ; script thực thi safety rehearsal scenarios.
+- Test liên quan: Chạy trực tiếp `python scripts/verify_w19_safety_guardrails.py`.
+
+### tests/unit/test_safety_guardrails.py
+
+- Vai trò file: Unit tests cho logic safety manager và threshold policy.
+- Class/Type trong file: Không có class; nhóm test function theo rule enforcement.
+- Test liên quan: `python -m pytest tests/unit/test_safety_guardrails.py -q`.
+
+### src/utils/canary_launch_manager.py
+
+- Vai trò file: Canary launch manager cho W20, quản lý controlled launch scenarios và escalation evidence.
+- Class trong file: `LaunchTier`, `EscalationState`, `CanaryLaunchRecord`, `CanaryLaunchManager`.
+- Test liên quan: `tests/unit/test_canary_launch.py`, `scripts/verify_w20_canary_launch.py`.
+
+### scripts/verify_w20_canary_launch.py
+
+- Vai trò file: Script chính capture evidence EV-W20-201..210 (canary launch, boundary, escalation).
+- Class/Type trong file: Không có class nghiệp vụ; script thực thi canary launch rehearsals.
+- Test liên quan: Chạy trực tiếp `python scripts/verify_w20_canary_launch.py`.
+
+### tests/unit/test_canary_launch.py
+
+- Vai trò file: Unit tests cho logic canary launch manager và threshold policy.
+- Class/Type trong file: Không có class; nhóm test function theo rule enforcement.
+- Test liên quan: `python -m pytest tests/unit/test_canary_launch.py -q`.
+
+### src/utils/release_gate_manager.py
+
+- Vai trò file: Release gate manager cho W21, quản lý evidence cho final-phase gates (lint, static, unit, test debt).
+- Class trong file: `SuiteType`, `DebtStatus`, `ReleaseGateRecord`, `ReleaseGateManager`.
+- Test liên quan: `tests/unit/test_release_gate1.py`, `scripts/verify_w21_release_gate1.py`.
+
+### scripts/verify_w21_release_gate1.py
+
+- Vai trò file: Script chính capture evidence EV-W21-101..107 và EV-W21-201..210 (suite checks, regression, test debt).
+- Class/Type trong file: Không có class nghiệp vụ; script thực thi release gate 1 rehearsals.
+- Test liên quan: Chạy trực tiếp `python scripts/verify_w21_release_gate1.py`.
+
+### tests/unit/test_release_gate1.py
+
+- Vai trò file: Unit tests cho logic release gate manager và threshold policy (chặn open debt, suite fail).
+- Class/Type trong file: Không có class; nhóm test function theo rule enforcement.
+- Test liên quan: `python -m pytest tests/unit/test_release_gate1.py -q`.
+
+### src/utils/integration_gate_manager.py
+
+- Vai trò file: Integration gate manager cho W22, quản lý evidence cho cross-runtime integration và integration debt.
+- Class trong file: `RuntimeScope`, `IntegrationSuiteType`, `IntegrationDebtStatus`, `IntegrationGateRecord`, `IntegrationGateManager`.
+- Test liên quan: `tests/unit/test_release_gate2.py`, `scripts/verify_w22_release_gate2.py`.
+
+### scripts/verify_w22_release_gate2.py
+
+- Vai trò file: Script chính capture evidence EV-W22-101..104 và EV-W22-201..210 (integration suite, regression, debt).
+- Class/Type trong file: Không có class nghiệp vụ; script thực thi release gate 2 rehearsals.
+- Test liên quan: Chạy trực tiếp `python scripts/verify_w22_release_gate2.py`.
+
+### tests/unit/test_release_gate2.py
+
+- Vai trò file: Unit tests cho logic integration gate manager và threshold policy (chặn open integration debt, suite fail).
+- Class/Type trong file: Không có class; nhóm test function theo rule enforcement.
+- Test liên quan: `python -m pytest tests/unit/test_release_gate2.py -q`.
+
+### src/utils/e2e_gate_manager.py
+
+- Vai trò file: E2E gate manager cho W23, quản lý evidence cho e2e, soak, fault-injection và test debt.
+- Class trong file: `E2ESuiteType`, `E2EDebtStatus`, `E2EGateRecord`, `E2EGateManager`.
+- Test liên quan: `tests/unit/test_release_gate3.py`, `scripts/verify_w23_release_gate3.py`.
+
+### scripts/verify_w23_release_gate3.py
+
+- Vai trò file: Script chính capture evidence EV-W23-101..104 và EV-W23-201..210 (e2e, soak, fault-injection, debt).
+- Class/Type trong file: Không có class nghiệp vụ; script thực thi release gate 3 rehearsals.
+- Test liên quan: Chạy trực tiếp `python scripts/verify_w23_release_gate3.py`.
+
+### tests/unit/test_release_gate3.py
+
+- Vai trò file: Unit tests cho logic e2e gate manager và threshold policy (chặn open e2e/fault debt, suite fail).
+- Class/Type trong file: Không có class; nhóm test function theo rule enforcement.
+- Test liên quan: `python -m pytest tests/unit/test_release_gate3.py -q`.
+
+### src/utils/final_release_manager.py
+
+- Vai trò file: Final release manager cho W24, quản lý evidence cho full regression, final approval, release blockers và rollback readiness.
+- Class trong file: `ApprovalState`, `ReleaseBlockerStatus`, `RollbackReadiness`, `FinalReleaseRecord`, `FinalReleaseManager`.
+- Test liên quan: `tests/unit/test_release_gate4.py`, `scripts/verify_w24_release_gate4.py`.
+
+### scripts/verify_w24_release_gate4.py
+
+- Vai trò file: Script chính capture evidence EV-W24-101..104 và EV-W24-201..210 (regression, approval, blocker, rollback).
+- Class/Type trong file: Không có class nghiệp vụ; script thực thi release gate 4 rehearsals.
+- Test liên quan: Chạy trực tiếp `python scripts/verify_w24_release_gate4.py`.
+
+### tests/unit/test_release_gate4.py
+
+- Vai trò file: Unit tests cho logic final release manager và threshold policy (chặn blocker, pending approval, rollback not ready).
+- Class/Type trong file: Không có class; nhóm test function theo rule enforcement.
+- Test liên quan: `python -m pytest tests/unit/test_release_gate4.py -q`.
+
 
 ## Roadmap Week 16 Companion Artifacts
 

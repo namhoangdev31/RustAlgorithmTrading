@@ -18,7 +18,7 @@ from utils.market_regime import (
 @pytest.fixture
 def sample_trending_up_data():
     """Generate sample data for trending up market"""
-    dates = pd.date_range(start='2024-01-01', periods=100, freq='1H')
+    dates = pd.date_range(start='2024-01-01', periods=100, freq='1h')
     # Create uptrend with noise
     trend = np.linspace(100, 150, 100)
     noise = np.random.normal(0, 2, 100)
@@ -39,7 +39,7 @@ def sample_trending_up_data():
 @pytest.fixture
 def sample_trending_down_data():
     """Generate sample data for trending down market"""
-    dates = pd.date_range(start='2024-01-01', periods=100, freq='1H')
+    dates = pd.date_range(start='2024-01-01', periods=100, freq='1h')
     # Create downtrend with noise
     trend = np.linspace(150, 100, 100)
     noise = np.random.normal(0, 2, 100)
@@ -60,7 +60,7 @@ def sample_trending_down_data():
 @pytest.fixture
 def sample_ranging_data():
     """Generate sample data for ranging market"""
-    dates = pd.date_range(start='2024-01-01', periods=100, freq='1H')
+    dates = pd.date_range(start='2024-01-01', periods=100, freq='1h')
     # Create sideways movement
     close = 100 + np.random.normal(0, 3, 100)
 
@@ -79,9 +79,9 @@ def sample_ranging_data():
 @pytest.fixture
 def sample_volatile_data():
     """Generate sample data for volatile market"""
-    dates = pd.date_range(start='2024-01-01', periods=100, freq='1H')
+    dates = pd.date_range(start='2024-01-01', periods=100, freq='1h')
     # Create high volatility movement
-    close = 100 + np.random.normal(0, 10, 100)
+    close = 100 + np.random.normal(0, 30, 100)
 
     data = pd.DataFrame({
         'timestamp': dates,
@@ -268,11 +268,11 @@ class TestRegimeStrategySelection:
         """Test strategy config for ranging market - DISABLED after Week 2 failure"""
         config = select_strategy_for_regime(MarketRegime.RANGING)
 
-        # Mean reversion disabled due to Week 2 backtest: 0% win rate, -283% annual return
-        assert config['strategy'] == 'hold'
+        # Mean reversion RE-ENABLED: Week 3.5 - Best strategy (43.3% win rate)
+        assert config['strategy'] == 'mean_reversion'
         assert config['direction'] == 'neutral'
-        assert config['enabled'] is False
-        assert config['position_size'] == 0.0  # No position
+        assert config['enabled'] is True
+        assert config['position_size'] == 0.15
         assert config['stop_loss'] == 0.03
 
     def test_volatile_trending_up_strategy(self):
@@ -346,7 +346,7 @@ class TestEdgeCases:
 
     def test_insufficient_data(self):
         """Test with insufficient data"""
-        dates = pd.date_range(start='2024-01-01', periods=10, freq='1H')
+        dates = pd.date_range(start='2024-01-01', periods=10, freq='1h')
         data = pd.DataFrame({
             'timestamp': dates,
             'open': [100] * 10,
@@ -366,7 +366,7 @@ class TestEdgeCases:
 
     def test_missing_columns(self):
         """Test with missing required columns"""
-        dates = pd.date_range(start='2024-01-01', periods=50, freq='1H')
+        dates = pd.date_range(start='2024-01-01', periods=50, freq='1h')
         data = pd.DataFrame({
             'timestamp': dates,
             'close': np.random.uniform(90, 110, 50)
@@ -381,7 +381,7 @@ class TestEdgeCases:
 
     def test_zero_volatility(self):
         """Test with zero volatility (flat prices)"""
-        dates = pd.date_range(start='2024-01-01', periods=50, freq='1H')
+        dates = pd.date_range(start='2024-01-01', periods=50, freq='1h')
         data = pd.DataFrame({
             'timestamp': dates,
             'open': [100] * 50,
@@ -400,7 +400,7 @@ class TestEdgeCases:
 
     def test_nan_values_in_data(self):
         """Test with NaN values in data"""
-        dates = pd.date_range(start='2024-01-01', periods=50, freq='1H')
+        dates = pd.date_range(start='2024-01-01', periods=50, freq='1h')
         close = np.random.uniform(90, 110, 50)
         close[10:15] = np.nan  # Insert NaN values
 

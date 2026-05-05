@@ -44,22 +44,33 @@ class TestHistoricalDataHandlerInit:
         df.to_csv(data_dir / "AAPL.csv", index=False)
 
         # Create test Parquet
-        df.to_parquet(data_dir / "MSFT.parquet", index=False)
+        try:
+            import pyarrow
+            df.to_parquet(data_dir / "MSFT.parquet", index=False)
+        except ImportError:
+            pass
 
         return data_dir
 
     def test_init_valid_params(self, test_data_dir):
         """Test initialization with valid parameters"""
+        symbols = ['AAPL']
+        try:
+            import pyarrow
+            symbols.append('MSFT')
+        except ImportError:
+            pass
+
         handler = HistoricalDataHandler(
-            symbols=['AAPL', 'MSFT'],
+            symbols=symbols,
             data_dir=test_data_dir,
             start_date=datetime(2024, 1, 1),
             end_date=datetime(2024, 1, 10),
         )
 
-        assert handler.symbols == ['AAPL', 'MSFT']
+        assert handler.symbols == symbols
         assert handler.data_dir == test_data_dir
-        assert len(handler.symbol_data) == 2
+        assert len(handler.symbol_data) == len(symbols)
 
     def test_init_empty_symbols(self, test_data_dir):
         """Test initialization with empty symbols list"""
@@ -148,7 +159,11 @@ class TestDataLoading:
         df_with_extras = df_valid.copy()
         df_with_extras['vwap'] = [102.0 + i for i in range(10)]
         df_with_extras['trade_count'] = [100 * (i + 1) for i in range(10)]
-        df_with_extras.to_parquet(data_dir / "MSFT.parquet", index=False)
+        try:
+            import pyarrow
+            df_with_extras.to_parquet(data_dir / "MSFT.parquet", index=False)
+        except ImportError:
+            pass
 
         return data_dir
 
@@ -164,6 +179,7 @@ class TestDataLoading:
 
     def test_load_parquet_data(self, test_data_dir):
         """Test loading data from Parquet"""
+        pytest.importorskip("pyarrow")
         handler = HistoricalDataHandler(
             symbols=['MSFT'],
             data_dir=test_data_dir,

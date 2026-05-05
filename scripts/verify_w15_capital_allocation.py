@@ -16,9 +16,9 @@ from typing import Dict, List
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from .models.governance import ControlRecord, ControlStatus
-from .risk.allocation_manager import AllocationManager, AllocationPolicy
-from .strategies.ml.validation.drift_detector import DriftDetector
+from src.models.governance import ControlRecord, ControlStatus
+from src.risk.allocation_manager import AllocationManager, AllocationPolicy
+from src.strategies.ml.validation.drift_detector import DriftDetector
 
 
 MANDATORY_META_FIELDS = [

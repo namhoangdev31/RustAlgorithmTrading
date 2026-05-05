@@ -3,7 +3,7 @@ from datetime import datetime
 from loguru import logger
 from enum import Enum
 from pydantic import BaseModel
-from ..models.governance import ControlRecord, ControlStatus, ControlType
+from models.governance import ControlRecord, ControlStatus, ControlType
 
 class AllocationSizingMode(Enum):
     VOLATILITY = "VOLATILITY"

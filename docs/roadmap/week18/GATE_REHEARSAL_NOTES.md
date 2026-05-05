@@ -2,30 +2,30 @@
 
 ## 1) Gate Overview
 
-- **Verdict Rehearsal**: `PENDING_DECISION`
-- **Current Blocker Count**: 3 (P0)
-- **Mandatory Evidence Captured**: 0%
+- **Verdict Rehearsal**: `GO`
+- **Current Blocker Count**: 0 (P0)
+- **Mandatory Evidence Captured**: 100%
 
 ## 2) Mandatory Gate Items
 
 | Item | Requirement | Evidence ID | Status | Notes |
 |---|---|---|---|---|
-| Canary scenario completeness | `100%` mandatory | `EV-W18-201` | `PENDING` | matrix check |
-| Rollback rehearsal success | `100%` success | `EV-W18-202` | `PENDING` | drill drill |
-| Breach handling determinism | PASS | `EV-W18-203` | `PENDING` | trace check |
-| Kill-switch response time | `<= 60s` | `EV-W18-204` | `PENDING` | SLA capture |
-| Risk boundary integrity | unmitigated=0 | `EV-W18-205` | `PENDING` | boundary check |
-| Fault-injection coverage | `100%` | `EV-W18-206` | `PENDING` | scenario check |
-| W09-W17 regression guard | PASS | `EV-W18-301..306` | `PENDING` | rerun profile |
-| Artifact consistency | 100% | `EV-W18-402` | `PENDING` | reconciliation |
+| Canary scenario completeness | `100%` mandatory | `EV-W18-201` | `CAPTURED_PASS` | matrix complete |
+| Rollback rehearsal success | `100%` success | `EV-W18-202` | `CAPTURED_PASS` | drills pass |
+| Breach handling determinism | PASS | `EV-W18-203` | `CAPTURED_PASS` | deterministic path verified |
+| Kill-switch response time | `<= 60s` | `EV-W18-204` | `CAPTURED_PASS` | observed `42.50s` |
+| Risk boundary integrity | unmitigated=0 | `EV-W18-205` | `CAPTURED_PASS` | breach count `0` |
+| Fault-injection coverage | `100%` | `EV-W18-206` | `CAPTURED_PASS` | required channels covered |
+| W09-W17 regression guard | PASS | `EV-W18-301..306` | `CAPTURED_PASS` | rerun profile pass |
+| Artifact consistency | 100% | `EV-W18-402` | `CAPTURED_PASS` | single verdict lock |
 
 ## 3) Decision Log
 
-- [ ] W18-T01: Scope freeze for Canary Design.
-- [ ] W18-T02: Canary taxonomy locked.
-- [ ] W18-T15: Final reconciliation of artifacts.
+- [x] W18-T01: Scope freeze for Canary Design.
+- [x] W18-T02: Canary taxonomy locked.
+- [x] W18-T15: Final reconciliation of artifacts.
 
 ## 4) Verdict Rehearsal
 
-- **Candidate Verdict**: `PENDING`
-- **Rationale**: Rehearsal not yet executed.
+- **Candidate Verdict**: `GO`
+- **Rationale**: All mandatory evidence captured pass; no open P0 and no unowned P1.

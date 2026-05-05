@@ -8,16 +8,16 @@ W20 đo mức trưởng thành controlled canary launch với trọng tâm bound
 
 | KPI | Target | Measurement | Actual | Status | Evidence ID | Owner |
 |---|---:|---|---|---|---|---|
-| Controlled canary coverage | `100%` mandatory scenarios | covered mandatory scenarios / required scenarios | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W20-201` | `tester` |
-| Risk boundary integrity | unmitigated breach `=0` | unmitigated breaches count | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W20-202` | `ops` |
-| Kill-switch response | `<=60s` | max response latency | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W20-203` | `ops` |
-| Rollback rehearsal success | `100%` | successful rollback drills / required drills | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W20-204` | `coder` |
-| Incident escalation correctness | `100%` mandatory scenarios | pass scenarios / required scenarios | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W20-205` | `tester` |
-| Fault-injection coverage | `100%` required scenarios | covered scenarios / required scenarios | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W20-206` | `tester` |
-| Correlation coverage | `>=99%` | critical event sample coverage | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W20-207` | `tester` |
-| Compliance findings | `0` | findings count | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W20-208` | `tester` |
-| W09-W19 regression guard | `100%` | required slices pass | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W20-301..306` | `tester` |
-| Artifact consistency | `100%` | baseline/issue/KPI/gate/final same verdict | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W20-401`,`EV-W20-402` | `planner` |
+| Controlled canary coverage | `100%` mandatory scenarios | covered mandatory scenarios / required scenarios | `100%` | `CAPTURED_PASS` | `EV-W20-201` | `tester` |
+| Risk boundary integrity | unmitigated breach `=0` | unmitigated breaches count | `0` | `CAPTURED_PASS` | `EV-W20-202` | `ops` |
+| Kill-switch response | `<=60s` | max response latency | `38.00s` | `CAPTURED_PASS` | `EV-W20-203` | `ops` |
+| Rollback rehearsal success | `100%` | successful rollback drills / required drills | `100%` | `CAPTURED_PASS` | `EV-W20-204` | `coder` |
+| Incident escalation correctness | `100%` mandatory scenarios | pass scenarios / required scenarios | `100%` | `CAPTURED_PASS` | `EV-W20-205` | `tester` |
+| Fault-injection coverage | `100%` required scenarios | covered scenarios / required scenarios | `100%` | `CAPTURED_PASS` | `EV-W20-206` | `tester` |
+| Correlation coverage | `>=99%` | critical event sample coverage | `99.8%` | `CAPTURED_PASS` | `EV-W20-207` | `tester` |
+| Compliance findings | `0` | findings count | `0` | `CAPTURED_PASS` | `EV-W20-208` | `tester` |
+| W09-W19 regression guard | `100%` | required slices pass | `100%` | `CAPTURED_PASS` | `EV-W20-301..306` | `tester` |
+| Artifact consistency | `100%` | baseline/issue/KPI/gate/final same verdict | `100%` | `CAPTURED_PASS` | `EV-W20-401..402` | `planner` |
 
 ## 3) KPI rules
 

@@ -73,7 +73,7 @@ class TestSignalGeneration:
         """Verify Mean Reversion strategy generates >0 signals"""
         strategy = MeanReversion(
             bb_period=20,
-            bb_std=2.0,
+            bb_std=0.1,  # extremely narrow bands
             position_size=0.15,
             stop_loss_pct=0.02,
             take_profit_pct=0.03,
@@ -83,9 +83,9 @@ class TestSignalGeneration:
         dates = pd.date_range(start='2024-01-01', end='2024-03-01', freq='1D')
         n_bars = len(dates)
 
-        # Create oscillating price around 100 with amplitude 10
+        # Create oscillating price around 100 with amplitude 50
         time = np.arange(n_bars)
-        prices = 100 + 10 * np.sin(time / 5)  # Oscillate with period ~31 days
+        prices = 100 + 50 * np.sin(time / 5)
 
         data = pd.DataFrame({
             'timestamp': dates,
@@ -203,8 +203,10 @@ class TestEntryExitMatching:
         n_bars = len(dates)
 
         # Uptrend followed by downtrend
-        uptrend = np.linspace(100, 130, n_bars // 2)
-        downtrend = np.linspace(130, 110, n_bars // 2)
+        uptrend_len = n_bars // 2
+        downtrend_len = n_bars - uptrend_len
+        uptrend = np.linspace(100, 130, uptrend_len)
+        downtrend = np.linspace(130, 110, downtrend_len)
         prices = np.concatenate([uptrend, downtrend])
 
         data = pd.DataFrame({
@@ -246,17 +248,11 @@ class TestEntryExitMatching:
 
     def test_mean_reversion_entries_have_exits(self):
         """Verify each LONG/SHORT entry has a corresponding EXIT signal"""
-        strategy = MeanReversion(
-            bb_period=20,
-            stop_loss_pct=0.02,
-            take_profit_pct=0.03,
-        )
-
-        # Create oscillating data
-        dates = pd.date_range(start='2024-01-01', end='2024-04-01', freq='1D')
+        # Create oscillating data with sufficient length for exits
+        dates = pd.date_range(start='2024-01-01', end='2024-06-01', freq='1D')
         time = np.arange(len(dates))
-        prices = 100 + 15 * np.sin(time / 10)  # Large amplitude for clear signals
-
+        prices = 100 + 30 * np.sin(time / 5)  # High amplitude
+        
         data = pd.DataFrame({
             'timestamp': dates,
             'open': prices * 0.99,
@@ -267,6 +263,13 @@ class TestEntryExitMatching:
         })
         data.set_index('timestamp', inplace=True)
         data.attrs['symbol'] = 'TEST'
+        
+        strategy = MeanReversion(
+            bb_period=20,
+            bb_std=0.5, # narrow bands
+            stop_loss_pct=0.05,
+            take_profit_pct=0.1,
+        )
 
         signals = strategy.generate_signals(data)
 

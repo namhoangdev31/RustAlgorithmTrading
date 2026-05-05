@@ -17,6 +17,8 @@ class SignalType(Enum):
     SHORT = "SHORT"
     EXIT = "EXIT"
     HOLD = "HOLD"
+    BUY = "LONG"
+    SELL = "SHORT"
 
 
 @dataclass

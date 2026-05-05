@@ -7,8 +7,8 @@ from typing import Optional
 import numpy as np
 from loguru import logger
 
-from ..models.events import OrderEvent, FillEvent
-from ..backtesting.data_handler import HistoricalDataHandler
+from models.events import OrderEvent, FillEvent
+from backtesting.data_handler import HistoricalDataHandler
 
 
 class SimulatedExecutionHandler:

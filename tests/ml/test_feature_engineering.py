@@ -14,7 +14,7 @@ def sample_data():
     np.random.seed(42)
     n = 200
 
-    dates = pd.date_range('2024-01-01', periods=n, freq='1H')
+    dates = pd.date_range('2024-01-01', periods=n, freq='1h')
     close = 100 + np.random.randn(n).cumsum()
     high = close + np.random.uniform(0, 2, n)
     low = close - np.random.uniform(0, 2, n)

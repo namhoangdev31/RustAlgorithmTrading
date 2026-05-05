@@ -289,7 +289,16 @@ class TestPositionSizing:
         """Test that position size scales with signal confidence"""
         from strategies.base import Signal
 
-        account_value = 100000
+        # Use a custom strategy instance with NO max limit to ensure scaling is visible
+        scaling_strategy = EnhancedMomentumStrategy(
+            symbols=['TEST'],
+            risk_params=RiskParameters(
+                max_position_size=1.0,  # No limit
+                risk_per_trade=0.02 # Lower risk per trade
+            )
+        )
+
+        account_value = 1000000
 
         # High confidence signal
         high_conf_signal = Signal(
@@ -311,11 +320,11 @@ class TestPositionSizing:
             metadata={'stop_loss': 95.0}
         )
 
-        high_size = strategy.calculate_position_size(high_conf_signal, account_value)
-        low_size = strategy.calculate_position_size(low_conf_signal, account_value)
+        high_size = scaling_strategy.calculate_position_size(high_conf_signal, account_value)
+        low_size = scaling_strategy.calculate_position_size(low_conf_signal, account_value)
 
         assert high_size > low_size, \
-            "Higher confidence should result in larger position"
+            f"Higher confidence should result in larger position: {high_size} vs {low_size}"
 
     def test_position_size_risk_calculation(self, strategy):
         """Test that position size properly accounts for risk per trade"""

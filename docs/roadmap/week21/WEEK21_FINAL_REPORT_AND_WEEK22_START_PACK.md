@@ -2,26 +2,28 @@
 
 ## 1) Executive summary
 
-- Current gate status: `PENDING_DECISION`.
-- Final verdict: `PENDING_DECISION`.
+- Current gate status: `NO-GO`.
+- Final verdict: `NO-GO`.
 - W21 objective summary:
-  1. Full lint/type/static/unit baseline hard-gate closure.
-  2. Test debt closure theo rule không defer.
-  3. Governance consistency cho W22 gate2 kickoff.
+  1. Baseline + regression/correlation/compliance capture đã hoàn tất.
+  2. Mandatory hard-gate1 (`lint/type/static/unit/debt`) chưa đạt ngưỡng.
+  3. Verdict lock `NO-GO` với recovery queue rõ owner/ETA/rerun.
 
 ## 2) KPI snapshot
 
 | KPI Group | Target | Actual | Status | Evidence ID |
 |---|---|---|---|---|
-| Hard-Gate | lint/type/static 100% | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W21-201`,`EV-W21-202` |
-| Hard-Gate | unit baseline 100% | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W21-203` |
-| Quality | debt open = 0 | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W21-204` |
-| Quality | W09-W20 regression pass | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W21-301..306` |
-| Governance | artifact consistency 100% | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W21-401`,`EV-W21-402` |
+| Hard-Gate | lint/type/static 100% | FAIL | `CAPTURED_FAIL` | `EV-W21-201`,`EV-W21-202` |
+| Hard-Gate | unit baseline 100% | FAIL | `CAPTURED_FAIL` | `EV-W21-203` |
+| Quality | debt open = 0 | FAIL | `CAPTURED_FAIL` | `EV-W21-204` |
+| Quality | W09-W20 regression pass | `100%` | `CAPTURED_PASS` | `EV-W21-301..306` |
+| Governance | artifact consistency 100% | `100%` (`NO-GO` unified) | `CAPTURED_PASS` | `EV-W21-401`,`EV-W21-402` |
 
 ## 3) Delivery status
 
-- `W21-T01..T18`: `PENDING_EXECUTION`.
+- `W21-T01..T06`: `DONE`.
+- `W21-T07..T12`: `DONE` (blockers captured + triaged).
+- `W21-T13..T18`: `DONE` (rerun, reconciliation, verdict lock, handoff pack).
 
 ## 4) Issue snapshot
 
@@ -51,6 +53,8 @@ Guardrails:
 
 ## 7) Recovery queue (nếu W21 = NO-GO)
 
-1. Ưu tiên unblock P0 trước, rồi P1.
-2. Mỗi blocker bắt buộc có owner + ETA + mitigation + missing evidence.
-3. Chỉ đổi trạng thái sau khi rerun command profile chuẩn.
+1. `W21-ISS-001` (`coder`, ETA `Pha 3 rerun`): unblock `EV-W21-105` bằng cách cài Python lint tools và xử lý rust fmt/clippy blockers.
+2. `W21-ISS-002` (`coder`, ETA `Pha 3 rerun`): unblock `EV-W21-106` bằng cách xử lý mypy module-path/stubs và cài `pyright`.
+3. `W21-ISS-003` (`tester`, ETA `Pha 3 rerun`): unblock `EV-W21-101/203` bằng cách sửa import/packaging errors trong unit collection.
+4. `W21-ISS-004` (`tester`, ETA `sau W21-ISS-003`): đóng debt backlog và rerun `EV-W21-204`.
+5. Chỉ được đổi verdict khi toàn bộ mandatory evidence chuyển `CAPTURED_PASS`.

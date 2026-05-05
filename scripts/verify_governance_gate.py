@@ -11,8 +11,8 @@ import numpy as np
 # Add project root to path (for `import src.*`)
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from .strategies.ml.validation.model_validator import ModelValidator
-from .strategies.ml.validation.governance import GovernanceStatus
+from src.strategies.ml.validation.model_validator import ModelValidator
+from src.strategies.ml.validation.governance import GovernanceStatus
 
 class MockModel:
     """Mock model that implements the required interface."""

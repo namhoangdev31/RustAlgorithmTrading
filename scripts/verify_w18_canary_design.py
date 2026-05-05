@@ -8,9 +8,9 @@ from src.utils.canary_manager import CanaryDesignManager, ExposureTier, BreachCl
 
 def run_canary_verification():
     manager = CanaryDesignManager(owner="tester")
-    
+
     print("=== Week 18 Canary Design Verification Rehearsal ===")
-    
+
     # EV-W18-201: Canary scenario completeness
     manager.build_canary_record(
         run_id="W18-CANARY-001",
@@ -20,10 +20,11 @@ def run_canary_verification():
         component="GOVERNANCE",
         correlation_id="corr-w18-001",
         evidence_ids=["EV-W18-201"],
+        canary_tier="T1",
         exposure_tier=ExposureTier.T1,
         metadata={"scenarios_count": 12}
     )
-    
+
     # EV-W18-202: Rollback rehearsal audit
     manager.build_canary_record(
         run_id="W18-RB-001",
@@ -33,9 +34,11 @@ def run_canary_verification():
         component="EXECUTION_ENGINE",
         correlation_id="corr-w18-002",
         evidence_ids=["EV-W18-202"],
+        rollback_required=True,
+        rollback_result="SUCCESS",
         rollback_success=True
     )
-    
+
     # EV-W18-203: Breach handling deterministic audit
     manager.build_canary_record(
         run_id="W18-BREACH-001",
@@ -45,10 +48,13 @@ def run_canary_verification():
         component="RISK_MANAGER",
         correlation_id="corr-w18-003",
         evidence_ids=["EV-W18-203"],
+        canary_tier="T2",
+        risk_boundary="RISK_LIMIT_SOFT",
         breach_class=BreachClass.RISK_LIMIT,
+        kill_switch_latency_ms=42500,
         rollback_disposition="AUTO"
     )
-    
+
     # EV-W18-204: Kill-switch response audit
     manager.build_canary_record(
         run_id="W18-KILL-001",
@@ -58,9 +64,9 @@ def run_canary_verification():
         component="RISK_MANAGER",
         correlation_id="corr-w18-004",
         evidence_ids=["EV-W18-204"],
-        latency_sec=42.5
+        kill_switch_latency_ms=42500
     )
-    
+
     # EV-W18-205: Risk boundary integrity audit
     manager.build_canary_record(
         run_id="W18-BOUNDARY-001",
@@ -70,9 +76,10 @@ def run_canary_verification():
         component="RISK_MANAGER",
         correlation_id="corr-w18-005",
         evidence_ids=["EV-W18-205"],
-        metadata={"breach_count": 0}
+        risk_boundary="RISK_LIMIT_HARD",
+        metadata={"breach_count": 0, "breach_mitigated": True}
     )
-    
+
     # EV-W18-206: Fault-injection coverage audit
     manager.build_canary_record(
         run_id="W18-FAULT-001",
@@ -83,7 +90,7 @@ def run_canary_verification():
         correlation_id="corr-w18-006",
         evidence_ids=["EV-W18-206"]
     )
-    
+
     # EV-W18-207: Correlation coverage audit
     manager.build_canary_record(
         run_id="W18-CORR-001",
@@ -95,7 +102,31 @@ def run_canary_verification():
         evidence_ids=["EV-W18-207"],
         metadata={"coverage": 0.998}
     )
-    
+
+    # EV-W18-208: Compliance Findings
+    manager.build_canary_record(
+        run_id="W18-COMP-001",
+        scenario_id="COMPLIANCE_AUDIT",
+        disposition="PASS",
+        reason_code="NO_FINDINGS",
+        component="GOVERNANCE",
+        correlation_id="corr-w18-008",
+        evidence_ids=["EV-W18-208"],
+        metadata={"findings": 0}
+    )
+
+    # EV-W18-209: Throughput / Toil Watermark
+    manager.build_canary_record(
+        run_id="W18-TOIL-001",
+        scenario_id="THROUGHPUT_WATERMARK",
+        disposition="PASS",
+        reason_code="WATERMARK_CAPTURED",
+        component="OBSERVABILITY",
+        correlation_id="corr-w18-009",
+        evidence_ids=["EV-W18-209"],
+        metadata={"throughput": 5000, "toil_minutes": 3}
+    )
+
     # EV-W18-210: Governance taxonomy consistency
     manager.build_canary_record(
         run_id="W18-GOV-001",
@@ -106,28 +137,36 @@ def run_canary_verification():
         correlation_id="corr-w18-010",
         evidence_ids=["EV-W18-210"]
     )
-    
+
     summary = manager.get_canary_summary()
-    
+
     checks = {
         "EV-W18-201": summary["canary_scenario_count"] > 0,
         "EV-W18-202": summary["rollback_success_rate"] == 1.0,
         "EV-W18-203": summary["breach_handling_count"] > 0,
         "EV-W18-204": summary["kill_switch_latency_sec"] <= 60.0,
         "EV-W18-205": any(r.evidence_ids == ["EV-W18-205"] and r.metadata.get("breach_count") == 0 for r in manager.records),
+        "EV-W18-206": any(r.evidence_ids == ["EV-W18-206"] and r.disposition == "PASS" for r in manager.records),
+        "EV-W18-207": summary["correlation_coverage"] >= 0.99,
+        "EV-W18-208": summary["compliance_findings"] == 0,
+        "EV-W18-209": summary["throughput_watermark"] > 0,
         "EV-W18-210": any(r.evidence_ids == ["EV-W18-210"] and r.disposition == "PASS" for r in manager.records),
     }
-    
+
     all_pass = True
-    for eid, passed in checks.items():
+    for eid, passed in sorted(checks.items()):
         print(f"{eid}: {'PASS' if passed else 'FAIL'}")
         all_pass &= passed
-        
+
     print("\n--- Canary Metrics ---")
-    print(f"Kill-switch max latency: {summary['kill_switch_latency_sec']:.2f}s")
-    print(f"Rollback success rate: {summary['rollback_success_rate']*100:.1f}%")
-    print(f"Tier distribution: {summary['tier_distribution']}")
-    
+    print(f"kill_switch_latency: {summary['kill_switch_latency_sec']:.2f}s")
+    print(f"rollback_success_rate: {summary['rollback_success_rate']*100:.1f}%")
+    print(f"breach_count: {summary['unmitigated_breach_count']}")
+    print(f"correlation_coverage: {summary['correlation_coverage']*100:.1f}%")
+    print(f"throughput_watermark: {summary['throughput_watermark']} msgs/sec")
+    print(f"tier_distribution: {summary['tier_distribution']}")
+    print(f"compliance_findings: {summary['compliance_findings']}")
+
     if all_pass:
         print("\nW18 CANARY DESIGN VERDICT: GO")
         return 0
