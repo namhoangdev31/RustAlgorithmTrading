@@ -86,6 +86,9 @@ src/research/repro_manager.py
 src/risk/__init__.py
 src/risk/allocation_manager.py
 src/risk/portfolio_controls.py
+src/signal_bridge/__init__.py
+src/signal_bridge/py.typed
+src/signal_bridge/signal_bridge.pyi
 src/simulations/__init__.py
 src/simulations/monte_carlo.py
 src/strategies/__init__.py
@@ -137,9 +140,4 @@ src/utils/safety_manager.py
 src/utils/staging_manager.py
 src/utils/validation_tools.py
 src/utils/visualization.py
-tests/test_alpaca_api_limits.py
 tests/test_alpaca_quick.py
-tests/test_backtest_integration.py
-tests/test_data_download.py
-tests/test_data_downloader.py
-tests/test_timezone_handling.py

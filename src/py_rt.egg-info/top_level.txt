@@ -6,6 +6,7 @@ models
 observability
 research
 risk
+signal_bridge
 simulations
 strategies
 utils
