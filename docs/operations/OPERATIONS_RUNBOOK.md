@@ -604,7 +604,7 @@ Bug in risk calculation logic caused false positive circuit breaker trip.
 
 ```bash
 # 1. Apply optimized Cargo flags
-cd /mnt/c/Users/DaviCastroSamora/Documents/SamoraDC/RustAlgorithmTrading/rust
+cd [REPO_ROOT]/rust
 RUSTFLAGS="-C target-cpu=native -C link-arg=-fuse-ld=lld" cargo build --release
 
 # 2. Update system configuration
@@ -825,7 +825,7 @@ sudo journalctl | grep sudo | tail -50
 
 ```bash
 # Update dependencies
-cd /mnt/c/Users/DaviCastroSamora/Documents/SamoraDC/RustAlgorithmTrading/rust
+cd [REPO_ROOT]/rust
 cargo update
 cargo audit
 

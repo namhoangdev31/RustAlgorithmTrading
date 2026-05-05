@@ -532,7 +532,7 @@ tar -xzf config-backup-20251021.tar.gz
 tar -xzf data-backup-20251021.tar.gz
 
 # Verify configuration
-./scripts/verify_config.sh
+./scripts/check_config.sh
 
 # Restart system
 ./scripts/start_trading_system.sh
@@ -682,7 +682,7 @@ python scripts/liquidate_positions.py --confirm
 ./scripts/stop_trading_system.sh
 
 # 2. Check for data corruption
-./scripts/verify_data_integrity.sh
+./scripts/check_data_integrity.sh
 
 # 3. Restore from last known good backup
 ./scripts/restore_from_backup.sh --date 2025-10-21 --time 14:00

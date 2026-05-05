@@ -3,68 +3,66 @@
 Status: Operational Static Canon  
 Updated: 2026-05-05
 
-This index is the active navigation layer for production operation and maintenance.
-Weekly execution packs and gate-by-week artifacts are not part of active documentation anymore.
+This index is organized for production maintenance, not weekly gate execution.
 
-## 1) Core Entry Points
+## 1) Start Here
 
-- `README.md`
-- `README_VI.md`
-- `docs/DOCS_CANONICAL_MAP.md`
-- `docs/index.md`
-- `PLAYBOOK.md`
+1. `docs/DOCS_CANONICAL_MAP.md`
+2. `README_VI.md`
+3. `PLAYBOOK.md`
+4. `docs/index.md`
 
-## 2) Operations & Runtime
+## 2) Runtime Operations
 
 - `docs/operations/OPERATIONS_RUNBOOK.md`
 - `docs/operations/DISASTER_RECOVERY.md`
 - `docs/deployment/PRODUCTION_DEPLOYMENT.md`
 - `docs/setup/DEVELOPMENT.md`
 
-## 3) Architecture & Interfaces
+## 3) Architecture & Contracts
 
 - `docs/architecture/SYSTEM_ARCHITECTURE.md`
 - `docs/architecture/python-rust-separation.md`
 - `docs/architecture/component-interfaces.md`
 - `docs/architecture/RUST_MODULE_STRUCTURE.md`
-
-## 4) API & Integration
-
 - `docs/API_DOCUMENTATION.md`
 - `docs/api/ALPACA_API.md`
 - `docs/api/ZMQ_PROTOCOL.md`
-- `docs/INTEGRATION_GUIDE.md`
 
-## 5) Observability & Storage
+## 4) Observability & Storage
 
 - `docs/observability/BACKEND_API.md`
 - `docs/STORAGE_GUIDE.md`
 - `docs/DATA_MANAGEMENT.md`
 
-## 6) Testing & Quality
+## 5) Testing & Quality
 
 - `docs/TEST_EXECUTION_GUIDE.md`
 - `tests/docs/COMPREHENSIVE_TESTING_STRATEGY.md`
 
-## 7) Scripts & Tooling
+## 6) Script Inventory
 
 - `scripts/README.md`
 
-## 8) Roadmap Consolidation
+## 7) Roadmap Summary
 
-The 24-week lifecycle artifacts have been replaced by one static summary:
+Weekly operation packs are consolidated in:
 
 - `docs/roadmap/FINAL_ROADMAP_SUMMARY.md`
 
-## 9) Technology Posture (Active)
+## 8) Documentation Health Notes
 
-- Broker/API provider: **Alpaca-only**
-- Analytics/observability posture: **DuckDB-first**
-- Non-active alternatives must be explicitly labeled `future/non-active`.
+- Canonical docs are expected to be link-clean and path-normalized.
+- Non-canonical docs may contain historical design context and should not override canonical operational guidance.
+- If any doc conflicts with runtime code, use runtime code + `PLAYBOOK.md` ownership map as source of truth.
 
-## 10) Path Convention
+## 9) Runtime Posture (Active)
 
-Use either:
-
-- repo-relative paths (e.g. `docs/operations/OPERATIONS_RUNBOOK.md`), or
-- `[REPO_ROOT]/...` in environment-agnostic instructions.
+- Provider: **Alpaca-only**
+- Observability/persistence posture: **DuckDB-first**
+- Public event envelope unchanged:
+  - `schema_version`
+  - `correlation_id`
+  - `event_type`
+  - `timestamp`
+  - `payload`

@@ -12,7 +12,7 @@ Successfully created a production-ready Rust workspace with 5 crates, 33+ source
 ## Created Crates
 
 ### 1. common (Library)
-**Path:** `/mnt/c/Users/DaviCastroSamora/Documents/SamoraDC/RustAlgorithmTrading/rust/common/`
+**Path:** `[REPO_ROOT]/rust/common/`
 
 **Purpose:** Shared types and utilities used across all components
 
@@ -32,7 +32,7 @@ Successfully created a production-ready Rust workspace with 5 crates, 33+ source
 - Message types for inter-component communication
 
 ### 2. market-data (Binary + Library)
-**Path:** `/mnt/c/Users/DaviCastroSamora/Documents/SamoraDC/RustAlgorithmTrading/rust/market-data/`
+**Path:** `[REPO_ROOT]/rust/market-data/`
 
 **Purpose:** Real-time market data feed with WebSocket connections and order book management
 
@@ -51,7 +51,7 @@ WebSocket -> OrderBook Manager -> Bar Aggregator -> ZMQ Publisher
 ```
 
 ### 3. signal-bridge (Binary + Library + Python Module)
-**Path:** `/mnt/c/Users/DaviCastroSamora/Documents/SamoraDC/RustAlgorithmTrading/rust/signal-bridge/`
+**Path:** `[REPO_ROOT]/rust/signal-bridge/`
 
 **Purpose:** Python-Rust bridge for ML signal generation with high-performance feature engineering
 
@@ -69,7 +69,7 @@ WebSocket -> OrderBook Manager -> Bar Aggregator -> ZMQ Publisher
 - Enables fast feature computation from Python ML models
 
 ### 4. risk-manager (Binary + Library)
-**Path:** `/mnt/c/Users/DaviCastroSamora/Documents/SamoraDC/RustAlgorithmTrading/rust/risk-manager/`
+**Path:** `[REPO_ROOT]/rust/risk-manager/`
 
 **Purpose:** Multi-layered risk management with position limits and stop-loss triggers
 
@@ -90,7 +90,7 @@ WebSocket -> OrderBook Manager -> Bar Aggregator -> ZMQ Publisher
 5. Circuit breaker for system protection
 
 ### 5. execution-engine (Binary + Library)
-**Path:** `/mnt/c/Users/DaviCastroSamora/Documents/SamoraDC/RustAlgorithmTrading/rust/execution-engine/`
+**Path:** `[REPO_ROOT]/rust/execution-engine/`
 
 **Purpose:** Smart order routing with retry logic and slippage estimation
 
@@ -112,7 +112,7 @@ WebSocket -> OrderBook Manager -> Bar Aggregator -> ZMQ Publisher
 ## Workspace Configuration
 
 ### Root Cargo.toml
-**Path:** `/mnt/c/Users/DaviCastroSamora/Documents/SamoraDC/RustAlgorithmTrading/rust/Cargo.toml`
+**Path:** `[REPO_ROOT]/rust/Cargo.toml`
 
 **Features:**
 - Workspace resolver = "2" (Rust 2021 edition)

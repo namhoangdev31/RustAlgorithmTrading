@@ -105,7 +105,7 @@ source $HOME/.cargo/env
 Create a production `.env` file:
 
 ```bash
-# /mnt/c/Users/DaviCastroSamora/Documents/SamoraDC/RustAlgorithmTrading/.env.production
+# [REPO_ROOT]/.env.production
 
 # === ALPACA API CREDENTIALS ===
 ALPACA_API_KEY=your_api_key_here
@@ -165,7 +165,7 @@ chown trading_user:trading_group .env.production
 
 ```bash
 # Navigate to Rust workspace
-cd /mnt/c/Users/DaviCastroSamora/Documents/SamoraDC/RustAlgorithmTrading/rust
+cd [REPO_ROOT]/rust
 
 # Build with maximum optimizations
 RUSTFLAGS="-C target-cpu=native -C link-arg=-fuse-ld=lld" \
@@ -256,7 +256,7 @@ sudo journalctl -u trading-market-data -f
 
 ```bash
 # Build all services
-cd /mnt/c/Users/DaviCastroSamora/Documents/SamoraDC/RustAlgorithmTrading
+cd [REPO_ROOT]
 docker compose -f docker/docker-compose.yml build
 
 # Tag for production
@@ -1079,8 +1079,8 @@ curl -X POST http://localhost:8080/api/v1/circuit-breaker/trip
 - [Operations Runbook](../operations/OPERATIONS_RUNBOOK.md)
 - [Troubleshooting Guide](../guides/troubleshooting.md)
 - [Architecture Documentation](../architecture/SYSTEM_ARCHITECTURE.md)
-- [Performance Tuning Guide](../PERFORMANCE_ANALYSIS.md)
-- [Security Audit Report](../SECURITY_AUDIT_REPORT.md)
+- [Performance Tuning Guide](../optimization/PERFORMANCE_OPTIMIZATIONS.md)
+- [Security Audit Report](../security/UNWRAP_REPLACEMENT_REPORT.md)
 
 ---
 

@@ -1376,7 +1376,7 @@ This guide covers the complete workflow for accessing Alpaca market data:
 
 ### Next Steps
 
-- **Explore**: [ALPACA_API.md](/mnt/c/Users/DaviCastroSamora/Documents/SamoraDC/RustAlgorithmTrading/docs/api/ALPACA_API.md) for trading operations
+- **Explore**: [ALPACA_API.md](../api/ALPACA_API.md) for trading operations
 - **Build**: Implement your first data pipeline
 - **Optimize**: Profile and optimize for production use
 - **Deploy**: Set up automated data updates
@@ -1385,7 +1385,7 @@ This guide covers the complete workflow for accessing Alpaca market data:
 
 - [Alpaca Data API Docs](https://alpaca.markets/docs/api-documentation/api-v2/market-data/)
 - [alpaca-py SDK](https://github.com/alpacahq/alpaca-py)
-- [System Architecture](/mnt/c/Users/DaviCastroSamora/Documents/SamoraDC/RustAlgorithmTrading/docs/architecture/python-rust-separation.md)
+- [System Architecture](../architecture/python-rust-separation.md)
 
 ---
 

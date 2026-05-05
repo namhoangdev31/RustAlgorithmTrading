@@ -311,7 +311,7 @@ s3://trading-backups/
 **Automated Verification** (weekly):
 ```bash
 #!/bin/bash
-# /opt/trading-system/scripts/verify_all_backups.sh
+# /opt/trading-system/scripts/check_all_backups.sh
 
 echo "=== BACKUP VERIFICATION REPORT ==="
 echo "Date: $(date)"

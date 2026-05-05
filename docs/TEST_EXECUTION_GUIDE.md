@@ -4,7 +4,7 @@
 
 ### Run All Tests
 ```bash
-cd /mnt/c/Users/DaviCastroSamora/Documents/SamoraDC/RustAlgorithmTrading/rust
+cd [REPO_ROOT]/rust
 
 # Run workspace tests
 cargo test --workspace
@@ -32,7 +32,7 @@ cargo test --package common --lib
 
 #### Integration Tests
 ```bash
-cd /mnt/c/Users/DaviCastroSamora/Documents/SamoraDC/RustAlgorithmTrading/tests
+cd [REPO_ROOT]/tests
 
 # End-to-end workflows (10 tests)
 cargo test --test integration
@@ -46,7 +46,7 @@ cargo test --test concurrent_integration
 
 ### Run Benchmarks
 ```bash
-cd /mnt/c/Users/DaviCastroSamora/Documents/SamoraDC/RustAlgorithmTrading/tests
+cd [REPO_ROOT]/tests
 
 # Run all benchmarks
 cargo bench
@@ -89,7 +89,7 @@ cargo install cargo-llvm-cov
 
 ### Generate Coverage Report
 ```bash
-cd /mnt/c/Users/DaviCastroSamora/Documents/SamoraDC/RustAlgorithmTrading/rust
+cd [REPO_ROOT]/rust
 
 # Using tarpaulin (HTML report)
 cargo tarpaulin --workspace --out Html --output-dir ../target/coverage
@@ -142,7 +142,7 @@ cargo build --workspace --all-targets
 ## Test Files Location
 
 ```
-/mnt/c/Users/DaviCastroSamora/Documents/SamoraDC/RustAlgorithmTrading/
+[REPO_ROOT]/
 ├── rust/
 │   ├── common/tests/             # Common library tests
 │   ├── market-data/tests/        # Market data component tests

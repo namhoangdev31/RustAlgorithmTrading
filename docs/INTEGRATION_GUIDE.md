@@ -24,7 +24,7 @@ pip install alpaca-py python-dotenv loguru pyzmq
 
 ### 3. Configure Credentials
 
-Create `/mnt/c/Users/DaviCastroSamora/Documents/SamoraDC/RustAlgorithmTrading/.env`:
+Create `[REPO_ROOT]/.env`:
 
 ```bash
 ALPACA_API_KEY=your_api_key_here
@@ -512,4 +512,4 @@ netstat -tlnp | grep 8080
 
 ---
 
-For detailed implementation information, see `/mnt/c/Users/DaviCastroSamora/Documents/SamoraDC/RustAlgorithmTrading/docs/CODER_IMPLEMENTATION_COMPLETE.md`
+For detailed implementation information, see `[REPO_ROOT]/docs/CODER_IMPLEMENTATION_COMPLETE.md`

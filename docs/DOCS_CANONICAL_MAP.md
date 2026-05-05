@@ -2,69 +2,92 @@
 
 Updated: 2026-05-05  
 Owner: Project maintainers  
-Mode: **Operational Static Canon**
+Mode: **Operational Static Canon (AGENTS-aligned)**
 
-This file is the source-of-truth map for what to read first and what counts as active operational documentation.
+This map defines what is authoritative for day-to-day maintenance and incident response.
 
-## 1) Canonical Read Order (Mandatory)
+## 1) Mandatory Reading Order (from `AGENTS.md`)
 
-1. `README.md`
+For non-trivial work, read in this exact order:
+
+1. `docs/DOCS_CANONICAL_MAP.md`
 2. `README_VI.md`
-3. `docs/DOCUMENTATION_INDEX.md`
-4. `docs/index.md`
-5. `PLAYBOOK.md`
+3. `PLAYBOOK.md`
+4. Domain docs by scope:
+   - `docs/`
+   - `rust/docs/`
+   - `tests/docs/`
+   - `medium/` (strategy rationale only)
 
-## 2) Canonical Domain Sets
+## 2) Canonical Operational Set
 
-### A. Runtime Architecture
+### A. Project Entry
+
+- `README.md`
+- `README_VI.md`
+- `docs/DOCUMENTATION_INDEX.md`
+- `docs/index.md`
+- `PLAYBOOK.md`
+
+### B. Runtime & Operations
+
+- `docs/operations/OPERATIONS_RUNBOOK.md`
+- `docs/operations/DISASTER_RECOVERY.md`
+- `docs/deployment/PRODUCTION_DEPLOYMENT.md`
+- `docs/setup/DEVELOPMENT.md`
+
+### C. Architecture & Interfaces
 
 - `docs/architecture/SYSTEM_ARCHITECTURE.md`
 - `docs/architecture/python-rust-separation.md`
 - `docs/architecture/component-interfaces.md`
 - `docs/architecture/RUST_MODULE_STRUCTURE.md`
 
-### B. Operations & Recovery
-
-- `docs/operations/OPERATIONS_RUNBOOK.md`
-- `docs/operations/DISASTER_RECOVERY.md`
-- `docs/deployment/PRODUCTION_DEPLOYMENT.md`
-
-### C. API & Contracts
+### D. API / Contract Surface
 
 - `docs/API_DOCUMENTATION.md`
 - `docs/api/ALPACA_API.md`
 - `docs/api/ZMQ_PROTOCOL.md`
 
-### D. Observability & Storage
+### E. Observability & Data Plane
 
 - `docs/observability/BACKEND_API.md`
 - `docs/STORAGE_GUIDE.md`
+- `docs/DATA_MANAGEMENT.md`
 
-### E. Testing
+### F. Testing
 
 - `docs/TEST_EXECUTION_GUIDE.md`
 - `tests/docs/COMPREHENSIVE_TESTING_STRATEGY.md`
 
-## 3) Roadmap Consolidation
+## 3) Roadmap Lifecycle Consolidation
 
-Weekly artifacts have been consolidated into one static summary:
+Weekly lifecycle artifacts are retired from active operations and consolidated to:
 
 - `docs/roadmap/FINAL_ROADMAP_SUMMARY.md`
 
-No weekly lifecycle file is part of the active operational truth.
-
 ## 4) Active Technology Posture
 
-- Provider: **Alpaca-only** (active)
-- Observability/Persistence posture: **DuckDB-first** (active)
-- Any non-active alternative must be labeled `future/non-active`.
+- Broker/API provider: **Alpaca-only (active)**
+- Observability/persistence posture: **DuckDB-first (active)**
+- Any alternative stack must be labeled `future/non-active`.
 
-## 5) Path Policy
+## 5) Canon vs Non-Canon Rule
 
-Use repo-relative paths or `[REPO_ROOT]/...`; avoid user-specific absolute paths.
+- Files in section 2 are authoritative for operations.
+- Other docs can remain as contextual/reference material but are non-canonical unless promoted here.
+- When canonical docs and non-canonical docs conflict, follow canonical docs and runtime code.
 
-## 6) Conflict Resolution
+## 6) Path & Reference Policy
 
-1. Runtime behavior in code/config overrides stale narrative docs.
-2. Canonical files listed above override non-canonical text.
-3. If a canonical file becomes stale, update it directly rather than adding parallel summaries.
+- Use repo-relative paths or `[REPO_ROOT]/...`.
+- Do not use user-specific absolute paths in active docs.
+- Keep links valid inside the repository tree.
+
+## 7) Maintenance Protocol
+
+When changing runtime behavior or ownership:
+
+1. Update `PLAYBOOK.md` first (doc -> code -> test routing).
+2. Update impacted canonical docs in section 2.
+3. Run quick link sanity for updated docs before merge.
