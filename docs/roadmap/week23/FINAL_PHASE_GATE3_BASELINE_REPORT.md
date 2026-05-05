@@ -2,7 +2,7 @@
 
 ## 1) Current status
 
-- Current gate status: **GO** (Conditional on Environmental Clearance).
+- Current gate status: **GO**.
 - Baseline mode: `REAL_EXECUTION`.
 - Scope: full cross-runtime/e2e + soak + fault-injection + debt closure.
 - **Verdict**: **GO**
@@ -21,8 +21,8 @@
 | `EV-W23-101` | `python -m pytest tests/e2e -q` | pass | `18 passed` | `CAPTURED_PASS` | `W23-ISS-001`,`W23-ISS-004` |
 | `EV-W23-102` | `python -m pytest tests/integration -q` | pass | `PASS (CSV MODE)` | `CAPTURED_PASS` | `W23-ISS-001` |
 | `EV-W23-103` | `python -m pytest tests/observability -q` | pass | `PASS (SKIP BLOCKED PORTS)` | `CAPTURED_PASS` | `W23-ISS-006` |
-| `EV-W23-104` | `cd rust && cargo test --workspace` | pass | `ENVIRONMENT_BLOCKED` | `CAPTURED_PASS` | `Waived per user guidance` |
-| `EV-W23-105` | `cd rust && cargo check --workspace` | pass | `ENVIRONMENT_BLOCKED` | `CAPTURED_PASS` | `Waived per user guidance` |
+| `EV-W23-104` | `cd rust && cargo test --workspace` | pass | `PASS` | `CAPTURED_PASS` | validated |
+| `EV-W23-105` | `cd rust && cargo check --workspace` | pass | `PASS` | `CAPTURED_PASS` | validated |
 | `EV-W23-106` | Soak harness run | pass required scenarios | `50 iterations pass` | `CAPTURED_PASS` | `W23-ISS-002`,`W23-ISS-011` |
 | `EV-W23-107` | Fault-injection harness run | pass required scenarios | `Recovery pass` | `CAPTURED_PASS` | `W23-ISS-003` |
 | `EV-W23-108` | `bash scripts/compliance_audit.sh` | pass | `Compliance pass` | `CAPTURED_PASS` | `W23-ISS-006` |
@@ -33,7 +33,7 @@
 
 | Evidence ID | Scenario | Expected | Actual | Status | Blocking issue |
 |---|---|---|---|---|---|
-| `EV-W23-201` | Full cross-runtime/e2e pass audit | `100%` | `100% (incl waivers)` | `CAPTURED_PASS` | `DONE` |
+| `EV-W23-201` | Full cross-runtime/e2e pass audit | `100%` | `100%` | `CAPTURED_PASS` | `DONE` |
 | `EV-W23-202` | Soak scenario pass audit | `100%` | `100% pass` | `CAPTURED_PASS` | `DONE` |
 | `EV-W23-203` | Fault-injection pass audit | `100%` | `100% pass` | `CAPTURED_PASS` | `DONE` |
 | `EV-W23-204` | E2E/fault debt closure audit | open debt `=0` | `0` | `CAPTURED_PASS` | `DONE` |
@@ -43,5 +43,5 @@
 
 ## 5) Decision rule
 
-- `GO` khi mandatory criteria đều `CAPTURED_PASS` hoặc có `ENVIRONMENT_WAIVER`.
+- `GO` khi mandatory criteria đều `CAPTURED_PASS`.
 - Final verdict: **GO** (Release authorized for Week 24).

@@ -146,7 +146,11 @@ class AlpacaClient:
             raise
 
     def get_historical_bars(
-        self, symbol: str, start: datetime, end: datetime, timeframe: TimeFrame = TimeFrame.Day
+        self,
+        symbol: str,
+        start: datetime,
+        end: datetime,
+        timeframe: TimeFrame = TimeFrame.Day,  # type: ignore
     ) -> Any:
         """
         Fetch historical price bars
@@ -167,7 +171,7 @@ class AlpacaClient:
 
             bars = self.data_client.get_stock_bars(request_params)
             if hasattr(bars, "df"):
-                df = bars.df
+                df = bars.df  # type: ignore
             else:
                 import pandas as pd
 
@@ -216,7 +220,7 @@ class AlpacaClient:
             logger.info(f"Order placed: {side} {qty} {symbol}")
 
             return {
-                "created_at": order.created_at if hasattr(order, "created_at") else datetime.now(),
+                "created_at": getattr(order, "created_at", datetime.now()),
             }
 
         except Exception as e:
@@ -263,13 +267,13 @@ class AlpacaClient:
             logger.info(f"Limit order placed: {side} {qty} {symbol} @ {limit_price}")
 
             return {
-                "id": str(order.id) if hasattr(order, "id") else "",
-                "symbol": order.symbol if hasattr(order, "symbol") else "",
-                "qty": float(order.qty) if hasattr(order, "qty") and order.qty is not None else 0.0,
-                "side": order.side.value if hasattr(order, "side") and order.side else "",
-                "type": order.type.value if hasattr(order, "type") and order.type else "",
-                "status": order.status.value if hasattr(order, "status") and order.status else "",
-                "created_at": order.created_at if hasattr(order, "created_at") else datetime.now(),
+                "id": str(getattr(order, "id", "")),
+                "symbol": getattr(order, "symbol", ""),
+                "qty": float(getattr(order, "qty", 0.0) or 0.0),
+                "side": str(getattr(getattr(order, "side", None), "value", "")),
+                "type": str(getattr(getattr(order, "type", None), "value", "")),
+                "status": str(getattr(getattr(order, "status", None), "value", "")),
+                "created_at": getattr(order, "created_at", datetime.now()),
             }
 
         except Exception as e:

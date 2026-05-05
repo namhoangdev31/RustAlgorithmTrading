@@ -67,7 +67,10 @@ class TestSignalDataclass:
 
         for signal_type in types_to_test:
             signal = Signal(
-                timestamp=datetime.now(timezone.utc), symbol="AAPL", signal_type=signal_type, price=150.0
+                timestamp=datetime.now(timezone.utc),
+                symbol="AAPL",
+                signal_type=signal_type,
+                price=150.0,
             )
             assert signal.signal_type == signal_type
             assert isinstance(signal.signal_type, SignalType)
@@ -75,7 +78,10 @@ class TestSignalDataclass:
     def test_signal_metadata_default(self):
         """Test Signal metadata defaults to empty dict"""
         signal = Signal(
-            timestamp=datetime.now(timezone.utc), symbol="AAPL", signal_type=SignalType.LONG, price=150.0
+            timestamp=datetime.now(timezone.utc),
+            symbol="AAPL",
+            signal_type=SignalType.LONG,
+            price=150.0,
         )
 
         assert signal.metadata == {}
@@ -255,7 +261,10 @@ class TestStrategySignalTypeConversion:
     def test_signal_type_to_string_conversion(self):
         """Test converting SignalType enum to string for SignalEvent"""
         signal = Signal(
-            timestamp=datetime.now(timezone.utc), symbol="AAPL", signal_type=SignalType.LONG, price=150.0
+            timestamp=datetime.now(timezone.utc),
+            symbol="AAPL",
+            signal_type=SignalType.LONG,
+            price=150.0,
         )
 
         # This is how backtest engine converts signals
@@ -274,7 +283,10 @@ class TestStrategySignalTypeConversion:
 
         for signal_type in actionable_types:
             signal = Signal(
-                timestamp=datetime.now(timezone.utc), symbol="AAPL", signal_type=signal_type, price=150.0
+                timestamp=datetime.now(timezone.utc),
+                symbol="AAPL",
+                signal_type=signal_type,
+                price=150.0,
             )
 
             converted = signal.signal_type.value
@@ -284,7 +296,10 @@ class TestStrategySignalTypeConversion:
         """Test that HOLD signals are filtered out (not actionable)"""
         # HOLD should not be converted to SignalEvent
         signal = Signal(
-            timestamp=datetime.now(timezone.utc), symbol="AAPL", signal_type=SignalType.HOLD, price=150.0
+            timestamp=datetime.now(timezone.utc),
+            symbol="AAPL",
+            signal_type=SignalType.HOLD,
+            price=150.0,
         )
 
         # HOLD should not be in valid SignalEvent types
@@ -302,7 +317,10 @@ class TestStrategyPositionLogic:
         # Note: should_enter checks for BUY/SELL, not LONG/SHORT
         # This is a potential issue in the base Strategy class
         signal = Signal(
-            timestamp=datetime.now(timezone.utc), symbol="AAPL", signal_type=SignalType.LONG, price=150.0
+            timestamp=datetime.now(timezone.utc),
+            symbol="AAPL",
+            signal_type=SignalType.LONG,
+            price=150.0,
         )
 
         # The base Strategy.should_enter needs to be updated
@@ -315,7 +333,10 @@ class TestStrategyPositionLogic:
         strategy = MomentumStrategy()
 
         signal = Signal(
-            timestamp=datetime.now(timezone.utc), symbol="AAPL", signal_type=SignalType.SHORT, price=150.0
+            timestamp=datetime.now(timezone.utc),
+            symbol="AAPL",
+            signal_type=SignalType.SHORT,
+            price=150.0,
         )
 
         assert signal.signal_type == SignalType.SHORT
@@ -323,7 +344,10 @@ class TestStrategyPositionLogic:
     def test_exit_signal_type(self):
         """Test EXIT signal type is recognized"""
         signal = Signal(
-            timestamp=datetime.now(timezone.utc), symbol="AAPL", signal_type=SignalType.EXIT, price=150.0
+            timestamp=datetime.now(timezone.utc),
+            symbol="AAPL",
+            signal_type=SignalType.EXIT,
+            price=150.0,
         )
 
         assert signal.signal_type == SignalType.EXIT

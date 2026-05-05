@@ -4,7 +4,7 @@ Event-driven backtesting engine.
 
 from collections import deque
 from datetime import datetime
-from typing import Dict, List, Optional, Any
+from typing import Dict, Optional, Any
 import pandas as pd
 from loguru import logger
 
@@ -13,7 +13,6 @@ from backtesting.data_handler import HistoricalDataHandler
 from backtesting.execution_handler import SimulatedExecutionHandler
 from backtesting.portfolio_handler import PortfolioHandler
 from backtesting.performance import PerformanceAnalyzer
-from models.governance import ControlStatus
 from risk.allocation_manager import AllocationManager, AllocationPolicy
 from research.repro_manager import ReproducibilityManager
 
@@ -91,6 +90,7 @@ class BacktestEngine:
 
         logger.info(f"Starting optimized backtest for {len(self.data_handler.symbols)} symbols...")
         from datetime import timezone
+
         start_time = datetime.now(timezone.utc)
 
         while self.continue_backtest:
@@ -98,8 +98,8 @@ class BacktestEngine:
             if self.data_handler.continue_backtest:
                 self.data_handler.update_bars()
 
-                # Optimized (Wave-3): Emit MarketEvent for ALL symbols to support parallel strategies
-                # This ensures each strategy gets data for all symbols it tracks
+                # Optimized (Wave-3): Emit MarketEvent for ALL symbols to support parallel
+                # strategies. This ensures each strategy gets data for all symbols it tracks.
                 for symbol in self.data_handler.symbols:
                     bar = self.data_handler.get_latest_bar(symbol)
                     if bar:
@@ -124,6 +124,7 @@ class BacktestEngine:
 
         # Calculate final performance metrics
         from datetime import timezone
+
         end_time = datetime.now(timezone.utc)
         duration = (end_time - start_time).total_seconds()
 

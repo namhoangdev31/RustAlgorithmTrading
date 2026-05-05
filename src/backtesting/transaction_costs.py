@@ -8,9 +8,8 @@ Includes:
 - Commission structures
 """
 
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 from dataclasses import dataclass
-import pandas as pd
 import numpy as np
 from loguru import logger
 

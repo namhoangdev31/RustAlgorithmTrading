@@ -9,7 +9,7 @@ import asyncio
 import json
 import zmq
 import zmq.asyncio
-from typing import Callable, Optional, Dict, Any, List
+from typing import Optional, Dict, Any, List
 from dataclasses import dataclass, asdict
 from enum import Enum
 from loguru import logger

@@ -13,7 +13,6 @@ import numpy as np
 from loguru import logger
 from datetime import datetime, timedelta
 
-from strategies.base import Strategy
 from backtesting.engine import BacktestEngine
 from backtesting.data_handler import HistoricalDataHandler
 from backtesting.execution_handler import SimulatedExecutionHandler
@@ -149,8 +148,8 @@ class WalkForwardAnalyzer:
             )
 
             # Split data
-            train_data = data[window.train_start : window.train_end]
-            test_data = data[window.test_start : window.test_end]
+            train_data = data[window.train_start:window.train_end]
+            test_data = data[window.test_start:window.test_end]
 
             if len(train_data) < 30 or len(test_data) < 10:
                 logger.warning(f"Insufficient data in window {window.window_id}, skipping")
@@ -179,19 +178,17 @@ class WalkForwardAnalyzer:
             # In walk-forward, we might need to load the specific window data
             # Assuming test_data is a DataFrame
             data_handler.add_symbol_data(symbol, test_data)
-            
+
             execution_handler = SimulatedExecutionHandler(events_queue=deque())
             portfolio_handler = PortfolioHandler(
-                data_handler=data_handler,
-                events_queue=deque(),
-                initial_capital=initial_capital
+                data_handler=data_handler, events_queue=deque(), initial_capital=initial_capital
             )
 
             engine = BacktestEngine(
                 data_handler=data_handler,
                 execution_handler=execution_handler,
                 portfolio_handler=portfolio_handler,
-                strategy=test_strategy
+                strategy=test_strategy,
             )
             test_results = engine.run()
 

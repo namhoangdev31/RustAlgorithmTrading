@@ -163,9 +163,9 @@ class AlpacaPaperTrading:
             account = self.trading_client.get_account()
 
             self._connected = True
-            logger.info("✓ Connected to Alpaca API")
-            logger.info(f"  Account status: {account.status}")
-            logger.info(f"  Buying power: ${float(account.buying_power):,.2f}")
+            logger.info(f"Connected to Alpaca API")
+            logger.info(f"Account status: {getattr(account, 'status', 'UNKNOWN')}")
+            logger.info(f"Buying power: ${float(getattr(account, 'buying_power', 0.0)):,.2f}")
 
             return True
 
@@ -186,9 +186,9 @@ class AlpacaPaperTrading:
             account = self.trading_client.get_account()
 
             return {
-                "status": account.status,
-                "cash": Decimal(str(account.cash)),
-                "portfolio_value": Decimal(str(account.portfolio_value)),
+                "status": getattr(account, "status", "UNKNOWN"),
+                "cash": Decimal(str(getattr(account, "cash", "0"))),
+                "portfolio_value": Decimal(str(getattr(account, "portfolio_value", "0"))),
                 "buying_power": Decimal(str(account.buying_power)),
                 "equity": Decimal(str(account.equity)),
                 "long_market_value": Decimal(str(account.long_market_value)),

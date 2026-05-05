@@ -204,25 +204,37 @@ class TestSignalEventValidation:
         # Missing symbol
         with pytest.raises(ValidationError):
             SignalEvent(
-                timestamp=datetime.now(timezone.utc), signal_type="LONG", strength=0.8, strategy_id="test"
+                timestamp=datetime.now(timezone.utc),
+                signal_type="LONG",
+                strength=0.8,
+                strategy_id="test",
             )
 
         # Missing signal_type
         with pytest.raises(ValidationError):
             SignalEvent(
-                timestamp=datetime.now(timezone.utc), symbol="AAPL", strength=0.8, strategy_id="test"
+                timestamp=datetime.now(timezone.utc),
+                symbol="AAPL",
+                strength=0.8,
+                strategy_id="test",
             )
 
         # Missing strength
         with pytest.raises(ValidationError):
             SignalEvent(
-                timestamp=datetime.now(timezone.utc), symbol="AAPL", signal_type="LONG", strategy_id="test"
+                timestamp=datetime.now(timezone.utc),
+                symbol="AAPL",
+                signal_type="LONG",
+                strategy_id="test",
             )
 
         # Missing strategy_id
         with pytest.raises(ValidationError):
             SignalEvent(
-                timestamp=datetime.now(timezone.utc), symbol="AAPL", signal_type="LONG", strength=0.8
+                timestamp=datetime.now(timezone.utc),
+                symbol="AAPL",
+                signal_type="LONG",
+                strength=0.8,
             )
 
     def test_signal_event_timestamp_default(self):

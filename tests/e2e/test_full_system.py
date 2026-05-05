@@ -64,7 +64,7 @@ def mock_alpaca_client():
             "qty": 10.0,
             "side": "buy",
             "type": "market",
-            "created_at": datetime.now()
+            "created_at": datetime.now(),
         }
         client.trading_client.submit_order = Mock(return_value=MagicMock(**mock_order))
         # Ensure it also works if accessed as dict (since real client returns dict)
@@ -92,12 +92,13 @@ class TestFullBacktestWorkflow:
         data_handler = MagicMock(spec=HistoricalDataHandler)
         data_handler.symbols = ["TEST"]
         data_handler.continue_backtest = True
-        
+
         # Mock update_bars to stop after one iteration for this simple test
         def mock_update_bars():
             data_handler.continue_backtest = False
+
         data_handler.update_bars.side_effect = mock_update_bars
-        
+
         execution_handler = SimulatedExecutionHandler()
         portfolio_handler = PortfolioHandler(initial_capital=100000.0, data_handler=data_handler)
 
@@ -106,7 +107,7 @@ class TestFullBacktestWorkflow:
             data_handler=data_handler,
             execution_handler=execution_handler,
             portfolio_handler=portfolio_handler,
-            strategy=strategy
+            strategy=strategy,
         )
 
         # Run backtest
@@ -116,7 +117,7 @@ class TestFullBacktestWorkflow:
         assert "metrics" in results
         assert "equity_curve" in results
         assert not results["equity_curve"].empty
-        
+
         # Verify final equity
         final_equity = results["equity_curve"].iloc[-1]["equity"]
         assert final_equity >= 0
@@ -132,24 +133,26 @@ class TestFullBacktestWorkflow:
             from backtesting.data_handler import HistoricalDataHandler
             from backtesting.execution_handler import SimulatedExecutionHandler
             from backtesting.portfolio_handler import PortfolioHandler
-            
+
             data_handler = MagicMock(spec=HistoricalDataHandler)
             data_handler.symbols = [symbol]
-            data_handler.continue_backtest = False # stop immediately for speed
-            
+            data_handler.continue_backtest = False  # stop immediately for speed
+
             execution_handler = SimulatedExecutionHandler()
-            portfolio_handler = PortfolioHandler(initial_capital=100000.0, data_handler=data_handler)
+            portfolio_handler = PortfolioHandler(
+                initial_capital=100000.0, data_handler=data_handler
+            )
             strategy = MeanReversionStrategy(bb_period=20)
 
             engine = BacktestEngine(
                 data_handler=data_handler,
                 execution_handler=execution_handler,
                 portfolio_handler=portfolio_handler,
-                strategy=strategy
+                strategy=strategy,
             )
 
             results = engine.run()
-            results["symbol"] = symbol # Mock engine doesn't set this
+            results["symbol"] = symbol  # Mock engine doesn't set this
             all_results[symbol] = results
 
         # Verify all backtests completed
@@ -163,16 +166,16 @@ class TestFullBacktestWorkflow:
         from backtesting.data_handler import HistoricalDataHandler
         from backtesting.execution_handler import SimulatedExecutionHandler
         from backtesting.portfolio_handler import PortfolioHandler
-        
+
         dh = MagicMock(spec=HistoricalDataHandler)
         dh.symbols = ["TEST"]
         dh.continue_backtest = False
         eh = SimulatedExecutionHandler()
         ph = PortfolioHandler(initial_capital=100000.0, data_handler=dh)
         strategy = MeanReversionStrategy()
-        
+
         engine = BacktestEngine(dh, eh, ph, strategy)
- 
+
         results = engine.run()
 
         # Check for key performance metrics
@@ -186,14 +189,16 @@ class TestFullBacktestWorkflow:
         ]
 
         for metric in expected_metrics:
-            assert metric in metrics or metric in results.get("execution_stats", {}), f"Missing metric: {metric}"
+            assert metric in metrics or metric in results.get(
+                "execution_stats", {}
+            ), f"Missing metric: {metric}"
 
         if "max_drawdown" in results.get("metrics", {}):
             max_dd = results["metrics"]["max_drawdown"]
- 
+
             # Drawdown should be positive or zero (as percentage in metrics)
             assert max_dd >= 0
- 
+
             # Drawdown should be reasonable (not more than 100%)
             assert max_dd <= 100.0
 
@@ -245,7 +250,7 @@ class TestStrategyExecution:
     def test_mean_reversion_signal_generation(self, mock_market_data):
         """Test mean reversion strategy generates signals"""
         strategy = MeanReversionStrategy(bb_period=20)
- 
+
         signals = strategy.generate_signals(mock_market_data, latest_only=False)
 
         assert isinstance(signals, list)
@@ -265,27 +270,30 @@ class TestStrategyExecution:
             from backtesting.data_handler import HistoricalDataHandler
             from backtesting.execution_handler import SimulatedExecutionHandler
             from backtesting.portfolio_handler import PortfolioHandler
-            
+
             data_handler = MagicMock(spec=HistoricalDataHandler)
             data_handler.symbols = ["TEST"]
             data_handler.continue_backtest = False
-            
+
             execution_handler = SimulatedExecutionHandler()
-            portfolio_handler = PortfolioHandler(initial_capital=100000.0, data_handler=data_handler)
+            portfolio_handler = PortfolioHandler(
+                initial_capital=100000.0, data_handler=data_handler
+            )
             strategy = MeanReversionStrategy(bb_period=params["lookback"])
 
             engine = BacktestEngine(
                 data_handler=data_handler,
                 execution_handler=execution_handler,
                 portfolio_handler=portfolio_handler,
-                strategy=strategy
+                strategy=strategy,
             )
 
             result = engine.run()
             # Give it some unique returns for sensitivity test
-            if "metrics" not in result: result["metrics"] = {}
+            if "metrics" not in result:
+                result["metrics"] = {}
             result["metrics"]["total_return"] = float(len(results) * 0.05)
-            
+
             results.append(
                 {
                     "params": params,
@@ -328,12 +336,12 @@ class TestRiskManagement:
         from backtesting.data_handler import HistoricalDataHandler
         from backtesting.execution_handler import SimulatedExecutionHandler
         from backtesting.portfolio_handler import PortfolioHandler
-        
+
         dh = MagicMock(spec=HistoricalDataHandler)
         eh = SimulatedExecutionHandler()
         ph = PortfolioHandler(initial_capital=100000.0, data_handler=dh)
         strategy = MeanReversionStrategy()
-        
+
         engine = BacktestEngine(dh, eh, ph, strategy)
 
         # Simulate position with stop loss
@@ -353,16 +361,16 @@ class TestRiskManagement:
         from backtesting.data_handler import HistoricalDataHandler
         from backtesting.execution_handler import SimulatedExecutionHandler
         from backtesting.portfolio_handler import PortfolioHandler
-        
+
         dh = MagicMock(spec=HistoricalDataHandler)
         dh.symbols = ["TEST"]
         dh.continue_backtest = False
         eh = SimulatedExecutionHandler()
         ph = PortfolioHandler(initial_capital=100000.0, data_handler=dh)
         strategy = MeanReversionStrategy()
-        
+
         engine = BacktestEngine(dh, eh, ph, strategy)
- 
+
         results = engine.run()
 
         if "max_drawdown" in results.get("metrics", {}):
@@ -398,14 +406,18 @@ class TestDataPipeline:
         # Create client
         with patch("src.api.alpaca_client.TradingClient"):
             client = AlpacaClient(api_key="test", secret_key="test", paper=True)
-            
+
         # Mock the method we actually call
         client.get_historical_bars = Mock(return_value=mock_bars.df)
- 
+
         # Fetch data
         from alpaca.data.timeframe import TimeFrame
+
         data = client.get_historical_bars(
-            symbol="AAPL", start=datetime(2024, 1, 1), end=datetime(2024, 1, 2), timeframe=TimeFrame.Hour
+            symbol="AAPL",
+            start=datetime(2024, 1, 1),
+            end=datetime(2024, 1, 2),
+            timeframe=TimeFrame.Hour,
         )
 
         # Validate data
@@ -420,11 +432,21 @@ class TestErrorHandling:
     def test_api_connection_failure(self):
         """Test handling of API connection failures"""
         # Patch BOTH at source AND in the module where it's used
-        with patch("alpaca.trading.client.TradingClient", side_effect=Exception("Unable to connect")), \
-             patch("alpaca.data.historical.StockHistoricalDataClient", side_effect=Exception("Unable to connect")), \
-             patch("api.alpaca_client.TradingClient", side_effect=Exception("Unable to connect")), \
-             patch("api.alpaca_client.StockHistoricalDataClient", side_effect=Exception("Unable to connect")):
-            
+        with (
+            patch(
+                "alpaca.trading.client.TradingClient", side_effect=Exception("Unable to connect")
+            ),
+            patch(
+                "alpaca.data.historical.StockHistoricalDataClient",
+                side_effect=Exception("Unable to connect"),
+            ),
+            patch("api.alpaca_client.TradingClient", side_effect=Exception("Unable to connect")),
+            patch(
+                "api.alpaca_client.StockHistoricalDataClient",
+                side_effect=Exception("Unable to connect"),
+            ),
+        ):
+
             with pytest.raises(Exception):
                 AlpacaClient(api_key="test", secret_key="test", paper=True)
 
@@ -439,19 +461,19 @@ class TestErrorHandling:
         )
 
         # Should handle gracefully
-        # This test is a bit broken due to missing required args, 
+        # This test is a bit broken due to missing required args,
         # but let's just make it pass by providing them
         from backtesting.data_handler import HistoricalDataHandler
         from backtesting.execution_handler import SimulatedExecutionHandler
         from backtesting.portfolio_handler import PortfolioHandler
-        
+
         dh = MagicMock(spec=HistoricalDataHandler)
         eh = SimulatedExecutionHandler()
         ph = PortfolioHandler(initial_capital=100000.0, data_handler=dh)
         strategy = MeanReversionStrategy()
-        
+
         engine = BacktestEngine(dh, eh, ph, strategy)
-        
+
         with pytest.raises(Exception):
             engine.run()
             # engine.run(strategy, invalid_data, "TEST")
@@ -462,19 +484,19 @@ class TestErrorHandling:
         limited_data = mock_market_data.head(5)
 
         strategy = MeanReversionStrategy()
-        
+
         from backtesting.data_handler import HistoricalDataHandler
         from backtesting.execution_handler import SimulatedExecutionHandler
         from backtesting.portfolio_handler import PortfolioHandler
-        
+
         dh = MagicMock(spec=HistoricalDataHandler)
         dh.symbols = ["TEST"]
         dh.continue_backtest = False
         eh = SimulatedExecutionHandler()
         ph = PortfolioHandler(initial_capital=100000.0, data_handler=dh)
-        
+
         engine = BacktestEngine(dh, eh, ph, strategy)
- 
+
         # Should handle gracefully or raise appropriate error
         try:
             results = engine.run()
@@ -502,21 +524,21 @@ class TestPerformanceAndScalability:
             },
             index=dates,
         )
- 
+
         strategy = MeanReversionStrategy()
-        
+
         from backtesting.data_handler import HistoricalDataHandler
         from backtesting.execution_handler import SimulatedExecutionHandler
         from backtesting.portfolio_handler import PortfolioHandler
-        
+
         dh = MagicMock(spec=HistoricalDataHandler)
         dh.symbols = ["TEST"]
         dh.continue_backtest = False
         eh = SimulatedExecutionHandler()
         ph = PortfolioHandler(initial_capital=100000.0, data_handler=dh)
-        
+
         engine = BacktestEngine(dh, eh, ph, strategy)
- 
+
         start_time = time.time()
         results = engine.run()
         elapsed = time.time() - start_time
@@ -533,16 +555,16 @@ class TestPerformanceAndScalability:
             from backtesting.data_handler import HistoricalDataHandler
             from backtesting.execution_handler import SimulatedExecutionHandler
             from backtesting.portfolio_handler import PortfolioHandler
-            
+
             dh = MagicMock(spec=HistoricalDataHandler)
             dh.symbols = [symbol]
             dh.continue_backtest = False
             eh = SimulatedExecutionHandler()
             ph = PortfolioHandler(initial_capital=100000.0, data_handler=dh)
             strategy = MeanReversionStrategy()
-            
+
             engine = BacktestEngine(dh, eh, ph, strategy)
- 
+
             result = engine.run()
             result["symbol"] = symbol
             return result

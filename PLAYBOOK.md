@@ -145,6 +145,18 @@ Mỗi file có 3 phần:
   - RustFeatureComputer: Lớp nghiệp vụ trong module.
 - Test liên quan: tests/test_alpaca_*.py, tests/integration/test_alpaca_api.rs, tests/integration/test_end_to_end.rs, tests/integration/test_concurrent.rs.
 
+### src/signal_bridge/ (Rust Binary Package)
+
+- Vai trò file: Thư mục chứa lõi xử lý tín hiệu viết bằng Rust, đóng gói dưới dạng Python package chuyên biệt.
+- Thành phần:
+  - `__init__.py`: Re-export các class từ binary.
+  - `signal_bridge.so`: File nhị phân thực thi (Rust).
+  - `signal_bridge.pyi`: File stub hỗ trợ type-hinting/IDE.
+- Class/Type ánh xạ:
+  - FeatureComputer (Rust): Lõi tính toán feature SIMD-optimized.
+  - Bar (Rust): Cấu trúc dữ liệu bar đồng nhất giữa hai ngôn ngữ.
+- Test liên quan: tests/integration/test_backtest_signal_flow.py, tests/unit/test_strategy_signals.py, cd rust && cargo test -p signal-bridge.
+
 ### src/bridge/zmq_bridge.py
 
 - Vai trò file: Lớp cầu nối Python <-> Rust hoặc Python <-> ZMQ runtime.

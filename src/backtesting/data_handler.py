@@ -226,12 +226,14 @@ class HistoricalDataHandler:
                 still_missing = [s for s in missing_symbols if not self._check_data_availability(s)]
                 if still_missing:
                     logger.error(
-                        f"Still missing data for {len(still_missing)} symbols after auto-download: {still_missing}"
+                        f"Still missing data for {len(still_missing)} "
+                        f"symbols after auto-download: {still_missing}"
                     )
             else:
                 logger.error(
                     "Auto-download failed. Please run manually:\n"
-                    f"  python scripts/download_market_data.py --symbols {' '.join(missing_symbols)}"
+                    f"  python scripts/download_market_data.py "
+                    f"--symbols {' '.join(missing_symbols)}"
                 )
 
             if still_missing:
@@ -252,7 +254,8 @@ class HistoricalDataHandler:
                     except Exception as parquet_error:
                         if csv_path.exists():
                             logger.warning(
-                                f"Failed to read Parquet for {symbol} ({parquet_error}); falling back to CSV"
+                                f"Failed to read Parquet for {symbol} "
+                                f"({parquet_error}); falling back to CSV"
                             )
                             df = pd.read_csv(csv_path, parse_dates=["timestamp"])
                             logger.debug(f"Loaded {symbol} from CSV fallback: {csv_path}")
@@ -273,7 +276,8 @@ class HistoricalDataHandler:
                 else:
                     logger.error(
                         f"No data file found for {symbol}. "
-                        f"Please download data using: python scripts/download_market_data.py --symbols {symbol}"
+                        "Please download data using: "
+                        f"python scripts/download_market_data.py --symbols {symbol}"
                     )
                     continue
 

@@ -3,14 +3,15 @@ Portfolio handler for position and cash management during backtesting.
 """
 
 from datetime import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Any
+from typing import Dict, List, Optional, TYPE_CHECKING
 from loguru import logger
 
 import pandas as pd
 
-from models.portfolio import Portfolio, Position
+from models.portfolio import Portfolio
 from models.events import SignalEvent, OrderEvent, FillEvent
-from models.market import Bar
+
+# from models.market import Bar  # Removed unused
 from backtesting.position_sizer import (
     PositionSizer,
     FixedAmountSizer,
@@ -18,7 +19,7 @@ from backtesting.position_sizer import (
     KellyPositionSizer,
 )
 from risk.allocation_manager import AllocationManager, AllocationPolicy
-from models.governance import ControlStatus, ControlType
+from models.governance import ControlStatus
 
 if TYPE_CHECKING:
     from .data_handler import HistoricalDataHandler
@@ -70,13 +71,16 @@ class PortfolioHandler:
 
         if position_sizer is not None and not isinstance(position_sizer, PositionSizer):
             raise TypeError(
-                f"position_sizer must be a PositionSizer instance or None, got {type(position_sizer).__name__}"
+                "position_sizer must be a PositionSizer instance or None, "
+                f"got {type(position_sizer).__name__}"
             )
 
         self.initial_capital = initial_capital
         self.data_handler = data_handler
         self.position_sizer = position_sizer or FixedAmountSizer(10000.0)
-        self.allocation_manager = allocation_manager or AllocationManager(AllocationPolicy())
+        self.allocation_manager = allocation_manager or AllocationManager(
+            AllocationPolicy()
+        )
 
         self.portfolio = Portfolio(
             initial_capital=initial_capital,
@@ -101,7 +105,9 @@ class PortfolioHandler:
             TypeError: If timestamp is not a datetime
         """
         if not isinstance(timestamp, datetime):
-            raise TypeError(f"timestamp must be a datetime, got {type(timestamp).__name__}")
+            raise TypeError(
+                f"timestamp must be a datetime, got {type(timestamp).__name__}"
+            )
 
         self.portfolio.timestamp = timestamp
 
@@ -154,11 +160,13 @@ class PortfolioHandler:
             latest_bar = self.data_handler.get_latest_bar(signal.symbol)
             if latest_bar:
                 current_price = latest_bar.close
-                logger.debug(f"📊 Current market price for {signal.symbol}: ${current_price:.2f}")
+                logger.debug(
+                    f"📊 Current market price for {signal.symbol}: ${current_price:.2f}"
+                )
             else:
                 logger.warning(f"⚠️ No market data available for {signal.symbol}")
         else:
-            logger.warning(f"⚠️ No data handler configured for price lookup")
+            logger.warning("⚠️ No data handler configured for price lookup")
 
         # Get current position
         current_position = self.portfolio.positions.get(signal.symbol)
@@ -211,8 +219,8 @@ class PortfolioHandler:
             orders.append(order)
 
             logger.info(
-                f"✅ EXIT ORDER: {direction} {order.quantity} {signal.symbol} @ market | "
-                f"Expected {'proceeds' if direction == 'SELL' else 'cost'}: ${abs(order_quantity) * (current_price or 0):,.2f}"
+                f"Expected {'proceeds' if direction == 'SELL' else 'cost'}: "
+                f"${abs(order_quantity) * (current_price or 0):,.2f}"
             )
 
             return orders
@@ -231,8 +239,8 @@ class PortfolioHandler:
 
         if available_cash < 0:
             logger.warning(
-                f"❌ Available cash is negative: ${available_cash:,.2f} "
-                f"(portfolio: ${self.portfolio.cash:,.2f}, reserved: ${self.reserved_cash:,.2f}) - skipping order"
+                f"(portfolio: ${self.portfolio.cash:,.2f}, "
+                f"reserved: ${self.reserved_cash:,.2f}) - skipping order"
             )
             return orders
 
@@ -274,7 +282,9 @@ class PortfolioHandler:
             )
 
             if allocation_record.status == ControlStatus.REJECT:
-                logger.warning(f"🚫 ALLOCATION REJECTED: {allocation_record.decision_reason}")
+                logger.warning(
+                    f"🚫 ALLOCATION REJECTED: {allocation_record.decision_reason}"
+                )
                 return orders
             elif allocation_record.status == ControlStatus.BLOCKED:
                 logger.error(
@@ -294,31 +304,38 @@ class PortfolioHandler:
         # RACE FIX: For BUY orders, validate cash and reserve funds
         if order_quantity > 0:  # BUY order (opening long or adding to position)
             if current_price is None or current_price <= 0:
-                logger.warning(f"❌ Invalid price for {signal.symbol}, cannot generate BUY order")
+                logger.warning(
+                    f"❌ Invalid price for {signal.symbol}, cannot generate BUY order"
+                )
                 return orders
 
             # Calculate estimated cost (position + commission + slippage)
             position_cost = abs(order_quantity) * current_price
             estimated_commission = position_cost * 0.001  # 0.1% commission
             estimated_slippage = position_cost * 0.0005  # 0.05% slippage
-            total_estimated_cost = position_cost + estimated_commission + estimated_slippage
+            total_estimated_cost = (
+                position_cost + estimated_commission + estimated_slippage
+            )
 
             # Check if we have enough available cash
             if total_estimated_cost > available_cash:
                 # Calculate maximum affordable quantity
-                max_affordable_value = available_cash / (1 + 0.001 + 0.0005)  # Adjust for fees
+                max_affordable_value = available_cash / (
+                    1 + 0.001 + 0.0005
+                )  # Adjust for fees
                 max_affordable_quantity = int(max_affordable_value / current_price)
 
                 if max_affordable_quantity <= 0:
                     logger.info(
-                        f"💸 Insufficient cash for {signal.symbol}: "
-                        f"need ${total_estimated_cost:,.2f}, have ${available_cash:,.2f} - skipping order"
+                        f"need ${total_estimated_cost:,.2f}, have "
+                        f"${available_cash:,.2f} - skipping order"
                     )
                     return orders
 
                 # Adjust order quantity to what we can afford
                 logger.info(
-                    f"⚠️ Reducing order for {signal.symbol} from {order_quantity} to {max_affordable_quantity} shares "
+                    f"⚠️ Reducing order for {signal.symbol} from {order_quantity} to "
+                    f"{max_affordable_quantity} shares "
                     f"(cash constraint: ${available_cash:,.2f} available)"
                 )
                 order_quantity = max_affordable_quantity
@@ -327,7 +344,9 @@ class PortfolioHandler:
                 position_cost = abs(order_quantity) * current_price
                 estimated_commission = position_cost * 0.001
                 estimated_slippage = position_cost * 0.0005
-                total_estimated_cost = position_cost + estimated_commission + estimated_slippage
+                total_estimated_cost = (
+                    position_cost + estimated_commission + estimated_slippage
+                )
 
             # RACE FIX: Reserve cash for this pending BUY order
             self.reserved_cash += total_estimated_cost
@@ -355,8 +374,8 @@ class PortfolioHandler:
 
         # ENHANCED LOGGING: Detailed order generation summary
         logger.info(
-            f"✅ ORDER GENERATED: {order.direction} {order.quantity} {signal.symbol} @ market | "
-            f"Signal: {signal.signal_type}, Position: {current_quantity}→{current_quantity + order_quantity}, "
+            f"Signal: {signal.signal_type}, Position: "
+            f"{current_quantity}→{current_quantity + order_quantity}, "
             f"Cash: ${self.portfolio.cash:,.2f}"
         )
 
@@ -382,8 +401,10 @@ class PortfolioHandler:
 
         # ENHANCED LOGGING: Fill event details
         logger.debug(
-            f"📦 FILL RECEIVED: {fill.direction} {fill.quantity} {fill.symbol} @ ${fill.fill_price:.2f} | "
-            f"Cost: ${position_cost:,.2f}, Commission: ${fill.commission:.2f}, Total: ${total_cost:,.2f}"
+            f"📦 FILL RECEIVED: {fill.direction} {fill.quantity} "
+            f"{fill.symbol} @ ${fill.fill_price:.2f} | "
+            f"Cost: ${position_cost:,.2f}, Commission: ${fill.commission:.2f}, "
+            f"Total: ${total_cost:,.2f}"
         )
 
         # For BUY orders, check if we have enough cash

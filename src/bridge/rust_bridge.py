@@ -6,11 +6,10 @@ Rust feature computation engine built with PyO3 bindings.
 """
 
 import sys
-import os
-from typing import List, Dict, Any, Optional
+from typing import List
 from dataclasses import dataclass
 from loguru import logger
-
+from signal_bridge import Bar
 
 @dataclass
 class MarketBar:
@@ -27,8 +26,6 @@ class MarketBar:
     def to_rust_bar(self):
         """Convert to Rust Bar object."""
         try:
-            from signal_bridge import Bar
-
             return Bar(
                 symbol=self.symbol,
                 open=self.open,

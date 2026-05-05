@@ -4,8 +4,7 @@ Performance analysis and metrics calculation.
 
 import pandas as pd
 import numpy as np
-from typing import Dict, List, cast
-from scipy import stats
+from typing import Dict, List
 from loguru import logger
 
 from models.portfolio import PerformanceMetrics

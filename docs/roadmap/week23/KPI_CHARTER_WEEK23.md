@@ -8,14 +8,14 @@ W23 do muc san sang hard-gate 3 voi trong tam cross-runtime/e2e, soak, fault-inj
 
 | KPI | Target | Measurement | Actual | Status | Evidence ID | Owner |
 |---|---:|---|---|---|---|---|
-| Full cross-runtime/e2e pass | `100%` | passed e2e suites / required suites | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W23-201` | `tester` |
-| Soak scenario pass | `100%` | passed soak scenarios / required scenarios | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W23-202` | `ops` |
-| Fault-injection pass | `100%` | passed fault scenarios / required scenarios | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W23-203` | `coder` |
-| E2E/fault debt closure | debt open `=0` | open debt items at gate lock | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W23-204` | `tester` |
-| Correlation coverage | `>=99%` | critical event sample coverage | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W23-205` | `tester` |
-| Compliance findings | `0` | findings count | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W23-206` | `tester` |
-| W09-W22 regression guard | `100%` | required slices pass | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W23-301..306` | `tester` |
-| Artifact consistency | `100%` | baseline/issue/KPI/gate/final same verdict | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W23-401`,`EV-W23-402` | `planner` |
+| Full cross-runtime/e2e pass | `100%` | passed e2e suites / required suites | `100%` | `CAPTURED_PASS` | `EV-W23-201` | `tester` |
+| Soak scenario pass | `100%` | passed soak scenarios / required scenarios | `100%` | `CAPTURED_PASS` | `EV-W23-202` | `ops` |
+| Fault-injection pass | `100%` | passed fault scenarios / required scenarios | `100%` | `CAPTURED_PASS` | `EV-W23-203` | `coder` |
+| E2E/fault debt closure | debt open `=0` | open debt items at gate lock | `0` | `CAPTURED_PASS` | `EV-W23-204` | `tester` |
+| Correlation coverage | `>=99%` | critical event sample coverage | `100%` | `CAPTURED_PASS` | `EV-W23-205` | `tester` |
+| Compliance findings | `0` | findings count | `0` | `CAPTURED_PASS` | `EV-W23-206` | `tester` |
+| W09-W22 regression guard | `100%` | required slices pass | `100%` | `CAPTURED_PASS` | `EV-W23-301..306` | `tester` |
+| Artifact consistency | `100%` | baseline/issue/KPI/gate/final same verdict | `100%` | `CAPTURED_PASS` | `EV-W23-401`,`EV-W23-402` | `planner` |
 
 ## 3) KPI rules
 

@@ -83,6 +83,8 @@ def build_gate_record(
 
     self.records[-1] = gate_record
     return gate_record
+
+
 class E2EGateManager(StagingHardeningManager):
     """Manager for Final-Phase Gate 3 verification and evidence capture (W23)."""
 
