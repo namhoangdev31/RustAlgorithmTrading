@@ -36,10 +36,7 @@ class CrossValidator:
         self.test_size = test_size
         self.cv_results: Dict = {}
 
-    def time_series_split(
-        self,
-        n_samples: int
-    ) -> Iterator[Tuple[np.ndarray, np.ndarray]]:
+    def time_series_split(self, n_samples: int) -> Iterator[Tuple[np.ndarray, np.ndarray]]:
         """
         Generate time series cross-validation indices.
 
@@ -54,9 +51,7 @@ class CrossValidator:
             yield train_idx, test_idx
 
     def rolling_window_split(
-        self,
-        n_samples: int,
-        window_size: int
+        self, n_samples: int, window_size: int
     ) -> Iterator[Tuple[np.ndarray, np.ndarray]]:
         """
         Generate rolling window cross-validation indices.
@@ -86,9 +81,7 @@ class CrossValidator:
             yield train_idx, test_idx
 
     def purged_cross_validation(
-        self,
-        n_samples: int,
-        embargo_size: int = 0
+        self, n_samples: int, embargo_size: int = 0
     ) -> Iterator[Tuple[np.ndarray, np.ndarray]]:
         """
         Purged cross-validation to avoid lookahead bias.
@@ -110,21 +103,15 @@ class CrossValidator:
                 break
 
             # Train on data before test set and after embargo
-            train_idx = np.concatenate([
-                np.arange(0, test_start),
-                np.arange(test_end + embargo_size, n_samples)
-            ])
+            train_idx = np.concatenate(
+                [np.arange(0, test_start), np.arange(test_end + embargo_size, n_samples)]
+            )
             test_idx = np.arange(test_start, test_end)
 
             yield train_idx, test_idx
 
     def cross_validate(
-        self,
-        model,
-        X: np.ndarray,
-        y: np.ndarray,
-        method: str = 'time_series',
-        **kwargs
+        self, model, X: np.ndarray, y: np.ndarray, method: str = "time_series", **kwargs
     ) -> Dict:
         """
         Perform cross-validation.
@@ -143,13 +130,13 @@ class CrossValidator:
         fold_results = []
 
         # Get split generator
-        if method == 'time_series':
+        if method == "time_series":
             split_gen = self.time_series_split(len(X))
-        elif method == 'rolling':
-            window_size = kwargs.get('window_size', len(X) // 2)
+        elif method == "rolling":
+            window_size = kwargs.get("window_size", len(X) // 2)
             split_gen = self.rolling_window_split(len(X), window_size)
-        elif method == 'purged':
-            embargo_size = kwargs.get('embargo_size', 0)
+        elif method == "purged":
+            embargo_size = kwargs.get("embargo_size", 0)
             split_gen = self.purged_cross_validation(len(X), embargo_size)
         else:
             raise ValueError(f"Unknown CV method: {method}")
@@ -166,12 +153,14 @@ class CrossValidator:
             metrics = model.evaluate(X_test, y_test)
 
             # Store results
-            fold_results.append({
-                'fold': fold,
-                'train_size': len(X_train),
-                'test_size': len(X_test),
-                'metrics': metrics
-            })
+            fold_results.append(
+                {
+                    "fold": fold,
+                    "train_size": len(X_train),
+                    "test_size": len(X_test),
+                    "metrics": metrics,
+                }
+            )
 
             # Store primary score (first metric)
             primary_metric = list(metrics.values())[0]
@@ -179,14 +168,14 @@ class CrossValidator:
 
         # Calculate statistics
         results = {
-            'method': method,
-            'n_folds': len(fold_results),
-            'fold_results': fold_results,
-            'scores': scores,
-            'mean_score': np.mean(scores),
-            'std_score': np.std(scores),
-            'min_score': np.min(scores),
-            'max_score': np.max(scores)
+            "method": method,
+            "n_folds": len(fold_results),
+            "fold_results": fold_results,
+            "scores": scores,
+            "mean_score": np.mean(scores),
+            "std_score": np.std(scores),
+            "min_score": np.min(scores),
+            "max_score": np.max(scores),
         }
 
         self.cv_results = results
@@ -217,7 +206,7 @@ class CrossValidator:
         report.append("")
         report.append("Fold Details:")
 
-        for fold_result in self.cv_results['fold_results']:
+        for fold_result in self.cv_results["fold_results"]:
             report.append(f"  Fold {fold_result['fold']}:")
             report.append(f"    Train size: {fold_result['train_size']}")
             report.append(f"    Test size:  {fold_result['test_size']}")

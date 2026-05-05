@@ -22,7 +22,7 @@ from alpaca.trading.requests import (
     MarketOrderRequest,
     LimitOrderRequest,
     StopOrderRequest,
-    GetOrdersRequest
+    GetOrdersRequest,
 )
 from alpaca.trading.enums import OrderSide, TimeInForce, QueryOrderStatus
 from alpaca.data.historical import StockHistoricalDataClient
@@ -35,6 +35,7 @@ from loguru import logger
 
 class OrderType(str, Enum):
     """Order types supported."""
+
     MARKET = "market"
     LIMIT = "limit"
     STOP = "stop"
@@ -44,6 +45,7 @@ class OrderType(str, Enum):
 @dataclass
 class PortfolioMetrics:
     """Portfolio performance metrics."""
+
     total_equity: Decimal
     cash: Decimal
     portfolio_value: Decimal
@@ -59,6 +61,7 @@ class PortfolioMetrics:
 @dataclass
 class PositionInfo:
     """Extended position information."""
+
     symbol: str
     qty: Decimal
     avg_entry_price: Decimal
@@ -94,7 +97,7 @@ class AlpacaPaperTrading:
         api_key: Optional[str] = None,
         secret_key: Optional[str] = None,
         paper: bool = True,
-        validate_credentials: bool = True
+        validate_credentials: bool = True,
     ):
         """
         Initialize Alpaca paper trading client.
@@ -149,15 +152,12 @@ class AlpacaPaperTrading:
         try:
             # Initialize trading client
             self.trading_client = TradingClient(
-                api_key=self.api_key,
-                secret_key=self.secret_key,
-                paper=True  # Always paper trading
+                api_key=self.api_key, secret_key=self.secret_key, paper=True  # Always paper trading
             )
 
             # Initialize data client
             self.data_client = StockHistoricalDataClient(
-                api_key=self.api_key,
-                secret_key=self.secret_key
+                api_key=self.api_key, secret_key=self.secret_key
             )
 
             # Validate by fetching account
@@ -228,8 +228,7 @@ class AlpacaPaperTrading:
 
             # P&L calculation
             cost_basis = sum(
-                Decimal(str(p.qty)) * Decimal(str(p.avg_entry_price))
-                for p in positions
+                Decimal(str(p.qty)) * Decimal(str(p.avg_entry_price)) for p in positions
             )
             current_value = sum(Decimal(str(p.market_value)) for p in positions)
             total_pl = current_value - cost_basis if cost_basis > 0 else Decimal("0.0")
@@ -242,7 +241,7 @@ class AlpacaPaperTrading:
                 buying_power=buying_power,
                 total_pl=total_pl,
                 total_pl_pct=total_pl_pct,
-                positions_count=len(positions)
+                positions_count=len(positions),
             )
 
         except Exception as e:
@@ -271,17 +270,19 @@ class AlpacaPaperTrading:
                 unrealized_pl = Decimal(str(pos.unrealized_pl))
                 unrealized_pl_pct = Decimal(str(pos.unrealized_plpc)) * 100
 
-                position_list.append(PositionInfo(
-                    symbol=pos.symbol,
-                    qty=qty,
-                    avg_entry_price=avg_entry,
-                    current_price=current_price,
-                    market_value=market_value,
-                    cost_basis=cost_basis,
-                    unrealized_pl=unrealized_pl,
-                    unrealized_pl_pct=unrealized_pl_pct,
-                    side="long" if float(qty) > 0 else "short"
-                ))
+                position_list.append(
+                    PositionInfo(
+                        symbol=pos.symbol,
+                        qty=qty,
+                        avg_entry_price=avg_entry,
+                        current_price=current_price,
+                        market_value=market_value,
+                        cost_basis=cost_basis,
+                        unrealized_pl=unrealized_pl,
+                        unrealized_pl_pct=unrealized_pl_pct,
+                        side="long" if float(qty) > 0 else "short",
+                    )
+                )
 
             return position_list
 
@@ -298,7 +299,7 @@ class AlpacaPaperTrading:
         limit_price: Optional[float] = None,
         stop_price: Optional[float] = None,
         time_in_force: str = "day",
-        validate_only: bool = False
+        validate_only: bool = False,
     ) -> Dict[str, Any]:
         """
         Place an order with validation.
@@ -345,10 +346,7 @@ class AlpacaPaperTrading:
             # Create order request based on type
             if order_type == OrderType.MARKET:
                 order_request = MarketOrderRequest(
-                    symbol=symbol,
-                    qty=qty,
-                    side=order_side,
-                    time_in_force=tif
+                    symbol=symbol, qty=qty, side=order_side, time_in_force=tif
                 )
             elif order_type == OrderType.LIMIT:
                 order_request = LimitOrderRequest(
@@ -356,7 +354,7 @@ class AlpacaPaperTrading:
                     qty=qty,
                     side=order_side,
                     time_in_force=tif,
-                    limit_price=limit_price
+                    limit_price=limit_price,
                 )
             elif order_type == OrderType.STOP:
                 order_request = StopOrderRequest(
@@ -364,19 +362,21 @@ class AlpacaPaperTrading:
                     qty=qty,
                     side=order_side,
                     time_in_force=tif,
-                    stop_price=stop_price
+                    stop_price=stop_price,
                 )
             else:
                 raise ValueError(f"Unsupported order type: {order_type}")
 
             if validate_only:
-                logger.info(f"✓ Order validation passed: {side} {qty} {symbol} @ {order_type.value}")
+                logger.info(
+                    f"✓ Order validation passed: {side} {qty} {symbol} @ {order_type.value}"
+                )
                 return {
                     "validated": True,
                     "symbol": symbol,
                     "qty": qty,
                     "side": side,
-                    "type": order_type.value
+                    "type": order_type.value,
                 }
 
             # Submit order
@@ -395,7 +395,9 @@ class AlpacaPaperTrading:
                 "type": order.type.value,
                 "status": order.status.value,
                 "filled_qty": float(order.filled_qty) if order.filled_qty else 0.0,
-                "filled_avg_price": float(order.filled_avg_price) if order.filled_avg_price else None,
+                "filled_avg_price": (
+                    float(order.filled_avg_price) if order.filled_avg_price else None
+                ),
                 "created_at": order.created_at,
                 "updated_at": order.updated_at,
             }
@@ -405,10 +407,7 @@ class AlpacaPaperTrading:
             raise
 
     def get_orders(
-        self,
-        status: Optional[str] = None,
-        limit: int = 100,
-        symbols: Optional[List[str]] = None
+        self, status: Optional[str] = None, limit: int = 100, symbols: Optional[List[str]] = None
     ) -> List[Dict[str, Any]]:
         """
         Get orders with optional filtering.
@@ -426,9 +425,13 @@ class AlpacaPaperTrading:
         try:
             # Build request
             request_params = GetOrdersRequest(
-                status=QueryOrderStatus.OPEN if status == "open" else QueryOrderStatus.CLOSED if status == "closed" else QueryOrderStatus.ALL,
+                status=(
+                    QueryOrderStatus.OPEN
+                    if status == "open"
+                    else QueryOrderStatus.CLOSED if status == "closed" else QueryOrderStatus.ALL
+                ),
                 limit=limit,
-                symbols=symbols
+                symbols=symbols,
             )
 
             orders = self.trading_client.get_orders(request_params)
@@ -442,7 +445,9 @@ class AlpacaPaperTrading:
                     "type": order.type.value,
                     "status": order.status.value,
                     "filled_qty": float(order.filled_qty) if order.filled_qty else 0.0,
-                    "filled_avg_price": float(order.filled_avg_price) if order.filled_avg_price else None,
+                    "filled_avg_price": (
+                        float(order.filled_avg_price) if order.filled_avg_price else None
+                    ),
                     "created_at": order.created_at,
                     "updated_at": order.updated_at,
                 }
@@ -573,11 +578,7 @@ class AlpacaPaperTrading:
             raise
 
     def get_historical_bars(
-        self,
-        symbol: str,
-        start: datetime,
-        end: datetime,
-        timeframe: TimeFrame = TimeFrame.Day
+        self, symbol: str, start: datetime, end: datetime, timeframe: TimeFrame = TimeFrame.Day
     ) -> List[Dict[str, Any]]:
         """
         Fetch historical price bars.
@@ -595,10 +596,7 @@ class AlpacaPaperTrading:
 
         try:
             request_params = StockBarsRequest(
-                symbol_or_symbols=symbol,
-                timeframe=timeframe,
-                start=start,
-                end=end
+                symbol_or_symbols=symbol, timeframe=timeframe, start=start, end=end
             )
 
             bars = self.data_client.get_stock_bars(request_params)
@@ -643,7 +641,9 @@ def test_alpaca_paper_trading():
 
         # Get portfolio metrics
         metrics = client.get_portfolio_metrics()
-        logger.info(f"✓ Portfolio: ${metrics.total_equity} equity, {metrics.positions_count} positions")
+        logger.info(
+            f"✓ Portfolio: ${metrics.total_equity} equity, {metrics.positions_count} positions"
+        )
 
         # Get positions
         positions = client.get_positions()
@@ -656,7 +656,7 @@ def test_alpaca_paper_trading():
             side="buy",
             order_type=OrderType.LIMIT,
             limit_price=150.0,
-            validate_only=True
+            validate_only=True,
         )
         logger.info(f"✓ Order validation: {order['validated']}")
 
@@ -665,7 +665,7 @@ def test_alpaca_paper_trading():
             symbol="AAPL",
             start=datetime.now() - timedelta(days=5),
             end=datetime.now(),
-            timeframe=TimeFrame.Day
+            timeframe=TimeFrame.Day,
         )
         logger.info(f"✓ Historical data: {len(bars)} bars fetched")
 
@@ -685,7 +685,7 @@ if __name__ == "__main__":
     logger.add(
         sys.stderr,
         format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <level>{message}</level>",
-        level="INFO"
+        level="INFO",
     )
 
     # Run tests

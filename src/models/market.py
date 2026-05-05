@@ -11,6 +11,7 @@ from .base import BaseModel
 
 class Bar(BaseModel):
     """OHLCV bar data."""
+
     symbol: str
     timestamp: datetime
     open: float = Field(gt=0)
@@ -21,24 +22,25 @@ class Bar(BaseModel):
     vwap: Optional[float] = None
     trade_count: Optional[int] = None
 
-    @field_validator('high')
+    @field_validator("high")
     @classmethod
     def validate_high(cls, v: float, info) -> float:
-        if 'low' in info.data and v < info.data['low']:
+        if "low" in info.data and v < info.data["low"]:
             raise ValueError("High must be >= low")
         return v
 
-    @field_validator('open', 'close')
+    @field_validator("open", "close")
     @classmethod
     def validate_price(cls, v: float, info) -> float:
-        if 'low' in info.data and 'high' in info.data:
-            if not (info.data['low'] <= v <= info.data['high']):
+        if "low" in info.data and "high" in info.data:
+            if not (info.data["low"] <= v <= info.data["high"]):
                 raise ValueError("Price must be between low and high")
         return v
 
 
 class Trade(BaseModel):
     """Individual trade tick."""
+
     symbol: str
     timestamp: datetime
     price: float = Field(gt=0)
@@ -49,6 +51,7 @@ class Trade(BaseModel):
 
 class Quote(BaseModel):
     """Bid/Ask quote data."""
+
     symbol: str
     timestamp: datetime
     bid_price: float = Field(gt=0)
@@ -56,10 +59,10 @@ class Quote(BaseModel):
     ask_price: float = Field(gt=0)
     ask_size: float = Field(gt=0)
 
-    @field_validator('ask_price')
+    @field_validator("ask_price")
     @classmethod
     def validate_spread(cls, v: float, info) -> float:
-        if 'bid_price' in info.data and v < info.data['bid_price']:
+        if "bid_price" in info.data and v < info.data["bid_price"]:
             raise ValueError("Ask price must be >= bid price")
         return v
 

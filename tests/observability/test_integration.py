@@ -7,6 +7,7 @@ Tests:
 - Real-time dashboard updates
 - Graceful shutdown and data persistence
 """
+
 import asyncio
 import json
 import sqlite3
@@ -26,9 +27,11 @@ def project_root() -> Path:
     """Get project root directory."""
     return Path(__file__).parent.parent.parent
 
+
 import pytest_asyncio
 
 from src.observability.api.main import app, api_state
+
 
 @pytest_asyncio.fixture
 async def api_client():
@@ -36,6 +39,7 @@ async def api_client():
     transport = httpx.ASGITransport(app=app)
     async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
         yield client
+
 
 @pytest_asyncio.fixture
 async def full_stack(project_root: Path):
@@ -59,6 +63,7 @@ async def full_stack(project_root: Path):
 
     # Manual lifespan stop
     await api_state.stop()
+
 
 class TestObservabilityIntegration:
     """End-to-end integration tests for the complete observability pipeline."""
@@ -98,10 +103,7 @@ class TestObservabilityIntegration:
                 )
             ]
 
-            conn.executemany(
-                "INSERT INTO metrics VALUES (?, ?, ?, ?)",
-                test_metrics
-            )
+            conn.executemany("INSERT INTO metrics VALUES (?, ?, ?, ?)", test_metrics)
 
             conn.close()
 
@@ -110,16 +112,15 @@ class TestObservabilityIntegration:
 
         # Step 2: Verify API can query the data
         # API should be able to access the database
-        response = await api_client.get(
-            "http://testserver/health",
-            timeout=5.0
-        )
+        response = await api_client.get("http://testserver/health", timeout=5.0)
         assert response.status_code == 200
 
         # Step 3: Connect WebSocket and receive streamed metrics
         if full_stack["api_process"] is None:
-             pytest.skip("WebSocket tests require a real network socket (blocked in this environment)")
-        
+            pytest.skip(
+                "WebSocket tests require a real network socket (blocked in this environment)"
+            )
+
         ws_url = "ws://localhost:8000/ws/metrics"
         async with websockets.connect(ws_url) as websocket:
             pass
@@ -160,20 +161,17 @@ class TestObservabilityIntegration:
             INSERT INTO trades (timestamp, correlation_id, symbol, side, quantity, price)
             VALUES (?, ?, ?, ?, ?, ?)
             """,
-            (timestamp, correlation_id, "AAPL", "buy", 100, 150.25)
+            (timestamp, correlation_id, "AAPL", "buy", 100, 150.25),
         )
         conn.commit()
 
         # Query trade back
-        cursor.execute(
-            "SELECT * FROM trades WHERE correlation_id = ?",
-            (correlation_id,)
-        )
+        cursor.execute("SELECT * FROM trades WHERE correlation_id = ?", (correlation_id,))
         trade = cursor.fetchone()
 
         assert trade is not None
         assert trade[2] == correlation_id  # correlation_id column
-        assert trade[3] == "AAPL"          # symbol column
+        assert trade[3] == "AAPL"  # symbol column
 
         conn.close()
 
@@ -184,7 +182,7 @@ class TestObservabilityIntegration:
     async def test_dashboard_updates_in_real_time(self, full_stack):
         """Test that dashboard receives real-time metric updates."""
         if full_stack["api_process"] is None:
-             pytest.skip("WebSocket tests require a real network socket")
+            pytest.skip("WebSocket tests require a real network socket")
         ws_url = "ws://localhost:8000/ws/metrics"
 
         messages_received = []
@@ -192,16 +190,13 @@ class TestObservabilityIntegration:
         async with websockets.connect(ws_url) as websocket:
             # Skip initial connected message
             await asyncio.wait_for(websocket.recv(), timeout=2.0)
-            
+
             # Collect messages for 1 second
             start_time = time.time()
 
             while time.time() - start_time < 1.0:
                 try:
-                    message = await asyncio.wait_for(
-                        websocket.recv(),
-                        timeout=0.2
-                    )
+                    message = await asyncio.wait_for(websocket.recv(), timeout=0.2)
 
                     if message not in ["ping", "pong"]:
                         messages_received.append(message)
@@ -210,29 +205,27 @@ class TestObservabilityIntegration:
                     continue
 
         # Should receive multiple updates
-        assert len(messages_received) >= 5, (
-            f"Expected at least 5 messages, got {len(messages_received)}"
-        )
+        assert (
+            len(messages_received) >= 5
+        ), f"Expected at least 5 messages, got {len(messages_received)}"
 
         # Verify all messages are valid JSON
         for message in messages_received:
             data = json.loads(message)
             assert "timestamp" in data
 
-        logger.info(
-            f"✓ Dashboard received {len(messages_received)} real-time updates"
-        )
+        logger.info(f"✓ Dashboard received {len(messages_received)} real-time updates")
 
     @pytest.mark.asyncio
     @pytest.mark.integration
     async def test_graceful_shutdown_preserves_data(self, project_root: Path):
         """Test that graceful shutdown preserves all data."""
-        # This test relies on subprocess termination. 
+        # This test relies on subprocess termination.
         # In-process tests are managed by fixtures, so we verify persistence via manual start/stop.
         db_path = project_root / "data" / "metrics_shutdown_test.duckdb"
         if db_path.exists():
             db_path.unlink()
-            
+
         # Manual start
         await api_state.start()
 
@@ -278,7 +271,7 @@ class TestObservabilityIntegration:
     async def test_concurrent_metric_collection_and_streaming(self, full_stack):
         """Test concurrent metric collection and WebSocket streaming."""
         if full_stack["api_process"] is None:
-             pytest.skip("WebSocket tests require a real network socket")
+            pytest.skip("WebSocket tests require a real network socket")
         project_root = full_stack["project_root"]
 
         # Task 1: Simulate continuous metric collection
@@ -304,7 +297,7 @@ class TestObservabilityIntegration:
 
                     conn.execute(
                         "INSERT INTO metrics VALUES (?, ?, ?, ?)",
-                        [datetime.now(), f"test_metric_{i}", float(i), "{}"]
+                        [datetime.now(), f"test_metric_{i}", float(i), "{}"],
                     )
 
                     conn.close()
@@ -316,17 +309,14 @@ class TestObservabilityIntegration:
         # Task 2: Consume metrics via WebSocket
         async def consume_websocket_metrics():
             if full_stack["api_process"] is None:
-                 return [] # Or skip the whole test
+                return []  # Or skip the whole test
             ws_url = "ws://localhost:8000/ws/metrics"
             messages = []
 
             async with websockets.connect(ws_url) as websocket:
                 for _ in range(10):
                     try:
-                        message = await asyncio.wait_for(
-                            websocket.recv(),
-                            timeout=0.2
-                        )
+                        message = await asyncio.wait_for(websocket.recv(), timeout=0.2)
 
                         if message not in ["ping", "pong"]:
                             messages.append(message)
@@ -346,16 +336,14 @@ class TestObservabilityIntegration:
         # Should receive messages while collecting
         assert len(messages) > 0, "No messages received during concurrent collection"
 
-        logger.info(
-            f"✓ Concurrent collection and streaming: {len(messages)} messages"
-        )
+        logger.info(f"✓ Concurrent collection and streaming: {len(messages)} messages")
 
     @pytest.mark.asyncio
     @pytest.mark.integration
     async def test_error_recovery_and_resilience(self, full_stack):
         """Test system recovery from transient errors."""
         if full_stack["api_process"] is None:
-             pytest.skip("WebSocket tests require a real network socket")
+            pytest.skip("WebSocket tests require a real network socket")
         ws_url = "ws://localhost:8000/ws/metrics"
 
         # Connect, disconnect, and reconnect
@@ -363,17 +351,14 @@ class TestObservabilityIntegration:
             async with websockets.connect(ws_url) as websocket:
                 # Skip initial connected message
                 await websocket.recv()
-                
+
                 # Send ping
                 await websocket.send("ping")
 
                 # Receive pong (skip queued metric updates)
                 pong_received = False
                 for _ in range(10):
-                    response = await asyncio.wait_for(
-                        websocket.recv(),
-                        timeout=2.0
-                    )
+                    response = await asyncio.wait_for(websocket.recv(), timeout=2.0)
                     if response == "pong":
                         pong_received = True
                         break
@@ -392,7 +377,7 @@ class TestObservabilityIntegration:
     async def test_multi_client_metric_broadcast(self, full_stack):
         """Test that metrics are broadcast to multiple connected clients."""
         if full_stack["api_process"] is None:
-             pytest.skip("WebSocket tests require a real network socket")
+            pytest.skip("WebSocket tests require a real network socket")
         ws_url = "ws://localhost:8000/ws/metrics"
         num_clients = 5
 
@@ -403,10 +388,7 @@ class TestObservabilityIntegration:
             async with websockets.connect(ws_url) as websocket:
                 for _ in range(10):
                     try:
-                        message = await asyncio.wait_for(
-                            websocket.recv(),
-                            timeout=0.2
-                        )
+                        message = await asyncio.wait_for(websocket.recv(), timeout=0.2)
 
                         if message not in ["ping", "pong"]:
                             messages.append(message)
@@ -417,19 +399,13 @@ class TestObservabilityIntegration:
             return client_id, messages
 
         # Connect multiple clients concurrently
-        results = await asyncio.gather(
-            *[client_receiver(i) for i in range(num_clients)]
-        )
+        results = await asyncio.gather(*[client_receiver(i) for i in range(num_clients)])
 
         # All clients should receive messages
         for client_id, messages in results:
-            assert len(messages) > 0, (
-                f"Client {client_id} received no messages"
-            )
+            assert len(messages) > 0, f"Client {client_id} received no messages"
 
-        logger.info(
-            f"✓ Metrics broadcast to {num_clients} clients simultaneously"
-        )
+        logger.info(f"✓ Metrics broadcast to {num_clients} clients simultaneously")
 
     @pytest.mark.asyncio
     @pytest.mark.integration
@@ -458,15 +434,9 @@ class TestObservabilityIntegration:
             )
 
             # Insert time-series data
-            metrics = [
-                (datetime.now(), "latency_ms", float(i * 1.5), "{}")
-                for i in range(100)
-            ]
+            metrics = [(datetime.now(), "latency_ms", float(i * 1.5), "{}") for i in range(100)]
 
-            conn.executemany(
-                "INSERT INTO metrics VALUES (?, ?, ?, ?)",
-                metrics
-            )
+            conn.executemany("INSERT INTO metrics VALUES (?, ?, ?, ?)", metrics)
 
             # Test aggregation query
             result = conn.execute(

@@ -2,6 +2,7 @@
 Dedicated tests for Incident Management API.
 Covers /incidents, /acknowledge, /resolve and error handling.
 """
+
 import pytest
 from fastapi.testclient import TestClient
 from src.observability.api.main import app
@@ -9,12 +10,13 @@ from src.observability.alerts.escalation import IncidentSeverity
 
 client = TestClient(app)
 
+
 @pytest.mark.asyncio
 async def test_incident_lifecycle_api():
     """Test full incident lifecycle via REST API."""
     from src.observability.api.main import api_state
     from src.observability.metrics.system_collector import SystemCollector
-    
+
     # Initialize system collector for testing
     if "system" not in api_state.collectors:
         api_state.collectors["system"] = SystemCollector()
@@ -30,20 +32,23 @@ async def test_incident_lifecycle_api():
     # but the system collector handles it. For testing, we'll manually trigger it
     # via the app instance if possible, or just mock it.
     from src.observability.api.main import api_state
+
     system_collector = api_state.collectors.get("system")
-    incident = await system_collector.escalation.create_incident({
-        "alert_id": "TEST-001",
-        "severity": "P0",
-        "component": "test_component",
-        "reason_code": "TEST_REASON",
-        "correlation_id": "TEST-CID-123"
-    })
-    
+    incident = await system_collector.escalation.create_incident(
+        {
+            "alert_id": "TEST-001",
+            "severity": "P0",
+            "component": "test_component",
+            "reason_code": "TEST_REASON",
+            "correlation_id": "TEST-CID-123",
+        }
+    )
+
     # 3. Verify it shows up in GET /incidents
     response = client.get("/incidents")
     data = response.json()
     assert incident.incident_id in data
-    assert data[incident.incident_id]["severity"] == "P0" # Contract match P0
+    assert data[incident.incident_id]["severity"] == "P0"  # Contract match P0
     assert data[incident.incident_id]["status"] == "NEW"
 
     # 4. Acknowledge it
@@ -53,7 +58,7 @@ async def test_incident_lifecycle_api():
 
     # 5. Resolve it (should fail without evidence)
     response = client.post(f"/incidents/{incident.incident_id}/resolve?evidence=")
-    assert response.status_code == 400 # Validation error
+    assert response.status_code == 400  # Validation error
 
     # 6. Resolve it (should succeed with evidence)
     response = client.post(f"/incidents/{incident.incident_id}/resolve?evidence=verified_via_test")
@@ -64,12 +69,15 @@ async def test_incident_lifecycle_api():
     response = client.get("/incidents")
     assert response.json()[incident.incident_id]["status"] == "RESOLVED"
 
+
 @pytest.mark.asyncio
 async def test_incident_not_found():
     """Verify 404 behavior for missing incidents."""
     from src.observability.api.main import api_state
+
     if "system" not in api_state.collectors:
         from src.observability.metrics.system_collector import SystemCollector
+
         api_state.collectors["system"] = SystemCollector()
         await api_state.collectors["system"].start()
 

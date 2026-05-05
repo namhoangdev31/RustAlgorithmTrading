@@ -13,6 +13,7 @@ import json
 
 class TimeInterval(str, Enum):
     """Time interval for aggregations"""
+
     SECOND = "1s"
     MINUTE = "1m"
     HOUR = "1h"
@@ -50,6 +51,7 @@ class TimeInterval(str, Enum):
 @dataclass
 class MetricRecord:
     """Trading metric record"""
+
     timestamp: datetime
     metric_name: str
     value: float
@@ -70,6 +72,7 @@ class MetricRecord:
 @dataclass
 class CandleRecord:
     """OHLCV candle record"""
+
     timestamp: datetime
     symbol: str
     open: float
@@ -86,6 +89,7 @@ class CandleRecord:
 @dataclass
 class PerformanceRecord:
     """Portfolio performance record"""
+
     timestamp: datetime
     portfolio_value: float
     pnl: float
@@ -118,7 +122,6 @@ DUCKDB_SCHEMAS = {
         CREATE INDEX IF NOT EXISTS idx_metrics_symbol
             ON trading_metrics(symbol);
     """,
-
     "candles": """
         CREATE TABLE IF NOT EXISTS candles (
             timestamp TIMESTAMP NOT NULL,
@@ -135,7 +138,6 @@ DUCKDB_SCHEMAS = {
         CREATE INDEX IF NOT EXISTS idx_candles_symbol_time
             ON candles(symbol, timestamp);
     """,
-
     "performance_history": """
         CREATE TABLE IF NOT EXISTS performance_history (
             timestamp TIMESTAMP NOT NULL PRIMARY KEY,
@@ -173,7 +175,6 @@ SQLITE_SCHEMAS = {
         CREATE INDEX IF NOT EXISTS idx_trade_symbol
             ON trade_log(symbol);
     """,
-
     "system_events": """
         CREATE TABLE IF NOT EXISTS system_events (
             id INTEGER PRIMARY KEY AUTOINCREMENT,

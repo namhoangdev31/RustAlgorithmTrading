@@ -26,6 +26,7 @@ class CanaryDesignRecord(StagingHardeningRecord):
     rollback_disposition: Optional[str] = "AUTO"
     kill_switch_latency_ms: Optional[int] = None
 
+
 class CanaryDesignManager(StagingHardeningManager):
     """Manager for canary design verification and evidence capture."""
 
@@ -78,7 +79,10 @@ class CanaryDesignManager(StagingHardeningManager):
             if effective_latency_ms is None:
                 disposition = "BLOCKED"
                 reason_code = "MISSING_KILL_SWITCH_TIMING"
-            if metadata.get("mitigation_evidence_missing") or metadata.get("breach_mitigated") is False:
+            if (
+                metadata.get("mitigation_evidence_missing")
+                or metadata.get("breach_mitigated") is False
+            ):
                 disposition = "BLOCKED"
                 reason_code = "MISSING_MITIGATION_EVIDENCE"
 
@@ -122,37 +126,67 @@ class CanaryDesignManager(StagingHardeningManager):
         base_summary = self.get_summary()
         canary_records = [r for r in self.records if isinstance(r, CanaryDesignRecord)]
         correlation_coverage = next(
-            (float(r.metadata.get("coverage", 0.0)) for r in canary_records if "CORRELATION" in r.scenario_id.upper()),
+            (
+                float(r.metadata.get("coverage", 0.0))
+                for r in canary_records
+                if "CORRELATION" in r.scenario_id.upper()
+            ),
             0.0,
         )
-        throughput_watermark = max((int(r.metadata.get("throughput", 0)) for r in canary_records), default=0)
+        throughput_watermark = max(
+            (int(r.metadata.get("throughput", 0)) for r in canary_records), default=0
+        )
         compliance_findings = next(
-            (int(r.metadata.get("findings", -1)) for r in canary_records if "COMPLIANCE" in r.scenario_id.upper()),
+            (
+                int(r.metadata.get("findings", -1))
+                for r in canary_records
+                if "COMPLIANCE" in r.scenario_id.upper()
+            ),
             -1,
         )
         max_latency_ms = max((r.kill_switch_latency_ms or 0 for r in canary_records), default=0)
         rollback_required_records = [r for r in canary_records if r.rollback_required]
-        rollback_pass_count = sum(1 for r in rollback_required_records if (r.rollback_result or "").upper() == "SUCCESS")
+        rollback_pass_count = sum(
+            1 for r in rollback_required_records if (r.rollback_result or "").upper() == "SUCCESS"
+        )
         rollback_success_rate = (
-            rollback_pass_count / len(rollback_required_records) if rollback_required_records else base_summary["rollback_success_rate"]
+            rollback_pass_count / len(rollback_required_records)
+            if rollback_required_records
+            else base_summary["rollback_success_rate"]
         )
         unmitigated_breach_count = sum(
-            1 for r in canary_records if "BREACH" in r.scenario_id.upper() and r.metadata.get("breach_mitigated") is False
+            1
+            for r in canary_records
+            if "BREACH" in r.scenario_id.upper() and r.metadata.get("breach_mitigated") is False
         )
 
         return {
             **base_summary,
-            "canary_scenario_count": len([r for r in canary_records if "CANARY" in r.scenario_id.upper()]),
-            "breach_handling_count": len([r for r in canary_records if "BREACH" in r.scenario_id.upper()]),
+            "canary_scenario_count": len(
+                [r for r in canary_records if "CANARY" in r.scenario_id.upper()]
+            ),
+            "breach_handling_count": len(
+                [r for r in canary_records if "BREACH" in r.scenario_id.upper()]
+            ),
             "kill_switch_latency_ms": max_latency_ms,
-            "kill_switch_latency_sec": max_latency_ms / 1000.0 if max_latency_ms else base_summary["kill_switch_latency_sec"],
+            "kill_switch_latency_sec": (
+                max_latency_ms / 1000.0
+                if max_latency_ms
+                else base_summary["kill_switch_latency_sec"]
+            ),
             "rollback_success_rate": rollback_success_rate,
             "correlation_coverage": correlation_coverage,
             "compliance_findings": compliance_findings,
             "throughput_watermark": throughput_watermark,
             "unmitigated_breach_count": unmitigated_breach_count,
             "tier_distribution": {
-                tier.value: len([r for r in canary_records if r.canary_tier == tier.value or r.exposure_tier == tier])
+                tier.value: len(
+                    [
+                        r
+                        for r in canary_records
+                        if r.canary_tier == tier.value or r.exposure_tier == tier
+                    ]
+                )
                 for tier in ExposureTier
-            }
+            },
         }

@@ -7,6 +7,7 @@ Tests cover:
 - Edge case handling
 - Numerical stability
 """
+
 import pytest
 import pandas as pd
 import numpy as np
@@ -21,7 +22,7 @@ class TestTechnicalIndicators:
         window = 20
 
         # Manual SMA calculation
-        expected_sma = sample_ohlcv_data['close'].rolling(window=window).mean()
+        expected_sma = sample_ohlcv_data["close"].rolling(window=window).mean()
 
         # actual_sma = calculate_sma(sample_ohlcv_data['close'], window)
         # assert np.allclose(actual_sma, expected_sma, equal_nan=True)
@@ -31,7 +32,7 @@ class TestTechnicalIndicators:
         """Test Exponential Moving Average calculation."""
         span = 20
 
-        expected_ema = sample_ohlcv_data['close'].ewm(span=span, adjust=False).mean()
+        expected_ema = sample_ohlcv_data["close"].ewm(span=span, adjust=False).mean()
 
         # actual_ema = calculate_ema(sample_ohlcv_data['close'], span)
         # assert np.allclose(actual_ema, expected_ema, equal_nan=True)
@@ -40,10 +41,30 @@ class TestTechnicalIndicators:
     def test_rsi_calculation(self):
         """Test RSI (Relative Strength Index) calculation."""
         # Create test data with known RSI
-        prices = pd.Series([
-            44, 44.34, 44.09, 43.61, 44.33, 44.83, 45.10, 45.42, 45.84, 46.08,
-            45.89, 46.03, 45.61, 46.28, 46.28, 46.00, 46.03, 46.41, 46.22, 45.64
-        ])
+        prices = pd.Series(
+            [
+                44,
+                44.34,
+                44.09,
+                43.61,
+                44.33,
+                44.83,
+                45.10,
+                45.42,
+                45.84,
+                46.08,
+                45.89,
+                46.03,
+                45.61,
+                46.28,
+                46.28,
+                46.00,
+                46.03,
+                46.41,
+                46.22,
+                45.64,
+            ]
+        )
 
         # RSI should be between 0 and 100
         # rsi = calculate_rsi(prices, period=14)
@@ -56,8 +77,8 @@ class TestTechnicalIndicators:
         window = 20
         num_std = 2
 
-        sma = sample_ohlcv_data['close'].rolling(window=window).mean()
-        std = sample_ohlcv_data['close'].rolling(window=window).std()
+        sma = sample_ohlcv_data["close"].rolling(window=window).mean()
+        std = sample_ohlcv_data["close"].rolling(window=window).std()
 
         expected_upper = sma + (num_std * std)
         expected_lower = sma - (num_std * std)
@@ -75,8 +96,8 @@ class TestTechnicalIndicators:
         slow = 26
         signal = 9
 
-        ema_fast = sample_ohlcv_data['close'].ewm(span=fast, adjust=False).mean()
-        ema_slow = sample_ohlcv_data['close'].ewm(span=slow, adjust=False).mean()
+        ema_fast = sample_ohlcv_data["close"].ewm(span=fast, adjust=False).mean()
+        ema_slow = sample_ohlcv_data["close"].ewm(span=slow, adjust=False).mean()
         expected_macd = ema_fast - ema_slow
         expected_signal = expected_macd.ewm(span=signal, adjust=False).mean()
 
@@ -93,7 +114,7 @@ class TestFeatureTransformations:
 
     def test_log_returns(self, sample_ohlcv_data):
         """Test log returns calculation."""
-        prices = sample_ohlcv_data['close']
+        prices = sample_ohlcv_data["close"]
         expected_returns = np.log(prices / prices.shift(1))
 
         # actual_returns = calculate_log_returns(prices)
@@ -102,7 +123,7 @@ class TestFeatureTransformations:
 
     def test_percentage_returns(self, sample_ohlcv_data):
         """Test percentage returns calculation."""
-        prices = sample_ohlcv_data['close']
+        prices = sample_ohlcv_data["close"]
         expected_returns = prices.pct_change()
 
         # actual_returns = calculate_pct_returns(prices)

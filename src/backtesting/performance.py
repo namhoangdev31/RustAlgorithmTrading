@@ -60,27 +60,25 @@ class PerformanceAnalyzer:
 
         # Calculate returns
         equity_curve = equity_curve.copy()
-        equity_curve['returns'] = equity_curve['equity'].pct_change()
+        equity_curve["returns"] = equity_curve["equity"].pct_change()
 
         # Total return
-        total_return = (
-            (equity_curve['equity'].iloc[-1] - initial_capital) / initial_capital
-        )
+        total_return = (equity_curve["equity"].iloc[-1] - initial_capital) / initial_capital
 
         # Sharpe ratio
-        sharpe = self._calculate_sharpe_ratio(equity_curve['returns'])
+        sharpe = self._calculate_sharpe_ratio(equity_curve["returns"])
 
         # Sortino ratio
-        sortino = self._calculate_sortino_ratio(equity_curve['returns'])
+        sortino = self._calculate_sortino_ratio(equity_curve["returns"])
 
         # Maximum drawdown
-        max_dd, max_dd_duration = self._calculate_max_drawdown(equity_curve['equity'])
+        max_dd, max_dd_duration = self._calculate_max_drawdown(equity_curve["equity"])
 
         # Trade statistics
         trade_stats = self._calculate_trade_statistics()
 
         # Volatility (annualized)
-        volatility = equity_curve['returns'].std() * np.sqrt(252)
+        volatility = equity_curve["returns"].std() * np.sqrt(252)
 
         # Calmar ratio
         calmar = abs(total_return / max_dd) if max_dd != 0 else 0.0
@@ -193,15 +191,15 @@ class PerformanceAnalyzer:
         """
         if not self.fills:
             return {
-                'total_trades': 0,
-                'winning_trades': 0,
-                'losing_trades': 0,
-                'win_rate': 0.0,
-                'profit_factor': 0.0,
-                'average_win': 0.0,
-                'average_loss': 0.0,
-                'largest_win': 0.0,
-                'largest_loss': 0.0,
+                "total_trades": 0,
+                "winning_trades": 0,
+                "losing_trades": 0,
+                "win_rate": 0.0,
+                "profit_factor": 0.0,
+                "average_win": 0.0,
+                "average_loss": 0.0,
+                "largest_win": 0.0,
+                "largest_loss": 0.0,
             }
 
         # Group fills by symbol to calculate trade P&L
@@ -236,21 +234,23 @@ class PerformanceAnalyzer:
                         avg_price = 0.0
                 else:
                     # Adding to position
-                    total_cost = (abs(position) * avg_price) + (abs(fill.quantity) * fill.fill_price)
+                    total_cost = (abs(position) * avg_price) + (
+                        abs(fill.quantity) * fill.fill_price
+                    )
                     position += fill.quantity
                     avg_price = total_cost / abs(position)
 
         if not trade_pnls:
             return {
-                'total_trades': 0,
-                'winning_trades': 0,
-                'losing_trades': 0,
-                'win_rate': 0.0,
-                'profit_factor': 0.0,
-                'average_win': 0.0,
-                'average_loss': 0.0,
-                'largest_win': 0.0,
-                'largest_loss': 0.0,
+                "total_trades": 0,
+                "winning_trades": 0,
+                "losing_trades": 0,
+                "win_rate": 0.0,
+                "profit_factor": 0.0,
+                "average_win": 0.0,
+                "average_loss": 0.0,
+                "largest_win": 0.0,
+                "largest_loss": 0.0,
             }
 
         pnls = np.array(trade_pnls)
@@ -273,13 +273,13 @@ class PerformanceAnalyzer:
         largest_loss = losing_trades.min() if len(losing_trades) > 0 else 0.0
 
         return {
-            'total_trades': total_trades,
-            'winning_trades': winning_count,
-            'losing_trades': losing_count,
-            'win_rate': win_rate,
-            'profit_factor': profit_factor,
-            'average_win': avg_win,
-            'average_loss': avg_loss,
-            'largest_win': largest_win,
-            'largest_loss': largest_loss,
+            "total_trades": total_trades,
+            "winning_trades": winning_count,
+            "losing_trades": losing_count,
+            "win_rate": win_rate,
+            "profit_factor": profit_factor,
+            "average_win": avg_win,
+            "average_loss": avg_loss,
+            "largest_win": largest_win,
+            "largest_loss": largest_loss,
         }

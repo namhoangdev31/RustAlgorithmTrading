@@ -14,7 +14,7 @@ def test_staging_record_contract():
         correlation_id="corr-123",
         evidence_ids=["EV-W17-201"],
     )
-    
+
     assert record.run_id == "RUN-001"
     assert record.scenario_id == "TEST_SCENARIO"
     assert record.reason_code == "OK"
@@ -36,7 +36,7 @@ def test_policy_missing_correlation_id():
         component="UNIT_TEST",
         correlation_id=None,
     )
-    
+
     assert record.disposition == "BLOCKED"
     assert record.reason_code == "MISSING_CORRELATION_ID"
 
@@ -52,7 +52,7 @@ def test_policy_missing_rollback_evidence():
         correlation_id="corr-456",
         rollback_success=None,
     )
-    
+
     assert record.disposition == "BLOCKED"
     assert record.reason_code == "MISSING_ROLLBACK_EVIDENCE"
 
@@ -78,7 +78,7 @@ def test_policy_missing_kill_switch_latency_or_timestamp():
         latency_sec=45.0,
         timestamp=None,
     )
-    
+
     assert missing_latency.disposition == "BLOCKED"
     assert missing_latency.reason_code == "MISSING_LATENCY_METRIC"
     assert missing_timestamp.disposition == "BLOCKED"
@@ -87,7 +87,7 @@ def test_policy_missing_kill_switch_latency_or_timestamp():
 
 def test_pass_thresholds():
     manager = StagingHardeningManager()
-    
+
     # Kill switch <= 60s
     manager.build_record(
         run_id="RUN-KS",
@@ -99,7 +99,7 @@ def test_pass_thresholds():
         latency_sec=45.0,
         timestamp=datetime.now(timezone.utc),
     )
-    
+
     # Rollback 100%
     manager.build_record(
         run_id="RUN-RB",
@@ -120,7 +120,7 @@ def test_pass_thresholds():
         correlation_id="corr-alert",
         metadata={"fp_rate": 0.12, "fn_count": 0},
     )
-    
+
     summary = manager.get_summary()
     assert summary["kill_switch_latency_sec"] <= 60.0
     assert summary["rollback_success_rate"] == 1.0

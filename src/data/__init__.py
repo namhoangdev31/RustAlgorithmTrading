@@ -7,7 +7,7 @@ from .features import FeatureEngine
 from .indicators import TechnicalIndicators
 
 __all__ = [
-    'DataLoader',
-    'FeatureEngine',
-    'TechnicalIndicators',
+    "DataLoader",
+    "FeatureEngine",
+    "TechnicalIndicators",
 ]

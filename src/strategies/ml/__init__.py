@@ -15,11 +15,11 @@ from .validation.model_validator import ModelValidator
 from .validation.cross_validator import CrossValidator
 
 __all__ = [
-    'FeatureEngineer',
-    'PricePredictor',
-    'TrendClassifier',
-    'ModelValidator',
-    'CrossValidator'
+    "FeatureEngineer",
+    "PricePredictor",
+    "TrendClassifier",
+    "ModelValidator",
+    "CrossValidator",
 ]
 
-__version__ = '0.1.0'
+__version__ = "0.1.0"

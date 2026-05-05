@@ -34,10 +34,10 @@ class BaseMLModel(ABC):
         self.is_trained: bool = False
         self.feature_names: Optional[list] = None
         self.metadata: Dict[str, Any] = {
-            'model_name': model_name,
-            'version': '0.1.0',
-            'assumptions': [],
-            'limitations': []
+            "model_name": model_name,
+            "version": "0.1.0",
+            "assumptions": [],
+            "limitations": [],
         }
 
     @abstractmethod
@@ -96,13 +96,13 @@ class BaseMLModel(ABC):
         filepath.parent.mkdir(parents=True, exist_ok=True)
 
         # Save model
-        model_path = filepath.with_suffix('.pkl')
-        with open(model_path, 'wb') as f:
+        model_path = filepath.with_suffix(".pkl")
+        with open(model_path, "wb") as f:
             pickle.dump(self.model, f)
 
         # Save metadata
-        metadata_path = filepath.with_suffix('.json')
-        with open(metadata_path, 'w') as f:
+        metadata_path = filepath.with_suffix(".json")
+        with open(metadata_path, "w") as f:
             json.dump(self.metadata, f, indent=2)
 
         print(f"Model saved to {filepath}")
@@ -117,14 +117,14 @@ class BaseMLModel(ABC):
         filepath = Path(filepath)
 
         # Load model
-        model_path = filepath.with_suffix('.pkl')
-        with open(model_path, 'rb') as f:
+        model_path = filepath.with_suffix(".pkl")
+        with open(model_path, "rb") as f:
             self.model = pickle.load(f)
 
         # Load metadata
-        metadata_path = filepath.with_suffix('.json')
+        metadata_path = filepath.with_suffix(".json")
         if metadata_path.exists():
-            with open(metadata_path, 'r') as f:
+            with open(metadata_path, "r") as f:
                 self.metadata = json.load(f)
 
         self.is_trained = True
@@ -132,13 +132,13 @@ class BaseMLModel(ABC):
 
     def add_assumption(self, assumption: str) -> None:
         """Add model assumption to metadata."""
-        if assumption not in self.metadata['assumptions']:
-            self.metadata['assumptions'].append(assumption)
+        if assumption not in self.metadata["assumptions"]:
+            self.metadata["assumptions"].append(assumption)
 
     def add_limitation(self, limitation: str) -> None:
         """Add model limitation to metadata."""
-        if limitation not in self.metadata['limitations']:
-            self.metadata['limitations'].append(limitation)
+        if limitation not in self.metadata["limitations"]:
+            self.metadata["limitations"].append(limitation)
 
     def get_metadata(self) -> Dict[str, Any]:
         """Get model metadata."""
@@ -147,4 +147,4 @@ class BaseMLModel(ABC):
     def set_feature_names(self, feature_names: list) -> None:
         """Set feature names for the model."""
         self.feature_names = feature_names
-        self.metadata['feature_names'] = feature_names
+        self.metadata["feature_names"] = feature_names

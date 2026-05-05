@@ -6,7 +6,7 @@
 - Final verdict: `NO-GO`.
 - W21 objective summary:
   1. Baseline + regression/correlation/compliance capture đã hoàn tất.
-  2. Mandatory hard-gate1 (`lint/type/static/unit/debt`) chưa đạt ngưỡng.
+  2. Unit baseline đã recover (`EV-W21-203` pass), nhưng lint/type/debt mandatory chưa đạt.
   3. Verdict lock `NO-GO` với recovery queue rõ owner/ETA/rerun.
 
 ## 2) KPI snapshot
@@ -14,7 +14,7 @@
 | KPI Group | Target | Actual | Status | Evidence ID |
 |---|---|---|---|---|
 | Hard-Gate | lint/type/static 100% | FAIL | `CAPTURED_FAIL` | `EV-W21-201`,`EV-W21-202` |
-| Hard-Gate | unit baseline 100% | FAIL | `CAPTURED_FAIL` | `EV-W21-203` |
+| Hard-Gate | unit baseline 100% | PASS | `CAPTURED_PASS` | `EV-W21-203` |
 | Quality | debt open = 0 | FAIL | `CAPTURED_FAIL` | `EV-W21-204` |
 | Quality | W09-W20 regression pass | `100%` | `CAPTURED_PASS` | `EV-W21-301..306` |
 | Governance | artifact consistency 100% | `100%` (`NO-GO` unified) | `CAPTURED_PASS` | `EV-W21-401`,`EV-W21-402` |
@@ -29,7 +29,7 @@
 
 - `W21-ISS-001..012`: trạng thái chi tiết theo `ISSUE_REGISTER_WEEK21.md`.
 - Rule chốt:
-  - P0 open phải về 0.
+  - P0 open hiện tại = `2` (W21-ISS-001, W21-ISS-002).
   - P1 unowned phải về 0.
 
 ## 5) Decision log
@@ -53,8 +53,7 @@ Guardrails:
 
 ## 7) Recovery queue (nếu W21 = NO-GO)
 
-1. `W21-ISS-001` (`coder`, ETA `Pha 3 rerun`): unblock `EV-W21-105` bằng cách cài Python lint tools và xử lý rust fmt/clippy blockers.
-2. `W21-ISS-002` (`coder`, ETA `Pha 3 rerun`): unblock `EV-W21-106` bằng cách xử lý mypy module-path/stubs và cài `pyright`.
-3. `W21-ISS-003` (`tester`, ETA `Pha 3 rerun`): unblock `EV-W21-101/203` bằng cách sửa import/packaging errors trong unit collection.
-4. `W21-ISS-004` (`tester`, ETA `sau W21-ISS-003`): đóng debt backlog và rerun `EV-W21-204`.
-5. Chỉ được đổi verdict khi toàn bộ mandatory evidence chuyển `CAPTURED_PASS`.
+1. `W21-ISS-001` (`coder`, ETA `Pha 3 rerun`): unblock `EV-W21-105` bằng cách đóng findings của `black/flake8/cargo fmt/cargo clippy`.
+2. `W21-ISS-002` (`coder`, ETA `Pha 3 rerun`): unblock `EV-W21-106` bằng cách xử lý `mypy` duplicate-module và lỗi typing của `pyright`.
+3. `W21-ISS-004` (`tester`, ETA `sau W21-ISS-001/002`): đóng debt backlog và rerun `EV-W21-204`.
+4. Chỉ được đổi verdict khi toàn bộ mandatory evidence chuyển `CAPTURED_PASS`.

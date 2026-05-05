@@ -11,7 +11,7 @@ def setup_logger(
     log_level: str = "INFO",
     log_file: str = "logs/trading.log",
     rotation: str = "10 MB",
-    retention: str = "1 week"
+    retention: str = "1 week",
 ) -> None:
     """
     Configure application-wide logging
@@ -32,12 +32,7 @@ def setup_logger(
         "<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - "
         "<level>{message}</level>"
     )
-    logger.add(
-        sys.stderr,
-        format=format_str,
-        level=log_level,
-        colorize=True
-    )
+    logger.add(sys.stderr, format=format_str, level=log_level, colorize=True)
 
     # Create logs directory if it doesn't exist
     log_path = Path(log_file)
@@ -45,8 +40,7 @@ def setup_logger(
 
     # Add file handler
     file_format = (
-        "{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | "
-        "{name}:{function}:{line} - {message}"
+        "{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | " "{name}:{function}:{line} - {message}"
     )
     logger.add(
         log_file,
@@ -54,7 +48,7 @@ def setup_logger(
         level=log_level,
         rotation=rotation,
         retention=retention,
-        compression="zip"
+        compression="zip",
     )
 
     logger.info(f"Logger initialized: level={log_level}, file={log_file}")

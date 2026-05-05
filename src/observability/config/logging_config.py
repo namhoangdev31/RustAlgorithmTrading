@@ -32,25 +32,21 @@ class LoggingConfig:
         base_log_dir: str = "logs",
         console_level: int = logging.INFO,
         file_level: int = logging.DEBUG,
-
         # Stream-specific levels
         market_data_level: int = logging.DEBUG,
         strategy_level: int = logging.INFO,
         risk_level: int = logging.INFO,
         execution_level: int = logging.INFO,
         system_level: int = logging.INFO,
-
         # File output settings
         file_output_enabled: bool = True,
         max_file_size: int = 100 * 1024 * 1024,  # 100 MB
         backup_count: int = 10,
-
         # Performance settings
         async_enabled: bool = True,
         queue_size: int = 10000,
         batch_size: int = 100,
         flush_interval: float = 0.1,
-
         # Format settings
         json_output: bool = True,
         include_traceback: bool = True,
@@ -86,11 +82,11 @@ class LoggingConfig:
 
         # Stream-specific levels
         self.stream_levels = {
-            'trading.market_data': market_data_level,
-            'trading.strategy': strategy_level,
-            'trading.risk': risk_level,
-            'trading.execution': execution_level,
-            'trading.system': system_level,
+            "trading.market_data": market_data_level,
+            "trading.strategy": strategy_level,
+            "trading.risk": risk_level,
+            "trading.execution": execution_level,
+            "trading.system": system_level,
         }
 
         # File output settings
@@ -128,7 +124,7 @@ class LoggingConfig:
 
         # Check for parent match (e.g., 'trading.market_data.binance')
         for parent_name, level in self.stream_levels.items():
-            if logger_name.startswith(parent_name + '.'):
+            if logger_name.startswith(parent_name + "."):
                 return level
 
         # Default to INFO
@@ -145,7 +141,7 @@ class LoggingConfig:
             Path to log file
         """
         # Create subdirectory for each major stream
-        stream_name = logger_name.split('.')[1] if '.' in logger_name else logger_name
+        stream_name = logger_name.split(".")[1] if "." in logger_name else logger_name
         stream_dir = self.base_log_dir / stream_name
         stream_dir.mkdir(parents=True, exist_ok=True)
 
@@ -154,7 +150,7 @@ class LoggingConfig:
         return log_file
 
     @classmethod
-    def from_env(cls) -> 'LoggingConfig':
+    def from_env(cls) -> "LoggingConfig":
         """
         Create configuration from environment variables
 
@@ -172,6 +168,7 @@ class LoggingConfig:
         - LOG_ASYNC_ENABLED: Enable async logging (true/false)
         - LOG_JSON_OUTPUT: Output JSON format (true/false)
         """
+
         def get_log_level(env_var: str, default: int) -> int:
             """Get log level from environment variable"""
             level_str = os.getenv(env_var)
@@ -183,30 +180,30 @@ class LoggingConfig:
             """Get boolean from environment variable"""
             value = os.getenv(env_var)
             if value:
-                return value.lower() in ('true', '1', 'yes', 'on')
+                return value.lower() in ("true", "1", "yes", "on")
             return default
 
         return cls(
-            base_log_dir=os.getenv('LOG_DIR', 'logs'),
-            console_level=get_log_level('LOG_CONSOLE_LEVEL', logging.INFO),
-            file_level=get_log_level('LOG_FILE_LEVEL', logging.DEBUG),
-            market_data_level=get_log_level('LOG_MARKET_DATA_LEVEL', logging.DEBUG),
-            strategy_level=get_log_level('LOG_STRATEGY_LEVEL', logging.INFO),
-            risk_level=get_log_level('LOG_RISK_LEVEL', logging.INFO),
-            execution_level=get_log_level('LOG_EXECUTION_LEVEL', logging.INFO),
-            system_level=get_log_level('LOG_SYSTEM_LEVEL', logging.INFO),
-            file_output_enabled=get_bool('LOG_FILE_ENABLED', True),
-            async_enabled=get_bool('LOG_ASYNC_ENABLED', True),
-            json_output=get_bool('LOG_JSON_OUTPUT', True),
+            base_log_dir=os.getenv("LOG_DIR", "logs"),
+            console_level=get_log_level("LOG_CONSOLE_LEVEL", logging.INFO),
+            file_level=get_log_level("LOG_FILE_LEVEL", logging.DEBUG),
+            market_data_level=get_log_level("LOG_MARKET_DATA_LEVEL", logging.DEBUG),
+            strategy_level=get_log_level("LOG_STRATEGY_LEVEL", logging.INFO),
+            risk_level=get_log_level("LOG_RISK_LEVEL", logging.INFO),
+            execution_level=get_log_level("LOG_EXECUTION_LEVEL", logging.INFO),
+            system_level=get_log_level("LOG_SYSTEM_LEVEL", logging.INFO),
+            file_output_enabled=get_bool("LOG_FILE_ENABLED", True),
+            async_enabled=get_bool("LOG_ASYNC_ENABLED", True),
+            json_output=get_bool("LOG_JSON_OUTPUT", True),
         )
 
     @classmethod
-    def get_default(cls) -> 'LoggingConfig':
+    def get_default(cls) -> "LoggingConfig":
         """Get default configuration"""
         return cls()
 
     @classmethod
-    def for_development(cls) -> 'LoggingConfig':
+    def for_development(cls) -> "LoggingConfig":
         """Get development configuration (more verbose, colored output)"""
         return cls(
             console_level=logging.DEBUG,
@@ -220,7 +217,7 @@ class LoggingConfig:
         )
 
     @classmethod
-    def for_production(cls) -> 'LoggingConfig':
+    def for_production(cls) -> "LoggingConfig":
         """Get production configuration (optimized, JSON output)"""
         return cls(
             console_level=logging.INFO,
@@ -238,7 +235,7 @@ class LoggingConfig:
         )
 
     @classmethod
-    def for_testing(cls) -> 'LoggingConfig':
+    def for_testing(cls) -> "LoggingConfig":
         """Get testing configuration (minimal output, enables DEBUG capture)"""
         return cls(
             base_log_dir="test_logs",
@@ -256,21 +253,20 @@ class LoggingConfig:
     def to_dict(self) -> Dict:
         """Export configuration as dictionary"""
         return {
-            'base_log_dir': str(self.base_log_dir),
-            'console_level': logging.getLevelName(self.console_level),
-            'file_level': logging.getLevelName(self.file_level),
-            'stream_levels': {
-                name: logging.getLevelName(level)
-                for name, level in self.stream_levels.items()
+            "base_log_dir": str(self.base_log_dir),
+            "console_level": logging.getLevelName(self.console_level),
+            "file_level": logging.getLevelName(self.file_level),
+            "stream_levels": {
+                name: logging.getLevelName(level) for name, level in self.stream_levels.items()
             },
-            'file_output_enabled': self.file_output_enabled,
-            'max_file_size': self.max_file_size,
-            'backup_count': self.backup_count,
-            'async_enabled': self.async_enabled,
-            'queue_size': self.queue_size,
-            'batch_size': self.batch_size,
-            'flush_interval': self.flush_interval,
-            'json_output': self.json_output,
-            'include_traceback': self.include_traceback,
-            'colored_output': self.colored_output,
+            "file_output_enabled": self.file_output_enabled,
+            "max_file_size": self.max_file_size,
+            "backup_count": self.backup_count,
+            "async_enabled": self.async_enabled,
+            "queue_size": self.queue_size,
+            "batch_size": self.batch_size,
+            "flush_interval": self.flush_interval,
+            "json_output": self.json_output,
+            "include_traceback": self.include_traceback,
+            "colored_output": self.colored_output,
         }

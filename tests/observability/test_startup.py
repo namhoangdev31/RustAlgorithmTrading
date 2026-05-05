@@ -7,6 +7,7 @@ Tests:
 - Dashboard accessibility
 - Database initialization
 """
+
 import asyncio
 import os
 import signal
@@ -57,9 +58,7 @@ class TestObservabilityStartup:
     @pytest.mark.asyncio
     @pytest.mark.integration
     @pytest.mark.timeout(45)
-    async def test_services_start_within_30_seconds(
-        self, project_root: Path, start_script: Path
-    ):
+    async def test_services_start_within_30_seconds(self, project_root: Path, start_script: Path):
         """Test all services start within 30 seconds."""
         start_time = time.time()
 
@@ -87,17 +86,14 @@ class TestObservabilityStartup:
                         break
 
                     try:
-                        response = await client.get(
-                            "http://localhost:8000/health",
-                            timeout=2.0
-                        )
+                        response = await client.get("http://localhost:8000/health", timeout=2.0)
                         if response.status_code == 200:
                             elapsed = time.time() - start_time
                             logger.info(f"Service started in {elapsed:.2f} seconds")
                             assert elapsed < 30, f"Startup took {elapsed}s (>30s)"
                             return
                     except (httpx.ConnectError, httpx.TimeoutException):
-                        await asyncio.sleep(2 ** attempt * 0.1)  # Exponential backoff
+                        await asyncio.sleep(2**attempt * 0.1)  # Exponential backoff
 
             pytest.fail(f"Service did not start within {max_wait} seconds")
 
@@ -136,20 +132,14 @@ class TestObservabilityStartup:
 
             async with httpx.AsyncClient() as client:
                 # Test root endpoint
-                response = await client.get(
-                    "http://localhost:8000/",
-                    timeout=5.0
-                )
+                response = await client.get("http://localhost:8000/", timeout=5.0)
                 assert response.status_code == 200
                 data = response.json()
                 assert "service" in data
                 assert data["service"] == "Trading Observability API"
 
                 # Test health endpoint
-                response = await client.get(
-                    "http://localhost:8000/health",
-                    timeout=5.0
-                )
+                response = await client.get("http://localhost:8000/health", timeout=5.0)
                 assert response.status_code == 200
                 assert response.json()["status"] == "healthy"
 
@@ -268,13 +258,11 @@ class TestObservabilityStartup:
 
             async with httpx.AsyncClient() as client:
                 for endpoint in endpoints:
-                    response = await client.get(
-                        f"http://localhost:8000{endpoint}",
-                        timeout=5.0
-                    )
-                    assert response.status_code in [200, 503], (
-                        f"Endpoint {endpoint} returned {response.status_code}"
-                    )
+                    response = await client.get(f"http://localhost:8000{endpoint}", timeout=5.0)
+                    assert response.status_code in [
+                        200,
+                        503,
+                    ], f"Endpoint {endpoint} returned {response.status_code}"
 
         finally:
             process.terminate()
@@ -309,10 +297,7 @@ class TestObservabilityStartup:
 
             # Verify service is running
             async with httpx.AsyncClient() as client:
-                response = await client.get(
-                    "http://localhost:8000/health",
-                    timeout=5.0
-                )
+                response = await client.get("http://localhost:8000/health", timeout=5.0)
                 assert response.status_code == 200
 
             # Send SIGTERM for graceful shutdown
@@ -323,9 +308,7 @@ class TestObservabilityStartup:
             await asyncio.wait_for(process.wait(), timeout=10.0)
             shutdown_time = time.time() - start_time
 
-            assert shutdown_time < 5.0, (
-                f"Graceful shutdown took {shutdown_time}s (>5s)"
-            )
+            assert shutdown_time < 5.0, f"Graceful shutdown took {shutdown_time}s (>5s)"
 
         except asyncio.TimeoutError:
             # Force kill if graceful shutdown fails

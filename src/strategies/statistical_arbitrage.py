@@ -38,20 +38,18 @@ class StatisticalArbitrageStrategy(Strategy):
     """
 
     def __init__(
-        self,
-        name: str = "StatisticalArbitrage",
-        parameters: Optional[Dict[str, Any]] = None
+        self, name: str = "StatisticalArbitrage", parameters: Optional[Dict[str, Any]] = None
     ):
         """Initialize statistical arbitrage strategy"""
         default_params = {
-            'entry_threshold': 2.0,
-            'exit_threshold': 0.5,
-            'lookback_period': 60,
-            'position_size_pct': 0.1,
-            'max_holding_period': 20,
-            'min_half_life': 1,      # Minimum mean reversion speed
-            'max_half_life': 30,     # Maximum mean reversion speed
-            'confidence_level': 0.05  # p-value for cointegration test
+            "entry_threshold": 2.0,
+            "exit_threshold": 0.5,
+            "lookback_period": 60,
+            "position_size_pct": 0.1,
+            "max_holding_period": 20,
+            "min_half_life": 1,  # Minimum mean reversion speed
+            "max_half_life": 30,  # Maximum mean reversion speed
+            "confidence_level": 0.05,  # p-value for cointegration test
         }
 
         if parameters:
@@ -72,7 +70,7 @@ class StatisticalArbitrageStrategy(Strategy):
             return []
 
         signals = []
-        symbol = data.attrs.get('symbol', 'UNKNOWN')
+        symbol = data.attrs.get("symbol", "UNKNOWN")
         current_idx = len(data) - 1
 
         # PERIODIC RE-CALIBRATION: Only re-test cointegration every N bars
@@ -88,10 +86,10 @@ class StatisticalArbitrageStrategy(Strategy):
 
         # Generate signals based on z-score for the CURRENT bar only (if streaming)
         # or for the window if backtesting
-        lookback = self.get_parameter('lookback_period', 60)
-        entry_threshold = self.get_parameter('entry_threshold', 2.0)
-        exit_threshold = self.get_parameter('exit_threshold', 0.5)
-        max_holding = self.get_parameter('max_holding_period', 20)
+        lookback = self.get_parameter("lookback_period", 60)
+        entry_threshold = self.get_parameter("entry_threshold", 2.0)
+        exit_threshold = self.get_parameter("exit_threshold", 0.5)
+        max_holding = self.get_parameter("max_holding_period", 20)
 
         # Optimization: Use pre-calculated spread
         spread = self._spread_series
@@ -100,46 +98,49 @@ class StatisticalArbitrageStrategy(Strategy):
         start_scan = max(lookback, self._last_calibration_idx)
         for i in range(start_scan, len(data)):
             current_time = data.index[i]
-            current_price = data.iloc[i]['close']
+            current_price = data.iloc[i]["close"]
 
             # Calculate rolling statistics
-            window = spread[i-lookback:i]
+            window = spread[i - lookback : i]
             z_score = (spread.iloc[i] - window.mean()) / window.std()
 
             # Check if should exit
             if symbol in self.entry_bars:
-                bars_held = i - self.entry_bars[symbol]['bar']
-                entry_side = self.entry_bars[symbol]['side']
+                bars_held = i - self.entry_bars[symbol]["bar"]
+                entry_side = self.entry_bars[symbol]["side"]
 
                 # Exit conditions
                 exit_signal = False
-                exit_reason = ''
+                exit_reason = ""
 
                 if abs(z_score) < exit_threshold:
                     exit_signal = True
-                    exit_reason = 'mean_reversion'
+                    exit_reason = "mean_reversion"
                 elif bars_held >= max_holding:
                     exit_signal = True
-                    exit_reason = 'max_holding_period'
-                elif (entry_side == 'long' and z_score > entry_threshold) or \
-                     (entry_side == 'short' and z_score < -entry_threshold):
+                    exit_reason = "max_holding_period"
+                elif (entry_side == "long" and z_score > entry_threshold) or (
+                    entry_side == "short" and z_score < -entry_threshold
+                ):
                     exit_signal = True
-                    exit_reason = 'stop_loss'
+                    exit_reason = "stop_loss"
 
                 if exit_signal:
-                    signals.append(Signal(
-                        timestamp=current_time,
-                        symbol=symbol,
-                        signal_type=SignalType.EXIT,
-                        price=current_price,
-                        confidence=min(abs(z_score) / entry_threshold, 1.0),
-                        metadata={
-                            'z_score': z_score,
-                            'spread': spread.iloc[i],
-                            'reason': exit_reason,
-                            'bars_held': bars_held
-                        }
-                    ))
+                    signals.append(
+                        Signal(
+                            timestamp=current_time,
+                            symbol=symbol,
+                            signal_type=SignalType.EXIT,
+                            price=current_price,
+                            confidence=min(abs(z_score) / entry_threshold, 1.0),
+                            metadata={
+                                "z_score": z_score,
+                                "spread": spread.iloc[i],
+                                "reason": exit_reason,
+                                "bars_held": bars_held,
+                            },
+                        )
+                    )
                     del self.entry_bars[symbol]
                     continue
 
@@ -147,50 +148,54 @@ class StatisticalArbitrageStrategy(Strategy):
             if symbol not in self.entry_bars:
                 if z_score > entry_threshold:
                     # Spread too high - short spread (short stock A, long stock B)
-                    signals.append(Signal(
-                        timestamp=current_time,
-                        symbol=symbol,
-                        signal_type=SignalType.SHORT,
-                        price=current_price,
-                        confidence=min(z_score / entry_threshold, 1.0),
-                        metadata={
-                            'z_score': z_score,
-                            'spread': spread.iloc[i],
-                            'hedge_ratio': self.hedge_ratio,
-                            'reason': 'spread_too_high'
-                        }
-                    ))
-                    self.entry_bars[symbol] = {'bar': i, 'side': 'short'}
+                    signals.append(
+                        Signal(
+                            timestamp=current_time,
+                            symbol=symbol,
+                            signal_type=SignalType.SHORT,
+                            price=current_price,
+                            confidence=min(z_score / entry_threshold, 1.0),
+                            metadata={
+                                "z_score": z_score,
+                                "spread": spread.iloc[i],
+                                "hedge_ratio": self.hedge_ratio,
+                                "reason": "spread_too_high",
+                            },
+                        )
+                    )
+                    self.entry_bars[symbol] = {"bar": i, "side": "short"}
 
                 elif z_score < -entry_threshold:
                     # Spread too low - long spread (long stock A, short stock B)
-                    signals.append(Signal(
-                        timestamp=current_time,
-                        symbol=symbol,
-                        signal_type=SignalType.LONG,
-                        price=current_price,
-                        confidence=min(abs(z_score) / entry_threshold, 1.0),
-                        metadata={
-                            'z_score': z_score,
-                            'spread': spread.iloc[i],
-                            'hedge_ratio': self.hedge_ratio,
-                            'reason': 'spread_too_low'
-                        }
-                    ))
-                    self.entry_bars[symbol] = {'bar': i, 'side': 'long'}
+                    signals.append(
+                        Signal(
+                            timestamp=current_time,
+                            symbol=symbol,
+                            signal_type=SignalType.LONG,
+                            price=current_price,
+                            confidence=min(abs(z_score) / entry_threshold, 1.0),
+                            metadata={
+                                "z_score": z_score,
+                                "spread": spread.iloc[i],
+                                "hedge_ratio": self.hedge_ratio,
+                                "reason": "spread_too_low",
+                            },
+                        )
+                    )
+                    self.entry_bars[symbol] = {"bar": i, "side": "long"}
 
         logger.info(f"Generated {len(signals)} statistical arbitrage signals")
         return signals
 
     def _validate_pair_data(self, data: pd.DataFrame) -> bool:
         """Validate that data contains both series"""
-        required = ['close', 'close_y']
+        required = ["close", "close_y"]
         missing = [col for col in required if col not in data.columns]
 
         if missing:
             # Try alternative names
-            if 'price_y' in data.columns:
-                data['close_y'] = data['price_y']
+            if "price_y" in data.columns:
+                data["close_y"] = data["price_y"]
             else:
                 logger.error(f"Missing required columns for pairs: {missing}")
                 return False
@@ -207,14 +212,14 @@ class StatisticalArbitrageStrategy(Strategy):
         Returns:
             True if cointegrated at specified confidence level
         """
-        series1 = data['close'].values
-        series2 = data['close_y'].values
+        series1 = data["close"].values
+        series2 = data["close_y"].values
 
         try:
             # Engle-Granger cointegration test
             score, pvalue, _ = coint(series1, series2)
 
-            confidence = self.get_parameter('confidence_level', 0.05)
+            confidence = self.get_parameter("confidence_level", 0.05)
             is_cointegrated = pvalue < confidence
 
             logger.info(
@@ -242,11 +247,12 @@ class StatisticalArbitrageStrategy(Strategy):
             Spread series
         """
         try:
-            series1 = data['close'].values
-            series2 = data['close_y'].values
+            series1 = data["close"].values
+            series2 = data["close_y"].values
 
             # OLS regression to find hedge ratio
             from scipy.stats import linregress
+
             slope, intercept, r_value, p_value, std_err = linregress(series2, series1)
 
             self.hedge_ratio = slope
@@ -254,10 +260,7 @@ class StatisticalArbitrageStrategy(Strategy):
             # Calculate spread
             spread = series1 - self.hedge_ratio * series2
 
-            logger.info(
-                f"Hedge ratio: {self.hedge_ratio:.4f}, "
-                f"R²: {r_value**2:.4f}"
-            )
+            logger.info(f"Hedge ratio: {self.hedge_ratio:.4f}, " f"R²: {r_value**2:.4f}")
 
             return pd.Series(spread, index=data.index)
 
@@ -293,9 +296,8 @@ class StatisticalArbitrageStrategy(Strategy):
 
             # AR(1) regression
             from scipy.stats import linregress
-            slope, intercept, _, _, _ = linregress(
-                spread_lag.values, spread_diff.values
-            )
+
+            slope, intercept, _, _, _ = linregress(spread_lag.values, spread_diff.values)
 
             # Half-life = -ln(2) / ln(1 + slope)
             if slope < 0:
@@ -310,10 +312,7 @@ class StatisticalArbitrageStrategy(Strategy):
             return np.inf
 
     def calculate_position_size(
-        self,
-        signal: Signal,
-        account_value: float,
-        current_position: float = 0.0
+        self, signal: Signal, account_value: float, current_position: float = 0.0
     ) -> float:
         """
         Calculate position size for pairs trade
@@ -326,7 +325,7 @@ class StatisticalArbitrageStrategy(Strategy):
         Returns:
             Position size
         """
-        position_pct = self.get_parameter('position_size_pct', 0.1)
+        position_pct = self.get_parameter("position_size_pct", 0.1)
 
         # Scale by confidence
         adjusted_pct = position_pct * signal.confidence

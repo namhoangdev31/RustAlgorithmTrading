@@ -17,6 +17,7 @@ from loguru import logger
 
 class MessageType(str, Enum):
     """Message types for inter-component communication."""
+
     ORDER_BOOK_UPDATE = "OrderBookUpdate"
     TRADE_UPDATE = "TradeUpdate"
     BAR_UPDATE = "BarUpdate"
@@ -33,6 +34,7 @@ class MessageType(str, Enum):
 @dataclass
 class Signal:
     """Trading signal structure."""
+
     symbol: str
     direction: str  # "long", "short", "neutral"
     strength: float  # 0.0 to 1.0
@@ -46,6 +48,7 @@ class Signal:
 @dataclass
 class Position:
     """Position structure."""
+
     symbol: str
     quantity: float
     avg_entry_price: float
@@ -110,25 +113,25 @@ class ZMQPublisher:
             # Create message envelope matching Rust Envelope struct (v1.0.0)
             from observability.logging.correlations import get_correlation_id
             import datetime
-            
+
             cid = get_correlation_id()
             if not cid:
                 import uuid
+
                 cid = str(uuid.uuid4())
-                logger.warning(f"[cid:{cid}] No correlation_id found in context, generated new one: {cid}")
+                logger.warning(
+                    f"[cid:{cid}] No correlation_id found in context, generated new one: {cid}"
+                )
 
             # Structured payload matching Rust Message enum
-            payload = {
-                "type": message_type.value,
-                "data": data
-            }
+            payload = {"type": message_type.value, "data": data}
 
             envelope = {
                 "schema_version": SCHEMA_VERSION,
                 "correlation_id": cid,
                 "event_type": message_type.value,
                 "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-                "payload": payload
+                "payload": payload,
             }
 
             # Serialize to JSON
@@ -162,10 +165,8 @@ class ZMQPublisher:
             component: Component name sending heartbeat
         """
         import time
-        data = {
-            "component": component,
-            "timestamp": int(time.time() * 1000)
-        }
+
+        data = {"component": component, "timestamp": int(time.time() * 1000)}
         await self.publish("system", MessageType.HEARTBEAT, data)
 
     async def close(self):
@@ -287,7 +288,7 @@ class ZMQSubscriber:
                 # Parse JSON
                 try:
                     envelope = json.loads(json_str)
-                    
+
                     # Validate v1.0.0 Envelope
                     version = envelope.get("schema_version")
                     cid = envelope.get("correlation_id", "INIT")
@@ -298,12 +299,13 @@ class ZMQSubscriber:
                             continue
                         else:
                             logger.warning(f"[cid:{cid}] LAX_MODE WARNING: {error_msg}")
-                    
+
                     # Extract correlation ID and set context
                     from observability.logging.correlations import set_correlation_id
+
                     if envelope.get("correlation_id"):
                         set_correlation_id(cid)
-                    
+
                     # Extract payload (Message enum variant)
                     payload = envelope.get("payload", {})
                     msg_type = payload.get("type", "Unknown")
@@ -314,19 +316,24 @@ class ZMQSubscriber:
                         # Normalize direction: long/short/neutral -> Buy/Sell/Hold
                         # Normalize field names: action/confidence -> direction/strength
                         direction = data.get("direction", data.get("action"))
-                        if direction == "long": direction = "Buy"
-                        elif direction == "short": direction = "Sell"
-                        elif direction == "neutral": direction = "Hold"
+                        if direction == "long":
+                            direction = "Buy"
+                        elif direction == "short":
+                            direction = "Sell"
+                        elif direction == "neutral":
+                            direction = "Hold"
                         data["direction"] = direction
-                        
+
                         if "strength" not in data and "confidence" in data:
                             data["strength"] = data.pop("confidence")
-                        
+
                         payload["data"] = data
 
                     # Week 5: Fail-fast for REJECT disposition on critical paths
                     if self._is_reject_payload(payload):
-                        logger.warning(f"[cid:{cid}] FAIL-FAST: Blocking REJECT message from topic '{topic}'")
+                        logger.warning(
+                            f"[cid:{cid}] FAIL-FAST: Blocking REJECT message from topic '{topic}'"
+                        )
                         continue
 
                     logger.debug(f"[cid:{cid}] Received {msg_type} on topic '{topic}'")
@@ -366,26 +373,28 @@ class ZMQSubscriber:
             if len(parts) == 2:
                 topic, json_str = parts
                 envelope = json.loads(json_str)
-                
+
                 # Validate v1.0.0 Envelope
                 version = envelope.get("schema_version")
                 cid = envelope.get("correlation_id", "INIT")
                 if version != SCHEMA_VERSION:
-                    error_msg = f"Schema mismatch in receive_one: expected {SCHEMA_VERSION}, got {version}"
+                    error_msg = (
+                        f"Schema mismatch in receive_one: expected {SCHEMA_VERSION}, got {version}"
+                    )
                     if SCHEMA_STRICT_MODE:
                         logger.error(f"[cid:{cid}] STRICT_MODE REJECTION: {error_msg}")
                         return None
                     else:
                         logger.warning(f"[cid:{cid}] LAX_MODE WARNING: {error_msg}")
-                
+
                 # Payload extraction (simplified for receive_one)
                 payload = envelope.get("payload", {})
-                
+
                 # Week 5: Fail-fast for REJECT disposition
                 if self._is_reject_payload(payload):
                     logger.warning(f"[cid:{cid}] FAIL-FAST (receive_one): Blocking REJECT message")
                     return None
-                    
+
                 return topic, payload
 
             return None
@@ -442,7 +451,7 @@ async def test_zmq_bridge():
             strength=0.8,
             timestamp=1234567890,
             features=[1.0, 2.0, 3.0],
-            metadata={"strategy": "test"}
+            metadata={"strategy": "test"},
         )
 
         await publisher.publish_signal(signal)
@@ -478,7 +487,7 @@ if __name__ == "__main__":
     logger.add(
         sys.stderr,
         format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <level>{message}</level>",
-        level="DEBUG"
+        level="DEBUG",
     )
 
     # Run tests

@@ -98,19 +98,27 @@ class FinalReleaseManager(StagingHardeningManager):
         approval_records = [r for r in gate_records if r.approval_state is not None]
         blocker_records = [r for r in gate_records if r.release_blocker_status is not None]
         rollback_records = [r for r in gate_records if r.rollback_readiness is not None]
-        
+
         approval_rate = (
-            sum(1 for r in approval_records if r.approval_state == ApprovalState.APPROVED) / len(approval_records)
-            if approval_records else 0.0
-        )
-        
-        rollback_ready_rate = (
-            sum(1 for r in rollback_records if r.rollback_readiness == RollbackReadiness.READY) / len(rollback_records)
-            if rollback_records else 0.0
+            sum(1 for r in approval_records if r.approval_state == ApprovalState.APPROVED)
+            / len(approval_records)
+            if approval_records
+            else 0.0
         )
 
-        open_blocker_count = sum(1 for r in blocker_records if r.release_blocker_status == ReleaseBlockerStatus.OPEN)
-        total_regressions = sum(r.regression_count for r in gate_records if r.regression_count is not None)
+        rollback_ready_rate = (
+            sum(1 for r in rollback_records if r.rollback_readiness == RollbackReadiness.READY)
+            / len(rollback_records)
+            if rollback_records
+            else 0.0
+        )
+
+        open_blocker_count = sum(
+            1 for r in blocker_records if r.release_blocker_status == ReleaseBlockerStatus.OPEN
+        )
+        total_regressions = sum(
+            r.regression_count for r in gate_records if r.regression_count is not None
+        )
 
         return {
             **base_summary,
@@ -118,6 +126,10 @@ class FinalReleaseManager(StagingHardeningManager):
             "rollback_ready_rate": rollback_ready_rate,
             "open_release_blockers": open_blocker_count,
             "total_regressions": total_regressions,
-            "blocked_by_approval": len([r for r in gate_records if r.reason_code and r.reason_code.startswith("APPROVAL_")]),
-            "blocked_by_rollback": len([r for r in gate_records if r.reason_code == "ROLLBACK_NOT_READY"]),
+            "blocked_by_approval": len(
+                [r for r in gate_records if r.reason_code and r.reason_code.startswith("APPROVAL_")]
+            ),
+            "blocked_by_rollback": len(
+                [r for r in gate_records if r.reason_code == "ROLLBACK_NOT_READY"]
+            ),
         }

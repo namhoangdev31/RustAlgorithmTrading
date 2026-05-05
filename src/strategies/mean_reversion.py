@@ -45,7 +45,7 @@ class MeanReversion(Strategy):
         stop_loss_pct: float = 0.02,
         take_profit_pct: float = 0.03,
         touch_threshold: float = 1.001,  # 0.1% threshold for touching bands
-        parameters: Optional[Dict[str, Any]] = None
+        parameters: Optional[Dict[str, Any]] = None,
     ):
         """
         Initialize Mean Reversion strategy with risk management
@@ -59,19 +59,23 @@ class MeanReversion(Strategy):
             touch_threshold: Multiplier for band touch detection (1.001 = 0.1% tolerance)
         """
         params = parameters or {}
-        params.update({
-            'bb_period': bb_period,
-            'bb_std': bb_std,
-            'position_size': position_size,
-            'stop_loss_pct': stop_loss_pct,
-            'take_profit_pct': take_profit_pct,
-            'touch_threshold': touch_threshold,
-        })
+        params.update(
+            {
+                "bb_period": bb_period,
+                "bb_std": bb_std,
+                "position_size": position_size,
+                "stop_loss_pct": stop_loss_pct,
+                "take_profit_pct": take_profit_pct,
+                "touch_threshold": touch_threshold,
+            }
+        )
 
         super().__init__(name="MeanReversion", parameters=params)
 
         # Track active positions for exit signals
-        self.active_positions = {}  # {symbol: {'entry_price': float, 'entry_time': datetime, 'type': 'long'/'short'}}
+        self.active_positions = (
+            {}
+        )  # {symbol: {'entry_price': float, 'entry_time': datetime, 'type': 'long'/'short'}}
 
     def generate_signals_for_symbol(self, symbol: str, data: pd.DataFrame) -> list[Signal]:
         """
@@ -86,7 +90,7 @@ class MeanReversion(Strategy):
         """
         # Set symbol attribute on dataframe
         data = data.copy()
-        data.attrs['symbol'] = symbol
+        data.attrs["symbol"] = symbol
         return self.generate_signals(data)
 
     def generate_signals(self, data: pd.DataFrame, latest_only: bool = True) -> list[Signal]:
@@ -103,22 +107,22 @@ class MeanReversion(Strategy):
             return []
 
         data = data.copy()
-        symbol = data.attrs.get('symbol', 'UNKNOWN')
+        symbol = data.attrs.get("symbol", "UNKNOWN")
 
         # Calculate Bollinger Bands
-        bb_period = self.get_parameter('bb_period', 20)
-        bb_std = self.get_parameter('bb_std', 2.0)
+        bb_period = self.get_parameter("bb_period", 20)
+        bb_std = self.get_parameter("bb_std", 2.0)
 
-        data['sma_20'] = data['close'].rolling(window=bb_period).mean()
-        rolling_std = data['close'].rolling(window=bb_period).std()
-        data['upper_band'] = data['sma_20'] + (rolling_std * bb_std)
-        data['lower_band'] = data['sma_20'] - (rolling_std * bb_std)
+        data["sma_20"] = data["close"].rolling(window=bb_period).mean()
+        rolling_std = data["close"].rolling(window=bb_period).std()
+        data["upper_band"] = data["sma_20"] + (rolling_std * bb_std)
+        data["lower_band"] = data["sma_20"] - (rolling_std * bb_std)
 
         # Get parameters
         signals = []
-        stop_loss_pct = self.get_parameter('stop_loss_pct', 0.02)
-        take_profit_pct = self.get_parameter('take_profit_pct', 0.03)
-        touch_threshold = self.get_parameter('touch_threshold', 1.001)
+        stop_loss_pct = self.get_parameter("stop_loss_pct", 0.02)
+        take_profit_pct = self.get_parameter("take_profit_pct", 0.03)
+        touch_threshold = self.get_parameter("touch_threshold", 1.001)
 
         # CRITICAL FIX: Determine range - only process latest bar for live trading
         min_bars = bb_period + 1
@@ -131,24 +135,24 @@ class MeanReversion(Strategy):
             current = data.iloc[i]
             previous = data.iloc[i - 1]
 
-            if pd.isna(current['sma_20']) or pd.isna(current['upper_band']):
+            if pd.isna(current["sma_20"]) or pd.isna(current["upper_band"]):
                 continue
 
-            current_price = float(current['close'])
+            current_price = float(current["close"])
             signal_type = SignalType.HOLD
 
             # Check for EXIT signals first (stop-loss / take-profit / mean reversion)
             if symbol in self.active_positions:
                 position = self.active_positions[symbol]
-                entry_price = position['entry_price']
-                entry_time = position['entry_time']
-                position_type = position['type']
+                entry_price = position["entry_price"]
+                entry_time = position["entry_time"]
+                position_type = position["type"]
 
                 # Calculate holding period
                 bars_held = i - data.index.get_loc(entry_time)
 
                 # Calculate P&L
-                if position_type == 'long':
+                if position_type == "long":
                     pnl_pct = (current_price - entry_price) / entry_price
                 else:  # short
                     pnl_pct = (entry_price - current_price) / entry_price
@@ -166,14 +170,14 @@ class MeanReversion(Strategy):
 
                 # Check mean reversion exit: price returns to middle band
                 if not exit_triggered:
-                    if position_type == 'long':
+                    if position_type == "long":
                         # Exit long when price reaches or crosses above middle band
-                        if current_price >= current['sma_20']:
+                        if current_price >= current["sma_20"]:
                             exit_triggered = True
                             exit_reason = "mean_reversion"
-                    elif position_type == 'short':
+                    elif position_type == "short":
                         # Exit short when price reaches or crosses below middle band
-                        if current_price <= current['sma_20']:
+                        if current_price <= current["sma_20"]:
                             exit_triggered = True
                             exit_reason = "mean_reversion"
 
@@ -185,15 +189,15 @@ class MeanReversion(Strategy):
                         price=current_price,
                         confidence=1.0,
                         metadata={
-                            'exit_reason': exit_reason,
-                            'pnl_pct': float(pnl_pct),
-                            'entry_price': entry_price,
-                            'position_type': position_type,
-                            'bars_held': bars_held,
-                            'sma_20': float(current['sma_20']),
-                            'upper_band': float(current['upper_band']),
-                            'lower_band': float(current['lower_band']),
-                        }
+                            "exit_reason": exit_reason,
+                            "pnl_pct": float(pnl_pct),
+                            "entry_price": entry_price,
+                            "position_type": position_type,
+                            "bars_held": bars_held,
+                            "sma_20": float(current["sma_20"]),
+                            "upper_band": float(current["upper_band"]),
+                            "lower_band": float(current["lower_band"]),
+                        },
                     )
                     signals.append(signal)
                     del self.active_positions[symbol]
@@ -202,7 +206,7 @@ class MeanReversion(Strategy):
             # Generate ENTRY signals only if no active position
             if symbol not in self.active_positions:
                 # Long signal: Price touches lower band (oversold, expect reversion UP)
-                if current_price <= current['lower_band'] * touch_threshold:
+                if current_price <= current["lower_band"] * touch_threshold:
                     signal_type = SignalType.LONG
                     logger.info(
                         f"LONG signal (mean reversion): price={current_price:.2f}, "
@@ -211,7 +215,7 @@ class MeanReversion(Strategy):
                     )
 
                 # Short signal: Price touches upper band (overbought, expect reversion DOWN)
-                elif current_price >= current['upper_band'] * (2 - touch_threshold):
+                elif current_price >= current["upper_band"] * (2 - touch_threshold):
                     signal_type = SignalType.SHORT
                     logger.info(
                         f"SHORT signal (mean reversion): price={current_price:.2f}, "
@@ -221,8 +225,8 @@ class MeanReversion(Strategy):
 
                 if signal_type in [SignalType.LONG, SignalType.SHORT]:
                     # Calculate confidence based on distance from middle band
-                    bb_width = current['upper_band'] - current['lower_band']
-                    distance_from_middle = abs(current_price - current['sma_20'])
+                    bb_width = current["upper_band"] - current["lower_band"]
+                    distance_from_middle = abs(current_price - current["sma_20"])
 
                     # Higher confidence when further from mean (more extreme)
                     confidence = min(distance_from_middle / (bb_width / 2), 1.0)
@@ -235,20 +239,20 @@ class MeanReversion(Strategy):
                         price=current_price,
                         confidence=float(confidence),
                         metadata={
-                            'sma_20': float(current['sma_20']),
-                            'upper_band': float(current['upper_band']),
-                            'lower_band': float(current['lower_band']),
-                            'bb_width': float(bb_width),
-                            'distance_from_mean': float(distance_from_middle),
-                        }
+                            "sma_20": float(current["sma_20"]),
+                            "upper_band": float(current["upper_band"]),
+                            "lower_band": float(current["lower_band"]),
+                            "bb_width": float(bb_width),
+                            "distance_from_mean": float(distance_from_middle),
+                        },
                     )
                     signals.append(signal)
 
                     # Track position
                     self.active_positions[symbol] = {
-                        'entry_price': current_price,
-                        'entry_time': current.name,
-                        'type': 'long' if signal_type == SignalType.LONG else 'short',
+                        "entry_price": current_price,
+                        "entry_time": current.name,
+                        "type": "long" if signal_type == SignalType.LONG else "short",
                     }
 
         logger.info(
@@ -258,17 +262,14 @@ class MeanReversion(Strategy):
         return signals
 
     def calculate_position_size(
-        self,
-        signal: Signal,
-        account_value: float,
-        current_position: float = 0.0
+        self, signal: Signal, account_value: float, current_position: float = 0.0
     ) -> float:
         """
         Calculate position size with conservative risk management
 
         Uses 15% of account value per position by default, scaled by confidence
         """
-        position_size_pct = self.get_parameter('position_size', 0.15)
+        position_size_pct = self.get_parameter("position_size", 0.15)
         position_value = account_value * position_size_pct
         shares = position_value / signal.price
 
@@ -292,10 +293,10 @@ class MeanReversion(Strategy):
             return None
 
         position = self.active_positions[symbol]
-        entry_price = position['entry_price']
-        position_type = position['type']
+        entry_price = position["entry_price"]
+        position_type = position["type"]
 
-        if position_type == 'long':
+        if position_type == "long":
             return (current_price - entry_price) / entry_price
         else:  # short
             return (entry_price - current_price) / entry_price

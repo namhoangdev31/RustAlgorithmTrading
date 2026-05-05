@@ -15,6 +15,8 @@ def test_gate_policy_open_integration_debt_blocked():
         reason_code="OK",
         component="TEST",
         correlation_id="corr-001",
+        evidence_ids=["EV-W22-204"],
+        debt_item_id="DEBT-001",
         integration_debt_status=IntegrationDebtStatus.OPEN,
     )
     assert record.disposition == "BLOCKED"
@@ -30,11 +32,14 @@ def test_gate_policy_suite_failure_blocked():
         reason_code="TEST_FAILED",
         component="TEST",
         correlation_id="corr-002",
+        evidence_ids=["EV-W22-203"],
+        suite_id="SUITE-CROSS-001",
         runtime_scope=RuntimeScope.CROSS_RUNTIME,
-        suite_type=IntegrationSuiteType.UNIT_INTEGRATION,
+        suite_type=IntegrationSuiteType.CROSS_RUNTIME,
+        debt_item_id="DEBT-CROSS-001",
     )
     assert record.disposition == "BLOCKED"
-    assert record.reason_code == "CROSS_RUNTIME_INTEGRATION_SUITE_FAIL"
+    assert record.reason_code == "CROSS_RUNTIME_SUITE_FAIL"
 
 
 def test_gate_policy_regression_detected_blocked():
@@ -46,6 +51,7 @@ def test_gate_policy_regression_detected_blocked():
         reason_code="OK",
         component="TEST",
         correlation_id="corr-003",
+        evidence_ids=["EV-W22-207"],
         regression_count=1,
     )
     assert record.disposition == "BLOCKED"
@@ -61,9 +67,45 @@ def test_gate_policy_missing_correlation_id():
         reason_code="OK",
         component="TEST",
         correlation_id=None,
+        evidence_ids=["EV-W22-208"],
     )
     assert record.disposition == "BLOCKED"
     assert record.reason_code == "MISSING_CORRELATION_ID"
+
+
+def test_gate_policy_missing_debt_mapping_for_failed_suite():
+    manager = IntegrationGateManager()
+    record = manager.build_gate_record(
+        run_id="RUN-005",
+        scenario_id="RS_INTEGRATION_SUITE",
+        disposition="FAIL",
+        reason_code="FAILED",
+        component="TEST",
+        correlation_id="corr-005",
+        evidence_ids=["EV-W22-202"],
+        suite_id="SUITE-RS-001",
+        runtime_scope=RuntimeScope.RUST,
+        suite_type=IntegrationSuiteType.RS_INTEGRATION,
+    )
+    assert record.disposition == "BLOCKED"
+    assert record.reason_code == "MISSING_DEBT_MAPPING"
+
+
+def test_gate_policy_pass_without_evidence_blocked():
+    manager = IntegrationGateManager()
+    record = manager.build_gate_record(
+        run_id="RUN-006",
+        scenario_id="PY_INTEGRATION_SUITE",
+        disposition="PASS",
+        reason_code="OK",
+        component="TEST",
+        correlation_id="corr-006",
+        suite_id="SUITE-PY-001",
+        runtime_scope=RuntimeScope.PYTHON,
+        suite_type=IntegrationSuiteType.PY_INTEGRATION,
+    )
+    assert record.disposition == "BLOCKED"
+    assert record.reason_code == "MISSING_EVIDENCE_CAPTURE"
 
 
 def test_gate_summary_aggregation():
@@ -76,8 +118,10 @@ def test_gate_summary_aggregation():
         reason_code="OK",
         component="TEST",
         correlation_id="corr-py",
+        evidence_ids=["EV-W22-201"],
+        suite_id="SUITE-PY-001",
         runtime_scope=RuntimeScope.PYTHON,
-        suite_type=IntegrationSuiteType.UNIT_INTEGRATION,
+        suite_type=IntegrationSuiteType.PY_INTEGRATION,
     )
 
     manager.build_gate_record(
@@ -87,6 +131,8 @@ def test_gate_summary_aggregation():
         reason_code="OK",
         component="TEST",
         correlation_id="corr-debt",
+        evidence_ids=["EV-W22-204"],
+        debt_item_id="DEBT-002",
         integration_debt_status=IntegrationDebtStatus.CLOSED,
     )
 

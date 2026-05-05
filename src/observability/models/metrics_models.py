@@ -4,6 +4,7 @@ Metric data structures for internal use.
 These models represent the actual metric data collected
 by each collector type.
 """
+
 from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel, Field
@@ -11,6 +12,7 @@ from pydantic import BaseModel, Field
 
 class MarketDataMetric(BaseModel):
     """Market data metric for a symbol."""
+
     symbol: str
     timestamp: datetime
 
@@ -31,13 +33,13 @@ class MarketDataMetric(BaseModel):
 
     # Order book
     order_book_imbalance: Optional[float] = Field(
-        None,
-        description="Order book imbalance (-1 to 1)"
+        None, description="Order book imbalance (-1 to 1)"
     )
 
 
 class StrategyMetric(BaseModel):
     """Strategy performance metric."""
+
     strategy_name: str
     timestamp: datetime
 
@@ -65,6 +67,7 @@ class StrategyMetric(BaseModel):
 
 class ExecutionMetric(BaseModel):
     """Order execution metric."""
+
     timestamp: datetime
 
     # Order statistics
@@ -79,18 +82,13 @@ class ExecutionMetric(BaseModel):
     avg_slippage_bps: float = Field(description="Average slippage (bps)")
 
     # Execution quality
-    market_impact_bps: Optional[float] = Field(
-        None,
-        description="Average market impact (bps)"
-    )
-    implementation_shortfall: Optional[float] = Field(
-        None,
-        description="Implementation shortfall"
-    )
+    market_impact_bps: Optional[float] = Field(None, description="Average market impact (bps)")
+    implementation_shortfall: Optional[float] = Field(None, description="Implementation shortfall")
 
 
 class SystemMetric(BaseModel):
     """System health metric."""
+
     timestamp: datetime
 
     # Resource usage
@@ -112,7 +110,5 @@ class SystemMetric(BaseModel):
     p99_latency_ms: Optional[float] = None
 
     # Health status
-    health_status: str = Field(
-        description="Overall health: healthy, degraded, unhealthy"
-    )
+    health_status: str = Field(description="Overall health: healthy, degraded, unhealthy")
     active_alerts: int = Field(default=0, description="Number of active alerts")

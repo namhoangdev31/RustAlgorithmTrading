@@ -4,6 +4,7 @@ Comprehensive logging infrastructure tests.
 Tests structured logging, log formatting, async logging performance,
 rotation, archival, error handling, and high-throughput scenarios.
 """
+
 import asyncio
 import json
 import logging
@@ -20,6 +21,7 @@ from tests.observability.fixtures.sample_logs import LogDataGenerator, Structure
 # ============================================================================
 # UNIT TESTS: Structured Logging
 # ============================================================================
+
 
 @pytest.mark.logging
 @pytest.mark.unit
@@ -88,6 +90,7 @@ class TestStructuredLogging:
 # UNIT TESTS: Correlation ID Propagation
 # ============================================================================
 
+
 @pytest.mark.logging
 @pytest.mark.correlation
 @pytest.mark.unit
@@ -146,6 +149,7 @@ class TestCorrelationIDPropagation:
 # INTEGRATION TESTS: Log File Operations
 # ============================================================================
 
+
 @pytest.mark.logging
 @pytest.mark.integration
 class TestLogFileOperations:
@@ -159,7 +163,11 @@ class TestLogFileOperations:
         logger = logging.getLogger("test_logger_creation")
         logger.setLevel(logging.INFO)
         handler = logging.FileHandler(str(log_file))
-        handler.setFormatter(logging.Formatter('{"timestamp":"%(asctime)s","level":"%(levelname)s","message":"%(message)s"}'))
+        handler.setFormatter(
+            logging.Formatter(
+                '{"timestamp":"%(asctime)s","level":"%(levelname)s","message":"%(message)s"}'
+            )
+        )
         logger.addHandler(handler)
 
         logger = logging.getLogger("test_logger_creation")
@@ -242,6 +250,7 @@ class TestLogFileOperations:
 # PERFORMANCE TESTS: High Throughput Logging
 # ============================================================================
 
+
 @pytest.mark.logging
 @pytest.mark.performance
 @pytest.mark.slow
@@ -276,7 +285,9 @@ class TestLoggingPerformance:
             """Async batch log writing."""
             logs = LogDataGenerator.generate_batch(count=batch_size)
             await asyncio.to_thread(
-                lambda: [log_file.write_text(json.dumps(log) + "\n", encoding="utf-8") for log in logs]
+                lambda: [
+                    log_file.write_text(json.dumps(log) + "\n", encoding="utf-8") for log in logs
+                ]
             )
 
         log_file = temp_log_dir / "async_test.log"
@@ -316,6 +327,7 @@ class TestLoggingPerformance:
 # ============================================================================
 # ERROR HANDLING TESTS
 # ============================================================================
+
 
 @pytest.mark.logging
 @pytest.mark.unit
@@ -366,6 +378,7 @@ class TestLoggingErrorHandling:
 # ============================================================================
 # REGRESSION TESTS
 # ============================================================================
+
 
 @pytest.mark.logging
 @pytest.mark.unit

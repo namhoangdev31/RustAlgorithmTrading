@@ -102,16 +102,15 @@ class TestSignalToOrderFlow:
     def test_long_signal_generates_buy_order(self):
         """Verify LONG signals generate BUY orders"""
         portfolio_handler = PortfolioHandler(
-            initial_capital=100000,
-            position_sizer=FixedAmountSizer(10000)
+            initial_capital=100000, position_sizer=FixedAmountSizer(10000)
         )
 
         # Create a LONG signal
         signal = SignalEvent(
             timestamp=datetime(2024, 1, 15),
-            symbol='TEST',
-            signal_type='LONG',
-            strategy_id='test_strategy',
+            symbol="TEST",
+            signal_type="LONG",
+            strategy_id="test_strategy",
             strength=0.8,
         )
 
@@ -120,6 +119,7 @@ class TestSignalToOrderFlow:
             def get_latest_bar(self, symbol):
                 class Bar:
                     close = 100.0
+
                 return Bar()
 
         portfolio_handler.data_handler = MockDataHandler()
@@ -130,7 +130,7 @@ class TestSignalToOrderFlow:
         # ASSERT: Should generate exactly 1 BUY order
         assert len(orders) == 1, f"Expected 1 order, got {len(orders)}"
         order = orders[0]
-        assert order.direction == 'BUY', f"Expected BUY order, got {order.direction}"
+        assert order.direction == "BUY", f"Expected BUY order, got {order.direction}"
         assert order.quantity > 0, "Order quantity must be positive"
 
         logger.info(f"✅ LONG signal → BUY {order.quantity} shares")
@@ -138,16 +138,15 @@ class TestSignalToOrderFlow:
     def test_short_signal_generates_sell_order(self):
         """Verify SHORT signals generate SELL orders"""
         portfolio_handler = PortfolioHandler(
-            initial_capital=100000,
-            position_sizer=FixedAmountSizer(10000)
+            initial_capital=100000, position_sizer=FixedAmountSizer(10000)
         )
 
         # Create a SHORT signal
         signal = SignalEvent(
             timestamp=datetime(2024, 1, 15),
-            symbol='TEST',
-            signal_type='SHORT',
-            strategy_id='test_strategy',
+            symbol="TEST",
+            signal_type="SHORT",
+            strategy_id="test_strategy",
             strength=0.8,
         )
 
@@ -156,6 +155,7 @@ class TestSignalToOrderFlow:
             def get_latest_bar(self, symbol):
                 class Bar:
                     close = 100.0
+
                 return Bar()
 
         portfolio_handler.data_handler = MockDataHandler()
@@ -166,7 +166,7 @@ class TestSignalToOrderFlow:
         # ASSERT: Should generate exactly 1 SELL order
         assert len(orders) == 1, f"Expected 1 order, got {len(orders)}"
         order = orders[0]
-        assert order.direction == 'SELL', f"Expected SELL order, got {order.direction}"
+        assert order.direction == "SELL", f"Expected SELL order, got {order.direction}"
         assert order.quantity > 0, "Order quantity must be positive"
 
         logger.info(f"✅ SHORT signal → SELL {order.quantity} shares")
@@ -174,8 +174,7 @@ class TestSignalToOrderFlow:
     def test_exit_signal_closes_position(self):
         """Verify EXIT signals close existing positions"""
         portfolio_handler = PortfolioHandler(
-            initial_capital=100000,
-            position_sizer=FixedAmountSizer(10000)
+            initial_capital=100000, position_sizer=FixedAmountSizer(10000)
         )
 
         # Set up mock data handler
@@ -183,6 +182,7 @@ class TestSignalToOrderFlow:
             def get_latest_bar(self, symbol):
                 class Bar:
                     close = 105.0
+
                 return Bar()
 
         portfolio_handler.data_handler = MockDataHandler()
@@ -190,9 +190,9 @@ class TestSignalToOrderFlow:
         # First, open a position with LONG signal
         long_signal = SignalEvent(
             timestamp=datetime(2024, 1, 10),
-            symbol='TEST',
-            signal_type='LONG',
-            strategy_id='test_strategy',
+            symbol="TEST",
+            signal_type="LONG",
+            strategy_id="test_strategy",
             strength=0.8,
         )
 
@@ -202,10 +202,10 @@ class TestSignalToOrderFlow:
         # Simulate fill
         fill = FillEvent(
             timestamp=datetime(2024, 1, 10),
-            symbol='TEST',
-            exchange='TEST',
+            symbol="TEST",
+            exchange="TEST",
             quantity=orders[0].quantity,
-            direction='BUY',
+            direction="BUY",
             fill_price=100.0,
             commission=10.0,
         )
@@ -214,9 +214,9 @@ class TestSignalToOrderFlow:
         # Now send EXIT signal
         exit_signal = SignalEvent(
             timestamp=datetime(2024, 1, 15),
-            symbol='TEST',
-            signal_type='EXIT',
-            strategy_id='test_strategy',
+            symbol="TEST",
+            signal_type="EXIT",
+            strategy_id="test_strategy",
             strength=1.0,
         )
 
@@ -225,10 +225,10 @@ class TestSignalToOrderFlow:
         # ASSERT: Should generate exactly 1 SELL order to close position
         assert len(exit_orders) == 1, f"Expected 1 exit order, got {len(exit_orders)}"
         exit_order = exit_orders[0]
-        assert exit_order.direction == 'SELL', f"Expected SELL to exit, got {exit_order.direction}"
-        assert exit_order.quantity == orders[0].quantity, (
-            f"Exit order quantity {exit_order.quantity} should match entry {orders[0].quantity}"
-        )
+        assert exit_order.direction == "SELL", f"Expected SELL to exit, got {exit_order.direction}"
+        assert (
+            exit_order.quantity == orders[0].quantity
+        ), f"Exit order quantity {exit_order.quantity} should match entry {orders[0].quantity}"
 
         logger.info(f"✅ EXIT signal → SELL {exit_order.quantity} shares (closing position)")
 
@@ -246,23 +246,25 @@ class TestEndToEndBacktestFlow:
         )
 
         # Create synthetic market data
-        dates = pd.date_range(start='2024-01-01', end='2024-02-01', freq='1D')
+        dates = pd.date_range(start="2024-01-01", end="2024-02-01", freq="1D")
         n_bars = len(dates)
 
         # Uptrend: 100 → 120
         prices = np.linspace(100, 120, n_bars)
         prices += np.random.normal(0, 1, n_bars)  # Small noise
 
-        data = pd.DataFrame({
-            'timestamp': dates,
-            'open': prices * 0.99,
-            'high': prices * 1.01,
-            'low': prices * 0.98,
-            'close': prices,
-            'volume': np.random.randint(1000000, 5000000, n_bars)
-        })
-        data.set_index('timestamp', inplace=True)
-        data.attrs['symbol'] = 'TEST'
+        data = pd.DataFrame(
+            {
+                "timestamp": dates,
+                "open": prices * 0.99,
+                "high": prices * 1.01,
+                "low": prices * 0.98,
+                "close": prices,
+                "volume": np.random.randint(1000000, 5000000, n_bars),
+            }
+        )
+        data.set_index("timestamp", inplace=True)
+        data.attrs["symbol"] = "TEST"
 
         # Generate signals
         signals = strategy.generate_signals(data)
@@ -274,8 +276,7 @@ class TestEndToEndBacktestFlow:
 
         # Initialize portfolio
         portfolio_handler = PortfolioHandler(
-            initial_capital=100000,
-            position_sizer=FixedAmountSizer(10000)
+            initial_capital=100000, position_sizer=FixedAmountSizer(10000)
         )
 
         # Mock data handler
@@ -290,7 +291,7 @@ class TestEndToEndBacktestFlow:
 
                     class Bar:
                         def __init__(self, row_data):
-                            self.close = float(row_data['close'])
+                            self.close = float(row_data["close"])
                             self.timestamp = row_data.name
 
                     return Bar(row)
@@ -312,7 +313,7 @@ class TestEndToEndBacktestFlow:
                 timestamp=signal.timestamp,
                 symbol=signal.symbol,
                 signal_type=signal.signal_type,
-                strategy_id='momentum',
+                strategy_id="momentum",
                 strength=signal.confidence,
             )
 
@@ -322,11 +323,11 @@ class TestEndToEndBacktestFlow:
 
             # Simulate fills
             for order in orders:
-                fill_price = signal.price * (1.0005 if order.direction == 'BUY' else 0.9995)
+                fill_price = signal.price * (1.0005 if order.direction == "BUY" else 0.9995)
                 fill = FillEvent(
                     timestamp=signal.timestamp,
                     symbol=signal.symbol,
-                    exchange='TEST',
+                    exchange="TEST",
                     quantity=order.quantity,
                     direction=order.direction,
                     fill_price=fill_price,
@@ -368,20 +369,22 @@ class TestEndToEndBacktestFlow:
         )
 
         # Create oscillating market data
-        dates = pd.date_range(start='2024-01-01', end='2024-03-01', freq='1D')
+        dates = pd.date_range(start="2024-01-01", end="2024-03-01", freq="1D")
         time = np.arange(len(dates))
         prices = 100 + 15 * np.sin(time / 10)  # Large oscillations
 
-        data = pd.DataFrame({
-            'timestamp': dates,
-            'open': prices * 0.99,
-            'high': prices * 1.01,
-            'low': prices * 0.98,
-            'close': prices,
-            'volume': np.random.randint(1000000, 5000000, len(dates))
-        })
-        data.set_index('timestamp', inplace=True)
-        data.attrs['symbol'] = 'TEST'
+        data = pd.DataFrame(
+            {
+                "timestamp": dates,
+                "open": prices * 0.99,
+                "high": prices * 1.01,
+                "low": prices * 0.98,
+                "close": prices,
+                "volume": np.random.randint(1000000, 5000000, len(dates)),
+            }
+        )
+        data.set_index("timestamp", inplace=True)
+        data.attrs["symbol"] = "TEST"
 
         # Generate signals
         signals = strategy.generate_signals(data)
@@ -393,8 +396,7 @@ class TestEndToEndBacktestFlow:
 
         # Initialize portfolio
         portfolio_handler = PortfolioHandler(
-            initial_capital=100000,
-            position_sizer=FixedAmountSizer(10000)
+            initial_capital=100000, position_sizer=FixedAmountSizer(10000)
         )
 
         # Mock data handler
@@ -409,7 +411,7 @@ class TestEndToEndBacktestFlow:
 
                     class Bar:
                         def __init__(self, row_data):
-                            self.close = float(row_data['close'])
+                            self.close = float(row_data["close"])
                             self.timestamp = row_data.name
 
                     return Bar(row)
@@ -431,7 +433,7 @@ class TestEndToEndBacktestFlow:
                 timestamp=signal.timestamp,
                 symbol=signal.symbol,
                 signal_type=signal.signal_type,
-                strategy_id='mean_reversion',
+                strategy_id="mean_reversion",
                 strength=signal.confidence,
             )
 
@@ -441,11 +443,11 @@ class TestEndToEndBacktestFlow:
 
             # Simulate fills
             for order in orders:
-                fill_price = signal.price * (1.0005 if order.direction == 'BUY' else 0.9995)
+                fill_price = signal.price * (1.0005 if order.direction == "BUY" else 0.9995)
                 fill = FillEvent(
                     timestamp=signal.timestamp,
                     symbol=signal.symbol,
-                    exchange='TEST',
+                    exchange="TEST",
                     quantity=order.quantity,
                     direction=order.direction,
                     fill_price=fill_price,
@@ -486,22 +488,23 @@ class TestSignalExecutionBottlenecks:
         # Start with very low capital
         portfolio_handler = PortfolioHandler(
             initial_capital=1000,  # Very low
-            position_sizer=FixedAmountSizer(10000)  # Wants $10k position
+            position_sizer=FixedAmountSizer(10000),  # Wants $10k position
         )
 
         class MockDataHandler:
             def get_latest_bar(self, symbol):
                 class Bar:
                     close = 200.0  # Expensive stock
+
                 return Bar()
 
         portfolio_handler.data_handler = MockDataHandler()
 
         signal = SignalEvent(
             timestamp=datetime(2024, 1, 15),
-            symbol='TEST',
-            signal_type='LONG',
-            strategy_id='test',
+            symbol="TEST",
+            signal_type="LONG",
+            strategy_id="test",
             strength=0.8,
         )
 
@@ -513,9 +516,9 @@ class TestSignalExecutionBottlenecks:
         if len(orders) > 0:
             order = orders[0]
             estimated_cost = order.quantity * 200 * 1.002  # With fees
-            assert estimated_cost <= 1000, (
-                f"Order cost ${estimated_cost:.2f} exceeds available cash $1000"
-            )
+            assert (
+                estimated_cost <= 1000
+            ), f"Order cost ${estimated_cost:.2f} exceeds available cash $1000"
             logger.info(f"✅ Order adjusted for cash constraint: {order.quantity} shares")
         else:
             logger.info(f"✅ Signal skipped due to insufficient cash (expected)")
@@ -523,23 +526,23 @@ class TestSignalExecutionBottlenecks:
     def test_position_sizer_bottleneck(self):
         """Test if position sizer returns 0 shares"""
         portfolio_handler = PortfolioHandler(
-            initial_capital=100000,
-            position_sizer=FixedAmountSizer(10)  # Tiny position size
+            initial_capital=100000, position_sizer=FixedAmountSizer(10)  # Tiny position size
         )
 
         class MockDataHandler:
             def get_latest_bar(self, symbol):
                 class Bar:
                     close = 200.0
+
                 return Bar()
 
         portfolio_handler.data_handler = MockDataHandler()
 
         signal = SignalEvent(
             timestamp=datetime(2024, 1, 15),
-            symbol='TEST',
-            signal_type='LONG',
-            strategy_id='test',
+            symbol="TEST",
+            signal_type="LONG",
+            strategy_id="test",
             strength=0.8,
         )
 
@@ -552,6 +555,6 @@ class TestSignalExecutionBottlenecks:
             logger.warning("⚠️ Position sizer returned 0 shares - potential bottleneck!")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Run tests with verbose output
-    pytest.main([__file__, '-v', '-s', '--tb=short'])
+    pytest.main([__file__, "-v", "-s", "--tb=short"])

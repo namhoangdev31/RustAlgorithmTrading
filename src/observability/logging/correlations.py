@@ -11,9 +11,7 @@ from contextvars import ContextVar, Token
 from typing import Generator, Optional, Any, Literal
 
 # Context variable for correlation ID (thread-safe and async-safe)
-correlation_id_var: ContextVar[Optional[str]] = ContextVar(
-    'correlation_id', default=None
-)
+correlation_id_var: ContextVar[Optional[str]] = ContextVar("correlation_id", default=None)
 
 
 @contextmanager
@@ -151,12 +149,12 @@ def extract_correlation_id_from_headers(headers: dict) -> Optional[str]:
         Correlation ID if found, None otherwise
     """
     header_names = [
-        'X-Correlation-ID',
-        'X-Request-ID',
-        'X-Trace-ID',
-        'x-correlation-id',
-        'x-request-id',
-        'x-trace-id',
+        "X-Correlation-ID",
+        "X-Request-ID",
+        "X-Trace-ID",
+        "x-correlation-id",
+        "x-request-id",
+        "x-trace-id",
     ]
 
     for header in header_names:
@@ -167,10 +165,7 @@ def extract_correlation_id_from_headers(headers: dict) -> Optional[str]:
     return None
 
 
-def inject_correlation_id_into_headers(
-    headers: dict,
-    cid: Optional[str] = None
-) -> dict:
+def inject_correlation_id_into_headers(headers: dict, cid: Optional[str] = None) -> dict:
     """
     Inject correlation ID into HTTP headers
 
@@ -187,6 +182,6 @@ def inject_correlation_id_into_headers(
         cid = get_correlation_id()
 
     if cid is not None:
-        headers['X-Correlation-ID'] = cid
+        headers["X-Correlation-ID"] = cid
 
     return headers

@@ -16,7 +16,7 @@ class PerformanceMetrics:
         trades: List[Any],
         equity_curve: pd.DataFrame,
         initial_capital: float,
-        risk_free_rate: float = 0.02
+        risk_free_rate: float = 0.02,
     ) -> Dict[str, Any]:
         """
         Calculate comprehensive performance metrics
@@ -35,10 +35,10 @@ class PerformanceMetrics:
 
         # Calculate returns
         equity_curve = equity_curve.copy()
-        equity_curve['returns'] = equity_curve['equity'].pct_change().fillna(0)
+        equity_curve["returns"] = equity_curve["equity"].pct_change().fillna(0)
 
         # Basic metrics
-        final_equity = float(equity_curve.iloc[-1]['equity'])
+        final_equity = float(equity_curve.iloc[-1]["equity"])
         total_return = (final_equity - initial_capital) / initial_capital
         total_return_pct = total_return * 100
 
@@ -63,17 +63,15 @@ class PerformanceMetrics:
 
         # Risk metrics
         sharpe_ratio = PerformanceMetrics._calculate_sharpe_ratio(
-            equity_curve['returns'],
-            risk_free_rate
+            equity_curve["returns"], risk_free_rate
         )
 
         sortino_ratio = PerformanceMetrics._calculate_sortino_ratio(
-            equity_curve['returns'],
-            risk_free_rate
+            equity_curve["returns"], risk_free_rate
         )
 
         max_drawdown, max_drawdown_pct = PerformanceMetrics._calculate_max_drawdown(
-            equity_curve['equity']
+            equity_curve["equity"]
         )
 
         # Calmar ratio
@@ -81,48 +79,41 @@ class PerformanceMetrics:
         calmar_ratio = (annual_return / abs(max_drawdown_pct)) if max_drawdown_pct != 0 else 0
 
         # Expectancy
-        expectancy = (win_rate/100 * avg_win) - ((1 - win_rate/100) * abs(avg_loss))
+        expectancy = (win_rate / 100 * avg_win) - ((1 - win_rate / 100) * abs(avg_loss))
 
         metrics = {
             # Returns
-            'total_return': total_return,
-            'total_return_pct': total_return_pct,
-            'annual_return': annual_return,
-            'net_profit': net_profit,
-
+            "total_return": total_return,
+            "total_return_pct": total_return_pct,
+            "annual_return": annual_return,
+            "net_profit": net_profit,
             # Trade statistics
-            'num_trades': num_trades,
-            'num_winning': num_winning,
-            'num_losing': num_losing,
-            'win_rate': win_rate,
-
+            "num_trades": num_trades,
+            "num_winning": num_winning,
+            "num_losing": num_losing,
+            "win_rate": win_rate,
             # Profit metrics
-            'total_profit': total_profit,
-            'total_loss': total_loss,
-            'avg_win': avg_win,
-            'avg_loss': avg_loss,
-            'profit_factor': profit_factor,
-            'expectancy': expectancy,
-
+            "total_profit": total_profit,
+            "total_loss": total_loss,
+            "avg_win": avg_win,
+            "avg_loss": avg_loss,
+            "profit_factor": profit_factor,
+            "expectancy": expectancy,
             # Risk metrics
-            'sharpe_ratio': sharpe_ratio,
-            'sortino_ratio': sortino_ratio,
-            'max_drawdown': max_drawdown,
-            'max_drawdown_pct': max_drawdown_pct,
-            'calmar_ratio': calmar_ratio,
-
+            "sharpe_ratio": sharpe_ratio,
+            "sortino_ratio": sortino_ratio,
+            "max_drawdown": max_drawdown,
+            "max_drawdown_pct": max_drawdown_pct,
+            "calmar_ratio": calmar_ratio,
             # Volatility
-            'volatility': float(equity_curve['returns'].std() * np.sqrt(252)),
+            "volatility": float(equity_curve["returns"].std() * np.sqrt(252)),
         }
 
         logger.info("Performance metrics calculated successfully")
         return metrics
 
     @staticmethod
-    def _calculate_sharpe_ratio(
-        returns: pd.Series,
-        risk_free_rate: float = 0.02
-    ) -> float:
+    def _calculate_sharpe_ratio(returns: pd.Series, risk_free_rate: float = 0.02) -> float:
         """Calculate Sharpe ratio"""
         if len(returns) == 0 or returns.std() == 0:
             return 0.0
@@ -132,10 +123,7 @@ class PerformanceMetrics:
         return float(sharpe)
 
     @staticmethod
-    def _calculate_sortino_ratio(
-        returns: pd.Series,
-        risk_free_rate: float = 0.02
-    ) -> float:
+    def _calculate_sortino_ratio(returns: pd.Series, risk_free_rate: float = 0.02) -> float:
         """Calculate Sortino ratio (only considers downside volatility)"""
         if len(returns) == 0:
             return 0.0
@@ -177,24 +165,24 @@ class PerformanceMetrics:
     def _empty_metrics() -> Dict[str, Any]:
         """Return empty metrics dict"""
         return {
-            'total_return': 0.0,
-            'total_return_pct': 0.0,
-            'annual_return': 0.0,
-            'net_profit': 0.0,
-            'num_trades': 0,
-            'num_winning': 0,
-            'num_losing': 0,
-            'win_rate': 0.0,
-            'total_profit': 0.0,
-            'total_loss': 0.0,
-            'avg_win': 0.0,
-            'avg_loss': 0.0,
-            'profit_factor': 0.0,
-            'expectancy': 0.0,
-            'sharpe_ratio': 0.0,
-            'sortino_ratio': 0.0,
-            'max_drawdown': 0.0,
-            'max_drawdown_pct': 0.0,
-            'calmar_ratio': 0.0,
-            'volatility': 0.0,
+            "total_return": 0.0,
+            "total_return_pct": 0.0,
+            "annual_return": 0.0,
+            "net_profit": 0.0,
+            "num_trades": 0,
+            "num_winning": 0,
+            "num_losing": 0,
+            "win_rate": 0.0,
+            "total_profit": 0.0,
+            "total_loss": 0.0,
+            "avg_win": 0.0,
+            "avg_loss": 0.0,
+            "profit_factor": 0.0,
+            "expectancy": 0.0,
+            "sharpe_ratio": 0.0,
+            "sortino_ratio": 0.0,
+            "max_drawdown": 0.0,
+            "max_drawdown_pct": 0.0,
+            "calmar_ratio": 0.0,
+            "volatility": 0.0,
         }

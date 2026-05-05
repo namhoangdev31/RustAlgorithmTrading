@@ -31,7 +31,7 @@ class TestShortPositionEntry:
 
     def test_reserved_cash_initialized(self, portfolio):
         """Test that reserved cash is initialized to 0."""
-        assert hasattr(portfolio, 'reserved_cash')
+        assert hasattr(portfolio, "reserved_cash")
         assert portfolio.reserved_cash == 0.0
         assert portfolio.portfolio.cash == 100000.0
 
@@ -45,23 +45,23 @@ class TestShortPositionEntry:
         """Test that SHORT signal type is recognized."""
         signal = SignalEvent(
             timestamp=datetime(2024, 1, 1, 9, 30),
-            symbol='AAPL',
-            signal_type='SHORT',
+            symbol="AAPL",
+            signal_type="SHORT",
             strength=1.0,
-            strategy_id='test'
+            strategy_id="test",
         )
-        assert signal.signal_type == 'SHORT'
+        assert signal.signal_type == "SHORT"
 
     def test_exit_signal_type_is_valid(self, portfolio):
         """Test that EXIT signal type is recognized."""
         signal = SignalEvent(
             timestamp=datetime(2024, 1, 1, 9, 30),
-            symbol='AAPL',
-            signal_type='EXIT',
+            symbol="AAPL",
+            signal_type="EXIT",
             strength=1.0,
-            strategy_id='test'
+            strategy_id="test",
         )
-        assert signal.signal_type == 'EXIT'
+        assert signal.signal_type == "EXIT"
 
 
 class TestShortPositionExit:
@@ -73,8 +73,9 @@ class TestShortPositionExit:
         portfolio = PortfolioHandler(initial_capital=100000.0)
         # Manually add a short position for testing
         from models.portfolio import Position
-        portfolio.portfolio.positions['AAPL'] = Position(
-            symbol='AAPL',
+
+        portfolio.portfolio.positions["AAPL"] = Position(
+            symbol="AAPL",
             quantity=-100,  # Negative = short
             average_price=150.0,
             current_price=150.0,
@@ -83,14 +84,14 @@ class TestShortPositionExit:
 
     def test_short_position_has_negative_quantity(self, portfolio_with_short):
         """Test that short position is stored with negative quantity."""
-        position = portfolio_with_short.portfolio.positions.get('AAPL')
+        position = portfolio_with_short.portfolio.positions.get("AAPL")
         assert position is not None
         assert position.quantity < 0, "Short position should have negative quantity"
         assert position.quantity == -100
 
     def test_short_position_market_value_is_negative(self, portfolio_with_short):
         """Test that short position has negative market value."""
-        position = portfolio_with_short.portfolio.positions.get('AAPL')
+        position = portfolio_with_short.portfolio.positions.get("AAPL")
         assert position is not None
         assert position.market_value < 0, "Short position should have negative market value"
 
@@ -138,7 +139,7 @@ class TestReservedCashForShorts:
 
     def test_reserved_cash_attribute_exists(self, portfolio):
         """Test that reserved_cash attribute exists."""
-        assert hasattr(portfolio, 'reserved_cash')
+        assert hasattr(portfolio, "reserved_cash")
         assert portfolio.reserved_cash == 0.0
 
     def test_reserved_cash_can_be_updated(self, portfolio):
@@ -187,8 +188,9 @@ class TestExitSignalDirectionFix:
         """Create a portfolio with an existing long position."""
         portfolio = PortfolioHandler(initial_capital=100000.0)
         from models.portfolio import Position
-        portfolio.portfolio.positions['AAPL'] = Position(
-            symbol='AAPL',
+
+        portfolio.portfolio.positions["AAPL"] = Position(
+            symbol="AAPL",
             quantity=100,  # Positive = long
             average_price=150.0,
             current_price=150.0,
@@ -201,8 +203,9 @@ class TestExitSignalDirectionFix:
         """Create a portfolio with an existing short position."""
         portfolio = PortfolioHandler(initial_capital=100000.0)
         from models.portfolio import Position
-        portfolio.portfolio.positions['AAPL'] = Position(
-            symbol='AAPL',
+
+        portfolio.portfolio.positions["AAPL"] = Position(
+            symbol="AAPL",
             quantity=-100,  # Negative = short
             average_price=150.0,
             current_price=150.0,
@@ -211,12 +214,12 @@ class TestExitSignalDirectionFix:
 
     def test_long_position_has_positive_quantity(self, portfolio_with_long):
         """Test that long position has positive quantity."""
-        position = portfolio_with_long.portfolio.positions.get('AAPL')
+        position = portfolio_with_long.portfolio.positions.get("AAPL")
         assert position.quantity > 0
 
     def test_short_position_has_negative_quantity(self, portfolio_with_short):
         """Test that short position has negative quantity."""
-        position = portfolio_with_short.portfolio.positions.get('AAPL')
+        position = portfolio_with_short.portfolio.positions.get("AAPL")
         assert position.quantity < 0
 
     def test_exit_direction_determined_by_position_type(self):
@@ -224,20 +227,20 @@ class TestExitSignalDirectionFix:
         # For long positions (qty > 0), exit should be SELL
         long_qty = 100
         if long_qty > 0:
-            exit_direction = 'SELL'
+            exit_direction = "SELL"
         else:
-            exit_direction = 'BUY'  # Cover short
+            exit_direction = "BUY"  # Cover short
 
-        assert exit_direction == 'SELL'
+        assert exit_direction == "SELL"
 
         # For short positions (qty < 0), exit should be BUY (cover)
         short_qty = -100
         if short_qty > 0:
-            exit_direction = 'SELL'
+            exit_direction = "SELL"
         else:
-            exit_direction = 'BUY'  # Cover short
+            exit_direction = "BUY"  # Cover short
 
-        assert exit_direction == 'BUY'
+        assert exit_direction == "BUY"
 
 
 class TestPortfolioEquityCurve:
@@ -258,9 +261,9 @@ class TestPortfolioEquityCurve:
         portfolio.update_timeindex(timestamp)
 
         assert len(portfolio.equity_curve) == 1
-        assert portfolio.equity_curve[0]['timestamp'] == timestamp
-        assert portfolio.equity_curve[0]['equity'] == 100000.0
+        assert portfolio.equity_curve[0]["timestamp"] == timestamp
+        assert portfolio.equity_curve[0]["equity"] == 100000.0
 
 
-if __name__ == '__main__':
-    pytest.main([__file__, '-v', '--tb=short'])
+if __name__ == "__main__":
+    pytest.main([__file__, "-v", "--tb=short"])

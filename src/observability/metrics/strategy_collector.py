@@ -9,6 +9,7 @@ Tracks strategy execution and performance:
 - Drawdown analysis
 - Sharpe ratio and other risk metrics
 """
+
 import asyncio
 from typing import Dict, Any, Optional
 from datetime import datetime
@@ -93,7 +94,7 @@ class StrategyCollector(BaseCollector):
                     "daily_pnl": 0.0,
                     "positions": 0,
                     "signals": 0,
-                    "win_rate": 0.5
+                    "win_rate": 0.5,
                 }
 
             # Simulate P&L changes
@@ -121,7 +122,7 @@ class StrategyCollector(BaseCollector):
                     "daily_pnl": metrics["daily_pnl"],
                     "positions": metrics["positions"],
                     "signals": metrics["signals"],
-                    "win_rate": metrics["win_rate"]
+                    "win_rate": metrics["win_rate"],
                 }
                 for name, metrics in self.strategies.items()
             ]
@@ -139,12 +140,10 @@ class StrategyCollector(BaseCollector):
             "total_pnl": self.total_pnl,
             "daily_pnl": self.daily_pnl,
             "open_positions": self.open_positions,
-            "signals_generated": self.signals_generated
+            "signals_generated": self.signals_generated,
         }
 
-    async def get_strategy_performance(
-        self, strategy_name: str
-    ) -> Optional[Dict[str, Any]]:
+    async def get_strategy_performance(self, strategy_name: str) -> Optional[Dict[str, Any]]:
         """Get performance metrics for a specific strategy."""
         return self.strategies.get(strategy_name)
 
@@ -155,5 +154,5 @@ class StrategyCollector(BaseCollector):
             "daily_pnl": self.daily_pnl,
             "open_positions": self.open_positions,
             "active_strategies": len(self.strategies),
-            "total_signals": self.signals_generated
+            "total_signals": self.signals_generated,
         }

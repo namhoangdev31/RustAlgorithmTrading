@@ -14,7 +14,7 @@ class MockPortfolioHandler:
 
     def __init__(self, initial_capital: float):
         self.current_cash = Decimal(str(initial_capital))
-        self._reserved_cash = Decimal('0')
+        self._reserved_cash = Decimal("0")
 
     def get_available_cash(self) -> Decimal:
         """Get cash available for new orders (excluding reserved)."""
@@ -46,19 +46,19 @@ class TestRaceConditionFixSimple:
     def test_reserved_cash_initialization(self):
         """Test that reserved cash is initialized to 0."""
         portfolio = MockPortfolioHandler(100000.0)
-        assert portfolio._reserved_cash == Decimal('0')
-        assert portfolio.current_cash == Decimal('100000.0')
-        assert portfolio.get_available_cash() == Decimal('100000.0')
+        assert portfolio._reserved_cash == Decimal("0")
+        assert portfolio.current_cash == Decimal("100000.0")
+        assert portfolio.get_available_cash() == Decimal("100000.0")
 
     def test_single_reservation(self):
         """Test single cash reservation."""
         portfolio = MockPortfolioHandler(100000.0)
 
         # Reserve 10,000
-        success = portfolio.reserve_cash(Decimal('10000.0'))
+        success = portfolio.reserve_cash(Decimal("10000.0"))
         assert success is True
-        assert portfolio._reserved_cash == Decimal('10000.0')
-        assert portfolio.get_available_cash() == Decimal('90000.0')
+        assert portfolio._reserved_cash == Decimal("10000.0")
+        assert portfolio.get_available_cash() == Decimal("90000.0")
 
     def test_multiple_reservations_same_bar(self):
         """Test that multiple reservations in the same bar don't cause overdraft."""
@@ -69,12 +69,14 @@ class TestRaceConditionFixSimple:
 
         for i in range(4):
             available = portfolio.get_available_cash()
-            amount = available * Decimal('0.25')
+            amount = available * Decimal("0.25")
             success = portfolio.reserve_cash(amount)
 
             if success:
                 reservations.append(amount)
-                print(f"Signal {i+1}: Reserved ${amount:.2f}, Available: ${portfolio.get_available_cash():.2f}")
+                print(
+                    f"Signal {i+1}: Reserved ${amount:.2f}, Available: ${portfolio.get_available_cash():.2f}"
+                )
 
         # All 4 should succeed without overdraft
         assert len(reservations) == 4
@@ -83,73 +85,73 @@ class TestRaceConditionFixSimple:
 
         # Total reserved should be reasonable (using 25% sequentially means diminishing amounts)
         total_reserved = sum(reservations)
-        assert total_reserved > Decimal('60000.0')  # Should use majority of capital
-        assert total_reserved < Decimal('100000.0')  # But not exceed total
+        assert total_reserved > Decimal("60000.0")  # Should use majority of capital
+        assert total_reserved < Decimal("100000.0")  # But not exceed total
 
     def test_order_rejection_insufficient_funds(self):
         """Test that orders are rejected when insufficient funds."""
         portfolio = MockPortfolioHandler(100000.0)
 
         # Reserve most of the cash
-        portfolio.reserve_cash(Decimal('95000.0'))
+        portfolio.reserve_cash(Decimal("95000.0"))
 
         # Try to reserve more than available
-        success = portfolio.reserve_cash(Decimal('10000.0'))
+        success = portfolio.reserve_cash(Decimal("10000.0"))
         assert success is False  # Should be rejected
-        assert portfolio._reserved_cash == Decimal('95000.0')  # Unchanged
+        assert portfolio._reserved_cash == Decimal("95000.0")  # Unchanged
 
     def test_order_execution_releases_reservation(self):
         """Test that executing an order releases the reservation and deducts cash."""
         portfolio = MockPortfolioHandler(100000.0)
 
         # Reserve cash
-        amount = Decimal('10000.0')
+        amount = Decimal("10000.0")
         portfolio.reserve_cash(amount)
 
         # Execute order
         success = portfolio.execute_order(amount)
         assert success is True
-        assert portfolio._reserved_cash == Decimal('0')  # Reservation released
-        assert portfolio.current_cash == Decimal('90000.0')  # Cash deducted
+        assert portfolio._reserved_cash == Decimal("0")  # Reservation released
+        assert portfolio.current_cash == Decimal("90000.0")  # Cash deducted
 
     def test_order_cancellation_releases_cash(self):
         """Test that canceling an order releases reserved cash."""
         portfolio = MockPortfolioHandler(100000.0)
 
         # Reserve cash
-        amount = Decimal('10000.0')
+        amount = Decimal("10000.0")
         portfolio.reserve_cash(amount)
 
         # Cancel reservation
         portfolio.cancel_reservation(amount)
 
-        assert portfolio._reserved_cash == Decimal('0')
-        assert portfolio.current_cash == Decimal('100000.0')  # Original amount
+        assert portfolio._reserved_cash == Decimal("0")
+        assert portfolio.current_cash == Decimal("100000.0")  # Original amount
 
     def test_concurrent_signals_sequential_processing(self):
         """Test that concurrent signals processed sequentially don't overdraft."""
         portfolio = MockPortfolioHandler(100000.0)
 
         signals = [
-            {'symbol': 'AAPL', 'price': 150.0},
-            {'symbol': 'GOOGL', 'price': 140.0},
-            {'symbol': 'MSFT', 'price': 370.0},
-            {'symbol': 'TSLA', 'price': 200.0},
+            {"symbol": "AAPL", "price": 150.0},
+            {"symbol": "GOOGL", "price": 140.0},
+            {"symbol": "MSFT", "price": 370.0},
+            {"symbol": "TSLA", "price": 200.0},
         ]
 
         executed_orders = []
 
         for signal in signals:
             available_cash = portfolio.get_available_cash()
-            position_value = available_cash * Decimal('0.20')  # 20% per signal
-            position_size = int(position_value / Decimal(str(signal['price'])))
+            position_value = available_cash * Decimal("0.20")  # 20% per signal
+            position_size = int(position_value / Decimal(str(signal["price"])))
 
             if position_size > 0:
-                cost = position_size * Decimal(str(signal['price']))
+                cost = position_size * Decimal(str(signal["price"]))
 
                 # Reserve cash
                 if portfolio.reserve_cash(cost):
-                    executed_orders.append((signal['symbol'], position_size, cost))
+                    executed_orders.append((signal["symbol"], position_size, cost))
 
         # Verify no overdraft occurred
         assert portfolio._reserved_cash <= portfolio.current_cash
@@ -160,7 +162,7 @@ class TestRaceConditionFixSimple:
             portfolio.execute_order(cost)
 
         # Verify final state
-        assert portfolio._reserved_cash == Decimal('0')
+        assert portfolio._reserved_cash == Decimal("0")
         assert portfolio.current_cash > 0  # Should have some cash left
         assert len(executed_orders) == 4  # All signals should have executed
 
@@ -170,9 +172,9 @@ class TestRaceConditionFixSimple:
 
         # Simulate 3 BUY signals arriving simultaneously
         signals = [
-            {'price': 150.0, 'allocation': 0.33},
-            {'price': 140.0, 'allocation': 0.33},
-            {'price': 370.0, 'allocation': 0.33},
+            {"price": 150.0, "allocation": 0.33},
+            {"price": 140.0, "allocation": 0.33},
+            {"price": 370.0, "allocation": 0.33},
         ]
 
         reservations = []
@@ -180,7 +182,7 @@ class TestRaceConditionFixSimple:
         # Process each signal
         for signal in signals:
             available = portfolio.get_available_cash()
-            amount = available * Decimal(str(signal['allocation']))
+            amount = available * Decimal(str(signal["allocation"]))
 
             if portfolio.reserve_cash(amount):
                 reservations.append(amount)
@@ -209,21 +211,21 @@ class TestRaceConditionFixSimple:
         portfolio = MockPortfolioHandler(100000.0)
 
         # Try to reserve exactly all available capital
-        success = portfolio.reserve_cash(Decimal('100000.0'))
+        success = portfolio.reserve_cash(Decimal("100000.0"))
         assert success is True
-        assert portfolio.get_available_cash() == Decimal('0')
+        assert portfolio.get_available_cash() == Decimal("0")
 
         # Try to reserve more (should fail)
-        success = portfolio.reserve_cash(Decimal('0.01'))
+        success = portfolio.reserve_cash(Decimal("0.01"))
         assert success is False
 
     def test_edge_case_zero_reservation(self):
         """Test edge case of zero reservation."""
         portfolio = MockPortfolioHandler(100000.0)
 
-        success = portfolio.reserve_cash(Decimal('0'))
+        success = portfolio.reserve_cash(Decimal("0"))
         assert success is True
-        assert portfolio._reserved_cash == Decimal('0')
+        assert portfolio._reserved_cash == Decimal("0")
 
     def test_precision_with_decimals(self):
         """Test that Decimal precision prevents floating point errors."""
@@ -231,18 +233,18 @@ class TestRaceConditionFixSimple:
 
         # Reserve amounts that could cause floating point errors
         amounts = [
-            Decimal('33333.33'),
-            Decimal('33333.33'),
-            Decimal('33333.34'),
+            Decimal("33333.33"),
+            Decimal("33333.33"),
+            Decimal("33333.34"),
         ]
 
         for amount in amounts:
             portfolio.reserve_cash(amount)
 
         # Should be exactly 100,000.00
-        assert portfolio._reserved_cash == Decimal('100000.00')
-        assert portfolio.get_available_cash() == Decimal('0.00')
+        assert portfolio._reserved_cash == Decimal("100000.00")
+        assert portfolio.get_available_cash() == Decimal("0.00")
 
 
-if __name__ == '__main__':
-    pytest.main([__file__, '-v', '--tb=short'])
+if __name__ == "__main__":
+    pytest.main([__file__, "-v", "--tb=short"])

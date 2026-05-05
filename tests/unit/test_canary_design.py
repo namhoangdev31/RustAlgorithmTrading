@@ -12,7 +12,7 @@ def test_canary_record_policy_exposure_tier():
         reason_code="OK",
         component="TEST",
         correlation_id="corr-123",
-        exposure_tier=None # Missing
+        exposure_tier=None,  # Missing
     )
     assert record.disposition == "BLOCKED"
     assert record.reason_code == "MISSING_EXPOSURE_TIER"
@@ -96,7 +96,7 @@ def test_canary_summary_aggregation():
         component="TEST",
         correlation_id="corr-789",
         canary_tier="T1",
-        exposure_tier=ExposureTier.T1
+        exposure_tier=ExposureTier.T1,
     )
 
     manager.build_canary_record(
@@ -107,7 +107,7 @@ def test_canary_summary_aggregation():
         component="TEST",
         correlation_id="corr-101",
         breach_class=BreachClass.LATENCY,
-        kill_switch_latency_ms=42500
+        kill_switch_latency_ms=42500,
     )
 
     manager.build_canary_record(
@@ -129,7 +129,7 @@ def test_canary_summary_aggregation():
         reason_code="OK",
         component="TEST",
         correlation_id="corr-102",
-        metadata={"findings": 0}
+        metadata={"findings": 0},
     )
 
     manager.build_canary_record(
@@ -139,9 +139,9 @@ def test_canary_summary_aggregation():
         reason_code="OK",
         component="TEST",
         correlation_id="corr-103",
-        metadata={"throughput": 5000}
+        metadata={"throughput": 5000},
     )
-    
+
     summary = manager.get_canary_summary()
     assert summary["canary_scenario_count"] == 1
     assert summary["breach_handling_count"] == 1

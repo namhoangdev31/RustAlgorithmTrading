@@ -10,7 +10,11 @@ class RuntimeScope(str, Enum):
 
 
 class IntegrationSuiteType(str, Enum):
-    UNIT_INTEGRATION = "UNIT_INTEGRATION"
+    PY_UNIT = "PY_UNIT"
+    PY_INTEGRATION = "PY_INTEGRATION"
+    RS_UNIT = "RS_UNIT"
+    RS_INTEGRATION = "RS_INTEGRATION"
+    CROSS_RUNTIME = "CROSS_RUNTIME"
 
 
 class IntegrationDebtStatus(str, Enum):
@@ -20,8 +24,10 @@ class IntegrationDebtStatus(str, Enum):
 
 
 class IntegrationGateRecord(StagingHardeningRecord):
+    suite_id: Optional[str] = None
     runtime_scope: Optional[RuntimeScope] = None
     suite_type: Optional[IntegrationSuiteType] = None
+    debt_item_id: Optional[str] = None
     integration_debt_status: Optional[IntegrationDebtStatus] = None
     regression_count: Optional[int] = None
 
@@ -38,8 +44,10 @@ class IntegrationGateManager(StagingHardeningManager):
         component: str,
         correlation_id: Optional[str] = None,
         evidence_ids: Optional[List[str]] = None,
+        suite_id: Optional[str] = None,
         runtime_scope: Optional[RuntimeScope] = None,
         suite_type: Optional[IntegrationSuiteType] = None,
+        debt_item_id: Optional[str] = None,
         integration_debt_status: Optional[IntegrationDebtStatus] = None,
         regression_count: Optional[int] = None,
         latency_sec: Optional[float] = None,
@@ -47,15 +55,29 @@ class IntegrationGateManager(StagingHardeningManager):
         metadata: Optional[Dict[str, Any]] = None,
     ) -> IntegrationGateRecord:
         metadata = metadata or {}
+        evidence_ids = evidence_ids or []
+        original_disposition = disposition
 
         # Enforce hard-gate policies
         if integration_debt_status == IntegrationDebtStatus.OPEN:
             disposition = "BLOCKED"
             reason_code = "OPEN_INTEGRATION_DEBT"
 
-        if suite_type == IntegrationSuiteType.UNIT_INTEGRATION and disposition != "PASS":
+        if disposition == "PASS" and not evidence_ids:
             disposition = "BLOCKED"
-            reason_code = f"{runtime_scope.value}_INTEGRATION_SUITE_FAIL" if runtime_scope else "INTEGRATION_SUITE_FAIL"
+            reason_code = "MISSING_EVIDENCE_CAPTURE"
+
+        if suite_type is not None and not suite_id:
+            disposition = "BLOCKED"
+            reason_code = "MISSING_SUITE_ID"
+
+        if suite_type is not None and original_disposition != "PASS":
+            disposition = "BLOCKED"
+            reason_code = f"{suite_type.value}_SUITE_FAIL"
+
+        if suite_type is not None and original_disposition != "PASS" and not debt_item_id:
+            disposition = "BLOCKED"
+            reason_code = "MISSING_DEBT_MAPPING"
 
         if regression_count is not None and regression_count > 0:
             disposition = "BLOCKED"
@@ -76,8 +98,10 @@ class IntegrationGateManager(StagingHardeningManager):
 
         gate_record = IntegrationGateRecord(
             **base_record.model_dump(),
+            suite_id=suite_id,
             runtime_scope=runtime_scope,
             suite_type=suite_type,
+            debt_item_id=debt_item_id,
             integration_debt_status=integration_debt_status,
             regression_count=regression_count,
         )
@@ -92,14 +116,19 @@ class IntegrationGateManager(StagingHardeningManager):
 
         suite_records = [r for r in gate_records if r.suite_type is not None]
         debt_records = [r for r in gate_records if r.integration_debt_status is not None]
-        
+
         suite_pass_rate = (
             sum(1 for r in suite_records if r.disposition == "PASS") / len(suite_records)
-            if suite_records else 0.0
+            if suite_records
+            else 0.0
         )
-        
-        open_debt_count = sum(1 for r in debt_records if r.integration_debt_status == IntegrationDebtStatus.OPEN)
-        total_regressions = sum(r.regression_count for r in gate_records if r.regression_count is not None)
+
+        open_debt_count = sum(
+            1 for r in debt_records if r.integration_debt_status == IntegrationDebtStatus.OPEN
+        )
+        total_regressions = sum(
+            r.regression_count for r in gate_records if r.regression_count is not None
+        )
 
         return {
             **base_summary,

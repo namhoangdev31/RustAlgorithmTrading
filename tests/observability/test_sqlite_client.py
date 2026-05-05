@@ -13,6 +13,7 @@ from src.observability.storage.sqlite_client import SQLiteClient, sqlite_session
 
 import pytest_asyncio
 
+
 @pytest_asyncio.fixture
 async def temp_db():
     """Create temporary database for testing"""
@@ -169,7 +170,7 @@ class TestSQLiteClient:
         """Test database size tracking"""
         # Use unique context to avoid interference
         cid = "SIZE_TEST_" + datetime.now(UTC).strftime("%H%M%S")
-        
+
         # Initial size
         size_before = await temp_db.get_db_size()
 
@@ -182,12 +183,12 @@ class TestSQLiteClient:
                 side="buy",
                 quantity=1.0,
                 price=50000.0,
-                metadata={"test_tag": "size_assertion_hardening_" + str(i)}
+                metadata={"test_tag": "size_assertion_hardening_" + str(i)},
             )
 
         # Size MUST increase now
         size_after = await temp_db.get_db_size()
-        
+
         # Logging for truth verification
         print(f"DEBUG: SQLite size transition {size_before} -> {size_after}")
         assert size_after > size_before

@@ -35,7 +35,7 @@ def configure_logging(log_level: str = "INFO") -> None:
             "<level>{message}</level>"
         ),
         level=log_level,
-        colorize=True
+        colorize=True,
     )
 
     # File logging
@@ -47,8 +47,7 @@ def configure_logging(log_level: str = "INFO") -> None:
         rotation="100 MB",
         retention="10 days",
         level=log_level,
-        format="{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | "
-               "{name}:{function} - {message}"
+        format="{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | " "{name}:{function} - {message}",
     )
 
 
@@ -70,57 +69,36 @@ Examples:
 
   # Enable SSL/TLS
   python server.py --ssl-keyfile key.pem --ssl-certfile cert.pem
-        """
+        """,
     )
 
-    parser.add_argument(
-        "--host",
-        default="127.0.0.1",
-        help="Bind host (default: 127.0.0.1)"
-    )
+    parser.add_argument("--host", default="127.0.0.1", help="Bind host (default: 127.0.0.1)")
 
-    parser.add_argument(
-        "--port",
-        type=int,
-        default=8000,
-        help="Bind port (default: 8000)"
-    )
+    parser.add_argument("--port", type=int, default=8000, help="Bind port (default: 8000)")
 
     parser.add_argument(
         "--workers",
         type=int,
         default=1,
-        help="Number of worker processes (production only, default: 1)"
+        help="Number of worker processes (production only, default: 1)",
     )
 
     parser.add_argument(
-        "--dev",
-        action="store_true",
-        help="Enable development mode with auto-reload"
+        "--dev", action="store_true", help="Enable development mode with auto-reload"
     )
 
     parser.add_argument(
         "--log-level",
         default="INFO",
         choices=["DEBUG", "INFO", "WARNING", "ERROR"],
-        help="Logging level (default: INFO)"
+        help="Logging level (default: INFO)",
     )
 
-    parser.add_argument(
-        "--ssl-keyfile",
-        help="SSL key file path"
-    )
+    parser.add_argument("--ssl-keyfile", help="SSL key file path")
 
-    parser.add_argument(
-        "--ssl-certfile",
-        help="SSL certificate file path"
-    )
+    parser.add_argument("--ssl-certfile", help="SSL certificate file path")
 
-    parser.add_argument(
-        "--access-log",
-        action="store_true",
-        help="Enable access logging"
-    )
+    parser.add_argument("--access-log", action="store_true", help="Enable access logging")
 
     args = parser.parse_args()
 
@@ -139,18 +117,22 @@ Examples:
     # Development mode configuration
     if args.dev:
         logger.info("[cid:INIT] Starting in DEVELOPMENT mode with auto-reload")
-        config.update({
-            "reload": True,
-            "reload_dirs": [str(Path(__file__).parent)],
-            "reload_includes": ["*.py"],
-        })
+        config.update(
+            {
+                "reload": True,
+                "reload_dirs": [str(Path(__file__).parent)],
+                "reload_includes": ["*.py"],
+            }
+        )
     else:
         logger.info("[cid:INIT] Starting in PRODUCTION mode")
-        config.update({
-            "workers": args.workers,
-            "loop": "uvloop",  # Use uvloop for better performance
-            "http": "httptools",  # Use httptools for better performance
-        })
+        config.update(
+            {
+                "workers": args.workers,
+                "loop": "uvloop",  # Use uvloop for better performance
+                "http": "httptools",  # Use httptools for better performance
+            }
+        )
 
     # SSL/TLS configuration
     if args.ssl_keyfile and args.ssl_certfile:
@@ -159,24 +141,22 @@ Examples:
             sys.exit(1)
 
         if not Path(args.ssl_certfile).exists():
-            logger.error(
-                f"[cid:INIT] SSL certificate file not found: {args.ssl_certfile}"
-            )
+            logger.error(f"[cid:INIT] SSL certificate file not found: {args.ssl_certfile}")
             sys.exit(1)
 
-        config.update({
-            "ssl_keyfile": args.ssl_keyfile,
-            "ssl_certfile": args.ssl_certfile,
-        })
+        config.update(
+            {
+                "ssl_keyfile": args.ssl_keyfile,
+                "ssl_certfile": args.ssl_certfile,
+            }
+        )
         logger.info("[cid:INIT] SSL/TLS enabled")
 
     # Log configuration
     logger.info("[cid:INIT] Server configuration:")
     logger.info(f"[cid:INIT]   Host: {args.host}")
     logger.info(f"[cid:INIT]   Port: {args.port}")
-    logger.info(
-        f"[cid:INIT]   Workers: {args.workers if not args.dev else 'auto-reload'}"
-    )
+    logger.info(f"[cid:INIT]   Workers: {args.workers if not args.dev else 'auto-reload'}")
     logger.info(f"[cid:INIT]   Log level: {args.log_level}")
     logger.info(f"[cid:INIT]   Access log: {args.access_log}")
 

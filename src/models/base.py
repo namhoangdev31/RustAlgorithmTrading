@@ -23,9 +23,9 @@ class BaseModel(PydanticBaseModel):
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert model to dictionary."""
-        return self.model_dump(mode='json')
+        return self.model_dump(mode="json")
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'BaseModel':
+    def from_dict(cls, data: Dict[str, Any]) -> "BaseModel":
         """Create model from dictionary."""
         return cls(**data)

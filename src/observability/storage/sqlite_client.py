@@ -14,6 +14,8 @@ import logging
 from .schemas import SQLITE_SCHEMAS
 
 logger = logging.getLogger(__name__)
+
+
 class SQLiteClient:
     """
     SQLite client for operational data
@@ -106,7 +108,7 @@ class SQLiteClient:
                 order_id,
                 status,
                 json.dumps(metadata) if metadata else None,
-            )
+            ),
         )
         await self._conn.commit()
         last_id = cursor.lastrowid
@@ -179,7 +181,7 @@ class SQLiteClient:
             WHERE timestamp >= ? AND timestamp <= ?
               AND status = 'executed'
             """,
-            [start_time, end_time]
+            [start_time, end_time],
         )
         row = await cursor.fetchone()
         if not row:
@@ -232,7 +234,7 @@ class SQLiteClient:
                 severity,
                 message,
                 json.dumps(details) if details else None,
-            )
+            ),
         )
         await self._conn.commit()
         last_id = cursor.lastrowid
@@ -301,7 +303,7 @@ class SQLiteClient:
             WHERE timestamp >= ? AND timestamp <= ?
             GROUP BY event_type, severity
             """,
-            [start_time, end_time]
+            [start_time, end_time],
         )
         rows = await cursor.fetchall()
 

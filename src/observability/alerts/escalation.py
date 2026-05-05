@@ -5,6 +5,7 @@ Handles incident lifecycle: alert -> acknowledge -> triage -> mitigation ->
 verify -> closeout -> postmortem.
 Enforces SLA targets: P0 <= 5m, P1 <= 15m.
 """
+
 import time
 from enum import Enum
 from typing import Any, Dict, List, Optional, cast
@@ -68,10 +69,7 @@ class Incident:
             "correlation_id": self.correlation_id,
             "uptime_seconds": time.time() - self.created_at,
             "owner": self.owner,
-            "ack_time": (
-                self.acknowledged_at - self.created_at
-                if self.acknowledged_at else None
-            ),
+            "ack_time": (self.acknowledged_at - self.created_at if self.acknowledged_at else None),
             "verify_evidence": self.verify_evidence,
         }
 
@@ -83,12 +81,14 @@ class EscalationManager:
         self.incidents: Dict[str, Incident] = {}
         self.escalation_matrix = {
             IncidentSeverity.P0: {
-                "owner": "primary_on_call", "backup": "manager", "sla_ack": 300
+                "owner": "primary_on_call",
+                "backup": "manager",
+                "sla_ack": 300,
             },  # 5m
             IncidentSeverity.P1: {
                 "owner": "secondary_on_call",
                 "backup": "primary_on_call",
-                "sla_ack": 900
+                "sla_ack": 900,
             },  # 15m
         }
 
@@ -120,8 +120,7 @@ class EscalationManager:
 
             ack_time = incident.acknowledged_at - incident.created_at
             sla_target = cast(
-                int,
-                self.escalation_matrix.get(incident.severity, {}).get("sla_ack", 3600)
+                int, self.escalation_matrix.get(incident.severity, {}).get("sla_ack", 3600)
             )
 
             status = "PASS" if ack_time <= sla_target else "FAIL"

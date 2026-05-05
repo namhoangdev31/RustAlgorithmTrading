@@ -34,24 +34,24 @@ class TestExitSignalFix:
         # Simulate opening a LONG position by directly updating portfolio
         # (simulating a previous ENTRY signal that was filled)
         portfolio_handler.portfolio.update_position(
-            symbol='AAPL',
+            symbol="AAPL",
             quantity=100,  # 100 shares long
             price=150.0,
         )
         portfolio_handler.portfolio.cash -= 100 * 150.0  # Deduct cost
 
         # Verify position is open
-        position = portfolio_handler.portfolio.positions.get('AAPL')
+        position = portfolio_handler.portfolio.positions.get("AAPL")
         assert position is not None
         assert position.quantity == 100
 
         # Create EXIT signal
         exit_signal = SignalEvent(
             timestamp=datetime.utcnow(),
-            symbol='AAPL',
-            signal_type='EXIT',
+            symbol="AAPL",
+            signal_type="EXIT",
             strength=1.0,
-            strategy_id='test_strategy'
+            strategy_id="test_strategy",
         )
 
         # Generate orders from EXIT signal
@@ -61,10 +61,12 @@ class TestExitSignalFix:
         assert len(orders) == 1, "EXIT signal should generate exactly 1 order"
 
         exit_order = orders[0]
-        assert exit_order.direction == 'SELL', "EXIT order must be SELL"
-        assert exit_order.quantity == 100, f"EXIT order should close full 100 shares, got {exit_order.quantity}"
-        assert exit_order.symbol == 'AAPL'
-        assert exit_order.order_type == 'MKT'
+        assert exit_order.direction == "SELL", "EXIT order must be SELL"
+        assert (
+            exit_order.quantity == 100
+        ), f"EXIT order should close full 100 shares, got {exit_order.quantity}"
+        assert exit_order.symbol == "AAPL"
+        assert exit_order.order_type == "MKT"
 
         print("✅ EXIT signal correctly generates SELL order for full position")
 
@@ -78,15 +80,15 @@ class TestExitSignalFix:
         )
 
         # No position exists for AAPL
-        assert 'AAPL' not in portfolio_handler.portfolio.positions
+        assert "AAPL" not in portfolio_handler.portfolio.positions
 
         # Create EXIT signal
         exit_signal = SignalEvent(
             timestamp=datetime.utcnow(),
-            symbol='AAPL',
-            signal_type='EXIT',
+            symbol="AAPL",
+            signal_type="EXIT",
             strength=1.0,
-            strategy_id='test_strategy'
+            strategy_id="test_strategy",
         )
 
         # Generate orders
@@ -109,10 +111,10 @@ class TestExitSignalFix:
         # Create LONG signal
         long_signal = SignalEvent(
             timestamp=datetime.utcnow(),
-            symbol='AAPL',
-            signal_type='LONG',
+            symbol="AAPL",
+            signal_type="LONG",
             strength=0.8,
-            strategy_id='test_strategy'
+            strategy_id="test_strategy",
         )
 
         # Mock data handler for price
@@ -120,6 +122,7 @@ class TestExitSignalFix:
             def get_latest_bar(self, symbol):
                 class Bar:
                     close = 150.0
+
                 return Bar()
 
         portfolio_handler.data_handler = MockDataHandler()
@@ -130,7 +133,7 @@ class TestExitSignalFix:
         # Should generate BUY order sized by position sizer
         assert len(orders) == 1
         order = orders[0]
-        assert order.direction == 'BUY'
+        assert order.direction == "BUY"
         # With $10k position size and $150 price, should be ~66 shares (after fees)
         assert 50 <= order.quantity <= 70, f"Expected ~66 shares, got {order.quantity}"
 
@@ -150,7 +153,7 @@ class TestExitSignalFix:
 
         # Open large position (larger than position sizer would allow)
         portfolio_handler.portfolio.update_position(
-            symbol='AAPL',
+            symbol="AAPL",
             quantity=200,  # 200 shares = $30k position (larger than $5k sizer)
             price=150.0,
         )
@@ -159,10 +162,10 @@ class TestExitSignalFix:
         # Create EXIT signal
         exit_signal = SignalEvent(
             timestamp=datetime.utcnow(),
-            symbol='AAPL',
-            signal_type='EXIT',
+            symbol="AAPL",
+            signal_type="EXIT",
             strength=1.0,
-            strategy_id='test_strategy'
+            strategy_id="test_strategy",
         )
 
         # Generate orders
@@ -171,9 +174,10 @@ class TestExitSignalFix:
         # CRITICAL: EXIT should close FULL 200 shares, not just the position sizer amount
         assert len(orders) == 1
         exit_order = orders[0]
-        assert exit_order.quantity == 200, \
-            f"EXIT must close full 200 shares, not position sizer amount (got {exit_order.quantity})"
-        assert exit_order.direction == 'SELL'
+        assert (
+            exit_order.quantity == 200
+        ), f"EXIT must close full 200 shares, not position sizer amount (got {exit_order.quantity})"
+        assert exit_order.direction == "SELL"
 
         print("✅ EXIT signal bypasses position sizer and closes full position")
 
@@ -191,6 +195,7 @@ class TestExitSignalFix:
             def get_latest_bar(self, symbol):
                 class Bar:
                     close = 150.0
+
                 return Bar()
 
         portfolio_handler.data_handler = MockDataHandler()
@@ -198,10 +203,10 @@ class TestExitSignalFix:
         # Step 1: LONG signal
         long_signal = SignalEvent(
             timestamp=datetime.utcnow(),
-            symbol='AAPL',
-            signal_type='LONG',
+            symbol="AAPL",
+            signal_type="LONG",
             strength=0.8,
-            strategy_id='test_strategy'
+            strategy_id="test_strategy",
         )
 
         entry_orders = portfolio_handler.generate_orders(long_signal)
@@ -212,26 +217,26 @@ class TestExitSignalFix:
         # Step 2: Simulate fill for ENTRY
         entry_fill = FillEvent(
             timestamp=datetime.utcnow(),
-            symbol='AAPL',
-            exchange='ALPACA',
+            symbol="AAPL",
+            exchange="ALPACA",
             quantity=entry_quantity,
-            direction='BUY',
+            direction="BUY",
             fill_price=150.0,
             commission=entry_quantity * 150.0 * 0.001,  # 0.1% commission
         )
         portfolio_handler.update_fill(entry_fill)
 
         # Verify position is open
-        position = portfolio_handler.portfolio.positions.get('AAPL')
+        position = portfolio_handler.portfolio.positions.get("AAPL")
         assert position.quantity == entry_quantity
 
         # Step 3: EXIT signal
         exit_signal = SignalEvent(
             timestamp=datetime.utcnow(),
-            symbol='AAPL',
-            signal_type='EXIT',
+            symbol="AAPL",
+            signal_type="EXIT",
             strength=1.0,
-            strategy_id='test_strategy'
+            strategy_id="test_strategy",
         )
 
         exit_orders = portfolio_handler.generate_orders(exit_signal)
@@ -239,20 +244,23 @@ class TestExitSignalFix:
         exit_order = exit_orders[0]
 
         # CRITICAL: EXIT order quantity must match ENTRY quantity
-        assert exit_order.quantity == entry_quantity, \
-            f"EXIT quantity ({exit_order.quantity}) must match ENTRY quantity ({entry_quantity})"
-        assert exit_order.direction == 'SELL'
+        assert (
+            exit_order.quantity == entry_quantity
+        ), f"EXIT quantity ({exit_order.quantity}) must match ENTRY quantity ({entry_quantity})"
+        assert exit_order.direction == "SELL"
 
-        print(f"✅ Complete ENTRY ({entry_quantity} shares) -> EXIT ({exit_order.quantity} shares) sequence works correctly")
+        print(
+            f"✅ Complete ENTRY ({entry_quantity} shares) -> EXIT ({exit_order.quantity} shares) sequence works correctly"
+        )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     """Run tests directly"""
     test = TestExitSignalFix()
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("🔧 EXIT SIGNAL BUG FIX VERIFICATION")
-    print("="*60 + "\n")
+    print("=" * 60 + "\n")
 
     try:
         test.test_exit_signal_closes_full_position()
@@ -261,9 +269,9 @@ if __name__ == '__main__':
         test.test_exit_signal_bypasses_position_sizer()
         test.test_exit_after_entry_sequence()
 
-        print("\n" + "="*60)
+        print("\n" + "=" * 60)
         print("✅ ALL TESTS PASSED - EXIT SIGNAL FIX VERIFIED")
-        print("="*60 + "\n")
+        print("=" * 60 + "\n")
     except AssertionError as e:
         print(f"\n❌ TEST FAILED: {e}\n")
         raise

@@ -7,6 +7,7 @@ Tests the complete pipeline:
 3. Metrics are stored in DuckDB
 4. Data can be queried successfully
 """
+
 import pytest
 import asyncio
 import aiohttp
@@ -33,10 +34,14 @@ async def test_rust_metrics_endpoints_available():
         for service_name, url in endpoints.items():
             try:
                 async with session.get(url) as response:
-                    assert response.status == 200, f"{service_name} endpoint returned {response.status}"
+                    assert (
+                        response.status == 200
+                    ), f"{service_name} endpoint returned {response.status}"
                     text = await response.text()
                     assert len(text) > 0, f"{service_name} returned empty metrics"
-                    assert "# TYPE" in text or "# HELP" in text, f"{service_name} doesn't return Prometheus format"
+                    assert (
+                        "# TYPE" in text or "# HELP" in text
+                    ), f"{service_name} doesn't return Prometheus format"
                     print(f"✓ {service_name} endpoint is accessible")
             except aiohttp.ClientError as e:
                 pytest.skip(f"{service_name} service not running: {e}")
@@ -45,9 +50,11 @@ async def test_rust_metrics_endpoints_available():
 @pytest.mark.asyncio
 async def test_rust_metrics_bridge_scraping():
     """Test that the Rust metrics bridge can successfully scrape services."""
-    bridge = RustMetricsBridge({
-        "market_data": "http://127.0.0.1:9091/metrics",
-    })
+    bridge = RustMetricsBridge(
+        {
+            "market_data": "http://127.0.0.1:9091/metrics",
+        }
+    )
 
     await bridge.start()
 
@@ -147,11 +154,13 @@ async def test_market_data_collector_integration():
 @pytest.mark.asyncio
 async def test_all_services_scraping():
     """Test scraping all three services concurrently."""
-    bridge = RustMetricsBridge({
-        "market_data": "http://127.0.0.1:9091/metrics",
-        "execution": "http://127.0.0.1:9092/metrics",
-        "risk": "http://127.0.0.1:9093/metrics",
-    })
+    bridge = RustMetricsBridge(
+        {
+            "market_data": "http://127.0.0.1:9091/metrics",
+            "execution": "http://127.0.0.1:9092/metrics",
+            "risk": "http://127.0.0.1:9093/metrics",
+        }
+    )
 
     await bridge.start()
 
@@ -168,9 +177,11 @@ async def test_all_services_scraping():
 
         for service_name, metrics in all_metrics.items():
             if metrics:
-                print(f"  {service_name}: {len(metrics['counters'])} counters, "
-                      f"{len(metrics['gauges'])} gauges, "
-                      f"{len(metrics['histograms'])} histograms")
+                print(
+                    f"  {service_name}: {len(metrics['counters'])} counters, "
+                    f"{len(metrics['gauges'])} gauges, "
+                    f"{len(metrics['histograms'])} histograms"
+                )
 
     finally:
         await bridge.stop()
@@ -179,9 +190,11 @@ async def test_all_services_scraping():
 @pytest.mark.asyncio
 async def test_continuous_scraping():
     """Test continuous metrics scraping."""
-    bridge = RustMetricsBridge({
-        "market_data": "http://127.0.0.1:9091/metrics",
-    })
+    bridge = RustMetricsBridge(
+        {
+            "market_data": "http://127.0.0.1:9091/metrics",
+        }
+    )
 
     await bridge.start()
 
@@ -195,9 +208,7 @@ async def test_continuous_scraping():
     try:
         # Start continuous scraping with 0.5s interval
         bridge.scrape_interval = 0.5
-        scrape_task = asyncio.create_task(
-            bridge.continuous_scrape(callback=metrics_callback)
-        )
+        scrape_task = asyncio.create_task(bridge.continuous_scrape(callback=metrics_callback))
 
         # Let it run for 2 seconds
         await asyncio.sleep(2)

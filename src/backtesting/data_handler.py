@@ -78,12 +78,18 @@ class HistoricalDataHandler:
         # TIMEZONE FIX: Ensure dates are timezone-aware (UTC) for consistent comparisons
         # This prevents "can't compare offset-naive and offset-aware datetimes" errors
         if start_date is not None:
-            self.start_date = start_date if start_date.tzinfo is not None else start_date.replace(tzinfo=timezone.utc)
+            self.start_date = (
+                start_date
+                if start_date.tzinfo is not None
+                else start_date.replace(tzinfo=timezone.utc)
+            )
         else:
             self.start_date = None
 
         if end_date is not None:
-            self.end_date = end_date if end_date.tzinfo is not None else end_date.replace(tzinfo=timezone.utc)
+            self.end_date = (
+                end_date if end_date.tzinfo is not None else end_date.replace(tzinfo=timezone.utc)
+            )
         else:
             self.end_date = None
 
@@ -95,8 +101,7 @@ class HistoricalDataHandler:
         self._load_data()
 
         logger.info(
-            f"Loaded historical data for {len(symbols)} symbols "
-            f"from {start_date} to {end_date}"
+            f"Loaded historical data for {len(symbols)} symbols " f"from {start_date} to {end_date}"
         )
 
     def _check_data_availability(self, symbol: str) -> bool:
@@ -154,7 +159,9 @@ class HistoricalDataHandler:
                 days_back = 365
 
             # Run download script
-            download_script = Path(__file__).parent.parent.parent / "scripts" / "download_market_data.py"
+            download_script = (
+                Path(__file__).parent.parent.parent / "scripts" / "download_market_data.py"
+            )
 
             if not download_script.exists():
                 logger.warning(f"Download script not found: {download_script}")
@@ -168,7 +175,7 @@ class HistoricalDataHandler:
                 "--days",
                 str(days_back),
                 "--output-dir",
-                str(self.data_dir.parent)
+                str(self.data_dir.parent),
             ]
 
             logger.info(f"Running: {' '.join(cmd)}")
@@ -197,7 +204,7 @@ class HistoricalDataHandler:
             FileNotFoundError: If data files are missing and auto-download fails
             Exception: If file reading fails
         """
-        required_columns = ['timestamp', 'open', 'high', 'low', 'close', 'volume']
+        required_columns = ["timestamp", "open", "high", "low", "close", "volume"]
 
         # Check data availability
         missing_symbols = [s for s in self.symbols if not self._check_data_availability(s)]
@@ -234,14 +241,16 @@ class HistoricalDataHandler:
                             logger.warning(
                                 f"Failed to read Parquet for {symbol} ({parquet_error}); falling back to CSV"
                             )
-                            df = pd.read_csv(csv_path, parse_dates=['timestamp'])
+                            df = pd.read_csv(csv_path, parse_dates=["timestamp"])
                             logger.debug(f"Loaded {symbol} from CSV fallback: {csv_path}")
                         else:
-                            logger.error(f"Failed to read Parquet file {parquet_path}: {parquet_error}")
+                            logger.error(
+                                f"Failed to read Parquet file {parquet_path}: {parquet_error}"
+                            )
                             raise ValueError(f"Invalid Parquet file for {symbol}: {parquet_error}")
                 elif csv_path.exists():
                     try:
-                        df = pd.read_csv(csv_path, parse_dates=['timestamp'])
+                        df = pd.read_csv(csv_path, parse_dates=["timestamp"])
                         logger.debug(f"Loaded {symbol} from CSV: {csv_path}")
                     except Exception as e:
                         logger.error(f"Failed to read CSV file {csv_path}: {e}")
@@ -262,21 +271,23 @@ class HistoricalDataHandler:
                     )
 
                 # Validate timestamp column
-                if df['timestamp'].isna().any():
-                    logger.warning(f"Found {df['timestamp'].isna().sum()} null timestamps for {symbol}")
-                    df = df.dropna(subset=['timestamp'])
+                if df["timestamp"].isna().any():
+                    logger.warning(
+                        f"Found {df['timestamp'].isna().sum()} null timestamps for {symbol}"
+                    )
+                    df = df.dropna(subset=["timestamp"])
 
                 # Filter by date range (ensure timestamps are timezone-aware for comparison)
                 if self.start_date:
                     # Make timestamp column timezone-aware if needed
-                    if df['timestamp'].dt.tz is None:
-                        df['timestamp'] = df['timestamp'].dt.tz_localize(timezone.utc)
-                    df = df[df['timestamp'] >= self.start_date]
+                    if df["timestamp"].dt.tz is None:
+                        df["timestamp"] = df["timestamp"].dt.tz_localize(timezone.utc)
+                    df = df[df["timestamp"] >= self.start_date]
                 if self.end_date:
                     # Make timestamp column timezone-aware if needed
-                    if df['timestamp'].dt.tz is None:
-                        df['timestamp'] = df['timestamp'].dt.tz_localize(timezone.utc)
-                    df = df[df['timestamp'] <= self.end_date]
+                    if df["timestamp"].dt.tz is None:
+                        df["timestamp"] = df["timestamp"].dt.tz_localize(timezone.utc)
+                    df = df[df["timestamp"] <= self.end_date]
 
                 if len(df) == 0:
                     logger.warning(
@@ -286,10 +297,10 @@ class HistoricalDataHandler:
                     continue
 
                 # Ensure sorted by timestamp
-                df = df.sort_values('timestamp').reset_index(drop=True)
+                df = df.sort_values("timestamp").reset_index(drop=True)
 
                 # Validate data integrity
-                if df['high'].lt(df['low']).any():
+                if df["high"].lt(df["low"]).any():
                     logger.warning(f"Found invalid bars for {symbol} where high < low")
 
                 self.symbol_data[symbol] = df
@@ -329,7 +340,7 @@ class HistoricalDataHandler:
                 row = df.iloc[self.bar_index]
 
                 # Validate bar data
-                if pd.isna(row['open']) or pd.isna(row['close']):
+                if pd.isna(row["open"]) or pd.isna(row["close"]):
                     logger.warning(
                         f"Invalid bar data for {symbol} at index {self.bar_index}: "
                         f"open={row['open']}, close={row['close']}"
@@ -338,22 +349,24 @@ class HistoricalDataHandler:
 
                 bar = Bar(
                     symbol=symbol,
-                    timestamp=row['timestamp'],
-                    open=float(row['open']),
-                    high=float(row['high']),
-                    low=float(row['low']),
-                    close=float(row['close']),
-                    volume=float(row['volume']),
-                    vwap=float(row['vwap']) if 'vwap' in row and pd.notna(row['vwap']) else None,
-                    trade_count=int(row['trade_count']) if 'trade_count' in row and pd.notna(row['trade_count']) else None,
+                    timestamp=row["timestamp"],
+                    open=float(row["open"]),
+                    high=float(row["high"]),
+                    low=float(row["low"]),
+                    close=float(row["close"]),
+                    volume=float(row["volume"]),
+                    vwap=float(row["vwap"]) if "vwap" in row and pd.notna(row["vwap"]) else None,
+                    trade_count=(
+                        int(row["trade_count"])
+                        if "trade_count" in row and pd.notna(row["trade_count"])
+                        else None
+                    ),
                 )
 
                 self.latest_bars[symbol].append(bar)
 
             except (ValueError, TypeError) as e:
-                logger.error(
-                    f"Error creating bar for {symbol} at index {self.bar_index}: {e}"
-                )
+                logger.error(f"Error creating bar for {symbol} at index {self.bar_index}: {e}")
                 raise ValueError(f"Invalid bar data for {symbol}: {e}")
 
         self.bar_index += 1
@@ -437,7 +450,16 @@ class HistoricalDataHandler:
         if not isinstance(field, str):
             raise TypeError(f"field must be a string, got {type(field).__name__}")
 
-        valid_fields = ['open', 'high', 'low', 'close', 'volume', 'vwap', 'trade_count', 'timestamp']
+        valid_fields = [
+            "open",
+            "high",
+            "low",
+            "close",
+            "volume",
+            "vwap",
+            "trade_count",
+            "timestamp",
+        ]
         if field not in valid_fields:
             raise ValueError(f"Invalid field '{field}'. Valid fields: {valid_fields}")
 
@@ -449,9 +471,7 @@ class HistoricalDataHandler:
             return value
         return None
 
-    def get_latest_bars_values(
-        self, symbol: str, field: str, n: int = 1
-    ) -> list[float]:
+    def get_latest_bars_values(self, symbol: str, field: str, n: int = 1) -> list[float]:
         """
         Get field values from N most recent bars.
 
@@ -470,7 +490,7 @@ class HistoricalDataHandler:
         if not isinstance(field, str):
             raise TypeError(f"field must be a string, got {type(field).__name__}")
 
-        valid_fields = ['open', 'high', 'low', 'close', 'volume', 'vwap', 'trade_count']
+        valid_fields = ["open", "high", "low", "close", "volume", "vwap", "trade_count"]
         if field not in valid_fields:
             raise ValueError(f"Invalid field '{field}'. Valid fields: {valid_fields}")
 

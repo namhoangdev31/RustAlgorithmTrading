@@ -51,9 +51,9 @@ class StrategyRouter:
 
         # Initialize all strategies
         self.strategies = {
-            'momentum': SimplifiedMomentumStrategy(),
-            'mean_reversion': MeanReversion(),
-            'trend_following': TrendFollowingStrategy(),
+            "momentum": SimplifiedMomentumStrategy(),
+            "mean_reversion": MeanReversion(),
+            "trend_following": TrendFollowingStrategy(),
         }
 
         # Track routing decisions
@@ -78,34 +78,30 @@ class StrategyRouter:
         """
         if not self.enable_regime_detection or len(data) < 100:
             # Default to momentum if regime detection disabled or insufficient data
-            msg = (
-                f"{symbol}: Using default Momentum strategy "
-                "(regime detection disabled)"
-            )
+            msg = f"{symbol}: Using default Momentum strategy " "(regime detection disabled)"
             logger.info(msg)
-            self._record_routing(symbol, 'momentum', MarketRegime.UNKNOWN, 0.0)
-            return self.strategies['momentum']
+            self._record_routing(symbol, "momentum", MarketRegime.UNKNOWN, 0.0)
+            return self.strategies["momentum"]
 
         # Detect market regime
         regime_info = self.regime_detector.detect_regime(data)
-        regime = regime_info['regime']
-        confidence = regime_info['confidence']
+        regime = regime_info["regime"]
+        confidence = regime_info["confidence"]
 
         # Select strategy based on regime
         if confidence < self.min_confidence:
             # Low confidence - use default momentum
-            strategy_name = 'momentum'
+            strategy_name = "momentum"
             logger.info(
-                f"{symbol}: Low confidence ({confidence:.2f}) - "
-                "using default Momentum strategy"
+                f"{symbol}: Low confidence ({confidence:.2f}) - " "using default Momentum strategy"
             )
         else:
             # High confidence - use regime-optimal strategy
             strategy_map = {
-                MarketRegime.TRENDING: 'trend_following',
-                MarketRegime.RANGING: 'mean_reversion',
-                MarketRegime.VOLATILE: 'momentum',
-                MarketRegime.UNKNOWN: 'momentum',
+                MarketRegime.TRENDING: "trend_following",
+                MarketRegime.RANGING: "mean_reversion",
+                MarketRegime.VOLATILE: "momentum",
+                MarketRegime.UNKNOWN: "momentum",
             }
             strategy_name = strategy_map[regime]
             logger.info(
@@ -119,9 +115,7 @@ class StrategyRouter:
         return self.strategies[strategy_name]
 
     def generate_signals(
-        self,
-        symbols_data: Dict[str, pd.DataFrame],
-        force_strategy: Optional[str] = None
+        self, symbols_data: Dict[str, pd.DataFrame], force_strategy: Optional[str] = None
     ) -> List[Signal]:
         """
         Generate signals for multiple symbols using optimal strategies
@@ -138,7 +132,7 @@ class StrategyRouter:
         for symbol, data in symbols_data.items():
             # Set symbol attribute on dataframe
             data = data.copy()
-            data.attrs['symbol'] = symbol
+            data.attrs["symbol"] = symbol
 
             # Select optimal strategy
             if force_strategy and force_strategy in self.strategies:
@@ -152,41 +146,34 @@ class StrategyRouter:
                 signals = strategy.generate_signals(data)
                 all_signals.extend(signals)
                 log_success = (
-                    f"{symbol}: Generated {len(signals)} signals using "
-                    f"{strategy.name}"
+                    f"{symbol}: Generated {len(signals)} signals using " f"{strategy.name}"
                 )
                 logger.info(log_success)
             except Exception as e:
-                log_msg = (
-                    f"{symbol}: Failed to generate signals with "
-                    f"{strategy.name}: {e}"
-                )
+                log_msg = f"{symbol}: Failed to generate signals with " f"{strategy.name}: {e}"
                 logger.error(log_msg)
 
         log_finish = (
-            f"Total signals generated: {len(all_signals)} across "
-            f"{len(symbols_data)} symbols"
+            f"Total signals generated: {len(all_signals)} across " f"{len(symbols_data)} symbols"
         )
         logger.info(log_finish)
         return all_signals
 
     def _record_routing(
-        self,
-        symbol: str,
-        strategy_name: str,
-        regime: MarketRegime,
-        confidence: float
+        self, symbol: str, strategy_name: str, regime: MarketRegime, confidence: float
     ):
         """Record routing decision for analysis"""
         if symbol not in self.routing_history:
             self.routing_history[symbol] = []
 
-        self.routing_history[symbol].append({
-            'timestamp': pd.Timestamp.now(),
-            'strategy': strategy_name,
-            'regime': regime.value,
-            'confidence': confidence,
-        })
+        self.routing_history[symbol].append(
+            {
+                "timestamp": pd.Timestamp.now(),
+                "strategy": strategy_name,
+                "regime": regime.value,
+                "confidence": confidence,
+            }
+        )
 
     def get_routing_summary(self) -> Dict[str, Any]:
         """
@@ -196,19 +183,19 @@ class StrategyRouter:
             Dictionary with routing statistics
         """
         summary = {
-            'total_symbols': len(self.routing_history),
-            'strategy_usage': {
-                'momentum': 0,
-                'mean_reversion': 0,
-                'trend_following': 0,
+            "total_symbols": len(self.routing_history),
+            "strategy_usage": {
+                "momentum": 0,
+                "mean_reversion": 0,
+                "trend_following": 0,
             },
-            'regime_distribution': {
-                'trending': 0,
-                'ranging': 0,
-                'volatile': 0,
-                'unknown': 0,
+            "regime_distribution": {
+                "trending": 0,
+                "ranging": 0,
+                "volatile": 0,
+                "unknown": 0,
             },
-            'avg_confidence': 0.0,
+            "avg_confidence": 0.0,
         }
 
         total_decisions = 0
@@ -217,21 +204,21 @@ class StrategyRouter:
         for symbol, history in self.routing_history.items():
             for decision in history:
                 # Count strategy usage
-                strategy = decision['strategy']
-                if strategy in summary['strategy_usage']:
-                    summary['strategy_usage'][strategy] += 1
+                strategy = decision["strategy"]
+                if strategy in summary["strategy_usage"]:
+                    summary["strategy_usage"][strategy] += 1
 
                 # Count regime distribution
-                regime = decision['regime']
-                if regime in summary['regime_distribution']:
-                    summary['regime_distribution'][regime] += 1
+                regime = decision["regime"]
+                if regime in summary["regime_distribution"]:
+                    summary["regime_distribution"][regime] += 1
 
                 # Sum confidence
-                total_confidence += decision['confidence']
+                total_confidence += decision["confidence"]
                 total_decisions += 1
 
         if total_decisions > 0:
-            summary['avg_confidence'] = total_confidence / total_decisions
+            summary["avg_confidence"] = total_confidence / total_decisions
 
         return summary
 
@@ -246,21 +233,18 @@ class StrategyRouter:
         logger.info(f"\nTotal Symbols: {summary['total_symbols']}")
 
         logger.info("\nStrategy Usage:")
-        for strategy, count in summary['strategy_usage'].items():
+        for strategy, count in summary["strategy_usage"].items():
             logger.info(f"  {strategy:20s}: {count:3d} symbols")
 
         logger.info("\nRegime Distribution:")
-        for regime, count in summary['regime_distribution'].items():
+        for regime, count in summary["regime_distribution"].items():
             logger.info(f"  {regime:20s}: {count:3d} decisions")
 
         logger.info(f"\nAverage Confidence: {summary['avg_confidence']:.2%}")
         logger.info("=" * 80 + "\n")
 
     def generate_signals_per_symbol(
-        self,
-        symbol: str,
-        data: pd.DataFrame,
-        force_strategy: Optional[str] = None
+        self, symbol: str, data: pd.DataFrame, force_strategy: Optional[str] = None
     ) -> List[Signal]:
         """
         Generate signals for a single symbol (for backtesting compatibility)
@@ -277,7 +261,7 @@ class StrategyRouter:
 
         # Set symbol attribute
         data = data.copy()
-        data.attrs['symbol'] = symbol
+        data.attrs["symbol"] = symbol
 
         # Select optimal strategy
         if force_strategy and force_strategy in self.strategies:
@@ -290,9 +274,7 @@ class StrategyRouter:
         try:
             signals = strategy.generate_signals(data)
             num_long = sum(1 for s in signals if s.signal_type == SignalType.LONG)
-            num_short = sum(
-                1 for s in signals if s.signal_type == SignalType.SHORT
-            )
+            num_short = sum(1 for s in signals if s.signal_type == SignalType.SHORT)
             num_exit = sum(1 for s in signals if s.signal_type == SignalType.EXIT)
 
             log_msg = (
@@ -303,10 +285,8 @@ class StrategyRouter:
             logger.info(log_msg)
             return signals
         except Exception as e:
-            logger.error(
-                f"[{symbol}] Failed to generate signals with "
-                f"{strategy.name}: {e}"
-            )
+            logger.error(f"[{symbol}] Failed to generate signals with " f"{strategy.name}: {e}")
             import traceback
+
             traceback.print_exc()
             return []

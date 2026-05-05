@@ -3,21 +3,25 @@ from enum import Enum
 from typing import Dict, List, Optional, Any
 from pydantic import BaseModel, Field
 
+
 class ControlStatus(Enum):
     ALLOW = "ALLOW"
     REJECT = "REJECT"
     DEFER = "DEFER"
     BLOCKED = "BLOCKED"
 
+
 class ControlType(Enum):
     EXPOSURE = "EXPOSURE"
     CONCENTRATION = "CONCENTRATION"
     ALLOCATION = "ALLOCATION"
 
+
 class ControlRecord(BaseModel):
     """
     Mandatory W14 Control Record for decision traceability.
     """
+
     portfolio_check_id: str
     timestamp: datetime = Field(default_factory=datetime.utcnow)
     strategy_set_id: str

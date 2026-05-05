@@ -35,14 +35,16 @@ class TestDataLoadingPerformance:
         # Create 1 year of minute data (~390 bars/day * 252 days = ~98k rows)
         num_rows = 100000
 
-        df = pd.DataFrame({
-            'timestamp': pd.date_range('2024-01-01', periods=num_rows, freq='1min'),
-            'open': [100.0 + (i % 100) * 0.1 for i in range(num_rows)],
-            'high': [105.0 + (i % 100) * 0.1 for i in range(num_rows)],
-            'low': [99.0 + (i % 100) * 0.1 for i in range(num_rows)],
-            'close': [104.0 + (i % 100) * 0.1 for i in range(num_rows)],
-            'volume': [1000 + i for i in range(num_rows)],
-        })
+        df = pd.DataFrame(
+            {
+                "timestamp": pd.date_range("2024-01-01", periods=num_rows, freq="1min"),
+                "open": [100.0 + (i % 100) * 0.1 for i in range(num_rows)],
+                "high": [105.0 + (i % 100) * 0.1 for i in range(num_rows)],
+                "low": [99.0 + (i % 100) * 0.1 for i in range(num_rows)],
+                "close": [104.0 + (i % 100) * 0.1 for i in range(num_rows)],
+                "volume": [1000 + i for i in range(num_rows)],
+            }
+        )
 
         # Save as both CSV and Parquet
         df.to_csv(data_dir / "AAPL_large.csv", index=False)
@@ -55,13 +57,15 @@ class TestDataLoadingPerformance:
         start_time = time.time()
 
         handler = HistoricalDataHandler(
-            symbols=['AAPL_large'],
+            symbols=["AAPL_large"],
             data_dir=large_dataset,
         )
 
         load_time = time.time() - start_time
 
-        print(f"\nCSV Load Time: {load_time:.3f}s for {len(handler.symbol_data['AAPL_large'])} rows")
+        print(
+            f"\nCSV Load Time: {load_time:.3f}s for {len(handler.symbol_data['AAPL_large'])} rows"
+        )
 
         # CSV loading should complete within reasonable time
         assert load_time < 5.0  # Less than 5 seconds
@@ -71,13 +75,15 @@ class TestDataLoadingPerformance:
         start_time = time.time()
 
         handler = HistoricalDataHandler(
-            symbols=['MSFT_large'],
+            symbols=["MSFT_large"],
             data_dir=large_dataset,
         )
 
         load_time = time.time() - start_time
 
-        print(f"\nParquet Load Time: {load_time:.3f}s for {len(handler.symbol_data['MSFT_large'])} rows")
+        print(
+            f"\nParquet Load Time: {load_time:.3f}s for {len(handler.symbol_data['MSFT_large'])} rows"
+        )
 
         # Parquet should be faster than CSV
         assert load_time < 3.0
@@ -91,7 +97,7 @@ class TestDataLoadingPerformance:
 
         # Load large dataset
         handler = HistoricalDataHandler(
-            symbols=['AAPL_large', 'MSFT_large'],
+            symbols=["AAPL_large", "MSFT_large"],
             data_dir=large_dataset,
         )
 
@@ -113,14 +119,16 @@ class TestDataLoadingPerformance:
         symbols = [f"SYM{i}" for i in range(10)]
 
         for symbol in symbols:
-            df = pd.DataFrame({
-                'timestamp': pd.date_range('2024-01-01', periods=1000),
-                'open': [100.0] * 1000,
-                'high': [105.0] * 1000,
-                'low': [99.0] * 1000,
-                'close': [104.0] * 1000,
-                'volume': [1000] * 1000,
-            })
+            df = pd.DataFrame(
+                {
+                    "timestamp": pd.date_range("2024-01-01", periods=1000),
+                    "open": [100.0] * 1000,
+                    "high": [105.0] * 1000,
+                    "low": [99.0] * 1000,
+                    "close": [104.0] * 1000,
+                    "volume": [1000] * 1000,
+                }
+            )
             df.to_csv(data_dir / f"{symbol}.csv", index=False)
 
         start_time = time.time()
@@ -143,18 +151,20 @@ class TestDataLoadingPerformance:
         data_dir.mkdir()
 
         # Create dataset
-        df = pd.DataFrame({
-            'timestamp': pd.date_range('2024-01-01', periods=10000),
-            'open': [100.0] * 10000,
-            'high': [105.0] * 10000,
-            'low': [99.0] * 10000,
-            'close': [104.0] * 10000,
-            'volume': [1000] * 10000,
-        })
+        df = pd.DataFrame(
+            {
+                "timestamp": pd.date_range("2024-01-01", periods=10000),
+                "open": [100.0] * 10000,
+                "high": [105.0] * 10000,
+                "low": [99.0] * 10000,
+                "close": [104.0] * 10000,
+                "volume": [1000] * 10000,
+            }
+        )
         df.to_csv(data_dir / "AAPL.csv", index=False)
 
         handler = HistoricalDataHandler(
-            symbols=['AAPL'],
+            symbols=["AAPL"],
             data_dir=data_dir,
         )
 
@@ -188,32 +198,34 @@ class TestDownloadPerformance:
         from unittest.mock import patch
 
         config = DownloadConfig(
-            symbols=['AAPL', 'MSFT', 'GOOGL'],
-            start_date='2024-01-01',
-            end_date='2024-12-31',
+            symbols=["AAPL", "MSFT", "GOOGL"],
+            start_date="2024-01-01",
+            end_date="2024-12-31",
             output_dir=str(tmp_path),
-            api_key='test_key',
-            api_secret='test_secret',
+            api_key="test_key",
+            api_secret="test_secret",
         )
 
-        with patch('scripts.download_historical_data.StockHistoricalDataClient'):
+        with patch("scripts.download_historical_data.StockHistoricalDataClient"):
             return AlpacaDataDownloader(config)
 
     def test_save_csv_performance(self, mock_downloader):
         """Test CSV save performance"""
         # Create large DataFrame
-        df = pd.DataFrame({
-            'timestamp': pd.date_range('2024-01-01', periods=50000),
-            'symbol': ['AAPL'] * 50000,
-            'open': [100.0] * 50000,
-            'high': [105.0] * 50000,
-            'low': [99.0] * 50000,
-            'close': [104.0] * 50000,
-            'volume': [1000] * 50000,
-        })
+        df = pd.DataFrame(
+            {
+                "timestamp": pd.date_range("2024-01-01", periods=50000),
+                "symbol": ["AAPL"] * 50000,
+                "open": [100.0] * 50000,
+                "high": [105.0] * 50000,
+                "low": [99.0] * 50000,
+                "close": [104.0] * 50000,
+                "volume": [1000] * 50000,
+            }
+        )
 
         start_time = time.time()
-        mock_downloader._save_csv(df, 'AAPL')
+        mock_downloader._save_csv(df, "AAPL")
         save_time = time.time() - start_time
 
         print(f"\nCSV Save Time: {save_time:.3f}s for 50k rows")
@@ -222,18 +234,20 @@ class TestDownloadPerformance:
 
     def test_save_parquet_performance(self, mock_downloader):
         """Test Parquet save performance"""
-        df = pd.DataFrame({
-            'timestamp': pd.date_range('2024-01-01', periods=50000),
-            'symbol': ['AAPL'] * 50000,
-            'open': [100.0] * 50000,
-            'high': [105.0] * 50000,
-            'low': [99.0] * 50000,
-            'close': [104.0] * 50000,
-            'volume': [1000] * 50000,
-        })
+        df = pd.DataFrame(
+            {
+                "timestamp": pd.date_range("2024-01-01", periods=50000),
+                "symbol": ["AAPL"] * 50000,
+                "open": [100.0] * 50000,
+                "high": [105.0] * 50000,
+                "low": [99.0] * 50000,
+                "close": [104.0] * 50000,
+                "volume": [1000] * 50000,
+            }
+        )
 
         start_time = time.time()
-        mock_downloader._save_parquet(df, 'AAPL')
+        mock_downloader._save_parquet(df, "AAPL")
         save_time = time.time() - start_time
 
         print(f"\nParquet Save Time: {save_time:.3f}s for 50k rows")
@@ -251,28 +265,30 @@ class TestDataValidationPerformance:
         from unittest.mock import patch
 
         config = DownloadConfig(
-            symbols=['AAPL'],
-            start_date='2024-01-01',
-            end_date='2024-12-31',
+            symbols=["AAPL"],
+            start_date="2024-01-01",
+            end_date="2024-12-31",
             output_dir=str(tmp_path),
-            api_key='test',
-            api_secret='test',
+            api_key="test",
+            api_secret="test",
         )
 
-        with patch('scripts.download_historical_data.StockHistoricalDataClient'):
+        with patch("scripts.download_historical_data.StockHistoricalDataClient"):
             downloader = AlpacaDataDownloader(config)
 
-        df = pd.DataFrame({
-            'timestamp': pd.date_range('2024-01-01', periods=100000, freq='1min'),
-            'open': [100.0] * 100000,
-            'high': [105.0] * 100000,
-            'low': [99.0] * 100000,
-            'close': [104.0] * 100000,
-            'volume': [1000] * 100000,
-        })
+        df = pd.DataFrame(
+            {
+                "timestamp": pd.date_range("2024-01-01", periods=100000, freq="1min"),
+                "open": [100.0] * 100000,
+                "high": [105.0] * 100000,
+                "low": [99.0] * 100000,
+                "close": [104.0] * 100000,
+                "volume": [1000] * 100000,
+            }
+        )
 
         start_time = time.time()
-        result = downloader._validate_dataframe(df, 'AAPL')
+        result = downloader._validate_dataframe(df, "AAPL")
         validation_time = time.time() - start_time
 
         print(f"\nValidation Time: {validation_time:.3f}s for 100k rows")
@@ -293,14 +309,16 @@ class TestConcurrentOperations:
         symbols = [f"SYM{i}" for i in range(20)]
 
         for symbol in symbols:
-            df = pd.DataFrame({
-                'timestamp': pd.date_range('2024-01-01', periods=5000),
-                'open': [100.0] * 5000,
-                'high': [105.0] * 5000,
-                'low': [99.0] * 5000,
-                'close': [104.0] * 5000,
-                'volume': [1000] * 5000,
-            })
+            df = pd.DataFrame(
+                {
+                    "timestamp": pd.date_range("2024-01-01", periods=5000),
+                    "open": [100.0] * 5000,
+                    "high": [105.0] * 5000,
+                    "low": [99.0] * 5000,
+                    "close": [104.0] * 5000,
+                    "volume": [1000] * 5000,
+                }
+            )
             df.to_parquet(data_dir / f"{symbol}.parquet", index=False)
 
         start_time = time.time()
@@ -328,14 +346,16 @@ class TestFileFormatComparison:
         data_dir = tmp_path / "formats"
         data_dir.mkdir()
 
-        df = pd.DataFrame({
-            'timestamp': pd.date_range('2024-01-01', periods=50000),
-            'open': [100.0 + i * 0.01 for i in range(50000)],
-            'high': [105.0 + i * 0.01 for i in range(50000)],
-            'low': [99.0 + i * 0.01 for i in range(50000)],
-            'close': [104.0 + i * 0.01 for i in range(50000)],
-            'volume': [1000 + i for i in range(50000)],
-        })
+        df = pd.DataFrame(
+            {
+                "timestamp": pd.date_range("2024-01-01", periods=50000),
+                "open": [100.0 + i * 0.01 for i in range(50000)],
+                "high": [105.0 + i * 0.01 for i in range(50000)],
+                "low": [99.0 + i * 0.01 for i in range(50000)],
+                "close": [104.0 + i * 0.01 for i in range(50000)],
+                "volume": [1000 + i for i in range(50000)],
+            }
+        )
 
         # Save in both formats
         df.to_csv(data_dir / "DATA_csv.csv", index=False)
@@ -348,7 +368,7 @@ class TestFileFormatComparison:
         # Test CSV
         start_csv = time.time()
         handler_csv = HistoricalDataHandler(
-            symbols=['DATA_csv'],
+            symbols=["DATA_csv"],
             data_dir=comparison_data,
         )
         csv_time = time.time() - start_csv
@@ -356,7 +376,7 @@ class TestFileFormatComparison:
         # Test Parquet
         start_parquet = time.time()
         handler_parquet = HistoricalDataHandler(
-            symbols=['DATA_parquet'],
+            symbols=["DATA_parquet"],
             data_dir=comparison_data,
         )
         parquet_time = time.time() - start_parquet
@@ -370,5 +390,5 @@ class TestFileFormatComparison:
         assert parquet_time < csv_time
 
 
-if __name__ == '__main__':
-    pytest.main([__file__, '-v', '-s'])  # -s to show print statements
+if __name__ == "__main__":
+    pytest.main([__file__, "-v", "-s"])  # -s to show print statements

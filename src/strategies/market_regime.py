@@ -16,6 +16,7 @@ from loguru import logger
 
 class MarketRegime(Enum):
     """Market regime classification"""
+
     TRENDING = "trending"
     RANGING = "ranging"
     VOLATILE = "volatile"
@@ -57,54 +58,54 @@ class RegimeDetector:
         df = data.copy()
 
         # True Range
-        df['h-l'] = df['high'] - df['low']
-        df['h-pc'] = abs(df['high'] - df['close'].shift(1))
-        df['l-pc'] = abs(df['low'] - df['close'].shift(1))
-        df['tr'] = df[['h-l', 'h-pc', 'l-pc']].max(axis=1)
+        df["h-l"] = df["high"] - df["low"]
+        df["h-pc"] = abs(df["high"] - df["close"].shift(1))
+        df["l-pc"] = abs(df["low"] - df["close"].shift(1))
+        df["tr"] = df[["h-l", "h-pc", "l-pc"]].max(axis=1)
 
         # Directional Movement
-        df['dm_plus'] = np.where(
-            (df['high'] - df['high'].shift(1)) > (df['low'].shift(1) - df['low']),
-            np.maximum(df['high'] - df['high'].shift(1), 0),
-            0
+        df["dm_plus"] = np.where(
+            (df["high"] - df["high"].shift(1)) > (df["low"].shift(1) - df["low"]),
+            np.maximum(df["high"] - df["high"].shift(1), 0),
+            0,
         )
-        df['dm_minus'] = np.where(
-            (df['low'].shift(1) - df['low']) > (df['high'] - df['high'].shift(1)),
-            np.maximum(df['low'].shift(1) - df['low'], 0),
-            0
+        df["dm_minus"] = np.where(
+            (df["low"].shift(1) - df["low"]) > (df["high"] - df["high"].shift(1)),
+            np.maximum(df["low"].shift(1) - df["low"], 0),
+            0,
         )
 
         # Smoothed values
-        df['tr_smooth'] = df['tr'].rolling(window=period).sum()
-        df['dm_plus_smooth'] = df['dm_plus'].rolling(window=period).sum()
-        df['dm_minus_smooth'] = df['dm_minus'].rolling(window=period).sum()
+        df["tr_smooth"] = df["tr"].rolling(window=period).sum()
+        df["dm_plus_smooth"] = df["dm_plus"].rolling(window=period).sum()
+        df["dm_minus_smooth"] = df["dm_minus"].rolling(window=period).sum()
 
         # Directional Indicators
-        df['di_plus'] = 100 * (df['dm_plus_smooth'] / df['tr_smooth'])
-        df['di_minus'] = 100 * (df['dm_minus_smooth'] / df['tr_smooth'])
+        df["di_plus"] = 100 * (df["dm_plus_smooth"] / df["tr_smooth"])
+        df["di_minus"] = 100 * (df["dm_minus_smooth"] / df["tr_smooth"])
 
         # DX and ADX
-        df['dx'] = 100 * abs(df['di_plus'] - df['di_minus']) / (df['di_plus'] + df['di_minus'])
-        df['adx'] = df['dx'].rolling(window=period).mean()
+        df["dx"] = 100 * abs(df["di_plus"] - df["di_minus"]) / (df["di_plus"] + df["di_minus"])
+        df["adx"] = df["dx"].rolling(window=period).mean()
 
-        return df['adx']
+        return df["adx"]
 
     def calculate_atr(self, data: pd.DataFrame, period: int = 14) -> pd.Series:
         """Calculate ATR (Average True Range)"""
         df = data.copy()
 
-        df['h-l'] = df['high'] - df['low']
-        df['h-pc'] = abs(df['high'] - df['close'].shift(1))
-        df['l-pc'] = abs(df['low'] - df['close'].shift(1))
-        df['tr'] = df[['h-l', 'h-pc', 'l-pc']].max(axis=1)
-        df['atr'] = df['tr'].rolling(window=period).mean()
+        df["h-l"] = df["high"] - df["low"]
+        df["h-pc"] = abs(df["high"] - df["close"].shift(1))
+        df["l-pc"] = abs(df["low"] - df["close"].shift(1))
+        df["tr"] = df[["h-l", "h-pc", "l-pc"]].max(axis=1)
+        df["atr"] = df["tr"].rolling(window=period).mean()
 
-        return df['atr']
+        return df["atr"]
 
     def calculate_bb_width(self, data: pd.DataFrame, period: int = 20) -> pd.Series:
         """Calculate Bollinger Band Width (normalized)"""
-        sma = data['close'].rolling(window=period).mean()
-        std = data['close'].rolling(window=period).std()
+        sma = data["close"].rolling(window=period).mean()
+        std = data["close"].rolling(window=period).std()
         bb_width = (2 * std) / sma  # Normalized width
         return bb_width
 
@@ -121,10 +122,10 @@ class RegimeDetector:
         """
         if len(data) < self.lookback:
             return {
-                'regime': MarketRegime.UNKNOWN,
-                'confidence': 0.0,
-                'metrics': {},
-                'recommendation': "Insufficient data for regime detection"
+                "regime": MarketRegime.UNKNOWN,
+                "confidence": 0.0,
+                "metrics": {},
+                "recommendation": "Insufficient data for regime detection",
             }
 
         # Calculate indicators
@@ -139,15 +140,18 @@ class RegimeDetector:
         current_bb_width = bb_width.iloc[-1] if not pd.isna(bb_width.iloc[-1]) else 0
 
         # Calculate normalized ATR (ATR / price)
-        normalized_atr = current_atr / data['close'].iloc[-1] if data['close'].iloc[-1] > 0 else 0
+        normalized_atr = current_atr / data["close"].iloc[-1] if data["close"].iloc[-1] > 0 else 0
 
         # Linear regression fit (R² score)
-        recent_prices = recent_data['close'].values
+        recent_prices = recent_data["close"].values
         x = np.arange(len(recent_prices))
         coeffs = np.polyfit(x, recent_prices, 1)
         poly = np.poly1d(coeffs)
         fitted = poly(x)
-        r_squared = 1 - (np.sum((recent_prices - fitted) ** 2) / np.sum((recent_prices - np.mean(recent_prices)) ** 2))
+        r_squared = 1 - (
+            np.sum((recent_prices - fitted) ** 2)
+            / np.sum((recent_prices - np.mean(recent_prices)) ** 2)
+        )
 
         # Regime detection logic
         regime = MarketRegime.UNKNOWN
@@ -184,16 +188,16 @@ class RegimeDetector:
         )
 
         return {
-            'regime': regime,
-            'confidence': float(confidence),
-            'metrics': {
-                'adx': float(current_adx),
-                'atr': float(current_atr),
-                'normalized_atr': float(normalized_atr),
-                'bb_width': float(current_bb_width),
-                'r_squared': float(r_squared),
+            "regime": regime,
+            "confidence": float(confidence),
+            "metrics": {
+                "adx": float(current_adx),
+                "atr": float(current_atr),
+                "normalized_atr": float(normalized_atr),
+                "bb_width": float(current_bb_width),
+                "r_squared": float(r_squared),
             },
-            'recommendation': recommendation
+            "recommendation": recommendation,
         }
 
     def get_optimal_strategy(self, regime: MarketRegime) -> str:

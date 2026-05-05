@@ -13,6 +13,7 @@ from loguru import logger
 
 class SignalType(Enum):
     """Trading signal types"""
+
     LONG = "LONG"
     SHORT = "SHORT"
     EXIT = "EXIT"
@@ -35,6 +36,7 @@ class Signal:
         confidence: Signal confidence (0-1)
         metadata: Additional signal information
     """
+
     timestamp: datetime
     symbol: str
     signal_type: SignalType
@@ -85,10 +87,7 @@ class Strategy(ABC):
 
     @abstractmethod
     def calculate_position_size(
-        self,
-        signal: Signal,
-        account_value: float,
-        current_position: float = 0.0
+        self, signal: Signal, account_value: float, current_position: float = 0.0
     ) -> float:
         """
         Calculate position size for a signal
@@ -146,7 +145,7 @@ class Strategy(ABC):
         Returns:
             True if data is valid
         """
-        required_columns = ['open', 'high', 'low', 'close', 'volume']
+        required_columns = ["open", "high", "low", "close", "volume"]
         missing_columns = [col for col in required_columns if col not in data.columns]
 
         if missing_columns:

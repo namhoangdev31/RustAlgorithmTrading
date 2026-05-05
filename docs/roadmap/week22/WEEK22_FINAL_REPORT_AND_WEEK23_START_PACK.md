@@ -2,26 +2,28 @@
 
 ## 1) Executive summary
 
-- Current gate status: `PENDING_DECISION`.
-- Final verdict: `PENDING_DECISION`.
+- Current gate status: `NO-GO`.
+- Final verdict: `NO-GO`.
 - W22 objective summary:
-  1. Full Python/Rust unit+integration hard-gate closure.
-  2. Integration debt closure theo rule không defer.
-  3. Governance consistency cho W23 gate3 kickoff.
+  1. Baseline/profile/rehearsal evidence W22 đã capture đầy đủ.
+  2. Mandatory hard-gate2 chưa đạt (`Python suites`, `cross-runtime`, `debt`, `regression EV-W22-305`).
+  3. Artifact đã lock một verdict duy nhất `NO-GO` + recovery queue.
 
 ## 2) KPI snapshot
 
 | KPI Group | Target | Actual | Status | Evidence ID |
 |---|---|---|---|---|
-| Hard-Gate | Python/Rust unit+integration 100% | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W22-201`,`EV-W22-202` |
-| Hard-Gate | cross-runtime slices pass | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W22-203` |
-| Quality | debt open = 0 | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W22-204` |
-| Quality | W09-W21 regression pass | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W22-301..306` |
-| Governance | artifact consistency 100% | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `EV-W22-401`,`EV-W22-402` |
+| Hard-Gate | Python/Rust unit+integration 100% | FAIL/PASS (Python fail, Rust pass) | `CAPTURED_FAIL` | `EV-W22-201`,`EV-W22-202` |
+| Hard-Gate | cross-runtime slices pass | FAIL | `CAPTURED_FAIL` | `EV-W22-203` |
+| Quality | debt open = 0 | FAIL | `CAPTURED_FAIL` | `EV-W22-204` |
+| Quality | W09-W21 regression pass | FAIL (`EV-W22-305` fail) | `CAPTURED_FAIL` | `EV-W22-301..306` |
+| Governance | artifact consistency 100% | `100%` (`NO-GO` unified) | `CAPTURED_PASS` | `EV-W22-401`,`EV-W22-402` |
 
 ## 3) Delivery status
 
-- `W22-T01..T18`: `PENDING_EXECUTION`.
+- `W22-T01..T06`: `DONE`.
+- `W22-T07..T12`: `DONE` (blockers captured + mapped).
+- `W22-T13..T18`: `DONE` (rerun, reconciliation, verdict lock, handoff pack).
 
 ## 4) Issue snapshot
 
@@ -51,6 +53,8 @@ Guardrails:
 
 ## 7) Recovery queue (nếu W22 = NO-GO)
 
-1. Ưu tiên unblock P0 trước, rồi P1.
-2. Mỗi blocker bắt buộc có owner + ETA + mitigation + missing evidence.
-3. Chỉ đổi trạng thái sau khi rerun command profile chuẩn.
+1. `W22-ISS-001` (`tester`, ETA `Pha 3 rerun`): close Python unit+integration failures và rerun `EV-W22-101/102/201`.
+2. `W22-ISS-003` (`coder`, ETA `Pha 3 rerun`): close cross-runtime integration blockers và rerun `EV-W22-203`.
+3. `W22-ISS-004` (`tester`, ETA `sau ISS-001/003`): close integration debt và rerun `EV-W22-204`.
+4. `W22-ISS-007` (`tester`, ETA `Pha 5 rerun`): fix `verify_w15_capital_allocation.py` import path (`models`) rồi rerun `EV-W22-305`.
+5. Chỉ được chuyển `GO` khi toàn bộ mandatory evidence đạt `CAPTURED_PASS`.

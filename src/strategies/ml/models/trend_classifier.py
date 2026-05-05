@@ -8,7 +8,13 @@ import numpy as np
 from typing import Dict, Literal
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, classification_report
+from sklearn.metrics import (
+    accuracy_score,
+    precision_score,
+    recall_score,
+    f1_score,
+    classification_report,
+)
 from .base_model import BaseMLModel
 
 
@@ -35,9 +41,9 @@ class TrendClassifier(BaseMLModel):
 
     def __init__(
         self,
-        model_type: Literal['random_forest', 'gradient_boosting', 'logistic'] = 'random_forest',
+        model_type: Literal["random_forest", "gradient_boosting", "logistic"] = "random_forest",
         neutral_threshold: float = 0.001,  # 0.1% return threshold
-        **model_params
+        **model_params,
     ):
         """
         Initialize trend classifier.
@@ -47,7 +53,7 @@ class TrendClassifier(BaseMLModel):
             neutral_threshold: Threshold for neutral class (absolute return)
             **model_params: Additional parameters for the model
         """
-        super().__init__(model_name=f'trend_classifier_{model_type}')
+        super().__init__(model_name=f"trend_classifier_{model_type}")
 
         self.model_type = model_type
         self.neutral_threshold = neutral_threshold
@@ -65,28 +71,28 @@ class TrendClassifier(BaseMLModel):
 
     def _create_model(self, model_type: str, params: dict):
         """Create the appropriate classification model."""
-        if model_type == 'random_forest':
+        if model_type == "random_forest":
             return RandomForestClassifier(
-                n_estimators=params.get('n_estimators', 100),
-                max_depth=params.get('max_depth', 10),
-                min_samples_split=params.get('min_samples_split', 5),
-                class_weight=params.get('class_weight', 'balanced'),
-                random_state=params.get('random_state', 42),
-                n_jobs=params.get('n_jobs', -1)
+                n_estimators=params.get("n_estimators", 100),
+                max_depth=params.get("max_depth", 10),
+                min_samples_split=params.get("min_samples_split", 5),
+                class_weight=params.get("class_weight", "balanced"),
+                random_state=params.get("random_state", 42),
+                n_jobs=params.get("n_jobs", -1),
             )
-        elif model_type == 'gradient_boosting':
+        elif model_type == "gradient_boosting":
             return GradientBoostingClassifier(
-                n_estimators=params.get('n_estimators', 100),
-                learning_rate=params.get('learning_rate', 0.1),
-                max_depth=params.get('max_depth', 5),
-                random_state=params.get('random_state', 42)
+                n_estimators=params.get("n_estimators", 100),
+                learning_rate=params.get("learning_rate", 0.1),
+                max_depth=params.get("max_depth", 5),
+                random_state=params.get("random_state", 42),
             )
-        elif model_type == 'logistic':
+        elif model_type == "logistic":
             return LogisticRegression(
-                C=params.get('C', 1.0),
-                class_weight=params.get('class_weight', 'balanced'),
-                random_state=params.get('random_state', 42),
-                max_iter=params.get('max_iter', 1000)
+                C=params.get("C", 1.0),
+                class_weight=params.get("class_weight", "balanced"),
+                random_state=params.get("random_state", 42),
+                max_iter=params.get("max_iter", 1000),
             )
         else:
             raise ValueError(f"Unknown model type: {model_type}")
@@ -133,20 +139,20 @@ class TrendClassifier(BaseMLModel):
         # Calculate training metrics
         y_pred = self.model.predict(X)
         metrics = {
-            'train_accuracy': accuracy_score(y_labels, y_pred),
-            'train_precision': precision_score(y_labels, y_pred, average='weighted'),
-            'train_recall': recall_score(y_labels, y_pred, average='weighted'),
-            'train_f1': f1_score(y_labels, y_pred, average='weighted')
+            "train_accuracy": accuracy_score(y_labels, y_pred),
+            "train_precision": precision_score(y_labels, y_pred, average="weighted"),
+            "train_recall": recall_score(y_labels, y_pred, average="weighted"),
+            "train_f1": f1_score(y_labels, y_pred, average="weighted"),
         }
 
         # Store in metadata
-        self.metadata['train_metrics'] = metrics
-        self.metadata['n_samples'] = len(X)
-        self.metadata['n_features'] = X.shape[1]
-        self.metadata['class_distribution'] = {
-            'down': int(np.sum(y_labels == 0)),
-            'neutral': int(np.sum(y_labels == 1)),
-            'up': int(np.sum(y_labels == 2))
+        self.metadata["train_metrics"] = metrics
+        self.metadata["n_samples"] = len(X)
+        self.metadata["n_features"] = X.shape[1]
+        self.metadata["class_distribution"] = {
+            "down": int(np.sum(y_labels == 0)),
+            "neutral": int(np.sum(y_labels == 1)),
+            "up": int(np.sum(y_labels == 2)),
         }
 
         return metrics
@@ -204,18 +210,18 @@ class TrendClassifier(BaseMLModel):
         y_pred = self.predict(X)
 
         metrics = {
-            'test_accuracy': accuracy_score(y_labels, y_pred),
-            'test_precision': precision_score(y_labels, y_pred, average='weighted'),
-            'test_recall': recall_score(y_labels, y_pred, average='weighted'),
-            'test_f1': f1_score(y_labels, y_pred, average='weighted'),
-            'test_precision_down': precision_score(y_labels, y_pred, labels=[0], average='micro'),
-            'test_precision_up': precision_score(y_labels, y_pred, labels=[2], average='micro')
+            "test_accuracy": accuracy_score(y_labels, y_pred),
+            "test_precision": precision_score(y_labels, y_pred, average="weighted"),
+            "test_recall": recall_score(y_labels, y_pred, average="weighted"),
+            "test_f1": f1_score(y_labels, y_pred, average="weighted"),
+            "test_precision_down": precision_score(y_labels, y_pred, labels=[0], average="micro"),
+            "test_precision_up": precision_score(y_labels, y_pred, labels=[2], average="micro"),
         }
 
         # Store classification report
-        self.metadata['test_metrics'] = metrics
-        self.metadata['classification_report'] = classification_report(
-            y_labels, y_pred, target_names=['Down', 'Neutral', 'Up']
+        self.metadata["test_metrics"] = metrics
+        self.metadata["classification_report"] = classification_report(
+            y_labels, y_pred, target_names=["Down", "Neutral", "Up"]
         )
 
         return metrics
@@ -230,9 +236,9 @@ class TrendClassifier(BaseMLModel):
         if not self.is_trained:
             raise ValueError("Model must be trained first")
 
-        if hasattr(self.model, 'feature_importances_'):
+        if hasattr(self.model, "feature_importances_"):
             return self.model.feature_importances_
-        elif hasattr(self.model, 'coef_'):
+        elif hasattr(self.model, "coef_"):
             # For logistic regression, use absolute coefficients
             return np.abs(self.model.coef_).mean(axis=0)
         else:

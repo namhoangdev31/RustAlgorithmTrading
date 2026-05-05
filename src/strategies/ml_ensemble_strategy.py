@@ -26,6 +26,7 @@ from strategies.ml.models.trend_classifier import TrendClassifier
 # Try importing XGBoost
 try:
     import xgboost as xgb
+
     HAS_XGBOOST = True
 except ImportError:
     HAS_XGBOOST = False
@@ -35,6 +36,7 @@ except ImportError:
 @dataclass
 class RegimeState:
     """Market regime state."""
+
     regime: str  # 'trending_up', 'trending_down', 'ranging', 'volatile'
     strength: float  # 0-1
     adx: float
@@ -69,55 +71,51 @@ class MLEnsembleStrategy(Strategy):
         # Confidence thresholds
         long_confidence_threshold: float = 0.60,
         short_confidence_threshold: float = 0.65,
-
         # Position sizing
         base_position_size: float = 0.15,
         max_position_size: float = 0.25,
         min_position_size: float = 0.05,
-
         # Risk management
         stop_loss_pct: float = 0.02,
         take_profit_pct: float = 0.04,
         trailing_stop_pct: float = 0.015,
-
         # Regime parameters
         adx_trending_threshold: float = 25.0,
         adx_strong_trend: float = 35.0,
         volatility_max: float = 0.04,  # Max daily volatility for shorts
-
         # Model parameters
         train_window: int = 120,  # Days for training
         retrain_frequency: int = 20,  # Retrain every N days
         min_samples_for_training: int = 60,
-
         # Ensemble weights
         rf_weight: float = 0.35,
         gbm_weight: float = 0.35,
         xgb_weight: float = 0.30,
-
-        parameters: Optional[Dict[str, Any]] = None
+        parameters: Optional[Dict[str, Any]] = None,
     ):
         """Initialize ML Ensemble Strategy."""
         params = parameters or {}
-        params.update({
-            'long_confidence_threshold': long_confidence_threshold,
-            'short_confidence_threshold': short_confidence_threshold,
-            'base_position_size': base_position_size,
-            'max_position_size': max_position_size,
-            'min_position_size': min_position_size,
-            'stop_loss_pct': stop_loss_pct,
-            'take_profit_pct': take_profit_pct,
-            'trailing_stop_pct': trailing_stop_pct,
-            'adx_trending_threshold': adx_trending_threshold,
-            'adx_strong_trend': adx_strong_trend,
-            'volatility_max': volatility_max,
-            'train_window': train_window,
-            'retrain_frequency': retrain_frequency,
-            'min_samples_for_training': min_samples_for_training,
-            'rf_weight': rf_weight,
-            'gbm_weight': gbm_weight,
-            'xgb_weight': xgb_weight,
-        })
+        params.update(
+            {
+                "long_confidence_threshold": long_confidence_threshold,
+                "short_confidence_threshold": short_confidence_threshold,
+                "base_position_size": base_position_size,
+                "max_position_size": max_position_size,
+                "min_position_size": min_position_size,
+                "stop_loss_pct": stop_loss_pct,
+                "take_profit_pct": take_profit_pct,
+                "trailing_stop_pct": trailing_stop_pct,
+                "adx_trending_threshold": adx_trending_threshold,
+                "adx_strong_trend": adx_strong_trend,
+                "volatility_max": volatility_max,
+                "train_window": train_window,
+                "retrain_frequency": retrain_frequency,
+                "min_samples_for_training": min_samples_for_training,
+                "rf_weight": rf_weight,
+                "gbm_weight": gbm_weight,
+                "xgb_weight": xgb_weight,
+            }
+        )
 
         super().__init__(name="MLEnsembleStrategy", parameters=params)
 
@@ -127,12 +125,14 @@ class MLEnsembleStrategy(Strategy):
         self._init_models()
 
         # Feature engineering
-        self.feature_engineer = FeatureEngineer(FeatureConfig(
-            lookback_periods=[5, 10, 20, 50],
-            technical_indicators=['sma', 'ema', 'rsi', 'macd', 'bbands'],
-            statistical_features=['returns', 'volatility', 'volume_ratio'],
-            scaling_method='standard'
-        ))
+        self.feature_engineer = FeatureEngineer(
+            FeatureConfig(
+                lookback_periods=[5, 10, 20, 50],
+                technical_indicators=["sma", "ema", "rsi", "macd", "bbands"],
+                statistical_features=["returns", "volatility", "volume_ratio"],
+                scaling_method="standard",
+            )
+        )
 
         # Training state
         self.is_trained = False
@@ -155,42 +155,37 @@ class MLEnsembleStrategy(Strategy):
 
     def _init_models(self):
         """Initialize ensemble models."""
-        rf_weight = self.get_parameter('rf_weight', 0.35)
-        gbm_weight = self.get_parameter('gbm_weight', 0.35)
-        xgb_weight = self.get_parameter('xgb_weight', 0.30)
+        rf_weight = self.get_parameter("rf_weight", 0.35)
+        gbm_weight = self.get_parameter("gbm_weight", 0.35)
+        xgb_weight = self.get_parameter("xgb_weight", 0.30)
 
         # Random Forest - good for capturing non-linear patterns
-        self.models['random_forest'] = TrendClassifier(
-            model_type='random_forest',
+        self.models["random_forest"] = TrendClassifier(
+            model_type="random_forest",
             n_estimators=200,
             max_depth=8,
             min_samples_split=10,
-            class_weight='balanced'
+            class_weight="balanced",
         )
-        self.model_weights['random_forest'] = rf_weight
+        self.model_weights["random_forest"] = rf_weight
 
         # Gradient Boosting - good for sequential patterns
-        self.models['gradient_boosting'] = TrendClassifier(
-            model_type='gradient_boosting',
-            n_estimators=150,
-            learning_rate=0.05,
-            max_depth=5
+        self.models["gradient_boosting"] = TrendClassifier(
+            model_type="gradient_boosting", n_estimators=150, learning_rate=0.05, max_depth=5
         )
-        self.model_weights['gradient_boosting'] = gbm_weight
+        self.model_weights["gradient_boosting"] = gbm_weight
 
         # XGBoost if available
         if HAS_XGBOOST:
-            self.models['xgboost'] = XGBoostClassifier(
-                n_estimators=150,
-                learning_rate=0.05,
-                max_depth=5
+            self.models["xgboost"] = XGBoostClassifier(
+                n_estimators=150, learning_rate=0.05, max_depth=5
             )
-            self.model_weights['xgboost'] = xgb_weight
+            self.model_weights["xgboost"] = xgb_weight
         else:
             # Redistribute weight to other models
             total = rf_weight + gbm_weight
-            self.model_weights['random_forest'] = rf_weight / total
-            self.model_weights['gradient_boosting'] = gbm_weight / total
+            self.model_weights["random_forest"] = rf_weight / total
+            self.model_weights["gradient_boosting"] = gbm_weight / total
 
         logger.info(f"Initialized {len(self.models)} ensemble models")
 
@@ -204,7 +199,7 @@ class MLEnsembleStrategy(Strategy):
         Returns:
             Training metrics for each model
         """
-        min_samples = self.get_parameter('min_samples_for_training', 60)
+        min_samples = self.get_parameter("min_samples_for_training", 60)
 
         if len(data) < min_samples:
             logger.warning(f"Insufficient data for training: {len(data)} < {min_samples}")
@@ -215,9 +210,7 @@ class MLEnsembleStrategy(Strategy):
 
         # Prepare ML dataset
         X, y = self.feature_engineer.prepare_ml_dataset(
-            features_df,
-            target_col='next_return',
-            scale_features=True
+            features_df, target_col="next_return", scale_features=True
         )
 
         if len(X) < min_samples:
@@ -254,19 +247,19 @@ class MLEnsembleStrategy(Strategy):
             RegimeState with regime classification
         """
         if len(data) < 50:
-            return RegimeState('unknown', 0.0, 0.0, 0.0, 0)
+            return RegimeState("unknown", 0.0, 0.0, 0.0, 0)
 
         # Calculate ADX
         adx = self._calculate_adx(data)
 
         # Calculate volatility (20-day)
-        returns = data['close'].pct_change()
+        returns = data["close"].pct_change()
         volatility = returns.rolling(20).std().iloc[-1]
 
         # Calculate trend direction using 20/50 EMA
-        ema_20 = data['close'].ewm(span=20).mean().iloc[-1]
-        ema_50 = data['close'].ewm(span=50).mean().iloc[-1]
-        price = data['close'].iloc[-1]
+        ema_20 = data["close"].ewm(span=20).mean().iloc[-1]
+        ema_50 = data["close"].ewm(span=50).mean().iloc[-1]
+        price = data["close"].iloc[-1]
 
         trend_direction = 0
         if price > ema_20 > ema_50:
@@ -275,36 +268,36 @@ class MLEnsembleStrategy(Strategy):
             trend_direction = -1
 
         # Classify regime
-        adx_trending = self.get_parameter('adx_trending_threshold', 25.0)
-        adx_strong = self.get_parameter('adx_strong_trend', 35.0)
-        vol_max = self.get_parameter('volatility_max', 0.04)
+        adx_trending = self.get_parameter("adx_trending_threshold", 25.0)
+        adx_strong = self.get_parameter("adx_strong_trend", 35.0)
+        vol_max = self.get_parameter("volatility_max", 0.04)
 
         if adx > adx_strong:
             if trend_direction > 0:
-                regime = 'trending_up'
+                regime = "trending_up"
                 strength = min(adx / 50, 1.0)
             elif trend_direction < 0:
-                regime = 'trending_down'
+                regime = "trending_down"
                 strength = min(adx / 50, 1.0)
             else:
-                regime = 'volatile'
+                regime = "volatile"
                 strength = 0.5
         elif adx > adx_trending:
             if trend_direction > 0:
-                regime = 'trending_up'
+                regime = "trending_up"
                 strength = 0.6
             elif trend_direction < 0:
-                regime = 'trending_down'
+                regime = "trending_down"
                 strength = 0.6
             else:
-                regime = 'ranging'
+                regime = "ranging"
                 strength = 0.5
         else:
             if volatility > vol_max:
-                regime = 'volatile'
+                regime = "volatile"
                 strength = min(volatility / vol_max, 1.0)
             else:
-                regime = 'ranging'
+                regime = "ranging"
                 strength = 0.7
 
         return RegimeState(
@@ -312,7 +305,7 @@ class MLEnsembleStrategy(Strategy):
             strength=strength,
             adx=adx,
             volatility=volatility,
-            trend_direction=trend_direction
+            trend_direction=trend_direction,
         )
 
     def _calculate_adx(self, data: pd.DataFrame, period: int = 14) -> float:
@@ -320,35 +313,39 @@ class MLEnsembleStrategy(Strategy):
         df = data.copy()
 
         # True Range
-        df['h-l'] = df['high'] - df['low']
-        df['h-pc'] = abs(df['high'] - df['close'].shift(1))
-        df['l-pc'] = abs(df['low'] - df['close'].shift(1))
-        df['tr'] = df[['h-l', 'h-pc', 'l-pc']].max(axis=1)
+        df["h-l"] = df["high"] - df["low"]
+        df["h-pc"] = abs(df["high"] - df["close"].shift(1))
+        df["l-pc"] = abs(df["low"] - df["close"].shift(1))
+        df["tr"] = df[["h-l", "h-pc", "l-pc"]].max(axis=1)
 
         # Directional Movement
-        df['dm_plus'] = np.where(
-            (df['high'] - df['high'].shift(1)) > (df['low'].shift(1) - df['low']),
-            np.maximum(df['high'] - df['high'].shift(1), 0), 0
+        df["dm_plus"] = np.where(
+            (df["high"] - df["high"].shift(1)) > (df["low"].shift(1) - df["low"]),
+            np.maximum(df["high"] - df["high"].shift(1), 0),
+            0,
         )
-        df['dm_minus'] = np.where(
-            (df['low'].shift(1) - df['low']) > (df['high'] - df['high'].shift(1)),
-            np.maximum(df['low'].shift(1) - df['low'], 0), 0
+        df["dm_minus"] = np.where(
+            (df["low"].shift(1) - df["low"]) > (df["high"] - df["high"].shift(1)),
+            np.maximum(df["low"].shift(1) - df["low"], 0),
+            0,
         )
 
         # Smoothed
-        df['tr_smooth'] = df['tr'].rolling(window=period).sum()
-        df['dm_plus_smooth'] = df['dm_plus'].rolling(window=period).sum()
-        df['dm_minus_smooth'] = df['dm_minus'].rolling(window=period).sum()
+        df["tr_smooth"] = df["tr"].rolling(window=period).sum()
+        df["dm_plus_smooth"] = df["dm_plus"].rolling(window=period).sum()
+        df["dm_minus_smooth"] = df["dm_minus"].rolling(window=period).sum()
 
         # DI
-        df['di_plus'] = 100 * (df['dm_plus_smooth'] / df['tr_smooth'])
-        df['di_minus'] = 100 * (df['dm_minus_smooth'] / df['tr_smooth'])
+        df["di_plus"] = 100 * (df["dm_plus_smooth"] / df["tr_smooth"])
+        df["di_minus"] = 100 * (df["dm_minus_smooth"] / df["tr_smooth"])
 
         # DX and ADX
-        df['dx'] = 100 * abs(df['di_plus'] - df['di_minus']) / (df['di_plus'] + df['di_minus'] + 1e-10)
-        df['adx'] = df['dx'].rolling(window=period).mean()
+        df["dx"] = (
+            100 * abs(df["di_plus"] - df["di_minus"]) / (df["di_plus"] + df["di_minus"] + 1e-10)
+        )
+        df["adx"] = df["dx"].rolling(window=period).mean()
 
-        return df['adx'].iloc[-1] if not pd.isna(df['adx'].iloc[-1]) else 0.0
+        return df["adx"].iloc[-1] if not pd.isna(df["adx"].iloc[-1]) else 0.0
 
     def _get_ensemble_prediction(self, X: np.ndarray) -> Tuple[int, float, Dict[str, float]]:
         """
@@ -374,11 +371,7 @@ class MLEnsembleStrategy(Strategy):
                 probs = model.predict_proba(X)[0]
                 weight = self.model_weights.get(name, 0.33)
                 weighted_probs += probs * weight
-                model_probs[name] = {
-                    'down': probs[0],
-                    'neutral': probs[1],
-                    'up': probs[2]
-                }
+                model_probs[name] = {"down": probs[0], "neutral": probs[1], "up": probs[2]}
             except Exception as e:
                 logger.debug(f"Model {name} prediction failed: {e}")
 
@@ -393,7 +386,7 @@ class MLEnsembleStrategy(Strategy):
 
     def _should_retrain(self, current_idx: int) -> bool:
         """Check if models should be retrained."""
-        retrain_freq = self.get_parameter('retrain_frequency', 20)
+        retrain_freq = self.get_parameter("retrain_frequency", 20)
         return current_idx - self.last_train_idx >= retrain_freq
 
     def generate_signals_for_symbol(self, symbol: str, data: pd.DataFrame) -> List[Signal]:
@@ -408,7 +401,7 @@ class MLEnsembleStrategy(Strategy):
             List of Signal objects
         """
         data = data.copy()
-        data.attrs['symbol'] = symbol
+        data.attrs["symbol"] = symbol
         return self.generate_signals(data)
 
     def generate_signals(self, data: pd.DataFrame, latest_only: bool = True) -> List[Signal]:
@@ -426,10 +419,10 @@ class MLEnsembleStrategy(Strategy):
             return []
 
         data = data.copy()
-        symbol = data.attrs.get('symbol', 'UNKNOWN')
+        symbol = data.attrs.get("symbol", "UNKNOWN")
 
-        train_window = self.get_parameter('train_window', 120)
-        min_samples = self.get_parameter('min_samples_for_training', 60)
+        train_window = self.get_parameter("train_window", 120)
+        min_samples = self.get_parameter("min_samples_for_training", 60)
 
         # Check if we have enough data
         if len(data) < min_samples:
@@ -454,9 +447,9 @@ class MLEnsembleStrategy(Strategy):
             start_idx = min_bars
 
         for i in range(start_idx, len(data)):
-            current_data = data.iloc[:i+1]
+            current_data = data.iloc[: i + 1]
             current_bar = data.iloc[i]
-            current_price = float(current_bar['close'])
+            current_price = float(current_bar["close"])
 
             # Check for exit signals first
             exit_signal = self._check_exit_conditions(symbol, current_price, current_bar, i, data)
@@ -478,8 +471,11 @@ class MLEnsembleStrategy(Strategy):
                     continue
 
                 # Get features for last bar
-                feature_cols = [col for col in features_df.columns
-                              if col not in ['open', 'high', 'low', 'close', 'volume', 'next_return']]
+                feature_cols = [
+                    col
+                    for col in features_df.columns
+                    if col not in ["open", "high", "low", "close", "volume", "next_return"]
+                ]
                 X = features_df[feature_cols].iloc[[-1]].values
 
                 # Scale features
@@ -501,7 +497,7 @@ class MLEnsembleStrategy(Strategy):
                 prediction=prediction,
                 confidence=confidence,
                 regime=regime,
-                model_probs=model_probs
+                model_probs=model_probs,
             )
 
             if signal:
@@ -509,14 +505,14 @@ class MLEnsembleStrategy(Strategy):
 
                 # Track position
                 self.active_positions[symbol] = {
-                    'entry_price': current_price,
-                    'entry_time': current_bar.name,
-                    'entry_idx': i,
-                    'type': 'long' if signal.signal_type == SignalType.LONG else 'short',
-                    'highest_price': current_price,
-                    'lowest_price': current_price,
-                    'confidence': confidence,
-                    'regime': regime.regime
+                    "entry_price": current_price,
+                    "entry_time": current_bar.name,
+                    "entry_idx": i,
+                    "type": "long" if signal.signal_type == SignalType.LONG else "short",
+                    "highest_price": current_price,
+                    "lowest_price": current_price,
+                    "confidence": confidence,
+                    "regime": regime.regime,
                 }
 
         if signals:
@@ -532,7 +528,7 @@ class MLEnsembleStrategy(Strategy):
         prediction: int,
         confidence: float,
         regime: RegimeState,
-        model_probs: Dict[str, Dict[str, float]]
+        model_probs: Dict[str, Dict[str, float]],
     ) -> Optional[Signal]:
         """
         Generate trading signal from ML prediction.
@@ -549,43 +545,39 @@ class MLEnsembleStrategy(Strategy):
         Returns:
             Signal object or None
         """
-        long_threshold = self.get_parameter('long_confidence_threshold', 0.60)
-        short_threshold = self.get_parameter('short_confidence_threshold', 0.65)
-        vol_max = self.get_parameter('volatility_max', 0.04)
+        long_threshold = self.get_parameter("long_confidence_threshold", 0.60)
+        short_threshold = self.get_parameter("short_confidence_threshold", 0.65)
+        vol_max = self.get_parameter("volatility_max", 0.04)
 
         signal_type = None
 
         # LONG signal conditions
         if prediction == 2 and confidence >= long_threshold:
             # Long in trending up or ranging markets
-            if regime.regime in ['trending_up', 'ranging']:
+            if regime.regime in ["trending_up", "ranging"]:
                 signal_type = SignalType.LONG
                 logger.info(
                     f"[{symbol}] LONG SIGNAL: confidence={confidence:.1%}, "
                     f"regime={regime.regime}, ADX={regime.adx:.1f}"
                 )
-            elif regime.regime == 'volatile' and confidence >= 0.70:
+            elif regime.regime == "volatile" and confidence >= 0.70:
                 # Higher threshold for volatile markets
                 signal_type = SignalType.LONG
-                logger.info(
-                    f"[{symbol}] LONG (volatile): confidence={confidence:.1%}"
-                )
+                logger.info(f"[{symbol}] LONG (volatile): confidence={confidence:.1%}")
 
         # SHORT signal conditions (stricter)
         elif prediction == 0 and confidence >= short_threshold:
             # Only short in confirmed downtrends with acceptable volatility
-            if regime.regime == 'trending_down' and regime.volatility <= vol_max:
+            if regime.regime == "trending_down" and regime.volatility <= vol_max:
                 signal_type = SignalType.SHORT
                 logger.info(
                     f"[{symbol}] SHORT SIGNAL: confidence={confidence:.1%}, "
                     f"regime={regime.regime}, ADX={regime.adx:.1f}, vol={regime.volatility:.3f}"
                 )
-            elif regime.regime == 'ranging' and confidence >= 0.75 and regime.trend_direction < 0:
+            elif regime.regime == "ranging" and confidence >= 0.75 and regime.trend_direction < 0:
                 # Very high confidence shorts in ranging with bearish bias
                 signal_type = SignalType.SHORT
-                logger.info(
-                    f"[{symbol}] SHORT (ranging): confidence={confidence:.1%}"
-                )
+                logger.info(f"[{symbol}] SHORT (ranging): confidence={confidence:.1%}")
 
         if signal_type is None:
             return None
@@ -600,16 +592,16 @@ class MLEnsembleStrategy(Strategy):
             price=price,
             confidence=float(confidence),
             metadata={
-                'strategy': 'ml_ensemble',
-                'prediction': int(prediction),
-                'regime': regime.regime,
-                'regime_strength': float(regime.strength),
-                'adx': float(regime.adx),
-                'volatility': float(regime.volatility),
-                'position_size_pct': float(position_size),
-                'model_agreement': self._calculate_model_agreement(model_probs, prediction),
-                'model_probs': model_probs
-            }
+                "strategy": "ml_ensemble",
+                "prediction": int(prediction),
+                "regime": regime.regime,
+                "regime_strength": float(regime.strength),
+                "adx": float(regime.adx),
+                "volatility": float(regime.volatility),
+                "position_size_pct": float(position_size),
+                "model_agreement": self._calculate_model_agreement(model_probs, prediction),
+                "model_probs": model_probs,
+            },
         )
 
     def _calculate_dynamic_position_size(self, confidence: float, regime: RegimeState) -> float:
@@ -620,9 +612,9 @@ class MLEnsembleStrategy(Strategy):
         Strong trend = larger position
         High volatility = smaller position
         """
-        base_size = self.get_parameter('base_position_size', 0.15)
-        max_size = self.get_parameter('max_position_size', 0.25)
-        min_size = self.get_parameter('min_position_size', 0.05)
+        base_size = self.get_parameter("base_position_size", 0.15)
+        max_size = self.get_parameter("max_position_size", 0.25)
+        min_size = self.get_parameter("min_position_size", 0.05)
 
         # Start with base size
         size = base_size
@@ -632,13 +624,13 @@ class MLEnsembleStrategy(Strategy):
         size *= confidence_mult
 
         # Regime multiplier
-        if regime.regime in ['trending_up', 'trending_down']:
-            size *= (1.0 + regime.strength * 0.3)  # Up to 30% increase
-        elif regime.regime == 'volatile':
+        if regime.regime in ["trending_up", "trending_down"]:
+            size *= 1.0 + regime.strength * 0.3  # Up to 30% increase
+        elif regime.regime == "volatile":
             size *= 0.7  # 30% reduction in volatile markets
 
         # Volatility adjustment (reduce for high vol)
-        vol_max = self.get_parameter('volatility_max', 0.04)
+        vol_max = self.get_parameter("volatility_max", 0.04)
         if regime.volatility > vol_max * 0.5:
             vol_ratio = regime.volatility / vol_max
             size *= max(0.5, 1.0 - vol_ratio * 0.5)
@@ -646,12 +638,14 @@ class MLEnsembleStrategy(Strategy):
         # Clamp to limits
         return max(min_size, min(max_size, size))
 
-    def _calculate_model_agreement(self, model_probs: Dict[str, Dict[str, float]], prediction: int) -> float:
+    def _calculate_model_agreement(
+        self, model_probs: Dict[str, Dict[str, float]], prediction: int
+    ) -> float:
         """Calculate how much models agree on the prediction."""
         if not model_probs:
             return 0.0
 
-        pred_key = {0: 'down', 1: 'neutral', 2: 'up'}[prediction]
+        pred_key = {0: "down", 1: "neutral", 2: "up"}[prediction]
         agreements = [probs.get(pred_key, 0) for probs in model_probs.values()]
 
         return np.mean(agreements) if agreements else 0.0
@@ -662,55 +656,55 @@ class MLEnsembleStrategy(Strategy):
         current_price: float,
         current_bar: pd.Series,
         idx: int,
-        data: pd.DataFrame
+        data: pd.DataFrame,
     ) -> Optional[Signal]:
         """Check if position should be exited."""
         if symbol not in self.active_positions:
             return None
 
         position = self.active_positions[symbol]
-        entry_price = position['entry_price']
-        position_type = position['type']
-        entry_idx = position['entry_idx']
+        entry_price = position["entry_price"]
+        position_type = position["type"]
+        entry_idx = position["entry_idx"]
 
         # Update tracking prices
-        if position_type == 'long':
-            position['highest_price'] = max(position['highest_price'], current_price)
+        if position_type == "long":
+            position["highest_price"] = max(position["highest_price"], current_price)
             pnl_pct = (current_price - entry_price) / entry_price
         else:  # short
-            position['lowest_price'] = min(position['lowest_price'], current_price)
+            position["lowest_price"] = min(position["lowest_price"], current_price)
             pnl_pct = (entry_price - current_price) / entry_price
 
         bars_held = idx - entry_idx
 
-        stop_loss = self.get_parameter('stop_loss_pct', 0.02)
-        take_profit = self.get_parameter('take_profit_pct', 0.04)
-        trailing_stop = self.get_parameter('trailing_stop_pct', 0.015)
+        stop_loss = self.get_parameter("stop_loss_pct", 0.02)
+        take_profit = self.get_parameter("take_profit_pct", 0.04)
+        trailing_stop = self.get_parameter("trailing_stop_pct", 0.015)
 
         exit_reason = None
 
         # Stop-loss (immediate)
         if pnl_pct <= -stop_loss:
-            exit_reason = 'stop_loss'
+            exit_reason = "stop_loss"
 
         # Take-profit (after minimum hold)
         elif pnl_pct >= take_profit and bars_held >= 3:
-            exit_reason = 'take_profit'
+            exit_reason = "take_profit"
 
         # Trailing stop
         elif bars_held >= 5:
-            if position_type == 'long':
-                drawdown = (position['highest_price'] - current_price) / position['highest_price']
+            if position_type == "long":
+                drawdown = (position["highest_price"] - current_price) / position["highest_price"]
                 if drawdown >= trailing_stop and pnl_pct > 0:
-                    exit_reason = 'trailing_stop'
+                    exit_reason = "trailing_stop"
             else:  # short
-                drawup = (current_price - position['lowest_price']) / position['lowest_price']
+                drawup = (current_price - position["lowest_price"]) / position["lowest_price"]
                 if drawup >= trailing_stop and pnl_pct > 0:
-                    exit_reason = 'trailing_stop'
+                    exit_reason = "trailing_stop"
 
         # Time-based exit (max hold 30 bars)
         elif bars_held >= 30:
-            exit_reason = 'time_exit'
+            exit_reason = "time_exit"
 
         if exit_reason:
             del self.active_positions[symbol]
@@ -727,28 +721,24 @@ class MLEnsembleStrategy(Strategy):
                 price=current_price,
                 confidence=1.0,
                 metadata={
-                    'exit_reason': exit_reason,
-                    'pnl_pct': float(pnl_pct),
-                    'bars_held': bars_held,
-                    'entry_price': entry_price,
-                    'position_type': position_type,
-                    'entry_confidence': position['confidence'],
-                    'entry_regime': position['regime']
-                }
+                    "exit_reason": exit_reason,
+                    "pnl_pct": float(pnl_pct),
+                    "bars_held": bars_held,
+                    "entry_price": entry_price,
+                    "position_type": position_type,
+                    "entry_confidence": position["confidence"],
+                    "entry_regime": position["regime"],
+                },
             )
 
         return None
 
     def calculate_position_size(
-        self,
-        signal: Signal,
-        account_value: float,
-        current_position: float = 0.0
+        self, signal: Signal, account_value: float, current_position: float = 0.0
     ) -> float:
         """Calculate position size from signal metadata."""
         position_size_pct = signal.metadata.get(
-            'position_size_pct',
-            self.get_parameter('base_position_size', 0.15)
+            "position_size_pct", self.get_parameter("base_position_size", 0.15)
         )
 
         position_value = account_value * position_size_pct
@@ -768,7 +758,7 @@ class XGBoostClassifier:
         n_estimators: int = 150,
         learning_rate: float = 0.05,
         max_depth: int = 5,
-        random_state: int = 42
+        random_state: int = 42,
     ):
         """Initialize XGBoost classifier."""
         if not HAS_XGBOOST:
@@ -780,7 +770,7 @@ class XGBoostClassifier:
             max_depth=max_depth,
             random_state=random_state,
             use_label_encoder=False,
-            eval_metric='mlogloss'
+            eval_metric="mlogloss",
         )
         self.is_trained = False
         self.neutral_threshold = 0.001
@@ -805,7 +795,7 @@ class XGBoostClassifier:
         y_pred = self.model.predict(X)
         from sklearn.metrics import accuracy_score
 
-        return {'train_accuracy': accuracy_score(y_labels, y_pred)}
+        return {"train_accuracy": accuracy_score(y_labels, y_pred)}
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         """Predict classes."""

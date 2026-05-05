@@ -121,13 +121,16 @@ class DuckDBClient:
                 (timestamp, metric_name, value, symbol, labels)
                 VALUES (?, ?, ?, ?, ?)
                 """,
-                [(
-                    d["timestamp"],
-                    d["metric_name"],
-                    d["value"],
-                    d["symbol"],
-                    d["labels"],
-                ) for d in data]
+                [
+                    (
+                        d["timestamp"],
+                        d["metric_name"],
+                        d["value"],
+                        d["symbol"],
+                        d["labels"],
+                    )
+                    for d in data
+                ],
             )
 
         await self._execute_sync(_insert)
@@ -152,15 +155,18 @@ class DuckDBClient:
                 (timestamp, symbol, open, high, low, close, volume)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
                 """,
-                [(
-                    d["timestamp"],
-                    d["symbol"],
-                    d["open"],
-                    d["high"],
-                    d["low"],
-                    d["close"],
-                    d["volume"],
-                ) for d in data]
+                [
+                    (
+                        d["timestamp"],
+                        d["symbol"],
+                        d["open"],
+                        d["high"],
+                        d["low"],
+                        d["close"],
+                        d["volume"],
+                    )
+                    for d in data
+                ],
             )
 
         await self._execute_sync(_insert)
@@ -168,6 +174,7 @@ class DuckDBClient:
 
     async def insert_performance(self, record: PerformanceRecord) -> None:
         """Insert performance record"""
+
         def _insert() -> None:
             if self._conn is None:
                 return
@@ -187,7 +194,7 @@ class DuckDBClient:
                     data["max_drawdown"],
                     data["win_rate"],
                     data["total_trades"],
-                )
+                ),
             )
 
         await self._execute_sync(_insert)
@@ -279,10 +286,7 @@ class DuckDBClient:
                 ORDER BY bucket DESC
                 LIMIT ?
             """
-            result = self._conn.execute(
-                query,
-                [symbol, start_time, end_time, limit]
-            ).fetchall()
+            result = self._conn.execute(query, [symbol, start_time, end_time, limit]).fetchall()
 
             result_list: List[Dict[str, Any]] = [
                 {
@@ -323,7 +327,7 @@ class DuckDBClient:
                 FROM performance_history
                 WHERE timestamp >= ? AND timestamp <= ?
                 """,
-                [start_time, end_time]
+                [start_time, end_time],
             ).fetchone()
 
             if not result or result[0] is None:
@@ -337,8 +341,7 @@ class DuckDBClient:
                 "worst_drawdown": result[4],
                 "avg_win_rate": result[5],
                 "total_trades": result[6],
-                "return_pct": ((result[1] - result[0]) / result[0] * 100)
-                              if result[0] else 0,
+                "return_pct": ((result[1] - result[0]) / result[0] * 100) if result[0] else 0,
             }
 
         return cast(Dict[str, Any], await self._execute_sync(_query))
@@ -380,10 +383,7 @@ class DuckDBClient:
             """
             if self._conn is None:
                 return []
-            result = self._conn.execute(
-                query,
-                [metric_name, start_time, end_time]
-            ).fetchall()
+            result = self._conn.execute(query, [metric_name, start_time, end_time]).fetchall()
 
             return [
                 {
@@ -396,11 +396,9 @@ class DuckDBClient:
 
         return cast(List[Dict[str, Any]], await self._execute_sync(_query))
 
-    async def get_latest_metrics(
-        self,
-        limit: int = 100
-    ) -> List[Dict[str, Any]]:
+    async def get_latest_metrics(self, limit: int = 100) -> List[Dict[str, Any]]:
         """Get most recent metrics across all types"""
+
         def _query() -> List[Dict[str, Any]]:
             if self._conn is None:
                 return []
@@ -415,7 +413,7 @@ class DuckDBClient:
                 ORDER BY metric_name, symbol, timestamp DESC
                 LIMIT ?
                 """,
-                [limit]
+                [limit],
             ).fetchall()
 
             return [
@@ -434,6 +432,7 @@ class DuckDBClient:
 
     async def optimize(self) -> None:
         """Optimize database for better query performance"""
+
         def _optimize() -> None:
             if self._conn is not None:
                 self._conn.execute("CHECKPOINT")
@@ -444,6 +443,7 @@ class DuckDBClient:
 
     async def get_table_stats(self) -> Dict[str, Dict[str, Any]]:
         """Get storage statistics for all tables"""
+
         def _query() -> Dict[str, Dict[str, Any]]:
             if self._conn is None:
                 return {}

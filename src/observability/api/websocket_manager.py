@@ -9,6 +9,7 @@ Features:
 - Rate limiting and backpressure management
 - < 50ms latency guarantee
 """
+
 import asyncio
 import time
 from typing import Dict, Set, Optional
@@ -54,10 +55,7 @@ class WebSocketConnection:
             return True
         except Exception as e:
             self.error_count += 1
-            logger.error(
-                f"[cid:INIT] Failed to send text to client "
-                f"{self.client_id}: {e}"
-            )
+            logger.error(f"[cid:INIT] Failed to send text to client " f"{self.client_id}: {e}")
             return False
 
     def update_ping(self) -> None:
@@ -136,12 +134,14 @@ class WebSocketManager:
         )
 
         # Send welcome message
-        await connection.send_json({
-            "type": "connected",
-            "client_id": client_id,
-            "server_time": time.time(),
-            "update_frequency_hz": 10
-        })
+        await connection.send_json(
+            {
+                "type": "connected",
+                "client_id": client_id,
+                "server_time": time.time(),
+                "update_frequency_hz": 10,
+            }
+        )
 
         return client_id
 
@@ -154,10 +154,7 @@ class WebSocketManager:
                 try:
                     await connection.websocket.close()
                 except Exception as e:
-                    logger.error(
-                        f"[cid:INIT] Error closing WebSocket for {client_id}: "
-                        f"{e}"
-                    )
+                    logger.error(f"[cid:INIT] Error closing WebSocket for {client_id}: " f"{e}")
 
                 del self.connections[client_id]
 
@@ -171,8 +168,7 @@ class WebSocketManager:
     async def disconnect_all(self) -> None:
         """Disconnect all clients gracefully."""
         logger.info(
-            f"[cid:INIT] Disconnecting all {len(self.connections)} "
-            f"WebSocket clients..."
+            f"[cid:INIT] Disconnecting all {len(self.connections)} " f"WebSocket clients..."
         )
 
         # Cancel background tasks
@@ -201,9 +197,7 @@ class WebSocketManager:
         try:
             self._message_queue.put_nowait({"data": data, "topic": topic})
         except asyncio.QueueFull:
-            logger.warning(
-                "[cid:INIT] Message queue full, dropping message (backpressure)"
-            )
+            logger.warning("[cid:INIT] Message queue full, dropping message (backpressure)")
             self.total_errors += 1
 
     async def _process_message_queue(self) -> None:
@@ -222,8 +216,7 @@ class WebSocketManager:
                 for connection in list(self.connections.values()):
                     # Check topic subscription
                     subscribed = (
-                        topic in connection.subscriptions or
-                        "all" in connection.subscriptions
+                        topic in connection.subscriptions or "all" in connection.subscriptions
                     )
                     if topic and not subscribed:
                         continue
@@ -277,9 +270,7 @@ class WebSocketManager:
 
                 # Disconnect stale clients
                 for client_id in stale_clients:
-                    logger.warning(
-                        f"[cid:INIT] Disconnecting stale client: {client_id}"
-                    )
+                    logger.warning(f"[cid:INIT] Disconnecting stale client: {client_id}")
                     await self.disconnect(client_id)
         except asyncio.CancelledError:
             logger.info("[cid:INIT] Heartbeat loop cancelled")
@@ -302,9 +293,8 @@ class WebSocketManager:
             "total_connections": self.total_connections,
             "total_messages_sent": self.total_messages_sent,
             "total_errors": self.total_errors,
-            "heartbeat_success_rate": (
-                self.total_pings_received / max(self.total_pings_sent, 1)
-            ) * 100,
+            "heartbeat_success_rate": (self.total_pings_received / max(self.total_pings_sent, 1))
+            * 100,
             "queue_size": self._message_queue.qsize(),
             "connections": [
                 {
@@ -312,8 +302,8 @@ class WebSocketManager:
                     "uptime": conn.uptime(),
                     "message_count": conn.message_count,
                     "error_count": conn.error_count,
-                    "subscriptions": list(conn.subscriptions)
+                    "subscriptions": list(conn.subscriptions),
                 }
                 for conn in self.connections.values()
-            ]
+            ],
         }

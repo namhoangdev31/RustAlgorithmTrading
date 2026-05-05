@@ -62,7 +62,10 @@ class ReleaseGateManager(StagingHardeningManager):
             disposition = "BLOCKED"
             reason_code = "MISSING_SUITE_ID"
 
-        if suite_type in [SuiteType.LINT, SuiteType.STATIC, SuiteType.TYPE, SuiteType.UNIT] and original_disposition != "PASS":
+        if (
+            suite_type in [SuiteType.LINT, SuiteType.STATIC, SuiteType.TYPE, SuiteType.UNIT]
+            and original_disposition != "PASS"
+        ):
             disposition = "BLOCKED"
             reason_code = f"{suite_type.value}_SUITE_FAIL"
 
@@ -106,14 +109,17 @@ class ReleaseGateManager(StagingHardeningManager):
 
         suite_records = [r for r in gate_records if r.suite_type is not None]
         debt_records = [r for r in gate_records if r.debt_status is not None]
-        
+
         suite_pass_rate = (
             sum(1 for r in suite_records if r.disposition == "PASS") / len(suite_records)
-            if suite_records else 0.0
+            if suite_records
+            else 0.0
         )
-        
+
         open_debt_count = sum(1 for r in debt_records if r.debt_status == DebtStatus.OPEN)
-        total_regressions = sum(r.regression_count for r in gate_records if r.regression_count is not None)
+        total_regressions = sum(
+            r.regression_count for r in gate_records if r.regression_count is not None
+        )
 
         return {
             **base_summary,
@@ -121,7 +127,6 @@ class ReleaseGateManager(StagingHardeningManager):
             "open_test_debt": open_debt_count,
             "total_regressions": total_regressions,
             "suite_distribution": {
-                t.value: len([r for r in gate_records if r.suite_type == t])
-                for t in SuiteType
+                t.value: len([r for r in gate_records if r.suite_type == t]) for t in SuiteType
             },
         }

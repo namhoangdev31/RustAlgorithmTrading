@@ -67,10 +67,10 @@ class TestStructuredLogger:
             test_logger.info(
                 "Trade executed",
                 extra={
-                    'symbol': 'BTCUSDT',
-                    'price': 45000.0,
-                    'quantity': 0.5,
-                }
+                    "symbol": "BTCUSDT",
+                    "price": 45000.0,
+                    "quantity": 0.5,
+                },
             )
 
         # Check that message was logged
@@ -130,8 +130,10 @@ class TestCorrelationID:
 
     def test_correlation_id_propagation(self, test_logger):
         """Test correlation ID propagates through nested calls"""
+
         def inner_function():
             from src.observability.logging.correlations import get_correlation_id
+
             return get_correlation_id()
 
         with correlation_id("test-456"):
@@ -178,8 +180,8 @@ class TestPerformance:
         test_logger.warning("Warning")
 
         metrics = test_logger.get_metrics()
-        assert metrics['total_logs'] == 3
-        assert metrics['average_latency_ms'] < 1.0
+        assert metrics["total_logs"] == 3
+        assert metrics["average_latency_ms"] < 1.0
 
     def test_async_handler_performance(self, test_config):
         """Test async handler reduces blocking time"""
@@ -200,6 +202,7 @@ class TestLogDecorator:
 
     def test_sync_function_decorator(self, caplog):
         """Test decorator on sync function"""
+
         @log_execution_time(logger_name="test.decorator", threshold_ms=0)
         def slow_function():
             time.sleep(0.01)
@@ -218,6 +221,7 @@ class TestLogDecorator:
     @pytest.mark.asyncio
     async def test_async_function_decorator(self, caplog):
         """Test decorator on async function"""
+
         @log_execution_time(logger_name="test.decorator", threshold_ms=0)
         async def async_slow_function():
             await asyncio.sleep(0.01)
@@ -234,6 +238,7 @@ class TestLogDecorator:
 
     def test_decorator_with_threshold(self, caplog):
         """Test decorator only logs when threshold exceeded"""
+
         @log_execution_time(logger_name="test.decorator", threshold_ms=100)
         def fast_function():
             return "fast"
@@ -247,6 +252,7 @@ class TestLogDecorator:
 
     def test_decorator_with_error(self, caplog):
         """Test decorator logs errors"""
+
         @log_execution_time(logger_name="test.decorator")
         def failing_function():
             raise ValueError("Test error")
@@ -296,7 +302,7 @@ class TestGracefulDegradation:
             lineno=0,
             msg="Test",
             args=(),
-            exc_info=None
+            exc_info=None,
         )
         record.non_serializable = object()  # Cannot be JSON serialized
 
@@ -311,17 +317,14 @@ class TestThreadSafety:
     def test_concurrent_logging(self, test_logger):
         """Test logging from multiple threads"""
         import threading
-        
+
         test_logger.reset_metrics()
 
         def log_worker(worker_id: int):
             for i in range(100):
                 test_logger.info(f"Worker {worker_id} message {i}")
 
-        threads = [
-            threading.Thread(target=log_worker, args=(i,))
-            for i in range(5)
-        ]
+        threads = [threading.Thread(target=log_worker, args=(i,)) for i in range(5)]
 
         for thread in threads:
             thread.start()
@@ -331,7 +334,7 @@ class TestThreadSafety:
 
         # Should complete without errors
         metrics = test_logger.get_metrics()
-        assert metrics['total_logs'] == 500
+        assert metrics["total_logs"] == 500
 
     def test_metrics_thread_safety(self, test_logger):
         """Test metrics are updated correctly from multiple threads"""
@@ -353,7 +356,7 @@ class TestThreadSafety:
 
         metrics = test_logger.get_metrics()
         # All 500 logs should be counted
-        assert metrics['total_logs'] == 500
+        assert metrics["total_logs"] == 500
 
 
 class TestRedactionHandler:
@@ -369,7 +372,7 @@ class TestRedactionHandler:
             "event": "risk_reject",
             "limit_snapshot": {"equity": 12345.0},
             "nested": {
-                "payload_preview": "{\"order\":\"AAPL\"}",
+                "payload_preview": '{"order":"AAPL"}',
                 "safe_field": "ok",
             },
             "items": [
@@ -397,5 +400,5 @@ class TestRedactionHandler:
         assert redact_sensitive_data(payload) == payload
 
 
-if __name__ == '__main__':
-    pytest.main([__file__, '-v'])
+if __name__ == "__main__":
+    pytest.main([__file__, "-v"])

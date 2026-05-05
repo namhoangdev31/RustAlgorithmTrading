@@ -48,48 +48,50 @@ class JSONFormatter(logging.Formatter):
             return json.dumps(log_data, default=str)
         except (TypeError, ValueError) as e:
             # Fallback to simple format on serialization error
-            return json.dumps({
-                'timestamp': datetime.now(UTC).isoformat() + 'Z',
-                'level': record.levelname,
-                'logger': record.name,
-                'message': str(record.getMessage()),
-                'serialization_error': str(e)
-            })
+            return json.dumps(
+                {
+                    "timestamp": datetime.now(UTC).isoformat() + "Z",
+                    "level": record.levelname,
+                    "logger": record.name,
+                    "message": str(record.getMessage()),
+                    "serialization_error": str(e),
+                }
+            )
 
     def _build_log_data(self, record: logging.LogRecord) -> Dict[str, Any]:
         """Build log data dictionary from record"""
         # Base log data
         log_data = {
-            'timestamp': datetime.fromtimestamp(record.created, UTC).isoformat() + 'Z',
-            'level': record.levelname,
-            'logger': record.name,
-            'message': record.getMessage(),
-            'module': record.module,
-            'function': record.funcName,
-            'line': record.lineno,
+            "timestamp": datetime.fromtimestamp(record.created, UTC).isoformat() + "Z",
+            "level": record.levelname,
+            "logger": record.name,
+            "message": record.getMessage(),
+            "module": record.module,
+            "function": record.funcName,
+            "line": record.lineno,
         }
 
         # Add correlation ID if present
-        if hasattr(record, 'correlation_id'):
-            log_data['correlation_id'] = record.correlation_id
+        if hasattr(record, "correlation_id"):
+            log_data["correlation_id"] = record.correlation_id
 
         # Add custom fields from extra
         extra_fields = self._extract_extra_fields(record)
         if extra_fields:
-            log_data['extra'] = extra_fields
+            log_data["extra"] = extra_fields
 
         # Add schema version if present
-        if hasattr(record, 'schema_version'):
-            log_data['schema_version'] = record.schema_version
+        if hasattr(record, "schema_version"):
+            log_data["schema_version"] = record.schema_version
 
         # Add exception info if present
         if record.exc_info and self.include_exc_info:
             exc_type, exc_value, exc_tb = record.exc_info
             if exc_type is not None and exc_value is not None:
-                log_data['exception'] = {
-                    'type': getattr(exc_type, '__name__', str(exc_type)),
-                    'message': str(exc_value),
-                    'traceback': traceback.format_exception(exc_type, exc_value, exc_tb)
+                log_data["exception"] = {
+                    "type": getattr(exc_type, "__name__", str(exc_type)),
+                    "message": str(exc_value),
+                    "traceback": traceback.format_exception(exc_type, exc_value, exc_tb),
                 }
 
         return log_data
@@ -98,12 +100,31 @@ class JSONFormatter(logging.Formatter):
         """Extract custom fields from record"""
         # Standard fields to skip
         skip_fields = {
-            'name', 'msg', 'args', 'created', 'filename', 'funcName',
-            'levelname', 'levelno', 'lineno', 'module', 'msecs',
-            'message', 'pathname', 'process', 'processName',
-            'relativeCreated', 'thread', 'threadName', 'exc_info',
-            'exc_text', 'stack_info', 'correlation_id', 'logger_name',
-            'timestamp', 'schema_version'
+            "name",
+            "msg",
+            "args",
+            "created",
+            "filename",
+            "funcName",
+            "levelname",
+            "levelno",
+            "lineno",
+            "module",
+            "msecs",
+            "message",
+            "pathname",
+            "process",
+            "processName",
+            "relativeCreated",
+            "thread",
+            "threadName",
+            "exc_info",
+            "exc_text",
+            "stack_info",
+            "correlation_id",
+            "logger_name",
+            "timestamp",
+            "schema_version",
         }
 
         extra = {}
@@ -136,12 +157,12 @@ class StructuredFormatter(logging.Formatter):
 
     # ANSI color codes
     COLORS = {
-        'DEBUG': '\033[36m',      # Cyan
-        'INFO': '\033[32m',       # Green
-        'WARNING': '\033[33m',    # Yellow
-        'ERROR': '\033[31m',      # Red
-        'CRITICAL': '\033[35m',   # Magenta
-        'RESET': '\033[0m',       # Reset
+        "DEBUG": "\033[36m",  # Cyan
+        "INFO": "\033[32m",  # Green
+        "WARNING": "\033[33m",  # Yellow
+        "ERROR": "\033[31m",  # Red
+        "CRITICAL": "\033[35m",  # Magenta
+        "RESET": "\033[0m",  # Reset
     }
 
     def __init__(self, use_colors: bool = True, include_extra: bool = True):
@@ -159,15 +180,15 @@ class StructuredFormatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
         """Format log record as human-readable structured text"""
         # Format timestamp
-        timestamp = datetime.fromtimestamp(record.created, UTC).strftime(
-            '%Y-%m-%d %H:%M:%S.%f'
-        )[:-3]  # Truncate to milliseconds
+        timestamp = datetime.fromtimestamp(record.created, UTC).strftime("%Y-%m-%d %H:%M:%S.%f")[
+            :-3
+        ]  # Truncate to milliseconds
 
         # Format level with optional color
         level = record.levelname
         if self.use_colors:
-            color = self.COLORS.get(level, '')
-            reset = self.COLORS['RESET']
+            color = self.COLORS.get(level, "")
+            reset = self.COLORS["RESET"]
             level = f"{color}{level}{reset}"
 
         # Format logger name
@@ -175,12 +196,12 @@ class StructuredFormatter(logging.Formatter):
 
         # Format correlation ID if present
         correlation_id = ""
-        if hasattr(record, 'correlation_id'):
+        if hasattr(record, "correlation_id"):
             correlation_id = f"[{record.correlation_id}]"
 
         # Format schema version if present
         schema_info = ""
-        if hasattr(record, 'schema_version'):
+        if hasattr(record, "schema_version"):
             schema_info = f"[{record.schema_version}]"
 
         # Main log line
@@ -199,21 +220,40 @@ class StructuredFormatter(logging.Formatter):
 
         # Add exception info if present
         if record.exc_info:
-            exc_text = ''.join(traceback.format_exception(*record.exc_info))
+            exc_text = "".join(traceback.format_exception(*record.exc_info))
             for line in exc_text.splitlines():
                 lines.append(f"  {line}")
 
-        return '\n'.join(lines)
+        return "\n".join(lines)
 
     def _extract_extra_fields(self, record: logging.LogRecord) -> Dict[str, Any]:
         """Extract custom fields from record"""
         skip_fields = {
-            'name', 'msg', 'args', 'created', 'filename', 'funcName',
-            'levelname', 'levelno', 'lineno', 'module', 'msecs',
-            'message', 'pathname', 'process', 'processName',
-            'relativeCreated', 'thread', 'threadName', 'exc_info',
-            'exc_text', 'stack_info', 'correlation_id', 'logger_name',
-            'timestamp', 'schema_version'
+            "name",
+            "msg",
+            "args",
+            "created",
+            "filename",
+            "funcName",
+            "levelname",
+            "levelno",
+            "lineno",
+            "module",
+            "msecs",
+            "message",
+            "pathname",
+            "process",
+            "processName",
+            "relativeCreated",
+            "thread",
+            "threadName",
+            "exc_info",
+            "exc_text",
+            "stack_info",
+            "correlation_id",
+            "logger_name",
+            "timestamp",
+            "schema_version",
         }
 
         extra = {}
@@ -237,16 +277,16 @@ class CompactJSONFormatter(JSONFormatter):
     def _build_log_data(self, record: logging.LogRecord) -> Dict[str, Any]:
         """Build minimal log data dictionary"""
         log_data = {
-            'ts': datetime.fromtimestamp(record.created, UTC).isoformat() + 'Z',
-            'lvl': record.levelname[0],  # Single letter: D, I, W, E, C
-            'lgr': record.name.split('.')[-1],  # Last component only
-            'msg': record.getMessage(),
+            "ts": datetime.fromtimestamp(record.created, UTC).isoformat() + "Z",
+            "lvl": record.levelname[0],  # Single letter: D, I, W, E, C
+            "lgr": record.name.split(".")[-1],  # Last component only
+            "msg": record.getMessage(),
         }
 
-        if hasattr(record, 'correlation_id'):
-            log_data['cid'] = record.correlation_id
+        if hasattr(record, "correlation_id"):
+            log_data["cid"] = record.correlation_id
 
-        if hasattr(record, 'schema_version'):
-            log_data['v'] = record.schema_version
+        if hasattr(record, "schema_version"):
+            log_data["v"] = record.schema_version
 
         return log_data

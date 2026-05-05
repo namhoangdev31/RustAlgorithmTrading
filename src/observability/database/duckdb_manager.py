@@ -8,6 +8,7 @@ Provides high-performance, embedded analytics database with:
 - Fast batch inserts
 - Time-series optimized queries
 """
+
 import duckdb
 from typing import Dict, Any, List, Optional
 from datetime import datetime
@@ -55,10 +56,7 @@ class DuckDBManager:
             with self._lock:
                 if thread_id not in self._connections:
                     self._connections[thread_id] = duckdb.connect(self.db_path)
-                    logger.debug(
-                        f"[cid:INIT] Created DuckDB connection "
-                        f"for thread {thread_id}"
-                    )
+                    logger.debug(f"[cid:INIT] Created DuckDB connection " f"for thread {thread_id}")
 
         return self._connections[thread_id]
 
@@ -76,7 +74,8 @@ class DuckDBManager:
         """Initialize database schema."""
         with self.get_connection() as conn:
             # Market data metrics table
-            conn.execute("""
+            conn.execute(
+                """
                 CREATE TABLE IF NOT EXISTS market_data (
                     timestamp TIMESTAMP NOT NULL,
                     symbol VARCHAR NOT NULL,
@@ -88,16 +87,20 @@ class DuckDBManager:
                     spread_bps DOUBLE,
                     PRIMARY KEY (timestamp, symbol)
                 )
-            """)
+            """
+            )
 
             # Create index for time-based queries
-            conn.execute("""
+            conn.execute(
+                """
                 CREATE INDEX IF NOT EXISTS idx_market_data_timestamp
                 ON market_data(timestamp DESC)
-            """)
+            """
+            )
 
             # Strategy metrics table
-            conn.execute("""
+            conn.execute(
+                """
                 CREATE TABLE IF NOT EXISTS strategy_metrics (
                     timestamp TIMESTAMP NOT NULL,
                     strategy_name VARCHAR NOT NULL,
@@ -108,15 +111,19 @@ class DuckDBManager:
                     win_rate DOUBLE,
                     PRIMARY KEY (timestamp, strategy_name)
                 )
-            """)
+            """
+            )
 
-            conn.execute("""
+            conn.execute(
+                """
                 CREATE INDEX IF NOT EXISTS idx_strategy_timestamp
                 ON strategy_metrics(timestamp DESC)
-            """)
+            """
+            )
 
             # Execution metrics table
-            conn.execute("""
+            conn.execute(
+                """
                 CREATE TABLE IF NOT EXISTS execution_metrics (
                     timestamp TIMESTAMP NOT NULL,
                     orders_submitted INTEGER,
@@ -128,15 +135,19 @@ class DuckDBManager:
                     avg_slippage_bps DOUBLE,
                     PRIMARY KEY (timestamp)
                 )
-            """)
+            """
+            )
 
-            conn.execute("""
+            conn.execute(
+                """
                 CREATE INDEX IF NOT EXISTS idx_execution_timestamp
                 ON execution_metrics(timestamp DESC)
-            """)
+            """
+            )
 
             # System metrics table
-            conn.execute("""
+            conn.execute(
+                """
                 CREATE TABLE IF NOT EXISTS system_metrics (
                     timestamp TIMESTAMP NOT NULL,
                     cpu_percent DOUBLE,
@@ -147,15 +158,19 @@ class DuckDBManager:
                     active_alerts INTEGER,
                     PRIMARY KEY (timestamp)
                 )
-            """)
+            """
+            )
 
-            conn.execute("""
+            conn.execute(
+                """
                 CREATE INDEX IF NOT EXISTS idx_system_timestamp
                 ON system_metrics(timestamp DESC)
-            """)
+            """
+            )
 
             # Trades table
-            conn.execute("""
+            conn.execute(
+                """
                 CREATE TABLE IF NOT EXISTS trades (
                     trade_id VARCHAR PRIMARY KEY,
                     timestamp TIMESTAMP NOT NULL,
@@ -167,17 +182,22 @@ class DuckDBManager:
                     slippage_bps DOUBLE,
                     strategy VARCHAR
                 )
-            """)
+            """
+            )
 
-            conn.execute("""
+            conn.execute(
+                """
                 CREATE INDEX IF NOT EXISTS idx_trades_timestamp
                 ON trades(timestamp DESC)
-            """)
+            """
+            )
 
-            conn.execute("""
+            conn.execute(
+                """
                 CREATE INDEX IF NOT EXISTS idx_trades_symbol
                 ON trades(symbol)
-            """)
+            """
+            )
 
             logger.info("[cid:INIT] DuckDB schema initialized")
 
@@ -203,17 +223,20 @@ class DuckDBManager:
                         record.get("ask"),
                         record.get("volume", 0),
                         record.get("trades", 0),
-                        record.get("spread_bps", 0.0)
+                        record.get("spread_bps", 0.0),
                     )
                     for record in data
                 ]
 
-                conn.executemany("""
+                conn.executemany(
+                    """
                     INSERT OR REPLACE INTO market_data
                     (timestamp, symbol, last_price, bid, ask,
                      volume, trades, spread_bps)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                """, values)
+                """,
+                    values,
+                )
 
                 logger.debug(f"[cid:INIT] Inserted {len(data)} market data records")
         except Exception as e:
@@ -235,21 +258,22 @@ class DuckDBManager:
                         record.get("daily_pnl", 0.0),
                         record.get("positions", 0),
                         record.get("signals", 0),
-                        record.get("win_rate", 0.0)
+                        record.get("win_rate", 0.0),
                     )
                     for record in data
                 ]
 
-                conn.executemany("""
+                conn.executemany(
+                    """
                     INSERT OR REPLACE INTO strategy_metrics
                     (timestamp, strategy_name, pnl, daily_pnl,
                      positions, signals, win_rate)
                     VALUES (?, ?, ?, ?, ?, ?, ?)
-                """, values)
-
-                logger.debug(
-                    f"[cid:INIT] Inserted {len(data)} strategy metrics records"
+                """,
+                    values,
                 )
+
+                logger.debug(f"[cid:INIT] Inserted {len(data)} strategy metrics records")
         except Exception as e:
             logger.error(f"[cid:INIT] Error inserting strategy metrics: {e}")
             raise
@@ -258,21 +282,24 @@ class DuckDBManager:
         """Insert execution metrics."""
         try:
             with self.get_connection() as conn:
-                conn.execute("""
+                conn.execute(
+                    """
                     INSERT OR REPLACE INTO execution_metrics
                     (timestamp, orders_submitted, orders_filled, orders_cancelled,
                      orders_rejected, fill_rate, avg_latency_ms, avg_slippage_bps)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                """, (
-                    data.get("timestamp", datetime.utcnow()),
-                    data.get("orders_submitted", 0),
-                    data.get("orders_filled", 0),
-                    data.get("orders_cancelled", 0),
-                    data.get("orders_rejected", 0),
-                    data.get("fill_rate", 0.0),
-                    data.get("avg_latency_ms", 0.0),
-                    data.get("avg_slippage_bps", 0.0)
-                ))
+                """,
+                    (
+                        data.get("timestamp", datetime.utcnow()),
+                        data.get("orders_submitted", 0),
+                        data.get("orders_filled", 0),
+                        data.get("orders_cancelled", 0),
+                        data.get("orders_rejected", 0),
+                        data.get("fill_rate", 0.0),
+                        data.get("avg_latency_ms", 0.0),
+                        data.get("avg_slippage_bps", 0.0),
+                    ),
+                )
 
                 logger.debug("[cid:INIT] Inserted execution metrics")
         except Exception as e:
@@ -283,20 +310,23 @@ class DuckDBManager:
         """Insert system metrics."""
         try:
             with self.get_connection() as conn:
-                conn.execute("""
+                conn.execute(
+                    """
                     INSERT OR REPLACE INTO system_metrics
                     (timestamp, cpu_percent, memory_percent, disk_usage_percent,
                      uptime_seconds, health_status, active_alerts)
                     VALUES (?, ?, ?, ?, ?, ?, ?)
-                """, (
-                    data.get("timestamp", datetime.utcnow()),
-                    data.get("cpu_percent", 0.0),
-                    data.get("memory_percent", 0.0),
-                    data.get("disk_usage_percent", 0.0),
-                    data.get("uptime_seconds", 0.0),
-                    data.get("health_status", "unknown"),
-                    data.get("active_alerts", 0)
-                ))
+                """,
+                    (
+                        data.get("timestamp", datetime.utcnow()),
+                        data.get("cpu_percent", 0.0),
+                        data.get("memory_percent", 0.0),
+                        data.get("disk_usage_percent", 0.0),
+                        data.get("uptime_seconds", 0.0),
+                        data.get("health_status", "unknown"),
+                        data.get("active_alerts", 0),
+                    ),
+                )
 
                 logger.debug("[cid:INIT] Inserted system metrics")
         except Exception as e:
@@ -307,22 +337,25 @@ class DuckDBManager:
         """Insert a single trade record."""
         try:
             with self.get_connection() as conn:
-                conn.execute("""
+                conn.execute(
+                    """
                     INSERT OR REPLACE INTO trades
                     (trade_id, timestamp, symbol, side, quantity, price,
                      latency_ms, slippage_bps, strategy)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """, (
-                    trade["trade_id"],
-                    trade.get("timestamp", datetime.utcnow()),
-                    trade["symbol"],
-                    trade["side"],
-                    trade["quantity"],
-                    trade["price"],
-                    trade.get("latency_ms"),
-                    trade.get("slippage_bps"),
-                    trade.get("strategy")
-                ))
+                """,
+                    (
+                        trade["trade_id"],
+                        trade.get("timestamp", datetime.utcnow()),
+                        trade["symbol"],
+                        trade["side"],
+                        trade["quantity"],
+                        trade["price"],
+                        trade.get("latency_ms"),
+                        trade.get("slippage_bps"),
+                        trade.get("strategy"),
+                    ),
+                )
 
                 logger.debug(f"[cid:INIT] Inserted trade: {trade['trade_id']}")
         except Exception as e:
@@ -334,7 +367,7 @@ class DuckDBManager:
         start_time: datetime,
         end_time: datetime,
         symbol: Optional[str] = None,
-        interval: str = "1m"
+        interval: str = "1m",
     ) -> List[Dict[str, Any]]:
         """
         Query market data with time-based aggregation.
@@ -353,7 +386,7 @@ class DuckDBManager:
             "5m": "5 minutes",
             "15m": "15 minutes",
             "1h": "1 hour",
-            "1d": "1 day"
+            "1d": "1 day",
         }
 
         time_bucket = interval_map.get(interval, "1 minute")
@@ -390,7 +423,7 @@ class DuckDBManager:
                         "low": row[4],
                         "total_volume": row[5],
                         "total_trades": row[6],
-                        "avg_spread": row[7]
+                        "avg_spread": row[7],
                     }
                     for row in result
                 ]
@@ -399,16 +432,10 @@ class DuckDBManager:
             return []
 
     async def query_strategy_metrics(
-        self,
-        start_time: datetime,
-        end_time: datetime,
-        strategy_name: Optional[str] = None
+        self, start_time: datetime, end_time: datetime, strategy_name: Optional[str] = None
     ) -> List[Dict[str, Any]]:
         """Query strategy metrics."""
-        strategy_filter = (
-            f"AND strategy_name = '{strategy_name}'"
-            if strategy_name else ""
-        )
+        strategy_filter = f"AND strategy_name = '{strategy_name}'" if strategy_name else ""
 
         query = f"""
             SELECT
@@ -437,7 +464,7 @@ class DuckDBManager:
                         "daily_pnl": row[3],
                         "positions": row[4],
                         "signals": row[5],
-                        "win_rate": row[6]
+                        "win_rate": row[6],
                     }
                     for row in result
                 ]
@@ -451,10 +478,7 @@ class DuckDBManager:
             for thread_id, conn in self._connections.items():
                 try:
                     conn.close()
-                    logger.debug(
-                        f"[cid:INIT] Closed DuckDB connection for thread "
-                        f"{thread_id}"
-                    )
+                    logger.debug(f"[cid:INIT] Closed DuckDB connection for thread " f"{thread_id}")
                 except Exception as e:
                     logger.error(f"[cid:INIT] Error closing connection: {e}")
 

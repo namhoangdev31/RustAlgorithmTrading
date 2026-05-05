@@ -30,8 +30,8 @@ class PortfolioHandler:
     def __init__(
         self,
         initial_capital: float,
-        position_sizer: Optional['PositionSizer'] = None,
-        data_handler: Optional['HistoricalDataHandler'] = None,
+        position_sizer: Optional["PositionSizer"] = None,
+        data_handler: Optional["HistoricalDataHandler"] = None,
         allocation_manager: Optional[AllocationManager] = None,
     ):
         """
@@ -48,13 +48,17 @@ class PortfolioHandler:
         """
         # Validate initial_capital
         if not isinstance(initial_capital, (int, float)):
-            raise TypeError(f"initial_capital must be a number, got {type(initial_capital).__name__}")
+            raise TypeError(
+                f"initial_capital must be a number, got {type(initial_capital).__name__}"
+            )
 
         if initial_capital <= 0:
             raise ValueError(f"initial_capital must be positive, got {initial_capital}")
 
         if position_sizer is not None and not isinstance(position_sizer, PositionSizer):
-            raise TypeError(f"position_sizer must be a PositionSizer instance or None, got {type(position_sizer).__name__}")
+            raise TypeError(
+                f"position_sizer must be a PositionSizer instance or None, got {type(position_sizer).__name__}"
+            )
 
         self.initial_capital = initial_capital
         self.data_handler = data_handler
@@ -89,7 +93,7 @@ class PortfolioHandler:
             raise TypeError(f"timestamp must be a datetime, got {type(timestamp).__name__}")
 
         self.portfolio.timestamp = timestamp
-        
+
         # Update equity and drawdown state
         current_prices = {}
         if self.data_handler:
@@ -100,13 +104,15 @@ class PortfolioHandler:
         self.portfolio.update_equity(current_prices)
 
         # Record equity curve point
-        self.equity_curve.append({
-            'timestamp': timestamp,
-            'equity': self.portfolio.equity,
-            'cash': self.portfolio.cash,
-            'total_pnl': self.portfolio.total_pnl,
-            'return_pct': self.portfolio.return_percentage,
-        })
+        self.equity_curve.append(
+            {
+                "timestamp": timestamp,
+                "equity": self.portfolio.equity,
+                "cash": self.portfolio.cash,
+                "total_pnl": self.portfolio.total_pnl,
+                "return_pct": self.portfolio.return_percentage,
+            }
+        )
 
     def generate_orders(self, signal: SignalEvent) -> List[OrderEvent]:
         """
@@ -157,9 +163,11 @@ class PortfolioHandler:
         # EXIT signals should ALWAYS close the full position, bypassing position sizing
         # This ensures proper exit execution regardless of position sizer logic
         # BUG FIX: For SHORT positions (quantity < 0), we need to BUY to close, not SELL
-        if signal.signal_type == 'EXIT':
+        if signal.signal_type == "EXIT":
             if current_quantity == 0:
-                logger.debug(f"🚫 EXIT signal for {signal.symbol} but no position to close (skipping)")
+                logger.debug(
+                    f"🚫 EXIT signal for {signal.symbol} but no position to close (skipping)"
+                )
                 return orders
 
             # Close the entire position (negate current quantity)
@@ -169,10 +177,10 @@ class PortfolioHandler:
             # - LONG position (quantity > 0): SELL to close
             # - SHORT position (quantity < 0): BUY to close (cover)
             if current_quantity > 0:
-                direction = 'SELL'
+                direction = "SELL"
                 action_desc = "selling long"
             else:
-                direction = 'BUY'
+                direction = "BUY"
                 action_desc = "covering short"
 
             logger.info(
@@ -184,7 +192,7 @@ class PortfolioHandler:
             order = OrderEvent(
                 timestamp=signal.timestamp,
                 symbol=signal.symbol,
-                order_type='MKT',
+                order_type="MKT",
                 quantity=abs(order_quantity),
                 direction=direction,
             )
@@ -233,16 +241,16 @@ class PortfolioHandler:
         order_quantity = target_quantity - current_quantity
 
         # Lane 1, 2, 3: Allocation Manager Enforcement
-        if order_quantity != 0 and signal.signal_type != 'EXIT':
+        if order_quantity != 0 and signal.signal_type != "EXIT":
             # Simplified proxy for W15: Fetch volatility/regime/drawdown
             # (In production, these would come from DataHandler/Portfolio state)
-            volatility = 0.015 # Proxy
-            regime = "NORMAL" # Proxy
-            if hasattr(self.data_handler, 'get_regime'):
+            volatility = 0.015  # Proxy
+            regime = "NORMAL"  # Proxy
+            if hasattr(self.data_handler, "get_regime"):
                 regime = self.data_handler.get_regime(signal.symbol)
-            if hasattr(self.data_handler, 'get_volatility'):
+            if hasattr(self.data_handler, "get_volatility"):
                 volatility = self.data_handler.get_volatility(signal.symbol)
-                
+
             allocation_record = self.allocation_manager.check_allocation(
                 strategy_id=signal.strategy_id,
                 symbol=signal.symbol,
@@ -251,16 +259,18 @@ class PortfolioHandler:
                 volatility=volatility,
                 regime=regime,
                 current_drawdown=self.portfolio.max_drawdown,
-                total_equity=self.portfolio.equity
+                total_equity=self.portfolio.equity,
             )
-            
+
             if allocation_record.status == ControlStatus.REJECT:
                 logger.warning(f"🚫 ALLOCATION REJECTED: {allocation_record.decision_reason}")
                 return orders
             elif allocation_record.status == ControlStatus.BLOCKED:
-                logger.error(f"🛑 ALLOCATION BLOCKED (DRAWDOWN HALT): {allocation_record.decision_reason}")
+                logger.error(
+                    f"🛑 ALLOCATION BLOCKED (DRAWDOWN HALT): {allocation_record.decision_reason}"
+                )
                 return orders
-                
+
             # Log successful allocation check
             logger.debug(f"✅ ALLOCATION ALLOWED: {allocation_record.decision_reason}")
 
@@ -323,9 +333,9 @@ class PortfolioHandler:
         order = OrderEvent(
             timestamp=signal.timestamp,
             symbol=signal.symbol,
-            order_type='MKT',
+            order_type="MKT",
             quantity=abs(order_quantity),
-            direction='BUY' if order_quantity > 0 else 'SELL',
+            direction="BUY" if order_quantity > 0 else "SELL",
         )
 
         orders.append(order)
@@ -394,15 +404,17 @@ class PortfolioHandler:
             raise ValueError(error_msg)
 
         # Record holdings
-        self.holdings_history.append({
-            'timestamp': fill.timestamp,
-            'symbol': fill.symbol,
-            'quantity': fill.quantity,
-            'price': fill.fill_price,
-            'commission': fill.commission,
-            'cash': self.portfolio.cash,
-            'equity': self.portfolio.equity,
-        })
+        self.holdings_history.append(
+            {
+                "timestamp": fill.timestamp,
+                "symbol": fill.symbol,
+                "quantity": fill.quantity,
+                "price": fill.fill_price,
+                "commission": fill.commission,
+                "cash": self.portfolio.cash,
+                "equity": self.portfolio.equity,
+            }
+        )
 
         # Log final position state
         new_position = self.portfolio.positions.get(fill.symbol)

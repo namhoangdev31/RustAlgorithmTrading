@@ -7,6 +7,7 @@ Provides DuckDB-based time-series storage with:
 - Batch write optimization
 - Thread-safe connection pooling
 """
+
 from .duckdb_manager import DuckDBManager, get_db
 
 __all__ = ["DuckDBManager", "get_db"]

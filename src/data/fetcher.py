@@ -31,7 +31,7 @@ class DataFetcher:
         symbols: List[str],
         start: datetime,
         end: datetime,
-        timeframe: TimeFrame = TimeFrame.Day
+        timeframe: TimeFrame = TimeFrame.Day,
     ) -> dict[str, pd.DataFrame]:
         """
         Fetch historical data for multiple symbols
@@ -50,10 +50,7 @@ class DataFetcher:
         for symbol in symbols:
             try:
                 df = self.client.get_historical_bars(
-                    symbol=symbol,
-                    start=start,
-                    end=end,
-                    timeframe=timeframe
+                    symbol=symbol, start=start, end=end, timeframe=timeframe
                 )
                 data[symbol] = df
                 logger.info(f"Fetched data for {symbol}: {len(df)} bars")
@@ -64,10 +61,7 @@ class DataFetcher:
         return data
 
     def fetch_last_n_days(
-        self,
-        symbol: str,
-        days: int = 365,
-        timeframe: TimeFrame = TimeFrame.Day
+        self, symbol: str, days: int = 365, timeframe: TimeFrame = TimeFrame.Day
     ) -> pd.DataFrame:
         """
         Fetch last N days of data
@@ -84,10 +78,7 @@ class DataFetcher:
         start = end - timedelta(days=days)
 
         return self.client.get_historical_bars(
-            symbol=symbol,
-            start=start,
-            end=end,
-            timeframe=timeframe
+            symbol=symbol, start=start, end=end, timeframe=timeframe
         )
 
     def get_latest_price(self, symbol: str) -> Optional[float]:
@@ -103,7 +94,7 @@ class DataFetcher:
         try:
             df = self.fetch_last_n_days(symbol, days=1)
             if not df.empty:
-                return float(df.iloc[-1]['close'])
+                return float(df.iloc[-1]["close"])
             return None
         except Exception as e:
             logger.error(f"Failed to get latest price for {symbol}: {e}")

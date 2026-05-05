@@ -11,6 +11,7 @@ from .base import BaseModel
 
 class Position(BaseModel):
     """Individual position tracking."""
+
     symbol: str
     quantity: int
     average_price: float = Field(gt=0)
@@ -47,6 +48,7 @@ class Position(BaseModel):
 
 class Portfolio(BaseModel):
     """Portfolio tracking with positions and cash."""
+
     initial_capital: float = Field(gt=0)
     cash: float = Field(ge=0)  # Changed from gt=0 to ge=0 to allow zero cash
     positions: Dict[str, Position] = Field(default_factory=dict)
@@ -74,15 +76,17 @@ class Portfolio(BaseModel):
         return ((self.equity - self.initial_capital) / self.initial_capital) * 100.0
 
     def update_equity(self, current_prices: Dict[str, float]):
-        """ Update total equity and drawdown tracking. """
-        pos_value = sum(pos.quantity * current_prices.get(symbol, pos.current_price) 
-                        for symbol, pos in self.positions.items())
+        """Update total equity and drawdown tracking."""
+        pos_value = sum(
+            pos.quantity * current_prices.get(symbol, pos.current_price)
+            for symbol, pos in self.positions.items()
+        )
         current_equity = self.cash + pos_value
-        
+
         # Update drawdown tracking
         if current_equity > self.max_equity:
             self.max_equity = current_equity
-        
+
         if self.max_equity > 0:
             current_dd = (self.max_equity - current_equity) / self.max_equity
             if current_dd > self.max_drawdown:
@@ -135,10 +139,7 @@ class Portfolio(BaseModel):
         else:
             # New position
             self.positions[symbol] = Position(
-                symbol=symbol,
-                quantity=quantity,
-                average_price=price,
-                current_price=price
+                symbol=symbol, quantity=quantity, average_price=price, current_price=price
             )
 
         # Update cash
@@ -151,6 +152,7 @@ class Portfolio(BaseModel):
 
 class PerformanceMetrics(BaseModel):
     """Performance metrics for strategy evaluation."""
+
     total_return: float = 0.0
     sharpe_ratio: float = 0.0
     sortino_ratio: float = 0.0
@@ -174,5 +176,6 @@ class PerformanceMetrics(BaseModel):
         """Calculate average trade P&L."""
         if self.total_trades == 0:
             return 0.0
-        return (self.winning_trades * self.average_win +
-                self.losing_trades * self.average_loss) / self.total_trades
+        return (
+            self.winning_trades * self.average_win + self.losing_trades * self.average_loss
+        ) / self.total_trades

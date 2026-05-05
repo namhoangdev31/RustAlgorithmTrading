@@ -31,8 +31,10 @@ class PricePredictor(BaseMLModel):
 
     def __init__(
         self,
-        model_type: Literal['random_forest', 'gradient_boosting', 'ridge', 'lasso'] = 'random_forest',
-        **model_params
+        model_type: Literal[
+            "random_forest", "gradient_boosting", "ridge", "lasso"
+        ] = "random_forest",
+        **model_params,
     ):
         """
         Initialize price predictor.
@@ -41,7 +43,7 @@ class PricePredictor(BaseMLModel):
             model_type: Type of regression model to use
             **model_params: Additional parameters for the model
         """
-        super().__init__(model_name=f'price_predictor_{model_type}')
+        super().__init__(model_name=f"price_predictor_{model_type}")
 
         self.model_type = model_type
         self.model = self._create_model(model_type, model_params)
@@ -58,30 +60,28 @@ class PricePredictor(BaseMLModel):
 
     def _create_model(self, model_type: str, params: dict):
         """Create the appropriate regression model."""
-        if model_type == 'random_forest':
+        if model_type == "random_forest":
             return RandomForestRegressor(
-                n_estimators=params.get('n_estimators', 100),
-                max_depth=params.get('max_depth', 10),
-                min_samples_split=params.get('min_samples_split', 5),
-                random_state=params.get('random_state', 42),
-                n_jobs=params.get('n_jobs', -1)
+                n_estimators=params.get("n_estimators", 100),
+                max_depth=params.get("max_depth", 10),
+                min_samples_split=params.get("min_samples_split", 5),
+                random_state=params.get("random_state", 42),
+                n_jobs=params.get("n_jobs", -1),
             )
-        elif model_type == 'gradient_boosting':
+        elif model_type == "gradient_boosting":
             return GradientBoostingRegressor(
-                n_estimators=params.get('n_estimators', 100),
-                learning_rate=params.get('learning_rate', 0.1),
-                max_depth=params.get('max_depth', 5),
-                random_state=params.get('random_state', 42)
+                n_estimators=params.get("n_estimators", 100),
+                learning_rate=params.get("learning_rate", 0.1),
+                max_depth=params.get("max_depth", 5),
+                random_state=params.get("random_state", 42),
             )
-        elif model_type == 'ridge':
+        elif model_type == "ridge":
             return Ridge(
-                alpha=params.get('alpha', 1.0),
-                random_state=params.get('random_state', 42)
+                alpha=params.get("alpha", 1.0), random_state=params.get("random_state", 42)
             )
-        elif model_type == 'lasso':
+        elif model_type == "lasso":
             return Lasso(
-                alpha=params.get('alpha', 1.0),
-                random_state=params.get('random_state', 42)
+                alpha=params.get("alpha", 1.0), random_state=params.get("random_state", 42)
             )
         else:
             raise ValueError(f"Unknown model type: {model_type}")
@@ -105,16 +105,16 @@ class PricePredictor(BaseMLModel):
         # Calculate training metrics
         y_pred = self.model.predict(X)
         metrics = {
-            'train_mse': mean_squared_error(y, y_pred),
-            'train_mae': mean_absolute_error(y, y_pred),
-            'train_r2': r2_score(y, y_pred),
-            'train_rmse': np.sqrt(mean_squared_error(y, y_pred))
+            "train_mse": mean_squared_error(y, y_pred),
+            "train_mae": mean_absolute_error(y, y_pred),
+            "train_r2": r2_score(y, y_pred),
+            "train_rmse": np.sqrt(mean_squared_error(y, y_pred)),
         }
 
         # Store in metadata
-        self.metadata['train_metrics'] = metrics
-        self.metadata['n_samples'] = len(X)
-        self.metadata['n_features'] = X.shape[1]
+        self.metadata["train_metrics"] = metrics
+        self.metadata["n_samples"] = len(X)
+        self.metadata["n_features"] = X.shape[1]
 
         return metrics
 
@@ -150,15 +150,15 @@ class PricePredictor(BaseMLModel):
         y_pred = self.predict(X)
 
         metrics = {
-            'test_mse': mean_squared_error(y, y_pred),
-            'test_mae': mean_absolute_error(y, y_pred),
-            'test_r2': r2_score(y, y_pred),
-            'test_rmse': np.sqrt(mean_squared_error(y, y_pred)),
-            'mape': np.mean(np.abs((y - y_pred) / y)) * 100  # Mean Absolute Percentage Error
+            "test_mse": mean_squared_error(y, y_pred),
+            "test_mae": mean_absolute_error(y, y_pred),
+            "test_r2": r2_score(y, y_pred),
+            "test_rmse": np.sqrt(mean_squared_error(y, y_pred)),
+            "mape": np.mean(np.abs((y - y_pred) / y)) * 100,  # Mean Absolute Percentage Error
         }
 
         # Store in metadata
-        self.metadata['test_metrics'] = metrics
+        self.metadata["test_metrics"] = metrics
 
         return metrics
 
@@ -172,16 +172,12 @@ class PricePredictor(BaseMLModel):
         if not self.is_trained:
             raise ValueError("Model must be trained first")
 
-        if hasattr(self.model, 'feature_importances_'):
+        if hasattr(self.model, "feature_importances_"):
             return self.model.feature_importances_
         else:
             return None
 
-    def predict_with_confidence(
-        self,
-        X: np.ndarray,
-        n_estimators: Optional[int] = None
-    ) -> tuple:
+    def predict_with_confidence(self, X: np.ndarray, n_estimators: Optional[int] = None) -> tuple:
         """
         Predict with confidence intervals (for ensemble models).
 
@@ -195,11 +191,9 @@ class PricePredictor(BaseMLModel):
         if not self.is_trained:
             raise ValueError("Model must be trained first")
 
-        if self.model_type in ['random_forest', 'gradient_boosting']:
+        if self.model_type in ["random_forest", "gradient_boosting"]:
             # Get predictions from individual estimators
-            predictions = np.array([
-                tree.predict(X) for tree in self.model.estimators_
-            ])
+            predictions = np.array([tree.predict(X) for tree in self.model.estimators_])
 
             mean_pred = predictions.mean(axis=0)
             std_pred = predictions.std(axis=0)

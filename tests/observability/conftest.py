@@ -1,6 +1,7 @@
 """
 Pytest configuration and shared fixtures for observability tests.
 """
+
 import asyncio
 import json
 import logging
@@ -19,6 +20,7 @@ from fastapi.testclient import TestClient
 # ============================================================================
 # FIXTURES: Test Configuration
 # ============================================================================
+
 
 @pytest.fixture(scope="session")
 def event_loop():
@@ -69,6 +71,7 @@ def log_config(temp_log_dir: Path) -> Dict[str, Any]:
 # ============================================================================
 # FIXTURES: Mock Services
 # ============================================================================
+
 
 @pytest.fixture
 def mock_websocket_server():
@@ -166,6 +169,7 @@ def mock_metrics_collector():
 # FIXTURES: Sample Data
 # ============================================================================
 
+
 @pytest.fixture
 def sample_log_entries() -> List[Dict[str, Any]]:
     """Generate sample log entries for testing."""
@@ -180,9 +184,7 @@ def sample_log_entries() -> List[Dict[str, Any]]:
             "component": "order-executor",
             "metadata": {"order_id": f"ORD-{i}", "symbol": "AAPL"},
         }
-        for i, level in enumerate(
-            ["INFO", "DEBUG", "WARNING", "ERROR", "INFO"] * 20
-        )
+        for i, level in enumerate(["INFO", "DEBUG", "WARNING", "ERROR", "INFO"] * 20)
     ]
 
 
@@ -197,18 +199,20 @@ def sample_metrics_data() -> List[Dict[str, Any]]:
             "value": value,
             "labels": {"service": "trading-engine", "environment": "test"},
         }
-        for i, (metric, value) in enumerate([
-            ("order_latency_ms", 5.2),
-            ("order_latency_ms", 4.8),
-            ("order_latency_ms", 6.1),
-            ("orders_executed_total", 1),
-            ("orders_executed_total", 1),
-            ("market_data_updates_total", 10),
-            ("market_data_updates_total", 12),
-            ("websocket_connections_active", 5),
-            ("websocket_connections_active", 6),
-            ("memory_usage_bytes", 104857600),
-        ])
+        for i, (metric, value) in enumerate(
+            [
+                ("order_latency_ms", 5.2),
+                ("order_latency_ms", 4.8),
+                ("order_latency_ms", 6.1),
+                ("orders_executed_total", 1),
+                ("orders_executed_total", 1),
+                ("market_data_updates_total", 10),
+                ("market_data_updates_total", 12),
+                ("websocket_connections_active", 5),
+                ("websocket_connections_active", 6),
+                ("memory_usage_bytes", 104857600),
+            ]
+        )
     ]
 
 
@@ -247,6 +251,7 @@ def sample_websocket_message() -> Dict[str, Any]:
 # ============================================================================
 # FIXTURES: Performance Testing
 # ============================================================================
+
 
 @pytest.fixture
 def performance_timer():
@@ -309,7 +314,7 @@ def memory_profiler():
             if not self.snapshot_before or not self.snapshot_after:
                 return 0
 
-            stats = self.snapshot_after.compare_to(self.snapshot_before, 'lineno')
+            stats = self.snapshot_after.compare_to(self.snapshot_before, "lineno")
             total = sum(stat.size_diff for stat in stats)
             return total
 
@@ -325,6 +330,7 @@ def memory_profiler():
 # FIXTURES: Correlation Testing
 # ============================================================================
 
+
 @pytest.fixture
 def correlation_context():
     """Correlation context for distributed tracing."""
@@ -338,6 +344,7 @@ def correlation_context():
         def new_correlation(self) -> str:
             """Generate new correlation ID."""
             import uuid
+
             self.correlation_id = f"corr-{uuid.uuid4().hex[:12]}"
             self.trace_id = f"trace-{uuid.uuid4().hex}"
             self.span_id = f"span-{uuid.uuid4().hex[:8]}"
@@ -358,34 +365,22 @@ def correlation_context():
 # MARKERS AND CONFIGURATION
 # ============================================================================
 
+
 def pytest_configure(config):
     """Configure custom pytest markers for observability tests."""
-    config.addinivalue_line(
-        "markers", "logging: Tests for logging infrastructure"
-    )
-    config.addinivalue_line(
-        "markers", "metrics: Tests for metrics collection"
-    )
-    config.addinivalue_line(
-        "markers", "websocket: Tests for WebSocket functionality"
-    )
-    config.addinivalue_line(
-        "markers", "api: Tests for backend API"
-    )
-    config.addinivalue_line(
-        "markers", "integration: Integration tests for observability"
-    )
-    config.addinivalue_line(
-        "markers", "performance: Performance and load tests"
-    )
-    config.addinivalue_line(
-        "markers", "correlation: Tests for correlation ID propagation"
-    )
+    config.addinivalue_line("markers", "logging: Tests for logging infrastructure")
+    config.addinivalue_line("markers", "metrics: Tests for metrics collection")
+    config.addinivalue_line("markers", "websocket: Tests for WebSocket functionality")
+    config.addinivalue_line("markers", "api: Tests for backend API")
+    config.addinivalue_line("markers", "integration: Integration tests for observability")
+    config.addinivalue_line("markers", "performance: Performance and load tests")
+    config.addinivalue_line("markers", "correlation: Tests for correlation ID propagation")
 
 
 # ============================================================================
 # CLEANUP HOOKS
 # ============================================================================
+
 
 @pytest.fixture(autouse=True)
 def cleanup_logs(temp_log_dir: Path):

@@ -8,6 +8,7 @@ Features:
 - Health check and status endpoints
 - Graceful startup/shutdown handlers
 """
+
 import asyncio
 from contextlib import asynccontextmanager
 from typing import Dict, Optional, Any
@@ -112,7 +113,7 @@ class ObservabilityAPI:
             "market_data": {},
             "strategy": {},
             "execution": {},
-            "system": {}
+            "system": {},
         }
 
         try:
@@ -122,21 +123,13 @@ class ObservabilityAPI:
                 self.collectors["strategy"].get_current_metrics(),
                 self.collectors["execution"].get_current_metrics(),
                 self.collectors["system"].get_current_metrics(),
-                return_exceptions=True
+                return_exceptions=True,
             )
 
-            metrics["market_data"] = (
-                results[0] if not isinstance(results[0], Exception) else {}
-            )
-            metrics["strategy"] = (
-                results[1] if not isinstance(results[1], Exception) else {}
-            )
-            metrics["execution"] = (
-                results[2] if not isinstance(results[2], Exception) else {}
-            )
-            metrics["system"] = (
-                results[3] if not isinstance(results[3], Exception) else {}
-            )
+            metrics["market_data"] = results[0] if not isinstance(results[0], Exception) else {}
+            metrics["strategy"] = results[1] if not isinstance(results[1], Exception) else {}
+            metrics["execution"] = results[2] if not isinstance(results[2], Exception) else {}
+            metrics["system"] = results[3] if not isinstance(results[3], Exception) else {}
         except Exception as e:
             logger.error(f"[cid:INIT] Error collecting metrics: {e}")
 
@@ -160,21 +153,15 @@ async def lifespan(app: FastAPI) -> Any:
 # Create FastAPI app
 app = FastAPI(
     title="Trading Observability API",
-    description=(
-        "Real-time observability and monitoring API "
-        "for algorithmic trading system"
-    ),
+    description=("Real-time observability and monitoring API " "for algorithmic trading system"),
     version="1.0.0",
-    lifespan=lifespan
+    lifespan=lifespan,
 )
 
 # CORS configuration for frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://localhost:5173"
-    ],  # React/Vite dev servers
+    allow_origins=["http://localhost:3000", "http://localhost:5173"],  # React/Vite dev servers
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -229,14 +216,11 @@ async def readiness_check() -> JSONResponse:
     """Readiness check - are all services ready?"""
     collectors_status = {}
     for name, collector in api_state.collectors.items():
-        if hasattr(collector, 'get_status'):
+        if hasattr(collector, "get_status"):
             status = await collector.get_status()
         else:
             status = {"status": "unknown"}
-        collectors_status[name] = {
-            "ready": collector.is_ready(),
-            "status": status
-        }
+        collectors_status[name] = {"ready": collector.is_ready(), "status": status}
 
     ready = all(s["ready"] for s in collectors_status.values())
     status_code = 200 if ready else 503
@@ -246,8 +230,8 @@ async def readiness_check() -> JSONResponse:
         content={
             "ready": ready,
             "collectors": collectors_status,
-            "timestamp": asyncio.get_event_loop().time()
-        }
+            "timestamp": asyncio.get_event_loop().time(),
+        },
     )
 
 
@@ -257,7 +241,7 @@ async def liveness_check() -> Dict[str, Any]:
     return {
         "alive": api_state.running,
         "websocket_connections": api_state.websocket_manager.connection_count(),
-        "uptime_seconds": asyncio.get_event_loop().time()
+        "uptime_seconds": asyncio.get_event_loop().time(),
     }
 
 
@@ -299,13 +283,10 @@ async def resolve_incident(incident_id: str, evidence: str) -> Dict[str, str]:
     escalation = system_collector.escalation
     try:
         if not await escalation.resolve_incident(incident_id, evidence):
-            raise HTTPException(
-                status_code=404, detail=f"Incident {incident_id} not found"
-            )
+            raise HTTPException(status_code=404, detail=f"Incident {incident_id} not found")
         return {"status": "RESOLVED"}
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
-
 
 
 @app.get("/")
@@ -316,9 +297,5 @@ async def root() -> Dict[str, Any]:
         "version": "1.0.0",
         "docs": "/docs",
         "websocket": "/ws/metrics",
-        "endpoints": {
-            "metrics": "/api/metrics",
-            "trades": "/api/trades",
-            "system": "/api/system"
-        }
+        "endpoints": {"metrics": "/api/metrics", "trades": "/api/trades", "system": "/api/system"},
     }

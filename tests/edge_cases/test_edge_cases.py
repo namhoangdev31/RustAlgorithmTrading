@@ -31,7 +31,7 @@ class TestMissingDataDirectory:
         missing_dir = tmp_path / "nonexistent" / "nested" / "path"
 
         handler = HistoricalDataHandler(
-            symbols=['AAPL'],
+            symbols=["AAPL"],
             data_dir=missing_dir,
         )
 
@@ -43,7 +43,7 @@ class TestMissingDataDirectory:
         empty_dir.mkdir()
 
         handler = HistoricalDataHandler(
-            symbols=['AAPL', 'MSFT'],
+            symbols=["AAPL", "MSFT"],
             data_dir=empty_dir,
         )
 
@@ -54,17 +54,17 @@ class TestMissingDataDirectory:
 class TestInvalidAPICredentials:
     """Test handling of invalid API credentials"""
 
-    @patch('scripts.download_historical_data.StockHistoricalDataClient')
+    @patch("scripts.download_historical_data.StockHistoricalDataClient")
     def test_invalid_credentials_raises_error(self, mock_client):
         """Test that invalid credentials are caught"""
         from scripts.download_historical_data import AlpacaDataDownloader, DownloadConfig
 
         config = DownloadConfig(
-            symbols=['AAPL'],
-            start_date='2024-01-01',
-            end_date='2024-12-31',
-            api_key='invalid_key',
-            api_secret='invalid_secret',
+            symbols=["AAPL"],
+            start_date="2024-01-01",
+            end_date="2024-12-31",
+            api_key="invalid_key",
+            api_secret="invalid_secret",
         )
 
         # Mock client to raise auth error
@@ -80,9 +80,9 @@ class TestInvalidAPICredentials:
         # Clear environment variables
         with patch.dict(os.environ, {}, clear=True):
             config = DownloadConfig(
-                symbols=['AAPL'],
-                start_date='2024-01-01',
-                end_date='2024-12-31',
+                symbols=["AAPL"],
+                start_date="2024-01-01",
+                end_date="2024-12-31",
             )
 
             with pytest.raises(ValueError, match="credentials not found"):
@@ -98,26 +98,28 @@ class TestPartialDataAvailability:
         data_dir.mkdir()
 
         # Create data for only AAPL
-        df = pd.DataFrame({
-            'timestamp': pd.date_range('2024-01-01', periods=10),
-            'open': [100.0] * 10,
-            'high': [105.0] * 10,
-            'low': [99.0] * 10,
-            'close': [104.0] * 10,
-            'volume': [1000.0] * 10,
-        })
+        df = pd.DataFrame(
+            {
+                "timestamp": pd.date_range("2024-01-01", periods=10),
+                "open": [100.0] * 10,
+                "high": [105.0] * 10,
+                "low": [99.0] * 10,
+                "close": [104.0] * 10,
+                "volume": [1000.0] * 10,
+            }
+        )
         df.to_csv(data_dir / "AAPL.csv", index=False)
 
         # Request AAPL and MSFT, but only AAPL exists
         handler = HistoricalDataHandler(
-            symbols=['AAPL', 'MSFT', 'GOOGL'],
+            symbols=["AAPL", "MSFT", "GOOGL"],
             data_dir=data_dir,
         )
 
         # Should load AAPL but skip others
-        assert 'AAPL' in handler.symbol_data
-        assert 'MSFT' not in handler.symbol_data
-        assert 'GOOGL' not in handler.symbol_data
+        assert "AAPL" in handler.symbol_data
+        assert "MSFT" not in handler.symbol_data
+        assert "GOOGL" not in handler.symbol_data
 
     def test_partial_date_range(self, tmp_path):
         """Test when data only covers part of requested range"""
@@ -125,26 +127,28 @@ class TestPartialDataAvailability:
         data_dir.mkdir()
 
         # Create data for Jan 1-10
-        df = pd.DataFrame({
-            'timestamp': pd.date_range('2024-01-01', periods=10),
-            'open': [100.0] * 10,
-            'high': [105.0] * 10,
-            'low': [99.0] * 10,
-            'close': [104.0] * 10,
-            'volume': [1000.0] * 10,
-        })
+        df = pd.DataFrame(
+            {
+                "timestamp": pd.date_range("2024-01-01", periods=10),
+                "open": [100.0] * 10,
+                "high": [105.0] * 10,
+                "low": [99.0] * 10,
+                "close": [104.0] * 10,
+                "volume": [1000.0] * 10,
+            }
+        )
         df.to_csv(data_dir / "AAPL.csv", index=False)
 
         # Request Jan 1 - Jan 31
         handler = HistoricalDataHandler(
-            symbols=['AAPL'],
+            symbols=["AAPL"],
             data_dir=data_dir,
             start_date=datetime(2024, 1, 1),
             end_date=datetime(2024, 1, 31),
         )
 
         # Should have only 10 days
-        assert len(handler.symbol_data['AAPL']) == 10
+        assert len(handler.symbol_data["AAPL"]) == 10
 
 
 class TestCorruptedFiles:
@@ -156,13 +160,13 @@ class TestCorruptedFiles:
         data_dir.mkdir()
 
         # Create invalid CSV
-        with open(data_dir / "AAPL.csv", 'w') as f:
+        with open(data_dir / "AAPL.csv", "w") as f:
             f.write("This is not valid CSV content\n")
             f.write("Random garbage data\n")
 
         with pytest.raises(Exception):
             handler = HistoricalDataHandler(
-                symbols=['AAPL'],
+                symbols=["AAPL"],
                 data_dir=data_dir,
             )
 
@@ -172,56 +176,60 @@ class TestCorruptedFiles:
         data_dir.mkdir()
 
         # Create empty CSV
-        with open(data_dir / "AAPL.csv", 'w') as f:
+        with open(data_dir / "AAPL.csv", "w") as f:
             f.write("timestamp,open,high,low,close,volume\n")
 
         handler = HistoricalDataHandler(
-            symbols=['AAPL'],
+            symbols=["AAPL"],
             data_dir=data_dir,
         )
 
         # Should handle empty file gracefully
-        assert 'AAPL' not in handler.symbol_data or len(handler.symbol_data['AAPL']) == 0
+        assert "AAPL" not in handler.symbol_data or len(handler.symbol_data["AAPL"]) == 0
 
     def test_csv_with_null_values(self, tmp_path):
         """Test CSV with null/NaN values"""
         data_dir = tmp_path / "nulls"
         data_dir.mkdir()
 
-        df = pd.DataFrame({
-            'timestamp': pd.date_range('2024-01-01', periods=10),
-            'open': [100.0, None, 102.0, None, 104.0, 105.0, None, 107.0, 108.0, 109.0],
-            'high': [105.0] * 10,
-            'low': [99.0] * 10,
-            'close': [104.0] * 10,
-            'volume': [1000.0] * 10,
-        })
+        df = pd.DataFrame(
+            {
+                "timestamp": pd.date_range("2024-01-01", periods=10),
+                "open": [100.0, None, 102.0, None, 104.0, 105.0, None, 107.0, 108.0, 109.0],
+                "high": [105.0] * 10,
+                "low": [99.0] * 10,
+                "close": [104.0] * 10,
+                "volume": [1000.0] * 10,
+            }
+        )
         df.to_csv(data_dir / "AAPL.csv", index=False)
 
         handler = HistoricalDataHandler(
-            symbols=['AAPL'],
+            symbols=["AAPL"],
             data_dir=data_dir,
         )
 
         # Should load and handle nulls
-        assert 'AAPL' in handler.symbol_data
+        assert "AAPL" in handler.symbol_data
 
     def test_csv_missing_required_columns(self, tmp_path):
         """Test CSV missing required columns"""
         data_dir = tmp_path / "missing_cols"
         data_dir.mkdir()
 
-        df = pd.DataFrame({
-            'timestamp': pd.date_range('2024-01-01', periods=10),
-            'open': [100.0] * 10,
-            'close': [104.0] * 10,
-            # Missing high, low, volume
-        })
+        df = pd.DataFrame(
+            {
+                "timestamp": pd.date_range("2024-01-01", periods=10),
+                "open": [100.0] * 10,
+                "close": [104.0] * 10,
+                # Missing high, low, volume
+            }
+        )
         df.to_csv(data_dir / "AAPL.csv", index=False)
 
         with pytest.raises(ValueError, match="Missing required columns"):
             handler = HistoricalDataHandler(
-                symbols=['AAPL'],
+                symbols=["AAPL"],
                 data_dir=data_dir,
             )
 
@@ -235,89 +243,95 @@ class TestMalformedData:
         data_dir.mkdir()
 
         # Create data with mixed timestamps
-        dates = pd.date_range('2024-01-01', periods=10).tolist()
+        dates = pd.date_range("2024-01-01", periods=10).tolist()
         dates = [dates[i] for i in [5, 2, 8, 1, 9, 0, 7, 3, 6, 4]]  # Shuffle
 
-        df = pd.DataFrame({
-            'timestamp': dates,
-            'open': [100.0] * 10,
-            'high': [105.0] * 10,
-            'low': [99.0] * 10,
-            'close': [104.0] * 10,
-            'volume': [1000.0] * 10,
-        })
+        df = pd.DataFrame(
+            {
+                "timestamp": dates,
+                "open": [100.0] * 10,
+                "high": [105.0] * 10,
+                "low": [99.0] * 10,
+                "close": [104.0] * 10,
+                "volume": [1000.0] * 10,
+            }
+        )
         df.to_csv(data_dir / "AAPL.csv", index=False)
 
         handler = HistoricalDataHandler(
-            symbols=['AAPL'],
+            symbols=["AAPL"],
             data_dir=data_dir,
         )
 
         # Should sort automatically
-        data = handler.symbol_data['AAPL']
-        assert data['timestamp'].is_monotonic_increasing
+        data = handler.symbol_data["AAPL"]
+        assert data["timestamp"].is_monotonic_increasing
 
     def test_duplicate_timestamps(self, tmp_path):
         """Test data with duplicate timestamps"""
         data_dir = tmp_path / "duplicates"
         data_dir.mkdir()
 
-        df = pd.DataFrame({
-            'timestamp': ['2024-01-01'] * 10,  # All same date
-            'open': [100.0 + i for i in range(10)],
-            'high': [105.0] * 10,
-            'low': [99.0] * 10,
-            'close': [104.0] * 10,
-            'volume': [1000.0] * 10,
-        })
+        df = pd.DataFrame(
+            {
+                "timestamp": ["2024-01-01"] * 10,  # All same date
+                "open": [100.0 + i for i in range(10)],
+                "high": [105.0] * 10,
+                "low": [99.0] * 10,
+                "close": [104.0] * 10,
+                "volume": [1000.0] * 10,
+            }
+        )
         df.to_csv(data_dir / "AAPL.csv", index=False)
 
         handler = HistoricalDataHandler(
-            symbols=['AAPL'],
+            symbols=["AAPL"],
             data_dir=data_dir,
         )
 
         # Should handle duplicates (may deduplicate)
-        assert 'AAPL' in handler.symbol_data
+        assert "AAPL" in handler.symbol_data
 
     def test_invalid_price_relationships(self, tmp_path):
         """Test data where high < low or negative prices"""
         data_dir = tmp_path / "invalid_prices"
         data_dir.mkdir()
 
-        df = pd.DataFrame({
-            'timestamp': pd.date_range('2024-01-01', periods=10),
-            'open': [100.0] * 10,
-            'high': [99.0] * 10,  # High less than low
-            'low': [105.0] * 10,
-            'close': [104.0] * 10,
-            'volume': [1000.0] * 10,
-        })
+        df = pd.DataFrame(
+            {
+                "timestamp": pd.date_range("2024-01-01", periods=10),
+                "open": [100.0] * 10,
+                "high": [99.0] * 10,  # High less than low
+                "low": [105.0] * 10,
+                "close": [104.0] * 10,
+                "volume": [1000.0] * 10,
+            }
+        )
         df.to_csv(data_dir / "AAPL.csv", index=False)
 
         handler = HistoricalDataHandler(
-            symbols=['AAPL'],
+            symbols=["AAPL"],
             data_dir=data_dir,
         )
 
         # Should load with warnings
-        assert 'AAPL' in handler.symbol_data
+        assert "AAPL" in handler.symbol_data
 
 
 class TestNetworkIssues:
     """Test handling of network-related issues"""
 
-    @patch('scripts.download_historical_data.StockHistoricalDataClient')
+    @patch("scripts.download_historical_data.StockHistoricalDataClient")
     def test_network_timeout(self, mock_client):
         """Test handling of network timeout"""
         from scripts.download_historical_data import AlpacaDataDownloader, DownloadConfig
 
         config = DownloadConfig(
-            symbols=['AAPL'],
-            start_date='2024-01-01',
-            end_date='2024-12-31',
-            api_key='test_key',
-            api_secret='test_secret',
+            symbols=["AAPL"],
+            start_date="2024-01-01",
+            end_date="2024-12-31",
+            api_key="test_key",
+            api_secret="test_secret",
             retry_attempts=2,
         )
 
@@ -328,38 +342,36 @@ class TestNetworkIssues:
 
         downloader = AlpacaDataDownloader(config)
 
-        with patch('time.sleep'):  # Skip delays
-            result = downloader._fetch_data_with_retry('AAPL')
+        with patch("time.sleep"):  # Skip delays
+            result = downloader._fetch_data_with_retry("AAPL")
 
         assert result is None
 
-    @patch('scripts.download_historical_data.StockHistoricalDataClient')
+    @patch("scripts.download_historical_data.StockHistoricalDataClient")
     def test_rate_limit_exceeded(self, mock_client):
         """Test handling of API rate limit"""
         from scripts.download_historical_data import AlpacaDataDownloader, DownloadConfig
 
         config = DownloadConfig(
-            symbols=['AAPL'],
-            start_date='2024-01-01',
-            end_date='2024-12-31',
-            api_key='test_key',
-            api_secret='test_secret',
+            symbols=["AAPL"],
+            start_date="2024-01-01",
+            end_date="2024-12-31",
+            api_key="test_key",
+            api_secret="test_secret",
             retry_attempts=2,
         )
 
         mock_instance = Mock()
-        mock_instance.get_stock_bars = Mock(
-            side_effect=Exception("429 Rate limit exceeded")
-        )
+        mock_instance.get_stock_bars = Mock(side_effect=Exception("429 Rate limit exceeded"))
         mock_client.return_value = mock_instance
 
         downloader = AlpacaDataDownloader(config)
 
-        with patch('time.sleep'):
-            result = downloader._fetch_data_with_retry('AAPL')
+        with patch("time.sleep"):
+            result = downloader._fetch_data_with_retry("AAPL")
 
         assert result is None
 
 
-if __name__ == '__main__':
-    pytest.main([__file__, '-v'])
+if __name__ == "__main__":
+    pytest.main([__file__, "-v"])

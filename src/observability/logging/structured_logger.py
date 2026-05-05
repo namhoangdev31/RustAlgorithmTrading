@@ -22,8 +22,9 @@ from ..config.logging_config import LoggingConfig
 from .correlations import correlation_id_var
 
 # Global logger registry
-_logger_registry: Dict[str, 'StructuredLogger'] = {}
+_logger_registry: Dict[str, "StructuredLogger"] = {}
 _registry_lock = threading.Lock()
+
 
 # Performance metrics
 class LoggerMetrics:
@@ -34,7 +35,7 @@ class LoggerMetrics:
         self._total_logs = 0
         self._total_latency = 0.0
         self._max_latency = 0.0
-        self._min_latency = float('inf')
+        self._min_latency = float("inf")
         self._error_count = 0
 
     def record_log(self, latency: float, error: bool = False) -> None:
@@ -50,17 +51,18 @@ class LoggerMetrics:
     def get_metrics(self) -> Dict[str, Any]:
         """Get current metrics snapshot"""
         with self._lock:
-            avg_latency = (self._total_latency / self._total_logs
-                          if self._total_logs > 0 else 0.0)
+            avg_latency = self._total_latency / self._total_logs if self._total_logs > 0 else 0.0
             return {
-                'total_logs': self._total_logs,
-                'average_latency_ms': avg_latency * 1000,
-                'max_latency_ms': self._max_latency * 1000,
-                'min_latency_ms': (self._min_latency * 1000
-                                  if self._min_latency != float('inf') else 0.0),
-                'error_count': self._error_count,
-                'error_rate': (self._error_count / self._total_logs
-                              if self._total_logs > 0 else 0.0),
+                "total_logs": self._total_logs,
+                "average_latency_ms": avg_latency * 1000,
+                "max_latency_ms": self._max_latency * 1000,
+                "min_latency_ms": (
+                    self._min_latency * 1000 if self._min_latency != float("inf") else 0.0
+                ),
+                "error_count": self._error_count,
+                "error_rate": (
+                    self._error_count / self._total_logs if self._total_logs > 0 else 0.0
+                ),
             }
 
     def reset(self) -> None:
@@ -69,7 +71,7 @@ class LoggerMetrics:
             self._total_logs = 0
             self._total_latency = 0.0
             self._max_latency = 0.0
-            self._min_latency = float('inf')
+            self._min_latency = float("inf")
             self._error_count = 0
 
 
@@ -93,7 +95,7 @@ class StructuredLogger:
         self,
         name: str,
         config: Optional[LoggingConfig] = None,
-        parent: Optional['StructuredLogger'] = None
+        parent: Optional["StructuredLogger"] = None,
     ):
         """
         Initialize structured logger
@@ -152,16 +154,16 @@ class StructuredLogger:
         # Add correlation ID if present
         correlation_id = correlation_id_var.get()
         if correlation_id:
-            context['correlation_id'] = correlation_id
+            context["correlation_id"] = correlation_id
 
         # Add schema version for One-pass traceability
-        context['schema_version'] = SCHEMA_VERSION
+        context["schema_version"] = SCHEMA_VERSION
 
         # Add logger name
-        context['logger_name'] = self.name
+        context["logger_name"] = self.name
 
         # Add timestamp
-        context['timestamp'] = time.time()
+        context["timestamp"] = time.time()
 
         return context
 
@@ -172,7 +174,7 @@ class StructuredLogger:
         *args: Any,
         exc_info: Any = None,
         extra: Optional[Dict[str, Any]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Log with performance metrics tracking"""
         start_time = time.perf_counter()
@@ -180,14 +182,7 @@ class StructuredLogger:
 
         try:
             enriched_context = self._enrich_context(extra)
-            self._logger.log(
-                level,
-                msg,
-                *args,
-                exc_info=exc_info,
-                extra=enriched_context,
-                **kwargs
-            )
+            self._logger.log(level, msg, *args, exc_info=exc_info, extra=enriched_context, **kwargs)
         except Exception as e:
             error = True
             # Graceful degradation: try basic logging
@@ -202,36 +197,22 @@ class StructuredLogger:
     # Public logging methods
 
     def debug(
-        self,
-        msg: str,
-        *args: Any,
-        extra: Optional[Dict[str, Any]] = None,
-        **kwargs: Any
+        self, msg: str, *args: Any, extra: Optional[Dict[str, Any]] = None, **kwargs: Any
     ) -> None:
         """Log debug message"""
         self._log_with_metrics(logging.DEBUG, msg, *args, extra=extra, **kwargs)
 
     def info(
-        self,
-        msg: str,
-        *args: Any,
-        extra: Optional[Dict[str, Any]] = None,
-        **kwargs: Any
+        self, msg: str, *args: Any, extra: Optional[Dict[str, Any]] = None, **kwargs: Any
     ) -> None:
         """Log info message"""
         self._log_with_metrics(logging.INFO, msg, *args, extra=extra, **kwargs)
 
     def warning(
-        self,
-        msg: str,
-        *args: Any,
-        extra: Optional[Dict[str, Any]] = None,
-        **kwargs: Any
+        self, msg: str, *args: Any, extra: Optional[Dict[str, Any]] = None, **kwargs: Any
     ) -> None:
         """Log warning message"""
-        self._log_with_metrics(
-            logging.WARNING, msg, *args, extra=extra, **kwargs
-        )
+        self._log_with_metrics(logging.WARNING, msg, *args, extra=extra, **kwargs)
 
     def error(
         self,
@@ -239,12 +220,10 @@ class StructuredLogger:
         *args: Any,
         exc_info: Any = None,
         extra: Optional[Dict[str, Any]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Log error message with optional exception info"""
-        self._log_with_metrics(
-            logging.ERROR, msg, *args, exc_info=exc_info, extra=extra, **kwargs
-        )
+        self._log_with_metrics(logging.ERROR, msg, *args, exc_info=exc_info, extra=extra, **kwargs)
 
     def critical(
         self,
@@ -252,7 +231,7 @@ class StructuredLogger:
         *args: Any,
         exc_info: Any = None,
         extra: Optional[Dict[str, Any]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Log critical message with optional exception info"""
         self._log_with_metrics(
@@ -260,25 +239,16 @@ class StructuredLogger:
         )
 
     def exception(
-        self,
-        msg: str,
-        *args: Any,
-        extra: Optional[Dict[str, Any]] = None,
-        **kwargs: Any
+        self, msg: str, *args: Any, extra: Optional[Dict[str, Any]] = None, **kwargs: Any
     ) -> None:
         """Log exception with traceback"""
-        self._log_with_metrics(
-            logging.ERROR, msg, *args, exc_info=True, extra=extra, **kwargs
-        )
+        self._log_with_metrics(logging.ERROR, msg, *args, exc_info=True, extra=extra, **kwargs)
 
     # Performance metrics
 
     def get_metrics(self) -> Dict[str, Any]:
         """Get logger performance metrics"""
-        return {
-            'logger_name': self.name,
-            **self._metrics.get_metrics()
-        }
+        return {"logger_name": self.name, **self._metrics.get_metrics()}
 
     def reset_metrics(self) -> None:
         """Reset performance metrics"""
@@ -303,16 +273,14 @@ class StructuredLogger:
             return bool(self._logger.isEnabledFor(level_num))
         return bool(self._logger.isEnabledFor(level))
 
-    def get_child(self, suffix: str) -> 'StructuredLogger':
+    def get_child(self, suffix: str) -> "StructuredLogger":
         """Create child logger with hierarchical name"""
         child_name = f"{self.name}.{suffix}"
         return get_logger(child_name, config=self.config, parent=self)
 
 
 def get_logger(
-    name: str,
-    config: Optional[LoggingConfig] = None,
-    parent: Optional[StructuredLogger] = None
+    name: str, config: Optional[LoggingConfig] = None, parent: Optional[StructuredLogger] = None
 ) -> StructuredLogger:
     """
     Get or create a structured logger
@@ -334,10 +302,7 @@ def get_logger(
 def get_all_metrics() -> Dict[str, Dict[str, Any]]:
     """Get metrics for all registered loggers"""
     with _registry_lock:
-        return {
-            name: logger.get_metrics()
-            for name, logger in _logger_registry.items()
-        }
+        return {name: logger.get_metrics() for name, logger in _logger_registry.items()}
 
 
 def reset_all_metrics() -> None:

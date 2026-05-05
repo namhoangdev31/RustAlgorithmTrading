@@ -46,10 +46,7 @@ class MLTradingStrategy:
     """
 
     def __init__(
-        self,
-        symbol: str,
-        model_type: str = 'random_forest',
-        lookback_periods: list = None
+        self, symbol: str, model_type: str = "random_forest", lookback_periods: list = None
     ):
         """
         Initialize ML trading strategy.
@@ -65,8 +62,8 @@ class MLTradingStrategy:
         # Initialize feature engineer
         config = FeatureConfig(
             lookback_periods=lookback_periods or [5, 10, 20, 50],
-            technical_indicators=['sma', 'ema', 'rsi', 'macd', 'bbands'],
-            statistical_features=['returns', 'volatility', 'volume_ratio']
+            technical_indicators=["sma", "ema", "rsi", "macd", "bbands"],
+            statistical_features=["returns", "volatility", "volume_ratio"],
         )
         self.feature_engineer = FeatureEngineer(config)
 
@@ -121,14 +118,11 @@ class MLTradingStrategy:
         volume = np.random.uniform(100000, 1000000, n_samples)
 
         # Create DataFrame
-        dates = pd.date_range('2024-01-01', periods=n_samples, freq='1H')
-        df = pd.DataFrame({
-            'open': open_price,
-            'high': high,
-            'low': low,
-            'close': close,
-            'volume': volume
-        }, index=dates)
+        dates = pd.date_range("2024-01-01", periods=n_samples, freq="1H")
+        df = pd.DataFrame(
+            {"open": open_price, "high": high, "low": low, "close": close, "volume": volume},
+            index=dates,
+        )
 
         return df
 
@@ -144,22 +138,18 @@ class MLTradingStrategy:
 
         # For price prediction
         self.X, self.y_price = self.feature_engineer.prepare_ml_dataset(
-            self.features,
-            target_col='next_return',
-            scale_features=True
+            self.features, target_col="next_return", scale_features=True
         )
 
         # For trend classification
         _, self.y_trend = self.feature_engineer.prepare_ml_dataset(
-            self.features,
-            target_col='next_return',
-            scale_features=False
+            self.features, target_col="next_return", scale_features=False
         )
 
         print(f"Dataset shape: {self.X.shape}")
         print(f"Samples: {len(self.X)}")
 
-    def train_models(self, validation_method: str = 'walk_forward') -> Dict:
+    def train_models(self, validation_method: str = "walk_forward") -> Dict:
         """
         Train both price and trend models.
 
@@ -169,34 +159,26 @@ class MLTradingStrategy:
         Returns:
             Dictionary with validation results
         """
-        print("\n" + "="*60)
+        print("\n" + "=" * 60)
         print("TRAINING MODELS")
-        print("="*60)
+        print("=" * 60)
 
         results = {}
 
         # Train price prediction model
         print("\n1. Training Price Prediction Model...")
         price_results = self.validator.validate_model(
-            self.price_model,
-            self.X,
-            self.y_price,
-            method=validation_method,
-            n_splits=5
+            self.price_model, self.X, self.y_price, method=validation_method, n_splits=5
         )
-        results['price_model'] = price_results
+        results["price_model"] = price_results
         print(self.validator.get_validation_report())
 
         # Train trend classification model
         print("\n2. Training Trend Classification Model...")
         trend_results = self.validator.validate_model(
-            self.trend_model,
-            self.X,
-            self.y_trend,
-            method=validation_method,
-            n_splits=5
+            self.trend_model, self.X, self.y_trend, method=validation_method, n_splits=5
         )
-        results['trend_model'] = trend_results
+        results["trend_model"] = trend_results
         print(self.validator.get_validation_report())
 
         return results
@@ -208,32 +190,26 @@ class MLTradingStrategy:
         Returns:
             CV results for both models
         """
-        print("\n" + "="*60)
+        print("\n" + "=" * 60)
         print("CROSS-VALIDATION")
-        print("="*60)
+        print("=" * 60)
 
         results = {}
 
         # CV for price model
         print("\n1. Price Model Cross-Validation...")
         price_cv = self.cv.cross_validate(
-            self.price_model,
-            self.X,
-            self.y_price,
-            method='time_series'
+            self.price_model, self.X, self.y_price, method="time_series"
         )
-        results['price_cv'] = price_cv
+        results["price_cv"] = price_cv
         print(self.cv.get_cv_report())
 
         # CV for trend model
         print("\n2. Trend Model Cross-Validation...")
         trend_cv = self.cv.cross_validate(
-            self.trend_model,
-            self.X,
-            self.y_trend,
-            method='time_series'
+            self.trend_model, self.X, self.y_trend, method="time_series"
         )
-        results['trend_cv'] = trend_cv
+        results["trend_cv"] = trend_cv
         print(self.cv.get_cv_report())
 
         return results
@@ -257,19 +233,17 @@ class MLTradingStrategy:
         )
 
         # Create signals DataFrame
-        signals = pd.DataFrame({
-            'predicted_return': price_pred,
-            'trend': trend_pred,
-            'confidence': trend_conf
-        })
+        signals = pd.DataFrame(
+            {"predicted_return": price_pred, "trend": trend_pred, "confidence": trend_conf}
+        )
 
         # Generate trading signal
         # Buy: uptrend (2) with high confidence
         # Sell: downtrend (0) with high confidence
         # Hold: neutral (1) or low confidence
-        signals['signal'] = 0  # Hold
-        signals.loc[(signals['trend'] == 2) & signals['confidence'], 'signal'] = 1  # Buy
-        signals.loc[(signals['trend'] == 0) & signals['confidence'], 'signal'] = -1  # Sell
+        signals["signal"] = 0  # Hold
+        signals.loc[(signals["trend"] == 2) & signals["confidence"], "signal"] = 1  # Buy
+        signals.loc[(signals["trend"] == 0) & signals["confidence"], "signal"] = -1  # Sell
 
         return signals
 
@@ -287,15 +261,15 @@ class MLTradingStrategy:
         if signals is None:
             signals = self.generate_signals()
 
-        print("\n" + "="*60)
+        print("\n" + "=" * 60)
         print("BACKTESTING")
-        print("="*60)
+        print("=" * 60)
 
         # Align signals with price data
-        returns = self.features['returns'].iloc[:len(signals)]
+        returns = self.features["returns"].iloc[: len(signals)]
 
         # Calculate strategy returns
-        strategy_returns = signals['signal'].shift(1) * returns
+        strategy_returns = signals["signal"].shift(1) * returns
 
         # Calculate cumulative returns
         cumulative_returns = (1 + strategy_returns).cumprod()
@@ -308,17 +282,17 @@ class MLTradingStrategy:
         max_drawdown = (cumulative_returns / cumulative_returns.cummax() - 1).min()
 
         # Count trades
-        n_trades = (signals['signal'].diff() != 0).sum()
+        n_trades = (signals["signal"].diff() != 0).sum()
 
         results = {
-            'initial_capital': initial_capital,
-            'final_value': final_value,
-            'total_return': total_return,
-            'annual_return': annual_return,
-            'sharpe_ratio': sharpe_ratio,
-            'max_drawdown': max_drawdown,
-            'n_trades': n_trades,
-            'win_rate': (strategy_returns > 0).sum() / len(strategy_returns)
+            "initial_capital": initial_capital,
+            "final_value": final_value,
+            "total_return": total_return,
+            "annual_return": annual_return,
+            "sharpe_ratio": sharpe_ratio,
+            "max_drawdown": max_drawdown,
+            "n_trades": n_trades,
+            "win_rate": (strategy_returns > 0).sum() / len(strategy_returns),
         }
 
         # Print results
@@ -333,7 +307,7 @@ class MLTradingStrategy:
 
         return results
 
-    def save_models(self, output_dir: str = 'models') -> None:
+    def save_models(self, output_dir: str = "models") -> None:
         """Save trained models."""
         Path(output_dir).mkdir(parents=True, exist_ok=True)
 
@@ -345,12 +319,12 @@ class MLTradingStrategy:
 
 def main():
     """Run complete ML strategy example."""
-    print("="*60)
+    print("=" * 60)
     print("ML TRADING STRATEGY EXAMPLE")
-    print("="*60)
+    print("=" * 60)
 
     # Initialize strategy
-    strategy = MLTradingStrategy('AAPL', model_type='random_forest')
+    strategy = MLTradingStrategy("AAPL", model_type="random_forest")
 
     # Load data (using synthetic data for demo)
     strategy.load_data()
@@ -362,7 +336,7 @@ def main():
     strategy.prepare_datasets()
 
     # Train models with validation
-    strategy.train_models(validation_method='walk_forward')
+    strategy.train_models(validation_method="walk_forward")
 
     # Cross-validate
     strategy.cross_validate_models()
@@ -372,12 +346,12 @@ def main():
     strategy.backtest(signals)
 
     # Save models
-    strategy.save_models('models')
+    strategy.save_models("models")
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("STRATEGY EXECUTION COMPLETE")
-    print("="*60)
+    print("=" * 60)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

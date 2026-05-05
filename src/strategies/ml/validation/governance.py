@@ -15,20 +15,24 @@ import os
 import tomllib
 from pathlib import Path
 
+
 class GovernanceStatus(Enum):
     PENDING = "PENDING"
     APPROVED = "APPROVED"
     REJECTED = "REJECTED"
     BLOCKED = "BLOCKED"
 
+
 @dataclass
 class GovernanceEvidence:
     """Evidence required for strategy governance."""
+
     oos_results: Dict[str, Any] = field(default_factory=dict)
     walk_forward_results: Dict[str, Any] = field(default_factory=dict)
     drift_metrics: Dict[str, Any] = field(default_factory=dict)
     timestamp: datetime = field(default_factory=datetime.utcnow)
     correlation_id: Optional[str] = None
+
 
 @dataclass
 class StrategyDecision:
@@ -44,13 +48,16 @@ class StrategyDecision:
     next_action: Optional[str] = None
     eta: Optional[str] = None
 
+
 class StrategyGovernanceGate:
-    def __init__(self, threshold_configs: Optional[Dict] = None, risk_config_path: Optional[str] = None):
+    def __init__(
+        self, threshold_configs: Optional[Dict] = None, risk_config_path: Optional[str] = None
+    ):
         self.thresholds = threshold_configs or {
-            'min_oos_sharpe': 1.5,
-            'max_oos_drawdown': 0.15,
-            'min_wf_consistency': 0.7,
-            'max_drift_pct': 0.01
+            "min_oos_sharpe": 1.5,
+            "max_oos_drawdown": 0.15,
+            "min_wf_consistency": 0.7,
+            "max_drift_pct": 0.01,
         }
         self.risk_limits = self._load_risk_limits(risk_config_path)
 
@@ -58,11 +65,11 @@ class StrategyGovernanceGate:
         """Load risk limits from TOML file."""
         if not path:
             path = os.path.join(os.getcwd(), "config", "risk_limits.toml")
-        
+
         if not os.path.exists(path):
             logger.warning(f"Risk config not found at {path}, using default empty limits.")
             return {}
-            
+
         try:
             with open(path, "rb") as f:
                 return tomllib.load(f)
@@ -76,35 +83,48 @@ class StrategyGovernanceGate:
         if not evidence.oos_results:
             issues.append("MISSING_OOS_EVIDENCE")
         else:
-            sharpe = evidence.oos_results.get('sharpe_ratio', 0)
-            if sharpe < self.thresholds['min_oos_sharpe']:
-                issues.append(f"INSUFFICIENT_OOS_SHARPE: {sharpe:.2f} < {self.thresholds['min_oos_sharpe']}")
+            sharpe = evidence.oos_results.get("sharpe_ratio", 0)
+            if sharpe < self.thresholds["min_oos_sharpe"]:
+                issues.append(
+                    f"INSUFFICIENT_OOS_SHARPE: {sharpe:.2f} < {self.thresholds['min_oos_sharpe']}"
+                )
 
         if not evidence.walk_forward_results:
             issues.append("MISSING_WF_EVIDENCE")
         else:
-            consistency = evidence.walk_forward_results.get('consistency_score', 0)
-            if consistency < self.thresholds['min_wf_consistency']:
-                issues.append(f"INSUFFICIENT_WF_CONSISTENCY: {consistency:.2f} < {self.thresholds['min_wf_consistency']}")
+            consistency = evidence.walk_forward_results.get("consistency_score", 0)
+            if consistency < self.thresholds["min_wf_consistency"]:
+                issues.append(
+                    f"INSUFFICIENT_WF_CONSISTENCY: {consistency:.2f} < {self.thresholds['min_wf_consistency']}"
+                )
 
         drift_value = float(evidence.drift_metrics.get("max_pct_drift", 0.0))
         if drift_value > self.thresholds["max_drift_pct"]:
-            issues.append(f"EXCESSIVE_REPRODUCIBILITY_DRIFT: {drift_value:.4f} > {self.thresholds['max_drift_pct']:.4f}")
+            issues.append(
+                f"EXCESSIVE_REPRODUCIBILITY_DRIFT: {drift_value:.4f} > {self.thresholds['max_drift_pct']:.4f}"
+            )
 
         risk_impact_flag = bool(evidence.drift_metrics.get("risk_impact_flag", False))
-        
+
         # Real Risk Limit Checks
         if self.risk_limits:
-            oos_drawdown = evidence.oos_results.get('max_drawdown', 0.0)
-            allowed_drawdown = self.risk_limits.get('loss_limits', {}).get('drawdown_threshold_percent', 10.0) / 100.0
-            
+            oos_drawdown = evidence.oos_results.get("max_drawdown", 0.0)
+            allowed_drawdown = (
+                self.risk_limits.get("loss_limits", {}).get("drawdown_threshold_percent", 10.0)
+                / 100.0
+            )
+
             if oos_drawdown > allowed_drawdown:
-                issues.append(f"RISK_LIMIT_EXCEEDED_DRAWDOWN: {oos_drawdown:.2%} > {allowed_drawdown:.2%}")
+                issues.append(
+                    f"RISK_LIMIT_EXCEEDED_DRAWDOWN: {oos_drawdown:.2%} > {allowed_drawdown:.2%}"
+                )
                 risk_impact_flag = True
 
             # Check stop loss consistency
-            strategy_sl = evidence.oos_results.get('stop_loss_pct', 0.0)
-            max_sl = self.risk_limits.get('stop_loss', {}).get('max_stop_loss_percent', 10.0) / 100.0
+            strategy_sl = evidence.oos_results.get("stop_loss_pct", 0.0)
+            max_sl = (
+                self.risk_limits.get("stop_loss", {}).get("max_stop_loss_percent", 10.0) / 100.0
+            )
             if strategy_sl > max_sl:
                 issues.append(f"RISK_LIMIT_EXCEEDED_STOPLOSS: {strategy_sl:.2%} > {max_sl:.2%}")
                 risk_impact_flag = True
@@ -142,12 +162,12 @@ class StrategyGovernanceGate:
             drift_value=drift_value,
             risk_impact_flag=risk_impact_flag,
             next_action=next_action,
-            eta=eta
+            eta=eta,
         )
 
     def log_decision(self, decision: StrategyDecision, log_path: str):
         os.makedirs(os.path.dirname(log_path), exist_ok=True)
-        
+
         log_entry = {
             "timestamp": decision.timestamp.isoformat(),
             "strategy_id": decision.strategy_id,
@@ -159,7 +179,7 @@ class StrategyGovernanceGate:
             "drift_value": decision.drift_value,
             "risk_impact_flag": decision.risk_impact_flag,
             "next_action": decision.next_action,
-            "eta": decision.eta
+            "eta": decision.eta,
         }
 
         with open(log_path, "a") as f:

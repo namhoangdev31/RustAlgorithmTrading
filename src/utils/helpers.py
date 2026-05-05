@@ -6,10 +6,7 @@ import numpy as np
 
 
 def calculate_position_size(
-    account_value: float,
-    risk_per_trade: float,
-    entry_price: float,
-    stop_loss_price: float
+    account_value: float, risk_per_trade: float, entry_price: float, stop_loss_price: float
 ) -> float:
     """
     Calculate position size based on risk management
@@ -47,11 +44,7 @@ def format_currency(amount: float, symbol: str = "$") -> str:
     return f"{symbol}{amount:,.2f}"
 
 
-def calculate_kelly_criterion(
-    win_rate: float,
-    avg_win: float,
-    avg_loss: float
-) -> float:
+def calculate_kelly_criterion(win_rate: float, avg_win: float, avg_loss: float) -> float:
     """
     Calculate Kelly Criterion for position sizing
 
@@ -74,10 +67,7 @@ def calculate_kelly_criterion(
 
 
 def calculate_compound_annual_growth_rate(
-    beginning_value: float,
-    ending_value: float,
-    num_periods: int,
-    periods_per_year: int = 252
+    beginning_value: float, ending_value: float, num_periods: int, periods_per_year: int = 252
 ) -> float:
     """
     Calculate Compound Annual Growth Rate (CAGR)
@@ -100,11 +90,7 @@ def calculate_compound_annual_growth_rate(
     return cagr
 
 
-def annualize_metric(
-    metric_value: float,
-    num_periods: int,
-    periods_per_year: int = 252
-) -> float:
+def annualize_metric(metric_value: float, num_periods: int, periods_per_year: int = 252) -> float:
     """
     Annualize a metric (like volatility or return)
 

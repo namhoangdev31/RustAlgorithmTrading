@@ -18,6 +18,7 @@ logger = logging.getLogger(__name__)
 
 class MarketRegime(Enum):
     """Market regime classifications"""
+
     TRENDING_UP = "trending_up"
     TRENDING_DOWN = "trending_down"
     RANGING = "ranging"
@@ -41,7 +42,7 @@ class MarketRegimeDetector:
         atr_period: int = 14,
         adx_trending_threshold: float = 25.0,
         adx_ranging_threshold: float = 20.0,
-        atr_volatility_multiplier: float = 1.5
+        atr_volatility_multiplier: float = 1.5,
     ):
         """
         Initialize market regime detector
@@ -70,16 +71,16 @@ class MarketRegimeDetector:
             Series with ADX values
         """
         # Calculate True Range
-        high_low = data['high'] - data['low']
-        high_close = np.abs(data['high'] - data['close'].shift())
-        low_close = np.abs(data['low'] - data['close'].shift())
+        high_low = data["high"] - data["low"]
+        high_close = np.abs(data["high"] - data["close"].shift())
+        low_close = np.abs(data["low"] - data["close"].shift())
 
         tr = pd.concat([high_low, high_close, low_close], axis=1).max(axis=1)
         atr = tr.rolling(window=self.adx_period).mean()
 
         # Calculate Directional Movement
-        up_move = data['high'] - data['high'].shift()
-        down_move = data['low'].shift() - data['low']
+        up_move = data["high"] - data["high"].shift()
+        down_move = data["low"].shift() - data["low"]
 
         plus_dm = np.where((up_move > down_move) & (up_move > 0), up_move, 0)
         minus_dm = np.where((down_move > up_move) & (down_move > 0), down_move, 0)
@@ -107,20 +108,16 @@ class MarketRegimeDetector:
         Returns:
             Series with ATR values
         """
-        high_low = data['high'] - data['low']
-        high_close = np.abs(data['high'] - data['close'].shift())
-        low_close = np.abs(data['low'] - data['close'].shift())
+        high_low = data["high"] - data["low"]
+        high_close = np.abs(data["high"] - data["close"].shift())
+        low_close = np.abs(data["low"] - data["close"].shift())
 
         tr = pd.concat([high_low, high_close, low_close], axis=1).max(axis=1)
         atr = tr.rolling(window=self.atr_period).mean()
 
         return atr
 
-    def calculate_trend_direction(
-        self,
-        data: pd.DataFrame,
-        lookback: int = 20
-    ) -> pd.Series:
+    def calculate_trend_direction(self, data: pd.DataFrame, lookback: int = 20) -> pd.Series:
         """
         Calculate trend direction using price momentum
 
@@ -131,15 +128,16 @@ class MarketRegimeDetector:
         Returns:
             Series with +1 (uptrend), -1 (downtrend), 0 (neutral)
         """
-        momentum = data['close'] - data['close'].shift(lookback)
+        momentum = data["close"] - data["close"].shift(lookback)
 
         # Use SMA to smooth trend detection
-        sma_short = data['close'].rolling(window=10).mean()
-        sma_long = data['close'].rolling(window=50).mean()
+        sma_short = data["close"].rolling(window=10).mean()
+        sma_long = data["close"].rolling(window=50).mean()
 
         trend = np.where(
-            (momentum > 0) & (sma_short > sma_long), 1,
-            np.where((momentum < 0) & (sma_short < sma_long), -1, 0)
+            (momentum > 0) & (sma_short > sma_long),
+            1,
+            np.where((momentum < 0) & (sma_short < sma_long), -1, 0),
         )
 
         return pd.Series(trend, index=data.index)
@@ -166,17 +164,9 @@ class MarketRegimeDetector:
         # Determine regime
         regime = []
         for i in range(len(data)):
-            adx_val = (
-                adx.iloc[i] if not pd.isna(adx.iloc[i]) else 0
-            )
-            trend_val = (
-                trend_direction.iloc[i]
-                if not pd.isna(trend_direction.iloc[i]) else 0
-            )
-            volatile = (
-                is_volatile.iloc[i]
-                if not pd.isna(is_volatile.iloc[i]) else False
-            )
+            adx_val = adx.iloc[i] if not pd.isna(adx.iloc[i]) else 0
+            trend_val = trend_direction.iloc[i] if not pd.isna(trend_direction.iloc[i]) else 0
+            volatile = is_volatile.iloc[i] if not pd.isna(is_volatile.iloc[i]) else False
 
             # Classify regime
             if adx_val >= self.adx_trending_threshold:
@@ -224,10 +214,7 @@ class MarketRegimeDetector:
 
         return stats
 
-    def get_current_regime(
-        self,
-        data: pd.DataFrame
-    ) -> Tuple[MarketRegime, Dict[str, float]]:
+    def get_current_regime(self, data: pd.DataFrame) -> Tuple[MarketRegime, Dict[str, float]]:
         """
         Get current market regime and supporting indicators
 
@@ -265,10 +252,10 @@ class MarketRegimeDetector:
         trend = self.calculate_trend_direction(data)
 
         indicators = {
-            'adx': float(adx.iloc[-1]) if not pd.isna(adx.iloc[-1]) else 0.0,
-            'atr': float(atr.iloc[-1]) if not pd.isna(atr.iloc[-1]) else 0.0,
-            'trend': float(trend.iloc[-1]) if not pd.isna(trend.iloc[-1]) else 0.0,
-            'close': float(data['close'].iloc[-1])
+            "adx": float(adx.iloc[-1]) if not pd.isna(adx.iloc[-1]) else 0.0,
+            "atr": float(atr.iloc[-1]) if not pd.isna(atr.iloc[-1]) else 0.0,
+            "trend": float(trend.iloc[-1]) if not pd.isna(trend.iloc[-1]) else 0.0,
+            "close": float(data["close"].iloc[-1]),
         }
 
         return current_regime, indicators
@@ -286,58 +273,58 @@ def select_strategy_for_regime(regime: MarketRegime) -> Dict[str, any]:
     """
     strategy_config = {
         MarketRegime.TRENDING_UP: {
-            'strategy': 'momentum',
-            'direction': 'long_only',
-            'stop_loss': 0.02,  # 2% stop loss
-            'position_size': 1.0,  # Normal size
-            'enabled': True
+            "strategy": "momentum",
+            "direction": "long_only",
+            "stop_loss": 0.02,  # 2% stop loss
+            "position_size": 1.0,  # Normal size
+            "enabled": True,
         },
         MarketRegime.TRENDING_DOWN: {
-            'strategy': 'momentum',
-            'direction': 'short_only',
-            'stop_loss': 0.02,
-            'position_size': 1.0,
-            'enabled': True
+            "strategy": "momentum",
+            "direction": "short_only",
+            "stop_loss": 0.02,
+            "position_size": 1.0,
+            "enabled": True,
         },
         MarketRegime.RANGING: {
             # RE-ENABLED: Week 3.5 - Best strategy (43.3% win rate)
-            'strategy': 'mean_reversion',
-            'direction': 'neutral',
-            'stop_loss': 0.03,
+            "strategy": "mean_reversion",
+            "direction": "neutral",
+            "stop_loss": 0.03,
             # 15% position - mean reversion RE-ENABLED
-            'position_size': 0.15,
-            'take_profit': 0.03,  # 3% take profit for mean reversion
+            "position_size": 0.15,
+            "take_profit": 0.03,  # 3% take profit for mean reversion
             # RE-ENABLED: Week 3 mistake - this was our BEST performing strategy!
-            'enabled': True
+            "enabled": True,
         },
         MarketRegime.VOLATILE_TRENDING_UP: {
-            'strategy': 'momentum',
-            'direction': 'long_only',
-            'stop_loss': 0.05,  # Wider 5% stop loss
-            'position_size': 0.5,  # Half position size
-            'enabled': True
+            "strategy": "momentum",
+            "direction": "long_only",
+            "stop_loss": 0.05,  # Wider 5% stop loss
+            "position_size": 0.5,  # Half position size
+            "enabled": True,
         },
         MarketRegime.VOLATILE_TRENDING_DOWN: {
-            'strategy': 'momentum',
-            'direction': 'short_only',
-            'stop_loss': 0.05,
-            'position_size': 0.5,
-            'enabled': True
+            "strategy": "momentum",
+            "direction": "short_only",
+            "stop_loss": 0.05,
+            "position_size": 0.5,
+            "enabled": True,
         },
         MarketRegime.VOLATILE_RANGING: {
-            'strategy': 'hold',
-            'direction': 'neutral',
-            'stop_loss': 0.05,
-            'position_size': 0.0,  # No trading in volatile ranging markets
-            'enabled': False
+            "strategy": "hold",
+            "direction": "neutral",
+            "stop_loss": 0.05,
+            "position_size": 0.0,  # No trading in volatile ranging markets
+            "enabled": False,
         },
         MarketRegime.UNKNOWN: {
-            'strategy': 'hold',
-            'direction': 'neutral',
-            'stop_loss': 0.03,
-            'position_size': 0.0,  # No trading when regime is unclear
-            'enabled': False
-        }
+            "strategy": "hold",
+            "direction": "neutral",
+            "stop_loss": 0.03,
+            "position_size": 0.0,  # No trading when regime is unclear
+            "enabled": False,
+        },
     }
 
     return strategy_config.get(regime, strategy_config[MarketRegime.UNKNOWN])
@@ -352,6 +339,6 @@ def get_regime_display_name(regime: MarketRegime) -> str:
         MarketRegime.VOLATILE_TRENDING_UP: "⚡📈 Volatile Trending Up",
         MarketRegime.VOLATILE_TRENDING_DOWN: "⚡📉 Volatile Trending Down",
         MarketRegime.VOLATILE_RANGING: "⚡↔️  Volatile Ranging",
-        MarketRegime.UNKNOWN: "❓ Unknown"
+        MarketRegime.UNKNOWN: "❓ Unknown",
     }
     return display_names.get(regime, "Unknown")

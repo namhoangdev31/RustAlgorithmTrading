@@ -7,6 +7,7 @@ Tests:
 - Metric streaming at 10Hz
 - Concurrent connections (100+)
 """
+
 import asyncio
 import json
 import time
@@ -23,25 +24,30 @@ from src.observability.api.main import app
 import httpx
 import pytest_asyncio
 
+
 @pytest_asyncio.fixture
 async def api_client():
     """Create an in-process test client for the FastAPI app with manual lifespan management."""
     from src.observability.api.main import api_state
+
     await api_state.start()
     transport = httpx.ASGITransport(app=app)
     async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
         yield client
     await api_state.stop()
 
+
 @pytest_asyncio.fixture
 async def api_server():
     """Mock api_server fixture to satisfy dependencies while using api_client for logic."""
     yield None
 
+
 @pytest.fixture
 def api_base_url() -> str:
     """Base URL for API endpoints."""
     return "http://testserver"
+
 
 class TestObservabilityAPI:
     """Test REST API endpoints and WebSocket streaming."""
@@ -59,9 +65,7 @@ class TestObservabilityAPI:
 
     @pytest.mark.asyncio
     @pytest.mark.api
-    async def test_root_endpoint_returns_service_info(
-        self, api_client, api_base_url: str
-    ):
+    async def test_root_endpoint_returns_service_info(self, api_client, api_base_url: str):
         """Test root endpoint returns API information."""
         response = await api_client.get(f"{api_base_url}/", timeout=5.0)
 
@@ -105,22 +109,21 @@ class TestObservabilityAPI:
     async def test_websocket_connection_succeeds(self, api_server):
         """Test WebSocket connection establishment."""
         if api_server is None:
-            pytest.skip("WebSocket tests require a real network socket (blocked in this environment)")
+            pytest.skip(
+                "WebSocket tests require a real network socket (blocked in this environment)"
+            )
         ws_url = "ws://localhost:8000/ws/metrics"
 
         try:
             async with websockets.connect(ws_url) as websocket:
                 # Skip initial connected message
                 msg = await asyncio.wait_for(websocket.recv(), timeout=2.0)
-                
+
                 # Send ping
                 await websocket.send("ping")
 
                 # Receive pong
-                response = await asyncio.wait_for(
-                    websocket.recv(),
-                    timeout=5.0
-                )
+                response = await asyncio.wait_for(websocket.recv(), timeout=5.0)
 
                 assert response == "pong"
 
@@ -141,17 +144,14 @@ class TestObservabilityAPI:
         async with websockets.connect(ws_url) as websocket:
             # Skip initial connected message
             await asyncio.wait_for(websocket.recv(), timeout=2.0)
-            
+
             # Collect messages for 2 seconds
             start_time = time.time()
             duration = 2.0
 
             while time.time() - start_time < duration:
                 try:
-                    message = await asyncio.wait_for(
-                        websocket.recv(),
-                        timeout=0.2
-                    )
+                    message = await asyncio.wait_for(websocket.recv(), timeout=0.2)
 
                     # Record receive timestamp
                     received_messages.append(time.time())
@@ -174,7 +174,7 @@ class TestObservabilityAPI:
         # Verify timing intervals (should be ~100ms)
         if len(received_messages) > 1:
             intervals = [
-                (received_messages[i] - received_messages[i-1]) * 1000
+                (received_messages[i] - received_messages[i - 1]) * 1000
                 for i in range(1, len(received_messages))
             ]
 
@@ -182,9 +182,9 @@ class TestObservabilityAPI:
             logger.info(f"Average interval: {avg_interval:.2f}ms")
 
             # Should be close to 100ms with some tolerance
-            assert 80 <= avg_interval <= 150, (
-                f"Average interval {avg_interval:.2f}ms not in 80-150ms range"
-            )
+            assert (
+                80 <= avg_interval <= 150
+            ), f"Average interval {avg_interval:.2f}ms not in 80-150ms range"
 
     @pytest.mark.asyncio
     @pytest.mark.websocket
@@ -202,14 +202,12 @@ class TestObservabilityAPI:
                 async with websockets.connect(ws_url) as websocket:
                     # Skip initial connected message
                     await asyncio.wait_for(websocket.recv(), timeout=2.0)
-                    
+
                     # Send ping to verify connection
                     await websocket.send("ping")
                     pong_received = False
                     for _ in range(10):
-                        response = await asyncio.wait_for(
-                            websocket.recv(), timeout=2.0
-                        )
+                        response = await asyncio.wait_for(websocket.recv(), timeout=2.0)
                         if response == "pong":
                             pong_received = True
                             break
@@ -222,24 +220,19 @@ class TestObservabilityAPI:
         # Create connections concurrently
         start_time = time.time()
 
-        results = await asyncio.gather(
-            *[create_connection(i) for i in range(num_connections)]
-        )
+        results = await asyncio.gather(*[create_connection(i) for i in range(num_connections)])
 
         elapsed = time.time() - start_time
 
         # Count successful connections
         successful = sum(1 for r in results if r is True)
 
-        logger.info(
-            f"Established {successful}/{num_connections} connections "
-            f"in {elapsed:.2f}s"
-        )
+        logger.info(f"Established {successful}/{num_connections} connections " f"in {elapsed:.2f}s")
 
         # Should successfully handle at least 95% of connections
-        assert successful >= num_connections * 0.95, (
-            f"Only {successful}/{num_connections} connections succeeded"
-        )
+        assert (
+            successful >= num_connections * 0.95
+        ), f"Only {successful}/{num_connections} connections succeeded"
 
     @pytest.mark.asyncio
     @pytest.mark.websocket
@@ -253,10 +246,7 @@ class TestObservabilityAPI:
             # Wait for a metric message
             for _ in range(10):
                 try:
-                    message = await asyncio.wait_for(
-                        websocket.recv(),
-                        timeout=1.0
-                    )
+                    message = await asyncio.wait_for(websocket.recv(), timeout=1.0)
 
                     # Skip ping/pong messages
                     if message in ["ping", "pong"]:
@@ -268,7 +258,7 @@ class TestObservabilityAPI:
                     except json.JSONDecodeError:
                         # Skip non-JSON messages like 'ping'/'pong'
                         continue
-                    
+
                     # Skip initial connected message
                     if data.get("type") == "connected":
                         continue
@@ -279,8 +269,7 @@ class TestObservabilityAPI:
 
                     # Should have metric categories
                     assert any(
-                        key in data
-                        for key in ["market_data", "strategy", "execution", "system"]
+                        key in data for key in ["market_data", "strategy", "execution", "system"]
                     )
 
                     logger.info(f"Received valid metric message: {len(message)} bytes")
@@ -297,10 +286,7 @@ class TestObservabilityAPI:
         """Test /api/metrics endpoint (if exists)."""
         # Try to get metrics
         try:
-            response = await api_client.get(
-                f"{api_base_url}/api/metrics",
-                timeout=5.0
-            )
+            response = await api_client.get(f"{api_base_url}/api/metrics", timeout=5.0)
 
             # Endpoint should exist or return 404
             assert response.status_code in [200, 404]
@@ -318,11 +304,8 @@ class TestObservabilityAPI:
         """Test that CORS headers are properly set."""
         response = await api_client.options(
             f"{api_base_url}/health",
-            headers={
-                "Origin": "http://localhost:3000",
-                "Access-Control-Request-Method": "GET"
-            },
-            timeout=5.0
+            headers={"Origin": "http://localhost:3000", "Access-Control-Request-Method": "GET"},
+            timeout=5.0,
         )
 
         # CORS preflight should succeed
@@ -337,18 +320,13 @@ class TestObservabilityAPI:
         for endpoint in endpoints:
             start_time = time.perf_counter()
 
-            response = await api_client.get(
-                f"{api_base_url}{endpoint}",
-                timeout=5.0
-            )
+            response = await api_client.get(f"{api_base_url}{endpoint}", timeout=5.0)
 
             latency_ms = (time.perf_counter() - start_time) * 1000
 
             assert response.status_code == 200
             # Relaxe latency for test environment if needed, but ensure it's reasonable
-            assert latency_ms < 150, (
-                f"{endpoint} latency {latency_ms:.2f}ms > 150ms"
-            )
+            assert latency_ms < 150, f"{endpoint} latency {latency_ms:.2f}ms > 150ms"
 
             logger.info(f"{endpoint} responded in {latency_ms:.2f}ms")
 
@@ -362,9 +340,9 @@ class TestObservabilityAPI:
 
         # First connection
         async with websockets.connect(ws_url) as ws1:
-            await ws1.recv() # skip connected message
+            await ws1.recv()  # skip connected message
             await ws1.send("ping")
-            
+
             # Robust pong check: skip any metric updates that arrive before pong
             pong_received = False
             for _ in range(10):
@@ -379,9 +357,9 @@ class TestObservabilityAPI:
 
         # Second connection (reconnect)
         async with websockets.connect(ws_url) as ws2:
-            await ws2.recv() # skip connected message
+            await ws2.recv()  # skip connected message
             await ws2.send("ping")
-            
+
             pong_received = False
             for _ in range(10):
                 response2 = await asyncio.wait_for(ws2.recv(), timeout=2.0)

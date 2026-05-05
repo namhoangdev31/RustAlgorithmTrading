@@ -5,11 +5,13 @@ This module provides a bridge between Rust services emitting Prometheus metrics
 and the Python observability system, allowing seamless data collection and
 storage in DuckDB.
 """
+
 import asyncio
 import aiohttp
 from typing import Dict, Any, Optional, List, cast
 from datetime import datetime
 from loguru import logger
+
 
 class RustMetricsBridge:
     """
@@ -37,8 +39,7 @@ class RustMetricsBridge:
         self.running = False
 
         logger.info(
-            f"[cid:INIT] Initialized RustMetricsBridge with "
-            f"{len(service_endpoints)} services"
+            f"[cid:INIT] Initialized RustMetricsBridge with " f"{len(service_endpoints)} services"
         )
 
     async def start(self) -> None:
@@ -77,14 +78,11 @@ class RustMetricsBridge:
                 if response.status == 200:
                     text = await response.text()
                     metrics = self._parse_prometheus_text(text, service_name)
-                    logger.debug(
-                        f"[cid:INIT] Scraped {len(metrics)} metrics from {service_name}"
-                    )
+                    logger.debug(f"[cid:INIT] Scraped {len(metrics)} metrics from {service_name}")
                     return metrics
                 else:
                     logger.warning(
-                        f"[cid:INIT] Failed to scrape {service_name}: "
-                        f"HTTP {response.status}"
+                        f"[cid:INIT] Failed to scrape {service_name}: " f"HTTP {response.status}"
                     )
                     return None
         except aiohttp.ClientError as e:
@@ -94,9 +92,7 @@ class RustMetricsBridge:
             logger.error(f"[cid:INIT] Unexpected error scraping {service_name}: {e}")
             return None
 
-    def _parse_prometheus_text(
-        self, text: str, service_name: str
-    ) -> Dict[str, Any]:
+    def _parse_prometheus_text(self, text: str, service_name: str) -> Dict[str, Any]:
         """
         Parse Prometheus text format into structured metrics.
 
@@ -121,19 +117,17 @@ class RustMetricsBridge:
 
         current_metric_type = None
 
-        for line in text.split('\n'):
+        for line in text.split("\n"):
             line = line.strip()
 
             # Skip empty lines and comments that aren't HELP/TYPE
-            is_comment = line.startswith('#')
-            is_type_or_help = (
-                line.startswith('# TYPE') or line.startswith('# HELP')
-            )
+            is_comment = line.startswith("#")
+            is_type_or_help = line.startswith("# TYPE") or line.startswith("# HELP")
             if not line or (is_comment and not is_type_or_help):
                 continue
 
             # Parse TYPE declarations
-            if line.startswith('# TYPE'):
+            if line.startswith("# TYPE"):
                 parts = line.split()
                 if len(parts) >= 4:
                     # current_metric_name = parts[2]
@@ -141,11 +135,11 @@ class RustMetricsBridge:
                 continue
 
             # Parse HELP declarations (just skip for now)
-            if line.startswith('# HELP'):
+            if line.startswith("# HELP"):
                 continue
 
             # Parse metric values
-            if not line.startswith('#'):
+            if not line.startswith("#"):
                 # Format: metric_name{labels} value [timestamp]
                 # or:     metric_name value [timestamp]
                 try:
@@ -159,11 +153,11 @@ class RustMetricsBridge:
                     value_str = parts[1].split()[0]
 
                     # Parse metric name and labels
-                    if '{' in name_and_labels:
-                        brace_idx = name_and_labels.index('{')
-                        close_brace_idx = name_and_labels.index('}')
+                    if "{" in name_and_labels:
+                        brace_idx = name_and_labels.index("{")
+                        close_brace_idx = name_and_labels.index("}")
                         metric_name = name_and_labels[:brace_idx]
-                        labels_str = name_and_labels[brace_idx + 1:close_brace_idx]
+                        labels_str = name_and_labels[brace_idx + 1 : close_brace_idx]
                         labels = self._parse_labels(labels_str)
                     else:
                         metric_name = name_and_labels
@@ -184,35 +178,27 @@ class RustMetricsBridge:
                         metric_key = f"{metric_name}{{{label_str}}}"
 
                     # Determine type (use declared type or infer from name)
-                    metric_type = current_metric_type or self._infer_metric_type(
-                        metric_name
-                    )
+                    metric_type = current_metric_type or self._infer_metric_type(metric_name)
 
                     if metric_type == "counter":
                         counters[metric_key] = {
                             "name": metric_name,
                             "value": value,
-                            "labels": labels
+                            "labels": labels,
                         }
                     elif metric_type == "gauge":
-                        gauges[metric_key] = {
-                            "name": metric_name,
-                            "value": value,
-                            "labels": labels
-                        }
+                        gauges[metric_key] = {"name": metric_name, "value": value, "labels": labels}
                         if metric_key not in histograms:
                             histograms[metric_key] = {
                                 "name": metric_name,
                                 "values": [],
-                                "labels": labels
+                                "labels": labels,
                             }
                         values = cast(List[float], histograms[metric_key]["values"])
                         values.append(value)
 
                 except Exception as e:
-                    logger.debug(
-                        f"[cid:INIT] Failed to parse metric line '{line}': {e}"
-                    )
+                    logger.debug(f"[cid:INIT] Failed to parse metric line '{line}': {e}")
                     continue
 
         return metrics
@@ -231,20 +217,20 @@ class RustMetricsBridge:
         for char in labels_str:
             if char == '"':
                 in_quotes = not in_quotes
-            elif char == ',' and not in_quotes:
+            elif char == "," and not in_quotes:
                 if current:
-                    parts.append(''.join(current).strip())
+                    parts.append("".join(current).strip())
                     current = []
                 continue
             current.append(char)
 
         if current:
-            parts.append(''.join(current).strip())
+            parts.append("".join(current).strip())
 
         # Parse each label
         for part in parts:
-            if '=' in part:
-                key, value = part.split('=', 1)
+            if "=" in part:
+                key, value = part.split("=", 1)
                 key = key.strip()
                 value = value.strip().strip('"')
                 labels[key] = value
@@ -267,10 +253,7 @@ class RustMetricsBridge:
         Returns:
             Dictionary mapping service names to their metrics
         """
-        tasks = [
-            self.scrape_service(name, url)
-            for name, url in self.service_endpoints.items()
-        ]
+        tasks = [self.scrape_service(name, url) for name, url in self.service_endpoints.items()]
         results: List[Any] = await asyncio.gather(*tasks, return_exceptions=True)
 
         metrics_by_service: Dict[str, Optional[Dict[str, Any]]] = {}
@@ -293,8 +276,7 @@ class RustMetricsBridge:
         """
         self.running = True
         logger.info(
-            f"[cid:INIT] Starting continuous scrape "
-            f"(interval: {self.scrape_interval}s)"
+            f"[cid:INIT] Starting continuous scrape " f"(interval: {self.scrape_interval}s)"
         )
 
         while self.running:
@@ -320,6 +302,7 @@ class RustMetricsBridge:
 
 # Singleton instance for easy access
 _bridge_instance: Optional[RustMetricsBridge] = None
+
 
 def get_rust_metrics_bridge() -> RustMetricsBridge:
     """Get or create the global RustMetricsBridge instance."""

@@ -54,7 +54,7 @@ class BacktestEngine:
         self.end_date = end_date
 
         # CRITICAL FIX: Connect data handler to execution handler for accurate pricing
-        if hasattr(execution_handler, 'set_data_handler'):
+        if hasattr(execution_handler, "set_data_handler"):
             execution_handler.set_data_handler(data_handler)
 
         self.events: deque[Event] = deque()
@@ -70,18 +70,16 @@ class BacktestEngine:
         # Initialize Governance Managers
         self.allocation_manager = AllocationManager(AllocationPolicy())
         self.reproducibility_manager = ReproducibilityManager()
-        
-        if hasattr(self.portfolio_handler, 'allocation_manager'):
+
+        if hasattr(self.portfolio_handler, "allocation_manager"):
             self.portfolio_handler.allocation_manager = self.allocation_manager
 
-        logger.info(
-            f"Initialized BacktestEngine from {start_date} to {end_date}"
-        )
+        logger.info(f"Initialized BacktestEngine from {start_date} to {end_date}")
 
     def run(self, seed_profile_id: Optional[str] = None) -> Dict:
         """
         Execute backtest and return performance metrics.
-        
+
         Args:
             seed_profile_id: Optional ID for deterministic seed profile (REPRO-GATED)
 
@@ -90,7 +88,7 @@ class BacktestEngine:
         """
         if seed_profile_id:
             self.reproducibility_manager.apply_seed_profile(seed_profile_id)
-            
+
         logger.info(f"Starting optimized backtest for {len(self.data_handler.symbols)} symbols...")
         start_time = datetime.utcnow()
 
@@ -108,7 +106,7 @@ class BacktestEngine:
                             timestamp=bar.timestamp,
                             symbol=symbol,
                             price=bar.close,
-                            volume=bar.volume
+                            volume=bar.volume,
                         )
                         self.events.append(market_event)
             else:
@@ -130,8 +128,7 @@ class BacktestEngine:
         results = self._generate_results(duration)
 
         logger.info(
-            f"Backtest completed in {duration:.2f}s. "
-            f"Processed {self.events_processed} events"
+            f"Backtest completed in {duration:.2f}s. " f"Processed {self.events_processed} events"
         )
 
         return results
@@ -165,65 +162,67 @@ class BacktestEngine:
         try:
             # OPTIMIZATION (Wave-3): Only process the symbol that triggered the event
             symbol = event.symbol
-            
+
             # Get latest bars for the specific symbol
             bars = self.data_handler.get_latest_bars(symbol, n=50)
             if not bars or len(bars) < 20:
                 return
 
             # Convert to DataFrame format
-            df = pd.DataFrame([
-                {
-                    'timestamp': bar.timestamp,
-                    'open': bar.open,
-                    'high': bar.high,
-                    'low': bar.low,
-                    'close': bar.close,
-                    'volume': bar.volume
-                }
-                for bar in bars
-            ])
-            df.set_index('timestamp', inplace=True)
-            df.attrs['symbol'] = symbol
+            df = pd.DataFrame(
+                [
+                    {
+                        "timestamp": bar.timestamp,
+                        "open": bar.open,
+                        "high": bar.high,
+                        "low": bar.low,
+                        "close": bar.close,
+                        "volume": bar.volume,
+                    }
+                    for bar in bars
+                ]
+            )
+            df.set_index("timestamp", inplace=True)
+            df.attrs["symbol"] = symbol
 
             # Generate signals for this specific symbol
             signals = []
-            is_portfolio = getattr(self.strategy, 'is_portfolio_strategy', False)
-            
+            is_portfolio = getattr(self.strategy, "is_portfolio_strategy", False)
+
             if is_portfolio:
                 # For portfolio strategies, only run once per bar (e.g. using the first symbol)
                 if symbol != self.data_handler.symbols[0]:
                     return
-                
+
                 # Try to build a combined dataframe if the strategy expects it
                 combined_df = None
-                
+
                 # Gather data
                 symbol_dfs = {}
                 for s in self.data_handler.symbols:
                     s_bars = self.data_handler.get_latest_bars(s, n=50)
                     if s_bars and len(s_bars) >= 20:
                         s_df = pd.DataFrame([b.__dict__ for b in s_bars])
-                        s_df.set_index('timestamp', inplace=True)
+                        s_df.set_index("timestamp", inplace=True)
                         symbol_dfs[s] = s_df
-                
+
                 if not symbol_dfs:
                     return
-                    
+
                 # StatArb specific logic (Pairs Trading) wants 'close' and 'close_y'
                 if len(symbol_dfs) == 2 and "StatisticalArbitrage" in self.strategy.name:
                     sym1, sym2 = list(symbol_dfs.keys())
                     combined_df = symbol_dfs[sym1].copy()
-                    combined_df['close_y'] = symbol_dfs[sym2]['close']
-                    combined_df.attrs['symbol'] = f"{sym1}-{sym2}"
+                    combined_df["close_y"] = symbol_dfs[sym2]["close"]
+                    combined_df.attrs["symbol"] = f"{sym1}-{sym2}"
                     signals = self.strategy.generate_signals(combined_df)
                 else:
                     # Pass dict for general portfolio strategies
                     signals = self.strategy.generate_signals(symbol_dfs)
-                    
-            elif hasattr(self.strategy, 'generate_signals_for_symbol'):
+
+            elif hasattr(self.strategy, "generate_signals_for_symbol"):
                 signals = self.strategy.generate_signals_for_symbol(symbol, df)
-            elif hasattr(self.strategy, 'generate_signals'):
+            elif hasattr(self.strategy, "generate_signals"):
                 # Compatibility layer: just pass the single dataframe
                 signals = self.strategy.generate_signals(df)
             else:
@@ -236,8 +235,8 @@ class BacktestEngine:
                     timestamp=event.timestamp,
                     symbol=signal.symbol,
                     signal_type=signal.signal_type.value,
-                    strength=getattr(signal, 'confidence', 0.8),
-                    strategy_id=self.strategy.name
+                    strength=getattr(signal, "confidence", 0.8),
+                    strategy_id=self.strategy.name,
                 )
                 self.events.append(signal_event)
 
@@ -298,20 +297,19 @@ class BacktestEngine:
         holdings = self.portfolio_handler.get_holdings()
 
         metrics = self.performance_analyzer.calculate_performance_metrics(
-            equity_curve=equity_curve,
-            initial_capital=self.portfolio_handler.initial_capital
+            equity_curve=equity_curve, initial_capital=self.portfolio_handler.initial_capital
         )
 
         return {
-            'metrics': metrics.to_dict(),
-            'equity_curve': equity_curve,
-            'holdings': holdings,
-            'execution_stats': {
-                'duration_seconds': duration,
-                'events_processed': self.events_processed,
-                'signals_generated': self.signals_generated,
-                'orders_placed': self.orders_placed,
-                'fills_executed': self.fills_executed,
-                'events_per_second': self.events_processed / duration if duration > 0 else 0,
-            }
+            "metrics": metrics.to_dict(),
+            "equity_curve": equity_curve,
+            "holdings": holdings,
+            "execution_stats": {
+                "duration_seconds": duration,
+                "events_processed": self.events_processed,
+                "signals_generated": self.signals_generated,
+                "orders_placed": self.orders_placed,
+                "fills_executed": self.fills_executed,
+                "events_per_second": self.events_processed / duration if duration > 0 else 0,
+            },
         }

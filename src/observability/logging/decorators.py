@@ -20,7 +20,7 @@ from .correlations import correlation_id, get_correlation_id
 
 def log_execution_time(
     logger_name: Optional[str] = None,
-    level: str = 'debug',
+    level: str = "debug",
     threshold_ms: Optional[float] = None,
     log_args: bool = False,
     log_result: bool = False,
@@ -41,6 +41,7 @@ def log_execution_time(
         ...     # Logs if execution takes > 100ms
         ...     return await data_source.fetch(symbol)
     """
+
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
         # Get logger
         log_name = logger_name or f"{func.__module__}.{func.__name__}"
@@ -65,28 +66,27 @@ def log_execution_time(
                 # Only log if threshold met
                 if threshold_ms is None or duration_ms >= threshold_ms:
                     extra = {
-                        'function': func.__name__,
-                        'duration_ms': duration_ms,
-                        'error': str(error) if error else None,
+                        "function": func.__name__,
+                        "duration_ms": duration_ms,
+                        "error": str(error) if error else None,
                     }
 
                     if log_args:
-                        extra['args'] = str(args)
-                        extra['kwargs'] = str(kwargs)
+                        extra["args"] = str(args)
+                        extra["kwargs"] = str(kwargs)
 
                     if log_result and result is not None:
-                        extra['result'] = str(result)[:200]  # Truncate
+                        extra["result"] = str(result)[:200]  # Truncate
 
                     if error:
                         logger.error(
                             f"[cid:INIT] Function {func.__name__} failed after "
                             f"{duration_ms:.2f}ms",
-                            extra=extra
+                            extra=extra,
                         )
                     else:
                         log_method(
-                            f"Function {func.__name__} executed in {duration_ms:.2f}ms",
-                            extra=extra
+                            f"Function {func.__name__} executed in {duration_ms:.2f}ms", extra=extra
                         )
 
         @functools.wraps(func)
@@ -106,29 +106,28 @@ def log_execution_time(
 
                 if threshold_ms is None or duration_ms >= threshold_ms:
                     extra = {
-                        'function': func.__name__,
-                        'duration_ms': duration_ms,
-                        'error': str(error) if error else None,
+                        "function": func.__name__,
+                        "duration_ms": duration_ms,
+                        "error": str(error) if error else None,
                     }
 
                     if log_args:
-                        extra['args'] = str(args)
-                        extra['kwargs'] = str(kwargs)
+                        extra["args"] = str(args)
+                        extra["kwargs"] = str(kwargs)
 
                     if log_result and result is not None:
-                        extra['result'] = str(result)[:200]
+                        extra["result"] = str(result)[:200]
 
                     if error:
                         logger.error(
                             f"[cid:INIT] Async function {func.__name__} failed "
                             f"after {duration_ms:.2f}ms",
-                            extra=extra
+                            extra=extra,
                         )
                     else:
                         log_method(
-                            f"Async function {func.__name__} executed in "
-                            f"{duration_ms:.2f}ms",
-                            extra=extra
+                            f"Async function {func.__name__} executed in " f"{duration_ms:.2f}ms",
+                            extra=extra,
                         )
 
         # Return appropriate wrapper
@@ -177,27 +176,27 @@ def log_trade_decision(
     logger = get_logger(logger_name)
 
     extra = {
-        'event_type': 'trade_decision',
-        'strategy': strategy_name,
-        'symbol': symbol,
-        'action': action,
-        'quantity': quantity,
-        'price': price,
-        'rationale': rationale,
+        "event_type": "trade_decision",
+        "strategy": strategy_name,
+        "symbol": symbol,
+        "action": action,
+        "quantity": quantity,
+        "price": price,
+        "rationale": rationale,
     }
 
     if context:
-        extra['context'] = context
+        extra["context"] = context
 
     # Add correlation ID if present
     cid = get_correlation_id()
     if cid:
-        extra['correlation_id'] = cid
+        extra["correlation_id"] = cid
 
     logger.info(
-        f"[cid:INIT] Trade Decision: {strategy_name} - {action} {quantity} {symbol}" +
-        (f" @ {price}" if price else ""),
-        extra=extra
+        f"[cid:INIT] Trade Decision: {strategy_name} - {action} {quantity} {symbol}"
+        + (f" @ {price}" if price else ""),
+        extra=extra,
     )
 
 
@@ -234,24 +233,20 @@ def log_error_with_context(
     logger = get_logger(logger_name)
     log_method = getattr(logger, severity)
 
-    extra = {
-        'error_type': type(error).__name__,
-        'error_message': str(error),
-        **context
-    }
+    extra = {"error_type": type(error).__name__, "error_message": str(error), **context}
 
     if include_traceback:
-        extra['traceback'] = traceback.format_exc()
+        extra["traceback"] = traceback.format_exc()
 
     # Add correlation ID if present
     cid = get_correlation_id()
     if cid:
-        extra['correlation_id'] = cid
+        extra["correlation_id"] = cid
 
     log_method(
         f"Error in {context.get('operation', 'unknown')}: {error}",
         exc_info=include_traceback,
-        extra=extra
+        extra=extra,
     )
 
 
@@ -275,7 +270,7 @@ class LogContext:
         self.context = context
         self._original_factory: Optional[Callable[..., logging.LogRecord]] = None
 
-    def __enter__(self) -> 'LogContext':
+    def __enter__(self) -> "LogContext":
         """Enter context and enrich log records"""
         old_factory = logging.getLogRecordFactory()
 
@@ -306,6 +301,7 @@ def with_correlation_id(func: Callable[..., Any]) -> Callable[..., Any]:
         ...     # All logs in this function will have correlation_id
         ...     logger.info("[cid:INIT] Processing request")
     """
+
     @functools.wraps(func)
     def sync_wrapper(*args: Any, **kwargs: Any) -> Any:
         with correlation_id():
@@ -315,6 +311,7 @@ def with_correlation_id(func: Callable[..., Any]) -> Callable[..., Any]:
     async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
         with correlation_id():
             return await func(*args, **kwargs)
+
     if asyncio.iscoroutinefunction(func):
         return async_wrapper
     else:

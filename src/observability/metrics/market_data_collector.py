@@ -8,6 +8,7 @@ Collects and aggregates metrics from market data feeds:
 - Order book depth
 - Market microstructure metrics
 """
+
 import asyncio
 from typing import Dict, Any, List, Optional
 from datetime import datetime
@@ -59,8 +60,7 @@ class MarketDataCollector(BaseCollector):
         self.aggregation_task = asyncio.create_task(self._aggregate_metrics())
 
         logger.info(
-            "[cid:INIT] Market data collector started - "
-            "connected to Rust service on port 9091"
+            "[cid:INIT] Market data collector started - " "connected to Rust service on port 9091"
         )
 
     async def _stop_impl(self) -> None:
@@ -83,8 +83,7 @@ class MarketDataCollector(BaseCollector):
                 # Collect system metrics - reduce sampling frequency to lower
                 # CPU overhead
                 rust_metrics = await self.rust_bridge.scrape_service(
-                    "market_data",
-                    "http://127.0.0.1:9091/metrics"
+                    "market_data", "http://127.0.0.1:9091/metrics"
                 )
 
                 if rust_metrics:
@@ -117,16 +116,16 @@ class MarketDataCollector(BaseCollector):
                     "bid": 0,
                     "ask": 0,
                     "volume": 0,
-                    "trades": 0
+                    "trades": 0,
                 }
 
             # Simulate price changes
             self.symbols[symbol]["last_price"] += random.uniform(-0.5, 0.5)
-            self.symbols[symbol]["bid"] = (
-                self.symbols[symbol]["last_price"] - random.uniform(0.01, 0.1)
+            self.symbols[symbol]["bid"] = self.symbols[symbol]["last_price"] - random.uniform(
+                0.01, 0.1
             )
-            self.symbols[symbol]["ask"] = (
-                self.symbols[symbol]["last_price"] + random.uniform(0.01, 0.1)
+            self.symbols[symbol]["ask"] = self.symbols[symbol]["last_price"] + random.uniform(
+                0.01, 0.1
             )
             self.symbols[symbol]["volume"] += random.randint(100, 1000)
             self.symbols[symbol]["trades"] += random.randint(1, 10)
@@ -135,19 +134,22 @@ class MarketDataCollector(BaseCollector):
             self.total_volume += random.uniform(1000, 10000)
 
             # Add to batch buffer for database write
-            self.batch_buffer.append({
-                "timestamp": datetime.utcnow(),
-                "symbol": symbol,
-                "last_price": self.symbols[symbol]["last_price"],
-                "bid": self.symbols[symbol]["bid"],
-                "ask": self.symbols[symbol]["ask"],
-                "volume": self.symbols[symbol]["volume"],
-                "trades": self.symbols[symbol]["trades"],
-                "spread_bps": (
-                    (self.symbols[symbol]["ask"] - self.symbols[symbol]["bid"]) /
-                    self.symbols[symbol]["last_price"] * 10000
-                )
-            })
+            self.batch_buffer.append(
+                {
+                    "timestamp": datetime.utcnow(),
+                    "symbol": symbol,
+                    "last_price": self.symbols[symbol]["last_price"],
+                    "bid": self.symbols[symbol]["bid"],
+                    "ask": self.symbols[symbol]["ask"],
+                    "volume": self.symbols[symbol]["volume"],
+                    "trades": self.symbols[symbol]["trades"],
+                    "spread_bps": (
+                        (self.symbols[symbol]["ask"] - self.symbols[symbol]["bid"])
+                        / self.symbols[symbol]["last_price"]
+                        * 10000
+                    ),
+                }
+            )
 
     async def _flush_to_database(self) -> None:
         """Flush batch buffer to DuckDB."""
@@ -157,9 +159,7 @@ class MarketDataCollector(BaseCollector):
                     await self.db.insert_market_data(self.batch_buffer)
                     self.batch_buffer.clear()
                 except Exception as e:
-                    logger.error(
-                        f"[cid:INIT] Error flushing market data to database: {e}"
-                    )
+                    logger.error(f"[cid:INIT] Error flushing market data to database: {e}")
 
     async def get_current_metrics(self) -> Dict[str, Any]:
         """Get current market data metrics."""
@@ -168,7 +168,7 @@ class MarketDataCollector(BaseCollector):
             "symbols": self.symbols,
             "total_trades": self.total_trades,
             "total_volume": self.total_volume,
-            "symbols_tracked": len(self.symbols)
+            "symbols_tracked": len(self.symbols),
         }
 
     async def get_tracked_symbols(self) -> List[str]:
@@ -188,7 +188,7 @@ class MarketDataCollector(BaseCollector):
                 "ask": 0.0,
                 "volume": 0,
                 "trades": 0,
-                "added_at": datetime.utcnow().isoformat()
+                "added_at": datetime.utcnow().isoformat(),
             }
             logger.info(f"[cid:INIT] Added symbol {symbol} to market data collector")
 
@@ -196,9 +196,7 @@ class MarketDataCollector(BaseCollector):
         """Stop tracking a symbol."""
         if symbol in self.symbols:
             del self.symbols[symbol]
-            logger.info(
-                f"[cid:INIT] Removed symbol {symbol} from market data collector"
-            )
+            logger.info(f"[cid:INIT] Removed symbol {symbol} from market data collector")
 
     async def _process_rust_metrics(self, rust_metrics: Dict[str, Any]) -> None:
         """
@@ -226,7 +224,7 @@ class MarketDataCollector(BaseCollector):
                         "bid": 0.0,
                         "ask": 0.0,
                         "volume": 0,
-                        "trades": int(value)
+                        "trades": int(value),
                     }
                 else:
                     self.symbols[symbol]["trades"] = int(value)
@@ -246,21 +244,23 @@ class MarketDataCollector(BaseCollector):
                         "bid": 0.0,
                         "ask": 0.0,
                         "volume": 0,
-                        "trades": 0
+                        "trades": 0,
                     }
                 else:
                     self.symbols[symbol]["last_price"] = value
 
         # Add processed data to batch buffer
         for symbol, data in self.symbols.items():
-            spread = (data.get("ask", 0.0) - data.get("bid", 0.0))
-            self.batch_buffer.append({
-                "timestamp": timestamp,
-                "symbol": symbol,
-                "last_price": data["last_price"],
-                "bid": data.get("bid", 0.0),
-                "ask": data.get("ask", 0.0),
-                "volume": data.get("volume", 0),
-                "trades": data.get("trades", 0),
-                "spread_bps": spread / max(data["last_price"], 0.01) * 10000
-            })
+            spread = data.get("ask", 0.0) - data.get("bid", 0.0)
+            self.batch_buffer.append(
+                {
+                    "timestamp": timestamp,
+                    "symbol": symbol,
+                    "last_price": data["last_price"],
+                    "bid": data.get("bid", 0.0),
+                    "ask": data.get("ask", 0.0),
+                    "volume": data.get("volume", 0),
+                    "trades": data.get("trades", 0),
+                    "spread_bps": spread / max(data["last_price"], 0.01) * 10000,
+                }
+            )

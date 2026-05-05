@@ -35,7 +35,7 @@ class TestParameterSensitivity:
     @pytest.fixture
     def test_data(self):
         """Generate realistic test data with trends and reversals"""
-        dates = pd.date_range(start='2024-01-01', end='2024-12-31', freq='1h')
+        dates = pd.date_range(start="2024-01-01", end="2024-12-31", freq="1h")
         n = len(dates)
 
         # Create realistic price movements
@@ -47,15 +47,18 @@ class TestParameterSensitivity:
 
         close_prices = base_price + trend + cycle1 + cycle2 + noise
 
-        data = pd.DataFrame({
-            'open': close_prices * (1 + np.random.uniform(-0.01, 0.01, n)),
-            'high': close_prices * (1 + np.random.uniform(0, 0.02, n)),
-            'low': close_prices * (1 - np.random.uniform(0, 0.02, n)),
-            'close': close_prices,
-            'volume': np.random.randint(500000, 2000000, n)
-        }, index=dates)
+        data = pd.DataFrame(
+            {
+                "open": close_prices * (1 + np.random.uniform(-0.01, 0.01, n)),
+                "high": close_prices * (1 + np.random.uniform(0, 0.02, n)),
+                "low": close_prices * (1 - np.random.uniform(0, 0.02, n)),
+                "close": close_prices,
+                "volume": np.random.randint(500000, 2000000, n),
+            },
+            index=dates,
+        )
 
-        data.attrs['symbol'] = 'AAPL'
+        data.attrs["symbol"] = "AAPL"
         return data
 
     @pytest.mark.parametrize("histogram_threshold", [0.0003, 0.0005, 0.001, 0.002])
@@ -63,12 +66,12 @@ class TestParameterSensitivity:
         """Test different MACD histogram thresholds for signal filtering"""
         strategy = MomentumStrategy(
             parameters={
-                'histogram_threshold': histogram_threshold,
-                'rsi_oversold': 30,
-                'rsi_overbought': 70,
-                'min_holding_period': 10,
-                'stop_loss_pct': 0.02,
-                'take_profit_pct': 0.03,
+                "histogram_threshold": histogram_threshold,
+                "rsi_oversold": 30,
+                "rsi_overbought": 70,
+                "min_holding_period": 10,
+                "stop_loss_pct": 0.02,
+                "take_profit_pct": 0.03,
             }
         )
 
@@ -90,10 +93,10 @@ class TestParameterSensitivity:
 
         # Store results for comparison
         return {
-            'threshold': histogram_threshold,
-            'total_signals': len(signals),
-            'avg_confidence': avg_confidence,
-            'balance': abs(len(long_signals) - len(short_signals)) / max(len(signals), 1)
+            "threshold": histogram_threshold,
+            "total_signals": len(signals),
+            "avg_confidence": avg_confidence,
+            "balance": abs(len(long_signals) - len(short_signals)) / max(len(signals), 1),
         }
 
     @pytest.mark.parametrize("rsi_midpoint", [45, 47, 50, 52, 55])
@@ -103,10 +106,10 @@ class TestParameterSensitivity:
         # Instead of 30/70 (contrarian), test 45-55 range (trend-following)
         strategy = MomentumStrategy(
             parameters={
-                'rsi_entry_level': rsi_midpoint,  # Crossover level for entry
-                'rsi_oversold': 30,  # Keep extremes for exits
-                'rsi_overbought': 70,
-                'min_holding_period': 10,
+                "rsi_entry_level": rsi_midpoint,  # Crossover level for entry
+                "rsi_oversold": 30,  # Keep extremes for exits
+                "rsi_overbought": 70,
+                "min_holding_period": 10,
             }
         )
 
@@ -117,26 +120,28 @@ class TestParameterSensitivity:
 
         # Test that signals are generated at appropriate RSI levels
         for signal in signals:
-            if 'rsi' in signal.metadata:
-                rsi = signal.metadata['rsi']
+            if "rsi" in signal.metadata:
+                rsi = signal.metadata["rsi"]
                 if signal.signal_type == SignalType.LONG:
                     # LONG when RSI crosses above midpoint
                     assert rsi >= rsi_midpoint - 5, f"LONG signal at RSI {rsi} below {rsi_midpoint}"
                 elif signal.signal_type == SignalType.SHORT:
                     # SHORT when RSI crosses below midpoint
-                    assert rsi <= rsi_midpoint + 5, f"SHORT signal at RSI {rsi} above {rsi_midpoint}"
+                    assert (
+                        rsi <= rsi_midpoint + 5
+                    ), f"SHORT signal at RSI {rsi} above {rsi_midpoint}"
 
     @pytest.mark.parametrize("sma_period", [None, 20, 50, 100, 200])
     def test_sma_trend_filter_sensitivity(self, test_data, sma_period):
         """Test impact of SMA trend filter on signal quality"""
         params = {
-            'rsi_oversold': 30,
-            'rsi_overbought': 70,
-            'min_holding_period': 10,
+            "rsi_oversold": 30,
+            "rsi_overbought": 70,
+            "min_holding_period": 10,
         }
 
         if sma_period:
-            params['sma_period'] = sma_period
+            params["sma_period"] = sma_period
 
         strategy = MomentumStrategy(parameters=params)
         signals = strategy.generate_signals(test_data)
@@ -151,32 +156,44 @@ class TestParameterSensitivity:
                 assert signal.confidence > 0, "Signal should have positive confidence"
 
         return {
-            'sma_period': sma_period,
-            'signal_count': len(signals),
-            'has_filter': sma_period is not None
+            "sma_period": sma_period,
+            "signal_count": len(signals),
+            "has_filter": sma_period is not None,
         }
 
     def test_optimal_parameter_combination(self, test_data):
         """Find optimal parameter combination for best risk-adjusted returns"""
         best_params = None
-        best_score = float('-inf')
+        best_score = float("-inf")
 
         # Grid search over key parameters
         param_grid = {
-            'histogram_threshold': [0.0005, 0.001],
-            'rsi_oversold': [30, 35],
-            'rsi_overbought': [65, 70],
-            'min_holding_period': [8, 10, 12],
-            'stop_loss_pct': [0.015, 0.02, 0.025],
-            'take_profit_pct': [0.025, 0.03, 0.035],
+            "histogram_threshold": [0.0005, 0.001],
+            "rsi_oversold": [30, 35],
+            "rsi_overbought": [65, 70],
+            "min_holding_period": [8, 10, 12],
+            "stop_loss_pct": [0.015, 0.02, 0.025],
+            "take_profit_pct": [0.025, 0.03, 0.035],
         }
 
         # Test a few combinations (full grid would be too slow)
         test_combinations = [
-            {'histogram_threshold': 0.001, 'rsi_oversold': 30, 'rsi_overbought': 70,
-             'min_holding_period': 10, 'stop_loss_pct': 0.02, 'take_profit_pct': 0.03},
-            {'histogram_threshold': 0.0005, 'rsi_oversold': 35, 'rsi_overbought': 65,
-             'min_holding_period': 12, 'stop_loss_pct': 0.015, 'take_profit_pct': 0.035},
+            {
+                "histogram_threshold": 0.001,
+                "rsi_oversold": 30,
+                "rsi_overbought": 70,
+                "min_holding_period": 10,
+                "stop_loss_pct": 0.02,
+                "take_profit_pct": 0.03,
+            },
+            {
+                "histogram_threshold": 0.0005,
+                "rsi_oversold": 35,
+                "rsi_overbought": 65,
+                "min_holding_period": 12,
+                "stop_loss_pct": 0.015,
+                "take_profit_pct": 0.035,
+            },
         ]
 
         for params in test_combinations:
@@ -188,8 +205,10 @@ class TestParameterSensitivity:
 
             # Calculate quality score
             avg_confidence = np.mean([s.confidence for s in signals])
-            signal_balance = abs(sum(1 for s in signals if s.signal_type == SignalType.LONG) -
-                                sum(1 for s in signals if s.signal_type == SignalType.SHORT))
+            signal_balance = abs(
+                sum(1 for s in signals if s.signal_type == SignalType.LONG)
+                - sum(1 for s in signals if s.signal_type == SignalType.SHORT)
+            )
 
             # Score: high confidence, good signal count, balanced long/short
             score = avg_confidence * len(signals) - signal_balance * 0.1
@@ -211,7 +230,7 @@ class TestVolumeConfirmation:
     @pytest.fixture
     def volume_test_data(self):
         """Create data with varying volume patterns"""
-        dates = pd.date_range(start='2024-01-01', periods=500, freq='1h')
+        dates = pd.date_range(start="2024-01-01", periods=500, freq="1h")
         n = len(dates)
 
         close_prices = 100 + np.cumsum(np.random.normal(0, 1, n))
@@ -220,15 +239,18 @@ class TestVolumeConfirmation:
         volume = np.random.randint(100000, 200000, n)
         volume[::50] = np.random.randint(500000, 1000000, len(volume[::50]))  # Volume spikes
 
-        data = pd.DataFrame({
-            'open': close_prices * 0.99,
-            'high': close_prices * 1.01,
-            'low': close_prices * 0.98,
-            'close': close_prices,
-            'volume': volume
-        }, index=dates)
+        data = pd.DataFrame(
+            {
+                "open": close_prices * 0.99,
+                "high": close_prices * 1.01,
+                "low": close_prices * 0.98,
+                "close": close_prices,
+                "volume": volume,
+            },
+            index=dates,
+        )
 
-        data.attrs['symbol'] = 'AAPL'
+        data.attrs["symbol"] = "AAPL"
         return data
 
     @pytest.mark.parametrize("volume_multiplier", [1.0, 1.2, 1.5, 2.0])
@@ -236,9 +258,9 @@ class TestVolumeConfirmation:
         """Test different volume multipliers for breakout confirmation"""
         strategy = MomentumStrategy(
             parameters={
-                'volume_multiplier': volume_multiplier,
-                'enable_volume_filter': volume_multiplier > 1.0,
-                'min_holding_period': 10,
+                "volume_multiplier": volume_multiplier,
+                "enable_volume_filter": volume_multiplier > 1.0,
+                "min_holding_period": 10,
             }
         )
 
@@ -251,28 +273,20 @@ class TestVolumeConfirmation:
         if volume_multiplier > 1.0:
             # Verify signals occur during higher volume
             for signal in signals:
-                if 'volume_ratio' in signal.metadata:
-                    assert signal.metadata['volume_ratio'] >= volume_multiplier * 0.8
+                if "volume_ratio" in signal.metadata:
+                    assert signal.metadata["volume_ratio"] >= volume_multiplier * 0.8
 
-        return {
-            'multiplier': volume_multiplier,
-            'signal_count': len(signals)
-        }
+        return {"multiplier": volume_multiplier, "signal_count": len(signals)}
 
     def test_volume_filter_vs_no_filter(self, volume_test_data):
         """Compare performance with and without volume filter"""
         # Strategy without volume filter
-        strategy_no_filter = MomentumStrategy(
-            parameters={'enable_volume_filter': False}
-        )
+        strategy_no_filter = MomentumStrategy(parameters={"enable_volume_filter": False})
         signals_no_filter = strategy_no_filter.generate_signals(volume_test_data)
 
         # Strategy with volume filter
         strategy_with_filter = MomentumStrategy(
-            parameters={
-                'enable_volume_filter': True,
-                'volume_multiplier': 1.5
-            }
+            parameters={"enable_volume_filter": True, "volume_multiplier": 1.5}
         )
         signals_with_filter = strategy_with_filter.generate_signals(volume_test_data)
 
@@ -282,7 +296,9 @@ class TestVolumeConfirmation:
 
         # Volume filter should reduce signal count
         # (filtering out low-conviction moves)
-        reduction_pct = (len(signals_no_filter) - len(signals_with_filter)) / max(len(signals_no_filter), 1)
+        reduction_pct = (len(signals_no_filter) - len(signals_with_filter)) / max(
+            len(signals_no_filter), 1
+        )
         print(f"   Reduction: {reduction_pct:.1%}")
 
         # Should reduce signals by at least 20% (filtering false breakouts)
@@ -295,7 +311,7 @@ class TestTrailingStopLoss:
     @pytest.fixture
     def trending_data(self):
         """Create strong trending data for trailing stop testing"""
-        dates = pd.date_range(start='2024-01-01', periods=200, freq='1h')
+        dates = pd.date_range(start="2024-01-01", periods=200, freq="1h")
         n = len(dates)
 
         # Strong uptrend with pullbacks
@@ -305,15 +321,18 @@ class TestTrailingStopLoss:
 
         close_prices = 100 + trend + pullbacks + noise
 
-        data = pd.DataFrame({
-            'open': close_prices * 0.99,
-            'high': close_prices * 1.02,
-            'low': close_prices * 0.98,
-            'close': close_prices,
-            'volume': np.random.randint(500000, 1000000, n)
-        }, index=dates)
+        data = pd.DataFrame(
+            {
+                "open": close_prices * 0.99,
+                "high": close_prices * 1.02,
+                "low": close_prices * 0.98,
+                "close": close_prices,
+                "volume": np.random.randint(500000, 1000000, n),
+            },
+            index=dates,
+        )
 
-        data.attrs['symbol'] = 'AAPL'
+        data.attrs["symbol"] = "AAPL"
         return data
 
     @pytest.mark.parametrize("trailing_pct", [0.01, 0.015, 0.02, 0.025])
@@ -321,10 +340,10 @@ class TestTrailingStopLoss:
         """Test different trailing stop percentages"""
         strategy = MomentumStrategy(
             parameters={
-                'use_trailing_stop': True,
-                'trailing_stop_pct': trailing_pct,
-                'stop_loss_pct': 0.02,
-                'min_holding_period': 5,  # Shorter for trending market
+                "use_trailing_stop": True,
+                "trailing_stop_pct": trailing_pct,
+                "stop_loss_pct": 0.02,
+                "min_holding_period": 5,  # Shorter for trending market
             }
         )
 
@@ -336,22 +355,19 @@ class TestTrailingStopLoss:
         # Check exit signals have proper metadata
         exit_signals = [s for s in signals if s.signal_type == SignalType.EXIT]
         for signal in exit_signals:
-            if 'exit_reason' in signal.metadata:
+            if "exit_reason" in signal.metadata:
                 print(f"   Exit: {signal.metadata['exit_reason']}")
 
-        return {
-            'trailing_pct': trailing_pct,
-            'exit_count': len(exit_signals)
-        }
+        return {"trailing_pct": trailing_pct, "exit_count": len(exit_signals)}
 
     def test_trailing_vs_fixed_takepprofit(self, trending_data):
         """Compare trailing stop vs fixed take-profit in trending market"""
         # Fixed take-profit strategy
         strategy_fixed = MomentumStrategy(
             parameters={
-                'use_trailing_stop': False,
-                'take_profit_pct': 0.03,
-                'stop_loss_pct': 0.02,
+                "use_trailing_stop": False,
+                "take_profit_pct": 0.03,
+                "stop_loss_pct": 0.02,
             }
         )
         signals_fixed = strategy_fixed.generate_signals(trending_data)
@@ -359,9 +375,9 @@ class TestTrailingStopLoss:
         # Trailing stop strategy
         strategy_trailing = MomentumStrategy(
             parameters={
-                'use_trailing_stop': True,
-                'trailing_stop_pct': 0.015,
-                'stop_loss_pct': 0.02,
+                "use_trailing_stop": True,
+                "trailing_stop_pct": 0.015,
+                "stop_loss_pct": 0.02,
             }
         )
         signals_trailing = strategy_trailing.generate_signals(trending_data)
@@ -378,9 +394,9 @@ class TestTrailingStopLoss:
 class TestMarketRegimes:
     """Test strategy performance across different market conditions"""
 
-    def create_trending_market(self, start_date='2024-01-01', periods=500):
+    def create_trending_market(self, start_date="2024-01-01", periods=500):
         """Simulate bull market (2023-style uptrend)"""
-        dates = pd.date_range(start=start_date, periods=periods, freq='1h')
+        dates = pd.date_range(start=start_date, periods=periods, freq="1h")
 
         # Strong uptrend with minor pullbacks
         trend = np.linspace(0, 60, periods)
@@ -389,17 +405,20 @@ class TestMarketRegimes:
 
         close = 100 + trend + noise + minor_pullbacks
 
-        return pd.DataFrame({
-            'open': close * 0.99,
-            'high': close * 1.02,
-            'low': close * 0.98,
-            'close': close,
-            'volume': np.random.randint(500000, 1500000, periods)
-        }, index=dates)
+        return pd.DataFrame(
+            {
+                "open": close * 0.99,
+                "high": close * 1.02,
+                "low": close * 0.98,
+                "close": close,
+                "volume": np.random.randint(500000, 1500000, periods),
+            },
+            index=dates,
+        )
 
-    def create_choppy_market(self, start_date='2024-01-01', periods=500):
+    def create_choppy_market(self, start_date="2024-01-01", periods=500):
         """Simulate choppy/ranging market (2022-style volatility)"""
-        dates = pd.date_range(start=start_date, periods=periods, freq='1h')
+        dates = pd.date_range(start=start_date, periods=periods, freq="1h")
 
         # Range-bound with high volatility
         oscillation = 15 * np.sin(np.linspace(0, 20 * np.pi, periods))
@@ -407,17 +426,20 @@ class TestMarketRegimes:
 
         close = 100 + oscillation + noise
 
-        return pd.DataFrame({
-            'open': close * 0.98,
-            'high': close * 1.03,
-            'low': close * 0.97,
-            'close': close,
-            'volume': np.random.randint(300000, 2000000, periods)
-        }, index=dates)
+        return pd.DataFrame(
+            {
+                "open": close * 0.98,
+                "high": close * 1.03,
+                "low": close * 0.97,
+                "close": close,
+                "volume": np.random.randint(300000, 2000000, periods),
+            },
+            index=dates,
+        )
 
-    def create_crash_scenario(self, start_date='2024-01-01', periods=500):
+    def create_crash_scenario(self, start_date="2024-01-01", periods=500):
         """Simulate market crash (2020 COVID-style drop)"""
-        dates = pd.date_range(start=start_date, periods=periods, freq='1h')
+        dates = pd.date_range(start=start_date, periods=periods, freq="1h")
 
         # Sharp decline with volatility spikes
         crash = -np.exp(np.linspace(0, 3, periods)) * 5
@@ -426,24 +448,27 @@ class TestMarketRegimes:
         close = 100 + crash + volatility
         close = np.maximum(close, 50)  # Floor at 50
 
-        return pd.DataFrame({
-            'open': close * 0.99,
-            'high': close * 1.05,
-            'low': close * 0.95,
-            'close': close,
-            'volume': np.random.randint(1000000, 5000000, periods)  # High volume
-        }, index=dates)
+        return pd.DataFrame(
+            {
+                "open": close * 0.99,
+                "high": close * 1.05,
+                "low": close * 0.95,
+                "close": close,
+                "volume": np.random.randint(1000000, 5000000, periods),  # High volume
+            },
+            index=dates,
+        )
 
     def test_trending_market_performance(self):
         """Test strategy in bull market conditions"""
         data = self.create_trending_market()
-        data.attrs['symbol'] = 'AAPL'
+        data.attrs["symbol"] = "AAPL"
 
         strategy = MomentumStrategy(
             parameters={
-                'min_holding_period': 10,
-                'stop_loss_pct': 0.02,
-                'take_profit_pct': 0.03,
+                "min_holding_period": 10,
+                "stop_loss_pct": 0.02,
+                "take_profit_pct": 0.03,
             }
         )
 
@@ -460,18 +485,20 @@ class TestMarketRegimes:
         # In uptrend, should favor LONG signals
         if len(signals) > 0:
             long_ratio = len(long_signals) / len(signals)
-            assert long_ratio >= 0.4, f"Should have decent LONG signals in uptrend, got {long_ratio:.1%}"
+            assert (
+                long_ratio >= 0.4
+            ), f"Should have decent LONG signals in uptrend, got {long_ratio:.1%}"
 
     def test_choppy_market_performance(self):
         """Test strategy in choppy/ranging market"""
         data = self.create_choppy_market()
-        data.attrs['symbol'] = 'AAPL'
+        data.attrs["symbol"] = "AAPL"
 
         strategy = MomentumStrategy(
             parameters={
-                'min_holding_period': 15,  # Longer hold to avoid whipsaws
-                'stop_loss_pct': 0.025,     # Wider stops for volatility
-                'take_profit_pct': 0.02,    # Tighter targets
+                "min_holding_period": 15,  # Longer hold to avoid whipsaws
+                "stop_loss_pct": 0.025,  # Wider stops for volatility
+                "take_profit_pct": 0.02,  # Tighter targets
             }
         )
 
@@ -494,13 +521,13 @@ class TestMarketRegimes:
     def test_crash_scenario_protection(self):
         """Test strategy protects capital during crash"""
         data = self.create_crash_scenario()
-        data.attrs['symbol'] = 'AAPL'
+        data.attrs["symbol"] = "AAPL"
 
         strategy = MomentumStrategy(
             parameters={
-                'min_holding_period': 5,   # Quick exits in crash
-                'stop_loss_pct': 0.02,     # Tight stops
-                'take_profit_pct': 0.04,   # Higher reward in volatility
+                "min_holding_period": 5,  # Quick exits in crash
+                "stop_loss_pct": 0.02,  # Tight stops
+                "take_profit_pct": 0.04,  # Higher reward in volatility
             }
         )
 
@@ -528,39 +555,43 @@ class TestIntegrationAndWalkForward:
     @pytest.fixture
     def full_year_data(self):
         """Full year of realistic data"""
-        dates = pd.date_range(start='2024-01-01', end='2024-12-31', freq='1h')
+        dates = pd.date_range(start="2024-01-01", end="2024-12-31", freq="1h")
         n = len(dates)
 
         # Realistic yearly pattern: Q1 rally, Q2-Q3 consolidation, Q4 rally
         q1_rally = np.where((dates.month >= 1) & (dates.month <= 3), np.linspace(0, 20, n), 0)
-        q2_q3_chop = np.where((dates.month >= 4) & (dates.month <= 9),
-                              10 * np.sin(np.linspace(0, 10 * np.pi, n)), 0)
+        q2_q3_chop = np.where(
+            (dates.month >= 4) & (dates.month <= 9), 10 * np.sin(np.linspace(0, 10 * np.pi, n)), 0
+        )
         q4_rally = np.where(dates.month >= 10, np.linspace(0, 15, n), 0)
 
         close = 100 + q1_rally + q2_q3_chop + q4_rally + np.random.normal(0, 2, n)
 
-        data = pd.DataFrame({
-            'open': close * (1 + np.random.uniform(-0.01, 0.01, n)),
-            'high': close * (1 + np.random.uniform(0, 0.02, n)),
-            'low': close * (1 - np.random.uniform(0, 0.02, n)),
-            'close': close,
-            'volume': np.random.randint(500000, 2000000, n)
-        }, index=dates)
+        data = pd.DataFrame(
+            {
+                "open": close * (1 + np.random.uniform(-0.01, 0.01, n)),
+                "high": close * (1 + np.random.uniform(0, 0.02, n)),
+                "low": close * (1 - np.random.uniform(0, 0.02, n)),
+                "close": close,
+                "volume": np.random.randint(500000, 2000000, n),
+            },
+            index=dates,
+        )
 
-        data.attrs['symbol'] = 'AAPL'
+        data.attrs["symbol"] = "AAPL"
         return data
 
     def test_full_backtest_integration(self, full_year_data):
         """Test complete backtest with all improvements"""
         strategy = MomentumStrategy(
             parameters={
-                'rsi_oversold': 30,
-                'rsi_overbought': 70,
-                'sma_period': 50,
-                'min_holding_period': 10,
-                'stop_loss_pct': 0.02,
-                'take_profit_pct': 0.03,
-                'position_size': 0.15,
+                "rsi_oversold": 30,
+                "rsi_overbought": 70,
+                "sma_period": 50,
+                "min_holding_period": 10,
+                "stop_loss_pct": 0.02,
+                "take_profit_pct": 0.03,
+                "position_size": 0.15,
             }
         )
 
@@ -588,19 +619,19 @@ class TestIntegrationAndWalkForward:
     def test_walk_forward_optimization(self, full_year_data):
         """Walk-forward optimization: train on first 6 months, test on last 6"""
         # Split data
-        mid_date = pd.Timestamp('2024-07-01')
+        mid_date = pd.Timestamp("2024-07-01")
         train_data = full_year_data[full_year_data.index < mid_date].copy()
         test_data = full_year_data[full_year_data.index >= mid_date].copy()
 
-        train_data.attrs['symbol'] = 'AAPL'
-        test_data.attrs['symbol'] = 'AAPL'
+        train_data.attrs["symbol"] = "AAPL"
+        test_data.attrs["symbol"] = "AAPL"
 
         # Test on training period
         strategy = MomentumStrategy(
             parameters={
-                'min_holding_period': 10,
-                'stop_loss_pct': 0.02,
-                'take_profit_pct': 0.03,
+                "min_holding_period": 10,
+                "stop_loss_pct": 0.02,
+                "take_profit_pct": 0.03,
             }
         )
 
@@ -626,7 +657,7 @@ class TestIntegrationAndWalkForward:
     def test_out_of_sample_validation(self):
         """Test on completely unseen data (different time period)"""
         # Create different data pattern
-        dates = pd.date_range(start='2023-01-01', end='2023-12-31', freq='1h')
+        dates = pd.date_range(start="2023-01-01", end="2023-12-31", freq="1h")
         n = len(dates)
 
         # Different pattern: bear market recovery
@@ -635,21 +666,24 @@ class TestIntegrationAndWalkForward:
 
         close = 100 + bear_phase + recovery + np.random.normal(0, 3, n)
 
-        oos_data = pd.DataFrame({
-            'open': close * 0.99,
-            'high': close * 1.02,
-            'low': close * 0.98,
-            'close': close,
-            'volume': np.random.randint(500000, 2000000, n)
-        }, index=dates)
+        oos_data = pd.DataFrame(
+            {
+                "open": close * 0.99,
+                "high": close * 1.02,
+                "low": close * 0.98,
+                "close": close,
+                "volume": np.random.randint(500000, 2000000, n),
+            },
+            index=dates,
+        )
 
-        oos_data.attrs['symbol'] = 'AAPL'
+        oos_data.attrs["symbol"] = "AAPL"
 
         strategy = MomentumStrategy(
             parameters={
-                'min_holding_period': 10,
-                'stop_loss_pct': 0.02,
-                'take_profit_pct': 0.03,
+                "min_holding_period": 10,
+                "stop_loss_pct": 0.02,
+                "take_profit_pct": 0.03,
             }
         )
 
@@ -687,29 +721,32 @@ class TestPerformanceMetrics:
 
     def test_minimum_holding_period_enforcement(self):
         """Ensure minimum holding period prevents overtrading"""
-        dates = pd.date_range(start='2024-01-01', periods=200, freq='1h')
+        dates = pd.date_range(start="2024-01-01", periods=200, freq="1h")
 
         # Volatile price action
         close = 100 + np.cumsum(np.random.normal(0, 2, 200))
 
-        data = pd.DataFrame({
-            'open': close * 0.99,
-            'high': close * 1.02,
-            'low': close * 0.98,
-            'close': close,
-            'volume': np.random.randint(500000, 1000000, 200)
-        }, index=dates)
-
-        data.attrs['symbol'] = 'AAPL'
-
-        strategy = MomentumStrategy(
-            parameters={'min_holding_period': 10}
+        data = pd.DataFrame(
+            {
+                "open": close * 0.99,
+                "high": close * 1.02,
+                "low": close * 0.98,
+                "close": close,
+                "volume": np.random.randint(500000, 1000000, 200),
+            },
+            index=dates,
         )
+
+        data.attrs["symbol"] = "AAPL"
+
+        strategy = MomentumStrategy(parameters={"min_holding_period": 10})
 
         signals = strategy.generate_signals(data)
 
         # Check that positions are held for minimum period
-        position_enters = [i for i, s in enumerate(signals) if s.signal_type in [SignalType.LONG, SignalType.SHORT]]
+        position_enters = [
+            i for i, s in enumerate(signals) if s.signal_type in [SignalType.LONG, SignalType.SHORT]
+        ]
         position_exits = [i for i, s in enumerate(signals) if s.signal_type == SignalType.EXIT]
 
         print(f"\n⏱️ Holding Period Check:")
@@ -720,35 +757,28 @@ class TestPerformanceMetrics:
         # (validating minimum holding period)
         if position_exits and position_enters:
             for exit in position_exits:
-                if exit.metadata and 'bars_held' in exit.metadata:
-                    bars_held = exit.metadata['bars_held']
+                if exit.metadata and "bars_held" in exit.metadata:
+                    bars_held = exit.metadata["bars_held"]
                     # Unless catastrophic loss, should hold >=10 bars
-                    if 'catastrophic' not in exit.metadata.get('exit_reason', ''):
+                    if "catastrophic" not in exit.metadata.get("exit_reason", ""):
                         assert bars_held >= 10, f"Position exited after only {bars_held} bars"
 
 
 def run_all_improvement_tests():
     """Run comprehensive test suite and generate report"""
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("MOMENTUM STRATEGY IMPROVEMENTS - COMPREHENSIVE TEST SUITE")
-    print("="*80)
+    print("=" * 80)
     print("\nTarget Metrics:")
     print("  • Win Rate: >30% (currently 0%)")
     print("  • Total Return: >0% (currently -0.96%)")
     print("  • Total Trades: 30-40 (currently 10-20)")
     print("  • Max Drawdown: <5% (currently 0.96%)")
     print("  • Sharpe Ratio: >0.5 (currently -11.38)")
-    print("="*80)
+    print("=" * 80)
 
-    pytest.main([
-        __file__,
-        '-v',
-        '--tb=short',
-        '--color=yes',
-        '-s',
-        '--maxfail=5'
-    ])
+    pytest.main([__file__, "-v", "--tb=short", "--color=yes", "-s", "--maxfail=5"])
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run_all_improvement_tests()

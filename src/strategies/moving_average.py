@@ -27,7 +27,7 @@ class MovingAverageCrossover(Strategy):
         fast_period: int = 20,
         slow_period: int = 50,
         position_size: float = 0.95,
-        parameters: Optional[Dict[str, Any]] = None
+        parameters: Optional[Dict[str, Any]] = None,
     ):
         """
         Initialize Moving Average Crossover strategy
@@ -39,11 +39,13 @@ class MovingAverageCrossover(Strategy):
             parameters: Additional parameters
         """
         params = parameters or {}
-        params.update({
-            'fast_period': fast_period,
-            'slow_period': slow_period,
-            'position_size': position_size,
-        })
+        params.update(
+            {
+                "fast_period": fast_period,
+                "slow_period": slow_period,
+                "position_size": position_size,
+            }
+        )
 
         super().__init__(name="MovingAverageCrossover", parameters=params)
 
@@ -61,12 +63,12 @@ class MovingAverageCrossover(Strategy):
             return []
 
         data = data.copy()
-        fast_period = self.get_parameter('fast_period', 20)
-        slow_period = self.get_parameter('slow_period', 50)
+        fast_period = self.get_parameter("fast_period", 20)
+        slow_period = self.get_parameter("slow_period", 50)
 
         # Calculate moving averages
-        data['fast_ma'] = data['close'].rolling(window=fast_period).mean()
-        data['slow_ma'] = data['close'].rolling(window=slow_period).mean()
+        data["fast_ma"] = data["close"].rolling(window=fast_period).mean()
+        data["slow_ma"] = data["close"].rolling(window=slow_period).mean()
 
         # Generate signals
         signals = []
@@ -76,37 +78,41 @@ class MovingAverageCrossover(Strategy):
             previous = data.iloc[i - 1]
 
             # Skip if NaN values
-            if pd.isna(current['fast_ma']) or pd.isna(current['slow_ma']):
+            if pd.isna(current["fast_ma"]) or pd.isna(current["slow_ma"]):
                 continue
 
             signal_type = SignalType.HOLD
 
             # Bullish crossover (fast crosses above slow)
-            if (previous['fast_ma'] <= previous['slow_ma'] and
-                current['fast_ma'] > current['slow_ma']):
+            if (
+                previous["fast_ma"] <= previous["slow_ma"]
+                and current["fast_ma"] > current["slow_ma"]
+            ):
                 signal_type = SignalType.LONG
 
             # Bearish crossover (fast crosses below slow)
-            elif (previous['fast_ma'] >= previous['slow_ma'] and
-                  current['fast_ma'] < current['slow_ma']):
+            elif (
+                previous["fast_ma"] >= previous["slow_ma"]
+                and current["fast_ma"] < current["slow_ma"]
+            ):
                 signal_type = SignalType.SHORT
 
             if signal_type != SignalType.HOLD:
                 # Calculate signal confidence based on MA separation
-                ma_diff = abs(current['fast_ma'] - current['slow_ma'])
-                confidence = min(ma_diff / current['close'], 1.0)
+                ma_diff = abs(current["fast_ma"] - current["slow_ma"])
+                confidence = min(ma_diff / current["close"], 1.0)
 
                 signal = Signal(
                     timestamp=current.name,
-                    symbol=data.attrs.get('symbol', 'UNKNOWN'),
+                    symbol=data.attrs.get("symbol", "UNKNOWN"),
                     signal_type=signal_type,
-                    price=float(current['close']),
+                    price=float(current["close"]),
                     confidence=float(confidence),
                     metadata={
-                        'fast_ma': float(current['fast_ma']),
-                        'slow_ma': float(current['slow_ma']),
-                        'ma_diff': float(ma_diff),
-                    }
+                        "fast_ma": float(current["fast_ma"]),
+                        "slow_ma": float(current["slow_ma"]),
+                        "ma_diff": float(ma_diff),
+                    },
                 )
                 signals.append(signal)
 
@@ -114,10 +120,7 @@ class MovingAverageCrossover(Strategy):
         return signals
 
     def calculate_position_size(
-        self,
-        signal: Signal,
-        account_value: float,
-        current_position: float = 0.0
+        self, signal: Signal, account_value: float, current_position: float = 0.0
     ) -> float:
         """
         Calculate position size based on account value
@@ -130,7 +133,7 @@ class MovingAverageCrossover(Strategy):
         Returns:
             Suggested position size (number of shares)
         """
-        position_size_pct = self.get_parameter('position_size', 0.95)
+        position_size_pct = self.get_parameter("position_size", 0.95)
         position_value = account_value * position_size_pct
 
         # Calculate number of shares

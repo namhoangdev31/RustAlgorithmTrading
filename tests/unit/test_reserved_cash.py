@@ -1,4 +1,5 @@
 import pytest
+
 pytestmark = pytest.mark.skip(reason="W21-DEBT: Module API changed, test requires update")
 
 """
@@ -45,10 +46,10 @@ class TestReservedCash:
         # Generate signal
         signal = SignalEvent(
             timestamp=datetime.now(),
-            symbol='AAPL',
-            signal_type='LONG',
+            symbol="AAPL",
+            signal_type="LONG",
             strength=0.8,
-            strategy_id='test',
+            strategy_id="test",
         )
 
         # Generate orders
@@ -56,7 +57,7 @@ class TestReservedCash:
 
         # Verify order generated
         assert len(orders) == 1
-        assert orders[0].direction == 'BUY'
+        assert orders[0].direction == "BUY"
 
         # Verify cash is reserved
         assert handler.reserved_cash > 0
@@ -76,7 +77,7 @@ class TestReservedCash:
         # Mock data handler
         handler.data_handler = Mock()
 
-        symbols = ['AAPL', 'GOOGL', 'MSFT', 'AMZN']
+        symbols = ["AAPL", "GOOGL", "MSFT", "AMZN"]
         price = 100.0
 
         total_allocated = 0
@@ -91,9 +92,9 @@ class TestReservedCash:
             signal = SignalEvent(
                 timestamp=datetime.now(),
                 symbol=symbol,
-                signal_type='LONG',
+                signal_type="LONG",
                 strength=0.8,
-                strategy_id='test',
+                strategy_id="test",
             )
 
             # Generate orders
@@ -134,10 +135,10 @@ class TestReservedCash:
         # Generate signal to reserve cash
         signal = SignalEvent(
             timestamp=datetime.now(),
-            symbol='AAPL',
-            signal_type='LONG',
+            symbol="AAPL",
+            signal_type="LONG",
             strength=0.8,
-            strategy_id='test',
+            strategy_id="test",
         )
 
         orders = handler.generate_orders(signal)
@@ -163,7 +164,7 @@ class TestReservedCash:
         # Mock data handler
         handler.data_handler = Mock()
 
-        symbols = ['AAPL', 'GOOGL', 'MSFT']
+        symbols = ["AAPL", "GOOGL", "MSFT"]
         price = 100.0
 
         orders_generated = []
@@ -178,9 +179,9 @@ class TestReservedCash:
             signal = SignalEvent(
                 timestamp=datetime.now(),
                 symbol=symbol,
-                signal_type='LONG',
+                signal_type="LONG",
                 strength=0.8,
-                strategy_id='test',
+                strategy_id="test",
             )
 
             # Generate orders
@@ -221,10 +222,10 @@ class TestReservedCash:
         # Generate signal
         signal = SignalEvent(
             timestamp=datetime.now(),
-            symbol='BRK.A',
-            signal_type='LONG',
+            symbol="BRK.A",
+            signal_type="LONG",
             strength=0.8,
-            strategy_id='test',
+            strategy_id="test",
         )
 
         # Generate orders
@@ -251,7 +252,7 @@ class TestReservedCash:
 
         # Add a real position (not a Mock) - use portfolio.update_position
         handler.portfolio.update_position(
-            symbol='AAPL',
+            symbol="AAPL",
             quantity=10,
             price=100.0,
         )
@@ -259,10 +260,10 @@ class TestReservedCash:
         # Generate EXIT signal
         signal = SignalEvent(
             timestamp=datetime.now(),
-            symbol='AAPL',
-            signal_type='EXIT',
+            symbol="AAPL",
+            signal_type="EXIT",
             strength=0.8,
-            strategy_id='test',
+            strategy_id="test",
         )
 
         initial_reserved = handler.reserved_cash
@@ -272,7 +273,7 @@ class TestReservedCash:
 
         # Verify SELL order generated
         if orders:
-            assert orders[0].direction == 'SELL'
+            assert orders[0].direction == "SELL"
             # Verify reserved cash unchanged (SELL doesn't reserve)
             assert handler.reserved_cash == initial_reserved
             print(f"SELL order generated without reserving cash")
@@ -321,7 +322,7 @@ class TestRaceConditionScenario:
         handler.data_handler = Mock()
 
         # Three signals arrive in same bar, each requesting 50% allocation
-        symbols = ['AAPL', 'GOOGL', 'MSFT']
+        symbols = ["AAPL", "GOOGL", "MSFT"]
         price = 100.0
 
         all_orders = []
@@ -337,9 +338,9 @@ class TestRaceConditionScenario:
             signal = SignalEvent(
                 timestamp=datetime.now(),
                 symbol=symbol,
-                signal_type='LONG',
+                signal_type="LONG",
                 strength=0.8,
-                strategy_id='test',
+                strategy_id="test",
             )
 
             # Generate orders
@@ -380,10 +381,14 @@ class TestRaceConditionScenario:
         assert available >= 0, f"Available cash went negative: ${available:,.2f}"
 
         print(f"\n✅ Race condition prevented!")
-        print(f"   Without fix: Would have committed ${handler.portfolio.cash * 0.5 * 3:,.2f} (150% of capital)")
-        print(f"   With fix: Actually committed ${total_committed:,.2f} ({total_committed/handler.initial_capital*100:.1f}% of capital)")
+        print(
+            f"   Without fix: Would have committed ${handler.portfolio.cash * 0.5 * 3:,.2f} (150% of capital)"
+        )
+        print(
+            f"   With fix: Actually committed ${total_committed:,.2f} ({total_committed/handler.initial_capital*100:.1f}% of capital)"
+        )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Run tests
-    pytest.main([__file__, '-v', '-s'])
+    pytest.main([__file__, "-v", "-s"])

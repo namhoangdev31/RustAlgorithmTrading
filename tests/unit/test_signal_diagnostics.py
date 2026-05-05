@@ -30,10 +30,11 @@ class TestSignalGeneration:
             volume_confirmation=False,  # Disable volume filter initially
             use_trailing_stop=False,  # Disable for initial test
             use_atr_sizing=False,  # Disable for initial test
+            use_adx_filter=False,  # Disable ADX filter for synthetic data
         )
 
         # Create synthetic data with clear momentum signals
-        dates = pd.date_range(start='2024-01-01', end='2024-03-01', freq='1D')
+        dates = pd.date_range(start="2024-01-01", end="2024-03-01", freq="1D")
         n_bars = len(dates)
 
         # Create uptrend: price rises from 100 to 150
@@ -41,19 +42,21 @@ class TestSignalGeneration:
         # Add some noise
         prices += np.random.normal(0, 2, n_bars)
 
-        data = pd.DataFrame({
-            'timestamp': dates,
-            'open': prices * 0.99,
-            'high': prices * 1.01,
-            'low': prices * 0.98,
-            'close': prices,
-            'volume': np.random.randint(1000000, 5000000, n_bars)
-        })
-        data.set_index('timestamp', inplace=True)
-        data.attrs['symbol'] = 'TEST'
+        data = pd.DataFrame(
+            {
+                "timestamp": dates,
+                "open": prices * 0.99,
+                "high": prices * 1.01,
+                "low": prices * 0.98,
+                "close": prices,
+                "volume": np.random.randint(1000000, 5000000, n_bars),
+            }
+        )
+        data.set_index("timestamp", inplace=True)
+        data.attrs["symbol"] = "TEST"
 
         # Generate signals
-        signals = strategy.generate_signals(data)
+        signals = strategy.generate_signals(data, latest_only=False)
 
         # ASSERT: Strategy should generate at least 1 signal
         assert len(signals) > 0, (
@@ -80,26 +83,28 @@ class TestSignalGeneration:
         )
 
         # Create synthetic data with oscillating prices (perfect for mean reversion)
-        dates = pd.date_range(start='2024-01-01', end='2024-03-01', freq='1D')
+        dates = pd.date_range(start="2024-01-01", end="2024-03-01", freq="1D")
         n_bars = len(dates)
 
         # Create oscillating price around 100 with amplitude 50
         time = np.arange(n_bars)
         prices = 100 + 50 * np.sin(time / 5)
 
-        data = pd.DataFrame({
-            'timestamp': dates,
-            'open': prices * 0.99,
-            'high': prices * 1.01,
-            'low': prices * 0.98,
-            'close': prices,
-            'volume': np.random.randint(1000000, 5000000, n_bars)
-        })
-        data.set_index('timestamp', inplace=True)
-        data.attrs['symbol'] = 'TEST'
+        data = pd.DataFrame(
+            {
+                "timestamp": dates,
+                "open": prices * 0.99,
+                "high": prices * 1.01,
+                "low": prices * 0.98,
+                "close": prices,
+                "volume": np.random.randint(1000000, 5000000, n_bars),
+            }
+        )
+        data.set_index("timestamp", inplace=True)
+        data.attrs["symbol"] = "TEST"
 
         # Generate signals
-        signals = strategy.generate_signals(data)
+        signals = strategy.generate_signals(data, latest_only=False)
 
         # ASSERT: Strategy should generate at least 1 signal
         assert len(signals) > 0, (
@@ -125,31 +130,34 @@ class TestSignalTypeValidation:
             macd_histogram_threshold=0.0005,
             volume_confirmation=False,
             use_trailing_stop=False,
+            use_adx_filter=False,
         )
 
         # Create uptrend data
-        dates = pd.date_range(start='2024-01-01', end='2024-03-01', freq='1D')
+        dates = pd.date_range(start="2024-01-01", end="2024-03-01", freq="1D")
         prices = np.linspace(100, 150, len(dates))
 
-        data = pd.DataFrame({
-            'timestamp': dates,
-            'open': prices * 0.99,
-            'high': prices * 1.01,
-            'low': prices * 0.98,
-            'close': prices,
-            'volume': np.random.randint(1000000, 5000000, len(dates))
-        })
-        data.set_index('timestamp', inplace=True)
-        data.attrs['symbol'] = 'TEST'
+        data = pd.DataFrame(
+            {
+                "timestamp": dates,
+                "open": prices * 0.99,
+                "high": prices * 1.01,
+                "low": prices * 0.98,
+                "close": prices,
+                "volume": np.random.randint(1000000, 5000000, len(dates)),
+            }
+        )
+        data.set_index("timestamp", inplace=True)
+        data.attrs["symbol"] = "TEST"
 
-        signals = strategy.generate_signals(data)
+        signals = strategy.generate_signals(data, latest_only=False)
 
         # ASSERT: All signals should have valid types
         valid_types = [SignalType.LONG, SignalType.SHORT, SignalType.EXIT]
         for sig in signals:
-            assert sig.signal_type in valid_types, (
-                f"Invalid signal type: {sig.signal_type}, expected one of {valid_types}"
-            )
+            assert (
+                sig.signal_type in valid_types
+            ), f"Invalid signal type: {sig.signal_type}, expected one of {valid_types}"
 
         logger.info(f"✅ All {len(signals)} Momentum signals have valid types")
 
@@ -158,29 +166,31 @@ class TestSignalTypeValidation:
         strategy = MeanReversion()
 
         # Create oscillating data
-        dates = pd.date_range(start='2024-01-01', end='2024-03-01', freq='1D')
+        dates = pd.date_range(start="2024-01-01", end="2024-03-01", freq="1D")
         time = np.arange(len(dates))
         prices = 100 + 10 * np.sin(time / 5)
 
-        data = pd.DataFrame({
-            'timestamp': dates,
-            'open': prices * 0.99,
-            'high': prices * 1.01,
-            'low': prices * 0.98,
-            'close': prices,
-            'volume': np.random.randint(1000000, 5000000, len(dates))
-        })
-        data.set_index('timestamp', inplace=True)
-        data.attrs['symbol'] = 'TEST'
+        data = pd.DataFrame(
+            {
+                "timestamp": dates,
+                "open": prices * 0.99,
+                "high": prices * 1.01,
+                "low": prices * 0.98,
+                "close": prices,
+                "volume": np.random.randint(1000000, 5000000, len(dates)),
+            }
+        )
+        data.set_index("timestamp", inplace=True)
+        data.attrs["symbol"] = "TEST"
 
-        signals = strategy.generate_signals(data)
+        signals = strategy.generate_signals(data, latest_only=False)
 
         # ASSERT: All signals should have valid types
         valid_types = [SignalType.LONG, SignalType.SHORT, SignalType.EXIT]
         for sig in signals:
-            assert sig.signal_type in valid_types, (
-                f"Invalid signal type: {sig.signal_type}, expected one of {valid_types}"
-            )
+            assert (
+                sig.signal_type in valid_types
+            ), f"Invalid signal type: {sig.signal_type}, expected one of {valid_types}"
 
         logger.info(f"✅ All {len(signals)} Mean Reversion signals have valid types")
 
@@ -196,10 +206,11 @@ class TestEntryExitMatching:
             stop_loss_pct=0.02,
             take_profit_pct=0.03,
             min_holding_period=5,  # Short period for testing
+            use_adx_filter=False,
         )
 
         # Create trending data with reversal
-        dates = pd.date_range(start='2024-01-01', end='2024-03-01', freq='1D')
+        dates = pd.date_range(start="2024-01-01", end="2024-03-01", freq="1D")
         n_bars = len(dates)
 
         # Uptrend followed by downtrend
@@ -209,18 +220,20 @@ class TestEntryExitMatching:
         downtrend = np.linspace(130, 110, downtrend_len)
         prices = np.concatenate([uptrend, downtrend])
 
-        data = pd.DataFrame({
-            'timestamp': dates,
-            'open': prices * 0.99,
-            'high': prices * 1.01,
-            'low': prices * 0.98,
-            'close': prices,
-            'volume': np.random.randint(1000000, 5000000, n_bars)
-        })
-        data.set_index('timestamp', inplace=True)
-        data.attrs['symbol'] = 'TEST'
+        data = pd.DataFrame(
+            {
+                "timestamp": dates,
+                "open": prices * 0.99,
+                "high": prices * 1.01,
+                "low": prices * 0.98,
+                "close": prices,
+                "volume": np.random.randint(1000000, 5000000, n_bars),
+            }
+        )
+        data.set_index("timestamp", inplace=True)
+        data.attrs["symbol"] = "TEST"
 
-        signals = strategy.generate_signals(data)
+        signals = strategy.generate_signals(data, latest_only=False)
 
         # Count entry and exit signals
         entries = [s for s in signals if s.signal_type in [SignalType.LONG, SignalType.SHORT]]
@@ -240,38 +253,41 @@ class TestEntryExitMatching:
             for exit_sig in exits:
                 # Find prior entry
                 prior_entries = [e for e in entries if e.timestamp < exit_sig.timestamp]
-                assert len(prior_entries) > 0, (
-                    f"EXIT signal at {exit_sig.timestamp} has no prior ENTRY signal"
-                )
+                assert (
+                    len(prior_entries) > 0
+                ), f"EXIT signal at {exit_sig.timestamp} has no prior ENTRY signal"
 
         logger.info(f"✅ Momentum entry/exit matching validated")
 
     def test_mean_reversion_entries_have_exits(self):
         """Verify each LONG/SHORT entry has a corresponding EXIT signal"""
         # Create oscillating data with sufficient length for exits
-        dates = pd.date_range(start='2024-01-01', end='2024-06-01', freq='1D')
+        dates = pd.date_range(start="2024-01-01", end="2024-06-01", freq="1D")
+        # Create oscillating price around 100 with high amplitude and faster cycles
         time = np.arange(len(dates))
-        prices = 100 + 30 * np.sin(time / 5)  # High amplitude
-        
-        data = pd.DataFrame({
-            'timestamp': dates,
-            'open': prices * 0.99,
-            'high': prices * 1.01,
-            'low': prices * 0.98,
-            'close': prices,
-            'volume': np.random.randint(1000000, 5000000, len(dates))
-        })
-        data.set_index('timestamp', inplace=True)
-        data.attrs['symbol'] = 'TEST'
-        
+        prices = 100 + 45 * np.sin(time / 2.5)  # Even faster, higher amplitude
+
+        data = pd.DataFrame(
+            {
+                "timestamp": dates,
+                "open": prices * 0.99,
+                "high": prices * 1.01,
+                "low": prices * 0.98,
+                "close": prices,
+                "volume": np.random.randint(1000000, 5000000, len(dates)),
+            }
+        )
+        data.set_index("timestamp", inplace=True)
+        data.attrs["symbol"] = "TEST"
+
         strategy = MeanReversion(
             bb_period=20,
-            bb_std=0.5, # narrow bands
+            bb_std=0.5,  # narrow bands
             stop_loss_pct=0.05,
             take_profit_pct=0.1,
         )
 
-        signals = strategy.generate_signals(data)
+        signals = strategy.generate_signals(data, latest_only=False)
 
         # Count entry and exit signals
         entries = [s for s in signals if s.signal_type in [SignalType.LONG, SignalType.SHORT]]
@@ -289,9 +305,9 @@ class TestEntryExitMatching:
             # Check that exits follow entries
             for exit_sig in exits:
                 prior_entries = [e for e in entries if e.timestamp < exit_sig.timestamp]
-                assert len(prior_entries) > 0, (
-                    f"EXIT signal at {exit_sig.timestamp} has no prior ENTRY signal"
-                )
+                assert (
+                    len(prior_entries) > 0
+                ), f"EXIT signal at {exit_sig.timestamp} has no prior ENTRY signal"
 
         logger.info(f"✅ Mean Reversion entry/exit matching validated")
 
@@ -305,28 +321,31 @@ class TestPositionTrackingState:
             macd_histogram_threshold=0.0005,
             volume_confirmation=False,
             min_holding_period=5,
+            use_adx_filter=False,
         )
 
         # Create trending data
-        dates = pd.date_range(start='2024-01-01', end='2024-02-01', freq='1D')
+        dates = pd.date_range(start="2024-01-01", end="2024-02-01", freq="1D")
         prices = np.linspace(100, 120, len(dates))
 
-        data = pd.DataFrame({
-            'timestamp': dates,
-            'open': prices * 0.99,
-            'high': prices * 1.01,
-            'low': prices * 0.98,
-            'close': prices,
-            'volume': np.random.randint(1000000, 5000000, len(dates))
-        })
-        data.set_index('timestamp', inplace=True)
-        data.attrs['symbol'] = 'TEST'
+        data = pd.DataFrame(
+            {
+                "timestamp": dates,
+                "open": prices * 0.99,
+                "high": prices * 1.01,
+                "low": prices * 0.98,
+                "close": prices,
+                "volume": np.random.randint(1000000, 5000000, len(dates)),
+            }
+        )
+        data.set_index("timestamp", inplace=True)
+        data.attrs["symbol"] = "TEST"
 
         # Initial state: no positions
         assert len(strategy.active_positions) == 0, "Should start with no positions"
 
         # Generate signals
-        signals = strategy.generate_signals(data)
+        signals = strategy.generate_signals(data, latest_only=False)
 
         # After signal generation, check position tracking
         logger.info(f"Active positions after signal generation: {strategy.active_positions}")
@@ -337,47 +356,49 @@ class TestPositionTrackingState:
 
         if len(entries) > len(exits):
             # We have open positions
-            assert 'TEST' in strategy.active_positions, (
-                "Strategy generated entries but didn't track position in active_positions"
-            )
+            assert (
+                "TEST" in strategy.active_positions
+            ), "Strategy generated entries but didn't track position in active_positions"
 
-            position = strategy.active_positions['TEST']
-            assert 'entry_price' in position, "Position missing entry_price"
-            assert 'entry_time' in position, "Position missing entry_time"
-            assert 'type' in position, "Position missing type"
+            position = strategy.active_positions["TEST"]
+            assert "entry_price" in position, "Position missing entry_price"
+            assert "entry_time" in position, "Position missing entry_time"
+            assert "type" in position, "Position missing type"
 
             logger.info(f"✅ Position tracked: {position}")
         else:
             # All positions closed
-            assert 'TEST' not in strategy.active_positions or len(strategy.active_positions) == 0, (
-                "All positions should be closed after matching entries and exits"
-            )
+            assert (
+                "TEST" not in strategy.active_positions or len(strategy.active_positions) == 0
+            ), "All positions should be closed after matching entries and exits"
 
     def test_mean_reversion_position_tracking(self):
         """Verify Mean Reversion strategy tracks positions correctly"""
         strategy = MeanReversion(bb_period=20)
 
         # Create oscillating data
-        dates = pd.date_range(start='2024-01-01', end='2024-02-01', freq='1D')
+        dates = pd.date_range(start="2024-01-01", end="2024-02-01", freq="1D")
         time = np.arange(len(dates))
         prices = 100 + 10 * np.sin(time / 5)
 
-        data = pd.DataFrame({
-            'timestamp': dates,
-            'open': prices * 0.99,
-            'high': prices * 1.01,
-            'low': prices * 0.98,
-            'close': prices,
-            'volume': np.random.randint(1000000, 5000000, len(dates))
-        })
-        data.set_index('timestamp', inplace=True)
-        data.attrs['symbol'] = 'TEST'
+        data = pd.DataFrame(
+            {
+                "timestamp": dates,
+                "open": prices * 0.99,
+                "high": prices * 1.01,
+                "low": prices * 0.98,
+                "close": prices,
+                "volume": np.random.randint(1000000, 5000000, len(dates)),
+            }
+        )
+        data.set_index("timestamp", inplace=True)
+        data.attrs["symbol"] = "TEST"
 
         # Initial state: no positions
         assert len(strategy.active_positions) == 0, "Should start with no positions"
 
         # Generate signals
-        signals = strategy.generate_signals(data)
+        signals = strategy.generate_signals(data, latest_only=False)
 
         # After signal generation, check position tracking
         logger.info(f"Active positions after signal generation: {strategy.active_positions}")
@@ -387,14 +408,14 @@ class TestPositionTrackingState:
 
         if len(entries) > len(exits):
             # We have open positions
-            assert 'TEST' in strategy.active_positions, (
-                "Strategy generated entries but didn't track position in active_positions"
-            )
+            assert (
+                "TEST" in strategy.active_positions
+            ), "Strategy generated entries but didn't track position in active_positions"
 
-            position = strategy.active_positions['TEST']
-            assert 'entry_price' in position, "Position missing entry_price"
-            assert 'entry_time' in position, "Position missing entry_time"
-            assert 'type' in position, "Position missing type"
+            position = strategy.active_positions["TEST"]
+            assert "entry_price" in position, "Position missing entry_price"
+            assert "entry_time" in position, "Position missing entry_time"
+            assert "type" in position, "Position missing type"
 
             logger.info(f"✅ Position tracked: {position}")
 
@@ -407,23 +428,26 @@ class TestSignalMetadata:
         strategy = MomentumStrategy(
             macd_histogram_threshold=0.0005,
             volume_confirmation=False,
+            use_adx_filter=False,
         )
 
-        dates = pd.date_range(start='2024-01-01', end='2024-02-01', freq='1D')
+        dates = pd.date_range(start="2024-01-01", end="2024-02-01", freq="1D")
         prices = np.linspace(100, 120, len(dates))
 
-        data = pd.DataFrame({
-            'timestamp': dates,
-            'open': prices * 0.99,
-            'high': prices * 1.01,
-            'low': prices * 0.98,
-            'close': prices,
-            'volume': np.random.randint(1000000, 5000000, len(dates))
-        })
-        data.set_index('timestamp', inplace=True)
-        data.attrs['symbol'] = 'TEST'
+        data = pd.DataFrame(
+            {
+                "timestamp": dates,
+                "open": prices * 0.99,
+                "high": prices * 1.01,
+                "low": prices * 0.98,
+                "close": prices,
+                "volume": np.random.randint(1000000, 5000000, len(dates)),
+            }
+        )
+        data.set_index("timestamp", inplace=True)
+        data.attrs["symbol"] = "TEST"
 
-        signals = strategy.generate_signals(data)
+        signals = strategy.generate_signals(data, latest_only=False)
 
         if len(signals) > 0:
             for sig in signals:
@@ -438,14 +462,14 @@ class TestSignalMetadata:
 
                 if sig.signal_type in [SignalType.LONG, SignalType.SHORT]:
                     # Entry signals should have indicators
-                    assert 'rsi' in sig.metadata, "Entry signal missing RSI in metadata"
-                    assert 'macd' in sig.metadata, "Entry signal missing MACD in metadata"
+                    assert "rsi" in sig.metadata, "Entry signal missing RSI in metadata"
+                    assert "macd" in sig.metadata, "Entry signal missing MACD in metadata"
 
                 if sig.signal_type == SignalType.EXIT:
                     # Exit signals should have exit_reason and pnl_pct
-                    assert 'exit_reason' in sig.metadata, "Exit signal missing exit_reason"
-                    assert 'pnl_pct' in sig.metadata, "Exit signal missing pnl_pct"
-                    assert 'entry_price' in sig.metadata, "Exit signal missing entry_price"
+                    assert "exit_reason" in sig.metadata, "Exit signal missing exit_reason"
+                    assert "pnl_pct" in sig.metadata, "Exit signal missing pnl_pct"
+                    assert "entry_price" in sig.metadata, "Exit signal missing entry_price"
 
             logger.info(f"✅ All {len(signals)} Momentum signals have complete metadata")
 
@@ -453,22 +477,24 @@ class TestSignalMetadata:
         """Verify Mean Reversion signals have complete metadata"""
         strategy = MeanReversion(bb_period=20)
 
-        dates = pd.date_range(start='2024-01-01', end='2024-02-01', freq='1D')
+        dates = pd.date_range(start="2024-01-01", end="2024-02-01", freq="1D")
         time = np.arange(len(dates))
         prices = 100 + 10 * np.sin(time / 5)
 
-        data = pd.DataFrame({
-            'timestamp': dates,
-            'open': prices * 0.99,
-            'high': prices * 1.01,
-            'low': prices * 0.98,
-            'close': prices,
-            'volume': np.random.randint(1000000, 5000000, len(dates))
-        })
-        data.set_index('timestamp', inplace=True)
-        data.attrs['symbol'] = 'TEST'
+        data = pd.DataFrame(
+            {
+                "timestamp": dates,
+                "open": prices * 0.99,
+                "high": prices * 1.01,
+                "low": prices * 0.98,
+                "close": prices,
+                "volume": np.random.randint(1000000, 5000000, len(dates)),
+            }
+        )
+        data.set_index("timestamp", inplace=True)
+        data.attrs["symbol"] = "TEST"
 
-        signals = strategy.generate_signals(data)
+        signals = strategy.generate_signals(data, latest_only=False)
 
         if len(signals) > 0:
             for sig in signals:
@@ -483,19 +509,19 @@ class TestSignalMetadata:
 
                 if sig.signal_type in [SignalType.LONG, SignalType.SHORT]:
                     # Entry signals should have BB bands
-                    assert 'sma_20' in sig.metadata, "Entry signal missing SMA in metadata"
-                    assert 'upper_band' in sig.metadata, "Entry signal missing upper_band"
-                    assert 'lower_band' in sig.metadata, "Entry signal missing lower_band"
+                    assert "sma_20" in sig.metadata, "Entry signal missing SMA in metadata"
+                    assert "upper_band" in sig.metadata, "Entry signal missing upper_band"
+                    assert "lower_band" in sig.metadata, "Entry signal missing lower_band"
 
                 if sig.signal_type == SignalType.EXIT:
                     # Exit signals should have exit_reason and pnl_pct
-                    assert 'exit_reason' in sig.metadata, "Exit signal missing exit_reason"
-                    assert 'pnl_pct' in sig.metadata, "Exit signal missing pnl_pct"
-                    assert 'entry_price' in sig.metadata, "Exit signal missing entry_price"
+                    assert "exit_reason" in sig.metadata, "Exit signal missing exit_reason"
+                    assert "pnl_pct" in sig.metadata, "Exit signal missing pnl_pct"
+                    assert "entry_price" in sig.metadata, "Exit signal missing entry_price"
 
             logger.info(f"✅ All {len(signals)} Mean Reversion signals have complete metadata")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Run tests with verbose output
-    pytest.main([__file__, '-v', '-s', '--tb=short'])
+    pytest.main([__file__, "-v", "-s", "--tb=short"])

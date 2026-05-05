@@ -9,6 +9,7 @@ Tracks system-level metrics:
 - Error rates and alerts
 - Uptime and availability
 """
+
 import asyncio
 import psutil
 from typing import Dict, Any, List, Optional
@@ -90,7 +91,7 @@ class SystemCollector(BaseCollector):
                 # Non-blocking sample
                 self.cpu_percent = psutil.cpu_percent(interval=None)
                 self.memory_percent = psutil.virtual_memory().percent
-                self.disk_usage_percent = psutil.disk_usage('/').percent
+                self.disk_usage_percent = psutil.disk_usage("/").percent
 
                 # Check for alerts
                 self._check_alerts()
@@ -116,14 +117,11 @@ class SystemCollector(BaseCollector):
                 "cpu_critical",
                 f"CPU usage critical: {self.cpu_percent:.1f}%",
                 "critical",
-                "CORE_RES_EXHAUSTED"
+                "CORE_RES_EXHAUSTED",
             )
         elif self.cpu_percent > 80:
             self._add_alert(
-                "cpu_high",
-                f"CPU usage high: {self.cpu_percent:.1f}%",
-                "warning",
-                "CORE_RES_HIGH"
+                "cpu_high", f"CPU usage high: {self.cpu_percent:.1f}%", "warning", "CORE_RES_HIGH"
             )
 
         # Memory alert
@@ -132,14 +130,14 @@ class SystemCollector(BaseCollector):
                 "memory_critical",
                 f"Memory usage critical: {self.memory_percent:.1f}%",
                 "critical",
-                "CORE_RES_EXHAUSTED"
+                "CORE_RES_EXHAUSTED",
             )
         elif self.memory_percent > 80:
             self._add_alert(
                 "memory_high",
                 f"Memory usage high: {self.memory_percent:.1f}%",
                 "warning",
-                "CORE_RES_HIGH"
+                "CORE_RES_HIGH",
             )
 
         # Disk alert
@@ -148,14 +146,14 @@ class SystemCollector(BaseCollector):
                 "disk_critical",
                 f"Disk usage critical: {self.disk_usage_percent:.1f}%",
                 "critical",
-                "CORE_RES_EXHAUSTED"
+                "CORE_RES_EXHAUSTED",
             )
         elif self.disk_usage_percent > 90:
             self._add_alert(
                 "disk_high",
                 f"Disk usage high: {self.disk_usage_percent:.1f}%",
                 "warning",
-                "CORE_RES_HIGH"
+                "CORE_RES_HIGH",
             )
 
     def _check_slo_violations(self) -> None:
@@ -164,8 +162,7 @@ class SystemCollector(BaseCollector):
         pass
 
     def _add_alert(
-        self, alert_type: str, message: str, severity: str,
-        reason_code: str = "SYSTEM_THRESHOLD"
+        self, alert_type: str, message: str, severity: str, reason_code: str = "SYSTEM_THRESHOLD"
     ) -> None:
         """Add a system alert with W09 taxonomy."""
         # Check if alert already exists
@@ -178,23 +175,26 @@ class SystemCollector(BaseCollector):
                 "reason_code": reason_code,
                 "timestamp": datetime.now(UTC).isoformat(),
                 "active": True,
-                "correlation_id": f"W10-ALRT-{int(datetime.now(UTC).timestamp())}"
+                "correlation_id": f"W10-ALRT-{int(datetime.now(UTC).timestamp())}",
             }
             self.active_alerts.append(alert)
             logger.warning(
-                f"[cid:INIT] System alert [{severity.upper()}]: {message} "
-                f"(code: {reason_code})"
+                f"[cid:INIT] System alert [{severity.upper()}]: {message} " f"(code: {reason_code})"
             )
 
             # Trigger Incident for P0/P1 (Lane B)
             if severity.lower() in ["critical", "warning"]:
-                asyncio.create_task(self.escalation.create_incident({
-                    "alert_id": alert["alert_id"],
-                    "severity": "P0" if severity.lower() == "critical" else "P1",
-                    "component": "system",
-                    "reason_code": reason_code,
-                    "correlation_id": alert["correlation_id"]
-                }))
+                asyncio.create_task(
+                    self.escalation.create_incident(
+                        {
+                            "alert_id": alert["alert_id"],
+                            "severity": "P0" if severity.lower() == "critical" else "P1",
+                            "component": "system",
+                            "reason_code": reason_code,
+                            "correlation_id": alert["correlation_id"],
+                        }
+                    )
+                )
 
     async def _write_to_database(self) -> None:
         """Write system metrics to DuckDB."""
@@ -208,7 +208,7 @@ class SystemCollector(BaseCollector):
                 "disk_usage_percent": self.disk_usage_percent,
                 "uptime_seconds": uptime,
                 "health_status": self._calculate_health_status(),
-                "active_alerts": len([a for a in self.active_alerts if a["active"]])
+                "active_alerts": len([a for a in self.active_alerts if a["active"]]),
             }
 
             await self.db.insert_system_metrics(metrics_data)
@@ -226,7 +226,7 @@ class SystemCollector(BaseCollector):
             "disk_usage_percent": self.disk_usage_percent,
             "uptime": uptime,
             "health": self._calculate_health_status(),
-            "active_alerts": len([a for a in self.active_alerts if a["active"]])
+            "active_alerts": len([a for a in self.active_alerts if a["active"]]),
         }
 
     def _calculate_health_status(self) -> str:
@@ -265,11 +265,7 @@ class SystemCollector(BaseCollector):
         status = self._calculate_health_status()
 
         # Merge with base status
-        base_status.update({
-            "status": status,
-            "reasons": reasons,
-            "healthy": status == "healthy"
-        })
+        base_status.update({"status": status, "reasons": reasons, "healthy": status == "healthy"})
         return base_status
 
     async def get_system_health(self) -> SystemHealth:
@@ -281,27 +277,27 @@ class SystemCollector(BaseCollector):
             components={
                 "cpu": ComponentStatus(
                     status="healthy" if self.cpu_percent < 80 else "degraded",
-                    usage_percent=float(self.cpu_percent)
+                    usage_percent=float(self.cpu_percent),
                 ),
                 "memory": ComponentStatus(
                     status="healthy" if self.memory_percent < 80 else "degraded",
-                    usage_percent=float(self.memory_percent)
+                    usage_percent=float(self.memory_percent),
                 ),
                 "disk": ComponentStatus(
                     status="healthy" if self.disk_usage_percent < 90 else "critical",
-                    usage_percent=float(self.disk_usage_percent)
-                )
+                    usage_percent=float(self.disk_usage_percent),
+                ),
             },
             resources={
                 "cpu": self.cpu_percent,
                 "memory": self.memory_percent,
-                "disk": self.disk_usage_percent
+                "disk": self.disk_usage_percent,
             },
             connections={
                 "market_data": "connected",
                 "execution": "connected",
-                "database": "connected"
-            }
+                "database": "connected",
+            },
         )
 
     async def get_performance_metrics(self) -> PerformanceMetrics:
@@ -313,18 +309,13 @@ class SystemCollector(BaseCollector):
             throughput_per_sec=1000.0,
             cpu_usage=self.cpu_percent,
             memory_usage=self.memory_percent,
-            queue_depth=0
+            queue_depth=0,
         )
 
-    async def get_recent_logs(
-        self, level: str = "INFO", limit: int = 100
-    ) -> List[Dict[str, Any]]:
+    async def get_recent_logs(self, level: str = "INFO", limit: int = 100) -> List[Dict[str, Any]]:
         """Get recent log entries."""
         # Filter by level and limit
-        filtered_logs = [
-            log for log in self.recent_logs
-            if log.get("level", "INFO") == level
-        ]
+        filtered_logs = [log for log in self.recent_logs if log.get("level", "INFO") == level]
         return filtered_logs[:limit]
 
     async def acknowledge_alert(self, alert_id: str) -> None:

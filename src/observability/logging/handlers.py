@@ -48,9 +48,7 @@ class AsyncQueueHandler(logging.Handler):
         # Processing thread
         self._stop_event = threading.Event()
         self._worker_thread = threading.Thread(
-            target=self._process_queue,
-            daemon=True,
-            name="AsyncLogWorker"
+            target=self._process_queue, daemon=True, name="AsyncLogWorker"
         )
         self._worker_thread.start()
 
@@ -93,9 +91,8 @@ class AsyncQueueHandler(logging.Handler):
 
                 # Process batch if full or interval elapsed
                 current_time = time.time()
-                should_flush = (
-                    len(batch) >= self.batch_size or
-                    (batch and current_time - last_flush >= self.flush_interval)
+                should_flush = len(batch) >= self.batch_size or (
+                    batch and current_time - last_flush >= self.flush_interval
                 )
 
                 if should_flush:
@@ -106,7 +103,8 @@ class AsyncQueueHandler(logging.Handler):
             except Exception:
                 # Continue processing on error
                 record_to_handle = (
-                    record if 'record' in locals()
+                    record
+                    if "record" in locals()
                     else logging.LogRecord("", 0, "", 0, "", None, None)
                 )
                 self.handleError(record_to_handle)
@@ -146,12 +144,13 @@ class AsyncQueueHandler(logging.Handler):
         """Get handler statistics"""
         with self._lock:
             return {
-                'queued_count': self._queued_count,
-                'processed_count': self._processed_count,
-                'dropped_count': self._dropped_count,
-                'queue_size': self.queue.qsize(),
-                'drop_rate': (self._dropped_count / self._queued_count
-                             if self._queued_count > 0 else 0.0),
+                "queued_count": self._queued_count,
+                "processed_count": self._processed_count,
+                "dropped_count": self._dropped_count,
+                "queue_size": self.queue.qsize(),
+                "drop_rate": (
+                    self._dropped_count / self._queued_count if self._queued_count > 0 else 0.0
+                ),
             }
 
 
@@ -170,7 +169,7 @@ class RotatingFileHandlerAsync(logging.handlers.RotatingFileHandler):
         filename: str,
         max_bytes: int = 100 * 1024 * 1024,  # 100 MB
         backup_count: int = 10,
-        encoding: Optional[str] = 'utf-8',
+        encoding: Optional[str] = "utf-8",
         delay: bool = False,
     ):
         """
@@ -236,7 +235,7 @@ class SyslogHandlerAsync(logging.handlers.SysLogHandler):
 
     def __init__(
         self,
-        address: Any = ('localhost', 514),
+        address: Any = ("localhost", 514),
         facility: int = logging.handlers.SysLogHandler.LOG_USER,
         socktype: Optional[int] = None,
     ):
@@ -249,6 +248,7 @@ class SyslogHandlerAsync(logging.handlers.SysLogHandler):
             socktype: Socket type (SOCK_DGRAM or SOCK_STREAM)
         """
         import socket
+
         if socktype is not None and not isinstance(socktype, socket.SocketKind):
             try:
                 socktype = socket.SocketKind(socktype)

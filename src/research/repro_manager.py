@@ -48,7 +48,9 @@ class ReproducibilityManager:
     def has_seed_profile(self, profile_id: str) -> bool:
         return profile_id in self.active_seeds
 
-    def calculate_drift(self, original_results: Dict[str, Any], rerun_results: Dict[str, Any]) -> float:
+    def calculate_drift(
+        self, original_results: Dict[str, Any], rerun_results: Dict[str, Any]
+    ) -> float:
         """Calculate mean relative drift over numeric metrics only."""
         total_drift = 0.0
         count = 0
@@ -68,7 +70,9 @@ class ReproducibilityManager:
         if not self.has_seed_profile(profile_id):
             return "DEFER"
         if drift > self.drift_threshold:
-            logger.warning(f"drift limit exceeded for {profile_id}: {drift:.6f} > {self.drift_threshold}")
+            logger.warning(
+                f"drift limit exceeded for {profile_id}: {drift:.6f} > {self.drift_threshold}"
+            )
             return "BLOCKED"
         return "PASS"
 

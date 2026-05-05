@@ -4,9 +4,9 @@ from .staging_manager import StagingHardeningManager, StagingHardeningRecord
 
 
 class LaunchTier(str, Enum):
-    NARROW = "NARROW"       # W20: controlled narrow canary
-    EXPANDED = "EXPANDED"   # Future: broader canary
-    FULL = "FULL"           # Future: full production
+    NARROW = "NARROW"  # W20: controlled narrow canary
+    EXPANDED = "EXPANDED"  # Future: broader canary
+    FULL = "FULL"  # Future: full production
 
 
 class EscalationState(str, Enum):
@@ -107,14 +107,17 @@ class CanaryLaunchManager(StagingHardeningManager):
         max_ks_ms = max((r.kill_switch_latency_ms for r in ks_records), default=0)
         escalation_pass_rate = (
             sum(1 for r in esc_records if r.disposition == "PASS") / len(esc_records)
-            if esc_records else 0.0
+            if esc_records
+            else 0.0
         )
         rollback_pass_rate = (
             sum(1 for r in rb_records if r.rollback_result == "SUCCESS") / len(rb_records)
-            if rb_records else 0.0
+            if rb_records
+            else 0.0
         )
         unmitigated = sum(
-            1 for r in launch_records
+            1
+            for r in launch_records
             if r.risk_boundary and r.metadata.get("breach_mitigated") is False
         )
 
@@ -126,7 +129,6 @@ class CanaryLaunchManager(StagingHardeningManager):
             "rollback_pass_rate": rollback_pass_rate,
             "unmitigated_breach_count": unmitigated,
             "launch_tier_distribution": {
-                t.value: len([r for r in launch_records if r.launch_tier == t])
-                for t in LaunchTier
+                t.value: len([r for r in launch_records if r.launch_tier == t]) for t in LaunchTier
             },
         }

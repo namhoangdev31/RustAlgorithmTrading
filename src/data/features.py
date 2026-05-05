@@ -81,8 +81,7 @@ class FeatureEngine:
         df = df.dropna()
 
         logger.info(
-            f"Created features: {original_len} -> {len(df)} rows, "
-            f"{len(df.columns)} features"
+            f"Created features: {original_len} -> {len(df)} rows, " f"{len(df.columns)} features"
         )
 
         return df
@@ -96,45 +95,38 @@ class FeatureEngine:
         config = config or {}
 
         # Moving averages
-        for period in config.get('sma_periods', [10, 20, 50, 200]):
-            df[f'sma_{period}'] = self.indicators.sma(df['close'], period)
+        for period in config.get("sma_periods", [10, 20, 50, 200]):
+            df[f"sma_{period}"] = self.indicators.sma(df["close"], period)
 
-        for period in config.get('ema_periods', [12, 26, 50]):
-            df[f'ema_{period}'] = self.indicators.ema(df['close'], period)
+        for period in config.get("ema_periods", [12, 26, 50]):
+            df[f"ema_{period}"] = self.indicators.ema(df["close"], period)
 
         # RSI
-        for period in config.get('rsi_periods', [14]):
-            df[f'rsi_{period}'] = self.indicators.rsi(df['close'], period)
+        for period in config.get("rsi_periods", [14]):
+            df[f"rsi_{period}"] = self.indicators.rsi(df["close"], period)
 
         # MACD
-        macd_config = config.get('macd', {'fast': 12, 'slow': 26, 'signal': 9})
+        macd_config = config.get("macd", {"fast": 12, "slow": 26, "signal": 9})
         macd, signal, hist = self.indicators.macd(
-            df['close'],
-            macd_config['fast'],
-            macd_config['slow'],
-            macd_config['signal']
+            df["close"], macd_config["fast"], macd_config["slow"], macd_config["signal"]
         )
-        df['macd'] = macd
-        df['macd_signal'] = signal
-        df['macd_hist'] = hist
+        df["macd"] = macd
+        df["macd_signal"] = signal
+        df["macd_hist"] = hist
 
         # Bollinger Bands
-        bb_config = config.get('bollinger', {'period': 20, 'std': 2})
+        bb_config = config.get("bollinger", {"period": 20, "std": 2})
         upper, middle, lower = self.indicators.bollinger_bands(
-            df['close'],
-            bb_config['period'],
-            bb_config['std']
+            df["close"], bb_config["period"], bb_config["std"]
         )
-        df['bb_upper'] = upper
-        df['bb_middle'] = middle
-        df['bb_lower'] = lower
-        df['bb_width'] = (upper - lower) / middle
+        df["bb_upper"] = upper
+        df["bb_middle"] = middle
+        df["bb_lower"] = lower
+        df["bb_width"] = (upper - lower) / middle
 
         # ATR
-        for period in config.get('atr_periods', [14]):
-            df[f'atr_{period}'] = self.indicators.atr(
-                df['high'], df['low'], df['close'], period
-            )
+        for period in config.get("atr_periods", [14]):
+            df[f"atr_{period}"] = self.indicators.atr(df["high"], df["low"], df["close"], period)
 
         logger.debug(f"Added technical indicators: {len(df.columns)} columns")
         return df
@@ -142,25 +134,25 @@ class FeatureEngine:
     def _add_price_features(self, df: pd.DataFrame) -> pd.DataFrame:
         """Add price-based features."""
         # Returns
-        df['returns'] = df['close'].pct_change()
-        df['log_returns'] = np.log(df['close'] / df['close'].shift(1))
+        df["returns"] = df["close"].pct_change()
+        df["log_returns"] = np.log(df["close"] / df["close"].shift(1))
 
         # Price ranges
-        df['high_low_range'] = (df['high'] - df['low']) / df['close']
-        df['close_open_range'] = (df['close'] - df['open']) / df['open']
+        df["high_low_range"] = (df["high"] - df["low"]) / df["close"]
+        df["close_open_range"] = (df["close"] - df["open"]) / df["open"]
 
         # Rolling volatility
         for window in [5, 10, 20]:
-            df[f'volatility_{window}'] = df['returns'].rolling(window).std()
+            df[f"volatility_{window}"] = df["returns"].rolling(window).std()
 
         # Price momentum
         for window in [5, 10, 20]:
-            df[f'momentum_{window}'] = df['close'] / df['close'].shift(window) - 1
+            df[f"momentum_{window}"] = df["close"] / df["close"].shift(window) - 1
 
         # Distance from moving averages
         for period in [10, 20, 50]:
-            sma = df['close'].rolling(period).mean()
-            df[f'distance_sma_{period}'] = (df['close'] - sma) / sma
+            sma = df["close"].rolling(period).mean()
+            df[f"distance_sma_{period}"] = (df["close"] - sma) / sma
 
         logger.debug(f"Added price features: {len(df.columns)} columns")
         return df
@@ -168,22 +160,22 @@ class FeatureEngine:
     def _add_volume_features(self, df: pd.DataFrame) -> pd.DataFrame:
         """Add volume-based features."""
         # Volume changes
-        df['volume_change'] = df['volume'].pct_change()
+        df["volume_change"] = df["volume"].pct_change()
 
         # Rolling volume statistics
         for window in [5, 10, 20]:
-            df[f'volume_sma_{window}'] = df['volume'].rolling(window).mean()
-            df[f'volume_ratio_{window}'] = df['volume'] / df[f'volume_sma_{window}']
+            df[f"volume_sma_{window}"] = df["volume"].rolling(window).mean()
+            df[f"volume_ratio_{window}"] = df["volume"] / df[f"volume_sma_{window}"]
 
         # On-Balance Volume (OBV)
-        df['obv'] = (np.sign(df['close'].diff()) * df['volume']).cumsum()
+        df["obv"] = (np.sign(df["close"].diff()) * df["volume"]).cumsum()
 
         # Volume-weighted price
-        df['vwap'] = (df['close'] * df['volume']).cumsum() / df['volume'].cumsum()
+        df["vwap"] = (df["close"] * df["volume"]).cumsum() / df["volume"].cumsum()
 
         # Money Flow Index (MFI)
-        typical_price = (df['high'] + df['low'] + df['close']) / 3
-        money_flow = typical_price * df['volume']
+        typical_price = (df["high"] + df["low"] + df["close"]) / 3
+        money_flow = typical_price * df["volume"]
 
         positive_flow = money_flow.where(typical_price > typical_price.shift(1), 0)
         negative_flow = money_flow.where(typical_price < typical_price.shift(1), 0)
@@ -192,7 +184,7 @@ class FeatureEngine:
         negative_mf = negative_flow.rolling(14).sum()
 
         mfi = 100 - (100 / (1 + positive_mf / negative_mf))
-        df['mfi'] = mfi
+        df["mfi"] = mfi
 
         logger.debug(f"Added volume features: {len(df.columns)} columns")
         return df
@@ -203,21 +195,21 @@ class FeatureEngine:
             return df
 
         # Time components
-        df['hour'] = df.index.hour
-        df['day_of_week'] = df.index.dayofweek
-        df['day_of_month'] = df.index.day
-        df['month'] = df.index.month
-        df['quarter'] = df.index.quarter
+        df["hour"] = df.index.hour
+        df["day_of_week"] = df.index.dayofweek
+        df["day_of_month"] = df.index.day
+        df["month"] = df.index.month
+        df["quarter"] = df.index.quarter
 
         # Cyclical encoding
-        df['hour_sin'] = np.sin(2 * np.pi * df['hour'] / 24)
-        df['hour_cos'] = np.cos(2 * np.pi * df['hour'] / 24)
+        df["hour_sin"] = np.sin(2 * np.pi * df["hour"] / 24)
+        df["hour_cos"] = np.cos(2 * np.pi * df["hour"] / 24)
 
-        df['day_sin'] = np.sin(2 * np.pi * df['day_of_week'] / 7)
-        df['day_cos'] = np.cos(2 * np.pi * df['day_of_week'] / 7)
+        df["day_sin"] = np.sin(2 * np.pi * df["day_of_week"] / 7)
+        df["day_cos"] = np.cos(2 * np.pi * df["day_of_week"] / 7)
 
-        df['month_sin'] = np.sin(2 * np.pi * df['month'] / 12)
-        df['month_cos'] = np.cos(2 * np.pi * df['month'] / 12)
+        df["month_sin"] = np.sin(2 * np.pi * df["month"] / 12)
+        df["month_cos"] = np.cos(2 * np.pi * df["month"] / 12)
 
         logger.debug(f"Added time features: {len(df.columns)} columns")
         return df
@@ -225,8 +217,8 @@ class FeatureEngine:
     def select_features(
         self,
         df: pd.DataFrame,
-        target: str = 'returns',
-        method: str = 'correlation',
+        target: str = "returns",
+        method: str = "correlation",
         top_k: int = 20,
     ) -> List[str]:
         """
@@ -242,10 +234,11 @@ class FeatureEngine:
             List of selected feature names
         """
         # Remove target and non-numeric columns
-        feature_cols = [col for col in df.columns
-                       if col != target and pd.api.types.is_numeric_dtype(df[col])]
+        feature_cols = [
+            col for col in df.columns if col != target and pd.api.types.is_numeric_dtype(df[col])
+        ]
 
-        if method == 'correlation':
+        if method == "correlation":
             # Calculate correlation with target
             correlations = df[feature_cols].corrwith(df[target]).abs()
             selected = correlations.nlargest(top_k).index.tolist()

@@ -31,8 +31,8 @@ class TestBacktestingIntegration:
 
     def test_backtest_with_real_data(self):
         """Test complete backtesting flow with real historical data."""
-        symbols = ['AAPL', 'MSFT', 'GOOGL']
-        data_dir = Path(__file__).parent.parent / 'data' / 'historical'
+        symbols = ["AAPL", "MSFT", "GOOGL"]
+        data_dir = Path(__file__).parent.parent / "data" / "historical"
 
         # Check if data exists
         if not data_dir.exists():
@@ -62,10 +62,7 @@ class TestBacktestingIntegration:
         # Initialize components
         try:
             data_handler = HistoricalDataHandler(
-                symbols=symbols,
-                data_dir=data_dir,
-                start_date=start_date,
-                end_date=end_date
+                symbols=symbols, data_dir=data_dir, start_date=start_date, end_date=end_date
             )
 
             execution_handler = SimulatedExecutionHandler()
@@ -78,34 +75,34 @@ class TestBacktestingIntegration:
                 portfolio_handler=portfolio_handler,
                 strategy=strategy,
                 start_date=start_date,
-                end_date=end_date
+                end_date=end_date,
             )
 
             # Run backtest
             results = engine.run()
 
             # Validate results structure
-            assert 'metrics' in results
-            assert 'equity_curve' in results
+            assert "metrics" in results
+            assert "equity_curve" in results
 
-            metrics = results['metrics']
+            metrics = results["metrics"]
 
             # Print results
             print(f"\n{'='*60}")
             print(f"BACKTEST RESULTS")
             print(f"{'='*60}")
 
-            if 'sharpe_ratio' in metrics:
+            if "sharpe_ratio" in metrics:
                 print(f"Sharpe Ratio: {metrics['sharpe_ratio']:.2f}")
-            if 'max_drawdown' in metrics:
+            if "max_drawdown" in metrics:
                 print(f"Max Drawdown: {metrics['max_drawdown']:.2f}%")
-            if 'win_rate' in metrics:
+            if "win_rate" in metrics:
                 print(f"Win Rate: {metrics['win_rate']:.2f}%")
-            if 'profit_factor' in metrics:
+            if "profit_factor" in metrics:
                 print(f"Profit Factor: {metrics['profit_factor']:.2f}")
 
-            equity = results.get('equity_curve', {}).get('equity', [initial_capital])
-            if hasattr(equity, 'iloc'):
+            equity = results.get("equity_curve", {}).get("equity", [initial_capital])
+            if hasattr(equity, "iloc"):
                 final_value = float(equity.iloc[-1]) if len(equity) > 0 else initial_capital
             elif isinstance(equity, (list, tuple)):
                 final_value = equity[-1] if len(equity) > 0 else initial_capital
@@ -127,13 +124,14 @@ class TestBacktestingIntegration:
         except Exception as e:
             print(f"\n✗ Integration test FAILED: {e}")
             import traceback
+
             traceback.print_exc()
             raise
 
     def test_timezone_handling_in_backtest(self):
         """Test that backtesting handles timezones correctly."""
-        symbols = ['AAPL']
-        data_dir = Path(__file__).parent.parent / 'data' / 'historical'
+        symbols = ["AAPL"]
+        data_dir = Path(__file__).parent.parent / "data" / "historical"
 
         if not data_dir.exists():
             pytest.skip("Historical data directory not found")
@@ -145,10 +143,7 @@ class TestBacktestingIntegration:
         try:
             # Should not raise timezone comparison errors
             data_handler = HistoricalDataHandler(
-                symbols=symbols,
-                data_dir=data_dir,
-                start_date=start_date,
-                end_date=end_date
+                symbols=symbols, data_dir=data_dir, start_date=start_date, end_date=end_date
             )
 
             # Verify dates were converted to timezone-aware
@@ -180,21 +175,21 @@ class TestCapitalConfiguration:
 
     def test_script_uses_correct_capital(self):
         """Verify the autonomous trading script uses $1,000."""
-        script_path = Path(__file__).parent.parent / 'scripts' / 'autonomous_trading_system.sh'
+        script_path = Path(__file__).parent.parent / "scripts" / "autonomous_trading_system.sh"
 
         if not script_path.exists():
             pytest.skip("Trading script not found")
 
-        with open(script_path, 'r') as f:
+        with open(script_path, "r") as f:
             content = f.read()
 
         # Check for the correct capital value
-        assert 'initial_capital = 1000.0' in content or 'initial_capital=1000.0' in content
-        assert 'initial_capital = 100000.0' not in content
-        assert 'initial_capital=100000.0' not in content
+        assert "initial_capital = 1000.0" in content or "initial_capital=1000.0" in content
+        assert "initial_capital = 100000.0" not in content
+        assert "initial_capital=100000.0" not in content
 
         print("✓ Script configured with correct initial capital")
 
 
-if __name__ == '__main__':
-    pytest.main([__file__, '-v', '--tb=short'])
+if __name__ == "__main__":
+    pytest.main([__file__, "-v", "--tb=short"])

@@ -7,6 +7,7 @@ Tests cover:
 - Model persistence
 - Prediction accuracy
 """
+
 import pytest
 import pandas as pd
 import numpy as np
@@ -20,13 +21,15 @@ class TestMLModels:
     def test_model_training(self, sample_ohlcv_data):
         """Test model can be trained without errors."""
         # Prepare simple features
-        features = pd.DataFrame({
-            'returns': sample_ohlcv_data['close'].pct_change(),
-            'volume': sample_ohlcv_data['volume']
-        }).fillna(0)
+        features = pd.DataFrame(
+            {
+                "returns": sample_ohlcv_data["close"].pct_change(),
+                "volume": sample_ohlcv_data["volume"],
+            }
+        ).fillna(0)
 
         # Simple binary labels (up/down)
-        labels = (sample_ohlcv_data['close'].shift(-1) > sample_ohlcv_data['close']).astype(int)
+        labels = (sample_ohlcv_data["close"].shift(-1) > sample_ohlcv_data["close"]).astype(int)
 
         # Drop last row (no future price)
         X = features[:-1]
@@ -36,7 +39,7 @@ class TestMLModels:
         model.fit(X, y)
 
         assert model.n_estimators == 10
-        assert hasattr(model, 'feature_importances_')
+        assert hasattr(model, "feature_importances_")
 
     def test_model_prediction(self):
         """Test model makes valid predictions."""
@@ -106,7 +109,7 @@ class TestModelValidation:
         test_data = sample_ohlcv_data[split_idx:]
 
         # Train data should be before test data
-        assert train_data['timestamp'].max() < test_data['timestamp'].min()
+        assert train_data["timestamp"].max() < test_data["timestamp"].min()
 
         # No data leakage
         assert len(set(train_data.index) & set(test_data.index)) == 0
@@ -140,7 +143,7 @@ class TestModelValidation:
 
         # At each point, mean should only include prior data
         for i in range(1, len(prices)):
-            expected_mean = prices[:i+1].mean()
+            expected_mean = prices[: i + 1].mean()
             assert abs(expanding_mean.iloc[i] - expected_mean) < 1e-10
 
 
@@ -160,11 +163,11 @@ class TestModelPersistence:
 
         # Save model
         model_path = tmp_path / "model.pkl"
-        with open(model_path, 'wb') as f:
+        with open(model_path, "wb") as f:
             pickle.dump(model, f)
 
         # Load model
-        with open(model_path, 'rb') as f:
+        with open(model_path, "rb") as f:
             loaded_model = pickle.load(f)
 
         # Make predictions with both models

@@ -26,31 +26,31 @@ class TestSignalExecutionBug:
     @pytest.fixture
     def sample_data(self):
         """Generate sample market data with clear trend"""
-        dates = pd.date_range(start='2024-01-01', periods=100, freq='1D')
+        dates = pd.date_range(start="2024-01-01", periods=100, freq="1D")
 
-        # Create strong uptrend with clear momentum signals
+        # Create oscillating price pattern suitable for Mean Reversion
         base_price = 100
-        prices = base_price + np.cumsum(np.random.randn(100) * 0.5 + 0.2)  # Upward drift
+        time = np.arange(100)
+        prices = base_price + 20 * np.sin(time / 5) + np.random.normal(0, 1, 100)
 
-        df = pd.DataFrame({
-            'open': prices - 0.5,
-            'high': prices + 1.0,
-            'low': prices - 1.0,
-            'close': prices,
-            'volume': np.random.randint(1000000, 5000000, 100)
-        }, index=dates)
+        df = pd.DataFrame(
+            {
+                "open": prices - 0.5,
+                "high": prices + 1.0,
+                "low": prices - 1.0,
+                "close": prices,
+                "volume": np.random.randint(1000000, 5000000, 100),
+            },
+            index=dates,
+        )
 
-        df.attrs['symbol'] = 'TEST'
+        df.attrs["symbol"] = "TEST"
         return df
 
     def test_momentum_signal_generation(self, sample_data):
         """Test if MomentumStrategy generates signals correctly"""
         strategy = MomentumStrategy(
-            rsi_period=14,
-            ema_fast=12,
-            ema_slow=26,
-            macd_signal=9,
-            position_size=0.15
+            rsi_period=14, ema_fast=12, ema_slow=26, macd_signal=9, position_size=0.15
         )
 
         # Generate signals
@@ -70,25 +70,26 @@ class TestSignalExecutionBug:
         assert len(signals) > 0, "No signals generated - this is the bug!"
 
         # Check if EXIT signals exist without ENTRY signals
-        entry_signals = signal_types.get('LONG', 0) + signal_types.get('SHORT', 0)
-        exit_signals = signal_types.get('EXIT', 0)
+        entry_signals = signal_types.get("LONG", 0) + signal_types.get("SHORT", 0)
+        exit_signals = signal_types.get("EXIT", 0)
 
         logger.info(f"Entry signals: {entry_signals}, Exit signals: {exit_signals}")
 
         # EXIT signals should not exceed ENTRY signals
-        assert exit_signals <= entry_signals, \
-            f"More EXIT ({exit_signals}) than ENTRY ({entry_signals}) signals - state management bug!"
+        assert (
+            exit_signals <= entry_signals
+        ), f"More EXIT ({exit_signals}) than ENTRY ({entry_signals}) signals - state management bug!"
 
     def test_mean_reversion_signal_generation(self, sample_data):
         """Test if MeanReversion strategy generates signals correctly"""
         strategy = MeanReversion(
-            bb_period=20,
-            bb_std=2.0,
-            position_size=0.15
+            bb_period=10,  # Shorter period to react faster to synthetic oscillations
+            bb_std=1.0,  # Narrower bands to ensure crossovers
+            position_size=0.15,
         )
 
         # Generate signals
-        signals = strategy.generate_signals_for_symbol('TEST', sample_data)
+        signals = strategy.generate_signals_for_symbol("TEST", sample_data)
 
         logger.info(f"Generated {len(signals)} signals for mean reversion strategy")
 
@@ -104,14 +105,15 @@ class TestSignalExecutionBug:
         assert len(signals) > 0, "No signals generated - this is the bug!"
 
         # Check if EXIT signals exist without ENTRY signals
-        entry_signals = signal_types.get('LONG', 0) + signal_types.get('SHORT', 0)
-        exit_signals = signal_types.get('EXIT', 0)
+        entry_signals = signal_types.get("LONG", 0) + signal_types.get("SHORT", 0)
+        exit_signals = signal_types.get("EXIT", 0)
 
         logger.info(f"Entry signals: {entry_signals}, Exit signals: {exit_signals}")
 
         # EXIT signals should not exceed ENTRY signals
-        assert exit_signals <= entry_signals, \
-            f"More EXIT ({exit_signals}) than ENTRY ({entry_signals}) signals - state management bug!"
+        assert (
+            exit_signals <= entry_signals
+        ), f"More EXIT ({exit_signals}) than ENTRY ({entry_signals}) signals - state management bug!"
 
     def test_signal_event_conversion(self):
         """Test SignalEvent creation from Strategy Signal"""
@@ -120,10 +122,10 @@ class TestSignalExecutionBug:
         # Create Strategy Signal
         strategy_signal = Signal(
             timestamp=datetime.now(),
-            symbol='TEST',
+            symbol="TEST",
             signal_type=SignalType.LONG,
             price=100.0,
-            confidence=0.8
+            confidence=0.8,
         )
 
         # Convert to SignalEvent (as done in engine.py:194-201)
@@ -132,30 +134,29 @@ class TestSignalExecutionBug:
             symbol=strategy_signal.symbol,
             signal_type=strategy_signal.signal_type.value,  # This is the key conversion
             strength=strategy_signal.confidence,
-            strategy_id='TestStrategy'
+            strategy_id="TestStrategy",
         )
 
         logger.info(f"Strategy signal type: {strategy_signal.signal_type.value}")
         logger.info(f"SignalEvent signal type: {signal_event.signal_type}")
 
         # Verify conversion
-        assert signal_event.signal_type == 'LONG'
+        assert signal_event.signal_type == "LONG"
         assert signal_event.strength == 0.8
 
     def test_portfolio_handler_exit_signal_without_position(self):
         """Test if portfolio_handler correctly handles EXIT signals without open positions"""
         portfolio = PortfolioHandler(
-            initial_capital=100000.0,
-            position_sizer=FixedAmountSizer(10000.0)
+            initial_capital=100000.0, position_sizer=FixedAmountSizer(10000.0)
         )
 
         # Create EXIT signal when no position exists
         exit_signal = SignalEvent(
             timestamp=datetime.now(),
-            symbol='TEST',
-            signal_type='EXIT',
+            symbol="TEST",
+            signal_type="EXIT",
             strength=1.0,
-            strategy_id='TestStrategy'
+            strategy_id="TestStrategy",
         )
 
         # Generate orders from EXIT signal (should return empty list)
@@ -168,12 +169,7 @@ class TestSignalExecutionBug:
 
     def test_signal_state_tracking(self, sample_data):
         """Test if strategy correctly tracks active positions"""
-        strategy = MomentumStrategy(
-            rsi_period=14,
-            ema_fast=12,
-            ema_slow=26,
-            macd_signal=9
-        )
+        strategy = MomentumStrategy(rsi_period=14, ema_fast=12, ema_slow=26, macd_signal=9)
 
         # Generate signals
         signals = strategy.generate_signals(sample_data)
@@ -181,13 +177,14 @@ class TestSignalExecutionBug:
         logger.info(f"Active positions after signal generation: {strategy.active_positions}")
 
         # Check position state consistency
-        entry_count = sum(1 for s in signals if s.signal_type.value in ['LONG', 'SHORT'])
-        exit_count = sum(1 for s in signals if s.signal_type.value == 'EXIT')
+        entry_count = sum(1 for s in signals if s.signal_type.value in ["LONG", "SHORT"])
+        exit_count = sum(1 for s in signals if s.signal_type.value == "EXIT")
 
         # After all signals processed, positions should be empty if exits match entries
         # OR have 1 position if final entry has no corresponding exit
-        assert len(strategy.active_positions) <= 1, \
-            f"Position tracking error: {len(strategy.active_positions)} positions still active"
+        assert (
+            len(strategy.active_positions) <= 1
+        ), f"Position tracking error: {len(strategy.active_positions)} positions still active"
 
         logger.info(f"Entry count: {entry_count}, Exit count: {exit_count}")
         logger.info(f"Net positions: {entry_count - exit_count}")
@@ -201,7 +198,7 @@ class TestSignalExecutionBug:
             macd_signal=9,
             macd_histogram_threshold=0.0005,  # Relaxed threshold
             volume_confirmation=False,  # Disable volume filter
-            use_trailing_stop=False  # Simplify exit logic
+            use_trailing_stop=False,  # Simplify exit logic
         )
 
         # Generate signals with relaxed conditions
@@ -220,7 +217,7 @@ class TestSignalExecutionBug:
             macd_signal=9,
             macd_histogram_threshold=0.01,  # Very strict
             volume_confirmation=True,  # Enable volume filter
-            volume_multiplier=5.0  # Extremely high volume requirement
+            volume_multiplier=5.0,  # Extremely high volume requirement
         )
 
         signals_strict = strategy_strict.generate_signals(sample_data)
@@ -228,24 +225,20 @@ class TestSignalExecutionBug:
         logger.info(f"Signals with strict conditions: {len(signals_strict)}")
 
         # Strict conditions should generate fewer signals
-        assert len(signals_strict) <= len(signals), \
-            "Strict conditions generated more signals than relaxed - logic error!"
+        assert len(signals_strict) <= len(
+            signals
+        ), "Strict conditions generated more signals than relaxed - logic error!"
 
     def test_minimum_holding_period_bug(self, sample_data):
         """Test if minimum holding period is blocking all exits"""
-        strategy = MomentumStrategy(
-            rsi_period=14,
-            ema_fast=12,
-            ema_slow=26,
-            macd_signal=9
-        )
+        strategy = MomentumStrategy(rsi_period=14, ema_fast=12, ema_slow=26, macd_signal=9)
 
         # Generate signals
         signals = strategy.generate_signals(sample_data)
 
         # Filter for positions that had entries
-        entries = [s for s in signals if s.signal_type.value in ['LONG', 'SHORT']]
-        exits = [s for s in signals if s.signal_type.value == 'EXIT']
+        entries = [s for s in signals if s.signal_type.value in ["LONG", "SHORT"]]
+        exits = [s for s in signals if s.signal_type.value == "EXIT"]
 
         logger.info(f"Entries: {len(entries)}, Exits: {len(exits)}")
 
@@ -259,8 +252,10 @@ class TestSignalExecutionBug:
                 last_bar_time = sample_data.index[-1]
                 bars_since_entry = len(sample_data[sample_data.index > last_entry.timestamp])
 
-                min_hold_period = strategy.get_parameter('min_holding_period', 10)
-                logger.info(f"Last entry: {last_entry.timestamp}, Bars since: {bars_since_entry}, Min hold: {min_hold_period}")
+                min_hold_period = strategy.get_parameter("min_holding_period", 10)
+                logger.info(
+                    f"Last entry: {last_entry.timestamp}, Bars since: {bars_since_entry}, Min hold: {min_hold_period}"
+                )
 
                 if bars_since_entry < min_hold_period:
                     logger.info("✅ Position still in minimum holding period - this is expected")

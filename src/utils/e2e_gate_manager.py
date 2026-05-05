@@ -47,7 +47,10 @@ class E2EGateManager(StagingHardeningManager):
             disposition = "BLOCKED"
             reason_code = "OPEN_E2E_FAULT_DEBT"
 
-        if suite_type in [E2ESuiteType.E2E, E2ESuiteType.SOAK, E2ESuiteType.FAULT_INJECTION] and disposition != "PASS":
+        if (
+            suite_type in [E2ESuiteType.E2E, E2ESuiteType.SOAK, E2ESuiteType.FAULT_INJECTION]
+            and disposition != "PASS"
+        ):
             disposition = "BLOCKED"
             reason_code = f"{suite_type.value}_SUITE_FAIL"
 
@@ -85,14 +88,17 @@ class E2EGateManager(StagingHardeningManager):
 
         suite_records = [r for r in gate_records if r.suite_type is not None]
         debt_records = [r for r in gate_records if r.e2e_debt_status is not None]
-        
+
         suite_pass_rate = (
             sum(1 for r in suite_records if r.disposition == "PASS") / len(suite_records)
-            if suite_records else 0.0
+            if suite_records
+            else 0.0
         )
-        
+
         open_debt_count = sum(1 for r in debt_records if r.e2e_debt_status == E2EDebtStatus.OPEN)
-        total_regressions = sum(r.regression_count for r in gate_records if r.regression_count is not None)
+        total_regressions = sum(
+            r.regression_count for r in gate_records if r.regression_count is not None
+        )
 
         return {
             **base_summary,
@@ -100,7 +106,6 @@ class E2EGateManager(StagingHardeningManager):
             "open_e2e_fault_debt": open_debt_count,
             "total_regressions": total_regressions,
             "suite_distribution": {
-                t.value: len([r for r in gate_records if r.suite_type == t])
-                for t in E2ESuiteType
+                t.value: len([r for r in gate_records if r.suite_type == t]) for t in E2ESuiteType
             },
         }

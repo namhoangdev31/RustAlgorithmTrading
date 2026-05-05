@@ -7,6 +7,7 @@ Tests:
 - SQLite trade recording
 - Data persistence after restart
 """
+
 import asyncio
 import sqlite3
 import time
@@ -39,9 +40,7 @@ class TestDatabasePerformance:
         return db_path
 
     @pytest.mark.performance
-    def test_duckdb_write_performance_exceeds_1000_per_sec(
-        self, duckdb_path: Path
-    ):
+    def test_duckdb_write_performance_exceeds_1000_per_sec(self, duckdb_path: Path):
         """Test DuckDB can handle >1000 inserts/second."""
         try:
             import duckdb
@@ -77,10 +76,7 @@ class TestDatabasePerformance:
         # Benchmark batch insert
         start_time = time.perf_counter()
 
-        conn.executemany(
-            "INSERT INTO metrics VALUES (?, ?, ?, ?)",
-            test_data
-        )
+        conn.executemany("INSERT INTO metrics VALUES (?, ?, ?, ?)", test_data)
 
         elapsed = time.perf_counter() - start_time
         inserts_per_sec = num_records / elapsed
@@ -90,9 +86,7 @@ class TestDatabasePerformance:
             f"({inserts_per_sec:.0f} inserts/sec)"
         )
 
-        assert inserts_per_sec > 1000, (
-            f"Insert rate {inserts_per_sec:.0f}/s is below 1000/s target"
-        )
+        assert inserts_per_sec > 1000, f"Insert rate {inserts_per_sec:.0f}/s is below 1000/s target"
 
         # Verify data
         result = conn.execute("SELECT COUNT(*) FROM metrics").fetchone()
@@ -159,9 +153,7 @@ class TestDatabasePerformance:
 
             logger.info(f"Query took {elapsed_ms:.2f}ms: {query[:50]}...")
 
-            assert elapsed_ms < 50, (
-                f"Query took {elapsed_ms:.2f}ms (>50ms): {query[:50]}"
-            )
+            assert elapsed_ms < 50, f"Query took {elapsed_ms:.2f}ms (>50ms): {query[:50]}"
             assert len(result) > 0
 
         conn.close()
@@ -200,8 +192,8 @@ class TestDatabasePerformance:
                 symbols[i % len(symbols)],
                 sides[i % len(sides)],
                 float((i % 10 + 1) * 10),  # quantity
-                150.0 + (i % 100) * 0.5,   # price
-                3.5 + (i % 5) * 0.2,       # execution_time_ms
+                150.0 + (i % 100) * 0.5,  # price
+                3.5 + (i % 5) * 0.2,  # execution_time_ms
                 strategies[i % len(strategies)],
             )
             for i in range(1000)
@@ -262,9 +254,7 @@ class TestDatabasePerformance:
 
         # Second connection: verify data exists
         conn2 = duckdb.connect(str(duckdb_path))
-        result = conn2.execute(
-            "SELECT * FROM persistent_data WHERE id = 1"
-        ).fetchone()
+        result = conn2.execute("SELECT * FROM persistent_data WHERE id = 1").fetchone()
 
         assert result is not None
         assert result[0] == 1
@@ -331,7 +321,7 @@ class TestDatabasePerformance:
             for i in range(num_writes):
                 conn.execute(
                     "INSERT INTO concurrent_test VALUES (?, ?, ?)",
-                    [i, thread_id, float(i * thread_id)]
+                    [i, thread_id, float(i * thread_id)],
                 )
             conn.close()
 
@@ -354,9 +344,7 @@ class TestDatabasePerformance:
         elapsed = time.perf_counter() - start_time
         total_writes = num_threads * writes_per_thread
 
-        logger.info(
-            f"Concurrent writes: {total_writes} records in {elapsed:.3f}s"
-        )
+        logger.info(f"Concurrent writes: {total_writes} records in {elapsed:.3f}s")
 
         # Verify all writes succeeded
         conn = duckdb.connect(str(duckdb_path))
@@ -408,9 +396,7 @@ class TestDatabasePerformance:
 
         elapsed_ms = (time.perf_counter() - start_time) * 1000
 
-        logger.info(
-            f"Aggregation on 1M rows took {elapsed_ms:.2f}ms"
-        )
+        logger.info(f"Aggregation on 1M rows took {elapsed_ms:.2f}ms")
 
         assert elapsed_ms < 500, f"Aggregation took {elapsed_ms:.2f}ms (>500ms)"
         assert len(result) == 10

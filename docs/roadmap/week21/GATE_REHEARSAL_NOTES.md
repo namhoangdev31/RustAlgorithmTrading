@@ -10,10 +10,10 @@
 
 | Gate item | Target | Evidence ID | Current status | Notes |
 |---|---|---|---|---|
-| Full lint pass | `100%` | `EV-W21-201` | `CAPTURED_FAIL` | missing python lint tools + rust fmt/clippy blockers |
-| Full type/static pass | `100%` | `EV-W21-202` | `CAPTURED_FAIL` | mypy fail + pyright missing |
-| Full unit baseline pass | `100%` | `EV-W21-203` | `CAPTURED_FAIL` | import/packaging collection errors |
-| Test debt closure | open debt `=0` | `EV-W21-204` | `CAPTURED_FAIL` | debt closure blocked by unit baseline fail |
+| Full lint pass | `100%` | `EV-W21-201` | `CAPTURED_FAIL` | lint findings còn mở (`black/flake8/fmt/clippy`) |
+| Full type/static pass | `100%` | `EV-W21-202` | `CAPTURED_FAIL` | `mypy` duplicate-module + `pyright` typing failures |
+| Full unit baseline pass | `100%` | `EV-W21-203` | `CAPTURED_PASS` | `pytest tests/unit -q` pass |
+| Test debt closure | open debt `=0` | `EV-W21-204` | `CAPTURED_FAIL` | debt chưa đóng do lint/type chưa pass |
 | Correlation coverage | `>=99%` | `EV-W21-205` | `CAPTURED_PASS` | 99.9% |
 | Compliance findings | `0` | `EV-W21-206` | `CAPTURED_PASS` | findings=0 |
 | W09-W20 regression guard | `100%` pass | `EV-W21-301..306` | `CAPTURED_PASS` | all rerun slices pass |
@@ -30,7 +30,6 @@
 
 ## 4) Recovery queue snapshot (NO-GO)
 
-1. `W21-ISS-001`: close lint blockers (`black/flake8` availability + rust fmt/clippy findings), then rerun `EV-W21-105`.
-2. `W21-ISS-002`: close type/static blockers (`mypy` module-path + stubs + `pyright` runtime), then rerun `EV-W21-106`.
-3. `W21-ISS-003`: close unit import/packaging collection errors, then rerun `EV-W21-101` and `EV-W21-203`.
-4. `W21-ISS-004`: close debt backlog after `EV-W21-203` recovers, then rerun `EV-W21-204`.
+1. `W21-ISS-001`: close lint blockers (`black/flake8` findings + rust fmt/clippy warnings/errors), then rerun `EV-W21-105`.
+2. `W21-ISS-002`: close type/static blockers (`mypy` duplicate-module + `pyright` typing errors), then rerun `EV-W21-106`.
+3. `W21-ISS-004`: close debt backlog after `EV-W21-201/202` recover, then rerun `EV-W21-204`.

@@ -17,31 +17,31 @@
 
 | Evidence ID | Command | Expected | Actual | Status | Issue mapping |
 |---|---|---|---|---|---|
-| `EV-W21-101` | `python -m pytest tests/unit -q` | pass | FAIL (`rc=2`), 25 import/collection errors (`backtesting`,`research`,`models`,`strategies` + relative import) | `CAPTURED_FAIL` | `W21-ISS-003`,`W21-ISS-004` |
+| `EV-W21-101` | `python -m pytest tests/unit -q` | pass | PASS (`rc=0`), `355 passed, 1 skipped` | `CAPTURED_PASS` | `W21-ISS-003` |
 | `EV-W21-102` | `python -m pytest tests/observability -q` | pass | PASS (`rc=0`) | `CAPTURED_PASS` | `W21-ISS-006` |
 | `EV-W21-103` | `cd rust && PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1 cargo test --workspace` | pass | PASS (`rc=0`) | `CAPTURED_PASS` | `W21-ISS-003`,`W21-ISS-007` |
 | `EV-W21-104` | `cd rust && PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1 cargo check --workspace` | pass | PASS (`rc=0`) | `CAPTURED_PASS` | `W21-ISS-002`,`W21-ISS-010` |
-| `EV-W21-105` | full lint profile | pass | FAIL: `black`/`flake8` missing (`rc=127`), `cargo fmt --check` diff, `cargo clippy -D warnings` errors | `CAPTURED_FAIL` | `W21-ISS-001` |
-| `EV-W21-106` | full type/static profile | pass | FAIL: `mypy` errors (`types-tabulate`, duplicate module path), `pyright` missing (`rc=127`) | `CAPTURED_FAIL` | `W21-ISS-002` |
+| `EV-W21-105` | full lint profile | pass | FAIL: `black --check` (`rc=1`, 12 files need reformat), `flake8` (`rc=1`, style/import findings), `cargo fmt --check` (`rc=1`), `cargo clippy -D warnings` (`rc=101`) | `CAPTURED_FAIL` | `W21-ISS-001` |
+| `EV-W21-106` | full type/static profile | pass | FAIL: `mypy` (`rc=2`, duplicate module path), `pyright` (`rc=1`, 579 errors) | `CAPTURED_FAIL` | `W21-ISS-002` |
 | `EV-W21-107` | `bash scripts/health_check.sh` | pass | PASS (`rc=0`) | `CAPTURED_PASS` | `W21-ISS-003` |
 | `EV-W21-108` | `bash scripts/compliance_audit.sh --check-correlation --check-versioning` | pass | PASS (`rc=0`), correlation/schema checks pass, redaction leaks=0 | `CAPTURED_PASS` | `W21-ISS-006` |
 | `EV-W21-109` | `python scripts/audit_correlation.py --fail-on-findings` | `0 findings` | PASS (`rc=0`), 0 findings | `CAPTURED_PASS` | `W21-ISS-012` |
-| `EV-W21-110` | Unit debt snapshot capture | debt items mapped | `python scripts/verify_w21_release_gate1.py` PASS (`rc=0`), toil watermark=14 captured | `CAPTURED_PASS` | `W21-ISS-004`,`W21-ISS-011` |
+| `EV-W21-110` | Unit debt snapshot capture | debt items mapped | `python scripts/verify_w21_release_gate1.py` FAIL (`rc=1`), verdict `NO-GO`, open debt=3 | `CAPTURED_FAIL` | `W21-ISS-001`,`W21-ISS-002`,`W21-ISS-004` |
 
 ## 4) Hard-gate1 rehearsal matrix
 
 | Evidence ID | Scenario | Expected | Actual | Status | Blocking issue |
 |---|---|---|---|---|---|
-| `EV-W21-201` | Full lint pass audit | `100%` | FAIL: lint profile chưa đạt (`black`/`flake8` missing, rust fmt/clippy fail) | `CAPTURED_FAIL` | `W21-ISS-001` |
-| `EV-W21-202` | Full type/static pass audit | `100%` | FAIL: type/static profile chưa đạt (`mypy` fail, `pyright` missing) | `CAPTURED_FAIL` | `W21-ISS-002` |
-| `EV-W21-203` | Full unit baseline pass audit | `100%` | FAIL: unit baseline fail do import/packaging collection errors | `CAPTURED_FAIL` | `W21-ISS-003` |
-| `EV-W21-204` | Test debt closure audit | open debt `=0` | FAIL: debt chưa thể đóng do `EV-W21-101` fail | `CAPTURED_FAIL` | `W21-ISS-004` |
+| `EV-W21-201` | Full lint pass audit | `100%` | FAIL: lint profile chưa đạt (`black/flake8/fmt/clippy` fail) | `CAPTURED_FAIL` | `W21-ISS-001` |
+| `EV-W21-202` | Full type/static pass audit | `100%` | FAIL: type/static profile chưa đạt (`mypy` + `pyright` fail) | `CAPTURED_FAIL` | `W21-ISS-002` |
+| `EV-W21-203` | Full unit baseline pass audit | `100%` | PASS: `pytest tests/unit -q` pass | `CAPTURED_PASS` | `W21-ISS-003` |
+| `EV-W21-204` | Test debt closure audit | open debt `=0` | FAIL: debt còn mở (`open debt=3`) do `EV-W21-201/202` fail | `CAPTURED_FAIL` | `W21-ISS-004` |
 | `EV-W21-205` | Correlation coverage audit | `>=99%` | PASS: 99.9% (`verify_w21_release_gate1.py`) | `CAPTURED_PASS` | `W21-ISS-006` |
 | `EV-W21-206` | Compliance findings audit | findings `=0` | PASS: findings=0 (`compliance_audit` + `audit_correlation`) | `CAPTURED_PASS` | `W21-ISS-012` |
-| `EV-W21-207` | Hard-gate rerun stability | no new blocker after rerun | FAIL: vẫn còn blocker mandatory (`EV-W21-201..204`) | `CAPTURED_FAIL` | `W21-ISS-003` |
+| `EV-W21-207` | Hard-gate rerun stability | no new blocker after rerun | FAIL: blocker mandatory vẫn còn (`EV-W21-201`,`EV-W21-202`,`EV-W21-204`) | `CAPTURED_FAIL` | `W21-ISS-001`,`W21-ISS-002`,`W21-ISS-004` |
 | `EV-W21-208` | Release blocker mapping audit | blockers taxonomy complete | PASS: blockers mapped to `W21-ISS-001..004` | `CAPTURED_PASS` | `W21-ISS-005` |
 | `EV-W21-209` | Escalation record integrity | trigger/owner/mitigation captured | PASS: change footprint trong budget, không cần escalation | `CAPTURED_PASS` | `W21-ISS-010` |
-| `EV-W21-210` | Throughput/toil watermark | gate toil measured | PASS: throughput watermark captured (`14`) | `CAPTURED_PASS` | `W21-ISS-011` |
+| `EV-W21-210` | Throughput/toil watermark | gate toil measured | PASS: throughput watermark captured (`9`) | `CAPTURED_PASS` | `W21-ISS-011` |
 
 ## 5) Regression and governance matrix
 

@@ -51,14 +51,18 @@ class MockDataHandler:
         # Convert to bar objects (simplified)
         bars = []
         for idx, row in bars_df.iterrows():
-            bar = type('Bar', (), {
-                'timestamp': idx,
-                'open': row['open'],
-                'high': row['high'],
-                'low': row['low'],
-                'close': row['close'],
-                'volume': row['volume']
-            })()
+            bar = type(
+                "Bar",
+                (),
+                {
+                    "timestamp": idx,
+                    "open": row["open"],
+                    "high": row["high"],
+                    "low": row["low"],
+                    "close": row["close"],
+                    "volume": row["volume"],
+                },
+            )()
             bars.append(bar)
 
         return bars
@@ -69,20 +73,23 @@ class TestBacktestSignalValidation:
 
     def create_test_data(self, periods=100) -> pd.DataFrame:
         """Create test market data"""
-        dates = pd.date_range(end=datetime.utcnow(), periods=periods, freq='1D')
+        dates = pd.date_range(end=datetime.utcnow(), periods=periods, freq="1D")
 
         base_price = 100.0
         trend = np.linspace(0, 20, periods)
         oscillation = 10 * np.sin(np.linspace(0, 4 * np.pi, periods))
         prices = base_price + trend + oscillation
 
-        df = pd.DataFrame({
-            'open': prices * 0.99,
-            'high': prices * 1.01,
-            'low': prices * 0.98,
-            'close': prices,
-            'volume': np.random.randint(1000000, 5000000, periods)
-        }, index=dates)
+        df = pd.DataFrame(
+            {
+                "open": prices * 0.99,
+                "high": prices * 1.01,
+                "low": prices * 0.98,
+                "close": prices,
+                "volume": np.random.randint(1000000, 5000000, periods),
+            },
+            index=dates,
+        )
 
         return df
 
@@ -90,7 +97,7 @@ class TestBacktestSignalValidation:
         """Test that backtest engine processes signals with valid types"""
         # Create test data
         data = self.create_test_data(periods=100)
-        symbols = ['AAPL']
+        symbols = ["AAPL"]
 
         # Initialize components
         data_handler = MockDataHandler(data, symbols)
@@ -103,16 +110,16 @@ class TestBacktestSignalValidation:
             data_handler=data_handler,
             execution_handler=execution_handler,
             portfolio_handler=portfolio_handler,
-            strategy=strategy
+            strategy=strategy,
         )
 
         # Run backtest - should complete without validation errors
         results = engine.run()
 
         # Verify results structure
-        assert 'metrics' in results
-        assert 'execution_stats' in results
-        assert results['execution_stats']['events_processed'] > 0
+        assert "metrics" in results
+        assert "execution_stats" in results
+        assert results["execution_stats"]["events_processed"] > 0
 
     def test_signal_event_creation_from_strategy_signals(self):
         """Test conversion from Strategy Signal to SignalEvent"""
@@ -123,7 +130,7 @@ class TestBacktestSignalValidation:
             signal_type=SignalType.LONG,
             price=150.0,
             confidence=0.85,
-            metadata={'rsi': 35.0}
+            metadata={"rsi": 35.0},
         )
 
         # Simulate conversion in backtest engine
@@ -132,7 +139,7 @@ class TestBacktestSignalValidation:
             symbol=strategy_signal.symbol,
             signal_type=strategy_signal.signal_type.value,  # Convert enum to string
             strength=strategy_signal.confidence,
-            strategy_id="test_strategy"
+            strategy_id="test_strategy",
         )
 
         # Verify conversion
@@ -149,7 +156,7 @@ class TestBacktestSignalValidation:
             symbol="AAPL",
             signal_type=SignalType.HOLD,  # HOLD is not valid for SignalEvent
             price=150.0,
-            confidence=0.5
+            confidence=0.5,
         )
 
         # Attempting to create SignalEvent with HOLD should fail
@@ -159,7 +166,7 @@ class TestBacktestSignalValidation:
                 symbol=strategy_signal.symbol,
                 signal_type=strategy_signal.signal_type.value,
                 strength=strategy_signal.confidence,
-                strategy_id="test"
+                strategy_id="test",
             )
 
         error_message = str(exc_info.value)
@@ -174,21 +181,21 @@ class TestBacktestSignalValidation:
                 symbol="AAPL",
                 signal_type=SignalType.LONG,
                 price=150.0,
-                confidence=0.8
+                confidence=0.8,
             ),
             Signal(
                 timestamp=datetime.utcnow() + timedelta(hours=1),
                 symbol="AAPL",
                 signal_type=SignalType.SHORT,
                 price=155.0,
-                confidence=0.9
+                confidence=0.9,
             ),
             Signal(
                 timestamp=datetime.utcnow() + timedelta(hours=2),
                 symbol="AAPL",
                 signal_type=SignalType.EXIT,
                 price=152.0,
-                confidence=1.0
+                confidence=1.0,
             ),
         ]
 
@@ -200,7 +207,7 @@ class TestBacktestSignalValidation:
                 symbol=signal.symbol,
                 signal_type=signal.signal_type.value,
                 strength=signal.confidence,
-                strategy_id="test"
+                strategy_id="test",
             )
             signal_events.append(event)
 
@@ -218,7 +225,7 @@ class TestBacktestSignalValidation:
                 symbol="AAPL",
                 signal_type="long",  # lowercase should fail
                 strength=0.8,
-                strategy_id="test"
+                strategy_id="test",
             )
 
         with pytest.raises(ValidationError):
@@ -227,13 +234,13 @@ class TestBacktestSignalValidation:
                 symbol="AAPL",
                 signal_type="Long",  # mixed case should fail
                 strength=0.8,
-                strategy_id="test"
+                strategy_id="test",
             )
 
     def test_backtest_signal_count_accuracy(self):
         """Test that backtest correctly counts generated signals"""
         data = self.create_test_data(periods=100)
-        symbols = ['AAPL']
+        symbols = ["AAPL"]
 
         data_handler = MockDataHandler(data, symbols)
         execution_handler = SimulatedExecutionHandler()
@@ -244,15 +251,15 @@ class TestBacktestSignalValidation:
             data_handler=data_handler,
             execution_handler=execution_handler,
             portfolio_handler=portfolio_handler,
-            strategy=strategy
+            strategy=strategy,
         )
 
         results = engine.run()
 
         # Verify signal count is tracked
-        assert 'execution_stats' in results
-        assert 'signals_generated' in results['execution_stats']
-        assert results['execution_stats']['signals_generated'] >= 0
+        assert "execution_stats" in results
+        assert "signals_generated" in results["execution_stats"]
+        assert results["execution_stats"]["signals_generated"] >= 0
 
 
 class TestSignalTypeEdgeCases:
@@ -266,7 +273,7 @@ class TestSignalTypeEdgeCases:
                 symbol="AAPL",
                 signal_type=None,
                 strength=0.8,
-                strategy_id="test"
+                strategy_id="test",
             )
 
     def test_signal_with_numeric_type(self):
@@ -277,7 +284,7 @@ class TestSignalTypeEdgeCases:
                 symbol="AAPL",
                 signal_type=123,
                 strength=0.8,
-                strategy_id="test"
+                strategy_id="test",
             )
 
     def test_signal_with_special_characters(self):
@@ -291,7 +298,7 @@ class TestSignalTypeEdgeCases:
                     symbol="AAPL",
                     signal_type=invalid_type,
                     strength=0.8,
-                    strategy_id="test"
+                    strategy_id="test",
                 )
 
     def test_signal_strength_edge_cases(self):
@@ -302,7 +309,7 @@ class TestSignalTypeEdgeCases:
             symbol="AAPL",
             signal_type="LONG",
             strength=0.0,
-            strategy_id="test"
+            strategy_id="test",
         )
         assert signal.strength == 0.0
 
@@ -312,7 +319,7 @@ class TestSignalTypeEdgeCases:
             symbol="AAPL",
             signal_type="LONG",
             strength=1.0,
-            strategy_id="test"
+            strategy_id="test",
         )
         assert signal.strength == 1.0
 
@@ -323,7 +330,7 @@ class TestSignalTypeEdgeCases:
                 symbol="AAPL",
                 signal_type="LONG",
                 strength=-0.0001,
-                strategy_id="test"
+                strategy_id="test",
             )
 
         # Just above 1 should fail
@@ -333,7 +340,7 @@ class TestSignalTypeEdgeCases:
                 symbol="AAPL",
                 signal_type="LONG",
                 strength=1.0001,
-                strategy_id="test"
+                strategy_id="test",
             )
 
 
@@ -354,7 +361,7 @@ class TestSignalValidationPerformance:
                 symbol="AAPL",
                 signal_type="LONG" if i % 3 == 0 else "SHORT" if i % 3 == 1 else "EXIT",
                 strength=0.8,
-                strategy_id="test"
+                strategy_id="test",
             )
             signals.append(signal)
 
@@ -378,7 +385,7 @@ class TestSignalValidationPerformance:
                     symbol="AAPL",
                     signal_type="INVALID",
                     strength=0.8,
-                    strategy_id="test"
+                    strategy_id="test",
                 )
             except ValidationError:
                 pass  # Expected

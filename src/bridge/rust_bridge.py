@@ -15,6 +15,7 @@ from loguru import logger
 @dataclass
 class MarketBar:
     """Market data bar structure matching Rust Bar type."""
+
     symbol: str
     open: float
     high: float
@@ -27,6 +28,7 @@ class MarketBar:
         """Convert to Rust Bar object."""
         try:
             from signal_bridge import Bar
+
             return Bar(
                 symbol=self.symbol,
                 open=self.open,
@@ -34,11 +36,13 @@ class MarketBar:
                 low=self.low,
                 close=self.close,
                 volume=self.volume,
-                timestamp=self.timestamp
+                timestamp=self.timestamp,
             )
         except ImportError as e:
             logger.error(f"[cid:INIT] Failed to import signal_bridge module: {e}")
-            logger.warning("[cid:INIT] Make sure the Rust library is built: cd rust && cargo build --release")
+            logger.warning(
+                "[cid:INIT] Make sure the Rust library is built: cd rust && cargo build --release"
+            )
             raise
 
 
@@ -60,6 +64,7 @@ class RustFeatureComputer:
         """Initialize the Rust feature computer."""
         try:
             from signal_bridge import FeatureComputer
+
             self._computer = FeatureComputer()
             self._call_counter = 0  # Wave-3: Sampling counter
             logger.info("[cid:INIT] Rust FeatureComputer initialized successfully")
@@ -94,11 +99,13 @@ class RustFeatureComputer:
             self._call_counter += 1
             rust_bar = bar.to_rust_bar()
             features = self._computer.compute_streaming(rust_bar)
-            
+
             # Wave-3: Sampled logging (1 per 100)
             if self._call_counter % 100 == 0:
-                logger.debug(f"[cid:INIT] Computed {len(features)} streaming features for {bar.symbol} (sampled)")
-                
+                logger.debug(
+                    f"[cid:INIT] Computed {len(features)} streaming features for {bar.symbol} (sampled)"
+                )
+
             return features
         except Exception as e:
             logger.error(f"[cid:INIT] Error computing streaming features: {e}")
@@ -133,11 +140,7 @@ class RustFeatureComputer:
             raise
 
     def compute_microstructure(
-        self,
-        bid_price: float,
-        ask_price: float,
-        bid_depth: float,
-        ask_depth: float
+        self, bid_price: float, ask_price: float, bid_depth: float, ask_depth: float
     ) -> List[float]:
         """
         Compute market microstructure features from order book data.
@@ -179,7 +182,7 @@ def test_rust_bridge():
             low=149.5,
             close=151.0,
             volume=1_000_000.0,
-            timestamp=1234567890
+            timestamp=1234567890,
         )
 
         # Test streaming features
@@ -189,8 +192,7 @@ def test_rust_bridge():
 
         # Test batch features
         bars = [
-            MarketBar("AAPL", 150.0, 151.0, 149.0, 150.5, 1e6, 1234567890 + i)
-            for i in range(20)
+            MarketBar("AAPL", 150.0, 151.0, 149.0, 150.5, 1e6, 1234567890 + i) for i in range(20)
         ]
         batch_features = computer.compute_batch(bars)
         logger.info(f"[cid:INIT] ✓ Batch features: {len(batch_features)} bars processed")
@@ -198,10 +200,7 @@ def test_rust_bridge():
 
         # Test microstructure features
         micro_features = computer.compute_microstructure(
-            bid_price=150.95,
-            ask_price=151.05,
-            bid_depth=10000.0,
-            ask_depth=8000.0
+            bid_price=150.95, ask_price=151.05, bid_depth=10000.0, ask_depth=8000.0
         )
         logger.info(f"[cid:INIT] ✓ Microstructure features: {micro_features}")
 
@@ -219,7 +218,7 @@ if __name__ == "__main__":
     logger.add(
         sys.stderr,
         format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <level>{message}</level>",
-        level="DEBUG"
+        level="DEBUG",
     )
 
     # Run tests

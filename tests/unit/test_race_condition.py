@@ -1,4 +1,5 @@
 import pytest
+
 pytestmark = pytest.mark.skip(reason="W21-DEBT: Module API changed, test requires update")
 
 """
@@ -32,37 +33,46 @@ class TestRaceConditionFix:
     @pytest.fixture
     def sample_data(self):
         """Create sample market data for testing."""
-        dates = pd.date_range(start='2024-01-01', periods=100, freq='1min')
+        dates = pd.date_range(start="2024-01-01", periods=100, freq="1min")
         data = {
-            'AAPL': pd.DataFrame({
-                'open': np.random.uniform(150, 160, 100),
-                'high': np.random.uniform(160, 170, 100),
-                'low': np.random.uniform(140, 150, 100),
-                'close': np.random.uniform(150, 160, 100),
-                'volume': np.random.randint(1000000, 2000000, 100)
-            }, index=dates),
-            'GOOGL': pd.DataFrame({
-                'open': np.random.uniform(140, 150, 100),
-                'high': np.random.uniform(150, 160, 100),
-                'low': np.random.uniform(130, 140, 100),
-                'close': np.random.uniform(140, 150, 100),
-                'volume': np.random.randint(1000000, 2000000, 100)
-            }, index=dates),
-            'MSFT': pd.DataFrame({
-                'open': np.random.uniform(370, 380, 100),
-                'high': np.random.uniform(380, 390, 100),
-                'low': np.random.uniform(360, 370, 100),
-                'close': np.random.uniform(370, 380, 100),
-                'volume': np.random.randint(1000000, 2000000, 100)
-            }, index=dates)
+            "AAPL": pd.DataFrame(
+                {
+                    "open": np.random.uniform(150, 160, 100),
+                    "high": np.random.uniform(160, 170, 100),
+                    "low": np.random.uniform(140, 150, 100),
+                    "close": np.random.uniform(150, 160, 100),
+                    "volume": np.random.randint(1000000, 2000000, 100),
+                },
+                index=dates,
+            ),
+            "GOOGL": pd.DataFrame(
+                {
+                    "open": np.random.uniform(140, 150, 100),
+                    "high": np.random.uniform(150, 160, 100),
+                    "low": np.random.uniform(130, 140, 100),
+                    "close": np.random.uniform(140, 150, 100),
+                    "volume": np.random.randint(1000000, 2000000, 100),
+                },
+                index=dates,
+            ),
+            "MSFT": pd.DataFrame(
+                {
+                    "open": np.random.uniform(370, 380, 100),
+                    "high": np.random.uniform(380, 390, 100),
+                    "low": np.random.uniform(360, 370, 100),
+                    "close": np.random.uniform(370, 380, 100),
+                    "volume": np.random.randint(1000000, 2000000, 100),
+                },
+                index=dates,
+            ),
         }
         return data
 
     def test_reserved_cash_initialization(self, portfolio):
         """Test that reserved cash is initialized to 0."""
-        assert hasattr(portfolio, '_reserved_cash')
-        assert portfolio._reserved_cash == Decimal('0')
-        assert portfolio.current_cash == Decimal('100000.0')
+        assert hasattr(portfolio, "_reserved_cash")
+        assert portfolio._reserved_cash == Decimal("0")
+        assert portfolio.current_cash == Decimal("100000.0")
 
     def test_single_signal_no_overdraft(self, portfolio):
         """Test that a single signal works correctly with reserved cash."""
@@ -71,11 +81,11 @@ class TestRaceConditionFix:
 
         # Calculate position size
         signal_dict = {
-            'symbol': 'AAPL',
-            'timestamp': timestamp,
-            'signal_type': 'BUY',
-            'strength': 1.0,
-            'price': current_price
+            "symbol": "AAPL",
+            "timestamp": timestamp,
+            "signal_type": "BUY",
+            "strength": 1.0,
+            "price": current_price,
         }
 
         position_size = portfolio.calculate_position_size(signal_dict)
@@ -94,33 +104,33 @@ class TestRaceConditionFix:
         portfolio.current_cash -= cost
 
         # Verify state after execution
-        assert portfolio._reserved_cash == Decimal('0')
-        assert portfolio.current_cash < Decimal('100000.0')
+        assert portfolio._reserved_cash == Decimal("0")
+        assert portfolio.current_cash < Decimal("100000.0")
 
     def test_multiple_signals_same_bar_no_overdraft(self, portfolio):
         """Test that multiple signals in the same bar don't cause overdraft."""
         timestamp = datetime(2024, 1, 1, 9, 30)
-        symbols = ['AAPL', 'GOOGL', 'MSFT']
+        symbols = ["AAPL", "GOOGL", "MSFT"]
         prices = [150.0, 140.0, 370.0]
 
-        total_reserved = Decimal('0')
+        total_reserved = Decimal("0")
         position_sizes = []
 
         # Simulate multiple signals in the same bar
         for symbol, price in zip(symbols, prices):
             signal_dict = {
-                'symbol': symbol,
-                'timestamp': timestamp,
-                'signal_type': 'BUY',
-                'strength': 1.0,
-                'price': price
+                "symbol": symbol,
+                "timestamp": timestamp,
+                "signal_type": "BUY",
+                "strength": 1.0,
+                "price": price,
             }
 
             # Calculate position size with reserved cash consideration
             available_cash = portfolio.current_cash - portfolio._reserved_cash
 
             # Simple position sizing (25% of available cash per signal)
-            position_value = available_cash * Decimal('0.25')
+            position_value = available_cash * Decimal("0.25")
             position_size = int(position_value / Decimal(str(price)))
 
             if position_size > 0:
@@ -144,7 +154,7 @@ class TestRaceConditionFix:
             portfolio.current_cash -= cost
 
         # Verify final state
-        assert portfolio._reserved_cash == Decimal('0')
+        assert portfolio._reserved_cash == Decimal("0")
         assert portfolio.current_cash >= 0
 
     def test_order_rejection_insufficient_funds(self, portfolio):
@@ -152,40 +162,40 @@ class TestRaceConditionFix:
         timestamp = datetime(2024, 1, 1, 9, 30)
 
         # Reserve most of the cash
-        large_reservation = Decimal('95000.0')
+        large_reservation = Decimal("95000.0")
         portfolio._reserved_cash = large_reservation
 
         # Try to place another large order
         signal_dict = {
-            'symbol': 'AAPL',
-            'timestamp': timestamp,
-            'signal_type': 'BUY',
-            'strength': 1.0,
-            'price': 150.0
+            "symbol": "AAPL",
+            "timestamp": timestamp,
+            "signal_type": "BUY",
+            "strength": 1.0,
+            "price": 150.0,
         }
 
         available_cash = portfolio.current_cash - portfolio._reserved_cash
 
         # This should result in a very small or zero position size
-        position_value = available_cash * Decimal('0.25')
-        position_size = int(position_value / Decimal('150.0'))
+        position_value = available_cash * Decimal("0.25")
+        position_size = int(position_value / Decimal("150.0"))
 
         # Verify that position size is appropriately limited
-        max_possible_size = int(available_cash / Decimal('150.0'))
+        max_possible_size = int(available_cash / Decimal("150.0"))
         assert position_size <= max_possible_size
 
         # If position size is 0, order should be rejected (simulated)
         if position_size == 0:
             # Order rejection - reserved cash unchanged
             assert portfolio._reserved_cash == large_reservation
-            assert portfolio.current_cash == Decimal('100000.0')
+            assert portfolio.current_cash == Decimal("100000.0")
 
     def test_reserved_cash_cleanup_after_execution(self, portfolio):
         """Test that reserved cash is properly cleaned up after order execution."""
         timestamp = datetime(2024, 1, 1, 9, 30)
 
         # Reserve cash for an order
-        cost = Decimal('10000.0')
+        cost = Decimal("10000.0")
         portfolio._reserved_cash = cost
 
         # Execute the order
@@ -193,15 +203,15 @@ class TestRaceConditionFix:
         portfolio.current_cash -= cost
 
         # Verify cleanup
-        assert portfolio._reserved_cash == Decimal('0')
-        assert portfolio.current_cash == Decimal('90000.0')
+        assert portfolio._reserved_cash == Decimal("0")
+        assert portfolio.current_cash == Decimal("90000.0")
 
     def test_reserved_cash_with_rejected_orders(self, portfolio):
         """Test that reserved cash is released when orders are rejected."""
         timestamp = datetime(2024, 1, 1, 9, 30)
 
         # Reserve cash for an order
-        cost = Decimal('10000.0')
+        cost = Decimal("10000.0")
         portfolio._reserved_cash = cost
 
         # Simulate order rejection (e.g., market closed, invalid price)
@@ -209,29 +219,29 @@ class TestRaceConditionFix:
         portfolio._reserved_cash -= cost
 
         # Verify cash is back to original amount
-        assert portfolio._reserved_cash == Decimal('0')
-        assert portfolio.current_cash == Decimal('100000.0')
+        assert portfolio._reserved_cash == Decimal("0")
+        assert portfolio.current_cash == Decimal("100000.0")
 
     def test_position_sizing_respects_reserved_cash(self, portfolio):
         """Test that position sizing considers reserved cash."""
         # Reserve 50% of capital
-        portfolio._reserved_cash = Decimal('50000.0')
+        portfolio._reserved_cash = Decimal("50000.0")
 
         signal_dict = {
-            'symbol': 'AAPL',
-            'timestamp': datetime(2024, 1, 1, 9, 30),
-            'signal_type': 'BUY',
-            'strength': 1.0,
-            'price': 150.0
+            "symbol": "AAPL",
+            "timestamp": datetime(2024, 1, 1, 9, 30),
+            "signal_type": "BUY",
+            "strength": 1.0,
+            "price": 150.0,
         }
 
         # Available cash should be 50,000
         available_cash = portfolio.current_cash - portfolio._reserved_cash
-        assert available_cash == Decimal('50000.0')
+        assert available_cash == Decimal("50000.0")
 
         # Position size should be based on available cash (25% = 12,500)
-        position_value = available_cash * Decimal('0.25')
-        expected_size = int(position_value / Decimal('150.0'))
+        position_value = available_cash * Decimal("0.25")
+        expected_size = int(position_value / Decimal("150.0"))
 
         # Calculate actual position size
         actual_size = portfolio.calculate_position_size(signal_dict)
@@ -243,10 +253,10 @@ class TestRaceConditionFix:
         """Test that concurrent signals are processed sequentially with proper cash tracking."""
         timestamp = datetime(2024, 1, 1, 9, 30)
         signals = [
-            {'symbol': 'AAPL', 'price': 150.0},
-            {'symbol': 'GOOGL', 'price': 140.0},
-            {'symbol': 'MSFT', 'price': 370.0},
-            {'symbol': 'TSLA', 'price': 200.0},
+            {"symbol": "AAPL", "price": 150.0},
+            {"symbol": "GOOGL", "price": 140.0},
+            {"symbol": "MSFT", "price": 370.0},
+            {"symbol": "TSLA", "price": 200.0},
         ]
 
         executed_orders = []
@@ -256,15 +266,15 @@ class TestRaceConditionFix:
             available_cash = portfolio.current_cash - portfolio._reserved_cash
 
             # Calculate position size
-            position_value = available_cash * Decimal('0.20')  # 20% per signal
-            position_size = int(position_value / Decimal(str(signal['price'])))
+            position_value = available_cash * Decimal("0.20")  # 20% per signal
+            position_size = int(position_value / Decimal(str(signal["price"])))
 
             if position_size > 0:
-                cost = position_size * Decimal(str(signal['price']))
+                cost = position_size * Decimal(str(signal["price"]))
 
                 # Reserve cash
                 portfolio._reserved_cash += cost
-                executed_orders.append((signal['symbol'], position_size, cost))
+                executed_orders.append((signal["symbol"], position_size, cost))
 
         # Verify all reservations are valid
         assert portfolio._reserved_cash <= portfolio.current_cash
@@ -275,25 +285,25 @@ class TestRaceConditionFix:
             portfolio.current_cash -= cost
 
         # Verify final state
-        assert portfolio._reserved_cash == Decimal('0')
+        assert portfolio._reserved_cash == Decimal("0")
         assert portfolio.current_cash >= 0
         assert len(executed_orders) > 0  # At least some orders should execute
 
     def test_reserved_cash_persistence_across_bars(self, portfolio):
         """Test that reserved cash doesn't leak across time bars."""
         # Bar 1: Reserve cash
-        portfolio._reserved_cash = Decimal('10000.0')
+        portfolio._reserved_cash = Decimal("10000.0")
 
         # Execute orders at end of bar
-        portfolio._reserved_cash = Decimal('0')
-        portfolio.current_cash -= Decimal('10000.0')
+        portfolio._reserved_cash = Decimal("0")
+        portfolio.current_cash -= Decimal("10000.0")
 
         # Bar 2: Should start with clean slate
-        assert portfolio._reserved_cash == Decimal('0')
+        assert portfolio._reserved_cash == Decimal("0")
 
         # New reservations should work correctly
-        portfolio._reserved_cash = Decimal('5000.0')
-        assert portfolio._reserved_cash == Decimal('5000.0')
+        portfolio._reserved_cash = Decimal("5000.0")
+        assert portfolio._reserved_cash == Decimal("5000.0")
 
 
 class TestIntegrationWithBacktest:
@@ -317,19 +327,19 @@ class TestIntegrationWithBacktest:
         # This would integrate with claude-flow hooks
         # Store test results in "hive/testing/race-fix-results"
         results = {
-            'test_status': 'PASSED',
-            'tests_run': 11,
-            'tests_passed': 11,
-            'tests_failed': 0,
-            'race_condition_fixed': True,
-            'reserved_cash_working': True,
-            'no_overdrafts_detected': True
+            "test_status": "PASSED",
+            "tests_run": 11,
+            "tests_passed": 11,
+            "tests_failed": 0,
+            "race_condition_fixed": True,
+            "reserved_cash_working": True,
+            "no_overdrafts_detected": True,
         }
 
         # In actual implementation, this would use:
         # npx claude-flow@alpha hooks post-task --task-id "race-testing"
-        assert results['test_status'] == 'PASSED'
+        assert results["test_status"] == "PASSED"
 
 
-if __name__ == '__main__':
-    pytest.main([__file__, '-v', '--tb=short'])
+if __name__ == "__main__":
+    pytest.main([__file__, "-v", "--tb=short"])

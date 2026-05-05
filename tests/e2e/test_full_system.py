@@ -19,20 +19,23 @@ from strategies.mean_reversion import MeanReversionStrategy
 @pytest.fixture
 def mock_market_data():
     """Generate realistic market data for testing"""
-    dates = pd.date_range(start='2024-01-01', periods=1000, freq='1min')
+    dates = pd.date_range(start="2024-01-01", periods=1000, freq="1min")
     np.random.seed(42)
 
     # Generate realistic price action
     returns = np.random.normal(0, 0.001, 1000)
     price = 100 * (1 + returns).cumprod()
 
-    data = pd.DataFrame({
-        'open': price + np.random.randn(1000) * 0.1,
-        'high': price + abs(np.random.randn(1000)) * 0.2,
-        'low': price - abs(np.random.randn(1000)) * 0.2,
-        'close': price,
-        'volume': np.random.randint(10000, 100000, 1000)
-    }, index=dates)
+    data = pd.DataFrame(
+        {
+            "open": price + np.random.randn(1000) * 0.1,
+            "high": price + abs(np.random.randn(1000)) * 0.2,
+            "low": price - abs(np.random.randn(1000)) * 0.2,
+            "close": price,
+            "volume": np.random.randint(10000, 100000, 1000),
+        },
+        index=dates,
+    )
 
     return data
 
@@ -40,13 +43,11 @@ def mock_market_data():
 @pytest.fixture
 def mock_alpaca_client():
     """Mock Alpaca client for E2E testing"""
-    with patch('src.api.alpaca_client.StockHistoricalDataClient'), \
-         patch('src.api.alpaca_client.TradingClient'):
-        client = AlpacaClient(
-            api_key='test_key',
-            secret_key='test_secret',
-            paper=True
-        )
+    with (
+        patch("src.api.alpaca_client.StockHistoricalDataClient"),
+        patch("src.api.alpaca_client.TradingClient"),
+    ):
+        client = AlpacaClient(api_key="test_key", secret_key="test_secret", paper=True)
 
         # Mock account info
         mock_account = MagicMock()
@@ -57,8 +58,8 @@ def mock_alpaca_client():
 
         # Mock successful order submission
         mock_order = MagicMock()
-        mock_order.id = 'test_order_id'
-        mock_order.status = 'filled'
+        mock_order.id = "test_order_id"
+        mock_order.status = "filled"
         client.trading_client.submit_order = Mock(return_value=mock_order)
 
         return client
@@ -70,33 +71,28 @@ class TestFullBacktestWorkflow:
     def test_simple_backtest_execution(self, mock_market_data):
         """Test basic backtest from start to finish"""
         # Initialize engine
-        engine = BacktestEngine(
-            initial_capital=100000.0,
-            commission_rate=0.001,
-            slippage=0.0005
-        )
+        engine = BacktestEngine(initial_capital=100000.0, commission_rate=0.001, slippage=0.0005)
 
         # Create strategy
         strategy = MeanReversionStrategy(
-            name="TestMeanReversion",
-            parameters={'lookback': 20, 'threshold': 2.0}
+            name="TestMeanReversion", parameters={"lookback": 20, "threshold": 2.0}
         )
 
         # Run backtest
         results = engine.run(strategy, mock_market_data, "TEST")
 
         # Verify results structure
-        assert 'final_equity' in results
-        assert 'total_trades' in results
-        assert 'metrics' in results
-        assert 'equity_curve' in results
+        assert "final_equity" in results
+        assert "total_trades" in results
+        assert "metrics" in results
+        assert "equity_curve" in results
 
         # Verify metrics exist
-        assert isinstance(results['metrics'], dict)
+        assert isinstance(results["metrics"], dict)
 
     def test_backtest_with_multiple_symbols(self, mock_market_data):
         """Test backtest across multiple symbols"""
-        symbols = ['AAPL', 'GOOGL', 'MSFT']
+        symbols = ["AAPL", "GOOGL", "MSFT"]
         all_results = {}
 
         for symbol in symbols:
@@ -105,8 +101,8 @@ class TestFullBacktestWorkflow:
 
             # Modify data slightly for each symbol
             data = mock_market_data.copy()
-            data['close'] = data['close'] * (1 + np.random.uniform(-0.1, 0.1))
-            data.attrs['symbol'] = symbol
+            data["close"] = data["close"] * (1 + np.random.uniform(-0.1, 0.1))
+            data.attrs["symbol"] = symbol
 
             results = engine.run(strategy, data, symbol)
             all_results[symbol] = results
@@ -114,8 +110,8 @@ class TestFullBacktestWorkflow:
         # Verify all backtests completed
         assert len(all_results) == 3
         for symbol, results in all_results.items():
-            assert results['symbol'] == symbol
-            assert 'final_equity' in results
+            assert results["symbol"] == symbol
+            assert "final_equity" in results
 
     def test_backtest_performance_metrics_calculated(self, mock_market_data):
         """Test that all performance metrics are calculated"""
@@ -125,13 +121,13 @@ class TestFullBacktestWorkflow:
         results = engine.run(strategy, mock_market_data, "TEST")
 
         # Check for key performance metrics
-        metrics = results.get('metrics', {})
+        metrics = results.get("metrics", {})
         expected_metrics = [
-            'total_return',
-            'sharpe_ratio',
-            'max_drawdown',
-            'win_rate',
-            'profit_factor'
+            "total_return",
+            "sharpe_ratio",
+            "max_drawdown",
+            "win_rate",
+            "profit_factor",
         ]
 
         for metric in expected_metrics:
@@ -148,39 +144,28 @@ class TestLiveTradingSimulation:
         initial_cash = account.cash
 
         # Submit buy order
-        buy_order = mock_alpaca_client.submit_market_order(
-            symbol='AAPL',
-            qty=10,
-            side='buy'
-        )
+        buy_order = mock_alpaca_client.submit_market_order(symbol="AAPL", qty=10, side="buy")
 
-        assert buy_order.id == 'test_order_id'
-        assert buy_order.status == 'filled'
+        assert buy_order.id == "test_order_id"
+        assert buy_order.status == "filled"
 
     def test_multiple_concurrent_orders(self, mock_alpaca_client):
         """Test handling multiple orders concurrently"""
-        symbols = ['AAPL', 'GOOGL', 'MSFT', 'TSLA']
+        symbols = ["AAPL", "GOOGL", "MSFT", "TSLA"]
         orders = []
 
         for symbol in symbols:
-            order = mock_alpaca_client.submit_market_order(
-                symbol=symbol,
-                qty=5,
-                side='buy'
-            )
+            order = mock_alpaca_client.submit_market_order(symbol=symbol, qty=5, side="buy")
             orders.append(order)
 
         assert len(orders) == 4
-        assert all(order.status == 'filled' for order in orders)
+        assert all(order.status == "filled" for order in orders)
 
     def test_order_cancellation_flow(self, mock_alpaca_client):
         """Test order cancellation"""
         # Submit order
         order = mock_alpaca_client.submit_limit_order(
-            symbol='AAPL',
-            qty=10,
-            side='buy',
-            limit_price=150.0
+            symbol="AAPL", qty=10, side="buy", limit_price=150.0
         )
 
         # Cancel order
@@ -196,8 +181,7 @@ class TestStrategyExecution:
     def test_mean_reversion_signal_generation(self, mock_market_data):
         """Test mean reversion strategy generates signals"""
         strategy = MeanReversionStrategy(
-            name="MR_Test",
-            parameters={'lookback': 20, 'threshold': 2.0}
+            name="MR_Test", parameters={"lookback": 20, "threshold": 2.0}
         )
 
         signals = strategy.generate_signals(mock_market_data)
@@ -209,9 +193,9 @@ class TestStrategyExecution:
     def test_strategy_parameter_sensitivity(self, mock_market_data):
         """Test strategy behavior with different parameters"""
         params_sets = [
-            {'lookback': 10, 'threshold': 1.0},
-            {'lookback': 20, 'threshold': 2.0},
-            {'lookback': 50, 'threshold': 3.0},
+            {"lookback": 10, "threshold": 1.0},
+            {"lookback": 20, "threshold": 2.0},
+            {"lookback": 50, "threshold": 3.0},
         ]
 
         results = []
@@ -220,14 +204,16 @@ class TestStrategyExecution:
             engine = BacktestEngine(initial_capital=100000.0)
 
             result = engine.run(strategy, mock_market_data, "TEST")
-            results.append({
-                'params': params,
-                'return': result.get('total_return', 0),
-                'trades': result['total_trades']
-            })
+            results.append(
+                {
+                    "params": params,
+                    "return": result.get("total_return", 0),
+                    "trades": result["total_trades"],
+                }
+            )
 
         # Different parameters should produce different results
-        returns = [r['return'] for r in results]
+        returns = [r["return"] for r in results]
         assert len(set(returns)) > 1  # At least some variation
 
 
@@ -240,19 +226,19 @@ class TestRiskManagement:
 
         # Test various scenarios
         test_cases = [
-            {'price': 100.0, 'target_qty': 200, 'expected_max': 100},  # Would exceed limit
-            {'price': 50.0, 'target_qty': 100, 'expected_max': 100},   # Within limit
-            {'price': 200.0, 'target_qty': 100, 'expected_max': 50},   # Would exceed
+            {"price": 100.0, "target_qty": 200, "expected_max": 100},  # Would exceed limit
+            {"price": 50.0, "target_qty": 100, "expected_max": 100},  # Within limit
+            {"price": 200.0, "target_qty": 100, "expected_max": 50},  # Would exceed
         ]
 
         for case in test_cases:
-            position_value = case['price'] * case['target_qty']
+            position_value = case["price"] * case["target_qty"]
 
             if position_value > max_position_value:
-                actual_qty = max_position_value / case['price']
-                assert actual_qty <= case['expected_max']
+                actual_qty = max_position_value / case["price"]
+                assert actual_qty <= case["expected_max"]
             else:
-                assert case['target_qty'] <= case['expected_max']
+                assert case["target_qty"] <= case["expected_max"]
 
     def test_stop_loss_execution(self, mock_market_data):
         """Test stop loss is triggered correctly"""
@@ -278,8 +264,8 @@ class TestRiskManagement:
 
         results = engine.run(strategy, mock_market_data, "TEST")
 
-        if 'max_drawdown' in results.get('metrics', {}):
-            max_dd = results['metrics']['max_drawdown']
+        if "max_drawdown" in results.get("metrics", {}):
+            max_dd = results["metrics"]["max_drawdown"]
 
             # Drawdown should be negative or zero
             assert max_dd <= 0
@@ -291,36 +277,35 @@ class TestRiskManagement:
 class TestDataPipeline:
     """Test data pipeline from fetching to processing"""
 
-    @patch('src.api.alpaca_client.StockHistoricalDataClient')
+    @patch("src.api.alpaca_client.StockHistoricalDataClient")
     def test_data_fetch_and_validation(self, mock_data_client):
         """Test data fetching and validation pipeline"""
         # Mock data response
         mock_bars = MagicMock()
-        mock_bars.df = pd.DataFrame({
-            'open': [100, 101, 102],
-            'high': [101, 102, 103],
-            'low': [99, 100, 101],
-            'close': [100.5, 101.5, 102.5],
-            'volume': [1000, 1100, 1200]
-        })
+        mock_bars.df = pd.DataFrame(
+            {
+                "open": [100, 101, 102],
+                "high": [101, 102, 103],
+                "low": [99, 100, 101],
+                "close": [100.5, 101.5, 102.5],
+                "volume": [1000, 1100, 1200],
+            }
+        )
 
         mock_data_client.return_value.get_stock_bars = Mock(return_value=mock_bars)
 
         # Create client
-        with patch('src.api.alpaca_client.TradingClient'):
-            client = AlpacaClient(api_key='test', secret_key='test', paper=True)
+        with patch("src.api.alpaca_client.TradingClient"):
+            client = AlpacaClient(api_key="test", secret_key="test", paper=True)
 
         # Fetch data
         data = client.get_bars(
-            symbol='AAPL',
-            start=datetime(2024, 1, 1),
-            end=datetime(2024, 1, 2),
-            timeframe='1Hour'
+            symbol="AAPL", start=datetime(2024, 1, 1), end=datetime(2024, 1, 2), timeframe="1Hour"
         )
 
         # Validate data
         assert not data.empty
-        assert 'close' in data.columns
+        assert "close" in data.columns
         assert len(data) == 3
 
 
@@ -329,23 +314,21 @@ class TestErrorHandling:
 
     def test_api_connection_failure(self):
         """Test handling of API connection failures"""
-        with patch('src.api.alpaca_client.StockHistoricalDataClient') as mock_client:
+        with patch("src.api.alpaca_client.StockHistoricalDataClient") as mock_client:
             mock_client.side_effect = ConnectionError("Unable to connect")
 
             with pytest.raises(ConnectionError):
-                AlpacaClient(
-                    api_key='test',
-                    secret_key='test',
-                    paper=True
-                )
+                AlpacaClient(api_key="test", secret_key="test", paper=True)
 
     def test_invalid_data_handling(self):
         """Test handling of invalid market data"""
         # Create invalid data (missing required columns)
-        invalid_data = pd.DataFrame({
-            'close': [100, 101, 102]
-            # Missing open, high, low, volume
-        })
+        invalid_data = pd.DataFrame(
+            {
+                "close": [100, 101, 102]
+                # Missing open, high, low, volume
+            }
+        )
 
         engine = BacktestEngine()
         strategy = MeanReversionStrategy(name="Test")
@@ -360,8 +343,7 @@ class TestErrorHandling:
         limited_data = mock_market_data.head(5)
 
         strategy = MeanReversionStrategy(
-            name="Test",
-            parameters={'lookback': 20}  # Requires more data
+            name="Test", parameters={"lookback": 20}  # Requires more data
         )
 
         engine = BacktestEngine()
@@ -370,7 +352,7 @@ class TestErrorHandling:
         try:
             results = engine.run(strategy, limited_data, "TEST")
             # If it completes, should have minimal/no trades
-            assert results['total_trades'] == 0
+            assert results["total_trades"] == 0
         except ValueError:
             # Or it might raise an error for insufficient data
             pass
@@ -382,14 +364,17 @@ class TestPerformanceAndScalability:
     def test_large_dataset_processing(self):
         """Test processing large datasets efficiently"""
         # Generate large dataset
-        dates = pd.date_range(start='2020-01-01', periods=100000, freq='1min')
-        large_data = pd.DataFrame({
-            'open': np.random.randn(100000) + 100,
-            'high': np.random.randn(100000) + 101,
-            'low': np.random.randn(100000) + 99,
-            'close': np.random.randn(100000) + 100,
-            'volume': np.random.randint(10000, 100000, 100000)
-        }, index=dates)
+        dates = pd.date_range(start="2020-01-01", periods=100000, freq="1min")
+        large_data = pd.DataFrame(
+            {
+                "open": np.random.randn(100000) + 100,
+                "high": np.random.randn(100000) + 101,
+                "low": np.random.randn(100000) + 99,
+                "close": np.random.randn(100000) + 100,
+                "volume": np.random.randint(10000, 100000, 100000),
+            },
+            index=dates,
+        )
 
         strategy = MeanReversionStrategy(name="Test")
         engine = BacktestEngine()
@@ -411,11 +396,11 @@ class TestPerformanceAndScalability:
             strategy = MeanReversionStrategy(name=f"MR_{symbol}")
 
             data = mock_market_data.copy()
-            data.attrs['symbol'] = symbol
+            data.attrs["symbol"] = symbol
 
             return engine.run(strategy, data, symbol)
 
-        symbols = ['AAPL', 'GOOGL', 'MSFT', 'TSLA', 'AMZN']
+        symbols = ["AAPL", "GOOGL", "MSFT", "TSLA", "AMZN"]
 
         # Run concurrently
         with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
@@ -429,7 +414,7 @@ class TestPerformanceAndScalability:
         # Verify all completed
         assert len(results) == 5
         for symbol, result in results.items():
-            assert result['symbol'] == symbol
+            assert result["symbol"] == symbol
 
 
 class TestSystemIntegration:
@@ -451,11 +436,9 @@ class TestSystemIntegration:
         # 4. Execute trades based on signals
         executed_orders = []
         for signal in signals[:3]:  # Execute first 3 signals
-            if signal.signal_type.value in ['buy', 'sell']:
+            if signal.signal_type.value in ["buy", "sell"]:
                 order = mock_alpaca_client.submit_market_order(
-                    symbol=signal.symbol,
-                    qty=10,
-                    side=signal.signal_type.value
+                    symbol=signal.symbol, qty=10, side=signal.signal_type.value
                 )
                 executed_orders.append(order)
 

@@ -22,7 +22,7 @@ def create_uptrend_data_with_rsi_60_88():
     - No RSI 50 crossovers (OLD logic would generate 0 signals)
     - NEW logic should generate 5-10 signals
     """
-    dates = pd.date_range(start='2024-01-01', periods=100, freq='1h')
+    dates = pd.date_range(start="2024-01-01", periods=100, freq="1h")
 
     # Create uptrend with RSI in 60-88 range
     base_price = 100
@@ -34,20 +34,23 @@ def create_uptrend_data_with_rsi_60_88():
         price = base_price + (i * 0.5)
         prices.append(price)
 
-        # RSI oscillates in bullish zone: 60-88
-        # This simulates strong momentum without overbought extremes
-        rsi = 60 + (28 * np.sin(i * 0.2))  # Oscillates 60-88
+        # RSI oscillates in bullish zone: 56-84 (within 55-85 zone)
+        # We use a slightly tighter range to ensure strategy calculation (which may differ) stays within bounds
+        rsi = 70 + (14 * np.sin(i * 0.4))  # Oscillates 56-84
         rsi_values.append(rsi)
 
-    data = pd.DataFrame({
-        'open': prices,
-        'high': [p * 1.01 for p in prices],
-        'low': [p * 0.99 for p in prices],
-        'close': prices,
-        'volume': [1000000] * 100,
-    }, index=dates)
+    data = pd.DataFrame(
+        {
+            "open": prices,
+            "high": [p * 1.01 for p in prices],
+            "low": [p * 0.99 for p in prices],
+            "close": prices,
+            "volume": [1000000] * 100,
+        },
+        index=dates,
+    )
 
-    data.attrs['symbol'] = 'TEST'
+    data.attrs["symbol"] = "TEST"
 
     return data, rsi_values
 
@@ -64,13 +67,15 @@ def test_rsi_fix_momentum_strategy():
         macd_histogram_threshold=0.0005,
         volume_confirmation=False,  # Disable for this test
         min_holding_period=5,  # Shorter for test
+        use_adx_filter=False,  # Disable ADX filter for synthetic data
     )
 
-    # Generate signals
-    signals = strategy.generate_signals(data)
+    # Generate signals (full history for test)
+    signals = strategy.generate_signals(data, latest_only=False)
 
     # Count entry signals (LONG/SHORT)
     from strategies.base import SignalType
+
     entry_signals = [s for s in signals if s.signal_type in [SignalType.LONG, SignalType.SHORT]]
 
     # BEFORE FIX: 0-1 signals (only initial crossover)
@@ -81,8 +86,9 @@ def test_rsi_fix_momentum_strategy():
     print(f"  Exit signals: {len(signals) - len(entry_signals)}")
 
     # Verify fix: Should generate at least 3 signals in uptrend
-    assert len(entry_signals) >= 3, \
-        f"Expected at least 3 entry signals with RSI level-based logic, got {len(entry_signals)}"
+    assert (
+        len(entry_signals) >= 3
+    ), f"Expected at least 3 entry signals with RSI level-based logic, got {len(entry_signals)}"
 
     # Verify signals are LONG (uptrend)
     long_signals = [s for s in entry_signals if s.signal_type == SignalType.LONG]
@@ -103,13 +109,15 @@ def test_rsi_fix_simplified_strategy():
         rsi_period=14,
         macd_histogram_threshold=0.0005,
         min_holding_period=5,
+        # use_adx_filter not supported in simplified
     )
 
-    # Generate signals
-    signals = strategy.generate_signals(data)
+    # Generate signals (full history for test)
+    signals = strategy.generate_signals(data, latest_only=False)
 
     # Count entry signals
     from strategies.base import SignalType
+
     entry_signals = [s for s in signals if s.signal_type in [SignalType.LONG, SignalType.SHORT]]
 
     print(f"\n📊 SimplifiedMomentumStrategy Results:")
@@ -118,8 +126,9 @@ def test_rsi_fix_simplified_strategy():
     print(f"  Exit signals: {len(signals) - len(entry_signals)}")
 
     # Verify fix: Should generate at least 3 signals
-    assert len(entry_signals) >= 3, \
-        f"Expected at least 3 entry signals with RSI level-based logic, got {len(entry_signals)}"
+    assert (
+        len(entry_signals) >= 3
+    ), f"Expected at least 3 entry signals with RSI level-based logic, got {len(entry_signals)}"
 
     # Verify signals are LONG (uptrend)
     long_signals = [s for s in entry_signals if s.signal_type == SignalType.LONG]
@@ -133,7 +142,7 @@ def test_rsi_zones_boundaries():
     """Test that RSI zones work correctly at boundaries"""
 
     # Create data with specific RSI values at boundaries
-    dates = pd.date_range(start='2024-01-01', periods=10, freq='1h')
+    dates = pd.date_range(start="2024-01-01", periods=10, freq="1h")
 
     test_cases = [
         (54, False, "Below 55 - should NOT trigger"),
@@ -150,14 +159,17 @@ def test_rsi_zones_boundaries():
 
     for rsi_value, should_trigger, description in test_cases:
         # Create simple data with fixed RSI
-        data = pd.DataFrame({
-            'open': [100] * 10,
-            'high': [101] * 10,
-            'low': [99] * 10,
-            'close': [100 + i for i in range(10)],  # Slight uptrend
-            'volume': [1000000] * 10,
-        }, index=dates)
-        data.attrs['symbol'] = 'TEST'
+        data = pd.DataFrame(
+            {
+                "open": [100] * 10,
+                "high": [101] * 10,
+                "low": [99] * 10,
+                "close": [100 + i for i in range(10)],  # Slight uptrend
+                "volume": [1000000] * 10,
+            },
+            index=dates,
+        )
+        data.attrs["symbol"] = "TEST"
 
         # The strategy will calculate its own RSI, so this is more of a conceptual test
         # In practice, we'd need to engineer the price data to produce specific RSI values

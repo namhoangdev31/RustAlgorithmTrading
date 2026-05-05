@@ -72,7 +72,7 @@ class MomentumStrategy(Strategy):
         use_adx_filter: bool = True,
         adx_period: int = 14,
         adx_threshold: float = 25.0,  # ADX >25 = trending market (good for momentum)
-        parameters: Optional[Dict[str, Any]] = None
+        parameters: Optional[Dict[str, Any]] = None,
     ):
         """
         Initialize Momentum strategy with advanced risk management
@@ -90,47 +90,52 @@ class MomentumStrategy(Strategy):
             - Risk-adjusted capital allocation
         """
         params = parameters or {}
-        params.update({
-            'rsi_period': rsi_period,
-            'rsi_oversold': rsi_oversold,
-            'rsi_overbought': rsi_overbought,
-            'ema_fast': ema_fast,
-            'ema_slow': ema_slow,
-            'macd_signal': macd_signal,
-            'position_size': position_size,
-            'stop_loss_pct': stop_loss_pct,
-            'take_profit_pct': take_profit_pct,
-            'min_holding_period': min_holding_period,
-            'macd_histogram_threshold': macd_histogram_threshold,
-            'volume_confirmation': volume_confirmation,
-            'volume_ma_period': volume_ma_period,
-            'volume_multiplier': volume_multiplier,
-            'use_trailing_stop': use_trailing_stop,
-            'trailing_stop_pct': trailing_stop_pct,
-            'use_atr_sizing': use_atr_sizing,
-            'atr_period': atr_period,
-            'atr_multiplier': atr_multiplier,
-            'use_adx_filter': use_adx_filter,
-            'adx_period': adx_period,
-            'adx_threshold': adx_threshold,
-        })
+        params.update(
+            {
+                "rsi_period": rsi_period,
+                "rsi_oversold": rsi_oversold,
+                "rsi_overbought": rsi_overbought,
+                "ema_fast": ema_fast,
+                "ema_slow": ema_slow,
+                "macd_signal": macd_signal,
+                "position_size": position_size,
+                "stop_loss_pct": stop_loss_pct,
+                "take_profit_pct": take_profit_pct,
+                "min_holding_period": min_holding_period,
+                "macd_histogram_threshold": macd_histogram_threshold,
+                "volume_confirmation": volume_confirmation,
+                "volume_ma_period": volume_ma_period,
+                "volume_multiplier": volume_multiplier,
+                "use_trailing_stop": use_trailing_stop,
+                "trailing_stop_pct": trailing_stop_pct,
+                "use_atr_sizing": use_atr_sizing,
+                "atr_period": atr_period,
+                "atr_multiplier": atr_multiplier,
+                "use_adx_filter": use_adx_filter,
+                "adx_period": adx_period,
+                "adx_threshold": adx_threshold,
+            }
+        )
 
         super().__init__(name="MomentumStrategy", parameters=params)
 
         # WEEK 3: Initialize market regime detector for ADX calculation
-        use_adx_filter = params.get('use_adx_filter', True)
+        use_adx_filter = params.get("use_adx_filter", True)
         if use_adx_filter:
             self.regime_detector = MarketRegimeDetector(
-                adx_period=params.get('adx_period', 14),
-                atr_period=params.get('atr_period', 14),
-                adx_trending_threshold=params.get('adx_threshold', 25.0),
-                adx_ranging_threshold=20.0
+                adx_period=params.get("adx_period", 14),
+                atr_period=params.get("atr_period", 14),
+                adx_trending_threshold=params.get("adx_threshold", 25.0),
+                adx_ranging_threshold=20.0,
             )
-            logger.info(f"✅ ADX trending filter ENABLED: threshold={params.get('adx_threshold', 25.0)}")
+            logger.info(
+                f"✅ ADX trending filter ENABLED: threshold={params.get('adx_threshold', 25.0)}"
+            )
         else:
             self.regime_detector = None
-            logger.warning("⚠️ ADX trending filter DISABLED - strategy will trade in all market conditions")
-
+            logger.warning(
+                "⚠️ ADX trending filter DISABLED - strategy will trade in all market conditions"
+            )
 
         # Track active positions for exit signals
         # PHASE 2: Added highest_price for trailing stops
@@ -150,7 +155,7 @@ class MomentumStrategy(Strategy):
             return []
 
         data = data.copy()
-        symbol = data.attrs.get('symbol', 'UNKNOWN')
+        symbol = data.attrs.get("symbol", "UNKNOWN")
 
         # Calculate RSI with division-by-zero protection using Wilder's smoothing
         # RSI = 100 - (100 / (1 + RS)) where RS = avg_gain / avg_loss
@@ -158,7 +163,7 @@ class MomentumStrategy(Strategy):
         # - When avg_loss ≈ 0 and avg_gain > 0: RSI = 100 (pure bullish momentum)
         # - When avg_loss ≈ 0 and avg_gain ≈ 0: RSI = 50 (neutral, no movement)
         # - Normal case: RSI calculated via standard formula
-        rsi_period = self.get_parameter('rsi_period', 14)
+        rsi_period = self.get_parameter("rsi_period", 14)
 
         # Validate and convert rsi_period to int for min_periods compatibility
         try:
@@ -171,13 +176,21 @@ class MomentumStrategy(Strategy):
             logger.warning(f"Invalid rsi_period={rsi_period}, using default 14")
             rsi_period = 14
 
-        delta = data['close'].diff()
+        delta = data["close"].diff()
 
         # Use Wilder's smoothing (EWMA with alpha=1/period) for RSI compatibility
         # This matches the standard RSI calculation used by most platforms
         alpha = 1.0 / rsi_period
-        gain = (delta.where(delta > 0, 0)).ewm(alpha=alpha, min_periods=rsi_period, adjust=False).mean()
-        loss = (-delta.where(delta < 0, 0)).ewm(alpha=alpha, min_periods=rsi_period, adjust=False).mean()
+        gain = (
+            (delta.where(delta > 0, 0))
+            .ewm(alpha=alpha, min_periods=rsi_period, adjust=False)
+            .mean()
+        )
+        loss = (
+            (-delta.where(delta < 0, 0))
+            .ewm(alpha=alpha, min_periods=rsi_period, adjust=False)
+            .mean()
+        )
 
         # CRITICAL FIX: Use np.where for safe RSI calculation without intermediate NaN issues
         # Tolerance for float comparison to handle precision issues (rtol=0 for strict comparison)
@@ -188,64 +201,64 @@ class MomentumStrategy(Strategy):
             np.isclose(loss, 0, atol=epsilon, rtol=0) & (gain > epsilon),  # loss ≈ 0, gain > 0
             100.0,  # Pure bullish: RSI = 100
             np.where(
-                np.isclose(loss, 0, atol=epsilon, rtol=0) & np.isclose(gain, 0, atol=epsilon, rtol=0),  # both ≈ 0
+                np.isclose(loss, 0, atol=epsilon, rtol=0)
+                & np.isclose(gain, 0, atol=epsilon, rtol=0),  # both ≈ 0
                 50.0,  # Neutral: RSI = 50
                 np.where(
                     loss > epsilon,  # Normal case: loss > 0
                     100 - (100 / (1 + (gain / loss))),  # Standard RSI formula
-                    np.nan  # Fallback for unexpected cases
-                )
-            )
+                    np.nan,  # Fallback for unexpected cases
+                ),
+            ),
         )
 
         # Clamp RSI values to valid range [0, 100] and preserve index alignment
-        data['rsi'] = pd.Series(np.clip(rsi_values, 0, 100), index=data.index)
+        data["rsi"] = pd.Series(np.clip(rsi_values, 0, 100), index=data.index)
 
         # Calculate MACD
-        ema_fast = self.get_parameter('ema_fast', 12)
-        ema_slow = self.get_parameter('ema_slow', 26)
-        macd_signal_period = self.get_parameter('macd_signal', 9)
+        ema_fast = self.get_parameter("ema_fast", 12)
+        ema_slow = self.get_parameter("ema_slow", 26)
+        macd_signal_period = self.get_parameter("macd_signal", 9)
 
-        data['ema_fast'] = data['close'].ewm(span=ema_fast, adjust=False).mean()
-        data['ema_slow'] = data['close'].ewm(span=ema_slow, adjust=False).mean()
-        data['macd'] = data['ema_fast'] - data['ema_slow']
-        data['macd_signal'] = data['macd'].ewm(span=macd_signal_period, adjust=False).mean()
-        data['macd_histogram'] = data['macd'] - data['macd_signal']
+        data["ema_fast"] = data["close"].ewm(span=ema_fast, adjust=False).mean()
+        data["ema_slow"] = data["close"].ewm(span=ema_slow, adjust=False).mean()
+        data["macd"] = data["ema_fast"] - data["ema_slow"]
+        data["macd_signal"] = data["macd"].ewm(span=macd_signal_period, adjust=False).mean()
+        data["macd_histogram"] = data["macd"] - data["macd_signal"]
 
         # CRITICAL FIX: Add 50-period SMA trend filter
-        sma_period = self.get_parameter('sma_period', 50)
-        data['sma_50'] = data['close'].rolling(window=sma_period).mean()
+        sma_period = self.get_parameter("sma_period", 50)
+        data["sma_50"] = data["close"].rolling(window=sma_period).mean()
 
         # PHASE 2: Add volume moving average for confirmation
-        volume_confirmation = self.get_parameter('volume_confirmation', True)
+        volume_confirmation = self.get_parameter("volume_confirmation", True)
         if volume_confirmation:
-            volume_ma_period = self.get_parameter('volume_ma_period', 20)
-            data['volume_ma'] = data['volume'].rolling(window=volume_ma_period).mean()
+            volume_ma_period = self.get_parameter("volume_ma_period", 20)
+            data["volume_ma"] = data["volume"].rolling(window=volume_ma_period).mean()
             logger.debug(f"Volume confirmation enabled with {volume_ma_period}-period MA")
 
         # PHASE 3: Add ATR for volatility-based position sizing
-        use_atr_sizing = self.get_parameter('use_atr_sizing', False)
+        use_atr_sizing = self.get_parameter("use_atr_sizing", False)
         if use_atr_sizing:
-            atr_period = self.get_parameter('atr_period', 14)
-            data['high_low'] = data['high'] - data['low']
-            data['high_close'] = abs(data['high'] - data['close'].shift())
-            data['low_close'] = abs(data['low'] - data['close'].shift())
-            data['true_range'] = data[['high_low', 'high_close', 'low_close']].max(axis=1)
-            data['atr'] = data['true_range'].rolling(window=atr_period).mean()
+            atr_period = self.get_parameter("atr_period", 14)
+            data["high_low"] = data["high"] - data["low"]
+            data["high_close"] = abs(data["high"] - data["close"].shift())
+            data["low_close"] = abs(data["low"] - data["close"].shift())
+            data["true_range"] = data[["high_low", "high_close", "low_close"]].max(axis=1)
+            data["atr"] = data["true_range"].rolling(window=atr_period).mean()
             logger.debug(f"ATR-based position sizing enabled with {atr_period}-period ATR")
 
-
         # WEEK 3: Calculate ADX for trending market filter
-        use_adx_filter = self.get_parameter('use_adx_filter', True)
+        use_adx_filter = self.get_parameter("use_adx_filter", True)
         if use_adx_filter and self.regime_detector:
-            data['adx'] = self.regime_detector.calculate_adx(data)
-            adx_threshold = self.get_parameter('adx_threshold', 25.0)
+            data["adx"] = self.regime_detector.calculate_adx(data)
+            adx_threshold = self.get_parameter("adx_threshold", 25.0)
             logger.debug(f"ADX trending filter enabled with threshold={adx_threshold}")
 
         # Get parameters
         signals = []
-        stop_loss_pct = self.get_parameter('stop_loss_pct', 0.02)
-        take_profit_pct = self.get_parameter('take_profit_pct', 0.03)
+        stop_loss_pct = self.get_parameter("stop_loss_pct", 0.02)
+        take_profit_pct = self.get_parameter("take_profit_pct", 0.03)
 
         # CRITICAL FIX: Determine range - only process latest bar for live trading
         min_bars = max(rsi_period, ema_slow, macd_signal_period) + 1
@@ -253,8 +266,8 @@ class MomentumStrategy(Strategy):
             # Risk exits must not wait for indicator warmup or latest-only gating.
             start_idx = 0
             position = self.active_positions[symbol]
-            call_highest_price = position.get('highest_price', position['entry_price'])
-            call_lowest_price = position.get('lowest_price', position['entry_price'])
+            call_highest_price = position.get("highest_price", position["entry_price"])
+            call_lowest_price = position.get("lowest_price", position["entry_price"])
         elif latest_only and len(data) > min_bars:
             start_idx = len(data) - 1
         else:
@@ -263,11 +276,11 @@ class MomentumStrategy(Strategy):
         for i in range(start_idx, len(data)):
             current = data.iloc[i]
             previous = data.iloc[i - 1] if i > 0 else current
-            current_price = float(current['close'])
+            current_price = float(current["close"])
             signal_type = SignalType.HOLD
 
             if symbol not in self.active_positions and (
-                pd.isna(current['rsi']) or pd.isna(current['macd'])
+                pd.isna(current["rsi"]) or pd.isna(current["macd"])
             ):
                 logger.debug(f"⏭️ Skipping bar {i}: NaN indicators (RSI or MACD)")
                 continue
@@ -283,13 +296,13 @@ class MomentumStrategy(Strategy):
             # Check for EXIT signals first (stop-loss / take-profit / trailing stop)
             if symbol in self.active_positions:
                 position = self.active_positions[symbol]
-                entry_price = position['entry_price']
-                entry_time = position['entry_time']  # CRITICAL: Define entry_time
-                position_type = position['type']
+                entry_price = position["entry_price"]
+                entry_time = position["entry_time"]  # CRITICAL: Define entry_time
+                position_type = position["type"]
                 if current.name < entry_time:
                     continue
-                highest_price = position.get('highest_price', entry_price)
-                lowest_price = position.get('lowest_price', entry_price)
+                highest_price = position.get("highest_price", entry_price)
+                lowest_price = position.get("lowest_price", entry_price)
 
                 # CRITICAL FIX: Calculate holding period FIRST to enforce minimum hold time
                 try:
@@ -297,24 +310,26 @@ class MomentumStrategy(Strategy):
                 except KeyError:
                     entry_index = 0
                 bars_held = max(0, i - entry_index)
-                min_holding_period = self.get_parameter('min_holding_period', 10)  # Hold at least 10 bars
+                min_holding_period = self.get_parameter(
+                    "min_holding_period", 10
+                )  # Hold at least 10 bars
 
                 # PHASE 2: Track highest/lowest price for trailing stops
-                use_trailing_stop = self.get_parameter('use_trailing_stop', True)
+                use_trailing_stop = self.get_parameter("use_trailing_stop", True)
                 if use_trailing_stop:
-                    if position_type == 'long':
+                    if position_type == "long":
                         highest_price = max(highest_price, current_price)
                         if bars_held < min_holding_period:
                             highest_price = min(highest_price, entry_price * (1 + take_profit_pct))
-                        self.active_positions[symbol]['highest_price'] = highest_price
+                        self.active_positions[symbol]["highest_price"] = highest_price
                     else:  # short
                         lowest_price = min(lowest_price, current_price)
                         if bars_held < min_holding_period:
                             lowest_price = max(lowest_price, entry_price * (1 - take_profit_pct))
-                        self.active_positions[symbol]['lowest_price'] = lowest_price
+                        self.active_positions[symbol]["lowest_price"] = lowest_price
 
                 # Calculate P&L
-                if position_type == 'long':
+                if position_type == "long":
                     pnl_pct = (current_price - entry_price) / entry_price
                 else:  # short
                     pnl_pct = (entry_price - current_price) / entry_price
@@ -336,7 +351,7 @@ class MomentumStrategy(Strategy):
                 catastrophic_loss_pct = -0.05
                 if pnl_pct <= catastrophic_loss_pct:
                     exit_triggered = True
-                    exit_reason = 'catastrophic_stop_loss'
+                    exit_reason = "catastrophic_stop_loss"
                     logger.info(
                         f"🚨 CATASTROPHIC LOSS: {symbol} @ ${current_price:.2f} | "
                         f"Entry=${entry_price:.2f}, P&L={pnl_pct:.2%}, Bars={bars_held}"
@@ -353,22 +368,26 @@ class MomentumStrategy(Strategy):
 
                 # Trailing stop-loss (IMMEDIATE exit to lock in profits)
                 elif use_trailing_stop:
-                    trailing_stop_pct = self.get_parameter('trailing_stop_pct', 0.015)
+                    trailing_stop_pct = self.get_parameter("trailing_stop_pct", 0.015)
 
-                    if position_type == 'long':
+                    if position_type == "long":
                         # Exit only against the high known before this call; new highs are state for the next tick.
-                        if current_price < call_highest_price * (1 - trailing_stop_pct):
+                        if current_price < highest_price * (1 - trailing_stop_pct):
                             exit_triggered = True
                             exit_reason = "trailing_stop_loss"
-                            pnl_from_peak = (current_price - call_highest_price) / call_highest_price
-                            logger.info(f"📉 Trailing stop: price={current_price:.2f}, peak={call_highest_price:.2f}, drop={pnl_from_peak:.2%}")
+                            pnl_from_peak = (current_price - highest_price) / highest_price
+                            logger.info(
+                                f"📉 Trailing stop: price={current_price:.2f}, peak={highest_price:.2f}, drop={pnl_from_peak:.2%}"
+                            )
                     else:  # short
                         # Exit only against the low known before this call; new lows are state for the next tick.
-                        if current_price > call_lowest_price * (1 + trailing_stop_pct):
+                        if current_price > lowest_price * (1 + trailing_stop_pct):
                             exit_triggered = True
                             exit_reason = "trailing_stop_loss"
-                            pnl_from_trough = (call_lowest_price - current_price) / call_lowest_price
-                            logger.info(f"📈 Trailing stop: price={current_price:.2f}, trough={call_lowest_price:.2f}, rise={pnl_from_trough:.2%}")
+                            pnl_from_trough = (lowest_price - current_price) / lowest_price
+                            logger.info(
+                                f"📈 Trailing stop: price={current_price:.2f}, trough={lowest_price:.2f}, rise={pnl_from_trough:.2%}"
+                            )
 
                 # 2. DELAYED EXITS (require minimum holding period to capture momentum):
 
@@ -390,17 +409,22 @@ class MomentumStrategy(Strategy):
                         price=current_price,
                         confidence=1.0,
                         metadata={
-                            'exit_reason': exit_reason,
-                            'pnl_pct': float(pnl_pct),
-                            'entry_price': entry_price,
-                            'position_type': position_type,
-                            'bars_held': bars_held,
-                            'holding_period_bypassed': bars_held < min_holding_period and exit_reason != 'take_profit',
-                            'rsi': float(current['rsi']),
-                            'macd': float(current['macd']),
-                            'highest_price': float(highest_price) if position_type == 'long' else None,
-                            'lowest_price': float(lowest_price) if position_type == 'short' else None,
-                        }
+                            "exit_reason": exit_reason,
+                            "pnl_pct": float(pnl_pct),
+                            "entry_price": entry_price,
+                            "position_type": position_type,
+                            "bars_held": bars_held,
+                            "holding_period_bypassed": bars_held < min_holding_period
+                            and exit_reason != "take_profit",
+                            "rsi": float(current["rsi"]),
+                            "macd": float(current["macd"]),
+                            "highest_price": (
+                                float(highest_price) if position_type == "long" else None
+                            ),
+                            "lowest_price": (
+                                float(lowest_price) if position_type == "short" else None
+                            ),
+                        },
                     )
                     signals.append(signal)
                     del self.active_positions[symbol]
@@ -411,25 +435,35 @@ class MomentumStrategy(Strategy):
                 if bars_held < min_holding_period:
                     continue
 
-                if pd.isna(current['rsi']) or pd.isna(current['macd']):
+                if pd.isna(current["rsi"]) or pd.isna(current["macd"]):
                     continue
 
                 if bars_held >= min_holding_period:
-                    if position_type == 'long':
+                    if position_type == "long":
                         # Exit long when momentum reverses: RSI crosses BELOW 50 + MACD bearish
-                        if (current['rsi'] < 50 and previous['rsi'] >= 50 and  # RSI momentum lost
-                            current['macd'] < current['macd_signal'] and       # MACD bearish
-                            current['macd_histogram'] < -0.001):               # Confirmed weakness
+                        if (
+                            current["rsi"] < 50
+                            and previous["rsi"] >= 50  # RSI momentum lost
+                            and current["macd"] < current["macd_signal"]  # MACD bearish
+                            and current["macd_histogram"] < -0.001
+                        ):  # Confirmed weakness
                             signal_type = SignalType.EXIT
-                    elif position_type == 'short':
+                    elif position_type == "short":
                         # Exit short when momentum reverses: RSI crosses ABOVE 50 + MACD bullish
-                        if (current['rsi'] > 50 and previous['rsi'] <= 50 and  # RSI momentum recovering
-                            current['macd'] > current['macd_signal'] and       # MACD bullish
-                            current['macd_histogram'] > 0.001):                # Confirmed strength
+                        if (
+                            current["rsi"] > 50
+                            and previous["rsi"] <= 50  # RSI momentum recovering
+                            and current["macd"] > current["macd_signal"]  # MACD bullish
+                            and current["macd_histogram"] > 0.001
+                        ):  # Confirmed strength
                             signal_type = SignalType.EXIT
 
                 if signal_type == SignalType.EXIT:
-                    pnl_pct = (current_price - entry_price) / entry_price if position_type == 'long' else (entry_price - current_price) / entry_price
+                    pnl_pct = (
+                        (current_price - entry_price) / entry_price
+                        if position_type == "long"
+                        else (entry_price - current_price) / entry_price
+                    )
                     signal = Signal(
                         timestamp=current.name,
                         symbol=symbol,
@@ -437,14 +471,14 @@ class MomentumStrategy(Strategy):
                         price=current_price,
                         confidence=0.8,
                         metadata={
-                            'exit_reason': 'technical_reversal',
-                            'pnl_pct': float(pnl_pct),
-                            'entry_price': entry_price,
-                            'position_type': position_type,
-                            'bars_held': bars_held,
-                            'rsi': float(current['rsi']),
-                            'macd': float(current['macd']),
-                        }
+                            "exit_reason": "technical_reversal",
+                            "pnl_pct": float(pnl_pct),
+                            "entry_price": entry_price,
+                            "position_type": position_type,
+                            "bars_held": bars_held,
+                            "rsi": float(current["rsi"]),
+                            "macd": float(current["macd"]),
+                        },
                     )
                     signals.append(signal)
                     del self.active_positions[symbol]
@@ -454,10 +488,10 @@ class MomentumStrategy(Strategy):
             if symbol not in self.active_positions:
                 # WEEK 3: Check ADX trending market filter FIRST (hard requirement)
                 # This is a HARD requirement - if market is not trending, skip ALL signals
-                use_adx_filter = self.get_parameter('use_adx_filter', True)
-                if use_adx_filter and 'adx' in data.columns:
-                    adx_threshold = self.get_parameter('adx_threshold', 25.0)
-                    current_adx = current.get('adx', 0)
+                use_adx_filter = self.get_parameter("use_adx_filter", True)
+                if use_adx_filter and "adx" in data.columns:
+                    adx_threshold = self.get_parameter("adx_threshold", 25.0)
+                    current_adx = current.get("adx", 0)
 
                     if pd.isna(current_adx) or current_adx < adx_threshold:
                         # Market is not trending - SKIP signal generation
@@ -469,10 +503,12 @@ class MomentumStrategy(Strategy):
                         continue
                     else:
                         # Market is trending - proceed with signal generation
-                        logger.debug(f"✅ ADX={current_adx:.1f} >{adx_threshold} (trending market - momentum suitable)")
+                        logger.debug(
+                            f"✅ ADX={current_adx:.1f} >{adx_threshold} (trending market - momentum suitable)"
+                        )
 
                 # PHASE 1: Get relaxed histogram threshold
-                histogram_threshold = self.get_parameter('macd_histogram_threshold', 0.0005)
+                histogram_threshold = self.get_parameter("macd_histogram_threshold", 0.0005)
 
                 # PHASE 2: Check volume confirmation
                 # WEEK 2 FIX: Reduced volume threshold from 1.2x to 1.05x (5% above average)
@@ -481,11 +517,11 @@ class MomentumStrategy(Strategy):
                 # preserving signals during normal trading activity
                 volume_ok = True
                 if volume_confirmation:
-                    volume_multiplier = self.get_parameter('volume_multiplier', 1.05)
-                    if 'volume_ma' in data.columns and not pd.isna(current.get('volume_ma')):
-                        volume_ok = current['volume'] > current['volume_ma'] * volume_multiplier
+                    volume_multiplier = self.get_parameter("volume_multiplier", 1.05)
+                    if "volume_ma" in data.columns and not pd.isna(current.get("volume_ma")):
+                        volume_ok = current["volume"] > current["volume_ma"] * volume_multiplier
                         if not volume_ok:
-                            v_ma = current['volume_ma']
+                            v_ma = current["volume_ma"]
                             logger.debug(
                                 f"Volume block: vol={current['volume']}, "
                                 f"ma={v_ma}, req={v_ma * volume_multiplier}"
@@ -508,26 +544,36 @@ class MomentumStrategy(Strategy):
                 # Week 3: 60-80 LONG zone → 15 trades (too few, signal starvation)
                 # Week 3.5: 58-82 LONG zone → Target 35-45 trades (GOLDILOCKS - just right)
                 # Rationale: Middle ground between Week 2 (too loose) and Week 3 (too tight)
-                rsi_long_cond = current['rsi'] > 58 and current['rsi'] < 82  # GOLDILOCKS bullish zone
-                macd_long_cond = current['macd'] > current['macd_signal']
-                hist_long_cond = current['macd_histogram'] > histogram_threshold
-                trend_long_cond = current['close'] > current['sma_50'] and not pd.isna(current['sma_50'])
+                rsi_long_cond = (
+                    current["rsi"] > 58 and current["rsi"] < 82
+                )  # GOLDILOCKS bullish zone
+                macd_long_cond = current["macd"] > current["macd_signal"]
+                hist_long_cond = current["macd_histogram"] > histogram_threshold
+                trend_long_cond = current["close"] > current["sma_50"] and not pd.isna(
+                    current["sma_50"]
+                )
 
                 # Count how many LONG conditions are met (out of 5)
-                long_conditions_met = sum([
-                    rsi_long_cond,      # 1. RSI in bullish zone (55-85)
-                    macd_long_cond,     # 2. MACD above signal line (bullish)
-                    hist_long_cond,     # 3. MACD histogram > threshold (strong bullish)
-                    trend_long_cond,    # 4. Price above 50-period SMA (uptrend)
-                    volume_ok           # 5. Volume above average (confirmation)
-                ])
+                long_conditions_met = sum(
+                    [
+                        rsi_long_cond,  # 1. RSI in bullish zone (55-85)
+                        macd_long_cond,  # 2. MACD above signal line (bullish)
+                        hist_long_cond,  # 3. MACD histogram > threshold (strong bullish)
+                        trend_long_cond,  # 4. Price above 50-period SMA (uptrend)
+                        volume_ok,  # 5. Volume above average (confirmation)
+                    ]
+                )
 
                 # LONG SIGNAL: Require at least 3 of 5 conditions (60% agreement)
                 if long_conditions_met >= 3:
                     signal_type = SignalType.LONG
                     # WEEK 3: Include ADX in signal logging
-                    current_adx = current.get('adx', 0) if 'adx' in data.columns else None
-                    adx_str = f", ADX={current_adx:.1f}" if current_adx and not pd.isna(current_adx) else ""
+                    current_adx = current.get("adx", 0) if "adx" in data.columns else None
+                    adx_str = (
+                        f", ADX={current_adx:.1f}"
+                        if current_adx and not pd.isna(current_adx)
+                        else ""
+                    )
                     logger.info(
                         f"🟢 LONG SIGNAL ({long_conditions_met}/5 conditions): {symbol} @ ${current_price:.2f} | "
                         f"RSI={current['rsi']:.1f} {'✓' if rsi_long_cond else '✗'}, "
@@ -572,19 +618,25 @@ class MomentumStrategy(Strategy):
                 # Week 2: 15-45 SHORT zone → 72.7% loss rate
                 # Week 3: 20-40 SHORT zone → Still disabled (72.7% loss rate)
                 # Week 3.5: Keep SHORT disabled - focus on LONG + mean reversion
-                rsi_short_cond = current['rsi'] < 40 and current['rsi'] > 20  # Bearish zone (UNUSED - shorts disabled)
-                macd_short_cond = current['macd'] < current['macd_signal']
-                hist_short_cond = current['macd_histogram'] < -histogram_threshold
-                trend_short_cond = current['close'] < current['sma_50'] and not pd.isna(current['sma_50'])
+                rsi_short_cond = (
+                    current["rsi"] < 40 and current["rsi"] > 20
+                )  # Bearish zone (UNUSED - shorts disabled)
+                macd_short_cond = current["macd"] < current["macd_signal"]
+                hist_short_cond = current["macd_histogram"] < -histogram_threshold
+                trend_short_cond = current["close"] < current["sma_50"] and not pd.isna(
+                    current["sma_50"]
+                )
 
                 # Count how many SHORT conditions are met (out of 5)
-                short_conditions_met = sum([
-                    rsi_short_cond,     # 1. RSI in bearish zone (15-45)
-                    macd_short_cond,    # 2. MACD below signal line (bearish)
-                    hist_short_cond,    # 3. MACD histogram < -threshold (strong bearish)
-                    trend_short_cond,   # 4. Price below 50-period SMA (downtrend)
-                    volume_ok           # 5. Volume above average (confirmation)
-                ])
+                short_conditions_met = sum(
+                    [
+                        rsi_short_cond,  # 1. RSI in bearish zone (15-45)
+                        macd_short_cond,  # 2. MACD below signal line (bearish)
+                        hist_short_cond,  # 3. MACD histogram < -threshold (strong bearish)
+                        trend_short_cond,  # 4. Price below 50-period SMA (downtrend)
+                        volume_ok,  # 5. Volume above average (confirmation)
+                    ]
+                )
 
                 # WEEK 3 FIX: SHORT SIGNALS DISABLED DUE TO 72.7% LOSS RATE
                 # Log when SHORT condition is met but skipped
@@ -621,26 +673,34 @@ class MomentumStrategy(Strategy):
 
                 if signal_type in [SignalType.LONG, SignalType.SHORT]:
                     # Calculate confidence based on indicator strength
-                    rsi_strength = abs(current['rsi'] - 50) / 50  # 0 to 1
-                    macd_strength = min(abs(current['macd_histogram']) / (current['close'] * 0.01), 1.0)
+                    rsi_strength = abs(current["rsi"] - 50) / 50  # 0 to 1
+                    macd_strength = min(
+                        abs(current["macd_histogram"]) / (current["close"] * 0.01), 1.0
+                    )
 
                     # PHASE 2: Add volume strength to confidence
                     volume_strength = 0.5  # Default neutral
-                    if volume_confirmation and 'volume_ma' in data.columns and not pd.isna(current.get('volume_ma')):
-                        volume_ratio = current['volume'] / current['volume_ma']
+                    if (
+                        volume_confirmation
+                        and "volume_ma" in data.columns
+                        and not pd.isna(current.get("volume_ma"))
+                    ):
+                        volume_ratio = current["volume"] / current["volume_ma"]
                         volume_strength = min(volume_ratio / 2.0, 1.0)  # Normalize to 0-1
 
-                    confidence = min((rsi_strength * 0.4 + macd_strength * 0.3 + volume_strength * 0.3), 1.0)
+                    confidence = min(
+                        (rsi_strength * 0.4 + macd_strength * 0.3 + volume_strength * 0.3), 1.0
+                    )
 
                     # PHASE 3: Calculate ATR-based position size multiplier
-                    if use_atr_sizing and 'atr' in data.columns and not pd.isna(current.get('atr')):
+                    if use_atr_sizing and "atr" in data.columns and not pd.isna(current.get("atr")):
                         # Store ATR for position sizing
-                        current_atr = current['atr']
+                        current_atr = current["atr"]
                     else:
                         current_atr = None
 
                     # WEEK 3: Include ADX in signal metadata
-                    current_adx = current.get('adx', None) if 'adx' in data.columns else None
+                    current_adx = current.get("adx", None) if "adx" in data.columns else None
 
                     signal = Signal(
                         timestamp=current.name,
@@ -649,35 +709,40 @@ class MomentumStrategy(Strategy):
                         price=current_price,
                         confidence=float(confidence),
                         metadata={
-                            'rsi': float(current['rsi']),
-                            'macd': float(current['macd']),
-                            'macd_signal': float(current['macd_signal']),
-                            'macd_histogram': float(current['macd_histogram']),
-                            'volume': float(current.get('volume', 0)),
-                            'volume_ma': float(current.get('volume_ma', 0)) if 'volume_ma' in data.columns else None,
-                            'volume_ratio': (
-                                float(current['volume'] / current['volume_ma'])
-                                if 'volume_ma' in data.columns and not pd.isna(current.get('volume_ma'))
+                            "rsi": float(current["rsi"]),
+                            "macd": float(current["macd"]),
+                            "macd_signal": float(current["macd_signal"]),
+                            "macd_histogram": float(current["macd_histogram"]),
+                            "volume": float(current.get("volume", 0)),
+                            "volume_ma": (
+                                float(current.get("volume_ma", 0))
+                                if "volume_ma" in data.columns
                                 else None
                             ),
-                            'atr': float(current_atr) if current_atr is not None else None,
-                            'adx': (
+                            "volume_ratio": (
+                                float(current["volume"] / current["volume_ma"])
+                                if "volume_ma" in data.columns
+                                and not pd.isna(current.get("volume_ma"))
+                                else None
+                            ),
+                            "atr": float(current_atr) if current_atr is not None else None,
+                            "adx": (
                                 float(current_adx)
                                 if current_adx is not None and not pd.isna(current_adx)
                                 else None
                             ),
-                            'histogram_threshold': float(histogram_threshold),
-                        }
+                            "histogram_threshold": float(histogram_threshold),
+                        },
                     )
                     signals.append(signal)
 
                     # Track position (PHASE 2: Initialize highest/lowest price)
                     self.active_positions[symbol] = {
-                        'entry_price': current_price,
-                        'entry_time': current.name,
-                        'type': 'long' if signal_type == SignalType.LONG else 'short',
-                        'highest_price': current_price,  # For trailing stop
-                        'lowest_price': current_price,   # For trailing stop (short)
+                        "entry_price": current_price,
+                        "entry_time": current.name,
+                        "type": "long" if signal_type == SignalType.LONG else "short",
+                        "highest_price": current_price,  # For trailing stop
+                        "lowest_price": current_price,  # For trailing stop (short)
                     }
 
         num_exits = sum(1 for s in signals if s.signal_type == SignalType.EXIT)
@@ -685,10 +750,7 @@ class MomentumStrategy(Strategy):
         return signals
 
     def calculate_position_size(
-        self,
-        signal: Signal,
-        account_value: float,
-        current_position: float = 0.0
+        self, signal: Signal, account_value: float, current_position: float = 0.0
     ) -> float:
         """
         Calculate position size with conservative risk management
@@ -698,7 +760,7 @@ class MomentumStrategy(Strategy):
         - Scaled by confidence
         - Optionally adjusted by ATR (lower volatility = larger position)
         """
-        position_size_pct = self.get_parameter('position_size', 0.15)
+        position_size_pct = self.get_parameter("position_size", 0.15)
         position_value = account_value * position_size_pct
         shares = position_value / signal.price
 
@@ -706,9 +768,9 @@ class MomentumStrategy(Strategy):
         shares *= signal.confidence
 
         # PHASE 3: ATR-based position sizing (volatility adjustment)
-        use_atr_sizing = self.get_parameter('use_atr_sizing', False)
-        if use_atr_sizing and signal.metadata.get('atr') is not None:
-            atr = signal.metadata['atr']
+        use_atr_sizing = self.get_parameter("use_atr_sizing", False)
+        if use_atr_sizing and signal.metadata.get("atr") is not None:
+            atr = signal.metadata["atr"]
             atr_pct = atr / signal.price  # ATR as percentage of price
 
             # Risk-adjusted sizing: Higher volatility = smaller position
@@ -743,10 +805,10 @@ class MomentumStrategy(Strategy):
             return None
 
         position = self.active_positions[symbol]
-        entry_price = position['entry_price']
-        position_type = position['type']
+        entry_price = position["entry_price"]
+        position_type = position["type"]
 
-        if position_type == 'long':
+        if position_type == "long":
             return (current_price - entry_price) / entry_price
         else:  # short
             return (entry_price - current_price) / entry_price

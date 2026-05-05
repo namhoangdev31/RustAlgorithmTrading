@@ -34,7 +34,7 @@ class SimpleMomentumStrategy(MomentumStrategy):
         rsi_period: int = 14,
         rsi_oversold: float = 35,
         rsi_overbought: float = 65,
-        position_size: float = 0.1
+        position_size: float = 0.1,
     ):
         """
         Initialize Simple Momentum Strategy
@@ -57,7 +57,7 @@ class SimpleMomentumStrategy(MomentumStrategy):
             ema_fast=12,  # Standard MACD fast period
             ema_slow=26,  # Standard MACD slow period
             macd_signal=9,  # Standard MACD signal period
-            position_size=position_size
+            position_size=position_size,
         )
 
         # Update name to reflect simplified version
@@ -74,11 +74,7 @@ class SimpleMomentumStrategy(MomentumStrategy):
         """Get list of symbols this strategy trades"""
         return self.symbols
 
-    def generate_signals_for_symbol(
-        self,
-        symbol: str,
-        data: pd.DataFrame
-    ) -> List[Signal]:
+    def generate_signals_for_symbol(self, symbol: str, data: pd.DataFrame) -> List[Signal]:
         """
         Generate signals for a specific symbol
 
@@ -91,16 +87,13 @@ class SimpleMomentumStrategy(MomentumStrategy):
         """
         # Set symbol metadata in dataframe
         data = data.copy()
-        data.attrs['symbol'] = symbol
+        data.attrs["symbol"] = symbol
 
         # Use parent's signal generation logic
         return self.generate_signals(data)
 
     def calculate_position_size(
-        self,
-        signal: Signal,
-        account_value: float,
-        current_position: float = 0.0
+        self, signal: Signal, account_value: float, current_position: float = 0.0
     ) -> float:
         """
         Calculate position size for a signal
@@ -116,12 +109,10 @@ class SimpleMomentumStrategy(MomentumStrategy):
             Position size in shares
         """
         # Get base position size from parent
-        position_shares = super().calculate_position_size(
-            signal, account_value, current_position
-        )
+        position_shares = super().calculate_position_size(signal, account_value, current_position)
 
         # Additional safety: Don't over-leverage
-        max_position_value = account_value * self.get_parameter('position_size', 0.1)
+        max_position_value = account_value * self.get_parameter("position_size", 0.1)
         max_shares = max_position_value / signal.price
 
         # Return minimum of calculated and max allowed

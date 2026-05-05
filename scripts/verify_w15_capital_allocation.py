@@ -14,7 +14,9 @@ import sys
 from pathlib import Path
 from typing import Dict, List
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT / "src"))
 
 from src.models.governance import ControlRecord, ControlStatus
 from src.risk.allocation_manager import AllocationManager, AllocationPolicy
@@ -121,7 +123,11 @@ def main() -> int:
     ev_202 = any(r.metadata.get("regime_class") for r in controls["records"])
     ev_203 = controls["trace_complete"]
     ev_204 = controls["trace_complete"]
-    ev_205 = any(r.metadata.get("drawdown_state") == "HALT" and r.status == ControlStatus.BLOCKED for r in controls["records"])
+    ev_205 = any(
+        r.metadata.get("drawdown_state") == "HALT"
+        and getattr(r.status, "value", str(r.status)) == ControlStatus.BLOCKED.value
+        for r in controls["records"]
+    )
     ev_206 = controls["coverage"] >= 1.0
     ev_207 = controls["escaped_breaches"] == 0
     ev_208 = drift["status"] == "PASS" and drift["max_pct_drift"] <= 0.01

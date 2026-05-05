@@ -28,12 +28,7 @@ async def get_system_health() -> SystemHealth:
 
         system_collector = api_state.collectors.get("system")
         if not system_collector:
-            return SystemHealth(
-                status="unknown",
-                components={},
-                resources={},
-                connections={}
-            )
+            return SystemHealth(status="unknown", components={}, resources={}, connections={})
 
         health = await system_collector.get_system_health()
 
@@ -59,10 +54,7 @@ async def get_performance_metrics() -> PerformanceMetrics:
 
         system_collector = api_state.collectors.get("system")
         if not system_collector:
-            raise HTTPException(
-                status_code=503,
-                detail="System collector not available"
-            )
+            raise HTTPException(status_code=503, detail="System collector not available")
 
         performance = await system_collector.get_performance_metrics()
 
@@ -88,29 +80,25 @@ async def get_component_status() -> Dict[str, Any]:
                 components[name] = status
             except Exception as e:
                 logger.error(f"[cid:INIT] Error getting {name} collector status: {e}")
-                components[name] = {
-                    "status": "error",
-                    "error": str(e)
-                }
+                components[name] = {"status": "error", "error": str(e)}
 
         # Add WebSocket manager status
         conn_count = api_state.websocket_manager.connection_count()
         components["websocket"] = {
             "status": "healthy" if conn_count >= 0 else "error",
             "connections": conn_count,
-            "stats": api_state.websocket_manager.get_stats()
+            "stats": api_state.websocket_manager.get_stats(),
         }
 
         # Overall status
         all_healthy = all(
-            comp.get("status") in ["healthy", "ready"]
-            for comp in components.values()
+            comp.get("status") in ["healthy", "ready"] for comp in components.values()
         )
 
         return {
             "status": "healthy" if all_healthy else "degraded",
             "components": components,
-            "timestamp": "utcnow"
+            "timestamp": "utcnow",
         }
     except Exception as e:
         logger.error(f"[cid:INIT] Error getting component status: {e}")
@@ -118,10 +106,7 @@ async def get_component_status() -> Dict[str, Any]:
 
 
 @router.get("/logs/recent")
-async def get_recent_logs(
-    level: str = "INFO",
-    limit: int = 100
-) -> Dict[str, Any]:
+async def get_recent_logs(level: str = "INFO", limit: int = 100) -> Dict[str, Any]:
     """
     Get recent log entries.
 
@@ -138,11 +123,7 @@ async def get_recent_logs(
 
         logs = await system_collector.get_recent_logs(level=level, limit=limit)
 
-        return {
-            "logs": logs,
-            "count": len(logs),
-            "level": level
-        }
+        return {"logs": logs, "count": len(logs), "level": level}
     except Exception as e:
         logger.error(f"[cid:INIT] Error getting recent logs: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -156,10 +137,7 @@ async def acknowledge_alert(alert_id: str) -> Dict[str, str]:
 
         system_collector = api_state.collectors.get("system")
         if not system_collector:
-            raise HTTPException(
-                status_code=503,
-                detail="System collector not available"
-            )
+            raise HTTPException(status_code=503, detail="System collector not available")
 
         await system_collector.acknowledge_alert(alert_id)
 
@@ -184,14 +162,10 @@ async def get_system_statistics() -> Dict[str, Any]:
         stats = {
             "api": {
                 "running": api_state.running,
-                "websocket_connections": (
-                    api_state.websocket_manager.connection_count()
-                ),
-                "total_messages_sent": (
-                    api_state.websocket_manager.total_messages_sent
-                )
+                "websocket_connections": (api_state.websocket_manager.connection_count()),
+                "total_messages_sent": (api_state.websocket_manager.total_messages_sent),
             },
-            "collectors": {}
+            "collectors": {},
         }
 
         for name, collector in api_state.collectors.items():
@@ -199,9 +173,7 @@ async def get_system_statistics() -> Dict[str, Any]:
                 collector_stats = await collector.get_statistics()
                 stats["collectors"][name] = collector_stats
             except Exception as e:
-                logger.error(
-                    f"[cid:INIT] Error getting {name} stats: {e}"
-                )
+                logger.error(f"[cid:INIT] Error getting {name} stats: {e}")
                 stats["collectors"][name] = cast(Any, {"error": str(e)})
 
         return stats

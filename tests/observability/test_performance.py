@@ -8,6 +8,7 @@ Tests:
 - Network bandwidth efficiency
 - Latency impact on trading operations
 """
+
 import asyncio
 import time
 from pathlib import Path
@@ -24,7 +25,9 @@ def project_root() -> Path:
     """Get project root directory."""
     return Path(__file__).parent.parent.parent
 
+
 import pytest_asyncio
+
 
 @pytest_asyncio.fixture
 async def api_server(project_root: Path):
@@ -51,7 +54,9 @@ async def api_server(project_root: Path):
             if process.returncode is not None:
                 # Server crashed on startup - capture error logs
                 stdout, stderr = await process.communicate()
-                logger.error(f"API Server crashed on startup:\nSTDOUT: {stdout.decode()}\nSTDERR: {stderr.decode()}")
+                logger.error(
+                    f"API Server crashed on startup:\nSTDOUT: {stdout.decode()}\nSTDERR: {stderr.decode()}"
+                )
                 break
             try:
                 await asyncio.sleep(0.5)
@@ -75,6 +80,7 @@ async def api_server(project_root: Path):
     except asyncio.TimeoutError:
         process.kill()
         await process.wait()
+
 
 class TestObservabilityPerformance:
     """Performance benchmarks and overhead validation."""
@@ -135,9 +141,7 @@ class TestObservabilityPerformance:
 
         memory_increase = memory_mb_after - memory_mb
 
-        assert memory_increase < 50, (
-            f"Memory increased by {memory_increase:.2f}MB after load"
-        )
+        assert memory_increase < 50, f"Memory increased by {memory_increase:.2f}MB after load"
 
     @pytest.mark.asyncio
     @pytest.mark.performance
@@ -151,9 +155,7 @@ class TestObservabilityPerformance:
                 tasks = []
 
                 for _ in range(100):
-                    tasks.append(
-                        client.get("http://localhost:8000/health", timeout=5.0)
-                    )
+                    tasks.append(client.get("http://localhost:8000/health", timeout=5.0))
 
                 await asyncio.gather(*tasks)
 
@@ -173,9 +175,7 @@ class TestObservabilityPerformance:
 
         logger.info(f"Average CPU under load: {avg_cpu:.2f}%")
 
-        assert avg_cpu < 10.0, (
-            f"CPU usage {avg_cpu:.2f}% exceeds 10% target under load"
-        )
+        assert avg_cpu < 10.0, f"CPU usage {avg_cpu:.2f}% exceeds 10% target under load"
 
     @pytest.mark.asyncio
     @pytest.mark.performance
@@ -192,13 +192,10 @@ class TestObservabilityPerformance:
 
             while time.time() - start_time < 2.0:
                 try:
-                    message = await asyncio.wait_for(
-                        websocket.recv(),
-                        timeout=0.2
-                    )
+                    message = await asyncio.wait_for(websocket.recv(), timeout=0.2)
 
                     if message not in ["ping", "pong"]:
-                        total_bytes_received += len(message.encode('utf-8'))
+                        total_bytes_received += len(message.encode("utf-8"))
                         message_count += 1
 
                 except asyncio.TimeoutError:
@@ -210,14 +207,11 @@ class TestObservabilityPerformance:
         kb_per_second = bytes_per_second / 1024
 
         logger.info(
-            f"Bandwidth: {kb_per_second:.2f} KB/s "
-            f"({message_count} messages in {duration}s)"
+            f"Bandwidth: {kb_per_second:.2f} KB/s " f"({message_count} messages in {duration}s)"
         )
 
         # Should be reasonable bandwidth (<100 KB/s for 10Hz updates)
-        assert kb_per_second < 100, (
-            f"Bandwidth {kb_per_second:.2f} KB/s exceeds 100 KB/s target"
-        )
+        assert kb_per_second < 100, f"Bandwidth {kb_per_second:.2f} KB/s exceeds 100 KB/s target"
 
     @pytest.mark.asyncio
     @pytest.mark.performance
@@ -230,10 +224,7 @@ class TestObservabilityPerformance:
             for _ in range(100):
                 start_time = time.perf_counter()
 
-                response = await client.get(
-                    "http://localhost:8000/health",
-                    timeout=5.0
-                )
+                response = await client.get("http://localhost:8000/health", timeout=5.0)
 
                 latency_ms = (time.perf_counter() - start_time) * 1000
                 latencies.append(latency_ms)
@@ -269,26 +260,16 @@ class TestObservabilityPerformance:
                 async with websockets.connect(ws_url) as websocket:
                     # Skip initial connected message
                     await asyncio.wait_for(websocket.recv(), timeout=2.0)
-                    
+
                     await websocket.send("ping")
-                    response = await asyncio.wait_for(
-                        websocket.recv(),
-                        timeout=5.0
-                    )
+                    response = await asyncio.wait_for(websocket.recv(), timeout=5.0)
 
                     connection_time = (time.perf_counter() - start_time) * 1000
 
-                    return {
-                        "success": response == "pong",
-                        "connection_time_ms": connection_time
-                    }
+                    return {"success": response == "pong", "connection_time_ms": connection_time}
 
             except Exception as e:
-                return {
-                    "success": False,
-                    "error": str(e),
-                    "connection_time_ms": -1
-                }
+                return {"success": False, "error": str(e), "connection_time_ms": -1}
 
         # Test with increasing concurrent connections
         # Calibrated for environmental baseline: 10 -> 30 connections
@@ -298,17 +279,13 @@ class TestObservabilityPerformance:
             start_time = time.perf_counter()
 
             results = await asyncio.gather(
-                *[test_connection(i) for i in range(count)],
-                return_exceptions=True
+                *[test_connection(i) for i in range(count)], return_exceptions=True
             )
 
             total_time = (time.perf_counter() - start_time) * 1000
 
             # Count successes
-            successful = sum(
-                1 for r in results
-                if isinstance(r, dict) and r.get("success")
-            )
+            successful = sum(1 for r in results if isinstance(r, dict) and r.get("success"))
 
             success_rate = (successful / count) * 100
 
@@ -319,7 +296,9 @@ class TestObservabilityPerformance:
 
             # Calibrated Success Rate: 40% (Environmental Baseline for W11)
             success_rate = (successful / count) * 100
-            assert success_rate >= 40, f"Success rate {success_rate:.1f}% below 40% for {count} connections"
+            assert (
+                success_rate >= 40
+            ), f"Success rate {success_rate:.1f}% below 40% for {count} connections"
 
     @pytest.mark.asyncio
     @pytest.mark.performance
@@ -344,17 +323,11 @@ class TestObservabilityPerformance:
             # Measure write performance
             from datetime import datetime
 
-            test_data = [
-                (datetime.now(), float(i))
-                for i in range(10000)
-            ]
+            test_data = [(datetime.now(), float(i)) for i in range(10000)]
 
             start_time = time.perf_counter()
 
-            conn.executemany(
-                "INSERT INTO perf_metrics VALUES (?, ?)",
-                test_data
-            )
+            conn.executemany("INSERT INTO perf_metrics VALUES (?, ?)", test_data)
 
             write_time = (time.perf_counter() - start_time) * 1000
 
@@ -383,8 +356,7 @@ class TestObservabilityPerformance:
             for cycle in range(10):
                 # 100 requests per cycle
                 tasks = [
-                    client.get("http://localhost:8000/health", timeout=5.0)
-                    for _ in range(100)
+                    client.get("http://localhost:8000/health", timeout=5.0) for _ in range(100)
                 ]
 
                 await asyncio.gather(*tasks)
@@ -398,14 +370,11 @@ class TestObservabilityPerformance:
         memory_increase = final_memory - baseline_memory
 
         logger.info(
-            f"Memory: {baseline_memory:.2f}MB → {final_memory:.2f}MB "
-            f"(+{memory_increase:.2f}MB)"
+            f"Memory: {baseline_memory:.2f}MB → {final_memory:.2f}MB " f"(+{memory_increase:.2f}MB)"
         )
 
         # Memory increase should be minimal (<20MB after 1000 requests)
-        assert memory_increase < 20, (
-            f"Memory increased by {memory_increase:.2f}MB (possible leak)"
-        )
+        assert memory_increase < 20, f"Memory increased by {memory_increase:.2f}MB (possible leak)"
 
     @pytest.mark.asyncio
     @pytest.mark.performance
@@ -431,19 +400,14 @@ class TestObservabilityPerformance:
         async with httpx.AsyncClient() as client:
             for _ in range(60):
                 try:
-                    response = await client.get(
-                        "http://localhost:8000/health",
-                        timeout=2.0
-                    )
+                    response = await client.get("http://localhost:8000/health", timeout=2.0)
 
                     if response.status_code == 200:
-                        startup_time = (time.perf_counter() - start_time)
+                        startup_time = time.perf_counter() - start_time
 
                         logger.info(f"Startup time: {startup_time:.2f}s")
 
-                        assert startup_time < 10, (
-                            f"Startup took {startup_time:.2f}s (>10s)"
-                        )
+                        assert startup_time < 10, f"Startup took {startup_time:.2f}s (>10s)"
 
                         break
 

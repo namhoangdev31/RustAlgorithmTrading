@@ -31,24 +31,19 @@ class MarketDataLogger(StructuredLogger):
         super().__init__("trading.market_data", config)
 
     def log_price_update(
-        self,
-        symbol: str,
-        price: float,
-        volume: float,
-        source: str,
-        **kwargs: Any
+        self, symbol: str, price: float, volume: float, source: str, **kwargs: Any
     ) -> None:
         """Log price update event"""
         self.debug(
             f"Price update: {symbol} @ {price}",
             extra={
-                'event_type': 'price_update',
-                'symbol': symbol,
-                'price': price,
-                'volume': volume,
-                'source': source,
-                **kwargs
-            }
+                "event_type": "price_update",
+                "symbol": symbol,
+                "price": price,
+                "volume": volume,
+                "source": source,
+                **kwargs,
+            },
         )
 
     def log_orderbook_update(
@@ -58,70 +53,60 @@ class MarketDataLogger(StructuredLogger):
         ask_price: float,
         bid_size: float,
         ask_size: float,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Log order book update"""
         self.debug(
-            f"Order book: {symbol} bid={bid_price}/{bid_size} "
-            f"ask={ask_price}/{ask_size}",
+            f"Order book: {symbol} bid={bid_price}/{bid_size} " f"ask={ask_price}/{ask_size}",
             extra={
-                'event_type': 'orderbook_update',
-                'symbol': symbol,
-                'bid_price': bid_price,
-                'ask_price': ask_price,
-                'bid_size': bid_size,
-                'ask_size': ask_size,
-                'spread': ask_price - bid_price,
-                **kwargs
-            }
+                "event_type": "orderbook_update",
+                "symbol": symbol,
+                "bid_price": bid_price,
+                "ask_price": ask_price,
+                "bid_size": bid_size,
+                "ask_size": ask_size,
+                "spread": ask_price - bid_price,
+                **kwargs,
+            },
         )
 
     def log_trade(
-        self,
-        symbol: str,
-        price: float,
-        quantity: float,
-        side: str,
-        **kwargs: Any
+        self, symbol: str, price: float, quantity: float, side: str, **kwargs: Any
     ) -> None:
         """Log market trade execution"""
         self.info(
             f"Trade: {symbol} {side} {quantity} @ {price}",
             extra={
-                'event_type': 'market_trade',
-                'symbol': symbol,
-                'price': price,
-                'quantity': quantity,
-                'side': side,
-                **kwargs
-            }
+                "event_type": "market_trade",
+                "symbol": symbol,
+                "price": price,
+                "quantity": quantity,
+                "side": side,
+                **kwargs,
+            },
         )
 
     def log_feed_status(
-        self,
-        source: str,
-        status: str,
-        message: Optional[str] = None,
-        **kwargs: Any
+        self, source: str, status: str, message: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Log data feed connectivity status"""
         level_map: Dict[str, Callable[..., None]] = {
-            'connected': self.info,
-            'disconnected': self.warning,
-            'error': self.error,
-            'reconnecting': self.warning,
+            "connected": self.info,
+            "disconnected": self.warning,
+            "error": self.error,
+            "reconnecting": self.warning,
         }
         log_func = level_map.get(status, self.info)
 
         log_func(
             f"Feed {source}: {status}" + (f" - {message}" if message else ""),
             extra={
-                'event_type': 'feed_status',
-                'source': source,
-                'status': status,
-                'message': message,
-                **kwargs
-            }
+                "event_type": "feed_status",
+                "source": source,
+                "status": status,
+                "message": message,
+                **kwargs,
+            },
         )
 
     def log_data_quality_issue(
@@ -129,18 +114,18 @@ class MarketDataLogger(StructuredLogger):
         issue_type: str,
         symbol: Optional[str] = None,
         details: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Log data quality issue"""
         self.warning(
             f"Data quality issue: {issue_type}" + (f" for {symbol}" if symbol else ""),
             extra={
-                'event_type': 'data_quality_issue',
-                'issue_type': issue_type,
-                'symbol': symbol,
-                'details': details,
-                **kwargs
-            }
+                "event_type": "data_quality_issue",
+                "issue_type": issue_type,
+                "symbol": symbol,
+                "details": details,
+                **kwargs,
+            },
         )
 
 
@@ -167,20 +152,20 @@ class StrategyLogger(StructuredLogger):
         signal_type: str,
         strength: float,
         reason: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Log trading signal generation"""
         self.info(
             f"Signal: {strategy_name} - {signal_type} {symbol} (strength: {strength})",
             extra={
-                'event_type': 'signal',
-                'strategy': strategy_name,
-                'symbol': symbol,
-                'signal_type': signal_type,
-                'strength': strength,
-                'reason': reason,
-                **kwargs
-            }
+                "event_type": "signal",
+                "strategy": strategy_name,
+                "symbol": symbol,
+                "signal_type": signal_type,
+                "strength": strength,
+                "reason": reason,
+                **kwargs,
+            },
         )
 
     def log_trade_decision(
@@ -191,22 +176,22 @@ class StrategyLogger(StructuredLogger):
         quantity: float,
         price: Optional[float] = None,
         rationale: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Log trade decision"""
         self.info(
-            f"Decision: {strategy_name} - {action} {quantity} {symbol}" +
-            (f" @ {price}" if price else ""),
+            f"Decision: {strategy_name} - {action} {quantity} {symbol}"
+            + (f" @ {price}" if price else ""),
             extra={
-                'event_type': 'trade_decision',
-                'strategy': strategy_name,
-                'symbol': symbol,
-                'action': action,
-                'quantity': quantity,
-                'price': price,
-                'rationale': rationale,
-                **kwargs
-            }
+                "event_type": "trade_decision",
+                "strategy": strategy_name,
+                "symbol": symbol,
+                "action": action,
+                "quantity": quantity,
+                "price": price,
+                "rationale": rationale,
+                **kwargs,
+            },
         )
 
     def log_position_update(
@@ -215,39 +200,35 @@ class StrategyLogger(StructuredLogger):
         symbol: str,
         position: float,
         pnl: Optional[float] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Log position update"""
         self.debug(
-            f"Position: {strategy_name} - {symbol} {position}" +
-            (f" (PnL: {pnl})" if pnl is not None else ""),
+            f"Position: {strategy_name} - {symbol} {position}"
+            + (f" (PnL: {pnl})" if pnl is not None else ""),
             extra={
-                'event_type': 'position_update',
-                'strategy': strategy_name,
-                'symbol': symbol,
-                'position': position,
-                'pnl': pnl,
-                **kwargs
-            }
+                "event_type": "position_update",
+                "strategy": strategy_name,
+                "symbol": symbol,
+                "position": position,
+                "pnl": pnl,
+                **kwargs,
+            },
         )
 
     def log_strategy_state(
-        self,
-        strategy_name: str,
-        state: str,
-        reason: Optional[str] = None,
-        **kwargs: Any
+        self, strategy_name: str, state: str, reason: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Log strategy state change"""
         self.info(
             f"Strategy {strategy_name}: {state}" + (f" - {reason}" if reason else ""),
             extra={
-                'event_type': 'strategy_state',
-                'strategy': strategy_name,
-                'state': state,
-                'reason': reason,
-                **kwargs
-            }
+                "event_type": "strategy_state",
+                "strategy": strategy_name,
+                "state": state,
+                "reason": reason,
+                **kwargs,
+            },
         )
 
     def log_performance_metric(
@@ -256,20 +237,20 @@ class StrategyLogger(StructuredLogger):
         metric_name: str,
         value: float,
         period: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Log performance metric"""
         self.info(
-            f"Performance: {strategy_name} - {metric_name}={value}" +
-            (f" ({period})" if period else ""),
+            f"Performance: {strategy_name} - {metric_name}={value}"
+            + (f" ({period})" if period else ""),
             extra={
-                'event_type': 'performance_metric',
-                'strategy': strategy_name,
-                'metric_name': metric_name,
-                'value': value,
-                'period': period,
-                **kwargs
-            }
+                "event_type": "performance_metric",
+                "strategy": strategy_name,
+                "metric_name": metric_name,
+                "value": value,
+                "period": period,
+                **kwargs,
+            },
         )
 
 
@@ -294,26 +275,26 @@ class RiskLogger(StructuredLogger):
         result: str,
         symbol: Optional[str] = None,
         details: Optional[Dict[str, Any]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Log risk check result"""
         level_map: Dict[str, Callable[..., None]] = {
-            'passed': self.debug,
-            'warning': self.warning,
-            'failed': self.error,
+            "passed": self.debug,
+            "warning": self.warning,
+            "failed": self.error,
         }
         log_func = level_map.get(result, self.info)
 
         log_func(
             f"Risk check {check_type}: {result}" + (f" for {symbol}" if symbol else ""),
             extra={
-                'event_type': 'risk_check',
-                'check_type': check_type,
-                'result': result,
-                'symbol': symbol,
-                'details': details or {},
-                **kwargs
-            }
+                "event_type": "risk_check",
+                "check_type": check_type,
+                "result": result,
+                "symbol": symbol,
+                "details": details or {},
+                **kwargs,
+            },
         )
 
     def log_limit_violation(
@@ -323,70 +304,58 @@ class RiskLogger(StructuredLogger):
         current_value: float,
         symbol: Optional[str] = None,
         action_taken: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Log risk limit violation"""
         self.error(
             f"LIMIT VIOLATION: {limit_type} - "
-            f"limit={limit_value}, current={current_value}" +
-            (f" ({symbol})" if symbol else ""),
+            f"limit={limit_value}, current={current_value}" + (f" ({symbol})" if symbol else ""),
             extra={
-                'event_type': 'limit_violation',
-                'limit_type': limit_type,
-                'limit_value': limit_value,
-                'current_value': current_value,
-                'excess': current_value - limit_value,
-                'symbol': symbol,
-                'action_taken': action_taken,
-                **kwargs
-            }
+                "event_type": "limit_violation",
+                "limit_type": limit_type,
+                "limit_value": limit_value,
+                "current_value": current_value,
+                "excess": current_value - limit_value,
+                "symbol": symbol,
+                "action_taken": action_taken,
+                **kwargs,
+            },
         )
 
     def log_exposure_update(
-        self,
-        exposure_type: str,
-        value: float,
-        limit: Optional[float] = None,
-        **kwargs: Any
+        self, exposure_type: str, value: float, limit: Optional[float] = None, **kwargs: Any
     ) -> None:
         """Log exposure update"""
         self.debug(
-            f"Exposure {exposure_type}: {value}" +
-            (f" / {limit}" if limit else ""),
+            f"Exposure {exposure_type}: {value}" + (f" / {limit}" if limit else ""),
             extra={
-                'event_type': 'exposure_update',
-                'exposure_type': exposure_type,
-                'value': value,
-                'limit': limit,
-                'utilization': (value / limit if limit else None),
-                **kwargs
-            }
+                "event_type": "exposure_update",
+                "exposure_type": exposure_type,
+                "value": value,
+                "limit": limit,
+                "utilization": (value / limit if limit else None),
+                **kwargs,
+            },
         )
 
-    def log_risk_alert(
-        self,
-        alert_type: str,
-        severity: str,
-        message: str,
-        **kwargs: Any
-    ) -> None:
+    def log_risk_alert(self, alert_type: str, severity: str, message: str, **kwargs: Any) -> None:
         """Log risk alert"""
         level_map: Dict[str, Callable[..., None]] = {
-            'info': self.info,
-            'warning': self.warning,
-            'critical': self.critical,
+            "info": self.info,
+            "warning": self.warning,
+            "critical": self.critical,
         }
         log_func = level_map.get(severity, self.warning)
 
         log_func(
             f"Risk Alert [{alert_type}]: {message}",
             extra={
-                'event_type': 'risk_alert',
-                'alert_type': alert_type,
-                'severity': severity,
-                'message': message,
-                **kwargs
-            }
+                "event_type": "risk_alert",
+                "alert_type": alert_type,
+                "severity": severity,
+                "message": message,
+                **kwargs,
+            },
         )
 
 
@@ -413,22 +382,22 @@ class ExecutionLogger(StructuredLogger):
         quantity: float,
         order_type: str,
         price: Optional[float] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Log order submission"""
         self.info(
-            f"Order submitted: {order_id} - {side} {quantity} {symbol} ({order_type})" +
-            (f" @ {price}" if price else ""),
+            f"Order submitted: {order_id} - {side} {quantity} {symbol} ({order_type})"
+            + (f" @ {price}" if price else ""),
             extra={
-                'event_type': 'order_submitted',
-                'order_id': order_id,
-                'symbol': symbol,
-                'side': side,
-                'quantity': quantity,
-                'order_type': order_type,
-                'price': price,
-                **kwargs
-            }
+                "event_type": "order_submitted",
+                "order_id": order_id,
+                "symbol": symbol,
+                "side": side,
+                "quantity": quantity,
+                "order_type": order_type,
+                "price": price,
+                **kwargs,
+            },
         )
 
     def log_order_status(
@@ -437,20 +406,20 @@ class ExecutionLogger(StructuredLogger):
         status: str,
         filled_quantity: Optional[float] = None,
         remaining_quantity: Optional[float] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Log order status update"""
         self.info(
-            f"Order {order_id}: {status}" +
-            (f" (filled: {filled_quantity})" if filled_quantity else ""),
+            f"Order {order_id}: {status}"
+            + (f" (filled: {filled_quantity})" if filled_quantity else ""),
             extra={
-                'event_type': 'order_status',
-                'order_id': order_id,
-                'status': status,
-                'filled_quantity': filled_quantity,
-                'remaining_quantity': remaining_quantity,
-                **kwargs
-            }
+                "event_type": "order_status",
+                "order_id": order_id,
+                "status": status,
+                "filled_quantity": filled_quantity,
+                "remaining_quantity": remaining_quantity,
+                **kwargs,
+            },
         )
 
     def log_fill(
@@ -460,59 +429,51 @@ class ExecutionLogger(StructuredLogger):
         quantity: float,
         price: float,
         is_partial: bool = False,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Log order fill"""
         self.info(
-            f"Fill: {order_id} - {quantity} {symbol} @ {price}" +
-            (" (partial)" if is_partial else " (complete)"),
+            f"Fill: {order_id} - {quantity} {symbol} @ {price}"
+            + (" (partial)" if is_partial else " (complete)"),
             extra={
-                'event_type': 'order_fill',
-                'order_id': order_id,
-                'symbol': symbol,
-                'quantity': quantity,
-                'price': price,
-                'is_partial': is_partial,
-                **kwargs
-            }
+                "event_type": "order_fill",
+                "order_id": order_id,
+                "symbol": symbol,
+                "quantity": quantity,
+                "price": price,
+                "is_partial": is_partial,
+                **kwargs,
+            },
         )
 
     def log_execution_quality(
-        self,
-        order_id: str,
-        metric_name: str,
-        value: float,
-        **kwargs: Any
+        self, order_id: str, metric_name: str, value: float, **kwargs: Any
     ) -> None:
         """Log execution quality metric"""
         self.debug(
             f"Execution quality: {order_id} - {metric_name}={value}",
             extra={
-                'event_type': 'execution_quality',
-                'order_id': order_id,
-                'metric_name': metric_name,
-                'value': value,
-                **kwargs
-            }
+                "event_type": "execution_quality",
+                "order_id": order_id,
+                "metric_name": metric_name,
+                "value": value,
+                **kwargs,
+            },
         )
 
     def log_order_error(
-        self,
-        order_id: str,
-        error_code: str,
-        error_message: str,
-        **kwargs: Any
+        self, order_id: str, error_code: str, error_message: str, **kwargs: Any
     ) -> None:
         """Log order execution error"""
         self.error(
             f"Order error: {order_id} - {error_code}: {error_message}",
             extra={
-                'event_type': 'order_error',
-                'order_id': order_id,
-                'error_code': error_code,
-                'error_message': error_message,
-                **kwargs
-            }
+                "event_type": "order_error",
+                "order_id": order_id,
+                "error_code": error_code,
+                "error_message": error_message,
+                **kwargs,
+            },
         )
 
 
@@ -536,55 +497,36 @@ class SystemLogger(StructuredLogger):
         """Log component startup"""
         self.info(
             f"Starting {component} v{version}",
-            extra={
-                'event_type': 'startup',
-                'component': component,
-                'version': version,
-                **kwargs
-            }
+            extra={"event_type": "startup", "component": component, "version": version, **kwargs},
         )
 
-    def log_shutdown(
-        self,
-        component: str,
-        reason: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
+    def log_shutdown(self, component: str, reason: Optional[str] = None, **kwargs: Any) -> None:
         """Log component shutdown"""
         self.info(
             f"Shutting down {component}" + (f": {reason}" if reason else ""),
-            extra={
-                'event_type': 'shutdown',
-                'component': component,
-                'reason': reason,
-                **kwargs
-            }
+            extra={"event_type": "shutdown", "component": component, "reason": reason, **kwargs},
         )
 
     def log_health_check(
-        self,
-        component: str,
-        status: str,
-        details: Optional[Dict[str, Any]] = None,
-        **kwargs: Any
+        self, component: str, status: str, details: Optional[Dict[str, Any]] = None, **kwargs: Any
     ) -> None:
         """Log health check result"""
         level_map: Dict[str, Callable[..., None]] = {
-            'healthy': self.debug,
-            'degraded': self.warning,
-            'unhealthy': self.error,
+            "healthy": self.debug,
+            "degraded": self.warning,
+            "unhealthy": self.error,
         }
         log_func = level_map.get(status, self.info)
 
         log_func(
             f"Health check: {component} is {status}",
             extra={
-                'event_type': 'health_check',
-                'component': component,
-                'status': status,
-                'details': details or {},
-                **kwargs
-            }
+                "event_type": "health_check",
+                "component": component,
+                "status": status,
+                "details": details or {},
+                **kwargs,
+            },
         )
 
     def log_resource_usage(
@@ -593,20 +535,20 @@ class SystemLogger(StructuredLogger):
         value: float,
         unit: str,
         threshold: Optional[float] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Log resource usage"""
         level = self.warning if (threshold and value > threshold) else self.debug
         level(
             f"Resource usage: {resource_type}={value}{unit}",
             extra={
-                'event_type': 'resource_usage',
-                'resource_type': resource_type,
-                'value': value,
-                'unit': unit,
-                'threshold': threshold,
-                **kwargs
-            }
+                "event_type": "resource_usage",
+                "resource_type": resource_type,
+                "value": value,
+                "unit": unit,
+                "threshold": threshold,
+                **kwargs,
+            },
         )
 
     def log_config_change(
@@ -615,37 +557,33 @@ class SystemLogger(StructuredLogger):
         old_value: Any,
         new_value: Any,
         changed_by: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Log configuration change"""
         self.info(
             f"Config changed: {config_key} = {new_value} (was: {old_value})",
             extra={
-                'event_type': 'config_change',
-                'config_key': config_key,
-                'old_value': old_value,
-                'new_value': new_value,
-                'changed_by': changed_by,
-                **kwargs
-            }
+                "event_type": "config_change",
+                "config_key": config_key,
+                "old_value": old_value,
+                "new_value": new_value,
+                "changed_by": changed_by,
+                **kwargs,
+            },
         )
 
     def log_critical_error(
-        self,
-        component: str,
-        error: str,
-        recovery_action: Optional[str] = None,
-        **kwargs: Any
+        self, component: str, error: str, recovery_action: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Log critical system error"""
         self.critical(
-            f"CRITICAL ERROR in {component}: {error}" +
-            (f" - Recovery: {recovery_action}" if recovery_action else ""),
+            f"CRITICAL ERROR in {component}: {error}"
+            + (f" - Recovery: {recovery_action}" if recovery_action else ""),
             extra={
-                'event_type': 'critical_error',
-                'component': component,
-                'error': error,
-                'recovery_action': recovery_action,
-                **kwargs
-            }
+                "event_type": "critical_error",
+                "component": component,
+                "error": error,
+                "recovery_action": recovery_action,
+                **kwargs,
+            },
         )

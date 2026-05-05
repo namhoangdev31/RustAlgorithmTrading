@@ -4,6 +4,7 @@ Base collector interface for metrics collection.
 All metric collectors inherit from BaseCollector and implement
 the standard interface for lifecycle management and data retrieval.
 """
+
 from abc import ABC, abstractmethod
 from typing import Dict, Any, Optional
 from datetime import datetime, UTC
@@ -94,7 +95,7 @@ class BaseCollector(ABC):
             "status": status,
             "uptime_seconds": uptime,
             "metrics_collected": self.metrics_collected,
-            "errors": self.errors
+            "errors": self.errors,
         }
 
     @abstractmethod
@@ -121,7 +122,7 @@ class BaseCollector(ABC):
             "uptime": status["uptime_seconds"],
             "metrics_collected": self.metrics_collected,
             "errors": self.errors,
-            "error_rate": self.errors / max(self.metrics_collected, 1)
+            "error_rate": self.errors / max(self.metrics_collected, 1),
         }
 
     def _increment_metrics_count(self) -> None:

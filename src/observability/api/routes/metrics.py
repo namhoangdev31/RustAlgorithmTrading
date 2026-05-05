@@ -1,6 +1,7 @@
 """
 Metrics API routes for current and historical metrics.
 """
+
 from datetime import datetime, timedelta
 from typing import Dict, Any
 
@@ -11,7 +12,7 @@ from ...models.schemas import (
     MetricsSnapshot,
     MetricsHistoryRequest,
     MetricsHistoryResponse,
-    TimeRange
+    TimeRange,
 )
 
 router = APIRouter()
@@ -39,7 +40,7 @@ async def get_current_metrics() -> MetricsSnapshot:
             market_data=metrics.get("market_data", {}),
             strategy=metrics.get("strategy", {}),
             execution=metrics.get("execution", {}),
-            system=metrics.get("system", {})
+            system=metrics.get("system", {}),
         )
     except Exception as e:
         logger.error(f"[cid:INIT] Error getting current metrics: {e}")
@@ -78,6 +79,7 @@ async def get_metrics_history(request: MetricsHistoryRequest) -> MetricsHistoryR
 
         # Query from DuckDB
         from ...database import get_db
+
         db = get_db()
 
         data = []
@@ -88,15 +90,12 @@ async def get_metrics_history(request: MetricsHistoryRequest) -> MetricsHistoryR
                 start_time,
                 end_time,
                 symbol=request.symbols[0] if request.symbols else None,
-                interval=request.interval or "1m"
+                interval=request.interval or "1m",
             )
             data.extend([{"type": "market_data", **record} for record in market_data])
 
         if not request.metric_types or "strategy" in request.metric_types:
-            strategy_data = await db.query_strategy_metrics(
-                start_time,
-                end_time
-            )
+            strategy_data = await db.query_strategy_metrics(start_time, end_time)
             data.extend([{"type": "strategy", **record} for record in strategy_data])
 
         logger.info(
@@ -110,7 +109,7 @@ async def get_metrics_history(request: MetricsHistoryRequest) -> MetricsHistoryR
             end_time=end_time,
             interval=request.interval,
             data=data,
-            count=len(data)
+            count=len(data),
         )
     except Exception as e:
         logger.error(f"[cid:INIT] Error querying metrics history: {e}")
@@ -129,10 +128,7 @@ async def get_tracked_symbols() -> Dict[str, Any]:
 
         symbols = await market_data_collector.get_tracked_symbols()
 
-        return {
-            "symbols": symbols,
-            "count": len(symbols)
-        }
+        return {"symbols": symbols, "count": len(symbols)}
     except Exception as e:
         logger.error(f"[cid:INIT] Error getting tracked symbols: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -154,36 +150,28 @@ async def get_metrics_summary() -> Dict[str, Any]:
         summary = {
             "timestamp": datetime.utcnow(),
             "market": {
-                "symbols_tracked": len(
-                    metrics.get("market_data", {}).get("symbols", [])
-                ),
+                "symbols_tracked": len(metrics.get("market_data", {}).get("symbols", [])),
                 "total_trades": metrics.get("market_data", {}).get("total_trades", 0),
-                "total_volume": metrics.get("market_data", {}).get("total_volume", 0.0)
+                "total_volume": metrics.get("market_data", {}).get("total_volume", 0.0),
             },
             "strategy": {
-                "active_strategies": len(
-                    metrics.get("strategy", {}).get("strategies", [])
-                ),
+                "active_strategies": len(metrics.get("strategy", {}).get("strategies", [])),
                 "total_pnl": metrics.get("strategy", {}).get("total_pnl", 0.0),
                 "daily_pnl": metrics.get("strategy", {}).get("daily_pnl", 0.0),
-                "open_positions": metrics.get("strategy", {}).get("open_positions", 0)
+                "open_positions": metrics.get("strategy", {}).get("open_positions", 0),
             },
             "execution": {
                 "orders_today": metrics.get("execution", {}).get("orders_today", 0),
                 "fills_today": metrics.get("execution", {}).get("fills_today", 0),
-                "fill_rate": metrics.get("execution", {}).get(
-                    "fill_rate", 0.0
-                ),
-                "avg_latency_ms": metrics.get("execution", {}).get(
-                    "avg_latency_ms", 0.0
-                )
+                "fill_rate": metrics.get("execution", {}).get("fill_rate", 0.0),
+                "avg_latency_ms": metrics.get("execution", {}).get("avg_latency_ms", 0.0),
             },
             "system": {
                 "cpu_usage": metrics.get("system", {}).get("cpu_percent", 0.0),
                 "memory_usage": metrics.get("system", {}).get("memory_percent", 0.0),
                 "uptime_seconds": metrics.get("system", {}).get("uptime", 0.0),
-                "health_status": metrics.get("system", {}).get("health", "unknown")
-            }
+                "health_status": metrics.get("system", {}).get("health", "unknown"),
+            },
         }
 
         return summary

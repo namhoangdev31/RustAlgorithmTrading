@@ -18,6 +18,7 @@ from loguru import logger
 @dataclass
 class TransactionCost:
     """Complete transaction cost breakdown"""
+
     commission: float
     slippage: float
     market_impact: float
@@ -48,7 +49,7 @@ class TransactionCostModel:
         variable_commission_rate: float = 0.0005,  # 5 bps
         min_commission: float = 1.0,
         impact_coefficient: float = 0.1,
-        spread_model: str = 'fixed'
+        spread_model: str = "fixed",
     ):
         """
         Initialize transaction cost model
@@ -73,11 +74,7 @@ class TransactionCostModel:
         )
 
     def calculate_cost(
-        self,
-        price: float,
-        quantity: float,
-        side: str,
-        market_data: Optional[Dict[str, Any]] = None
+        self, price: float, quantity: float, side: str, market_data: Optional[Dict[str, Any]] = None
     ) -> TransactionCost:
         """
         Calculate total transaction costs for an order
@@ -110,11 +107,11 @@ class TransactionCostModel:
             market_impact=market_impact,
             total=total,
             metadata={
-                'price': price,
-                'quantity': quantity,
-                'side': side,
-                'notional': price * quantity
-            }
+                "price": price,
+                "quantity": quantity,
+                "side": side,
+                "notional": price * quantity,
+            },
         )
 
     def _calculate_commission(self, price: float, quantity: float) -> float:
@@ -135,11 +132,7 @@ class TransactionCostModel:
         return max(total, self.min_commission)
 
     def _calculate_slippage(
-        self,
-        price: float,
-        quantity: float,
-        side: str,
-        market_data: Dict[str, Any]
+        self, price: float, quantity: float, side: str, market_data: Dict[str, Any]
     ) -> float:
         """
         Calculate slippage cost based on spread and order size
@@ -160,7 +153,7 @@ class TransactionCostModel:
         half_spread = spread / 2.0
 
         # Additional slippage based on order size
-        avg_volume = market_data.get('avg_volume', 1000000)
+        avg_volume = market_data.get("avg_volume", 1000000)
         volume_ratio = quantity / avg_volume if avg_volume > 0 else 0.01
 
         # Larger orders get worse slippage
@@ -171,10 +164,7 @@ class TransactionCostModel:
         return quantity * price * total_slippage_pct
 
     def _calculate_market_impact(
-        self,
-        price: float,
-        quantity: float,
-        market_data: Dict[str, Any]
+        self, price: float, quantity: float, market_data: Dict[str, Any]
     ) -> float:
         """
         Calculate market impact using square-root model
@@ -191,8 +181,8 @@ class TransactionCostModel:
             Market impact cost in dollars
         """
         # Get market parameters
-        avg_volume = market_data.get('avg_volume', 1000000)
-        volatility = market_data.get('volatility', 0.02)  # Default 2% daily vol
+        avg_volume = market_data.get("avg_volume", 1000000)
+        volatility = market_data.get("volatility", 0.02)  # Default 2% daily vol
 
         # Volume ratio
         volume_ratio = quantity / avg_volume if avg_volume > 0 else 0.01
@@ -213,20 +203,20 @@ class TransactionCostModel:
         Returns:
             Spread as percentage
         """
-        if self.spread_model == 'fixed':
+        if self.spread_model == "fixed":
             # Fixed spread (10 bps)
             return 0.001
 
-        elif self.spread_model == 'volume':
+        elif self.spread_model == "volume":
             # Spread inversely proportional to volume
-            avg_volume = market_data.get('avg_volume', 1000000)
+            avg_volume = market_data.get("avg_volume", 1000000)
             base_spread = 0.001
             volume_factor = 1000000 / max(avg_volume, 100000)
             return base_spread * volume_factor
 
-        elif self.spread_model == 'volatility':
+        elif self.spread_model == "volatility":
             # Spread proportional to volatility
-            volatility = market_data.get('volatility', 0.02)
+            volatility = market_data.get("volatility", 0.02)
             return volatility * 0.1  # 10% of daily volatility
 
         else:
@@ -251,10 +241,7 @@ class OrderBookSlippageModel:
         logger.info(f"OrderBookSlippageModel initialized with {depth_levels} levels")
 
     def calculate_execution_price(
-        self,
-        order_quantity: float,
-        side: str,
-        order_book: Dict[str, List[tuple]]
+        self, order_quantity: float, side: str, order_book: Dict[str, List[tuple]]
     ) -> tuple[float, float]:
         """
         Calculate execution price by walking the order book
@@ -268,12 +255,12 @@ class OrderBookSlippageModel:
             Tuple of (average_execution_price, slippage_cost)
         """
         # Select appropriate side
-        levels = order_book['asks'] if side == 'buy' else order_book['bids']
+        levels = order_book["asks"] if side == "buy" else order_book["bids"]
 
         remaining = order_quantity
         total_cost = 0.0
 
-        for price, size in levels[:self.depth_levels]:
+        for price, size in levels[: self.depth_levels]:
             if remaining <= 0:
                 break
 
@@ -284,7 +271,7 @@ class OrderBookSlippageModel:
         if remaining > 0:
             # Not enough liquidity - use last price with penalty
             last_price = levels[-1][0] if levels else 0
-            penalty = 1.02 if side == 'buy' else 0.98
+            penalty = 1.02 if side == "buy" else 0.98
             total_cost += remaining * last_price * penalty
 
         avg_price = total_cost / order_quantity if order_quantity > 0 else 0

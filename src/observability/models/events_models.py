@@ -6,6 +6,7 @@ Events are used for:
 - Event-driven triggers
 - Logging and auditing
 """
+
 from datetime import datetime
 from typing import Dict, Any, Optional
 from enum import Enum
@@ -14,6 +15,7 @@ from pydantic import BaseModel, Field
 
 class EventType(str, Enum):
     """Types of events in the system."""
+
     # Metric events
     METRIC_UPDATE = "metric_update"
     METRIC_THRESHOLD = "metric_threshold"
@@ -41,6 +43,7 @@ class EventType(str, Enum):
 
 class BaseEvent(BaseModel):
     """Base event model."""
+
     event_id: str = Field(description="Unique event identifier")
     event_type: EventType
     timestamp: datetime
@@ -50,6 +53,7 @@ class BaseEvent(BaseModel):
 
 class MetricEvent(BaseEvent):
     """Metric update or threshold event."""
+
     metric_name: str
     metric_value: float
     threshold: Optional[float] = None
@@ -58,6 +62,7 @@ class MetricEvent(BaseEvent):
 
 class TradeEvent(BaseEvent):
     """Trade execution event."""
+
     trade_id: str
     symbol: str
     side: str  # "buy" or "sell"
@@ -69,6 +74,7 @@ class TradeEvent(BaseEvent):
 
 class OrderEvent(BaseEvent):
     """Order lifecycle event."""
+
     order_id: str
     client_order_id: str
     symbol: str
@@ -81,6 +87,7 @@ class OrderEvent(BaseEvent):
 
 class AlertEvent(BaseEvent):
     """System alert event."""
+
     alert_type: str  # "warning", "error", "critical"
     severity: str  # "low", "medium", "high", "critical"
     message: str
@@ -90,12 +97,14 @@ class AlertEvent(BaseEvent):
 
 class StrategyEvent(BaseEvent):
     """Strategy-related event."""
+
     strategy_name: str
     event_data: Dict[str, Any]
 
 
 class SystemEvent(BaseEvent):
     """System-level event."""
+
     component: str
     status: str  # "healthy", "degraded", "unhealthy", "error"
     message: str

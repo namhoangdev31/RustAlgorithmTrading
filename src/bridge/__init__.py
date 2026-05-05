@@ -7,20 +7,9 @@ and Rust trading engines through:
   - ZeroMQ messaging for async communication
 """
 
-from .rust_bridge import (
-    MarketBar,
-    RustFeatureComputer,
-    test_rust_bridge
-)
+from .rust_bridge import MarketBar, RustFeatureComputer, test_rust_bridge
 
-from .zmq_bridge import (
-    ZMQPublisher,
-    ZMQSubscriber,
-    MessageType,
-    Signal,
-    Position,
-    test_zmq_bridge
-)
+from .zmq_bridge import ZMQPublisher, ZMQSubscriber, MessageType, Signal, Position, test_zmq_bridge
 
 __all__ = [
     # Rust bridge

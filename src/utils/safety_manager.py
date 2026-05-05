@@ -89,29 +89,32 @@ class SafetyGuardrailsManager(StagingHardeningManager):
         safety_records = [r for r in self.records if isinstance(r, SafetyGuardrailsRecord)]
 
         kill_switch_records = [
-            r for r in safety_records
-            if r.trigger_type == SafetyTriggerType.KILL_SWITCH and r.kill_switch_latency_ms is not None
+            r
+            for r in safety_records
+            if r.trigger_type == SafetyTriggerType.KILL_SWITCH
+            and r.kill_switch_latency_ms is not None
         ]
         risk_off_records = [
-            r for r in safety_records
-            if r.trigger_type == SafetyTriggerType.RISK_OFF
+            r for r in safety_records if r.trigger_type == SafetyTriggerType.RISK_OFF
         ]
         rollback_records = [
-            r for r in safety_records
-            if r.trigger_type == SafetyTriggerType.ROLLBACK
+            r for r in safety_records if r.trigger_type == SafetyTriggerType.ROLLBACK
         ]
 
         max_kill_switch_ms = max((r.kill_switch_latency_ms for r in kill_switch_records), default=0)
         risk_off_pass_rate = (
             sum(1 for r in risk_off_records if r.disposition == "PASS") / len(risk_off_records)
-            if risk_off_records else 0.0
+            if risk_off_records
+            else 0.0
         )
         rollback_pass_rate = (
             sum(1 for r in rollback_records if r.disposition == "PASS") / len(rollback_records)
-            if rollback_records else 0.0
+            if rollback_records
+            else 0.0
         )
         unmitigated_breaches = sum(
-            1 for r in safety_records
+            1
+            for r in safety_records
             if r.risk_boundary and r.metadata.get("breach_mitigated") is False
         )
 

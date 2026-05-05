@@ -22,6 +22,7 @@ from strategies.base import Strategy, Signal, SignalType
 @dataclass
 class OrderBookSnapshot:
     """Order book snapshot at a point in time"""
+
     timestamp: pd.Timestamp
     bids: List[tuple[float, float]]  # List of (price, size)
     asks: List[tuple[float, float]]
@@ -45,18 +46,16 @@ class OrderBookImbalanceStrategy(Strategy):
     """
 
     def __init__(
-        self,
-        name: str = "OrderBookImbalance",
-        parameters: Optional[Dict[str, Any]] = None
+        self, name: str = "OrderBookImbalance", parameters: Optional[Dict[str, Any]] = None
     ):
         """Initialize order book imbalance strategy"""
         default_params = {
-            'depth_levels': 5,
-            'imbalance_threshold': 0.6,
-            'position_size_pct': 0.1,
-            'holding_period': 5,
-            'min_spread_bps': 1,  # Minimum spread in basis points
-            'max_spread_bps': 50  # Maximum spread in basis points
+            "depth_levels": 5,
+            "imbalance_threshold": 0.6,
+            "position_size_pct": 0.1,
+            "holding_period": 5,
+            "min_spread_bps": 1,  # Minimum spread in basis points
+            "max_spread_bps": 50,  # Maximum spread in basis points
         }
 
         if parameters:
@@ -85,34 +84,36 @@ class OrderBookImbalanceStrategy(Strategy):
             return []
 
         signals = []
-        symbol = data.attrs.get('symbol', 'UNKNOWN')
-        depth = self.get_parameter('depth_levels', 5)
-        threshold = self.get_parameter('imbalance_threshold', 0.6)
-        holding_period = self.get_parameter('holding_period', 5)
+        symbol = data.attrs.get("symbol", "UNKNOWN")
+        depth = self.get_parameter("depth_levels", 5)
+        threshold = self.get_parameter("imbalance_threshold", 0.6)
+        holding_period = self.get_parameter("holding_period", 5)
 
         for i in range(len(data)):
             current_time = data.index[i]
-            current_price = data.iloc[i]['close']
+            current_price = data.iloc[i]["close"]
 
             # Check if we should exit existing position
             if symbol in self.entry_bars:
                 bars_held = i - self.entry_bars[symbol]
                 if bars_held >= holding_period:
-                    signals.append(Signal(
-                        timestamp=current_time,
-                        symbol=symbol,
-                        signal_type=SignalType.EXIT,
-                        price=current_price,
-                        confidence=0.8,
-                        metadata={'reason': 'holding_period_exit'}
-                    ))
+                    signals.append(
+                        Signal(
+                            timestamp=current_time,
+                            symbol=symbol,
+                            signal_type=SignalType.EXIT,
+                            price=current_price,
+                            confidence=0.8,
+                            metadata={"reason": "holding_period_exit"},
+                        )
+                    )
                     del self.entry_bars[symbol]
                     continue
 
             # Try to extract order book data
             try:
-                bids = self._extract_order_book_side(data.iloc[i], 'bid', depth)
-                asks = self._extract_order_book_side(data.iloc[i], 'ask', depth)
+                bids = self._extract_order_book_side(data.iloc[i], "bid", depth)
+                asks = self._extract_order_book_side(data.iloc[i], "ask", depth)
 
                 if not bids or not asks:
                     continue
@@ -122,8 +123,8 @@ class OrderBookImbalanceStrategy(Strategy):
 
                 # Check spread
                 spread_bps = self._calculate_spread_bps(bids[0][0], asks[0][0])
-                min_spread = self.get_parameter('min_spread_bps', 1)
-                max_spread = self.get_parameter('max_spread_bps', 50)
+                min_spread = self.get_parameter("min_spread_bps", 1)
+                max_spread = self.get_parameter("max_spread_bps", 50)
 
                 if spread_bps < min_spread or spread_bps > max_spread:
                     continue
@@ -131,34 +132,38 @@ class OrderBookImbalanceStrategy(Strategy):
                 # Generate signals
                 if imbalance > threshold and symbol not in self.entry_bars:
                     # Strong bid side - long signal
-                    signals.append(Signal(
-                        timestamp=current_time,
-                        symbol=symbol,
-                        signal_type=SignalType.LONG,
-                        price=current_price,
-                        confidence=min(imbalance, 1.0),
-                        metadata={
-                            'imbalance': imbalance,
-                            'spread_bps': spread_bps,
-                            'reason': 'bid_imbalance'
-                        }
-                    ))
+                    signals.append(
+                        Signal(
+                            timestamp=current_time,
+                            symbol=symbol,
+                            signal_type=SignalType.LONG,
+                            price=current_price,
+                            confidence=min(imbalance, 1.0),
+                            metadata={
+                                "imbalance": imbalance,
+                                "spread_bps": spread_bps,
+                                "reason": "bid_imbalance",
+                            },
+                        )
+                    )
                     self.entry_bars[symbol] = i
 
                 elif imbalance < (1 - threshold) and symbol not in self.entry_bars:
                     # Strong ask side - short signal
-                    signals.append(Signal(
-                        timestamp=current_time,
-                        symbol=symbol,
-                        signal_type=SignalType.SHORT,
-                        price=current_price,
-                        confidence=min(1 - imbalance, 1.0),
-                        metadata={
-                            'imbalance': imbalance,
-                            'spread_bps': spread_bps,
-                            'reason': 'ask_imbalance'
-                        }
-                    ))
+                    signals.append(
+                        Signal(
+                            timestamp=current_time,
+                            symbol=symbol,
+                            signal_type=SignalType.SHORT,
+                            price=current_price,
+                            confidence=min(1 - imbalance, 1.0),
+                            metadata={
+                                "imbalance": imbalance,
+                                "spread_bps": spread_bps,
+                                "reason": "ask_imbalance",
+                            },
+                        )
+                    )
                     self.entry_bars[symbol] = i
 
             except Exception as e:
@@ -169,10 +174,7 @@ class OrderBookImbalanceStrategy(Strategy):
         return signals
 
     def _extract_order_book_side(
-        self,
-        row: pd.Series,
-        side: str,
-        depth: int
+        self, row: pd.Series, side: str, depth: int
     ) -> List[tuple[float, float]]:
         """
         Extract order book levels from data row
@@ -188,14 +190,14 @@ class OrderBookImbalanceStrategy(Strategy):
         levels = []
 
         for i in range(depth):
-            price_col = f'{side}_price_{i}'
-            size_col = f'{side}_size_{i}'
+            price_col = f"{side}_price_{i}"
+            size_col = f"{side}_size_{i}"
 
             # Try alternative column names
             if price_col not in row:
-                price_col = f'{side}_prices_{i}'
+                price_col = f"{side}_prices_{i}"
             if size_col not in row:
-                size_col = f'{side}_sizes_{i}'
+                size_col = f"{side}_sizes_{i}"
 
             if price_col in row and size_col in row:
                 price = row[price_col]
@@ -207,10 +209,7 @@ class OrderBookImbalanceStrategy(Strategy):
         return levels
 
     def _calculate_imbalance(
-        self,
-        bids: List[tuple[float, float]],
-        asks: List[tuple[float, float]],
-        depth: int
+        self, bids: List[tuple[float, float]], asks: List[tuple[float, float]], depth: int
     ) -> float:
         """
         Calculate order book imbalance ratio
@@ -255,10 +254,7 @@ class OrderBookImbalanceStrategy(Strategy):
         return (spread / mid) * 10000  # Convert to bps
 
     def calculate_position_size(
-        self,
-        signal: Signal,
-        account_value: float,
-        current_position: float = 0.0
+        self, signal: Signal, account_value: float, current_position: float = 0.0
     ) -> float:
         """
         Calculate position size based on confidence and account value
@@ -271,7 +267,7 @@ class OrderBookImbalanceStrategy(Strategy):
         Returns:
             Position size in shares
         """
-        position_pct = self.get_parameter('position_size_pct', 0.1)
+        position_pct = self.get_parameter("position_size_pct", 0.1)
 
         # Scale by confidence
         adjusted_pct = position_pct * signal.confidence

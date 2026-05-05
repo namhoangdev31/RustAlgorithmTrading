@@ -14,9 +14,11 @@ from typing import Dict, List, Optional
 from dataclasses import dataclass
 from models import PricePredictor
 
+
 @dataclass
 class MonteCarloConfig:
     """Configuration for Monte Carlo simulations."""
+
     n_simulations: int = 1000
     confidence_level: float = 0.95
     random_seed: int = 42
@@ -49,10 +51,7 @@ class MLMonteCarloSimulator:
         np.random.seed(self.config.random_seed)
 
     def simulate_prediction_uncertainty(
-        self,
-        model,
-        X: np.ndarray,
-        n_simulations: Optional[int] = None
+        self, model, X: np.ndarray, n_simulations: Optional[int] = None
     ) -> Dict:
         """
         Simulate prediction uncertainty using bootstrap.
@@ -88,20 +87,15 @@ class MLMonteCarloSimulator:
         upper_bound = np.percentile(predictions, 97.5, axis=0)
 
         return {
-            'mean': mean_pred,
-            'std': std_pred,
-            'lower_95': lower_bound,
-            'upper_95': upper_bound,
-            'predictions': predictions
+            "mean": mean_pred,
+            "std": std_pred,
+            "lower_95": lower_bound,
+            "upper_95": upper_bound,
+            "predictions": predictions,
         }
 
     def feature_permutation_importance(
-        self,
-        model,
-        X: np.ndarray,
-        y: np.ndarray,
-        feature_names: List[str],
-        n_repeats: int = 10
+        self, model, X: np.ndarray, y: np.ndarray, feature_names: List[str], n_repeats: int = 10
     ) -> pd.DataFrame:
         """
         Calculate feature importance via permutation.
@@ -135,13 +129,15 @@ class MLMonteCarloSimulator:
                 metric = list(score.values())[0]
                 scores.append(baseline_metric - metric)
 
-            importances.append({
-                'feature': feature_name,
-                'importance_mean': np.mean(scores),
-                'importance_std': np.std(scores)
-            })
+            importances.append(
+                {
+                    "feature": feature_name,
+                    "importance_mean": np.mean(scores),
+                    "importance_std": np.std(scores),
+                }
+            )
 
-        return pd.DataFrame(importances).sort_values('importance_mean', ascending=False)
+        return pd.DataFrame(importances).sort_values("importance_mean", ascending=False)
 
     def simulate_strategy_returns(
         self,
@@ -149,7 +145,7 @@ class MLMonteCarloSimulator:
         X: np.ndarray,
         y: np.ndarray,
         initial_capital: float = 100000,
-        n_simulations: Optional[int] = None
+        n_simulations: Optional[int] = None,
     ) -> Dict:
         """
         Monte Carlo simulation of strategy returns.
@@ -190,12 +186,16 @@ class MLMonteCarloSimulator:
             cumulative = initial_capital * (1 + strategy_returns).cumprod()
 
             # Final value
-            final_values.append(cumulative.iloc[-1] if isinstance(cumulative, pd.Series) else cumulative[-1])
+            final_values.append(
+                cumulative.iloc[-1] if isinstance(cumulative, pd.Series) else cumulative[-1]
+            )
 
             # Max drawdown
             running_max = np.maximum.accumulate(cumulative)
             drawdown = (cumulative - running_max) / running_max
-            max_drawdowns.append(drawdown.min() if isinstance(drawdown, pd.Series) else np.min(drawdown))
+            max_drawdowns.append(
+                drawdown.min() if isinstance(drawdown, pd.Series) else np.min(drawdown)
+            )
 
             # Sharpe ratio
             mean_return = strategy_returns.mean()
@@ -211,19 +211,19 @@ class MLMonteCarloSimulator:
         cvar_95 = returns[returns <= var_95].mean()
 
         return {
-            'mean_return': returns.mean(),
-            'std_return': returns.std(),
-            'median_return': np.median(returns),
-            'var_95': var_95,  # Value at Risk (95% confidence)
-            'cvar_95': cvar_95,  # Conditional VaR
-            'mean_sharpe': np.mean(sharpe_ratios),
-            'mean_max_drawdown': np.mean(max_drawdowns),
-            'prob_profit': (returns > 0).sum() / len(returns),
-            'percentile_5': np.percentile(returns, 5),
-            'percentile_95': np.percentile(returns, 95),
-            'all_returns': returns,
-            'all_sharpe': sharpe_ratios,
-            'all_drawdowns': max_drawdowns
+            "mean_return": returns.mean(),
+            "std_return": returns.std(),
+            "median_return": np.median(returns),
+            "var_95": var_95,  # Value at Risk (95% confidence)
+            "cvar_95": cvar_95,  # Conditional VaR
+            "mean_sharpe": np.mean(sharpe_ratios),
+            "mean_max_drawdown": np.mean(max_drawdowns),
+            "prob_profit": (returns > 0).sum() / len(returns),
+            "percentile_5": np.percentile(returns, 5),
+            "percentile_95": np.percentile(returns, 95),
+            "all_returns": returns,
+            "all_sharpe": sharpe_ratios,
+            "all_drawdowns": max_drawdowns,
         }
 
     def stress_test_features(
@@ -232,7 +232,7 @@ class MLMonteCarloSimulator:
         X: np.ndarray,
         y: np.ndarray,
         stress_factor: float = 2.0,
-        n_simulations: int = 100
+        n_simulations: int = 100,
     ) -> Dict:
         """
         Stress test model by perturbing features.
@@ -261,23 +261,18 @@ class MLMonteCarloSimulator:
 
         # Aggregate results
         metric_names = list(baseline_metrics.keys())
-        results = {'baseline': baseline_metrics}
+        results = {"baseline": baseline_metrics}
 
         for metric in metric_names:
             values = [m[metric] for m in stressed_metrics]
-            results[f'{metric}_mean_stressed'] = np.mean(values)
-            results[f'{metric}_std_stressed'] = np.std(values)
-            results[f'{metric}_worst'] = np.min(values) if 'r2' in metric else np.max(values)
+            results[f"{metric}_mean_stressed"] = np.mean(values)
+            results[f"{metric}_std_stressed"] = np.std(values)
+            results[f"{metric}_worst"] = np.min(values) if "r2" in metric else np.max(values)
 
         return results
 
     def bootstrap_confidence_intervals(
-        self,
-        model,
-        X: np.ndarray,
-        y: np.ndarray,
-        n_bootstrap: int = 1000,
-        confidence: float = 0.95
+        self, model, X: np.ndarray, y: np.ndarray, n_bootstrap: int = 1000, confidence: float = 0.95
     ) -> Dict:
         """
         Calculate confidence intervals via bootstrap.
@@ -314,16 +309,14 @@ class MLMonteCarloSimulator:
 
         for metric in metric_names:
             values = [m[metric] for m in all_metrics]
-            results[f'{metric}_mean'] = np.mean(values)
-            results[f'{metric}_lower'] = np.percentile(values, lower_percentile)
-            results[f'{metric}_upper'] = np.percentile(values, upper_percentile)
+            results[f"{metric}_mean"] = np.mean(values)
+            results[f"{metric}_lower"] = np.percentile(values, lower_percentile)
+            results[f"{metric}_upper"] = np.percentile(values, upper_percentile)
 
         return results
 
     def generate_simulation_report(
-        self,
-        strategy_results: Dict,
-        feature_importance: pd.DataFrame = None
+        self, strategy_results: Dict, feature_importance: pd.DataFrame = None
     ) -> str:
         """
         Generate comprehensive simulation report.
@@ -367,8 +360,10 @@ class MLMonteCarloSimulator:
         if feature_importance is not None:
             report.append("TOP 10 IMPORTANT FEATURES:")
             for idx, row in feature_importance.head(10).iterrows():
-                report.append(f"  {row['feature']:30s} {row['importance_mean']:8.4f} "
-                            f"(±{row['importance_std']:.4f})")
+                report.append(
+                    f"  {row['feature']:30s} {row['importance_mean']:8.4f} "
+                    f"(±{row['importance_std']:.4f})"
+                )
             report.append("")
 
         report.append("=" * 70)
@@ -389,7 +384,7 @@ def main():
     y = X[:, 0] * 0.01 + np.random.randn(n_samples) * 0.02  # Noisy linear relationship
 
     # Create and train simple mode
-    model = PricePredictor(model_type='random_forest', n_estimators=50)
+    model = PricePredictor(model_type="random_forest", n_estimators=50)
     model.train(X[:800], y[:800])
 
     # Initialize simulator
@@ -401,9 +396,7 @@ def main():
 
     print("2. Calculating feature importance...")
     feature_names = [f"feature_{i}" for i in range(n_features)]
-    importance = simulator.feature_permutation_importance(
-        model, X[800:], y[800:], feature_names
-    )
+    importance = simulator.feature_permutation_importance(model, X[800:], y[800:], feature_names)
     print(f"   Top 3 features: {importance['feature'].head(3).tolist()}\n")
 
     print("3. Simulating strategy returns...")
@@ -412,5 +405,5 @@ def main():
     print("\n" + simulator.generate_simulation_report(results, importance))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

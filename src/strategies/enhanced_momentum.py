@@ -39,10 +39,11 @@ from data.indicators import TechnicalIndicators
 
 class SignalQuality(Enum):
     """Signal quality classification based on indicator confluence"""
-    STRONG = "strong"      # All indicators aligned, high confidence
+
+    STRONG = "strong"  # All indicators aligned, high confidence
     MODERATE = "moderate"  # Majority alignment, medium confidence
-    WEAK = "weak"          # Minimal alignment, low confidence
-    INVALID = "invalid"    # Contradicting signals, no trade
+    WEAK = "weak"  # Minimal alignment, low confidence
+    INVALID = "invalid"  # Contradicting signals, no trade
 
 
 @dataclass
@@ -60,6 +61,7 @@ class RiskParameters:
         trailing_stop_activation: Profit % to activate trailing stop (default: 0.05 = 5%)
         trailing_stop_distance: Trailing stop distance as % (default: 0.03 = 3%)
     """
+
     max_position_size: float = 0.15
     risk_per_trade: float = 0.02
     max_portfolio_exposure: float = 0.60
@@ -78,11 +80,12 @@ class IndicatorThresholds:
     These values are derived from backtesting and statistical analysis
     to maximize risk-adjusted returns while minimizing false signals.
     """
+
     # RSI thresholds
     rsi_period: int = 14
-    rsi_oversold: float = 30      # Strong buy zone
+    rsi_oversold: float = 30  # Strong buy zone
     rsi_moderate_oversold: float = 40  # Moderate buy zone
-    rsi_overbought: float = 70    # Strong sell zone
+    rsi_overbought: float = 70  # Strong sell zone
     rsi_moderate_overbought: float = 60  # Moderate sell zone
 
     # MACD parameters
@@ -106,6 +109,7 @@ class TradeRationale:
     """
     Detailed rationale for trade decision including all indicator values
     """
+
     timestamp: datetime
     symbol: str
     signal_type: SignalType
@@ -136,30 +140,30 @@ class TradeRationale:
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for logging"""
         return {
-            'timestamp': self.timestamp.isoformat(),
-            'symbol': self.symbol,
-            'signal_type': self.signal_type.value,
-            'signal_quality': self.signal_quality.value,
-            'confidence_score': round(self.confidence_score, 4),
-            'indicators': {
-                'rsi': round(self.rsi, 2),
-                'rsi_trend': self.rsi_trend,
-                'macd': round(self.macd, 4),
-                'macd_signal': round(self.macd_signal, 4),
-                'macd_histogram': round(self.macd_histogram, 4),
-                'ema_fast': round(self.ema_fast, 2),
-                'ema_slow': round(self.ema_slow, 2),
-                'trend_direction': self.trend_direction,
-                'volume_ratio': round(self.volume_ratio, 2)
+            "timestamp": self.timestamp.isoformat(),
+            "symbol": self.symbol,
+            "signal_type": self.signal_type.value,
+            "signal_quality": self.signal_quality.value,
+            "confidence_score": round(self.confidence_score, 4),
+            "indicators": {
+                "rsi": round(self.rsi, 2),
+                "rsi_trend": self.rsi_trend,
+                "macd": round(self.macd, 4),
+                "macd_signal": round(self.macd_signal, 4),
+                "macd_histogram": round(self.macd_histogram, 4),
+                "ema_fast": round(self.ema_fast, 2),
+                "ema_slow": round(self.ema_slow, 2),
+                "trend_direction": self.trend_direction,
+                "volume_ratio": round(self.volume_ratio, 2),
             },
-            'risk_management': {
-                'atr': round(self.atr, 4),
-                'stop_loss': round(self.stop_loss_price, 2),
-                'take_profit': round(self.take_profit_price, 2),
-                'risk_reward': round(self.risk_reward_ratio, 2),
-                'position_size': round(self.position_size_shares, 2)
+            "risk_management": {
+                "atr": round(self.atr, 4),
+                "stop_loss": round(self.stop_loss_price, 2),
+                "take_profit": round(self.take_profit_price, 2),
+                "risk_reward": round(self.risk_reward_ratio, 2),
+                "position_size": round(self.position_size_shares, 2),
             },
-            'metadata': self.metadata
+            "metadata": self.metadata,
         }
 
 
@@ -202,7 +206,7 @@ class EnhancedMomentumStrategy(Strategy):
         min_signal_quality: SignalQuality = SignalQuality.MODERATE,
         enable_volume_filter: bool = True,
         enable_trend_filter: bool = True,
-        parameters: Optional[Dict[str, Any]] = None
+        parameters: Optional[Dict[str, Any]] = None,
     ):
         """
         Initialize Enhanced Momentum Strategy
@@ -218,12 +222,14 @@ class EnhancedMomentumStrategy(Strategy):
         """
         # Initialize base strategy
         params = parameters or {}
-        params.update({
-            'symbols': symbols,
-            'min_signal_quality': min_signal_quality.value,
-            'enable_volume_filter': enable_volume_filter,
-            'enable_trend_filter': enable_trend_filter
-        })
+        params.update(
+            {
+                "symbols": symbols,
+                "min_signal_quality": min_signal_quality.value,
+                "enable_volume_filter": enable_volume_filter,
+                "enable_trend_filter": enable_trend_filter,
+            }
+        )
 
         super().__init__(name="EnhancedMomentumStrategy", parameters=params)
 
@@ -265,41 +271,37 @@ class EnhancedMomentumStrategy(Strategy):
         df = data.copy()
 
         # RSI - Relative Strength Index
-        df['rsi'] = TechnicalIndicators.rsi(df['close'], self.thresholds.rsi_period)
-        df['rsi_prev'] = df['rsi'].shift(1)
+        df["rsi"] = TechnicalIndicators.rsi(df["close"], self.thresholds.rsi_period)
+        df["rsi_prev"] = df["rsi"].shift(1)
 
         # MACD - Moving Average Convergence Divergence
         macd_line, signal_line, histogram = TechnicalIndicators.macd(
-            df['close'],
+            df["close"],
             self.thresholds.macd_fast,
             self.thresholds.macd_slow,
-            self.thresholds.macd_signal
+            self.thresholds.macd_signal,
         )
-        df['macd'] = macd_line
-        df['macd_signal'] = signal_line
-        df['macd_histogram'] = histogram
-        df['macd_prev'] = df['macd'].shift(1)
-        df['macd_signal_prev'] = df['macd_signal'].shift(1)
+        df["macd"] = macd_line
+        df["macd_signal"] = signal_line
+        df["macd_histogram"] = histogram
+        df["macd_prev"] = df["macd"].shift(1)
+        df["macd_signal_prev"] = df["macd_signal"].shift(1)
 
         # EMA - Exponential Moving Averages for trend
-        df['ema_fast'] = TechnicalIndicators.ema(df['close'], self.thresholds.ema_fast)
-        df['ema_slow'] = TechnicalIndicators.ema(df['close'], self.thresholds.ema_slow)
-        df['ema_distance'] = (df['ema_fast'] - df['ema_slow']) / df['ema_slow']
+        df["ema_fast"] = TechnicalIndicators.ema(df["close"], self.thresholds.ema_fast)
+        df["ema_slow"] = TechnicalIndicators.ema(df["close"], self.thresholds.ema_slow)
+        df["ema_distance"] = (df["ema_fast"] - df["ema_slow"]) / df["ema_slow"]
 
         # ATR - Average True Range for volatility-based stops
-        df['atr'] = TechnicalIndicators.atr(
-            df['high'], df['low'], df['close'], period=14
-        )
+        df["atr"] = TechnicalIndicators.atr(df["high"], df["low"], df["close"], period=14)
 
         # Volume analysis
-        df['volume_sma'] = df['volume'].rolling(
-            window=self.thresholds.volume_sma_period
-        ).mean()
-        df['volume_ratio'] = df['volume'] / df['volume_sma']
+        df["volume_sma"] = df["volume"].rolling(window=self.thresholds.volume_sma_period).mean()
+        df["volume_ratio"] = df["volume"] / df["volume_sma"]
 
         # Additional momentum indicators
-        df['close_prev'] = df['close'].shift(1)
-        df['price_change'] = (df['close'] - df['close_prev']) / df['close_prev']
+        df["close_prev"] = df["close"].shift(1)
+        df["price_change"] = (df["close"] - df["close_prev"]) / df["close_prev"]
 
         logger.debug(f"Calculated indicators for {len(df)} bars")
         return df
@@ -311,8 +313,8 @@ class EnhancedMomentumStrategy(Strategy):
         Returns:
             Tuple of (signal_type, strength, trend_description)
         """
-        rsi = row['rsi']
-        rsi_prev = row['rsi_prev']
+        rsi = row["rsi"]
+        rsi_prev = row["rsi_prev"]
 
         if pd.isna(rsi) or pd.isna(rsi_prev):
             return None, 0.0, "invalid"
@@ -323,9 +325,11 @@ class EnhancedMomentumStrategy(Strategy):
             return SignalType.LONG, strength, "rising_from_oversold"
 
         # Moderate long: In moderate oversold zone with upward momentum
-        elif (rsi > self.thresholds.rsi_oversold and
-              rsi < self.thresholds.rsi_moderate_oversold and
-              rsi > rsi_prev):
+        elif (
+            rsi > self.thresholds.rsi_oversold
+            and rsi < self.thresholds.rsi_moderate_oversold
+            and rsi > rsi_prev
+        ):
             strength = 0.6
             return SignalType.LONG, strength, "moderate_oversold_rising"
 
@@ -335,9 +339,11 @@ class EnhancedMomentumStrategy(Strategy):
             return SignalType.SHORT, strength, "falling_from_overbought"
 
         # Moderate short: In moderate overbought zone with downward momentum
-        elif (rsi < self.thresholds.rsi_overbought and
-              rsi > self.thresholds.rsi_moderate_overbought and
-              rsi < rsi_prev):
+        elif (
+            rsi < self.thresholds.rsi_overbought
+            and rsi > self.thresholds.rsi_moderate_overbought
+            and rsi < rsi_prev
+        ):
             strength = 0.6
             return SignalType.SHORT, strength, "moderate_overbought_falling"
 
@@ -350,33 +356,33 @@ class EnhancedMomentumStrategy(Strategy):
         Returns:
             Tuple of (signal_type, strength, description)
         """
-        macd = row['macd']
-        signal = row['macd_signal']
-        histogram = row['macd_histogram']
-        macd_prev = row['macd_prev']
-        signal_prev = row['macd_signal_prev']
+        macd = row["macd"]
+        signal = row["macd_signal"]
+        histogram = row["macd_histogram"]
+        macd_prev = row["macd_prev"]
+        signal_prev = row["macd_signal_prev"]
 
         if pd.isna(macd) or pd.isna(signal):
             return None, 0.0, "invalid"
 
         # Bullish crossover: MACD crosses above signal
         if macd > signal and macd_prev <= signal_prev:
-            strength = min(abs(histogram) / row['close'], 1.0)
+            strength = min(abs(histogram) / row["close"], 1.0)
             return SignalType.LONG, strength, "bullish_crossover"
 
         # Bearish crossover: MACD crosses below signal
         elif macd < signal and macd_prev >= signal_prev:
-            strength = min(abs(histogram) / row['close'], 1.0)
+            strength = min(abs(histogram) / row["close"], 1.0)
             return SignalType.SHORT, strength, "bearish_crossover"
 
         # Continued bullish momentum
         elif macd > signal and histogram > self.thresholds.macd_histogram_threshold:
-            strength = 0.5 * min(abs(histogram) / row['close'], 1.0)
+            strength = 0.5 * min(abs(histogram) / row["close"], 1.0)
             return SignalType.LONG, strength, "bullish_momentum"
 
         # Continued bearish momentum
         elif macd < signal and histogram < -self.thresholds.macd_histogram_threshold:
-            strength = 0.5 * min(abs(histogram) / row['close'], 1.0)
+            strength = 0.5 * min(abs(histogram) / row["close"], 1.0)
             return SignalType.SHORT, strength, "bearish_momentum"
 
         return SignalType.HOLD, 0.0, "neutral"
@@ -388,9 +394,9 @@ class EnhancedMomentumStrategy(Strategy):
         Returns:
             Tuple of (trend_direction, strength)
         """
-        ema_fast = row['ema_fast']
-        ema_slow = row['ema_slow']
-        ema_distance = row['ema_distance']
+        ema_fast = row["ema_fast"]
+        ema_slow = row["ema_slow"]
+        ema_distance = row["ema_distance"]
 
         if pd.isna(ema_fast) or pd.isna(ema_slow):
             return "neutral", 0.0
@@ -411,7 +417,7 @@ class EnhancedMomentumStrategy(Strategy):
         Returns:
             Tuple of (is_confirmed, volume_ratio)
         """
-        volume_ratio = row['volume_ratio']
+        volume_ratio = row["volume_ratio"]
 
         if pd.isna(volume_ratio):
             return False, 0.0
@@ -426,7 +432,7 @@ class EnhancedMomentumStrategy(Strategy):
         macd_signal: SignalType,
         macd_strength: float,
         trend_direction: str,
-        volume_confirmed: bool
+        volume_confirmed: bool,
     ) -> Tuple[SignalQuality, float]:
         """
         Determine overall signal quality based on indicator confluence
@@ -441,21 +447,26 @@ class EnhancedMomentumStrategy(Strategy):
             Tuple of (signal_quality, confidence_score)
         """
         # Count indicator alignment
-        long_count = sum([
-            rsi_signal == SignalType.LONG,
-            macd_signal == SignalType.LONG,
-            trend_direction == "bullish"
-        ])
+        long_count = sum(
+            [
+                rsi_signal == SignalType.LONG,
+                macd_signal == SignalType.LONG,
+                trend_direction == "bullish",
+            ]
+        )
 
-        short_count = sum([
-            rsi_signal == SignalType.SHORT,
-            macd_signal == SignalType.SHORT,
-            trend_direction == "bearish"
-        ])
+        short_count = sum(
+            [
+                rsi_signal == SignalType.SHORT,
+                macd_signal == SignalType.SHORT,
+                trend_direction == "bearish",
+            ]
+        )
 
         # Check for contradictions
-        if (rsi_signal == SignalType.LONG and macd_signal == SignalType.SHORT) or \
-           (rsi_signal == SignalType.SHORT and macd_signal == SignalType.LONG):
+        if (rsi_signal == SignalType.LONG and macd_signal == SignalType.SHORT) or (
+            rsi_signal == SignalType.SHORT and macd_signal == SignalType.LONG
+        ):
             return SignalQuality.INVALID, 0.0
 
         # Calculate confidence score
@@ -484,10 +495,7 @@ class EnhancedMomentumStrategy(Strategy):
             return SignalQuality.INVALID, 0.0
 
     def calculate_risk_metrics(
-        self,
-        entry_price: float,
-        signal_type: SignalType,
-        atr: float
+        self, entry_price: float, signal_type: SignalType, atr: float
     ) -> Tuple[float, float, float]:
         """
         Calculate stop loss, take profit, and risk/reward ratio
@@ -517,10 +525,7 @@ class EnhancedMomentumStrategy(Strategy):
         return stop_loss, take_profit, risk_reward_ratio
 
     def calculate_position_size(
-        self,
-        signal: Signal,
-        account_value: float,
-        current_position: float = 0.0
+        self, signal: Signal, account_value: float, current_position: float = 0.0
     ) -> float:
         """
         Calculate risk-adjusted position size using Kelly Criterion principles
@@ -539,7 +544,7 @@ class EnhancedMomentumStrategy(Strategy):
             Position size in shares
         """
         # Extract risk metrics from signal metadata
-        stop_loss = signal.metadata.get('stop_loss', 0.0)
+        stop_loss = signal.metadata.get("stop_loss", 0.0)
         confidence = signal.confidence
 
         if stop_loss == 0.0:
@@ -611,31 +616,33 @@ class EnhancedMomentumStrategy(Strategy):
             return []
 
         # Get symbol from data attributes
-        symbol = data.attrs.get('symbol', 'UNKNOWN')
+        symbol = data.attrs.get("symbol", "UNKNOWN")
 
         # Calculate all indicators
         data = self.calculate_indicators(data)
 
         # Determine minimum required bars for indicator stability
-        min_bars = max(
-            self.thresholds.rsi_period,
-            self.thresholds.macd_slow,
-            self.thresholds.ema_slow,
-            self.thresholds.volume_sma_period
-        ) + 10  # Extra buffer for derivative calculations
+        min_bars = (
+            max(
+                self.thresholds.rsi_period,
+                self.thresholds.macd_slow,
+                self.thresholds.ema_slow,
+                self.thresholds.volume_sma_period,
+            )
+            + 10
+        )  # Extra buffer for derivative calculations
 
         signals = []
 
         logger.info(
-            f"Analyzing {len(data)} bars for {symbol} "
-            f"(evaluating from bar {min_bars} onwards)"
+            f"Analyzing {len(data)} bars for {symbol} " f"(evaluating from bar {min_bars} onwards)"
         )
 
         for i in range(min_bars, len(data)):
             row = data.iloc[i]
 
             # Skip if any critical indicator is NaN
-            if pd.isna(row['rsi']) or pd.isna(row['macd']) or pd.isna(row['atr']):
+            if pd.isna(row["rsi"]) or pd.isna(row["macd"]) or pd.isna(row["atr"]):
                 continue
 
             # Evaluate each indicator
@@ -656,19 +663,28 @@ class EnhancedMomentumStrategy(Strategy):
             # Apply volume filter if enabled
             if self.enable_volume_filter and not volume_confirmed:
                 if rsi_signal in [SignalType.LONG, SignalType.SHORT]:
-                    logger.debug(f"Bar {i}: Signal rejected - volume filter (ratio: {volume_ratio:.2f})")
+                    logger.debug(
+                        f"Bar {i}: Signal rejected - volume filter (ratio: {volume_ratio:.2f})"
+                    )
                     continue
 
             # Determine signal quality and confidence
             quality, confidence = self.determine_signal_quality(
-                rsi_signal, rsi_strength,
-                macd_signal, macd_strength,
-                trend_direction, volume_confirmed
+                rsi_signal,
+                rsi_strength,
+                macd_signal,
+                macd_strength,
+                trend_direction,
+                volume_confirmed,
             )
 
             # Filter by minimum quality
-            quality_order = [SignalQuality.INVALID, SignalQuality.WEAK,
-                           SignalQuality.MODERATE, SignalQuality.STRONG]
+            quality_order = [
+                SignalQuality.INVALID,
+                SignalQuality.WEAK,
+                SignalQuality.MODERATE,
+                SignalQuality.STRONG,
+            ]
             if quality_order.index(quality) < quality_order.index(self.min_signal_quality):
                 logger.debug(f"Bar {i}: Signal rejected - quality too low ({quality.value})")
                 continue
@@ -683,7 +699,7 @@ class EnhancedMomentumStrategy(Strategy):
 
             # Calculate risk metrics
             stop_loss, take_profit, risk_reward = self.calculate_risk_metrics(
-                row['close'], final_signal_type, row['atr']
+                row["close"], final_signal_type, row["atr"]
             )
 
             # Filter by minimum risk/reward
@@ -701,27 +717,27 @@ class EnhancedMomentumStrategy(Strategy):
                 signal_type=final_signal_type,
                 signal_quality=quality,
                 confidence_score=confidence,
-                rsi=row['rsi'],
+                rsi=row["rsi"],
                 rsi_trend=rsi_trend,
-                macd=row['macd'],
-                macd_signal=row['macd_signal'],
-                macd_histogram=row['macd_histogram'],
-                ema_fast=row['ema_fast'],
-                ema_slow=row['ema_slow'],
+                macd=row["macd"],
+                macd_signal=row["macd_signal"],
+                macd_histogram=row["macd_histogram"],
+                ema_fast=row["ema_fast"],
+                ema_slow=row["ema_slow"],
                 trend_direction=trend_direction,
                 volume_ratio=volume_ratio,
-                atr=row['atr'],
+                atr=row["atr"],
                 stop_loss_price=stop_loss,
                 take_profit_price=take_profit,
                 risk_reward_ratio=risk_reward,
                 position_size_shares=0.0,  # Will be calculated during position sizing
                 metadata={
-                    'bar_index': i,
-                    'rsi_strength': rsi_strength,
-                    'macd_strength': macd_strength,
-                    'trend_strength': trend_strength,
-                    'volume_confirmed': volume_confirmed
-                }
+                    "bar_index": i,
+                    "rsi_strength": rsi_strength,
+                    "macd_strength": macd_strength,
+                    "trend_strength": trend_strength,
+                    "volume_confirmed": volume_confirmed,
+                },
             )
 
             # Store rationale
@@ -732,21 +748,21 @@ class EnhancedMomentumStrategy(Strategy):
                 timestamp=row.name,
                 symbol=symbol,
                 signal_type=final_signal_type,
-                price=float(row['close']),
+                price=float(row["close"]),
                 confidence=float(confidence),
                 metadata={
-                    'quality': quality.value,
-                    'rsi': float(row['rsi']),
-                    'macd': float(row['macd']),
-                    'macd_histogram': float(row['macd_histogram']),
-                    'trend': trend_direction,
-                    'volume_ratio': float(volume_ratio),
-                    'atr': float(row['atr']),
-                    'stop_loss': float(stop_loss),
-                    'take_profit': float(take_profit),
-                    'risk_reward': float(risk_reward),
-                    'rationale': rationale.to_dict()
-                }
+                    "quality": quality.value,
+                    "rsi": float(row["rsi"]),
+                    "macd": float(row["macd"]),
+                    "macd_histogram": float(row["macd_histogram"]),
+                    "trend": trend_direction,
+                    "volume_ratio": float(volume_ratio),
+                    "atr": float(row["atr"]),
+                    "stop_loss": float(stop_loss),
+                    "take_profit": float(take_profit),
+                    "risk_reward": float(risk_reward),
+                    "rationale": rationale.to_dict(),
+                },
             )
 
             signals.append(signal)
@@ -803,18 +819,17 @@ class EnhancedMomentumStrategy(Strategy):
             Dictionary with performance metrics
         """
         return {
-            'total_signals': self.total_signals_generated,
-            'signals_by_quality': {
-                quality.value: count
-                for quality, count in self.signals_by_quality.items()
+            "total_signals": self.total_signals_generated,
+            "signals_by_quality": {
+                quality.value: count for quality, count in self.signals_by_quality.items()
             },
-            'current_positions': len(self.current_positions),
-            'total_trades': len(self.trade_history),
-            'risk_parameters': {
-                'max_position_size': self.risk_params.max_position_size,
-                'risk_per_trade': self.risk_params.risk_per_trade,
-                'max_portfolio_exposure': self.risk_params.max_portfolio_exposure
-            }
+            "current_positions": len(self.current_positions),
+            "total_trades": len(self.trade_history),
+            "risk_parameters": {
+                "max_position_size": self.risk_params.max_position_size,
+                "risk_per_trade": self.risk_params.risk_per_trade,
+                "max_portfolio_exposure": self.risk_params.max_portfolio_exposure,
+            },
         }
 
     def __repr__(self) -> str:

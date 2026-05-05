@@ -25,7 +25,7 @@ class TestSignalEventValidation:
             symbol="AAPL",
             signal_type="LONG",
             strength=0.8,
-            strategy_id="test_strategy"
+            strategy_id="test_strategy",
         )
         assert signal.signal_type == "LONG"
         assert signal.event_type == EventType.SIGNAL
@@ -40,7 +40,7 @@ class TestSignalEventValidation:
             symbol="GOOGL",
             signal_type="SHORT",
             strength=0.9,
-            strategy_id="momentum"
+            strategy_id="momentum",
         )
         assert signal.signal_type == "SHORT"
         assert signal.event_type == EventType.SIGNAL
@@ -52,7 +52,7 @@ class TestSignalEventValidation:
             symbol="MSFT",
             signal_type="EXIT",
             strength=1.0,
-            strategy_id="mean_reversion"
+            strategy_id="mean_reversion",
         )
         assert signal.signal_type == "EXIT"
         assert signal.event_type == EventType.SIGNAL
@@ -65,7 +65,7 @@ class TestSignalEventValidation:
                 symbol="AAPL",
                 signal_type="BUY",
                 strength=0.8,
-                strategy_id="test"
+                strategy_id="test",
             )
 
         error_message = str(exc_info.value)
@@ -82,7 +82,7 @@ class TestSignalEventValidation:
                 symbol="AAPL",
                 signal_type="SELL",
                 strength=0.8,
-                strategy_id="test"
+                strategy_id="test",
             )
 
         error_message = str(exc_info.value)
@@ -96,7 +96,7 @@ class TestSignalEventValidation:
                 symbol="AAPL",
                 signal_type="HOLD",
                 strength=0.0,
-                strategy_id="test"
+                strategy_id="test",
             )
 
         error_message = str(exc_info.value)
@@ -110,7 +110,7 @@ class TestSignalEventValidation:
                 symbol="AAPL",
                 signal_type="INVALID_SIGNAL",
                 strength=0.5,
-                strategy_id="test"
+                strategy_id="test",
             )
 
         error_message = str(exc_info.value)
@@ -124,7 +124,7 @@ class TestSignalEventValidation:
                 symbol="AAPL",
                 signal_type="",
                 strength=0.5,
-                strategy_id="test"
+                strategy_id="test",
             )
 
         error_message = str(exc_info.value)
@@ -138,7 +138,7 @@ class TestSignalEventValidation:
                 symbol="AAPL",
                 signal_type="long",
                 strength=0.8,
-                strategy_id="test"
+                strategy_id="test",
             )
 
         error_message = str(exc_info.value)
@@ -153,7 +153,7 @@ class TestSignalEventValidation:
                 symbol="AAPL",
                 signal_type="LONG",
                 strength=strength,
-                strategy_id="test"
+                strategy_id="test",
             )
             assert signal.strength == strength
 
@@ -165,7 +165,7 @@ class TestSignalEventValidation:
                 symbol="AAPL",
                 signal_type="LONG",
                 strength=-0.1,
-                strategy_id="test"
+                strategy_id="test",
             )
 
         error_message = str(exc_info.value)
@@ -179,7 +179,7 @@ class TestSignalEventValidation:
                 symbol="AAPL",
                 signal_type="LONG",
                 strength=1.1,
-                strategy_id="test"
+                strategy_id="test",
             )
 
         error_message = str(exc_info.value)
@@ -192,7 +192,7 @@ class TestSignalEventValidation:
             symbol="AAPL",
             signal_type="LONG",
             strength=0.8,
-            strategy_id="test"
+            strategy_id="test",
         )
 
         # Pydantic frozen field should prevent modification
@@ -204,48 +204,31 @@ class TestSignalEventValidation:
         # Missing symbol
         with pytest.raises(ValidationError):
             SignalEvent(
-                timestamp=datetime.utcnow(),
-                signal_type="LONG",
-                strength=0.8,
-                strategy_id="test"
+                timestamp=datetime.utcnow(), signal_type="LONG", strength=0.8, strategy_id="test"
             )
 
         # Missing signal_type
         with pytest.raises(ValidationError):
             SignalEvent(
-                timestamp=datetime.utcnow(),
-                symbol="AAPL",
-                strength=0.8,
-                strategy_id="test"
+                timestamp=datetime.utcnow(), symbol="AAPL", strength=0.8, strategy_id="test"
             )
 
         # Missing strength
         with pytest.raises(ValidationError):
             SignalEvent(
-                timestamp=datetime.utcnow(),
-                symbol="AAPL",
-                signal_type="LONG",
-                strategy_id="test"
+                timestamp=datetime.utcnow(), symbol="AAPL", signal_type="LONG", strategy_id="test"
             )
 
         # Missing strategy_id
         with pytest.raises(ValidationError):
             SignalEvent(
-                timestamp=datetime.utcnow(),
-                symbol="AAPL",
-                signal_type="LONG",
-                strength=0.8
+                timestamp=datetime.utcnow(), symbol="AAPL", signal_type="LONG", strength=0.8
             )
 
     def test_signal_event_timestamp_default(self):
         """Test that timestamp has a default value if not provided"""
         before = datetime.utcnow()
-        signal = SignalEvent(
-            symbol="AAPL",
-            signal_type="LONG",
-            strength=0.8,
-            strategy_id="test"
-        )
+        signal = SignalEvent(symbol="AAPL", signal_type="LONG", strength=0.8, strategy_id="test")
         after = datetime.utcnow()
 
         assert before <= signal.timestamp <= after
@@ -258,21 +241,21 @@ class TestSignalEventValidation:
                 symbol="AAPL",
                 signal_type="LONG",
                 strength=0.8,
-                strategy_id="test"
+                strategy_id="test",
             ),
             SignalEvent(
                 timestamp=datetime.utcnow(),
                 symbol="GOOGL",
                 signal_type="SHORT",
                 strength=0.9,
-                strategy_id="test"
+                strategy_id="test",
             ),
             SignalEvent(
                 timestamp=datetime.utcnow(),
                 symbol="MSFT",
                 signal_type="EXIT",
                 strength=1.0,
-                strategy_id="test"
+                strategy_id="test",
             ),
         ]
 

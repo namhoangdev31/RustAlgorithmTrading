@@ -89,7 +89,7 @@ def test_gate_summary_aggregation():
         correlation_id="corr-blk",
         release_blocker_status=ReleaseBlockerStatus.CLOSED,
     )
-    
+
     manager.build_gate_record(
         run_id="RUN-RLL",
         scenario_id="ROLLBACK",
@@ -107,4 +107,3 @@ def test_gate_summary_aggregation():
     assert summary["open_release_blockers"] == 0
     assert summary["total_regressions"] == 0
     assert summary["blocked_count"] == 0
-

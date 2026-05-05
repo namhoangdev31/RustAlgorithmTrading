@@ -31,11 +31,11 @@ class TestMomentumSignalGeneration:
     def strategy(self):
         """Create strategy instance"""
         return SimpleMomentumStrategy(
-            symbols=['AAPL', 'MSFT', 'GOOGL'],
+            symbols=["AAPL", "MSFT", "GOOGL"],
             rsi_period=14,
             rsi_oversold=35,
             rsi_overbought=65,
-            position_size=0.1
+            position_size=0.1,
         )
 
     def test_load_historical_data(self, historical_data_path):
@@ -50,21 +50,21 @@ class TestMomentumSignalGeneration:
 
         # Validate structure
         assert not df.empty, "Data should not be empty"
-        assert 'close' in df.columns, "Data should have 'close' column"
-        assert 'open' in df.columns, "Data should have 'open' column"
-        assert 'high' in df.columns, "Data should have 'high' column"
-        assert 'low' in df.columns, "Data should have 'low' column"
-        assert 'volume' in df.columns, "Data should have 'volume' column"
+        assert "close" in df.columns, "Data should have 'close' column"
+        assert "open" in df.columns, "Data should have 'open' column"
+        assert "high" in df.columns, "Data should have 'high' column"
+        assert "low" in df.columns, "Data should have 'low' column"
+        assert "volume" in df.columns, "Data should have 'volume' column"
 
         # Validate data quality
         assert len(df) >= 50, f"Need at least 50 bars, got {len(df)}"
-        assert df['close'].notna().sum() > 0, "Close prices should not be all NaN"
+        assert df["close"].notna().sum() > 0, "Close prices should not be all NaN"
 
         logger.info(f"Loaded {len(df)} bars for AAPL from {df.index[0]} to {df.index[-1]}")
 
     def test_generate_signals_with_real_data(self, historical_data_path, strategy):
         """Test signal generation with real historical data"""
-        symbols = ['AAPL', 'MSFT', 'GOOGL']
+        symbols = ["AAPL", "MSFT", "GOOGL"]
         all_signals = []
 
         for symbol in symbols:
@@ -79,11 +79,11 @@ class TestMomentumSignalGeneration:
 
             # Ensure index is datetime
             if not isinstance(df.index, pd.DatetimeIndex):
-                df['timestamp'] = pd.to_datetime(df['timestamp'])
-                df.set_index('timestamp', inplace=True)
+                df["timestamp"] = pd.to_datetime(df["timestamp"])
+                df.set_index("timestamp", inplace=True)
 
             # Ensure required columns exist
-            required_cols = ['open', 'high', 'low', 'close', 'volume']
+            required_cols = ["open", "high", "low", "close", "volume"]
             missing_cols = [col for col in required_cols if col not in df.columns]
             if missing_cols:
                 logger.error(f"Missing columns for {symbol}: {missing_cols}")
@@ -98,15 +98,17 @@ class TestMomentumSignalGeneration:
 
             # Validate signals
             for signal in signals:
-                assert signal.symbol == symbol, f"Signal symbol mismatch: {signal.symbol} != {symbol}"
+                assert (
+                    signal.symbol == symbol
+                ), f"Signal symbol mismatch: {signal.symbol} != {symbol}"
                 assert signal.signal_type in [SignalType.BUY, SignalType.SELL, SignalType.HOLD]
                 assert signal.price > 0, f"Invalid signal price: {signal.price}"
                 assert 0 <= signal.confidence <= 1, f"Invalid confidence: {signal.confidence}"
-                assert 'rsi' in signal.metadata, "Signal should have RSI metadata"
-                assert 'macd' in signal.metadata, "Signal should have MACD metadata"
+                assert "rsi" in signal.metadata, "Signal should have RSI metadata"
+                assert "macd" in signal.metadata, "Signal should have MACD metadata"
 
                 # Verify RSI is in valid range
-                rsi = signal.metadata['rsi']
+                rsi = signal.metadata["rsi"]
                 assert 0 <= rsi <= 100, f"RSI {rsi} out of bounds"
 
             all_signals.extend(signals)
@@ -127,13 +129,15 @@ class TestMomentumSignalGeneration:
         # Print sample signals for inspection
         if buy_signals:
             sample = buy_signals[0]
-            logger.info(f"Sample BUY signal: {sample.symbol} @ ${sample.price:.2f}, "
-                       f"RSI: {sample.metadata['rsi']:.2f}, "
-                       f"Confidence: {sample.confidence:.2f}")
+            logger.info(
+                f"Sample BUY signal: {sample.symbol} @ ${sample.price:.2f}, "
+                f"RSI: {sample.metadata['rsi']:.2f}, "
+                f"Confidence: {sample.confidence:.2f}"
+            )
 
     def test_signal_timing_distribution(self, historical_data_path, strategy):
         """Test that signals are distributed throughout the time period"""
-        symbol = 'AAPL'
+        symbol = "AAPL"
         data_file = historical_data_path / f"{symbol}.parquet"
 
         if not data_file.exists():
@@ -143,8 +147,8 @@ class TestMomentumSignalGeneration:
 
         # Ensure datetime index
         if not isinstance(df.index, pd.DatetimeIndex):
-            df['timestamp'] = pd.to_datetime(df['timestamp'])
-            df.set_index('timestamp', inplace=True)
+            df["timestamp"] = pd.to_datetime(df["timestamp"])
+            df.set_index("timestamp", inplace=True)
 
         # Generate signals
         signals = strategy.generate_signals_for_symbol(symbol, df)
@@ -168,7 +172,7 @@ class TestMomentumSignalGeneration:
 
     def test_indicator_calculations(self, historical_data_path, strategy):
         """Test that indicators are calculated correctly"""
-        symbol = 'AAPL'
+        symbol = "AAPL"
         data_file = historical_data_path / f"{symbol}.parquet"
 
         if not data_file.exists():
@@ -178,8 +182,8 @@ class TestMomentumSignalGeneration:
 
         # Ensure datetime index
         if not isinstance(df.index, pd.DatetimeIndex):
-            df['timestamp'] = pd.to_datetime(df['timestamp'])
-            df.set_index('timestamp', inplace=True)
+            df["timestamp"] = pd.to_datetime(df["timestamp"])
+            df.set_index("timestamp", inplace=True)
 
         # Generate signals (which calculates indicators internally)
         signals = strategy.generate_signals_for_symbol(symbol, df)
@@ -189,18 +193,20 @@ class TestMomentumSignalGeneration:
             sample_signal = signals[0]
 
             # RSI should be between 0 and 100
-            rsi = sample_signal.metadata['rsi']
+            rsi = sample_signal.metadata["rsi"]
             assert 0 <= rsi <= 100, f"RSI {rsi} out of valid range"
 
             # MACD should be a reasonable number relative to price
-            macd = sample_signal.metadata['macd']
+            macd = sample_signal.metadata["macd"]
             price = sample_signal.price
             assert abs(macd) < price, f"MACD {macd} seems unreasonable for price {price}"
 
             # MACD histogram should exist
-            assert 'macd_histogram' in sample_signal.metadata
+            assert "macd_histogram" in sample_signal.metadata
 
-            logger.info(f"Sample indicator values: RSI={rsi:.2f}, MACD={macd:.2f}, Price=${price:.2f}")
+            logger.info(
+                f"Sample indicator values: RSI={rsi:.2f}, MACD={macd:.2f}, Price=${price:.2f}"
+            )
 
     def test_position_sizing_with_signals(self, strategy):
         """Test position sizing calculations with generated signals"""
@@ -209,10 +215,10 @@ class TestMomentumSignalGeneration:
 
         signal = Signal(
             timestamp=datetime.now(),
-            symbol='AAPL',
+            symbol="AAPL",
             signal_type=SignalType.BUY,
             price=230.0,
-            confidence=0.8
+            confidence=0.8,
         )
 
         account_value = 10000.0
@@ -222,13 +228,15 @@ class TestMomentumSignalGeneration:
 
         # Validate position size
         position_value = position_size * signal.price
-        max_allowed = account_value * strategy.get_parameter('position_size')
+        max_allowed = account_value * strategy.get_parameter("position_size")
 
         logger.info(f"Position size: {position_size} shares = ${position_value:.2f}")
         logger.info(f"Max allowed: ${max_allowed:.2f}")
 
         # Should not exceed position size limit
-        assert position_value <= max_allowed * 1.01, f"Position ${position_value:.2f} exceeds max ${max_allowed:.2f}"
+        assert (
+            position_value <= max_allowed * 1.01
+        ), f"Position ${position_value:.2f} exceeds max ${max_allowed:.2f}"
 
         # Should be positive
         assert position_size > 0, "Position size should be positive"
@@ -237,7 +245,7 @@ class TestMomentumSignalGeneration:
         """Test that signal confidence values are reasonable"""
         all_confidences = []
 
-        for symbol in ['AAPL', 'MSFT', 'GOOGL']:
+        for symbol in ["AAPL", "MSFT", "GOOGL"]:
             data_file = historical_data_path / f"{symbol}.parquet"
 
             if not data_file.exists():
@@ -246,8 +254,8 @@ class TestMomentumSignalGeneration:
             df = pd.read_parquet(data_file)
 
             if not isinstance(df.index, pd.DatetimeIndex):
-                df['timestamp'] = pd.to_datetime(df['timestamp'])
-                df.set_index('timestamp', inplace=True)
+                df["timestamp"] = pd.to_datetime(df["timestamp"])
+                df.set_index("timestamp", inplace=True)
 
             signals = strategy.generate_signals_for_symbol(symbol, df)
 
@@ -270,7 +278,9 @@ class TestMomentumSignalGeneration:
         assert std_confidence > 0.01, "Confidence should vary across signals"
 
         # Mean confidence should be reasonable
-        assert 0.3 <= mean_confidence <= 0.9, f"Mean confidence {mean_confidence:.3f} seems unreasonable"
+        assert (
+            0.3 <= mean_confidence <= 0.9
+        ), f"Mean confidence {mean_confidence:.3f} seems unreasonable"
 
 
 class TestMomentumStrategyDiagnostics:
@@ -282,24 +292,24 @@ class TestMomentumStrategyDiagnostics:
 
         signal = Signal(
             timestamp=datetime.now(),
-            symbol='TEST',
+            symbol="TEST",
             signal_type=SignalType.BUY,
             price=100.0,
             confidence=0.8,
-            metadata={'rsi': 45.0, 'macd': 0.5}
+            metadata={"rsi": 45.0, "macd": 0.5},
         )
 
         # Check attributes
-        assert hasattr(signal, 'timestamp')
-        assert hasattr(signal, 'symbol')
-        assert hasattr(signal, 'signal_type')
-        assert hasattr(signal, 'price')
-        assert hasattr(signal, 'confidence')
-        assert hasattr(signal, 'metadata')
+        assert hasattr(signal, "timestamp")
+        assert hasattr(signal, "symbol")
+        assert hasattr(signal, "signal_type")
+        assert hasattr(signal, "price")
+        assert hasattr(signal, "confidence")
+        assert hasattr(signal, "metadata")
 
         # Verify signal_type is SignalType enum
         assert signal.signal_type == SignalType.BUY
-        assert signal.signal_type.value == 'buy'
+        assert signal.signal_type.value == "buy"
 
         logger.info(f"Signal structure: {signal}")
         logger.info(f"Signal type: {signal.signal_type} ({type(signal.signal_type)})")
@@ -307,29 +317,30 @@ class TestMomentumStrategyDiagnostics:
     def test_strategy_generates_signals_on_synthetic_data(self):
         """Test signal generation on known synthetic data"""
         # Create synthetic data with clear buy/sell patterns
-        dates = pd.date_range(start='2024-01-01', periods=100, freq='1D')
+        dates = pd.date_range(start="2024-01-01", periods=100, freq="1D")
 
         # Create oversold-to-recovery pattern (should trigger BUY)
-        prices = np.concatenate([
-            np.linspace(120, 80, 40),   # Drop (oversold)
-            np.linspace(80, 100, 60)    # Recovery (buy signal)
-        ])
-
-        df = pd.DataFrame({
-            'open': prices - 1,
-            'high': prices + 2,
-            'low': prices - 2,
-            'close': prices,
-            'volume': [1000000] * 100
-        }, index=dates)
-
-        strategy = SimpleMomentumStrategy(
-            symbols=['TEST'],
-            rsi_oversold=35,
-            rsi_overbought=65
+        prices = np.concatenate(
+            [
+                np.linspace(120, 80, 40),  # Drop (oversold)
+                np.linspace(80, 100, 60),  # Recovery (buy signal)
+            ]
         )
 
-        signals = strategy.generate_signals_for_symbol('TEST', df)
+        df = pd.DataFrame(
+            {
+                "open": prices - 1,
+                "high": prices + 2,
+                "low": prices - 2,
+                "close": prices,
+                "volume": [1000000] * 100,
+            },
+            index=dates,
+        )
+
+        strategy = SimpleMomentumStrategy(symbols=["TEST"], rsi_oversold=35, rsi_overbought=65)
+
+        signals = strategy.generate_signals_for_symbol("TEST", df)
 
         logger.info(f"Generated {len(signals)} signals on synthetic data")
 
@@ -338,9 +349,11 @@ class TestMomentumStrategyDiagnostics:
 
         # Log any signals generated
         for signal in signals:
-            logger.info(f"Signal: {signal.signal_type.value} @ ${signal.price:.2f}, "
-                       f"RSI: {signal.metadata.get('rsi', 'N/A')}")
+            logger.info(
+                f"Signal: {signal.signal_type.value} @ ${signal.price:.2f}, "
+                f"RSI: {signal.metadata.get('rsi', 'N/A')}"
+            )
 
 
-if __name__ == '__main__':
-    pytest.main([__file__, '-v', '-s', '--tb=short'])
+if __name__ == "__main__":
+    pytest.main([__file__, "-v", "-s", "--tb=short"])

@@ -8,6 +8,7 @@ Tracks order execution and fill quality:
 - Execution quality metrics
 - Broker/exchange performance
 """
+
 import asyncio
 from typing import Dict, Any, List, Optional, cast
 from datetime import datetime
@@ -121,7 +122,7 @@ class ExecutionCollector(BaseCollector):
                 "price": random.uniform(100, 200),
                 "timestamp": datetime.utcnow().isoformat(),
                 "latency_ms": random.uniform(10, 100),
-                "slippage_bps": random.uniform(0, 5)
+                "slippage_bps": random.uniform(0, 5),
             }
             self.recent_trades.append(mock_trade)
 
@@ -139,7 +140,7 @@ class ExecutionCollector(BaseCollector):
                 "orders_rejected": self.orders_rejected,
                 "fill_rate": self.fill_rate,
                 "avg_latency_ms": self.avg_fill_latency_ms,
-                "avg_slippage_bps": self.avg_slippage_bps
+                "avg_slippage_bps": self.avg_slippage_bps,
             }
 
             await self.db.insert_execution_metrics(metrics_data)
@@ -156,14 +157,11 @@ class ExecutionCollector(BaseCollector):
             "rejected": self.orders_rejected,
             "fill_rate": self.fill_rate,
             "avg_latency_ms": self.avg_fill_latency_ms,
-            "avg_slippage_bps": self.avg_slippage_bps
+            "avg_slippage_bps": self.avg_slippage_bps,
         }
 
     async def get_trades(
-        self,
-        filter: TradeFilter,
-        limit: int = 100,
-        offset: int = 0
+        self, filter: TradeFilter, limit: int = 100, offset: int = 0
     ) -> List[Dict[str, Any]]:
         """Get trade history with filters."""
         # Filter trades based on criteria
@@ -171,15 +169,13 @@ class ExecutionCollector(BaseCollector):
 
         # Apply filters
         if filter.symbol:
-            filtered_trades = [
-                t for t in filtered_trades if t["symbol"] == filter.symbol
-            ]
+            filtered_trades = [t for t in filtered_trades if t["symbol"] == filter.symbol]
 
         if filter.side:
             filtered_trades = [t for t in filtered_trades if t["side"] == filter.side]
 
         # Apply pagination
-        return filtered_trades[offset:offset + limit]
+        return filtered_trades[offset : offset + limit]
 
     async def count_trades(self, filter: TradeFilter) -> int:
         """Count trades matching filter."""
@@ -194,10 +190,7 @@ class ExecutionCollector(BaseCollector):
         return None
 
     async def get_trade_statistics(
-        self,
-        symbol: Optional[str],
-        start_time: datetime,
-        end_time: datetime
+        self, symbol: Optional[str], start_time: datetime, end_time: datetime
     ) -> Dict[str, Any]:
         """Get aggregated trade statistics."""
         # Filter trades by time range and symbol
@@ -209,24 +202,15 @@ class ExecutionCollector(BaseCollector):
                     filtered_trades.append(trade)
 
         if not filtered_trades:
-            return {
-                "count": 0,
-                "total_volume": 0.0,
-                "avg_price": 0.0,
-                "avg_size": 0.0
-            }
+            return {"count": 0, "total_volume": 0.0, "avg_price": 0.0, "avg_size": 0.0}
 
         return {
             "count": len(filtered_trades),
             "total_volume": sum(t["quantity"] * t["price"] for t in filtered_trades),
-            "avg_price": (
-                sum(t["price"] for t in filtered_trades) / len(filtered_trades)
-            ),
-            "avg_size": (
-                sum(t["quantity"] for t in filtered_trades) / len(filtered_trades)
-            ),
+            "avg_price": (sum(t["price"] for t in filtered_trades) / len(filtered_trades)),
+            "avg_size": (sum(t["quantity"] for t in filtered_trades) / len(filtered_trades)),
             "buy_count": sum(1 for t in filtered_trades if t["side"] == "buy"),
-            "sell_count": sum(1 for t in filtered_trades if t["side"] == "sell")
+            "sell_count": sum(1 for t in filtered_trades if t["side"] == "sell"),
         }
 
     async def get_execution_quality(self) -> Dict[str, Any]:
@@ -236,5 +220,5 @@ class ExecutionCollector(BaseCollector):
             "avg_latency_ms": self.avg_fill_latency_ms,
             "avg_slippage_bps": self.avg_slippage_bps,
             "rejection_rate": self.orders_rejected / max(self.orders_submitted, 1),
-            "cancellation_rate": self.orders_cancelled / max(self.orders_submitted, 1)
+            "cancellation_rate": self.orders_cancelled / max(self.orders_submitted, 1),
         }

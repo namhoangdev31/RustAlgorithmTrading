@@ -1,4 +1,5 @@
 """Data models for observability API."""
+
 from .schemas import (
     MetricsSnapshot,
     MetricsHistoryRequest,
@@ -8,20 +9,10 @@ from .schemas import (
     TradeHistoryResponse,
     SystemHealth,
     PerformanceMetrics,
-    TimeRange
+    TimeRange,
 )
-from .metrics_models import (
-    MarketDataMetric,
-    StrategyMetric,
-    ExecutionMetric,
-    SystemMetric
-)
-from .events_models import (
-    EventType,
-    MetricEvent,
-    TradeEvent,
-    AlertEvent
-)
+from .metrics_models import MarketDataMetric, StrategyMetric, ExecutionMetric, SystemMetric
+from .events_models import EventType, MetricEvent, TradeEvent, AlertEvent
 
 __all__ = [
     # Schemas
@@ -43,5 +34,5 @@ __all__ = [
     "EventType",
     "MetricEvent",
     "TradeEvent",
-    "AlertEvent"
+    "AlertEvent",
 ]

@@ -24,6 +24,7 @@ from src.observability.storage.schemas import (
 
 import pytest_asyncio
 
+
 @pytest_asyncio.fixture
 async def temp_db():
     """Create temporary database for testing"""

@@ -21,6 +21,7 @@ class SimulatedExecutionHandler:
     - Partial fill simulation
     - Market impact modeling
     """
+
     data_handler: Optional[HistoricalDataHandler] = None
 
     def __init__(
@@ -76,8 +77,8 @@ class SimulatedExecutionHandler:
         fill = FillEvent(
             timestamp=datetime.utcnow(),
             symbol=order.symbol,
-            exchange='SIMULATED',
-            quantity=fill_quantity if order.direction == 'BUY' else -fill_quantity,
+            exchange="SIMULATED",
+            quantity=fill_quantity if order.direction == "BUY" else -fill_quantity,
             direction=order.direction,
             fill_price=fill_price,
             commission=commission,
@@ -106,12 +107,12 @@ class SimulatedExecutionHandler:
             Fill price
         """
         # Base price (use limit price or market price)
-        if order.order_type == 'LMT' and order.price:
+        if order.order_type == "LMT" and order.price:
             base_price = order.price
         else:
             # CRITICAL FIX: Get actual market price from data handler
             base_price = None
-            if hasattr(self, 'data_handler') and self.data_handler:
+            if hasattr(self, "data_handler") and self.data_handler:
                 latest_bar = self.data_handler.get_latest_bar(order.symbol)
                 if latest_bar:
                     base_price = latest_bar.close
@@ -125,7 +126,9 @@ class SimulatedExecutionHandler:
                 return 0.0
 
         # Calculate slippage (random within range)
-        slippage_factor = float(np.random.normal(self.slippage_bps / 10000.0, self.slippage_bps / 20000.0))
+        slippage_factor = float(
+            np.random.normal(self.slippage_bps / 10000.0, self.slippage_bps / 20000.0)
+        )
 
         # Calculate market impact based on notional value
         # Base price is guaranteed to be a float here
@@ -134,7 +137,7 @@ class SimulatedExecutionHandler:
         impact_factor = (notional / 1_000_000) * (self.market_impact_bps / 10000.0)
 
         # Apply slippage and impact (worse price for buyer, better for seller)
-        if order.direction == 'BUY':
+        if order.direction == "BUY":
             fill_price = actual_price * (1 + slippage_factor + impact_factor)
         else:
             fill_price = actual_price * (1 - slippage_factor - impact_factor)

@@ -9,6 +9,7 @@ Tests cover:
 - Slippage modeling
 - Performance metric calculations
 """
+
 import pytest
 import pandas as pd
 import numpy as np
@@ -129,7 +130,9 @@ class TestPerformanceMetrics:
 
         # sharpe = calculate_sharpe_ratio(sample_returns, risk_free_rate)
         # Expected: (mean - rf) / std * sqrt(252)
-        expected_sharpe = (sample_returns.mean() - risk_free_rate) / sample_returns.std() * np.sqrt(252)
+        expected_sharpe = (
+            (sample_returns.mean() - risk_free_rate) / sample_returns.std() * np.sqrt(252)
+        )
 
         # assert abs(sharpe - expected_sharpe) < 0.01
         assert True  # Placeholder
@@ -164,7 +167,7 @@ class TestPerformanceMetrics:
 
         gross_profit = trades[trades > 0].sum()
         gross_loss = abs(trades[trades < 0].sum())
-        expected_pf = gross_profit / gross_loss if gross_loss > 0 else float('inf')
+        expected_pf = gross_profit / gross_loss if gross_loss > 0 else float("inf")
 
         # pf = calculate_profit_factor(trades)
         # assert abs(pf - expected_pf) < 0.01
@@ -177,7 +180,7 @@ class TestBacktestValidation:
 
     def test_timestamp_ordering(self, sample_ohlcv_data):
         """Test that data is properly time-ordered."""
-        timestamps = sample_ohlcv_data['timestamp']
+        timestamps = sample_ohlcv_data["timestamp"]
         assert timestamps.is_monotonic_increasing
 
     def test_price_consistency(self, sample_ohlcv_data):
@@ -185,19 +188,19 @@ class TestBacktestValidation:
         data = sample_ohlcv_data
 
         # High should be >= Open, Close, Low
-        assert (data['high'] >= data['open']).all()
-        assert (data['high'] >= data['close']).all()
-        assert (data['high'] >= data['low']).all()
+        assert (data["high"] >= data["open"]).all()
+        assert (data["high"] >= data["close"]).all()
+        assert (data["high"] >= data["low"]).all()
 
         # Low should be <= Open, Close, High
-        assert (data['low'] <= data['open']).all()
-        assert (data['low'] <= data['close']).all()
+        assert (data["low"] <= data["open"]).all()
+        assert (data["low"] <= data["close"]).all()
 
     def test_volume_non_negative(self, sample_ohlcv_data):
         """Test that volume is never negative."""
-        assert (sample_ohlcv_data['volume'] >= 0).all()
+        assert (sample_ohlcv_data["volume"] >= 0).all()
 
     def test_no_missing_data(self, sample_ohlcv_data):
         """Test for missing data in critical columns."""
-        assert not sample_ohlcv_data['close'].isna().any()
-        assert not sample_ohlcv_data['volume'].isna().any()
+        assert not sample_ohlcv_data["close"].isna().any()
+        assert not sample_ohlcv_data["volume"].isna().any()

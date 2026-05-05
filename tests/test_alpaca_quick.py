@@ -1,4 +1,5 @@
 """Quick Alpaca API functionality test with proper date handling."""
+
 import os
 from dotenv import load_dotenv
 from alpaca.trading.client import TradingClient
@@ -55,10 +56,7 @@ try:
     start_date = end_date - timedelta(days=7)
 
     bars_request = StockBarsRequest(
-        symbol_or_symbols=["AAPL"],
-        timeframe=TimeFrame.Day,
-        start=start_date,
-        end=end_date
+        symbol_or_symbols=["AAPL"], timeframe=TimeFrame.Day, start=start_date, end=end_date
     )
 
     bars = data_client.get_stock_bars(bars_request)
@@ -69,10 +67,12 @@ try:
     if aapl_bars:
         print(f"\n   Recent AAPL Bars:")
         for bar in aapl_bars[-3:]:  # Show last 3 bars
-            print(f"   {bar.timestamp.strftime('%Y-%m-%d')}: "
-                  f"O=${bar.open:.2f} H=${bar.high:.2f} "
-                  f"L=${bar.low:.2f} C=${bar.close:.2f} "
-                  f"V={bar.volume:,}")
+            print(
+                f"   {bar.timestamp.strftime('%Y-%m-%d')}: "
+                f"O=${bar.open:.2f} H=${bar.high:.2f} "
+                f"L=${bar.low:.2f} C=${bar.close:.2f} "
+                f"V={bar.volume:,}"
+            )
 except Exception as e:
     print(f"❌ Error: {e}")
 
@@ -86,8 +86,10 @@ try:
         print(f"✅ Found {len(positions)} position(s):")
         for pos in positions:
             print(f"   {pos.symbol}: {pos.qty} shares @ ${float(pos.avg_entry_price):.2f}")
-            print(f"      Current: ${float(pos.current_price):.2f} | "
-                  f"P&L: ${float(pos.unrealized_pl):.2f}")
+            print(
+                f"      Current: ${float(pos.current_price):.2f} | "
+                f"P&L: ${float(pos.unrealized_pl):.2f}"
+            )
     else:
         print("✅ No positions (account empty - ready for trading)")
 except Exception as e:

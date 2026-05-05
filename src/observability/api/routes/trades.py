@@ -1,17 +1,14 @@
 """
 Trade history and execution API routes.
 """
+
 from datetime import datetime, timedelta
 from typing import Optional, Dict, Any, cast
 
 from fastapi import APIRouter, Query, HTTPException
 from loguru import logger
 
-from ...models.schemas import (
-    Trade,
-    TradeFilter,
-    TradeHistoryResponse
-)
+from ...models.schemas import Trade, TradeFilter, TradeHistoryResponse
 
 router = APIRouter()
 
@@ -23,7 +20,7 @@ async def get_trade_history(
     start_time: Optional[datetime] = Query(None, description="Start time"),
     end_time: Optional[datetime] = Query(None, description="End time"),
     limit: int = Query(100, ge=1, le=1000, description="Max trades to return"),
-    offset: int = Query(0, ge=0, description="Pagination offset")
+    offset: int = Query(0, ge=0, description="Pagination offset"),
 ) -> TradeHistoryResponse:
     """
     Get trade history with optional filters.
@@ -45,24 +42,17 @@ async def get_trade_history(
             symbol=symbol,
             side=side,
             start_time=start_time or datetime.utcnow() - timedelta(days=1),
-            end_time=end_time or datetime.utcnow()
+            end_time=end_time or datetime.utcnow(),
         )
 
         # Query trades
         trades = await execution_collector.get_trades(
-            filter=trade_filter,
-            limit=limit,
-            offset=offset
+            filter=trade_filter, limit=limit, offset=offset
         )
 
         total = await execution_collector.count_trades(filter=trade_filter)
 
-        return TradeHistoryResponse(
-            trades=trades,
-            total=total,
-            limit=limit,
-            offset=offset
-        )
+        return TradeHistoryResponse(trades=trades, total=total, limit=limit, offset=offset)
     except Exception as e:
         logger.error(f"[cid:INIT] Error getting trade history: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -93,8 +83,7 @@ async def get_trade_details(trade_id: str) -> Trade:
 
 @router.get("/stats/summary")
 async def get_trade_statistics(
-    symbol: Optional[str] = Query(None),
-    time_range: str = Query("24h", regex="^(1h|24h|7d|30d)$")
+    symbol: Optional[str] = Query(None), time_range: str = Query("24h", regex="^(1h|24h|7d|30d)$")
 ) -> Dict[str, Any]:
     """
     Get aggregated trade statistics.
@@ -127,9 +116,7 @@ async def get_trade_statistics(
             start_time = now - timedelta(hours=24)
 
         stats = await execution_collector.get_trade_statistics(
-            symbol=symbol,
-            start_time=start_time,
-            end_time=now
+            symbol=symbol, start_time=start_time, end_time=now
         )
 
         return cast(Dict[str, Any], stats)

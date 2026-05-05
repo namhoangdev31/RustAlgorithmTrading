@@ -33,7 +33,7 @@ class DataLoader:
             data_dir: Directory containing data files
             cache_enabled: Enable in-memory caching
         """
-        self.data_dir = Path(data_dir) if data_dir else Path('data')
+        self.data_dir = Path(data_dir) if data_dir else Path("data")
         self.cache_enabled = cache_enabled
         self.cache: Dict[str, pd.DataFrame] = {}
 
@@ -44,8 +44,8 @@ class DataLoader:
         symbol: str,
         start_date: Optional[datetime] = None,
         end_date: Optional[datetime] = None,
-        timeframe: str = '1D',
-        source: str = 'csv',
+        timeframe: str = "1D",
+        source: str = "csv",
     ) -> pd.DataFrame:
         """
         Load OHLCV data for symbol.
@@ -80,12 +80,11 @@ class DataLoader:
             df = df[df.index <= end_date]
 
         # Resample if needed
-        if timeframe != '1D':
+        if timeframe != "1D":
             df = self._resample_data(df, timeframe)
 
         logger.info(
-            f"Loaded {len(df)} bars for {symbol} "
-            f"from {df.index.min()} to {df.index.max()}"
+            f"Loaded {len(df)} bars for {symbol} " f"from {df.index.min()} to {df.index.max()}"
         )
 
         return df
@@ -95,7 +94,7 @@ class DataLoader:
         symbols: List[str],
         start_date: Optional[datetime] = None,
         end_date: Optional[datetime] = None,
-        timeframe: str = '1D',
+        timeframe: str = "1D",
     ) -> Dict[str, pd.DataFrame]:
         """
         Load data for multiple symbols.
@@ -137,13 +136,13 @@ class DataLoader:
         Returns:
             DataFrame with data
         """
-        if source == 'parquet':
+        if source == "parquet":
             file_path = self.data_dir / f"{symbol}.parquet"
             df = pd.read_parquet(file_path)
         else:
             file_path = self.data_dir / f"{symbol}.csv"
-            df = pd.read_csv(file_path, parse_dates=['timestamp'])
-            df.set_index('timestamp', inplace=True)
+            df = pd.read_csv(file_path, parse_dates=["timestamp"])
+            df.set_index("timestamp", inplace=True)
 
         # Validate and clean data
         df = self._validate_data(df)
@@ -161,35 +160,35 @@ class DataLoader:
             Cleaned DataFrame
         """
         # Required columns
-        required_cols = ['open', 'high', 'low', 'close', 'volume']
+        required_cols = ["open", "high", "low", "close", "volume"]
         missing = [col for col in required_cols if col not in df.columns]
 
         if missing:
             raise ValueError(f"Missing required columns: {missing}")
 
         # Remove duplicates
-        df = df[~df.index.duplicated(keep='first')]
+        df = df[~df.index.duplicated(keep="first")]
 
         # Sort by index
         df = df.sort_index()
 
         # Validate OHLC relationships
-        invalid_high = df['high'] < df[['open', 'close', 'low']].max(axis=1)
-        invalid_low = df['low'] > df[['open', 'close', 'high']].min(axis=1)
+        invalid_high = df["high"] < df[["open", "close", "low"]].max(axis=1)
+        invalid_low = df["low"] > df[["open", "close", "high"]].min(axis=1)
 
         if invalid_high.any() or invalid_low.any():
             logger.warning(f"Found {invalid_high.sum() + invalid_low.sum()} invalid OHLC bars")
             # Fix invalid bars
-            df.loc[invalid_high, 'high'] = df[['open', 'close', 'low']].max(axis=1)
-            df.loc[invalid_low, 'low'] = df[['open', 'close', 'high']].min(axis=1)
+            df.loc[invalid_high, "high"] = df[["open", "close", "low"]].max(axis=1)
+            df.loc[invalid_low, "low"] = df[["open", "close", "high"]].min(axis=1)
 
         # Remove negative prices
-        price_cols = ['open', 'high', 'low', 'close']
+        price_cols = ["open", "high", "low", "close"]
         for col in price_cols:
             df = df[df[col] > 0]
 
         # Remove negative volume
-        df = df[df['volume'] >= 0]
+        df = df[df["volume"] >= 0]
 
         # Forward fill missing values (conservative)
         df = df.ffill()
@@ -209,25 +208,27 @@ class DataLoader:
         """
         # Convert timeframe to pandas offset
         timeframe_map = {
-            '1min': '1T',
-            '5min': '5T',
-            '15min': '15T',
-            '1H': '1H',
-            '4H': '4H',
-            '1D': '1D',
-            '1W': '1W',
+            "1min": "1T",
+            "5min": "5T",
+            "15min": "15T",
+            "1H": "1H",
+            "4H": "4H",
+            "1D": "1D",
+            "1W": "1W",
         }
 
         freq = timeframe_map.get(timeframe, timeframe)
 
         # Resample OHLCV
-        resampled = df.resample(freq).agg({
-            'open': 'first',
-            'high': 'max',
-            'low': 'min',
-            'close': 'last',
-            'volume': 'sum',
-        })
+        resampled = df.resample(freq).agg(
+            {
+                "open": "first",
+                "high": "max",
+                "low": "min",
+                "close": "last",
+                "volume": "sum",
+            }
+        )
 
         # Remove NaN rows
         resampled = resampled.dropna()
@@ -240,7 +241,7 @@ class DataLoader:
         self,
         symbol: str,
         data: pd.DataFrame,
-        format: str = 'parquet',
+        format: str = "parquet",
     ):
         """
         Save data to file.
@@ -252,7 +253,7 @@ class DataLoader:
         """
         self.data_dir.mkdir(parents=True, exist_ok=True)
 
-        if format == 'parquet':
+        if format == "parquet":
             file_path = self.data_dir / f"{symbol}.parquet"
             data.to_parquet(file_path)
         else:

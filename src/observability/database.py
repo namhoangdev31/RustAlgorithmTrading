@@ -4,6 +4,7 @@ Database interface for observability data storage.
 Provides async interface to DuckDB for storing metrics collected
 from Rust services.
 """
+
 from typing import List, Dict, Any, Optional
 from datetime import datetime
 from pathlib import Path
@@ -78,7 +79,7 @@ class ObservabilityDatabase:
         metric_name: str,
         start_time: Optional[datetime] = None,
         end_time: Optional[datetime] = None,
-        limit: int = 1000
+        limit: int = 1000,
     ) -> List[Dict[str, Any]]:
         """
         Query metrics from DuckDB.
@@ -92,10 +93,7 @@ class ObservabilityDatabase:
         Returns:
             List of metric records
         """
-        logger.debug(
-            f"[cid:INIT] Would query {metric_name} from {start_time} "
-            f"to {end_time}"
-        )
+        logger.debug(f"[cid:INIT] Would query {metric_name} from {start_time} " f"to {end_time}")
         return []
 
 
