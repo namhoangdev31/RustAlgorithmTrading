@@ -86,10 +86,12 @@ fn test_fractional_price_still_enforces_limits() {
 
 #[test]
 fn test_max_open_positions_projected_rejection() {
-    let mut config = RiskConfig::default();
-    config.max_position_size = 10_000.0;
-    config.max_notional_exposure = 100_000.0;
-    config.max_open_positions = 2;
+    let config = RiskConfig {
+        max_position_size: 10_000.0,
+        max_notional_exposure: 100_000.0,
+        max_open_positions: 2,
+        ..RiskConfig::default()
+    };
 
     let mut checker = LimitChecker::new(config);
     checker.update_position(create_position("AAPL", Side::Bid, 10.0, 100.0));
@@ -111,9 +113,11 @@ fn test_max_open_positions_projected_rejection() {
 
 #[test]
 fn test_position_projection_allows_reducing_order() {
-    let mut config = RiskConfig::default();
-    config.max_position_size = 10_000.0;
-    config.max_notional_exposure = 100_000.0;
+    let config = RiskConfig {
+        max_position_size: 10_000.0,
+        max_notional_exposure: 100_000.0,
+        ..RiskConfig::default()
+    };
 
     let mut checker = LimitChecker::new(config);
     checker.update_position(create_position("AAPL", Side::Bid, 100.0, 100.0));
@@ -126,10 +130,12 @@ fn test_position_projection_allows_reducing_order() {
 
 #[test]
 fn test_position_projection_handles_reversal_without_false_reject() {
-    let mut config = RiskConfig::default();
     // Keep order-size gate permissive so this test isolates projected-position behavior.
-    config.max_position_size = 20_000.0;
-    config.max_notional_exposure = 100_000.0;
+    let config = RiskConfig {
+        max_position_size: 20_000.0,
+        max_notional_exposure: 100_000.0,
+        ..RiskConfig::default()
+    };
 
     let mut checker = LimitChecker::new(config);
     checker.update_position(create_position("AAPL", Side::Bid, 100.0, 100.0));

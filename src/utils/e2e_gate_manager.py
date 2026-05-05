@@ -50,10 +50,7 @@ def build_gate_record(
         disposition = "BLOCKED"
         reason_code = "OPEN_E2E_FAULT_DEBT"
 
-    if (
-        suite_type in [E2ESuiteType.E2E, E2ESuiteType.SOAK, E2ESuiteType.FAULT_INJECTION]
-        and disposition != "PASS"
-    ):
+    if suite_type is not None and disposition != "PASS":
         disposition = "BLOCKED"
         reason_code = f"{suite_type.value}_SUITE_FAIL"
 

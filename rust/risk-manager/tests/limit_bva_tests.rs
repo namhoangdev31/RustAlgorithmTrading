@@ -8,8 +8,10 @@ use std::time::Instant;
 
 #[test]
 fn test_symbol_volume_limit_bva() {
-    let mut config = RiskConfig::default();
-    config.max_position_size = 1000.0; // $1000 limit
+    let config = RiskConfig {
+        max_position_size: 1000.0, // $1000 limit
+        ..RiskConfig::default()
+    };
 
     let checker = LimitChecker::new(config);
     let sym = Symbol("AAPL".to_string());
@@ -85,9 +87,11 @@ fn test_symbol_volume_limit_bva() {
 
 #[test]
 fn test_strategy_allocation_limit_bva() {
-    let mut config = RiskConfig::default();
-    config.max_position_size = 10_000.0; // keep symbol gate permissive
-    config.max_notional_exposure = 1_000.0; // strategy-level guardrail
+    let config = RiskConfig {
+        max_position_size: 10_000.0,    // keep symbol gate permissive
+        max_notional_exposure: 1_000.0, // strategy-level guardrail
+        ..RiskConfig::default()
+    };
 
     let checker = LimitChecker::new(config);
     let sym = Symbol("AAPL".to_string());
@@ -165,9 +169,11 @@ fn test_strategy_allocation_limit_bva() {
 
 #[test]
 fn test_risk_lookup_overhead_within_threshold() {
-    let mut config = RiskConfig::default();
-    config.max_position_size = 10_000.0;
-    config.max_notional_exposure = 50_000.0;
+    let config = RiskConfig {
+        max_position_size: 10_000.0,
+        max_notional_exposure: 50_000.0,
+        ..RiskConfig::default()
+    };
 
     let checker = LimitChecker::new(config);
     let order = Order {

@@ -104,7 +104,10 @@ class CanaryLaunchManager(StagingHardeningManager):
         esc_records = [r for r in launch_records if r.escalation_state is not None]
         rb_records = [r for r in launch_records if r.rollback_required is True]
 
-        max_ks_ms = max((r.kill_switch_latency_ms for r in ks_records), default=0)
+        max_ks_ms = max(
+            (r.kill_switch_latency_ms for r in ks_records if r.kill_switch_latency_ms is not None),
+            default=0,
+        )
         escalation_pass_rate = (
             sum(1 for r in esc_records if r.disposition == "PASS") / len(esc_records)
             if esc_records

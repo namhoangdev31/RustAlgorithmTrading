@@ -1,7 +1,7 @@
 """
 Rust-powered signal processing bridge.
 
-This package provides high-performance technical indicators and 
+This package provides high-performance technical indicators and
 feature computation via PyO3-compiled Rust bindings.
 """
 

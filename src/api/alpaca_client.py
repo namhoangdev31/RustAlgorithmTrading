@@ -150,7 +150,7 @@ class AlpacaClient:
         symbol: str,
         start: datetime,
         end: datetime,
-        timeframe: TimeFrame = TimeFrame.Day,  # type: ignore
+        timeframe: TimeFrame = TimeFrame.Day,
     ) -> Any:
         """
         Fetch historical price bars
@@ -171,7 +171,7 @@ class AlpacaClient:
 
             bars = self.data_client.get_stock_bars(request_params)
             if hasattr(bars, "df"):
-                df = bars.df  # type: ignore
+                df = bars.df
             else:
                 import pandas as pd
 

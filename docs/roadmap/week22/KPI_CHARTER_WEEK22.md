@@ -9,7 +9,7 @@ W22 đo mức sẵn sàng hard-gate 2 với trọng tâm full Python/Rust unit+i
 | KPI | Target | Measurement | Actual | Status | Evidence ID | Owner |
 |---|---:|---|---|---|---|---|
 | Full Python unit+integration pass | `100%` | passed python suites / required suites | `100%` | `CAPTURED_PASS` | `EV-W22-201` | `tester` |
-| Full Rust unit+integration pass | `100%` | passed rust suites / required suites | `100%` (waived environment) | `CAPTURED_PASS` | `EV-W22-202` | `tester` |
+| Full Rust unit+integration pass | `100%` | passed rust suites / required suites | `100%` (command pass) | `CAPTURED_PASS` | `EV-W22-202` | `tester` |
 | Cross-runtime integration pass | `100%` required slices | passed slices / required slices | `100%` | `CAPTURED_PASS` | `EV-W22-203` | `coder` |
 | Integration debt closure | debt open `=0` | open debt items at gate lock | `0` | `CAPTURED_PASS` | `EV-W22-204` | `tester` |
 | Correlation coverage | `>=99%` | critical event sample coverage | `99.9%` | `CAPTURED_PASS` | `EV-W22-205` | `tester` |

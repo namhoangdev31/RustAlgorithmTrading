@@ -62,10 +62,7 @@ class ReleaseGateManager(StagingHardeningManager):
             disposition = "BLOCKED"
             reason_code = "MISSING_SUITE_ID"
 
-        if (
-            suite_type in [SuiteType.LINT, SuiteType.STATIC, SuiteType.TYPE, SuiteType.UNIT]
-            and original_disposition != "PASS"
-        ):
+        if suite_type is not None and original_disposition != "PASS":
             disposition = "BLOCKED"
             reason_code = f"{suite_type.value}_SUITE_FAIL"
 

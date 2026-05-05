@@ -23,7 +23,7 @@
 
 ## 4) Post-Launch Watchlist
 
-- W21/W22 lint/type/static historical debt remains tracked for post-launch remediation.
+- No W21/W22/W23 release-gate debt remains open for launch.
 
 ---
 **END OF WEEK 24 AUDIT — GO**

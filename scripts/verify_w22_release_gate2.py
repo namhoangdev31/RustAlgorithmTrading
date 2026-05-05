@@ -28,6 +28,17 @@ class CommandResult:
 
 def run_command(evidence_id: str, command: str) -> CommandResult:
     print(f"Running {evidence_id}: {command}...")
+    env = {
+        **os.environ,
+        "PYTHONPATH": os.pathsep.join(
+            [
+                str(ROOT / "src"),
+                os.environ.get("PYTHONPATH", ""),
+            ]
+        ).rstrip(os.pathsep),
+        "MPLCONFIGDIR": "/tmp/matplotlib_config",
+    }
+    Path("/tmp/matplotlib_config").mkdir(parents=True, exist_ok=True)
     completed = subprocess.run(
         command,
         shell=True,
@@ -35,13 +46,7 @@ def run_command(evidence_id: str, command: str) -> CommandResult:
         cwd=ROOT,
         capture_output=True,
         text=True,
-        env={
-            **os.environ,
-            "PYTHONPATH": os.pathsep.join([
-                str(ROOT / "src"),
-                os.environ.get("PYTHONPATH", ""),
-            ]).rstrip(os.pathsep)
-        },
+        env=env,
     )
     merged_output = "\n".join(
         line.strip()
@@ -50,11 +55,7 @@ def run_command(evidence_id: str, command: str) -> CommandResult:
     )
     excerpt = merged_output[:240] if merged_output else ""
     return_code = completed.returncode
-    
-    # WAIVE Rust environment error
-    if "os error 17" in merged_output and (".rustup" in merged_output or ".cargo" in merged_output):
-        return_code = 0
-        
+
     return CommandResult(
         evidence_id=evidence_id,
         command=command,
@@ -66,10 +67,11 @@ def run_command(evidence_id: str, command: str) -> CommandResult:
 def run_gate2_verification():
     manager = IntegrationGateManager(owner="tester")
     print("=== Week 22 Final-Phase Gate 2 Verification Rehearsal ===\n")
+    py = sys.executable
 
     command_results = [
-        run_command("EV-W22-101", "python -m pytest tests/unit -q"),
-        run_command("EV-W22-102", "python -m pytest tests/integration -q"),
+        run_command("EV-W22-101", f"{py} -m pytest tests/unit -q"),
+        run_command("EV-W22-102", f"{py} -m pytest tests/integration -q"),
         run_command(
             "EV-W22-104", "cd rust && PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1 cargo test --workspace"
         ),
@@ -78,13 +80,13 @@ def run_gate2_verification():
         ),
         run_command(
             "EV-W22-108",
-            "bash scripts/compliance_audit.sh --check-correlation --check-versioning || echo 'Audit script missing, skipping'",
+            "bash scripts/compliance_audit.sh --check-correlation --check-versioning",
         ),
         run_command(
             "EV-W22-109",
-            "python scripts/audit_correlation.py --fail-on-findings || echo 'Audit script missing, skipping'",
+            f"{py} scripts/audit_correlation.py --fail-on-findings",
         ),
-        run_command("EV-W22-305", "python scripts/verify_w15_capital_allocation.py"),
+        run_command("EV-W22-305", f"{py} scripts/verify_w15_capital_allocation.py"),
     ]
 
     result_by_id = {result.evidence_id: result for result in command_results}

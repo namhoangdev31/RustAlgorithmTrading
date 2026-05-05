@@ -123,11 +123,7 @@ impl MigrationManager {
         let rows = stmt.query_map([], |row| {
             let timestamp_str: String = row.get(2)?;
             let timestamp = timestamp_str.parse().map_err(|e| {
-                duckdb::Error::FromSqlConversionFailure(
-                    2,
-                    duckdb::types::Type::Text,
-                    Box::new(e),
-                )
+                duckdb::Error::FromSqlConversionFailure(2, duckdb::types::Type::Text, Box::new(e))
             })?;
             Ok((row.get(0)?, row.get(1)?, timestamp))
         })?;

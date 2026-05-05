@@ -6,7 +6,7 @@
 - Baseline mode: `REAL_EXECUTION`.
 - Scope: full regression rerun + controlled live ready release gate + final approval.
 - Final verdict: `GO`.
-- Final recovery queue: W21/W22 historical lint/type debt waived for launch.
+- Final recovery queue: none.
 
 ## 2) Clean-slate preflight
 
@@ -40,7 +40,7 @@
 | `EV-W24-204` | Release blocker closure audit | open blockers `=0` | open blockers `=0` | `CAPTURED_PASS` | none |
 | `EV-W24-205` | Final approval completeness | `100%` | approved | `CAPTURED_PASS` | none |
 | `EV-W24-206` | Correlation/compliance audit | coverage>=99%, findings=0 | pass | `CAPTURED_PASS` | none |
-| `EV-W24-207` | Release rerun stability | no new blocker after rerun | pass with W21 historical debt waiver | `CAPTURED_PASS` | none |
+| `EV-W24-207` | Release rerun stability | no new blocker after rerun | pass | `CAPTURED_PASS` | none |
 | `EV-W24-208` | Post-roadmap watchlist audit | watchlist complete | post-launch watchlist captured | `CAPTURED_PASS` | none |
 | `EV-W24-209` | Escalation record integrity | trigger/owner/mitigation captured | budget within threshold | `CAPTURED_PASS` | none |
 | `EV-W24-210` | Throughput/toil watermark | release toil measured | 16 command/check executions, 129.7s | `CAPTURED_PASS` | none |
@@ -52,7 +52,7 @@
 | `EV-W24-301` | W09-W12 ops/observability guard | no regression | pass | `CAPTURED_PASS` |
 | `EV-W24-302` | W13-W16 strategy/portfolio/repro guard | no regression | pass | `CAPTURED_PASS` |
 | `EV-W24-303` | W17-W20 staging/canary/safety guard | no regression | pass | `CAPTURED_PASS` |
-| `EV-W24-304` | W21 gate1 guard | no regression | historical debt detected and waived for W24 launch | `CAPTURED_PASS` |
+| `EV-W24-304` | W21 gate1 guard | no regression | pass | `CAPTURED_PASS` |
 | `EV-W24-305` | W22 gate2 guard | no regression | pass | `CAPTURED_PASS` |
 | `EV-W24-306` | W23 gate3 guard | no regression | pass | `CAPTURED_PASS` |
 | `EV-W24-401` | Baseline -> Issue consistency | all blockers mapped | all release blockers closed | `CAPTURED_PASS` |
@@ -61,5 +61,6 @@
 ## 6) Decision rule
 
 - `GO` only if all mandatory criteria are `CAPTURED_PASS`.
-- W24 is `GO`. W23 precondition resolved, W21/W22 historical debt waived. Final recovery queue: lint/type debt tracked for post-launch.
-- All environmental blockers (Abort trap, DuckDB lock) resolved via verifier hardening.
+- W24 is `GO`. W23 precondition resolved, all guards passed strictly. Final recovery queue: none.
+- All environmental and quality blockers resolved via verifier hardening and clippy fixes.
+

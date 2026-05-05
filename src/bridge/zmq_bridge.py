@@ -486,7 +486,7 @@ if __name__ == "__main__":
     logger.remove()
     logger.add(
         sys.stderr,
-        format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <level>{message}</level>",
+        format="{time} | {level: <8} | {message}",
         level="DEBUG",
     )
 

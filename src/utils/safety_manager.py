@@ -101,7 +101,14 @@ class SafetyGuardrailsManager(StagingHardeningManager):
             r for r in safety_records if r.trigger_type == SafetyTriggerType.ROLLBACK
         ]
 
-        max_kill_switch_ms = max((r.kill_switch_latency_ms for r in kill_switch_records), default=0)
+        max_kill_switch_ms = max(
+            (
+                r.kill_switch_latency_ms
+                for r in kill_switch_records
+                if r.kill_switch_latency_ms is not None
+            ),
+            default=0,
+        )
         risk_off_pass_rate = (
             sum(1 for r in risk_off_records if r.disposition == "PASS") / len(risk_off_records)
             if risk_off_records

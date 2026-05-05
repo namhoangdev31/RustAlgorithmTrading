@@ -18,7 +18,7 @@
 | `W21-ISS-006` | P1 | `DONE` | `tester` | `Pha 4` | Correlation/compliance quality | `EV-W21-205`,`EV-W21-206` | fix coverage/findings and rerun audits | coverage>=99%, findings=0 |
 | `W21-ISS-007` | P1 | `DONE` | `tester` | `Pha 5` | Regression guard | `EV-W21-301..306` | rerun W09-W20 guardrail slices | regression guard pass |
 | `W21-ISS-008` | P1 | `DONE` | `planner` | `Pha 6` | Final verdict consistency | `EV-W21-401`,`EV-W21-402` | strict artifact reconciliation | one final verdict |
-| `W21-ISS-009` | P1 | `DONE` | `planner` | `Pha 7` | W22 handoff | `EV-W21-402` | complete NO-GO recovery queue + W22 priorities/guardrails | start pack complete |
+| `W21-ISS-009` | P1 | `DONE` | `planner` | `Pha 7` | W22 handoff | `EV-W21-402` | complete GO handoff + W22 priorities/guardrails | start pack complete |
 | `W21-ISS-010` | P1 | `DONE` | `planner` | `Pha 5` | Budget governance | `EV-W21-209` | add escalation record when required | budget within threshold or approved escalation |
 | `W21-ISS-011` | P2 | `DONE` | `ops` | `Pha 5` | Gate throughput | `EV-W21-210` | capture gate toil watermark | throughput watermark captured |
 | `W21-ISS-012` | P2 | `DONE` | `planner` | `Pha 6` | Audit linkage | `EV-W21-205`,`EV-W21-206` | complete evidence linkage | linkage complete |

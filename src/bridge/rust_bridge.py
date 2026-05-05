@@ -11,6 +11,7 @@ from dataclasses import dataclass
 from loguru import logger
 from signal_bridge import Bar
 
+
 @dataclass
 class MarketBar:
     """Market data bar structure matching Rust Bar type."""
@@ -99,9 +100,8 @@ class RustFeatureComputer:
 
             # Wave-3: Sampled logging (1 per 100)
             if self._call_counter % 100 == 0:
-                logger.debug(
-                    f"[cid:INIT] Computed {len(features)} streaming features for {bar.symbol} (sampled)"
-                )
+                msg = f"Computed {len(features)} streaming features for {bar.symbol} (sampled)"
+                logger.debug(f"[cid:INIT] {msg}")
 
             return features
         except Exception as e:
@@ -214,7 +214,7 @@ if __name__ == "__main__":
     logger.remove()
     logger.add(
         sys.stderr,
-        format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <level>{message}</level>",
+        format="{time} | {level: <8} | {message}",
         level="DEBUG",
     )
 

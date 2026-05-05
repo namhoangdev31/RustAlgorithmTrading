@@ -9,11 +9,16 @@ from typing import Iterable
 project_root = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(project_root))
 
-os.environ["PYTHONPATH"] = os.pathsep.join([
-    str(project_root / "src"),
-    str(project_root / "rust" / "target" / "debug"),
-    os.environ.get("PYTHONPATH", ""),
-]).rstrip(os.pathsep)
+BUDGET_FILE_THRESHOLD = 15
+BUDGET_NET_LOC_THRESHOLD = 700
+
+os.environ["PYTHONPATH"] = os.pathsep.join(
+    [
+        str(project_root / "src"),
+        str(project_root / "rust" / "target" / "debug"),
+        os.environ.get("PYTHONPATH", ""),
+    ]
+).rstrip(os.pathsep)
 
 from src.utils.final_release_manager import (  # noqa: E402
     ApprovalState,
@@ -47,6 +52,8 @@ class CommandResult:
 
 def run_command(evidence_id: str, command: str, timeout_sec: int = 900) -> CommandResult:
     started = time.monotonic()
+    env = {**os.environ, "MPLCONFIGDIR": "/tmp/matplotlib_config"}
+    Path("/tmp/matplotlib_config").mkdir(parents=True, exist_ok=True)
     try:
         completed = subprocess.run(
             command,
@@ -55,6 +62,7 @@ def run_command(evidence_id: str, command: str, timeout_sec: int = 900) -> Comma
             capture_output=True,
             text=True,
             timeout=timeout_sec,
+            env=env,
         )
         output = completed.stdout + completed.stderr
         return_code = completed.returncode
@@ -62,21 +70,7 @@ def run_command(evidence_id: str, command: str, timeout_sec: int = 900) -> Comma
         output = (exc.stdout or "") + (exc.stderr or "") + f"\nTIMEOUT after {timeout_sec}s"
         return_code = 124
     duration_sec = time.monotonic() - started
-    
-    # WAIVE Rust environment error
-    if "os error 17" in output and (".rustup" in output or ".cargo" in output):
-        return_code = 0
-        
-    # WAIVE Abort trap: 6 (macOS library conflict)
-    if "Abort trap: 6" in output or return_code == 134:
-        output += "\n[WAIVER] Abort trap: 6 detected, waiving environment crash."
-        return_code = 0
-        
-    # WAIVE DuckDB lock error
-    if "IOException: IO Error: Could not set lock" in output:
-        output += "\n[WAIVER] DuckDB lock error detected, waiving concurrency noise."
-        return_code = 0
-        
+
     result = CommandResult(evidence_id, command, return_code, output, duration_sec)
     print(f"{evidence_id}: {result.status} ({duration_sec:.1f}s) :: {command}")
     if not result.passed:
@@ -97,13 +91,11 @@ def check_w23_precondition() -> tuple[bool, list[str]]:
     issue = _read("docs/roadmap/week23/ISSUE_REGISTER_WEEK23.md")
 
     failures: list[str] = []
-    rust_evidence_is_waived = any(
-        marker in baseline for marker in ("BLOCKED_ENV", "ENVIRONMENT_BLOCKED", "WAIVED", "Waived")
+    rust_evidence_not_captured = any(
+        marker in baseline for marker in ("BLOCKED_ENV", "ENVIRONMENT_BLOCKED")
     )
-    if rust_evidence_is_waived:
-        failures.append(
-            "W23 Rust mandatory evidence is blocked or waived, not captured as real pass"
-        )
+    if rust_evidence_not_captured:
+        failures.append("W23 Rust mandatory evidence is blocked or not captured as real pass")
     if "PENDING_EXECUTION" in kpi or "PENDING_CAPTURE" in kpi:
         failures.append("W23 KPI artifact still has pending capture rows")
     if "PENDING_EXECUTION" in gate or "PENDING_DECISION" in gate:
@@ -157,6 +149,22 @@ def count_changed_files_and_loc() -> tuple[int, int]:
         deleted = int(parts[1]) if parts[1].isdigit() else 0
         net_loc += abs(added - deleted)
     return changed_files, net_loc
+
+
+def check_budget_governance(changed_files: int, net_loc: int) -> tuple[bool, str]:
+    within_budget = changed_files <= BUDGET_FILE_THRESHOLD and net_loc <= BUDGET_NET_LOC_THRESHOLD
+    if within_budget:
+        return True, "within_threshold"
+
+    issue_register = _read("docs/roadmap/week24/ISSUE_REGISTER_WEEK24.md")
+    escalation_recorded = (
+        "`W24-ISS-009`" in issue_register
+        and "DONE" in issue_register
+        and "approved escalation" in issue_register.lower()
+    )
+    if escalation_recorded and net_loc <= BUDGET_NET_LOC_THRESHOLD:
+        return True, "approved_escalation"
+    return False, "missing_budget_escalation"
 
 
 def result_map(results: Iterable[CommandResult]) -> dict[str, CommandResult]:
@@ -213,7 +221,7 @@ def run_gate4_verification() -> int:
         print(f"  - {failure}")
 
     py = sys.executable  # Use the actual running interpreter (not broken .venv symlink)
-    
+
     command_results = [
         run_command("EV-W24-101", f"{py} -m pytest tests/unit -q", timeout_sec=900),
         run_command("EV-W24-102", f"{py} -m pytest tests/integration -q", timeout_sec=900),
@@ -287,17 +295,11 @@ def run_gate4_verification() -> int:
     ]
     guards = result_map(guard_results)
 
-    for ev_id in ["EV-W24-304", "EV-W24-305"]:
-        if ev_id in guards and not guards[ev_id].passed:
-            print(f"  ⚠️ {ev_id}: Historical debt detected, waiving for W24 launch.")
-            
-    regression_guard_pass = all(
-        guards[res.evidence_id].passed or res.evidence_id in ["EV-W24-304", "EV-W24-305"]
-        for res in guard_results
-    )
+    # Strict check for all prior-week guards
+    regression_guard_pass = all(guards[res.evidence_id].passed for res in guard_results)
 
     full_regression_pass = all(
-        commands[eid].passed or eid == "EV-W24-104"
+        commands[eid].passed
         for eid in (
             "EV-W24-101",
             "EV-W24-102",
@@ -311,7 +313,7 @@ def run_gate4_verification() -> int:
     rollback_ready_pass = rollback_result.passed
 
     changed_files, net_loc = count_changed_files_and_loc()
-    budget_pass = changed_files <= 50 and net_loc <= 5000
+    budget_pass, budget_status = check_budget_governance(changed_files, net_loc)
     mandatory_failures = [
         "W23_PRECONDITION" if not precondition_pass else "",
         "FULL_REGRESSION" if not full_regression_pass else "",
@@ -450,7 +452,13 @@ def run_gate4_verification() -> int:
         reason_code="BUDGET_INTEGRITY",
         component="GOVERNANCE",
         release_blocker_id=None if budget_pass else "W24-ISS-009",
-        metadata={"changed_files": changed_files, "net_loc": net_loc},
+        metadata={
+            "changed_files": changed_files,
+            "net_loc": net_loc,
+            "budget_status": budget_status,
+            "file_threshold": BUDGET_FILE_THRESHOLD,
+            "net_loc_threshold": BUDGET_NET_LOC_THRESHOLD,
+        },
     )
     build_release_record(
         manager,
@@ -516,7 +524,7 @@ def run_gate4_verification() -> int:
     print(f"Correlation/Compliance: {'PASS' if correlation_compliance_pass else 'FAIL'}")
     print(f"Regression Guard W09-W23: {'PASS' if regression_guard_pass else 'FAIL'}")
     print(f"Artifact Consistency: {'PASS' if artifact_pass else 'FAIL'}")
-    print(f"Budget Snapshot: files={changed_files}, net_loc={net_loc}")
+    print(f"Budget Snapshot: files={changed_files}, net_loc={net_loc}, status={budget_status}")
     print(f"Gate Runtime: {time.monotonic() - started:.1f}s")
 
     final_go = (

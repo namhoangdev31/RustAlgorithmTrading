@@ -1,6 +1,5 @@
 // Integration tests for common types and messaging
 use chrono::Utc;
-use common::messaging::*;
 use common::types::*;
 
 mod type_tests {
@@ -68,7 +67,7 @@ mod type_tests {
 
     #[test]
     fn test_order_status_enum() {
-        let statuses = vec![
+        let statuses = [
             OrderStatus::Pending,
             OrderStatus::PartiallyFilled,
             OrderStatus::Filled,

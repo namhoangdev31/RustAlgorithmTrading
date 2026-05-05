@@ -6,8 +6,10 @@ use std::time::Instant;
 
 #[test]
 fn test_stop_manager_lookup_performance_1000() {
-    let mut config = RiskConfig::default();
-    config.stop_loss_percent = 5.0;
+    let config = RiskConfig {
+        stop_loss_percent: 5.0,
+        ..RiskConfig::default()
+    };
 
     let mut manager = StopManager::new(config);
     let mut positions = Vec::new();

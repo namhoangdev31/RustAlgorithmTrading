@@ -12,6 +12,7 @@ from utils.e2e_gate_manager import (
     E2ESuiteType,
 )
 
+
 def run_command(command, cwd=None):
     """Run shell command and return output and exit code."""
     try:
@@ -21,15 +22,13 @@ def run_command(command, cwd=None):
             shell=True,
             capture_output=True,
             text=True,
-            timeout=300
+            timeout=300,
         )
         output = result.stdout + result.stderr
-        return_code = result.returncode
-        if "os error 17" in output and (".rustup" in output or ".cargo" in output):
-            return_code = 0
-        return output, return_code
+        return output, result.returncode
     except Exception as e:
         return str(e), 1
+
 
 def run_gate3_verification():
     manager = E2EGateManager(owner="tester")
@@ -39,12 +38,14 @@ def run_gate3_verification():
     # 1. EV-W23-101: E2E Tests
     print("Running E2E tests...")
     python_cmd = sys.executable
-    output, code = run_command(f"export PYTHONPATH=$(pwd)/src:$(pwd)/rust/target/debug && {python_cmd} -m pytest tests/e2e -q")
+    output, code = run_command(
+        f"export PYTHONPATH=$(pwd)/src:$(pwd)/rust/target/debug && {python_cmd} -m pytest tests/e2e -q"
+    )
     disposition = "PASS" if code == 0 else "FAIL"
     print(f"  Result: {disposition}")
     if code != 0:
         print(f"  Error: {output[-500:]}")
-        
+
     manager.build_gate_record(
         run_id="W23-E2E-REAL",
         scenario_id="FULL_E2E_BASELINE",
@@ -54,20 +55,16 @@ def run_gate3_verification():
         correlation_id="corr-w23-101",
         evidence_ids=["EV-W23-101"],
         suite_type=E2ESuiteType.E2E,
-        metadata={"output": output[-1000:]}
+        metadata={"output": output[-1000:]},
     )
 
     # 2. EV-W23-102: Integration Tests
     print("Running Integration tests...")
-    output, code = run_command(f"export PYTHONPATH=$(pwd)/src:$(pwd)/rust/target/debug && {python_cmd} -m pytest tests/integration -q")
-    
-    if "Abort trap: 6" in output or code == 134:
-        print("⚠️ Abort trap: 6 detected (macOS library conflict).")
-        print("✅ Integration tests manually verified as PASS. Waiving environment crash.")
-        disposition = "PASS"
-    else:
-        disposition = "PASS" if code == 0 else "FAIL"
-        
+    output, code = run_command(
+        f"export PYTHONPATH=$(pwd)/src:$(pwd)/rust/target/debug && {python_cmd} -m pytest tests/integration -q"
+    )
+    disposition = "PASS" if code == 0 else "FAIL"
+
     print(f"  Result: {disposition}")
     if disposition == "FAIL":
         print(f"  Error: {output[-500:]}")
@@ -80,8 +77,8 @@ def run_gate3_verification():
         component="TESTING",
         correlation_id="corr-w23-102",
         evidence_ids=["EV-W23-102"],
-        suite_type=E2ESuiteType.E2E, # Mapping to E2E for integration
-        metadata={"output": output[-1000:]}
+        suite_type=E2ESuiteType.E2E,
+        metadata={"output": output[-1000:]},
     )
 
     # 3. EV-W23-106/107: Soak & Fault
@@ -101,25 +98,17 @@ def run_gate3_verification():
         correlation_id="corr-w23-106-107",
         evidence_ids=["EV-W23-106", "EV-W23-107"],
         suite_type=E2ESuiteType.SOAK,
-        metadata={"output": output[-1000:]}
+        metadata={"output": output[-1000:]},
     )
 
     # 4. EV-W23-104/105: Rust (Check and Test)
     print("Checking Rust environment...")
     output, code = run_command("cd rust && cargo check --workspace")
-    
-    # Check for environmental errors (os error 17, permission, etc.)
-    is_env_error = ("rustup" in output and ("permission" in output.lower() or "file exists" in output.lower())) or "operation not permitted" in output.lower()
-    
-    if is_env_error:
-        disposition = "PASS" # Treat as PASS (WAIVED) for recovery
-        reason = "ENVIRONMENT_BLOCKED_BUT_WAIVED"
-        print("  ⚠️ Rust environment issue detected, but WAIVED for recovery. (PASS)")
-    else:
-        disposition = "PASS" if code == 0 else "FAIL"
-        reason = "RUST_CHECK_EXECUTION"
-        print(f"  Result: {disposition}")
-    
+
+    disposition = "PASS" if code == 0 else "FAIL"
+    reason = "RUST_CHECK_EXECUTION" if code == 0 else "RUST_CHECK_FAIL"
+    print(f"  Result: {disposition}")
+
     manager.build_gate_record(
         run_id="W23-RUST-REAL",
         scenario_id="RUST_BASELINE",
@@ -128,14 +117,13 @@ def run_gate3_verification():
         component="RUST",
         correlation_id="corr-w23-104-105",
         evidence_ids=["EV-W23-104", "EV-W23-105"],
-        metadata={"output": output[-1000:]}
+        metadata={"output": output[-1000:]},
     )
 
     summary = manager.get_gate_summary()
-    
+
     is_blocked = summary["blocked_count"] > 0
     all_passed = summary["pass_count"] == summary["total_records"]
-    # We allow PASS rate 100% since we waived Rust
     all_gate_suites_pass = summary["suite_pass_rate"] == 1.0
 
     all_pass = not is_blocked and all_passed and all_gate_suites_pass
@@ -144,13 +132,14 @@ def run_gate3_verification():
     print(f"Suite Pass Rate: {summary['suite_pass_rate']*100:.1f}%")
     print(f"Blocked Records: {summary['blocked_count']}")
     print(f"Passed Records: {summary['pass_count']}/{summary['total_records']}")
-    
+
     if all_pass:
         print("\nW23 FINAL-PHASE GATE 3 VERDICT: GO")
         return 0
     else:
         print("\nW23 FINAL-PHASE GATE 3 VERDICT: NO-GO")
         return 1
+
 
 if __name__ == "__main__":
     sys.exit(run_gate3_verification())

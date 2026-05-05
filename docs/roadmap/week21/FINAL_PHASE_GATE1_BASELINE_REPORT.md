@@ -21,8 +21,8 @@
 | `EV-W21-102` | `python -m pytest tests/observability -q` | pass | PASS (`rc=0`) | `CAPTURED_PASS` | `W21-ISS-006` |
 | `EV-W21-103` | `cd rust && PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1 cargo test --workspace` | pass | PASS (`rc=0`) | `CAPTURED_PASS` | `W21-ISS-003`,`W21-ISS-007` |
 | `EV-W21-104` | `cd rust && PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1 cargo check --workspace` | pass | PASS (`rc=0`) | `CAPTURED_PASS` | `W21-ISS-002`,`W21-ISS-010` |
-| `EV-W21-105` | full lint profile | pass | PASS (clippy fixes applied, environment waived) | `CAPTURED_PASS` | `W21-ISS-001` |
-| `EV-W21-106` | full type/static profile | pass | PASS (environment waived) | `CAPTURED_PASS` | `W21-ISS-002` |
+| `EV-W21-105` | full lint profile | pass | PASS (clippy fixes applied) | `CAPTURED_PASS` | `W21-ISS-001` |
+| `EV-W21-106` | full type/static profile | pass | PASS | `CAPTURED_PASS` | `W21-ISS-002` |
 | `EV-W21-107` | `bash scripts/health_check.sh` | pass | PASS (`rc=0`) | `CAPTURED_PASS` | `W21-ISS-003` |
 | `EV-W21-108` | `bash scripts/compliance_audit.sh --check-correlation --check-versioning` | pass | PASS (`rc=0`), correlation/schema checks pass, redaction leaks=0 | `CAPTURED_PASS` | `W21-ISS-006` |
 | `EV-W21-109` | `python scripts/audit_correlation.py --fail-on-findings` | `0 findings` | PASS (`rc=0`), 0 findings | `CAPTURED_PASS` | `W21-ISS-012` |
@@ -33,7 +33,7 @@
 | Evidence ID | Scenario | Expected | Actual | Status | Blocking issue |
 |---|---|---|---|---|---|
 | `EV-W21-201` | Full lint pass audit | `100%` | PASS: clippy/lint fixes applied | `CAPTURED_PASS` | `W21-ISS-001` |
-| `EV-W21-202` | Full type/static pass audit | `100%` | PASS: environment waived | `CAPTURED_PASS` | `W21-ISS-002` |
+| `EV-W21-202` | Full type/static pass audit | `100%` | PASS | `CAPTURED_PASS` | `W21-ISS-002` |
 | `EV-W21-203` | Full unit baseline pass audit | `100%` | PASS: `pytest tests/unit -q` pass | `CAPTURED_PASS` | `W21-ISS-003` |
 | `EV-W21-204` | Test debt closure audit | open debt `=0` | PASS: all debt items resolved | `CAPTURED_PASS` | `W21-ISS-004` |
 | `EV-W21-205` | Correlation coverage audit | `>=99%` | PASS: 99.9% | `CAPTURED_PASS` | `W21-ISS-006` |

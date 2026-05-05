@@ -163,9 +163,10 @@ class AlpacaPaperTrading:
             account = self.trading_client.get_account()
 
             self._connected = True
-            logger.info(f"Connected to Alpaca API")
-            logger.info(f"Account status: {getattr(account, 'status', 'UNKNOWN')}")
-            logger.info(f"Buying power: ${float(getattr(account, 'buying_power', 0.0)):,.2f}")
+            logger.info("Connected to Alpaca API")
+            if account is not None:
+                logger.info(f"Account status: {getattr(account, 'status', 'UNKNOWN')}")
+                logger.info(f"Buying power: ${float(getattr(account, 'buying_power', 0.0)):,.2f}")
 
             return True
 
@@ -183,24 +184,26 @@ class AlpacaPaperTrading:
         self._ensure_connected()
 
         try:
+            if self.trading_client is None:
+                raise RuntimeError("Trading client not initialized")
             account = self.trading_client.get_account()
 
             return {
                 "status": getattr(account, "status", "UNKNOWN"),
                 "cash": Decimal(str(getattr(account, "cash", "0"))),
                 "portfolio_value": Decimal(str(getattr(account, "portfolio_value", "0"))),
-                "buying_power": Decimal(str(account.buying_power)),
-                "equity": Decimal(str(account.equity)),
-                "long_market_value": Decimal(str(account.long_market_value)),
-                "short_market_value": Decimal(str(account.short_market_value)),
-                "initial_margin": Decimal(str(account.initial_margin)),
-                "maintenance_margin": Decimal(str(account.maintenance_margin)),
-                "daytrade_count": account.daytrade_count,
-                "pattern_day_trader": account.pattern_day_trader,
-                "trading_blocked": account.trading_blocked,
-                "transfers_blocked": account.transfers_blocked,
-                "account_blocked": account.account_blocked,
-                "created_at": account.created_at,
+                "buying_power": Decimal(str(getattr(account, "buying_power", "0"))),
+                "equity": Decimal(str(getattr(account, "equity", "0"))),
+                "long_market_value": Decimal(str(getattr(account, "long_market_value", "0"))),
+                "short_market_value": Decimal(str(getattr(account, "short_market_value", "0"))),
+                "initial_margin": Decimal(str(getattr(account, "initial_margin", "0"))),
+                "maintenance_margin": Decimal(str(getattr(account, "maintenance_margin", "0"))),
+                "daytrade_count": getattr(account, "daytrade_count", 0),
+                "pattern_day_trader": getattr(account, "pattern_day_trader", False),
+                "trading_blocked": getattr(account, "trading_blocked", False),
+                "transfers_blocked": getattr(account, "transfers_blocked", False),
+                "account_blocked": getattr(account, "account_blocked", False),
+                "created_at": getattr(account, "created_at", None),
             }
         except Exception as e:
             logger.error(f"Failed to fetch account info: {e}")
@@ -216,20 +219,24 @@ class AlpacaPaperTrading:
         self._ensure_connected()
 
         try:
+            if self.trading_client is None:
+                raise RuntimeError("Trading client not initialized")
             account = self.trading_client.get_account()
             positions = self.trading_client.get_all_positions()
 
             # Calculate metrics
-            equity = Decimal(str(account.equity))
-            cash = Decimal(str(account.cash))
-            portfolio_value = Decimal(str(account.portfolio_value))
-            buying_power = Decimal(str(account.buying_power))
+            equity = Decimal(str(getattr(account, "equity", "0")))
+            cash = Decimal(str(getattr(account, "cash", "0")))
+            portfolio_value = Decimal(str(getattr(account, "portfolio_value", "0")))
+            buying_power = Decimal(str(getattr(account, "buying_power", "0")))
 
             # P&L calculation
             cost_basis = sum(
-                Decimal(str(p.qty)) * Decimal(str(p.avg_entry_price)) for p in positions
+                Decimal(str(getattr(p, "qty", "0")))
+                * Decimal(str(getattr(p, "avg_entry_price", "0")))
+                for p in positions
             )
-            current_value = sum(Decimal(str(p.market_value)) for p in positions)
+            current_value = sum(Decimal(str(getattr(p, "market_value", "0"))) for p in positions)
             total_pl = current_value - cost_basis if cost_basis > 0 else Decimal("0.0")
             total_pl_pct = (total_pl / cost_basis * 100) if cost_basis > 0 else Decimal("0.0")
 
@@ -547,7 +554,7 @@ class AlpacaPaperTrading:
             logger.error(f"Failed to close all positions: {e}")
             raise
 
-    def get_latest_quote(self, symbol: str) -> Dict[str, float]:
+    def get_latest_quote(self, symbol: str) -> Dict[str, Any]:
         """
         Get latest quote for a symbol.
 
@@ -678,9 +685,8 @@ if __name__ == "__main__":
     logger.remove()
     logger.add(
         sys.stderr,
-        format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | "
-        "<level>{level: <8}</level> | <level>{message}</level>",
-        level="INFO",
+        format="{time} | {level: <8} | {message}",
+        level="DEBUG",
     )
 
     # Run tests

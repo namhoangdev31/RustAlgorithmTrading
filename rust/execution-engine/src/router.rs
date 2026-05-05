@@ -191,6 +191,7 @@ impl OrderRouter {
         let http_client = self.http_client.clone();
         let config = self.config.clone();
         let telemetry = self.telemetry_tx.clone();
+        let retry_cid = cid.clone();
 
         let result = retry_policy
             .execute_with_hooks(
@@ -207,7 +208,7 @@ impl OrderRouter {
                     if matches!(err, TradingError::Network(_)) {
                         let _ = telemetry.try_send(format!(
                             "[cid:{}] Retryable error (Network): {:?}",
-                            cid, err
+                            retry_cid, err
                         ));
                         return true;
                     }
@@ -219,14 +220,14 @@ impl OrderRouter {
                         {
                             let _ = telemetry.try_send(format!(
                                 "[cid:{}] Retryable error (Exchange Rate Limit / Transient): {:?}",
-                                cid, err
+                                retry_cid, err
                             ));
                             return true;
                         }
                     }
                     let _ = telemetry.try_send(format!(
                         "[cid:{}] Non-retryable error, failing immediately: {:?}",
-                        cid, err
+                        retry_cid, err
                     ));
                     false // Unknown error falls here, fail-safe!
                 },
@@ -552,18 +553,18 @@ mod tests {
         };
 
         // Network error is retryable
-        assert_eq!(should_retry(&err1), true);
+        assert!(should_retry(&err1));
 
         // Exchange rate limit is retryable
         let err2 = TradingError::Exchange("error 429 rate limit exceeded".to_string());
-        assert_eq!(should_retry(&err2), true);
+        assert!(should_retry(&err2));
 
         // Unknown exchange error is NON-retryable (Fail-safe phase 3)
         let err3 = TradingError::Exchange("Unknown weird payload error".to_string());
-        assert_eq!(should_retry(&err3), false);
+        assert!(!should_retry(&err3));
 
         // Authorization error is NON-retryable
         let err4 = TradingError::Exchange("error 401 unauthorized".to_string());
-        assert_eq!(should_retry(&err4), false);
+        assert!(!should_retry(&err4));
     }
 }

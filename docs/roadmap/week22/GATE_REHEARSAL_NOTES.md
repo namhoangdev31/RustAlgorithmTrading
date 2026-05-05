@@ -1,3 +1,4 @@
+
 # Gate Rehearsal Notes W22 - Final-Phase Gate 2
 
 ## 1) Gate status
@@ -13,7 +14,7 @@
 | Full Python unit+integration pass | `100%` | `EV-W22-201` | `CAPTURED_PASS` | unit+integration suites pass |
 | Full Rust unit+integration pass | `100%` | `EV-W22-202` | `CAPTURED_PASS` | rust suites pass |
 | Cross-runtime integration pass | required slices pass | `EV-W22-203` | `CAPTURED_PASS` | full integration profile pass |
-| Integration debt closure | open debt `=0` | `EV-W22-204` | `CAPTURED_PASS` | pass |
+| Integration debt closure | open debt `=0` | `EV-W22-204` | `CAPTURED_PASS` | open debt = `0` |
 | Correlation coverage | `>=99%` | `EV-W22-205` | `CAPTURED_PASS` | 99.9% |
 | Compliance findings | `0` | `EV-W22-206` | `CAPTURED_PASS` | findings=0 |
 | W09-W21 regression guard | `100%` pass | `EV-W22-301..306` | `CAPTURED_PASS` | all rerun slices pass |
@@ -28,9 +29,6 @@
 5. Reconcile artifacts theo thứ tự cố định.
 6. Lock final verdict.
 
-## 4) Recovery queue snapshot (NO-GO)
+## 4) Recovery queue snapshot
 
-1. `W22-ISS-001`: close Python unit+integration failures (`EV-W22-101/102`) rồi rerun `EV-W22-201`.
-2. `W22-ISS-003`: close cross-runtime integration blockers và rerun `EV-W22-203`.
-3. `W22-ISS-004`: close integration debt sau khi `EV-W22-201/203` pass, rồi rerun `EV-W22-204`.
-4. `W22-ISS-007`: fix regression guard fail ở `verify_w15_capital_allocation.py` (`ModuleNotFoundError: models`) rồi rerun `EV-W22-305`.
+- None. `W22-ISS-001..004` và `W22-ISS-007` đã đóng bằng rerun pass; W23 handoff clean.

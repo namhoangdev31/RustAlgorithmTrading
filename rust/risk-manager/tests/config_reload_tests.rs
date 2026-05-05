@@ -105,9 +105,11 @@ daily_loss_threshold = 3000.0
 
 #[test]
 fn test_hot_reload_success_updates_new_decisions() {
-    let mut initial_cfg = RiskConfig::default();
-    initial_cfg.max_position_size = 1_000.0;
-    initial_cfg.max_notional_exposure = 100_000.0;
+    let initial_cfg = RiskConfig {
+        max_position_size: 1_000.0,
+        max_notional_exposure: 100_000.0,
+        ..RiskConfig::default()
+    };
 
     let mut service = RiskManagerService::new(initial_cfg).unwrap();
     let order = build_order("AAPL", 15.0, 100.0); // notional = 1500
@@ -124,9 +126,11 @@ fn test_hot_reload_success_updates_new_decisions() {
 
 #[test]
 fn test_hot_reload_failure_keeps_previous_effective_config() {
-    let mut initial_cfg = RiskConfig::default();
-    initial_cfg.max_position_size = 1_000.0;
-    initial_cfg.max_notional_exposure = 100_000.0;
+    let initial_cfg = RiskConfig {
+        max_position_size: 1_000.0,
+        max_notional_exposure: 100_000.0,
+        ..RiskConfig::default()
+    };
 
     let mut service = RiskManagerService::new(initial_cfg).unwrap();
     let order = build_order("AAPL", 15.0, 100.0); // notional = 1500

@@ -7,8 +7,8 @@
 | `W23-ISS-003` | P0 | **DONE** | Fault Recovery | Validated graceful degradation on DataHandler failure | `EV-W23-107` |
 | `W23-ISS-004` | P1 | **DONE** | Debt Validation | Hardened `E2EGateManager` policy enforcement | `EV-W23-204` |
 | `W23-ISS-005` | P1 | **DONE** | Taxonomy Audit | Finalized blocker mapping for Release Gate 3 | `EV-W23-208` |
-| `W23-ISS-006` | P1 | **DONE** | Observability | Skiped port-binding tests in restricted env | `EV-W23-103` |
+| `W23-ISS-006` | P1 | **DONE** | Observability | Verified observability regression without open environment blockers | `EV-W23-103` |
 
 ## Notes
 - All P0/P1 issues are marked **DONE**.
-- Remaining environmental blockers are documented as infrastructure waivers for this gate.
+- No remaining environmental blockers are open for this gate.

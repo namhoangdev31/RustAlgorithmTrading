@@ -148,8 +148,8 @@ class WalkForwardAnalyzer:
             )
 
             # Split data
-            train_data = data[window.train_start:window.train_end]
-            test_data = data[window.test_start:window.test_end]
+            train_data = data[window.train_start : window.train_end]
+            test_data = data[window.test_start : window.test_end]
 
             if len(train_data) < 30 or len(test_data) < 10:
                 logger.warning(f"Insufficient data in window {window.window_id}, skipping")

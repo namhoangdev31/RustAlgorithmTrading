@@ -76,7 +76,10 @@ class FinalReleaseManager(StagingHardeningManager):
             disposition = "BLOCKED"
             reason_code = "OPEN_RELEASE_BLOCKER"
 
-        if approval_state in [ApprovalState.PENDING, ApprovalState.REJECTED]:
+        if approval_state is not None and approval_state in [
+            ApprovalState.PENDING,
+            ApprovalState.REJECTED,
+        ]:
             disposition = "BLOCKED"
             reason_code = f"APPROVAL_{approval_state.value}"
 

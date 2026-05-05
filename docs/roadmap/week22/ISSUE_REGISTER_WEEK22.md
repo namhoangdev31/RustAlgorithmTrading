@@ -18,7 +18,7 @@
 | `W22-ISS-006` | P1 | `DONE` | `tester` | `Pha 4` | Correlation/compliance quality | `EV-W22-205`,`EV-W22-206` | correlation/compliance rerun pass | coverage>=99%, findings=0 |
 | `W22-ISS-007` | P1 | `DONE` | `tester` | `Pha 5` | Regression guard | `EV-W22-301..306` | close failing guard (`verify_w15_capital_allocation.py`) then rerun | regression guard pass |
 | `W22-ISS-008` | P1 | `DONE` | `planner` | `Pha 6` | Final verdict consistency | `EV-W22-401`,`EV-W22-402` | strict artifact reconciliation | one final verdict |
-| `W22-ISS-009` | P1 | `DONE` | `planner` | `Pha 7` | W23 handoff | `EV-W22-402` | complete NO-GO recovery queue + W23 priorities/guardrails | start pack complete |
+| `W22-ISS-009` | P1 | `DONE` | `planner` | `Pha 7` | W23 handoff | `EV-W22-402` | complete GO handoff + W23 priorities/guardrails | start pack complete |
 | `W22-ISS-010` | P1 | `DONE` | `planner` | `Pha 5` | Budget governance | `EV-W22-209` | budget within threshold (no escalation required) | budget within threshold or approved escalation |
 | `W22-ISS-011` | P2 | `DONE` | `ops` | `Pha 5` | Gate throughput | `EV-W22-210` | capture gate toil watermark | throughput watermark captured |
 | `W22-ISS-012` | P2 | `DONE` | `planner` | `Pha 6` | Audit linkage | `EV-W22-205`,`EV-W22-206` | complete evidence linkage | linkage complete |

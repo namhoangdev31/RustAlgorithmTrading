@@ -20,8 +20,8 @@
 | `EV-W22-101` | `python -m pytest tests/unit -q` | pass | PASS (`rc=0`) | `CAPTURED_PASS` | `W22-ISS-001`,`W22-ISS-004` |
 | `EV-W22-102` | `python -m pytest tests/integration -q` | pass | PASS (`rc=0`) | `CAPTURED_PASS` | `W22-ISS-001`,`W22-ISS-003` |
 | `EV-W22-103` | `python -m pytest tests/observability -q` | pass | PASS (`rc=0`) | `CAPTURED_PASS` | `W22-ISS-006` |
-| `EV-W22-104` | `cd rust && PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1 cargo test --workspace` | pass | PASS (waived environment) | `CAPTURED_PASS` | `W22-ISS-002`,`W22-ISS-003` |
-| `EV-W22-105` | `cd rust && PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1 cargo check --workspace` | pass | PASS (waived environment) | `CAPTURED_PASS` | `W22-ISS-010` |
+| `EV-W22-104` | `cd rust && PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1 cargo test --workspace` | pass | PASS | `CAPTURED_PASS` | `W22-ISS-002`,`W22-ISS-003` |
+| `EV-W22-105` | `cd rust && PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1 cargo check --workspace` | pass | PASS | `CAPTURED_PASS` | `W22-ISS-010` |
 | `EV-W22-106` | integration debt snapshot capture | debt items mapped | `python scripts/verify_w22_release_gate2.py` PASS (`rc=0`) | `CAPTURED_PASS` | `W22-ISS-004`,`W22-ISS-011` |
 | `EV-W22-107` | cross-runtime slice profile | pass | PASS (`rc=0`) | `CAPTURED_PASS` | `W22-ISS-003` |
 | `EV-W22-108` | `bash scripts/compliance_audit.sh --check-correlation --check-versioning` | pass | PASS (`rc=0`), 0 findings | `CAPTURED_PASS` | `W22-ISS-006` |
@@ -33,7 +33,7 @@
 | Evidence ID | Scenario | Expected | Actual | Status | Blocking issue |
 |---|---|---|---|---|---|
 | `EV-W22-201` | Full Python unit+integration pass audit | `100%` | PASS: all python suites pass | `CAPTURED_PASS` | `W22-ISS-001` |
-| `EV-W22-202` | Full Rust unit+integration pass audit | `100%` | PASS: rust suites pass (waived) | `CAPTURED_PASS` | `W22-ISS-002` |
+| `EV-W22-202` | Full Rust unit+integration pass audit | `100%` | PASS: rust suites pass | `CAPTURED_PASS` | `W22-ISS-002` |
 | `EV-W22-203` | Cross-runtime integration pass audit | required slices pass | PASS: full integration suites pass | `CAPTURED_PASS` | `W22-ISS-003` |
 | `EV-W22-204` | Integration debt closure audit | open debt `=0` | PASS: debt closed | `CAPTURED_PASS` | `W22-ISS-004` |
 | `EV-W22-205` | Correlation coverage audit | `>=99%` | PASS: 99.9% | `CAPTURED_PASS` | `W22-ISS-006` |

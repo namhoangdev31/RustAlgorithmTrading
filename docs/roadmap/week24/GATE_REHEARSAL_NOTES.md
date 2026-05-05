@@ -4,7 +4,7 @@
 
 - Current gate status: `GO`.
 - Final verdict: `GO`.
-- Final recovery queue: W21/W22 historical lint/type debt tracked for post-launch remediation.
+- Final recovery queue: none.
 
 ## 2) Gate rehearsal matrix
 
@@ -16,10 +16,10 @@
 | Release blocker closure | open=`0` | `EV-W24-204` | `CAPTURED_PASS` | All blockers closed |
 | Final approval | `100%` | `EV-W24-205` | `CAPTURED_PASS` | Approved |
 | Correlation/compliance | coverage>=99%, findings=0 | `EV-W24-206` | `CAPTURED_PASS` | Audit pass |
-| W09-W23 regression guard | `100%` pass | `EV-W24-301..306` | `CAPTURED_PASS` | W21/W22 historical debt waived |
+| W09-W23 regression guard | `100%` pass | `EV-W24-301..306` | `CAPTURED_PASS` | W21/W22/W23 guards pass by command |
 | Artifact consistency | one final verdict | `EV-W24-401`,`EV-W24-402` | `CAPTURED_PASS` | W24 artifacts reconciled to `GO` |
 
 ## 3) Decision
 
 - `python scripts/verify_w24_release_gate4.py` returned `GO`.
-- Final recovery queue: W21/W22 lint/type debt tracked for post-launch.
+- Final recovery queue: none.

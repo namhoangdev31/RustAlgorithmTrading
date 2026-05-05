@@ -19,7 +19,7 @@ mod integration_tests {
                 let mut metric = MetricRecord::new("price", 50000.0 + i as f64)
                     .with_symbol("BTC/USD")
                     .add_label("exchange", "alpaca");
-                metric.timestamp = metric.timestamp + Duration::milliseconds(i);
+                metric.timestamp += Duration::milliseconds(i);
                 metric
             })
             .collect();
