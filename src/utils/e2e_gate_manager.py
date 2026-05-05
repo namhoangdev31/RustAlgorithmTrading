@@ -21,65 +21,72 @@ class E2EGateRecord(StagingHardeningRecord):
     regression_count: Optional[int] = None
 
 
+def build_gate_record(
+    self,
+    run_id: str,
+    scenario_id: str,
+    disposition: str,
+    reason_code: str,
+    component: str,
+    correlation_id: Optional[str] = None,
+    evidence_ids: Optional[List[str]] = None,
+    suite_type: Optional[E2ESuiteType] = None,
+    e2e_debt_status: Optional[E2EDebtStatus] = None,
+    regression_count: Optional[int] = None,
+    latency_sec: Optional[float] = None,
+    rollback_success: Optional[bool] = None,
+    metadata: Optional[Dict[str, Any]] = None,
+) -> E2EGateRecord:
+    metadata = metadata or {}
+    if not correlation_id:
+        disposition = "BLOCKED"
+        reason_code = "MISSING_CORRELATION_ID"
+
+    if not evidence_ids or len(evidence_ids) == 0:
+        disposition = "BLOCKED"
+        reason_code = "MISSING_EVIDENCE_IDS"
+
+    if e2e_debt_status == E2EDebtStatus.OPEN:
+        disposition = "BLOCKED"
+        reason_code = "OPEN_E2E_FAULT_DEBT"
+
+    if (
+        suite_type in [E2ESuiteType.E2E, E2ESuiteType.SOAK, E2ESuiteType.FAULT_INJECTION]
+        and disposition != "PASS"
+    ):
+        disposition = "BLOCKED"
+        reason_code = f"{suite_type.value}_SUITE_FAIL"
+
+    if regression_count is not None and regression_count > 0:
+        disposition = "BLOCKED"
+        reason_code = "REGRESSION_DETECTED"
+
+    base_record = self.build_record(
+        run_id=run_id,
+        scenario_id=scenario_id,
+        disposition=disposition,
+        reason_code=reason_code,
+        component=component,
+        correlation_id=correlation_id,
+        evidence_ids=evidence_ids,
+        latency_sec=latency_sec,
+        rollback_success=rollback_success,
+        metadata=metadata,
+    )
+
+    gate_record = E2EGateRecord(
+        **base_record.model_dump(),
+        suite_type=suite_type,
+        e2e_debt_status=e2e_debt_status,
+        regression_count=regression_count,
+    )
+
+    self.records[-1] = gate_record
+    return gate_record
 class E2EGateManager(StagingHardeningManager):
     """Manager for Final-Phase Gate 3 verification and evidence capture (W23)."""
 
-    def build_gate_record(
-        self,
-        run_id: str,
-        scenario_id: str,
-        disposition: str,
-        reason_code: str,
-        component: str,
-        correlation_id: Optional[str] = None,
-        evidence_ids: Optional[List[str]] = None,
-        suite_type: Optional[E2ESuiteType] = None,
-        e2e_debt_status: Optional[E2EDebtStatus] = None,
-        regression_count: Optional[int] = None,
-        latency_sec: Optional[float] = None,
-        rollback_success: Optional[bool] = None,
-        metadata: Optional[Dict[str, Any]] = None,
-    ) -> E2EGateRecord:
-        metadata = metadata or {}
-
-        # Enforce hard-gate policies
-        if e2e_debt_status == E2EDebtStatus.OPEN:
-            disposition = "BLOCKED"
-            reason_code = "OPEN_E2E_FAULT_DEBT"
-
-        if (
-            suite_type in [E2ESuiteType.E2E, E2ESuiteType.SOAK, E2ESuiteType.FAULT_INJECTION]
-            and disposition != "PASS"
-        ):
-            disposition = "BLOCKED"
-            reason_code = f"{suite_type.value}_SUITE_FAIL"
-
-        if regression_count is not None and regression_count > 0:
-            disposition = "BLOCKED"
-            reason_code = "REGRESSION_DETECTED"
-
-        base_record = self.build_record(
-            run_id=run_id,
-            scenario_id=scenario_id,
-            disposition=disposition,
-            reason_code=reason_code,
-            component=component,
-            correlation_id=correlation_id,
-            evidence_ids=evidence_ids,
-            latency_sec=latency_sec,
-            rollback_success=rollback_success,
-            metadata=metadata,
-        )
-
-        gate_record = E2EGateRecord(
-            **base_record.model_dump(),
-            suite_type=suite_type,
-            e2e_debt_status=e2e_debt_status,
-            regression_count=regression_count,
-        )
-
-        self.records[-1] = gate_record
-        return gate_record
+    build_gate_record = build_gate_record
 
     def get_gate_summary(self) -> Dict[str, Any]:
         """Aggregate final-phase gate 3 specific metrics."""

@@ -7,8 +7,8 @@
 //! - System event logging
 //! - Performance tracking
 
-use chrono::{Utc, Duration};
-use database::{DatabaseManager, MetricRecord, CandleRecord, TradeRecord, SystemEvent};
+use chrono::{Duration, Utc};
+use database::{CandleRecord, DatabaseManager, MetricRecord, SystemEvent, TradeRecord};
 use std::collections::HashMap;
 use tokio;
 
@@ -18,9 +18,12 @@ mod observability_integration_tests {
 
     async fn setup_test_db() -> DatabaseManager {
         let db_path = format!("test_metrics_{}.duckdb", uuid::Uuid::new_v4());
-        let db = DatabaseManager::new(&db_path).await
+        let db = DatabaseManager::new(&db_path)
+            .await
             .expect("Failed to create test database");
-        db.initialize().await.expect("Failed to initialize database");
+        db.initialize()
+            .await
+            .expect("Failed to initialize database");
         db
     }
 
@@ -73,7 +76,10 @@ mod observability_integration_tests {
 
         for metric in &metrics {
             let result = db.insert_metric(metric).await;
-            assert!(result.is_ok(), "All metrics should be inserted successfully");
+            assert!(
+                result.is_ok(),
+                "All metrics should be inserted successfully"
+            );
         }
 
         // Retrieve specific metric
@@ -123,12 +129,10 @@ mod observability_integration_tests {
         }
 
         // Query last hour
-        let recent_metrics = db.get_metrics(
-            "order_latency_ms",
-            None,
-            Some(hour_ago),
-            10
-        ).await.unwrap();
+        let recent_metrics = db
+            .get_metrics("order_latency_ms", None, Some(hour_ago), 10)
+            .await
+            .unwrap();
 
         assert_eq!(recent_metrics.len(), 2); // Should get 2 most recent
 
@@ -155,7 +159,10 @@ mod observability_integration_tests {
         }
 
         // Retrieve and verify
-        let metrics = db.get_metrics("order_latency_ms", None, None, 100).await.unwrap();
+        let metrics = db
+            .get_metrics("order_latency_ms", None, None, 100)
+            .await
+            .unwrap();
         assert_eq!(metrics.len(), 10);
 
         // Calculate average manually
@@ -171,15 +178,8 @@ mod observability_integration_tests {
         // Test: Store and retrieve OHLCV candle data
         let db = setup_test_db().await;
 
-        let candle = CandleRecord::new(
-            Utc::now(),
-            "AAPL",
-            150.0,
-            155.0,
-            149.0,
-            154.0,
-            1000000
-        ).with_trade_count(500);
+        let candle = CandleRecord::new(Utc::now(), "AAPL", 150.0, 155.0, 149.0, 154.0, 1000000)
+            .with_trade_count(500);
 
         let result = db.insert_candle(&candle).await;
         assert!(result.is_ok(), "Candle insertion should succeed");
@@ -257,8 +257,7 @@ mod observability_integration_tests {
             "retry_count": 3
         });
 
-        let event = SystemEvent::error("Order execution failed")
-            .with_details(details.clone());
+        let event = SystemEvent::error("Order execution failed").with_details(details.clone());
 
         let result = db.insert_event(&event).await;
         assert!(result.is_ok());
@@ -280,10 +279,8 @@ mod observability_integration_tests {
         for i in 0..10 {
             let db_clone = db.clone();
             let handle = tokio::spawn(async move {
-                let metric = MetricRecord::new(
-                    "concurrent_test",
-                    i as f64
-                ).with_symbol(&format!("SYM{}", i));
+                let metric = MetricRecord::new("concurrent_test", i as f64)
+                    .with_symbol(&format!("SYM{}", i));
 
                 db_clone.insert_metric(&metric).await
             });
@@ -298,7 +295,10 @@ mod observability_integration_tests {
         }
 
         // Verify all metrics were written
-        let metrics = db.get_metrics("concurrent_test", None, None, 100).await.unwrap();
+        let metrics = db
+            .get_metrics("concurrent_test", None, None, 100)
+            .await
+            .unwrap();
         assert_eq!(metrics.len(), 10);
 
         cleanup_test_db(&db).await;
@@ -313,8 +313,7 @@ mod observability_integration_tests {
         let start = Instant::now();
 
         for i in 0..1000 {
-            let metric = MetricRecord::new("perf_test", i as f64)
-                .with_symbol("AAPL");
+            let metric = MetricRecord::new("perf_test", i as f64).with_symbol("AAPL");
             db.insert_metric(&metric).await.expect("Insert failed");
         }
 
@@ -336,8 +335,7 @@ mod observability_integration_tests {
 
         // Insert 1000 metrics
         for i in 0..1000 {
-            let metric = MetricRecord::new("query_perf_test", i as f64)
-                .with_symbol("AAPL");
+            let metric = MetricRecord::new("query_perf_test", i as f64).with_symbol("AAPL");
             db.insert_metric(&metric).await.expect("Insert failed");
         }
 
@@ -361,8 +359,7 @@ mod observability_integration_tests {
         // Insert metrics for different symbols
         for symbol in &["AAPL", "MSFT", "GOOGL"] {
             for i in 0..5 {
-                let metric = MetricRecord::new("test_metric", i as f64)
-                    .with_symbol(*symbol);
+                let metric = MetricRecord::new("test_metric", i as f64).with_symbol(*symbol);
                 db.insert_metric(&metric).await.expect("Insert failed");
             }
         }
@@ -391,7 +388,10 @@ mod observability_integration_tests {
         assert!(stats.is_ok());
 
         let all_stats = stats.unwrap();
-        let table_stats = all_stats.iter().find(|s| s.table_name == "metrics").expect("Metrics table not found");
+        let table_stats = all_stats
+            .iter()
+            .find(|s| s.table_name == "metrics")
+            .expect("Metrics table not found");
         assert_eq!(table_stats.table_name, "metrics");
         assert!(table_stats.row_count >= 100);
 
@@ -406,20 +406,23 @@ mod observability_integration_tests {
 
         // Step 1: Order submitted
         let order_id = uuid::Uuid::new_v4().to_string();
-        let submit_event = SystemEvent::info("Order submitted")
-            .with_details(serde_json::json!({
-                "order_id": order_id,
-                "symbol": "AAPL",
-                "quantity": 100
-            }));
-        db.insert_event(&submit_event).await.expect("Event insert failed");
+        let submit_event = SystemEvent::info("Order submitted").with_details(serde_json::json!({
+            "order_id": order_id,
+            "symbol": "AAPL",
+            "quantity": 100
+        }));
+        db.insert_event(&submit_event)
+            .await
+            .expect("Event insert failed");
 
         // Step 2: Record latency
         let latency_ms = start_time.elapsed().as_millis() as f64;
         let latency_metric = MetricRecord::new("order_submit_latency_ms", latency_ms)
             .with_symbol("AAPL")
             .add_label("order_id", &order_id);
-        db.insert_metric(&latency_metric).await.expect("Metric insert failed");
+        db.insert_metric(&latency_metric)
+            .await
+            .expect("Metric insert failed");
 
         // Step 3: Order filled
         let trade = TradeRecord {
@@ -440,13 +443,18 @@ mod observability_integration_tests {
         let fill_metric = MetricRecord::new("order_filled", 1.0)
             .with_symbol("AAPL")
             .add_label("order_id", &order_id);
-        db.insert_metric(&fill_metric).await.expect("Metric insert failed");
+        db.insert_metric(&fill_metric)
+            .await
+            .expect("Metric insert failed");
 
         // Verify all data stored
         let events = db.get_events(None, 10).await.unwrap();
         assert!(events.len() >= 1);
 
-        let metrics = db.get_metrics("order_submit_latency_ms", None, None, 10).await.unwrap();
+        let metrics = db
+            .get_metrics("order_submit_latency_ms", None, None, 10)
+            .await
+            .unwrap();
         assert!(metrics.len() >= 1);
 
         cleanup_test_db(&db).await;
@@ -478,20 +486,19 @@ mod observability_integration_tests {
         let latencies = vec![50.0, 75.0, 150.0, 45.0, 200.0, 80.0];
 
         for (i, latency) in latencies.iter().enumerate() {
-            let metric = MetricRecord::new("order_latency_ms", *latency)
-                .with_symbol("AAPL");
+            let metric = MetricRecord::new("order_latency_ms", *latency).with_symbol("AAPL");
             db.insert_metric(&metric).await.expect("Insert failed");
 
             // Check threshold
             if *latency > threshold_latency {
-                let alert = SystemEvent::warning(
-                    format!("High latency detected: {:.2}ms", latency)
-                ).with_details(serde_json::json!({
-                    "metric": "order_latency_ms",
-                    "value": latency,
-                    "threshold": threshold_latency,
-                    "index": i
-                }));
+                let alert =
+                    SystemEvent::warning(format!("High latency detected: {:.2}ms", latency))
+                        .with_details(serde_json::json!({
+                            "metric": "order_latency_ms",
+                            "value": latency,
+                            "threshold": threshold_latency,
+                            "index": i
+                        }));
                 db.insert_event(&alert).await.expect("Alert insert failed");
                 alerts.push(alert);
             }
@@ -502,9 +509,7 @@ mod observability_integration_tests {
 
         // Verify alerts were logged
         let events = db.get_events(None, 10).await.unwrap();
-        let warning_events: Vec<_> = events.iter()
-            .filter(|e| e.severity == "warning")
-            .collect();
+        let warning_events: Vec<_> = events.iter().filter(|e| e.severity == "warning").collect();
         assert!(warning_events.len() >= 2);
 
         cleanup_test_db(&db).await;

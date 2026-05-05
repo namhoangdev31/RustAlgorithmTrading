@@ -1,7 +1,10 @@
 import sys
+import subprocess
+import json
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+project_root = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(project_root))
 
 from src.utils.e2e_gate_manager import (
     E2EGateManager,
@@ -9,144 +12,114 @@ from src.utils.e2e_gate_manager import (
     E2EDebtStatus,
 )
 
+def run_command(command, cwd=None):
+    """Run shell command and return output and exit code."""
+    try:
+        result = subprocess.run(
+            command,
+            cwd=cwd or project_root,
+            shell=True,
+            capture_output=True,
+            text=True,
+            timeout=300
+        )
+        return result.stdout + result.stderr, result.returncode
+    except Exception as e:
+        return str(e), 1
 
 def run_gate3_verification():
     manager = E2EGateManager(owner="tester")
 
-    print("=== Week 23 Final-Phase Gate 3 Verification Rehearsal ===\n")
+    print("=== Week 23 Final-Phase Gate 3 REAL Verification ===\n")
 
-    # EV-W23-101: Full Cross-runtime E2E Pass
+    # 1. EV-W23-101: E2E Tests
+    print("Running E2E tests...")
+    output, code = run_command("python -m pytest tests/e2e -q")
+    disposition = "PASS" if code == 0 else "FAIL"
     manager.build_gate_record(
-        run_id="W23-E2E-001",
+        run_id="W23-E2E-REAL",
         scenario_id="FULL_E2E_BASELINE",
-        disposition="PASS",
-        reason_code="ALL_TESTS_PASS",
+        disposition=disposition,
+        reason_code="E2E_EXECUTION",
         component="TESTING",
-        correlation_id="corr-w23-001",
+        correlation_id="corr-w23-101",
         evidence_ids=["EV-W23-101"],
         suite_type=E2ESuiteType.E2E,
+        metadata={"output": output[-500:]}
     )
 
-    # EV-W23-102: Soak Testing Pass
+    # 2. EV-W23-102: Integration Tests
+    print("Running Integration tests...")
+    output, code = run_command("python -m pytest tests/integration -q")
+    disposition = "PASS" if code == 0 else "FAIL"
     manager.build_gate_record(
-        run_id="W23-SOAK-001",
-        scenario_id="SOAK_STABILITY_BASELINE",
-        disposition="PASS",
-        reason_code="ALL_TESTS_PASS",
+        run_id="W23-INT-REAL",
+        scenario_id="INTEGRATION_BASELINE",
+        disposition=disposition,
+        reason_code="INT_EXECUTION",
         component="TESTING",
-        correlation_id="corr-w23-002",
+        correlation_id="corr-w23-102",
         evidence_ids=["EV-W23-102"],
+        suite_type=E2ESuiteType.E2E, # Mapping to E2E for integration
+        metadata={"output": output[-500:]}
+    )
+
+    # 3. EV-W23-106/107: Soak & Fault
+    print("Running Soak & Fault tests...")
+    output, code = run_command("python scripts/run_soak_fault_tests.py")
+    disposition = "PASS" if code == 0 else "FAIL"
+    manager.build_gate_record(
+        run_id="W23-SOAK-FAULT-REAL",
+        scenario_id="SOAK_FAULT_BASELINE",
+        disposition=disposition,
+        reason_code="SOAK_FAULT_EXECUTION",
+        component="TESTING",
+        correlation_id="corr-w23-106-107",
+        evidence_ids=["EV-W23-106", "EV-W23-107"],
         suite_type=E2ESuiteType.SOAK,
+        metadata={"output": output[-500:]}
     )
 
-    # EV-W23-103: Fault-Injection Pass
+    # 4. EV-W23-104/105: Rust (Check and Test)
+    print("Checking Rust environment...")
+    output, code = run_command("cd rust && cargo check --workspace")
+    if ("rustup" in output and ("permission" in output.lower() or "file exists" in output.lower())) or "operation not permitted" in output.lower():
+        disposition = "BLOCKED"
+        reason = "ENVIRONMENT_PERMISSION_ERROR"
+    else:
+        disposition = "PASS" if code == 0 else "FAIL"
+        reason = "RUST_CHECK_EXECUTION"
+    
     manager.build_gate_record(
-        run_id="W23-FAULT-001",
-        scenario_id="FAULT_INJECTION_RECOVERY",
-        disposition="PASS",
-        reason_code="ALL_TESTS_PASS",
-        component="TESTING",
-        correlation_id="corr-w23-003",
-        evidence_ids=["EV-W23-103"],
-        suite_type=E2ESuiteType.FAULT_INJECTION,
-    )
-
-    # EV-W23-104: Zero E2E/Fault Debt
-    manager.build_gate_record(
-        run_id="W23-DEBT-001",
-        scenario_id="E2E_FAULT_DEBT_AUDIT",
-        disposition="PASS",
-        reason_code="DEBT_CLOSED",
-        component="TESTING",
-        correlation_id="corr-w23-004",
-        evidence_ids=["EV-W23-104"],
-        e2e_debt_status=E2EDebtStatus.CLOSED,
-    )
-
-    # EV-W23-201: Regression Guard Pass
-    manager.build_gate_record(
-        run_id="W23-REG-001",
-        scenario_id="REGRESSION_GUARD",
-        disposition="PASS",
-        reason_code="NO_REGRESSION",
-        component="SYSTEM",
-        correlation_id="corr-w23-005",
-        evidence_ids=["EV-W23-201"],
-        regression_count=0,
-    )
-
-    # EV-W23-207: Correlation Coverage
-    manager.build_gate_record(
-        run_id="W23-CORR-001",
-        scenario_id="CORRELATION_AUDIT",
-        disposition="PASS",
-        reason_code="HIGH_COVERAGE",
-        component="OBSERVABILITY",
-        correlation_id="corr-w23-006",
-        evidence_ids=["EV-W23-207"],
-        metadata={"coverage": 0.999},
-    )
-
-    # EV-W23-208: Compliance Findings
-    manager.build_gate_record(
-        run_id="W23-COMP-001",
-        scenario_id="COMPLIANCE_FINDINGS",
-        disposition="PASS",
-        reason_code="NO_FINDINGS",
-        component="COMPLIANCE",
-        correlation_id="corr-w23-007",
-        evidence_ids=["EV-W23-208"],
-        metadata={"findings": 0},
-    )
-
-    # EV-W23-402: Artifact Consistency
-    manager.build_gate_record(
-        run_id="W23-ART-001",
-        scenario_id="ARTIFACT_CONSISTENCY",
-        disposition="PASS",
-        reason_code="CONSISTENT",
-        component="GOVERNANCE",
-        correlation_id="corr-w23-008",
-        evidence_ids=["EV-W23-402"],
+        run_id="W23-RUST-REAL",
+        scenario_id="RUST_BASELINE",
+        disposition=disposition,
+        reason_code=reason,
+        component="RUST",
+        correlation_id="corr-w23-104-105",
+        evidence_ids=["EV-W23-104", "EV-W23-105"],
+        metadata={"output": output[-500:]}
     )
 
     summary = manager.get_gate_summary()
+    
+    is_blocked = summary["blocked_count"] > 0
+    all_passed = summary["pass_count"] == summary["total_records"]
+    all_gate_suites_pass = summary["suite_pass_rate"] == 1.0
 
-    checks = {
-        "EV-W23-101..103": summary["suite_pass_rate"] == 1.0,
-        "EV-W23-104": summary["open_e2e_fault_debt"] == 0,
-        "EV-W23-201": summary["total_regressions"] == 0,
-        "EV-W23-207": any(
-            "EV-W23-207" in r.evidence_ids and r.metadata.get("coverage", 0) >= 0.99
-            for r in manager.records
-        ),
-        "EV-W23-208": any(
-            "EV-W23-208" in r.evidence_ids and r.metadata.get("findings") == 0
-            for r in manager.records
-        ),
-        "EV-W23-402": any(
-            "EV-W23-402" in r.evidence_ids and r.disposition == "PASS" for r in manager.records
-        ),
-    }
+    all_pass = not is_blocked and all_passed and all_gate_suites_pass
 
-    all_pass = True
-    for eid, passed in checks.items():
-        print(f"{eid}: {'PASS' if passed else 'FAIL'}")
-        all_pass &= passed
-
-    print("\n--- Gate 3 Metrics ---")
+    print("\n--- Gate 3 Metrics (REAL) ---")
     print(f"Suite Pass Rate: {summary['suite_pass_rate']*100:.1f}%")
-    print(f"Open E2E/Fault Debt: {summary['open_e2e_fault_debt']}")
-    print(f"Total Regressions: {summary['total_regressions']}")
-    print(f"Suite Distribution: {summary['suite_distribution']}")
-
+    print(f"Blocked Records: {summary['blocked_count']}")
+    print(f"Passed Records: {summary['pass_count']}/{summary['total_records']}")
+    
     if all_pass:
         print("\nW23 FINAL-PHASE GATE 3 VERDICT: GO")
         return 0
     else:
         print("\nW23 FINAL-PHASE GATE 3 VERDICT: NO-GO")
         return 1
-
 
 if __name__ == "__main__":
     sys.exit(run_gate3_verification())

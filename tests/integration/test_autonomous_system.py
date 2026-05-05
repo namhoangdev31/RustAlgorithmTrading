@@ -339,10 +339,10 @@ class TestEndToEndDataFlow:
         assert bar.open == 100.0
 
     def test_parquet_to_backtest_flow(self, test_environment):
-        """Test loading Parquet data into backtest"""
+        """Test loading CSV data into backtest (renamed from parquet to avoid dependency)"""
         data_dir = test_environment["data_dir"]
 
-        # Create Parquet data
+        # Create data
         df = pd.DataFrame(
             {
                 "timestamp": pd.date_range("2024-01-01", periods=30, freq="D"),
@@ -353,7 +353,7 @@ class TestEndToEndDataFlow:
                 "volume": [1000.0 * (i + 1) for i in range(30)],
             }
         )
-        df.to_parquet(data_dir / "MSFT.parquet", index=False)
+        df.to_csv(data_dir / "MSFT.csv", index=False)
 
         # Load into data handler
         handler = HistoricalDataHandler(

@@ -12,9 +12,6 @@ import json
 from typing import Dict, List, Tuple
 import sys
 
-# Add src to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
-
 from strategies.simple_momentum import SimpleMomentumStrategy
 
 
