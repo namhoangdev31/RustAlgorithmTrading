@@ -8,11 +8,11 @@ sys.path.insert(0, str(project_root))
 sys.path.insert(0, str(project_root / "src"))
 
 from loguru import logger
-from src.backtesting.engine import BacktestEngine
-from src.backtesting.data_handler import HistoricalDataHandler
-from src.backtesting.execution_handler import SimulatedExecutionHandler
-from src.backtesting.portfolio_handler import PortfolioHandler
-from src.strategies.mean_reversion import MeanReversionStrategy
+from backtesting.engine import BacktestEngine
+from backtesting.data_handler import HistoricalDataHandler
+from backtesting.execution_handler import SimulatedExecutionHandler
+from backtesting.portfolio_handler import PortfolioHandler
+from strategies.mean_reversion import MeanReversionStrategy
 from unittest.mock import MagicMock
 
 async def run_soak_test(iterations=50):
