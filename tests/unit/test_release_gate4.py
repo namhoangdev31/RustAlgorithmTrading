@@ -2,6 +2,7 @@ from utils.final_release_manager import (
     FinalReleaseManager,
     ApprovalState,
     ReleaseBlockerStatus,
+    ReleaseSuiteType,
     RollbackReadiness,
 )
 
@@ -15,6 +16,7 @@ def test_gate_policy_open_blocker_blocked():
         reason_code="OK",
         component="GOVERNANCE",
         correlation_id="corr-001",
+        evidence_ids=["EV-W24-204"],
         release_blocker_status=ReleaseBlockerStatus.OPEN,
     )
     assert record.disposition == "BLOCKED"
@@ -30,6 +32,7 @@ def test_gate_policy_pending_approval_blocked():
         reason_code="OK",
         component="GOVERNANCE",
         correlation_id="corr-002",
+        evidence_ids=["EV-W24-205"],
         approval_state=ApprovalState.PENDING,
     )
     assert record.disposition == "BLOCKED"
@@ -45,6 +48,7 @@ def test_gate_policy_rollback_not_ready_blocked():
         reason_code="OK",
         component="SYSTEM",
         correlation_id="corr-003",
+        evidence_ids=["EV-W24-203"],
         rollback_readiness=RollbackReadiness.NOT_READY,
         rollback_success=True,
     )
@@ -61,6 +65,7 @@ def test_gate_policy_regression_detected_blocked():
         reason_code="OK",
         component="TEST",
         correlation_id="corr-004",
+        evidence_ids=["EV-W24-201"],
         regression_count=1,
     )
     assert record.disposition == "BLOCKED"
@@ -77,6 +82,7 @@ def test_gate_summary_aggregation():
         reason_code="OK",
         component="GOV",
         correlation_id="corr-app",
+        evidence_ids=["EV-W24-205", "EV-W24-402"],
         approval_state=ApprovalState.APPROVED,
     )
 
@@ -87,6 +93,7 @@ def test_gate_summary_aggregation():
         reason_code="OK",
         component="GOV",
         correlation_id="corr-blk",
+        evidence_ids=["EV-W24-204"],
         release_blocker_status=ReleaseBlockerStatus.CLOSED,
     )
 
@@ -97,6 +104,7 @@ def test_gate_summary_aggregation():
         reason_code="OK",
         component="SYS",
         correlation_id="corr-rll",
+        evidence_ids=["EV-W24-203"],
         rollback_readiness=RollbackReadiness.READY,
         rollback_success=True,
     )
@@ -107,3 +115,50 @@ def test_gate_summary_aggregation():
     assert summary["open_release_blockers"] == 0
     assert summary["total_regressions"] == 0
     assert summary["blocked_count"] == 0
+
+
+def test_gate_policy_missing_evidence_blocked():
+    manager = FinalReleaseManager()
+    record = manager.build_gate_record(
+        run_id="RUN-005",
+        scenario_id="RELEASE_GATE",
+        disposition="PASS",
+        reason_code="OK",
+        component="GOV",
+        correlation_id="corr-005",
+    )
+    assert record.disposition == "BLOCKED"
+    assert record.reason_code == "MISSING_EVIDENCE"
+
+
+def test_gate_policy_failed_suite_requires_blocker_mapping():
+    manager = FinalReleaseManager()
+    record = manager.build_gate_record(
+        run_id="RUN-006",
+        suite_id="FULL_REGRESSION",
+        suite_type=ReleaseSuiteType.FULL_REGRESSION,
+        scenario_id="FULL_REGRESSION",
+        disposition="FAIL",
+        reason_code="FAILED",
+        component="TEST",
+        correlation_id="corr-006",
+        evidence_ids=["EV-W24-201"],
+    )
+    assert record.disposition == "BLOCKED"
+    assert record.reason_code == "MISSING_RELEASE_BLOCKER_MAPPING"
+
+
+def test_gate_policy_approval_requires_artifact_consistency_evidence():
+    manager = FinalReleaseManager()
+    record = manager.build_gate_record(
+        run_id="RUN-007",
+        scenario_id="FINAL_APPROVAL",
+        disposition="PASS",
+        reason_code="OK",
+        component="GOV",
+        correlation_id="corr-007",
+        evidence_ids=["EV-W24-205"],
+        approval_state=ApprovalState.APPROVED,
+    )
+    assert record.disposition == "BLOCKED"
+    assert record.reason_code == "MISSING_ARTIFACT_CONSISTENCY_EVIDENCE"

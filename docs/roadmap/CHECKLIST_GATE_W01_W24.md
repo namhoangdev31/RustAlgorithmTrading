@@ -221,13 +221,13 @@
 
 ## W24 - Final-phase Gate 4
 
-- [ ] Full regression rerun pass.
+- [x] Full regression rerun pass.
 - [ ] Release gate `controlled live ready` pass.
-- [ ] Gate artifacts cuối kỳ nhất quán hoàn toàn.
+- [x] Gate artifacts cuối kỳ nhất quán hoàn toàn.
 - [ ] Không còn P0 mở, không có P1 unowned.
 - [ ] Final approval đã chốt.
 - Evidence IDs: `EV-W24-101..110, EV-W24-201..210, EV-W24-301..306, EV-W24-401..402`
-- Decision: [ ] GO  [ ] NO-GO
+- Decision: [ ] GO  [x] NO-GO
 
 ---
-Last updated: W21 GO - Final-Phase Gate 1 lock complete.
+Last updated: W24 NO-GO - Final-Phase Gate 4 recovery queue locked.
