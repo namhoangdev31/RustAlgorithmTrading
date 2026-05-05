@@ -2382,7 +2382,6 @@ Mỗi file có 3 phần:
 - Class/Type trong file: Không có class; nhóm test function theo rule enforcement.
 - Test liên quan: `python -m pytest tests/unit/test_release_gate4.py -q`.
 
-
 ## Roadmap Week 16 Companion Artifacts
 
 - `docs/roadmap/W16_OPERATIONS_PLAN.md`: Week 16 reproducibility operations plan.
@@ -2475,3 +2474,11 @@ Mỗi file có 3 phần:
 - `docs/roadmap/week24/INTERFACE_RELEASE_GATE4_SPEC.md`: interface freeze + gate4 contract rules W24.
 - `docs/roadmap/week24/GATE_REHEARSAL_NOTES.md`: gate checklist + rehearsal notes W24.
 - `docs/roadmap/week24/WEEK24_FINAL_REPORT_AND_CONTROLLED_LIVE_READY_SIGNOFF.md`: final report + controlled live ready signoff.
+
+## Global Reconciliation Audit Artifacts (W01-W23)
+
+- `docs/audit/MASTER_AUDIT_REPORT_W01_W23.md`: Master reconciliation report for Week 1 to Week 23.
+- `scripts/fix_utcnow.py`: Utility script to modernize datetime.utcnow() to timezone-aware UTC.
+- `scripts/verify_w10_api_health_slo.py`: Regression script for Week 10 API SLO.
+- `scripts/verify_w15_capital_allocation.py`: Regression script for Week 15 capital allocation.
+- `scripts/verify_w17_staging_hardening.py`: Regression script for Week 17 staging hardening.

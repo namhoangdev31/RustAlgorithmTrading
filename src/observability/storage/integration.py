@@ -5,7 +5,7 @@ Provides easy integration between FastAPI endpoints and storage clients.
 """
 
 from typing import Optional, Dict, Any, List
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 from contextlib import asynccontextmanager
 from fastapi import HTTPException
 import logging
@@ -91,7 +91,7 @@ class StorageManager:
     ) -> None:
         """Record a single metric (convenience method)"""
         metric = MetricRecord(
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
             metric_name=metric_name,
             value=value,
             symbol=symbol,
@@ -109,7 +109,7 @@ class StorageManager:
         try:
             return await self.duckdb.get_metrics(
                 metric_name=metric_name,
-                start_time=datetime.utcnow() - timedelta(minutes=minutes),
+                start_time=datetime.now(timezone.utc) - timedelta(minutes=minutes),
                 symbol=symbol,
             )
         except Exception as e:
@@ -136,7 +136,7 @@ class StorageManager:
             return await self.duckdb.get_candles(
                 symbol=symbol,
                 interval=time_interval,
-                start_time=datetime.utcnow() - timedelta(days=7),
+                start_time=datetime.now(timezone.utc) - timedelta(days=7),
                 limit=limit,
             )
         except Exception as e:
@@ -155,7 +155,7 @@ class StorageManager:
         """Log a trade execution"""
         try:
             return await self.sqlite.log_trade(
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 symbol=symbol,
                 side=side,
                 quantity=quantity,
@@ -174,7 +174,7 @@ class StorageManager:
     ) -> Dict[str, Any]:
         """Get trading summary for last N hours"""
         try:
-            start_time = datetime.utcnow() - timedelta(hours=hours)
+            start_time = datetime.now(timezone.utc) - timedelta(hours=hours)
 
             # Get trade stats from SQLite
             trade_stats = await self.sqlite.get_trade_stats(start_time)
@@ -200,7 +200,7 @@ class StorageManager:
 
             # Get recent events
             events = await self.sqlite.get_event_counts(
-                start_time=datetime.utcnow() - timedelta(hours=1)
+                start_time=datetime.now(timezone.utc) - timedelta(hours=1)
             )
 
             return {

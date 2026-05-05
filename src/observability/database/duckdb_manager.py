@@ -11,7 +11,7 @@ Provides high-performance, embedded analytics database with:
 
 import duckdb
 from typing import Dict, Any, List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from loguru import logger
 from contextlib import contextmanager
@@ -194,7 +194,7 @@ class DuckDBManager:
                 # Prepare batch insert
                 values = [
                     (
-                        record.get("timestamp", datetime.utcnow()),
+                        record.get("timestamp", datetime.now(timezone.utc)),
                         record["symbol"],
                         record.get("last_price"),
                         record.get("bid"),
@@ -230,7 +230,7 @@ class DuckDBManager:
             with self.get_connection() as conn:
                 values = [
                     (
-                        record.get("timestamp", datetime.utcnow()),
+                        record.get("timestamp", datetime.now(timezone.utc)),
                         record["strategy_name"],
                         record.get("pnl", 0.0),
                         record.get("daily_pnl", 0.0),
@@ -268,7 +268,7 @@ class DuckDBManager:
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                     (
-                        data.get("timestamp", datetime.utcnow()),
+                        data.get("timestamp", datetime.now(timezone.utc)),
                         data.get("orders_submitted", 0),
                         data.get("orders_filled", 0),
                         data.get("orders_cancelled", 0),
@@ -296,7 +296,7 @@ class DuckDBManager:
                     VALUES (?, ?, ?, ?, ?, ?, ?)
                 """,
                     (
-                        data.get("timestamp", datetime.utcnow()),
+                        data.get("timestamp", datetime.now(timezone.utc)),
                         data.get("cpu_percent", 0.0),
                         data.get("memory_percent", 0.0),
                         data.get("disk_usage_percent", 0.0),
@@ -324,7 +324,7 @@ class DuckDBManager:
                 """,
                     (
                         trade["trade_id"],
-                        trade.get("timestamp", datetime.utcnow()),
+                        trade.get("timestamp", datetime.now(timezone.utc)),
                         trade["symbol"],
                         trade["side"],
                         trade["quantity"],

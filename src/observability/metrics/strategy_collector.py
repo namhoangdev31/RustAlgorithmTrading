@@ -12,7 +12,7 @@ Tracks strategy execution and performance:
 
 import asyncio
 from typing import Dict, Any, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 
 from loguru import logger
 
@@ -113,7 +113,7 @@ class StrategyCollector(BaseCollector):
     async def _write_to_database(self) -> None:
         """Write strategy metrics to DuckDB."""
         try:
-            timestamp = datetime.utcnow()
+            timestamp = datetime.now(timezone.utc)
             records = [
                 {
                     "timestamp": timestamp,
@@ -135,7 +135,7 @@ class StrategyCollector(BaseCollector):
     async def get_current_metrics(self) -> Dict[str, Any]:
         """Get current strategy metrics."""
         return {
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "strategies": self.strategies,
             "total_pnl": self.total_pnl,
             "daily_pnl": self.daily_pnl,

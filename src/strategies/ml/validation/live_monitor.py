@@ -8,7 +8,7 @@ Enforces the 1% drift threshold during active execution.
 import time
 import os
 from typing import Dict, Any, List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 from loguru import logger
 from .drift_detector import DriftDetector
 
@@ -26,7 +26,7 @@ class LiveGovernanceMonitor:
         self.detector = DriftDetector(tolerance=drift_tolerance)
         self.live_returns: List[float] = []
         self.window_size = 50  # Rolling window for drift calculation
-        self.last_check = datetime.utcnow()
+        self.last_check = datetime.now(timezone.utc)
         self.drift_history: List[Dict] = []
 
         logger.info(
@@ -63,7 +63,7 @@ class LiveGovernanceMonitor:
             # In a real system, this could trigger a kill-switch or notify a dashboard
 
         record = {
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "drift": drift,
             "abs_drift": abs_drift,
             "status": status,
@@ -94,7 +94,7 @@ class LiveGovernanceMonitor:
             "strategy_id": self.strategy_id,
             "baseline": self.baseline,
             "drift_history": self.drift_history,
-            "exported_at": datetime.utcnow().isoformat(),
+            "exported_at": datetime.now(timezone.utc).isoformat(),
         }
         with open(path, "w") as f:
             json.dump(report, f, indent=2)

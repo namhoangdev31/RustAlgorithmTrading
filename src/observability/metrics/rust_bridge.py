@@ -9,7 +9,7 @@ storage in DuckDB.
 import asyncio
 import aiohttp
 from typing import Dict, Any, Optional, List, cast
-from datetime import datetime
+from datetime import datetime, timezone
 from loguru import logger
 
 
@@ -104,7 +104,7 @@ class RustMetricsBridge:
             Dictionary of parsed metrics
         """
         metrics: Dict[str, Any] = {
-            "timestamp": datetime.utcnow(),
+            "timestamp": datetime.now(timezone.utc),
             "service": service_name,
             "counters": {},
             "gauges": {},

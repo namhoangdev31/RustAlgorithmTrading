@@ -5,7 +5,7 @@ This test validates that EXIT signals properly close positions
 without going through position sizing logic.
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 from backtesting.portfolio_handler import PortfolioHandler, FixedAmountSizer
 from models.events import SignalEvent, FillEvent
 from models.portfolio import Portfolio
@@ -47,7 +47,7 @@ class TestExitSignalFix:
 
         # Create EXIT signal
         exit_signal = SignalEvent(
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
             symbol="AAPL",
             signal_type="EXIT",
             strength=1.0,
@@ -84,7 +84,7 @@ class TestExitSignalFix:
 
         # Create EXIT signal
         exit_signal = SignalEvent(
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
             symbol="AAPL",
             signal_type="EXIT",
             strength=1.0,
@@ -110,7 +110,7 @@ class TestExitSignalFix:
 
         # Create LONG signal
         long_signal = SignalEvent(
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
             symbol="AAPL",
             signal_type="LONG",
             strength=0.8,
@@ -161,7 +161,7 @@ class TestExitSignalFix:
 
         # Create EXIT signal
         exit_signal = SignalEvent(
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
             symbol="AAPL",
             signal_type="EXIT",
             strength=1.0,
@@ -202,7 +202,7 @@ class TestExitSignalFix:
 
         # Step 1: LONG signal
         long_signal = SignalEvent(
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
             symbol="AAPL",
             signal_type="LONG",
             strength=0.8,
@@ -216,7 +216,7 @@ class TestExitSignalFix:
 
         # Step 2: Simulate fill for ENTRY
         entry_fill = FillEvent(
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
             symbol="AAPL",
             exchange="ALPACA",
             quantity=entry_quantity,
@@ -232,7 +232,7 @@ class TestExitSignalFix:
 
         # Step 3: EXIT signal
         exit_signal = SignalEvent(
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
             symbol="AAPL",
             signal_type="EXIT",
             strength=1.0,

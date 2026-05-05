@@ -10,10 +10,10 @@
 
 | Issue ID | Severity | Status | Owner | ETA | Blocking of | Evidence ID | Mitigation | Exit criteria |
 |---|---|---|---|---|---|---|---|---|
-| `W21-ISS-001` | P0 | `BLOCKED` | `coder` | `Pha 3 rerun` | Full lint gate | `EV-W21-201` | close remaining `black/flake8/cargo fmt/clippy` findings and rerun full lint profile | lint pass `100%` |
-| `W21-ISS-002` | P0 | `BLOCKED` | `coder` | `Pha 3 rerun` | Full type/static gate | `EV-W21-202` | resolve `mypy` duplicate module path + pyright typing failures and rerun type/static profile | type/static pass `100%` |
+| `W21-ISS-001` | P0 | `DONE` | `coder` | `Pha 3 rerun` | Full lint gate | `EV-W21-201` | close remaining `black/flake8/cargo fmt/clippy` findings and rerun full lint profile | lint pass `100%` |
+| `W21-ISS-002` | P0 | `DONE` | `coder` | `Pha 3 rerun` | Full type/static gate | `EV-W21-202` | resolve `mypy` duplicate module path + pyright typing failures and rerun type/static profile | type/static pass `100%` |
 | `W21-ISS-003` | P0 | `DONE` | `tester` | `Pha 3` | Full unit baseline gate | `EV-W21-203` | rerun full unit baseline completed | unit baseline pass `100%` |
-| `W21-ISS-004` | P1 | `IN_PROGRESS` | `tester` | `Pha 4` | Test debt closure | `EV-W21-204` | close debt backlog after lint/type gates recover | debt open `=0` |
+| `W21-ISS-004` | P1 | `DONE` | `tester` | `Pha 4` | Test debt closure | `EV-W21-204` | close debt backlog after lint/type gates recover | debt open `=0` |
 | `W21-ISS-005` | P1 | `DONE` | `planner` | `Pha 4` | Release blocker taxonomy | `EV-W21-208` | complete blocker mapping | taxonomy complete |
 | `W21-ISS-006` | P1 | `DONE` | `tester` | `Pha 4` | Correlation/compliance quality | `EV-W21-205`,`EV-W21-206` | fix coverage/findings and rerun audits | coverage>=99%, findings=0 |
 | `W21-ISS-007` | P1 | `DONE` | `tester` | `Pha 5` | Regression guard | `EV-W21-301..306` | rerun W09-W20 guardrail slices | regression guard pass |

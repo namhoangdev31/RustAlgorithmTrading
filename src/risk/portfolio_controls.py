@@ -1,5 +1,5 @@
 from typing import Dict
-from datetime import datetime
+from datetime import datetime, timezone
 from models.governance import ControlRecord, ControlStatus, ControlType
 
 
@@ -42,7 +42,7 @@ class RiskControlManager:
         status = ControlStatus.REJECT if is_breach else ControlStatus.ALLOW
 
         return ControlRecord(
-            portfolio_check_id=f"EXP-{strategy_id}-{symbol}-{datetime.utcnow().timestamp()}",
+            portfolio_check_id=f"EXP-{strategy_id}-{symbol}-{datetime.now(timezone.utc).timestamp()}",
             strategy_set_id=strategy_id,
             control_type=ControlType.EXPOSURE,
             status=status,
@@ -81,7 +81,7 @@ class RiskControlManager:
         status = ControlStatus.REJECT if is_breach else ControlStatus.ALLOW
 
         return ControlRecord(
-            portfolio_check_id=f"CON-{strategy_id}-{datetime.utcnow().timestamp()}",
+            portfolio_check_id=f"CON-{strategy_id}-{datetime.now(timezone.utc).timestamp()}",
             strategy_set_id=strategy_id,
             control_type=ControlType.CONCENTRATION,
             status=status,
@@ -104,7 +104,7 @@ class RiskControlManager:
     def _allow_record(self, strategy_id: str, ctrl_type: ControlType, reason: str) -> ControlRecord:
         evidence_id = "EV-W14-201" if ctrl_type == ControlType.EXPOSURE else "EV-W14-202"
         return ControlRecord(
-            portfolio_check_id=f"{ctrl_type.value[:3]}-{strategy_id}-{datetime.utcnow().timestamp()}",
+            portfolio_check_id=f"{ctrl_type.value[:3]}-{strategy_id}-{datetime.now(timezone.utc).timestamp()}",
             strategy_set_id=strategy_id,
             control_type=ctrl_type,
             status=ControlStatus.ALLOW,

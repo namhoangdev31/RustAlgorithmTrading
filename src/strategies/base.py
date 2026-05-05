@@ -4,7 +4,7 @@ Base strategy class and signal definitions
 
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 from dataclasses import dataclass
 from datetime import datetime
 import pandas as pd
@@ -43,7 +43,7 @@ class Signal:
     price: float
     quantity: float = 0.0
     confidence: float = 1.0
-    metadata: Dict[str, Any] = None
+    metadata: Optional[Dict[str, Any]] = None
 
     def __post_init__(self):
         if self.metadata is None:
@@ -68,8 +68,8 @@ class Strategy(ABC):
         """
         self.name = name
         self.parameters = parameters or {}
-        self.signals = []
-        self.positions = {}
+        self.signals: List[Signal] = []
+        self.positions: Dict[str, Any] = {}
         logger.info(f"Strategy '{name}' initialized with parameters: {self.parameters}")
 
     @abstractmethod

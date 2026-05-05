@@ -10,18 +10,18 @@
 
 | Issue ID | Cluster | Severity | Owner | Due | ETA | Status | Dependency | Mitigation | Exit criteria | Evidence ID | Blocking of |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| `W10-ISS-001` | C-ObservabilityGap | P0 | `ops` | Pha 4 | Pha 4 | `BLOCKED` | alert profile | bổ sung incident replay sample cho critical alerts | critical false-negative `=0` với sample thật | `EV-W10-209`,`EV-W10-304` | Gate |
+| `W10-ISS-001` | C-ObservabilityGap | P0 | `ops` | Pha 4 | Pha 4 | `DONE` | alert profile | bổ sung incident replay sample cho critical alerts | critical false-negative `=0` với sample thật | `EV-W10-209`,`EV-W10-304` | Gate |
 | `W10-ISS-002` | A-Incompatibility | P0 | `coder` | Pha 3 | Pha 3 | `DONE` | health endpoints | lock ready/live correctness tests | ready/live correctness `100%` | `EV-W10-202`,`EV-W10-203` | Gate |
 | `W10-ISS-003` | C-ObservabilityGap | P0 | `tester` | Pha 2 | Pha 2 | `DONE` | baseline capture | collect latency matrix | health/SLO latency captured | `EV-W10-201`,`EV-W10-204` | Gate |
-| `W10-ISS-004` | C-ObservabilityGap | P1 | `ops` | Pha 4 | Pha 4 | `BLOCKED` | alert sample | chuẩn hóa sample method + threshold tuning | false-positive sample `<=15%` | `EV-W10-208` | Gate |
-| `W10-ISS-005` | C-ObservabilityGap | P1 | `ops` | Pha 4 | Pha 4 | `BLOCKED` | W09 taxonomy | thêm event->alert timing capture harness | latency `<=120s` hoặc mitigation rõ | `EV-W10-207` | Gate |
-| `W10-ISS-006` | C-ObservabilityGap | P1 | `ops` | Pha 4 | Pha 4 | `BLOCKED` | dashboard SLO panels | thêm dashboard runtime probe + source checks | panel availability `>=95%` | `EV-W10-211`,`EV-W10-305` | Gate |
+| `W10-ISS-004` | C-ObservabilityGap | P1 | `ops` | Pha 4 | Pha 4 | `DONE` | alert sample | chuẩn hóa sample method + threshold tuning | false-positive sample `<=15%` | `EV-W10-208` | Gate |
+| `W10-ISS-005` | C-ObservabilityGap | P1 | `ops` | Pha 4 | Pha 4 | `DONE` | W09 taxonomy | thêm event->alert timing capture harness | latency `<=120s` hoặc mitigation rõ | `EV-W10-207` | Gate |
+| `W10-ISS-006` | C-ObservabilityGap | P1 | `ops` | Pha 4 | Pha 4 | `DONE` | dashboard SLO panels | thêm dashboard runtime probe + source checks | panel availability `>=95%` | `EV-W10-211`,`EV-W10-305` | Gate |
 | `W10-ISS-007` | B-SemanticDrift | P1 | `tester` | Pha 5 | Pha 5 | `DONE` | W05-W09 guardrails | rerun regression slices after W10 | no W05-W09 regression | `EV-W10-213..217` | Gate |
 | `W10-ISS-008` | C-ObservabilityGap | P1 | `planner` | Pha 6 | Pha 6 | `DONE` | doc sync | sync baseline/issue/gate/KPI/final | one final decision | `EV-W10-306`,`EV-W10-402` | Gate |
 | `W10-ISS-009` | A-Incompatibility | P1 | `coder` | Pha 3 | Pha 3 | `DONE` | system route schema | adapter/fixture if schema drift | API schema checks pass | `EV-W10-204`,`EV-W10-205` | Gate |
-| `W10-ISS-010` | C-ObservabilityGap | P1 | `coder` | Pha 3 | Pha 3 | `BLOCKED` | websocket manager | harden stale-stream/restart handling | heartbeat success `>=99%` | `EV-W10-206`,`EV-W10-303` | Gate |
+| `W10-ISS-010` | C-ObservabilityGap | P1 | `coder` | Pha 3 | Pha 3 | `DONE` | websocket manager | harden stale-stream/restart handling | heartbeat success `>=99%` | `EV-W10-206`,`EV-W10-303` | Gate |
 | `W10-ISS-011` | B-SemanticDrift | P2 | `planner` | Pha 5 | Pha 5 | `DONE` | scope creep | enforce change-budget tracking | within budget or escalation record | `EV-W10-402` | Governance |
-| `W10-ISS-012` | B-SemanticDrift | P2 | `ops` | Pha 5 | Pha 5 | `BLOCKED` | perf watermark | tách profile perf cho môi trường dev/ci | no critical overhead blocker | `EV-W10-102`,`EV-W10-304` | KPI |
+| `W10-ISS-012` | B-SemanticDrift | P2 | `ops` | Pha 5 | Pha 5 | `DONE` | perf watermark | tách profile perf cho môi trường dev/ci | no critical overhead blocker | `EV-W10-102`,`EV-W10-304` | KPI |
 
 ## Change records
 

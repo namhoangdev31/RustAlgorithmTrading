@@ -2,7 +2,7 @@
 Metrics API routes for current and historical metrics.
 """
 
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 from typing import Dict, Any
 
 from fastapi import APIRouter, HTTPException
@@ -36,7 +36,7 @@ async def get_current_metrics() -> MetricsSnapshot:
         metrics = await api_state._collect_all_metrics()
 
         return MetricsSnapshot(
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
             market_data=metrics.get("market_data", {}),
             strategy=metrics.get("strategy", {}),
             execution=metrics.get("execution", {}),
@@ -62,7 +62,7 @@ async def get_metrics_history(request: MetricsHistoryRequest) -> MetricsHistoryR
 
         # Determine time range
         if request.time_range:
-            end_time = datetime.utcnow()
+            end_time = datetime.now(timezone.utc)
             if request.time_range == TimeRange.HOUR_1:
                 start_time = end_time - timedelta(hours=1)
             elif request.time_range == TimeRange.HOURS_24:
@@ -74,8 +74,8 @@ async def get_metrics_history(request: MetricsHistoryRequest) -> MetricsHistoryR
             else:
                 start_time = end_time - timedelta(hours=1)
         else:
-            start_time = request.start_time or datetime.utcnow() - timedelta(hours=1)
-            end_time = request.end_time or datetime.utcnow()
+            start_time = request.start_time or datetime.now(timezone.utc) - timedelta(hours=1)
+            end_time = request.end_time or datetime.now(timezone.utc)
 
         # Query from DuckDB
         from ...database import get_db
@@ -148,7 +148,7 @@ async def get_metrics_summary() -> Dict[str, Any]:
 
         # Calculate summary statistics
         summary = {
-            "timestamp": datetime.utcnow(),
+            "timestamp": datetime.now(timezone.utc),
             "market": {
                 "symbols_tracked": len(metrics.get("market_data", {}).get("symbols", [])),
                 "total_trades": metrics.get("market_data", {}).get("total_trades", 0),

@@ -5,7 +5,8 @@ Walk-forward analysis divides data into multiple training and testing periods
 to evaluate how well a strategy generalizes to unseen data.
 """
 
-from typing import Dict, Any, List, Optional, Tuple
+from typing import Dict, Any, List
+from collections import deque
 from dataclasses import dataclass
 import pandas as pd
 import numpy as np
@@ -14,6 +15,9 @@ from datetime import datetime, timedelta
 
 from strategies.base import Strategy
 from backtesting.engine import BacktestEngine
+from backtesting.data_handler import HistoricalDataHandler
+from backtesting.execution_handler import SimulatedExecutionHandler
+from backtesting.portfolio_handler import PortfolioHandler
 
 
 @dataclass
@@ -166,8 +170,30 @@ class WalkForwardAnalyzer:
                 name=f"{strategy_class.__name__}_window_{window.window_id}", parameters=best_params
             )
 
-            engine = BacktestEngine(initial_capital=initial_capital)
-            test_results = engine.run(test_strategy, test_data, symbol)
+            # Initialize handlers for BacktestEngine
+            data_handler = HistoricalDataHandler(
+                events_queue=deque(),
+                symbol_list=[symbol],
+                csv_dir="data",  # Default CSV dir
+            )
+            # In walk-forward, we might need to load the specific window data
+            # Assuming test_data is a DataFrame
+            data_handler.add_symbol_data(symbol, test_data)
+            
+            execution_handler = SimulatedExecutionHandler(events_queue=deque())
+            portfolio_handler = PortfolioHandler(
+                data_handler=data_handler,
+                events_queue=deque(),
+                initial_capital=initial_capital
+            )
+
+            engine = BacktestEngine(
+                data_handler=data_handler,
+                execution_handler=execution_handler,
+                portfolio_handler=portfolio_handler,
+                strategy=test_strategy
+            )
+            test_results = engine.run()
 
             window_results.append(
                 {

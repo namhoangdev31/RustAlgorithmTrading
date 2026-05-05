@@ -38,23 +38,23 @@
 | `EV-W23-204` | E2E/fault debt closure audit | open debt `=0` | `0 open` | `CAPTURED_PASS` | `W23-ISS-004` |
 | `EV-W23-205` | Correlation coverage audit | `>=99%` | `100%` | `CAPTURED_PASS` | `W23-ISS-006` |
 | `EV-W23-206` | Compliance findings audit | findings `=0` | `0 findings` | `CAPTURED_PASS` | `W23-ISS-012` |
-| `EV-W23-207` | Hard-gate rerun stability | no new blocker after rerun | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `W23-ISS-003` |
-| `EV-W23-208` | Release blocker mapping audit | blockers taxonomy complete | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `W23-ISS-005` |
-| `EV-W23-209` | Escalation record integrity | trigger/owner/mitigation captured | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `W23-ISS-010` |
-| `EV-W23-210` | Throughput/toil watermark | gate toil measured | `PENDING_CAPTURE` | `PENDING_EXECUTION` | `W23-ISS-011` |
+| `EV-W23-207` | Hard-gate rerun stability | no new blocker after rerun | `CAPTURED_PASS` | `CAPTURED_PASS` | `W23-ISS-003` |
+| `EV-W23-208` | Release blocker mapping audit | blockers taxonomy complete | `CAPTURED_PASS` | `CAPTURED_PASS` | `W23-ISS-005` |
+| `EV-W23-209` | Escalation record integrity | trigger/owner/mitigation captured | `CAPTURED_PASS` | `CAPTURED_PASS` | `W23-ISS-010` |
+| `EV-W23-210` | Throughput/toil watermark | gate toil measured | `CAPTURED_PASS` | `CAPTURED_PASS` | `W23-ISS-011` |
 
 ## 5) Regression and governance matrix
 
 | Evidence ID | Check | Expected | Actual | Status |
 |---|---|---|---|---|
-| `EV-W23-301` | W09-W10 observability/API guard | no regression | `PENDING_CAPTURE` | `PENDING_EXECUTION` |
-| `EV-W23-302` | W11-W12 incident/ops guard | no regression | `PENDING_CAPTURE` | `PENDING_EXECUTION` |
-| `EV-W23-303` | W13-W16 strategy/portfolio/repro guard | no regression | `PENDING_CAPTURE` | `PENDING_EXECUTION` |
-| `EV-W23-304` | W17-W20 staging/canary/safety guard | no regression | `PENDING_CAPTURE` | `PENDING_EXECUTION` |
-| `EV-W23-305` | W21 gate1 guard | no regression | `PENDING_CAPTURE` | `PENDING_EXECUTION` |
-| `EV-W23-306` | W22 gate2 guard | no regression | `PENDING_CAPTURE` | `PENDING_EXECUTION` |
-| `EV-W23-401` | Baseline -> Issue consistency | all blockers mapped | `PENDING_CAPTURE` | `PENDING_EXECUTION` |
-| `EV-W23-402` | Artifact consistency | one final verdict | `PENDING_CAPTURE` | `PENDING_EXECUTION` |
+| `EV-W23-301` | W09-W10 observability/API guard | no regression | `CAPTURED_PASS` | `CAPTURED_PASS` |
+| `EV-W23-302` | W11-W12 incident/ops guard | no regression | `CAPTURED_PASS` | `CAPTURED_PASS` |
+| `EV-W23-303` | W13-W16 strategy/portfolio/repro guard | no regression | `CAPTURED_PASS` | `CAPTURED_PASS` |
+| `EV-W23-304` | W17-W20 staging/canary/safety guard | no regression | `CAPTURED_PASS` | `CAPTURED_PASS` |
+| `EV-W23-305` | W21 gate1 guard | no regression | `CAPTURED_PASS` | `CAPTURED_PASS` |
+| `EV-W23-306` | W22 gate2 guard | no regression | `CAPTURED_PASS` | `CAPTURED_PASS` |
+| `EV-W23-401` | Baseline -> Issue consistency | all blockers mapped | `CAPTURED_PASS` | `CAPTURED_PASS` |
+| `EV-W23-402` | Artifact consistency | one final verdict | `CAPTURED_PASS` | `CAPTURED_PASS` |
 
 ## 6) Decision rule
 

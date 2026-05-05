@@ -2,7 +2,7 @@
 Simulated execution handler for backtesting.
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 import numpy as np
 from loguru import logger
@@ -75,7 +75,7 @@ class SimulatedExecutionHandler:
         commission = self._calculate_commission(fill_price, fill_quantity)
 
         fill = FillEvent(
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
             symbol=order.symbol,
             exchange="SIMULATED",
             quantity=fill_quantity if order.direction == "BUY" else -fill_quantity,

@@ -7,7 +7,7 @@ and automated validation reports.
 
 import json
 from typing import Dict
-from datetime import datetime
+from datetime import datetime, timezone
 from loguru import logger
 
 
@@ -32,7 +32,7 @@ def run_governance_verification(validator, model, X, y) -> Dict:
 
     summary = {
         "strategy_id": model.name,
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "train_test_verdict": tt_decision.get("verdict"),
         "walk_forward_verdict": wf_decision.get("verdict"),
         "max_drift": wf_decision.get("drift_value", 0.0),

@@ -11,7 +11,7 @@ Collects and aggregates metrics from market data feeds:
 
 import asyncio
 from typing import Dict, Any, List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 
 from loguru import logger
 
@@ -136,7 +136,7 @@ class MarketDataCollector(BaseCollector):
             # Add to batch buffer for database write
             self.batch_buffer.append(
                 {
-                    "timestamp": datetime.utcnow(),
+                    "timestamp": datetime.now(timezone.utc),
                     "symbol": symbol,
                     "last_price": self.symbols[symbol]["last_price"],
                     "bid": self.symbols[symbol]["bid"],
@@ -164,7 +164,7 @@ class MarketDataCollector(BaseCollector):
     async def get_current_metrics(self) -> Dict[str, Any]:
         """Get current market data metrics."""
         return {
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "symbols": self.symbols,
             "total_trades": self.total_trades,
             "total_volume": self.total_volume,
@@ -188,7 +188,7 @@ class MarketDataCollector(BaseCollector):
                 "ask": 0.0,
                 "volume": 0,
                 "trades": 0,
-                "added_at": datetime.utcnow().isoformat(),
+                "added_at": datetime.now(timezone.utc).isoformat(),
             }
             logger.info(f"[cid:INIT] Added symbol {symbol} to market data collector")
 
@@ -205,7 +205,7 @@ class MarketDataCollector(BaseCollector):
         Args:
             rust_metrics: Parsed metrics from Rust service
         """
-        timestamp = rust_metrics.get("timestamp", datetime.utcnow())
+        timestamp = rust_metrics.get("timestamp", datetime.now(timezone.utc))
 
         # Process counters
         for metric_key, metric_data in rust_metrics.get("counters", {}).items():

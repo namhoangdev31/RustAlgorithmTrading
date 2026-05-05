@@ -9,7 +9,7 @@ Tests cover:
 """
 
 import pytest
-from datetime import datetime
+from datetime import datetime, timezone
 from pydantic import ValidationError
 
 from models.events import SignalEvent, EventType
@@ -21,7 +21,7 @@ class TestSignalEventValidation:
     def test_valid_signal_type_long(self):
         """Test SignalEvent accepts valid LONG signal type"""
         signal = SignalEvent(
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
             symbol="AAPL",
             signal_type="LONG",
             strength=0.8,
@@ -36,7 +36,7 @@ class TestSignalEventValidation:
     def test_valid_signal_type_short(self):
         """Test SignalEvent accepts valid SHORT signal type"""
         signal = SignalEvent(
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
             symbol="GOOGL",
             signal_type="SHORT",
             strength=0.9,
@@ -48,7 +48,7 @@ class TestSignalEventValidation:
     def test_valid_signal_type_exit(self):
         """Test SignalEvent accepts valid EXIT signal type"""
         signal = SignalEvent(
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
             symbol="MSFT",
             signal_type="EXIT",
             strength=1.0,
@@ -61,7 +61,7 @@ class TestSignalEventValidation:
         """Test SignalEvent rejects BUY (should be LONG)"""
         with pytest.raises(ValidationError) as exc_info:
             SignalEvent(
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 symbol="AAPL",
                 signal_type="BUY",
                 strength=0.8,
@@ -78,7 +78,7 @@ class TestSignalEventValidation:
         """Test SignalEvent rejects SELL (should be SHORT or EXIT)"""
         with pytest.raises(ValidationError) as exc_info:
             SignalEvent(
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 symbol="AAPL",
                 signal_type="SELL",
                 strength=0.8,
@@ -92,7 +92,7 @@ class TestSignalEventValidation:
         """Test SignalEvent rejects HOLD (not a valid signal)"""
         with pytest.raises(ValidationError) as exc_info:
             SignalEvent(
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 symbol="AAPL",
                 signal_type="HOLD",
                 strength=0.0,
@@ -106,7 +106,7 @@ class TestSignalEventValidation:
         """Test SignalEvent rejects arbitrary string"""
         with pytest.raises(ValidationError) as exc_info:
             SignalEvent(
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 symbol="AAPL",
                 signal_type="INVALID_SIGNAL",
                 strength=0.5,
@@ -120,7 +120,7 @@ class TestSignalEventValidation:
         """Test SignalEvent rejects empty string"""
         with pytest.raises(ValidationError) as exc_info:
             SignalEvent(
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 symbol="AAPL",
                 signal_type="",
                 strength=0.5,
@@ -134,7 +134,7 @@ class TestSignalEventValidation:
         """Test SignalEvent rejects lowercase signal types (case sensitive)"""
         with pytest.raises(ValidationError) as exc_info:
             SignalEvent(
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 symbol="AAPL",
                 signal_type="long",
                 strength=0.8,
@@ -149,7 +149,7 @@ class TestSignalEventValidation:
         # Valid strengths
         for strength in [0.0, 0.5, 1.0]:
             signal = SignalEvent(
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 symbol="AAPL",
                 signal_type="LONG",
                 strength=strength,
@@ -161,7 +161,7 @@ class TestSignalEventValidation:
         """Test signal strength rejects negative values"""
         with pytest.raises(ValidationError) as exc_info:
             SignalEvent(
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 symbol="AAPL",
                 signal_type="LONG",
                 strength=-0.1,
@@ -175,7 +175,7 @@ class TestSignalEventValidation:
         """Test signal strength rejects values > 1.0"""
         with pytest.raises(ValidationError) as exc_info:
             SignalEvent(
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 symbol="AAPL",
                 signal_type="LONG",
                 strength=1.1,
@@ -188,7 +188,7 @@ class TestSignalEventValidation:
     def test_signal_event_immutable_event_type(self):
         """Test that event_type field is frozen and cannot be changed"""
         signal = SignalEvent(
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
             symbol="AAPL",
             signal_type="LONG",
             strength=0.8,
@@ -204,32 +204,32 @@ class TestSignalEventValidation:
         # Missing symbol
         with pytest.raises(ValidationError):
             SignalEvent(
-                timestamp=datetime.utcnow(), signal_type="LONG", strength=0.8, strategy_id="test"
+                timestamp=datetime.now(timezone.utc), signal_type="LONG", strength=0.8, strategy_id="test"
             )
 
         # Missing signal_type
         with pytest.raises(ValidationError):
             SignalEvent(
-                timestamp=datetime.utcnow(), symbol="AAPL", strength=0.8, strategy_id="test"
+                timestamp=datetime.now(timezone.utc), symbol="AAPL", strength=0.8, strategy_id="test"
             )
 
         # Missing strength
         with pytest.raises(ValidationError):
             SignalEvent(
-                timestamp=datetime.utcnow(), symbol="AAPL", signal_type="LONG", strategy_id="test"
+                timestamp=datetime.now(timezone.utc), symbol="AAPL", signal_type="LONG", strategy_id="test"
             )
 
         # Missing strategy_id
         with pytest.raises(ValidationError):
             SignalEvent(
-                timestamp=datetime.utcnow(), symbol="AAPL", signal_type="LONG", strength=0.8
+                timestamp=datetime.now(timezone.utc), symbol="AAPL", signal_type="LONG", strength=0.8
             )
 
     def test_signal_event_timestamp_default(self):
         """Test that timestamp has a default value if not provided"""
-        before = datetime.utcnow()
+        before = datetime.now(timezone.utc)
         signal = SignalEvent(symbol="AAPL", signal_type="LONG", strength=0.8, strategy_id="test")
-        after = datetime.utcnow()
+        after = datetime.now(timezone.utc)
 
         assert before <= signal.timestamp <= after
 
@@ -237,21 +237,21 @@ class TestSignalEventValidation:
         """Test creating multiple signals with different valid types"""
         signals = [
             SignalEvent(
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 symbol="AAPL",
                 signal_type="LONG",
                 strength=0.8,
                 strategy_id="test",
             ),
             SignalEvent(
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 symbol="GOOGL",
                 signal_type="SHORT",
                 strength=0.9,
                 strategy_id="test",
             ),
             SignalEvent(
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 symbol="MSFT",
                 signal_type="EXIT",
                 strength=1.0,

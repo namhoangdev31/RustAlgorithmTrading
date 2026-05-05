@@ -11,7 +11,7 @@ Tests cover:
 import pytest
 import pandas as pd
 import numpy as np
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 from pydantic import ValidationError
 
 from backtesting.engine import BacktestEngine
@@ -78,7 +78,7 @@ class TestBacktestSignalValidation:
 
     def create_test_data(self, periods=100) -> pd.DataFrame:
         """Create test market data"""
-        dates = pd.date_range(end=datetime.utcnow(), periods=periods, freq="1D")
+        dates = pd.date_range(end=datetime.now(timezone.utc), periods=periods, freq="1D")
 
         base_price = 100.0
         trend = np.linspace(0, 20, periods)
@@ -130,7 +130,7 @@ class TestBacktestSignalValidation:
         """Test conversion from Strategy Signal to SignalEvent"""
         # Create a strategy signal
         strategy_signal = Signal(
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
             symbol="AAPL",
             signal_type=SignalType.LONG,
             price=150.0,
@@ -157,7 +157,7 @@ class TestBacktestSignalValidation:
         """Test that invalid signal types are caught during conversion"""
         # Create a strategy signal with invalid type (simulating a bug)
         strategy_signal = Signal(
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
             symbol="AAPL",
             signal_type=SignalType.HOLD,  # HOLD is not valid for SignalEvent
             price=150.0,
@@ -182,21 +182,21 @@ class TestBacktestSignalValidation:
         # Create signals of different types
         signals = [
             Signal(
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 symbol="AAPL",
                 signal_type=SignalType.LONG,
                 price=150.0,
                 confidence=0.8,
             ),
             Signal(
-                timestamp=datetime.utcnow() + timedelta(hours=1),
+                timestamp=datetime.now(timezone.utc) + timedelta(hours=1),
                 symbol="AAPL",
                 signal_type=SignalType.SHORT,
                 price=155.0,
                 confidence=0.9,
             ),
             Signal(
-                timestamp=datetime.utcnow() + timedelta(hours=2),
+                timestamp=datetime.now(timezone.utc) + timedelta(hours=2),
                 symbol="AAPL",
                 signal_type=SignalType.EXIT,
                 price=152.0,
@@ -226,7 +226,7 @@ class TestBacktestSignalValidation:
         """Test that signal validation is case-sensitive"""
         with pytest.raises(ValidationError):
             SignalEvent(
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 symbol="AAPL",
                 signal_type="long",  # lowercase should fail
                 strength=0.8,
@@ -235,7 +235,7 @@ class TestBacktestSignalValidation:
 
         with pytest.raises(ValidationError):
             SignalEvent(
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 symbol="AAPL",
                 signal_type="Long",  # mixed case should fail
                 strength=0.8,
@@ -274,7 +274,7 @@ class TestSignalTypeEdgeCases:
         """Test that None signal type is rejected"""
         with pytest.raises(ValidationError):
             SignalEvent(
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 symbol="AAPL",
                 signal_type=None,
                 strength=0.8,
@@ -285,7 +285,7 @@ class TestSignalTypeEdgeCases:
         """Test that numeric signal type is rejected"""
         with pytest.raises(ValidationError):
             SignalEvent(
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 symbol="AAPL",
                 signal_type=123,
                 strength=0.8,
@@ -299,7 +299,7 @@ class TestSignalTypeEdgeCases:
         for invalid_type in invalid_types:
             with pytest.raises(ValidationError):
                 SignalEvent(
-                    timestamp=datetime.utcnow(),
+                    timestamp=datetime.now(timezone.utc),
                     symbol="AAPL",
                     signal_type=invalid_type,
                     strength=0.8,
@@ -310,7 +310,7 @@ class TestSignalTypeEdgeCases:
         """Test signal strength boundary conditions"""
         # Exactly 0.0 should work
         signal = SignalEvent(
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
             symbol="AAPL",
             signal_type="LONG",
             strength=0.0,
@@ -320,7 +320,7 @@ class TestSignalTypeEdgeCases:
 
         # Exactly 1.0 should work
         signal = SignalEvent(
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
             symbol="AAPL",
             signal_type="LONG",
             strength=1.0,
@@ -331,7 +331,7 @@ class TestSignalTypeEdgeCases:
         # Just below 0 should fail
         with pytest.raises(ValidationError):
             SignalEvent(
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 symbol="AAPL",
                 signal_type="LONG",
                 strength=-0.0001,
@@ -341,7 +341,7 @@ class TestSignalTypeEdgeCases:
         # Just above 1 should fail
         with pytest.raises(ValidationError):
             SignalEvent(
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 symbol="AAPL",
                 signal_type="LONG",
                 strength=1.0001,
@@ -362,7 +362,7 @@ class TestSignalValidationPerformance:
         signals = []
         for i in range(num_signals):
             signal = SignalEvent(
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 symbol="AAPL",
                 signal_type="LONG" if i % 3 == 0 else "SHORT" if i % 3 == 1 else "EXIT",
                 strength=0.8,
@@ -386,7 +386,7 @@ class TestSignalValidationPerformance:
         for i in range(num_attempts):
             try:
                 SignalEvent(
-                    timestamp=datetime.utcnow(),
+                    timestamp=datetime.now(timezone.utc),
                     symbol="AAPL",
                     signal_type="INVALID",
                     strength=0.8,

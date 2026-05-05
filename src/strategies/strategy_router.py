@@ -15,7 +15,7 @@ from loguru import logger
 
 from strategies.base import Strategy, Signal, SignalType
 from strategies.momentum_simplified import SimplifiedMomentumStrategy
-from strategies.mean_reversion import MeanReversion
+from strategies.mean_reversion import MeanReversionStrategy
 from strategies.trend_following import TrendFollowingStrategy
 from strategies.market_regime import RegimeDetector, MarketRegime
 
@@ -52,7 +52,7 @@ class StrategyRouter:
         # Initialize all strategies
         self.strategies = {
             "momentum": SimplifiedMomentumStrategy(),
-            "mean_reversion": MeanReversion(),
+            "mean_reversion": MeanReversionStrategy(),
             "trend_following": TrendFollowingStrategy(),
         }
 
@@ -163,6 +163,10 @@ class StrategyRouter:
         self, symbol: str, strategy_name: str, regime: MarketRegime, confidence: float
     ):
         """Record routing decision for analysis"""
+        # Routing state
+        self.routing_history: Dict[str, List[Dict[str, Any]]] = {}
+        self.active_regime: MarketRegime = MarketRegime.RANGING
+
         if symbol not in self.routing_history:
             self.routing_history[symbol] = []
 
@@ -203,6 +207,8 @@ class StrategyRouter:
 
         for symbol, history in self.routing_history.items():
             for decision in history:
+                # Ensure decision is treated as Dict[str, Any]
+                assert isinstance(decision, dict)
                 # Count strategy usage
                 strategy = decision["strategy"]
                 if strategy in summary["strategy_usage"]:

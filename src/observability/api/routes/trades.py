@@ -2,7 +2,7 @@
 Trade history and execution API routes.
 """
 
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 from typing import Optional, Dict, Any, cast
 
 from fastapi import APIRouter, Query, HTTPException
@@ -41,8 +41,8 @@ async def get_trade_history(
         trade_filter = TradeFilter(
             symbol=symbol,
             side=side,
-            start_time=start_time or datetime.utcnow() - timedelta(days=1),
-            end_time=end_time or datetime.utcnow(),
+            start_time=start_time or datetime.now(timezone.utc) - timedelta(days=1),
+            end_time=end_time or datetime.now(timezone.utc),
         )
 
         # Query trades
@@ -103,7 +103,7 @@ async def get_trade_statistics(
             return {"error": "Execution collector not available"}
 
         # Parse time range
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         if time_range == "1h":
             start_time = now - timedelta(hours=1)
         elif time_range == "24h":

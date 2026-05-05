@@ -11,7 +11,7 @@ Tracks order execution and fill quality:
 
 import asyncio
 from typing import Dict, Any, List, Optional, cast
-from datetime import datetime
+from datetime import datetime, timezone
 from collections import deque
 
 from loguru import logger
@@ -120,7 +120,7 @@ class ExecutionCollector(BaseCollector):
                 "side": random.choice(["buy", "sell"]),
                 "quantity": random.randint(10, 100),
                 "price": random.uniform(100, 200),
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
                 "latency_ms": random.uniform(10, 100),
                 "slippage_bps": random.uniform(0, 5),
             }
@@ -133,7 +133,7 @@ class ExecutionCollector(BaseCollector):
         """Write execution metrics to DuckDB."""
         try:
             metrics_data = {
-                "timestamp": datetime.utcnow(),
+                "timestamp": datetime.now(timezone.utc),
                 "orders_submitted": self.orders_submitted,
                 "orders_filled": self.orders_filled,
                 "orders_cancelled": self.orders_cancelled,
@@ -150,7 +150,7 @@ class ExecutionCollector(BaseCollector):
     async def get_current_metrics(self) -> Dict[str, Any]:
         """Get current execution metrics."""
         return {
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "orders_today": self.orders_submitted,
             "fills_today": self.orders_filled,
             "cancelled": self.orders_cancelled,

@@ -1,5 +1,5 @@
 from typing import Dict, List, Optional, Any
-from datetime import datetime
+from datetime import datetime, timezone
 from loguru import logger
 from enum import Enum
 from pydantic import BaseModel
@@ -98,7 +98,7 @@ class AllocationManager:
         )
 
         return ControlRecord(
-            portfolio_check_id=f"ALC-{strategy_id}-{symbol}-{datetime.utcnow().timestamp()}",
+            portfolio_check_id=f"ALC-{strategy_id}-{symbol}-{datetime.now(timezone.utc).timestamp()}",
             strategy_set_id=strategy_id,
             control_type=ControlType.ALLOCATION,
             status=status,

@@ -1,7 +1,7 @@
 import pytest
 import pandas as pd
 import numpy as np
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any
 from unittest.mock import MagicMock
 
@@ -82,7 +82,7 @@ class TestBacktestEngine:
         )
 
         signal = Signal(
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
             symbol="TEST",
             signal_type=SignalType.LONG,
             price=100.0,
