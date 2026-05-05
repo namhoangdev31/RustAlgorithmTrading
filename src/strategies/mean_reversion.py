@@ -15,7 +15,7 @@ from loguru import logger
 from strategies.base import Strategy, Signal, SignalType
 
 
-class MeanReversion(Strategy):
+class MeanReversionStrategy(Strategy):
     """
     Mean Reversion Strategy using Bollinger Bands with comprehensive risk management
 

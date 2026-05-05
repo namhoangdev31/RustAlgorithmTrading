@@ -15,7 +15,7 @@ from datetime import datetime, timedelta
 from loguru import logger
 
 from strategies.momentum import MomentumStrategy
-from strategies.mean_reversion import MeanReversion
+from strategies.mean_reversion import MeanReversionStrategy
 from backtesting.portfolio_handler import PortfolioHandler, FixedAmountSizer
 from models.events import SignalEvent
 
@@ -82,7 +82,7 @@ class TestSignalExecutionBug:
 
     def test_mean_reversion_signal_generation(self, sample_data):
         """Test if MeanReversion strategy generates signals correctly"""
-        strategy = MeanReversion(
+        strategy = MeanReversionStrategy(
             bb_period=10,  # Shorter period to react faster to synthetic oscillations
             bb_std=1.0,  # Narrower bands to ensure crossovers
             position_size=0.15,

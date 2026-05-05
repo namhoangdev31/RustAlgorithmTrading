@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
 from loguru import logger
 
 from strategies.momentum import MomentumStrategy
-from strategies.mean_reversion import MeanReversion
+from strategies.mean_reversion import MeanReversionStrategy
 from strategies.base import SignalType
 
 
@@ -74,7 +74,7 @@ class TestSignalGeneration:
 
     def test_mean_reversion_generates_signals(self):
         """Verify Mean Reversion strategy generates >0 signals"""
-        strategy = MeanReversion(
+        strategy = MeanReversionStrategy(
             bb_period=20,
             bb_std=0.1,  # extremely narrow bands
             position_size=0.15,
@@ -163,7 +163,7 @@ class TestSignalTypeValidation:
 
     def test_mean_reversion_signal_types_are_valid(self):
         """Verify all Mean Reversion signals have valid signal types"""
-        strategy = MeanReversion()
+        strategy = MeanReversionStrategy()
 
         # Create oscillating data
         dates = pd.date_range(start="2024-01-01", end="2024-03-01", freq="1D")
@@ -280,7 +280,7 @@ class TestEntryExitMatching:
         data.set_index("timestamp", inplace=True)
         data.attrs["symbol"] = "TEST"
 
-        strategy = MeanReversion(
+        strategy = MeanReversionStrategy(
             bb_period=20,
             bb_std=0.5,  # narrow bands
             stop_loss_pct=0.05,
@@ -374,7 +374,7 @@ class TestPositionTrackingState:
 
     def test_mean_reversion_position_tracking(self):
         """Verify Mean Reversion strategy tracks positions correctly"""
-        strategy = MeanReversion(bb_period=20)
+        strategy = MeanReversionStrategy(bb_period=20)
 
         # Create oscillating data
         dates = pd.date_range(start="2024-01-01", end="2024-02-01", freq="1D")
@@ -475,7 +475,7 @@ class TestSignalMetadata:
 
     def test_mean_reversion_signal_metadata(self):
         """Verify Mean Reversion signals have complete metadata"""
-        strategy = MeanReversion(bb_period=20)
+        strategy = MeanReversionStrategy(bb_period=20)
 
         dates = pd.date_range(start="2024-01-01", end="2024-02-01", freq="1D")
         time = np.arange(len(dates))

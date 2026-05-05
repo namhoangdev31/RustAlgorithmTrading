@@ -13,7 +13,7 @@ from datetime import datetime, timedelta, timezone
 from loguru import logger
 
 from strategies.momentum import MomentumStrategy
-from strategies.mean_reversion import MeanReversion
+from strategies.mean_reversion import MeanReversionStrategy
 from strategies.base import SignalType
 from backtesting.portfolio_handler import PortfolioHandler, FixedAmountSizer
 from models.events import SignalEvent, OrderEvent, FillEvent
@@ -362,7 +362,7 @@ class TestEndToEndBacktestFlow:
     def test_mean_reversion_strategy_full_flow(self):
         """Test Mean Reversion strategy from data to P&L"""
         # Initialize strategy
-        strategy = MeanReversion(
+        strategy = MeanReversionStrategy(
             bb_period=20,
             stop_loss_pct=0.02,
             take_profit_pct=0.03,

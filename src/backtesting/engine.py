@@ -90,7 +90,8 @@ class BacktestEngine:
             self.reproducibility_manager.apply_seed_profile(seed_profile_id)
 
         logger.info(f"Starting optimized backtest for {len(self.data_handler.symbols)} symbols...")
-        start_time = datetime.utcnow()
+        from datetime import timezone
+        start_time = datetime.now(timezone.utc)
 
         while self.continue_backtest:
             # Update market data bars
@@ -122,7 +123,8 @@ class BacktestEngine:
             self.portfolio_handler.clear_reserved_cash()
 
         # Calculate final performance metrics
-        end_time = datetime.utcnow()
+        from datetime import timezone
+        end_time = datetime.now(timezone.utc)
         duration = (end_time - start_time).total_seconds()
 
         results = self._generate_results(duration)

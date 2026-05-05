@@ -216,6 +216,53 @@ class AlpacaClient:
             logger.info(f"Order placed: {side} {qty} {symbol}")
 
             return {
+                "created_at": order.created_at if hasattr(order, "created_at") else datetime.now(),
+            }
+
+        except Exception as e:
+            logger.error(f"Failed to place order: {e}")
+            raise
+
+    def place_limit_order(
+        self, symbol: str, qty: float, side: str, limit_price: float, time_in_force: str = "day"
+    ) -> Dict[str, Any]:
+        """
+        Place a limit order
+
+        Args:
+            symbol: Stock symbol
+            qty: Quantity to trade
+            side: "buy" or "sell"
+            limit_price: Limit price
+            time_in_force: Order duration (default: "day")
+
+        Returns:
+            Order details dictionary
+        """
+        try:
+            from alpaca.trading.requests import LimitOrderRequest
+
+            order_side = OrderSide.BUY if side.lower() == "buy" else OrderSide.SELL
+            tif_map = {
+                "day": TimeInForce.DAY,
+                "gtc": TimeInForce.GTC,
+                "ioc": TimeInForce.IOC,
+                "fok": TimeInForce.FOK,
+            }
+
+            limit_order_data = LimitOrderRequest(
+                symbol=symbol,
+                qty=qty,
+                side=order_side,
+                limit_price=limit_price,
+                time_in_force=tif_map.get(time_in_force.lower(), TimeInForce.DAY),
+            )
+
+            order = self.trading_client.submit_order(limit_order_data)
+
+            logger.info(f"Limit order placed: {side} {qty} {symbol} @ {limit_price}")
+
+            return {
                 "id": str(order.id) if hasattr(order, "id") else "",
                 "symbol": order.symbol if hasattr(order, "symbol") else "",
                 "qty": float(order.qty) if hasattr(order, "qty") and order.qty is not None else 0.0,
@@ -226,7 +273,7 @@ class AlpacaClient:
             }
 
         except Exception as e:
-            logger.error(f"Failed to place order: {e}")
+            logger.error(f"Failed to place limit order: {e}")
             raise
 
     def get_orders(self, status: str = "all") -> List[Dict[str, Any]]:
@@ -279,6 +326,24 @@ class AlpacaClient:
             return True
         except Exception as e:
             logger.error(f"Failed to cancel orders: {e}")
+            raise
+
+    def cancel_order(self, order_id: str) -> bool:
+        """
+        Cancel a specific order
+
+        Args:
+            order_id: ID of the order to cancel
+
+        Returns:
+            True if successful
+        """
+        try:
+            self.trading_client.cancel_order_by_id(order_id)
+            logger.info(f"Order cancelled: {order_id}")
+            return True
+        except Exception as e:
+            logger.error(f"Failed to cancel order {order_id}: {e}")
             raise
 
     def close_all_positions(self) -> bool:

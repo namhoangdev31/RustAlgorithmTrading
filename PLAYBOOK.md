@@ -596,7 +596,7 @@ Mỗi file có 3 phần:
 
 - Vai trò file: Các chiến lược giao dịch và router chiến lược.
 - Class trong file:
-  - MeanReversion: Lớp nghiệp vụ trong module.
+  - MeanReversionStrategy: Triển khai logic chiến lược giao dịch (signal, position sizing, regime/risk-aware decisions).
 - Test liên quan: tests/unit/python/*, tests/unit/test_*strategy*.py, tests/integration/test_*signal*.py, tests/test_backtest_integration.py.
 
 ### src/strategies/ml/__init__.py
@@ -2463,7 +2463,7 @@ Mỗi file có 3 phần:
 - `docs/roadmap/week23/ISSUE_REGISTER_WEEK23.md`: issue governance W23 (severity/owner/ETA/evidence).
 - `docs/roadmap/week23/INTERFACE_RELEASE_GATE3_SPEC.md`: interface freeze + gate3 contract rules W23.
 - `docs/roadmap/week23/GATE_REHEARSAL_NOTES.md`: gate checklist + rehearsal notes W23.
-- `docs/roadmap/week23/WEEK23_FINAL_REPORT_AND_WEEK24_START_PACK.md`: closeout + W24 handoff pack.
+- `docs/roadmap/week23/WEEK23_FINAL_REPORT_AND_WEEK24_START_PACK.md`: closeout + W24 start pack (GO verdict).
 
 ## Roadmap Week 24 Companion Artifacts
 
