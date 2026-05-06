@@ -94,25 +94,27 @@ python src/bridge/zmq_bridge.py
 
 **Python Side**:
 ```python
-from bridge import RustFeatureComputer, MarketBar
+import numpy as np
+from bridge import RustFeatureComputer
 
 # Initialize computer
 computer = RustFeatureComputer()
 
-# Create market bar
-bar = MarketBar(
-    symbol="AAPL",
-    open=150.0,
-    high=152.5,
-    low=149.5,
-    close=151.0,
-    volume=1_000_000.0,
-    timestamp=1234567890
-)
+# Columnar batch contract (Phase 1.1)
+open_arr = np.array([150.0, 151.0], dtype=np.float64)
+high_arr = np.array([152.5, 153.0], dtype=np.float64)
+low_arr = np.array([149.5, 150.2], dtype=np.float64)
+close_arr = np.array([151.0, 152.2], dtype=np.float64)
+volume_arr = np.array([1_000_000.0, 1_200_000.0], dtype=np.float64)
 
-# Compute features (3-10x faster than pure Python)
-features = computer.compute_streaming(bar)
-# Returns: [close, rsi, macd_line, macd_signal, macd_hist, ema_fast, ema_slow, spread, sma, dist_from_sma, volume, range_pct]
+features = computer.compute_batch_named(
+    open_arr=open_arr,
+    high_arr=high_arr,
+    low_arr=low_arr,
+    close_arr=close_arr,
+    volume_arr=volume_arr,
+)
+# Returns DataFrame columns: close/log_returns/momentum_10/volume/range_pct
 ```
 
 **Rust Side** (`signal-bridge/src/bridge.rs`):
@@ -361,7 +363,7 @@ async fn main() -> anyhow::Result<()> {
 
 ```python
 import asyncio
-from bridge import RustFeatureComputer, ZMQPublisher, ZMQSubscriber, Signal, MarketBar
+from bridge import RustFeatureComputer, ZMQPublisher, ZMQSubscriber, Signal
 from api.alpaca_paper_trading import AlpacaPaperTrading, OrderType
 
 async def trading_system():
@@ -379,19 +381,15 @@ async def trading_system():
     # 3. Main trading loop
     async for topic, message in market_subscriber.receive():
         if message["type"] == "BarUpdate":
-            # Convert to MarketBar
-            bar = MarketBar(
-                symbol=message["symbol"],
-                open=message["open"],
-                high=message["high"],
-                low=message["low"],
-                close=message["close"],
-                volume=message["volume"],
-                timestamp=message["timestamp"]
-            )
-
-            # 4. Compute features using Rust (fast!)
-            features = feature_computer.compute_streaming(bar)
+            # 4. Compute features using Rust (fast columnar path)
+            features = feature_computer.compute_batch_named(
+                open_arr=[message["open"]],
+                high_arr=[message["high"]],
+                low_arr=[message["low"]],
+                close_arr=[message["close"]],
+                volume_arr=[message["volume"]],
+                timestamp_arr=[message["timestamp"]],
+            ).iloc[0].to_list()
 
             # 5. Make trading decision (your ML model here)
             prediction = your_ml_model.predict(features)
@@ -399,10 +397,10 @@ async def trading_system():
             # 6. Generate signal if prediction is strong
             if abs(prediction) > 0.7:
                 signal = Signal(
-                    symbol=bar.symbol,
+                    symbol=message["symbol"],
                     direction="long" if prediction > 0 else "short",
                     strength=abs(prediction),
-                    timestamp=bar.timestamp,
+                    timestamp=message["timestamp"],
                     features=features
                 )
 
@@ -412,7 +410,7 @@ async def trading_system():
                 # 8. Place order via Alpaca
                 if prediction > 0:
                     order = alpaca.place_order(
-                        symbol=bar.symbol,
+                        symbol=message["symbol"],
                         qty=10,
                         side="buy",
                         order_type=OrderType.MARKET

@@ -33,13 +33,18 @@ def _rust_computer_or_skip():
 
 
 def test_rust_feature_computer_compute_batch_named_contract():
-    from bridge.rust_bridge import MarketBar, RUST_BATCH_FEATURE_COLUMNS
+    from bridge.rust_bridge import RUST_BATCH_FEATURE_COLUMNS
 
     data = _market_data()
     computer = _rust_computer_or_skip()
-    bars = [MarketBar.from_series("TEST", row) for _, row in data.iterrows()]
 
-    rust_features = computer.compute_batch_named([bar for bar in bars if bar is not None])
+    rust_features = computer.compute_batch_named(
+        open_arr=data["open"].to_numpy(dtype=np.float64, copy=False),
+        high_arr=data["high"].to_numpy(dtype=np.float64, copy=False),
+        low_arr=data["low"].to_numpy(dtype=np.float64, copy=False),
+        close_arr=data["close"].to_numpy(dtype=np.float64, copy=False),
+        volume_arr=data["volume"].to_numpy(dtype=np.float64, copy=False),
+    )
 
     assert list(rust_features.columns) == RUST_BATCH_FEATURE_COLUMNS
     assert len(rust_features) == len(data)
@@ -80,7 +85,9 @@ def test_feature_engine_rust_backend_fallback_behavior():
     data = _market_data(80)
 
     class FailingRustComputer:
-        def compute_batch_named(self, _bars):
+        def compute_batch_named(
+            self, open_arr, high_arr, low_arr, close_arr, volume_arr, timestamp_arr=None
+        ):
             raise RuntimeError("simulated FFI failure")
 
     engine = FeatureEngine(
@@ -107,7 +114,9 @@ def test_feature_engine_rust_backend_can_disable_fallback():
     data = _market_data(20)
 
     class FailingRustComputer:
-        def compute_batch_named(self, _bars):
+        def compute_batch_named(
+            self, open_arr, high_arr, low_arr, close_arr, volume_arr, timestamp_arr=None
+        ):
             raise RuntimeError("simulated FFI failure")
 
     engine = FeatureEngine(
@@ -118,3 +127,39 @@ def test_feature_engine_rust_backend_can_disable_fallback():
 
     with pytest.raises(RuntimeError, match="simulated FFI failure"):
         engine.create_features(data)
+
+
+def test_rust_feature_computer_fail_fast_on_invalid_batch_inputs():
+    computer = _rust_computer_or_skip()
+    data = _market_data(16)
+
+    with pytest.raises(ValueError, match="same length"):
+        computer.compute_batch_named(
+            open_arr=data["open"].to_numpy(dtype=np.float64, copy=False)[:-1],
+            high_arr=data["high"].to_numpy(dtype=np.float64, copy=False),
+            low_arr=data["low"].to_numpy(dtype=np.float64, copy=False),
+            close_arr=data["close"].to_numpy(dtype=np.float64, copy=False),
+            volume_arr=data["volume"].to_numpy(dtype=np.float64, copy=False),
+        )
+
+    close_nan = data["close"].to_numpy(dtype=np.float64, copy=True)
+    close_nan[3] = np.nan
+    with pytest.raises(ValueError, match="NaN/inf"):
+        computer.compute_batch_named(
+            open_arr=data["open"].to_numpy(dtype=np.float64, copy=False),
+            high_arr=data["high"].to_numpy(dtype=np.float64, copy=False),
+            low_arr=data["low"].to_numpy(dtype=np.float64, copy=False),
+            close_arr=close_nan,
+            volume_arr=data["volume"].to_numpy(dtype=np.float64, copy=False),
+        )
+
+    close_zero = data["close"].to_numpy(dtype=np.float64, copy=True)
+    close_zero[0] = 0.0
+    with pytest.raises(ValueError, match="close must be positive"):
+        computer.compute_batch_named(
+            open_arr=data["open"].to_numpy(dtype=np.float64, copy=False),
+            high_arr=data["high"].to_numpy(dtype=np.float64, copy=False),
+            low_arr=data["low"].to_numpy(dtype=np.float64, copy=False),
+            close_arr=close_zero,
+            volume_arr=data["volume"].to_numpy(dtype=np.float64, copy=False),
+        )

@@ -13,9 +13,6 @@ if str(SRC_ROOT) not in sys.path:
 from data.features import FeatureEngine
 
 
-RUST_MIN_BATCH_SIZE = 1_000
-
-
 def generate_market_data(num_bars: int) -> pd.DataFrame:
     rng = np.random.default_rng(42)
     dates = pd.date_range('2024-01-01', periods=num_bars, freq='min')
@@ -73,8 +70,6 @@ def run_benchmark():
         print(f"  Rust compute boundary time: {compute_boundary_time:.2f} ms")
         print(f"  Estimated FFI/object overhead: {boundary_overhead:.2f} ms")
         print(f"  Speedup: {py_time / rust_time:.2f}x")
-        if size < RUST_MIN_BATCH_SIZE and rust_time > py_time:
-            print("  Recommendation: keep Python for sub-1k batches.")
 
 if __name__ == "__main__":
     run_benchmark()

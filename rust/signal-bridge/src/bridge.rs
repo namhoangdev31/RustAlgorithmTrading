@@ -1,9 +1,10 @@
 use crate::features::FeatureEngine;
 use crate::indicators::{calculate_momentum_simd, calculate_returns_simd, EMA, MACD, RSI, SMA};
-use numpy::PyReadonlyArray1;
+use numpy::{IntoPyArray, PyReadonlyArray1};
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 use pyo3::types::PyDict;
+use std::time::Instant;
 
 #[pyclass]
 #[derive(Clone)]
@@ -124,8 +125,8 @@ impl FeatureComputer {
     }
 
     /// Compute features in batch using columnar NumPy arrays
-    #[pyo3(signature = (open, high, low, close, volume))]
-    pub fn compute_batch_columnar<'py>(
+    #[pyo3(signature = (open, high, low, close, volume, timestamp=None))]
+    pub fn compute_batch_named<'py>(
         &self,
         py: Python<'py>,
         open: PyReadonlyArray1<'_, f64>,
@@ -133,59 +134,93 @@ impl FeatureComputer {
         low: PyReadonlyArray1<'_, f64>,
         close: PyReadonlyArray1<'_, f64>,
         volume: PyReadonlyArray1<'_, f64>,
-    ) -> PyResult<Bound<'py, PyDict>> {
-        use numpy::IntoPyArray;
-        use pyo3::types::PyDict;
+        timestamp: Option<PyReadonlyArray1<'_, i64>>,
+    ) -> PyResult<(Bound<'py, PyDict>, f64)> {
+        let open = open
+            .as_slice()
+            .map_err(|_| PyValueError::new_err("open must be contiguous float64"))?;
+        let high = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err("high must be contiguous float64"))?;
+        let low = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err("low must be contiguous float64"))?;
+        let close = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err("close must be contiguous float64"))?;
+        let volume = volume
+            .as_slice()
+            .map_err(|_| PyValueError::new_err("volume must be contiguous float64"))?;
 
-        let open_view = open.as_array();
-        let high_view = high.as_array();
-        let low_view = low.as_array();
-        let close_view = close.as_array();
-        let volume_view = volume.as_array();
-
-        let n = close_view.len();
-        if open_view.len() != n
-            || high_view.len() != n
-            || low_view.len() != n
-            || volume_view.len() != n
-        {
+        let n = close.len();
+        if open.len() != n || high.len() != n || low.len() != n || volume.len() != n {
             return Err(PyValueError::new_err(
-                "Input arrays must have the same length",
+                "open/high/low/close/volume must have the same length",
             ));
         }
-
         if n == 0 {
-            let dict = PyDict::new_bound(py);
-            return Ok(dict);
+            return Err(PyValueError::new_err("input arrays cannot be empty"));
         }
 
-        // Convert to Vec for SIMD kernels
-        let close_vec = close_view.to_vec();
-        let returns = calculate_returns_simd(&close_vec);
-        let momentum_10 = calculate_momentum_simd(&close_vec, 10);
+        if let Some(ts) = timestamp {
+            let ts = ts
+                .as_slice()
+                .map_err(|_| PyValueError::new_err("timestamp must be contiguous int64"))?;
+            if ts.len() != n {
+                return Err(PyValueError::new_err(
+                    "timestamp must have same length as price arrays",
+                ));
+            }
+        }
 
-        let mut log_returns_vec = vec![0.0; n];
-        let mut momentum_10_vec = vec![0.0; n];
-        let mut range_pct_vec = vec![0.0; n];
+        for i in 0..n {
+            if !open[i].is_finite()
+                || !high[i].is_finite()
+                || !low[i].is_finite()
+                || !close[i].is_finite()
+                || !volume[i].is_finite()
+            {
+                return Err(PyValueError::new_err(format!(
+                    "non-finite OHLCV value at index {}",
+                    i
+                )));
+            }
+            if close[i] <= 0.0 {
+                return Err(PyValueError::new_err(format!(
+                    "close must be positive at index {}",
+                    i
+                )));
+            }
+        }
+
+        let compute_start = Instant::now();
+        let returns = calculate_returns_simd(close);
+        let momentum_10 = calculate_momentum_simd(close, 10);
+
+        let mut log_returns = vec![0.0; n];
+        let mut momentum = vec![0.0; n];
+        let mut range_pct = vec![0.0; n];
 
         for i in 0..n {
             if i > 0 && i <= returns.len() {
-                log_returns_vec[i] = returns[i - 1];
+                log_returns[i] = returns[i - 1];
             }
             if i >= 10 && (i - 10) < momentum_10.len() {
-                momentum_10_vec[i] = momentum_10[i - 10];
+                momentum[i] = momentum_10[i - 10];
             }
-            range_pct_vec[i] = (high_view[i] - low_view[i]) / close_view[i] * 100.0;
+            range_pct[i] = (high[i] - low[i]) / close[i] * 100.0;
         }
 
-        let dict = PyDict::new_bound(py);
-        dict.set_item("close", close_view.to_owned().into_pyarray_bound(py))?;
-        dict.set_item("log_returns", log_returns_vec.into_pyarray_bound(py))?;
-        dict.set_item("momentum_10", momentum_10_vec.into_pyarray_bound(py))?;
-        dict.set_item("volume", volume_view.to_owned().into_pyarray_bound(py))?;
-        dict.set_item("range_pct", range_pct_vec.into_pyarray_bound(py))?;
+        let compute_time_ms = compute_start.elapsed().as_secs_f64() * 1000.0;
 
-        Ok(dict)
+        let dict = PyDict::new_bound(py);
+        dict.set_item("close", close.to_vec().into_pyarray_bound(py))?;
+        dict.set_item("log_returns", log_returns.into_pyarray_bound(py))?;
+        dict.set_item("momentum_10", momentum.into_pyarray_bound(py))?;
+        dict.set_item("volume", volume.to_vec().into_pyarray_bound(py))?;
+        dict.set_item("range_pct", range_pct.into_pyarray_bound(py))?;
+
+        Ok((dict, compute_time_ms))
     }
 
     #[pyo3(signature = (initial_price, num_days, mu, sigma, num_paths, seed))]
@@ -291,6 +326,15 @@ fn signal_bridge(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
 #[cfg(test)]
 mod tests {
     use super::FeatureComputer;
+    use numpy::{PyArray1, PyArrayMethods};
+    use pyo3::prelude::PyDictMethods;
+    use pyo3::Python;
+    use std::sync::Once;
+
+    fn ensure_python_initialized() {
+        static INIT: Once = Once::new();
+        INIT.call_once(pyo3::prepare_freethreaded_python);
+    }
 
     #[test]
     fn simulate_price_paths_is_deterministic_for_same_seed() {
@@ -321,5 +365,83 @@ mod tests {
         assert!(computer
             .simulate_price_paths(100.0, 20, 0.05, 0.2, 0, 42)
             .is_err());
+    }
+
+    #[test]
+    fn compute_batch_named_rejects_mismatch_lengths() {
+        let computer = FeatureComputer::new();
+        ensure_python_initialized();
+        Python::with_gil(|py| {
+            let open = PyArray1::from_vec_bound(py, vec![1.0, 2.0]);
+            let high = PyArray1::from_vec_bound(py, vec![1.1, 2.1]);
+            let low = PyArray1::from_vec_bound(py, vec![0.9, 1.9]);
+            let close = PyArray1::from_vec_bound(py, vec![1.0]);
+            let volume = PyArray1::from_vec_bound(py, vec![10.0, 20.0]);
+            let result = computer.compute_batch_named(
+                py,
+                open.readonly(),
+                high.readonly(),
+                low.readonly(),
+                close.readonly(),
+                volume.readonly(),
+                None,
+            );
+            assert!(result.is_err());
+        });
+    }
+
+    #[test]
+    fn compute_batch_named_rejects_non_positive_close() {
+        let computer = FeatureComputer::new();
+        ensure_python_initialized();
+        Python::with_gil(|py| {
+            let open = PyArray1::from_vec_bound(py, vec![1.0, 2.0]);
+            let high = PyArray1::from_vec_bound(py, vec![1.1, 2.1]);
+            let low = PyArray1::from_vec_bound(py, vec![0.9, 1.9]);
+            let close = PyArray1::from_vec_bound(py, vec![1.0, 0.0]);
+            let volume = PyArray1::from_vec_bound(py, vec![10.0, 20.0]);
+            let result = computer.compute_batch_named(
+                py,
+                open.readonly(),
+                high.readonly(),
+                low.readonly(),
+                close.readonly(),
+                volume.readonly(),
+                None,
+            );
+            assert!(result.is_err());
+        });
+    }
+
+    #[test]
+    fn compute_batch_named_returns_expected_columns() {
+        let computer = FeatureComputer::new();
+        ensure_python_initialized();
+        Python::with_gil(|py| {
+            let open = PyArray1::from_vec_bound(py, vec![100.0, 101.0, 102.0, 103.0, 104.0, 105.0]);
+            let high = PyArray1::from_vec_bound(py, vec![101.0, 102.0, 103.0, 104.0, 105.0, 106.0]);
+            let low = PyArray1::from_vec_bound(py, vec![99.0, 100.0, 101.0, 102.0, 103.0, 104.0]);
+            let close = PyArray1::from_vec_bound(py, vec![100.0, 101.0, 102.0, 103.0, 104.0, 105.0]);
+            let volume = PyArray1::from_vec_bound(py, vec![10.0, 11.0, 12.0, 13.0, 14.0, 15.0]);
+
+            let (out, compute_ms) = computer
+                .compute_batch_named(
+                    py,
+                    open.readonly(),
+                    high.readonly(),
+                    low.readonly(),
+                    close.readonly(),
+                    volume.readonly(),
+                    None,
+                )
+                .unwrap();
+
+            assert!(out.contains("close").unwrap());
+            assert!(out.contains("log_returns").unwrap());
+            assert!(out.contains("momentum_10").unwrap());
+            assert!(out.contains("volume").unwrap());
+            assert!(out.contains("range_pct").unwrap());
+            assert!(compute_ms >= 0.0);
+        });
     }
 }

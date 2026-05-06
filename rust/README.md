@@ -218,17 +218,21 @@ The signal-bridge crate compiles to both a library and a Python module:
 
 ```python
 from signal_bridge import FeatureComputer
-from bridge.rust_bridge import MarketBar, RustFeatureComputer
+import numpy as np
+from bridge.rust_bridge import RustFeatureComputer
 
 computer = FeatureComputer()
 
 # Direct PyO3 batch contract:
 # columns are [close, log_returns, momentum_10, volume, range_pct]
-bars = [
-    MarketBar("AAPL", 150.0, 152.0, 149.0, 151.0, 1_000_000.0, 1).to_rust_bar(),
-    MarketBar("AAPL", 151.0, 153.0, 150.0, 152.5, 1_100_000.0, 2).to_rust_bar(),
-]
-named_features = computer.compute_batch_named(bars)
+open_arr = np.array([150.0, 151.0], dtype=np.float64)
+high_arr = np.array([152.0, 153.0], dtype=np.float64)
+low_arr = np.array([149.0, 150.0], dtype=np.float64)
+close_arr = np.array([151.0, 152.5], dtype=np.float64)
+volume_arr = np.array([1_000_000.0, 1_100_000.0], dtype=np.float64)
+named_features, compute_ms = computer.compute_batch_named(
+    open_arr, high_arr, low_arr, close_arr, volume_arr
+)
 
 # Deterministic Rust Monte Carlo numeric kernel.
 paths = computer.simulate_price_paths(
@@ -242,10 +246,11 @@ paths = computer.simulate_price_paths(
 
 # Python wrapper returns a pandas DataFrame with stable column names.
 rust_features = RustFeatureComputer().compute_batch_named(
-    [
-        MarketBar("AAPL", 150.0, 152.0, 149.0, 151.0, 1_000_000.0, 1),
-        MarketBar("AAPL", 151.0, 153.0, 150.0, 152.5, 1_100_000.0, 2),
-    ]
+    open_arr=open_arr,
+    high_arr=high_arr,
+    low_arr=low_arr,
+    close_arr=close_arr,
+    volume_arr=volume_arr,
 )
 
 # Use with your ML model
@@ -255,7 +260,7 @@ prediction = ml_model.predict(rust_features)
 Build the Python module:
 
 ```bash
-uv pip install maturin
+.venv/bin/pip install maturin
 .venv/bin/maturin develop --release --features extension-module --manifest-path rust/signal-bridge/Cargo.toml
 ```
 

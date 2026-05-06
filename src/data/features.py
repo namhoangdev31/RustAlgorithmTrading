@@ -8,7 +8,11 @@ import numpy as np
 from loguru import logger
 
 from .indicators import TechnicalIndicators
-from bridge.rust_bridge import RustFeatureComputer, MarketBar, RUST_BATCH_FEATURE_COLUMNS
+from bridge.rust_bridge import (
+    REQUIRED_OHLCV_COLUMNS,
+    RUST_BATCH_FEATURE_COLUMNS,
+    RustFeatureComputer,
+)
 
 
 class FeatureEngine:
@@ -29,7 +33,7 @@ class FeatureEngine:
         include_price_features: bool = True,
         include_volume_features: bool = True,
         include_time_features: bool = True,
-        feature_backend: str = "python",
+        feature_backend: str = "rust",
         rust_feature_computer: Optional[RustFeatureComputer] = None,
         rust_fallback_to_python: bool = True,
     ):
@@ -41,7 +45,7 @@ class FeatureEngine:
             include_price_features: Include price-based features
             include_volume_features: Include volume-based features
             include_time_features: Include time-based features
-            feature_backend: "python" or "rust"
+            feature_backend: "rust" (default) or "python"
             rust_feature_computer: Optional existing RustFeatureComputer
             rust_fallback_to_python: If Rust fails, fallback to python
         """
@@ -73,16 +77,39 @@ class FeatureEngine:
         feature_config: Optional[Dict[str, Any]] = None,
     ) -> pd.DataFrame:
         """Create features using Rust PyO3 columnar kernel (Phase 1.1)."""
-        missing_columns = {"open", "high", "low", "close", "volume"} - set(data.columns)
+        missing_columns = set(REQUIRED_OHLCV_COLUMNS) - set(data.columns)
         if missing_columns:
             raise ValueError(f"Missing required OHLCV columns for Rust backend: {missing_columns}")
 
         if self.rust_feature_computer is None:
             self.rust_feature_computer = RustFeatureComputer()
 
-        # Phase 1.1: High-performance columnar FFI call
-        rust_features_df = self.rust_feature_computer.compute_batch_columnar(data)
-        
+        open_arr = np.ascontiguousarray(data["open"].to_numpy(dtype=np.float64, copy=False))
+        high_arr = np.ascontiguousarray(data["high"].to_numpy(dtype=np.float64, copy=False))
+        low_arr = np.ascontiguousarray(data["low"].to_numpy(dtype=np.float64, copy=False))
+        close_arr = np.ascontiguousarray(data["close"].to_numpy(dtype=np.float64, copy=False))
+        volume_arr = np.ascontiguousarray(data["volume"].to_numpy(dtype=np.float64, copy=False))
+
+        # Phase 1.1 policy: fail-fast entire batch on invalid numeric input.
+        if (
+            not np.isfinite(open_arr).all()
+            or not np.isfinite(high_arr).all()
+            or not np.isfinite(low_arr).all()
+            or not np.isfinite(close_arr).all()
+            or not np.isfinite(volume_arr).all()
+        ):
+            raise ValueError("Rust backend received non-finite OHLCV values (NaN/inf)")
+        if (close_arr <= 0.0).any():
+            raise ValueError("Rust backend requires close > 0 for every row")
+
+        rust_features_df = self.rust_feature_computer.compute_batch_named(
+            open_arr=open_arr,
+            high_arr=high_arr,
+            low_arr=low_arr,
+            close_arr=close_arr,
+            volume_arr=volume_arr,
+        )
+
         # Sync index with original data
         rust_features_df.index = data.index
 

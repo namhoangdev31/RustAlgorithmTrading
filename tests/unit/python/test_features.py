@@ -138,6 +138,7 @@ class TestFeatureTransformations:
             include_indicators=False,
             include_volume_features=False,
             include_time_features=False,
+            feature_backend="python",
         )
         features = engine.create_features(sample_ohlcv_data)
 
@@ -154,6 +155,7 @@ class TestFeatureTransformations:
             include_indicators=False,
             include_volume_features=False,
             include_time_features=False,
+            feature_backend="python",
         )
         features = engine.create_features(sample_ohlcv_data)
 
@@ -180,8 +182,8 @@ class TestFeatureTransformations:
         assert normalized.min() == 0
         assert normalized.max() == 1
 
-    def test_feature_engine_python_default_path(self, sample_ohlcv_data):
-        """FeatureEngine keeps Python as the default feature backend."""
+    def test_feature_engine_python_backend_explicit_path(self, sample_ohlcv_data):
+        """FeatureEngine can be forced to Python backend explicitly."""
         engine = FeatureEngine(feature_backend="python")
         features = engine.create_features(
             sample_ohlcv_data,
@@ -197,11 +199,18 @@ class TestFeatureTransformations:
         assert "momentum_10" in features.columns
         assert not features.empty
 
+    def test_feature_engine_default_backend_is_rust(self):
+        """After Phase 1.1 gate pass, Rust is the default backend selection."""
+        engine = FeatureEngine()
+        assert engine.feature_backend == "rust"
+
     def test_feature_engine_rust_fallback_to_python(self, sample_ohlcv_data):
         """Rust opt-in path falls back to Python when the Rust computer fails."""
 
         class FailingRustComputer:
-            def compute_batch_named(self, _bars):
+            def compute_batch_named(
+                self, open_arr, high_arr, low_arr, close_arr, volume_arr, timestamp_arr=None
+            ):
                 raise RuntimeError("simulated rust backend failure")
 
         engine = FeatureEngine(
@@ -243,6 +252,7 @@ class TestFeatureEdgeCases:
             include_indicators=False,
             include_volume_features=False,
             include_time_features=False,
+            feature_backend="python",
         )
         features = engine.create_features(data)
 

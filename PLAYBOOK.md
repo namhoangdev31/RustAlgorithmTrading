@@ -102,7 +102,7 @@ Execution rules:
 | File | Ownership | Key classes | Primary tests |
 |---|---|---|---|
 | `src/bridge/zmq_bridge.py` | Envelope serialization + pub/sub handoff + Phase 1 centralized validation | `ZMQPublisher`, `ZMQSubscriber`, `Signal`, `Position` | `tests/integration/test_backtest_signal_flow.py`, `tests/integration/test_risk_execution_observability.rs` |
-| `src/bridge/rust_bridge.py` | Python -> Rust feature bridge and batch FFI wrapper timing | `RustFeatureComputer`, `MarketBar`, `RUST_BATCH_FEATURE_COLUMNS` | `tests/unit/python/test_rust_feature_parity.py`, `tests/integration/test_backtest_signal_flow.py` |
+| `src/bridge/rust_bridge.py` | Python -> Rust feature bridge and batch FFI wrapper timing | `RustFeatureComputer`, `RUST_BATCH_FEATURE_COLUMNS`, `REQUIRED_OHLCV_COLUMNS` | `tests/unit/python/test_rust_feature_parity.py`, `tests/integration/test_backtest_signal_flow.py` |
 | `src/typings/` | Python type stubs for binary modules | `signal_bridge.pyi` | N/A (IDE only) |
 
 ## 3.5 Strategy Layer (`src/strategies`)

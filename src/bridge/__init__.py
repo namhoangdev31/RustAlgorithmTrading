@@ -1,10 +1,9 @@
 """Python-Rust bridge module for algorithmic trading system."""
-from .rust_bridge import MarketBar , RustFeatureComputer , test_rust_bridge
+from .rust_bridge import RustFeatureComputer, test_rust_bridge
 from .zmq_bridge import MessageType, Position, Signal, ZMQPublisher, ZMQSubscriber, test_zmq_bridge
 
 __all__ = [
     # Rust bridge
-    "MarketBar",
     "RustFeatureComputer",
     "test_rust_bridge",
     # ZMQ bridge
@@ -18,11 +17,10 @@ __all__ = [
 
 
 def __getattr__(name):
-    if name in {"MarketBar", "RustFeatureComputer", "test_rust_bridge"}:
-        from .rust_bridge import MarketBar, RustFeatureComputer, test_rust_bridge
+    if name in {"RustFeatureComputer", "test_rust_bridge"}:
+        from .rust_bridge import RustFeatureComputer, test_rust_bridge
 
         return {
-            "MarketBar": MarketBar,
             "RustFeatureComputer": RustFeatureComputer,
             "test_rust_bridge": test_rust_bridge,
         }[name]

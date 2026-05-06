@@ -1,5 +1,5 @@
 import numpy as np
-from typing import List, Dict
+from typing import Dict, List, Optional, Tuple
 
 class Bar:
     symbol: str
@@ -23,14 +23,15 @@ class Bar:
 class FeatureComputer:
     def __init__(self) -> None: ...
     def compute_streaming(self, bar: Bar) -> List[float]: ...
-    def compute_batch_columnar(
+    def compute_batch_named(
         self,
         open: np.ndarray,
         high: np.ndarray,
         low: np.ndarray,
         close: np.ndarray,
         volume: np.ndarray,
-    ) -> Dict[str, np.ndarray]: ...
+        timestamp: Optional[np.ndarray] = ...,
+    ) -> Tuple[Dict[str, np.ndarray], float]: ...
     def simulate_price_paths(
         self,
         initial_price: float,
