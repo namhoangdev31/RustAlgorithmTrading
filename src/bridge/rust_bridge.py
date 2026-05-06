@@ -165,63 +165,49 @@ class RustFeatureComputer:
             logger.error(f"[cid:INIT] Error computing streaming features: {e}")
             raise
 
-    def compute_batch(self, bars: List[MarketBar]) -> List[List[float]]:
+    def compute_batch_columnar(self, df: pd.DataFrame) -> pd.DataFrame:
         """
-        Compute features from a list of bars (batch/historical mode).
-
-        Uses SIMD-accelerated calculations for improved performance.
+        Compute features using columnar NumPy arrays (Phase 1.1).
 
         Args:
-            bars: List of market data bars
+            df: DataFrame with OHLCV columns (open, high, low, close, volume)
 
         Returns:
-            List of feature vectors, one per bar
-
-        Features include:
-            - Price (close)
-            - Returns (log returns)
-            - Momentum (10-period)
-            - Volume
-            - Price range %
+            DataFrame with computed features (close, log_returns, momentum_10, volume, range_pct)
         """
-        try:
-            rust_bars = [bar.to_rust_bar() for bar in bars]
-            features = self._computer.compute_batch(rust_bars)
-            logger.debug(f"[cid:INIT] Computed batch features for {len(bars)} bars")
-            return features
-        except Exception as e:
-            logger.error(f"[cid:INIT] Error computing batch features: {e}")
-            raise
-
-    def compute_batch_named(self, bars: List[MarketBar]) -> pd.DataFrame:
-        """
-        Compute features and return as a DataFrame with named columns.
-        Measures FFI overhead.
-        """
-        if not bars:
+        if df.empty:
             return pd.DataFrame(columns=RUST_BATCH_FEATURE_COLUMNS)
-            
+
         try:
             start_time = time.perf_counter()
-            rust_bars = [bar.to_rust_bar() for bar in bars]
+
+            # Cast to NumPy arrays (no copy if possible)
+            o = df["open"].to_numpy(dtype=np.float64, copy=False)
+            h = df["high"].to_numpy(dtype=np.float64, copy=False)
+            l = df["low"].to_numpy(dtype=np.float64, copy=False)
+            c = df["close"].to_numpy(dtype=np.float64, copy=False)
+            v = df["volume"].to_numpy(dtype=np.float64, copy=False)
+
+            # Fail-fast validation before FFI
+            if not (np.isfinite(c).all() and (c > 0).all()):
+                logger.error("[cid:INIT] Batch rejected: Invalid price data (non-finite or non-positive close)")
+                raise ValueError("Invalid price data (non-finite or non-positive close)")
+
             compute_start = time.perf_counter()
-            features_lists = self._computer.compute_batch_named(rust_bars)
+            # FFI Call
+            features_dict = self._computer.compute_batch_columnar(o, h, l, c, v)
             compute_end = time.perf_counter()
+
             end_time = time.perf_counter()
 
             self.last_batch_wrapper_time_ms = (end_time - start_time) * 1000
             self.last_batch_compute_time_ms = (compute_end - compute_start) * 1000
-            self.last_batch_size = len(bars)
-            logger.debug(
-                "[cid:INIT] Rust batch_named wrapper time: "
-                f"{self.last_batch_wrapper_time_ms:.2f}ms "
-                f"(compute boundary: {self.last_batch_compute_time_ms:.2f}ms) "
-                f"for {len(bars)} bars"
-            )
+            self.last_batch_size = len(df)
 
-            return pd.DataFrame(features_lists, columns=RUST_BATCH_FEATURE_COLUMNS)
+            # Convert dict of ndarrays directly to DataFrame
+            return pd.DataFrame(features_dict)
         except Exception as e:
-            logger.error(f"[cid:INIT] Error computing batch named features: {e}")
+            logger.error(f"[cid:INIT] Error in columnar batch computation: {e}")
             raise
 
     def compute_microstructure(
@@ -275,13 +261,17 @@ def test_rust_bridge():
         logger.info(f"[cid:INIT] ✓ Streaming features: {len(streaming_features)} values")
         logger.info(f"[cid:INIT]   First 5 features: {streaming_features[:5]}")
 
-        # Test batch features
-        bars = [
-            MarketBar("AAPL", 150.0, 151.0, 149.0, 150.5, 1e6, 1234567890 + i) for i in range(20)
-        ]
-        batch_features = computer.compute_batch(bars)
-        logger.info(f"[cid:INIT] ✓ Batch features: {len(batch_features)} bars processed")
-        logger.info(f"[cid:INIT]   Features per bar: {len(batch_features[0])}")
+        # Test batch features (Columnar API)
+        test_df = pd.DataFrame({
+            "open": np.linspace(150, 160, 20),
+            "high": np.linspace(151, 161, 20),
+            "low": np.linspace(149, 159, 20),
+            "close": np.linspace(150.5, 160.5, 20),
+            "volume": np.ones(20) * 1e6
+        })
+        batch_features_df = computer.compute_batch_columnar(test_df)
+        logger.info(f"[cid:INIT] ✓ Batch columnar features: {batch_features_df.shape} shape")
+        logger.info(f"[cid:INIT]   Columns: {batch_features_df.columns.tolist()}")
 
         # Test microstructure features
         micro_features = computer.compute_microstructure(

@@ -1,8 +1,9 @@
 use crate::features::FeatureEngine;
 use crate::indicators::{calculate_momentum_simd, calculate_returns_simd, EMA, MACD, RSI, SMA};
+use numpy::PyReadonlyArray1;
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
-use pyo3::types::PyList;
+use pyo3::types::PyDict;
 
 #[pyclass]
 #[derive(Clone)]
@@ -122,71 +123,69 @@ impl FeatureComputer {
         Ok(features)
     }
 
-    pub fn compute_batch(
+    /// Compute features in batch using columnar NumPy arrays
+    #[pyo3(signature = (open, high, low, close, volume))]
+    pub fn compute_batch_columnar<'py>(
         &self,
-        _pyyy: Python,
-        bars: &Bound<'_, PyList>,
-    ) -> PyResult<Vec<Vec<f64>>> {
-        let bar_count = bars.len();
-        let mut all_features = Vec::with_capacity(bar_count);
+        py: Python<'py>,
+        open: PyReadonlyArray1<'_, f64>,
+        high: PyReadonlyArray1<'_, f64>,
+        low: PyReadonlyArray1<'_, f64>,
+        close: PyReadonlyArray1<'_, f64>,
+        volume: PyReadonlyArray1<'_, f64>,
+    ) -> PyResult<Bound<'py, PyDict>> {
+        use numpy::IntoPyArray;
+        use pyo3::types::PyDict;
 
-        // Extract prices
-        let mut closes = Vec::with_capacity(bar_count);
-        let mut highs = Vec::with_capacity(bar_count);
-        let mut lows = Vec::with_capacity(bar_count);
-        let mut volumes = Vec::with_capacity(bar_count);
+        let open_view = open.as_array();
+        let high_view = high.as_array();
+        let low_view = low.as_array();
+        let close_view = close.as_array();
+        let volume_view = volume.as_array();
 
-        for item in bars.iter() {
-            let bar: Bar = item.extract()?;
-            closes.push(bar.close);
-            highs.push(bar.high);
-            lows.push(bar.low);
-            volumes.push(bar.volume);
+        let n = close_view.len();
+        if open_view.len() != n
+            || high_view.len() != n
+            || low_view.len() != n
+            || volume_view.len() != n
+        {
+            return Err(PyValueError::new_err(
+                "Input arrays must have the same length",
+            ));
         }
 
-        // SIMD-accelerated calculations
-        let returns = calculate_returns_simd(&closes);
-        let momentum_10 = calculate_momentum_simd(&closes, 10);
+        if n == 0 {
+            let dict = PyDict::new_bound(py);
+            return Ok(dict);
+        }
 
-        for i in 0..bar_count {
-            let mut features = Vec::with_capacity(15);
+        // Convert to Vec for SIMD kernels
+        let close_vec = close_view.to_vec();
+        let returns = calculate_returns_simd(&close_vec);
+        let momentum_10 = calculate_momentum_simd(&close_vec, 10);
 
-            features.push(closes[i]);
+        let mut log_returns_vec = vec![0.0; n];
+        let mut momentum_10_vec = vec![0.0; n];
+        let mut range_pct_vec = vec![0.0; n];
 
-            // Returns
+        for i in 0..n {
             if i > 0 && i <= returns.len() {
-                features.push(returns[i - 1]);
-            } else {
-                features.push(0.0);
+                log_returns_vec[i] = returns[i - 1];
             }
-
-            // Momentum
             if i >= 10 && (i - 10) < momentum_10.len() {
-                features.push(momentum_10[i - 10]);
-            } else {
-                features.push(0.0);
+                momentum_10_vec[i] = momentum_10[i - 10];
             }
-
-            // Volume
-            features.push(volumes[i]);
-
-            // Range
-            let range_pct = (highs[i] - lows[i]) / closes[i] * 100.0;
-            features.push(range_pct);
-
-            all_features.push(features);
+            range_pct_vec[i] = (high_view[i] - low_view[i]) / close_view[i] * 100.0;
         }
 
-        Ok(all_features)
-    }
+        let dict = PyDict::new_bound(py);
+        dict.set_item("close", close_view.to_owned().into_pyarray_bound(py))?;
+        dict.set_item("log_returns", log_returns_vec.into_pyarray_bound(py))?;
+        dict.set_item("momentum_10", momentum_10_vec.into_pyarray_bound(py))?;
+        dict.set_item("volume", volume_view.to_owned().into_pyarray_bound(py))?;
+        dict.set_item("range_pct", range_pct_vec.into_pyarray_bound(py))?;
 
-    pub fn compute_batch_named(
-        &self,
-        _pyyy: Python,
-        bars: &Bound<'_, PyList>,
-    ) -> PyResult<Vec<Vec<f64>>> {
-        // compute_batch_named returns the same logical arrays, mapped identically
-        self.compute_batch(_pyyy, bars)
+        Ok(dict)
     }
 
     #[pyo3(signature = (initial_price, num_days, mu, sigma, num_paths, seed))]

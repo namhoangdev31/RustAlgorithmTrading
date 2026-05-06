@@ -72,8 +72,7 @@ class FeatureEngine:
         data: pd.DataFrame,
         feature_config: Optional[Dict[str, Any]] = None,
     ) -> pd.DataFrame:
-        """Create features using Rust PyO3 batch kernel."""
-        symbol = feature_config.get("symbol", "UNKNOWN") if feature_config else "UNKNOWN"
+        """Create features using Rust PyO3 columnar kernel (Phase 1.1)."""
         missing_columns = {"open", "high", "low", "close", "volume"} - set(data.columns)
         if missing_columns:
             raise ValueError(f"Missing required OHLCV columns for Rust backend: {missing_columns}")
@@ -81,29 +80,11 @@ class FeatureEngine:
         if self.rust_feature_computer is None:
             self.rust_feature_computer = RustFeatureComputer()
 
-        bars = []
-        valid_indices = []
-        for idx, row in data.iterrows():
-            bar = MarketBar.from_series(symbol, row)
-            if bar is not None:
-                bars.append(bar)
-                valid_indices.append(idx)
-
-        if not bars:
-            raise ValueError("No valid MarketBars created from DataFrame")
-
-        rust_features_df = self.rust_feature_computer.compute_batch_named(bars)
-        if len(valid_indices) != len(rust_features_df):
-            raise ValueError(
-                "Rust backend returned row count mismatch: "
-                f"{len(rust_features_df)} features for {len(valid_indices)} bars"
-            )
-
-        missing_rust_columns = set(RUST_BATCH_FEATURE_COLUMNS) - set(rust_features_df.columns)
-        if missing_rust_columns:
-            raise ValueError(f"Rust backend missing feature columns: {missing_rust_columns}")
-
-        rust_features_df.index = valid_indices
+        # Phase 1.1: High-performance columnar FFI call
+        rust_features_df = self.rust_feature_computer.compute_batch_columnar(data)
+        
+        # Sync index with original data
+        rust_features_df.index = data.index
 
         return rust_features_df
 

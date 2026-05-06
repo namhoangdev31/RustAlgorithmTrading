@@ -39,6 +39,7 @@ ta = "0.5"
 
 # Numerical computing
 ndarray = "0.15"
+numpy = "0.21"
 
 # SIMD operations (stable Rust)
 wide = "0.7"
