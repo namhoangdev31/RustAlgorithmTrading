@@ -1,6 +1,6 @@
 # PLAYBOOK.md — Canonical Doc -> Code -> Test Map
 
-Updated: 2026-05-05  
+Updated: 2026-05-07  
 Scope: Production maintenance for Python + Rust trading stack
 
 This playbook is the **code-grounded routing map** for maintainers.  
@@ -19,7 +19,8 @@ For any non-trivial change, read in this order:
 1. `docs/DOCS_CANONICAL_MAP.md`
 2. `README_VI.md`
 3. `PLAYBOOK.md`
-4. Domain docs in `docs/`, `rust/docs/`, `tests/docs/`
+4. `docs/roadmap/PHASE1_GO_NO_GO_EVIDENCE.md`
+5. Domain docs in `docs/`, `rust/docs/`, `tests/docs/`
 
 Execution rules:
 
@@ -56,6 +57,11 @@ Execution rules:
 - `scripts/run_ml_backtest.py`
 - `scripts/run_optimized_backtest.py`
 
+### 2.4 Phase 1 Evidence Artifacts
+
+- `docs/roadmap/PHASE1_GO_NO_GO_EVIDENCE.md`: Phase 1 parity, reproducibility, ZMQ hardening, benchmark threshold, and GO/NO-GO evidence chain.
+- `src/typings/signal_bridge.pyi`: IDE type stubs for the PyO3 binary module.
+
 ---
 
 ## 3) Python Ownership Map (`src/`)
@@ -75,7 +81,7 @@ Execution rules:
 | `src/data/loader.py` | Data loading/parquet-csv bridge | `DataLoader` | `tests/unit/python/test_backtesting.py` |
 | `src/data/preprocessor.py` | Cleaning/transforms | `DataPreprocessor` | `tests/unit/python/test_features.py` |
 | `src/data/indicators.py` | Technical indicator calculations | `TechnicalIndicators` | `tests/unit/python/test_features.py`, `tests/unit/test_strategy_signals.py` |
-| `src/data/features.py` | Feature engineering pipeline | `FeatureEngine` | `tests/unit/python/test_features.py`, `tests/ml/test_feature_engineering.py` |
+| `src/data/features.py` | Feature engineering pipeline + Phase 1 Rust opt-in offload adapter | `FeatureEngine` | `tests/unit/python/test_features.py`, `tests/unit/python/test_rust_feature_parity.py`, `tests/ml/test_feature_engineering.py` |
 
 ## 3.3 Backtesting Layer (`src/backtesting`)
 
@@ -95,8 +101,9 @@ Execution rules:
 
 | File | Ownership | Key classes | Primary tests |
 |---|---|---|---|
-| `src/bridge/zmq_bridge.py` | Envelope serialization + pub/sub handoff | `ZMQPublisher`, `ZMQSubscriber`, `Signal`, `Position` | `tests/integration/test_backtest_signal_flow.py`, `tests/integration/test_risk_execution_observability.rs` |
-| `src/bridge/rust_bridge.py` | Python -> Rust feature bridge | `RustFeatureComputer`, `MarketBar` | `tests/integration/test_backtest_signal_flow.py` |
+| `src/bridge/zmq_bridge.py` | Envelope serialization + pub/sub handoff + Phase 1 centralized validation | `ZMQPublisher`, `ZMQSubscriber`, `Signal`, `Position` | `tests/integration/test_backtest_signal_flow.py`, `tests/integration/test_risk_execution_observability.rs` |
+| `src/bridge/rust_bridge.py` | Python -> Rust feature bridge and batch FFI wrapper timing | `RustFeatureComputer`, `MarketBar`, `RUST_BATCH_FEATURE_COLUMNS` | `tests/unit/python/test_rust_feature_parity.py`, `tests/integration/test_backtest_signal_flow.py` |
+| `src/typings/` | Python type stubs for binary modules | `signal_bridge.pyi` | N/A (IDE only) |
 
 ## 3.5 Strategy Layer (`src/strategies`)
 
@@ -224,7 +231,7 @@ Execution rules:
 | File | Ownership | Key classes | Primary tests |
 |---|---|---|---|
 | `src/research/repro_manager.py` | Reproducibility record/decision model | `ReproducibilityManager`, `ReproducibilityRecord` | `tests/unit/test_repro_manager.py` |
-| `src/simulations/monte_carlo.py` | Monte Carlo simulation | `MonteCarloSimulator` | strategy + simulation tests |
+| `src/simulations/monte_carlo.py` | Monte Carlo simulation + explicit seed control/Rust numeric backend | `MonteCarloSimulator` | `tests/unit/python/test_monte_carlo_reproducibility.py`, strategy + simulation tests |
 
 ---
 
@@ -235,7 +242,7 @@ Execution rules:
 | File | Ownership | Key types/functions | Primary tests |
 |---|---|---|---|
 | `rust/common/src/types.rs` | Shared domain primitives | `Order`, `Position`, `Signal`, `RiskReport`, `RiskReason` | `tests/unit/test_common_types.rs`, `tests/unit/test_types.rs` |
-| `rust/common/src/messaging.rs` | Cross-runtime envelope/messages | `Envelope`, `Message`, `RiskCheckRequest`, `RiskCheckResult` | integration contract tests |
+| `rust/common/src/messaging.rs` | Cross-runtime envelope/messages + Phase 1 required-field validation | `Envelope`, `Message`, `RiskCheckRequest`, `RiskCheckResult` | `rust/common/tests/parser_tests.rs`, integration contract tests |
 | `rust/common/src/errors.rs` | Shared error surface | `TradingError` | `tests/unit/test_errors.rs` |
 | `rust/common/src/config.rs` | Shared service config structs | `SystemConfig`, `MarketDataConfig`, `RiskConfig` | crate config tests |
 | `rust/common/src/health.rs` | Health status contract | `HealthCheck`, `SystemHealth` | `tests/unit/test_common_health.rs` |
@@ -255,9 +262,9 @@ Execution rules:
 
 | File | Ownership | Key types/functions | Primary tests |
 |---|---|---|---|
-| `rust/signal-bridge/src/indicators.rs` | Low-latency indicators | `SMA`, `EMA`, `RSI`, `MACD`, `BollingerBands` | strategy signal unit/integration tests |
+| `rust/signal-bridge/src/indicators.rs` | Low-latency indicators + batch log-return/momentum helpers | `SMA`, `EMA`, `RSI`, `MACD`, `BollingerBands`, `batch_log_returns`, `batch_momentum` | crate tests, strategy signal unit/integration tests |
 | `rust/signal-bridge/src/features.rs` | Feature compute service | `FeatureEngine` | signal flow integration |
-| `rust/signal-bridge/src/bridge.rs` | Bridge compute contract | `FeatureComputer` | `tests/integration/test_backtest_signal_flow.py` |
+| `rust/signal-bridge/src/bridge.rs` | Bridge compute contract + Phase 1 PyO3 batch/Monte Carlo kernels | `FeatureComputer`, `Bar` | crate tests, `tests/unit/python/test_rust_feature_parity.py`, `tests/unit/python/test_monte_carlo_reproducibility.py` |
 
 ## 4.4 `rust/risk-manager`
 
@@ -296,8 +303,14 @@ Execution rules:
 ### 5.1 Unit tests
 
 - Python unit: `tests/unit/python/`
+  - `tests/unit/python/test_rust_feature_parity.py`
+  - `tests/unit/python/test_monte_carlo_reproducibility.py`
 - Mixed Python unit: `tests/unit/test_*.py`
 - Rust unit/crate behavior: `tests/unit/test_*.rs`
+
+### 5.1.1 Benchmarks
+
+- `tests/benchmarks/feature_backend_benchmark.py`
 
 ### 5.2 Integration tests
 

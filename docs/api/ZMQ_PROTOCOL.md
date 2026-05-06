@@ -69,18 +69,51 @@ socket.send_multipart([topic, &payload], 0)?;
 
 ### Message Envelope
 
-Each message payload is wrapped in a common envelope:
+Each message payload is wrapped in a common envelope (v1.0.0):
 
 ```json
 {
-  "type": "OrderBookUpdate",
+  "schema_version": "v1.0.0",
+  "correlation_id": "req-1234-abcd",
+  "event_type": "OrderBookUpdate",
   "timestamp": "2024-10-14T20:30:00.123456Z",
-  "sequence": 12345,
-  "data": {
-    // Type-specific data
+  "payload": {
+    "type": "OrderBookUpdate",
+    "data": {
+      // Type-specific data
+    }
   }
 }
 ```
+
+#### Required Envelope Fields
+
+All active Python/Rust/Go-compatible messages must include these top-level fields:
+
+- `schema_version`: must be `v1.0.0` for the current contract.
+- `correlation_id`: non-empty trace identifier propagated through publish, receive, risk, and execution logs.
+- `event_type`: non-empty event name matching the payload type.
+- `timestamp`: ISO-8601 UTC timestamp.
+- `payload`: non-null JSON object with `type` and `data` where applicable.
+
+The public envelope field set is intentionally stable. Phase 1 hardening adds validation only; it does not add required public fields or break old valid `v1.0.0` envelopes.
+
+#### Schema Version Modes
+
+Subscribers support two schema-version behaviors:
+
+- Strict mode: wrong or missing `schema_version` is rejected at the bridge boundary and never reaches business logic.
+- Compatibility mode: wrong `schema_version` is logged as a warning, but the message may continue if the payload is otherwise valid.
+
+Malformed JSON, missing `correlation_id`, missing `payload`, null payloads, and non-object payloads are always rejected in both modes.
+
+#### Correlation Trace Requirement
+
+Publish and receive paths must log with `[cid:{correlation_id}]` whenever a correlation id is available. If a publisher has no active correlation context, it must generate a new UUID and log that generation so split-brain debugging can follow the event across Python, Rust, and later Go services.
+
+#### REJECT Fail-Fast Behavior
+
+Messages carrying a top-level or nested `decision`/`disposition` of `REJECT` are blocked at the subscriber entry point. This prevents rejected risk decisions from flowing into execution or portfolio mutation paths.
 
 ## Topic Structure
 

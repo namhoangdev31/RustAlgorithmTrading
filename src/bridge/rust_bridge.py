@@ -6,10 +6,17 @@ Rust feature computation engine built with PyO3 bindings.
 """
 
 import sys
-from typing import List
+import time
+from typing import List, Optional
 from dataclasses import dataclass
+import pandas as pd
+import numpy as np
 from loguru import logger
-from signal_bridge import Bar
+
+from typings.signal_bridge import Bar
+
+RUST_BATCH_FEATURE_COLUMNS = ["close", "log_returns", "momentum_10", "volume", "range_pct"]
+REQUIRED_OHLCV_COLUMNS = ["open", "high", "low", "close", "volume"]
 
 
 @dataclass
@@ -27,7 +34,12 @@ class MarketBar:
     def to_rust_bar(self):
         """Convert to Rust Bar object."""
         try:
-            return Bar(
+            if Bar is None:
+                from signal_bridge import Bar as RustBar
+            else:
+                RustBar = Bar
+
+            return RustBar(
                 symbol=self.symbol,
                 open=self.open,
                 high=self.high,
@@ -42,6 +54,48 @@ class MarketBar:
                 "[cid:INIT] Make sure the Rust library is built: cd rust && cargo build --release"
             )
             raise
+
+    @classmethod
+    def from_series(cls, symbol: str, row: pd.Series) -> Optional["MarketBar"]:
+        """
+        Create MarketBar from a pandas Series row, with safety checks.
+        Returns None if the data is invalid for Rust processing.
+        """
+        try:
+            for col in REQUIRED_OHLCV_COLUMNS:
+                if col not in row:
+                    logger.warning(f"[cid:INIT] Missing required column {col} for {symbol}")
+                    return None
+
+            o = float(np.float64(row["open"]))
+            h = float(np.float64(row["high"]))
+            l = float(np.float64(row["low"]))
+            c = float(np.float64(row["close"]))
+            v = float(np.float64(row["volume"]))
+
+            values = np.array([o, h, l, c, v], dtype=np.float64)
+            if not np.isfinite(values).all():
+                logger.debug(f"[cid:INIT] Rejected non-finite OHLCV row for {symbol}")
+                return None
+
+            if c <= 0:
+                logger.debug(f"[cid:INIT] Rejected non-positive close for {symbol}: {c}")
+                return None
+
+            timestamp = int(row.name.timestamp()) if isinstance(row.name, pd.Timestamp) else 0
+
+            return cls(
+                symbol=symbol,
+                open=o,
+                high=h,
+                low=l,
+                close=c,
+                volume=v,
+                timestamp=timestamp,
+            )
+        except Exception as e:
+            logger.debug(f"Failed to create MarketBar from series: {e}")
+            return None
 
 
 class RustFeatureComputer:
@@ -65,6 +119,9 @@ class RustFeatureComputer:
 
             self._computer = FeatureComputer()
             self._call_counter = 0  # Wave-3: Sampling counter
+            self.last_batch_wrapper_time_ms = 0.0
+            self.last_batch_compute_time_ms = None
+            self.last_batch_size = 0
             logger.info("[cid:INIT] Rust FeatureComputer initialized successfully")
         except ImportError as e:
             logger.error(f"[cid:INIT] Failed to import signal_bridge: {e}")
@@ -134,6 +191,37 @@ class RustFeatureComputer:
             return features
         except Exception as e:
             logger.error(f"[cid:INIT] Error computing batch features: {e}")
+            raise
+
+    def compute_batch_named(self, bars: List[MarketBar]) -> pd.DataFrame:
+        """
+        Compute features and return as a DataFrame with named columns.
+        Measures FFI overhead.
+        """
+        if not bars:
+            return pd.DataFrame(columns=RUST_BATCH_FEATURE_COLUMNS)
+            
+        try:
+            start_time = time.perf_counter()
+            rust_bars = [bar.to_rust_bar() for bar in bars]
+            compute_start = time.perf_counter()
+            features_lists = self._computer.compute_batch_named(rust_bars)
+            compute_end = time.perf_counter()
+            end_time = time.perf_counter()
+
+            self.last_batch_wrapper_time_ms = (end_time - start_time) * 1000
+            self.last_batch_compute_time_ms = (compute_end - compute_start) * 1000
+            self.last_batch_size = len(bars)
+            logger.debug(
+                "[cid:INIT] Rust batch_named wrapper time: "
+                f"{self.last_batch_wrapper_time_ms:.2f}ms "
+                f"(compute boundary: {self.last_batch_compute_time_ms:.2f}ms) "
+                f"for {len(bars)} bars"
+            )
+
+            return pd.DataFrame(features_lists, columns=RUST_BATCH_FEATURE_COLUMNS)
+        except Exception as e:
+            logger.error(f"[cid:INIT] Error computing batch named features: {e}")
             raise
 
     def compute_microstructure(

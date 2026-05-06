@@ -97,6 +97,36 @@ class ZMQPublisher:
             logger.error(f"[cid:INIT] Failed to connect publisher: {e}")
             raise
 
+    def _build_envelope(
+        self, message_type: MessageType, data: Dict[str, Any]
+    ) -> tuple[str, Dict[str, Any]]:
+        """
+        Build a standardized ZMQ envelope.
+        Returns tuple of (correlation_id, envelope_dict).
+        """
+        from observability.logging.correlations import get_correlation_id
+        import datetime
+        import uuid
+
+        cid = get_correlation_id()
+        if not cid:
+            cid = str(uuid.uuid4())
+            logger.warning(
+                f"[cid:{cid}] No correlation_id found in context, generated new one: {cid}"
+            )
+
+        payload = {"type": message_type.value, "data": data}
+
+        envelope = {
+            "schema_version": SCHEMA_VERSION,
+            "correlation_id": cid,
+            "event_type": message_type.value,
+            "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            "payload": payload,
+        }
+
+        return cid, envelope
+
     async def publish(self, topic: str, message_type: MessageType, data: Dict[str, Any]):
         """
         Publish a message.
@@ -110,29 +140,7 @@ class ZMQPublisher:
             raise RuntimeError("Publisher not connected. Call connect() first.")
 
         try:
-            # Create message envelope matching Rust Envelope struct (v1.0.0)
-            from observability.logging.correlations import get_correlation_id
-            import datetime
-
-            cid = get_correlation_id()
-            if not cid:
-                import uuid
-
-                cid = str(uuid.uuid4())
-                logger.warning(
-                    f"[cid:{cid}] No correlation_id found in context, generated new one: {cid}"
-                )
-
-            # Structured payload matching Rust Message enum
-            payload = {"type": message_type.value, "data": data}
-
-            envelope = {
-                "schema_version": SCHEMA_VERSION,
-                "correlation_id": cid,
-                "event_type": message_type.value,
-                "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-                "payload": payload,
-            }
+            cid, envelope = self._build_envelope(message_type, data)
 
             # Serialize to JSON
             message_json = json.dumps(envelope)
@@ -232,6 +240,74 @@ class ZMQSubscriber:
                 return True
         return False
 
+    def _validate_envelope(self, envelope: Dict[str, Any]) -> tuple[bool, str]:
+        """
+        Validate ZMQ envelope structure and version.
+        Returns (is_valid, error_reason_or_empty)
+        """
+        if not isinstance(envelope, dict):
+            return False, "Envelope must be a JSON object"
+
+        required = ["schema_version", "correlation_id", "event_type", "timestamp", "payload"]
+        for field in required:
+            if field not in envelope:
+                return False, f"Missing required field: {field}"
+
+        if not envelope.get("correlation_id"):
+            return False, "correlation_id cannot be empty"
+        if not envelope.get("event_type"):
+            return False, "event_type cannot be empty"
+        if not envelope.get("timestamp"):
+            return False, "timestamp cannot be empty"
+        if envelope.get("payload") is None:
+            return False, "payload cannot be null"
+        if not isinstance(envelope.get("payload"), dict):
+            return False, "payload must be an object"
+
+        version = envelope.get("schema_version")
+        if version != SCHEMA_VERSION:
+            error_msg = f"Schema mismatch: expected {SCHEMA_VERSION}, got {version}"
+            if SCHEMA_STRICT_MODE:
+                return False, f"STRICT_MODE REJECTION: {error_msg}"
+            else:
+                cid = envelope.get("correlation_id", "INIT")
+                logger.warning(f"[cid:{cid}] LAX_MODE WARNING: {error_msg}")
+
+        return True, ""
+
+    def _extract_payload(self, envelope: Dict[str, Any]) -> tuple[str, Dict[str, Any]]:
+        """
+        Extract and normalize payload from validated envelope.
+        """
+        payload = envelope.get("payload", {})
+        if not isinstance(payload, dict):
+            raise ValueError("payload must be an object")
+
+        msg_type = payload.get("type", "Unknown")
+        data = payload.get("data", {})
+        if data is None:
+            data = {}
+        if not isinstance(data, dict):
+            raise ValueError("payload.data must be an object when present")
+
+        # Normalization Layer: Handle legacy Signal formats and field names
+        if msg_type == MessageType.SIGNAL_GENERATED.value:
+            direction = data.get("direction", data.get("action"))
+            if direction == "long":
+                direction = "Buy"
+            elif direction == "short":
+                direction = "Sell"
+            elif direction == "neutral":
+                direction = "Hold"
+            data["direction"] = direction
+
+            if "strength" not in data and "confidence" in data:
+                data["strength"] = data.pop("confidence")
+
+            payload["data"] = data
+
+        return msg_type, payload
+
     async def connect(self, topics: Optional[List[str]] = None):
         """
         Connect to ZMQ endpoint and subscribe to topics.
@@ -289,47 +365,25 @@ class ZMQSubscriber:
                 try:
                     envelope = json.loads(json_str)
 
-                    # Validate v1.0.0 Envelope
-                    version = envelope.get("schema_version")
-                    cid = envelope.get("correlation_id", "INIT")
-                    if version != SCHEMA_VERSION:
-                        error_msg = f"Schema mismatch: expected {SCHEMA_VERSION}, got {version}"
-                        if SCHEMA_STRICT_MODE:
-                            logger.error(f"[cid:{cid}] STRICT_MODE REJECTION: {error_msg}")
-                            continue
-                        else:
-                            logger.warning(f"[cid:{cid}] LAX_MODE WARNING: {error_msg}")
+                    # Validate Envelope
+                    is_valid, error_msg = self._validate_envelope(envelope)
+                    if not is_valid:
+                        cid = envelope.get("correlation_id", "INIT") if isinstance(envelope, dict) else "INIT"
+                        logger.error(f"[cid:{cid}] Envelope validation failed: {error_msg}")
+                        continue
 
-                    # Extract correlation ID and set context
+                    cid = envelope.get("correlation_id")
                     from observability.logging.correlations import set_correlation_id
+                    set_correlation_id(cid)
 
-                    if envelope.get("correlation_id"):
-                        set_correlation_id(cid)
+                    # Extract payload
+                    try:
+                        msg_type, payload = self._extract_payload(envelope)
+                    except ValueError as e:
+                        logger.error(f"[cid:{cid}] Payload extraction failed: {e}")
+                        continue
 
-                    # Extract payload (Message enum variant)
-                    payload = envelope.get("payload", {})
-                    msg_type = payload.get("type", "Unknown")
-                    data = payload.get("data", {})
-
-                    # Normalization Layer: Handle legacy Signal formats and field names
-                    if msg_type == MessageType.SIGNAL_GENERATED.value:
-                        # Normalize direction: long/short/neutral -> Buy/Sell/Hold
-                        # Normalize field names: action/confidence -> direction/strength
-                        direction = data.get("direction", data.get("action"))
-                        if direction == "long":
-                            direction = "Buy"
-                        elif direction == "short":
-                            direction = "Sell"
-                        elif direction == "neutral":
-                            direction = "Hold"
-                        data["direction"] = direction
-
-                        if "strength" not in data and "confidence" in data:
-                            data["strength"] = data.pop("confidence")
-
-                        payload["data"] = data
-
-                    # Week 5: Fail-fast for REJECT disposition on critical paths
+                    # Fail-fast for REJECT disposition
                     if self._is_reject_payload(payload):
                         logger.warning(
                             f"[cid:{cid}] FAIL-FAST: Blocking REJECT message from topic '{topic}'"
@@ -374,23 +428,23 @@ class ZMQSubscriber:
                 topic, json_str = parts
                 envelope = json.loads(json_str)
 
-                # Validate v1.0.0 Envelope
-                version = envelope.get("schema_version")
-                cid = envelope.get("correlation_id", "INIT")
-                if version != SCHEMA_VERSION:
-                    error_msg = (
-                        f"Schema mismatch in receive_one: expected {SCHEMA_VERSION}, got {version}"
-                    )
-                    if SCHEMA_STRICT_MODE:
-                        logger.error(f"[cid:{cid}] STRICT_MODE REJECTION: {error_msg}")
-                        return None
-                    else:
-                        logger.warning(f"[cid:{cid}] LAX_MODE WARNING: {error_msg}")
+                # Validate Envelope
+                is_valid, error_msg = self._validate_envelope(envelope)
+                if not is_valid:
+                    cid = envelope.get("correlation_id", "INIT") if isinstance(envelope, dict) else "INIT"
+                    logger.error(f"[cid:{cid}] Envelope validation failed (receive_one): {error_msg}")
+                    return None
 
-                # Payload extraction (simplified for receive_one)
-                payload = envelope.get("payload", {})
+                cid = envelope.get("correlation_id")
+                
+                # Extract payload
+                try:
+                    _, payload = self._extract_payload(envelope)
+                except ValueError as e:
+                    logger.error(f"[cid:{cid}] Payload extraction failed (receive_one): {e}")
+                    return None
 
-                # Week 5: Fail-fast for REJECT disposition
+                # Fail-fast for REJECT disposition
                 if self._is_reject_payload(payload):
                     logger.warning(f"[cid:{cid}] FAIL-FAST (receive_one): Blocking REJECT message")
                     return None
@@ -399,6 +453,9 @@ class ZMQSubscriber:
 
             return None
 
+        except json.JSONDecodeError as e:
+            logger.error(f"[cid:INIT] Failed to parse message JSON (receive_one): {e}")
+            return None
         except zmq.Again:
             # Timeout
             return None

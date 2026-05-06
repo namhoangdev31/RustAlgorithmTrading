@@ -24,6 +24,51 @@ fn test_envelope_serialization() {
 }
 
 #[test]
+fn test_envelope_validate_schema_version() {
+    let envelope = Envelope::new("Heartbeat", "cid-schema", json!({"type": "Heartbeat"}));
+    assert!(envelope.validate_schema_version());
+
+    let mut wrong = envelope.clone();
+    wrong.schema_version = "v9.9.9".to_string();
+    assert!(!wrong.validate_schema_version());
+}
+
+#[test]
+fn test_envelope_validate_required_fields_rejects_empty_correlation_id() {
+    let envelope = Envelope::new("Heartbeat", "   ", json!({"type": "Heartbeat"}));
+    let err = envelope.validate_required_fields().unwrap_err();
+    assert!(err.contains("correlation_id"));
+}
+
+#[test]
+fn test_envelope_validate_required_fields_rejects_null_payload() {
+    let envelope = Envelope::new("Heartbeat", "cid-null", serde_json::Value::Null);
+    let err = envelope.validate_required_fields().unwrap_err();
+    assert!(err.contains("payload"));
+}
+
+#[test]
+fn test_envelope_backward_compatible_v1_is_valid() {
+    let raw = json!({
+        "schema_version": "v1.0.0",
+        "correlation_id": "cid-backcompat",
+        "event_type": "Heartbeat",
+        "timestamp": Utc::now().to_rfc3339(),
+        "payload": {
+            "type": "Heartbeat",
+            "data": {
+                "component": "common-test",
+                "timestamp": Utc::now().to_rfc3339()
+            }
+        }
+    });
+
+    let envelope: Envelope = serde_json::from_value(raw).unwrap();
+    assert!(envelope.validate_schema_version());
+    assert!(envelope.validate_required_fields().is_ok());
+}
+
+#[test]
 fn test_message_deserialization_from_payload() {
     let raw_payload = json!({
         "type": "Heartbeat",

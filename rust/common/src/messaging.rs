@@ -25,6 +25,23 @@ impl Envelope {
             payload,
         }
     }
+
+    pub fn validate_schema_version(&self) -> bool {
+        self.schema_version == SCHEMA_VERSION
+    }
+
+    pub fn validate_required_fields(&self) -> Result<(), String> {
+        if self.correlation_id.trim().is_empty() {
+            return Err("correlation_id cannot be empty".to_string());
+        }
+        if self.event_type.trim().is_empty() {
+            return Err("event_type cannot be empty".to_string());
+        }
+        if self.payload.is_null() {
+            return Err("payload cannot be null".to_string());
+        }
+        Ok(())
+    }
 }
 
 /// Structured error payload for contract mismatches and failures

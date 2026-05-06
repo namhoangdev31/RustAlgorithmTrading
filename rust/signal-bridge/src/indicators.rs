@@ -275,6 +275,14 @@ pub fn calculate_returns_simd(prices: &[f64]) -> Vec<f64> {
     returns
 }
 
+pub fn batch_log_returns(prices: &[f64]) -> Vec<f64> {
+    calculate_returns_simd(prices)
+}
+
+pub fn batch_momentum(prices: &[f64], period: usize) -> Vec<f64> {
+    calculate_momentum_simd(prices, period)
+}
+
 /// Legacy function interfaces
 pub fn rsi(prices: &[f64], period: usize) -> Vec<f64> {
     let mut rsi_calc = RSI::new(period);
@@ -337,4 +345,35 @@ pub fn atr(highs: &[f64], lows: &[f64], closes: &[f64], period: usize) -> Vec<f6
     }
 
     results
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{batch_log_returns, batch_momentum};
+
+    #[test]
+    fn batch_log_returns_matches_scalar_formula() {
+        let prices = vec![100.0, 105.0, 110.0, 108.0, 112.0];
+        let result = batch_log_returns(&prices);
+        let expected: Vec<f64> = prices.windows(2).map(|w| (w[1] / w[0]).ln()).collect();
+
+        assert_eq!(result.len(), expected.len());
+        for (actual, expected) in result.iter().zip(expected.iter()) {
+            assert!((actual - expected).abs() < 1e-12);
+        }
+    }
+
+    #[test]
+    fn batch_momentum_matches_scalar_formula() {
+        let prices = vec![100.0, 105.0, 110.0, 108.0, 112.0, 120.0];
+        let result = batch_momentum(&prices, 3);
+        let expected: Vec<f64> = (0..prices.len() - 3)
+            .map(|i| (prices[i + 3] - prices[i]) / prices[i] * 100.0)
+            .collect();
+
+        assert_eq!(result.len(), expected.len());
+        for (actual, expected) in result.iter().zip(expected.iter()) {
+            assert!((actual - expected).abs() < 1e-12);
+        }
+    }
 }

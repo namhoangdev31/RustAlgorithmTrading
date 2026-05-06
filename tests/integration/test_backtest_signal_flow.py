@@ -96,6 +96,166 @@ async def test_zmq_subscriber_blocks_duplicate_reject_messages():
         subscriber.context.term()
 
 
+@pytest.mark.asyncio
+async def test_zmq_subscriber_schema_validation():
+    """Phase 1 hardening: Invalid schema versions must be rejected in STRICT_MODE."""
+    from bridge.zmq_bridge import SCHEMA_VERSION
+    import bridge.zmq_bridge as zb
+    
+    envelope = {
+        "schema_version": "v9.9.9",  # Invalid
+        "correlation_id": "cid-w5-schema-invalid",
+        "event_type": "RiskCheckResult",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "payload": {
+            "type": "RiskCheckResult",
+            "data": {},
+        },
+    }
+    raw = f"risk {json.dumps(envelope)}"
+
+    subscriber = ZMQSubscriber("inproc://week5-schema")
+    subscriber.socket = _FakeSubscriberSocket(raw)
+    subscriber._connected = True
+
+    try:
+        original_strict = zb.SCHEMA_STRICT_MODE
+        zb.SCHEMA_STRICT_MODE = True
+
+        result = await subscriber.receive_one(timeout=0.01)
+        assert result is None, "Strict mode must drop invalid schema"
+    finally:
+        zb.SCHEMA_STRICT_MODE = original_strict
+        subscriber.context.term()
+
+
+@pytest.mark.asyncio
+async def test_zmq_subscriber_missing_fields():
+    """Phase 1 hardening: missing correlation_id must be rejected."""
+    from bridge.zmq_bridge import SCHEMA_VERSION
+    
+    envelope = {
+        "schema_version": SCHEMA_VERSION,
+        "event_type": "RiskCheckResult",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "payload": {},
+    }
+    raw = f"risk {json.dumps(envelope)}"
+
+    subscriber = ZMQSubscriber("inproc://phase1-missing-fields")
+    subscriber.socket = _FakeSubscriberSocket(raw)
+    subscriber._connected = True
+
+    try:
+        result = await subscriber.receive_one(timeout=0.01)
+        assert result is None, "Missing correlation_id must be rejected"
+    finally:
+        subscriber.context.term()
+
+
+@pytest.mark.asyncio
+async def test_zmq_subscriber_missing_schema_version():
+    envelope = {
+        "correlation_id": "cid-missing-schema",
+        "event_type": "RiskCheckResult",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "payload": {"type": "RiskCheckResult", "data": {}},
+    }
+    raw = f"risk {json.dumps(envelope)}"
+    subscriber = ZMQSubscriber("inproc://phase1-missing-schema")
+    subscriber.socket = _FakeSubscriberSocket(raw)
+    subscriber._connected = True
+
+    try:
+        assert await subscriber.receive_one(timeout=0.01) is None
+    finally:
+        subscriber.context.term()
+
+
+@pytest.mark.asyncio
+async def test_zmq_subscriber_missing_payload():
+    envelope = {
+        "schema_version": SCHEMA_VERSION,
+        "correlation_id": "cid-missing-payload",
+        "event_type": "RiskCheckResult",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    }
+    raw = f"risk {json.dumps(envelope)}"
+    subscriber = ZMQSubscriber("inproc://phase1-missing-payload")
+    subscriber.socket = _FakeSubscriberSocket(raw)
+    subscriber._connected = True
+
+    try:
+        assert await subscriber.receive_one(timeout=0.01) is None
+    finally:
+        subscriber.context.term()
+
+
+@pytest.mark.asyncio
+async def test_zmq_subscriber_malformed_json_is_dropped():
+    subscriber = ZMQSubscriber("inproc://phase1-malformed-json")
+    subscriber.socket = _FakeSubscriberSocket("risk {not-valid-json")
+    subscriber._connected = True
+
+    try:
+        assert await subscriber.receive_one(timeout=0.01) is None
+    finally:
+        subscriber.context.term()
+
+
+@pytest.mark.asyncio
+async def test_zmq_subscriber_valid_envelope_is_accepted():
+    envelope = {
+        "schema_version": SCHEMA_VERSION,
+        "correlation_id": "cid-valid-envelope",
+        "event_type": "RiskCheckResult",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "payload": {
+            "type": "RiskCheckResult",
+            "data": {"decision": "ALLOW"},
+        },
+    }
+    raw = f"risk {json.dumps(envelope)}"
+    subscriber = ZMQSubscriber("inproc://phase1-valid-envelope")
+    subscriber.socket = _FakeSubscriberSocket(raw)
+    subscriber._connected = True
+
+    try:
+        result = await subscriber.receive_one(timeout=0.01)
+        assert result == ("risk", envelope["payload"])
+    finally:
+        subscriber.context.term()
+
+
+@pytest.mark.asyncio
+async def test_zmq_subscriber_wrong_schema_compatibility_mode_warns_and_accepts():
+    import bridge.zmq_bridge as zb
+
+    envelope = {
+        "schema_version": "v0.9.0",
+        "correlation_id": "cid-lax-schema",
+        "event_type": "RiskCheckResult",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "payload": {
+            "type": "RiskCheckResult",
+            "data": {"decision": "ALLOW"},
+        },
+    }
+    raw = f"risk {json.dumps(envelope)}"
+    subscriber = ZMQSubscriber("inproc://phase1-lax-schema")
+    subscriber.socket = _FakeSubscriberSocket(raw)
+    subscriber._connected = True
+
+    try:
+        original_strict = zb.SCHEMA_STRICT_MODE
+        zb.SCHEMA_STRICT_MODE = False
+        result = await subscriber.receive_one(timeout=0.01)
+        assert result == ("risk", envelope["payload"])
+    finally:
+        zb.SCHEMA_STRICT_MODE = original_strict
+        subscriber.context.term()
+
+
 class TestSignalToOrderFlow:
     """Test signal → order conversion in portfolio handler"""
 

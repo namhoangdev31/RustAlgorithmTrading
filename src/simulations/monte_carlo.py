@@ -8,6 +8,7 @@ import numpy as np
 from pathlib import Path
 from loguru import logger
 import matplotlib.pyplot as plt
+import secrets
 
 from strategies.base import Strategy
 from backtesting.engine import BacktestEngine
@@ -29,6 +30,8 @@ class MonteCarloSimulator:
         num_simulations: int = 1000,
         confidence_level: float = 0.95,
         random_seed: Optional[int] = None,
+        numeric_backend: str = "numpy",
+        rust_fallback_to_numpy: bool = True,
     ):
         """
         Initialize Monte Carlo simulator
@@ -37,12 +40,25 @@ class MonteCarloSimulator:
             num_simulations: Number of simulation runs
             confidence_level: Confidence level for VaR/CVaR (default: 0.95)
             random_seed: Random seed for reproducibility
+            numeric_backend: "numpy" or "rust"
+            rust_fallback_to_numpy: Fallback if Rust fails
         """
         self.num_simulations = num_simulations
         self.confidence_level = confidence_level
+        if numeric_backend not in {"numpy", "rust"}:
+            raise ValueError(f"Unsupported numeric_backend: {numeric_backend}")
 
-        if random_seed is not None:
-            np.random.seed(random_seed)
+        self.numeric_backend = numeric_backend
+        self.rust_fallback_to_numpy = rust_fallback_to_numpy
+
+        self.random_seed = int(random_seed) if random_seed is not None else secrets.randbits(64)
+        if not 0 <= self.random_seed <= (2**64 - 1):
+            raise ValueError("random_seed must fit into u64 for cross-runtime reproducibility")
+        self._rng = np.random.default_rng(self.random_seed)
+        logger.info(
+            f"Monte Carlo random_seed set to {self.random_seed} "
+            f"(backend: {self.numeric_backend})"
+        )
 
         self.simulation_results: List[Dict[str, Any]] = []
 
@@ -61,24 +77,43 @@ class MonteCarloSimulator:
     ) -> np.ndarray:
         """
         Simulate price paths using Geometric Brownian Motion
-
-        Args:
-            initial_price: Starting price
-            num_days: Number of days to simulate
-            mu: Expected return (drift)
-            sigma: Volatility (standard deviation)
-            num_paths: Number of paths (defaults to num_simulations)
-
-        Returns:
-            Array of simulated price paths [num_paths, num_days]
         """
         if num_paths is None:
             num_paths = self.num_simulations
 
+        if initial_price <= 0:
+            raise ValueError("initial_price must be positive")
+        if num_days < 0 or num_paths <= 0:
+            raise ValueError("num_days must be non-negative and num_paths must be positive")
+        if sigma < 0:
+            raise ValueError("sigma must be non-negative")
+
+        if self.numeric_backend == "rust":
+            try:
+                # Use signal_bridge directly since we need the specific Rust function
+                from signal_bridge import FeatureComputer
+                computer = FeatureComputer()
+                paths = computer.simulate_price_paths(
+                    initial_price=initial_price,
+                    num_days=num_days,
+                    mu=mu,
+                    sigma=sigma,
+                    num_paths=num_paths,
+                    seed=self.random_seed,
+                )
+                logger.info(f"Generated {num_paths} price paths via Rust backend")
+                return np.array(paths)
+            except Exception as e:
+                if self.rust_fallback_to_numpy:
+                    logger.warning(f"Rust numeric backend failed, falling back to numpy: {e}")
+                else:
+                    raise
+
         dt = 1 / 252  # Daily time step
 
-        # Generate random returns
-        random_returns = np.random.normal(
+        # Generate random returns using explicit local RNG initialized with seed
+        rng = np.random.default_rng(self.random_seed)
+        random_returns = rng.normal(
             (mu - 0.5 * sigma**2) * dt, sigma * np.sqrt(dt), size=(num_paths, num_days)
         )
 
@@ -89,7 +124,7 @@ class MonteCarloSimulator:
         for t in range(1, num_days + 1):
             price_paths[:, t] = price_paths[:, t - 1] * np.exp(random_returns[:, t - 1])
 
-        logger.info(f"Generated {num_paths} price paths for {num_days} days")
+        logger.info(f"Generated {num_paths} price paths for {num_days} days via numpy")
         return price_paths
 
     def simulate_strategy(
@@ -191,7 +226,7 @@ class MonteCarloSimulator:
         Returns:
             Resampled data
         """
-        indices = np.random.choice(len(data), size=len(data), replace=True)
+        indices = self._rng.choice(len(data), size=len(data), replace=True)
         resampled = data.iloc[indices].copy()
         resampled.index = data.index  # Preserve original index
         return resampled
@@ -217,7 +252,7 @@ class MonteCarloSimulator:
 
         resampled_indices = []
         for _ in range(num_blocks):
-            start_idx = np.random.randint(0, n - block_size + 1)
+            start_idx = self._rng.integers(0, n - block_size + 1)
             block_indices = list(range(start_idx, min(start_idx + block_size, n)))
             resampled_indices.extend(block_indices)
 
@@ -244,7 +279,7 @@ class MonteCarloSimulator:
         sigma = returns.std()
 
         # Generate synthetic returns
-        synthetic_returns = np.random.normal(mu, sigma, size=len(data))
+        synthetic_returns = self._rng.normal(mu, sigma, size=len(data))
 
         # Create synthetic prices
         synthetic_data = data.copy()

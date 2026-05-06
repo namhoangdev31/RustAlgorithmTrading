@@ -8,6 +8,7 @@ import numpy as np
 from loguru import logger
 
 from .indicators import TechnicalIndicators
+from bridge.rust_bridge import RustFeatureComputer, MarketBar, RUST_BATCH_FEATURE_COLUMNS
 
 
 class FeatureEngine:
@@ -28,6 +29,9 @@ class FeatureEngine:
         include_price_features: bool = True,
         include_volume_features: bool = True,
         include_time_features: bool = True,
+        feature_backend: str = "python",
+        rust_feature_computer: Optional[RustFeatureComputer] = None,
+        rust_fallback_to_python: bool = True,
     ):
         """
         Initialize feature engine.
@@ -37,15 +41,71 @@ class FeatureEngine:
             include_price_features: Include price-based features
             include_volume_features: Include volume-based features
             include_time_features: Include time-based features
+            feature_backend: "python" or "rust"
+            rust_feature_computer: Optional existing RustFeatureComputer
+            rust_fallback_to_python: If Rust fails, fallback to python
         """
         self.include_indicators = include_indicators
         self.include_price_features = include_price_features
         self.include_volume_features = include_volume_features
         self.include_time_features = include_time_features
+        
+        if feature_backend not in {"python", "rust"}:
+            raise ValueError(f"Unsupported feature_backend: {feature_backend}")
+
+        self.feature_backend = feature_backend
+        self.rust_fallback_to_python = rust_fallback_to_python
+        self.rust_feature_computer = rust_feature_computer
 
         self.indicators = TechnicalIndicators()
 
-        logger.info("Initialized FeatureEngine")
+        logger.info(f"Initialized FeatureEngine (backend: {self.feature_backend})")
+
+    def _should_use_rust(self, feature_config: Optional[Dict[str, Any]] = None) -> bool:
+        """Check if we should use Rust backend."""
+        if feature_config and feature_config.get("feature_backend") == "python":
+            return False
+        return self.feature_backend == "rust"
+
+    def _create_rust_batch_features(
+        self,
+        data: pd.DataFrame,
+        feature_config: Optional[Dict[str, Any]] = None,
+    ) -> pd.DataFrame:
+        """Create features using Rust PyO3 batch kernel."""
+        symbol = feature_config.get("symbol", "UNKNOWN") if feature_config else "UNKNOWN"
+        missing_columns = {"open", "high", "low", "close", "volume"} - set(data.columns)
+        if missing_columns:
+            raise ValueError(f"Missing required OHLCV columns for Rust backend: {missing_columns}")
+
+        if self.rust_feature_computer is None:
+            self.rust_feature_computer = RustFeatureComputer()
+
+        bars = []
+        valid_indices = []
+        for idx, row in data.iterrows():
+            bar = MarketBar.from_series(symbol, row)
+            if bar is not None:
+                bars.append(bar)
+                valid_indices.append(idx)
+
+        if not bars:
+            raise ValueError("No valid MarketBars created from DataFrame")
+
+        rust_features_df = self.rust_feature_computer.compute_batch_named(bars)
+        if len(valid_indices) != len(rust_features_df):
+            raise ValueError(
+                "Rust backend returned row count mismatch: "
+                f"{len(rust_features_df)} features for {len(valid_indices)} bars"
+            )
+
+        missing_rust_columns = set(RUST_BATCH_FEATURE_COLUMNS) - set(rust_features_df.columns)
+        if missing_rust_columns:
+            raise ValueError(f"Rust backend missing feature columns: {missing_rust_columns}")
+
+        rust_features_df.index = valid_indices
+
+        return rust_features_df
 
     def create_features(
         self,
@@ -62,6 +122,22 @@ class FeatureEngine:
         Returns:
             DataFrame with features
         """
+        if self._should_use_rust(feature_config):
+            try:
+                rust_df = self._create_rust_batch_features(data, feature_config)
+                df = data.copy()
+                for column in RUST_BATCH_FEATURE_COLUMNS:
+                    df[column] = rust_df[column]
+                df = df.dropna()
+                logger.info(f"Created Rust features: {len(data)} -> {len(df)} rows")
+                return df
+            except Exception as e:
+                if self.rust_fallback_to_python:
+                    logger.warning(f"Rust feature computation failed, falling back to python: {e}")
+                else:
+                    raise
+
+        # Python default behavior
         df = data.copy()
 
         if self.include_indicators:

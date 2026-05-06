@@ -1,5 +1,6 @@
 use crate::features::FeatureEngine;
 use crate::indicators::{calculate_momentum_simd, calculate_returns_simd, EMA, MACD, RSI, SMA};
+use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 use pyo3::types::PyList;
 
@@ -179,6 +180,77 @@ impl FeatureComputer {
         Ok(all_features)
     }
 
+    pub fn compute_batch_named(
+        &self,
+        _pyyy: Python,
+        bars: &Bound<'_, PyList>,
+    ) -> PyResult<Vec<Vec<f64>>> {
+        // compute_batch_named returns the same logical arrays, mapped identically
+        self.compute_batch(_pyyy, bars)
+    }
+
+    #[pyo3(signature = (initial_price, num_days, mu, sigma, num_paths, seed))]
+    pub fn simulate_price_paths(
+        &self,
+        initial_price: f64,
+        num_days: usize,
+        mu: f64,
+        sigma: f64,
+        num_paths: usize,
+        seed: u64,
+    ) -> PyResult<Vec<Vec<f64>>> {
+        use rand::SeedableRng;
+        use rand_chacha::ChaCha8Rng;
+        use rand_distr::{Distribution, Normal};
+
+        if !initial_price.is_finite() || initial_price <= 0.0 {
+            return Err(PyValueError::new_err(
+                "initial_price must be finite and positive",
+            ));
+        }
+        if !mu.is_finite() {
+            return Err(PyValueError::new_err("mu must be finite"));
+        }
+        if !sigma.is_finite() || sigma < 0.0 {
+            return Err(PyValueError::new_err(
+                "sigma must be finite and non-negative",
+            ));
+        }
+        if num_paths == 0 {
+            return Err(PyValueError::new_err("num_paths must be positive"));
+        }
+
+        let mut rng = ChaCha8Rng::seed_from_u64(seed);
+        let dt = 1.0 / 252.0;
+        let drift = (mu - 0.5 * sigma * sigma) * dt;
+        let diffusion = sigma * dt.sqrt();
+        let normal = if diffusion > 0.0 {
+            Some(Normal::new(drift, diffusion).map_err(|e| PyValueError::new_err(e.to_string()))?)
+        } else {
+            None
+        };
+
+        let mut all_paths = Vec::with_capacity(num_paths);
+
+        for _ in 0..num_paths {
+            let mut path = Vec::with_capacity(num_days + 1);
+            path.push(initial_price);
+
+            let mut current_price = initial_price;
+            for _ in 0..num_days {
+                let random_return: f64 = normal
+                    .as_ref()
+                    .map(|dist| dist.sample(&mut rng))
+                    .unwrap_or(drift);
+                current_price *= random_return.exp();
+                path.push(current_price);
+            }
+            all_paths.push(path);
+        }
+
+        Ok(all_paths)
+    }
+
     /// Compute market microstructure features
     pub fn compute_microstructure(
         &self,
@@ -215,4 +287,40 @@ fn signal_bridge(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<FeatureComputer>()?;
     m.add_class::<Bar>()?;
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::FeatureComputer;
+
+    #[test]
+    fn simulate_price_paths_is_deterministic_for_same_seed() {
+        let computer = FeatureComputer::new();
+        let first = computer
+            .simulate_price_paths(100.0, 20, 0.05, 0.2, 50, 42)
+            .unwrap();
+        let second = computer
+            .simulate_price_paths(100.0, 20, 0.05, 0.2, 50, 42)
+            .unwrap();
+
+        assert_eq!(first, second);
+        assert_eq!(first.len(), 50);
+        assert_eq!(first[0].len(), 21);
+        assert_eq!(first[0][0], 100.0);
+    }
+
+    #[test]
+    fn simulate_price_paths_rejects_invalid_numeric_parameters() {
+        let computer = FeatureComputer::new();
+
+        assert!(computer
+            .simulate_price_paths(0.0, 20, 0.05, 0.2, 50, 42)
+            .is_err());
+        assert!(computer
+            .simulate_price_paths(100.0, 20, 0.05, -0.2, 50, 42)
+            .is_err());
+        assert!(computer
+            .simulate_price_paths(100.0, 20, 0.05, 0.2, 0, 42)
+            .is_err());
+    }
 }

@@ -1,6 +1,6 @@
 # FINAL_ROADMAP_SUMMARY.md
 
-Updated: 2026-05-06  
+Updated: 2026-05-07  
 Mode: Static Operational Summary (post-weekly lifecycle)
 
 ## 1) System Status
@@ -65,9 +65,10 @@ Current technical baseline:
   - `rust/execution-engine`
   - `rust/database`
   - `rust/common`
-- Existing FFI bridge already available:
+- Existing FFI bridge available and hardened:
   - `src/bridge/rust_bridge.py`
-  - `src/signal_bridge/signal_bridge.so`
+  - `src/typings/signal_bridge.pyi` (IDE stubs)
+  - `signal-bridge` Rust library (installed via maturin)
 - Current Python observability/API surface targeted for Go replacement:
   - `src/observability/api/*`
   - `src/observability/metrics/*`
@@ -99,7 +100,7 @@ Expected capability gains:
 
 ## 6) Three-Phase Migration Roadmap (Python Research, Rust Trading, Go Control Plane)
 
-### 6.1 Phase 1: Immediate Offload and Contract Hardening
+### 6.1 Phase 1: Immediate Offload and Contract Hardening ✅ (Hardened)
 
 Primary objective:
 

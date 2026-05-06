@@ -22,58 +22,72 @@ Production-ready algorithmic trading system built with Rust, featuring WebSocket
 This is a Cargo workspace containing 5 crates:
 
 ### 1. `common` - Shared Types and Utilities
+
 Core domain types used across all components:
+
 - Trading types: Symbol, Price, Quantity, Order, Position, Trade, Bar
 - Messaging protocol: ZMQ message types for inter-component communication
 - Error handling: Unified TradingError type
 - Configuration: System-wide config structures
 
 ### 2. `market-data` - Market Data Feed
+
 Real-time market data processing:
+
 - **WebSocket Client**: Connects to exchange WebSocket feeds (Binance, Coinbase, etc.)
 - **Order Book Manager**: Reconstructs and maintains order book state with BTreeMap
 - **Bar Aggregator**: Tick-to-bar aggregation for OHLCV candles
 - **ZMQ Publisher**: Broadcasts market data to other components
 
 **Key Dependencies:**
+
 - `tokio-tungstenite` - WebSocket connections
 - `zmq` - Inter-process messaging
 - `metrics` - Performance tracking
 - `tracing` - Structured logging
 
 ### 3. `signal-bridge` - Signal Generation (Rust + Python Bridge)
+
 Bridges Python ML models with Rust feature engineering:
+
 - **Feature Engine**: High-performance feature computation in Rust
 - **Technical Indicators**: RSI, MACD, Bollinger Bands, ATR implementations
 - **PyO3 Bindings**: Python can call Rust functions for feature computation
 - **Signal Integration**: Subscribes to market data, generates trading signals
 
 **Key Dependencies:**
+
 - `pyo3` - Python bindings for seamless Rust ↔ Python integration
 - `ta` - Technical analysis indicators library
 - `ndarray` - Numerical computing
 
 ### 4. `risk-manager` - Risk Management
+
 Multi-layered risk controls:
+
 - **Limit Checker**: Position size limits, notional exposure caps
 - **P&L Tracker**: Real-time profit/loss tracking with FIFO/LIFO/weighted average
 - **Stop Manager**: Static and trailing stop-loss triggers
 - **Circuit Breaker**: Automatic trading pause on anomalies
 
 **Key Features:**
+
 - Pre-trade risk checks
 - Real-time position monitoring
 - Configurable risk parameters
 - Defensive programming for tail risks
 
 ### 5. `execution-engine` - Order Execution
+
 Smart order routing and execution:
+
 - **Order Router**: Routes orders to exchanges with retry logic
 - **Retry Policy**: Exponential backoff for failed orders
 - **Slippage Estimator**: Estimates market impact before execution
 - **Rate Limiting**: Respects exchange API rate limits
 
 **Key Dependencies:**
+
 - `reqwest` - HTTP client for exchange APIs
 - `governor` - Rate limiting
 
@@ -94,6 +108,7 @@ Smart order routing and execution:
 ## Building the System
 
 ### Prerequisites
+
 ```bash
 # Install Rust
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
@@ -106,12 +121,14 @@ brew install zeromq
 ```
 
 ### Build All Crates
+
 ```bash
 cd rust
 cargo build --workspace --release
 ```
 
 ### Build Individual Crates
+
 ```bash
 cargo build -p market-data --release
 cargo build -p signal-bridge --release
@@ -120,11 +137,13 @@ cargo build -p execution-engine --release
 ```
 
 ### Run Tests
+
 ```bash
 cargo test --workspace
 ```
 
 ### Check Code
+
 ```bash
 # Format
 cargo fmt --all
@@ -198,24 +217,52 @@ RUST_LOG=info ./target/release/execution-engine
 The signal-bridge crate compiles to both a library and a Python module:
 
 ```python
-# Import Rust-compiled feature computation
 from signal_bridge import FeatureComputer
+from bridge.rust_bridge import MarketBar, RustFeatureComputer
 
-# Create feature computer instance
 computer = FeatureComputer()
 
-# Compute features (calls Rust under the hood)
-features = computer.compute(price_data)
+# Direct PyO3 batch contract:
+# columns are [close, log_returns, momentum_10, volume, range_pct]
+bars = [
+    MarketBar("AAPL", 150.0, 152.0, 149.0, 151.0, 1_000_000.0, 1).to_rust_bar(),
+    MarketBar("AAPL", 151.0, 153.0, 150.0, 152.5, 1_100_000.0, 2).to_rust_bar(),
+]
+named_features = computer.compute_batch_named(bars)
+
+# Deterministic Rust Monte Carlo numeric kernel.
+paths = computer.simulate_price_paths(
+    initial_price=100.0,
+    num_days=252,
+    mu=0.05,
+    sigma=0.2,
+    num_paths=10_000,
+    seed=42,
+)
+
+# Python wrapper returns a pandas DataFrame with stable column names.
+rust_features = RustFeatureComputer().compute_batch_named(
+    [
+        MarketBar("AAPL", 150.0, 152.0, 149.0, 151.0, 1_000_000.0, 1),
+        MarketBar("AAPL", 151.0, 153.0, 150.0, 152.5, 1_100_000.0, 2),
+    ]
+)
 
 # Use with your ML model
-prediction = ml_model.predict([features])
+prediction = ml_model.predict(rust_features)
 ```
 
 Build the Python module:
+
 ```bash
-cd signal-bridge
-pip install maturin
-maturin develop --release
+uv pip install maturin
+.venv/bin/maturin develop --release --features extension-module --manifest-path rust/signal-bridge/Cargo.toml
+```
+
+For repository-local imports that prioritize `src/`, copy the rebuilt ABI3 artifact after a successful build:
+
+```bash
+cp .venv/lib/python3.12/site-packages/signal_bridge/signal_bridge.abi3.so src/signal_bridge/signal_bridge.so
 ```
 
 ## Inter-Component Communication
@@ -236,13 +283,17 @@ Components communicate via ZMQ PUB/SUB pattern:
 ## Monitoring and Observability
 
 ### Metrics
+
 All components export Prometheus metrics:
+
 - Latency distributions (order processing, WebSocket roundtrip)
 - Counters (orders sent, fills received)
 - Gauges (current positions, unrealized P&L)
 
 ### Logging
+
 Structured logging with `tracing`:
+
 ```bash
 # Set log level
 export RUST_LOG=info,market_data=debug,execution_engine=trace
@@ -252,6 +303,7 @@ RUST_LOG=debug ./target/release/market-data
 ```
 
 ### Log Format
+
 ```
 2025-10-14T20:15:32.123Z INFO [market_data] WebSocket connected to wss://stream.binance.com
 2025-10-14T20:15:32.456Z DEBUG [market_data::orderbook] Order book updated: BTCUSDT bid=42150.5 ask=42151.0
@@ -261,11 +313,15 @@ RUST_LOG=debug ./target/release/market-data
 ## Development Roadmap
 
 ### Phase 1: Foundation ✅ (Current)
+
 - [x] Workspace structure
 - [x] Common types and messaging
+- [x] ZMQ Schema Contract Hardening (v1.0.0)
+- [x] Rust Feature Offloading (Indicators, Simulators)
 - [x] Module skeletons with proper structure
 
 ### Phase 2: Market Data (Next)
+
 - [ ] WebSocket connection implementation
 - [ ] Order book reconstruction with sequence numbers
 - [ ] Tick-to-bar aggregation
@@ -274,6 +330,7 @@ RUST_LOG=debug ./target/release/market-data
 - [ ] Unit tests
 
 ### Phase 3: Signal Generation
+
 - [ ] Technical indicator implementations
 - [ ] Feature engineering
 - [ ] PyO3 bindings finalization
@@ -281,6 +338,7 @@ RUST_LOG=debug ./target/release/market-data
 - [ ] Backtesting framework
 
 ### Phase 4: Risk & Execution
+
 - [ ] Position tracking
 - [ ] Risk limit enforcement
 - [ ] Stop-loss triggers
@@ -289,6 +347,7 @@ RUST_LOG=debug ./target/release/market-data
 - [ ] Integration tests
 
 ### Phase 5: Production
+
 - [ ] Docker containers
 - [ ] Grafana dashboards
 - [ ] Alert system

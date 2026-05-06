@@ -1,5 +1,5 @@
 """Python-Rust bridge module for algorithmic trading system."""
-
+from .rust_bridge import MarketBar , RustFeatureComputer , test_rust_bridge
 from .zmq_bridge import MessageType, Position, Signal, ZMQPublisher, ZMQSubscriber, test_zmq_bridge
 
 __all__ = [

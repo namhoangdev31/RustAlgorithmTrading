@@ -12,6 +12,9 @@ import pytest
 import pandas as pd
 import numpy as np
 
+from data.features import FeatureEngine
+from data.indicators import TechnicalIndicators
+
 
 @pytest.mark.unit
 class TestTechnicalIndicators:
@@ -21,22 +24,19 @@ class TestTechnicalIndicators:
         """Test Simple Moving Average calculation."""
         window = 20
 
-        # Manual SMA calculation
         expected_sma = sample_ohlcv_data["close"].rolling(window=window).mean()
+        actual_sma = TechnicalIndicators.sma(sample_ohlcv_data["close"], window)
 
-        # actual_sma = calculate_sma(sample_ohlcv_data['close'], window)
-        # assert np.allclose(actual_sma, expected_sma, equal_nan=True)
-        assert True  # Placeholder
+        pd.testing.assert_series_equal(actual_sma, expected_sma)
 
     def test_ema_calculation(self, sample_ohlcv_data):
         """Test Exponential Moving Average calculation."""
         span = 20
 
         expected_ema = sample_ohlcv_data["close"].ewm(span=span, adjust=False).mean()
+        actual_ema = TechnicalIndicators.ema(sample_ohlcv_data["close"], span)
 
-        # actual_ema = calculate_ema(sample_ohlcv_data['close'], span)
-        # assert np.allclose(actual_ema, expected_ema, equal_nan=True)
-        assert True  # Placeholder
+        pd.testing.assert_series_equal(actual_ema, expected_ema)
 
     def test_rsi_calculation(self):
         """Test RSI (Relative Strength Index) calculation."""
@@ -66,11 +66,11 @@ class TestTechnicalIndicators:
             ]
         )
 
-        # RSI should be between 0 and 100
-        # rsi = calculate_rsi(prices, period=14)
-        # assert (rsi >= 0).all()
-        # assert (rsi <= 100).all()
-        assert True  # Placeholder
+        rsi = TechnicalIndicators.rsi(prices, period=14).dropna()
+
+        assert not rsi.empty
+        assert (rsi >= 0).all()
+        assert (rsi <= 100).all()
 
     def test_bollinger_bands(self, sample_ohlcv_data):
         """Test Bollinger Bands calculation."""
@@ -82,13 +82,13 @@ class TestTechnicalIndicators:
 
         expected_upper = sma + (num_std * std)
         expected_lower = sma - (num_std * std)
+        upper, middle, lower = TechnicalIndicators.bollinger_bands(
+            sample_ohlcv_data["close"], window, num_std
+        )
 
-        # upper, middle, lower = calculate_bollinger_bands(
-        #     sample_ohlcv_data['close'], window, num_std
-        # )
-        # assert np.allclose(upper, expected_upper, equal_nan=True)
-        # assert np.allclose(lower, expected_lower, equal_nan=True)
-        assert True  # Placeholder
+        pd.testing.assert_series_equal(upper, expected_upper)
+        pd.testing.assert_series_equal(middle, sma)
+        pd.testing.assert_series_equal(lower, expected_lower)
 
     def test_macd_calculation(self, sample_ohlcv_data):
         """Test MACD indicator calculation."""
@@ -100,12 +100,29 @@ class TestTechnicalIndicators:
         ema_slow = sample_ohlcv_data["close"].ewm(span=slow, adjust=False).mean()
         expected_macd = ema_fast - ema_slow
         expected_signal = expected_macd.ewm(span=signal, adjust=False).mean()
+        expected_hist = expected_macd - expected_signal
+        macd_line, signal_line, histogram = TechnicalIndicators.macd(
+            sample_ohlcv_data["close"], fast, slow, signal
+        )
 
-        # macd_line, signal_line, histogram = calculate_macd(
-        #     sample_ohlcv_data['close'], fast, slow, signal
-        # )
-        # assert np.allclose(macd_line, expected_macd, equal_nan=True)
-        assert True  # Placeholder
+        pd.testing.assert_series_equal(macd_line, expected_macd)
+        pd.testing.assert_series_equal(signal_line, expected_signal)
+        pd.testing.assert_series_equal(histogram, expected_hist)
+
+    def test_atr_calculation(self, sample_ohlcv_data):
+        """Test Average True Range calculation."""
+        period = 14
+        high = sample_ohlcv_data["high"]
+        low = sample_ohlcv_data["low"]
+        close = sample_ohlcv_data["close"]
+        tr = pd.concat(
+            [high - low, (high - close.shift()).abs(), (low - close.shift()).abs()],
+            axis=1,
+        ).max(axis=1)
+        expected_atr = tr.rolling(window=period).mean()
+        actual_atr = TechnicalIndicators.atr(high, low, close, period)
+
+        pd.testing.assert_series_equal(actual_atr, expected_atr)
 
 
 @pytest.mark.unit
@@ -117,18 +134,32 @@ class TestFeatureTransformations:
         prices = sample_ohlcv_data["close"]
         expected_returns = np.log(prices / prices.shift(1))
 
-        # actual_returns = calculate_log_returns(prices)
-        # assert np.allclose(actual_returns, expected_returns, equal_nan=True)
-        assert True  # Placeholder
+        engine = FeatureEngine(
+            include_indicators=False,
+            include_volume_features=False,
+            include_time_features=False,
+        )
+        features = engine.create_features(sample_ohlcv_data)
+
+        pd.testing.assert_series_equal(
+            features["log_returns"], expected_returns.loc[features.index], check_names=False
+        )
 
     def test_percentage_returns(self, sample_ohlcv_data):
         """Test percentage returns calculation."""
         prices = sample_ohlcv_data["close"]
         expected_returns = prices.pct_change()
 
-        # actual_returns = calculate_pct_returns(prices)
-        # assert np.allclose(actual_returns, expected_returns, equal_nan=True)
-        assert True  # Placeholder
+        engine = FeatureEngine(
+            include_indicators=False,
+            include_volume_features=False,
+            include_time_features=False,
+        )
+        features = engine.create_features(sample_ohlcv_data)
+
+        pd.testing.assert_series_equal(
+            features["returns"], expected_returns.loc[features.index], check_names=False
+        )
 
     def test_standardization(self):
         """Test feature standardization (z-score)."""
@@ -137,19 +168,59 @@ class TestFeatureTransformations:
         expected_mean = 0
         expected_std = 1
 
-        # standardized = standardize_features(data)
-        # assert abs(standardized.mean() - expected_mean) < 1e-10
-        # assert abs(standardized.std() - expected_std) < 1e-10
-        assert True  # Placeholder
+        standardized = (data - data.mean()) / data.std()
+        assert abs(standardized.mean() - expected_mean) < 1e-10
+        assert abs(standardized.std() - expected_std) < 1e-10
 
     def test_normalization(self):
         """Test feature normalization to [0, 1] range."""
         data = pd.Series([10, 20, 30, 40, 50])
 
-        # normalized = normalize_features(data)
-        # assert normalized.min() == 0
-        # assert normalized.max() == 1
-        assert True  # Placeholder
+        normalized = (data - data.min()) / (data.max() - data.min())
+        assert normalized.min() == 0
+        assert normalized.max() == 1
+
+    def test_feature_engine_python_default_path(self, sample_ohlcv_data):
+        """FeatureEngine keeps Python as the default feature backend."""
+        engine = FeatureEngine(feature_backend="python")
+        features = engine.create_features(
+            sample_ohlcv_data,
+            feature_config={
+                "sma_periods": [10, 20, 50],
+                "ema_periods": [12, 26],
+                "rsi_periods": [14],
+            },
+        )
+
+        assert engine.feature_backend == "python"
+        assert "log_returns" in features.columns
+        assert "momentum_10" in features.columns
+        assert not features.empty
+
+    def test_feature_engine_rust_fallback_to_python(self, sample_ohlcv_data):
+        """Rust opt-in path falls back to Python when the Rust computer fails."""
+
+        class FailingRustComputer:
+            def compute_batch_named(self, _bars):
+                raise RuntimeError("simulated rust backend failure")
+
+        engine = FeatureEngine(
+            feature_backend="rust",
+            rust_feature_computer=FailingRustComputer(),
+            rust_fallback_to_python=True,
+        )
+        features = engine.create_features(
+            sample_ohlcv_data,
+            feature_config={
+                "sma_periods": [10, 20, 50],
+                "ema_periods": [12, 26],
+                "rsi_periods": [14],
+            },
+        )
+
+        assert "returns" in features.columns
+        assert "momentum_10" in features.columns
+        assert not features.empty
 
 
 @pytest.mark.unit
@@ -158,30 +229,40 @@ class TestFeatureEdgeCases:
 
     def test_handles_zero_volatility(self):
         """Test features handle constant price gracefully."""
-        constant_prices = pd.Series([100] * 50)
+        constant_prices = pd.Series([100.0] * 60)
+        data = pd.DataFrame(
+            {
+                "open": constant_prices,
+                "high": constant_prices,
+                "low": constant_prices,
+                "close": constant_prices,
+                "volume": 1_000.0,
+            }
+        )
+        engine = FeatureEngine(
+            include_indicators=False,
+            include_volume_features=False,
+            include_time_features=False,
+        )
+        features = engine.create_features(data)
 
-        # Should not divide by zero or produce NaN
-        # std = constant_prices.rolling(window=20).std()
-        # normalized = normalize_features(constant_prices)
-
-        assert True  # Placeholder
+        assert np.isfinite(features["returns"].fillna(0.0)).all()
+        assert (features["volatility_20"] == 0.0).all()
 
     def test_handles_extreme_values(self):
         """Test features handle extreme price movements."""
         prices = pd.Series([100, 100, 100, 1000, 100, 100])  # Price spike
 
-        # returns = calculate_pct_returns(prices)
-        # assert not np.isinf(returns).any()
-        assert True  # Placeholder
+        returns = prices.pct_change()
+        assert not np.isinf(returns.dropna()).any()
 
     def test_insufficient_data(self):
         """Test features handle insufficient data gracefully."""
         short_series = pd.Series([100, 101, 102])
 
-        # Should handle gracefully when window > data length
-        # sma = calculate_sma(short_series, window=20)
-        # assert len(sma) == len(short_series)
-        assert True  # Placeholder
+        sma = TechnicalIndicators.sma(short_series, period=20)
+        assert len(sma) == len(short_series)
+        assert sma.isna().all()
 
     def test_numerical_stability(self):
         """Test numerical stability with very small/large numbers."""
@@ -191,10 +272,7 @@ class TestFeatureEdgeCases:
         # Very large prices
         large_prices = pd.Series([1e8, 1.1e8, 1.2e8, 1.15e8])
 
-        # Both should produce valid features
-        # small_returns = calculate_pct_returns(small_prices)
-        # large_returns = calculate_pct_returns(large_prices)
+        small_returns = small_prices.pct_change()
+        large_returns = large_prices.pct_change()
 
-        # Returns should be similar (scale invariant)
-        # assert np.allclose(small_returns, large_returns, equal_nan=True)
-        assert True  # Placeholder
+        assert np.allclose(small_returns, large_returns, equal_nan=True)
