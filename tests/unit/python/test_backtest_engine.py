@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 from typing import Any
 from unittest.mock import MagicMock
 
+import backtesting.engine as engine_module
 from backtesting.engine import BacktestEngine
 from backtesting.data_handler import HistoricalDataHandler
 from backtesting.execution_handler import SimulatedExecutionHandler
@@ -51,6 +52,30 @@ class TestBacktestEngine:
         assert engine.portfolio_handler == portfolio_handler
         assert engine.strategy == strategy
         assert engine.events_processed == 0
+
+    def test_rust_backend_fallback_to_python(
+        self, data_handler, execution_handler, portfolio_handler, monkeypatch
+    ):
+        """Engine should fallback to python backend if Rust runtime init fails."""
+
+        class FailingRustBridge:
+            def __init__(self, *args, **kwargs):
+                raise RuntimeError("bridge unavailable")
+
+        monkeypatch.setattr(engine_module, "RustBacktestBridge", FailingRustBridge)
+
+        strategy = MockStrategy()
+        engine = BacktestEngine(
+            data_handler=data_handler,
+            execution_handler=execution_handler,
+            portfolio_handler=portfolio_handler,
+            strategy=strategy,
+            engine_backend="rust",
+            rust_fallback_to_python=True,
+        )
+
+        assert engine.engine_backend == "python"
+        assert engine.rust_backtest_runtime is None
 
     def test_run_empty_data(self, temp_data_dir, execution_handler):
         """Test backtest with empty data"""
@@ -178,3 +203,50 @@ class TestPositionManagementIntegration:
         # Check portfolio position
         assert "TEST" in portfolio_handler.portfolio.positions
         assert portfolio_handler.portfolio.positions["TEST"].quantity > 0
+
+    def test_rust_signal_path_skips_python_order_generation(
+        self, data_handler, execution_handler, portfolio_handler
+    ):
+        """In rust mode, SIGNAL events should be delegated to rust runtime directly."""
+
+        class DummyRustRuntime:
+            def __init__(self):
+                self.signals = []
+
+            def process_signal(self, **kwargs):
+                self.signals.append(kwargs)
+
+            def dispatch_until_idle(self, correlation_id=None):
+                return None
+
+            def get_new_fills(self):
+                return []
+
+            def get_state(self):
+                return {"equity": 100000.0, "positions": []}
+
+        dummy_runtime = DummyRustRuntime()
+
+        strategy = MockStrategy()
+        engine = BacktestEngine(
+            data_handler=data_handler,
+            execution_handler=execution_handler,
+            portfolio_handler=portfolio_handler,
+            strategy=strategy,
+            engine_backend="rust",
+            rust_backtest_runtime=dummy_runtime,  # type: ignore[arg-type]
+            rust_fallback_to_python=False,
+        )
+
+        event = SignalEvent(
+            symbol="TEST",
+            timestamp=datetime.now(timezone.utc),
+            signal_type="LONG",
+            strength=1.0,
+            strategy_id="MockStrategy",
+        )
+
+        engine._handle_signal_event(event)
+
+        assert len(dummy_runtime.signals) == 1
+        assert len(engine.events) == 0

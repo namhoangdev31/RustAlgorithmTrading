@@ -30,6 +30,7 @@ class SimulatedExecutionHandler:
         slippage_bps: float = 5.0,  # 5 basis points
         market_impact_bps: float = 2.0,  # 2 basis points per $1M notional
         partial_fill_probability: float = 0.0,  # No partial fills by default
+        random_seed: Optional[int] = None,
     ):
         """
         Initialize execution handler.
@@ -44,12 +45,15 @@ class SimulatedExecutionHandler:
         self.slippage_bps = slippage_bps
         self.market_impact_bps = market_impact_bps
         self.partial_fill_probability = partial_fill_probability
+        self.random_seed = random_seed
+        self._rng = np.random.default_rng(random_seed)
 
         logger.info(
             f"Initialized SimulatedExecutionHandler with "
             f"commission={commission_rate:.4f}, "
             f"slippage={slippage_bps}bps, "
-            f"impact={market_impact_bps}bps/$1M"
+            f"impact={market_impact_bps}bps/$1M, "
+            f"seed={random_seed}"
         )
 
     def execute_order(self, order: OrderEvent) -> Optional[FillEvent]:
@@ -64,8 +68,8 @@ class SimulatedExecutionHandler:
         """
         # Simulate partial fills
         fill_quantity = order.quantity
-        if np.random.random() < self.partial_fill_probability:
-            fill_quantity = int(order.quantity * np.random.uniform(0.5, 1.0))
+        if self._rng.random() < self.partial_fill_probability:
+            fill_quantity = int(order.quantity * self._rng.uniform(0.5, 1.0))
             logger.debug(f"Partial fill: {fill_quantity}/{order.quantity}")
 
         # Calculate fill price with slippage and market impact
@@ -94,6 +98,11 @@ class SimulatedExecutionHandler:
     def set_data_handler(self, data_handler: HistoricalDataHandler) -> None:
         """Set data handler for getting actual market prices."""
         self.data_handler = data_handler
+
+    def reset_seed(self, seed: Optional[int]) -> None:
+        """Reset local RNG seed for deterministic replay."""
+        self.random_seed = seed
+        self._rng = np.random.default_rng(seed)
 
     def _calculate_fill_price(self, order: OrderEvent, quantity: int) -> float:
         """
@@ -127,7 +136,7 @@ class SimulatedExecutionHandler:
 
         # Calculate slippage (random within range)
         slippage_factor = float(
-            np.random.normal(self.slippage_bps / 10000.0, self.slippage_bps / 20000.0)
+            self._rng.normal(self.slippage_bps / 10000.0, self.slippage_bps / 20000.0)
         )
 
         # Calculate market impact based on notional value

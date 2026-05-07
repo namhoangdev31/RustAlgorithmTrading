@@ -8,6 +8,8 @@ license.workspace = true
 [dependencies]
 # Workspace dependencies
 common = { path = "../common" }
+risk-manager = { path = "../risk-manager" }
+execution-engine = { path = "../execution-engine" }
 
 # Python bindings
 pyo3.workspace = true

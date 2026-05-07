@@ -170,6 +170,15 @@ Detailed deliverables:
 5. Define one authoritative state owner for portfolio, position, and PnL during each runtime mode.
 6. Evaluate whether ZMQ remains sufficient or whether schema-first transport such as gRPC/Protobuf is needed for contract safety. Aeron remains a future low-latency candidate only if latency goals exceed ZMQ/gRPC capability.
 
+Current implementation baseline:
+
+- Rust backtest runtime is implemented in `rust/signal-bridge/src/backtest_runtime.rs` and exposed via PyO3 `BacktestRuntime`.
+- Python adapter path is implemented in `src/bridge/backtest_bridge.py`.
+- `BacktestEngine` supports `engine_backend=("python"|"rust")` with `rust_fallback_to_python` rollback behavior.
+- Strict reconciliation gates are enforced in rust mode (`PnL <= 0.10%`, exposure `<= 5 bps`).
+- Canonical Phase 2 Python gate file exists at `tests/test_backtest_integration.py`.
+- Canonical Phase 2 evidence artifact is tracked in `docs/roadmap/PHASE2_GO_NO_GO_EVIDENCE.md`.
+
 Validation gate (minimum):
 
 - `python -m pytest tests/unit/python/test_backtest_engine.py -q`

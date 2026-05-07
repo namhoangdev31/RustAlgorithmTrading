@@ -3,7 +3,7 @@ Portfolio handler for position and cash management during backtesting.
 """
 
 from datetime import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING
+from typing import Dict, List, Optional, TYPE_CHECKING, Any
 from loguru import logger
 
 import pandas as pd
@@ -89,6 +89,8 @@ class PortfolioHandler:
         self.holdings_history: List[Dict] = []
 
         self.reserved_cash: float = 0.0
+        self._risk_decision_trace: list[dict[str, Any]] = []
+        self._risk_decision_sequence_no: int = 0
 
         logger.info(f"Initialized PortfolioHandler with ${initial_capital:,.2f}")
 
@@ -274,6 +276,18 @@ class PortfolioHandler:
                 current_drawdown=self.portfolio.max_drawdown,
                 total_equity=self.portfolio.equity,
             )
+            self._risk_decision_sequence_no += 1
+            self._risk_decision_trace.append(
+                {
+                    "timestamp": signal.timestamp.isoformat(),
+                    "symbol": signal.symbol,
+                    "signal_type": signal.signal_type,
+                    "strategy_id": signal.strategy_id,
+                    "sequence_no": self._risk_decision_sequence_no,
+                    "decision": allocation_record.status.value,
+                    "reason_code": allocation_record.reason_code or "NONE",
+                }
+            )
 
             if allocation_record.status == ControlStatus.REJECT:
                 logger.warning(f"🚫 ALLOCATION REJECTED: {allocation_record.decision_reason}")
@@ -299,16 +313,16 @@ class PortfolioHandler:
                 logger.warning(f"❌ Invalid price for {signal.symbol}, cannot generate BUY order")
                 return orders
 
-            # Calculate estimated cost (position + commission + slippage)
-            position_cost = abs(order_quantity) * current_price
-            estimated_commission = position_cost * 0.001  # 0.1% commission
-            estimated_slippage = position_cost * 0.0005  # 0.05% slippage
-            total_estimated_cost = position_cost + estimated_commission + estimated_slippage
+            # Calculate estimated cost (position + commission + slippage buffer)
+            estimated_commission = position_cost * 0.0010  # 10 bps
+            estimated_slippage = position_cost * 0.0020    # 20 bps safety buffer
+            # Add a small fixed dollar safety floor ($10)
+            total_estimated_cost = position_cost + estimated_commission + estimated_slippage + 10.0
 
             # Check if we have enough available cash
             if total_estimated_cost > available_cash:
-                # Calculate maximum affordable quantity
-                max_affordable_value = available_cash / (1 + 0.001 + 0.0005)  # Adjust for fees
+                # Calculate maximum affordable quantity with conservative buffer (10bps commission + 20bps slippage)
+                max_affordable_value = (available_cash - 10.0) / (1 + 0.0010 + 0.0020)
                 max_affordable_quantity = int(max_affordable_value / current_price)
 
                 if max_affordable_quantity <= 0:
@@ -460,3 +474,11 @@ class PortfolioHandler:
         if self.reserved_cash > 0:
             logger.debug(f"🔄 Clearing reserved cash: ${self.reserved_cash:,.2f}")
             self.reserved_cash = 0.0
+
+    def pop_risk_decision_trace(self) -> list[dict[str, Any]]:
+        """
+        Return and clear allocation/risk decisions generated during order creation.
+        """
+        decisions = list(self._risk_decision_trace)
+        self._risk_decision_trace.clear()
+        return decisions

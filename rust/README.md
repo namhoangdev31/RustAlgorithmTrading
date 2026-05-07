@@ -222,8 +222,9 @@ RUST_LOG=info ./target/release/execution-engine
 The signal-bridge crate compiles to both a library and a Python module:
 
 ```python
-from signal_bridge import FeatureComputer
+from signal_bridge import BacktestRuntime, FeatureComputer
 import numpy as np
+from bridge.backtest_bridge import RustBacktestBridge
 from bridge.rust_bridge import RustFeatureComputer
 
 computer = FeatureComputer()
@@ -260,6 +261,22 @@ rust_features = RustFeatureComputer().compute_batch_named(
 
 # Use with your ML model
 prediction = ml_model.predict(rust_features)
+
+# Phase 2 backtest runtime (Rust authoritative state owner).
+runtime = BacktestRuntime(initial_capital=100_000.0, symbols=["AAPL"], seed=42)
+runtime.ingest_bar("AAPL", 1700000000, 100.0, 101.0, 99.0, 100.5, 50_000.0)
+runtime.process_signal("AAPL", "LONG", 1.0, "MomentumStrategy")
+runtime.dispatch_until_idle()
+state = runtime.state_snapshot()
+stats = runtime.execution_stats_snapshot()
+risk_decisions = runtime.get_new_risk_decisions()
+
+# Python adapter path used by BacktestEngine(engine_backend=\"rust\")
+bridge = RustBacktestBridge(initial_capital=100_000.0, symbols=["AAPL"], seed=42)
+bridge.ingest_bar("AAPL", 1700000000, 100.0, 101.0, 99.0, 100.5, 50_000.0)
+bridge.process_signal("AAPL", "LONG", 1.0, "MomentumStrategy")
+bridge.dispatch_until_idle()
+fills = bridge.get_new_fills()
 ```
 
 Build the Python module:

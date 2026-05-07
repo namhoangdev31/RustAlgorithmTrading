@@ -97,6 +97,12 @@ class AllocationManager:
             f"Regime: {regime} | Vol: {volatility:.4f} | DD: {current_drawdown:.2%}"
         )
 
+        reason_code = None
+        if status == ControlStatus.REJECT:
+            reason_code = "STRATEGY_ALLOCATION_LIMIT_EXCEEDED"
+        elif status == ControlStatus.BLOCKED:
+            reason_code = "STRATEGY_MAX_DRAWDOWN_BREACH"
+
         return ControlRecord(
             portfolio_check_id=f"ALC-{strategy_id}-{symbol}-{datetime.now(timezone.utc).timestamp()}",
             strategy_set_id=strategy_id,
@@ -107,6 +113,7 @@ class AllocationManager:
             measured_value=measured_value,
             breach_flag=is_breach,
             decision_reason=decision_reason,
+            reason_code=reason_code,
             evidence_ids=["EV-W15-201", "EV-W15-202", "EV-W15-205"],
             risk_impact_flag=is_breach,
             next_action="ADJUST_QUANTITY" if is_breach else "PROCEED",

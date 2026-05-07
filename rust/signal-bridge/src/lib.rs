@@ -1,4 +1,5 @@
 pub mod bridge;
+pub mod backtest_runtime;
 /// Signal Bridge Component
 ///
 /// Bridges Python ML models with Rust for feature engineering.

@@ -32,6 +32,7 @@ class ControlRecord(BaseModel):
     measured_value: float
     breach_flag: bool
     decision_reason: str
+    reason_code: Optional[str] = None
     evidence_ids: List[str]
     risk_impact_flag: bool
     next_action: str

@@ -36,7 +36,14 @@ Weekly verifier/audit lifecycle scripts are intentionally removed from active in
 - `scripts/run_router_backtest.py` — Router strategy backtest
 - `scripts/run_ml_backtest.py` — ML backtest path
 - `scripts/run_optimized_backtest.py` — Optimized backtest path
+- `scripts/run_soak_fault_tests.py` — Phase 2 rust soak/stability gate harness (`S100K`)
 - `scripts/run_data_tests.sh` — Data-focused checks
+
+## 5) Phase 2 Promotion Gates
+
+- `tests/benchmarks/backtest_engine_production_benchmark.py` — production-like benchmark (`P10K`, `P100K`) for python vs rust
+- `scripts/run_soak_fault_tests.py` — long-run stability gate with timeout/memory/fallback/reconciliation checks
+- `docs/roadmap/PHASE2_GO_NO_GO_EVIDENCE.md` — canonical evidence checklist and verdict
 
 ## Usage Notes
 

@@ -1,3 +1,4 @@
+use crate::backtest_runtime::BacktestRuntime as RustBacktestRuntime;
 use crate::features::FeatureEngine;
 use crate::indicators::{calculate_momentum_simd, calculate_returns_simd, EMA, MACD, RSI, SMA};
 use numpy::{IntoPyArray, PyReadonlyArray1};
@@ -315,11 +316,149 @@ impl FeatureComputer {
     }
 }
 
+
+#[pyclass]
+pub struct BacktestRuntime {
+    inner: RustBacktestRuntime,
+}
+
+#[pymethods]
+impl BacktestRuntime {
+    #[new]
+    #[pyo3(signature = (initial_capital, symbols, max_position_size=10000.0, max_notional_exposure=50000.0, max_open_positions=5, stop_loss_percent=2.0, max_loss_threshold=500.0, seed=42))]
+    pub fn new(
+        initial_capital: f64,
+        symbols: Vec<String>,
+        max_position_size: f64,
+        max_notional_exposure: f64,
+        max_open_positions: usize,
+        stop_loss_percent: f64,
+        max_loss_threshold: f64,
+        seed: u64,
+    ) -> Self {
+        let risk_config = common::config::RiskConfig {
+            max_position_size,
+            max_notional_exposure,
+            max_open_positions,
+            stop_loss_percent,
+            trailing_stop_percent: 1.0,
+            enable_circuit_breaker: true,
+            max_loss_threshold,
+        };
+
+        Self {
+            inner: RustBacktestRuntime::new(initial_capital, symbols, risk_config, seed),
+        }
+    }
+
+    pub fn ingest_bar(
+        &mut self,
+        symbol: String,
+        timestamp: i64,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: f64,
+    ) {
+        self.inner
+            .ingest_bar(symbol, timestamp, open, high, low, close, volume);
+    }
+
+    #[pyo3(signature = (initial_capital, symbols, max_position_size=10000.0, max_notional_exposure=50000.0, max_open_positions=5, stop_loss_percent=2.0, max_loss_threshold=500.0, seed=42))]
+    pub fn init_state(
+        &mut self,
+        initial_capital: f64,
+        symbols: Vec<String>,
+        max_position_size: f64,
+        max_notional_exposure: f64,
+        max_open_positions: usize,
+        stop_loss_percent: f64,
+        max_loss_threshold: f64,
+        seed: u64,
+    ) {
+        let risk_config = common::config::RiskConfig {
+            max_position_size,
+            max_notional_exposure,
+            max_open_positions,
+            stop_loss_percent,
+            trailing_stop_percent: 1.0,
+            enable_circuit_breaker: true,
+            max_loss_threshold,
+        };
+
+        self.inner
+            .init_state(initial_capital, symbols, risk_config, seed);
+    }
+
+    pub fn process_signal(
+        &mut self,
+        symbol: String,
+        signal_type: String,
+        strength: f64,
+        strategy_id: String,
+    ) {
+        self.inner
+            .process_signal(symbol, signal_type, strength, strategy_id);
+    }
+
+    pub fn dispatch_until_idle(&mut self) {
+        self.inner.dispatch_until_idle();
+    }
+
+    pub fn get_new_fills(&mut self, py: Python) -> PyResult<PyObject> {
+        let fills = self.inner.get_new_fills();
+        let json_str = serde_json::to_string(&fills).map_err(|e| PyValueError::new_err(e.to_string()))?;
+        
+        let json_mod = py.import_bound("json")?;
+        let dict = json_mod.call_method1("loads", (json_str,))?;
+        Ok(dict.to_object(py))
+    }
+
+    pub fn get_new_risk_decisions(&mut self, py: Python) -> PyResult<PyObject> {
+        let decisions = self.inner.get_new_risk_decisions();
+        let json_str =
+            serde_json::to_string(&decisions).map_err(|e| PyValueError::new_err(e.to_string()))?;
+
+        let json_mod = py.import_bound("json")?;
+        let parsed = json_mod.call_method1("loads", (json_str,))?;
+        Ok(parsed.to_object(py))
+    }
+
+    pub fn state_snapshot(&self, py: Python) -> PyResult<PyObject> {
+        let snapshot = self.inner.state_snapshot();
+        let json_str = snapshot.to_string();
+        
+        // Convert JSON string to Python dict via json.loads
+        let json_mod = py.import_bound("json")?;
+        let dict = json_mod.call_method1("loads", (json_str,))?;
+        Ok(dict.to_object(py))
+    }
+
+    pub fn execution_stats_snapshot(&self, py: Python) -> PyResult<PyObject> {
+        let snapshot = self.inner.execution_stats_snapshot();
+        let json_str = snapshot.to_string();
+
+        let json_mod = py.import_bound("json")?;
+        let dict = json_mod.call_method1("loads", (json_str,))?;
+        Ok(dict.to_object(py))
+    }
+
+    pub fn reset(&mut self, seed: u64) {
+        self.inner.reset(seed);
+    }
+
+    pub fn get_equity(&self) -> f64 {
+        self.inner.get_equity()
+    }
+}
+
 /// Python module initialization
 #[pymodule]
 fn signal_bridge(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<FeatureComputer>()?;
     m.add_class::<Bar>()?;
+    m.add_class::<BacktestRuntime>()?;
     Ok(())
 }
 

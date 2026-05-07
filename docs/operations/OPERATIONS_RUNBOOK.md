@@ -2,7 +2,7 @@
 ## Rust Algorithmic Trading System
 
 **Version**: 1.0.0
-**Last Updated**: October 21, 2025
+**Last Updated**: May 7, 2026
 **Audience**: Operations Team, DevOps Engineers, SREs
 
 ---
@@ -953,6 +953,57 @@ grep "rate_limit" /opt/trading-system/logs/execution-engine.log
 
 ---
 
+## 9. Phase 2 Rust Default Rollback Playbook
+
+### 9.1 Trigger Conditions (Any One Triggers Rollback)
+
+- PnL drift > 0.10%
+- Exposure drift > 5 bps
+- `false_allow_delta != 0`
+- `false_reject_delta != 0`
+- `blocked_delta != 0`
+- timeout/crash detected in soak or production run
+- latency regression gate breached
+- runtime fallback events detected while rust is default
+
+### 9.2 Immediate Response
+
+```bash
+# Force python default for next backtest runtime boot
+export BACKTEST_ENGINE_BACKEND_DEFAULT=python
+```
+
+```bash
+# Keep safety fallback enabled at runtime
+export BACKTEST_ENGINE_PROMOTE_RUST_DEFAULT=0
+```
+
+### 9.3 Verification After Rollback
+
+```bash
+python -m pytest tests/unit/python/test_backtest_engine.py -q
+python -m pytest tests/test_backtest_integration.py -q
+cd rust && cargo test -p risk-manager -p execution-engine -p signal-bridge
+```
+
+### 9.4 Evidence and Incident Recording
+
+For every rollback:
+
+1. Attach `data/benchmarks/phase2_backtest_benchmark.json` if available.
+2. Attach `data/benchmarks/phase2_soak_results.json` if available.
+3. Record trigger reason and failing metric.
+4. Record artifact hash and commit SHA.
+5. Open follow-up ticket before re-promotion.
+
+### 9.5 Re-Promotion Prerequisite
+
+Do not re-enable rust default until all checks pass in:
+
+- `docs/roadmap/PHASE2_GO_NO_GO_EVIDENCE.md`
+
+---
+
 **Document Version**: 1.0.0
-**Last Updated**: October 21, 2025
+**Last Updated**: May 7, 2026
 **Maintained By**: Documentation Specialist Agent

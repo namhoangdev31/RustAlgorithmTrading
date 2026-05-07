@@ -392,6 +392,29 @@ class HistoricalDataHandler:
         self.bar_index += 1
         self.continue_backtest = any_updated
 
+    def get_latest_bars_as_df(self, symbol: str, n: int = 1) -> pd.DataFrame:
+        """
+        Get latest n bars for a symbol as a DataFrame.
+
+        This is MUCH faster than converting Bar objects back to a DataFrame
+        per event loop iteration.
+
+        Args:
+            symbol: Symbol to get data for
+            n: Number of bars to retrieve
+
+        Returns:
+            DataFrame containing the latest n bars
+        """
+        if symbol not in self.symbol_data:
+            return pd.DataFrame()
+
+        df = self.symbol_data[symbol]
+        end_idx = self.bar_index
+        start_idx = max(0, end_idx - n + 1)
+
+        return df.iloc[start_idx:end_idx]
+
     def get_latest_bar(self, symbol: str) -> Optional[Bar]:
         """
         Get most recent bar for symbol.
