@@ -6,11 +6,25 @@
 ```bash
 cd [REPO_ROOT]/rust
 
+# For PyO3 crates (especially signal-bridge), pin Python runtime to repo venv
+export PYO3_PYTHON=[REPO_ROOT]/.venv/bin/python
+
 # Run workspace tests
 cargo test --workspace
 
 # Run with output
 cargo test --workspace -- --nocapture --test-threads=1
+```
+
+### Run `signal-bridge` Tests Reliably
+```bash
+# From repo root
+cd [REPO_ROOT]/rust
+PYO3_PYTHON=[REPO_ROOT]/.venv/bin/python cargo test -p signal-bridge -p common
+
+# Or from crate directory
+cd [REPO_ROOT]/rust/signal-bridge
+PYO3_PYTHON=[REPO_ROOT]/.venv/bin/python cargo test
 ```
 
 ### Run Specific Test Files

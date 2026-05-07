@@ -353,7 +353,7 @@ Execution rules:
 - `src/bridge/**` -> `python -m pytest tests/integration/test_backtest_signal_flow.py -q`
 - `src/observability/**` -> `python -m pytest tests/observability -q`
 - `rust/market-data/**` -> `cd rust && cargo test -p market-data`
-- `rust/signal-bridge/**` -> `cd rust && cargo test -p signal-bridge`
+- `rust/signal-bridge/**` -> `cd rust && PYO3_PYTHON="$PWD/../.venv/bin/python" cargo test -p signal-bridge`
 - `rust/risk-manager/**` -> `cd rust && cargo test -p risk-manager`
 - `rust/execution-engine/**` -> `cd rust && cargo test -p execution-engine`
 - `rust/database/**` -> `cd rust && cargo test -p database`

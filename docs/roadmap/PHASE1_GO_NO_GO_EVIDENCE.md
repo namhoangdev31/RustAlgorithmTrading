@@ -127,3 +127,50 @@ Default-Rust gate is now GO because:
 
 - `speedup > 1.0x` at both `10k` and `100k` bars.
 - FFI boundary overhead is materially below compute+pipeline savings at target batch sizes.
+
+## 7. Final Phase 1 Acceptance Checklist
+
+Sign-off reference date: **May 7, 2026**.
+
+### 7.1 Scope Completion
+
+- [x] Feature offload migrated to NumPy-columnar FFI contract (`open/high/low/close/volume[/timestamp]`).
+- [x] Legacy per-row object conversion bottleneck removed from feature-offload path.
+- [x] Monte Carlo seed control remains explicit and deterministic across backends.
+- [x] ZMQ envelope validation hardened with strict/compatibility mode behavior and fail-fast REJECT blocking.
+- [x] No Go implementation introduced in Phase 1.
+
+### 7.2 Contract and Safety Gates
+
+- [x] Batch input validation enforces fail-fast on `NaN`, `inf`, and `close <= 0`.
+- [x] Stable output feature columns preserved: `close`, `log_returns`, `momentum_10`, `volume`, `range_pct`.
+- [x] Python fallback behavior remains available when Rust backend errors.
+- [x] Correlation-id traceability is preserved in publish/receive logging paths.
+
+### 7.3 Test Evidence Gates
+
+- [x] `tests/unit/python/test_features.py` passes.
+- [x] `tests/unit/python/test_rust_feature_parity.py` passes.
+- [x] `tests/unit/python/test_monte_carlo_reproducibility.py` passes.
+- [x] `tests/integration/test_backtest_signal_flow.py` passes.
+- [x] `cargo test -p signal-bridge -p common` passes.
+
+### 7.4 Performance Promotion Gate
+
+- [x] Benchmark command executed: `python tests/benchmarks/feature_backend_benchmark.py`.
+- [x] `10,000` bars speedup > `1.0x`.
+- [x] `100,000` bars speedup > `1.0x`.
+- [x] Rust default promotion rule satisfied (non-hybrid policy).
+
+### 7.5 Documentation and Operational Readiness
+
+- [x] Evidence report updated with latest benchmark and verdict.
+- [x] Python/Rust API usage examples updated to columnar contract.
+- [x] Type stubs (`src/typings/signal_bridge.pyi`) updated to current public interface.
+- [x] Build path uses `.venv` toolchain for `maturin` and extension installation.
+
+### 7.6 Final Sign-off Decision
+
+- [x] **Phase 1 implementation status: GO**
+- [x] **Default Rust feature backend status: GO**
+- [x] **Ready to start Phase 2 planning**

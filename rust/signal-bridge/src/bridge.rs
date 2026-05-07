@@ -327,13 +327,39 @@ fn signal_bridge(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
 mod tests {
     use super::FeatureComputer;
     use numpy::{PyArray1, PyArrayMethods};
-    use pyo3::prelude::PyDictMethods;
-    use pyo3::Python;
+    use pyo3::exceptions::PyModuleNotFoundError;
+    use pyo3::prelude::{PyAnyMethods, PyDictMethods, PyStringMethods};
+    use pyo3::types::PyModule;
+    use pyo3::{PyErr, Python};
     use std::sync::Once;
 
     fn ensure_python_initialized() {
         static INIT: Once = Once::new();
         INIT.call_once(pyo3::prepare_freethreaded_python);
+    }
+
+    fn skip_if_numpy_unavailable(py: Python<'_>) -> bool {
+        match PyModule::import_bound(py, "numpy") {
+            Ok(_) => false,
+            Err(err) => {
+                if err.is_instance_of::<PyModuleNotFoundError>(py) {
+                    eprintln!(
+                        "skipping numpy-dependent test: NumPy is unavailable in current Python runtime ({})",
+                        format_pyerr(py, err)
+                    );
+                    true
+                } else {
+                    panic!("unexpected Python import error while checking numpy: {}", format_pyerr(py, err));
+                }
+            }
+        }
+    }
+
+    fn format_pyerr(py: Python<'_>, err: PyErr) -> String {
+        match err.value_bound(py).str() {
+            Ok(s) => s.to_string_lossy().to_string(),
+            Err(_) => "unprintable python error".to_string(),
+        }
     }
 
     #[test]
@@ -372,6 +398,9 @@ mod tests {
         let computer = FeatureComputer::new();
         ensure_python_initialized();
         Python::with_gil(|py| {
+            if skip_if_numpy_unavailable(py) {
+                return;
+            }
             let open = PyArray1::from_vec_bound(py, vec![1.0, 2.0]);
             let high = PyArray1::from_vec_bound(py, vec![1.1, 2.1]);
             let low = PyArray1::from_vec_bound(py, vec![0.9, 1.9]);
@@ -395,6 +424,9 @@ mod tests {
         let computer = FeatureComputer::new();
         ensure_python_initialized();
         Python::with_gil(|py| {
+            if skip_if_numpy_unavailable(py) {
+                return;
+            }
             let open = PyArray1::from_vec_bound(py, vec![1.0, 2.0]);
             let high = PyArray1::from_vec_bound(py, vec![1.1, 2.1]);
             let low = PyArray1::from_vec_bound(py, vec![0.9, 1.9]);
@@ -418,6 +450,9 @@ mod tests {
         let computer = FeatureComputer::new();
         ensure_python_initialized();
         Python::with_gil(|py| {
+            if skip_if_numpy_unavailable(py) {
+                return;
+            }
             let open = PyArray1::from_vec_bound(py, vec![100.0, 101.0, 102.0, 103.0, 104.0, 105.0]);
             let high = PyArray1::from_vec_bound(py, vec![101.0, 102.0, 103.0, 104.0, 105.0, 106.0]);
             let low = PyArray1::from_vec_bound(py, vec![99.0, 100.0, 101.0, 102.0, 103.0, 104.0]);

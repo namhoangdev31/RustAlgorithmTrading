@@ -139,7 +139,12 @@ cargo build -p execution-engine --release
 ### Run Tests
 
 ```bash
-cargo test --workspace
+# Recommended for PyO3 crates that use NumPy in tests:
+PYO3_PYTHON="$PWD/../.venv/bin/python" cargo test --workspace
+
+# If running directly inside rust/signal-bridge:
+cd signal-bridge
+PYO3_PYTHON="$PWD/../../.venv/bin/python" cargo test
 ```
 
 ### Check Code
