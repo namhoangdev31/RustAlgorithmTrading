@@ -28,7 +28,6 @@ if str(SRC_ROOT) not in sys.path:
 
 from backtesting.data_handler import HistoricalDataHandler
 from backtesting.engine import BacktestEngine
-from backtesting.execution_handler import SimulatedExecutionHandler
 from backtesting.portfolio_handler import FixedAmountSizer, PortfolioHandler
 from backtesting.risk_integrity import compare_risk_decision_traces
 from strategies.base import Signal, SignalType, Strategy
@@ -289,13 +288,6 @@ def run_single_backtest(
     seed: int,
 ) -> tuple[RunTelemetry, dict[str, Any]]:
     data_handler = HistoricalDataHandler(symbols=symbols, data_dir=data_dir)
-    execution_handler = SimulatedExecutionHandler(
-        commission_rate=0.001,
-        slippage_bps=5.0,
-        market_impact_bps=2.0,
-        partial_fill_probability=0.0,
-        random_seed=seed,
-    )
     portfolio_handler = PortfolioHandler(
         initial_capital=1_000_000.0,
         position_sizer=FixedAmountSizer(50_000.0),

@@ -29,7 +29,6 @@ if str(SRC_ROOT) not in sys.path:
 
 from backtesting.data_handler import HistoricalDataHandler
 from backtesting.engine import BacktestEngine
-from backtesting.execution_handler import SimulatedExecutionHandler
 from backtesting.integrity import (
     IntegrityMetrics,
     SoakRunTelemetry,
@@ -235,13 +234,6 @@ def run_single(
     seed: int,
 ) -> tuple[SoakRunTelemetry, dict[str, Any], float]:
     data_handler = HistoricalDataHandler(symbols=symbols, data_dir=data_dir)
-    execution_handler = SimulatedExecutionHandler(
-        commission_rate=0.001,
-        slippage_bps=5.0,
-        market_impact_bps=2.0,
-        partial_fill_probability=0.0,
-        random_seed=seed,
-    )
     portfolio_handler = PortfolioHandler(
         initial_capital=1_000_000.0,
         position_sizer=FixedAmountSizer(60_000.0),
