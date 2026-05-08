@@ -1,0 +1,84 @@
+package main
+
+import (
+	"context"
+	"log/slog"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
+	"trading/observability-api/internal/health"
+	internalhttp "trading/observability-api/internal/http"
+	"trading/observability-api/internal/storage"
+	"trading/observability-api/internal/worker"
+	"trading/observability-api/internal/ws"
+)
+
+func main() {
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	slog.SetDefault(logger)
+
+	port := getenvOrDefault("PORT", "8080")
+	duckDBPath := getenvOrDefault("DUCKDB_PATH", "data/observability.duckdb")
+	sqlitePath := getenvOrDefault("SQLITE_PATH", "data/trading_operational.db")
+
+	duckReader, duckErr := storage.NewDuckDBReader(duckDBPath)
+	if duckErr != nil {
+		slog.Warn("duckdb_unavailable", "path", duckDBPath, "error", duckErr)
+	}
+	sqliteReader, sqliteErr := storage.NewSQLiteReader(sqlitePath)
+	if sqliteErr != nil {
+		slog.Warn("sqlite_unavailable", "path", sqlitePath, "error", sqliteErr)
+	}
+	store := storage.NewStore(duckReader, sqliteReader)
+	defer func() {
+		if err := store.Close(); err != nil {
+			slog.Warn("store_close_error", "error", err)
+		}
+	}()
+
+	wsManager := ws.NewManager()
+	go wsManager.Start()
+
+	collector := worker.NewMetricsCollector(store, wsManager)
+	go collector.Start()
+
+	healthAgg := health.NewAggregator(store, wsManager)
+	handler := internalhttp.SetupRoutes(store, wsManager, healthAgg)
+
+	server := &http.Server{
+		Addr:              ":" + port,
+		Handler:           handler,
+		ReadHeaderTimeout: 10 * time.Second,
+	}
+
+	go func() {
+		slog.Info("go_control_plane_started", "port", port)
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			slog.Error("go_control_plane_listen_error", "error", err)
+			os.Exit(1)
+		}
+	}()
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	collector.Stop()
+	wsManager.Stop()
+	if err := server.Shutdown(ctx); err != nil {
+		slog.Error("go_control_plane_shutdown_error", "error", err)
+	}
+}
+
+func getenvOrDefault(key string, fallback string) string {
+	if v := os.Getenv(key); v != "" {
+		return v
+	}
+	return fallback
+}

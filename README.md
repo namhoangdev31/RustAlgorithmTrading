@@ -7,6 +7,14 @@ RustAlgorithmTrading is a production-focused algorithmic trading platform that s
 
 The repository now follows a **static operations documentation model** (no weekly gate artifacts in active docs).
 
+## Current Rollout Status (Phase 3)
+
+- Go control-plane implementation is in place and functional parity gates have been executed with real artifacts.
+- Current verdict remains **NO-GO** for full production cutover.
+- Active blockers:
+  - DuckDB compatibility issue on Go read path (`duckdb_unavailable` / deserialize error).
+  - Hard-gate completion pending for soak and rollback drill.
+
 ## Quick Start
 
 ### 1) Install dependencies
@@ -85,6 +93,15 @@ Read in this order:
 Roadmap lifecycle has been consolidated to one static summary:
 
 - `docs/roadmap/FINAL_ROADMAP_SUMMARY.md`
+- `docs/roadmap/PHASE3_GO_NO_GO_EVIDENCE.md`
+
+## Phase 3 Gate Commands
+
+```bash
+python -m pytest tests/observability/test_go_parity.py -q
+python -m pytest tests/observability -q
+python -m pytest tests/integration/test_observability_integration.py -q
+```
 
 ## Scripts Hub
 

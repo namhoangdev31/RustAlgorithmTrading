@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="LanguageServerSettingsState">
+    <state>
+      <map>
+        <entry key="a4c3071b-65c7-48ed-93d0-d1c0b6a9c1fa">
+          <value>
+            <LanguageServerDefinitionSettings>
+              <option name="errorReportingKind" value="none" />
+            </LanguageServerDefinitionSettings>
+          </value>
+        </entry>
+      </map>
+    </state>
+  </component>
+</project>

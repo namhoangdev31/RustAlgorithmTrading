@@ -45,6 +45,7 @@ class AlpacaClient:
         self.api_key = api_key or os.getenv("ALPACA_API_KEY")
         self.secret_key = secret_key or os.getenv("ALPACA_SECRET_KEY")
         self.base_url = base_url or os.getenv("ALPACA_BASE_URL", "https://paper-api.alpaca.markets")
+        self.paper = paper or os.getenv("ALPACA_PAPER", "true").lower() == "true"
 
         if not self.api_key or not self.secret_key:
             raise ValueError("Alpaca API credentials not found in environment variables")

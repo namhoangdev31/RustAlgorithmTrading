@@ -61,14 +61,19 @@ def run_benchmark():
         start_time = time.perf_counter()
         _ = rust_engine.create_features(data)
         rust_time = (time.perf_counter() - start_time) * 1000
-        wrapper_time = rust_engine.rust_feature_computer.last_batch_wrapper_time_ms
-        compute_boundary_time = rust_engine.rust_feature_computer.last_batch_compute_time_ms
-        boundary_overhead = max(wrapper_time - (compute_boundary_time or 0.0), 0.0)
+        
+        if rust_engine.rust_feature_computer:
+            wrapper_time = rust_engine.rust_feature_computer.last_batch_wrapper_time_ms
+            compute_boundary_time = rust_engine.rust_feature_computer.last_batch_compute_time_ms
+            boundary_overhead = max(wrapper_time - (compute_boundary_time or 0.0), 0.0)
 
-        print(f"  Rust Pipeline (incl. FFI): {rust_time:.2f} ms")
-        print(f"  Rust wrapper time: {wrapper_time:.2f} ms")
-        print(f"  Rust compute boundary time: {compute_boundary_time:.2f} ms")
-        print(f"  Estimated FFI/object overhead: {boundary_overhead:.2f} ms")
+            print(f"  Rust Pipeline (incl. FFI): {rust_time:.2f} ms")
+            print(f"  Rust wrapper time: {wrapper_time:.2f} ms")
+            print(f"  Rust compute boundary time: {compute_boundary_time:.2f} ms")
+            print(f"  Estimated FFI/object overhead: {boundary_overhead:.2f} ms")
+        else:
+            print(f"  Rust Pipeline (fallback/unknown): {rust_time:.2f} ms")
+            
         print(f"  Speedup: {py_time / rust_time:.2f}x")
 
 if __name__ == "__main__":

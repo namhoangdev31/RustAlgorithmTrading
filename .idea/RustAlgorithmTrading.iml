@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="JAVA_MODULE" version="4">
+  <component name="Go" enabled="true" />
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$">
@@ -16,6 +17,7 @@
       <sourceFolder url="file://$MODULE_DIR$/rust/signal-bridge" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/rust" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/go" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/.venv" />
       <excludeFolder url="file://$MODULE_DIR$/tests/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/target" />

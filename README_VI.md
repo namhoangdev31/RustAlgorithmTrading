@@ -7,6 +7,14 @@ RustAlgorithmTrading là nền tảng giao dịch thuật toán tập trung vậ
 
 Kho tài liệu đã chuyển sang mô hình **vận hành tĩnh** (không còn bộ tài liệu tuần trong cây active).
 
+## Trạng thái rollout hiện tại (Phase 3)
+
+- Go control-plane đã được triển khai và đã có artifact chạy gate thực tế.
+- Verdict hiện tại vẫn là **NO-GO** cho cutover production toàn phần.
+- Blocker chính:
+  - Lỗi tương thích DuckDB ở Go read path (`duckdb_unavailable` / deserialize error).
+  - Chưa hoàn tất soak test và rollback drill theo hard-gate.
+
 ## Khởi động nhanh
 
 ### 1) Cài dependencies
@@ -85,6 +93,15 @@ Chuẩn công nghệ active:
 Tài liệu roadmap tuần đã được gom về một file tổng kết:
 
 - `docs/roadmap/FINAL_ROADMAP_SUMMARY.md`
+- `docs/roadmap/PHASE3_GO_NO_GO_EVIDENCE.md`
+
+## Lệnh gate cho Phase 3
+
+```bash
+python -m pytest tests/observability/test_go_parity.py -q
+python -m pytest tests/observability -q
+python -m pytest tests/integration/test_observability_integration.py -q
+```
 
 ## Hub scripts
 

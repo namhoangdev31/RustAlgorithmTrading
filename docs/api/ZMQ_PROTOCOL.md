@@ -115,6 +115,19 @@ Publish and receive paths must log with `[cid:{correlation_id}]` whenever a corr
 
 Messages carrying a top-level or nested `decision`/`disposition` of `REJECT` are blocked at the subscriber entry point. This prevents rejected risk decisions from flowing into execution or portfolio mutation paths.
 
+### Phase 3 Relationship Note
+
+Phase 3 introduces a Go observability control-plane, but it does not alter the public ZMQ envelope contract.
+The following fields remain mandatory and unchanged:
+
+- `schema_version`
+- `correlation_id`
+- `event_type`
+- `timestamp`
+- `payload`
+
+Any Phase 3 GO/NO-GO decision is operational and does not imply a protocol version change for this document.
+
 ## Topic Structure
 
 Topics follow a hierarchical naming convention:

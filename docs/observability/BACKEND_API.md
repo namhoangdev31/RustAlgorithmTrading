@@ -4,6 +4,18 @@
 
 The Observability Backend provides a production-ready FastAPI application with WebSocket streaming for real-time monitoring of the algorithmic trading system.
 
+Phase 3 note:
+- FastAPI is the compatibility baseline.
+- Go control-plane (`go/`) is the target serving runtime for Big Bang cutover once hard-gate parity is proven.
+- Trading decision ownership remains outside observability serving in both implementations.
+
+Current Phase 3 status:
+- Functional gates are passing with recorded artifacts.
+- Full cutover verdict is currently **NO-GO** due to:
+  - DuckDB compatibility issue on Go read path (`duckdb_unavailable` deserialize error).
+  - Pending soak test and rollback drill.
+- Canonical status source: `docs/roadmap/PHASE3_GO_NO_GO_EVIDENCE.md`.
+
 ## Architecture
 
 ```
@@ -93,6 +105,13 @@ python scripts/start_observability_api.py --port 8080
 
 # Multiple workers (production)
 python scripts/start_observability_api.py --workers 4
+```
+
+### Starting Go Control-Plane (Phase 3)
+
+```bash
+cd go
+PORT=8080 DUCKDB_PATH=../data/metrics.duckdb SQLITE_PATH=../data/trades.db go run ./cmd/server/main.go
 ```
 
 ### Using uvicorn directly

@@ -1,6 +1,6 @@
 # FINAL_ROADMAP_SUMMARY.md
 
-Updated: 2026-05-07  
+Updated: 2026-05-08  
 Mode: Static Operational Summary (post-weekly lifecycle)
 
 ## 1) System Status
@@ -240,6 +240,37 @@ Validation gate (minimum):
 - Go unit and integration tests for API response parity, WebSocket fanout, auth/rate-limit, health/readiness, and metrics ingestion.
 - Soak tests with p95/p99 latency and error-budget comparison against baseline.
 
+Phase 3 locked execution decisions:
+
+- Go stack is fixed to `chi` + `gorilla/websocket`.
+- Rollout is Big Bang switch only (no progressive traffic split in v1).
+- Cutover requires hard-gate PASS with evidence artifacts.
+- Go reads DuckDB/SQLite directly in v1.
+- Auth/rate limit baseline is `X-API-Key` + key/IP throttling.
+- Go remains control-plane only and cannot mutate trading exposure.
+
+API Parity Matrix (FastAPI vs Go):
+| Endpoint | Method | Response Schema | Status Code | Notes |
+|---|---|---|---|---|
+| `/health` | GET | `SystemHealth` | 200 | Basic health check |
+| `/health/ready` | GET | Custom JSON | 200/503 | Readiness check |
+| `/health/live` | GET | Custom JSON | 200 | Liveness check |
+| `/api/metrics/current` | GET | `MetricsSnapshot` | 200 | Current metrics |
+| `/api/metrics/history` | POST | `MetricsHistoryResponse` | 200 | Historical metrics query |
+| `/api/metrics/symbols` | GET | `{"symbols": [], "count": 0}` | 200 | Tracked symbols |
+| `/api/metrics/summary` | GET | Custom JSON | 200 | High-level metrics summary |
+| `/api/trades/` | GET | `TradeHistoryResponse` | 200 | Trade history with filters |
+| `/api/trades/{trade_id}` | GET | `Trade` | 200/404 | Trade details |
+| `/api/trades/stats/summary` | GET | Custom JSON | 200 | Trade statistics |
+| `/api/trades/execution/quality`| GET | Custom JSON | 200 | Execution quality |
+| `/api/system/health` | GET | `SystemHealth` | 200 | Comprehensive system health |
+| `/api/system/performance` | GET | `PerformanceMetrics` | 200 | Performance metrics |
+| `/api/system/components` | GET | Custom JSON | 200 | Component statuses |
+| `/api/system/logs/recent` | GET | Custom JSON | 200 | Recent logs |
+| `/api/system/alerts/acknowledge/{id}` | POST | Custom JSON | 200 | Acknowledge alert |
+| `/api/system/stats` | GET | Custom JSON | 200 | System stats |
+| `/ws/metrics` | WS | 10Hz streaming | 101 | WebSocket fanout, ping/pong |
+
 Quality and exit criteria:
 
 - End-to-end stability is maintained or improved.
@@ -253,6 +284,26 @@ Rollback strategy:
 
 - Keep FastAPI behind an internal compatibility flag until Go has passed parity and soak gates.
 - Preserve deployment topology that can route dashboard/API traffic back to FastAPI during migration.
+
+Current execution status (as of 2026-05-08):
+
+- Functional gate runs have been executed with real artifacts:
+  - `tests/observability/test_go_parity.py`
+  - `tests/observability`
+  - `tests/integration/test_observability_integration.py`
+- Current verdict is **NO-GO** for full production cutover.
+- Primary blockers:
+  - Go DuckDB read-path compatibility (`duckdb_unavailable` deserialize error).
+  - Hard-gate not complete until soak test and rollback drill are executed and signed off.
+- Canonical evidence record:
+  - `docs/roadmap/PHASE3_GO_NO_GO_EVIDENCE.md`
+
+Phase 3 module checklist (implementation readiness):
+
+- `docs`: update parity matrix, cutover runbook, evidence template, and PLAYBOOK routing.
+- `go`: implement server entrypoint, auth middleware, rate limiter, health aggregator, WS fanout, and DuckDB/SQLite adapters.
+- `tests`: add/refresh Go parity tests for API/WS/auth/rate-limit and integration checks for cutover artifacts.
+- `src`: keep Python observability as compatibility baseline with explicit serving toggle for hard cutover and rollback.
 
 ## 7) Risk Register and Mitigations
 

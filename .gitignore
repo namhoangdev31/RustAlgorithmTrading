@@ -77,3 +77,6 @@ data/backtest_results/*.json
 logs/
 tests/logs/
 tests/reports/
+go/.cache/
+go/observability-api
+data/benchmarks/

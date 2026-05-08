@@ -10,10 +10,11 @@ Features:
 """
 
 import asyncio
+import os
 from contextlib import asynccontextmanager
 from typing import Dict, Optional, Any
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from loguru import logger
@@ -126,10 +127,10 @@ class ObservabilityAPI:
                 return_exceptions=True,
             )
 
-            metrics["market_data"] = results[0] if not isinstance(results[0], Exception) else {}
-            metrics["strategy"] = results[1] if not isinstance(results[1], Exception) else {}
-            metrics["execution"] = results[2] if not isinstance(results[2], Exception) else {}
-            metrics["system"] = results[3] if not isinstance(results[3], Exception) else {}
+            metrics["market_data"] = results[0] if not isinstance(results[0], BaseException) else {}
+            metrics["strategy"] = results[1] if not isinstance(results[1], BaseException) else {}
+            metrics["execution"] = results[2] if not isinstance(results[2], BaseException) else {}
+            metrics["system"] = results[3] if not isinstance(results[3], BaseException) else {}
         except Exception as e:
             logger.error(f"[cid:INIT] Error collecting metrics: {e}")
 
@@ -139,15 +140,40 @@ class ObservabilityAPI:
 # Global API instance
 api_state = ObservabilityAPI()
 
-
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> Any:
     """Manage application lifecycle."""
-    # Startup
-    await api_state.start()
-    yield
-    # Shutdown
-    await api_state.stop()
+    # Check if Go Control Plane is active
+    go_control_plane_enabled = os.environ.get("GO_CONTROL_PLANE_ENABLED", "false").lower() == "true"
+    
+    if go_control_plane_enabled:
+        logger.info("[cid:INIT] Go Control Plane enabled. FastAPI serving path disabled.")
+        # Start collectors only, decouple API serving
+        api_state.collectors["market_data"] = MarketDataCollector()
+        api_state.collectors["strategy"] = StrategyCollector()
+        api_state.collectors["execution"] = ExecutionCollector()
+        api_state.collectors["system"] = SystemCollector()
+        
+        for name, collector in api_state.collectors.items():
+            try:
+                await collector.start()
+                logger.info(f"[cid:INIT] Started {name} collector in detached mode")
+            except Exception as e:
+                logger.error(f"[cid:INIT] Failed to start {name} collector: {e}")
+                
+        yield
+        
+        for name, collector in api_state.collectors.items():
+            try:
+                await collector.stop()
+            except Exception as e:
+                logger.error(f"[cid:INIT] Error stopping {name} collector: {e}")
+    else:
+        # Full Startup
+        await api_state.start()
+        yield
+        # Full Shutdown
+        await api_state.stop()
 
 
 # Create FastAPI app
@@ -157,6 +183,9 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan,
 )
+
+
+FASTAPI_SERVING_ENABLED = os.environ.get("FASTAPI_SERVING_ENABLED", "true").lower() == "true"
 
 # CORS configuration for frontend
 app.add_middleware(
@@ -168,6 +197,30 @@ app.add_middleware(
 )
 
 
+@app.middleware("http")
+async def fastapi_serving_guard(request: Request, call_next: Any) -> Any:
+    """
+    Optional serving guard for Phase 3 cutover.
+
+    When FASTAPI_SERVING_ENABLED=false, FastAPI remains up for compatibility
+    lifecycle but rejects non-health HTTP serving routes so traffic can be
+    switched hard to Go control-plane.
+    """
+    if FASTAPI_SERVING_ENABLED:
+        return await call_next(request)
+
+    if request.url.path in {"/health", "/health/live", "/health/ready"}:
+        return await call_next(request)
+
+    return JSONResponse(
+        status_code=503,
+        content={
+            "detail": "FastAPI serving path disabled by FASTAPI_SERVING_ENABLED=false",
+            "go_control_plane_enabled": True,
+        },
+    )
+
+
 # WebSocket endpoint for real-time streaming
 @app.websocket("/ws/metrics")
 async def websocket_metrics_endpoint(websocket: WebSocket) -> None:
@@ -177,6 +230,10 @@ async def websocket_metrics_endpoint(websocket: WebSocket) -> None:
     Streams metrics at 10Hz with < 50ms latency.
     Supports automatic reconnection and heartbeat.
     """
+    if not FASTAPI_SERVING_ENABLED:
+        await websocket.close(code=1008, reason="FastAPI websocket disabled; use Go control-plane")
+        return
+
     client_id = await api_state.websocket_manager.connect(websocket)
 
     try:

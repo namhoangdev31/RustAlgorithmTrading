@@ -72,6 +72,24 @@ Execution rules:
 - `tests/fixtures/phase2/risk_decision_golden.json`: Golden risk decision spec used by Rust-only integrity checks.
 - `docs/roadmap/PHASE2_GO_NO_GO_EVIDENCE.md`: Phase 2.2 GO/NO-GO evidence, fail-closed rollback triggers, and sign-off checklist.
 
+### 2.6 Phase 3 Go Control-Plane Artifacts
+
+- `docs/observability/PHASE3_API_PARITY_MATRIX.md`: FastAPI-vs-Go endpoint and websocket parity contract for v1 cutover scope.
+- `docs/observability/PHASE3_CUTOVER_RUNBOOK.md`: Big Bang switch runbook, hard-gate conditions, and rollback procedure.
+- `docs/roadmap/PHASE3_GO_NO_GO_EVIDENCE.md`: Phase 3 GO/NO-GO execution evidence, blockers, and sign-off status.
+- `data/benchmarks/phase3/`: Runtime artifacts for parity/observability/integration gates and health/lock snapshots.
+
+### 2.7 Current Phase 3 Status
+
+- Functional gates executed with real artifacts:
+  - `tests/observability/test_go_parity.py` (non-skip pass run)
+  - `tests/observability`
+  - `tests/integration/test_observability_integration.py`
+- Current verdict: **NO-GO**
+- Blocking items:
+  - Go DuckDB read-path compatibility (`duckdb_unavailable` deserialize error).
+  - Hard-gate completion pending soak test and rollback drill.
+
 ---
 
 ## 3) Python Ownership Map (`src/`)
@@ -306,7 +324,24 @@ Execution rules:
 
 ---
 
-## 5) Test Ownership Map (`tests/`)
+## 5) Go Ownership Map (`go/`)
+
+| File/Module | Ownership | Key types/functions | Primary tests |
+|---|---|---|---|
+| `go/cmd/server/main.go` | Entrypoint for Phase 3 API | `main` | `tests/observability/test_go_parity.py` |
+| `go/internal/http/` | HTTP Routes & Middleware | Route handlers, Auth/CORS Middleware | `tests/observability/test_go_parity.py` |
+| `go/internal/auth/apikey.go` | Internal API key gate | `APIKeyAuth` | `go/internal/http/routes_test.go`, `tests/observability/test_go_parity.py` |
+| `go/internal/ratelimit/limiter.go` | Key/IP throttling | `Limiter`, `Middleware` | `go/internal/http/routes_test.go` |
+| `go/internal/ws/` | WebSocket Manager | `WebSocketManager`, `Broadcast` | `tests/observability/test_go_parity.py` |
+| `go/internal/storage/` | DuckDB/SQLite read adapters | `DuckDBReader`, `SQLiteReader`, `Store` | `tests/observability/test_go_parity.py` |
+| `go/internal/health/` | Health and readiness aggregator | `Aggregator`, `Check` | `tests/observability/test_go_parity.py` |
+| `go/internal/worker/collector.go` | 10Hz WS metrics broadcast worker | `MetricsCollector` | `tests/observability/test_go_parity.py` |
+| `go/internal/http/routes_test.go` | Go HTTP/auth/CORS gate tests | route tests | `cd go && go test ./...` |
+| `go/internal/ws/manager_test.go` | Go websocket handshake/ping-pong tests | websocket tests | `cd go && go test ./...` |
+
+---
+
+## 6) Test Ownership Map (`tests/`)
 
 ### 5.1 Unit tests
 
@@ -351,7 +386,7 @@ Execution rules:
 | Signal mismatch | `docs/api/ZMQ_PROTOCOL.md` | `src/strategies/strategy_router.py`, `rust/signal-bridge/src/indicators.rs` | `tests/unit/test_strategy_signals.py`, `tests/integration/test_backtest_signal_flow.py` |
 | Risk reject anomalies | `docs/guides/RISK_MANAGEMENT_GUIDE.md` | `rust/risk-manager/src/limits.rs` | `tests/unit/test_risk_manager.rs` |
 | Execution retry/slippage | `docs/architecture/component-interfaces.md` | `rust/execution-engine/src/retry.rs`, `rust/execution-engine/src/slippage.rs` | `tests/unit/test_retry.rs`, `tests/unit/test_slippage.rs` |
-| Observability API/storage | `docs/observability/BACKEND_API.md` | `src/observability/api/main.py`, `src/observability/storage/duckdb_client.py` | `tests/observability/`, `tests/integration/test_observability_integration.py` |
+| Observability API/storage | `docs/observability/BACKEND_API.md`, `docs/observability/PHASE3_API_PARITY_MATRIX.md`, `docs/observability/PHASE3_CUTOVER_RUNBOOK.md` | `go/internal/http/routes.go`, `go/internal/ws/manager.go`, `src/observability/api/main.py`, `src/observability/storage/duckdb_client.py` | `tests/observability/test_go_parity.py`, `tests/integration/test_observability_integration.py` |
 | DB persistence/query | `docs/STORAGE_GUIDE.md` | `rust/database/src/{schema,query,connection}.rs` | `tests/integration/test_duckdb_storage.rs` |
 
 ---
@@ -370,6 +405,15 @@ Execution rules:
 - `rust/execution-engine/**` -> `cd rust && cargo test -p execution-engine`
 - `rust/database/**` -> `cd rust && cargo test -p database`
 - `rust/common/**` -> `cd rust && cargo test -p common`
+- `go/**` -> `cd go && go test ./...`
+
+For Phase 3 cutover hard-gate execution order, run:
+
+- `python -m pytest tests/observability/test_go_parity.py -q`
+- `python -m pytest tests/observability -q`
+- `python -m pytest tests/integration/test_observability_integration.py -q`
+- `python scripts/run_go_soak_test.py` (required before GO)
+- rollback drill per `docs/observability/PHASE3_CUTOVER_RUNBOOK.md` (required before GO)
 
 For cross-runtime contract edits (`src/bridge/**`, `rust/signal-bridge/**`, `rust/common/src/messaging.rs`), run both Python integration and Rust crate tests.
 

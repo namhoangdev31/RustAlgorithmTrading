@@ -59,10 +59,10 @@ class FeatureEngine:
 
         self.feature_backend = feature_backend
         self.rust_fallback_to_python = rust_fallback_to_python
-        self.rust_feature_computer = rust_feature_computer
+        self.rust_feature_computer: Optional[RustFeatureComputer] = rust_feature_computer
+        self.rust_feature_computer = RustFeatureComputer()
 
         self.indicators = TechnicalIndicators()
-
         logger.info(f"Initialized FeatureEngine (backend: {self.feature_backend})")
 
     def _should_use_rust(self, feature_config: Optional[Dict[str, Any]] = None) -> bool:

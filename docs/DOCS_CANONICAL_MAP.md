@@ -67,6 +67,7 @@ Weekly lifecycle artifacts are retired from active operations and consolidated t
 - `docs/roadmap/FINAL_ROADMAP_SUMMARY.md`
 - `docs/roadmap/PHASE1_GO_NO_GO_EVIDENCE.md`
 - `docs/roadmap/PHASE2_GO_NO_GO_EVIDENCE.md`
+- `docs/roadmap/PHASE3_GO_NO_GO_EVIDENCE.md`
 
 ## 4) Active Technology Posture
 
