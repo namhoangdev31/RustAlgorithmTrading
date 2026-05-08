@@ -226,6 +226,7 @@ mod performance_load_tests {
             trailing_stop_percent: 3.0,
             enable_circuit_breaker: true,
             max_loss_threshold: 1000.0,
+            sizing_amount: 0.0,
         };
 
         let mut stop_manager = StopManager::new(risk_config);

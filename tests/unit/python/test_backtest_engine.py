@@ -1,252 +1,161 @@
-import pytest
-import pandas as pd
-import numpy as np
+from __future__ import annotations
+
 from datetime import datetime, timezone
 from typing import Any
-from unittest.mock import MagicMock
 
-import backtesting.engine as engine_module
-from backtesting.engine import BacktestEngine
+import pandas as pd
+import pytest
+
+from backtesting.engine import BacktestEngine, StrategyBatchInterfaceRequired
 from backtesting.data_handler import HistoricalDataHandler
-from backtesting.execution_handler import SimulatedExecutionHandler
 from backtesting.portfolio_handler import PortfolioHandler
-from backtesting.position_sizer import FixedAmountSizer
-from models.events import SignalEvent, MarketEvent, EventType
-from strategies.base import Strategy, Signal, SignalType
-from models.governance import ControlRecord, ControlStatus, ControlType
+from models.events import SignalEvent
+from strategies.base import Signal, Strategy
 
 
-class MockStrategy(Strategy):
-    """Simple mock strategy for testing"""
-
-    def __init__(self, name="MockStrategy", signals_to_generate=None):
+class BatchMockStrategy(Strategy):
+    def __init__(self, name: str = "BatchMockStrategy"):
         super().__init__(name)
-        self.signals_to_generate = signals_to_generate or []
 
     def generate_signals(self, data: Any) -> list[Signal]:
-        """Return predefined signals"""
-        return self.signals_to_generate
+        return []
+
+    def generate_signal_frame(
+        self, data_by_symbol: dict[str, pd.DataFrame], context: Any = None
+    ) -> pd.DataFrame:
+        rows = []
+        for symbol, df in data_by_symbol.items():
+            if len(df) >= 25:
+                row = df.iloc[24]
+                rows.append(
+                    {
+                        "timestamp": row["timestamp"],
+                        "symbol": symbol,
+                        "signal_type": "LONG",
+                        "strength": 1.0,
+                        "strategy_id": self.name,
+                        "signal_id": f"{symbol}:25:LONG",
+                    }
+                )
+        return pd.DataFrame(
+            rows,
+            columns=["timestamp", "symbol", "signal_type", "strength", "strategy_id", "signal_id"],
+        )
 
     def calculate_position_size(
         self, signal: Signal, account_value: float, current_position: float = 0.0
     ) -> float:
-        """Fixed position size of 10 shares"""
         return 10.0
 
 
-class TestBacktestEngine:
-    """Test engine initialization and core loop"""
+class LegacyOnlyStrategy(Strategy):
+    def __init__(self):
+        super().__init__("LegacyOnlyStrategy")
 
-    def test_initialization(self, data_handler, execution_handler, portfolio_handler):
-        """Test engine initialization"""
-        strategy = MockStrategy()
-        engine = BacktestEngine(
-            data_handler=data_handler,
-            execution_handler=execution_handler,
-            portfolio_handler=portfolio_handler,
-            strategy=strategy,
-        )
+    def generate_signals(self, data: Any) -> list[Signal]:
+        return []
 
-        assert engine.data_handler == data_handler
-        assert engine.execution_handler == execution_handler
-        assert engine.portfolio_handler == portfolio_handler
-        assert engine.strategy == strategy
-        assert engine.events_processed == 0
-
-    def test_rust_backend_fallback_to_python(
-        self, data_handler, execution_handler, portfolio_handler, monkeypatch
-    ):
-        """Engine should fallback to python backend if Rust runtime init fails."""
-
-        class FailingRustBridge:
-            def __init__(self, *args, **kwargs):
-                raise RuntimeError("bridge unavailable")
-
-        monkeypatch.setattr(engine_module, "RustBacktestBridge", FailingRustBridge)
-
-        strategy = MockStrategy()
-        engine = BacktestEngine(
-            data_handler=data_handler,
-            execution_handler=execution_handler,
-            portfolio_handler=portfolio_handler,
-            strategy=strategy,
-            engine_backend="rust",
-            rust_fallback_to_python=True,
-        )
-
-        assert engine.engine_backend == "python"
-        assert engine.rust_backtest_runtime is None
-
-    def test_run_empty_data(self, temp_data_dir, execution_handler):
-        """Test backtest with empty data"""
-        # Create empty CSV
-        empty_data = pd.DataFrame(columns=["timestamp", "open", "high", "low", "close", "volume"])
-        empty_data.to_csv(temp_data_dir / "EMPTY.csv", index=False)
-
-        data_handler = HistoricalDataHandler(symbols=["EMPTY"], data_dir=temp_data_dir)
-        portfolio_handler = PortfolioHandler(initial_capital=100000.0, data_handler=data_handler)
-        strategy = MockStrategy()
-
-        engine = BacktestEngine(
-            data_handler=data_handler,
-            execution_handler=execution_handler,
-            portfolio_handler=portfolio_handler,
-            strategy=strategy,
-        )
-
-        results = engine.run()
-        assert results["metrics"]["total_trades"] == 0
-        assert results["metrics"]["total_return"] == 0.0
-
-    def test_event_processing_flow(self, data_handler, execution_handler):
-        """Test the full event flow: Market -> Signal -> Order -> Fill"""
-        portfolio_handler = PortfolioHandler(
-            initial_capital=100000.0,
-            data_handler=data_handler,
-            position_sizer=FixedAmountSizer(amount=1000.0),
-        )
-
-        signal = Signal(
-            timestamp=datetime.now(timezone.utc),
-            symbol="TEST",
-            signal_type=SignalType.LONG,
-            price=100.0,
-            quantity=10.0,
-        )
-        strategy = MockStrategy(signals_to_generate=[signal])
-
-        engine = BacktestEngine(
-            data_handler=data_handler,
-            execution_handler=execution_handler,
-            portfolio_handler=portfolio_handler,
-            strategy=strategy,
-        )
-
-        # Run full engine loop
-        results = engine.run()
-
-        # Check if events were processed
-        assert engine.events_processed > 0
-        assert "metrics" in results
+    def calculate_position_size(
+        self, signal: Signal, account_value: float, current_position: float = 0.0
+    ) -> float:
+        return 10.0
 
 
-class TestPositionManagementIntegration:
-    """Test position management through the engine and handlers"""
+class DummyRustRuntime:
+    def __init__(self):
+        self.market_symbols: list[str] = []
+        self.signals = pd.DataFrame()
+        self.processed_signals: list[dict[str, Any]] = []
+        self.state = {
+            "cash": 100000.0,
+            "equity": 100000.0,
+            "realized_pnl": 0.0,
+            "unrealized_pnl": 0.0,
+            "positions": [],
+            "execution_stats": {
+                "events_processed": 25,
+                "signals_processed": 1,
+                "orders_placed": 1,
+                "fills_executed": 1,
+            },
+        }
+        self.decisions = [
+            {
+                "timestamp": "2024-01-02T00:00:00+00:00",
+                "symbol": "TEST",
+                "signal_type": "LONG",
+                "strategy_id": "BatchMockStrategy",
+                "signal_id": "TEST:25:LONG",
+                "sequence_no": 1,
+                "decision": "ALLOW",
+                "reason_code": "NONE",
+            }
+        ]
 
-    def test_successful_trade_cycle(self, data_handler, execution_handler):
-        """Test a full buy-then-sell cycle"""
-        portfolio_handler = PortfolioHandler(
-            initial_capital=100000.0,
-            data_handler=data_handler,
-            position_sizer=FixedAmountSizer(amount=10000.0),
-        )
-        strategy = MockStrategy()
-        engine = BacktestEngine(
-            data_handler=data_handler,
-            execution_handler=execution_handler,
-            portfolio_handler=portfolio_handler,
-            strategy=strategy,
-        )
+    def load_market_data_columnar(self, symbol: str, df: pd.DataFrame) -> None:
+        self.market_symbols.append(symbol)
 
-        # Mock AllocationManager to always allow
-        mock_record = ControlRecord(
-            portfolio_check_id="TEST-CHECK",
-            strategy_set_id="TEST-STRATEGY",
-            control_type=ControlType.ALLOCATION,
-            status=ControlStatus.ALLOW,
-            owner="test_owner",
-            limit_value=10000.0,
-            measured_value=1000.0,
-            breach_flag=False,
-            decision_reason="Mocked allow",
-            evidence_ids=["EV-1"],
-            risk_impact_flag=False,
-            next_action="PROCEED",
-            eta="IMMEDIATE",
-        )
-        engine.allocation_manager.check_allocation = MagicMock(return_value=mock_record)
+    def load_signals(self, signal_frame: pd.DataFrame) -> None:
+        self.signals = signal_frame
 
-        # 1. Update bars to have a current price
-        data_handler.update_bars()
-        bar = data_handler.get_latest_bar("TEST")
+    def run_to_completion(self) -> None:
+        return None
 
-        # 2. Dispatch SignalEvent via engine.dispatch to ensure metrics are updated
-        signal_event = SignalEvent(
-            symbol="TEST",
-            timestamp=bar.timestamp,
-            signal_type="LONG",
-            strength=1.0,
-            strategy_id="MockStrategy",
-        )
-        engine._dispatch_event(signal_event)
+    def state_snapshot(self) -> dict[str, Any]:
+        return self.state
 
-        assert engine.signals_generated == 1
+    def get_new_risk_decisions(self) -> list[dict[str, Any]]:
+        decisions = list(self.decisions)
+        self.decisions.clear()
+        return decisions
 
-        # Check if order event is in the queue
-        assert len(engine.events) == 1
-        order_event = engine.events.popleft()
-        assert order_event.event_type == EventType.ORDER
+    def process_signal(self, **kwargs) -> None:
+        self.processed_signals.append(kwargs)
 
-        # 3. Dispatch the order event
-        engine._dispatch_event(order_event)
-        assert engine.orders_placed == 1
 
-        # Check if fill event is in the queue
-        assert len(engine.events) == 1
-        fill_event = engine.events.popleft()
-        assert fill_event.event_type == EventType.FILL
+def test_initialization_uses_rust_backend(data_handler, portfolio_handler):
+    runtime = DummyRustRuntime()
+    engine = BacktestEngine(
+        data_handler=data_handler,
+        portfolio_handler=portfolio_handler,
+        strategy=BatchMockStrategy(),
+        rust_backtest_runtime=runtime,  # type: ignore[arg-type]
+    )
 
-        # 4. Dispatch the fill event
-        engine._dispatch_event(fill_event)
-        assert engine.fills_executed == 1
+    assert engine.rust_backtest_runtime is runtime
+    assert engine.events_processed == 0
 
-        # Check portfolio position
-        assert "TEST" in portfolio_handler.portfolio.positions
-        assert portfolio_handler.portfolio.positions["TEST"].quantity > 0
 
-    def test_rust_signal_path_skips_python_order_generation(
-        self, data_handler, execution_handler, portfolio_handler
-    ):
-        """In rust mode, SIGNAL events should be delegated to rust runtime directly."""
 
-        class DummyRustRuntime:
-            def __init__(self):
-                self.signals = []
+def test_missing_batch_strategy_interface_fails(data_handler, portfolio_handler):
+    engine = BacktestEngine(
+        data_handler=data_handler,
+        portfolio_handler=portfolio_handler,
+        strategy=LegacyOnlyStrategy(),
+        rust_backtest_runtime=DummyRustRuntime(),  # type: ignore[arg-type]
+    )
 
-            def process_signal(self, **kwargs):
-                self.signals.append(kwargs)
+    with pytest.raises(StrategyBatchInterfaceRequired):
+        engine.run()
 
-            def dispatch_until_idle(self, correlation_id=None):
-                return None
 
-            def get_new_fills(self):
-                return []
+def test_run_uses_rust_batch_runtime(data_handler, portfolio_handler):
+    runtime = DummyRustRuntime()
+    engine = BacktestEngine(
+        data_handler=data_handler,
+        portfolio_handler=portfolio_handler,
+        strategy=BatchMockStrategy(),
+        rust_backtest_runtime=runtime,  # type: ignore[arg-type]
+    )
 
-            def get_state(self):
-                return {"equity": 100000.0, "positions": []}
+    results = engine.run()
 
-        dummy_runtime = DummyRustRuntime()
+    assert runtime.market_symbols == ["TEST"]
+    assert len(runtime.signals) == 1
+    assert engine.events_processed == 25
+    assert engine.signals_generated == 1
+    assert results["execution_stats"]["rust_fallback_count"] == 0
+    assert results["risk_decision_trace"][0]["signal_id"] == "TEST:25:LONG"
 
-        strategy = MockStrategy()
-        engine = BacktestEngine(
-            data_handler=data_handler,
-            execution_handler=execution_handler,
-            portfolio_handler=portfolio_handler,
-            strategy=strategy,
-            engine_backend="rust",
-            rust_backtest_runtime=dummy_runtime,  # type: ignore[arg-type]
-            rust_fallback_to_python=False,
-        )
 
-        event = SignalEvent(
-            symbol="TEST",
-            timestamp=datetime.now(timezone.utc),
-            signal_type="LONG",
-            strength=1.0,
-            strategy_id="MockStrategy",
-        )
 
-        engine._handle_signal_event(event)
-
-        assert len(dummy_runtime.signals) == 1
-        assert len(engine.events) == 0

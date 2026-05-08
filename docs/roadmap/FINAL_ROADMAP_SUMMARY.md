@@ -174,7 +174,9 @@ Current implementation baseline:
 
 - Rust backtest runtime is implemented in `rust/signal-bridge/src/backtest_runtime.rs` and exposed via PyO3 `BacktestRuntime`.
 - Python adapter path is implemented in `src/bridge/backtest_bridge.py`.
-- `BacktestEngine` supports `engine_backend=("python"|"rust")` with `rust_fallback_to_python` rollback behavior.
+- `BacktestEngine` is Rust-only for production backtests; Python fallback is removed and failures fail closed.
+- Production strategies must provide `generate_signal_frame(data_by_symbol, context)` for the Rust full-run batch API.
+- Risk integrity compares Rust traces against frozen golden artifacts instead of regenerating a Python backend baseline.
 - Strict reconciliation gates are enforced in rust mode (`PnL <= 0.10%`, exposure `<= 5 bps`).
 - Canonical Phase 2 Python gate file exists at `tests/test_backtest_integration.py`.
 - Canonical Phase 2 evidence artifact is tracked in `docs/roadmap/PHASE2_GO_NO_GO_EVIDENCE.md`.

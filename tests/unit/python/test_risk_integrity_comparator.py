@@ -8,6 +8,7 @@ def test_risk_integrity_comparator_zero_delta_for_identical_trace():
             "symbol": "AAPL",
             "signal_type": "LONG",
             "strategy_id": "S1",
+            "signal_id": "AAPL:1:LONG",
             "sequence_no": 1,
             "decision": "ALLOW",
             "reason_code": "NONE",
@@ -17,6 +18,7 @@ def test_risk_integrity_comparator_zero_delta_for_identical_trace():
             "symbol": "AAPL",
             "signal_type": "LONG",
             "strategy_id": "S1",
+            "signal_id": "AAPL:2:LONG",
             "sequence_no": 2,
             "decision": "REJECT",
             "reason_code": "SYMBOL_POSITION_LIMIT_EXCEEDED",
@@ -40,6 +42,7 @@ def test_risk_integrity_comparator_detects_false_allow_and_false_reject():
             "symbol": "AAPL",
             "signal_type": "LONG",
             "strategy_id": "S1",
+            "signal_id": "AAPL:1:LONG",
             "sequence_no": 1,
             "decision": "REJECT",
             "reason_code": "SYMBOL_VOLUME_LIMIT_EXCEEDED",
@@ -49,6 +52,7 @@ def test_risk_integrity_comparator_detects_false_allow_and_false_reject():
             "symbol": "AAPL",
             "signal_type": "LONG",
             "strategy_id": "S1",
+            "signal_id": "AAPL:2:LONG",
             "sequence_no": 2,
             "decision": "ALLOW",
             "reason_code": "NONE",
@@ -60,6 +64,7 @@ def test_risk_integrity_comparator_detects_false_allow_and_false_reject():
             "symbol": "AAPL",
             "signal_type": "LONG",
             "strategy_id": "S1",
+            "signal_id": "AAPL:1:LONG",
             "sequence_no": 1,
             "decision": "ALLOW",
             "reason_code": "NONE",
@@ -69,6 +74,7 @@ def test_risk_integrity_comparator_detects_false_allow_and_false_reject():
             "symbol": "AAPL",
             "signal_type": "LONG",
             "strategy_id": "S1",
+            "signal_id": "AAPL:2:LONG",
             "sequence_no": 2,
             "decision": "REJECT",
             "reason_code": "SYMBOL_POSITION_LIMIT_EXCEEDED",
@@ -79,3 +85,34 @@ def test_risk_integrity_comparator_detects_false_allow_and_false_reject():
     assert result.false_allow_delta == 1
     assert result.false_reject_delta == 1
     assert result.blocked_delta == 0
+
+
+def test_risk_integrity_key_uses_signal_id_not_sequence_no_only():
+    baseline = [
+        {
+            "timestamp": "2024-01-01T00:00:00+00:00",
+            "symbol": "AAPL",
+            "signal_type": "LONG",
+            "strategy_id": "S1",
+            "signal_id": "AAPL:25:LONG",
+            "sequence_no": 1,
+            "decision": "ALLOW",
+            "reason_code": "NONE",
+        }
+    ]
+    candidate = [
+        {
+            "timestamp": "2024-01-01T00:00:00+00:00",
+            "symbol": "AAPL",
+            "signal_type": "LONG",
+            "strategy_id": "S1",
+            "signal_id": "AAPL:26:LONG",
+            "sequence_no": 1,
+            "decision": "ALLOW",
+            "reason_code": "NONE",
+        }
+    ]
+
+    result = compare_risk_decision_traces(baseline, candidate)
+    assert result.missing_keys_in_candidate == 1
+    assert result.extra_keys_in_candidate == 1

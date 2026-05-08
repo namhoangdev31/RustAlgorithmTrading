@@ -18,7 +18,6 @@ from backtesting.position_sizer import (
     PercentageOfEquitySizer,
     KellyPositionSizer,
 )
-from risk.allocation_manager import AllocationManager, AllocationPolicy
 from models.governance import ControlStatus
 
 if TYPE_CHECKING:
@@ -46,7 +45,6 @@ class PortfolioHandler:
         initial_capital: float,
         position_sizer: Optional["PositionSizer"] = None,
         data_handler: Optional["HistoricalDataHandler"] = None,
-        allocation_manager: Optional[AllocationManager] = None,
     ):
         """
         Initialize portfolio handler.
@@ -78,14 +76,19 @@ class PortfolioHandler:
         self.initial_capital = initial_capital
         self.data_handler = data_handler
         self.position_sizer = position_sizer or FixedAmountSizer(10000.0)
-        self.allocation_manager = allocation_manager or AllocationManager(AllocationPolicy())
 
         self.portfolio = Portfolio(
             initial_capital=initial_capital,
             cash=initial_capital,
         )
 
-        self.equity_curve: List[Dict] = []
+        # Optimized history storage: Use separate lists for columns instead of list of dicts
+        self._equity_curve_timestamps: List[datetime] = []
+        self._equity_curve_equities: List[float] = []
+        self._equity_curve_cashes: List[float] = []
+        self._equity_curve_total_pnls: List[float] = []
+        self._equity_curve_return_pcts: List[float] = []
+
         self.holdings_history: List[Dict] = []
 
         self.reserved_cash: float = 0.0
@@ -96,389 +99,36 @@ class PortfolioHandler:
 
     def update_timeindex(self, timestamp: datetime):
         """
-        Update portfolio timestamp and record equity snapshot.
-
-        Args:
-            timestamp: Current timestamp
-
-        Raises:
-            TypeError: If timestamp is not a datetime
+        Legacy method kept for minimal compatibility, logic removed as Rust handles state.
         """
-        if not isinstance(timestamp, datetime):
-            raise TypeError(f"timestamp must be a datetime, got {type(timestamp).__name__}")
-
         self.portfolio.timestamp = timestamp
-
-        # Update equity and drawdown state
-        current_prices = {}
-        if self.data_handler:
-            for symbol in self.portfolio.positions.keys():
-                bar = self.data_handler.get_latest_bar(symbol)
-                if bar:
-                    current_prices[symbol] = bar.close
-        self.portfolio.update_equity(current_prices)
-
-        # Record equity curve point
-        self.equity_curve.append(
-            {
-                "timestamp": timestamp,
-                "equity": self.portfolio.equity,
-                "cash": self.portfolio.cash,
-                "total_pnl": self.portfolio.total_pnl,
-                "return_pct": self.portfolio.return_percentage,
-            }
-        )
-
-    def generate_orders(self, signal: SignalEvent) -> List[OrderEvent]:
-        """
-        Generate orders from trading signal with race condition protection.
-
-        CRITICAL FIX: EXIT signals bypass position sizing and always close full position.
-
-        This method prevents cash overdraft when multiple orders are generated
-        in the same bar by tracking reserved cash for pending orders.
-
-        Args:
-            signal: Trading signal (LONG/SHORT/EXIT)
-
-        Returns:
-            List of order events (may be empty if insufficient cash or no position)
-        """
-        orders = []
-
-        # ENHANCED LOGGING: Log incoming signal details
-        logger.debug(
-            f"📥 Signal received: {signal.signal_type} for {signal.symbol}, "
-            f"confidence={signal.strength:.2f}, strategy={signal.strategy_id}"
-        )
-
-        # Get current market price
-        current_price = None
-        if self.data_handler:
-            latest_bar = self.data_handler.get_latest_bar(signal.symbol)
-            if latest_bar:
-                current_price = latest_bar.close
-                logger.debug(f"📊 Current market price for {signal.symbol}: ${current_price:.2f}")
-            else:
-                logger.warning(f"⚠️ No market data available for {signal.symbol}")
-        else:
-            logger.warning("⚠️ No data handler configured for price lookup")
-
-        # Get current position
-        current_position = self.portfolio.positions.get(signal.symbol)
-        current_quantity = current_position.quantity if current_position else 0
-        logger.debug(
-            f"💼 Current position: {current_quantity} shares of {signal.symbol} "
-            f"(value: ${abs(current_quantity * (current_price or 0)):,.2f})"
-        )
-
-        # ================================
-        # CRITICAL FIX: Handle EXIT signals FIRST
-        # ================================
-        # EXIT signals should ALWAYS close the full position, bypassing position sizing
-        # This ensures proper exit execution regardless of position sizer logic
-        # BUG FIX: For SHORT positions (quantity < 0), we need to BUY to close, not SELL
-        if signal.signal_type == "EXIT":
-            if current_quantity == 0:
-                logger.debug(
-                    f"🚫 EXIT signal for {signal.symbol} but no position to close (skipping)"
-                )
-                return orders
-
-            # Close the entire position (negate current quantity)
-            order_quantity = -current_quantity
-
-            # CRITICAL FIX: Determine direction based on position type
-            # - LONG position (quantity > 0): SELL to close
-            # - SHORT position (quantity < 0): BUY to close (cover)
-            if current_quantity > 0:
-                direction = "SELL"
-                action_desc = "selling long"
-            else:
-                direction = "BUY"
-                action_desc = "covering short"
-
-            logger.info(
-                f"🚪 EXIT signal: {action_desc} {abs(current_quantity)} shares of {signal.symbol} "
-                f"(current: {current_quantity} → target: 0)"
-            )
-
-            # Create order to exit position with correct direction
-            order = OrderEvent(
-                timestamp=signal.timestamp,
-                symbol=signal.symbol,
-                order_type="MKT",
-                quantity=abs(order_quantity),
-                direction=direction,
-            )
-
-            orders.append(order)
-
-            logger.info(
-                f"Expected {'proceeds' if direction == 'SELL' else 'cost'}: "
-                f"${abs(order_quantity) * (current_price or 0):,.2f}"
-            )
-
-            return orders
-
-        # ================================
-        # Handle LONG and SHORT signals through position sizer
-        # ================================
-
-        # RACE FIX: Calculate available cash minus reserved cash
-        available_cash = self.portfolio.cash - self.reserved_cash
-
-        logger.debug(
-            f"💰 Cash status: portfolio=${self.portfolio.cash:,.2f}, "
-            f"reserved=${self.reserved_cash:,.2f}, available=${available_cash:,.2f}"
-        )
-
-        if available_cash < 0:
-            logger.warning(
-                f"(portfolio: ${self.portfolio.cash:,.2f}, "
-                f"reserved: ${self.reserved_cash:,.2f}) - skipping order"
-            )
-            return orders
-
-        # Calculate target position based on signal using position sizer
-        target_quantity = self.position_sizer.calculate_position_size(
-            signal=signal,
-            portfolio=self.portfolio,
-            current_price=current_price,
-        )
-
-        logger.debug(
-            f"🎯 Position sizing: signal={signal.signal_type}, current={current_quantity}, "
-            f"target={target_quantity}, delta={target_quantity - current_quantity}"
-        )
-
-        # Calculate order quantity needed to reach target
-        order_quantity = target_quantity - current_quantity
-
-        # Lane 1, 2, 3: Allocation Manager Enforcement
-        if order_quantity != 0 and signal.signal_type != "EXIT":
-            # Simplified proxy for W15: Fetch volatility/regime/drawdown
-            # (In production, these would come from DataHandler/Portfolio state)
-            volatility = 0.015  # Proxy
-            regime = "NORMAL"  # Proxy
-            if hasattr(self.data_handler, "get_regime"):
-                regime = self.data_handler.get_regime(signal.symbol)
-            if hasattr(self.data_handler, "get_volatility"):
-                volatility = self.data_handler.get_volatility(signal.symbol)
-
-            allocation_record = self.allocation_manager.check_allocation(
-                strategy_id=signal.strategy_id,
-                symbol=signal.symbol,
-                requested_quantity=order_quantity,
-                price=current_price or 0.0,
-                volatility=volatility,
-                regime=regime,
-                current_drawdown=self.portfolio.max_drawdown,
-                total_equity=self.portfolio.equity,
-            )
-            self._risk_decision_sequence_no += 1
-            self._risk_decision_trace.append(
-                {
-                    "timestamp": signal.timestamp.isoformat(),
-                    "symbol": signal.symbol,
-                    "signal_type": signal.signal_type,
-                    "strategy_id": signal.strategy_id,
-                    "sequence_no": self._risk_decision_sequence_no,
-                    "decision": allocation_record.status.value,
-                    "reason_code": allocation_record.reason_code or "NONE",
-                }
-            )
-
-            if allocation_record.status == ControlStatus.REJECT:
-                logger.warning(f"🚫 ALLOCATION REJECTED: {allocation_record.decision_reason}")
-                return orders
-            elif allocation_record.status == ControlStatus.BLOCKED:
-                logger.error(
-                    f"🛑 ALLOCATION BLOCKED (DRAWDOWN HALT): {allocation_record.decision_reason}"
-                )
-                return orders
-
-            # Log successful allocation check
-            logger.debug(f"✅ ALLOCATION ALLOWED: {allocation_record.decision_reason}")
-
-        if order_quantity == 0:
-            logger.debug(
-                f"⏸️ No order needed: target position already achieved for {signal.symbol}"
-            )
-            return orders
-
-        # RACE FIX: For BUY orders, validate cash and reserve funds
-        if order_quantity > 0:  # BUY order (opening long or adding to position)
-            if current_price is None or current_price <= 0:
-                logger.warning(f"❌ Invalid price for {signal.symbol}, cannot generate BUY order")
-                return orders
-
-            # Calculate estimated cost (position + commission + slippage buffer)
-            estimated_commission = position_cost * 0.0010  # 10 bps
-            estimated_slippage = position_cost * 0.0020    # 20 bps safety buffer
-            # Add a small fixed dollar safety floor ($10)
-            total_estimated_cost = position_cost + estimated_commission + estimated_slippage + 10.0
-
-            # Check if we have enough available cash
-            if total_estimated_cost > available_cash:
-                # Calculate maximum affordable quantity with conservative buffer (10bps commission + 20bps slippage)
-                max_affordable_value = (available_cash - 10.0) / (1 + 0.0010 + 0.0020)
-                max_affordable_quantity = int(max_affordable_value / current_price)
-
-                if max_affordable_quantity <= 0:
-                    logger.info(
-                        f"need ${total_estimated_cost:,.2f}, have "
-                        f"${available_cash:,.2f} - skipping order"
-                    )
-                    return orders
-
-                # Adjust order quantity to what we can afford
-                logger.info(
-                    f"⚠️ Reducing order for {signal.symbol} from {order_quantity} to "
-                    f"{max_affordable_quantity} shares "
-                    f"(cash constraint: ${available_cash:,.2f} available)"
-                )
-                order_quantity = max_affordable_quantity
-
-                # Recalculate costs with adjusted quantity
-                position_cost = abs(order_quantity) * current_price
-                estimated_commission = position_cost * 0.001
-                estimated_slippage = position_cost * 0.0005
-                total_estimated_cost = position_cost + estimated_commission + estimated_slippage
-
-            # RACE FIX: Reserve cash for this pending BUY order
-            self.reserved_cash += total_estimated_cost
-            logger.debug(
-                f"💰 Reserved ${total_estimated_cost:,.2f} for {signal.symbol} BUY order "
-                f"(total reserved: ${self.reserved_cash:,.2f})"
-            )
-        else:
-            # SELL order - closing or reducing position, no cash needed
-            logger.debug(
-                f"💵 SELL order for {abs(order_quantity)} shares of {signal.symbol} "
-                f"(expected proceeds: ~${abs(order_quantity) * (current_price or 0):,.2f})"
-            )
-
-        # Create order
-        order = OrderEvent(
-            timestamp=signal.timestamp,
-            symbol=signal.symbol,
-            order_type="MKT",
-            quantity=abs(order_quantity),
-            direction="BUY" if order_quantity > 0 else "SELL",
-        )
-
-        orders.append(order)
-
-        # ENHANCED LOGGING: Detailed order generation summary
-        logger.info(
-            f"Signal: {signal.signal_type}, Position: "
-            f"{current_quantity}→{current_quantity + order_quantity}, "
-            f"Cash: ${self.portfolio.cash:,.2f}"
-        )
-
-        return orders
 
     def update_fill(self, fill: FillEvent):
         """
-        Update portfolio with fill event.
-
-        Args:
-            fill: Fill event
-
-        Raises:
-            ValueError: If fill would result in negative cash
+        Legacy method kept for minimal compatibility, logic removed as Rust handles fills.
         """
-        # CRITICAL FIX: Validate that we have enough cash BEFORE updating
-        position_cost = abs(fill.quantity) * fill.fill_price
-        total_cost = position_cost + fill.commission
-
-        # Get position before fill
-        old_position = self.portfolio.positions.get(fill.symbol)
-        old_quantity = old_position.quantity if old_position else 0
-
-        # ENHANCED LOGGING: Fill event details
-        logger.debug(
-            f"📦 FILL RECEIVED: {fill.direction} {fill.quantity} "
-            f"{fill.symbol} @ ${fill.fill_price:.2f} | "
-            f"Cost: ${position_cost:,.2f}, Commission: ${fill.commission:.2f}, "
-            f"Total: ${total_cost:,.2f}"
-        )
-
-        # For BUY orders, check if we have enough cash
-        if fill.quantity > 0:  # BUY (positive quantity means adding shares)
-            if total_cost > self.portfolio.cash:
-                error_msg = (
-                    f"❌ Insufficient cash for fill: need ${total_cost:,.2f} "
-                    f"(position: ${position_cost:,.2f} + commission: ${fill.commission:,.2f}), "
-                    f"but only have ${self.portfolio.cash:,.2f}"
-                )
-                logger.error(error_msg)
-                raise ValueError(error_msg)
-
-        # Update position
-        self.portfolio.update_position(
-            symbol=fill.symbol,
-            quantity=fill.quantity,
-            price=fill.fill_price,
-        )
-
-        # Deduct commission
-        self.portfolio.cash -= fill.commission
-
-        # Final safety check
-        if self.portfolio.cash < 0:
-            error_msg = (
-                f"❌ Portfolio cash went negative: ${self.portfolio.cash:,.2f} "
-                f"after processing {fill.quantity} {fill.symbol} @ ${fill.fill_price:,.2f}"
-            )
-            logger.error(error_msg)
-            raise ValueError(error_msg)
-
-        # Record holdings
-        self.holdings_history.append(
-            {
-                "timestamp": fill.timestamp,
-                "symbol": fill.symbol,
-                "quantity": fill.quantity,
-                "price": fill.fill_price,
-                "commission": fill.commission,
-                "cash": self.portfolio.cash,
-                "equity": self.portfolio.equity,
-            }
-        )
-
-        # Log final position state
-        new_position = self.portfolio.positions.get(fill.symbol)
-        new_quantity = new_position.quantity if new_position else 0
-        logger.debug(
-            f"📊 Position updated: {fill.symbol} {old_quantity}→{new_quantity} shares, "
-            f"Cash: ${self.portfolio.cash:,.2f}, Equity: ${self.portfolio.equity:,.2f}"
-        )
+        pass
 
     def get_equity_curve(self) -> pd.DataFrame:
-        """Get equity curve as DataFrame."""
-        return pd.DataFrame(self.equity_curve)
+        """Get equity curve as DataFrame (Optimized)."""
+        return pd.DataFrame(
+            {
+                "timestamp": self._equity_curve_timestamps,
+                "equity": self._equity_curve_equities,
+                "cash": self._equity_curve_cashes,
+                "total_pnl": self._equity_curve_total_pnls,
+                "return_pct": self._equity_curve_return_pcts,
+            }
+        )
 
     def get_holdings(self) -> pd.DataFrame:
         """Get holdings history as DataFrame."""
         return pd.DataFrame(self.holdings_history)
 
     def clear_reserved_cash(self):
-        """
-        Clear reserved cash after all orders in a bar have been processed.
-
-        This should be called by the engine after processing all fills for a bar
-        to reset the reservation system for the next bar.
-        """
-        if self.reserved_cash > 0:
-            logger.debug(f"🔄 Clearing reserved cash: ${self.reserved_cash:,.2f}")
-            self.reserved_cash = 0.0
+        """Legacy method, logic removed."""
+        pass
 
     def pop_risk_decision_trace(self) -> list[dict[str, Any]]:
-        """
-        Return and clear allocation/risk decisions generated during order creation.
-        """
-        decisions = list(self._risk_decision_trace)
-        self._risk_decision_trace.clear()
-        return decisions
+        """Legacy method, logic removed."""
+        return []

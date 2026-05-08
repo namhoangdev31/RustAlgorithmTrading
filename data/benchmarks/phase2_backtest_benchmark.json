@@ -1,0 +1,588 @@
+{
+  "generated_at_utc": "2026-05-08T04:39:33.595984+00:00",
+  "profiles": [
+    {
+      "profile": {
+        "name": "P10K",
+        "symbols": 20,
+        "bars_per_symbol": 10000
+      },
+      "env_backend_default": "rust",
+      "warmup_runs": 2,
+      "measured_runs": 12,
+      "raw_runs": [
+        {
+          "backend": "rust",
+          "profile": "P10K",
+          "run_index": 0,
+          "warmup": true,
+          "duration_seconds": 0.4307987920474261,
+          "throughput_bars_per_second": 464253.8551454022,
+          "total_events": 204000,
+          "peak_rss_bytes": 154075136,
+          "fallback_count": 0,
+          "reconciliation_failures": 0,
+          "crashed": false,
+          "crash_reason": null
+        },
+        {
+          "backend": "rust",
+          "profile": "P10K",
+          "run_index": 1,
+          "warmup": true,
+          "duration_seconds": 0.4908401248976588,
+          "throughput_bars_per_second": 407464.65061653306,
+          "total_events": 204000,
+          "peak_rss_bytes": 155598848,
+          "fallback_count": 0,
+          "reconciliation_failures": 0,
+          "crashed": false,
+          "crash_reason": null
+        },
+        {
+          "backend": "rust",
+          "profile": "P10K",
+          "run_index": 2,
+          "warmup": false,
+          "duration_seconds": 0.4422992079053074,
+          "throughput_bars_per_second": 452182.586867346,
+          "total_events": 204000,
+          "peak_rss_bytes": 146554880,
+          "fallback_count": 0,
+          "reconciliation_failures": 0,
+          "crashed": false,
+          "crash_reason": null
+        },
+        {
+          "backend": "rust",
+          "profile": "P10K",
+          "run_index": 3,
+          "warmup": false,
+          "duration_seconds": 0.41966783395037055,
+          "throughput_bars_per_second": 476567.3797712402,
+          "total_events": 204000,
+          "peak_rss_bytes": 146636800,
+          "fallback_count": 0,
+          "reconciliation_failures": 0,
+          "crashed": false,
+          "crash_reason": null
+        },
+        {
+          "backend": "rust",
+          "profile": "P10K",
+          "run_index": 4,
+          "warmup": false,
+          "duration_seconds": 0.4293455411680043,
+          "throughput_bars_per_second": 465825.2638560403,
+          "total_events": 204000,
+          "peak_rss_bytes": 146685952,
+          "fallback_count": 0,
+          "reconciliation_failures": 0,
+          "crashed": false,
+          "crash_reason": null
+        },
+        {
+          "backend": "rust",
+          "profile": "P10K",
+          "run_index": 5,
+          "warmup": false,
+          "duration_seconds": 0.42462870804592967,
+          "throughput_bars_per_second": 470999.7138920884,
+          "total_events": 204000,
+          "peak_rss_bytes": 146685952,
+          "fallback_count": 0,
+          "reconciliation_failures": 0,
+          "crashed": false,
+          "crash_reason": null
+        },
+        {
+          "backend": "rust",
+          "profile": "P10K",
+          "run_index": 6,
+          "warmup": false,
+          "duration_seconds": 0.44492462486959994,
+          "throughput_bars_per_second": 449514.34202729666,
+          "total_events": 204000,
+          "peak_rss_bytes": 147095552,
+          "fallback_count": 0,
+          "reconciliation_failures": 0,
+          "crashed": false,
+          "crash_reason": null
+        },
+        {
+          "backend": "rust",
+          "profile": "P10K",
+          "run_index": 7,
+          "warmup": false,
+          "duration_seconds": 0.5164729580283165,
+          "throughput_bars_per_second": 387241.9589275663,
+          "total_events": 204000,
+          "peak_rss_bytes": 150700032,
+          "fallback_count": 0,
+          "reconciliation_failures": 0,
+          "crashed": false,
+          "crash_reason": null
+        },
+        {
+          "backend": "rust",
+          "profile": "P10K",
+          "run_index": 8,
+          "warmup": false,
+          "duration_seconds": 0.47983845812268555,
+          "throughput_bars_per_second": 416806.941199498,
+          "total_events": 204000,
+          "peak_rss_bytes": 152289280,
+          "fallback_count": 0,
+          "reconciliation_failures": 0,
+          "crashed": false,
+          "crash_reason": null
+        },
+        {
+          "backend": "rust",
+          "profile": "P10K",
+          "run_index": 9,
+          "warmup": false,
+          "duration_seconds": 0.46006345795467496,
+          "throughput_bars_per_second": 434722.6378055521,
+          "total_events": 204000,
+          "peak_rss_bytes": 114622464,
+          "fallback_count": 0,
+          "reconciliation_failures": 0,
+          "crashed": false,
+          "crash_reason": null
+        },
+        {
+          "backend": "rust",
+          "profile": "P10K",
+          "run_index": 10,
+          "warmup": false,
+          "duration_seconds": 0.4259143329691142,
+          "throughput_bars_per_second": 469577.99848098395,
+          "total_events": 204000,
+          "peak_rss_bytes": 144277504,
+          "fallback_count": 0,
+          "reconciliation_failures": 0,
+          "crashed": false,
+          "crash_reason": null
+        },
+        {
+          "backend": "rust",
+          "profile": "P10K",
+          "run_index": 11,
+          "warmup": false,
+          "duration_seconds": 0.4291489999741316,
+          "throughput_bars_per_second": 466038.6020054938,
+          "total_events": 204000,
+          "peak_rss_bytes": 144277504,
+          "fallback_count": 0,
+          "reconciliation_failures": 0,
+          "crashed": false,
+          "crash_reason": null
+        },
+        {
+          "backend": "rust",
+          "profile": "P10K",
+          "run_index": 12,
+          "warmup": false,
+          "duration_seconds": 0.4595705419778824,
+          "throughput_bars_per_second": 435188.9029685139,
+          "total_events": 204000,
+          "peak_rss_bytes": 144293888,
+          "fallback_count": 0,
+          "reconciliation_failures": 0,
+          "crashed": false,
+          "crash_reason": null
+        },
+        {
+          "backend": "rust",
+          "profile": "P10K",
+          "run_index": 13,
+          "warmup": false,
+          "duration_seconds": 0.42636170890182257,
+          "throughput_bars_per_second": 469085.2762438233,
+          "total_events": 204000,
+          "peak_rss_bytes": 144801792,
+          "fallback_count": 0,
+          "reconciliation_failures": 0,
+          "crashed": false,
+          "crash_reason": null
+        }
+      ],
+      "aggregates": {
+        "python_baseline": {
+          "count": 3,
+          "runtime_seconds": {
+            "p50": 26.7,
+            "p95": 36.7945536541054,
+            "p99": 37.92
+          },
+          "throughput_bars_per_second": {
+            "p50": 7490.0,
+            "p95": 10517.0,
+            "p99": 10517.0
+          },
+          "peak_rss_bytes": {
+            "p50": 438288384,
+            "p95": 438288384,
+            "max": 438288384
+          },
+          "fallback_count_total": 0,
+          "reconciliation_failures_total": 0,
+          "crash_count": 0,
+          "all_runs_passed": true
+        },
+        "rust": {
+          "count": 12,
+          "runtime_seconds": {
+            "p50": 0.43582237453665584,
+            "p95": 0.49632398308021947,
+            "p99": 0.5124431630386971
+          },
+          "throughput_bars_per_second": {
+            "p50": 459003.92536169314,
+            "p95": 473505.1635377067,
+            "p99": 475954.9365245335
+          },
+          "peak_rss_bytes": {
+            "p50": 146595840,
+            "p95": 151415193,
+            "max": 152289280
+          },
+          "fallback_count_total": 0,
+          "reconciliation_failures_total": 0,
+          "crash_count": 0,
+          "all_runs_passed": true
+        }
+      },
+      "aggressive_gate": {
+        "pass": true,
+        "speedup_p95": 74.13414404388836,
+        "p95_ratio_rust_over_python": 0.01348906111882788,
+        "rust_peak_memory_limit_bytes": 482117222,
+        "reasons": []
+      },
+      "risk_integrity": {
+        "golden_source": "/Users/hoangnam/Developer/RustAlgorithmTrading/tests/fixtures/phase2/risk_decision_golden.json",
+        "golden_decision_count": 1000,
+        "rust_telemetry": {
+          "backend": "rust",
+          "profile": "P10K",
+          "run_index": -1,
+          "warmup": false,
+          "duration_seconds": 0.4243839590344578,
+          "throughput_bars_per_second": 471271.3469543768,
+          "total_events": 204000,
+          "peak_rss_bytes": 144949248,
+          "fallback_count": 0,
+          "reconciliation_failures": 0,
+          "crashed": false,
+          "crash_reason": null
+        },
+        "comparison": {
+          "false_allow_delta": 0,
+          "false_reject_delta": 0,
+          "blocked_delta": 0,
+          "missing_keys_in_candidate": 0,
+          "extra_keys_in_candidate": 0,
+          "reason_mismatch_count": 0,
+          "baseline_total": 1000,
+          "candidate_total": 1000,
+          "details": []
+        },
+        "pass": true
+      }
+    },
+    {
+      "profile": {
+        "name": "P100K",
+        "symbols": 20,
+        "bars_per_symbol": 100000
+      },
+      "env_backend_default": "rust",
+      "warmup_runs": 2,
+      "measured_runs": 12,
+      "raw_runs": [
+        {
+          "backend": "rust",
+          "profile": "P100K",
+          "run_index": 0,
+          "warmup": true,
+          "duration_seconds": 3.874831167049706,
+          "throughput_bars_per_second": 516151.52087330783,
+          "total_events": 2033678,
+          "peak_rss_bytes": 578830336,
+          "fallback_count": 0,
+          "reconciliation_failures": 0,
+          "crashed": false,
+          "crash_reason": null
+        },
+        {
+          "backend": "rust",
+          "profile": "P100K",
+          "run_index": 1,
+          "warmup": true,
+          "duration_seconds": 4.013203375041485,
+          "throughput_bars_per_second": 498355.00798145466,
+          "total_events": 2033678,
+          "peak_rss_bytes": 539361280,
+          "fallback_count": 0,
+          "reconciliation_failures": 0,
+          "crashed": false,
+          "crash_reason": null
+        },
+        {
+          "backend": "rust",
+          "profile": "P100K",
+          "run_index": 2,
+          "warmup": false,
+          "duration_seconds": 3.833060499979183,
+          "throughput_bars_per_second": 521776.2672962928,
+          "total_events": 2033678,
+          "peak_rss_bytes": 478871552,
+          "fallback_count": 0,
+          "reconciliation_failures": 0,
+          "crashed": false,
+          "crash_reason": null
+        },
+        {
+          "backend": "rust",
+          "profile": "P100K",
+          "run_index": 3,
+          "warmup": false,
+          "duration_seconds": 3.84185133385472,
+          "throughput_bars_per_second": 520582.35111177526,
+          "total_events": 2033678,
+          "peak_rss_bytes": 416088064,
+          "fallback_count": 0,
+          "reconciliation_failures": 0,
+          "crashed": false,
+          "crash_reason": null
+        },
+        {
+          "backend": "rust",
+          "profile": "P100K",
+          "run_index": 4,
+          "warmup": false,
+          "duration_seconds": 3.7870025830343366,
+          "throughput_bars_per_second": 528122.1642044669,
+          "total_events": 2033678,
+          "peak_rss_bytes": 414318592,
+          "fallback_count": 0,
+          "reconciliation_failures": 0,
+          "crashed": false,
+          "crash_reason": null
+        },
+        {
+          "backend": "rust",
+          "profile": "P100K",
+          "run_index": 5,
+          "warmup": false,
+          "duration_seconds": 3.8509140419773757,
+          "throughput_bars_per_second": 519357.2170655452,
+          "total_events": 2033678,
+          "peak_rss_bytes": 523255808,
+          "fallback_count": 0,
+          "reconciliation_failures": 0,
+          "crashed": false,
+          "crash_reason": null
+        },
+        {
+          "backend": "rust",
+          "profile": "P100K",
+          "run_index": 6,
+          "warmup": false,
+          "duration_seconds": 3.8437815830111504,
+          "throughput_bars_per_second": 520320.92792151717,
+          "total_events": 2033678,
+          "peak_rss_bytes": 401162240,
+          "fallback_count": 0,
+          "reconciliation_failures": 0,
+          "crashed": false,
+          "crash_reason": null
+        },
+        {
+          "backend": "rust",
+          "profile": "P100K",
+          "run_index": 7,
+          "warmup": false,
+          "duration_seconds": 3.809183374978602,
+          "throughput_bars_per_second": 525046.9203287528,
+          "total_events": 2033678,
+          "peak_rss_bytes": 407240704,
+          "fallback_count": 0,
+          "reconciliation_failures": 0,
+          "crashed": false,
+          "crash_reason": null
+        },
+        {
+          "backend": "rust",
+          "profile": "P100K",
+          "run_index": 8,
+          "warmup": false,
+          "duration_seconds": 3.8301737918518484,
+          "throughput_bars_per_second": 522169.5172826665,
+          "total_events": 2033678,
+          "peak_rss_bytes": 396771328,
+          "fallback_count": 0,
+          "reconciliation_failures": 0,
+          "crashed": false,
+          "crash_reason": null
+        },
+        {
+          "backend": "rust",
+          "profile": "P100K",
+          "run_index": 9,
+          "warmup": false,
+          "duration_seconds": 3.7829778329469264,
+          "throughput_bars_per_second": 528684.038955102,
+          "total_events": 2033678,
+          "peak_rss_bytes": 415531008,
+          "fallback_count": 0,
+          "reconciliation_failures": 0,
+          "crashed": false,
+          "crash_reason": null
+        },
+        {
+          "backend": "rust",
+          "profile": "P100K",
+          "run_index": 10,
+          "warmup": false,
+          "duration_seconds": 3.8783938749693334,
+          "throughput_bars_per_second": 515677.38204924174,
+          "total_events": 2033678,
+          "peak_rss_bytes": 489046016,
+          "fallback_count": 0,
+          "reconciliation_failures": 0,
+          "crashed": false,
+          "crash_reason": null
+        },
+        {
+          "backend": "rust",
+          "profile": "P100K",
+          "run_index": 11,
+          "warmup": false,
+          "duration_seconds": 3.819540583062917,
+          "throughput_bars_per_second": 523623.18360188376,
+          "total_events": 2033678,
+          "peak_rss_bytes": 482312192,
+          "fallback_count": 0,
+          "reconciliation_failures": 0,
+          "crashed": false,
+          "crash_reason": null
+        },
+        {
+          "backend": "rust",
+          "profile": "P100K",
+          "run_index": 12,
+          "warmup": false,
+          "duration_seconds": 3.7879974169190973,
+          "throughput_bars_per_second": 527983.4645786706,
+          "total_events": 2033678,
+          "peak_rss_bytes": 485015552,
+          "fallback_count": 0,
+          "reconciliation_failures": 0,
+          "crashed": false,
+          "crash_reason": null
+        },
+        {
+          "backend": "rust",
+          "profile": "P100K",
+          "run_index": 13,
+          "warmup": false,
+          "duration_seconds": 3.842145500006154,
+          "throughput_bars_per_second": 520542.49376989924,
+          "total_events": 2033678,
+          "peak_rss_bytes": 512180224,
+          "fallback_count": 0,
+          "reconciliation_failures": 0,
+          "crashed": false,
+          "crash_reason": null
+        }
+      ],
+      "aggregates": {
+        "python_baseline": {
+          "count": 3,
+          "runtime_seconds": {
+            "p50": 119.93,
+            "p95": 132.09501486637163,
+            "p99": 133.45
+          },
+          "throughput_bars_per_second": {
+            "p50": 16677.0,
+            "p95": 16689.0,
+            "p99": 16689.0
+          },
+          "peak_rss_bytes": {
+            "p50": 2727133184,
+            "p95": 2727133184,
+            "max": 2727133184
+          },
+          "fallback_count_total": 0,
+          "reconciliation_failures_total": 0,
+          "crash_count": 0,
+          "all_runs_passed": true
+        },
+        "rust": {
+          "count": 12,
+          "runtime_seconds": {
+            "p50": 3.8316171459155157,
+            "p95": 3.8632799668237565,
+            "p99": 3.875371093340218
+          },
+          "throughput_bars_per_second": {
+            "p50": 521972.89228947967,
+            "p95": 528375.0078422526,
+            "p99": 528622.2327325321
+          },
+          "peak_rss_bytes": {
+            "p50": 447479808,
+            "p95": 517164236,
+            "max": 523255808
+          },
+          "fallback_count_total": 0,
+          "reconciliation_failures_total": 0,
+          "crash_count": 0,
+          "all_runs_passed": true
+        }
+      },
+      "aggressive_gate": {
+        "pass": true,
+        "speedup_p95": 34.19245200988506,
+        "p95_ratio_rust_over_python": 0.02924622076565025,
+        "rust_peak_memory_limit_bytes": 2999846502,
+        "reasons": []
+      },
+      "risk_integrity": {
+        "golden_source": "/Users/hoangnam/Developer/RustAlgorithmTrading/tests/fixtures/phase2/risk_decision_golden.json",
+        "golden_decision_count": 10000,
+        "rust_telemetry": {
+          "backend": "rust",
+          "profile": "P100K",
+          "run_index": -1,
+          "warmup": false,
+          "duration_seconds": 3.819094416918233,
+          "throughput_bars_per_second": 523684.3559405565,
+          "total_events": 2033678,
+          "peak_rss_bytes": 467468288,
+          "fallback_count": 0,
+          "reconciliation_failures": 0,
+          "crashed": false,
+          "crash_reason": null
+        },
+        "comparison": {
+          "false_allow_delta": 0,
+          "false_reject_delta": 0,
+          "blocked_delta": 0,
+          "missing_keys_in_candidate": 0,
+          "extra_keys_in_candidate": 0,
+          "reason_mismatch_count": 0,
+          "baseline_total": 10000,
+          "candidate_total": 10000,
+          "details": []
+        },
+        "pass": true
+      }
+    }
+  ],
+  "overall_pass": true
+}

@@ -58,6 +58,7 @@ pub fn parse_risk_config_toml(content: &str) -> Result<RiskConfig> {
         trailing_stop_percent: parsed.stop_loss.trailing_stop_percent,
         enable_circuit_breaker: parsed.circuit_breaker.enabled,
         max_loss_threshold: parsed.loss_limits.max_daily_loss,
+        sizing_amount: 0.0,
     };
 
     cfg.validate()?;

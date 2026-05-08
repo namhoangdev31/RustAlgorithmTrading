@@ -52,17 +52,17 @@ class RiskDecisionRecord:
     symbol: str
     signal_type: str
     strategy_id: str
+    signal_id: str
     sequence_no: int
     decision: str
     reason_code: str
 
-    def key(self) -> tuple[str, str, str, str, int]:
+    def key(self) -> tuple[str, str, str, str]:
         return (
             self.timestamp,
             self.symbol,
-            self.signal_type,
             self.strategy_id,
-            self.sequence_no,
+            self.signal_id,
         )
 
     def asdict(self) -> dict[str, Any]:
@@ -97,6 +97,7 @@ def normalize_risk_decision_trace(
                 symbol=str(row["symbol"]).strip(),
                 signal_type=str(row["signal_type"]).strip().upper(),
                 strategy_id=str(row["strategy_id"]).strip(),
+                signal_id=str(row.get("signal_id", row.get("sequence_no", ""))).strip(),
                 sequence_no=int(row["sequence_no"]),
                 decision=_canonical_decision(row["decision"]),
                 reason_code=_canonical_reason_code(row.get("reason_code")),
@@ -111,7 +112,7 @@ def compare_risk_decision_traces(
     candidate_rows: Iterable[dict[str, Any]],
 ) -> RiskIntegrityComparison:
     """
-    Compare candidate (Rust) decisions against baseline (Python/live semantics).
+    Compare candidate Rust decisions against the frozen golden baseline.
     """
     baseline = normalize_risk_decision_trace(baseline_rows)
     candidate = normalize_risk_decision_trace(candidate_rows)

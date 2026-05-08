@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "description": "Frozen Python baseline from the accepted Phase 2 benchmark artifact. Rust-only promotion compares against these values and does not execute the Python backend.",
+  "profiles": {
+    "P10K": {
+      "measured_runs": 3,
+      "runtime_seconds": {
+        "p50": 26.70,
+        "p95": 36.7945536541054,
+        "p99": 37.92
+      },
+      "throughput_bars_per_second": {
+        "p50": 7490.0,
+        "p95": 10517.0,
+        "p99": 10517.0
+      },
+      "peak_rss_bytes": {
+        "p50": 438288384,
+        "p95": 438288384,
+        "max": 438288384
+      }
+    },
+    "P100K": {
+      "measured_runs": 3,
+      "runtime_seconds": {
+        "p50": 119.93,
+        "p95": 132.09501486637163,
+        "p99": 133.45
+      },
+      "throughput_bars_per_second": {
+        "p50": 16677.0,
+        "p95": 16689.0,
+        "p99": 16689.0
+      },
+      "peak_rss_bytes": {
+        "p50": 2727133184,
+        "p95": 2727133184,
+        "max": 2727133184
+      }
+    }
+  }
+}

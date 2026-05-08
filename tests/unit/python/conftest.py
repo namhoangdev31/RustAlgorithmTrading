@@ -6,9 +6,7 @@ from datetime import datetime, timedelta
 # W21 Test Debt: Skip tests with broken imports during collection
 from pathlib import Path
 from backtesting.data_handler import HistoricalDataHandler
-from backtesting.execution_handler import SimulatedExecutionHandler
 from backtesting.portfolio_handler import PortfolioHandler
-from risk.allocation_manager import AllocationManager, AllocationPolicy
 
 
 @pytest.fixture
@@ -28,10 +26,7 @@ def data_handler(temp_data_dir, sample_ohlcv_data):
     return HistoricalDataHandler(symbols=["TEST"], data_dir=temp_data_dir)
 
 
-@pytest.fixture
-def execution_handler():
-    """Simulated execution handler fixture"""
-    return SimulatedExecutionHandler()
+
 
 
 @pytest.fixture

@@ -55,6 +55,7 @@ pub struct RiskConfig {
     pub trailing_stop_percent: f64,
     pub enable_circuit_breaker: bool,
     pub max_loss_threshold: f64,
+    pub sizing_amount: f64,
 }
 
 impl Default for RiskConfig {
@@ -67,6 +68,7 @@ impl Default for RiskConfig {
             trailing_stop_percent: 1.0,
             enable_circuit_breaker: true,
             max_loss_threshold: 500.0,
+            sizing_amount: 0.0, // 0.0 means use % equity (legacy behavior)
         }
     }
 }

@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "description": "Compact golden risk decision spec for Phase 2.2 Rust-only gates.",
+  "profiles": {
+    "P10K": {
+      "symbols": 20,
+      "bars_per_symbol": 10000,
+      "first_timestamp": "2024-01-01T00:00:00+00:00",
+      "strategy_id": "BenchmarkSignalStrategy",
+      "cycle_period": 200,
+      "long_cycle": 25,
+      "decision": "ALLOW",
+      "reason_code": "NONE"
+    },
+    "P100K": {
+      "symbols": 20,
+      "bars_per_symbol": 100000,
+      "first_timestamp": "2024-01-01T00:00:00+00:00",
+      "strategy_id": "BenchmarkSignalStrategy",
+      "cycle_period": 200,
+      "long_cycle": 25,
+      "decision": "ALLOW",
+      "reason_code": "NONE"
+    },
+    "S100K": {
+      "symbols": 10,
+      "bars_per_symbol": 100000,
+      "first_timestamp": "2024-01-01T00:00:00+00:00",
+      "strategy_id": "SoakSignalStrategy",
+      "cycle_period": 180,
+      "long_cycle": 30,
+      "decision": "ALLOW",
+      "reason_code": "NONE"
+    }
+  }
+}

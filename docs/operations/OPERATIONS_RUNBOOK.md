@@ -953,7 +953,7 @@ grep "rate_limit" /opt/trading-system/logs/execution-engine.log
 
 ---
 
-## 9. Phase 2 Rust Default Rollback Playbook
+## 9. Phase 2.2 Rust-Only Rollback Playbook
 
 ### 9.1 Trigger Conditions (Any One Triggers Rollback)
 
@@ -964,19 +964,22 @@ grep "rate_limit" /opt/trading-system/logs/execution-engine.log
 - `blocked_delta != 0`
 - timeout/crash detected in soak or production run
 - latency regression gate breached
-- runtime fallback events detected while rust is default
+- runtime fallback event count is non-zero
 
 ### 9.2 Immediate Response
 
 ```bash
-# Force python default for next backtest runtime boot
-export BACKTEST_ENGINE_BACKEND_DEFAULT=python
+# Fail closed: keep Rust-only policy and stop promotion/release.
+export BACKTEST_ENGINE_BACKEND_DEFAULT=rust
 ```
 
 ```bash
-# Keep safety fallback enabled at runtime
-export BACKTEST_ENGINE_PROMOTE_RUST_DEFAULT=0
+# Revert the deployed artifact/config pointer to the last known-good Rust build.
+export BACKTEST_ENGINE_PROMOTE_RUST_DEFAULT=1
 ```
+
+Do not route production backtests to the Python backend. Phase 2.2 rollback is a
+Rust release/config rollback, not a runtime fallback.
 
 ### 9.3 Verification After Rollback
 
@@ -994,11 +997,12 @@ For every rollback:
 2. Attach `data/benchmarks/phase2_soak_results.json` if available.
 3. Record trigger reason and failing metric.
 4. Record artifact hash and commit SHA.
-5. Open follow-up ticket before re-promotion.
+5. Record last known-good Rust artifact/build id used for rollback.
+6. Open follow-up ticket before re-promotion.
 
 ### 9.5 Re-Promotion Prerequisite
 
-Do not re-enable rust default until all checks pass in:
+Do not promote a new Rust artifact until all checks pass in:
 
 - `docs/roadmap/PHASE2_GO_NO_GO_EVIDENCE.md`
 

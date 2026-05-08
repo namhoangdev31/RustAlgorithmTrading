@@ -1,6 +1,6 @@
 # PLAYBOOK.md — Canonical Doc -> Code -> Test Map
 
-Updated: 2026-05-07  
+Updated: 2026-05-08  
 Scope: Production maintenance for Python + Rust trading stack
 
 This playbook is the **code-grounded routing map** for maintainers.  
@@ -63,11 +63,14 @@ Execution rules:
 - `docs/roadmap/PHASE1_GO_NO_GO_EVIDENCE.md`: Phase 1 parity, reproducibility, ZMQ hardening, benchmark threshold, and GO/NO-GO evidence chain.
 - `src/typings/signal_bridge.pyi`: IDE type stubs for the PyO3 binary module.
 
-### 2.5 Phase 2 Promotion Artifacts
+### 2.5 Phase 2.2 Rust-Only Promotion Artifacts
 
-- `tests/benchmarks/backtest_engine_production_benchmark.py`: Production-like benchmark gate (`P10K`, `P100K`) for python vs rust backtest backends.
-- `scripts/run_soak_fault_tests.py`: Rust soak/stability harness with timeout/memory/fallback/reconciliation gates.
-- `docs/roadmap/PHASE2_GO_NO_GO_EVIDENCE.md`: Phase 2 GO/NO-GO evidence, rollback triggers, and sign-off checklist.
+- `tests/benchmarks/backtest_engine_production_benchmark.py`: Production-like Rust-only benchmark gate (`P10K`, `P100K`) against frozen Python baseline metrics.
+- `scripts/run_soak_fault_tests.py`: Rust-only soak/stability harness with timeout/memory/fallback/reconciliation gates.
+- `scripts/generate_golden_risk_baseline.py`: Generates the compact immutable Phase 2.2 golden risk spec fixture.
+- `tests/fixtures/phase2/python_baseline_metrics.json`: Frozen Python runtime metrics for speedup comparison; the Python backend is not executed by the promotion benchmark.
+- `tests/fixtures/phase2/risk_decision_golden.json`: Golden risk decision spec used by Rust-only integrity checks.
+- `docs/roadmap/PHASE2_GO_NO_GO_EVIDENCE.md`: Phase 2.2 GO/NO-GO evidence, fail-closed rollback triggers, and sign-off checklist.
 
 ---
 
@@ -94,12 +97,11 @@ Execution rules:
 
 | File | Ownership | Key classes | Primary tests |
 |---|---|---|---|
-| `src/backtesting/engine.py` | Event-driven simulation engine | `BacktestEngine` | `tests/unit/python/test_backtest_engine.py`, `tests/integration/test_backtest_signal_validation.py` |
+| `src/backtesting/engine.py` | [UPDATED] Rust-only batch simulation engine (Phase 2.2); no Python backend fallback | `BacktestEngine`, `StrategyBatchInterfaceRequired`, `_run_rust_batch_path` | `tests/unit/python/test_backtest_engine.py`, `tests/test_backtest_integration.py` |
 | `src/backtesting/data_handler.py` | Historical stream feed in backtest | `HistoricalDataHandler` | `tests/unit/test_data_handler.py` |
-| `src/backtesting/execution_handler.py` | Simulated execution path | `SimulatedExecutionHandler` | `tests/unit/python/test_backtesting.py`, `tests/integration/test_backtest_signal_validation.py` |
-| `src/backtesting/portfolio_handler.py` | Position/cash/portfolio state | `PortfolioHandler` | `tests/unit/test_portfolio_handler_shorts.py` |
-| `src/backtesting/risk_integrity.py` | Phase 2 risk decision parity comparator | `RiskDecisionRecord`, `RiskIntegrityComparison`, `compare_risk_decision_traces` | `tests/unit/python/test_risk_integrity_comparator.py`, `tests/test_backtest_integration.py` |
-| `src/backtesting/phase2_governance.py` | Phase 2 rollback/soak governance gates and backend default resolver | `RollbackGateMetrics`, `SoakRunTelemetry`, `evaluate_rollback_triggers`, `evaluate_soak_stability`, `resolve_engine_backend` | `tests/unit/python/test_phase2_governance.py` |
+| `src/backtesting/portfolio_handler.py` | [UPDATED] Passive state container for position/cash/portfolio (synced from Rust) | `PortfolioHandler` | `tests/unit/test_portfolio_handler_shorts.py` |
+| `src/backtesting/risk_integrity.py` | Phase 2.2 golden risk decision comparator keyed by `{timestamp, symbol, strategy_id, signal_id}` | `RiskDecisionRecord`, `RiskIntegrityComparison`, `compare_risk_decision_traces` | `tests/unit/python/test_risk_integrity_comparator.py`, `tests/test_backtest_integration.py` |
+| `src/backtesting/governance.py` | Reliability governance gates | `RollbackGateMetrics`, `SoakRunTelemetry`, `evaluate_rollback_triggers`, `evaluate_soak_stability` | `tests/unit/python/test_governance.py` |
 | `src/backtesting/performance.py` | Performance analytics | `PerformanceAnalyzer` | `tests/unit/python/test_backtesting.py` |
 | `src/backtesting/metrics.py` | Performance metric objects | `PerformanceMetrics` | `tests/unit/python/test_backtesting.py` |
 | `src/backtesting/position_sizer.py` | Sizing policies | `PositionSizer`, `FixedAmountSizer`, `PercentageOfEquitySizer`, `KellyPositionSizer` | `tests/unit/test_position_sizing.py` |
@@ -112,7 +114,7 @@ Execution rules:
 |---|---|---|---|
 | `src/bridge/zmq_bridge.py` | Envelope serialization + pub/sub handoff + Phase 1 centralized validation | `ZMQPublisher`, `ZMQSubscriber`, `Signal`, `Position` | `tests/integration/test_backtest_signal_flow.py`, `tests/integration/test_risk_execution_observability.rs` |
 | `src/bridge/rust_bridge.py` | Python -> Rust feature bridge and batch FFI wrapper timing | `RustFeatureComputer`, `RUST_BATCH_FEATURE_COLUMNS`, `REQUIRED_OHLCV_COLUMNS` | `tests/unit/python/test_rust_feature_parity.py`, `tests/integration/test_backtest_signal_flow.py` |
-| `src/bridge/backtest_bridge.py` | [NEW] Phase 2: Bridge to Rust authoritative backtest runtime | `RustBacktestBridge` | `tests/test_backtest_integration.py` |
+| `src/bridge/backtest_bridge.py` | [UPDATED] Bridge to Rust authoritative runtime with batch loading support and signal-id propagation | `RustBacktestBridge`, `load_market_data_columnar`, `load_signals` | `tests/test_backtest_integration.py` |
 | `src/typings/` | Python type stubs for binary modules | `signal_bridge.pyi` | N/A (IDE only) |
 
 ## 3.5 Strategy Layer (`src/strategies`)
@@ -157,12 +159,7 @@ Execution rules:
 | `src/strategies/ml/validation/governance.py` | Governance gate objects | `tests/unit/test_release_gate1.py`, `tests/unit/test_release_gate2.py` |
 | `src/strategies/ml/validation/live_monitor.py` | Live governance checks | `tests/unit/test_staging_hardening.py` |
 
-## 3.6 Risk & Allocation (`src/risk`)
 
-| File | Ownership | Key classes | Primary tests |
-|---|---|---|---|
-| `src/risk/portfolio_controls.py` | Exposure/concentration controls | `RiskControlManager`, `PortfolioPolicy` | `tests/unit/test_portfolio_controls.py` |
-| `src/risk/allocation_manager.py` | Capital allocation logic | `AllocationManager`, `AllocationPolicy`, `AllocationSizingMode` | `tests/unit/test_allocation_manager.py` |
 
 ## 3.7 Observability (`src/observability`)
 
@@ -274,8 +271,8 @@ Execution rules:
 |---|---|---|---|
 | `rust/signal-bridge/src/indicators.rs` | Low-latency indicators + batch log-return/momentum helpers | `SMA`, `EMA`, `RSI`, `MACD`, `BollingerBands`, `batch_log_returns`, `batch_momentum` | crate tests, strategy signal unit/integration tests |
 | `rust/signal-bridge/src/features.rs` | Feature compute service | `FeatureEngine` | signal flow integration |
-| `rust/signal-bridge/src/backtest_runtime.rs` | [NEW] Phase 2: High-performance backtest simulation kernel | `BacktestRuntime` | `cargo test -p signal-bridge` |
-| `rust/signal-bridge/src/bridge.rs` | Bridge compute contract + Phase 1 PyO3 batch/Monte Carlo kernels | `FeatureComputer`, `Bar` | crate tests, `tests/unit/python/test_rust_feature_parity.py`, `tests/unit/python/test_monte_carlo_reproducibility.py` |
+| `rust/signal-bridge/src/backtest_runtime.rs` | [UPDATED] Rust-owned backtest kernel with streaming bar/signal merge, risk, execution, portfolio, PnL, metrics | `BacktestRuntime`, `SignalRow`, `RiskDecisionTrace`, `load_market_data`, `load_signals`, `run_to_completion` | `cargo test -p signal-bridge` |
+| `rust/signal-bridge/src/bridge.rs` | Bridge compute contract + PyO3 batch/Monte Carlo/Rust-only backtest kernels | `FeatureComputer`, `BacktestRuntime`, `load_market_data_columnar`, `load_signals_columnar` | crate tests, `tests/unit/python/test_rust_feature_parity.py`, `tests/test_backtest_integration.py` |
 
 ## 4.4 `rust/risk-manager`
 
@@ -330,7 +327,7 @@ Execution rules:
 - Phase 2 canonical gate: `tests/test_backtest_integration.py`
 - Phase 2 rollout governance unit gates:
   - `tests/unit/python/test_risk_integrity_comparator.py`
-  - `tests/unit/python/test_phase2_governance.py`
+  - `tests/unit/python/test_governance.py`
 - Critical mixed path:
   - `tests/integration/test_backtest_signal_flow.py`
   - `tests/integration/test_observability_integration.py`
@@ -352,7 +349,7 @@ Execution rules:
 |---|---|---|---|
 | Alpaca auth/rate limit | `docs/api/ALPACA_API.md` | `src/api/alpaca_client.py` | `tests/test_alpaca_quick.py`, `tests/unit/test_alpaca_auth.rs` |
 | Signal mismatch | `docs/api/ZMQ_PROTOCOL.md` | `src/strategies/strategy_router.py`, `rust/signal-bridge/src/indicators.rs` | `tests/unit/test_strategy_signals.py`, `tests/integration/test_backtest_signal_flow.py` |
-| Risk reject anomalies | `docs/guides/RISK_MANAGEMENT_GUIDE.md` | `rust/risk-manager/src/limits.rs`, `src/risk/portfolio_controls.py` | `tests/unit/test_risk_manager.rs`, `tests/unit/test_portfolio_controls.py` |
+| Risk reject anomalies | `docs/guides/RISK_MANAGEMENT_GUIDE.md` | `rust/risk-manager/src/limits.rs` | `tests/unit/test_risk_manager.rs` |
 | Execution retry/slippage | `docs/architecture/component-interfaces.md` | `rust/execution-engine/src/retry.rs`, `rust/execution-engine/src/slippage.rs` | `tests/unit/test_retry.rs`, `tests/unit/test_slippage.rs` |
 | Observability API/storage | `docs/observability/BACKEND_API.md` | `src/observability/api/main.py`, `src/observability/storage/duckdb_client.py` | `tests/observability/`, `tests/integration/test_observability_integration.py` |
 | DB persistence/query | `docs/STORAGE_GUIDE.md` | `rust/database/src/{schema,query,connection}.rs` | `tests/integration/test_duckdb_storage.rs` |
@@ -364,7 +361,7 @@ Execution rules:
 - `src/api/**` -> `python -m pytest tests/test_alpaca_*.py -q`
 - `src/data/**` -> `python -m pytest tests/unit/python/test_features.py -q`
 - `src/strategies/**` -> `python -m pytest tests/unit/test_strategy_signals.py -q`
-- `src/backtesting/**` -> `python -m pytest tests/unit/python/test_backtest_engine.py -q && python -m pytest tests/unit/python/test_risk_integrity_comparator.py -q && python -m pytest tests/unit/python/test_phase2_governance.py -q && python -m pytest tests/test_backtest_integration.py -q`
+- `src/backtesting/**` -> `python -m pytest tests/unit/python/test_backtest_engine.py -q && python -m pytest tests/unit/python/test_risk_integrity_comparator.py -q && python -m pytest tests/unit/python/test_governance.py -q && python -m pytest tests/test_backtest_integration.py -q`
 - `src/bridge/**` -> `python -m pytest tests/integration/test_backtest_signal_flow.py -q`
 - `src/observability/**` -> `python -m pytest tests/observability -q`
 - `rust/market-data/**` -> `cd rust && cargo test -p market-data`

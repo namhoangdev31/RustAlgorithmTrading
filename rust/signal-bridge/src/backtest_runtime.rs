@@ -11,6 +11,26 @@ use serde_json::json;
 use std::collections::{HashMap, VecDeque};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct MarketBar {
+    pub timestamp: i64,
+    pub open: f64,
+    pub high: f64,
+    pub low: f64,
+    pub close: f64,
+    pub volume: f64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SignalRow {
+    pub timestamp: i64,
+    pub symbol: String,
+    pub signal_type: String,
+    pub strength: f64,
+    pub strategy_id: String,
+    pub signal_id: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Fill {
     pub symbol: String,
     pub quantity: f64,
@@ -39,6 +59,7 @@ struct PendingSignal {
     signal_type: String,
     strength: f64,
     strategy_id: String,
+    signal_id: String,
     timestamp: DateTime<Utc>,
 }
 
@@ -47,6 +68,7 @@ struct PendingOrder {
     order: Order,
     signal_type: String,
     strategy_id: String,
+    signal_id: String,
     timestamp: DateTime<Utc>,
 }
 
@@ -62,6 +84,7 @@ pub struct RiskDecisionTrace {
     pub symbol: String,
     pub signal_type: String,
     pub strategy_id: String,
+    pub signal_id: String,
     pub sequence_no: u64,
     pub decision: String,
     pub reason_code: String,
@@ -84,10 +107,17 @@ pub struct BacktestRuntime {
     pub risk_decision_trace: Vec<RiskDecisionTrace>,
     pub decision_sequence_no: u64,
     event_queue: VecDeque<RuntimeEvent>,
+    batch_market_data: HashMap<String, Vec<MarketBar>>,
+    batch_signals: Vec<SignalRow>,
 }
 
 impl BacktestRuntime {
-    pub fn new(initial_capital: f64, symbols: Vec<String>, risk_config: RiskConfig, seed: u64) -> Self {
+    pub fn new(
+        initial_capital: f64,
+        symbols: Vec<String>,
+        risk_config: RiskConfig,
+        seed: u64,
+    ) -> Self {
         Self {
             cash: initial_capital,
             initial_capital,
@@ -105,6 +135,8 @@ impl BacktestRuntime {
             risk_decision_trace: Vec::new(),
             decision_sequence_no: 0,
             event_queue: VecDeque::new(),
+            batch_market_data: HashMap::new(),
+            batch_signals: Vec::new(),
         }
     }
 
@@ -160,7 +192,13 @@ impl BacktestRuntime {
         self.stats.events_processed += 1;
     }
 
-    pub fn process_signal(&mut self, symbol: String, signal_type: String, strength: f64, strategy_id: String) {
+    pub fn process_signal(
+        &mut self,
+        symbol: String,
+        signal_type: String,
+        strength: f64,
+        strategy_id: String,
+    ) {
         if !self.current_prices.contains_key(&symbol) || !strength.is_finite() {
             return;
         }
@@ -180,11 +218,117 @@ impl BacktestRuntime {
             signal_type,
             strength,
             strategy_id,
+            signal_id: format!("stream_{}", self.stats.signals_processed + 1),
             timestamp,
         };
 
         self.event_queue.push_back(RuntimeEvent::Signal(signal));
         self.stats.signals_processed += 1;
+    }
+
+    pub fn load_market_data(&mut self, symbol: String, bars: Vec<MarketBar>) {
+        let mut sorted = bars;
+        sorted.sort_by_key(|bar| bar.timestamp);
+        self.batch_market_data.insert(symbol, sorted);
+    }
+
+    pub fn load_signals(&mut self, signals: Vec<SignalRow>) {
+        let mut sorted = signals;
+        sorted.sort_by(|left, right| {
+            left.timestamp
+                .cmp(&right.timestamp)
+                .then_with(|| left.symbol.cmp(&right.symbol))
+                .then_with(|| left.signal_id.cmp(&right.signal_id))
+        });
+        self.batch_signals = sorted;
+    }
+
+    pub fn run_to_completion(&mut self) {
+        let mut symbols: Vec<String> = self.batch_market_data.keys().cloned().collect();
+        symbols.sort();
+        let mut bar_cursors: HashMap<String, usize> = symbols
+            .iter()
+            .map(|symbol| (symbol.clone(), 0usize))
+            .collect();
+        let mut signal_cursor = 0usize;
+
+        loop {
+            let mut next_ts: Option<i64> = None;
+            for symbol in &symbols {
+                let idx = *bar_cursors.get(symbol).unwrap_or(&0);
+                if let Some(bar) = self
+                    .batch_market_data
+                    .get(symbol)
+                    .and_then(|bars| bars.get(idx))
+                {
+                    next_ts =
+                        Some(next_ts.map_or(bar.timestamp, |current| current.min(bar.timestamp)));
+                }
+            }
+            if let Some(signal) = self.batch_signals.get(signal_cursor) {
+                next_ts =
+                    Some(next_ts.map_or(signal.timestamp, |current| current.min(signal.timestamp)));
+            }
+
+            let Some(timestamp) = next_ts else {
+                break;
+            };
+
+            for symbol in &symbols {
+                loop {
+                    let idx = *bar_cursors.get(symbol).unwrap_or(&0);
+                    let Some(bar) = self
+                        .batch_market_data
+                        .get(symbol)
+                        .and_then(|bars| bars.get(idx))
+                    else {
+                        break;
+                    };
+                    if bar.timestamp != timestamp {
+                        break;
+                    }
+                    let bar = bar.clone();
+                    self.ingest_bar(
+                        symbol.clone(),
+                        bar.timestamp,
+                        bar.open,
+                        bar.high,
+                        bar.low,
+                        bar.close,
+                        bar.volume,
+                    );
+                    bar_cursors.insert(symbol.clone(), idx + 1);
+                }
+            }
+            self.dispatch_until_idle();
+
+            while let Some(signal) = self.batch_signals.get(signal_cursor) {
+                if signal.timestamp != timestamp {
+                    break;
+                }
+                let signal = signal.clone();
+                let dt = DateTime::from_timestamp(signal.timestamp, 0).unwrap_or_else(Utc::now);
+                self.last_timestamps.insert(signal.symbol.clone(), dt);
+
+                if self.current_prices.contains_key(&signal.symbol)
+                    && signal.strength.is_finite()
+                    && (self.symbols.is_empty() || self.symbols.contains(&signal.symbol))
+                {
+                    self.event_queue
+                        .push_back(RuntimeEvent::Signal(PendingSignal {
+                            symbol: signal.symbol,
+                            signal_type: signal.signal_type,
+                            strength: signal.strength,
+                            strategy_id: signal.strategy_id,
+                            signal_id: signal.signal_id,
+                            timestamp: dt,
+                        }));
+                    self.stats.signals_processed += 1;
+                    self.dispatch_until_idle();
+                }
+                signal_cursor += 1;
+            }
+        }
     }
 
     pub fn dispatch_until_idle(&mut self) {
@@ -211,20 +355,12 @@ impl BacktestRuntime {
                     match report.decision {
                         RiskDecision::Allow => {
                             self.stats.risk_allows += 1;
-                            self.record_risk_decision(
-                                &pending_order,
-                                "ALLOW",
-                                report.reason_code,
-                            );
+                            self.record_risk_decision(&pending_order, "ALLOW", report.reason_code);
                             self.execute_order(pending_order.order);
                         }
                         RiskDecision::Reject => {
                             self.stats.risk_rejects += 1;
-                            self.record_risk_decision(
-                                &pending_order,
-                                "REJECT",
-                                report.reason_code,
-                            );
+                            self.record_risk_decision(&pending_order, "REJECT", report.reason_code);
                         }
                     }
                 }
@@ -270,11 +406,18 @@ impl BacktestRuntime {
             };
 
             let strength = signal.strength.abs().clamp(0.0, 1.0);
-            let target_value = self.get_equity() * 0.10 * strength;
+            let unconstrained_target = if self.risk_config.sizing_amount > 0.0 {
+                self.risk_config.sizing_amount * strength
+            } else {
+                self.get_equity() * 0.10 * strength
+            };
+            let risk_capped_target = self.risk_config.max_position_size * 0.90;
+            let target_value = if risk_capped_target >= price {
+                unconstrained_target.min(risk_capped_target)
+            } else {
+                unconstrained_target
+            };
             let qty = (target_value / price).floor();
-            if qty <= 0.0 {
-                return None;
-            }
             (side, qty)
         };
 
@@ -296,6 +439,7 @@ impl BacktestRuntime {
             },
             signal_type: signal.signal_type.to_ascii_uppercase(),
             strategy_id: signal.strategy_id.clone(),
+            signal_id: signal.signal_id.clone(),
             timestamp: signal.timestamp,
         })
     }
@@ -322,6 +466,7 @@ impl BacktestRuntime {
             symbol: pending_order.order.symbol.0.clone(),
             signal_type: pending_order.signal_type.clone(),
             strategy_id: pending_order.strategy_id.clone(),
+            signal_id: pending_order.signal_id.clone(),
             sequence_no: self.decision_sequence_no,
             decision: decision.to_string(),
             reason_code: Self::canonical_reason_code(reason),
@@ -368,7 +513,8 @@ impl BacktestRuntime {
         }
 
         let now = order.updated_at;
-        let realized_delta = self.update_position_after_fill(&symbol, order.side, quantity, fill_price, now);
+        let realized_delta =
+            self.update_position_after_fill(&symbol, order.side, quantity, fill_price, now);
         self.realized_pnl_total += realized_delta;
 
         if let Some(pos) = self.positions.get(&symbol) {
@@ -434,7 +580,8 @@ impl BacktestRuntime {
 
                 if existing.side == fill_side {
                     let total_qty = existing.quantity.0 + fill_qty;
-                    let total_cost = existing.quantity.0 * existing.entry_price.0 + fill_qty * fill_price;
+                    let total_cost =
+                        existing.quantity.0 * existing.entry_price.0 + fill_qty * fill_price;
                     existing.quantity = Quantity(total_qty);
                     existing.entry_price = Price(total_cost / total_qty);
                     self.positions.insert(symbol.to_string(), existing);
@@ -581,20 +728,30 @@ mod tests {
             trailing_stop_percent: 1.0,
             enable_circuit_breaker: true,
             max_loss_threshold: 1_000_000.0,
+            sizing_amount: 100_000.0,
         }
     }
 
     #[test]
     fn dispatch_preserves_signal_order_and_generates_fill() {
-        let mut runtime = BacktestRuntime::new(
-            100_000.0,
-            vec!["AAPL".to_string()],
-            risk_config(),
-            42,
-        );
+        let mut runtime =
+            BacktestRuntime::new(100_000.0, vec!["AAPL".to_string()], risk_config(), 42);
 
-        runtime.ingest_bar("AAPL".to_string(), 1_700_000_000, 99.0, 101.0, 98.0, 100.0, 1000.0);
-        runtime.process_signal("AAPL".to_string(), "LONG".to_string(), 1.0, "S1".to_string());
+        runtime.ingest_bar(
+            "AAPL".to_string(),
+            1_700_000_000,
+            99.0,
+            101.0,
+            98.0,
+            100.0,
+            1000.0,
+        );
+        runtime.process_signal(
+            "AAPL".to_string(),
+            "LONG".to_string(),
+            1.0,
+            "S1".to_string(),
+        );
         runtime.dispatch_until_idle();
 
         let stats = runtime.execution_stats_snapshot();
@@ -615,13 +772,29 @@ mod tests {
         let mut right = BacktestRuntime::new(100_000.0, vec!["AAPL".to_string()], risk_config(), 7);
 
         for runtime in [&mut left, &mut right] {
-            runtime.ingest_bar("AAPL".to_string(), 1_700_000_000, 99.0, 101.0, 98.0, 100.0, 1000.0);
-            runtime.process_signal("AAPL".to_string(), "LONG".to_string(), 1.0, "S1".to_string());
+            runtime.ingest_bar(
+                "AAPL".to_string(),
+                1_700_000_000,
+                99.0,
+                101.0,
+                98.0,
+                100.0,
+                1000.0,
+            );
+            runtime.process_signal(
+                "AAPL".to_string(),
+                "LONG".to_string(),
+                1.0,
+                "S1".to_string(),
+            );
             runtime.dispatch_until_idle();
         }
 
         assert_eq!(left.state_snapshot(), right.state_snapshot());
-        assert_eq!(left.execution_stats_snapshot(), right.execution_stats_snapshot());
+        assert_eq!(
+            left.execution_stats_snapshot(),
+            right.execution_stats_snapshot()
+        );
     }
 
     #[test]
@@ -634,11 +807,26 @@ mod tests {
             trailing_stop_percent: 1.0,
             enable_circuit_breaker: true,
             max_loss_threshold: 1000.0,
+            sizing_amount: 0.0,
         };
 
-        let mut runtime = BacktestRuntime::new(100_000.0, vec!["AAPL".to_string()], strict_config, 1);
-        runtime.ingest_bar("AAPL".to_string(), 1_700_000_000, 99.0, 101.0, 98.0, 100.0, 1000.0);
-        runtime.process_signal("AAPL".to_string(), "LONG".to_string(), 1.0, "S1".to_string());
+        let mut runtime =
+            BacktestRuntime::new(100_000.0, vec!["AAPL".to_string()], strict_config, 1);
+        runtime.ingest_bar(
+            "AAPL".to_string(),
+            1_700_000_000,
+            99.0,
+            101.0,
+            98.0,
+            100.0,
+            1000.0,
+        );
+        runtime.process_signal(
+            "AAPL".to_string(),
+            "LONG".to_string(),
+            1.0,
+            "S1".to_string(),
+        );
         runtime.dispatch_until_idle();
 
         let stats = runtime.execution_stats_snapshot();
@@ -656,11 +844,26 @@ mod tests {
             trailing_stop_percent: 1.0,
             enable_circuit_breaker: true,
             max_loss_threshold: 1000.0,
+            sizing_amount: 0.0,
         };
 
-        let mut runtime = BacktestRuntime::new(100_000.0, vec!["AAPL".to_string()], strict_config, 1);
-        runtime.ingest_bar("AAPL".to_string(), 1_700_000_000, 99.0, 101.0, 98.0, 100.0, 1000.0);
-        runtime.process_signal("AAPL".to_string(), "LONG".to_string(), 1.0, "S1".to_string());
+        let mut runtime =
+            BacktestRuntime::new(100_000.0, vec!["AAPL".to_string()], strict_config, 1);
+        runtime.ingest_bar(
+            "AAPL".to_string(),
+            1_700_000_000,
+            99.0,
+            101.0,
+            98.0,
+            100.0,
+            1000.0,
+        );
+        runtime.process_signal(
+            "AAPL".to_string(),
+            "LONG".to_string(),
+            1.0,
+            "S1".to_string(),
+        );
         runtime.dispatch_until_idle();
 
         let decisions = runtime.get_new_risk_decisions();

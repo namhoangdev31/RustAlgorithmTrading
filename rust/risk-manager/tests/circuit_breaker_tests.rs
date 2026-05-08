@@ -12,6 +12,7 @@ fn test_config() -> RiskConfig {
         trailing_stop_percent: 3.0,
         enable_circuit_breaker: true,
         max_loss_threshold: 10_000.0,
+        sizing_amount: 0.0,
     }
 }
 

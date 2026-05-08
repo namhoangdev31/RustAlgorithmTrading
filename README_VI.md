@@ -2,8 +2,8 @@
 
 RustAlgorithmTrading là nền tảng giao dịch thuật toán tập trung vận hành production, tách rõ:
 
-- **Python (offline)**: nghiên cứu, backtest, phân tích chiến lược, công cụ quan sát
-- **Rust (online)**: market data, signal bridge, risk checks, execution
+- **Python (offline)**: nghiên cứu, orchestration backtest, batch strategy signal generation, công cụ quan sát
+- **Rust (runtime)**: market data, signal bridge, risk checks, execution, production backtest core
 
 Kho tài liệu đã chuyển sang mô hình **vận hành tĩnh** (không còn bộ tài liệu tuần trong cây active).
 

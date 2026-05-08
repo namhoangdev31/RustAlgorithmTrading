@@ -1,5 +1,5 @@
 """
-Phase 2 soak/stability harness for Rust backtest runtime.
+Phase 2.2 soak/stability harness for Rust-only backtest runtime.
 """
 
 from __future__ import annotations
@@ -23,16 +23,17 @@ from loguru import logger
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SRC_ROOT = REPO_ROOT / "src"
+RISK_GOLDEN_FIXTURE = REPO_ROOT / "tests" / "fixtures" / "phase2" / "risk_decision_golden.json"
 if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
 from backtesting.data_handler import HistoricalDataHandler
 from backtesting.engine import BacktestEngine
 from backtesting.execution_handler import SimulatedExecutionHandler
-from backtesting.phase2_governance import (
-    RollbackGateMetrics,
+from backtesting.integrity import (
+    IntegrityMetrics,
     SoakRunTelemetry,
-    evaluate_rollback_triggers,
+    validate_run_integrity,
     evaluate_soak_stability,
 )
 from backtesting.portfolio_handler import FixedAmountSizer, PortfolioHandler
@@ -122,6 +123,64 @@ class SoakSignalStrategy(Strategy):
     ) -> float:
         return 100.0
 
+    def generate_signal_frame(
+        self,
+        data_by_symbol: dict[str, pd.DataFrame],
+        context: Any = None,
+    ) -> pd.DataFrame:
+        rows: list[dict[str, Any]] = []
+        for symbol, df in data_by_symbol.items():
+            if symbol not in self._symbols or df.empty:
+                continue
+
+            timestamps = df["timestamp"].values if "timestamp" in df.columns else df.index.values
+            close_prices = df["close"].to_numpy(dtype=np.float64, copy=False)
+            indices = np.arange(1, len(df) + 1)
+            cycles = indices % 180
+
+            for idx in np.where(cycles == 30)[0]:
+                rows.append(
+                    {
+                        "timestamp": timestamps[idx],
+                        "symbol": symbol,
+                        "signal_type": "LONG",
+                        "strength": 1.0,
+                        "strategy_id": self.name,
+                        "signal_id": f"{symbol}:{idx + 1}:LONG",
+                        "price": float(close_prices[idx]),
+                    }
+                )
+
+            for idx in np.where(cycles == 120)[0]:
+                rows.append(
+                    {
+                        "timestamp": timestamps[idx],
+                        "symbol": symbol,
+                        "signal_type": "EXIT",
+                        "strength": 1.0,
+                        "strategy_id": self.name,
+                        "signal_id": f"{symbol}:{idx + 1}:EXIT",
+                        "price": float(close_prices[idx]),
+                    }
+                )
+
+        if not rows:
+            return pd.DataFrame(
+                columns=[
+                    "timestamp",
+                    "symbol",
+                    "signal_type",
+                    "strength",
+                    "strategy_id",
+                    "signal_id",
+                    "price",
+                ]
+            )
+
+        frame = pd.DataFrame(rows)
+        frame["timestamp"] = pd.to_datetime(frame["timestamp"], utc=True)
+        return frame.sort_values(["timestamp", "symbol", "signal_id"]).reset_index(drop=True)
+
 
 def write_soak_dataset(
     output_dir: Path,
@@ -173,7 +232,6 @@ def load_rust_benchmark_p95(artifact_path: Path) -> float:
 def run_single(
     symbols: list[str],
     data_dir: Path,
-    backend: str,
     seed: int,
 ) -> tuple[SoakRunTelemetry, dict[str, Any], float]:
     data_handler = HistoricalDataHandler(symbols=symbols, data_dir=data_dir)
@@ -193,11 +251,8 @@ def run_single(
 
     engine = BacktestEngine(
         data_handler=data_handler,
-        execution_handler=execution_handler,
         portfolio_handler=portfolio_handler,
         strategy=strategy,
-        engine_backend=backend,
-        rust_fallback_to_python=False,
     )
 
     sampler = MemorySampler(interval_seconds=0.02)
@@ -228,16 +283,55 @@ def run_single(
     return telemetry, results, duration
 
 
-def run_risk_integrity_snapshot(symbols: list[str], data_dir: Path, seed: int) -> dict[str, Any]:
-    py_telemetry, py_results, _ = run_single(symbols=symbols, data_dir=data_dir, backend="python", seed=seed)
-    rust_telemetry, rust_results, _ = run_single(symbols=symbols, data_dir=data_dir, backend="rust", seed=seed)
+def build_soak_golden_risk_trace(
+    symbols: list[str],
+    bars_per_symbol: int,
+) -> list[dict[str, Any]]:
+    payload = json.loads(RISK_GOLDEN_FIXTURE.read_text())
+    spec = payload["profiles"]["S100K"]
+
+    rows: list[dict[str, Any]] = []
+    start = pd.Timestamp(spec["first_timestamp"])
+    period = int(spec["cycle_period"])
+    long_cycle = int(spec["long_cycle"])
+    sequence_no = 0
+    for bar_index in range(1, bars_per_symbol + 1):
+        if bar_index % period != long_cycle:
+            continue
+        timestamp = start + pd.Timedelta(minutes=bar_index - 1)
+        for symbol in symbols:
+            sequence_no += 1
+            rows.append(
+                {
+                    "timestamp": timestamp.isoformat(),
+                    "symbol": symbol,
+                    "signal_type": "LONG",
+                    "strategy_id": spec["strategy_id"],
+                    "signal_id": f"{symbol}:{bar_index}:LONG",
+                    "sequence_no": sequence_no,
+                    "decision": spec["decision"],
+                    "reason_code": spec["reason_code"],
+                }
+            )
+    return rows
+
+
+def run_risk_integrity_snapshot(
+    symbols: list[str],
+    data_dir: Path,
+    bars_per_symbol: int,
+    seed: int,
+) -> dict[str, Any]:
+    rust_telemetry, rust_results, _ = run_single(symbols=symbols, data_dir=data_dir, seed=seed)
+    golden_trace = build_soak_golden_risk_trace(symbols, bars_per_symbol)
 
     comparison = compare_risk_decision_traces(
-        py_results.get("risk_decision_trace", []),
+        golden_trace,
         rust_results.get("risk_decision_trace", []),
     )
     return {
-        "python_telemetry": asdict(py_telemetry),
+        "golden_source": str(RISK_GOLDEN_FIXTURE),
+        "golden_decision_count": len(golden_trace),
         "rust_telemetry": asdict(rust_telemetry),
         "comparison": comparison.to_dict(),
     }
@@ -257,7 +351,9 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--rust-benchmark-p95-seconds", type=float, default=0.0)
     parser.add_argument(
+        "--output",
         "--output-json",
+        dest="output_json",
         type=Path,
         default=REPO_ROOT / "data" / "benchmarks" / "phase2_soak_results.json",
     )
@@ -293,6 +389,7 @@ def main() -> int:
         risk_integrity_snapshot = run_risk_integrity_snapshot(
             symbols=symbols,
             data_dir=data_dir,
+            bars_per_symbol=args.bars_per_symbol,
             seed=args.seed + 1000,
         )
 
@@ -301,7 +398,6 @@ def main() -> int:
             telemetry, results, duration = run_single(
                 symbols=symbols,
                 data_dir=data_dir,
-                backend="rust",
                 seed=args.seed + run_idx,
             )
             timed_out = duration > max(2.2 * rust_benchmark_p95, 900.0)
@@ -329,7 +425,7 @@ def main() -> int:
 
     soak_eval = evaluate_soak_stability(run_telemetry, rust_benchmark_p95_seconds=rust_benchmark_p95)
     comparison = risk_integrity_snapshot["comparison"]
-    rollback_metrics = RollbackGateMetrics(
+    integrity_metrics = IntegrityMetrics(
         pnl_drift_pct=0.0,
         exposure_drift_bps=0.0,
         false_allow_delta=int(comparison["false_allow_delta"]),
@@ -341,7 +437,7 @@ def main() -> int:
         reconciliation_failure_count=soak_eval.reconciliation_failure_count,
         latency_regression_ratio=1.0,
     )
-    rollback_eval = evaluate_rollback_triggers(rollback_metrics)
+    integrity_eval = validate_run_integrity(integrity_metrics)
 
     artifact = {
         "generated_at_utc": pd.Timestamp.utcnow().isoformat(),
@@ -356,10 +452,10 @@ def main() -> int:
         "run_artifacts": run_artifacts,
         "risk_integrity_snapshot": risk_integrity_snapshot,
         "soak_evaluation": asdict(soak_eval),
-        "rollback_evaluation": {
-            "should_rollback": rollback_eval.should_rollback,
-            "reasons": rollback_eval.reasons,
-            "metrics": rollback_eval.metrics,
+        "integrity_evaluation": {
+            "is_valid": integrity_eval.is_valid,
+            "reasons": integrity_eval.reasons,
+            "metrics": integrity_eval.metrics,
         },
     }
 
@@ -368,9 +464,9 @@ def main() -> int:
 
     print(f"[phase2-soak] wrote artifact: {args.output_json}")
     print(f"[phase2-soak] pass_gate={soak_eval.pass_gate}")
-    print(f"[phase2-soak] should_rollback={rollback_eval.should_rollback}")
+    print(f"[phase2-soak] integrity_is_valid={integrity_eval.is_valid}")
 
-    return 0 if soak_eval.pass_gate and not rollback_eval.should_rollback else 1
+    return 0 if soak_eval.pass_gate and integrity_eval.is_valid else 1
 
 
 if __name__ == "__main__":

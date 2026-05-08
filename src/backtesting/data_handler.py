@@ -315,8 +315,9 @@ class HistoricalDataHandler:
                     )
                     continue
 
-                # Ensure sorted by timestamp
+                # Ensure sorted by timestamp and set as index once for high performance (keep column for compatibility)
                 df = df.sort_values("timestamp").reset_index(drop=True)
+                df.set_index("timestamp", drop=False, inplace=True)
 
                 # Validate data integrity
                 if df["high"].lt(df["low"]).any():

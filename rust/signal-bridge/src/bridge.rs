@@ -325,7 +325,7 @@ pub struct BacktestRuntime {
 #[pymethods]
 impl BacktestRuntime {
     #[new]
-    #[pyo3(signature = (initial_capital, symbols, max_position_size=10000.0, max_notional_exposure=50000.0, max_open_positions=5, stop_loss_percent=2.0, max_loss_threshold=500.0, seed=42))]
+    #[pyo3(signature = (initial_capital, symbols, max_position_size=10000.0, max_notional_exposure=50000.0, max_open_positions=5, stop_loss_percent=2.0, max_loss_threshold=500.0, sizing_amount=0.0, seed=42))]
     pub fn new(
         initial_capital: f64,
         symbols: Vec<String>,
@@ -334,6 +334,7 @@ impl BacktestRuntime {
         max_open_positions: usize,
         stop_loss_percent: f64,
         max_loss_threshold: f64,
+        sizing_amount: f64,
         seed: u64,
     ) -> Self {
         let risk_config = common::config::RiskConfig {
@@ -344,6 +345,7 @@ impl BacktestRuntime {
             trailing_stop_percent: 1.0,
             enable_circuit_breaker: true,
             max_loss_threshold,
+            sizing_amount,
         };
 
         Self {
@@ -365,7 +367,7 @@ impl BacktestRuntime {
             .ingest_bar(symbol, timestamp, open, high, low, close, volume);
     }
 
-    #[pyo3(signature = (initial_capital, symbols, max_position_size=10000.0, max_notional_exposure=50000.0, max_open_positions=5, stop_loss_percent=2.0, max_loss_threshold=500.0, seed=42))]
+    #[pyo3(signature = (initial_capital, symbols, max_position_size=10000.0, max_notional_exposure=50000.0, max_open_positions=5, stop_loss_percent=2.0, max_loss_threshold=500.0, sizing_amount=0.0, seed=42))]
     pub fn init_state(
         &mut self,
         initial_capital: f64,
@@ -375,6 +377,7 @@ impl BacktestRuntime {
         max_open_positions: usize,
         stop_loss_percent: f64,
         max_loss_threshold: f64,
+        sizing_amount: f64,
         seed: u64,
     ) {
         let risk_config = common::config::RiskConfig {
@@ -385,6 +388,7 @@ impl BacktestRuntime {
             trailing_stop_percent: 1.0,
             enable_circuit_breaker: true,
             max_loss_threshold,
+            sizing_amount,
         };
 
         self.inner
@@ -444,12 +448,103 @@ impl BacktestRuntime {
         Ok(dict.to_object(py))
     }
 
+    pub fn metrics_snapshot(&self, py: Python) -> PyResult<PyObject> {
+        self.execution_stats_snapshot(py)
+    }
+
     pub fn reset(&mut self, seed: u64) {
         self.inner.reset(seed);
     }
 
     pub fn get_equity(&self) -> f64 {
         self.inner.get_equity()
+    }
+
+    pub fn load_market_data_columnar(
+        &mut self,
+        symbol: String,
+        timestamp: PyReadonlyArray1<i64>,
+        open: PyReadonlyArray1<f64>,
+        high: PyReadonlyArray1<f64>,
+        low: PyReadonlyArray1<f64>,
+        close: PyReadonlyArray1<f64>,
+        volume: PyReadonlyArray1<f64>,
+    ) -> PyResult<()> {
+        let ts = timestamp.as_slice().map_err(|_| PyValueError::new_err("timestamp must be contiguous"))?;
+        let o = open.as_slice().map_err(|_| PyValueError::new_err("open must be contiguous"))?;
+        let h = high.as_slice().map_err(|_| PyValueError::new_err("high must be contiguous"))?;
+        let l = low.as_slice().map_err(|_| PyValueError::new_err("low must be contiguous"))?;
+        let c = close.as_slice().map_err(|_| PyValueError::new_err("close must be contiguous"))?;
+        let v = volume.as_slice().map_err(|_| PyValueError::new_err("volume must be contiguous"))?;
+
+        let n = ts.len();
+        if o.len() != n || h.len() != n || l.len() != n || c.len() != n || v.len() != n {
+            return Err(PyValueError::new_err("All arrays must have the same length"));
+        }
+
+        let mut bars = Vec::with_capacity(n);
+        for i in 0..n {
+            bars.push(crate::backtest_runtime::MarketBar {
+                timestamp: ts[i],
+                open: o[i],
+                high: h[i],
+                low: l[i],
+                close: c[i],
+                volume: v[i],
+            });
+        }
+
+        self.inner.load_market_data(symbol, bars);
+        Ok(())
+    }
+
+    pub fn load_signals_columnar(
+        &mut self,
+        timestamp: PyReadonlyArray1<i64>,
+        symbol: Vec<String>,
+        signal_type: Vec<String>,
+        strength: PyReadonlyArray1<f64>,
+        strategy_id: Vec<String>,
+        signal_id: Option<Vec<String>>,
+    ) -> PyResult<()> {
+        let ts = timestamp.as_slice().map_err(|_| PyValueError::new_err("timestamp must be contiguous"))?;
+        let s = strength.as_slice().map_err(|_| PyValueError::new_err("strength must be contiguous"))?;
+
+        let n = ts.len();
+        if symbol.len() != n || signal_type.len() != n || s.len() != n || strategy_id.len() != n {
+            return Err(PyValueError::new_err("All arrays must have the same length"));
+        }
+        if let Some(ids) = &signal_id {
+            if ids.len() != n {
+                return Err(PyValueError::new_err("signal_id must have the same length"));
+            }
+        }
+
+        let mut signals = Vec::with_capacity(n);
+        for i in 0..n {
+            signals.push(crate::backtest_runtime::SignalRow {
+                timestamp: ts[i],
+                symbol: symbol[i].clone(),
+                signal_type: signal_type[i].clone(),
+                strength: s[i],
+                strategy_id: strategy_id[i].clone(),
+                signal_id: signal_id
+                    .as_ref()
+                    .map(|ids| ids[i].clone())
+                    .unwrap_or_else(|| format!("sig_{}", i + 1)),
+            });
+        }
+
+        self.inner.load_signals(signals);
+        Ok(())
+    }
+
+    pub fn run_to_completion(&mut self) {
+        self.inner.run_to_completion();
+    }
+
+    pub fn risk_decision_trace(&mut self, py: Python) -> PyResult<PyObject> {
+        self.get_new_risk_decisions(py)
     }
 }
 

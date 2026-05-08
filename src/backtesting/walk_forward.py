@@ -15,7 +15,6 @@ from datetime import datetime, timedelta
 
 from backtesting.engine import BacktestEngine
 from backtesting.data_handler import HistoricalDataHandler
-from backtesting.execution_handler import SimulatedExecutionHandler
 from backtesting.portfolio_handler import PortfolioHandler
 
 
@@ -179,14 +178,12 @@ class WalkForwardAnalyzer:
             # Assuming test_data is a DataFrame
             data_handler.add_symbol_data(symbol, test_data)
 
-            execution_handler = SimulatedExecutionHandler(events_queue=deque())
             portfolio_handler = PortfolioHandler(
-                data_handler=data_handler, events_queue=deque(), initial_capital=initial_capital
+                data_handler=data_handler, initial_capital=initial_capital
             )
 
             engine = BacktestEngine(
                 data_handler=data_handler,
-                execution_handler=execution_handler,
                 portfolio_handler=portfolio_handler,
                 strategy=test_strategy,
             )

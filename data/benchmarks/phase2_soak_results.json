@@ -1,0 +1,3183 @@
+{
+  "generated_at_utc": "2026-05-08T04:51:40.893494+00:00",
+  "config": {
+    "symbols": 10,
+    "bars_per_symbol": 100000,
+    "runs_requested": 120,
+    "max_hours": 6.0,
+    "rust_benchmark_p95_seconds": 3.8632799668237565
+  },
+  "runs_executed": 120,
+  "run_artifacts": [
+    {
+      "run_index": 0,
+      "telemetry": {
+        "duration_seconds": 2.0640644170343876,
+        "peak_rss_bytes": 324239360,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.062618,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 493624.6071739895,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 1,
+      "telemetry": {
+        "duration_seconds": 2.0458668328356,
+        "peak_rss_bytes": 322961408,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.044515,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 497995.3680946337,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 2,
+      "telemetry": {
+        "duration_seconds": 2.0260801669210196,
+        "peak_rss_bytes": 330727424,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.024935,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 502810.70750419144,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 3,
+      "telemetry": {
+        "duration_seconds": 2.0313450831454247,
+        "peak_rss_bytes": 334741504,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.030224,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 501500.81961399334,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 4,
+      "telemetry": {
+        "duration_seconds": 2.0558816250413656,
+        "peak_rss_bytes": 343621632,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.054635,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 495542.5172840918,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 5,
+      "telemetry": {
+        "duration_seconds": 2.0351087499875575,
+        "peak_rss_bytes": 362987520,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.033999,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 500570.0592773153,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 6,
+      "telemetry": {
+        "duration_seconds": 2.0445146658457816,
+        "peak_rss_bytes": 380354560,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.043379,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 498272.2245848666,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 7,
+      "telemetry": {
+        "duration_seconds": 2.101863207994029,
+        "peak_rss_bytes": 414875648,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.100717,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 484672.13813188544,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 8,
+      "telemetry": {
+        "duration_seconds": 2.0412451250012964,
+        "peak_rss_bytes": 418742272,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.040061,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 499082.62547051284,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 9,
+      "telemetry": {
+        "duration_seconds": 2.05817012488842,
+        "peak_rss_bytes": 403849216,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.056975,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 494978.79167223716,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 10,
+      "telemetry": {
+        "duration_seconds": 2.2794638338964432,
+        "peak_rss_bytes": 399065088,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.277947,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 446963.4280341026,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 11,
+      "telemetry": {
+        "duration_seconds": 2.0544535419903696,
+        "peak_rss_bytes": 278396928,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.053312,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 495861.8076551445,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 12,
+      "telemetry": {
+        "duration_seconds": 2.060015792027116,
+        "peak_rss_bytes": 278495232,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.058847,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 494528.73380100605,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 13,
+      "telemetry": {
+        "duration_seconds": 2.0856714581605047,
+        "peak_rss_bytes": 353550336,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.084326,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 488483.5673498292,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 14,
+      "telemetry": {
+        "duration_seconds": 2.0878232908435166,
+        "peak_rss_bytes": 358187008,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.086715,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 487924.3212417604,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 15,
+      "telemetry": {
+        "duration_seconds": 2.0506968330591917,
+        "peak_rss_bytes": 345309184,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.049543,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 496773.6710086102,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 16,
+      "telemetry": {
+        "duration_seconds": 2.0409210838843137,
+        "peak_rss_bytes": 365527040,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.039794,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 499147.9531756638,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 17,
+      "telemetry": {
+        "duration_seconds": 2.041862375102937,
+        "peak_rss_bytes": 359890944,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.040733,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 498918.28083340643,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 18,
+      "telemetry": {
+        "duration_seconds": 2.0439200419932604,
+        "peak_rss_bytes": 353320960,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.040874,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 498883.8115434858,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 19,
+      "telemetry": {
+        "duration_seconds": 2.041564708109945,
+        "peak_rss_bytes": 348700672,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.039989,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 499100.24024639354,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 20,
+      "telemetry": {
+        "duration_seconds": 2.0521494580898434,
+        "peak_rss_bytes": 354992128,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.051007,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 496419.07609286567,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 21,
+      "telemetry": {
+        "duration_seconds": 2.034215583000332,
+        "peak_rss_bytes": 356155392,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.033089,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 500794.1118170429,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 22,
+      "telemetry": {
+        "duration_seconds": 2.0312365000136197,
+        "peak_rss_bytes": 310935552,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.030075,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 501537.6279201507,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 23,
+      "telemetry": {
+        "duration_seconds": 2.0545132919214666,
+        "peak_rss_bytes": 315752448,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.053335,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 495856.2533634307,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 24,
+      "telemetry": {
+        "duration_seconds": 2.036444499855861,
+        "peak_rss_bytes": 311476224,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.034755,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 500384.07572410436,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 25,
+      "telemetry": {
+        "duration_seconds": 2.07534279092215,
+        "peak_rss_bytes": 320847872,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.074184,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 490872.07306584186,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 26,
+      "telemetry": {
+        "duration_seconds": 2.1023502498865128,
+        "peak_rss_bytes": 328335360,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.10117,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 484567.6456450453,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 27,
+      "telemetry": {
+        "duration_seconds": 2.04125254182145,
+        "peak_rss_bytes": 328744960,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.040134,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 499064.76731430384,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 28,
+      "telemetry": {
+        "duration_seconds": 2.0335222089197487,
+        "peak_rss_bytes": 316522496,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.032392,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 500965.85698034626,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 29,
+      "telemetry": {
+        "duration_seconds": 2.036052207928151,
+        "peak_rss_bytes": 323764224,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.034908,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 500346.45300917776,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 30,
+      "telemetry": {
+        "duration_seconds": 2.074724083999172,
+        "peak_rss_bytes": 315146240,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.073557,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 491020.5024506199,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 31,
+      "telemetry": {
+        "duration_seconds": 2.0549340827856213,
+        "peak_rss_bytes": 309526528,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.053786,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 495747.3660839055,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 32,
+      "telemetry": {
+        "duration_seconds": 2.034120084019378,
+        "peak_rss_bytes": 334872576,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.033015,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 500812.34029261966,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 33,
+      "telemetry": {
+        "duration_seconds": 2.082206124905497,
+        "peak_rss_bytes": 341704704,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.080392,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 489407.28478094516,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 34,
+      "telemetry": {
+        "duration_seconds": 2.0285882498137653,
+        "peak_rss_bytes": 317440000,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.027432,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 502191.44217907183,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 35,
+      "telemetry": {
+        "duration_seconds": 2.1828050408512354,
+        "peak_rss_bytes": 310525952,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.18158,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 466707.1571979941,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 36,
+      "telemetry": {
+        "duration_seconds": 2.0432360421400517,
+        "peak_rss_bytes": 308887552,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.042084,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 498588.2069493713,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 37,
+      "telemetry": {
+        "duration_seconds": 2.041299207834527,
+        "peak_rss_bytes": 296976384,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.040153,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 499060.1195106445,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 38,
+      "telemetry": {
+        "duration_seconds": 2.0537641670089215,
+        "peak_rss_bytes": 311803904,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.052605,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 496032.6024734423,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 39,
+      "telemetry": {
+        "duration_seconds": 2.105871375184506,
+        "peak_rss_bytes": 325795840,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.104719,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 483750.56242662325,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 40,
+      "telemetry": {
+        "duration_seconds": 2.0389394578523934,
+        "peak_rss_bytes": 320143360,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.037278,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 499764.3915067065,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 41,
+      "telemetry": {
+        "duration_seconds": 2.033776917029172,
+        "peak_rss_bytes": 325779456,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.032572,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 500921.49257197283,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 42,
+      "telemetry": {
+        "duration_seconds": 2.0880861671175808,
+        "peak_rss_bytes": 325779456,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.086928,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 487874.5217851311,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 43,
+      "telemetry": {
+        "duration_seconds": 2.0311723749618977,
+        "peak_rss_bytes": 318930944,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.029993,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 501557.8871454236,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 44,
+      "telemetry": {
+        "duration_seconds": 2.035387707874179,
+        "peak_rss_bytes": 314916864,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.034232,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 500512.72421238094,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 45,
+      "telemetry": {
+        "duration_seconds": 2.0426011672243476,
+        "peak_rss_bytes": 334430208,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.041448,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 498743.53889983974,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 46,
+      "telemetry": {
+        "duration_seconds": 2.0350992078892887,
+        "peak_rss_bytes": 358268928,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.033921,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 500589.255924886,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 47,
+      "telemetry": {
+        "duration_seconds": 2.0848390830215067,
+        "peak_rss_bytes": 365445120,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.083645,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 488643.2189744414,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 48,
+      "telemetry": {
+        "duration_seconds": 2.032197583001107,
+        "peak_rss_bytes": 374145024,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.031021,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 501304.02393672935,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 49,
+      "telemetry": {
+        "duration_seconds": 2.0308308750391006,
+        "peak_rss_bytes": 368033792,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.029703,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 501629.54875664075,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 50,
+      "telemetry": {
+        "duration_seconds": 2.030092458007857,
+        "peak_rss_bytes": 372768768,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.028896,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 501829.0735454158,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 51,
+      "telemetry": {
+        "duration_seconds": 2.0310174580663443,
+        "peak_rss_bytes": 372801536,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.029858,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 501591.2443136417,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 52,
+      "telemetry": {
+        "duration_seconds": 2.0756352921016514,
+        "peak_rss_bytes": 372801536,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.074317,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 490840.5995804884,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 53,
+      "telemetry": {
+        "duration_seconds": 2.0530328748282045,
+        "peak_rss_bytes": 348307456,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.051792,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 496229.14993332664,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 54,
+      "telemetry": {
+        "duration_seconds": 2.038943958003074,
+        "peak_rss_bytes": 344440832,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.03776,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 499646.1801193467,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 55,
+      "telemetry": {
+        "duration_seconds": 2.062252416042611,
+        "peak_rss_bytes": 343441408,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.0611,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 493988.1616612488,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 56,
+      "telemetry": {
+        "duration_seconds": 2.0450530420057476,
+        "peak_rss_bytes": 337575936,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.043886,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 498148.6247276022,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 57,
+      "telemetry": {
+        "duration_seconds": 2.037517207907513,
+        "peak_rss_bytes": 348487680,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.036397,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 499980.6029963705,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 58,
+      "telemetry": {
+        "duration_seconds": 2.0859807909000665,
+        "peak_rss_bytes": 352223232,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.084185,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 488516.61440802994,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 59,
+      "telemetry": {
+        "duration_seconds": 2.0429755840450525,
+        "peak_rss_bytes": 342491136,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.041793,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 498659.26663476654,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 60,
+      "telemetry": {
+        "duration_seconds": 2.05542862508446,
+        "peak_rss_bytes": 347340800,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.05391,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 495717.43649916496,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 61,
+      "telemetry": {
+        "duration_seconds": 2.208252958022058,
+        "peak_rss_bytes": 328679424,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.207089,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 461313.06893378566,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 62,
+      "telemetry": {
+        "duration_seconds": 2.1908624158240855,
+        "peak_rss_bytes": 335691776,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.189378,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 465044.8666242193,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 63,
+      "telemetry": {
+        "duration_seconds": 2.116106207948178,
+        "peak_rss_bytes": 297697280,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.114892,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 481423.6377082139,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 64,
+      "telemetry": {
+        "duration_seconds": 2.065143167041242,
+        "peak_rss_bytes": 304513024,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.063895,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 493319.1853267729,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 65,
+      "telemetry": {
+        "duration_seconds": 2.0397681249305606,
+        "peak_rss_bytes": 298876928,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.038075,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 499568.95600014715,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 66,
+      "telemetry": {
+        "duration_seconds": 2.03177100000903,
+        "peak_rss_bytes": 304660480,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.030633,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 501399.8098129992,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 67,
+      "telemetry": {
+        "duration_seconds": 2.0408454169519246,
+        "peak_rss_bytes": 309477376,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.039631,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 499187.843291262,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 68,
+      "telemetry": {
+        "duration_seconds": 2.0349219171330333,
+        "peak_rss_bytes": 366559232,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.033293,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 500743.8672144152,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 69,
+      "telemetry": {
+        "duration_seconds": 2.0515922910999507,
+        "peak_rss_bytes": 377847808,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.050423,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 496560.46581607795,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 70,
+      "telemetry": {
+        "duration_seconds": 2.0472342078574,
+        "peak_rss_bytes": 361562112,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.046024,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 497628.08256403636,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 71,
+      "telemetry": {
+        "duration_seconds": 2.0574382920749485,
+        "peak_rss_bytes": 382517248,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.056228,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 495158.61081553216,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 72,
+      "telemetry": {
+        "duration_seconds": 2.0368792498484254,
+        "peak_rss_bytes": 371179520,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.035729,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 500144.66562101344,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 73,
+      "telemetry": {
+        "duration_seconds": 2.0448430408723652,
+        "peak_rss_bytes": 370819072,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.043687,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 498197.1309696642,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 74,
+      "telemetry": {
+        "duration_seconds": 2.047425667056814,
+        "peak_rss_bytes": 356417536,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.045751,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 497694.48970084824,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 75,
+      "telemetry": {
+        "duration_seconds": 2.0315882090944797,
+        "peak_rss_bytes": 363921408,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.030414,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 501453.8906843629,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 76,
+      "telemetry": {
+        "duration_seconds": 2.144881291082129,
+        "peak_rss_bytes": 364724224,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.143195,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 475065.9645995815,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 77,
+      "telemetry": {
+        "duration_seconds": 2.0642088330350816,
+        "peak_rss_bytes": 338624512,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.063009,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 493531.0510036553,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 78,
+      "telemetry": {
+        "duration_seconds": 2.0314983329735696,
+        "peak_rss_bytes": 346030080,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.030305,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 501480.8119962272,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 79,
+      "telemetry": {
+        "duration_seconds": 2.126428582938388,
+        "peak_rss_bytes": 349339648,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.12527,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 479072.77663543925,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 80,
+      "telemetry": {
+        "duration_seconds": 2.0392138748429716,
+        "peak_rss_bytes": 318439424,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.038011,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 499584.64404755423,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 81,
+      "telemetry": {
+        "duration_seconds": 2.2143562498968095,
+        "peak_rss_bytes": 323436544,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.212526,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 460179.45099854196,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 82,
+      "telemetry": {
+        "duration_seconds": 2.039590874919668,
+        "peak_rss_bytes": 319766528,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.038423,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 499483.6694837137,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 83,
+      "telemetry": {
+        "duration_seconds": 2.0923392090480775,
+        "peak_rss_bytes": 341360640,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.091078,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 486906.27513655636,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 84,
+      "telemetry": {
+        "duration_seconds": 2.0327563751488924,
+        "peak_rss_bytes": 330547200,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.031608,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 501159.18031431263,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 85,
+      "telemetry": {
+        "duration_seconds": 2.039339500013739,
+        "peak_rss_bytes": 342147072,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.038181,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 499542.9748388392,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 86,
+      "telemetry": {
+        "duration_seconds": 2.035423541907221,
+        "peak_rss_bytes": 337821696,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.034096,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 500546.188577137,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 87,
+      "telemetry": {
+        "duration_seconds": 2.043174457969144,
+        "peak_rss_bytes": 348782592,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.041983,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 498612.8679817608,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 88,
+      "telemetry": {
+        "duration_seconds": 2.054507290944457,
+        "peak_rss_bytes": 352190464,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.053323,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 495859.1512392352,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 89,
+      "telemetry": {
+        "duration_seconds": 2.0325715839862823,
+        "peak_rss_bytes": 329842688,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.031404,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 501209.5083006629,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 90,
+      "telemetry": {
+        "duration_seconds": 2.0323178749531507,
+        "peak_rss_bytes": 333496320,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.031148,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 501272.6792926956,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 91,
+      "telemetry": {
+        "duration_seconds": 2.038673165952787,
+        "peak_rss_bytes": 330235904,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.037384,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 499738.39001386095,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 92,
+      "telemetry": {
+        "duration_seconds": 2.0360069999005646,
+        "peak_rss_bytes": 373587968,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.034714,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 500394.1585893644,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 93,
+      "telemetry": {
+        "duration_seconds": 2.0767132500186563,
+        "peak_rss_bytes": 364904448,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.075525,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 490554.9198395587,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 94,
+      "telemetry": {
+        "duration_seconds": 2.037048582918942,
+        "peak_rss_bytes": 370950144,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.035884,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 500106.5876051878,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 95,
+      "telemetry": {
+        "duration_seconds": 2.0330565420445055,
+        "peak_rss_bytes": 385417216,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.031896,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 501088.14624370536,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 96,
+      "telemetry": {
+        "duration_seconds": 2.037007125094533,
+        "peak_rss_bytes": 390135808,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.035789,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 500129.92505608394,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 97,
+      "telemetry": {
+        "duration_seconds": 2.0944772500079125,
+        "peak_rss_bytes": 390283264,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.093037,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 486450.55008583225,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 98,
+      "telemetry": {
+        "duration_seconds": 2.047346208943054,
+        "peak_rss_bytes": 349945856,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.045995,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 497635.13596074283,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 99,
+      "telemetry": {
+        "duration_seconds": 2.066391750006005,
+        "peak_rss_bytes": 348979200,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.06522,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 493002.68252292735,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 100,
+      "telemetry": {
+        "duration_seconds": 2.1773553339298815,
+        "peak_rss_bytes": 332873728,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.176163,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 467868.90504066105,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 101,
+      "telemetry": {
+        "duration_seconds": 2.0521529999095947,
+        "peak_rss_bytes": 374325248,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.050992,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 496422.7066707233,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 102,
+      "telemetry": {
+        "duration_seconds": 2.075333584100008,
+        "peak_rss_bytes": 377962496,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.073667,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 490994.45571540657,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 103,
+      "telemetry": {
+        "duration_seconds": 2.3222570000216365,
+        "peak_rss_bytes": 377962496,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.31994,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 438872.9880945197,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 104,
+      "telemetry": {
+        "duration_seconds": 2.20861529186368,
+        "peak_rss_bytes": 294518784,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.207444,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 461238.88080513023,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 105,
+      "telemetry": {
+        "duration_seconds": 2.0480116670951247,
+        "peak_rss_bytes": 294502400,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.046813,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 497436.2582219284,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 106,
+      "telemetry": {
+        "duration_seconds": 2.197415624978021,
+        "peak_rss_bytes": 299286528,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.196225,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 463595.03238511534,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 107,
+      "telemetry": {
+        "duration_seconds": 2.106662832899019,
+        "peak_rss_bytes": 350355456,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.105228,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 483633.6016811481,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 108,
+      "telemetry": {
+        "duration_seconds": 2.0567213750910014,
+        "peak_rss_bytes": 330252288,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.055524,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 495328.19855180476,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 109,
+      "telemetry": {
+        "duration_seconds": 2.1710952499415725,
+        "peak_rss_bytes": 329400320,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.169661,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 469271.0059313413,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 110,
+      "telemetry": {
+        "duration_seconds": 2.087368292035535,
+        "peak_rss_bytes": 322732032,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.086163,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 488053.42631424294,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 111,
+      "telemetry": {
+        "duration_seconds": 2.053959875134751,
+        "peak_rss_bytes": 324009984,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.052774,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 495991.765289311,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 112,
+      "telemetry": {
+        "duration_seconds": 2.1282587500754744,
+        "peak_rss_bytes": 293093376,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.124569,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 479230.8463504833,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 113,
+      "telemetry": {
+        "duration_seconds": 2.150881916983053,
+        "peak_rss_bytes": 327860224,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.14948,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 473676.8892941548,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 114,
+      "telemetry": {
+        "duration_seconds": 2.1883802919182926,
+        "peak_rss_bytes": 318898176,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.186924,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 465566.7046500016,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 115,
+      "telemetry": {
+        "duration_seconds": 2.062517333077267,
+        "peak_rss_bytes": 318701568,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.061299,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 493940.47151820286,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 116,
+      "telemetry": {
+        "duration_seconds": 2.1222940830048174,
+        "peak_rss_bytes": 313065472,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.120728,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 480098.8151238631,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 117,
+      "telemetry": {
+        "duration_seconds": 2.0342919582035393,
+        "peak_rss_bytes": 311967744,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.033077,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 500797.06769591116,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 118,
+      "telemetry": {
+        "duration_seconds": 2.037834041984752,
+        "peak_rss_bytes": 312918016,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.036291,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 500006.6297007648,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    },
+    {
+      "run_index": 119,
+      "telemetry": {
+        "duration_seconds": 2.0469751658383757,
+        "peak_rss_bytes": 331612160,
+        "fallback_count": 0,
+        "reconciliation_failure_count": 0,
+        "crashed": false,
+        "timed_out": false
+      },
+      "execution_stats": {
+        "duration_seconds": 2.045782,
+        "events_processed": 1018159,
+        "signals_generated": 11110,
+        "orders_placed": 7049,
+        "fills_executed": 2978,
+        "events_per_second": 497686.9480716909,
+        "rust_fallback_count": 0,
+        "reconciliation_failures": 0,
+        "reconciliation_checks": 0,
+        "risk_allow_count": 5560,
+        "risk_reject_count": 0,
+        "risk_blocked_count": 0
+      },
+      "crash_reason": null
+    }
+  ],
+  "risk_integrity_snapshot": {
+    "golden_source": "/Users/hoangnam/Developer/RustAlgorithmTrading/tests/fixtures/phase2/risk_decision_golden.json",
+    "golden_decision_count": 5560,
+    "rust_telemetry": {
+      "duration_seconds": 2.04262008308433,
+      "peak_rss_bytes": 316194816,
+      "fallback_count": 0,
+      "reconciliation_failure_count": 0,
+      "crashed": false,
+      "timed_out": false
+    },
+    "comparison": {
+      "false_allow_delta": 0,
+      "false_reject_delta": 0,
+      "blocked_delta": 0,
+      "missing_keys_in_candidate": 0,
+      "extra_keys_in_candidate": 0,
+      "reason_mismatch_count": 0,
+      "baseline_total": 5560,
+      "candidate_total": 5560,
+      "details": []
+    }
+  },
+  "soak_evaluation": {
+    "pass_gate": true,
+    "timeout_threshold_seconds": 900.0,
+    "timeout_count": 0,
+    "crash_count": 0,
+    "fallback_count": 0,
+    "reconciliation_failure_count": 0,
+    "memory_slope_mb_per_hour": -103.32816152632819,
+    "total_memory_growth_pct": 2.2738756947953513,
+    "reasons": []
+  },
+  "rollback_evaluation": {
+    "should_rollback": false,
+    "reasons": [],
+    "metrics": {
+      "pnl_drift_pct": 0.0,
+      "exposure_drift_bps": 0.0,
+      "false_allow_delta": 0,
+      "false_reject_delta": 0,
+      "blocked_delta": 0,
+      "timeout_count": 0,
+      "crash_count": 0,
+      "fallback_count": 0,
+      "reconciliation_failure_count": 0,
+      "latency_regression_ratio": 1.0
+    }
+  }
+}

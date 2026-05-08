@@ -13,7 +13,6 @@ import secrets
 from strategies.base import Strategy
 from backtesting.engine import BacktestEngine
 from backtesting.data_handler import HistoricalDataHandler
-from backtesting.execution_handler import SimulatedExecutionHandler
 from backtesting.portfolio_handler import PortfolioHandler
 
 
@@ -174,14 +173,12 @@ class MonteCarloSimulator:
             data_handler.symbol_data = {strategy.name: synthetic_data}
             data_handler.continue_backtest = True
 
-            execution_handler = SimulatedExecutionHandler()
             portfolio_handler = PortfolioHandler(
                 initial_capital=initial_capital, data_handler=data_handler
             )
 
             engine = BacktestEngine(
                 data_handler=data_handler,
-                execution_handler=execution_handler,
                 portfolio_handler=portfolio_handler,
                 strategy=strategy,
             )

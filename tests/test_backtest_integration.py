@@ -1,8 +1,8 @@
-"""Canonical Phase 2 gate file for backtest core integration."""
+"""Canonical Phase 2.2 gate file for Rust-only backtest integration."""
 
 from __future__ import annotations
 
-from datetime import datetime
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -11,50 +11,53 @@ import pytest
 pytest.importorskip("signal_bridge", reason="signal_bridge extension is required for rust backend gate")
 
 from backtesting.data_handler import HistoricalDataHandler
-from backtesting.engine import BacktestEngine
-from backtesting.execution_handler import SimulatedExecutionHandler
+from backtesting.engine import BacktestEngine, StrategyBatchInterfaceRequired
 from backtesting.portfolio_handler import FixedAmountSizer, PortfolioHandler
 from backtesting.risk_integrity import compare_risk_decision_traces
-from strategies.base import Signal, SignalType, Strategy
+from strategies.base import Signal, Strategy
 
 
-class DeterministicSignalStrategy(Strategy):
-    """Small deterministic strategy for backend parity/replay tests."""
-
+class DeterministicBatchStrategy(Strategy):
     def __init__(self):
-        super().__init__(name="DeterministicSignalStrategy")
-        self._entered = False
-        self._exited = False
+        super().__init__(name="DeterministicBatchStrategy")
 
     def generate_signals(self, data: pd.DataFrame) -> list[Signal]:
-        symbol = data.attrs.get("symbol", "AAPL")
-        ts = pd.Timestamp(data.index[-1]).to_pydatetime()
-        price = float(data["close"].iloc[-1])
+        return []
 
-        signals: list[Signal] = []
-        if len(data) >= 25 and not self._entered:
-            signals.append(
-                Signal(
-                    timestamp=ts,
-                    symbol=symbol,
-                    signal_type=SignalType.LONG,
-                    price=price,
-                    confidence=1.0,
+    def generate_signal_frame(
+        self, data_by_symbol: dict[str, pd.DataFrame], context: Any = None
+    ) -> pd.DataFrame:
+        rows = []
+        for symbol, df in data_by_symbol.items():
+            for bar_index, signal_type in [(25, "LONG"), (45, "EXIT")]:
+                row = df.iloc[bar_index - 1]
+                rows.append(
+                    {
+                        "timestamp": row["timestamp"],
+                        "symbol": symbol,
+                        "signal_type": signal_type,
+                        "strength": 1.0,
+                        "strategy_id": self.name,
+                        "signal_id": f"{symbol}:{bar_index}:{signal_type}",
+                    }
                 )
-            )
-            self._entered = True
-        elif len(data) >= 45 and self._entered and not self._exited:
-            signals.append(
-                Signal(
-                    timestamp=ts,
-                    symbol=symbol,
-                    signal_type=SignalType.EXIT,
-                    price=price,
-                    confidence=1.0,
-                )
-            )
-            self._exited = True
-        return signals
+        return pd.DataFrame(rows)
+
+    def calculate_position_size(
+        self,
+        signal: Signal,
+        account_value: float,
+        current_position: float = 0.0,
+    ) -> float:
+        return 100.0
+
+
+class LegacyOnlyStrategy(Strategy):
+    def __init__(self):
+        super().__init__(name="LegacyOnlyStrategy")
+
+    def generate_signals(self, data: pd.DataFrame) -> list[Signal]:
+        return []
 
     def calculate_position_size(
         self,
@@ -68,47 +71,41 @@ class DeterministicSignalStrategy(Strategy):
 @pytest.fixture
 def sample_data() -> dict[str, pd.DataFrame]:
     rng = np.random.default_rng(42)
-    dates = pd.date_range(start="2024-01-01", periods=120, freq="h")
+    dates = pd.date_range(start="2024-01-01", periods=120, freq="h", tz="UTC")
     prices = 100 + np.cumsum(rng.normal(0.02, 0.35, 120))
     df = pd.DataFrame(
         {
+            "timestamp": dates,
             "open": prices * 0.998,
             "high": prices * 1.002,
             "low": prices * 0.996,
             "close": prices,
             "volume": rng.integers(10_000, 60_000, 120),
-        },
-        index=dates,
+        }
     )
-    df.index.name = "timestamp"
     return {"AAPL": df}
 
 
-def _make_engine(data_dir, backend: str, seed: int) -> BacktestEngine:
+def _make_engine(data_dir, strategy: Strategy | None = None) -> BacktestEngine:
     symbols = ["AAPL"]
     data_handler = HistoricalDataHandler(symbols=symbols, data_dir=data_dir)
-    execution_handler = SimulatedExecutionHandler(
-        commission_rate=0.001,
-        slippage_bps=0.0,
-        market_impact_bps=0.0,
-        partial_fill_probability=0.0,
-        random_seed=seed,
-    )
     portfolio_handler = PortfolioHandler(
         initial_capital=100000.0,
         position_sizer=FixedAmountSizer(10000),
         data_handler=data_handler,
     )
-    strategy = DeterministicSignalStrategy()
 
     return BacktestEngine(
         data_handler=data_handler,
-        execution_handler=execution_handler,
         portfolio_handler=portfolio_handler,
-        strategy=strategy,
-        engine_backend=backend,
-        rust_fallback_to_python=False,
+        strategy=strategy or DeterministicBatchStrategy(),
     )
+
+
+def _write_sample_data(sample_data: dict[str, pd.DataFrame], data_dir) -> None:
+    data_dir.mkdir()
+    for symbol, df in sample_data.items():
+        df.to_csv(data_dir / f"{symbol}.csv", index=False)
 
 
 def _final_equity(results: dict) -> float:
@@ -116,84 +113,72 @@ def _final_equity(results: dict) -> float:
     return float(equity_curve["equity"].iloc[-1]) if not equity_curve.empty else 0.0
 
 
-def test_backtest_parity_python_vs_rust(sample_data, tmp_path):
-    """Strict parity gate: PnL drift <= 0.10%."""
+def test_rust_only_backtest_runs_to_completion(sample_data, tmp_path):
     data_dir = tmp_path / "data"
-    data_dir.mkdir()
-    for symbol, df in sample_data.items():
-        df.to_csv(data_dir / f"{symbol}.csv")
+    _write_sample_data(sample_data, data_dir)
 
-    engine_py = _make_engine(data_dir, backend="python", seed=42)
-    engine_rust = _make_engine(data_dir, backend="rust", seed=42)
+    engine = _make_engine(data_dir)
+    results = engine.run()
 
-    results_py = engine_py.run()
-    results_rust = engine_rust.run()
-
-    py_final_equity = _final_equity(results_py)
-    rust_final_equity = _final_equity(results_rust)
-
-    drift = abs(py_final_equity - rust_final_equity) / py_final_equity if py_final_equity > 0 else 0.0
-    assert drift <= 0.0010, f"PnL drift {drift:.4%} exceeds tolerance 0.10%"
+    assert _final_equity(results) > 0
+    assert results["execution_stats"]["rust_fallback_count"] == 0
+    assert results["execution_stats"]["signals_generated"] == 2
 
 
 def test_rust_backend_reproducibility(sample_data, tmp_path):
-    """Rust backend must be deterministic for identical seed + input."""
     data_dir = tmp_path / "data_repro"
-    data_dir.mkdir()
-    for symbol, df in sample_data.items():
-        df.to_csv(data_dir / f"{symbol}.csv")
+    _write_sample_data(sample_data, data_dir)
 
     outcomes = []
     for _ in range(2):
-        engine = _make_engine(data_dir, backend="rust", seed=42)
+        engine = _make_engine(data_dir)
         results = engine.run()
-        outcomes.append(_final_equity(results))
+        outcomes.append(
+            (
+                _final_equity(results),
+                results["risk_decision_trace"],
+                {
+                    key: value
+                    for key, value in results["execution_stats"].items()
+                    if key not in {"duration_seconds", "events_per_second"}
+                },
+            )
+        )
 
     assert outcomes[0] == outcomes[1]
 
 
-def test_default_backend_switch_smoke_with_env(sample_data, tmp_path, monkeypatch):
-    """
-    Integration smoke: default backend should respect env-driven promotion switch.
-    """
-    data_dir = tmp_path / "data_default_switch"
-    data_dir.mkdir()
-    for symbol, df in sample_data.items():
-        df.to_csv(data_dir / f"{symbol}.csv")
+def test_legacy_strategy_fails_clear_in_rust_only_mode(sample_data, tmp_path):
+    data_dir = tmp_path / "data_legacy"
+    _write_sample_data(sample_data, data_dir)
 
-    monkeypatch.setenv("BACKTEST_ENGINE_BACKEND_DEFAULT", "rust")
-    engine = _make_engine(data_dir, backend="rust", seed=123)
+    engine = _make_engine(data_dir, strategy=LegacyOnlyStrategy())
 
-    engine_default = BacktestEngine(
-        data_handler=engine.data_handler,
-        execution_handler=engine.execution_handler,
-        portfolio_handler=engine.portfolio_handler,
-        strategy=engine.strategy,
-        engine_backend=None,
-        rust_fallback_to_python=False,
-    )
-    assert engine_default.engine_backend == "rust"
+    with pytest.raises(StrategyBatchInterfaceRequired):
+        engine.run()
 
 
-def test_risk_integrity_zero_deltas_python_vs_rust(sample_data, tmp_path):
-    """
-    Phase 2 integrity gate: false-allow/reject deltas remain zero.
-    """
-    data_dir = tmp_path / "data_risk_integrity"
-    data_dir.mkdir()
-    for symbol, df in sample_data.items():
-        df.to_csv(data_dir / f"{symbol}.csv")
+def test_risk_integrity_against_golden_trace(sample_data, tmp_path):
+    data_dir = tmp_path / "data_risk"
+    _write_sample_data(sample_data, data_dir)
 
-    engine_py = _make_engine(data_dir, backend="python", seed=42)
-    engine_rust = _make_engine(data_dir, backend="rust", seed=42)
+    engine = _make_engine(data_dir)
+    results = engine.run()
+    candidate = results["risk_decision_trace"]
+    baseline = [
+        {
+            "timestamp": pd.Timestamp(sample_data["AAPL"]["timestamp"].iloc[24]).isoformat(),
+            "symbol": "AAPL",
+            "signal_type": "LONG",
+            "strategy_id": "DeterministicBatchStrategy",
+            "signal_id": "AAPL:25:LONG",
+            "sequence_no": 1,
+            "decision": "ALLOW",
+            "reason_code": "NONE",
+        }
+    ]
 
-    results_py = engine_py.run()
-    results_rust = engine_rust.run()
-
-    comparison = compare_risk_decision_traces(
-        results_py.get("risk_decision_trace", []),
-        results_rust.get("risk_decision_trace", []),
-    )
+    comparison = compare_risk_decision_traces(baseline, candidate)
 
     assert comparison.false_allow_delta == 0
     assert comparison.false_reject_delta == 0

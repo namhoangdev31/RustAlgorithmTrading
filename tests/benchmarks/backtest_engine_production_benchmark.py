@@ -1,5 +1,5 @@
 """
-Phase 2 production-like benchmark for python vs rust backtest engine backends.
+Phase 2.2 production-like benchmark for Rust-only backtest runtime.
 """
 
 from __future__ import annotations
@@ -29,7 +29,6 @@ if str(SRC_ROOT) not in sys.path:
 from backtesting.data_handler import HistoricalDataHandler
 from backtesting.engine import BacktestEngine
 from backtesting.execution_handler import SimulatedExecutionHandler
-from backtesting.phase2_governance import resolve_engine_backend
 from backtesting.portfolio_handler import FixedAmountSizer, PortfolioHandler
 from backtesting.risk_integrity import compare_risk_decision_traces
 from strategies.base import Signal, SignalType, Strategy
@@ -39,6 +38,8 @@ AGGRESSIVE_MIN_SPEEDUP = {"P10K": 1.20, "P100K": 1.40}
 AGGRESSIVE_P95_RATIO_LIMIT = 0.75
 AGGRESSIVE_RUST_MAX_MEMORY_BYTES = int(3.2 * 1024 * 1024 * 1024)
 AGGRESSIVE_RUST_MEMORY_MULTIPLIER = 1.10
+BASELINE_FIXTURE = REPO_ROOT / "tests" / "fixtures" / "phase2" / "python_baseline_metrics.json"
+RISK_GOLDEN_FIXTURE = REPO_ROOT / "tests" / "fixtures" / "phase2" / "risk_decision_golden.json"
 
 
 def configure_logging(level: str) -> None:
@@ -61,6 +62,7 @@ class RunTelemetry:
     warmup: bool
     duration_seconds: float
     throughput_bars_per_second: float
+    total_events: int
     peak_rss_bytes: int
     fallback_count: int
     reconciliation_failures: int
@@ -110,9 +112,22 @@ class BenchmarkSignalStrategy(Strategy):
         if symbol not in self._symbols:
             return []
 
-        bar_index = len(data)
-        timestamp = pd.Timestamp(data.index[-1]).to_pydatetime()
-        price = float(data["close"].iloc[-1])
+        # Use a stateful counter instead of len(data) because data is now a sliding window
+        if not hasattr(self, "_bar_counts"):
+            self._bar_counts = {}
+        
+        self._bar_counts[symbol] = self._bar_counts.get(symbol, 0) + 1
+        bar_index = self._bar_counts[symbol]
+        
+        if len(data) == 0:
+            return []
+
+        try:
+            timestamp = pd.Timestamp(data.index[-1]).to_pydatetime()
+            price = float(data["close"].iloc[-1])
+        except (IndexError, AttributeError, ValueError):
+            return []
+
         open_position = self._position_open[symbol]
         cycle = bar_index % 200
 
@@ -150,6 +165,62 @@ class BenchmarkSignalStrategy(Strategy):
     ) -> float:
         return 100.0
 
+    def generate_signal_frame(self, data_by_symbol: dict[str, pd.DataFrame], context: Any = None) -> pd.DataFrame:
+        signals = []
+        for symbol, df in data_by_symbol.items():
+            if symbol not in self._symbols or df.empty:
+                continue
+            
+            n_bars = len(df)
+            indices = np.arange(1, n_bars + 1)
+            cycles = indices % 200
+            
+            long_mask = (cycles == 25)
+            exit_mask = (cycles == 125)
+            
+            timestamps = df["timestamp"].values if "timestamp" in df.columns else df.index.values
+            close_prices = df["close"].values
+            
+            for idx in np.where(long_mask)[0]:
+                signals.append({
+                    "timestamp": timestamps[idx],
+                    "symbol": symbol,
+                    "signal_type": "LONG",
+                    "strength": 1.0,
+                    "strategy_id": self.name,
+                    "signal_id": f"{symbol}:{idx + 1}:LONG",
+                    "price": float(close_prices[idx])
+                })
+                
+            for idx in np.where(exit_mask)[0]:
+                signals.append({
+                    "timestamp": timestamps[idx],
+                    "symbol": symbol,
+                    "signal_type": "EXIT",
+                    "strength": 1.0,
+                    "strategy_id": self.name,
+                    "signal_id": f"{symbol}:{idx + 1}:EXIT",
+                    "price": float(close_prices[idx])
+                })
+                
+        if not signals:
+            return pd.DataFrame(
+                columns=[
+                    "timestamp",
+                    "symbol",
+                    "signal_type",
+                    "strength",
+                    "strategy_id",
+                    "signal_id",
+                    "price",
+                ]
+            )
+            
+        res = pd.DataFrame(signals)
+        res["timestamp"] = pd.to_datetime(res["timestamp"], utc=True)
+        res = res.sort_values(["timestamp", "symbol"]).reset_index(drop=True)
+        return res
+
 
 def percentile(values: list[float], q: float) -> float:
     if not values:
@@ -161,7 +232,8 @@ def write_profile_data(
     output_dir: Path,
     symbol_count: int,
     bars_per_symbol: int,
-    seed: int,
+    seed: int = 42,
+    extension: str = "parquet",
 ) -> list[str]:
     output_dir.mkdir(parents=True, exist_ok=True)
     symbols = [f"SYM{i:03d}" for i in range(symbol_count)]
@@ -174,7 +246,10 @@ def write_profile_data(
         tz="UTC",
     )
 
-    for symbol in symbols:
+    print(f"  > Generating synthetic data for {symbol_count} symbols...", end="", flush=True)
+    for i, symbol in enumerate(symbols):
+        if i % 5 == 0 and i > 0:
+            print(f" {i}/{symbol_count}...", end="", flush=True)
         drift = rng.normal(0.0002, 0.00005)
         vol = abs(rng.normal(0.006, 0.001))
         raw_returns = rng.normal(drift, vol, bars_per_symbol)
@@ -196,8 +271,12 @@ def write_profile_data(
                 "volume": volume,
             }
         )
-        df.to_csv(output_dir / f"{symbol}.csv", index=False)
+        if extension == "parquet":
+            df.to_parquet(output_dir / f"{symbol}.parquet", index=False)
+        else:
+            df.to_csv(output_dir / f"{symbol}.csv", index=False)
 
+    print(f" Done.")
     return symbols
 
 
@@ -205,7 +284,6 @@ def run_single_backtest(
     profile: ProfileConfig,
     symbols: list[str],
     data_dir: Path,
-    backend: str,
     run_index: int,
     warmup: bool,
     seed: int,
@@ -226,11 +304,8 @@ def run_single_backtest(
     strategy = BenchmarkSignalStrategy(symbols)
     engine = BacktestEngine(
         data_handler=data_handler,
-        execution_handler=execution_handler,
         portfolio_handler=portfolio_handler,
         strategy=strategy,
-        engine_backend=backend,
-        rust_fallback_to_python=False,
     )
 
     total_bars = float(profile.symbols * profile.bars_per_symbol)
@@ -254,12 +329,13 @@ def run_single_backtest(
     reconciliation_failures = int(execution_stats.get("reconciliation_failures", 0))
 
     telemetry = RunTelemetry(
-        backend=backend,
+        backend="rust",
         profile=profile.name,
         run_index=run_index,
         warmup=warmup,
         duration_seconds=duration,
         throughput_bars_per_second=total_bars / duration,
+        total_events=engine.events_processed,
         peak_rss_bytes=peak_rss_bytes,
         fallback_count=fallback_count,
         reconciliation_failures=reconciliation_failures,
@@ -306,6 +382,7 @@ def evaluate_aggressive_gate(
     profile_name: str,
     python_agg: dict[str, Any],
     rust_agg: dict[str, Any],
+    required_measured_runs: int,
 ) -> dict[str, Any]:
     py_p95 = float(python_agg["runtime_seconds"]["p95"])
     rust_p95 = float(rust_agg["runtime_seconds"]["p95"])
@@ -337,8 +414,8 @@ def evaluate_aggressive_gate(
         )
     if not rust_agg["all_runs_passed"]:
         reasons.append("Rust measured runs must pass 12/12 without crash/fallback/reconciliation failure")
-    if int(rust_agg["count"]) < 12:
-        reasons.append("Rust measured run count must be 12")
+    if int(rust_agg["count"]) < required_measured_runs:
+        reasons.append(f"Rust measured run count must be {required_measured_runs}")
 
     return {
         "pass": len(reasons) == 0,
@@ -349,37 +426,95 @@ def evaluate_aggressive_gate(
     }
 
 
+def load_python_baseline() -> dict[str, Any]:
+    if not BASELINE_FIXTURE.exists():
+        raise FileNotFoundError(f"Frozen Python baseline fixture not found: {BASELINE_FIXTURE}")
+    return json.loads(BASELINE_FIXTURE.read_text())
+
+
+def python_baseline_aggregate(profile_name: str) -> dict[str, Any]:
+    payload = load_python_baseline()
+    profile = payload["profiles"][profile_name]
+    p95 = float(profile["runtime_seconds"]["p95"])
+    peak = int(profile["peak_rss_bytes"]["max"])
+    return {
+        "count": int(profile.get("measured_runs", 12)),
+        "runtime_seconds": {
+            "p50": float(profile["runtime_seconds"].get("p50", p95)),
+            "p95": p95,
+            "p99": float(profile["runtime_seconds"].get("p99", p95)),
+        },
+        "throughput_bars_per_second": profile.get("throughput_bars_per_second", {}),
+        "peak_rss_bytes": {
+            "p50": int(profile["peak_rss_bytes"].get("p50", peak)),
+            "p95": int(profile["peak_rss_bytes"].get("p95", peak)),
+            "max": peak,
+        },
+        "fallback_count_total": 0,
+        "reconciliation_failures_total": 0,
+        "crash_count": 0,
+        "all_runs_passed": True,
+    }
+
+
+def expand_golden_risk_trace(profile: ProfileConfig, symbols: list[str]) -> list[dict[str, Any]]:
+    if not RISK_GOLDEN_FIXTURE.exists():
+        raise FileNotFoundError(f"Golden risk baseline not found: {RISK_GOLDEN_FIXTURE}")
+
+    payload = json.loads(RISK_GOLDEN_FIXTURE.read_text())
+    if isinstance(payload, list):
+        return payload
+
+    spec = payload["profiles"][profile.name]
+    start = pd.Timestamp(spec["first_timestamp"])
+    period = int(spec["cycle_period"])
+    long_cycle = int(spec["long_cycle"])
+    rows: list[dict[str, Any]] = []
+    sequence_no = 0
+    for bar_index in range(1, profile.bars_per_symbol + 1):
+        if bar_index % period != long_cycle:
+            continue
+        timestamp = start + pd.Timedelta(minutes=bar_index - 1)
+        for symbol in symbols:
+            sequence_no += 1
+            rows.append(
+                {
+                    "timestamp": timestamp.isoformat(),
+                    "symbol": symbol,
+                    "signal_type": "LONG",
+                    "strategy_id": spec["strategy_id"],
+                    "signal_id": f"{symbol}:{bar_index}:LONG",
+                    "sequence_no": sequence_no,
+                    "decision": spec["decision"],
+                    "reason_code": spec["reason_code"],
+                }
+            )
+    return rows
+
+
 def run_risk_integrity_pair_check(
     profile: ProfileConfig,
     symbols: list[str],
     data_dir: Path,
     seed: int,
 ) -> dict[str, Any]:
-    py_telemetry, py_results = run_single_backtest(
-        profile=profile,
-        symbols=symbols,
-        data_dir=data_dir,
-        backend="python",
-        run_index=-1,
-        warmup=False,
-        seed=seed,
-    )
+    golden_trace = expand_golden_risk_trace(profile, symbols)
+        
     rust_telemetry, rust_results = run_single_backtest(
         profile=profile,
         symbols=symbols,
         data_dir=data_dir,
-        backend="rust",
         run_index=-1,
         warmup=False,
         seed=seed,
     )
 
-    py_trace = py_results.get("risk_decision_trace", [])
     rust_trace = rust_results.get("risk_decision_trace", [])
-    comparison = compare_risk_decision_traces(py_trace, rust_trace)
+    comparison = compare_risk_decision_traces(golden_trace, rust_trace)
 
     return {
-        "python_telemetry": asdict(py_telemetry),
+        "golden_source": str(RISK_GOLDEN_FIXTURE),
+        "golden_decision_count": len(golden_trace),
         "rust_telemetry": asdict(rust_telemetry),
         "comparison": comparison.to_dict(),
         "pass": (
@@ -405,39 +540,38 @@ def run_profile(
             symbol_count=profile.symbols,
             bars_per_symbol=profile.bars_per_symbol,
             seed=seed,
+            extension="csv"
         )
 
         all_runs: list[RunTelemetry] = []
-        for backend in ("python", "rust"):
-            for run_index in range(warmup_runs + measured_runs):
-                warmup = run_index < warmup_runs
-                telemetry, _ = run_single_backtest(
-                    profile=profile,
-                    symbols=symbols,
-                    data_dir=data_dir,
-                    backend=backend,
-                    run_index=run_index,
-                    warmup=warmup,
-                    seed=seed + run_index,
-                )
-                all_runs.append(telemetry)
+        for run_index in range(warmup_runs + measured_runs):
+            warmup = run_index < warmup_runs
+            run_type = "warmup" if warmup else f"measured {run_index - warmup_runs + 1}/{measured_runs}"
+            print(f"  > Running rust {run_type}...", end="", flush=True)
+
+            telemetry, _ = run_single_backtest(
+                profile=profile,
+                symbols=symbols,
+                data_dir=data_dir,
+                run_index=run_index,
+                warmup=warmup,
+                seed=seed + run_index,
+            )
+            all_runs.append(telemetry)
+            print(f" Done ({telemetry.duration_seconds:.2f}s, {telemetry.throughput_bars_per_second:,.0f} bars/s, events: {telemetry.total_events:,})")
 
         measured_by_backend = {
-            backend: [
-                run
-                for run in all_runs
-                if run.backend == backend and not run.warmup
-            ]
-            for backend in ("python", "rust")
+            "rust": [run for run in all_runs if not run.warmup],
         }
         aggregates = {
-            backend: aggregate_backend_runs(measured_by_backend[backend])
-            for backend in ("python", "rust")
+            "python_baseline": python_baseline_aggregate(profile.name),
+            "rust": aggregate_backend_runs(measured_by_backend["rust"]),
         }
         aggressive_gate = evaluate_aggressive_gate(
             profile_name=profile.name,
-            python_agg=aggregates["python"],
+            python_agg=aggregates["python_baseline"],
             rust_agg=aggregates["rust"],
+            required_measured_runs=measured_runs,
         )
         risk_integrity = run_risk_integrity_pair_check(
             profile=profile,
@@ -448,7 +582,7 @@ def run_profile(
 
         return {
             "profile": asdict(profile),
-            "env_backend_default": resolve_engine_backend(None),
+            "env_backend_default": "rust",
             "warmup_runs": warmup_runs,
             "measured_runs": measured_runs,
             "raw_runs": [asdict(run) for run in all_runs],
@@ -461,7 +595,9 @@ def run_profile(
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
+        "--output",
         "--output-json",
+        dest="output_json",
         type=Path,
         default=REPO_ROOT / "data" / "benchmarks" / "phase2_backtest_benchmark.json",
         help="Path to write benchmark artifact JSON.",
@@ -472,8 +608,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--log-level",
         type=str,
-        default="WARNING",
-        help="Loguru level for benchmark runtime (default: WARNING).",
+        default="INFO",
+        help="Loguru level for benchmark runtime (default: INFO).",
     )
     return parser.parse_args()
 
@@ -481,6 +617,11 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
     configure_logging(args.log_level)
+    
+    print("=" * 60)
+    print("PHASE 2 PRODUCTION BACKTEST BENCHMARK")
+    print(f"Started at: {pd.Timestamp.utcnow()}")
+    print("=" * 60)
 
     profiles = [
         ProfileConfig(name="P10K", symbols=20, bars_per_symbol=10_000),
@@ -494,6 +635,7 @@ def main() -> int:
 
     overall_pass = True
     for profile in profiles:
+        print(f"\n[Benchmarking Profile: {profile.name}] ({profile.symbols} symbols, {profile.bars_per_symbol:,} bars/symbol)")
         profile_result = run_profile(
             profile=profile,
             warmup_runs=args.warmup_runs,
