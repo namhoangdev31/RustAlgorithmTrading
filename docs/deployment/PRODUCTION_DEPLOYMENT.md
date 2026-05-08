@@ -1,10 +1,10 @@
 # Production Deployment Guide
 ## Rust Algorithmic Trading System
 
-**Version**: 1.0.0
-**Last Updated**: October 21, 2025
+**Version**: 1.1.0
+**Last Updated**: May 8, 2026
 **System Status**: Production Ready (92% completion)
-**Target Environment**: Linux (Ubuntu 20.04+ / RHEL 8+), Docker, Kubernetes
+**Target Environment**: Linux (Ubuntu 20.04+ / RHEL 8+), Docker-first deployment, Kubernetes optional
 
 ---
 
@@ -41,10 +41,12 @@ RHEL 8+ or CentOS Stream
 # Runtime Dependencies
 Rust 1.70+
 Python 3.9+
+uv (Python dependency + venv manager)
 Docker 24.0+
 Docker Compose 2.20+
 Kubernetes 1.28+ (for K8s deployment)
-PostgreSQL 15+ (for persistence)
+DuckDB + SQLite (active observability persistence)
+PostgreSQL 15+ (optional parallel integration path)
 
 # System Libraries
 pkg-config
@@ -77,6 +79,9 @@ sudo apt-get install -y \
     curl \
     git
 
+# Install uv
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
 # Install Rust (if not present)
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 source $HOME/.cargo/env
@@ -98,6 +103,9 @@ sudo dnf install -y \
 # Install Rust
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 source $HOME/.cargo/env
+
+# Install uv
+curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
 ### 2.2 Environment Variables
@@ -117,10 +125,12 @@ ALPACA_API_URL=https://api.alpaca.markets  # Live trading
 TRADING_MODE=production  # CRITICAL: Set to 'production' for live trading
 PAPER_TRADING=false      # CRITICAL: Set to false for live trading
 
-# === DATABASE CONFIGURATION ===
+# === OBSERVABILITY DATA PATHS (ACTIVE) ===
+DUCKDB_PATH=/opt/trading-system/data/metrics.duckdb
+SQLITE_PATH=/opt/trading-system/data/trades.db
+
+# === OPTIONAL POSTGRES PARALLEL INTEGRATION ===
 DATABASE_URL=postgresql://trading_user:secure_password@localhost:5432/trading_db
-DB_POOL_SIZE=20
-DB_TIMEOUT_SECONDS=30
 
 # === LOGGING & MONITORING ===
 RUST_LOG=info,market_data=debug,execution_engine=debug
@@ -156,7 +166,7 @@ chown trading_user:trading_group .env.production
 
 ## 3. Deployment Methods
 
-### Method 1: Native Deployment (Recommended for Production)
+### Method 1: Native Deployment (Recommended for Lowest Latency Trading Runtime)
 
 **Advantages**: Lowest latency (<50μs), full control, optimal performance
 **Best For**: Production trading with strict latency requirements
@@ -247,7 +257,7 @@ sudo journalctl -u trading-market-data -f
 
 ---
 
-### Method 2: Docker Deployment
+### Method 2: Docker Deployment (Primary Operations Path)
 
 **Advantages**: Isolated environment, easy rollback, consistent across environments
 **Best For**: Staging, UAT, development environments
@@ -255,9 +265,9 @@ sudo journalctl -u trading-market-data -f
 #### Step 1: Build Docker Images
 
 ```bash
-# Build all services
+# Build all services (from deployment manifests)
 cd [REPO_ROOT]
-docker compose -f docker/docker-compose.yml build
+docker compose -f deployment/docker-compose.yml build
 
 # Tag for production
 docker tag trading_market_data:latest trading_market_data:v1.0.0
@@ -267,7 +277,7 @@ docker tag trading_risk_management:latest trading_risk_management:v1.0.0
 
 #### Step 2: Configure Production Compose File
 
-Create `docker/docker-compose.production.yml`:
+Create `deployment/docker-compose.production.yml`:
 
 ```yaml
 version: '3.8'
@@ -323,13 +333,13 @@ volumes:
 
 ```bash
 # Start all services
-docker compose -f docker/docker-compose.production.yml up -d
+docker compose -f deployment/docker-compose.production.yml up -d
 
 # Monitor startup
-docker compose -f docker/docker-compose.production.yml logs -f
+docker compose -f deployment/docker-compose.production.yml logs -f
 
 # Verify health
-docker compose -f docker/docker-compose.production.yml ps
+docker compose -f deployment/docker-compose.production.yml ps
 ```
 
 ---
@@ -596,7 +606,7 @@ sudo systemctl restart trading-execution-engine
 nano config/system.production.json
 
 # Recreate container
-docker compose -f docker/docker-compose.production.yml up -d --force-recreate execution_engine_service
+docker compose -f deployment/docker-compose.production.yml up -d --force-recreate execution_engine_service
 ```
 
 **For Kubernetes**:
@@ -951,14 +961,14 @@ sudo systemctl start trading-*
 
 ```bash
 # Stop current containers
-docker compose -f docker/docker-compose.production.yml down
+docker compose -f deployment/docker-compose.production.yml down
 
 # Restore previous version
-docker compose -f docker/docker-compose.production.yml pull
+docker compose -f deployment/docker-compose.production.yml pull
 docker tag trading_market_data:v0.9.0 trading_market_data:latest
 
 # Start previous version
-docker compose -f docker/docker-compose.production.yml up -d
+docker compose -f deployment/docker-compose.production.yml up -d
 ```
 
 ### 9.3 Kubernetes Rollback

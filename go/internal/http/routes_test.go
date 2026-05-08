@@ -12,7 +12,7 @@ import (
 )
 
 func buildTestRouter() http.Handler {
-	store := storage.NewStore(nil, nil)
+	store := storage.NewStore(nil, nil, nil)
 	wsManager := ws.NewManager()
 	healthAgg := health.NewAggregator(store, wsManager)
 	return SetupRoutes(store, wsManager, healthAgg)

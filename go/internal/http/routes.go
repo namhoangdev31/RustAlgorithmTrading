@@ -145,9 +145,15 @@ func SetupRoutes(store *storage.Store, wsManager *ws.Manager, healthAggregator *
 				side := r.URL.Query().Get("side")
 
 				trades := []map[string]interface{}{}
-				if store != nil && store.SQLite() != nil {
-					if t, err := store.SQLite().QueryTrades(limit, offset, symbol, side); err == nil {
-						trades = t
+				if store != nil {
+					if store.Postgres() != nil {
+						if t, err := store.Postgres().QueryTrades(limit, offset, symbol, side); err == nil {
+							trades = t
+						}
+					} else if store.SQLite() != nil {
+						if t, err := store.SQLite().QueryTrades(limit, offset, symbol, side); err == nil {
+							trades = t
+						}
 					}
 				}
 				writeJSON(w, http.StatusOK, map[string]interface{}{
@@ -160,11 +166,18 @@ func SetupRoutes(store *storage.Store, wsManager *ws.Manager, healthAggregator *
 
 			r.Get("/{trade_id}", func(w http.ResponseWriter, r *http.Request) {
 				tradeID := chi.URLParam(r, "trade_id")
-				if store == nil || store.SQLite() == nil {
-					writeJSON(w, http.StatusNotFound, map[string]interface{}{"detail": "Trade not found"})
-					return
+				var trade map[string]interface{}
+				var ok bool
+				var err error
+
+				if store != nil {
+					if store.Postgres() != nil {
+						trade, ok, err = store.Postgres().QueryTradeByID(tradeID)
+					} else if store.SQLite() != nil {
+						trade, ok, err = store.SQLite().QueryTradeByID(tradeID)
+					}
 				}
-				trade, ok, err := store.SQLite().QueryTradeByID(tradeID)
+
 				if err != nil || !ok {
 					writeJSON(w, http.StatusNotFound, map[string]interface{}{"detail": "Trade not found"})
 					return
@@ -179,9 +192,15 @@ func SetupRoutes(store *storage.Store, wsManager *ws.Manager, healthAggregator *
 				}
 				symbol := r.URL.Query().Get("symbol")
 				payload := map[string]interface{}{}
-				if store != nil && store.SQLite() != nil {
-					if s, err := store.SQLite().QueryTradeStatsSummary(symbol, timeRange); err == nil {
-						payload = s
+				if store != nil {
+					if store.Postgres() != nil {
+						if s, err := store.Postgres().QueryTradeStatsSummary(symbol, timeRange); err == nil {
+							payload = s
+						}
+					} else if store.SQLite() != nil {
+						if s, err := store.SQLite().QueryTradeStatsSummary(symbol, timeRange); err == nil {
+							payload = s
+						}
 					}
 				}
 				writeJSON(w, http.StatusOK, payload)
@@ -189,9 +208,15 @@ func SetupRoutes(store *storage.Store, wsManager *ws.Manager, healthAggregator *
 
 			r.Get("/execution/quality", func(w http.ResponseWriter, r *http.Request) {
 				payload := map[string]interface{}{}
-				if store != nil && store.SQLite() != nil {
-					if s, err := store.SQLite().QueryExecutionQuality(); err == nil {
-						payload = s
+				if store != nil {
+					if store.Postgres() != nil {
+						if s, err := store.Postgres().QueryExecutionQuality(); err == nil {
+							payload = s
+						}
+					} else if store.SQLite() != nil {
+						if s, err := store.SQLite().QueryExecutionQuality(); err == nil {
+							payload = s
+						}
 					}
 				}
 				writeJSON(w, http.StatusOK, payload)
@@ -222,9 +247,15 @@ func SetupRoutes(store *storage.Store, wsManager *ws.Manager, healthAggregator *
 				}
 				limit := parseIntWithDefault(r.URL.Query().Get("limit"), 100)
 				logs := []map[string]interface{}{}
-				if store != nil && store.DuckDB() != nil {
-					if rows, err := store.DuckDB().QueryLogs(level, limit); err == nil {
-						logs = rows
+				if store != nil {
+					if store.Postgres() != nil {
+						if rows, err := store.Postgres().QueryLogs(level, limit); err == nil {
+							logs = rows
+						}
+					} else if store.DuckDB() != nil {
+						if rows, err := store.DuckDB().QueryLogs(level, limit); err == nil {
+							logs = rows
+						}
 					}
 				}
 				writeJSON(w, http.StatusOK, map[string]interface{}{

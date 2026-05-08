@@ -9,9 +9,11 @@ from datetime import datetime, timezone, timedelta
 from contextlib import asynccontextmanager
 from fastapi import HTTPException
 import logging
+import os
 
 from .duckdb_client import DuckDBClient
 from .sqlite_client import SQLiteClient
+from .postgres_client import PostgresClient
 from .schemas import MetricRecord, TimeInterval
 
 logger = logging.getLogger(__name__)
@@ -21,14 +23,14 @@ class StorageManager:
     """
     Unified storage manager for FastAPI applications
 
-    Manages both DuckDB (analytics) and SQLite (operational) connections.
-    Thread-safe and optimized for concurrent requests.
+    Manages DuckDB (analytics) and operational storage (Postgres or SQLite).
     """
 
     def __init__(
         self,
         duckdb_path: str = "data/trading_metrics.duckdb",
         sqlite_path: str = "data/trading_operational.db",
+        postgres_dsn: Optional[str] = os.getenv("DATABASE_URL"),
     ):
         """
         Initialize storage manager
@@ -36,23 +38,31 @@ class StorageManager:
         Args:
             duckdb_path: Path to DuckDB database
             sqlite_path: Path to SQLite database
+            postgres_dsn: DSN for PostgreSQL (optional)
         """
         self.duckdb_path = duckdb_path
         self.sqlite_path = sqlite_path
+        self.postgres_dsn = postgres_dsn
+        
         self._duckdb: Optional[DuckDBClient] = None
         self._sqlite: Optional[SQLiteClient] = None
+        self._postgres: Optional[PostgresClient] = None
         self._initialized = False
 
     async def initialize(self) -> None:
-        """Initialize both database connections"""
+        """Initialize database connections"""
         if self._initialized:
             return
 
         self._duckdb = DuckDBClient(self.duckdb_path)
         await self._duckdb.initialize()
 
-        self._sqlite = SQLiteClient(self.sqlite_path)
-        await self._sqlite.initialize()
+        if self.postgres_dsn:
+            self._postgres = PostgresClient(self.postgres_dsn)
+            await self._postgres.initialize()
+        else:
+            self._sqlite = SQLiteClient(self.sqlite_path)
+            await self._sqlite.initialize()
 
         self._initialized = True
         logger.info("[cid:INIT] Storage manager initialized")
@@ -63,6 +73,8 @@ class StorageManager:
             await self._duckdb.close()
         if self._sqlite:
             await self._sqlite.close()
+        if self._postgres:
+            await self._postgres.close()
         self._initialized = False
         logger.info("[cid:INIT] Storage manager closed")
 
@@ -74,11 +86,11 @@ class StorageManager:
         return self._duckdb
 
     @property
-    def sqlite(self) -> SQLiteClient:
-        """Get SQLite client"""
-        if not self._initialized or not self._sqlite:
+    def operational(self):
+        """Get operational storage client (Postgres or SQLite)"""
+        if not self._initialized:
             raise RuntimeError("StorageManager not initialized")
-        return self._sqlite
+        return self._postgres if self._postgres else self._sqlite
 
     # ========== Convenience Methods for FastAPI ==========
 
@@ -89,7 +101,7 @@ class StorageManager:
         symbol: Optional[str] = None,
         labels: Optional[Dict[str, Any]] = None,
     ) -> None:
-        """Record a single metric (convenience method)"""
+        """Record a single metric"""
         metric = MetricRecord(
             timestamp=datetime.now(timezone.utc),
             metric_name=metric_name,
@@ -105,7 +117,7 @@ class StorageManager:
         minutes: int = 60,
         symbol: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
-        """Get recent metrics (last N minutes)"""
+        """Get recent metrics"""
         try:
             return await self.duckdb.get_metrics(
                 metric_name=metric_name,
@@ -114,33 +126,6 @@ class StorageManager:
             )
         except Exception as e:
             logger.error(f"[cid:INIT] Failed to get metrics: {e}")
-            raise HTTPException(status_code=500, detail=str(e))
-
-    async def get_market_data(
-        self,
-        symbol: str,
-        interval: str = "1m",
-        limit: int = 100,
-    ) -> List[Dict[str, Any]]:
-        """Get market candles for a symbol"""
-        try:
-            # Parse interval
-            interval_map = {
-                "1s": TimeInterval.SECOND,
-                "1m": TimeInterval.MINUTE,
-                "1h": TimeInterval.HOUR,
-                "1d": TimeInterval.DAY,
-            }
-            time_interval = interval_map.get(interval, TimeInterval.MINUTE)
-
-            return await self.duckdb.get_candles(
-                symbol=symbol,
-                interval=time_interval,
-                start_time=datetime.now(timezone.utc) - timedelta(days=7),
-                limit=limit,
-            )
-        except Exception as e:
-            logger.error(f"[cid:INIT] Failed to get market data: {e}")
             raise HTTPException(status_code=500, detail=str(e))
 
     async def log_trade_execution(
@@ -152,9 +137,9 @@ class StorageManager:
         order_id: Optional[str] = None,
         metadata: Optional[Dict[str, Any]] = None,
     ) -> int:
-        """Log a trade execution"""
+        """Log a trade execution in operational storage"""
         try:
-            return await self.sqlite.log_trade(
+            return await self.operational.log_trade(
                 timestamp=datetime.now(timezone.utc),
                 symbol=symbol,
                 side=side,
@@ -168,18 +153,74 @@ class StorageManager:
             logger.error(f"[cid:INIT] Failed to log trade: {e}")
             raise HTTPException(status_code=500, detail=str(e))
 
+    async def get_trades(
+        self,
+        start_time: datetime,
+        end_time: Optional[datetime] = None,
+        symbol: Optional[str] = None,
+        limit: int = 1000,
+    ) -> List[Dict[str, Any]]:
+        """Query trades from operational storage"""
+        try:
+            return await self.operational.get_trades(
+                start_time=start_time,
+                end_time=end_time,
+                symbol=symbol,
+                limit=limit
+            )
+        except Exception as e:
+            logger.error(f"[cid:INIT] Failed to get trades: {e}")
+            raise HTTPException(status_code=500, detail=str(e))
+
+    async def log_event(
+        self,
+        event_type: str,
+        severity: str,
+        message: str,
+        details: Optional[Dict[str, Any]] = None,
+    ) -> int:
+        """Log a system event in operational storage"""
+        try:
+            return await self.operational.log_event(
+                event_type=event_type,
+                severity=severity,
+                message=message,
+                details=details,
+                timestamp=datetime.now(timezone.utc)
+            )
+        except Exception as e:
+            logger.error(f"[cid:INIT] Failed to log event: {e}")
+            raise HTTPException(status_code=500, detail=str(e))
+
+    async def get_events(
+        self,
+        start_time: datetime,
+        end_time: Optional[datetime] = None,
+        event_type: Optional[str] = None,
+        severity: Optional[str] = None,
+        limit: int = 1000,
+    ) -> List[Dict[str, Any]]:
+        """Query events from operational storage"""
+        try:
+            return await self.operational.get_events(
+                start_time=start_time,
+                end_time=end_time,
+                event_type=event_type,
+                severity=severity,
+                limit=limit
+            )
+        except Exception as e:
+            logger.error(f"[cid:INIT] Failed to get events: {e}")
+            raise HTTPException(status_code=500, detail=str(e))
+
     async def get_trading_summary(
         self,
         hours: int = 24,
     ) -> Dict[str, Any]:
-        """Get trading summary for last N hours"""
+        """Get trading summary"""
         try:
             start_time = datetime.now(timezone.utc) - timedelta(hours=hours)
-
-            # Get trade stats from SQLite
-            trade_stats = await self.sqlite.get_trade_stats(start_time)
-
-            # Get performance metrics from DuckDB
+            trade_stats = await self.operational.get_trade_stats(start_time)
             performance = await self.duckdb.get_performance_summary(start_time)
 
             return {
@@ -190,36 +231,6 @@ class StorageManager:
         except Exception as e:
             logger.error(f"[cid:INIT] Failed to get trading summary: {e}")
             raise HTTPException(status_code=500, detail=str(e))
-
-    async def get_system_health(self) -> Dict[str, Any]:
-        """Get system health metrics"""
-        try:
-            # Get database stats
-            duckdb_stats = await self.duckdb.get_table_stats()
-            sqlite_size = await self.sqlite.get_db_size()
-
-            # Get recent events
-            events = await self.sqlite.get_event_counts(
-                start_time=datetime.now(timezone.utc) - timedelta(hours=1)
-            )
-
-            return {
-                "status": "healthy",
-                "databases": {
-                    "duckdb": duckdb_stats,
-                    "sqlite": {
-                        "size_bytes": sqlite_size,
-                        "size_mb": sqlite_size / (1024 * 1024),
-                    },
-                },
-                "recent_events": events,
-            }
-        except Exception as e:
-            logger.error(f"[cid:INIT] Failed to get system health: {e}")
-            return {
-                "status": "unhealthy",
-                "error": str(e),
-            }
 
 
 # Global storage manager instance
@@ -234,41 +245,17 @@ def get_storage_manager() -> StorageManager:
     return _storage_manager
 
 
-# FastAPI lifespan context manager
 @asynccontextmanager
 async def storage_lifespan(app: Any) -> Any:
-    """
-    FastAPI lifespan context manager
-
-    Usage:
-        from fastapi import FastAPI
-        from observability.storage.integration import storage_lifespan
-
-        app = FastAPI(lifespan=storage_lifespan)
-    """
+    """FastAPI lifespan context manager"""
     storage = get_storage_manager()
     await storage.initialize()
-    logger.info("[cid:INIT] Storage initialized for FastAPI app")
-
     yield {"storage": storage}
-
     await storage.close()
-    logger.info("[cid:INIT] Storage closed for FastAPI app")
 
 
-# Dependency injection for FastAPI routes
 async def get_storage() -> StorageManager:
-    """
-    FastAPI dependency for storage access
-
-    Usage:
-        from fastapi import Depends
-        from ...observability.storage.integration import get_storage
-
-        @app.get("/metrics")
-        async def get_metrics(storage: StorageManager = Depends(get_storage)):
-            return await storage.get_recent_metrics("price")
-    """
+    """FastAPI dependency for storage access"""
     storage = get_storage_manager()
     if not storage._initialized:
         await storage.initialize()

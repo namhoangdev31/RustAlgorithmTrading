@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Observability Backend provides a production-ready FastAPI application with WebSocket streaming for real-time monitoring of the algorithmic trading system.
+The observability control-plane is served by Go in Phase 3, with FastAPI retained as compatibility baseline and rollback path during transition.
 
 Phase 3 note:
 - FastAPI is the compatibility baseline.
@@ -20,10 +20,10 @@ Current Phase 3 status:
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                   FastAPI Backend                        │
+│               Go Observability Control-Plane             │
 ├─────────────────────────────────────────────────────────┤
 │  REST API Endpoints          WebSocket Streaming        │
-│  ├─ GET /api/metrics        ws://localhost:8000/ws      │
+│  ├─ GET /api/metrics        ws://localhost:8080/ws      │
 │  ├─ GET /api/trades         - Real-time updates         │
 │  ├─ GET /api/system         - 10Hz streaming            │
 │  └─ GET /health             - < 50ms latency            │
@@ -114,7 +114,7 @@ cd go
 PORT=8080 DUCKDB_PATH=../data/metrics.duckdb SQLITE_PATH=../data/trades.db go run ./cmd/server/main.go
 ```
 
-### Using uvicorn directly
+### Using FastAPI compatibility path (legacy)
 
 ```bash
 # Development
@@ -130,7 +130,7 @@ uvicorn src.observability.api.main:app --host 0.0.0.0 --port 8000 --workers 4
 
 #### Get Current Metrics
 ```bash
-curl http://localhost:8000/api/metrics/current
+curl http://localhost:8080/api/metrics/current
 ```
 
 Response:
@@ -165,19 +165,19 @@ Response:
 
 #### Query Trade History
 ```bash
-curl -X GET "http://localhost:8000/api/trades?symbol=AAPL&limit=10"
+curl -X GET "http://localhost:8080/api/trades?symbol=AAPL&limit=10"
 ```
 
 #### Get System Health
 ```bash
-curl http://localhost:8000/api/system/health
+curl http://localhost:8080/api/system/health
 ```
 
 ### WebSocket Streaming
 
 #### JavaScript Client
 ```javascript
-const ws = new WebSocket('ws://localhost:8000/ws/metrics');
+const ws = new WebSocket('ws://localhost:8080/ws/metrics');
 
 ws.onopen = () => {
     console.log('Connected to metrics stream');
@@ -216,7 +216,7 @@ import websockets
 import json
 
 async def stream_metrics():
-    uri = "ws://localhost:8000/ws/metrics"
+    uri = "ws://localhost:8080/ws/metrics"
 
     async with websockets.connect(uri) as websocket:
         print("Connected to metrics stream")
@@ -331,7 +331,7 @@ await collector.start()
 The API exposes Prometheus-compatible metrics at `/metrics`:
 
 ```bash
-curl http://localhost:8000/metrics
+curl http://localhost:8080/metrics
 ```
 
 Key metrics:
@@ -500,7 +500,7 @@ server {
 ## Support
 
 For issues or questions:
-- Check the [API documentation](http://localhost:8000/docs)
+- Check service health endpoint at `http://localhost:8080/health` (Go runtime)
 - Review logs in `.logs/observability/`
 - Contact the development team
 

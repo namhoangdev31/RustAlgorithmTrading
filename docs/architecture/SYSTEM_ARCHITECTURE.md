@@ -1,8 +1,8 @@
 # System Architecture Documentation
 ## Rust Algorithmic Trading System
 
-**Version**: 1.0.0
-**Last Updated**: October 21, 2025
+**Version**: 1.1.0
+**Last Updated**: May 8, 2026
 **Architecture Pattern**: Microservices with Event-Driven Communication
 
 ---
@@ -23,12 +23,14 @@
 
 ### 1.1 High-Level Architecture
 
-The system follows a **Python-Rust hybrid microservices architecture** with clear separation of concerns:
+The system follows a **Python-Rust-Go hybrid microservices architecture** with clear separation of concerns:
 
 - **Rust Services**: Low-latency components (market data, execution, risk management)
-- **Python Services**: ML/AI components (signal generation, strategy)
+- **Python Services**: ML/AI components (research, strategy authoring, orchestration)
+- **Go Service**: Control-plane observability API + WebSocket fanout (no trading decisions)
 - **Inter-Service Communication**: ZeroMQ pub/sub pattern
-- **State Management**: PostgreSQL for persistence, in-memory caches for hot paths
+- **State Management (active)**: DuckDB (analytics), SQLite (operational), in-memory caches for hot paths
+- **State Management (optional/future-compatible)**: PostgreSQL support can exist in parallel but is not the active single source for observability data paths
 - **Monitoring**: Prometheus + Grafana stack
 
 ### 1.2 Design Principles
@@ -43,9 +45,10 @@ The system follows a **Python-Rust hybrid microservices architecture** with clea
 
 | Layer | Technology | Purpose |
 |-------|-----------|---------|
-| **Services** | Rust 1.70+, Python 3.9+ | Core trading logic |
+| **Services** | Rust 1.70+, Python 3.9+, Go 1.21+ | Trading runtime + control plane |
 | **Messaging** | ZeroMQ 0.10 | Inter-service communication |
-| **Database** | PostgreSQL 15 | State persistence |
+| **Database (active)** | DuckDB + SQLite | Observability analytics + operational records |
+| **Database (optional)** | PostgreSQL 15 | Parallel/legacy integration path |
 | **Caching** | In-memory (Rust HashMap) | Hot path optimization |
 | **Monitoring** | Prometheus, Grafana | Metrics & visualization |
 | **Containerization** | Docker 24.0+ | Deployment |
@@ -63,9 +66,9 @@ The system follows a **Python-Rust hybrid microservices architecture** with clea
 │                          EXTERNAL SYSTEMS                                    │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │  ┌─────────────────┐           ┌──────────────────┐                        │
-│  │  Alpaca Markets │           │  PostgreSQL 15   │                        │
-│  │  REST API       │           │  Database        │                        │
-│  │  (HTTPS)        │           │  (Port 5432)     │                        │
+│  │  Alpaca Markets │           │  Data Stores     │                        │
+│  │  REST API       │           │  DuckDB/SQLite   │                        │
+│  │  (HTTPS)        │           │  (+ optional PG) │                        │
 │  └────────┬────────┘           └────────┬─────────┘                        │
 │           │                              │                                  │
 │  ┌────────▼────────┐                    │                                  │
@@ -149,26 +152,10 @@ The system follows a **Python-Rust hybrid microservices architecture** with clea
 └─────────────────────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                        PERSISTENCE & MONITORING                              │
+│                    PERSISTENCE + CONTROL PLANE OBSERVABILITY                │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                               │
-│  ┌────────────────────────────────────────────────────────────────────┐     │
-│  │                    PostgreSQL Database                              │     │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐             │     │
-│  │  │  Positions   │  │  Orders      │  │  Trades      │             │     │
-│  │  └──────────────┘  └──────────────┘  └──────────────┘             │     │
-│  │  ┌──────────────┐  ┌──────────────┐                               │     │
-│  │  │  Daily P&L   │  │  Risk Events │                               │     │
-│  │  └──────────────┘  └──────────────┘                               │     │
-│  └────────────────────────────────────────────────────────────────────┘     │
-│                                                                               │
-│  ┌────────────────────────────────────────────────────────────────────┐     │
-│  │                    Monitoring Stack                                 │     │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐             │     │
-│  │  │  Prometheus  │  │  Grafana     │  │  Alertmanager│             │     │
-│  │  │  (Port 9090) │  │  (Port 3000) │  │  (Port 9093) │             │     │
-│  │  └──────────────┘  └──────────────┘  └──────────────┘             │     │
-│  └────────────────────────────────────────────────────────────────────┘     │
+│  Rust/Python producers -> DuckDB/SQLite -> Go API/WS (10Hz) -> Dashboard   │
+│  Notes: Go remains control-plane only; no risk/execution/order decisions.   │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -223,6 +210,18 @@ The system follows a **Python-Rust hybrid microservices architecture** with clea
                                                     ┌─────────────┐
                                                     │  Database   │
                                                     │  Persist    │
+                                                    └─────────────┘
+
+5. Observability Control Plane (Phase 3)
+   ┌─────────────┐         ┌─────────────┐         ┌─────────────┐
+   │ Rust/Python │  write  │ DuckDB/     │  read   │   Go API/   │
+   │ producers   │────────▶│ SQLite      │────────▶│ WS fanout   │
+   └─────────────┘         └─────────────┘         └──────┬──────┘
+                                                           │
+                                                           ▼
+                                                    ┌─────────────┐
+                                                    │ Dashboard   │
+                                                    │  Clients    │
                                                     └─────────────┘
 ```
 

@@ -42,7 +42,7 @@ src/observability/storage/
 ├── schemas.py               # Data models & SQL schemas
 ├── duckdb_client.py         # DuckDB time-series client
 ├── sqlite_client.py         # SQLite operational client
-└── integration.py           # FastAPI integration helpers
+└── integration.py           # Control-plane integration (Go primary, FastAPI compatibility) helpers
 
 tests/observability/
 ├── test_duckdb_client.py    # DuckDB tests with benchmarks
@@ -63,11 +63,11 @@ pip install duckdb>=0.9.0 aiosqlite>=0.19.0
 from observability.storage import DuckDBClient, SQLiteClient
 
 # DuckDB for analytics
-duckdb = DuckDBClient("data/trading_metrics.duckdb")
+duckdb = DuckDBClient("data/metrics.duckdb")
 await duckdb.initialize()
 
 # SQLite for operations
-sqlite = SQLiteClient("data/trading_operational.db")
+sqlite = SQLiteClient("data/trades.db")
 await sqlite.initialize()
 ```
 

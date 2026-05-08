@@ -1,6 +1,6 @@
 # PLAYBOOK.md — Canonical Doc -> Code -> Test Map
 
-Updated: 2026-05-08  
+Updated: 2026-05-08 (Postgres Integration Update)
 Scope: Production maintenance for Python + Rust trading stack
 
 This playbook is the **code-grounded routing map** for maintainers.  
@@ -197,6 +197,8 @@ Execution rules:
 |---|---|---|---|
 | `src/observability/storage/duckdb_client.py` | DuckDB persistence client | `DuckDBClient` | `tests/observability/test_duckdb_client.py` |
 | `src/observability/storage/sqlite_client.py` | SQLite fallback client | `SQLiteClient` | `tests/observability/test_sqlite_client.py` |
+| `src/observability/storage/postgres_client.py` | PostgreSQL persistence client | `PostgresClient` | `tests/observability/test_databases.py` |
+| `src/observability/storage/schemas.py` | Storage schema definitions | `SQL_SCHEMA`, `POSTGRES_SCHEMA` | integration storage tests |
 | `src/observability/storage/integration.py` | Storage orchestration | `StorageManager` | `tests/observability/test_databases.py` |
 | `src/observability/database/duckdb_manager.py` | DB manager singleton | `DuckDBManager` | `tests/observability/test_databases.py` |
 | `src/observability/database.py` | Legacy db wrapper | `ObservabilityDatabase` | `tests/observability/test_databases.py` |
@@ -329,12 +331,16 @@ Execution rules:
 | File/Module | Ownership | Key types/functions | Primary tests |
 |---|---|---|---|
 | `go/cmd/server/main.go` | Entrypoint for Phase 3 API | `main` | `tests/observability/test_go_parity.py` |
-| `go/internal/http/` | HTTP Routes & Middleware | Route handlers, Auth/CORS Middleware | `tests/observability/test_go_parity.py` |
+| `go/internal/http/routes.go` | HTTP Route definitions | `SetupRoutes` | `go/internal/http/routes_test.go` |
+| `go/internal/http/middleware.go` | CORS, ID, and Logger middleware | `SetupCors`, `CorrelationID`, `Logger` | `go/internal/http/routes_test.go` |
 | `go/internal/auth/apikey.go` | Internal API key gate | `APIKeyAuth` | `go/internal/http/routes_test.go`, `tests/observability/test_go_parity.py` |
 | `go/internal/ratelimit/limiter.go` | Key/IP throttling | `Limiter`, `Middleware` | `go/internal/http/routes_test.go` |
-| `go/internal/ws/` | WebSocket Manager | `WebSocketManager`, `Broadcast` | `tests/observability/test_go_parity.py` |
-| `go/internal/storage/` | DuckDB/SQLite read adapters | `DuckDBReader`, `SQLiteReader`, `Store` | `tests/observability/test_go_parity.py` |
-| `go/internal/health/` | Health and readiness aggregator | `Aggregator`, `Check` | `tests/observability/test_go_parity.py` |
+| `go/internal/ws/manager.go` | WebSocket Manager logic | `Manager`, `ServeWS` | `go/internal/ws/manager_test.go`, `tests/observability/test_go_parity.py` |
+| `go/internal/storage/store.go` | Multi-DB store bundle | `Store`, `NewStore` | `tests/observability/test_go_parity.py` |
+| `go/internal/storage/postgres.go` | PostgreSQL read adapter | `PostgresReader` | `tests/observability/test_go_parity.py` |
+| `go/internal/storage/duckdb.go` | DuckDB read adapter | `DuckDBReader` | `tests/observability/test_go_parity.py` |
+| `go/internal/storage/sqlite.go` | SQLite fallback read adapter | `SQLiteReader` | `tests/observability/test_go_parity.py` |
+| `go/internal/health/aggregator.go` | Health aggregation logic | `Aggregator` | `tests/observability/test_go_parity.py` |
 | `go/internal/worker/collector.go` | 10Hz WS metrics broadcast worker | `MetricsCollector` | `tests/observability/test_go_parity.py` |
 | `go/internal/http/routes_test.go` | Go HTTP/auth/CORS gate tests | route tests | `cd go && go test ./...` |
 | `go/internal/ws/manager_test.go` | Go websocket handshake/ping-pong tests | websocket tests | `cd go && go test ./...` |

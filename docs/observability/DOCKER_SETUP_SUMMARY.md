@@ -47,7 +47,7 @@ docs/observability/
    - Webhook integration
    - Email notifications (configurable)
 
-4. **FastAPI Observability Server** (Port 8000)
+4. **Go Observability Control-Plane Server (FastAPI compatibility optional)** (Port 8000)
    - Custom metrics API
    - DuckDB analytics
    - React dashboard serving
@@ -305,7 +305,7 @@ docker/
 5. **Access dashboards:**
    - Grafana: http://localhost:3000
    - Prometheus: http://localhost:9090
-   - API Docs: http://localhost:8000/docs
+   - API Docs: http://localhost:8080/health
 
 ## 🎯 Success Criteria
 
@@ -351,8 +351,8 @@ make prune         # Clean unused resources
 
 Created files:
 ```
-✅ docker/docker-compose.observability.yml (456 lines)
-✅ docker/docker-compose.dev.yml (31 lines)
+✅ deployment/docker-compose.observability.yml (456 lines)
+✅ deployment/docker-compose.dev.yml (31 lines)
 ✅ docker/.env.example (143 lines)
 ✅ docker/.dockerignore (56 lines)
 ✅ docker/Makefile (125 lines)

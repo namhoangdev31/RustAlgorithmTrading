@@ -1,10 +1,10 @@
-# Observability Stack Integration Guide
+# Observability Stack Integration Guide (Phase 3 Updated)
 
 ## Overview
 
 The observability stack is now fully integrated into the trading system startup process. With a single command, you can launch:
 
-- **FastAPI Observability API** (port 8000)
+- **Go Observability Control-Plane API** (port 8000)
 - **React Real-Time Dashboard** (port 3000, optional)
 - **DuckDB & SQLite Databases** (automatic initialization)
 - **Complete Trading System** (backtesting → validation → paper trading)
@@ -30,8 +30,8 @@ The observability stack is now fully integrated into the trading system startup 
 ```
 1. ✓ Dependency verification (Python packages, Node.js, ports)
 2. ✓ Directory creation (logs/, data/, monitoring/)
-3. ✓ Database initialization (DuckDB metrics.duckdb, SQLite events.db)
-4. ✓ FastAPI server starts (http://localhost:8000)
+3. ✓ Database initialization (DuckDB metrics.duckdb, SQLite trading_operational.db)
+4. ✓ Go server starts (http://localhost:8080 by default)
 5. ✓ React dashboard starts (http://localhost:3000, if enabled)
 6. ✓ Browser auto-opens to dashboard
 7. ✓ Trading system launches (backtest → validate → trade)
@@ -51,11 +51,11 @@ The observability stack is now fully integrated into the trading system startup 
                        │ Metrics & Events
                        ▼
 ┌─────────────────────────────────────────────────────────────┐
-│              FastAPI Observability API                       │
+│              Go Observability Control-Plane API                       │
 │                  (port 8000)                                 │
 ├─────────────────────────────────────────────────────────────┤
 │  • REST Endpoints (/api/metrics, /api/trades, /api/system)  │
-│  • WebSocket Stream (ws://localhost:8000/ws/metrics)        │
+│  • WebSocket Stream (ws://localhost:8080/ws/metrics)        │
 │  • Health Checks (/health, /health/ready, /health/live)     │
 └──────────────────────┬──────────────────────────────────────┘
                        │
@@ -76,7 +76,7 @@ The observability stack is now fully integrated into the trading system startup 
 ├─────────────────────────────────────────────────────────────┤
 │  • DuckDB (data/metrics.duckdb)                             │
 │    - Market data, strategy metrics, execution, system       │
-│  • SQLite (data/events.db)                                  │
+│  • SQLite (data/trading_operational.db)                                  │
 │    - Real-time events, alerts                               │
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -105,7 +105,7 @@ Comprehensive dependency checker.
 **Checks:**
 - System commands (python3, pip3, cargo, curl, node, npm)
 - Python version (>= 3.8)
-- Python packages (fastapi, uvicorn, duckdb, etc.)
+- Go toolchain + Python test runtime + DuckDB/SQLite client libs
 - Directory structure
 - Configuration files (.env, system.json)
 - Port availability (8000, 3000, 5001-5003)
@@ -125,7 +125,7 @@ Standalone observability stack launcher.
 **Features:**
 - Directory setup
 - Database initialization
-- FastAPI server startup
+- Go server startup
 - Optional dashboard startup
 - Auto-browser launch
 - Health monitoring loop
@@ -155,7 +155,7 @@ Standalone observability stack launcher.
 OBSERVABILITY_PID=$!
 
 # 3. Wait for API ready
-while ! curl -s http://localhost:8000/health; do
+while ! curl -s http://localhost:8080/health; do
     sleep 1
 done
 
@@ -216,7 +216,7 @@ trap cleanup EXIT INT TERM
 
 ## API Endpoints
 
-### Base URL: `http://localhost:8000`
+### Base URL: `http://localhost:8080`
 
 #### Health Endpoints
 
@@ -300,7 +300,7 @@ GET /api/system/alerts
 #### WebSocket Endpoint
 
 ```bash
-WS ws://localhost:8000/ws/metrics
+WS ws://localhost:8080/ws/metrics
 # Real-time metric streaming at 10Hz
 
 # Message format:
@@ -385,7 +385,7 @@ conn.close()
 "
 ```
 
-### SQLite: `data/events.db`
+### SQLite: `data/trading_operational.db`
 
 **Tables:**
 
@@ -423,7 +423,7 @@ RustAlgorithmTrading/
 │   └── system/                  # System logs
 ├── data/
 │   ├── metrics.duckdb          # Time-series metrics
-│   ├── events.db               # Real-time events
+│   ├── trading_operational.db  # Operational events/trades
 │   ├── backtest_results/       # Backtest outputs
 │   ├── simulation_results/     # Simulation outputs
 │   └── live_trading/           # Live trading data
@@ -467,7 +467,7 @@ lsof -ti :8000 | xargs kill -9
 ls -la data/*.db data/*.duckdb
 
 # Reinitialize databases
-rm data/metrics.duckdb data/events.db
+rm data/metrics.duckdb data/trading_operational.db
 ./scripts/start_observability.sh
 ```
 
@@ -506,13 +506,13 @@ tail -f logs/observability/dashboard.log
 
 ```bash
 # Test WebSocket endpoint
-wscat -c ws://localhost:8000/ws/metrics
+wscat -c ws://localhost:8080/ws/metrics
 
 # Check CORS settings in main.py
 # Should allow localhost:3000 and localhost:5173
 
 # Verify API is running
-curl http://localhost:8000/health
+curl http://localhost:8080/health
 ```
 
 ## Advanced Usage
@@ -536,7 +536,8 @@ Edit `/scripts/start_observability.sh`:
 
 ```python
 # In run_api.py generation
-uvicorn.run(
+# legacy fastapi compatibility path
+# uvicorn.run(
     app,
     host="0.0.0.0",
     port=9000,  # Changed from 8000
@@ -593,7 +594,7 @@ npm run build
 ### Required Python Packages
 
 ```bash
-pip3 install fastapi uvicorn websockets pydantic duckdb loguru psutil numpy pandas
+go version && .venv/bin/python -m pip install -r requirements.txt
 ```
 
 ### Optional Dependencies
@@ -612,10 +613,10 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 A: Yes, use `./scripts/start_trading.sh --no-observability`
 
 **Q: How do I view real-time metrics?**
-A: Open http://localhost:8000 in your browser (auto-opens)
+A: Open http://localhost:8080 in your browser (auto-opens)
 
 **Q: Where are metrics stored?**
-A: DuckDB at `data/metrics.duckdb` and SQLite at `data/events.db`
+A: DuckDB at `data/metrics.duckdb` and SQLite at `data/trading_operational.db`
 
 **Q: How do I export metrics?**
 A: Use DuckDB export: `COPY (SELECT * from .) TO 'output.csv' (HEADER, DELIMITER ',')`
@@ -642,5 +643,5 @@ A: Yes, change `host="0.0.0.0"` and configure firewall for ports 8000, 3000
 For issues or questions:
 - Check logs in `logs/observability/`
 - Run dependency checker: `./scripts/check_dependencies.sh`
-- Review API docs: http://localhost:8000/docs
+- Review API docs: http://localhost:8080/docs
 - Consult main README: `/docs/README.md`

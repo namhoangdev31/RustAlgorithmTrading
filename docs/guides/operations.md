@@ -40,13 +40,13 @@ sudo systemctl enable trading-signal-bridge
 
 ```bash
 # Start all services
-docker-compose -f docker/docker-compose.yml up -d
+docker-compose -f deployment/docker-compose.yml up -d
 
 # Start specific service
-docker-compose -f docker/docker-compose.yml up -d market_data_service
+docker-compose -f deployment/docker-compose.yml up -d market_data_service
 
 # View startup logs
-docker-compose -f docker/docker-compose.yml logs -f
+docker-compose -f deployment/docker-compose.yml logs -f
 ```
 
 ### Stopping Services
@@ -71,10 +71,10 @@ sudo systemctl stop trading-market-data
 **Docker Deployment**:
 ```bash
 # Graceful shutdown (sends SIGTERM)
-docker-compose -f docker/docker-compose.yml down
+docker-compose -f deployment/docker-compose.yml down
 
 # Force stop (sends SIGKILL after timeout)
-docker-compose -f docker/docker-compose.yml down --timeout 30
+docker-compose -f deployment/docker-compose.yml down --timeout 30
 ```
 
 #### Emergency Shutdown
@@ -86,7 +86,7 @@ For immediate system halt (use only in emergencies):
 ./scripts/emergency_stop.sh
 
 # Docker deployment
-docker-compose -f docker/docker-compose.yml kill
+docker-compose -f deployment/docker-compose.yml kill
 ```
 
 ### Restarting Services
@@ -105,10 +105,10 @@ sudo systemctl reload trading-market-data
 **Docker Deployment**:
 ```bash
 # Restart specific service
-docker-compose -f docker/docker-compose.yml restart market_data_service
+docker-compose -f deployment/docker-compose.yml restart market_data_service
 
 # Restart with rebuild
-docker-compose -f docker/docker-compose.yml up -d --build market_data_service
+docker-compose -f deployment/docker-compose.yml up -d --build market_data_service
 ```
 
 #### Full System Restart
@@ -118,7 +118,7 @@ docker-compose -f docker/docker-compose.yml up -d --build market_data_service
 ./scripts/restart_trading_system.sh
 
 # Docker deployment
-docker-compose -f docker/docker-compose.yml restart
+docker-compose -f deployment/docker-compose.yml restart
 ```
 
 ### Service Status
@@ -140,7 +140,7 @@ ps aux | grep market-data
 **Docker Deployment**:
 ```bash
 # Check all containers
-docker-compose -f docker/docker-compose.yml ps
+docker-compose -f deployment/docker-compose.yml ps
 
 # Check specific container
 docker inspect trading_market_data
@@ -261,13 +261,13 @@ tail -f /opt/RustAlgorithmTrading/logs/*.log
 **Docker Deployment**:
 ```bash
 # Follow logs for all services
-docker-compose -f docker/docker-compose.yml logs -f
+docker-compose -f deployment/docker-compose.yml logs -f
 
 # Follow specific service
-docker-compose -f docker/docker-compose.yml logs -f market_data_service
+docker-compose -f deployment/docker-compose.yml logs -f market_data_service
 
 # Follow with timestamps
-docker-compose -f docker/docker-compose.yml logs -f --timestamps
+docker-compose -f deployment/docker-compose.yml logs -f --timestamps
 ```
 
 #### Historical Log Analysis

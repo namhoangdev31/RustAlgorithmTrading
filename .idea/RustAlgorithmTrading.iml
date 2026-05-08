@@ -14,7 +14,6 @@
       <sourceFolder url="file://$MODULE_DIR$/rust/risk-manager/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/rust/risk-manager/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/rust/signal-bridge/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/rust/signal-bridge" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/rust" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/go" isTestSource="false" />

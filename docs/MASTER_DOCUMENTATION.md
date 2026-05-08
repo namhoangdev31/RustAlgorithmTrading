@@ -1801,10 +1801,10 @@ cargo build --release  # Will take 20-30 minutes
 ./scripts/run-load-tests.sh
 
 # View all logs
-docker-compose -f docker/docker-compose.staging.yml logs -f
+docker-compose -f deployment/docker-compose.staging.yml logs -f
 
 # Stop staging environment
-docker-compose -f docker/docker-compose.staging.yml down
+docker-compose -f deployment/docker-compose.staging.yml down
 ```
 
 ## Service URLs
@@ -1830,7 +1830,7 @@ redis-cli -p 6380
 ## Load Test Individual Execution
 
 ```bash
-LOAD_TESTER=$(docker-compose -f docker/docker-compose.staging.yml ps -q load-tester)
+LOAD_TESTER=$(docker-compose -f deployment/docker-compose.staging.yml ps -q load-tester)
 
 # Market Data Flood (1000 ticks/sec)
 docker exec $LOAD_TESTER python /tests/market_data_flood_test.py
@@ -1849,16 +1849,16 @@ docker exec $LOAD_TESTER python /tests/websocket_concurrency_test.py
 
 ```bash
 # Check service status
-docker-compose -f docker/docker-compose.staging.yml ps
+docker-compose -f deployment/docker-compose.staging.yml ps
 
 # Check specific service logs
-docker-compose -f docker/docker-compose.staging.yml logs trading-engine-staging
+docker-compose -f deployment/docker-compose.staging.yml logs trading-engine-staging
 
 # Check resource usage
 docker stats
 
 # Restart specific service
-docker-compose -f docker/docker-compose.staging.yml restart trading-engine-staging
+docker-compose -f deployment/docker-compose.staging.yml restart trading-engine-staging
 
 # View load test results
 cat docker/load-test-results/summary.txt

@@ -8,7 +8,7 @@ The Docker observability stack includes:
 - **Prometheus** - Metrics collection
 - **Grafana** - Visualization
 - **Alertmanager** - Alert routing
-- **FastAPI Observability Server** - Custom metrics API
+- **Go Observability Control-Plane Server** - Custom metrics API
 - **Node Exporter** - System metrics (optional)
 - **cAdvisor** - Container metrics (optional)
 
@@ -58,7 +58,7 @@ make logs
 - **Prometheus**: http://localhost:9090
 - **Grafana**: http://localhost:3000 (admin/admin)
 - **Observability API**: http://localhost:8000
-- **API Docs**: http://localhost:8000/docs
+- **API Docs**: http://localhost:8080/health
 - **Alertmanager**: http://localhost:9093
 
 ## 🔧 Configuration

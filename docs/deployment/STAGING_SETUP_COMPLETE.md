@@ -12,7 +12,7 @@ Delivered a complete, production-ready staging environment with comprehensive lo
 
 ### 1. Staging Docker Compose Configuration
 
-**File**: `docker/docker-compose.staging.yml`
+**File**: `deployment/docker-compose.staging.yml`
 
 **Services Deployed**:
 - ✅ Trading Engine (Port 9001) - 4 CPU cores, 8GB RAM
@@ -337,10 +337,10 @@ open http://localhost:3001
 ./scripts/verify-staging.sh
 
 # View logs
-docker-compose -f docker/docker-compose.staging.yml logs -f
+docker-compose -f deployment/docker-compose.staging.yml logs -f
 
 # Check specific service
-docker-compose -f docker/docker-compose.staging.yml logs trading-engine-staging
+docker-compose -f deployment/docker-compose.staging.yml logs trading-engine-staging
 ```
 
 ## Known Limitations
@@ -381,7 +381,7 @@ All tasks completed with proper coordination:
 ## Files Created
 
 ### Docker Configuration (2 files)
-- `docker/docker-compose.staging.yml` (530 lines)
+- `deployment/docker-compose.staging.yml` (530 lines)
 - `docker/.env.staging` (45 lines)
 
 ### Prometheus Configuration (2 files)

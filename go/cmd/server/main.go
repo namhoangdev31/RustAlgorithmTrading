@@ -23,16 +23,30 @@ func main() {
 	port := getenvOrDefault("PORT", "8080")
 	duckDBPath := getenvOrDefault("DUCKDB_PATH", "data/observability.duckdb")
 	sqlitePath := getenvOrDefault("SQLITE_PATH", "data/trading_operational.db")
+	databaseURL := os.Getenv("DATABASE_URL")
 
 	duckReader, duckErr := storage.NewDuckDBReader(duckDBPath)
 	if duckErr != nil {
 		slog.Warn("duckdb_unavailable", "path", duckDBPath, "error", duckErr)
 	}
+
 	sqliteReader, sqliteErr := storage.NewSQLiteReader(sqlitePath)
 	if sqliteErr != nil {
 		slog.Warn("sqlite_unavailable", "path", sqlitePath, "error", sqliteErr)
 	}
-	store := storage.NewStore(duckReader, sqliteReader)
+
+	var postgresReader *storage.PostgresReader
+	if databaseURL != "" {
+		var pgErr error
+		postgresReader, pgErr = storage.NewPostgresReader(databaseURL)
+		if pgErr != nil {
+			slog.Warn("postgres_unavailable", "error", pgErr)
+		} else {
+			slog.Info("postgres_connected")
+		}
+	}
+
+	store := storage.NewStore(duckReader, sqliteReader, postgresReader)
 	defer func() {
 		if err := store.Close(); err != nil {
 			slog.Warn("store_close_error", "error", err)

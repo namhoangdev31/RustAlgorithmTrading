@@ -190,7 +190,7 @@ All scripts are executable bash scripts with comprehensive error handling.
 
 ### Docker Compose Orchestration
 
-**Location**: `docker/docker-compose.yml`
+**Location**: `deployment/docker-compose.yml`
 
 **Services**:
 - 5 trading microservices
@@ -209,19 +209,19 @@ All scripts are executable bash scripts with comprehensive error handling.
 
 ```bash
 # Build and start all services
-docker-compose -f docker/docker-compose.yml up -d
+docker-compose -f deployment/docker-compose.yml up -d
 
 # View service status
-docker-compose -f docker/docker-compose.yml ps
+docker-compose -f deployment/docker-compose.yml ps
 
 # View logs
-docker-compose -f docker/docker-compose.yml logs -f
+docker-compose -f deployment/docker-compose.yml logs -f
 
 # Stop all services
-docker-compose -f docker/docker-compose.yml down
+docker-compose -f deployment/docker-compose.yml down
 
 # Rebuild after code changes
-docker-compose -f docker/docker-compose.yml up -d --build
+docker-compose -f deployment/docker-compose.yml up -d --build
 ```
 
 ### Service URLs
@@ -354,7 +354,7 @@ GRAFANA_PASSWORD=secure_password
 cargo build --release
 
 # Or build Docker images
-docker-compose -f docker/docker-compose.yml build
+docker-compose -f deployment/docker-compose.yml build
 ```
 
 ### 4. Deploy
@@ -376,13 +376,13 @@ docker-compose -f docker/docker-compose.yml build
 
 ```bash
 # Start all services
-docker-compose -f docker/docker-compose.yml up -d
+docker-compose -f deployment/docker-compose.yml up -d
 
 # Check status
-docker-compose -f docker/docker-compose.yml ps
+docker-compose -f deployment/docker-compose.yml ps
 
 # View logs
-docker-compose -f docker/docker-compose.yml logs -f
+docker-compose -f deployment/docker-compose.yml logs -f
 ```
 
 ### 5. Access Services
@@ -400,7 +400,7 @@ docker-compose -f docker/docker-compose.yml logs -f
 
 **Docker**:
 ```bash
-docker-compose -f docker/docker-compose.yml down
+docker-compose -f deployment/docker-compose.yml down
 ```
 
 ---
@@ -452,7 +452,7 @@ cat .env
 **Issue**: Container won't start
 ```bash
 # Check logs
-docker-compose -f docker/docker-compose.yml logs service_name
+docker-compose -f deployment/docker-compose.yml logs service_name
 
 # Inspect container
 docker inspect trading_market_data

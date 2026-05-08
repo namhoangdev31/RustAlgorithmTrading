@@ -95,7 +95,7 @@ ENABLE_DASHBOARD=true
 # === Database Configuration ===
 DATABASE_TYPE=duckdb
 DATABASE_PATH=./data/metrics.duckdb
-SQLITE_PATH=./data/events.db
+SQLITE_PATH=./data/trading_operational.db
 
 # === Risk Management ===
 MAX_DAILY_LOSS=5000.0
@@ -157,7 +157,7 @@ cat config/system.json | jq .
     "metrics_interval_ms": 100,
     "database": {
       "duckdb_path": "./data/metrics.duckdb",
-      "sqlite_path": "./data/events.db"
+      "sqlite_path": "./data/trading_operational.db"
     }
   },
   "logging": {
@@ -181,27 +181,27 @@ cat config/system.json | jq .
 
 ```bash
 # Build all services
-docker-compose -f docker/docker-compose.yml build
+docker-compose -f deployment/docker-compose.yml build
 
 # Or build specific services
-docker-compose -f docker/docker-compose.yml build market-data
-docker-compose -f docker/docker-compose.yml build execution-engine
+docker-compose -f deployment/docker-compose.yml build market-data
+docker-compose -f deployment/docker-compose.yml build execution-engine
 ```
 
 #### Step 2: Start Services
 
 ```bash
 # Start all services
-docker-compose -f docker/docker-compose.yml up -d
+docker-compose -f deployment/docker-compose.yml up -d
 
 # Check status
-docker-compose -f docker/docker-compose.yml ps
+docker-compose -f deployment/docker-compose.yml ps
 
 # View logs
-docker-compose -f docker/docker-compose.yml logs -f
+docker-compose -f deployment/docker-compose.yml logs -f
 ```
 
-**Docker Compose File:** `docker/docker-compose.yml`
+**Docker Compose File:** `deployment/docker-compose.yml`
 
 ```yaml
 version: '3.8'
@@ -440,7 +440,7 @@ conn.close()
 EOF
 
 # Check SQLite
-sqlite3 data/events.db "SELECT COUNT(*) FROM trade_events;"
+sqlite3 data/trading_operational.db "SELECT COUNT(*) FROM trade_events;"
 ```
 
 ### 3. Test Market Data Feed
@@ -475,13 +475,13 @@ open http://localhost:3000
 
 ```bash
 # Check API documentation
-open http://localhost:8000/docs
+curl http://localhost:8080/health
 
 # Check dashboard
 open http://localhost:3000
 
 # Test WebSocket streaming
-wscat -c ws://localhost:8000/ws/metrics
+wscat -c ws://localhost:8080/ws/metrics
 
 # Send ping
 > ping
@@ -580,7 +580,7 @@ lsof -i :5001-5003
 lsof -ti :8000 | xargs kill -9
 
 # Restart services
-docker-compose -f docker/docker-compose.yml restart
+docker-compose -f deployment/docker-compose.yml restart
 
 # Or manual restart
 ./scripts/stop_trading_system.sh
@@ -606,7 +606,7 @@ df -h
 **Solutions:**
 ```bash
 # Reinitialize databases
-rm data/metrics.duckdb data/events.db
+rm data/metrics.duckdb data/trading_operational.db
 ./scripts/start_observability.sh
 
 # Fix permissions
@@ -645,8 +645,8 @@ conn.close()
 EOF
 
 # Restart services with lower memory limits
-docker-compose -f docker/docker-compose.yml down
-docker-compose -f docker/docker-compose.yml up -d --scale worker=1
+docker-compose -f deployment/docker-compose.yml down
+docker-compose -f deployment/docker-compose.yml up -d --scale worker=1
 ```
 
 ### WebSocket Disconnections
@@ -679,7 +679,7 @@ sudo iptables -L -n
 websocket.send_str("ping")  # Every 30 seconds
 
 # Restart services
-docker-compose -f docker/docker-compose.yml restart market-data
+docker-compose -f deployment/docker-compose.yml restart market-data
 ```
 
 ---
@@ -690,7 +690,7 @@ docker-compose -f docker/docker-compose.yml restart market-data
 
 ```bash
 # 1. Stop current deployment
-docker-compose -f docker/docker-compose.yml down
+docker-compose -f deployment/docker-compose.yml down
 
 # 2. Checkout previous version
 git checkout v0.1.0  # or previous stable tag
@@ -699,7 +699,7 @@ git checkout v0.1.0  # or previous stable tag
 cp config/system.staging.backup.json config/system.json
 
 # 4. Restart services
-docker-compose -f docker/docker-compose.yml up -d
+docker-compose -f deployment/docker-compose.yml up -d
 
 # 5. Verify rollback
 curl http://localhost:8000/health
@@ -713,7 +713,7 @@ curl http://localhost:8000/health
 
 # 2. Restore database backup
 cp backups/metrics.duckdb.backup data/metrics.duckdb
-cp backups/events.db.backup data/events.db
+cp backups/trading_operational.db.backup data/trading_operational.db
 
 # 3. Verify backup integrity
 python3 <<EOF
@@ -735,20 +735,20 @@ EOF
 python3 scripts/export_metrics.py --output=rollback_backup_$(date +%Y%m%d).csv
 
 # 2. Stop all services
-docker-compose -f docker/docker-compose.yml down -v
+docker-compose -f deployment/docker-compose.yml down -v
 
 # 3. Checkout previous version
 git fetch --tags
 git checkout v0.1.0
 
 # 4. Rebuild containers
-docker-compose -f docker/docker-compose.yml build
+docker-compose -f deployment/docker-compose.yml build
 
 # 5. Import preserved data
 python3 scripts/import_metrics.py --input=rollback_backup_*.csv
 
 # 6. Start services
-docker-compose -f docker/docker-compose.yml up -d
+docker-compose -f deployment/docker-compose.yml up -d
 
 # 7. Verify system
 ./scripts/production_validation.sh

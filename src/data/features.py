@@ -286,14 +286,14 @@ class FeatureEngine:
         df["quarter"] = df.index.quarter
 
         # Cyclical encoding
-        df["hour_sin"] = np.sin(2 * np.pi * df["hour"] / 24)
-        df["hour_cos"] = np.cos(2 * np.pi * df["hour"] / 24)
+        df["hour_sin"] = np.sin(2 * np.pi * df["hour"].values / 24)
+        df["hour_cos"] = np.cos(2 * np.pi * df["hour"].values / 24)
 
-        df["day_sin"] = np.sin(2 * np.pi * df["day_of_week"] / 7)
-        df["day_cos"] = np.cos(2 * np.pi * df["day_of_week"] / 7)
+        df["day_sin"] = np.sin(2 * np.pi * df["day_of_week"].values / 7)
+        df["day_cos"] = np.cos(2 * np.pi * df["day_of_week"].values / 7)
 
-        df["month_sin"] = np.sin(2 * np.pi * df["month"] / 12)
-        df["month_cos"] = np.cos(2 * np.pi * df["month"] / 12)
+        df["month_sin"] = np.sin(2 * np.pi * df["month"].values / 12)
+        df["month_cos"] = np.cos(2 * np.pi * df["month"].values / 12)
 
         logger.debug(f"Added time features: {len(df.columns)} columns")
         return df

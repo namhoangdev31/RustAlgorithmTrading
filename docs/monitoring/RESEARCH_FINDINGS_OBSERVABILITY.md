@@ -21,7 +21,7 @@ This comprehensive research report analyzes observability patterns for real-time
    - Time-series database for historical metrics
 
 2. **Recommended Stack**:
-   - **Real-time Dashboard**: FastAPI + WebSockets + React
+   - **Real-time Dashboard**: Go control-plane + WebSockets + React
    - **Logging**: Structlog (JSON) + QueueHandler for async
    - **Time-Series DB**: TimescaleDB (primary) + Prometheus (monitoring)
    - **Charts**: TradingView Lightweight Charts (financial) + Plotly (analytics)
@@ -32,7 +32,7 @@ This comprehensive research report analyzes observability patterns for real-time
 
 ## 1. Real-Time Dashboard Technologies
 
-### 1.1 FastAPI + WebSockets
+### 1.1 Go + WebSockets
 
 **Rating**: ⭐⭐⭐⭐⭐ (Excellent fit for DreamMaker)
 
@@ -152,7 +152,7 @@ import useWebSocket from 'react-use-websocket';
 
 function TradingDashboard() {
   const [metrics, setMetrics] = useState({});
-  const { lastMessage } = useWebSocket('ws://localhost:8000/ws/metrics');
+  const { lastMessage } = useWebSocket('ws://localhost:8080/ws/metrics');
 
   useEffect(() => {
     if (lastMessage !== null) {
@@ -1081,7 +1081,7 @@ tail -f logs/trading.json | jq .
 **Tasks**:
 1. Deploy TimescaleDB:
    ```yaml
-   # docker/docker-compose.yml (add to existing file)
+   # deployment/docker-compose.yml (add to existing file)
    timescaledb:
      image: timescale/timescaledb:latest-pg16
      ports:
@@ -1272,7 +1272,7 @@ ORDER BY bucket DESC LIMIT 10;
 
    function TradingDashboard() {
        const [metrics, setMetrics] = useState({});
-       const { lastMessage } = useWebSocket('ws://localhost:8000/ws/metrics', {
+       const { lastMessage } = useWebSocket('ws://localhost:8080/ws/metrics', {
            shouldReconnect: () => true,  // Auto-reconnect
            reconnectAttempts: 10,
            reconnectInterval: (attemptNumber) => Math.min(1000 * 2 ** attemptNumber, 30000),
@@ -1352,7 +1352,7 @@ open http://localhost:8000
 
    async def test_1000_concurrent_clients():
        async def client():
-           async with websockets.connect('ws://localhost:8000/ws/metrics') as ws:
+           async with websockets.connect('ws://localhost:8080/ws/metrics') as ws:
                for _ in range(100):
                    msg = await ws.recv()
                    assert msg is not None
@@ -1567,7 +1567,7 @@ Results:
 
 | Layer | Technology | Rationale |
 |-------|------------|-----------|
-| **Real-time API** | FastAPI + WebSockets | Native Python, high performance, production-ready |
+| **Real-time API** | Go + WebSockets | Native Python, high performance, production-ready |
 | **Frontend** | React 18 | Best ecosystem for financial charts, concurrent rendering |
 | **Logging** | Structlog + QueueHandler | Structured JSON, async, best performance |
 | **Time-series DB** | TimescaleDB | SQL, best query performance, cost-effective |

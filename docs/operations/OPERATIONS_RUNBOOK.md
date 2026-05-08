@@ -220,13 +220,13 @@ sudo systemctl status trading-*
 **Docker Deployment**:
 ```bash
 # Start all services
-docker compose -f docker/docker-compose.production.yml up -d
+docker compose -f deployment/docker-compose.production.yml up -d
 
 # Follow startup logs
-docker compose -f docker/docker-compose.production.yml logs -f
+docker compose -f deployment/docker-compose.production.yml logs -f
 
 # Verify health
-docker compose -f docker/docker-compose.production.yml ps
+docker compose -f deployment/docker-compose.production.yml ps
 ```
 
 **Kubernetes Deployment**:

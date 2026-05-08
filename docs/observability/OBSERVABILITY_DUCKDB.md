@@ -240,7 +240,7 @@ Returns aggregated statistics across all metrics.
 
 #### Real-Time Stream
 ```javascript
-const ws = new WebSocket('ws://localhost:8000/ws/metrics');
+const ws = new WebSocket('ws://localhost:8080/ws/metrics');
 
 ws.onmessage = (event) => {
   const metrics = JSON.parse(event.data);
@@ -430,4 +430,4 @@ src/observability/
 For issues or questions:
 - Check logs in `logs/observability_api.log`
 - Review DuckDB documentation: https://duckdb.org/docs/
-- Check API docs: http://localhost:8000/docs
+- Check API docs: http://localhost:8080/health

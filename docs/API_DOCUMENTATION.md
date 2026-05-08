@@ -1,5 +1,55 @@
 # API Documentation
 
+## Status Note (Phase 3)
+
+- Python class-level API docs below remain valid for research/orchestration interfaces.
+- Observability serving has a Go control-plane path in Phase 3.
+- Current operational verdict is documented in:
+  - `docs/roadmap/PHASE3_GO_NO_GO_EVIDENCE.md`
+- ZMQ message contract source of truth:
+  - `docs/api/ZMQ_PROTOCOL.md`
+
+---
+
+## Observability Control-Plane API (Go)
+
+Phase 3 in-scope external endpoints (REST/WS) for dashboard/control-plane:
+
+- `GET /health`
+- `GET /health/ready`
+- `GET /health/live`
+- `GET /api/metrics/current`
+- `POST /api/metrics/history`
+- `GET /api/metrics/symbols`
+- `GET /api/metrics/summary`
+- `GET /api/trades/`
+- `GET /api/trades/{trade_id}`
+- `GET /api/trades/stats/summary`
+- `GET /api/trades/execution/quality`
+- `GET /api/system/health`
+- `GET /api/system/performance`
+- `GET /api/system/components`
+- `GET /api/system/logs/recent`
+- `POST /api/system/alerts/acknowledge/{id}`
+- `GET /api/system/stats`
+- `WS /ws/metrics` (10Hz fanout, ping/pong)
+
+Parity matrix and rollout constraints:
+
+- `docs/observability/PHASE3_API_PARITY_MATRIX.md`
+- `docs/observability/PHASE3_CUTOVER_RUNBOOK.md`
+
+Auth/rate-limit (v1):
+
+- `X-API-Key` internal auth
+- key/IP rate limiting
+
+Out of scope:
+
+- Go must not participate in strategy decisions, risk decisions, sizing, order routing, or execution.
+
+---
+
 ## Core Modules
 
 ### 1. Alpaca Client (`src/api/alpaca_client.py`)

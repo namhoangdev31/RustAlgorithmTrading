@@ -319,7 +319,7 @@ Use Docker for isolated, reproducible deployments.
 
 ```bash
 # Build all service images
-docker-compose -f docker/docker-compose.yml build
+docker-compose -f deployment/docker-compose.yml build
 
 # Verify images
 docker images | grep trading
@@ -329,29 +329,29 @@ docker images | grep trading
 
 ```bash
 # Start all services
-docker-compose -f docker/docker-compose.yml up -d
+docker-compose -f deployment/docker-compose.yml up -d
 
 # View logs
-docker-compose -f docker/docker-compose.yml logs -f
+docker-compose -f deployment/docker-compose.yml logs -f
 
 # Check service health
-docker-compose -f docker/docker-compose.yml ps
+docker-compose -f deployment/docker-compose.yml ps
 ```
 
 #### 3. Docker Service Management
 
 ```bash
 # Stop all services
-docker-compose -f docker/docker-compose.yml down
+docker-compose -f deployment/docker-compose.yml down
 
 # Restart specific service
-docker-compose -f docker/docker-compose.yml restart market_data_service
+docker-compose -f deployment/docker-compose.yml restart market_data_service
 
 # View service logs
-docker-compose -f docker/docker-compose.yml logs -f market_data_service
+docker-compose -f deployment/docker-compose.yml logs -f market_data_service
 
 # Execute command in container
-docker-compose -f docker/docker-compose.yml exec market_data_service /bin/bash
+docker-compose -f deployment/docker-compose.yml exec market_data_service /bin/bash
 ```
 
 ### Method 3: Kubernetes Deployment (Enterprise)
@@ -443,7 +443,7 @@ tail -f logs/trading_system.log
 Docker Compose handles startup order automatically via `depends_on` and health checks:
 
 ```bash
-docker-compose -f docker/docker-compose.yml up -d
+docker-compose -f deployment/docker-compose.yml up -d
 ```
 
 ## Verification
@@ -467,7 +467,7 @@ ps aux | grep -E '(market-data|risk-manager|execution-engine|signal-bridge)'
 **Docker Deployment**:
 ```bash
 # Check container health
-docker-compose -f docker/docker-compose.yml ps
+docker-compose -f deployment/docker-compose.yml ps
 
 # Should show all services as "healthy"
 ```
@@ -502,8 +502,8 @@ tail -f logs/execution_engine.log
 **Docker Deployment**:
 ```bash
 # View container logs
-docker-compose -f docker/docker-compose.yml logs -f market_data_service
-docker-compose -f docker/docker-compose.yml logs -f risk_management_service
+docker-compose -f deployment/docker-compose.yml logs -f market_data_service
+docker-compose -f deployment/docker-compose.yml logs -f risk_management_service
 ```
 
 #### 4. Verify Metrics Endpoint
@@ -529,7 +529,7 @@ cd tests
 cargo test --test integration --release
 
 # Docker deployment
-docker-compose -f docker/docker-compose.yml exec strategy_engine \
+docker-compose -f deployment/docker-compose.yml exec strategy_engine \
   cargo test --test integration --release
 ```
 

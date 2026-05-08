@@ -12,7 +12,7 @@ src/observability/storage/
 ├── schemas.py               # Data models & SQL schemas
 ├── duckdb_client.py         # DuckDB time-series client
 ├── sqlite_client.py         # SQLite operational client
-└── integration.py           # FastAPI integration
+└── integration.py           # Control-plane integration (Go primary, FastAPI compatibility)
 ```
 
 ## DuckDB Client
@@ -27,7 +27,7 @@ High-performance analytics database for time-series trading data.
 from observability.storage import DuckDBClient
 
 client = DuckDBClient(
-    db_path="data/trading_metrics.duckdb",  # Database file path
+    db_path="data/metrics.duckdb",  # Database file path
     read_only=False,                         # Read-only mode
     threads=4                                # Query threads
 )
@@ -306,7 +306,7 @@ Operational database for transactional data (trade logs, system events).
 ```python
 from observability.storage import SQLiteClient
 
-client = SQLiteClient("data/trading_operational.db")
+client = SQLiteClient("data/trades.db")
 await client.initialize()
 ```
 

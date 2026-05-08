@@ -34,7 +34,7 @@ The self-hosted observability architecture for the py_rt (DreamMaker) algorithmi
 | **Metrics Collection** | Prometheus | Self-hosted Docker | $0 | ✅ FREE |
 | **Dashboards** | Grafana | Self-hosted Docker | $0 | ✅ FREE |
 | **Alerting** | Alertmanager | Self-hosted Docker | $0 | ✅ FREE |
-| **Real-time API** | FastAPI + WebSocket | Python (included) | $0 | ✅ FREE |
+| **Real-time API** | Go + WebSocket (FastAPI compatibility mode) | Python (included) | $0 | ✅ FREE |
 | **Logging** | Loguru + Structured Logging | Python (included) | $0 | ✅ FREE |
 | **Time-Series Storage** | Prometheus TSDB | Docker volume | $0 | ✅ FREE |
 | **Container Runtime** | Docker Compose | Self-hosted | $0 | ✅ FREE |
@@ -76,7 +76,7 @@ No paid services, no hidden costs, full functionality achieved with open-source 
 
 ### 2.1 Real-Time API Performance
 
-**FastAPI + WebSocket Implementation:**
+**Go + WebSocket (FastAPI compatibility mode) Implementation:**
 
 | Metric | Target | Measured (Estimated) | Status |
 |--------|--------|---------------------|--------|
@@ -680,7 +680,7 @@ Saves $200-450/month compared to commercial solutions while providing equivalent
 
 | Feature | Recommended | Implemented | Status |
 |---------|------------|-------------|--------|
-| **Real-time Dashboard** | FastAPI + WebSocket | ✅ Implemented | MATCH |
+| **Real-time Dashboard** | Go + WebSocket (FastAPI compatibility mode) | ✅ Implemented | MATCH |
 | **Logging** | Structlog + QueueHandler | ⚠️ Loguru (sync) | PARTIAL |
 | **Time-Series DB** | TimescaleDB + Prometheus | ✅ Prometheus only | ACCEPTABLE |
 | **Charts** | TradingView + Plotly | 📋 Planned (backend ready) | PENDING |
@@ -769,7 +769,7 @@ With the required actions completed, this system is ready for production paper t
 │    └─────────────────────────────┘                            │
 │                                                                │
 │    ┌─────────────────────────────────────────────┐            │
-│    │  REAL-TIME API (FastAPI + WebSocket)        │            │
+│    │  REAL-TIME API (Go + WebSocket (FastAPI compatibility mode))        │            │
 │    │  - 10Hz metric streaming                    │            │
 │    │  - REST API for historical data             │            │
 │    │  - CORS configured for frontend             │            │
