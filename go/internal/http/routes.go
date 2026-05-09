@@ -102,7 +102,7 @@ func SetupRoutes(store *storage.Store, wsManager *ws.Manager, healthAggregator *
 					}
 				}
 
-				data := []map[string]interface{}{}
+				var data []map[string]interface{}
 				if store != nil && store.DuckDB() != nil {
 					h, err := store.DuckDB().QueryMetricsHistory(start, end, req.MetricTypes)
 					if err == nil {
@@ -226,7 +226,7 @@ func SetupRoutes(store *storage.Store, wsManager *ws.Manager, healthAggregator *
 		r.Route("/system", func(r chi.Router) {
 			r.Get("/health", healthAggregator.SystemHealthHandler)
 			r.Get("/performance", func(w http.ResponseWriter, r *http.Request) {
-				history := []map[string]interface{}{}
+				var history []map[string]interface{}
 				if store != nil && store.DuckDB() != nil {
 					if h, err := store.DuckDB().QueryPerformanceHistory(50); err == nil {
 						history = h
@@ -246,7 +246,7 @@ func SetupRoutes(store *storage.Store, wsManager *ws.Manager, healthAggregator *
 					level = "INFO"
 				}
 				limit := parseIntWithDefault(r.URL.Query().Get("limit"), 100)
-				logs := []map[string]interface{}{}
+				var logs []map[string]interface{}
 				if store != nil {
 					if store.Postgres() != nil {
 						if rows, err := store.Postgres().QueryLogs(level, limit); err == nil {

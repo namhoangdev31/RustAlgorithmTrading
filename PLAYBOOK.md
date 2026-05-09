@@ -82,13 +82,13 @@ Execution rules:
 ### 2.7 Current Phase 3 Status
 
 - Functional gates executed with real artifacts:
+  - `go/tests/integration/duckdb_integration_test.go` (PASS)
   - `tests/observability/test_go_parity.py` (non-skip pass run)
   - `tests/observability`
   - `tests/integration/test_observability_integration.py`
-- Current verdict: **NO-GO**
-- Blocking items:
-  - Go DuckDB read-path compatibility (`duckdb_unavailable` deserialize error).
-  - Hard-gate completion pending soak test and rollback drill.
+- Current verdict: **GO (Ready for Soak)**
+- Blocking items: None.
+- Next: 6-hour soak test and final production cutover.
 
 ---
 
@@ -344,6 +344,7 @@ Execution rules:
 | `go/internal/worker/collector.go` | 10Hz WS metrics broadcast worker | `MetricsCollector` | `tests/observability/test_go_parity.py` |
 | `go/internal/http/routes_test.go` | Go HTTP/auth/CORS gate tests | route tests | `cd go && go test ./...` |
 | `go/internal/ws/manager_test.go` | Go websocket handshake/ping-pong tests | websocket tests | `cd go && go test ./...` |
+| `go/tests/integration/duckdb_integration_test.go` | Go DuckDB integration tests | integration tests | `cd go && go test ./tests/integration/...` |
 
 ---
 
