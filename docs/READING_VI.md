@@ -323,4 +323,3 @@ Mục tiêu tuần đầu:
 - Tôi biết tài liệu nào là canonical vs legacy.
 
 Nếu bạn check được hầu hết mục trên, bạn đã có nền tảng đủ tốt để bắt đầu đóng góp code.
-

@@ -15,7 +15,7 @@ The Observability API now uses **DuckDB** as its time-series database backend, r
 
 ```
 ┌─────────────────────────────────────────────────┐
-│          FastAPI Application                     │
+│          Go control-plane Application                     │
 │                                                  │
 │  ┌──────────────┐         ┌─────────────────┐  │
 │  │  WebSocket   │         │   REST API      │  │
@@ -398,7 +398,7 @@ pytest tests/ -v
 ```
 src/observability/
 ├── api/
-│   ├── main.py              # FastAPI application
+│   ├── main.py              # Go control-plane application
 │   ├── routes/              # API endpoints
 │   └── websocket_manager.py # WebSocket handling
 ├── database/

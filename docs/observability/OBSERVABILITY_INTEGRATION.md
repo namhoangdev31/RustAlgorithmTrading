@@ -415,7 +415,7 @@ CREATE TABLE alert_events (
 RustAlgorithmTrading/
 ├── logs/
 │   ├── observability/
-│   │   ├── api.log              # FastAPI logs
+│   │   ├── api.log              # Go control-plane logs
 │   │   ├── dashboard.log        # React dev server logs
 │   │   └── dashboard_install.log
 │   ├── trades/                  # Trade-specific logs
@@ -438,7 +438,7 @@ RustAlgorithmTrading/
 │   └── autonomous_trading_system.sh  # Trading system
 └── src/
     └── observability/
-        ├── api/                # FastAPI application
+        ├── api/                # Go control-plane application
         ├── dashboard/          # React dashboard
         ├── metrics/            # Metric collectors
         ├── logging/            # Structured logging
@@ -478,7 +478,7 @@ rm data/observability.duckdb data/trades.db
 tail -f logs/observability/api.log
 
 # Verify Python packages
-pip3 list | grep -E "(fastapi|uvicorn|duckdb)"
+pip3 list | grep -E "(go-control-plane|go runtime|duckdb)"
 
 # Run dependency check
 ./scripts/check_dependencies.sh
@@ -536,8 +536,8 @@ Edit `/scripts/start_observability.sh`:
 
 ```python
 # In run_api.py generation
-# legacy fastapi compatibility path
-# uvicorn.run(
+# legacy go-control-plane compatibility path
+# go runtime.run(
     app,
     host="0.0.0.0",
     port=9000,  # Changed from 8000

@@ -1,13 +1,12 @@
 """
-FastAPI Integration Helpers
+Observability Storage Integration Helpers
 
-Provides easy integration between FastAPI endpoints and storage clients.
+Provides storage integration helpers for control-plane and collectors.
 """
 
 from typing import Optional, Dict, Any, List
 from datetime import datetime, timezone, timedelta
 from contextlib import asynccontextmanager
-from fastapi import HTTPException
 import logging
 import os
 
@@ -21,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 class StorageManager:
     """
-    Unified storage manager for FastAPI applications
+    Unified storage manager for observability runtime
 
     Manages DuckDB (analytics) and operational storage (Postgres or SQLite).
     """
@@ -92,7 +91,7 @@ class StorageManager:
             raise RuntimeError("StorageManager not initialized")
         return self._postgres if self._postgres else self._sqlite
 
-    # ========== Convenience Methods for FastAPI ==========
+    # ========== Convenience Methods ==========
 
     async def record_metric(
         self,
@@ -126,7 +125,7 @@ class StorageManager:
             )
         except Exception as e:
             logger.error(f"[cid:INIT] Failed to get metrics: {e}")
-            raise HTTPException(status_code=500, detail=str(e))
+            raise RuntimeError(str(e))
 
     async def log_trade_execution(
         self,
@@ -151,7 +150,7 @@ class StorageManager:
             )
         except Exception as e:
             logger.error(f"[cid:INIT] Failed to log trade: {e}")
-            raise HTTPException(status_code=500, detail=str(e))
+            raise RuntimeError(str(e))
 
     async def get_trades(
         self,
@@ -170,7 +169,7 @@ class StorageManager:
             )
         except Exception as e:
             logger.error(f"[cid:INIT] Failed to get trades: {e}")
-            raise HTTPException(status_code=500, detail=str(e))
+            raise RuntimeError(str(e))
 
     async def log_event(
         self,
@@ -190,7 +189,7 @@ class StorageManager:
             )
         except Exception as e:
             logger.error(f"[cid:INIT] Failed to log event: {e}")
-            raise HTTPException(status_code=500, detail=str(e))
+            raise RuntimeError(str(e))
 
     async def get_events(
         self,
@@ -211,7 +210,7 @@ class StorageManager:
             )
         except Exception as e:
             logger.error(f"[cid:INIT] Failed to get events: {e}")
-            raise HTTPException(status_code=500, detail=str(e))
+            raise RuntimeError(str(e))
 
     async def get_trading_summary(
         self,
@@ -230,7 +229,7 @@ class StorageManager:
             }
         except Exception as e:
             logger.error(f"[cid:INIT] Failed to get trading summary: {e}")
-            raise HTTPException(status_code=500, detail=str(e))
+            raise RuntimeError(str(e))
 
 
 # Global storage manager instance
@@ -247,7 +246,7 @@ def get_storage_manager() -> StorageManager:
 
 @asynccontextmanager
 async def storage_lifespan(app: Any) -> Any:
-    """FastAPI lifespan context manager"""
+    """Storage lifespan context manager."""
     storage = get_storage_manager()
     await storage.initialize()
     yield {"storage": storage}
@@ -255,7 +254,7 @@ async def storage_lifespan(app: Any) -> Any:
 
 
 async def get_storage() -> StorageManager:
-    """FastAPI dependency for storage access"""
+    """Return initialized storage manager."""
     storage = get_storage_manager()
     if not storage._initialized:
         await storage.initialize()

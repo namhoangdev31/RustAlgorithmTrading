@@ -64,7 +64,7 @@ uv pip install numpy
 uv pip install pandas==2.0.0
 
 # Upgrade package
-uv pip install --upgrade fastapi
+uv pip install --upgrade go-control-plane
 
 # List installed packages
 uv pip list
@@ -185,7 +185,7 @@ uv pip install git+https://github.com/user/repo.git
 ### Install with extras
 
 ```bash
-uv pip install fastapi[all]
+uv pip install go-control-plane[all]
 ```
 
 ### Install from local directory

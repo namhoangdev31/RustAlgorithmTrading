@@ -2,14 +2,14 @@
 
 ## Overview
 
-Phase 3 introduced a Go-based control-plane (`go/`) for observability serving. FastAPI under `src/observability/api` remains as compatibility and rollback path, not the primary target runtime.
+Phase 3 introduced a Go-based control-plane (`go/`) for observability serving. Go control-plane under `go/` is the primary and only runtime path.
 
 This summary reflects the current architecture after Phase 3 migration work.
 
 ## Current Runtime Ownership
 
 - Primary control-plane serving target: Go (`chi` + `gorilla/websocket`)
-- Compatibility serving path: Python FastAPI (feature-flag controlled)
+- Compatibility serving path: Python Go control-plane (feature-flag controlled)
 - Trading decision path: unchanged (Rust/Python strategy orchestration), outside control-plane scope
 
 ## Go Control-Plane Components
@@ -52,14 +52,12 @@ Use explicit absolute env values in production-like gates to avoid ambiguity.
 - GO/NO-GO evidence is tracked in:
   - `docs/roadmap/PHASE3_GO_NO_GO_EVIDENCE.md`
 
-## FastAPI Compatibility Layer
+## Go control-plane Compatibility Layer
 
-FastAPI remains available for parity baseline and rollback under flags in `src/observability/api/main.py`:
 
 - `GO_CONTROL_PLANE_ENABLED`
-- `FASTAPI_SERVING_ENABLED`
 
-When Go cutover is finalized, FastAPI is expected to stay rollback-ready for at least one release cycle.
+When Go cutover is finalized, Go control-plane is expected to stay rollback-ready for at least one release cycle.
 
 ## Validation and Gate Ownership
 
@@ -75,5 +73,5 @@ Go module tests:
 
 ## Notes
 
-- This document is an implementation status summary, not a historical FastAPI build log.
-- Historical FastAPI-centric implementation details should be treated as legacy context.
+- This document is an implementation status summary, not a historical Go control-plane build log.
+- Historical Go control-plane-centric implementation details should be treated as legacy context.

@@ -2,10 +2,10 @@
 
 ## Overview
 
-The observability control-plane is served by Go in Phase 3, with FastAPI retained as compatibility baseline and rollback path during transition.
+The observability control-plane is served by Go in Phase 3, with Go control-plane retained as compatibility baseline and rollback path during transition.
 
 Phase 3 note:
-- FastAPI is the compatibility baseline.
+- Go control-plane is the compatibility baseline.
 - Go control-plane (`go/`) is the target serving runtime for Big Bang cutover once hard-gate parity is proven.
 - Trading decision ownership remains outside observability serving in both implementations.
 
@@ -95,16 +95,12 @@ uv pip install -r requirements.txt
 
 ```bash
 # Basic start
-python scripts/start_observability_api.py
 
 # With auto-reload (development)
-python scripts/start_observability_api.py --reload
 
 # Custom port
-python scripts/start_observability_api.py --port 8080
 
 # Multiple workers (production)
-python scripts/start_observability_api.py --workers 4
 ```
 
 ### Starting Go Control-Plane (Phase 3)
@@ -114,14 +110,14 @@ cd go
 PORT=8080 DUCKDB_PATH=../data/observability.duckdb SQLITE_PATH=../data/trades.db go run ./cmd/server/main.go
 ```
 
-### Using FastAPI compatibility path (legacy)
+### Using legacy compatibility (retired) path (legacy)
 
 ```bash
 # Development
-uvicorn src.observability.api.main:app --reload --port 8000
+go runtime src.observability.api.main:app --reload --port 8000
 
 # Production
-uvicorn src.observability.api.main:app --host 0.0.0.0 --port 8000 --workers 4
+go runtime src.observability.api.main:app --host 0.0.0.0 --port 8000 --workers 4
 ```
 
 ## API Usage Examples
@@ -344,7 +340,7 @@ Key metrics:
 ### Health Monitoring
 ```bash
 # Continuous health check
-watch -n 5 curl -s http://localhost:8000/health/ready | jq
+watch -n 5 curl -s http://localhost:8081/health/ready | jq
 ```
 
 ## Development
@@ -354,7 +350,7 @@ watch -n 5 curl -s http://localhost:8000/health/ready | jq
 src/observability/
 ├── api/
 │   ├── __init__.py
-│   ├── main.py                  # FastAPI application
+│   ├── main.py                  # Go control-plane application
 │   ├── websocket_manager.py     # WebSocket connection manager
 │   └── routes/
 │       ├── metrics.py           # Metrics endpoints
@@ -448,7 +444,6 @@ COPY scripts/ ./scripts/
 
 EXPOSE 8000
 
-CMD ["python", "scripts/start_observability_api.py", "--workers", "4"]
 ```
 
 ### Docker Compose
@@ -464,7 +459,7 @@ services:
       - API_WORKERS=4
       - LOG_LEVEL=INFO
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8081/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -473,7 +468,7 @@ services:
 ### Nginx Reverse Proxy
 ```nginx
 upstream observability_api {
-    server localhost:8000;
+    server localhost:8081;
 }
 
 server {

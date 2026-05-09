@@ -57,7 +57,7 @@ make logs
 
 - **Prometheus**: http://localhost:9090
 - **Grafana**: http://localhost:3000 (admin/admin)
-- **Observability API**: http://localhost:8000
+- **Observability API**: http://localhost:8081
 - **API Docs**: http://localhost:8080/health
 - **Alertmanager**: http://localhost:9093
 
@@ -357,13 +357,13 @@ services:
 
 ```bash
 # Get current metrics
-curl http://localhost:8000/api/v1/metrics
+curl http://localhost:8081/api/v1/metrics
 
 # Get trading statistics
-curl http://localhost:8000/api/v1/stats
+curl http://localhost:8081/api/v1/stats
 
 # Get system health
-curl http://localhost:8000/health
+curl http://localhost:8081/health
 ```
 
 ## 🐛 Troubleshooting
@@ -572,7 +572,7 @@ Deploy Thanos or Cortex for long-term storage.
 - [Prometheus Documentation](https://prometheus.io/docs/)
 - [Grafana Documentation](https://grafana.com/docs/)
 - [Docker Compose Reference](https://docs.docker.com/compose/)
-- [FastAPI Documentation](https://fastapi.tiangolo.com/)
+- [Go control-plane Documentation](https://go-control-plane.tiangolo.com/)
 
 ## 🤝 Support
 

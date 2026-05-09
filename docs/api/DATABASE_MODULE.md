@@ -12,7 +12,7 @@ src/observability/storage/
 ├── schemas.py               # Data models & SQL schemas
 ├── duckdb_client.py         # DuckDB time-series client
 ├── sqlite_client.py         # SQLite operational client
-└── integration.py           # Control-plane integration (Go primary, FastAPI compatibility)
+└── integration.py           # Control-plane integration (Go primary, legacy compatibility (retired))
 ```
 
 ## DuckDB Client
@@ -443,12 +443,12 @@ class TimeInterval(str, Enum):
         """Get DuckDB interval expression"""
 ```
 
-## FastAPI Integration
+## Go control-plane Integration
 
 ### Dependency Injection
 
 ```python
-from fastapi import FastAPI, Depends
+from go-control-plane import Go control-plane, Depends
 from observability.storage.integration import (
     storage_lifespan,
     get_storage,
@@ -456,7 +456,7 @@ from observability.storage.integration import (
 )
 
 # Initialize app with storage
-app = FastAPI(lifespan=storage_lifespan)
+app = Go control-plane(lifespan=storage_lifespan)
 
 @app.get("/api/metrics/{metric_name}")
 async def get_metrics(

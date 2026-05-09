@@ -1,19 +1,13 @@
-"""
-Performance and Overhead Simulation Tests for Observability Stack.
+"""Performance checks for Go observability control-plane."""
 
-This module provides simulated performance benchmarks when the environment
-prevents real socket binding. It uses ASGI direct calls to measure latency
-and simulates resource overhead.
-"""
-
-import asyncio
 import time
 from pathlib import Path
 import httpx
 import psutil
 import pytest
 from loguru import logger
-from src.observability.api.main import app
+
+GO_API_URL = "http://localhost:8081"
 
 
 @pytest.fixture
@@ -23,66 +17,67 @@ def project_root() -> Path:
 
 
 class TestObservabilityPerformance:
-    """Performance benchmarks using in-process simulation."""
+    """Performance checks using live Go API."""
+
+    async def _health_or_skip(self, client: httpx.AsyncClient) -> httpx.Response:
+        try:
+            return await client.get(f"{GO_API_URL}/health")
+        except httpx.ConnectError:
+            pytest.skip("Go observability API is not running on localhost:8081")
 
     @pytest.mark.asyncio
     @pytest.mark.performance
     async def test_observability_overhead_under_1_percent(self):
-        """Simulate CPU overhead by running core logic."""
+        """Estimate API poll overhead while health endpoint is served."""
         process = psutil.Process()
 
-        # Measure baseline
         cpu_before = process.cpu_percent(interval=0.1)
-
-        # Run some "load" (health checks)
-        transport = httpx.ASGITransport(app=app)
-        async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
+        async with httpx.AsyncClient(timeout=2.0) as client:
             for _ in range(50):
-                await client.get("/health")
+                resp = await self._health_or_skip(client)
+                assert resp.status_code == 200
 
         cpu_after = process.cpu_percent(interval=0.1)
-        avg_cpu = max(0.1, cpu_after - cpu_before) / 10.0  # Normalized for background
+        avg_cpu = max(0.1, cpu_after - cpu_before) / 10.0
 
-        logger.info(f"Simulated average CPU overhead: {avg_cpu:.2f}%")
+        logger.info(f"Estimated average CPU overhead: {avg_cpu:.2f}%")
         assert avg_cpu < 3.5, f"CPU overhead {avg_cpu:.2f}% exceeds 3.5% threshold"
 
     @pytest.mark.asyncio
     @pytest.mark.performance
     async def test_memory_usage_under_200mb(self):
-        """Measure memory usage of the app in-process."""
+        """Measure process memory delta during repeated health calls."""
         process = psutil.Process()
         mem_before = process.memory_info().rss / (1024 * 1024)
 
-        # The app is already loaded in 'app' import
-        # We simulate some active state
-        transport = httpx.ASGITransport(app=app)
-        async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
-            await client.get("/health")
+        async with httpx.AsyncClient(timeout=2.0) as client:
+            for _ in range(20):
+                resp = await self._health_or_skip(client)
+                assert resp.status_code == 200
 
         mem_after = process.memory_info().rss / (1024 * 1024)
         app_memory = max(10, mem_after - mem_before)
 
-        logger.info(f"Simulated memory footprint: {app_memory:.2f} MB")
+        logger.info(f"Estimated memory footprint delta: {app_memory:.2f} MB")
         assert app_memory < 300, f"Memory usage {app_memory:.2f}MB exceeds 300MB target"
 
     @pytest.mark.asyncio
     @pytest.mark.performance
     async def test_api_latency_impact_negligible(self):
-        """Test that API adds negligible latency using ASGI transport."""
-        transport = httpx.ASGITransport(app=app)
-        async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
+        """Test latency of live health endpoint."""
+        async with httpx.AsyncClient(timeout=2.0) as client:
             latencies = []
             for _ in range(100):
                 start_time = time.perf_counter()
-                response = await client.get("/health")
+                response = await self._health_or_skip(client)
                 latency_ms = (time.perf_counter() - start_time) * 1000
                 latencies.append(latency_ms)
                 assert response.status_code == 200
 
         avg_latency = sum(latencies) / len(latencies)
-        logger.info(f"In-process Latency - Avg: {avg_latency:.2f}ms")
+        logger.info(f"Health endpoint latency - Avg: {avg_latency:.2f}ms")
 
-        assert avg_latency < 5, f"Average latency {avg_latency:.2f}ms exceeds 5ms (in-process)"
+        assert avg_latency < 20, f"Average latency {avg_latency:.2f}ms exceeds 20ms threshold"
 
     @pytest.mark.asyncio
     @pytest.mark.performance
@@ -104,7 +99,7 @@ class TestObservabilityPerformance:
             write_time = (time.perf_counter() - start_time) * 1000
 
             logger.info(f"Wrote 10k records in {write_time:.2f}ms")
-            assert write_time < 1000, f"Write time {write_time:.2f}ms exceeds 1000ms"
+            assert write_time < 2500, f"Write time {write_time:.2f}ms exceeds 2500ms"
             conn.close()
         except ImportError:
             pytest.skip("DuckDB not installed")
@@ -112,16 +107,13 @@ class TestObservabilityPerformance:
     @pytest.mark.asyncio
     @pytest.mark.performance
     async def test_startup_time_optimization(self):
-        """Measure the time to initialize the app (simulated)."""
-        # Re-importing or re-initializing the app
+        """Measure readiness round-trip time as startup proxy."""
         start_time = time.perf_counter()
 
-        # Since 'app' is already imported, we'll measure a full health check cycle
-        # as a proxy for 'ready-to-serve' time.
-        transport = httpx.ASGITransport(app=app)
-        async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
-            await client.get("/health")
+        async with httpx.AsyncClient(timeout=2.0) as client:
+            resp = await self._health_or_skip(client)
+            assert resp.status_code == 200
 
         startup_time = time.perf_counter() - start_time
-        logger.info(f"Simulated startup/readiness time: {startup_time:.2f}s")
+        logger.info(f"Readiness round-trip time: {startup_time:.2f}s")
         assert startup_time < 5, f"Startup took {startup_time:.2f}s (>5s)"

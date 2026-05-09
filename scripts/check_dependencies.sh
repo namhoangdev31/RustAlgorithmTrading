@@ -3,7 +3,7 @@
 # DEPENDENCY CHECK SCRIPT
 #
 # Verifies all required dependencies for the observability stack:
-# - Python packages (FastAPI, Uvicorn, DuckDB, SQLite, etc.)
+# - Go binary/runtime and Python data stack (DuckDB, SQLite, etc.)
 # - Node.js and npm (for React dashboard)
 # - System utilities (curl, jq)
 # - Directory structure
@@ -151,8 +151,6 @@ check_python_packages() {
     log_info "Checking required Python packages..."
 
     local required_packages=(
-        "fastapi"
-        "uvicorn"
         "websockets"
         "pydantic"
         "duckdb"
@@ -252,7 +250,7 @@ check_port_availability() {
     log_info "Checking port availability..."
 
     local required_ports=(
-        "8000:Observability API"
+        "8081:Observability API"
         "3000:React Dashboard"
         "5001:Market Data Service"
         "5002:Risk Manager Service"

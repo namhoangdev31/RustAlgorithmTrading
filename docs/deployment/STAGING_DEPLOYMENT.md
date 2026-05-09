@@ -282,7 +282,7 @@ services:
       - ../src/observability:/app/src/observability
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8081/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -294,7 +294,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - VITE_API_URL=http://localhost:8000
+      - VITE_API_URL=http://localhost:8081
     depends_on:
       - observability-api
     restart: unless-stopped
@@ -326,7 +326,7 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 
 # Verify installation
-python3 -c "import fastapi, uvicorn, duckdb; print('OK')"
+python3 -c "import go-control-plane, go runtime, duckdb; print('OK')"
 ```
 
 #### Step 3: Start Services
@@ -407,13 +407,13 @@ EOF
 
 ```bash
 # Check all services
-curl http://localhost:8000/health
+curl http://localhost:8081/health
 curl http://localhost:5001/health
 curl http://localhost:5002/health
 curl http://localhost:5003/health
 
 # Check observability readiness
-curl http://localhost:8000/health/ready | jq .
+curl http://localhost:8081/health/ready | jq .
 
 # Expected output:
 {
@@ -497,19 +497,19 @@ wscat -c ws://localhost:8080/ws/metrics
 
 ```bash
 # 1. Service Health
-watch -n 5 'curl -s http://localhost:8000/api/system/status | jq .'
+watch -n 5 'curl -s http://localhost:8081/api/system/status | jq .'
 
 # 2. Trading Performance
-curl http://localhost:8000/api/trades/pnl?period=today | jq .
+curl http://localhost:8081/api/trades/pnl?period=today | jq .
 
 # 3. Risk Metrics
-curl http://localhost:8000/api/risk/exposure | jq .
+curl http://localhost:8081/api/risk/exposure | jq .
 
 # 4. Circuit Breaker Status
-curl http://localhost:8000/api/system/circuit-breaker/status | jq .
+curl http://localhost:8081/api/system/circuit-breaker/status | jq .
 
 # 5. Database Metrics
-curl http://localhost:8000/api/metrics/system | jq .
+curl http://localhost:8081/api/metrics/system | jq .
 ```
 
 ### Set Up Alerts
@@ -675,7 +675,7 @@ sudo iptables -L -n
 }
 
 # Enable keep-alive
-# Edit src/observability/api/main.py
+# Edit Go observability config (go/cmd/server/main.go env wiring)
 websocket.send_str("ping")  # Every 30 seconds
 
 # Restart services
@@ -702,7 +702,7 @@ cp config/system.staging.backup.json config/system.json
 docker-compose -f deployment/docker-compose.yml up -d
 
 # 5. Verify rollback
-curl http://localhost:8000/health
+curl http://localhost:8081/health
 ```
 
 ### Database Rollback

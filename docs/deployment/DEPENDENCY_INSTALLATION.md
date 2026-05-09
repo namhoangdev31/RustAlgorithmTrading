@@ -68,8 +68,8 @@ All Python dependencies are listed in `requirements.txt`:
 - pandas
 - ccxt (cryptocurrency exchange library)
 - python-dotenv
-- fastapi (if using REST API)
-- uvicorn (ASGI server)
+- go-control-plane (if using REST API)
+- go runtime (ASGI server)
 - pytest (testing)
 - pytest-asyncio (async testing)
 
@@ -213,7 +213,7 @@ npm --version
 
 ### Python Packages
 ```bash
-pip3 list | grep -E "(numpy|pandas|ccxt|dotenv|fastapi|uvicorn|pytest)"
+pip3 list | grep -E "(numpy|pandas|ccxt|dotenv|go-control-plane|go runtime|pytest)"
 ```
 
 ### Rust Dependencies

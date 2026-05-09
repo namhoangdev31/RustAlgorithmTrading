@@ -31,16 +31,8 @@ src/models/market.py
 src/models/portfolio.py
 src/observability/__init__.py
 src/observability/database.py
-src/observability/server.py
 src/observability/alerts/__init__.py
 src/observability/alerts/escalation.py
-src/observability/api/__init__.py
-src/observability/api/main.py
-src/observability/api/websocket_manager.py
-src/observability/api/routes/__init__.py
-src/observability/api/routes/metrics.py
-src/observability/api/routes/system.py
-src/observability/api/routes/trades.py
 src/observability/config/__init__.py
 src/observability/config/logging_config.py
 src/observability/dashboard/__init__.py

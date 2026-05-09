@@ -18,7 +18,7 @@ docker/
 ### Application Files
 ```
 src/observability/
-├── Dockerfile                        # Multi-stage FastAPI build
+├── Dockerfile                        # Multi-stage Go control-plane build
 └── requirements.txt                  # Python dependencies
 ```
 
@@ -47,7 +47,7 @@ docs/observability/
    - Webhook integration
    - Email notifications (configurable)
 
-4. **Go Observability Control-Plane Server (FastAPI compatibility optional)** (Port 8000)
+4. **Go Observability Control-Plane Server (legacy compatibility (retired) optional)** (Port 8000)
    - Custom metrics API
    - DuckDB analytics
    - React dashboard serving
@@ -343,7 +343,7 @@ make prune         # Clean unused resources
 
 1. Check logs: `make logs`
 2. Verify config: `docker-compose config`
-3. Test connectivity: `curl http://localhost:8000/health`
+3. Test connectivity: `curl http://localhost:8081/health`
 4. Review docs: `docker/README.md`
 5. Check resources: `docker stats`
 

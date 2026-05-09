@@ -382,16 +382,13 @@ start_observability() {
     # Ensure logs directory exists
     mkdir -p "$PROJECT_ROOT/logs/observability"
 
-    # Start observability API using Python script
-    log_info "Launching FastAPI server with uvicorn..."
+    # Start observability API using Go runtime
+    log_info "Launching Go observability control-plane..."
 
     cd "$PROJECT_ROOT"
 
     # Start server in background with proper error handling
-    python3 "$SCRIPT_DIR/start_observability_api.py" \
-        --host 0.0.0.0 \
-        --port 8000 \
-        --log-level info \
+    "$SCRIPT_DIR/start_go_observability.sh" \
         > "$PROJECT_ROOT/logs/observability/api.log" 2>&1 &
 
     OBSERVABILITY_PID=$!
@@ -410,7 +407,7 @@ start_observability() {
     fi
 
     # Wait for API to be ready
-    if ! wait_for_service "Observability API" "http://localhost:8000/health" $STARTUP_TIMEOUT; then
+    if ! wait_for_service "Observability API" "http://localhost:8081/health" $STARTUP_TIMEOUT; then
         log_error "Observability API failed to start"
         log_info "Check logs at: $PROJECT_ROOT/logs/observability/api.log"
 
@@ -425,7 +422,7 @@ start_observability() {
     fi
 
     # Verify readiness endpoint
-    if ! verify_service_health "Observability API (readiness)" "http://localhost:8000/health/ready"; then
+    if ! verify_service_health "Observability API (readiness)" "http://localhost:8081/health/ready"; then
         log_warning "API is running but not fully ready (collectors may be initializing)"
     fi
 
@@ -433,10 +430,10 @@ start_observability() {
     echo ""
     log_success "Observability stack is operational"
     log_info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    log_info "  📊 Dashboard:      http://localhost:8000"
-    log_info "  📖 API Docs:       http://localhost:8000/docs"
-    log_info "  🔌 WebSocket:      ws://localhost:8000/ws/metrics"
-    log_info "  💚 Health Check:   http://localhost:8000/health"
+    log_info "  📊 Dashboard:      http://localhost:8081"
+    log_info "  📖 API Docs:       http://localhost:8081/health"
+    log_info "  🔌 WebSocket:      ws://localhost:8081/ws/metrics"
+    log_info "  💚 Health Check:   http://localhost:8081/health"
     log_info "  📁 Logs:           $PROJECT_ROOT/logs/observability/api.log"
     log_info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo ""
@@ -625,8 +622,8 @@ main() {
     log_info "Launching autonomous trading system..."
 
     if [[ "$START_OBSERVABILITY" == "true" ]]; then
-        log_info "Real-time metrics: http://localhost:8000"
-        log_info "WebSocket stream: ws://localhost:8000/ws/metrics"
+        log_info "Real-time metrics: http://localhost:8081"
+        log_info "WebSocket stream: ws://localhost:8081/ws/metrics"
     fi
 
     echo ""
@@ -656,9 +653,9 @@ main() {
     echo ""
 
     if [[ "$START_OBSERVABILITY" == "true" ]]; then
-        log_info "📊 Observability Dashboard: http://localhost:8000"
-        log_info "📖 API Documentation:      http://localhost:8000/docs"
-        log_info "🔌 WebSocket Metrics:      ws://localhost:8000/ws/metrics"
+        log_info "📊 Observability Dashboard: http://localhost:8081"
+        log_info "📖 API Documentation:      http://localhost:8081/health"
+        log_info "🔌 WebSocket Metrics:      ws://localhost:8081/ws/metrics"
     fi
 
     log_info "📈 Trading System Logs:    $PROJECT_ROOT/logs/trading_system.log"

@@ -108,15 +108,6 @@ start_observability() {
             echo_info "Starting observability in native mode..."
             cd "$PROJECT_ROOT"
 
-            # Start in background
-            if [ ! -d "src/observability/venv" ]; then
-                echo_info "Creating Python virtual environment..."
-                python3 -m venv src/observability/venv
-            fi
-
-            source src/observability/venv/bin/activate
-            pip install -q -r src/observability/requirements.txt
-
             # Export environment
             export DUCKDB_PATH="$PROJECT_ROOT/data/metrics.duckdb"
             export SQLITE_PATH="$PROJECT_ROOT/data/trading.db"
@@ -124,7 +115,7 @@ start_observability() {
 
             # Start API in background
             cd src/observability
-            nohup uvicorn main:app --host 0.0.0.0 --port 8000 > "$PROJECT_ROOT/logs/observability-api.log" 2>&1 &
+            nohup "$PROJECT_ROOT/scripts/start_go_observability.sh" > "$PROJECT_ROOT/logs/observability-api.log" 2>&1 &
             echo $! > /tmp/observability-api.pid
             echo_success "Native observability API started (PID: $(cat /tmp/observability-api.pid))"
             ;;
@@ -183,8 +174,8 @@ wait_for_services() {
         echo_warning "Grafana: Not responding"
     fi
 
-    if curl -s http://localhost:8000/health > /dev/null 2>&1; then
-        echo_success "Observability API: http://localhost:8000"
+    if curl -s http://localhost:8081/health > /dev/null 2>&1; then
+        echo_success "Observability API: http://localhost:8081"
     else
         echo_warning "Observability API: Not responding"
     fi
@@ -259,8 +250,8 @@ show_info() {
     echo ""
     echo "  📊 Grafana Dashboard:     http://localhost:3000"
     echo "  🔍 Prometheus:            http://localhost:9090"
-    echo "  📡 Observability API:     http://localhost:8000"
-    echo "  📚 API Documentation:     http://localhost:8000/docs"
+    echo "  📡 Observability API:     http://localhost:8081"
+    echo "  📚 Health Endpoint:       http://localhost:8081/health"
     echo "  🚨 Alertmanager:          http://localhost:9093"
     echo ""
     echo "═══════════════════════════════════════════════════════"

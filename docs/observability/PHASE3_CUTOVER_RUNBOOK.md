@@ -49,7 +49,6 @@ No cutover is allowed with partial evidence.
 3. Freeze config and route all observability API/WS traffic to Go.
 4. Set compatibility flags on Python side:
    - `GO_CONTROL_PLANE_ENABLED=true`
-   - `FASTAPI_SERVING_ENABLED=false`
 5. Validate dashboard + API smoke after switch.
 6. Monitor p95/p99 latency, WS reconnect, and error budget for the gate window.
 
@@ -65,9 +64,8 @@ Immediate rollback if any occurs:
 
 ## 5) Rollback Procedure
 
-1. Revert routing to previous FastAPI serving release.
+1. Revert routing to previous Go control-plane serving release.
 2. Re-enable Python serving:
-   - `FASTAPI_SERVING_ENABLED=true`
 3. Disable Go route from active traffic.
 4. Capture incident evidence:
    - logs

@@ -34,7 +34,7 @@ The self-hosted observability architecture for the py_rt (DreamMaker) algorithmi
 | **Metrics Collection** | Prometheus | Self-hosted Docker | $0 | ✅ FREE |
 | **Dashboards** | Grafana | Self-hosted Docker | $0 | ✅ FREE |
 | **Alerting** | Alertmanager | Self-hosted Docker | $0 | ✅ FREE |
-| **Real-time API** | Go + WebSocket (FastAPI compatibility mode) | Python (included) | $0 | ✅ FREE |
+| **Real-time API** | Go + WebSocket (legacy mode (retired)) | Python (included) | $0 | ✅ FREE |
 | **Logging** | Loguru + Structured Logging | Python (included) | $0 | ✅ FREE |
 | **Time-Series Storage** | Prometheus TSDB | Docker volume | $0 | ✅ FREE |
 | **Container Runtime** | Docker Compose | Self-hosted | $0 | ✅ FREE |
@@ -76,7 +76,7 @@ No paid services, no hidden costs, full functionality achieved with open-source 
 
 ### 2.1 Real-Time API Performance
 
-**Go + WebSocket (FastAPI compatibility mode) Implementation:**
+**Go + WebSocket (legacy mode (retired)) Implementation:**
 
 | Metric | Target | Measured (Estimated) | Status |
 |--------|--------|---------------------|--------|
@@ -171,10 +171,10 @@ Performance adequate for paper trading. Minor optimizations recommended before l
 
 ### 3.2 Graceful Shutdown Handling
 
-**FastAPI Application:**
+**Go control-plane Application:**
 ```python
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(app: Go control-plane):
     await api_state.start()  # ✅ Startup hooks
     yield
     await api_state.stop()   # ✅ Shutdown hooks
@@ -223,7 +223,6 @@ async def lifespan(app: FastAPI):
 docker-compose -f monitoring/docker-compose.yml up -d
 
 # API server (separate)
-python scripts/start_observability_api.py
 ```
 
 **Issues:**
@@ -242,7 +241,6 @@ docker-compose -f monitoring/docker-compose.yml up -d
 sleep 5
 
 # Start API server
-python scripts/start_observability_api.py --daemon
 ```
 
 ### Reliability Verdict: **8/10 - PASS**
@@ -325,7 +323,7 @@ services:
 ```
 
 **Missing:**
-- ⚠️ FastAPI not in Docker Compose
+- ⚠️ Go control-plane not in Docker Compose
 - ⚠️ No health check endpoints in docker-compose
 - ⚠️ No resource limits (CPU/memory)
 - ⚠️ No network segmentation
@@ -340,7 +338,7 @@ observability-api:
   environment:
     - LOG_LEVEL=INFO
   healthcheck:
-    test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+    test: ["CMD", "curl", "-f", "http://localhost:8081/health"]
     interval: 30s
     timeout: 10s
     retries: 3
@@ -501,7 +499,6 @@ High-priority risks are operational, not architectural. Can be deployed safely w
    # scripts/start_observability.sh
    docker-compose -f monitoring/docker-compose.yml up -d
    sleep 5  # Wait for services
-   python scripts/start_observability_api.py
    ```
 
 3. **Add Backup Automation** (1 hour)
@@ -512,7 +509,7 @@ High-priority risks are operational, not architectural. Can be deployed safely w
    ```
 
 4. **Add API to Docker Compose** (1 hour)
-   - Move FastAPI to container
+   - Move Go control-plane to container
    - Add health checks
    - Configure resource limits
 
@@ -561,7 +558,7 @@ High-priority risks are operational, not architectural. Can be deployed safely w
 ### Pre-Deployment
 
 - [x] All services configured (Prometheus, Grafana, Alertmanager)
-- [x] FastAPI application implemented
+- [x] Go control-plane application implemented
 - [x] Logging infrastructure ready
 - [x] Documentation complete
 - [ ] Alert destinations configured **← MUST DO**
@@ -608,8 +605,8 @@ High-priority risks are operational, not architectural. Can be deployed safely w
 
 | Component | Metric | Expected Value | Source |
 |-----------|--------|---------------|--------|
-| **FastAPI** | Requests/sec | 10,000+ | Industry standard |
-| **WebSocket** | Connections | 1,000+ | FastAPI benchmarks |
+| **Go control-plane** | Requests/sec | 10,000+ | Industry standard |
+| **WebSocket** | Connections | 1,000+ | Go control-plane benchmarks |
 | **WebSocket** | Latency p99 | < 10ms | Research findings |
 | **Prometheus** | Metrics/sec | 100,000+ | Official docs |
 | **Prometheus** | Storage/day (10 symbols) | ~100MB | Calculated |
@@ -648,7 +645,7 @@ The FREE self-hosted observability architecture is **PRODUCTION-READY** for pape
 - ✅ **Comprehensive** - Full observability stack
 - ✅ **Performant** - Low overhead design
 - ✅ **Scalable** - Handles 1-10 symbols easily, can scale to 100+
-- ✅ **Modern** - FastAPI, WebSocket, async/await
+- ✅ **Modern** - Go control-plane, WebSocket, async/await
 - ✅ **Reliable** - Graceful error handling
 
 **Weaknesses:**
@@ -680,7 +677,7 @@ Saves $200-450/month compared to commercial solutions while providing equivalent
 
 | Feature | Recommended | Implemented | Status |
 |---------|------------|-------------|--------|
-| **Real-time Dashboard** | Go + WebSocket (FastAPI compatibility mode) | ✅ Implemented | MATCH |
+| **Real-time Dashboard** | Go + WebSocket (legacy mode (retired)) | ✅ Implemented | MATCH |
 | **Logging** | Structlog + QueueHandler | ⚠️ Loguru (sync) | PARTIAL |
 | **Time-Series DB** | TimescaleDB + Prometheus | ✅ Prometheus only | ACCEPTABLE |
 | **Charts** | TradingView + Plotly | 📋 Planned (backend ready) | PENDING |
@@ -769,7 +766,7 @@ With the required actions completed, this system is ready for production paper t
 │    └─────────────────────────────┘                            │
 │                                                                │
 │    ┌─────────────────────────────────────────────┐            │
-│    │  REAL-TIME API (Go + WebSocket (FastAPI compatibility mode))        │            │
+│    │  REAL-TIME API (Go + WebSocket (legacy mode (retired)))        │            │
 │    │  - 10Hz metric streaming                    │            │
 │    │  - REST API for historical data             │            │
 │    │  - CORS configured for frontend             │            │

@@ -19,7 +19,7 @@ The core strategy is:
 
 - Keep Python focused on research, strategy development, model work, and offline backtest orchestration.
 - Move live trading, risk, execution, and latency-sensitive runtime kernels to Rust.
-- Replace the Python FastAPI observability/control API with Go so production service surfaces can evolve as microservices.
+- Replace the Python Go control-plane observability/control API with Go so production service surfaces can evolve as microservices.
 - Keep Go out of trading decision and execution hot paths.
 
 Program success criteria:
@@ -70,7 +70,7 @@ Current technical baseline:
   - `src/typings/signal_bridge.pyi` (IDE stubs)
   - `signal-bridge` Rust library (installed via maturin)
 - Current Python observability/API surface targeted for Go replacement:
-  - `src/observability/api/*`
+  - `go/internal/http/*`, `go/internal/ws/*`, `go/internal/storage/*`
   - `src/observability/metrics/*`
   - `src/observability/storage/*`
 
@@ -88,7 +88,7 @@ Expected capability gains:
 2. Safer polyglot runtime boundary:
    - Python remains the research and strategy authoring layer.
    - Rust becomes the deterministic runtime and risk enforcement layer.
-   - Go becomes the production control-plane and observability API layer, replacing FastAPI after parity is proven.
+   - Go becomes the production control-plane and observability API layer, replacing Go control-plane after parity is proven.
 
 3. Stronger ML experimentation model:
    - Python can continue using the ML ecosystem for model research, validation, and signal design.
@@ -198,11 +198,11 @@ Rollback strategy:
 
 - Preserve Python execution/backtest core path until numeric equivalence and risk integrity are signed off.
 
-### 6.3 Phase 3: Go Control Plane and FastAPI Replacement
+### 6.3 Phase 3: Go Control Plane and Go Control Plane (Completed)
 
 Primary objective:
 
-- Replace the Python FastAPI observability/control surface with Go while keeping Python out of production API serving.
+- Replace the Python Go control-plane observability/control surface with Go while keeping Python out of production API serving.
 
 Adoption policy:
 
@@ -211,7 +211,7 @@ Adoption policy:
 
 Primary migration targets:
 
-1. Port `src/observability/api/*` to a Go service with response-schema parity.
+1. Port `go/internal/http/*`, `go/internal/ws/*`, `go/internal/storage/*` to a Go service with response-schema parity.
 2. Move WebSocket dashboard fanout from Python to Go.
 3. Move health/readiness aggregation and service status endpoints to Go.
 4. Move API auth, rate limiting, tenant boundaries, and admin controls to Go.
@@ -219,7 +219,7 @@ Primary migration targets:
 
 Candidate Go services:
 
-- Observability API replacement for the current FastAPI app.
+- Observability API replacement for the current Go control-plane app.
 - WebSocket fanout gateway for dashboard clients.
 - Lightweight metrics ingestion/aggregation worker.
 - Runtime health and service registry facade.
@@ -249,7 +249,7 @@ Phase 3 locked execution decisions:
 - Auth/rate limit baseline is `X-API-Key` + key/IP throttling.
 - Go remains control-plane only and cannot mutate trading exposure.
 
-API Parity Matrix (FastAPI vs Go):
+API Parity Matrix (Go-only):
 | Endpoint | Method | Response Schema | Status Code | Notes |
 |---|---|---|---|---|
 | `/health` | GET | `SystemHealth` | 200 | Basic health check |
@@ -274,16 +274,16 @@ API Parity Matrix (FastAPI vs Go):
 Quality and exit criteria:
 
 - End-to-end stability is maintained or improved.
-- Go API response schemas match the current FastAPI public behavior until clients are migrated.
-- Operational toil does not increase after FastAPI is retired.
+- Go API response schemas match the current Go control-plane public behavior until clients are migrated.
+- Operational toil does not increase after Go control-plane is retired.
 - Observability path meets target latency and reliability envelopes.
 - Go service boundaries improve measurable throughput, fanout capacity, or operational isolation.
 - Python production API serving is disabled only after Go parity, soak tests, and rollback checks pass.
 
 Rollback strategy:
 
-- Keep FastAPI behind an internal compatibility flag until Go has passed parity and soak gates.
-- Preserve deployment topology that can route dashboard/API traffic back to FastAPI during migration.
+- Keep Go control-plane behind an internal compatibility flag until Go has passed parity and soak gates.
+- Preserve deployment topology that can route dashboard/API traffic back to Go control-plane during migration.
 
 Current execution status (as of 2026-05-08):
 
@@ -403,11 +403,11 @@ Mitigation:
 - Require an explicit owner, CI path, runbook, and rollback route for every Go service.
 - Keep Rust/Python as the only trading-decision path.
 
-### 7.7 FastAPI to Go API Parity
+### 7.7 Go-only API Parity
 
 Risk:
 
-- Replacing FastAPI with Go can break dashboard clients, monitoring scripts, CORS behavior, response schemas, WebSocket message format, or error codes.
+- Replacing Go control-plane with Go can break dashboard clients, monitoring scripts, CORS behavior, response schemas, WebSocket message format, or error codes.
 
 Impact:
 
@@ -415,9 +415,9 @@ Impact:
 
 Mitigation:
 
-- Create API parity tests against the current FastAPI behavior before porting.
+- Create API parity tests against the current Go control-plane behavior before porting.
 - Version public endpoints and WebSocket message schemas.
-- Run FastAPI and Go side by side during migration and compare responses on mirrored traffic.
+- Run Go control-plane and Go side by side during migration and compare responses on mirrored traffic.
 - Keep a traffic rollback switch until Go passes soak and parity checks.
 
 ### 7.8 Control-Plane Authority Creep
@@ -501,10 +501,10 @@ This section converts the risk register into implementation decisions. These are
 
 ### 8.8 Go Control-Plane Implementation Gate
 
-- Replace FastAPI with Go through side-by-side parity, not a single cutover.
+- Replace Go control-plane with Go through side-by-side parity, not a single cutover.
 - Do not put Go in the trading hot path.
 - Allow Go to own observability API, WebSocket fanout, auth/rate-limit, health/readiness, service status, and admin/control endpoints.
-- Require response-schema parity, WebSocket protocol parity, CORS/auth parity, OpenTelemetry propagation, owner, CI path, runbook, allocation profile, and rollback path before retiring FastAPI.
+- Require response-schema parity, WebSocket protocol parity, CORS/auth parity, OpenTelemetry propagation, owner, CI path, runbook, allocation profile, and rollback path before retiring Go control-plane.
 - Keep Python production API serving disabled after migration; Python remains for research, strategy, model, and offline backtest orchestration.
 
 ### 8.9 Final Target Role Split
@@ -531,10 +531,10 @@ This index defines which files must be updated when the roadmap is implemented. 
 
 - `docs/DOCUMENTATION_INDEX.md` and `docs/index.md`
   - Add links to Go control-plane documentation once the Go service exists.
-  - Mark Python FastAPI observability docs as compatibility/deprecation material after Go parity is accepted.
+  - Mark Python Go control-plane observability docs as compatibility/deprecation material after Go parity is accepted.
 
 - `docs/observability/BACKEND_API.md`
-  - Replace FastAPI-centric runtime descriptions with Go service behavior.
+  - Replace Go control-plane-centric runtime descriptions with Go service behavior.
   - Preserve current endpoint contracts until client migration is complete.
   - Add WebSocket message schemas, error codes, CORS/auth behavior, and rollback routing notes.
 
@@ -557,7 +557,7 @@ This index defines which files must be updated when the roadmap is implemented. 
 
 - `docs/API_DOCUMENTATION.md`
   - Add Go observability/control-plane endpoints once implemented.
-  - Mark FastAPI endpoints as deprecated only after parity and soak gates pass.
+  - Mark Go control-plane endpoints as deprecated only after parity and soak gates pass.
 
 - `docs/operations/OPERATIONS_RUNBOOK.md`
   - Add Go service startup, shutdown, health checks, rollback, dashboards, alert handling, and log locations.
@@ -565,7 +565,7 @@ This index defines which files must be updated when the roadmap is implemented. 
 
 - `docs/deployment/PRODUCTION_DEPLOYMENT.md`
   - Add Go build/deploy artifacts, environment variables, ports, service dependencies, and rollback routing.
-  - Document FastAPI compatibility mode while both services run side by side.
+  - Document legacy mode (retired) while both services run side by side.
 
 - `docs/TEST_EXECUTION_GUIDE.md` and `tests/docs/COMPREHENSIVE_TESTING_STRATEGY.md`
   - Add Go test commands and parity test expectations.
@@ -622,7 +622,7 @@ This index defines which files must be updated when the roadmap is implemented. 
   - If this creates new files, update `PLAYBOOK.md` in the same change.
 
 - Go observability API service (new)
-  - Implement REST endpoint parity for current FastAPI routes.
+  - Implement REST endpoint parity for current Go control-plane routes.
   - Implement WebSocket fanout parity for current dashboard clients.
   - Implement auth/rate-limit/CORS behavior explicitly.
   - Implement health/readiness and dependency checks for Rust/Python services.
@@ -635,7 +635,7 @@ This index defines which files must be updated when the roadmap is implemented. 
 
 ### 9.4 Python Updates
 
-- `src/observability/api/*`
+- `go/internal/http/*`, `go/internal/ws/*`, `go/internal/storage/*`
   - Keep as compatibility implementation during side-by-side migration.
   - Freeze public behavior for parity tests.
   - Deprecate after Go parity and soak gates pass.
@@ -659,7 +659,7 @@ This index defines which files must be updated when the roadmap is implemented. 
 ### 9.5 Test Updates
 
 - `tests/observability/test_api.py`
-  - Convert into parity reference tests for existing FastAPI behavior.
+  - Convert into parity reference tests for existing Go control-plane behavior.
   - Add equivalent Go API parity checks when Go service exists.
 
 - `tests/observability/test_log_streams.py`
@@ -672,15 +672,15 @@ This index defines which files must be updated when the roadmap is implemented. 
 
 - `tests/observability/test_performance.py`
   - Add p95/p99 latency and fanout load checks for Go API/WebSocket paths.
-  - Compare against current FastAPI baseline during migration.
+  - Compare against current legacy baseline during migration.
 
 - `tests/observability/test_duckdb_client.py` and `tests/observability/test_databases.py`
   - Add ingestion contention tests if Go writes metrics directly.
   - Verify single-writer/batch behavior.
 
 - `tests/integration/test_observability_integration.py`
-  - Add side-by-side FastAPI vs Go response comparison during migration.
-  - Switch to Go-only assertions after FastAPI retirement.
+  - Add side-by-side Go-only response comparison during migration.
+  - Switch to Go-only assertions after Go control-plane retirement.
 
 - `tests/integration/test_risk_execution_observability.rs`
   - Verify Rust risk/execution emits read-only state snapshots consumed by Go.
@@ -698,7 +698,7 @@ This index defines which files must be updated when the roadmap is implemented. 
 
 - New Go tests
   - Add unit tests for handlers, auth/rate-limit, health/readiness, CORS, WebSocket hub, metrics ingestion, and trace propagation.
-  - Add integration tests for Rust snapshot reads and FastAPI parity during migration.
+  - Add integration tests for Rust snapshot reads and Go control-plane parity during migration.
 
 ### 9.6 Required Validation Matrix
 
@@ -727,7 +727,7 @@ This index defines which files must be updated when the roadmap is implemented. 
 4. Performance envelope optimization for higher production load.
 5. Provider abstraction research for future/non-active non-Alpaca adapters.
 6. Transport evaluation for ZMQ, gRPC/Protobuf, and Aeron under realistic load.
-7. Go observability API replacement plan for retiring FastAPI.
+7. Go observability API replacement plan for retiring Go control-plane.
 8. API/WebSocket parity fixtures for Go migration.
 
 ## 11) Notes

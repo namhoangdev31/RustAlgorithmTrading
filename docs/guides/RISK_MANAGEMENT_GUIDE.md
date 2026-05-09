@@ -328,10 +328,10 @@ When circuit breaker trips:
 
 ```bash
 # Check circuit breaker status
-curl http://localhost:8000/api/system/circuit-breaker/status
+curl http://localhost:8081/api/system/circuit-breaker/status
 
 # Resume trading (requires authentication)
-curl -X POST http://localhost:8000/api/system/circuit-breaker/resume \
+curl -X POST http://localhost:8081/api/system/circuit-breaker/resume \
   -H "Authorization: Bearer <token>"
 ```
 
@@ -724,7 +724,7 @@ cat config/risk_limits.toml | grep -A 10 "\[stop_loss\]"
 tail -f logs/risk_manager/stop_manager.log
 
 # Verify position has stop-loss set
-curl http://localhost:8000/api/positions/AAPL | jq '.stop_loss_price'
+curl http://localhost:8081/api/positions/AAPL | jq '.stop_loss_price'
 ```
 
 **Solutions:**
@@ -760,13 +760,13 @@ stop_manager.check_all_positions(); // Should run continuously
 **Diagnosis:**
 ```bash
 # Check circuit breaker status
-curl http://localhost:8000/api/system/circuit-breaker/status
+curl http://localhost:8081/api/system/circuit-breaker/status
 
 # Review recent trades
-curl http://localhost:8000/api/trades/history?limit=10
+curl http://localhost:8081/api/trades/history?limit=10
 
 # Check daily P&L
-curl http://localhost:8000/api/trades/pnl?period=today
+curl http://localhost:8081/api/trades/pnl?period=today
 ```
 
 **Solutions:**
@@ -806,7 +806,7 @@ cat config/risk_limits.toml | grep -A 5 "\[position_limits\]"
 tail -f logs/risk_manager/rejections.log
 
 # Check calculated position size
-curl http://localhost:8000/api/risk/calculate-size?symbol=AAPL&risk=1000
+curl http://localhost:8081/api/risk/calculate-size?symbol=AAPL&risk=1000
 ```
 
 **Solutions:**

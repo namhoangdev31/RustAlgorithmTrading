@@ -1,4 +1,4 @@
-# Phase 3 API Parity Matrix (FastAPI -> Go)
+# Phase 3 API Parity Matrix (Go-only)
 
 Updated: 2026-05-08
 Scope: Control-plane observability API/WebSocket only
@@ -19,7 +19,7 @@ Execution status:
 
 ## Endpoint Matrix
 
-| Endpoint | Method | FastAPI v1 | Go v1 | Notes |
+| Endpoint | Method | Go control-plane v1 | Go v1 | Notes |
 |---|---|---|---|---|
 | `/` | GET | ✅ | ✅ | Root service metadata |
 | `/health` | GET | ✅ | ✅ | Basic health |

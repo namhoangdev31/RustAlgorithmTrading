@@ -21,7 +21,7 @@ DuckDB is perfect for trading analytics:
 
 ```
 ┌─────────────────────────────────────────────────┐
-│              FastAPI Application                │
+│              Go control-plane Application                │
 ├─────────────────────────────────────────────────┤
 │          StorageManager (integration.py)        │
 ├──────────────────────┬──────────────────────────┤
@@ -42,7 +42,7 @@ src/observability/storage/
 ├── schemas.py               # Data models & SQL schemas
 ├── duckdb_client.py         # DuckDB time-series client
 ├── sqlite_client.py         # SQLite operational client
-└── integration.py           # Control-plane integration (Go primary, FastAPI compatibility) helpers
+└── integration.py           # Control-plane integration (Go primary, legacy compatibility (retired)) helpers
 
 tests/observability/
 ├── test_duckdb_client.py    # DuckDB tests with benchmarks
@@ -71,10 +71,10 @@ sqlite = SQLiteClient("data/trades.db")
 await sqlite.initialize()
 ```
 
-### 3. FastAPI Integration
+### 3. Go control-plane Integration
 
 ```python
-from fastapi import FastAPI, Depends
+from go-control-plane import Go control-plane, Depends
 from observability.storage.integration import (
     storage_lifespan,
     get_storage,
@@ -82,7 +82,7 @@ from observability.storage.integration import (
 )
 
 # Initialize app with storage
-app = FastAPI(lifespan=storage_lifespan)
+app = Go control-plane(lifespan=storage_lifespan)
 
 @app.get("/metrics/{metric_name}")
 async def get_metrics(
@@ -337,7 +337,7 @@ DuckDB can export to Grafana via:
 
 1. **Parquet files**: Export query results
 2. **PostgreSQL wire protocol**: Coming in future DuckDB versions
-3. **Custom API**: Expose queries via FastAPI endpoints
+3. **Custom API**: Expose queries via Go control-plane endpoints
 
 Example API endpoint for Grafana:
 

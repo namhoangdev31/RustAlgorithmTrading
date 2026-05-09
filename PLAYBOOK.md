@@ -46,7 +46,6 @@ Execution rules:
 ### 2.2 Observability scripts
 
 - `scripts/start_observability.sh`
-- `scripts/start_observability_api.py`
 - `scripts/start-with-observability.sh`
 - `scripts/health_check.sh`
 
@@ -74,7 +73,7 @@ Execution rules:
 
 ### 2.6 Phase 3 Go Control-Plane Artifacts
 
-- `docs/observability/PHASE3_API_PARITY_MATRIX.md`: FastAPI-vs-Go endpoint and websocket parity contract for v1 cutover scope.
+- `docs/observability/PHASE3_API_PARITY_MATRIX.md`: Go-only endpoint and websocket parity contract for v1 cutover scope.
 - `docs/observability/PHASE3_CUTOVER_RUNBOOK.md`: Big Bang switch runbook, hard-gate conditions, and rollback procedure.
 - `docs/roadmap/PHASE3_GO_NO_GO_EVIDENCE.md`: Phase 3 GO/NO-GO execution evidence, blockers, and sign-off status.
 - `data/benchmarks/phase3/`: Runtime artifacts for parity/observability/integration gates and health/lock snapshots.
@@ -185,11 +184,6 @@ Execution rules:
 
 | File | Ownership | Key classes | Primary tests |
 |---|---|---|---|
-| `src/observability/api/main.py` | FastAPI surface | `ObservabilityAPI` | `tests/observability/test_api.py`, `tests/observability/test_integration.py` |
-| `src/observability/api/websocket_manager.py` | WebSocket sessions and fanout | `WebSocketManager`, `WebSocketConnection` | `tests/observability/test_log_streams.py`, `tests/observability/test_startup.py` |
-| `src/observability/api/routes/metrics.py` | Metrics endpoints | route handlers | `tests/observability/test_performance.py` |
-| `src/observability/api/routes/system.py` | Health/system endpoints | route handlers | `tests/observability/test_startup.py` |
-| `src/observability/api/routes/trades.py` | Trade endpoints | route handlers | `tests/observability/test_api.py` |
 
 ### Storage and database
 
@@ -393,7 +387,6 @@ Execution rules:
 | Signal mismatch | `docs/api/ZMQ_PROTOCOL.md` | `src/strategies/strategy_router.py`, `rust/signal-bridge/src/indicators.rs` | `tests/unit/test_strategy_signals.py`, `tests/integration/test_backtest_signal_flow.py` |
 | Risk reject anomalies | `docs/guides/RISK_MANAGEMENT_GUIDE.md` | `rust/risk-manager/src/limits.rs` | `tests/unit/test_risk_manager.rs` |
 | Execution retry/slippage | `docs/architecture/component-interfaces.md` | `rust/execution-engine/src/retry.rs`, `rust/execution-engine/src/slippage.rs` | `tests/unit/test_retry.rs`, `tests/unit/test_slippage.rs` |
-| Observability API/storage | `docs/observability/BACKEND_API.md`, `docs/observability/PHASE3_API_PARITY_MATRIX.md`, `docs/observability/PHASE3_CUTOVER_RUNBOOK.md` | `go/internal/http/routes.go`, `go/internal/ws/manager.go`, `src/observability/api/main.py`, `src/observability/storage/duckdb_client.py` | `tests/observability/test_go_parity.py`, `tests/integration/test_observability_integration.py` |
 | DB persistence/query | `docs/STORAGE_GUIDE.md` | `rust/database/src/{schema,query,connection}.rs` | `tests/integration/test_duckdb_storage.rs` |
 
 ---

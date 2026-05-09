@@ -36,7 +36,7 @@ Phase 3 evaluates Go control-plane serving for observability APIs and WebSocket 
 | Profile | p50 (ms) | p95 (ms) | p99 (ms) | Error rate | Pass/Fail |
 |---|---:|---:|---:|---:|---|
 | Go control-plane | 4.61 | 10.88 | 17.62 | **0.00%** | Pass |
-| FastAPI baseline | ~12.0 | ~45.0 | ~85.0 | <1% | Pass |
+| legacy baseline | ~12.0 | ~45.0 | ~85.0 | <1% | Pass |
 
 ### 4.2 WebSocket Stability
 

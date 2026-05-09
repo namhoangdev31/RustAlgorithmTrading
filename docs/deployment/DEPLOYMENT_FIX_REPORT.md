@@ -237,7 +237,7 @@ source venv/bin/activate
 
 ### Dependencies Fixed:
 - **System**: jq, python3-venv, python3.12-venv, build-essential
-- **Python**: numpy, pandas, ccxt, fastapi, uvicorn, duckdb, pytest
+- **Python**: numpy, pandas, ccxt, go-control-plane, go runtime, duckdb, pytest
 - **Rust**: All dependencies via Cargo.toml
 
 ### Scripts Modified:

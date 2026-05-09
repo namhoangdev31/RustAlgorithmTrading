@@ -1,6 +1,6 @@
 # Observability API - Quick Start
 
-Production-ready FastAPI backend with DuckDB for real-time trading metrics.
+Production-ready Go control-plane backend with DuckDB for real-time trading metrics.
 
 ## Quick Start
 
@@ -33,9 +33,9 @@ python src/observability/server.py --workers 4
 
 ## Access Points
 
-- **API Docs**: http://localhost:8000/docs
-- **WebSocket**: ws://localhost:8000/ws/metrics
-- **Health Check**: http://localhost:8000/health
+- **API Docs**: http://localhost:8081/health
+- **WebSocket**: ws://localhost:8081/ws/metrics
+- **Health Check**: http://localhost:8081/health
 
 ## Key Endpoints
 
@@ -66,7 +66,7 @@ Full documentation: [docs/OBSERVABILITY_DUCKDB.md](../../docs/OBSERVABILITY_DUCK
 ## Requirements
 
 - Python 3.8+
-- FastAPI
+- Go Chi/Gorilla
 - DuckDB
 - Uvicorn
 - psutil

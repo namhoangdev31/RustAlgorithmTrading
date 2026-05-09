@@ -16,7 +16,7 @@ Weekly verifier/audit lifecycle scripts are intentionally removed from active in
 ## 2) Observability
 
 - `scripts/start_observability.sh` — Launch observability stack
-- `scripts/start_observability_api.py` — Observability API runtime
+- `scripts/start_go_observability.sh` — Observability API runtime
 - `scripts/start-with-observability.sh` — Combined startup path with monitoring
 - `scripts/health_check.sh` — Health and status checks
 

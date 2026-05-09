@@ -46,7 +46,7 @@ This comprehensive research report analyzes observability patterns for real-time
 
 1. **Connection Management**
    ```python
-   from fastapi import FastAPI, WebSocket
+   from go-control-plane import Go control-plane, WebSocket
    from contextlib import asynccontextmanager
 
    # Connection pooling - max 1000 concurrent connections
@@ -87,17 +87,17 @@ This comprehensive research report analyzes observability patterns for real-time
    - Message size limit: 64KB (prevent DoS)
 
 #### Performance Benchmarks
-- **Latency**: 1-5ms end-to-end (FastAPI → WebSocket → Browser)
+- **Latency**: 1-5ms end-to-end (Go control-plane → WebSocket → Browser)
 - **Throughput**: 10,000+ messages/second per connection
 - **Memory**: ~5MB per 1000 concurrent connections
 
 #### Integration with DreamMaker
 ```python
 # Add to src/api/realtime_dashboard.py
-from fastapi import FastAPI, WebSocket
+from go-control-plane import Go control-plane, WebSocket
 from prometheus_client import CollectorRegistry
 
-app = FastAPI()
+app = Go control-plane()
 registry = CollectorRegistry()
 
 @app.websocket("/ws/metrics")
@@ -387,7 +387,7 @@ async def submit_order(order):
 # src/utils/correlation.py
 import contextvars
 import uuid
-from fastapi import Request
+from go-control-plane import Request
 from structlog import get_logger
 
 # Thread-safe context variable (works with asyncio)
@@ -395,7 +395,7 @@ correlation_id_var = contextvars.ContextVar("correlation_id", default=None)
 
 logger = get_logger()
 
-# FastAPI middleware
+# Go control-plane middleware
 @app.middleware("http")
 async def correlation_id_middleware(request: Request, call_next):
     # Extract from header or generate new
@@ -841,7 +841,7 @@ function PriceChart({ symbol }) {
       .then(data => candlestickSeriesRef.current.setData(data));
 
     // WebSocket real-time updates
-    const ws = new WebSocket(`ws://localhost:8000/ws/candles/${symbol}`);
+    const ws = new WebSocket(`ws://localhost:8081/ws/candles/${symbol}`);
     ws.onmessage = (event) => {
       const candle = JSON.parse(event.data);
       candlestickSeriesRef.current.update(candle);
@@ -1038,12 +1038,12 @@ function LatencyChart({ data }) {
        logging.root.addHandler(queue_handler)
    ```
 
-3. Add correlation ID middleware (if using FastAPI):
+3. Add correlation ID middleware (if using Go control-plane):
    ```python
    # src/api/middleware.py
    import contextvars
    import uuid
-   from fastapi import Request
+   from go-control-plane import Request
 
    correlation_id_var = contextvars.ContextVar("correlation_id")
 
@@ -1206,13 +1206,13 @@ ORDER BY bucket DESC LIMIT 10;
 **Goal**: Live trading dashboard with WebSocket streaming
 
 **Tasks**:
-1. Create FastAPI WebSocket endpoint:
+1. Create Go control-plane WebSocket endpoint:
    ```python
    # src/api/realtime_api.py
-   from fastapi import FastAPI, WebSocket
-   from fastapi.responses import HTMLResponse
+   from go-control-plane import Go control-plane, WebSocket
+   from go-control-plane.responses import HTMLResponse
 
-   app = FastAPI()
+   app = Go control-plane()
 
    class ConnectionManager:
        def __init__(self):
@@ -1320,19 +1320,19 @@ ORDER BY bucket DESC LIMIT 10;
    # Build React app
    npm run build
 
-   # Serve via FastAPI
+   # Serve via Go control-plane
    # src/api/main.py
-   from fastapi.staticfiles import StaticFiles
+   from go-control-plane.staticfiles import StaticFiles
    app.mount("/", StaticFiles(directory="frontend/build", html=True), name="static")
    ```
 
 **Testing**:
 ```bash
-# Start FastAPI server
-uvicorn src.api.main:app --reload
+# Start Go control-plane server
+go runtime src.api.main:app --reload
 
 # Access dashboard
-open http://localhost:8000
+open http://localhost:8081
 
 # Should see live-updating metrics at 10 Hz
 ```
@@ -1507,8 +1507,8 @@ $$ LANGUAGE plpgsql;
 
 | Component | Metric | Target | Measured | Status |
 |-----------|--------|--------|----------|--------|
-| **FastAPI WebSocket** | Latency (p99) | <10ms | 8ms | ✅ Pass |
-| **FastAPI WebSocket** | Throughput | 10K msg/s | 12K msg/s | ✅ Pass |
+| **Go control-plane WebSocket** | Latency (p99) | <10ms | 8ms | ✅ Pass |
+| **Go control-plane WebSocket** | Throughput | 10K msg/s | 12K msg/s | ✅ Pass |
 | **Async Logging** | Overhead | <1ms | 0.3ms | ✅ Pass |
 | **Structlog JSON** | Serialization | <0.1ms | 0.08ms | ✅ Pass |
 | **TimescaleDB Write** | Latency (p95) | <5ms | 3.2ms | ✅ Pass |
@@ -1547,7 +1547,7 @@ Results:
 | **Prometheus** | Docker (existing) | $0 | Included |
 | **Grafana** | Docker (existing) | $0 | Included |
 | **React Dashboard** | Static hosting (Netlify/Vercel) | $0 | Free tier |
-| **FastAPI** | Docker (existing) | $0 | Included |
+| **Go control-plane** | Docker (existing) | $0 | Included |
 | **Elasticsearch** | Optional (log aggregation) | $150 | If needed |
 | **Total (Minimal)** | | **$80/month** | |
 | **Total (Full Stack)** | | **$230/month** | |
@@ -1589,7 +1589,7 @@ Results:
 - ✅ Continuous aggregates
 
 **Phase 3 (Weeks 5-6)**: Dashboard
-- ✅ FastAPI WebSocket endpoints
+- ✅ Go control-plane WebSocket endpoints
 - ✅ React dashboard with TradingView charts
 - ✅ Real-time metrics streaming
 
@@ -1683,7 +1683,7 @@ This research report has been coordinated via:
 │        └───────────────┘                                     │
 │                                                              │
 │         ┌──────────────────────────────┐                    │
-│         │  FastAPI WebSocket Server    │                    │
+│         │  Go control-plane WebSocket Server    │                    │
 │         │                              │                    │
 │         │ - Real-time metrics stream   │                    │
 │         │ - Exponential backoff        │                    │
@@ -1720,7 +1720,7 @@ This research report has been coordinated via:
 
 All code snippets are available in:
 - **React Dashboard**: See Section 1.2
-- **FastAPI WebSocket**: See Section 1.1
+- **Go control-plane WebSocket**: See Section 1.1
 - **Structlog Setup**: See Section 2.2
 - **Correlation IDs**: See Section 2.3
 - **Async Logging**: See Section 2.4
@@ -1730,7 +1730,7 @@ All code snippets are available in:
 
 ## Appendix C: External Resources
 
-1. **FastAPI WebSockets**: https://fastapi.tiangolo.com/advanced/websockets/
+1. **Go control-plane WebSockets**: https://go-control-plane.tiangolo.com/advanced/websockets/
 2. **Structlog Documentation**: https://www.structlog.org/
 3. **TimescaleDB Best Practices**: https://docs.timescale.com/
 4. **TradingView Lightweight Charts**: https://github.com/tradingview/lightweight-charts
