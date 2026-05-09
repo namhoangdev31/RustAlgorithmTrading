@@ -102,3 +102,16 @@ Phase 3 evaluates Go control-plane serving for observability APIs and WebSocket 
 
 - **Scraping Latency**: Reduced by ~40% due to Go concurrency (goroutines) vs Python serial loops.
 - **Resource Usage**: ~60% reduction in memory overhead for background collection tasks.
+
+## 9) Operational Hardening (Finalized 2026-05-09)
+
+### 9.1 High-Severity Fixes
+
+- **Startup Robustness**: `scripts/start_go_observability.sh` now automatically builds the Go binary if missing and handles clean process termination (`pkill`).
+- **Panic Prevention**: Added nil-checks for `DuckDB` storage in the collector manager to prevent runtime crashes if the database is locked or unavailable.
+- **Python Cleanup**: Purged stale `.egg-info` metadata to ensure clean production deployment.
+
+### 9.2 Flexibility & Scaling
+
+- **Configurable Targets**: Metrics scraper endpoints (`market_data`, `execution`, `risk`) are now configurable via environment variables (`MARKET_DATA_METRICS_URL`, etc.), with 8081 as the finalized default.
+- **Port Transparency**: Service port is now fully configurable via `PORT` env var, facilitating deployment in restricted network environments.

@@ -59,9 +59,9 @@ func main() {
 
 	// Wave 1: Initialize Go Metrics Collector (Shadow Run)
 	targets := map[string]string{
-		"market_data": "http://127.0.0.1:9091/metrics",
-		"execution":   "http://127.0.0.1:9092/metrics",
-		"risk":        "http://127.0.0.1:9093/metrics",
+		"market_data": getenvOrDefault("MARKET_DATA_METRICS_URL", "http://127.0.0.1:9091/metrics"),
+		"execution":   getenvOrDefault("EXECUTION_METRICS_URL", "http://127.0.0.1:9092/metrics"),
+		"risk":        getenvOrDefault("RISK_METRICS_URL", "http://127.0.0.1:9093/metrics"),
 	}
 	collectorMgr := collector.NewManager(store, targets)
 	go collectorMgr.Start(context.Background())

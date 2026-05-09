@@ -57,6 +57,11 @@ func (m *Manager) Start(ctx context.Context) {
 
 // processResults handles the scraped metrics and writes them to DuckDB
 func (m *Manager) processResults(results map[string]*ScrapeResult) {
+	if m.store == nil || m.store.DuckDB() == nil {
+		log.Println("[Collector] Storage or DuckDB not available, skipping ingestion")
+		return
+	}
+
 	var metricsToInsert []map[string]interface{}
 	totalMetrics := 0
 	errors := 0
