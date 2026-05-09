@@ -97,7 +97,7 @@ Execution rules:
 
 | File | Ownership | Key classes/functions | Primary tests |
 |---|---|---|---|
-| `src/api/alpaca_client.py` | Alpaca REST/WebSocket client behavior | `AlpacaClient` | `tests/test_alpaca_quick.py`, `tests/unit/test_alpaca_client.rs`, `tests/unit/test_alpaca_auth.rs`, `tests/unit/test_alpaca_error_handling.rs` |
+| `src/api/alpaca_client.py` | Alpaca REST/WebSocket client behavior | `AlpacaClient` | `tests/unit/python/test_alpaca_client_go_runtime.py`, `tests/test_alpaca_quick.py`, `tests/unit/test_alpaca_client.rs`, `tests/unit/test_alpaca_auth.rs`, `tests/unit/test_alpaca_error_handling.rs` |
 | `src/api/alpaca_paper_trading.py` | Paper trading account/order lifecycle | `AlpacaPaperTrading`, `OrderType`, `PortfolioMetrics`, `PositionInfo` | `tests/integration/test_alpaca_api.rs`, `tests/integration/test_end_to_end.rs` |
 
 ## 3.2 Data Layer (`src/data`)
@@ -383,7 +383,7 @@ Execution rules:
 
 | Symptom | Read first | Inspect first | Validate first |
 |---|---|---|---|
-| Alpaca auth/rate limit | `docs/api/ALPACA_API.md` | `src/api/alpaca_client.py` | `tests/test_alpaca_quick.py`, `tests/unit/test_alpaca_auth.rs` |
+| Alpaca auth/rate limit | `docs/api/ALPACA_API.md` | `src/api/alpaca_client.py` | `tests/unit/python/test_alpaca_client_go_runtime.py`, `tests/test_alpaca_quick.py`, `tests/unit/test_alpaca_auth.rs` |
 | Signal mismatch | `docs/api/ZMQ_PROTOCOL.md` | `src/strategies/strategy_router.py`, `rust/signal-bridge/src/indicators.rs` | `tests/unit/test_strategy_signals.py`, `tests/integration/test_backtest_signal_flow.py` |
 | Risk reject anomalies | `docs/guides/RISK_MANAGEMENT_GUIDE.md` | `rust/risk-manager/src/limits.rs` | `tests/unit/test_risk_manager.rs` |
 | Execution retry/slippage | `docs/architecture/component-interfaces.md` | `rust/execution-engine/src/retry.rs`, `rust/execution-engine/src/slippage.rs` | `tests/unit/test_retry.rs`, `tests/unit/test_slippage.rs` |
@@ -447,3 +447,15 @@ bash scripts/health_check.sh
 2. Never patch generated outputs (`__pycache__`, `target/`, logs, build artifacts).
 3. Keep edit scope minimal and owner-centered.
 4. Do not reintroduce weekly lifecycle/gate artifacts into active playbook flow.
+## Phase 3+ Go Migration Additions
+
+| File | Responsibility | Key Types/Functions | Validation |
+|---|---|---|---|
+| `go/internal/alpaca/client.go` | Go-native Alpaca adapter with retry/rate-limit resilience | `Client`, `GetAccount`, `GetPositions`, `PlaceMarketOrder` | `go/internal/alpaca/client_test.go` |
+| `go/internal/alpaca/client_test.go` | Alpaca adapter contract tests | `TestGetAccount`, `TestRetries429ThenSuccess`, `TestPlaceMarketOrder` | `go test ./internal/alpaca` |
+| `go/internal/zmqbridge/envelope.go` | ZMQ envelope contract build/encode/decode/validate | `Envelope`, `BuildEnvelope`, `Decode`, `Validator.Validate` | `go/internal/zmqbridge/envelope_test.go` |
+| `go/internal/zmqbridge/envelope_test.go` | Envelope validation tests | strict schema mismatch + required fields | `go test ./internal/zmqbridge` |
+| `go/internal/alerts/escalation.go` | Incident lifecycle manager in Go | `Manager`, `Create`, `Acknowledge`, `Resolve` | `go/internal/alerts/escalation_test.go` |
+| `go/internal/alerts/escalation_test.go` | Incident lifecycle tests | create/ack/resolve contract | `go test ./internal/alerts` |
+| `go/internal/integrity/integrity.go` | Go integrity gate evaluator for backtest/runtime safety | `Metrics`, `Thresholds`, `ValidateRunIntegrity` | `go/internal/integrity/integrity_test.go` |
+| `go/internal/integrity/integrity_test.go` | Integrity gate tests | pass/fail reasoning checks | `go test ./internal/integrity` |

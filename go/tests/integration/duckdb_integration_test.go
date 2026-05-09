@@ -14,7 +14,12 @@ func TestGoDuckDBIntegration(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create temp dir: %v", err)
 	}
-	defer os.RemoveAll(tempDir)
+	defer func(path string) {
+		err := os.RemoveAll(path)
+		if err != nil {
+
+		}
+	}(tempDir)
 
 	dbPath := filepath.Join(tempDir, "test.duckdb")
 

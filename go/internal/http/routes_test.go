@@ -1,6 +1,8 @@
 package http
 
 import (
+	"bytes"
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -62,5 +64,62 @@ func TestCORSHeadersPresent(t *testing.T) {
 	}
 	if rec.Header().Get("Access-Control-Allow-Origin") == "" {
 		t.Fatalf("expected Access-Control-Allow-Origin header")
+	}
+}
+
+func TestIncidentLifecycleEndpoints(t *testing.T) {
+	t.Setenv("OBSERVABILITY_API_KEY", "")
+	r := buildTestRouter()
+
+	createBody := map[string]interface{}{
+		"severity":       "P0",
+		"component":      "risk",
+		"reason_code":    "RISK_BLOCK",
+		"correlation_id": "cid-100",
+	}
+	raw, _ := json.Marshal(createBody)
+	req := httptest.NewRequest(http.MethodPost, "/api/system/incidents", bytes.NewReader(raw))
+	rec := httptest.NewRecorder()
+	r.ServeHTTP(rec, req)
+	if rec.Code != http.StatusCreated {
+		t.Fatalf("expected 201, got %d", rec.Code)
+	}
+
+	var created map[string]interface{}
+	_ = json.Unmarshal(rec.Body.Bytes(), &created)
+	id, ok := created["incident_id"].(string)
+	if !ok || id == "" {
+		t.Fatalf("missing incident_id in response: %s", rec.Body.String())
+	}
+
+	ackReq := httptest.NewRequest(http.MethodPost, "/api/system/incidents/"+id+"/acknowledge?owner=ops", nil)
+	ackRec := httptest.NewRecorder()
+	r.ServeHTTP(ackRec, ackReq)
+	if ackRec.Code != http.StatusOK {
+		t.Fatalf("expected 200 acknowledge, got %d", ackRec.Code)
+	}
+
+	resolveReq := httptest.NewRequest(http.MethodPost, "/api/system/incidents/"+id+"/resolve?evidence=verified", nil)
+	resolveRec := httptest.NewRecorder()
+	r.ServeHTTP(resolveRec, resolveReq)
+	if resolveRec.Code != http.StatusOK {
+		t.Fatalf("expected 200 resolve, got %d", resolveRec.Code)
+	}
+}
+
+func TestIntegrityValidateEndpoint(t *testing.T) {
+	t.Setenv("OBSERVABILITY_API_KEY", "")
+	r := buildTestRouter()
+	raw := []byte(`{"PnlDriftPct":0.25,"FalseAllowDelta":1}`)
+	req := httptest.NewRequest(http.MethodPost, "/api/system/integrity/validate", bytes.NewReader(raw))
+	rec := httptest.NewRecorder()
+	r.ServeHTTP(rec, req)
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d", rec.Code)
+	}
+	var payload map[string]interface{}
+	_ = json.Unmarshal(rec.Body.Bytes(), &payload)
+	if valid, ok := payload["is_valid"].(bool); !ok || valid {
+		t.Fatalf("expected is_valid=false, got %v", payload["is_valid"])
 	}
 }

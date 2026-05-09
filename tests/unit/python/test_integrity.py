@@ -1,4 +1,5 @@
 import pytest
+from unittest.mock import Mock, patch
 
 from backtesting.integrity import (
     IntegrityMetrics,
@@ -12,14 +13,24 @@ def test_validate_run_integrity_detects_crashes():
     metrics = IntegrityMetrics(
         crash_count=1,
     )
-    report = validate_run_integrity(metrics)
+    mocked = Mock(status_code=200)
+    mocked.json.return_value = {
+        "is_valid": False,
+        "reasons": ["Runtime crashes detected: 1"],
+        "metrics": {"crash_count": 1},
+    }
+    with patch("backtesting.integrity.requests.post", return_value=mocked):
+        report = validate_run_integrity(metrics)
     assert report.is_valid is False
     assert any("crashes" in reason for reason in report.reasons)
 
 
 def test_validate_run_integrity_passes_clean_run():
     metrics = IntegrityMetrics()
-    report = validate_run_integrity(metrics)
+    mocked = Mock(status_code=200)
+    mocked.json.return_value = {"is_valid": True, "reasons": [], "metrics": {}}
+    with patch("backtesting.integrity.requests.post", return_value=mocked):
+        report = validate_run_integrity(metrics)
     assert report.is_valid is True
     assert report.reasons == []
 

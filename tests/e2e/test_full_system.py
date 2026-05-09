@@ -43,35 +43,38 @@ def mock_market_data():
 @pytest.fixture
 def mock_alpaca_client():
     """Mock Alpaca client for E2E testing"""
-    with (
-        patch("src.api.alpaca_client.StockHistoricalDataClient"),
-        patch("src.api.alpaca_client.TradingClient"),
-    ):
-        client = AlpacaClient(api_key="test_key", secret_key="test_secret", paper=True)
+    client = AlpacaClient(api_key="test_key", secret_key="test_secret", paper=True)
 
-        # Mock account info
-        mock_account = MagicMock()
-        mock_account.cash = 100000.0
-        mock_account.portfolio_value = 100000.0
-        mock_account.buying_power = 200000.0
-        client.trading_client.get_account = Mock(return_value=mock_account)
-
-        # Mock successful order submission
-        mock_order = {
-            "id": "test_order_id",
-            "status": "filled",
-            "symbol": "AAPL",
-            "qty": 10.0,
-            "side": "buy",
-            "type": "market",
-            "created_at": datetime.now(),
-        }
-        client.trading_client.submit_order = Mock(return_value=MagicMock(**mock_order))
-        # Ensure it also works if accessed as dict (since real client returns dict)
-        client.place_market_order = Mock(return_value=mock_order)
-        client.place_limit_order = Mock(return_value=mock_order)
-
-        return client
+    mock_order = {
+        "id": "test_order_id",
+        "status": "filled",
+        "symbol": "AAPL",
+        "qty": 10.0,
+        "side": "buy",
+        "type": "market",
+        "created_at": datetime.now(),
+    }
+    client.get_account = Mock(
+        return_value={"cash": 100000.0, "portfolio_value": 100000.0, "buying_power": 200000.0}
+    )
+    client.place_market_order = Mock(return_value=mock_order)
+    client.place_limit_order = Mock(return_value=mock_order)
+    client.cancel_order = Mock(return_value=True)
+    client.cancel_all_orders = Mock(return_value=True)
+    client.close_all_positions = Mock(return_value=[])
+    client.get_orders = Mock(return_value=[mock_order])
+    client.get_historical_bars = Mock(
+        return_value=pd.DataFrame(
+            {
+                "open": [100, 101, 102],
+                "high": [101, 102, 103],
+                "low": [99, 100, 101],
+                "close": [100.5, 101.5, 102.5],
+                "volume": [1000, 1100, 1200],
+            }
+        )
+    )
+    return client
 
 
 class TestFullBacktestWorkflow:
@@ -238,7 +241,6 @@ class TestLiveTradingSimulation:
         )
 
         # Cancel order
-        mock_alpaca_client.trading_client.cancel_order_by_id = Mock(return_value=True)
         result = mock_alpaca_client.cancel_order(order["id"])
 
         assert result is True
@@ -386,12 +388,9 @@ class TestRiskManagement:
 class TestDataPipeline:
     """Test data pipeline from fetching to processing"""
 
-    @patch("src.api.alpaca_client.StockHistoricalDataClient")
-    def test_data_fetch_and_validation(self, mock_data_client):
+    def test_data_fetch_and_validation(self):
         """Test data fetching and validation pipeline"""
-        # Mock data response
-        mock_bars = MagicMock()
-        mock_bars.df = pd.DataFrame(
+        df = pd.DataFrame(
             {
                 "open": [100, 101, 102],
                 "high": [101, 102, 103],
@@ -400,24 +399,14 @@ class TestDataPipeline:
                 "volume": [1000, 1100, 1200],
             }
         )
-
-        mock_data_client.return_value.get_stock_bars = Mock(return_value=mock_bars)
-
-        # Create client
-        with patch("src.api.alpaca_client.TradingClient"):
-            client = AlpacaClient(api_key="test", secret_key="test", paper=True)
-
-        # Mock the method we actually call
-        client.get_historical_bars = Mock(return_value=mock_bars.df)
-
-        # Fetch data
-        from alpaca.data.timeframe import TimeFrame
+        client = AlpacaClient(api_key="test", secret_key="test", paper=True)
+        client.get_historical_bars = Mock(return_value=df)
 
         data = client.get_historical_bars(
             symbol="AAPL",
             start=datetime(2024, 1, 1),
             end=datetime(2024, 1, 2),
-            timeframe=TimeFrame.Hour,
+            timeframe="1Hour",
         )
 
         # Validate data
@@ -429,26 +418,13 @@ class TestDataPipeline:
 class TestErrorHandling:
     """Test error handling and recovery"""
 
-    def test_api_connection_failure(self):
+    def test_api_connection_failure(self, monkeypatch):
         """Test handling of API connection failures"""
-        # Patch BOTH at source AND in the module where it's used
-        with (
-            patch(
-                "alpaca.trading.client.TradingClient", side_effect=Exception("Unable to connect")
-            ),
-            patch(
-                "alpaca.data.historical.StockHistoricalDataClient",
-                side_effect=Exception("Unable to connect"),
-            ),
-            patch("api.alpaca_client.TradingClient", side_effect=Exception("Unable to connect")),
-            patch(
-                "api.alpaca_client.StockHistoricalDataClient",
-                side_effect=Exception("Unable to connect"),
-            ),
-        ):
-
+        monkeypatch.delenv("ALPACA_API_KEY", raising=False)
+        monkeypatch.delenv("ALPACA_SECRET_KEY", raising=False)
+        with patch("api.alpaca_client.load_dotenv", return_value=False):
             with pytest.raises(Exception):
-                AlpacaClient(api_key="test", secret_key="test", paper=True)
+                AlpacaClient(api_key=None, secret_key=None, paper=True)
 
     def test_invalid_data_handling(self):
         """Test handling of invalid market data"""
