@@ -14,7 +14,7 @@ from observability.storage import DuckDBClient
 import asyncio
 
 async def check_database_health():
-    client = DuckDBClient("data/metrics.duckdb")
+    client = DuckDBClient("data/observability.duckdb")
     await client.initialize()
 
     # Get table statistics
@@ -44,7 +44,7 @@ asyncio.run(check_database_health())
 ### Prometheus Integration
 
 ```python
-# src/observability/metrics/duckdb_metrics.py
+# src/observability/observability.duckdb_metrics.py
 from prometheus_client import Gauge, Histogram, Counter
 
 # Database size
@@ -196,7 +196,7 @@ tail -f logs/observability/api.log | jq -r 'select(.event == "duckdb_insert_fail
 # Enable query profiling
 import duckdb
 
-conn = duckdb.connect("data/metrics.duckdb")
+conn = duckdb.connect("data/observability.duckdb")
 conn.execute("PRAGMA enable_profiling")
 conn.execute("PRAGMA profile_output='profile.json'")
 
@@ -277,7 +277,7 @@ def check_memory_usage():
     print(f"VMS: {mem_info.vms / 1024 / 1024:.2f} MB")
 
     # DuckDB-specific memory
-    conn = duckdb.connect("data/metrics.duckdb")
+    conn = duckdb.connect("data/observability.duckdb")
     result = conn.execute("PRAGMA database_size").fetchone()
     print(f"Database size: {result[0] / 1024 / 1024:.2f} MB")
 ```
@@ -288,7 +288,7 @@ def check_memory_usage():
 
 ```python
 # Configure memory limit
-conn = duckdb.connect("data/metrics.duckdb")
+conn = duckdb.connect("data/observability.duckdb")
 conn.execute("PRAGMA memory_limit='2GB'")
 ```
 
@@ -308,7 +308,7 @@ for row in conn.execute("SELECT * FROM huge_table"):
 ```python
 # Regular optimization
 async def optimize_database():
-    client = DuckDBClient("data/metrics.duckdb")
+    client = DuckDBClient("data/observability.duckdb")
     await client.initialize()
     await client.optimize()  # VACUUM + CHECKPOINT
     await client.close()
@@ -320,12 +320,12 @@ async def optimize_database():
 
 ```bash
 # Check database size
-du -h data/metrics.duckdb
+du -h data/observability.duckdb
 
 # Breakdown by table
 python3 <<EOF
 import duckdb
-conn = duckdb.connect("data/metrics.duckdb")
+conn = duckdb.connect("data/observability.duckdb")
 
 for table in ["trading_metrics", "candles", "performance_history"]:
     count = conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
@@ -342,7 +342,7 @@ EOF
 ```python
 # Delete old data
 async def cleanup_old_data(days_to_keep=30):
-    client = DuckDBClient("data/metrics.duckdb")
+    client = DuckDBClient("data/observability.duckdb")
     await client.initialize()
 
     cutoff = datetime.utcnow() - timedelta(days=days_to_keep)
@@ -362,7 +362,7 @@ async def cleanup_old_data(days_to_keep=30):
 # Archive old data to Parquet
 import duckdb
 
-conn = duckdb.connect("data/metrics.duckdb")
+conn = duckdb.connect("data/observability.duckdb")
 
 # Export old data
 conn.execute("""
@@ -433,7 +433,7 @@ from datetime import datetime
 from pathlib import Path
 
 def backup_database():
-    source = Path("data/metrics.duckdb")
+    source = Path("data/observability.duckdb")
     backup_dir = Path("backups")
     backup_dir.mkdir(exist_ok=True)
 
@@ -466,7 +466,7 @@ from pathlib import Path
 
 def restore_database(backup_file: str):
     source = Path(backup_file)
-    target = Path("data/metrics.duckdb")
+    target = Path("data/observability.duckdb")
 
     print(f"Restoring {source} to {target}")
 
@@ -488,7 +488,7 @@ restore_database("backups/metrics_20250421_020000.duckdb")
 # Analyze query execution
 import duckdb
 
-conn = duckdb.connect("data/metrics.duckdb")
+conn = duckdb.connect("data/observability.duckdb")
 
 # Get query plan
 plan = conn.execute("""
@@ -536,7 +536,7 @@ conn.execute("""
 ```python
 # Daily maintenance script
 async def daily_maintenance():
-    client = DuckDBClient("data/metrics.duckdb")
+    client = DuckDBClient("data/observability.duckdb")
     await client.initialize()
 
     # Optimize database
@@ -557,7 +557,7 @@ async def daily_maintenance():
 ```python
 # Health check script
 async def health_check():
-    client = DuckDBClient("data/metrics.duckdb")
+    client = DuckDBClient("data/observability.duckdb")
     await client.initialize()
 
     # Check query performance
@@ -581,10 +581,10 @@ async def health_check():
 import duckdb
 from datetime import timedelta
 
-conn = duckdb.connect("data/metrics.duckdb")
+conn = duckdb.connect("data/observability.duckdb")
 
 # Get current size
-current_size = Path("data/metrics.duckdb").stat().st_size / 1024 / 1024  # MB
+current_size = Path("data/observability.duckdb").stat().st_size / 1024 / 1024  # MB
 
 # Get insert rate
 result = conn.execute("""

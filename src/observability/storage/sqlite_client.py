@@ -28,7 +28,7 @@ class SQLiteClient:
 
     def __init__(
         self,
-        db_path: str = "data/trading_operational.db",
+        db_path: str = "data/trades.db",
         timeout: float = 5.0,
     ):
         """
@@ -331,7 +331,7 @@ class SQLiteClient:
 
 # Context manager for automatic connection handling
 @asynccontextmanager
-async def sqlite_session(db_path: str = "data/trading_operational.db") -> Any:
+async def sqlite_session(db_path: str = "data/trades.db") -> Any:
     """Async context manager for SQLite sessions"""
     client = SQLiteClient(db_path)
     await client.initialize()

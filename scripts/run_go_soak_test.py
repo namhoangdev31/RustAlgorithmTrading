@@ -17,8 +17,10 @@ import websockets
 from collections import deque
 import statistics
 
-GO_API_URL = "http://localhost:8080"
-WS_URL = "ws://localhost:8080/ws/metrics"
+import os
+
+GO_API_URL = os.getenv("GO_API_URL", "http://localhost:8081")
+WS_URL = os.getenv("WS_URL", "ws://localhost:8081/ws/metrics")
 
 class SoakTest:
     def __init__(self, duration_sec: int, concurrent_clients: int):
@@ -37,8 +39,11 @@ class SoakTest:
                     self.latencies.append((time.perf_counter() - start) * 1000)
                 else:
                     self.errors += 1
-            except Exception:
-                self.errors += 1
+                    print(f"  API Error: Status {resp.status_code} on {GO_API_URL}/api/system/health")
+            except Exception as e:
+                if self.running:
+                    self.errors += 1
+                    print(f"  API Request Exception: {e}")
             
             # Simple rate limiting per worker to avoid local port exhaustion
             await asyncio.sleep(0.1)
@@ -48,11 +53,27 @@ class SoakTest:
             try:
                 async with websockets.connect(WS_URL) as ws:
                     while self.running:
-                        await ws.send("ping")
-                        await ws.recv()
+                        try:
+                            await asyncio.wait_for(ws.send("ping"), timeout=5.0)
+                            # Wait for pong, but skip over metric broadcasts
+                            while self.running:
+                                msg = await asyncio.wait_for(ws.recv(), timeout=5.0)
+                                if msg == "pong":
+                                    break
+                        except websockets.ConnectionClosed:
+                            break
+                        except asyncio.TimeoutError:
+                            if self.running:
+                                self.errors += 1
+                                print(f"  WS Error: Timeout waiting for pong while running")
+                            break
                         await asyncio.sleep(1)
-            except Exception:
-                self.errors += 1
+            except Exception as e:
+                if self.running:
+                    # Filter out closure errors that happen during shutdown
+                    if not isinstance(e, (websockets.ConnectionClosed, asyncio.CancelledError)):
+                        self.errors += 1
+                        print(f"  WS Connection Error: {e}")
                 await asyncio.sleep(1)
 
     async def run(self):

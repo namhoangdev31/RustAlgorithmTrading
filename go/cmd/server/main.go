@@ -22,7 +22,7 @@ func main() {
 
 	port := getenvOrDefault("PORT", "8080")
 	duckDBPath := getenvOrDefault("DUCKDB_PATH", "data/observability.duckdb")
-	sqlitePath := getenvOrDefault("SQLITE_PATH", "data/trading_operational.db")
+	sqlitePath := getenvOrDefault("SQLITE_PATH", "data/trades.db")
 	databaseURL := os.Getenv("DATABASE_URL")
 
 	duckReader, duckErr := storage.NewDuckDBReader(duckDBPath)
@@ -63,7 +63,7 @@ func main() {
 	handler := internalhttp.SetupRoutes(store, wsManager, healthAgg)
 
 	server := &http.Server{
-		Addr:              ":" + port,
+		Addr:              "127.0.0.1:" + port,
 		Handler:           handler,
 		ReadHeaderTimeout: 10 * time.Second,
 	}

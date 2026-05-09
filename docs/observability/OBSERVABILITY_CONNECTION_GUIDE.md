@@ -372,7 +372,7 @@ pip install -r requirements.txt
 
 3. **DuckDB Initialized**:
 ```bash
-python -c "from rust.database import DatabaseManager; import asyncio; asyncio.run(DatabaseManager.new('data/metrics.duckdb').initialize())"
+python -c "from rust.database import DatabaseManager; import asyncio; asyncio.run(DatabaseManager.new('data/observability.duckdb').initialize())"
 ```
 
 ### Starting Services
@@ -430,7 +430,7 @@ asyncio.run(test())
 **3. Check DuckDB**:
 ```sql
 -- Connect to DuckDB
-duckdb data/metrics.duckdb
+duckdb data/observability.duckdb
 
 -- Check metrics table
 SELECT COUNT(*) FROM trading_metrics;

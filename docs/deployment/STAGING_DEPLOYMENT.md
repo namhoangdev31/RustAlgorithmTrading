@@ -94,8 +94,8 @@ ENABLE_DASHBOARD=true
 
 # === Database Configuration ===
 DATABASE_TYPE=duckdb
-DATABASE_PATH=./data/metrics.duckdb
-SQLITE_PATH=./data/trading_operational.db
+DATABASE_PATH=./data/observability.duckdb
+SQLITE_PATH=./data/trades.db
 
 # === Risk Management ===
 MAX_DAILY_LOSS=5000.0
@@ -156,8 +156,8 @@ cat config/system.json | jq .
     "dashboard_port": 3000,
     "metrics_interval_ms": 100,
     "database": {
-      "duckdb_path": "./data/metrics.duckdb",
-      "sqlite_path": "./data/trading_operational.db"
+      "duckdb_path": "./data/observability.duckdb",
+      "sqlite_path": "./data/trades.db"
     }
   },
   "logging": {
@@ -433,14 +433,14 @@ curl http://localhost:8000/health/ready | jq .
 # Check DuckDB
 python3 <<EOF
 import duckdb
-conn = duckdb.connect('data/metrics.duckdb')
+conn = duckdb.connect('data/observability.duckdb')
 result = conn.execute('SELECT COUNT(*) FROM system_metrics').fetchone()
 print(f"System metrics records: {result[0]}")
 conn.close()
 EOF
 
 # Check SQLite
-sqlite3 data/trading_operational.db "SELECT COUNT(*) FROM trade_events;"
+sqlite3 data/trades.db "SELECT COUNT(*) FROM trade_events;"
 ```
 
 ### 3. Test Market Data Feed
@@ -606,7 +606,7 @@ df -h
 **Solutions:**
 ```bash
 # Reinitialize databases
-rm data/metrics.duckdb data/trading_operational.db
+rm data/observability.duckdb data/trades.db
 ./scripts/start_observability.sh
 
 # Fix permissions
@@ -639,7 +639,7 @@ ps aux --sort=-%mem | head -20
 # Reduce metrics retention
 python3 <<EOF
 import duckdb
-conn = duckdb.connect('data/metrics.duckdb')
+conn = duckdb.connect('data/observability.duckdb')
 conn.execute("DELETE FROM system_metrics WHERE timestamp < current_timestamp - INTERVAL 7 DAY")
 conn.close()
 EOF
@@ -712,13 +712,13 @@ curl http://localhost:8000/health
 ./scripts/stop_trading_system.sh
 
 # 2. Restore database backup
-cp backups/metrics.duckdb.backup data/metrics.duckdb
-cp backups/trading_operational.db.backup data/trading_operational.db
+cp backups/observability.duckdb.backup data/observability.duckdb
+cp backups/trades.db.backup data/trades.db
 
 # 3. Verify backup integrity
 python3 <<EOF
 import duckdb
-conn = duckdb.connect('data/metrics.duckdb')
+conn = duckdb.connect('data/observability.duckdb')
 result = conn.execute('SELECT COUNT(*) FROM system_metrics')
 print(f"Records restored: {result.fetchone()[0]}")
 conn.close()

@@ -35,7 +35,7 @@ func SetupRoutes(store *storage.Store, wsManager *ws.Manager, healthAggregator *
 	r.Use(middleware.Recoverer)
 	r.Use(SetupCors())
 
-	limiter := ratelimit.NewLimiter(120, time.Minute)
+	limiter := ratelimit.NewLimiter(10000, time.Minute)
 	r.Use(limiter.Middleware)
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {

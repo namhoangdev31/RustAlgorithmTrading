@@ -28,8 +28,8 @@ class StorageManager:
 
     def __init__(
         self,
-        duckdb_path: str = "data/trading_metrics.duckdb",
-        sqlite_path: str = "data/trading_operational.db",
+        duckdb_path: str = "data/observability.duckdb",
+        sqlite_path: str = "data/trades.db",
         postgres_dsn: Optional[str] = os.getenv("DATABASE_URL"),
     ):
         """

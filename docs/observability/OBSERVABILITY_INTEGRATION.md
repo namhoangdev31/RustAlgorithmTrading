@@ -30,7 +30,7 @@ The observability stack is now fully integrated into the trading system startup 
 ```
 1. ✓ Dependency verification (Python packages, Node.js, ports)
 2. ✓ Directory creation (logs/, data/, monitoring/)
-3. ✓ Database initialization (DuckDB metrics.duckdb, SQLite trading_operational.db)
+3. ✓ Database initialization (DuckDB observability.duckdb, SQLite trades.db)
 4. ✓ Go server starts (http://localhost:8080 by default)
 5. ✓ React dashboard starts (http://localhost:3000, if enabled)
 6. ✓ Browser auto-opens to dashboard
@@ -74,9 +74,9 @@ The observability stack is now fully integrated into the trading system startup 
 ┌─────────────────────────────────────────────────────────────┐
 │                     Databases                                │
 ├─────────────────────────────────────────────────────────────┤
-│  • DuckDB (data/metrics.duckdb)                             │
+│  • DuckDB (data/observability.duckdb)                             │
 │    - Market data, strategy metrics, execution, system       │
-│  • SQLite (data/trading_operational.db)                                  │
+│  • SQLite (data/trades.db)                                  │
 │    - Real-time events, alerts                               │
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -203,7 +203,7 @@ cleanup() {
     # Save state to DuckDB
     python3 <<'PYTHON'
 import duckdb
-conn = duckdb.connect('data/metrics.duckdb')
+conn = duckdb.connect('data/observability.duckdb')
 conn.execute("INSERT INTO system_metrics ...")
 conn.close()
 PYTHON
@@ -319,7 +319,7 @@ WS ws://localhost:8080/ws/metrics
 
 ## Databases
 
-### DuckDB: `data/metrics.duckdb`
+### DuckDB: `data/observability.duckdb`
 
 **Tables:**
 
@@ -378,14 +378,14 @@ CREATE TABLE system_metrics (
 # Interactive query
 python3 -c "
 import duckdb
-conn = duckdb.connect('data/metrics.duckdb')
+conn = duckdb.connect('data/observability.duckdb')
 result = conn.execute('SELECT * FROM system_metrics ORDER BY timestamp DESC LIMIT 10')
 print(result.fetchall())
 conn.close()
 "
 ```
 
-### SQLite: `data/trading_operational.db`
+### SQLite: `data/trades.db`
 
 **Tables:**
 
@@ -422,8 +422,8 @@ RustAlgorithmTrading/
 │   ├── metrics/                 # Metric logs
 │   └── system/                  # System logs
 ├── data/
-│   ├── metrics.duckdb          # Time-series metrics
-│   ├── trading_operational.db  # Operational events/trades
+│   ├── observability.duckdb          # Time-series metrics
+│   ├── trades.db  # Operational events/trades
 │   ├── backtest_results/       # Backtest outputs
 │   ├── simulation_results/     # Simulation outputs
 │   └── live_trading/           # Live trading data
@@ -467,7 +467,7 @@ lsof -ti :8000 | xargs kill -9
 ls -la data/*.db data/*.duckdb
 
 # Reinitialize databases
-rm data/metrics.duckdb data/trading_operational.db
+rm data/observability.duckdb data/trades.db
 ./scripts/start_observability.sh
 ```
 
@@ -616,7 +616,7 @@ A: Yes, use `./scripts/start_trading.sh --no-observability`
 A: Open http://localhost:8080 in your browser (auto-opens)
 
 **Q: Where are metrics stored?**
-A: DuckDB at `data/metrics.duckdb` and SQLite at `data/trading_operational.db`
+A: DuckDB at `data/observability.duckdb` and SQLite at `data/trades.db`
 
 **Q: How do I export metrics?**
 A: Use DuckDB export: `COPY (SELECT * from .) TO 'output.csv' (HEADER, DELIMITER ',')`

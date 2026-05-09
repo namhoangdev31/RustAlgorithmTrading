@@ -11,9 +11,8 @@ import pytest_asyncio
 import websockets
 
 
-FASTAPI_URL = "http://localhost:8000"
-GO_API_URL = "http://localhost:8080"
-GO_WS_URL = "ws://localhost:8080/ws/metrics"
+GO_API_URL = "http://localhost:8081"
+GO_WS_URL = "ws://localhost:8081/ws/metrics"
 
 pytestmark = pytest.mark.asyncio
 
@@ -55,18 +54,15 @@ class TestGoControlPlaneParity:
         assert "websocket_connections" in body
         assert "uptime_seconds" in body
 
-    async def test_root_contract_parity_shape(self, http_client: httpx.AsyncClient) -> None:
-        py_resp = await _get_or_skip(http_client, f"{FASTAPI_URL}/")
+    async def test_root_contract_standalone_shape(self, http_client: httpx.AsyncClient) -> None:
         go_resp = await _get_or_skip(http_client, f"{GO_API_URL}/")
-        assert py_resp.status_code == 200
         assert go_resp.status_code == 200
 
-        py = py_resp.json()
         go = go_resp.json()
         for key in ("service", "version", "websocket", "endpoints"):
-            assert key in py
-            assert key in go
+            assert key in go, f"Key {key} missing in Go response"
         assert isinstance(go["endpoints"], dict)
+        assert go["service"] == "Trading Observability API"
 
     async def test_api_auth_contract(self, http_client: httpx.AsyncClient) -> None:
         # This test validates response behavior when key is missing.

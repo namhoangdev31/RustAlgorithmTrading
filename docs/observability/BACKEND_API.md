@@ -111,7 +111,7 @@ python scripts/start_observability_api.py --workers 4
 
 ```bash
 cd go
-PORT=8080 DUCKDB_PATH=../data/metrics.duckdb SQLITE_PATH=../data/trades.db go run ./cmd/server/main.go
+PORT=8080 DUCKDB_PATH=../data/observability.duckdb SQLITE_PATH=../data/trades.db go run ./cmd/server/main.go
 ```
 
 ### Using FastAPI compatibility path (legacy)

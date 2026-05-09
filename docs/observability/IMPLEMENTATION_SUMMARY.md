@@ -34,11 +34,11 @@ This summary reflects the current architecture after Phase 3 migration work.
 Current operational paths (override via env):
 
 - `DUCKDB_PATH` default in Go: `data/observability.duckdb`
-- `SQLITE_PATH` default in Go: `data/trading_operational.db`
+- `SQLITE_PATH` default in Go: `data/trades.db`
 
 Deployment profiles may override to alternatives like:
 
-- `data/metrics.duckdb`
+- `data/observability.duckdb`
 - `data/trades.db`
 
 Use explicit absolute env values in production-like gates to avoid ambiguity.

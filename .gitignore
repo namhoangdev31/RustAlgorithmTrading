@@ -81,3 +81,4 @@ go/.cache/
 go/observability-api
 data/benchmarks/
 go/vendor/
+go/.go_cache/

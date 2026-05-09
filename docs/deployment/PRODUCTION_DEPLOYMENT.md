@@ -126,7 +126,7 @@ TRADING_MODE=production  # CRITICAL: Set to 'production' for live trading
 PAPER_TRADING=false      # CRITICAL: Set to false for live trading
 
 # === OBSERVABILITY DATA PATHS (ACTIVE) ===
-DUCKDB_PATH=/opt/trading-system/data/metrics.duckdb
+DUCKDB_PATH=/opt/trading-system/data/observability.duckdb
 SQLITE_PATH=/opt/trading-system/data/trades.db
 
 # === OPTIONAL POSTGRES PARALLEL INTEGRATION ===
