@@ -66,7 +66,7 @@ func main() {
 	collectorMgr := collector.NewManager(store, targets)
 	go collectorMgr.Start(context.Background())
 
-	metricsWorker := worker.NewMetricsCollector(store, wsManager)
+	metricsWorker := worker.NewMetricsCollector(store, wsManager, collectorMgr)
 	go metricsWorker.Start()
 
 	healthAgg := health.NewAggregator(store, wsManager)
