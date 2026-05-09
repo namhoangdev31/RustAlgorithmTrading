@@ -9,6 +9,7 @@ import (
 	"syscall"
 	"time"
 
+	"trading/observability-api/internal/collector"
 	"trading/observability-api/internal/health"
 	internalhttp "trading/observability-api/internal/http"
 	"trading/observability-api/internal/storage"
@@ -20,7 +21,7 @@ func main() {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	slog.SetDefault(logger)
 
-	port := getenvOrDefault("PORT", "8080")
+	port := getenvOrDefault("PORT", "8081") // Finalized port 8081
 	duckDBPath := getenvOrDefault("DUCKDB_PATH", "data/observability.duckdb")
 	sqlitePath := getenvOrDefault("SQLITE_PATH", "data/trades.db")
 	databaseURL := os.Getenv("DATABASE_URL")
@@ -56,8 +57,17 @@ func main() {
 	wsManager := ws.NewManager()
 	go wsManager.Start()
 
-	collector := worker.NewMetricsCollector(store, wsManager)
-	go collector.Start()
+	// Wave 1: Initialize Go Metrics Collector (Shadow Run)
+	targets := map[string]string{
+		"market_data": "http://127.0.0.1:9091/metrics",
+		"execution":   "http://127.0.0.1:9092/metrics",
+		"risk":        "http://127.0.0.1:9093/metrics",
+	}
+	collectorMgr := collector.NewManager(store, targets)
+	go collectorMgr.Start(context.Background())
+
+	metricsWorker := worker.NewMetricsCollector(store, wsManager)
+	go metricsWorker.Start()
 
 	healthAgg := health.NewAggregator(store, wsManager)
 	handler := internalhttp.SetupRoutes(store, wsManager, healthAgg)
@@ -83,7 +93,8 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	collector.Stop()
+	collectorMgr.Stop()
+	metricsWorker.Stop()
 	wsManager.Stop()
 	if err := server.Shutdown(ctx); err != nil {
 		slog.Error("go_control_plane_shutdown_error", "error", err)

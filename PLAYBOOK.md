@@ -212,11 +212,11 @@ Execution rules:
 
 | File | Ownership | Key classes | Primary tests |
 |---|---|---|---|
-| `src/observability/metrics/collectors.py` | Base collector abstraction | `BaseCollector` | `tests/observability/test_performance.py` |
-| `src/observability/metrics/market_data_collector.py` | Market data metrics | `MarketDataCollector` | `tests/observability/test_performance.py` |
-| `src/observability/metrics/strategy_collector.py` | Strategy metrics | `StrategyCollector` | `tests/observability/test_performance.py` |
-| `src/observability/metrics/execution_collector.py` | Execution metrics | `ExecutionCollector` | `tests/observability/test_performance.py` |
-| `src/observability/metrics/system_collector.py` | System metrics | `SystemCollector` | `tests/observability/test_performance.py` |
+| `src/observability/metrics/collectors.py` | [LEGACY] Base collector abstraction | `BaseCollector` | DEPRECATED (Moved to Go) |
+| `src/observability/metrics/market_data_collector.py` | [LEGACY] Market data metrics | `MarketDataCollector` | DEPRECATED (Moved to Go) |
+| `src/observability/metrics/strategy_collector.py` | [LEGACY] Strategy metrics | `StrategyCollector` | DEPRECATED (Moved to Go) |
+| `src/observability/metrics/execution_collector.py` | [LEGACY] Execution metrics | `ExecutionCollector` | DEPRECATED (Moved to Go) |
+| `src/observability/metrics/system_collector.py` | [LEGACY] System metrics | `SystemCollector` | DEPRECATED (Moved to Go) |
 
 ### Alerting
 
@@ -459,3 +459,6 @@ bash scripts/health_check.sh
 | `go/internal/alerts/escalation_test.go` | Incident lifecycle tests | create/ack/resolve contract | `go test ./internal/alerts` |
 | `go/internal/integrity/integrity.go` | Go integrity gate evaluator for backtest/runtime safety | `Metrics`, `Thresholds`, `ValidateRunIntegrity` | `go/internal/integrity/integrity_test.go` |
 | `go/internal/integrity/integrity_test.go` | Integrity gate tests | pass/fail reasoning checks | `go test ./internal/integrity` |
+| `go/internal/collector/parser.go` | Go-native Prometheus parser | `Parser`, `Parse` | `go test ./internal/collector` |
+| `go/internal/collector/scraper.go` | Go-native concurrent metrics scraper | `Scraper`, `ScrapeAll` | `go test ./internal/collector` |
+| `go/internal/collector/manager.go` | Metrics collection lifecycle manager | `Manager`, `Start`, `Stop` | `go test ./internal/collector` |

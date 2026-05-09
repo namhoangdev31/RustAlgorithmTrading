@@ -8,21 +8,66 @@ import (
 	_ "github.com/marcboeker/go-duckdb"
 )
 
-// DuckDBReader provides read-only access to observability analytics data.
-type DuckDBReader struct {
+// DuckDB provides access to observability analytics data.
+type DuckDB struct {
 	db *sql.DB
 }
 
-func NewDuckDBReader(dbPath string) (*DuckDBReader, error) {
-	connStr := fmt.Sprintf("%s?access_mode=read_only", dbPath)
-	db, err := sql.Open("duckdb", connStr)
+// DuckDBReader is a type alias for backward compatibility.
+type DuckDBReader = DuckDB
+
+func NewDuckDBReader(dbPath string) (*DuckDB, error) {
+	// Open in read-write mode (default) as Go is now the primary controller.
+	db, err := sql.Open("duckdb", dbPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open duckdb: %w", err)
 	}
 	if err := db.Ping(); err != nil {
 		return nil, fmt.Errorf("failed to ping duckdb: %w", err)
 	}
-	return &DuckDBReader{db: db}, nil
+	
+	s := &DuckDB{db: db}
+	if err := s.Initialize(); err != nil {
+		return nil, fmt.Errorf("failed to initialize duckdb schema: %w", err)
+	}
+	return s, nil
+}
+
+func (r *DuckDB) Initialize() error {
+	schemas := []string{
+		`CREATE TABLE IF NOT EXISTS trading_metrics (
+			timestamp TIMESTAMP NOT NULL,
+			metric_name VARCHAR NOT NULL,
+			value DOUBLE NOT NULL,
+			symbol VARCHAR,
+			labels VARCHAR
+		)`,
+		`CREATE INDEX IF NOT EXISTS idx_metrics_timestamp ON trading_metrics(timestamp)`,
+		`CREATE TABLE IF NOT EXISTS performance_history (
+			timestamp TIMESTAMP NOT NULL PRIMARY KEY,
+			portfolio_value DOUBLE NOT NULL,
+			pnl DOUBLE NOT NULL,
+			sharpe_ratio DOUBLE,
+			max_drawdown DOUBLE,
+			win_rate DOUBLE,
+			total_trades INTEGER
+		)`,
+		`CREATE INDEX IF NOT EXISTS idx_performance_timestamp ON performance_history(timestamp)`,
+		`CREATE TABLE IF NOT EXISTS system_events (
+			timestamp TIMESTAMP NOT NULL,
+			event_type VARCHAR,
+			severity VARCHAR,
+			message VARCHAR,
+			details VARCHAR
+		)`,
+	}
+
+	for _, schema := range schemas {
+		if _, err := r.db.Exec(schema); err != nil {
+			return fmt.Errorf("failed to execute schema [%s]: %w", schema, err)
+		}
+	}
+	return nil
 }
 
 func (r *DuckDBReader) Close() error {
@@ -218,4 +263,60 @@ func (r *DuckDBReader) QueryLogs(level string, limit int) ([]map[string]interfac
 		results = append(results, item)
 	}
 	return results, nil
+}
+
+func (r *DuckDB) InsertMetrics(metrics []map[string]interface{}) error {
+	if r.db == nil {
+		return fmt.Errorf("database not connected")
+	}
+	if len(metrics) == 0 {
+		return nil
+	}
+
+	tx, err := r.db.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	stmt, err := tx.Prepare("INSERT INTO trading_metrics (timestamp, metric_name, value, symbol, labels) VALUES (?, ?, ?, ?, ?)")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	for _, m := range metrics {
+		_, err := stmt.Exec(
+			m["timestamp"],
+			m["metric_name"],
+			m["value"],
+			m["symbol"],
+			m["labels"],
+		)
+		if err != nil {
+			return err
+		}
+	}
+
+	return tx.Commit()
+}
+
+func (r *DuckDB) InsertPerformanceRecord(record map[string]interface{}) error {
+	if r.db == nil {
+		return fmt.Errorf("database not connected")
+	}
+
+	query := `
+		INSERT INTO performance_history (timestamp, portfolio_value, pnl, total_trades, sharpe_ratio, max_drawdown)
+		VALUES (?, ?, ?, ?, ?, ?)
+	`
+	_, err := r.db.Exec(query,
+		record["timestamp"],
+		record["portfolio_value"],
+		record["pnl"],
+		record["total_trades"],
+		record["sharpe_ratio"],
+		record["max_drawdown"],
+	)
+	return err
 }
