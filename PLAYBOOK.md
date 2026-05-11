@@ -38,45 +38,47 @@ The platform is fully migrated.
 
 | File | Ownership | Key classes/functions | Primary tests |
 |---|---|---|---|
-| `src/api/alpaca_client.py` | Alpaca REST/WebSocket client behavior | `AlpacaClient` | `tests/unit/python/test_alpaca_client_go_runtime.py`, `tests/test_alpaca_quick.py` |
-| `src/api/alpaca_paper_trading.py` | Paper trading account/order lifecycle | `AlpacaPaperTrading`, `OrderType`, `PortfolioMetrics` | `tests/integration/test_alpaca_api.rs`, `tests/integration/test_end_to_end.rs` |
+| `src/api/alpaca_client.py` | Alpaca REST/WebSocket client behavior | `AlpacaClient`, `get_account()`, `submit_order()`, `get_positions()` | `tests/unit/python/test_alpaca_client_go_runtime.py`, `tests/test_alpaca_quick.py` |
+| `src/api/alpaca_paper_trading.py` | Paper trading account/order lifecycle | `AlpacaPaperTrading`, `OrderType`, `PortfolioMetrics`, `TradeUpdate` | `tests/integration/test_alpaca_api.rs`, `tests/integration/test_end_to_end.rs` |
 
 ### 3.2 Data Layer (`src/data`)
 
 | File | Ownership | Key classes | Primary tests |
 |---|---|---|---|
-| `src/data/fetcher.py` | Market data acquisition abstraction | `DataFetcher` | `tests/unit/test_download_data.py` |
-| `src/data/loader.py` | Data loading/parquet-csv bridge | `DataLoader` | `tests/unit/python/test_backtesting.py` |
-| `src/data/preprocessor.py` | Cleaning/transforms | `DataPreprocessor` | `tests/unit/python/test_features.py` |
-| `src/data/indicators.py` | Technical indicator calculations | `TechnicalIndicators` | `tests/unit/test_strategy_signals.py` |
-| `src/data/features.py` | Feature engineering pipeline | `FeatureEngine` | `tests/unit/python/test_features.py`, `tests/unit/python/test_rust_feature_parity.py` |
+| `src/data/fetcher.py` | Market data acquisition abstraction | `DataFetcher`, `fetch_historical_bars()`, `stream_live_quotes()` | `tests/unit/test_download_data.py` |
+| `src/data/loader.py` | Data loading/parquet-csv bridge | `DataLoader`, `load_parquet()`, `save_dataset()` | `tests/unit/python/test_backtesting.py` |
+| `src/data/preprocessor.py` | Cleaning/transforms | `DataPreprocessor`, `handle_missing_values()`, `normalize_features()` | `tests/unit/python/test_features.py` |
+| `src/data/indicators.py` | Technical indicator calculations | `TechnicalIndicators`, `calculate_rsi()`, `calculate_macd()`, `calculate_bollinger_bands()` | `tests/unit/test_strategy_signals.py` |
+| `src/data/features.py` | Feature engineering pipeline | `FeatureEngine`, `generate_momentum_features()`, `generate_volatility_features()` | `tests/unit/python/test_features.py`, `tests/unit/python/test_rust_feature_parity.py` |
 
 ### 3.3 Backtesting Layer (`src/backtesting`)
 
 | File | Ownership | Key classes | Primary tests |
 |---|---|---|---|
-| `src/backtesting/engine.py` | Rust-only batch simulation engine | `BacktestEngine`, `StrategyBatchInterfaceRequired` | `tests/unit/python/test_backtest_engine.py`, `tests/test_backtest_integration.py` |
-| `src/backtesting/portfolio_handler.py` | Passive state container for portfolio (synced from Rust) | `PortfolioHandler` | `tests/unit/test_portfolio_handler_shorts.py` |
-| `src/backtesting/risk_integrity.py` | Golden risk decision comparator | `RiskIntegrityComparison` | `tests/unit/python/test_risk_integrity_comparator.py` |
-| `src/backtesting/performance.py` | Performance analytics | `PerformanceAnalyzer` | `tests/unit/python/test_backtesting.py` |
-| `src/backtesting/transaction_costs.py` | Cost/slippage models | `TransactionCostModel`, `OrderBookSlippageModel` | `tests/unit/test_slippage.rs` |
+| `src/backtesting/engine.py` | Rust-only batch simulation engine | `BacktestEngine`, `run_simulation()`, `StrategyBatchInterfaceRequired` | `tests/unit/python/test_backtest_engine.py`, `tests/test_backtest_integration.py` |
+| `src/backtesting/portfolio_handler.py` | Passive state container for portfolio (synced from Rust) | `PortfolioHandler`, `update_position()`, `calculate_equity()` | `tests/unit/test_portfolio_handler_shorts.py` |
+| `src/backtesting/risk_integrity.py` | Golden risk decision comparator | `RiskIntegrityComparison`, `validate_decisions()` | `tests/unit/python/test_risk_integrity_comparator.py` |
+| `src/backtesting/performance.py` | Performance analytics | `PerformanceAnalyzer`, `calculate_sharpe_ratio()`, `calculate_max_drawdown()` | `tests/unit/python/test_backtesting.py` |
+| `src/backtesting/transaction_costs.py` | Cost/slippage models | `TransactionCostModel`, `OrderBookSlippageModel`, `estimate_slippage()` | `tests/unit/test_slippage.rs` |
+| `src/backtesting/walk_forward.py` | Walk-forward optimization logic | `WalkForwardOptimizer`, `generate_folds()` | `tests/unit/python/test_backtesting.py` |
 
 ### 3.4 Bridge Layer (`src/bridge`)
 
 | File | Ownership | Key classes | Primary tests |
 |---|---|---|---|
-| `src/bridge/zmq_bridge.py` | Envelope serialization + ZMQ handoff | `ZMQPublisher`, `ZMQSubscriber`, `Signal`, `Position` | `tests/integration/test_backtest_signal_flow.py` |
-| `src/bridge/rust_bridge.py` | Python -> Rust feature bridge wrapper | `RustFeatureComputer` | `tests/unit/python/test_rust_feature_parity.py` |
-| `src/bridge/backtest_bridge.py` | Bridge to Rust authoritative runtime | `RustBacktestBridge` | `tests/test_backtest_integration.py` |
+| `src/bridge/zmq_bridge.py` | Envelope serialization + ZMQ handoff | `ZMQPublisher`, `ZMQSubscriber`, `Signal`, `Position`, `publish_event()` | `tests/integration/test_backtest_signal_flow.py` |
+| `src/bridge/rust_bridge.py` | Python -> Rust feature bridge wrapper | `RustFeatureComputer`, `compute_features_batch()` | `tests/unit/python/test_rust_feature_parity.py` |
+| `src/bridge/backtest_bridge.py` | Bridge to Rust authoritative runtime | `RustBacktestBridge`, `execute_rust_backtest()` | `tests/test_backtest_integration.py` |
 
 ### 3.5 Strategy Layer (`src/strategies`)
 
 | File | Ownership | Key classes | Primary tests |
 |---|---|---|---|
-| `src/strategies/base.py` | Strategy contract + signal type | `SignalType`, `Signal`, `Strategy` | `tests/unit/test_strategy_signals.py` |
-| `src/strategies/strategy_router.py` | Multi-strategy orchestration | `StrategyRouter` | `tests/integration/test_backtest_signal_flow.py` |
-| `src/strategies/momentum.py` | Momentum Strategy implementation | `MomentumStrategy` | `tests/unit/test_momentum_strategy.py` |
-| `src/strategies/ml_ensemble_strategy.py` | ML Ensemble Strategy | `MLEnsembleStrategy` | `tests/ml/test_models.py` |
+| `src/strategies/base.py` | Strategy contract + signal type | `SignalType`, `Signal`, `Strategy` (Abstract Base Class) | `tests/unit/test_strategy_signals.py` |
+| `src/strategies/strategy_router.py` | Multi-strategy orchestration | `StrategyRouter`, `route_signal()`, `MarketRegime` enum | `tests/integration/test_backtest_signal_flow.py` |
+| `src/strategies/momentum.py` | Momentum Strategy implementation | `MomentumStrategy`, `generate_signals()` | `tests/unit/test_momentum_strategy.py` |
+| `src/strategies/ml_ensemble_strategy.py` | ML Ensemble Strategy | `MLEnsembleStrategy`, `predict_regime()`, `train_model()` | `tests/ml/test_models.py` |
+| `src/strategies/mean_reversion.py` | Mean Reversion logic | `MeanReversionStrategy`, `calculate_zscore()` | `tests/unit/test_strategy_signals.py` |
 
 ---
 
@@ -86,54 +88,60 @@ The platform is fully migrated.
 
 | File | Ownership | Key types/functions | Primary tests |
 |---|---|---|---|
-| `rust/common/src/types.rs` | Shared domain primitives | `Order`, `Position`, `Signal`, `RiskReport` | `tests/unit/test_common_types.rs` |
-| `rust/common/src/messaging.rs` | Cross-runtime envelope/messages | `Envelope`, `Message` | integration contract tests |
-| `rust/common/src/errors.rs` | Shared error surface | `TradingError` | `tests/unit/test_errors.rs` |
-| `rust/common/src/health.rs` | Health status contract | `HealthCheck`, `SystemHealth` | `tests/unit/test_common_health.rs` |
-| `rust/common/src/http.rs` | Health/ready http helpers | `create_health_router` | service integration tests |
+| `rust/common/src/types.rs` | Shared domain primitives | `Order` (struct), `Position` (struct), `Signal` (enum), `RiskReport` (struct) | `tests/unit/test_common_types.rs` |
+| `rust/common/src/messaging.rs` | Cross-runtime envelope/messages | `Envelope` (struct), `Message` (enum), `serialize()`, `deserialize()` | integration contract tests |
+| `rust/common/src/errors.rs` | Shared error surface | `TradingError` (enum), `Result<T>` type alias | `tests/unit/test_errors.rs` |
+| `rust/common/src/health.rs` | Health status contract | `HealthCheck` (trait), `SystemHealth` (struct) | `tests/unit/test_common_health.rs` |
+| `rust/common/src/http.rs` | Health/ready http helpers | `create_health_router()` (axum router setup) | service integration tests |
+| `rust/common/src/config.rs` | Configuration management | `AppConfig`, `load_config()` | `tests/unit/test_common_types.rs` |
 
 ### 4.2 `rust/market-data`
 
 | File | Ownership | Key types/functions | Primary tests |
 |---|---|---|---|
-| `rust/market-data/src/websocket.rs` | Alpaca stream ingestion | `WebSocketClient`, `AlpacaMessage` | `tests/integration/test_websocket.rs` |
-| `rust/market-data/src/orderbook.rs` | Orderbook core | `FastOrderBook`, `OrderBookManager` | `tests/unit/test_orderbook.rs` |
-| `rust/market-data/src/aggregation.rs` | Bar/VWAP aggregation | `BarAggregator`, `VwapCalculator` | integration data flow tests |
-| `rust/market-data/src/publisher.rs` | Event publish layer | `MarketDataPublisher` | integration stream tests |
+| `rust/market-data/src/websocket.rs` | Alpaca stream ingestion | `WebSocketClient` (struct), `AlpacaMessage` (enum), `connect()`, `handle_message()` | `tests/integration/test_websocket.rs` |
+| `rust/market-data/src/orderbook.rs` | Orderbook core | `FastOrderBook` (struct), `OrderBookManager` (struct), `update_level()` | `tests/unit/test_orderbook.rs` |
+| `rust/market-data/src/aggregation.rs` | Bar/VWAP aggregation | `BarAggregator` (struct), `VwapCalculator` (struct), `aggregate_trades()` | integration data flow tests |
+| `rust/market-data/src/publisher.rs` | Event publish layer | `MarketDataPublisher` (struct), `broadcast_tick()` | integration stream tests |
+| `rust/market-data/src/main.rs` | Entry point | `main()`, `tokio::main` setup | `cargo test -p market-data` |
 
 ### 4.3 `rust/signal-bridge`
 
 | File | Ownership | Key types/functions | Primary tests |
 |---|---|---|---|
-| `rust/signal-bridge/src/indicators.rs` | Low-latency indicators (RSI, MACD, etc) | `SMA`, `EMA`, `RSI`, `MACD`, `batch_log_returns` | `cargo test -p signal-bridge` |
-| `rust/signal-bridge/src/backtest_runtime.rs` | Rust-owned backtest kernel | `BacktestRuntime`, `SignalRow` | `cargo test -p signal-bridge` |
-| `rust/signal-bridge/src/bridge.rs` | PyO3 batch/Monte Carlo/Backtest bridge | `FeatureComputer`, `BacktestRuntime` | `tests/test_backtest_integration.py` |
+| `rust/signal-bridge/src/indicators.rs` | Low-latency indicators (RSI, MACD, etc) | `SMA` (struct), `EMA` (struct), `RSI` (struct), `MACD` (struct), `batch_log_returns()` | `cargo test -p signal-bridge` |
+| `rust/signal-bridge/src/features.rs` | Feature computation logic | `FeatureEngine`, `compute_features()` | `cargo test -p signal-bridge` |
+| `rust/signal-bridge/src/backtest_runtime.rs` | Rust-owned backtest kernel | `BacktestRuntime` (struct), `SignalRow` (struct), `run_step()` | `cargo test -p signal-bridge` |
+| `rust/signal-bridge/src/bridge.rs` | PyO3 batch/Monte Carlo/Backtest bridge | `FeatureComputer` (struct), `BacktestRuntime` (struct) exposed via PyO3 `#[pyclass]` | `tests/test_backtest_integration.py` |
 
 ### 4.4 `rust/risk-manager`
 
 | File | Ownership | Key types/functions | Primary tests |
 |---|---|---|---|
-| `rust/risk-manager/src/limits.rs` | Position/daily loss limits | `LimitChecker`, `check_with_report` | `tests/unit/test_risk_manager.rs` |
-| `rust/risk-manager/src/stops.rs` | Stop loss policies | `StopManager`, `StopLossTrigger` | `tests/integration/test_stop_loss_integration.rs` |
-| `rust/risk-manager/src/pnl.rs` | PnL accounting | `PnLTracker`, `PositionState` | risk integration tests |
-| `rust/risk-manager/src/circuit_breaker.rs` | Circuit state machine | `CircuitBreaker` | risk-manager unit tests |
+| `rust/risk-manager/src/limits.rs` | Position/daily loss limits | `LimitChecker` (struct), `check_with_report()`, `PositionLimits` | `tests/unit/test_risk_manager.rs` |
+| `rust/risk-manager/src/stops.rs` | Stop loss policies | `StopManager` (struct), `StopLossTrigger` (enum), `evaluate_stops()` | `tests/integration/test_stop_loss_integration.rs` |
+| `rust/risk-manager/src/pnl.rs` | PnL accounting | `PnLTracker` (struct), `PositionState` (struct), `update_pnl()` | risk integration tests |
+| `rust/risk-manager/src/circuit_breaker.rs` | Circuit state machine | `CircuitBreaker` (struct), `trigger_halt()`, `CircuitState` (enum) | risk-manager unit tests |
+| `rust/risk-manager/src/reload.rs` | Dynamic config reloading | `ConfigReloader`, `watch_config_file()` | `tests/unit/test_risk_manager.rs` |
 
 ### 4.5 `rust/execution-engine`
 
 | File | Ownership | Key types/functions | Primary tests |
 |---|---|---|---|
-| `rust/execution-engine/src/router.rs` | Order routing to broker | `OrderRouter`, `AlpacaOrderRequest` | `tests/unit/test_execution_router.rs` |
-| `rust/execution-engine/src/retry.rs` | Retry policy | `RetryPolicy` | `tests/unit/test_retry.rs` |
-| `rust/execution-engine/src/slippage.rs` | Slippage estimation | `SlippageEstimator` | `tests/unit/test_slippage.rs` |
-| `rust/execution-engine/src/stop_loss_executor.rs` | Stop-loss order emission | `StopLossExecutor` | stop-loss integration tests |
+| `rust/execution-engine/src/router.rs` | Order routing to broker | `OrderRouter` (struct), `AlpacaOrderRequest` (struct), `route_order()` | `tests/unit/test_execution_router.rs` |
+| `rust/execution-engine/src/retry.rs` | Retry policy | `RetryPolicy` (struct), `should_retry()`, `calculate_backoff()` | `tests/unit/test_retry.rs` |
+| `rust/execution-engine/src/slippage.rs` | Slippage estimation | `SlippageEstimator` (struct), `apply_slippage()` | `tests/unit/test_slippage.rs` |
+| `rust/execution-engine/src/stop_loss_executor.rs` | Stop-loss order emission | `StopLossExecutor` (struct), `execute_stop_market()` | stop-loss integration tests |
+| `rust/execution-engine/src/main.rs` | Entry point | `main()`, ZMQ listener setup | `cargo test -p execution-engine` |
 
 ### 4.6 `rust/database`
 
 | File | Ownership | Key types/functions | Primary tests |
 |---|---|---|---|
-| `rust/database/src/connection.rs` | DB connection manager | `ConnectionManager` | `rust/database/src/tests.rs` |
-| `rust/database/src/schema.rs` | Schema lifecycle | `Schema::create_all` | storage integration tests |
-| `rust/database/src/models.rs` | Metric/trade records | `MetricRecord`, `TradeRecord` | `tests/integration/test_duckdb_storage.rs` |
+| `rust/database/src/connection.rs` | DB connection manager | `ConnectionManager` (struct), `get_pool()` | `rust/database/src/tests.rs` |
+| `rust/database/src/schema.rs` | Schema lifecycle | `Schema::create_all()`, `TableDefinitions` | storage integration tests |
+| `rust/database/src/models.rs` | Metric/trade records | `MetricRecord` (struct), `TradeRecord` (struct) mapping to DB rows | `tests/integration/test_duckdb_storage.rs` |
+| `rust/database/src/query.rs` | Query builders | `QueryBuilder`, `insert_trade()`, `fetch_metrics()` | `rust/database/src/tests.rs` |
 
 ---
 
@@ -141,15 +149,18 @@ The platform is fully migrated.
 
 | Module | Ownership | Key types/functions | Primary tests |
 |---|---|---|---|
-| `go/cmd/server/main.go` | Entrypoint for Phase 3 API | `main` | `tests/observability/test_go_parity.py` |
-| `go/internal/http/routes.go` | HTTP Route definitions | `SetupRoutes` | `go/internal/http/routes_test.go` |
-| `go/internal/ws/manager.go` | WebSocket fanout logic | `Manager`, `ServeWS` | `go/internal/ws/manager_test.go` |
-| `go/internal/storage/duckdb.go` | DuckDB read adapter | `DuckDBReader` | `tests/observability/test_go_parity.py` |
-| `go/internal/storage/sqlite.go` | SQLite read adapter | `SQLiteReader` | `tests/observability/test_go_parity.py` |
-| `go/internal/health/aggregator.go` | Health aggregation logic | `Aggregator` | `tests/observability/test_go_parity.py` |
-| `go/internal/worker/collector.go` | Metrics broadcast worker | `MetricsCollector` | `tests/observability/test_go_parity.py` |
-| `go/internal/alpaca/client.go` | Go-native Alpaca adapter | `Client`, `PlaceMarketOrder` | `go/internal/alpaca/client_test.go` |
-| `go/internal/integrity/integrity.go` | Go integrity gate evaluator | `ValidateRunIntegrity` | `go/internal/integrity/integrity_test.go` |
+| `go/cmd/server/main.go` | Entrypoint for Phase 3 API | `main()`, Env var parsing (`duckDBPath`, `sqlitePath`), Server Initialization | `tests/observability/test_go_parity.py` |
+| `go/internal/http/routes.go` | HTTP Route definitions | `SetupRoutes()`, defining `/health`, `/metrics`, `/ws` | `go/internal/http/routes_test.go` |
+| `go/internal/http/middleware.go` | HTTP Middleware | `AuthMiddleware()`, `RateLimitMiddleware()` | `go/internal/http/routes_test.go` |
+| `go/internal/ws/manager.go` | WebSocket fanout logic | `Manager` struct, `ServeWS()`, `broadcastMessage()`, `Client` struct | `go/internal/ws/manager_test.go` |
+| `go/internal/storage/duckdb.go` | DuckDB read adapter | `DuckDBReader` struct, `QueryAnalytics()`, Connection pooling setup | `tests/observability/test_go_parity.py` |
+| `go/internal/storage/sqlite.go` | SQLite read adapter | `SQLiteReader` struct, `QueryTransactions()`, `InsertLog()` | `tests/observability/test_go_parity.py` |
+| `go/internal/storage/postgres.go` | Postgres read/write adapter | `PostgresReader` struct, Database URL handling | `go/tests/integration/duckdb_integration_test.go` |
+| `go/internal/health/aggregator.go` | Health aggregation logic | `Aggregator` struct, `CollectHealthStatus()`, `ComponentHealth` type | `tests/observability/test_go_parity.py` |
+| `go/internal/worker/collector.go` | Metrics broadcast worker | `MetricsCollector` struct, `Start()`, `Stop()`, Time ticker loops | `tests/observability/test_go_parity.py` |
+| `go/internal/alpaca/client.go` | Go-native Alpaca adapter | `Client` struct, `PlaceMarketOrder()`, `CancelOrder()` | `go/internal/alpaca/client_test.go` |
+| `go/internal/integrity/integrity.go` | Go integrity gate evaluator | `ValidateRunIntegrity()`, Checking `schema_version` and invariants | `go/internal/integrity/integrity_test.go` |
+| `go/internal/zmqbridge/envelope.go` | ZMQ Envelope handling | `Envelope` struct parsing, Message deserialization logic | `go/internal/zmqbridge/envelope_test.go` |
 
 ---
 
@@ -157,11 +168,17 @@ The platform is fully migrated.
 
 | Path | Responsibility | Key components |
 |---|---|---|
-| `deployment/docker-compose.yml` | Primary runtime orchestration | Rust services (Market, Execution, Risk) |
-| `deployment/docker-compose.observability.yml` | Control plane orchestration | Go Observability API (Port 8081), Dashboard |
-| `deployment/monitoring/` | Monitoring stack configs | Prometheus, Alertmanager, Grafana assets |
-| `docs/deployment/PRODUCTION_DEPLOYMENT.md` | Authoritative deployment guide | Lifecycle, security, rollback instructions |
-| `docs/deployment/DEPENDENCY_INSTALLATION.md` | Unified runtime sync guide | `rustup`, `uv`, `go` environment synchronization |
+| `deployment/docker-compose.yml` | Primary runtime orchestration | Services: `market_data_service`, `order_execution_service`, `risk_management_service`, `strategy_engine`, `api_gateway`. Network: `trading_network`. |
+| `deployment/docker-compose.observability.yml` | Control plane orchestration | Services: `observability-api` (Go server on port 8081). Replaces Python FastAPI. |
+| `deployment/docker-compose.staging.yml` | Staging environment overrides | Staging specific environment variables and resource limits. |
+| `deployment/docker-compose.dev.yml` | Development environment overrides | Hot-reloading configs and exposed debug ports. |
+| `deployment/monitoring/` | Monitoring stack configs | `prometheus.yml`, `alertmanager.yml`, `alerts/trading_system.yml` (alert rules). |
+| `deployment/grafana/` | Grafana dashboard provisioning | `dashboards/staging-performance.json`, `provisioning/dashboards.yml`, `provisioning/datasources.yml`. |
+| `docs/deployment/PRODUCTION_DEPLOYMENT.md` | Authoritative deployment guide | Lifecycle, security, rollback instructions. Required reading before prod changes. |
+| `docs/deployment/DEPENDENCY_INSTALLATION.md` | Unified runtime sync guide | `rustup`, `uv`, `go` environment synchronization procedures. |
+| `deployment/Makefile` | Docker stack management commands | `make up`, `make down`, `make health`, `make logs`. |
+| `deployment/Dockerfile` | Multi-stage Rust build | Builder stage -> Runtime stages for each Rust binary (`market_data_service`, etc.). |
+| `deployment/go.Dockerfile` | Go control plane build | Multi-stage Alpine build for the `observability-api` binary. |
 
 ---
 
@@ -173,15 +190,16 @@ Standalone Android project (Jetpack Compose + Material 3). Migrated from `leposa
 
 | Path | Ownership | Key Components |
 |---|---|---|
-| `android/app/build.gradle.kts` | App build config (all deps inline) | Compose, Firebase, Ktor, Koin |
-| `android/app/src/main/kotlin/.../MainActivity.kt` | Entry point | `MainActivity` |
-| `android/app/src/main/kotlin/.../LeposApp.kt` | Application class | Firebase, Koin init |
-| `android/app/src/main/kotlin/.../core/` | Core utilities (Result, AppError, Dispatchers) | `Result`, `AppError`, `DispatcherProvider` |
-| `android/app/src/main/kotlin/.../data/` | Data layer (DTOs, mappers, network, repos) | `ApiService`, `BundleRepositoryImpl` |
-| `android/app/src/main/kotlin/.../domain/` | Domain models, ports, use cases | `Bundle`, `MiniApp`, `BundleDownloader` |
-| `android/app/src/main/kotlin/.../di/` | DI modules (Koin) | `AndroidModule`, `SharedModule`, `Koin` |
-| `android/app/src/main/kotlin/.../ui/` | All UI screens (Compose) | 30+ screens across features |
-| `android/app/src/main/kotlin/.../runtime/` | WebRuntime + capabilities | `PlatformCapabilities`, `GestureValidator` |
+| `android/app/build.gradle.kts` | App build config (all deps inline) | Compose, Firebase, Ktor, Koin dependencies defined here. |
+| `android/app/src/main/kotlin/.../MainActivity.kt` | Entry point | `MainActivity` inheriting `ComponentActivity`, setting Compose content. |
+| `android/app/src/main/kotlin/.../LeposApp.kt` | Application class | `LeposApp`, Firebase App initialization, Koin `startKoin` block. |
+| `android/app/src/main/kotlin/.../core/` | Core utilities (Result, AppError, Dispatchers) | `Result` (Sealed class), `AppError` (Sealed class), `DispatcherProvider` (Interface & Impl). |
+| `android/app/src/main/kotlin/.../data/` | Data layer (DTOs, mappers, network, repos) | `ApiService` (Ktor), `BundleRepositoryImpl`, `TokenStorageImpl`. |
+| `android/app/src/main/kotlin/.../domain/` | Domain models, ports, use cases | `Bundle` (data class), `MiniApp` (data class), `BundleDownloader` interface, `GetBundlesUseCase`. |
+| `android/app/src/main/kotlin/.../di/` | DI modules (Koin) | `AndroidModule.kt`, `SharedModule.kt` defining singletons and factory instances. |
+| `android/app/src/main/kotlin/.../ui/` | All UI screens (Compose) | `MainScreen` (Bottom Nav), `ProfileScreen`, `AccountOverviewScreen`, `ActivityScreen`, `LoginScreen`, `HomeScreen`. |
+| `android/app/src/main/kotlin/.../navigation/` | Jetpack Navigation structure | `Route.kt` (Sealed classes for type-safe routing), `AppNavigation.kt` (NavHost setup). |
+| `android/app/src/main/kotlin/.../runtime/` | WebRuntime + capabilities | `PlatformCapabilities`, `GestureValidator`, `WebRuntimeViewModel` for Mini Apps. |
 
 ### 7.2 iOS App (`ios/`)
 
@@ -189,18 +207,18 @@ Standalone iOS project (SwiftUI + Liquid Glass). Migrated from `leposapp/iosApp`
 
 | Path | Ownership | Key Components |
 |---|---|---|
-| `ios/iosApp.xcodeproj` | Xcode project config | Build settings, SPM deps |
-| `ios/iosApp/iOSApp.swift` | Entry point | `@main iOSApp` |
-| `ios/iosApp/Shared/Core/` | Core (Result, AppError, Dispatchers) | `AppResult`, `AppError`, `AppDispatcher` |
-| `ios/iosApp/Shared/Domain/Models/` | Domain models (native Swift) | `Bundle_`, `MiniApp`, `User`, `FeaturedApp` |
-| `ios/iosApp/Shared/Domain/Repositories.swift` | Repository protocols | `BundleRepository`, `TodayRepository`, `LoginRepository` |
-| `ios/iosApp/Shared/Domain/UseCases.swift` | Use cases | `GetBundlesUseCase`, `DownloadBundleUseCase` |
-| `ios/iosApp/Shared/Data/` | Data layer (networking, mock repos) | `ApiService`, `TokenStorage`, mock impls |
-| `ios/iosApp/Shared/Runtime/` | Runtime capabilities | `PlatformCapabilities`, `GestureValidator` |
-| `ios/iosApp/Shared/Navigation/` | Navigation routing | `Route` enum |
-| `ios/iosApp/DI/` | Dependency injection | `SharedComponent`, `AppDependencyContainer` |
-| `ios/iosApp/Views/` | All UI views (SwiftUI) | 60+ views across features |
-| `ios/iosApp/DesignSystem/` | Design tokens | Colors, Typography, Spacing, LiquidGlass |
+| `ios/iosApp.xcodeproj` | Xcode project config | Build settings, SPM dependencies, Target configurations. |
+| `ios/iosApp/iOSApp.swift` | Entry point | `@main struct iOSApp: App`, lifecycle management. |
+| `ios/iosApp/Shared/Core/` | Core (Result, AppError, Dispatchers) | `AppResult` (enum), `AppError` (enum), `AppDispatcher` helper. |
+| `ios/iosApp/Shared/Domain/Models/` | Domain models (native Swift) | `Bundle_` (struct), `MiniApp` (struct), `User` (struct), `FeaturedApp` (struct). |
+| `ios/iosApp/Shared/Domain/Repositories.swift` | Repository protocols | `BundleRepository` (protocol), `TodayRepository` (protocol), `LoginRepository` (protocol). |
+| `ios/iosApp/Shared/Domain/UseCases.swift` | Use cases | `GetBundlesUseCase` (struct), `DownloadBundleUseCase` (struct). |
+| `ios/iosApp/Shared/Data/` | Data layer (networking, mock repos) | `ApiService` (URLSession wrapper), `TokenStorage`, Mock repository implementations. |
+| `ios/iosApp/Shared/Runtime/` | Runtime capabilities | `PlatformCapabilities`, `GestureValidator`. |
+| `ios/iosApp/Coordinators/` | Navigation routing state | `NavigationViewModel` (ObservableObject), `AppRoute` (enum). |
+| `ios/iosApp/DI/` | Dependency injection | `SharedComponent`, `AppDependencyContainer` managing protocol-to-implementation resolution. |
+| `ios/iosApp/Views/` | All UI views (SwiftUI) | `MainTabView`, `HomeView`, `ProfileView`, `AccountOverviewView`, `ActivityView`, `LoginView`. |
+| `ios/iosApp/DesignSystem/` | Design tokens | Color extensions, Typography structs, Spacing constants, LiquidGlass view modifiers. |
 
 ---
 
@@ -208,11 +226,13 @@ Standalone iOS project (SwiftUI + Liquid Glass). Migrated from `leposapp/iosApp`
 
 | Path | Responsibility | Key components |
 |---|---|---|
-| `frontend/app/page.tsx` | Landing page composition | Hero, benefits, features, template, proof, plans, contact, FAQ, footer |
-| `frontend/app/globals.css` | Tailwind/shadcn theme tokens | Light/dark trading platform palette |
-| `frontend/components/layout/` | Page shell and section components | Navbar, theme provider, landing sections |
-| `frontend/components/ui/` | shadcn source components | Button, Card, Sheet, NavigationMenu, Accordion, Form primitives |
-| `frontend/public/` | Static landing assets | Favicon |
+| `frontend/app/page.tsx` | Landing page composition | Main entry point composing `Hero`, `Benefits`, `Features`, `Pricing`, `Contact`, `FAQ`, `Footer`. |
+| `frontend/app/layout.tsx` | Global layout wrapper | Root HTML layout, font loading, `ThemeProvider` injection. |
+| `frontend/app/globals.css` | Tailwind/shadcn theme tokens | CSS variables for Light/dark trading platform palette. |
+| `frontend/components/layout/` | Page shell and section components | `navbar.tsx`, `theme-provider.tsx`, `sections/hero.tsx`, `sections/features.tsx`, `sections/pricing.tsx`. |
+| `frontend/components/ui/` | shadcn source components | Primitive UI elements: `button.tsx`, `card.tsx`, `sheet.tsx`, `navigation-menu.tsx`, `accordion.tsx`, `form.tsx`. |
+| `frontend/public/` | Static landing assets | Images, SVG icons, Favicon. |
+| `frontend/package.json` | Dependencies and scripts | Next.js, React, Tailwind, Framer Motion, Lucide icons dependencies. |
 
 Validate with:
 
@@ -226,14 +246,16 @@ cd frontend && npm run typecheck && npm run build
 
 | Folder | Focus | Key Authority |
 |---|---|---|
-| `docs/architecture/` | System Design | `SYSTEM_ARCHITECTURE.md`, `python-rust-separation.md` |
-| `docs/api/` | Contracts | `ZMQ_PROTOCOL.md`, `ALPACA_API.md` |
-| `docs/observability/` | Monitoring | `OBSERVABILITY_OVERVIEW.md`, `METRICS_CATALOG.md` |
-| `docs/operations/` | Day-to-Day | `OPERATIONS_GUIDE.md` |
-| `docs/optimization/` | Performance | `PERFORMANCE_GUIDE.md` |
-| `docs/security/` | Hardening | `SECURITY_STANDARDS.md` |
-| `docs/setup/` | Provisioning | `DEVELOPMENT.md` |
-| `docs/roadmap/` | Lifecycle | `COMPLETION_REPORT.md` |
+| `docs/architecture/` | System Design | `SYSTEM_ARCHITECTURE.md`, `python-rust-separation.md`, `component-interfaces.md`. |
+| `docs/api/` | Contracts | `ZMQ_PROTOCOL.md` (messaging format), `ALPACA_API.md` (broker integration), `DATABASE_MODULE.md`. |
+| `docs/observability/` | Monitoring | `OBSERVABILITY_OVERVIEW.md`, `METRICS_CATALOG.md`, `STORAGE_OPERATIONS.md`, `PHASE3_API_PARITY_MATRIX.md`. |
+| `docs/operations/` | Day-to-Day | `OPERATIONS_GUIDE.md` (ops manual). |
+| `docs/optimization/` | Performance | `PERFORMANCE_GUIDE.md` (Rust tuning). |
+| `docs/security/` | Hardening | `SECURITY_STANDARDS.md` (Panic-free guarantees, payload signing). |
+| `docs/setup/` | Provisioning | `DEVELOPMENT.md` (local machine setup). |
+| `docs/roadmap/` | Lifecycle | `COMPLETION_REPORT.md` (Phase 3.5 final status). |
+| `docs/guides/` | How-Tos | `RISK_MANAGEMENT_GUIDE.md`, `strategy-development.md`, `ERROR_HANDLING_PATTERNS.md`. |
+| `docs/ml/` | Machine Learning | `ML_STRATEGY_GUIDE.md`. |
 
 ---
 
@@ -278,14 +300,15 @@ cd frontend && npm run typecheck && npm run build
 
 | Folder | Ownership | Primary Language | Key Files |
 |---|---|---|---|
-| `tests/unit/python/` | Python Unit Tests | Python | `test_backtest_engine.py`, `test_rust_feature_parity.py` |
-| `tests/unit/` | Rust Unit Tests | Rust | `test_common_types.rs`, `test_risk_manager.rs` |
-| `tests/integration/` | Cross-runtime Integration | Mixed | `test_backtest_signal_flow.py`, `test_websocket.rs` |
-| `tests/e2e/` | Full System Flows | Python | `test_full_system.py` |
-| `tests/observability/` | Go API & Metrics Parity | Python/Go | `test_go_parity.py`, `test_api.py` |
-| `tests/benchmarks/` | Performance Gates | Python/Rust | `backtest_engine_production_benchmark.py` |
-| `tests/ml/` | ML Strategy Validation | Python | `test_feature_engineering.py`, `test_models.py` |
-| `tests/fixtures/` | Test Data & Golden Artifacts | JSON/Parquet | `risk_decision_golden.json` |
+| `tests/unit/python/` | Python Unit Tests | Python | `test_backtest_engine.py`, `test_rust_feature_parity.py`, `test_features.py`, `test_portfolio_controls.py`. |
+| `tests/unit/` | Rust Unit Tests | Rust | `test_common_types.rs`, `test_risk_manager.rs`, `test_orderbook.rs`, `test_execution_router.rs`, `test_slippage.rs`. |
+| `tests/integration/` | Cross-runtime Integration | Mixed | `test_backtest_signal_flow.py` (Python->Rust), `test_websocket.rs` (Rust->Alpaca), `test_duckdb_storage.rs`. |
+| `tests/e2e/` | Full System Flows | Python | `test_full_system.py` (End to end execution validation). |
+| `tests/observability/` | Go API & Metrics Parity | Python/Go | `test_go_parity.py` (Validates Go API responses match legacy Python), `test_api.py`. |
+| `tests/benchmarks/` | Performance Gates | Python/Rust | `backtest_engine_production_benchmark.py` (Ensures performance regressions don't occur). |
+| `tests/ml/` | ML Strategy Validation | Python | `test_feature_engineering.py`, `test_models.py` (Model inference checks). |
+| `tests/property/` | Property-based tests | Rust | `test_order_invariants.rs` (Fuzzing constraints). |
+| `tests/fixtures/` | Test Data & Golden Artifacts | JSON/Parquet | `risk_decision_golden.json`, `phase2/` snapshots for regression testing. |
 
 ---
 **Architect**: Antigravity AI
