@@ -10,6 +10,7 @@
       <sourceFolder url="file://$MODULE_DIR$/frontend" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/go" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ios" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rust" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/rust/common/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/rust/common/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/rust/database/examples" isTestSource="false" />
