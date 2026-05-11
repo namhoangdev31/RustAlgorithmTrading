@@ -1,0 +1,16 @@
+package com.lepos.lepos.enum
+
+enum class NotificationType {
+    NEW_MESSAGE,
+    NEW_COMMENT,
+    NEW_LIKE,
+    NEW_PROPOSAL,
+    PROPOSAL_ACCEPTED,
+    PROPOSAL_REJECTED,
+    CAR_SOLD,
+    INSPECTION_SCHEDULED,
+    INSPECTION_COMPLETED,
+    KYC_APPROVED,
+    KYC_REJECTED,
+    SYSTEM
+}

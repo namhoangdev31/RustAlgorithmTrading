@@ -165,7 +165,46 @@ The platform is fully migrated.
 
 ---
 
-## 7) Frontend Landing Page (`frontend/`)
+## 7) Mobile Apps (Standalone)
+
+### 7.1 Android App (`android/`)
+
+Standalone Android project (Jetpack Compose + Material 3). Migrated from `leposapp/androidApp` with shared module inlined.
+
+| Path | Ownership | Key Components |
+|---|---|---|
+| `android/app/build.gradle.kts` | App build config (all deps inline) | Compose, Firebase, Ktor, Koin |
+| `android/app/src/main/kotlin/.../MainActivity.kt` | Entry point | `MainActivity` |
+| `android/app/src/main/kotlin/.../LeposApp.kt` | Application class | Firebase, Koin init |
+| `android/app/src/main/kotlin/.../core/` | Core utilities (Result, AppError, Dispatchers) | `Result`, `AppError`, `DispatcherProvider` |
+| `android/app/src/main/kotlin/.../data/` | Data layer (DTOs, mappers, network, repos) | `ApiService`, `BundleRepositoryImpl` |
+| `android/app/src/main/kotlin/.../domain/` | Domain models, ports, use cases | `Bundle`, `MiniApp`, `BundleDownloader` |
+| `android/app/src/main/kotlin/.../di/` | DI modules (Koin) | `AndroidModule`, `SharedModule`, `Koin` |
+| `android/app/src/main/kotlin/.../ui/` | All UI screens (Compose) | 30+ screens across features |
+| `android/app/src/main/kotlin/.../runtime/` | WebRuntime + capabilities | `PlatformCapabilities`, `GestureValidator` |
+
+### 7.2 iOS App (`ios/`)
+
+Standalone iOS project (SwiftUI + Liquid Glass). Migrated from `leposapp/iosApp` with native Swift replacing KMP Shared framework.
+
+| Path | Ownership | Key Components |
+|---|---|---|
+| `ios/iosApp.xcodeproj` | Xcode project config | Build settings, SPM deps |
+| `ios/iosApp/iOSApp.swift` | Entry point | `@main iOSApp` |
+| `ios/iosApp/Shared/Core/` | Core (Result, AppError, Dispatchers) | `AppResult`, `AppError`, `AppDispatcher` |
+| `ios/iosApp/Shared/Domain/Models/` | Domain models (native Swift) | `Bundle_`, `MiniApp`, `User`, `FeaturedApp` |
+| `ios/iosApp/Shared/Domain/Repositories.swift` | Repository protocols | `BundleRepository`, `TodayRepository`, `LoginRepository` |
+| `ios/iosApp/Shared/Domain/UseCases.swift` | Use cases | `GetBundlesUseCase`, `DownloadBundleUseCase` |
+| `ios/iosApp/Shared/Data/` | Data layer (networking, mock repos) | `ApiService`, `TokenStorage`, mock impls |
+| `ios/iosApp/Shared/Runtime/` | Runtime capabilities | `PlatformCapabilities`, `GestureValidator` |
+| `ios/iosApp/Shared/Navigation/` | Navigation routing | `Route` enum |
+| `ios/iosApp/DI/` | Dependency injection | `SharedComponent`, `AppDependencyContainer` |
+| `ios/iosApp/Views/` | All UI views (SwiftUI) | 60+ views across features |
+| `ios/iosApp/DesignSystem/` | Design tokens | Colors, Typography, Spacing, LiquidGlass |
+
+---
+
+## 8) Frontend Landing Page (`frontend/`)
 
 | Path | Responsibility | Key components |
 |---|---|---|
@@ -183,7 +222,7 @@ cd frontend && npm run typecheck && npm run build
 
 ---
 
-## 8) Documentation Index (`docs/`)
+## 9) Documentation Index (`docs/`)
 
 | Folder | Focus | Key Authority |
 |---|---|---|
@@ -198,7 +237,7 @@ cd frontend && npm run typecheck && npm run build
 
 ---
 
-## 9) Fast Routing Matrix (Doc -> Code -> Test)
+## 10) Fast Routing Matrix (Doc -> Code -> Test)
 
 | Symptom | Read first | Inspect first | Validate first |
 |---|---|---|---|
@@ -211,7 +250,7 @@ cd frontend && npm run typecheck && npm run build
 
 ---
 
-## 10) Path-Triggered Minimum Tests
+## 11) Path-Triggered Minimum Tests
 
 - `src/api/**` -> `python -m pytest tests/test_alpaca_*.py -q`
 - `src/data/**` -> `python -m pytest tests/unit/python/test_features.py -q`
@@ -226,7 +265,7 @@ cd frontend && npm run typecheck && npm run build
 
 ---
 
-## 11) Maintenance Contract
+## 12) Maintenance Contract
 
 1. Any new project file must be added to this playbook in the same change.
 2. Keep edit scope minimal and owner-centered.
@@ -235,7 +274,7 @@ cd frontend && npm run typecheck && npm run build
 
 ---
 
-## 12) Test Ownership Map (`tests/`)
+## 13) Test Ownership Map (`tests/`)
 
 | Folder | Ownership | Primary Language | Key Files |
 |---|---|---|---|

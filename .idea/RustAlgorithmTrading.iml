@@ -16,7 +16,11 @@
       <sourceFolder url="file://$MODULE_DIR$/rust/signal-bridge/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/rust" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/android" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/frontend" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/go" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/ios" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/.venv" />
       <excludeFolder url="file://$MODULE_DIR$/tests/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/target" />

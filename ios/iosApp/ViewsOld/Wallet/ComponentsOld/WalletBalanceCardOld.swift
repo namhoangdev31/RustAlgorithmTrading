@@ -1,0 +1,75 @@
+import SwiftUI
+// import Shared — replaced by native Swift Shared module
+
+struct WalletBalanceCardOld: View {
+    var balance: Double = 2450.00
+    
+    var body: some View {
+        VStack(spacing: 20) {
+            HStack(alignment: .top) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("TOTAL BALANCE")
+                        .font(.caption)
+                        .fontWeight(.bold)
+                        .foregroundColor(.secondary.opacity(0.8))
+                    
+                    Text(String(format: "$%.2f", balance))
+                        .font(.system(size: 48, weight: .bold))
+                        .foregroundColor(.primary)
+                }
+                
+                Spacer()
+                
+                Button(action: {
+                    // Add money or some other action
+                }) {
+                    Image(systemName: "plus")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                        .frame(width: 50, height: 50)
+                        .background(Color.cyan)
+                        .clipShape(Circle())
+                        .shadow(color: .cyan.opacity(0.3), radius: 10, x: 0, y: 5)
+                }
+            }
+            
+            HStack(spacing: 32) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("CURRENCY")
+                        .font(.caption)
+                        .fontWeight(.bold)
+                        .foregroundColor(.cyan)
+                    Text("USD / United\nStates")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.primary)
+                }
+                
+                Divider().frame(height: 40)
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("STATUS")
+                        .font(.caption)
+                        .fontWeight(.bold)
+                        .foregroundColor(.cyan)
+                    
+                    HStack(spacing: 4) {
+                        Circle()
+                            .fill(Color.green)
+                            .frame(width: 8, height: 8)
+                        Text("Verified\nAccount")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.primary)
+                    }
+                }
+                Spacer()
+            }
+        }
+        .padding(24)
+        .background(Color.white)
+        .cornerRadius(32)
+        .shadow(color: Color.black.opacity(0.05), radius: 15, x: 0, y: 5)
+    }
+}
