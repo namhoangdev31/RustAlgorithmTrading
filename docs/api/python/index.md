@@ -1,10 +1,11 @@
 # Python API Reference
 
-Complete API reference for all Python modules in the py_rt trading system.
+Complete API reference for all Python modules in the RustAlgorithmTrading trading system.
 
 ## Overview
 
 The Python layer provides:
+
 - Trading strategy development
 - Backtesting framework
 - ML model integration
@@ -37,19 +38,22 @@ src/
 ## Quick Links
 
 ### Core Modules
-- [Strategies](strategies.md) - Trading strategy base classes
-- [Backtesting](backtesting.md) - Backtesting engine
-- [Data](data.md) - Data fetching and preprocessing
-- [API Clients](api-clients.md) - External API integrations
+
+- [Strategies](../../../src/strategies/) - Trading strategy base classes
+- [Backtesting](../../../src/backtesting/) - Backtesting engine
+- [Data](../../../src/data/) - Data fetching and preprocessing
+- [API Clients](../../../src/api/) - External API integrations
 
 ### ML Modules
-- [Features](ml/features.md) - Feature engineering
-- [Models](ml/models.md) - ML model classes
-- [Validation](ml/validation.md) - Model validation
+
+- [Features](../../../src/strategies/ml/features/) - Feature engineering
+- [Models](../../../src/strategies/ml/models/) - ML model classes
+- [Validation](../../../src/strategies/ml/validation/) - Model validation
 
 ### Utilities
-- [Logger](utils/logger.md) - Logging configuration
-- [Helpers](utils/helpers.md) - Utility functions
+
+- [Utilities](../../../src/utils/) - Shared helper utilities
+- [Observability Logging](../../../src/observability/logging/) - Logging configuration
 
 ## Installation
 
@@ -367,7 +371,7 @@ uv run pytest tests/unit/python/test_strategies.py
 
 ## Examples
 
-See the [examples/](../../examples/) directory for complete examples:
+See the [ML examples](../../../src/strategies/ml/examples/) directory for complete examples:
 
 - `basic_backtest.py` - Simple strategy backtest
 - `monte_carlo_simulation.py` - Risk analysis
@@ -401,8 +405,8 @@ def generate_signals(data: pd.DataFrame,
 ## Next Steps
 
 - [Rust API Reference](../rust/index.md)
-- [REST API](../rest/index.md)
-- [WebSocket API](../websocket/index.md)
+- [Alpaca API](../ALPACA_API.md)
+- [ZMQ Protocol](../ZMQ_PROTOCOL.md)
 - [Strategy Development Guide](../../guides/strategy-development.md)
 
 ---

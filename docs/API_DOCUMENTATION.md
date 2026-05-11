@@ -1,38 +1,25 @@
-# API Documentation
+## Status Note (Phase 3.5 COMPLETE)
 
-## Status Note (Phase 3)
-
-- Python class-level API docs below remain valid for research/orchestration interfaces.
-- Observability serving has a Go control-plane path in Phase 3.
-- Current operational verdict is documented in:
-  - `docs/roadmap/PHASE3_GO_NO_GO_EVIDENCE.md`
-- ZMQ message contract source of truth:
-  - `docs/api/ZMQ_PROTOCOL.md`
+- **Observability**: Fully migrated to **Go control-plane** (Port 8081). Python collectors have been purged.
+- **Research/Backtesting**: Python remains the standard for strategy development and historical simulations.
+- **Production Evidence**: Documented in `docs/roadmap/COMPLETION_REPORT.md`.
+- **ZMQ Message Contract**: Source of truth remains `docs/api/ZMQ_PROTOCOL.md`.
 
 ---
 
-## Observability Control-Plane API (Go)
+## Observability Control-Plane API (Go Native)
 
-Phase 3 in-scope external endpoints (REST/WS) for dashboard/control-plane:
+Served on **Port 8081**. High-performance Go-native ingestion and serving.
 
-- `GET /health`
-- `GET /health/ready`
-- `GET /health/live`
-- `GET /api/metrics/current`
-- `POST /api/metrics/history`
-- `GET /api/metrics/symbols`
-- `GET /api/metrics/summary`
-- `GET /api/trades/`
-- `GET /api/trades/{trade_id}`
-- `GET /api/trades/stats/summary`
-- `GET /api/trades/execution/quality`
-- `GET /api/system/health`
-- `GET /api/system/performance`
-- `GET /api/system/components`
-- `GET /api/system/logs/recent`
-- `POST /api/system/alerts/acknowledge/{id}`
-- `GET /api/system/stats`
-- `WS /ws/metrics` (10Hz fanout, ping/pong)
+### Primary Endpoints (REST)
+- `GET /health` | `GET /health/ready` | `GET /health/live`
+- `GET /api/metrics/current` - Live snapshot
+- `POST /api/metrics/history` - DuckDB historical query
+- `GET /api/metrics/summary` - Performance metrics (CAGR, Sharpe)
+- `GET /api/trades/` - SQLite trade history
+
+### Streaming (WebSocket)
+- `WS /ws/metrics` - 10Hz fanout of latest system state.
 
 Parity matrix and rollout constraints:
 

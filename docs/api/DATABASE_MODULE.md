@@ -1,18 +1,20 @@
-# Database Module API Documentation
+## Status Note (Phase 3.5 COMPLETE)
 
-## Overview
-
-The database module provides high-performance time-series storage and operational data management using DuckDB and SQLite.
+- **Primary Storage Owner**: The Go control-plane (`go/`) is the authoritative writer and server for observability data.
+- **Database Path**: Standardized to `data/observability.duckdb` for metrics and `data/trades.db` for transactional data.
+- **Python Usage**: Python clients documented below are for **read-only** research, backtesting analysis, and offline reporting. Do not use Python to write metrics in production.
 
 ## Architecture
 
 ```
-src/observability/storage/
-├── __init__.py              # Public API exports
-├── schemas.py               # Data models & SQL schemas
-├── duckdb_client.py         # DuckDB time-series client
-├── sqlite_client.py         # SQLite operational client
-└── integration.py           # Control-plane integration (Go primary, legacy compatibility (retired))
+┌─────────────────────────────────────────────────────────┐
+│               Storage Ownership (Phase 3.5)              │
+├─────────────────────────────────────────────────────────┤
+│    Go Binary (Writer/API)       Python SDK (Analytics)  │
+│    ├─ DuckDB Ingestion         ├─ Research Reports      │
+│    ├─ SQLite Logging           ├─ Backtest Validation   │
+│    └─ REST/WS Serving          └─ Notebook Integration  │
+└─────────────────────────────────────────────────────────┘
 ```
 
 ## DuckDB Client
@@ -632,7 +634,6 @@ async def trading_analytics():
 
 ## References
 
-- **DuckDB Documentation**: https://duckdb.org/docs/
+- **DuckDB Documentation**: <https://duckdb.org/docs/>
 - **Storage Guide**: /docs/STORAGE_GUIDE.md
-- **Migration Guide**: /docs/migration/DUCKDB_MIGRATION.md
-- **Observability Guide**: /docs/observability/DUCKDB_OBSERVABILITY.md
+- **Observability Guide**: /docs/observability/STORAGE_OPERATIONS.md

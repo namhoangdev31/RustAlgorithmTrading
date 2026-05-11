@@ -4,8 +4,8 @@ Updated: 2026-05-08
 Scope: Observability/control-plane serving only
 
 Current status note:
-- This runbook is not yet eligible for GO execution.
-- Refer to `docs/roadmap/PHASE3_GO_NO_GO_EVIDENCE.md` for current blockers and gate outcomes.
+- This runbook is retained as historical cutover procedure and rollback reference.
+- Refer to `docs/roadmap/COMPLETION_REPORT.md` for final migration status.
 
 ## 1) Fixed Decisions
 
@@ -20,7 +20,7 @@ Current status note:
 
 All gates must PASS with evidence in:
 
-- `docs/roadmap/PHASE3_GO_NO_GO_EVIDENCE.md`
+- `docs/roadmap/COMPLETION_REPORT.md`
 
 Required:
 

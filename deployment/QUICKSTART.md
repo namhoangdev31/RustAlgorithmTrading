@@ -128,9 +128,9 @@ On Linux, update Prometheus config:
 ## 📚 Next Steps
 
 - Read [docker/README.md](./README.md) for detailed docs
-- Read [docs/observability/docker-deployment.md](../docs/observability/docker-deployment.md) for advanced config
+- Read [docs/observability/OBSERVABILITY_OVERVIEW.md](../docs/observability/OBSERVABILITY_OVERVIEW.md) for advanced config
 - Configure custom alerts in `docker/prometheus/alerts.yml`
-- Add Grafana dashboards from `docs/grafana/`
+- Add Grafana dashboards from `deployment/grafana/`
 
 ## 💡 Pro Tips
 

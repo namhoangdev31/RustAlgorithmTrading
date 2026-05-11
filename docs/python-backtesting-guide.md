@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes the comprehensive Python backtesting framework implemented for the py_rt algorithmic trading system. The framework follows quantitative research best practices and provides an event-driven architecture for realistic strategy backtesting.
+This document describes the comprehensive Python backtesting framework implemented for the RustAlgorithmTrading algorithmic trading system. The framework follows quantitative research best practices and provides an event-driven architecture for realistic strategy backtesting.
 
 ## Architecture
 

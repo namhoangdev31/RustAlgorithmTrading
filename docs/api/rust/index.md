@@ -1,6 +1,6 @@
 # Rust API Reference
 
-Complete API reference for all Rust crates in the py_rt trading system.
+Complete API reference for all Rust crates in the RustAlgorithmTrading trading system.
 
 ## Overview
 
@@ -41,17 +41,17 @@ rust/
 ## Quick Links
 
 ### Core Crates
-- [common](common/index.md) - Shared types and utilities
-- [market-data](market-data/index.md) - Market data service
-- [signal-bridge](signal-bridge/index.md) - Python integration
-- [risk-manager](risk-manager/index.md) - Risk management
-- [execution-engine](execution-engine/index.md) - Order execution
+- [common](../../../rust/common/) - Shared types and utilities
+- [market-data](../../../rust/market-data/) - Market data service
+- [signal-bridge](../../../rust/signal-bridge/) - Python integration
+- [risk-manager](../../../rust/risk-manager/) - Risk management
+- [execution-engine](../../../rust/execution-engine/) - Order execution
 
 ### Modules
-- [Types](common/types.md) - Domain type definitions
-- [Messaging](common/messaging.md) - ZMQ message protocol
-- [Errors](common/errors.md) - Error handling
-- [Config](common/config.md) - Configuration management
+- [Types](../../../rust/common/src/types.rs) - Domain type definitions
+- [Messaging](../../../rust/common/src/messaging.rs) - ZMQ message protocol
+- [Errors](../../../rust/common/src/errors.rs) - Error handling
+- [Config](../../../rust/common/src/config.rs) - Configuration management
 
 ## Installation
 
@@ -477,8 +477,8 @@ cargo doc --no-deps --document-private-items --open
 ## Next Steps
 
 - [Python API Reference](../python/index.md)
-- [REST API](../rest/index.md)
-- [ZMQ Protocol](../zmq/index.md)
+- [Alpaca API](../ALPACA_API.md)
+- [ZMQ Protocol](../ZMQ_PROTOCOL.md)
 - [Developer Guide](../../developer/contributing.md)
 
 ---

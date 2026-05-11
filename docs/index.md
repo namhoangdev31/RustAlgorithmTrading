@@ -22,7 +22,7 @@ Welcome to the active documentation index.
 
 Weekly gate lifecycle docs are consolidated into:
 
-- `docs/roadmap/FINAL_ROADMAP_SUMMARY.md`
+- `docs/roadmap/COMPLETION_REPORT.md`
 
 ## Current Runtime Posture
 

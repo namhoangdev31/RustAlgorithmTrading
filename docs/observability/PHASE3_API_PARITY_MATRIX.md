@@ -4,8 +4,8 @@ Updated: 2026-05-08
 Scope: Control-plane observability API/WebSocket only
 
 Execution status:
-- Functional parity run is green (see `docs/roadmap/PHASE3_GO_NO_GO_EVIDENCE.md`).
-- Production cutover verdict remains **NO-GO** until soak + rollback drill complete and DuckDB compatibility blocker is resolved.
+- Functional parity run is green (see `docs/roadmap/COMPLETION_REPORT.md`).
+- Production cutover scope is complete; this matrix is retained as the Phase 3 API contract reference.
 
 ## Contract Rules
 

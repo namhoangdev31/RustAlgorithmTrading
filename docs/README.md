@@ -28,7 +28,7 @@ This directory contains active operational documentation for RustAlgorithmTradin
 
 All lifecycle weekly documents are consolidated in:
 
-- `docs/roadmap/FINAL_ROADMAP_SUMMARY.md`
+- `docs/roadmap/COMPLETION_REPORT.md`
 
 ## Conventions
 

@@ -1,8 +1,8 @@
-# py_rt System Architecture: Python-Rust Separation
+# RustAlgorithmTrading System Architecture: Python-Rust Separation
 
 ## Executive Summary
 
-The py_rt algorithmic trading system is designed with a clear separation between:
+The RustAlgorithmTrading algorithmic trading system is designed with a clear separation between:
 - **Python (Offline)**: Research, backtesting, analysis, and strategy development
 - **Rust (Online)**: Low-latency order execution, market data processing, and risk management
 
@@ -372,7 +372,7 @@ fn backtest_strategy(
 }
 
 #[pymodule]
-fn py_rt_core(_py: Python, m: &PyModule) -> PyResult<()> {
+fn RustAlgorithmTrading_core(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(calculate_sma, m)?)?;
     m.add_function(wrap_pyfunction!(backtest_strategy, m)?)?;
     Ok(())
@@ -381,11 +381,11 @@ fn py_rt_core(_py: Python, m: &PyModule) -> PyResult<()> {
 
 **Python Usage**:
 ```python
-import py_rt_core
+import RustAlgorithmTrading_core
 
 # Use Rust-accelerated functions from Python
-sma = py_rt_core.calculate_sma(prices, window=20)
-results = py_rt_core.backtest_strategy(df, strategy, config)
+sma = RustAlgorithmTrading_core.calculate_sma(prices, window=20)
+results = RustAlgorithmTrading_core.backtest_strategy(df, strategy, config)
 ```
 
 ### 3.2 Shared Memory IPC
@@ -685,7 +685,46 @@ DEPLOYMENT CONFIGURATION:
 
 ---
 
-## 5. Technology Stack
+## 5. Go Control-Plane Architecture (Phase 3.5)
+
+### 5.1 Observability Domain
+
+While Rust handles the **Online** trading execution and Python handles the **Offline** research, the system utilizes **Go** for the **Control-Plane** and **Observability** domain.
+
+**Responsibilities**:
+- High-concurrency metrics ingestion (scraping Rust/Python endpoints).
+- Real-time state broadcasting (10Hz WebSocket fanout).
+- Analytical data persistence (DuckDB single-writer management).
+- System health and performance monitoring API.
+
+### 5.2 Why Go for the Control Plane?
+
+1. **Concurrency**: Go's goroutines enable extremely efficient WebSocket fanout to hundreds of concurrent clients with minimal latency.
+2. **Lifecycle Decoupling**: Keeping the monitoring service in a separate runtime ensures that even if the Rust trading engine restarts or the Python research suite is offline, the monitoring dashboard remains functional.
+3. **DuckDB Integration**: The Go DuckDB driver provides a robust, single-writer interface that is ideal for managing the analytical time-series database.
+4. **Static Binary**: Go's static compilation simplifies deployment and reduces the production RAM footprint compared to a Python-based API.
+
+### 5.3 Communication Topology
+
+```
+┌──────────────┐       ┌──────────────┐       ┌──────────────┐
+│  RUST CORE   │       │ PYTHON ML    │       │ GO CONTROL   │
+│  (Ingestion) │       │ (Research)   │       │ (Monitoring) │
+└──────┬───────┘       └──────┬───────┘       └──────▲───────┘
+       │                      │                      │
+       │ HTTP Metrics (:9091) │ HTTP Metrics (:9092) │ Scrape (1s)
+       └──────────────────────┴──────────┬───────────┘
+                                         │
+                                         ▼
+                               ┌──────────────────┐
+                               │ DUCKDB STORAGE   │
+                               │ (Analytical)     │
+                               └──────────────────┘
+```
+
+---
+
+## 6. Technology Stack
 
 ### 5.1 Python Stack
 

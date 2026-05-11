@@ -1,8 +1,9 @@
 # Integration Patterns & Event Flow
 ## Rust Algorithmic Trading System
 
-**Document Version:** 1.0
+**Document Version:** 1.5.0 (Phase 3.5 Hardened)
 **Created:** 2025-10-14
+**Updated:** 2026-05-10
 **Author:** System Architect Agent (Hive Mind Swarm)
 
 ---
@@ -32,7 +33,7 @@ Market Data Feed ─────PUB──────> [tcp://localhost:5555]
                                         ├─SUB─> Market Data Store
                                         ├─SUB─> Signal Generator
                                         ├─SUB─> Feature Engine
-                                        └─SUB─> Metrics Collector
+                                        └─SUB─> Metrics Collector (Go)
 
 Signal Generator ─────REQ──────> [tcp://localhost:5556] (Risk Manager)
                   <────REP───────
@@ -46,9 +47,9 @@ Execution Engine ─────PUSH─────> [tcp://localhost:5557]
                                                     │
                                                     └──> Risk Manager (position updates)
 
-All Components ───────> Prometheus Endpoint (HTTP :9090/metrics)
-All Components ───────> Grafana Dashboard (HTTP :3000)
-All Components ───────> Jaeger Tracing (UDP :6831)
+All Components ───────> Go Control-Plane (HTTP :8081/metrics scraper)
+Go Control-Plane ─────> DuckDB Persistence (data/observability.duckdb)
+Go Control-Plane ─────> WebSocket Clients (10Hz Fanout)
 ```
 
 ### 1.2 Integration Principles
@@ -59,7 +60,7 @@ All Components ───────> Jaeger Tracing (UDP :6831)
 | **Event-Driven** | PUB/SUB for broadcasts | Scalable to multiple consumers |
 | **Request-Reply** | REQ/REP for synchronous checks | Deterministic risk validation |
 | **Idempotency** | UUID-based message IDs | Safe retries without duplicates |
-| **Observability** | Structured logging + metrics | Full system visibility |
+| **Observability** | Go-native Control-Plane | Centralized metrics, low-latency fanout |
 
 ---
 

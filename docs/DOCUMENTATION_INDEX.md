@@ -1,7 +1,7 @@
 # Documentation Index
 
 Status: Operational Static Canon  
-Updated: 2026-05-05
+Updated: 2026-05-11
 
 This index is organized for production maintenance, not weekly gate execution.
 
@@ -14,8 +14,7 @@ This index is organized for production maintenance, not weekly gate execution.
 
 ## 2) Runtime Operations
 
-- `docs/operations/OPERATIONS_RUNBOOK.md`
-- `docs/operations/DISASTER_RECOVERY.md`
+- `docs/operations/OPERATIONS_GUIDE.md`
 - `docs/deployment/PRODUCTION_DEPLOYMENT.md`
 - `docs/setup/DEVELOPMENT.md`
 
@@ -33,7 +32,7 @@ This index is organized for production maintenance, not weekly gate execution.
 
 - `docs/observability/BACKEND_API.md`
 - `docs/STORAGE_GUIDE.md`
-- `docs/DATA_MANAGEMENT.md`
+- `docs/observability/STORAGE_OPERATIONS.md`
 
 ## 5) Testing & Quality
 
@@ -48,7 +47,7 @@ This index is organized for production maintenance, not weekly gate execution.
 
 Weekly operation packs are consolidated in:
 
-- `docs/roadmap/FINAL_ROADMAP_SUMMARY.md`
+- `docs/roadmap/COMPLETION_REPORT.md`
 
 ## 8) Documentation Health Notes
 

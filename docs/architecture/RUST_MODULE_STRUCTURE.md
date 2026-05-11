@@ -1,10 +1,16 @@
-# Rust Module Structure for DuckDB Database Layer
+# Rust Module Structure for Database Layer (Phase 3.5 Update)
 
-**Date**: October 21, 2025
-**Author**: Hive Mind Architecture Agent
-**Purpose**: Define complete Rust module organization for DuckDB integration
+**Date**: May 10, 2026
+**Status**: ✅ Operational (Tri-Runtime Integrated)
 
----
+## Overview
+
+The Rust database layer provides high-performance storage access for trading operations. In Phase 3.5, this layer has been integrated with the **Go Control-Plane** for unified observability.
+
+**Primary Ownership (Phase 3.5)**:
+- **Go Control-Plane**: Authoritative writer for `trading_metrics` (DuckDB) and primary REST/WS API server.
+- **Rust Services**: Authoritative writers for operational data (`trades`, `positions`, `audit_logs`) via the `database` crate documented below.
+- **Shared Storage**: Both runtimes operate on the same data files (`data/observability.duckdb` and `data/trades.db`).
 
 ## 1. Directory Structure
 

@@ -1,156 +1,53 @@
-# ML Trading Strategy - Quick Start Guide
+# ML Trading Strategy - Quick Start
+## Get started in 5 minutes (Phase 3.5)
 
-Get started with ML-based trading strategies in 5 minutes!
-
-## Installation
+### 1. Environment Setup
+We recommend using `uv` for fast dependency management.
 
 ```bash
-# Install Python dependencies
-pip install -r config/ml/requirements.txt
+# Sync dependencies
+uv sync
 
-# Or use uv (recommended)
-uv pip install scikit-learn numpy pandas matplotlib pytest
+# Verify ML components
+pytest tests/ml/ -v
 ```
 
-## Quick Example
-
-### 1. Import Libraries
-
-```python
-from strategies.ml import FeatureEngineer, PricePredictor, ModelValidator
-import pandas as pd
-```
-
-### 2. Load Data
-
-```python
-# Load your OHLCV data
-df = pd.read_csv('your_data.csv', index_col=0, parse_dates=True)
-
-# Or use the example with synthetic data
-from strategies.ml.examples.ml_strategy_example import MLTradingStrategy
-
-strategy = MLTradingStrategy('AAPL')
-strategy.load_data()  # Generates synthetic data
-```
-
-### 3. Engineer Features
-
-```python
-strategy.engineer_features()
-strategy.prepare_datasets()
-```
-
-### 4. Train and Validate
-
-```python
-results = strategy.train_models(validation_method='walk_forward')
-```
-
-### 5. Generate Signals and Backtest
-
-```python
-signals = strategy.generate_signals(confidence_threshold=0.6)
-backtest_results = strategy.backtest(signals)
-```
-
-## Run Complete Example
+### 2. Run the Reference Strategy
+The project includes a complete end-to-end example that generates synthetic data, trains a model, and performs a backtest.
 
 ```bash
 python src/strategies/ml/examples/ml_strategy_example.py
 ```
 
-## Expected Output
+### 3. Core Implementation Pattern
+To build your own strategy, follow the `FeatureEngineer` -> `Model` -> `SignalFrame` pattern.
 
-```
-==============================================================
-ML TRADING STRATEGY EXAMPLE
-==============================================================
-Loaded 1000 bars of AAPL data
-Engineering features...
-Created 87 features
-Preparing datasets...
-Dataset shape: (918, 87)
+```python
+import pandas as pd
+from src.strategies.ml.features.feature_engineering import FeatureEngineer
+from src.strategies.ml.models.trend_classifier import TrendClassifier
 
-==============================================================
-TRAINING MODELS
-==============================================================
+# 1. Prepare Data
+df = pd.read_csv("your_data.csv")
+fe = FeatureEngineer()
+features = fe.engineer_features(df)
+X, y = fe.prepare_ml_dataset(features)
 
-1. Training Price Prediction Model...
-==============================================================
-MODEL VALIDATION REPORT
-==============================================================
-Method: walk_forward
-Number of folds: 5
+# 2. Train
+model = TrendClassifier(model_type="random_forest")
+model.train(X, y)
 
-Average Test Metrics:
-  test_mse: 0.0004 (±0.0001)
-  test_r2: 0.6523 (±0.1234)
-
-2. Training Trend Classification Model...
-==============================================================
-Test Metrics:
-  test_accuracy: 0.6234
-  test_precision: 0.6123
-  test_f1: 0.5987
-
-==============================================================
-BACKTESTING
-==============================================================
-Initial Capital: $100,000.00
-Final Value:     $112,345.67
-Total Return:    12.35%
-Annual Return:   45.23%
-Sharpe Ratio:    1.85
-Max Drawdown:    -8.45%
-Number of Trades: 234
-Win Rate:        55.67%
+# 3. Generate Signal Frame
+# This frame is compatible with the Rust Simulation Kernel
+signals = model.generate_signal_frame(df)
 ```
 
-## Next Steps
-
-1. **Customize Features**: Edit `FeatureConfig` to add your own indicators
-2. **Try Different Models**: Test `gradient_boosting`, `ridge`, `lasso`
-3. **Tune Hyperparameters**: Optimize model parameters
-4. **Add Risk Management**: Implement position sizing and stop losses
-5. **Deploy to Production**: Integrate with your trading system
-
-## Common Issues
-
-### ImportError: No module named 'sklearn'
-
-```bash
-pip install scikit-learn
-```
-
-### TA-Lib installation fails
-
-TA-Lib is optional. If you encounter issues:
-```bash
-# Remove ta-lib from requirements
-# Or install system dependency first:
-# Ubuntu: sudo apt-get install ta-lib
-# Mac: brew install ta-lib
-```
-
-### Low model accuracy
-
-- Increase training data (aim for >1000 samples)
-- Add more relevant features
-- Try different models
-- Use walk-forward validation
-- Check for data quality issues
-
-## Resources
-
-- [Full Documentation](ML_STRATEGY_GUIDE.md)
-- [Example Code](../src/strategies/ml/examples/)
-- [Unit Tests](../tests/ml/)
-
-## Support
-
-For issues or questions, see the main repository documentation.
+### 4. Integration with Rust Kernel
+To use your ML model in production:
+1. Save the model to `src/models/my_model.joblib`.
+2. Configure your strategy in `config/strategies.yaml` to point to this model.
+3. The **Rust Signal Bridge** will automatically load the model for inference.
 
 ---
-
-Happy Trading! 🚀
+**Architect**: Antigravity AI
+**Updated**: May 11, 2026

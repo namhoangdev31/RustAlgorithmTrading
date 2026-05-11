@@ -1,10 +1,11 @@
 # Detailed System Architecture Design
 ## Rust Algorithmic Trading System
 
-**Document Version:** 1.0
+**Document Version:** 1.5.0 (Phase 3.5 Hardened)
 **Created:** 2025-10-14
+**Updated:** 2026-05-10
 **Author:** System Architect Agent (Hive Mind Swarm)
-**Status:** Design Complete - Ready for Implementation
+**Status:** Production Ready - Tri-Runtime Integrated
 
 ---
 
@@ -18,7 +19,7 @@ This document provides the detailed system architecture for a production-ready a
 - **Observability** with comprehensive metrics, tracing, and logging
 - **Financial precision** using fixed-point arithmetic for all monetary calculations
 
-The architecture follows a **microservices-inspired pattern** with loosely coupled components communicating via ZeroMQ message queues, enabling independent scaling, testing, and deployment.
+The architecture follows a **Tri-Runtime Pattern** (Rust/Python/Go) with loosely coupled components communicating via ZeroMQ and hardened by a Go-native control plane for observability.
 
 ---
 
@@ -118,12 +119,12 @@ The architecture follows a **microservices-inspired pattern** with loosely coupl
                 └──────────────────┘
 
         ═══════════════════════════════════════════
-                 OBSERVABILITY LAYER
+                 GO OBSERVABILITY LAYER
         ═══════════════════════════════════════════
 
         ┌──────────────┐  ┌──────────────┐  ┌──────────────┐
-        │  Prometheus  │  │   Grafana    │  │    Tracing   │
-        │  (Metrics)   │  │ (Dashboard)  │  │  (Jaeger)    │
+        │  GO SCRAPER  │──▶ DUCKDB STORE │──▶ WEBSOCKET HUB│
+        │  (Port 8081) │  │ (Analytical) │  │  (Real-time) │
         └──────────────┘  └──────────────┘  └──────────────┘
 ```
 
@@ -140,15 +141,14 @@ The architecture follows a **microservices-inspired pattern** with loosely coupl
 
 ### 1.3 Technology Stack Summary
 
-| Layer | Primary Tech | Alternatives | Rationale |
-|-------|-------------|--------------|-----------|
-| Runtime | Tokio (async) | async-std | Most mature, best ecosystem |
-| Data Structures | DashMap, crossbeam | parking_lot | Lock-free for hot paths |
-| Serialization | serde, simd-json | bincode | JSON for API, bincode for IPC |
-| Messaging | ZeroMQ | Redis Streams | Lowest latency, simple |
-| Metrics | Prometheus | StatsD | Industry standard, pull model |
-| Logging | tracing | slog | Structured, async-friendly |
-| Testing | Criterion, proptest | - | Performance + properties |
+| Layer | Primary Tech | Rationale |
+|-------|-------------|-----------|
+| Runtime | Rust (Tokio) | Low-latency, memory safe execution kernel |
+| Research | Python (uv) | High-velocity research & ML development |
+| Control | Go (1.22+) | High-concurrency metrics fanout (Port 8081) |
+| Storage | DuckDB / SQLite | Columnar analytics + Transactional integrity |
+| Messaging | ZeroMQ | Sub-10μs inter-process communication |
+| Metrics | OpenMetrics | Exported by Rust, scraped by Go |
 
 ---
 
@@ -1806,47 +1806,18 @@ services:
     networks:
       - trading-net
 
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: trading-prometheus
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--storage.tsdb.retention.time=30d'
+  observability:
+    build:
+      context: .
+      dockerfile: go/Dockerfile
+    container_name: trading-observability
     ports:
-      - "9090:9090"
+      - "8081:8081"
     volumes:
-      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-      - prometheus-data:/prometheus
+      - ./data:/data
     restart: unless-stopped
     networks:
       - trading-net
-
-  grafana:
-    image: grafana/grafana:latest
-    container_name: trading-grafana
-    ports:
-      - "3000:3000"
-    environment:
-      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
-      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource
-    volumes:
-      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
-      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources:ro
-      - grafana-data:/var/lib/grafana
-    restart: unless-stopped
-    depends_on:
-      - prometheus
-    networks:
-      - trading-net
-
-networks:
-  trading-net:
-    driver: bridge
-
-volumes:
-  prometheus-data:
-  grafana-data:
 ```
 
 ### 8.2 Multi-Stage Docker Build
