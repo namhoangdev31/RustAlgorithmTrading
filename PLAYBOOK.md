@@ -165,7 +165,25 @@ The platform is fully migrated.
 
 ---
 
-## 7) Documentation Index (`docs/`)
+## 7) Frontend Landing Page (`frontend/`)
+
+| Path | Responsibility | Key components |
+|---|---|---|
+| `frontend/app/page.tsx` | Landing page composition | Hero, benefits, features, template, proof, plans, contact, FAQ, footer |
+| `frontend/app/globals.css` | Tailwind/shadcn theme tokens | Light/dark trading platform palette |
+| `frontend/components/layout/` | Page shell and section components | Navbar, theme provider, landing sections |
+| `frontend/components/ui/` | shadcn source components | Button, Card, Sheet, NavigationMenu, Accordion, Form primitives |
+| `frontend/public/` | Static landing assets | Favicon |
+
+Validate with:
+
+```bash
+cd frontend && npm run typecheck && npm run build
+```
+
+---
+
+## 8) Documentation Index (`docs/`)
 
 | Folder | Focus | Key Authority |
 |---|---|---|
@@ -180,7 +198,7 @@ The platform is fully migrated.
 
 ---
 
-## 8) Fast Routing Matrix (Doc -> Code -> Test)
+## 9) Fast Routing Matrix (Doc -> Code -> Test)
 
 | Symptom | Read first | Inspect first | Validate first |
 |---|---|---|---|
@@ -193,7 +211,7 @@ The platform is fully migrated.
 
 ---
 
-## 9) Path-Triggered Minimum Tests
+## 10) Path-Triggered Minimum Tests
 
 - `src/api/**` -> `python -m pytest tests/test_alpaca_*.py -q`
 - `src/data/**` -> `python -m pytest tests/unit/python/test_features.py -q`
@@ -204,10 +222,11 @@ The platform is fully migrated.
 - `rust/risk-manager/**` -> `cd rust && cargo test -p risk-manager`
 - `rust/execution-engine/**` -> `cd rust && cargo test -p execution-engine`
 - `go/**` -> `cd go && go test ./...`
+- `frontend/**` -> `cd frontend && npm run typecheck && npm run build`
 
 ---
 
-## 10) Maintenance Contract
+## 11) Maintenance Contract
 
 1. Any new project file must be added to this playbook in the same change.
 2. Keep edit scope minimal and owner-centered.
@@ -216,7 +235,7 @@ The platform is fully migrated.
 
 ---
 
-## 11) Test Ownership Map (`tests/`)
+## 12) Test Ownership Map (`tests/`)
 
 | Folder | Ownership | Primary Language | Key Files |
 |---|---|---|---|
