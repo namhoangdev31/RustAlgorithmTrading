@@ -27,5 +27,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "LeposAndroid"
+rootProject.name = "RustAlgorithmTrading"
 include(":app")
