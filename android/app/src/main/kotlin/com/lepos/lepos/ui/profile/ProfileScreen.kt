@@ -26,6 +26,9 @@ fun ProfileScreen(
     onNavigateToMyReviews: () -> Unit,
     onNavigateToNotifications: () -> Unit,
     onNavigateToSupport: () -> Unit,
+    onNavigateToAccountOverview: () -> Unit,
+    onNavigateToAbout: () -> Unit,
+    onNavigateToActivity: () -> Unit,
     onLogout: () -> Unit
 ) {
     Scaffold(
@@ -39,7 +42,7 @@ fun ProfileScreen(
         ) {
             ProfileHeader(onSettingsClick = onNavigateToSettings)
             
-            UserInfo()
+            UserInfo(onClick = onNavigateToAccountOverview)
             
             DashboardStats()
             
@@ -100,6 +103,8 @@ fun ProfileScreen(
                 onMyReviewsClick = onNavigateToMyReviews,
                 onNotificationsClick = onNavigateToNotifications,
                 onSupportClick = onNavigateToSupport,
+                onActivityClick = onNavigateToActivity,
+                onAboutClick = onNavigateToAbout,
                 onLogoutClick = onLogout
             )
             

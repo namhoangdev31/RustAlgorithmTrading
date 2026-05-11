@@ -36,24 +36,24 @@ struct SettingsGridView: View {
             .buttonStyle(PlainButtonStyle())
 
             Button(action: {
-                // Placeholder
+                navigation.navigate(to: .activity)
+            }) {
+                SettingsCard(
+                    title: "Activity",
+                    subtitle: "Logs & History",
+                    icon: "clock.arrow.circlepath",
+                    iconColor: .orange
+                )
+            }
+            .buttonStyle(PlainButtonStyle())
+
+            Button(action: {
+                // Placeholder for security
             }) {
                 SettingsCard(
                     title: "Security",
                     subtitle: "2FA & Privacy",
                     icon: "shield.fill",
-                    iconColor: .blue
-                )
-            }
-            .buttonStyle(PlainButtonStyle())
-            
-            Button(action: {
-                // Placeholder
-            }) {
-                SettingsCard(
-                    title: "Payments",
-                    subtitle: "Saved Cards",
-                    icon: "creditcard.fill",
                     iconColor: .blue
                 )
             }

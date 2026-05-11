@@ -1,23 +1,30 @@
 import SwiftUI
 
 struct UserInfoView: View {
+    @EnvironmentObject var navigation: NavigationViewModel
+    
     var body: some View {
         VStack(spacing: 16) {
             // Avatar with Premium Badge
             ZStack(alignment: .bottom) {
-                Circle()
-                    .stroke(LinearGradient(colors: [.blue, .purple], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 3)
-                    .frame(width: 106, height: 106)
-                    .overlay(
-                        Image(systemName: "person.fill") // Placeholder for actual avatar
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .padding(20)
-                            .foregroundColor(.gray)
-                            .background(Color(.systemGray6))
-                            .clipShape(Circle())
-                            .frame(width: 100, height: 100)
-                    )
+                Button(action: {
+                    navigation.navigate(to: .accountOverview)
+                }) {
+                    Circle()
+                        .stroke(LinearGradient(colors: [.blue, .purple], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 3)
+                        .frame(width: 106, height: 106)
+                        .overlay(
+                            Image(systemName: "person.fill") // Placeholder for actual avatar
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .padding(20)
+                                .foregroundColor(.gray)
+                                .background(Color(.systemGray6))
+                                .clipShape(Circle())
+                                .frame(width: 100, height: 100)
+                        )
+                }
+                .buttonStyle(PlainButtonStyle())
                 
                 Text("PREMIUM")
                     .font(.caption2)

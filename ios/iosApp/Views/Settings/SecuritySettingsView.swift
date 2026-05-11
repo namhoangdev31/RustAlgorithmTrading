@@ -19,13 +19,19 @@ struct SecuritySettingsView: View {
             }
             
             Section(header: Text("Activity")) {
-                NavigationLink(destination: Text("Login Activity View")) {
+                Button(action: {
+                    navigation.navigate(to: .activity)
+                }) {
                     HStack {
                         Text("Recent Login Activity")
+                            .foregroundColor(.primary)
                         Spacer()
                         Text("Safe")
                             .foregroundColor(.green)
                             .font(.caption)
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .foregroundColor(.gray)
                     }
                 }
             }

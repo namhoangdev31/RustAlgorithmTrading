@@ -16,7 +16,8 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SecuritySettingsScreen(
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    onNavigateToActivity: () -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     var twoFactorEnabled by remember { mutableStateOf(false) }
@@ -94,7 +95,7 @@ fun SecuritySettingsScreen(
                             Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null)
                         }
                     },
-                    modifier = Modifier.clickable { /* Navigate */ }
+                    modifier = Modifier.clickable { onNavigateToActivity() }
                 )
             }
             

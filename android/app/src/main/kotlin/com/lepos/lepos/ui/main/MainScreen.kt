@@ -38,6 +38,8 @@ fun MainScreen(
     onNavigateToTopCharts: () -> Unit,
     onNavigateToSupport: () -> Unit,
     onLogout: () -> Unit,
+    onNavigateToAccountOverview: () -> Unit,
+    onNavigateToAbout: () -> Unit,
     onItemClick: (String) -> Unit
 ) {
     var selectedItem by remember { mutableIntStateOf(0) }
@@ -108,6 +110,9 @@ fun MainScreen(
                     onNavigateToMyReviews = onNavigateToMyReviews,
                     onNavigateToNotifications = onNavigateToNotifications,
                     onNavigateToSupport = onNavigateToSupport,
+                    onNavigateToAccountOverview = onNavigateToAccountOverview,
+                    onNavigateToAbout = onNavigateToAbout,
+                    onNavigateToActivity = onNavigateToActivity,
                     onLogout = onLogout
                 )
 

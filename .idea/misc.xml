@@ -4,5 +4,8 @@
     <option name="sdkName" value="Python 3.12 (RustAlgorithmTrading)" />
   </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_26" project-jdk-name="Python 3.12 (RustAlgorithmTrading)" project-jdk-type="Python SDK" />
+  <component name="FrameworkDetectionExcludesConfiguration">
+    <file type="web" url="file://$PROJECT_DIR$/android/app" />
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_26" project-jdk-name="homebrew-17" project-jdk-type="JavaSDK" />
 </project>

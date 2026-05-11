@@ -68,6 +68,12 @@ fun AppNavigation() {
                 onNavigateToSupport = {
                     navController.navigate(Route.HelpSupport)
                 },
+                onNavigateToAccountOverview = {
+                    navController.navigate(Route.AccountOverview)
+                },
+                onNavigateToAbout = {
+                    navController.navigate(Route.AboutApp)
+                },
                 onLogout = {
                     navController.navigate(Route.Login) {
                         popUpTo(Route.Main) { inclusive = true }
@@ -175,6 +181,17 @@ fun AppNavigation() {
             com.lepos.lepos.ui.profile.EditProfileScreen(
                 onNavigateBack = {
                     navController.popBackStack()
+                }
+            )
+        }
+
+        composable<Route.AccountOverview> {
+            com.lepos.lepos.ui.profile.AccountOverviewScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onEditProfile = {
+                    navController.navigate(Route.EditProfile)
                 }
             )
         }
@@ -379,7 +396,8 @@ fun AppNavigation() {
 
         composable<Route.Security> {
             com.lepos.lepos.ui.settings.SecuritySettingsScreen(
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToActivity = { navController.navigate(Route.Activity) }
             )
         }
 

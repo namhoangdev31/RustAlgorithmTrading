@@ -14,6 +14,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CreditCard
 import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.filled.Help
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Security
@@ -35,6 +37,8 @@ fun SettingsGrid(
     onMyReviewsClick: () -> Unit,
     onNotificationsClick: () -> Unit,
     onSupportClick: () -> Unit,
+    onActivityClick: () -> Unit,
+    onAboutClick: () -> Unit,
     onLogoutClick: () -> Unit
 ) {
     Column(
@@ -72,17 +76,19 @@ fun SettingsGrid(
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             SettingsCard(
-                title = "Security",
-                subtitle = "2FA & Privacy",
-                icon = Icons.Default.Security,
-                iconColor = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.weight(1f)
+                title = "Activity",
+                subtitle = "Logs & History",
+                icon = Icons.Default.History,
+                iconColor = Color(0xFFFF9500), // Orange
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable(onClick = onActivityClick)
             )
 
             SettingsCard(
-                title = "Payments",
-                subtitle = "Saved Cards",
-                icon = Icons.Default.CreditCard,
+                title = "Security",
+                subtitle = "2FA & Privacy",
+                icon = Icons.Default.Security,
                 iconColor = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.weight(1f)
             )
@@ -95,26 +101,38 @@ fun SettingsGrid(
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             SettingsCard(
+                title = "About",
+                subtitle = "App Info",
+                icon = Icons.Default.Info,
+                iconColor = Color(0xFF8E8E93), // Gray
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable(onClick = onAboutClick)
+            )
+
+            SettingsCard(
                 title = "Support",
                 subtitle = "24/7 Concierge",
-                icon = Icons.Default.Info,
+                icon = Icons.Default.Help,
                 iconColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier
                     .weight(1f)
                     .clickable(onClick = onSupportClick)
             )
-
-            SettingsCard(
-                title = "Log out",
-                subtitle = "Switch account",
-                icon = Icons.Default.ExitToApp,
-                iconColor = MaterialTheme.colorScheme.error,
-                isDestructive = true,
-                modifier = Modifier
-                    .weight(1f)
-                    .clickable(onClick = onLogoutClick)
-            )
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        SettingsCard(
+            title = "Log out",
+            subtitle = "Switch account",
+            icon = Icons.Default.ExitToApp,
+            iconColor = MaterialTheme.colorScheme.error,
+            isDestructive = true,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onLogoutClick)
+        )
     }
 }
 
