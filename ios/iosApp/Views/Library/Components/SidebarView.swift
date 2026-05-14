@@ -84,7 +84,7 @@ extension View {
     @ViewBuilder
     func applyGlassEffect() -> some View {
         if #available(iOS 26.0, *) {
-            self.glassEffect(in: .rect(cornerRadius: 5))
+            self.adaptiveGlass(cornerRadius: 5)
         } else {
             self.background(.ultraThinMaterial)
         }

@@ -29,13 +29,5 @@ let package = Package(
                 .process("Fixtures")
             ]
         ),
-        .testTarget(
-            name: "SwiftUIInternalKitTests",
-            dependencies: ["AdaptiveSwiftUi"],
-            path: "Tests/SwiftUIInternalKitTests",
-            resources: [
-                .process("Fixtures")
-            ]
-        ),
     ]
 )

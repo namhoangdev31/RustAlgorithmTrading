@@ -1,5 +1,4 @@
 import Foundation
-import Shared // Assuming framework name is Shared. If it was ComposeApp, we might need to change implementation
 
 @MainActor
 class LoginViewModel: ObservableObject {
@@ -19,28 +18,35 @@ class LoginViewModel: ObservableObject {
         isLoading = true
         error = nil
         
-        do {
-            let result = try await loginUseCase.execute(email: email, password: password)
-            
-            if let success = result as? DomainResultSuccess<KotlinBoolean> {
-                // Assuming data is KotlinBoolean or plain Bool depending on interop
-                // For simplicity, treating existence of success as true since login returns Boolean
-                let isSuccess = success.data?.boolValue ?? false
-                if isSuccess {
-                    isLoggedIn = true
-                } else {
-                    self.error = "Login failed"
-                }
-            } else if let errorResult = result as? DomainResultError {
-                self.error = errorResult.message
+        let result = await loginUseCase.login(email: email, password: password)
+
+        if result.isSuccess {
+            if result.data == true {
+                isLoggedIn = true
             } else {
-                 self.error = "Unknown result type"
+                error = "Login failed"
             }
-            
-            isLoading = false
-        } catch {
-            isLoading = false
-            self.error = error.localizedDescription
+        } else if let appError = result.error {
+            error = message(for: appError)
+        } else {
+            error = "Unknown login error"
+        }
+
+        isLoading = false
+    }
+
+    private func message(for error: AppError) -> String {
+        switch error {
+        case .networkError(let message, _):
+            return message ?? "Network error"
+        case .serverError(_, let message):
+            return message ?? "Server error"
+        case .databaseError(let message, _):
+            return message ?? "Database error"
+        case .unknownError(let message, _):
+            return message ?? "Unknown error"
+        case .validationError(let message):
+            return message ?? "Validation error"
         }
     }
 }

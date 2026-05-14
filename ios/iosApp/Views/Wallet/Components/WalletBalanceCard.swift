@@ -9,7 +9,7 @@ struct WalletBalanceCard: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("TOTAL BALANCE")
                         .font(.caption)
-                        .fontWeight(.bold)
+                        
                         .foregroundColor(.secondary.opacity(0.8))
                     
                     Text(String(format: "$%.2f", balance))
@@ -24,7 +24,7 @@ struct WalletBalanceCard: View {
                 }) {
                     Image(systemName: "plus")
                         .font(.title2)
-                        .fontWeight(.bold)
+                        
                         .foregroundColor(.white)
                         .frame(width: 50, height: 50)
                         .background(Color.cyan)
@@ -37,7 +37,7 @@ struct WalletBalanceCard: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("CURRENCY")
                         .font(.caption)
-                        .fontWeight(.bold)
+                        
                         .foregroundColor(.cyan)
                     Text("USD / United\nStates")
                         .font(.subheadline)
@@ -50,7 +50,7 @@ struct WalletBalanceCard: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("STATUS")
                         .font(.caption)
-                        .fontWeight(.bold)
+                        
                         .foregroundColor(.cyan)
                     
                     HStack(spacing: 4) {

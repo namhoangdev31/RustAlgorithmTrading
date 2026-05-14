@@ -228,7 +228,7 @@ enum AppRoute: Hashable, Identifiable {
 }
 
 class NavigationViewModel: ObservableObject {
-    @Published var path = NavigationPath()
+    @Published var path: [AppRoute] = []
     @Published var presentedSheet: AppRoute? = nil
     
     // Store actions that cannot be passed via Hashable routes
@@ -259,12 +259,12 @@ class NavigationViewModel: ObservableObject {
     
     func goBack() {
         if !path.isEmpty {
-            path.removeLast()
+            _ = path.popLast()
         }
     }
     
     func reset() {
-        path = NavigationPath()
+        path = []
         presentedSheet = nil
         pendingSystemAction = nil
     }

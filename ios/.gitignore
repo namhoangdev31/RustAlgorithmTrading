@@ -10,6 +10,7 @@ build/
 
 # SPM
 .build/
+.swiftpm/xcode/xcuserdata/
 Package.resolved
 
 # CocoaPods

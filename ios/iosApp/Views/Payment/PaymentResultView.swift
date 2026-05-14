@@ -21,7 +21,7 @@ struct PaymentResultView: View {
                     VStack(spacing: 8) {
                         Text(type == .success ? "Payment Successful" : "Payment Failed")
                             .font(.title)
-                            .fontWeight(.bold)
+                            
                         
                         Text(type == .success ?
                              "Your transaction has been processed\nand your mini-app is ready to use." :
@@ -80,11 +80,11 @@ struct PaymentResultView: View {
         }
         .navigationBarBackButtonHidden(true)
         .toolbar {
-            if type == .failure {
-                ToolbarItem(placement: .topBarLeading) {
-                   Button("Account", systemImage: "multiply", action: {
-                    navigation.goBack()
-                })
+            ToolbarItem(placement: .navigationBarLeading) {
+                if type == .failure {
+                    Button("Account", systemImage: "multiply", action: {
+                        navigation.goBack()
+                    })
                 }
             }
         }

@@ -1,0 +1,187 @@
+name: iOS AdaptiveSwiftUi Library CI
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'ios/Libraries/AdaptiveSwiftUi/**'
+      - 'ios/iosApp/**'
+      - 'ios/iosApp.xcodeproj/**'
+      - 'ios/scripts/ios/package_ci.sh'
+      - '.github/workflows/ios-adaptive-swiftui.yml'
+  push:
+    branches: [main, develop]
+    tags:
+      - 'v*'
+    paths:
+      - 'ios/Libraries/AdaptiveSwiftUi/**'
+      - 'ios/iosApp/**'
+      - 'ios/iosApp.xcodeproj/**'
+      - 'ios/scripts/ios/package_ci.sh'
+      - '.github/workflows/ios-adaptive-swiftui.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: adaptive-swiftui-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  lint-and-format:
+    name: Lint and Format Gate
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: SwiftFormat (optional)
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -f ios/.swiftformat || -f .swiftformat ]]; then
+            brew install swiftformat
+            swiftformat --lint ios/Libraries/AdaptiveSwiftUi/Sources ios/Libraries/AdaptiveSwiftUi/Tests
+          else
+            echo "No .swiftformat config found; skipping SwiftFormat gate."
+          fi
+
+      - name: SwiftLint (optional)
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -f ios/.swiftlint.yml || -f .swiftlint.yml ]]; then
+            brew install swiftlint
+            CONFIG_PATH=".swiftlint.yml"
+            if [[ -f ios/.swiftlint.yml ]]; then
+              CONFIG_PATH="ios/.swiftlint.yml"
+            fi
+            swiftlint lint --strict --config "${CONFIG_PATH}" ios/Libraries/AdaptiveSwiftUi/Sources ios/Libraries/AdaptiveSwiftUi/Tests
+          else
+            echo "No .swiftlint.yml config found; skipping SwiftLint gate."
+          fi
+
+  unit-tests:
+    name: Swift Test Gate
+    runs-on: macos-latest
+    needs: lint-and-format
+    defaults:
+      run:
+        working-directory: ios/Libraries/AdaptiveSwiftUi
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Reset and clear module/build caches
+        shell: bash
+        run: |
+          set -euo pipefail
+          swift package reset
+          rm -rf .build
+          rm -rf .swiftpm/xcode/xcuserdata
+          rm -rf "$HOME/Library/Developer/Xcode/DerivedData/ModuleCache.noindex"
+          rm -rf "$HOME/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex"
+
+      - name: Run swift test
+        shell: bash
+        run: |
+          set -euo pipefail
+          swift test | tee swift-test.log
+
+      - name: Upload swift test logs
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: adaptive-swiftui-swift-test-log
+          path: ios/Libraries/AdaptiveSwiftUi/swift-test.log
+
+  coverage:
+    name: Coverage Gate
+    runs-on: macos-latest
+    needs: lint-and-format
+    defaults:
+      run:
+        working-directory: ios/Libraries/AdaptiveSwiftUi
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run deterministic package CI with coverage
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash ../../scripts/ios/package_ci.sh | tee package-ci.log
+
+      - name: Collect coverage artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p coverage-artifacts
+          CODECOV_PATH="$(swift test --show-codecov-path)"
+          if [[ -f "${CODECOV_PATH}" ]]; then
+            cp "${CODECOV_PATH}" coverage-artifacts/lcov.info
+          fi
+          find .build -name '*.profdata' -print -exec cp {} coverage-artifacts/ \;
+          if [[ -d .build ]]; then
+            tar -czf coverage-artifacts/build-coverage.tar.gz .build
+          fi
+
+      - name: Upload coverage artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: adaptive-swiftui-coverage
+          path: |
+            ios/Libraries/AdaptiveSwiftUi/coverage-artifacts/**
+            ios/Libraries/AdaptiveSwiftUi/package-ci.log
+
+  integration-compile:
+    name: iOS App Integration Compile Gate
+    runs-on: macos-latest
+    needs: [unit-tests, coverage]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build iosApp with local AdaptiveSwiftUi package
+        shell: bash
+        run: |
+          set -euo pipefail
+          xcodebuild \
+            -project ios/iosApp.xcodeproj \
+            -scheme iosApp \
+            -configuration Debug \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO \
+            build | tee ios-app-build.log
+
+      - name: Upload integration compile log
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: adaptive-swiftui-iosapp-build-log
+          path: ios-app-build.log
+
+  release:
+    name: Internal Tag Release
+    runs-on: macos-latest
+    needs: [unit-tests, coverage, integration-compile]
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release-artifacts
+
+      - name: Package release artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          tar -czf adaptive-swiftui-release-artifacts-${GITHUB_REF_NAME}.tar.gz release-artifacts
+
+      - name: Create GitHub release with artifacts
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-rc') }}
+          generate_release_notes: true
+          files: |
+            adaptive-swiftui-release-artifacts-${{ github.ref_name }}.tar.gz

@@ -1,14 +1,8 @@
 import SwiftUI
-// import Shared — replaced by native Swift Shared module
 
 struct HomeView: View {
-    // @StateObject private var viewModel: HomeViewModel
     @EnvironmentObject var navigation: NavigationViewModel
-    @State private var scrollPosition = ScrollPosition(y: 0)
     @State private var offsetY: CGFloat = 0
-    // init(viewModel: HomeViewModel) {
-    //     _viewModel = StateObject(wrappedValue: viewModel)
-    // }
 
     var body: some View {
         ScrollView {
@@ -41,17 +35,10 @@ struct HomeView: View {
                 QuickAccessView()
             }
             .padding(.bottom, 20)
+            .onCompatScrollOffsetChange { offsetY = $0 }
         }
-        .scrollPosition($scrollPosition)
-        .onScrollGeometryChange(for: CGFloat.self) { geometry in
-            geometry.contentOffset.y
-        } action: { oldValue, newValue in
-            if oldValue != newValue {
-                offsetY = newValue
-                print("offsetY" , offsetY)
-            }
-        }
-        .backgroundExtensionEffect()
+        .coordinateSpace(name: "scroll")
+        .adaptiveBackgroundExtension()
         .navigationBarHidden(true)
     }
 }

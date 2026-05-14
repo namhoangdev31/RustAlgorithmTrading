@@ -2,7 +2,6 @@ import SwiftUI
 
 struct ProfileView: View {
     @EnvironmentObject var navigation: NavigationViewModel
-    @State private var scrollPosition = ScrollPosition(y: 0)
     @State private var offsetY: CGFloat = 0
 
     var body: some View {
@@ -13,10 +12,8 @@ struct ProfileView: View {
                 }
                 VStack(spacing: 16) {
                     UserInfoView()
-                    
                     DashboardStatsView()
-                    
-                    // White card container for the rest
+
                     VStack(spacing: 16) {
                         Button(action: {
                             navigation.navigate(to: .updates)
@@ -44,7 +41,7 @@ struct ProfileView: View {
                             .background(Color(.secondarySystemBackground))
                             .cornerRadius(12)
                         }
-                        
+
                         Button(action: {
                             navigation.navigate(to: .detail(itemId: "favorites"))
                         }) {
@@ -55,9 +52,8 @@ struct ProfileView: View {
                     }
                     .padding(.vertical, 32)
                     .cornerRadius(32)
-                    .padding(.horizontal) // Optional: layout choice
-                    
-                    // Footer
+                    .padding(.horizontal)
+
                     Text("BUILD 2.4.1 PREMIUM STABLE")
                         .font(.caption2)
                         .fontWeight(.bold)
@@ -66,16 +62,10 @@ struct ProfileView: View {
                 }
             }
             .padding(.bottom, 20)
+            .onCompatScrollOffsetChange { offsetY = $0 }
         }
-        .scrollPosition($scrollPosition)
-        .onScrollGeometryChange(for: CGFloat.self) { geometry in
-            geometry.contentOffset.y
-        } action: { oldValue, newValue in
-            if oldValue != newValue {
-                offsetY = newValue
-            }
-        }
-        .backgroundExtensionEffect()
+        .coordinateSpace(name: "scroll")
+        .adaptiveBackgroundExtension()
         .navigationBarHidden(true)
     }
 }

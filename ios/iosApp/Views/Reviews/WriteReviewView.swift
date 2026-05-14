@@ -75,7 +75,7 @@ struct WriteReviewView: View {
                         Button("Submit") {
                             submitReview()
                         }
-                        .fontWeight(.bold)
+                         
                         .disabled(rating == 0 || title.isEmpty)
                     }
                 }

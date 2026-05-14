@@ -2,7 +2,6 @@ import SwiftUI
 
 struct LibraryView: View {
     @EnvironmentObject var navigation: NavigationViewModel
-    @State private var scrollPosition = ScrollPosition(y: 0)
     @State private var offsetY: CGFloat = 0
     @State private var isShowingSidebar = false
 
@@ -16,7 +15,6 @@ struct LibraryView: View {
                         }
                     }
 
-                    // Updates Entry Point
                     Button(action: {
                         navigation.navigate(to: .updates)
                     }) {
@@ -39,7 +37,6 @@ struct LibraryView: View {
                         .padding(.horizontal)
                     }
 
-
                     Button(action: {
                         navigation.navigate(to: .wallet)
                     }) {
@@ -55,24 +52,15 @@ struct LibraryView: View {
                     .buttonStyle(PlainButtonStyle())
 
                     AllAppsView()
-
                     ProductivityView()
-
                     LifestyleView()
-
                     SystemView()
 
                     Color.clear.frame(height: 20)
                 }
+                .onCompatScrollOffsetChange { offsetY = $0 }
             }
-            .scrollPosition($scrollPosition)
-            .onScrollGeometryChange(for: CGFloat.self) { geometry in
-                geometry.contentOffset.y
-            } action: { oldValue, newValue in
-                if oldValue != newValue {
-                    offsetY = newValue
-                }
-            }
+            .coordinateSpace(name: "scroll")
             .navigationBarHidden(true)
 
             SidebarView(isShowing: $isShowingSidebar)

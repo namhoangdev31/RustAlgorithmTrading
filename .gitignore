@@ -82,3 +82,10 @@ go/observability-api
 data/benchmarks/
 go/vendor/
 go/.go_cache/
+
+# iOS / SwiftPM generated artifacts
+**/.swiftpm/xcode/xcuserdata/
+ios/Libraries/AdaptiveSwiftUi/.build/
+ios/Libraries/AdaptiveSwiftUi/.swiftpm/
+ios/Libraries/AdaptiveSwiftUi/**/*.DS_Store
+ios/.DS_Store

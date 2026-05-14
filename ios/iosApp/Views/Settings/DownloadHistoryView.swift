@@ -49,7 +49,7 @@ struct DownloadHistoryView: View {
                             // Open App Logic
                         }
                         .font(.caption)
-                        .fontWeight(.bold)
+                        
                         .foregroundColor(.blue)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)

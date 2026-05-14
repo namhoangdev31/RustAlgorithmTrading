@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct SecuritySettingsView: View {
+    @EnvironmentObject var navigation: NavigationViewModel
     @State private var twoFactorEnabled = false
     @State private var biometricsEnabled = true
     

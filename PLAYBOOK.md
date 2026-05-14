@@ -221,6 +221,11 @@ Standalone iOS project (SwiftUI + Liquid Glass). Migrated from `leposapp/iosApp`
 | `ios/iosApp/DesignSystem/` | Design tokens | Color extensions, Typography structs, Spacing constants, LiquidGlass view modifiers. |
 | `ios/iosApp/DesignSystem/PlatformVersion.swift` | Cross-version gates | `SupportedOSVersion` (enum), `PlatformVersion` helpers for OS 15/16/17/18/26 and WWDC25 checks. |
 | `ios/iosApp/DesignSystem/AdaptiveSurfaceModifiers.swift` | UI compatibility layer | `AdaptiveGlassContainer`, `adaptiveGlass`, `adaptiveGlassButton`, `adaptiveBackgroundExtension`, `adaptiveTabBarMinimizeOnScroll`. |
+| `ios/iosApp/Shared/Runtime/WebRuntimeManifest.swift` | Runtime launch manifest model | `WebRuntimeManifest` dùng cho route `.miniApp` và runtime launch contract. |
+| `ios/iosApp/Shared/Services/AppInstallationService.swift` | Local install-state service | `AppInstallationService` (UserDefaults-backed) cho trạng thái cài/gỡ mini app. |
+| `ios/iosApp/DesignSystem/ScrollOffsetCompat.swift` | Scroll offset compatibility helper | `onCompatScrollOffsetChange(...)` thay thế API `onScrollGeometryChange` iOS 18+ trên các màn Home/Discovery/Profile/Library/Details. |
+| `ios/iosApp/DesignSystem/GlassCompat.swift` | Glass effect compatibility shim | `glassEffect()` fallback qua `adaptiveGlass(...)` để tránh availability lỗi iOS 26 APIs. |
+| `ios/iosApp/DesignSystem/DesignTokens.swift` | Standalone token fallback | `DesignTokens` light/dark/colors/spacing/typography để thay thế dependency token generator bị thiếu trong target iOS standalone. |
 | `ios/Libraries/AdaptiveSwiftUi/` | Reusable SwiftUI compatibility package | `Package.swift` + `AdaptivePlatformVersion` + adaptive wrappers for Glass, ButtonSizing, TabView, Sheet, List, Navigation across OS 15/16/17/18/26. |
 | `ios/Libraries/AdaptiveSwiftUi/Sources/AdaptiveSwiftUi/Compatibility/AdaptiveTabViewStyle.swift` | Tab style compatibility wrappers | `AdaptiveTabViewStyle`, `AdaptivePageTabIndexDisplayMode`, `adaptiveTabViewStyle(_:)` with OS-aware fallback for `.sidebarAdaptable`, `.tabBarOnly`, `.grouped`, `.page`, `.verticalPage`. |
 | `ios/Libraries/AdaptiveSwiftUi/Sources/AdaptiveSwiftUi/Compatibility/AdaptiveTabContent.swift` | Tab content compatibility wrappers | `adaptiveCustomizationID(_:)`, `adaptiveCustomizationBehavior(_:for:)`, `adaptiveTabBadge(_:)`, and customization enums for cross-platform tab behavior. |
@@ -327,6 +332,11 @@ cd frontend && npm run typecheck && npm run build
 |---|---|---|---|
 | `ios/Libraries/AdaptiveSwiftUi/Tests/AdaptiveSwiftUiTests/Fixtures/exploreswiftui_feed.xml` | AdaptiveSwiftUi test suite | Frozen RSS snapshot fixture used for full-coverage parsing assertions (case/component completeness). | `ios/Libraries/AdaptiveSwiftUi/Tests/AdaptiveSwiftUiTests/CompileContractsTests.swift::testExploreSwiftUIRSSFixtureHasFullCoverage` |
 | `ios/Libraries/AdaptiveSwiftUi/Tests/AdaptiveSwiftUiTests/RSSParameterizedTests.swift` | AdaptiveSwiftUi test suite | Parameterized Swift Testing suite that expands RSS validation into 184 per-item tests and 28 per-component tests. | `rssCaseValidity`, `rssComponentCoverage` |
+| `ios/Libraries/AdaptiveSwiftUi/Tests/AdaptiveSwiftUiTests/RSSHardeningTests.swift` | AdaptiveSwiftUi test suite | Parser hardening and strict gates: malformed XML, missing content, duplicate/invalid GUID behavior, snapshot invariants, p95 performance gate. | `RSSHardeningTests` |
+| `ios/scripts/ios/package_ci.sh` | iOS platform scripts | Deterministic local CI runner for package reset, cache cleanup, test, and coverage. | Used by CI coverage job and local release rehearsal |
+| `.github/workflows/ios-adaptive-swiftui.yml` | CI/CD workflow ownership | Dedicated macOS library pipeline: lint/format, swift test, coverage artifacts, iosApp integration compile, tag release artifacts. | GitHub Actions `iOS AdaptiveSwiftUi Library CI` |
+| `ios/Libraries/AdaptiveSwiftUi/docs/CHANGELOG.md` | iOS package release engineering | Internal semantic tag changelog and release checklist for rc/stable promotions. | Reviewed during `v0.1.0-rcN` and `v0.1.0` release gates |
+| `ios/Libraries/AdaptiveSwiftUi/docs/ROLLBACK_RUNBOOK.md` | iOS package operations | Rollback procedure and drill checklist to return to previous stable tag within SLA. | Rollback rehearsal in release phase |
 
 ---
 **Architect**: Antigravity AI

@@ -57,7 +57,7 @@ struct FilterSheetView: View {
                     Button("Done") {
                         dismiss()
                     }
-                    .fontWeight(.bold)
+                    
                 }
             }
         }

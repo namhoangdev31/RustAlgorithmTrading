@@ -63,7 +63,7 @@ struct EditProfileView: View {
                 Button("Done") {
                     saveProfile()
                 }
-                .fontWeight(.bold)
+                 
                 .disabled(isLoading || name.isEmpty)
             }
         }

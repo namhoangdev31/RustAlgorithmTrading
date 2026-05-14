@@ -1,14 +1,14 @@
 import Foundation
 import Testing
 
-@Test("RSS case validity (1 item = 1 test case)", arguments: ExploreSwiftUIRSSParameterizedData.caseArguments)
+@Test("RSS_CASE_VALIDATE (1 item = 1 test case)", arguments: ExploreSwiftUIRSSParameterizedData.caseArguments)
 func rssCaseValidity(_ item: ExploreSwiftUIRSSItem) {
     #expect(item.hasRequiredCoreFields)
     #expect(!item.component.isEmpty)
     #expect(ExploreSwiftUIRSSParameterizedData.knownComponents.contains(item.component))
 }
 
-@Test("RSS component coverage (1 component = 1 test case)", arguments: ExploreSwiftUIRSSParameterizedData.componentExpectations)
+@Test("RSS_COMPONENT_VALIDATE (1 component = 1 test case)", arguments: ExploreSwiftUIRSSParameterizedData.componentExpectations)
 func rssComponentCoverage(_ expectation: RSSComponentExpectation) {
     let actualCount = ExploreSwiftUIRSSParameterizedData.feed.items.filter { $0.component == expectation.component }.count
     #expect(actualCount == expectation.expectedCount)

@@ -27,7 +27,7 @@ struct SearchView: View {
                 .padding(.bottom, 20)
             }
             .navigationTitle("Search")
-            .navigationSubtitle("Quick Categories")
+            
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     HStack(spacing: 16) {
@@ -62,12 +62,11 @@ struct SearchView: View {
         .onSubmit(of: .search) {
             isSearching = true
         }
-        .onChange(of: searchText) { oldValue, newValue in
+        .onChange(of: searchText) { newValue in
             if newValue.isEmpty {
                 isSearching = false
             } else {
-                // If user types again, go back to suggestions until they hit enter
-                isSearching = false 
+                isSearching = false
             }
         }
     }

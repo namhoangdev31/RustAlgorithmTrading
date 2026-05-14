@@ -25,9 +25,9 @@ struct AboutAppView: View {
             .listRowBackground(Color.clear)
             
             Section(header: Text("Legal")) {
-                NavigationLink("Terms of Service", value: AppRoute.legal(type: "terms"))
-                NavigationLink("Privacy Policy", value: AppRoute.legal(type: "privacy"))
-                NavigationLink("Licenses", value: AppRoute.legal(type: "licenses"))
+                NavigationLink(destination: LegalView(type: "terms")) { Text("Terms of Service") }
+                NavigationLink(destination: LegalView(type: "privacy")) { Text("Privacy Policy") }
+                NavigationLink(destination: LegalView(type: "licenses")) { Text("Licenses") }
             }
             
             Section {

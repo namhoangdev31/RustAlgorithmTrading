@@ -112,7 +112,6 @@ struct ActivityView: View {
             }
         }
         .navigationTitle("Activity")
-        .navigationSubtitle("Have 4 activity not read")
         .toolbar{
             ToolbarItemGroup(placement: .primaryAction) {
                 Button("Up", systemImage: "checkmark.circle.fill", action: {}).tint(.blue)

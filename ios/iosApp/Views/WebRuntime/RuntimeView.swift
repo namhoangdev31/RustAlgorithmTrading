@@ -1,5 +1,4 @@
 import SwiftUI
-// import Shared — replaced by native Swift Shared module
 
 struct RuntimeView: View {
     let manifest: WebRuntimeManifest
@@ -15,6 +14,9 @@ struct RuntimeView: View {
             contentView
             assistiveTouchButton
         }
+        .onAppear {
+            viewModel.loadBundle(manifest: manifest, bundlePath: bundlePath)
+        }
         .onDisappear {
             viewModel.stopServer()
         }
@@ -24,21 +26,15 @@ struct RuntimeView: View {
     @ViewBuilder
     private var contentView: some View {
         switch viewModel.state {
-        case is WebRuntimeState.Idle:
+        case .idle:
             EmptyView()
-
-        case is WebRuntimeState.Loading:
+        case .loading:
             ProgressView()
                 .progressViewStyle(CircularProgressViewStyle(tint: .white))
                 .scaleEffect(1.5)
-
-        case let ready as WebRuntimeState.Ready:
-            RuntimeWebViewWrapper(
-                manifest: manifest,
-                httpUrl: ready.entryUrl
-            )
-
-        case let error as WebRuntimeState.Error:
+        case .ready(let entryUrl):
+            RuntimeWebViewWrapper(manifest: manifest, httpUrl: entryUrl)
+        case .error(let message):
             VStack(spacing: 16) {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .font(.system(size: 60))
@@ -46,15 +42,12 @@ struct RuntimeView: View {
                 Text("Error")
                     .font(.title)
                     .foregroundColor(.white)
-                Text(error.message)
+                Text(message)
                     .font(.body)
                     .foregroundColor(.white.opacity(0.8))
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 32)
             }
-
-        default:
-            EmptyView()
         }
     }
 
@@ -62,22 +55,16 @@ struct RuntimeView: View {
         GeometryReader { geometry in
             ZStack {
                 if isExpanded {
-                    // Transparent background to capture taps outside the menu
                     Color.black.opacity(0.001)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .onTapGesture {
-                            withAnimation {
-                                isExpanded = false
-                            }
+                            withAnimation { isExpanded = false }
                         }
 
                     VStack(spacing: 20) {
                         Button(action: {
-                            // Reload Action
                             NotificationCenter.default.post(name: NSNotification.Name("ReloadMiniApp"), object: nil)
-                            withAnimation {
-                                isExpanded = false
-                            }
+                            withAnimation { isExpanded = false }
                         }) {
                             Image(systemName: "arrow.clockwise")
                                 .font(.title)
@@ -87,11 +74,8 @@ struct RuntimeView: View {
                         }
 
                         Button(action: {
-                            // Exit Action
                             dismiss()
-                            withAnimation {
-                                isExpanded = false
-                            }
+                            withAnimation { isExpanded = false }
                         }) {
                             Image(systemName: "xmark")
                                 .font(.title)
@@ -101,7 +85,7 @@ struct RuntimeView: View {
                         }
                     }
                     .padding()
-                    .glassEffect()
+                    .adaptiveGlass(cornerRadius: 16)
                     .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
                     .transition(.scale)
                     .zIndex(2)
@@ -109,9 +93,7 @@ struct RuntimeView: View {
 
                 if !isExpanded {
                     Button(action: {
-                        withAnimation {
-                            isExpanded.toggle()
-                        }
+                        withAnimation { isExpanded.toggle() }
                     }) {
                         Image(systemName: "circle.grid.3x3.fill")
                             .font(.system(size: 24))
@@ -122,26 +104,19 @@ struct RuntimeView: View {
                     .position(dragPosition ?? CGPoint(x: geometry.size.width - 50, y: geometry.size.height - 150))
                     .highPriorityGesture(
                         DragGesture()
-                        .onChanged { gesture in
-                            self.dragPosition = gesture.location
-                        }
-                        .onEnded { value in
-                            var currentPosition = value.location
-
-                            if currentPosition.x > (geometry.size.width / 2) {
-                                currentPosition.x = geometry.size.width - 40
-                            } else {
-                                currentPosition.x = 40
+                            .onChanged { gesture in
+                                dragPosition = gesture.location
                             }
-
-                            let minY: CGFloat = 80
-                            let maxY: CGFloat = geometry.size.height - 80
-                            currentPosition.y = min(max(currentPosition.y, minY), maxY)
-
-                            withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
-                                dragPosition = currentPosition
+                            .onEnded { value in
+                                var currentPosition = value.location
+                                currentPosition.x = currentPosition.x > (geometry.size.width / 2) ? geometry.size.width - 40 : 40
+                                let minY: CGFloat = 80
+                                let maxY: CGFloat = geometry.size.height - 80
+                                currentPosition.y = min(max(currentPosition.y, minY), maxY)
+                                withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
+                                    dragPosition = currentPosition
+                                }
                             }
-                        }
                     )
                     .zIndex(1)
                 }
@@ -150,7 +125,7 @@ struct RuntimeView: View {
     }
 
     private var orientationMask: UIInterfaceOrientationMask {
-        switch manifest.orientation {
+        switch manifest.orientation.lowercased() {
         case "landscape": return .landscape
         case "portrait": return .portrait
         default: return .all
@@ -158,7 +133,6 @@ struct RuntimeView: View {
     }
 }
 
-// MARK: - WebView Wrapper
 private struct RuntimeWebViewWrapper: UIViewRepresentable {
     let manifest: WebRuntimeManifest
     let httpUrl: String
@@ -167,7 +141,6 @@ private struct RuntimeWebViewWrapper: UIViewRepresentable {
         let webView = RuntimeWebView(frame: .zero, manifest: manifest)
         webView.loadBundle(httpUrl: httpUrl)
 
-        // Listen for reload notification
         NotificationCenter.default.addObserver(
             forName: NSNotification.Name("ReloadMiniApp"),
             object: nil,
@@ -179,18 +152,16 @@ private struct RuntimeWebViewWrapper: UIViewRepresentable {
         return webView
     }
 
-    func updateUIView(_ uiView: RuntimeWebView, context: Context) {
-        // No updates needed
-    }
+    func updateUIView(_ uiView: RuntimeWebView, context: Context) {}
 }
 
-// MARK: - View Modifiers
 private extension View {
     func supportedOrientations(_ mask: UIInterfaceOrientationMask) -> some View {
         self.onAppear {
-            let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
-            windowScene?.requestGeometryUpdate(.iOS(interfaceOrientations: mask))
+            guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return }
+            if #available(iOS 16.0, *) {
+                windowScene.requestGeometryUpdate(.iOS(interfaceOrientations: mask))
+            }
         }
     }
 }
-

@@ -39,7 +39,7 @@ struct AddCardView: View {
                             dismiss()
                         }) {
                             Text("Save & Continue")
-                                .fontWeight(.bold)
+                                
                                 .frame(maxWidth: .infinity)
                                 .padding()
                                 .background(Color(red: 20/255, green: 40/255, blue: 50/255))
@@ -54,7 +54,7 @@ struct AddCardView: View {
                                 .foregroundColor(.green)
                             Text("SECURE CHECKOUT")
                                 .font(.caption2)
-                                .fontWeight(.bold)
+                                
                                 .foregroundColor(.secondary)
                         }
                         .padding(.horizontal, 12)
@@ -78,7 +78,7 @@ struct AddCardView: View {
         }
         
         .navigationTitle("Add New Card")
-        .toolbarTitleDisplayMode(.large)
+        
     }
 }
 
