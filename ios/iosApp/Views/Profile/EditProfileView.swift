@@ -1,6 +1,5 @@
 import SwiftUI
 
-@available(iOS 26.0 , *)
 struct EditProfileView: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var navigation: NavigationViewModel

@@ -1,7 +1,6 @@
 import SwiftUI
 import SFSafeSymbols
 
-@available(iOS 26.0 , *)
 struct EditorChoiceDetailView: View {
     @EnvironmentObject var navigation: NavigationViewModel
     @State private var showStickyFooter: Bool = false

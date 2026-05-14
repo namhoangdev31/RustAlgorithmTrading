@@ -7,7 +7,6 @@ struct DeveloperAppItem: Identifiable {
     let category: String
 }
 
-@available(iOS 26.0, *)
 struct DeveloperProfileView: View {
     let developerId: String
     @EnvironmentObject var navigation: NavigationViewModel

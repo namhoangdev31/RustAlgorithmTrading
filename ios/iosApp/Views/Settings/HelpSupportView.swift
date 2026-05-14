@@ -1,6 +1,5 @@
 import SwiftUI
 
-@available(iOS 26.0, *)
 struct HelpSupportView: View {
     @Environment(\.dismiss) var dismiss
     

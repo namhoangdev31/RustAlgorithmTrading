@@ -1,7 +1,6 @@
 import SwiftUI
 // import Shared — replaced by native Swift Shared module
 
-@available(iOS 26.0, *)
 struct CheckoutTransactionDetailsView: View {
     let price: Double
     let tax: Double
@@ -26,7 +25,6 @@ struct CheckoutTransactionDetailsView: View {
     }
 }
 
-@available(iOS 26.0, *)
 struct CheckoutDetailRow: View {
     let label: String
     let value: String

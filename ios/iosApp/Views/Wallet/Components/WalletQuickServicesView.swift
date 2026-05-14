@@ -1,6 +1,5 @@
 import SwiftUI
 
-@available(iOS 26.0, *)
 struct WalletQuickServicesView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -24,7 +23,6 @@ struct WalletQuickServicesView: View {
     }
 }
 
-@available(iOS 26.0, *)
 struct QuickServiceButton: View {
     let icon: String
     let title: String

@@ -10,7 +10,6 @@ struct WishlistItem: Identifiable {
     let rating: Double
 }
 
-@available(iOS 26.0, *)
 struct WishlistView: View {
     @EnvironmentObject var navigation: NavigationViewModel
     

@@ -1,6 +1,5 @@
 import SwiftUI
 
-@available(iOS 26.0, *)
 struct SavedMethodRow: View {
     let method: PaymentMethod
     

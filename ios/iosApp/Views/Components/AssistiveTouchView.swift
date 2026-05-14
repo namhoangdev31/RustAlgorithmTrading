@@ -1,6 +1,5 @@
 import SwiftUI
 
-@available(iOS 26.0 , *)
 struct AssistiveTouchView: View {
     @State private var dragPosition: CGPoint?
     @State private var isExpanded: Bool = false

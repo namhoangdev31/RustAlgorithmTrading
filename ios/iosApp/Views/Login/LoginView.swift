@@ -1,6 +1,5 @@
 import SwiftUI
 
-@available(iOS 26.0 , *)
 struct LoginView: View {
     @StateObject private var viewModel: LoginViewModel
     @EnvironmentObject var navigation: NavigationViewModel

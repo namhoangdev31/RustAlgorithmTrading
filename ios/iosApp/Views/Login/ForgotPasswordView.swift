@@ -1,6 +1,5 @@
 import SwiftUI
 
-@available(iOS 26.0, *)
 struct ForgotPasswordView: View {
     @EnvironmentObject var navigation: NavigationViewModel
     @State private var email: String = ""

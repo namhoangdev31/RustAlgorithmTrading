@@ -1,6 +1,5 @@
 import SwiftUI
 
-@available(iOS 26.0, *)
 struct WalletProviderRow: View {
     let icon: String
     let iconColor: Color

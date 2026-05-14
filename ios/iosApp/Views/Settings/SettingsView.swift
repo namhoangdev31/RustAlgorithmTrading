@@ -1,6 +1,5 @@
 import SwiftUI
 
-@available(iOS 26.0 , *)
 struct SettingsView: View {
     @EnvironmentObject var navigation: NavigationViewModel
     @AppStorage("isDarkMode") private var isDarkMode = true

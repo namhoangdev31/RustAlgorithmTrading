@@ -8,7 +8,6 @@ struct BrowseCategoryItem: Identifiable {
     let color: Color
 }
 
-@available(iOS 26.0, *)
 struct CategoryBrowseView: View {
     @EnvironmentObject var navigation: NavigationViewModel
     

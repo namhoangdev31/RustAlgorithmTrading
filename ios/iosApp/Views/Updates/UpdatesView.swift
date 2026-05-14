@@ -11,7 +11,6 @@ struct UpdateItem: Identifiable {
     let releaseNotes: String
 }
 
-@available(iOS 26.0, *)
 struct UpdatesView: View {
     @EnvironmentObject var navigation: NavigationViewModel
     

@@ -11,7 +11,6 @@ struct TopChartApp: Identifiable {
     let price: String // "GET" or price
 }
 
-@available(iOS 26.0, *)
 struct TopChartsView: View {
     @EnvironmentObject var navigation: NavigationViewModel
     @State private var selectedSegment = 0 // 0: Paid, 1: Free

@@ -1,6 +1,5 @@
 import SwiftUI
 
-@available(iOS 26.0, *)
 struct MiniAppDetailsToolbar: ToolbarContent {
     let showNavBarItems: Bool
     let isDownloaded: Bool

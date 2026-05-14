@@ -1,6 +1,5 @@
 import SwiftUI
 
-@available(iOS 26.0 , *)
 struct LoginHeaderView: View {
     var body: some View {
         Text("Welcome Back")
@@ -10,7 +9,6 @@ struct LoginHeaderView: View {
     }
 }
 
-@available(iOS 26.0 , *)
 struct LoginFormView: View {
     @Binding var email: String
     @Binding var password: String
@@ -66,7 +64,6 @@ struct LoginButtonView: View {
     }
 }
 
-@available(iOS 26.0 , *)
 struct LiquidGlassDemoCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {

@@ -1,6 +1,5 @@
 import SwiftUI
 
-@available(iOS 26.0, *)
 struct SecureConnectionCard: View {
     var body: some View {
         VStack(spacing: 16) {

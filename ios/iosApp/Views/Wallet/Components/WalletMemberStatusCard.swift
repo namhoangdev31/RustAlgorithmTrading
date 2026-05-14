@@ -1,6 +1,5 @@
 import SwiftUI
 
-@available(iOS 26.0, *)
 struct WalletMemberStatusCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {

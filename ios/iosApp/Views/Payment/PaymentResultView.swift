@@ -6,7 +6,6 @@ enum PaymentResultType {
     case failure
 }
 
-@available(iOS 26.0, *)
 struct PaymentResultView: View {
     let type: PaymentResultType
     @EnvironmentObject var navigation: NavigationViewModel

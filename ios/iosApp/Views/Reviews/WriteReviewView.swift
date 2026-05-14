@@ -1,6 +1,5 @@
 import SwiftUI
 
-@available(iOS 26.0, *)
 struct WriteReviewView: View {
     let appId: String
     @Environment(\.dismiss) var dismiss

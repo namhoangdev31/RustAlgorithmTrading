@@ -1,6 +1,5 @@
 import SwiftUI
 
-@available(iOS 26.0, *)
 struct LibraryView: View {
     @EnvironmentObject var navigation: NavigationViewModel
     @State private var scrollPosition = ScrollPosition(y: 0)

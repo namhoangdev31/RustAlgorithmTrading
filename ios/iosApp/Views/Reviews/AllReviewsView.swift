@@ -9,7 +9,6 @@ struct ReviewItem: Identifiable {
     let content: String
 }
 
-@available(iOS 26.0, *)
 struct AllReviewsView: View {
     let appId: String
     @EnvironmentObject var navigation: NavigationViewModel

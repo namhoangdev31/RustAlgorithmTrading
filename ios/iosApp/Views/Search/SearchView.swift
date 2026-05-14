@@ -1,6 +1,5 @@
 import SwiftUI
 
-@available(iOS 26.0 , *)
 struct SearchView: View {
     @State private var isSearching: Bool = false
     @State private var searchText: String = ""

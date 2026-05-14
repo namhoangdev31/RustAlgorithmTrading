@@ -1,7 +1,6 @@
 import SwiftUI
 // import Shared — replaced by native Swift Shared module
 
-@available(iOS 26.0 , *)
 struct MiniAppStoreView: View {
     @StateObject private var viewModel: MiniAppStoreViewModel
     @Environment(\.appContainer) private var container

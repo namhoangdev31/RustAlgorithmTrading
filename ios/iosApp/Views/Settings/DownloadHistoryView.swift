@@ -9,7 +9,6 @@ struct DownloadHistoryItem: Identifiable {
     let isInstalled: Bool
 }
 
-@available(iOS 26.0 , *)
 struct DownloadHistoryView: View {
     @EnvironmentObject var navigation: NavigationViewModel
     

@@ -1,7 +1,6 @@
 import SwiftUI
 // import Shared — replaced by native Swift Shared module
 
-@available(iOS 26.0, *)
 struct MiniAppDetailsView: View {
     @EnvironmentObject var navigation: NavigationViewModel
     @StateObject private var viewModel = MiniAppDetailsViewState(appId: "mock_app_1")

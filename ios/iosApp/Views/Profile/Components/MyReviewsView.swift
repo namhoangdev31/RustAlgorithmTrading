@@ -10,7 +10,6 @@ struct MyReviewItem: Identifiable {
     let comment: String
 }
 
-@available(iOS 26.0, *)
 struct MyReviewsView: View {
     let reviews: [MyReviewItem] = [
         MyReviewItem(appName: "EcoTrack Pro", appIconColor: .green, rating: 5, date: "2 days ago", comment: "Amazing app! Helped me reduce my carbon footprint significantly."),

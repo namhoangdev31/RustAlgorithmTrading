@@ -1,6 +1,5 @@
 import SwiftUI
 
-@available(iOS 26.0, *)
 struct AppCoordinator: View {
     @StateObject private var navigation = NavigationViewModel()
     @AppStorage("isLoggedIn") var isLoggedIn: Bool = false

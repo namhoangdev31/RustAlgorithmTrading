@@ -1,6 +1,5 @@
 import SwiftUI
 
-@available(iOS 26.0, *)
 struct WalletExclusiveOfferView: View {
     var body: some View {
         ZStack(alignment: .leading) {

@@ -1,7 +1,6 @@
 import SwiftUI
 // import Shared — replaced by native Swift Shared module
 
-@available(iOS 26.0, *)
 class MiniAppDetailsViewState: ObservableObject {
     @Published var isDownloaded: Bool = false
     @Published var isLoading: Bool = false

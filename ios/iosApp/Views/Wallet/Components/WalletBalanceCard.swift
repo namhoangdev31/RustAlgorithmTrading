@@ -1,6 +1,5 @@
 import SwiftUI
 
-@available(iOS 26.0, *)
 struct WalletBalanceCard: View {
     var balance: Double = 2450.00
     
