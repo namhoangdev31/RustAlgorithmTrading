@@ -219,6 +219,16 @@ Standalone iOS project (SwiftUI + Liquid Glass). Migrated from `leposapp/iosApp`
 | `ios/iosApp/DI/` | Dependency injection | `SharedComponent`, `AppDependencyContainer` managing protocol-to-implementation resolution. |
 | `ios/iosApp/Views/` | All UI views (SwiftUI) | `MainTabView`, `HomeView`, `ProfileView`, `AccountOverviewView`, `ActivityView`, `LoginView`. |
 | `ios/iosApp/DesignSystem/` | Design tokens | Color extensions, Typography structs, Spacing constants, LiquidGlass view modifiers. |
+| `ios/iosApp/DesignSystem/PlatformVersion.swift` | Cross-version gates | `SupportedOSVersion` (enum), `PlatformVersion` helpers for OS 15/16/17/18/26 and WWDC25 checks. |
+| `ios/iosApp/DesignSystem/AdaptiveSurfaceModifiers.swift` | UI compatibility layer | `AdaptiveGlassContainer`, `adaptiveGlass`, `adaptiveGlassButton`, `adaptiveBackgroundExtension`, `adaptiveTabBarMinimizeOnScroll`. |
+| `ios/Libraries/AdaptiveSwiftUi/` | Reusable SwiftUI compatibility package | `Package.swift` + `AdaptivePlatformVersion` + adaptive wrappers for Glass, ButtonSizing, TabView, Sheet, List, Navigation across OS 15/16/17/18/26. |
+| `ios/Libraries/AdaptiveSwiftUi/Sources/AdaptiveSwiftUi/Compatibility/AdaptiveTabViewStyle.swift` | Tab style compatibility wrappers | `AdaptiveTabViewStyle`, `AdaptivePageTabIndexDisplayMode`, `adaptiveTabViewStyle(_:)` with OS-aware fallback for `.sidebarAdaptable`, `.tabBarOnly`, `.grouped`, `.page`, `.verticalPage`. |
+| `ios/Libraries/AdaptiveSwiftUi/Sources/AdaptiveSwiftUi/Compatibility/AdaptiveTabContent.swift` | Tab content compatibility wrappers | `adaptiveCustomizationID(_:)`, `adaptiveCustomizationBehavior(_:for:)`, `adaptiveTabBadge(_:)`, and customization enums for cross-platform tab behavior. |
+| `ios/Libraries/AdaptiveSwiftUi/Sources/AdaptiveSwiftUi/Compatibility/AdaptivePickers.swift` | Picker compatibility wrappers | `AdaptivePickerStyle`, `adaptivePickerStyle(_:)`, `adaptiveHorizontalRadioGroupLayout()`, `adaptiveDefaultWheelPickerItemHeight(_:)`. |
+| `ios/Libraries/AdaptiveSwiftUi/Sources/AdaptiveSwiftUi/Components/AdaptiveRoleButton.swift` | Role button cross-version component | `AdaptiveButtonRole`, `AdaptiveRoleButton` with iOS 26 default-role labels and legacy fallback labels. |
+| `ios/Libraries/AdaptiveSwiftUi/Sources/AdaptiveSwiftUi/Components/AdaptiveContentUnavailable.swift` | Empty-state compatibility components | `AdaptiveContentUnavailable`, `AdaptiveSearchUnavailable` with `ContentUnavailableView` passthrough on supported OS and fallback UI on older OS. |
+| `ios/Libraries/AdaptiveSwiftUi/Sources/AdaptiveSwiftUi/Components/AdaptiveConcentricSurface.swift` | Concentric surface compatibility component | `AdaptiveConcentricSurface`, `adaptiveConcentricSurface(...)` with `ConcentricRectangle` on OS 26+ and rounded fallback otherwise. |
+| `ios/Libraries/AdaptiveSwiftUi/Tests/AdaptiveSwiftUiTests/CompileContractsTests.swift` | Compile/fallback contract tests | Smoke coverage for `adaptive*` wrappers, version flags, tab customization storage API, and cross-module integration compile checks. |
 
 ---
 
@@ -309,6 +319,14 @@ cd frontend && npm run typecheck && npm run build
 | `tests/ml/` | ML Strategy Validation | Python | `test_feature_engineering.py`, `test_models.py` (Model inference checks). |
 | `tests/property/` | Property-based tests | Rust | `test_order_invariants.rs` (Fuzzing constraints). |
 | `tests/fixtures/` | Test Data & Golden Artifacts | JSON/Parquet | `risk_decision_golden.json`, `phase2/` snapshots for regression testing. |
+
+---
+## 14) iOS Package Test Fixture Map (`ios/Libraries/AdaptiveSwiftUi`)
+
+| File | Ownership | Role | Primary test |
+|---|---|---|---|
+| `ios/Libraries/AdaptiveSwiftUi/Tests/AdaptiveSwiftUiTests/Fixtures/exploreswiftui_feed.xml` | AdaptiveSwiftUi test suite | Frozen RSS snapshot fixture used for full-coverage parsing assertions (case/component completeness). | `ios/Libraries/AdaptiveSwiftUi/Tests/AdaptiveSwiftUiTests/CompileContractsTests.swift::testExploreSwiftUIRSSFixtureHasFullCoverage` |
+| `ios/Libraries/AdaptiveSwiftUi/Tests/AdaptiveSwiftUiTests/RSSParameterizedTests.swift` | AdaptiveSwiftUi test suite | Parameterized Swift Testing suite that expands RSS validation into 184 per-item tests and 28 per-component tests. | `rssCaseValidity`, `rssComponentCoverage` |
 
 ---
 **Architect**: Antigravity AI

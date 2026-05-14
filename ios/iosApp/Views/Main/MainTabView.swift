@@ -30,6 +30,7 @@ struct MainTabView: View {
         }
         .navigationTitle(currentTitle)
         .toolbar(.hidden, for: .navigationBar)
+        .adaptiveTabBarMinimizeOnScroll()
     }
     
     private var currentTitle: String {
