@@ -1,4 +1,5 @@
 import SwiftUI
+import AdaptiveSwiftUi
 import SFSafeSymbols
 
 struct EditorChoiceDetailView: View {

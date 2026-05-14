@@ -1,4 +1,5 @@
 import SwiftUI
+import AdaptiveSwiftUi
 
 struct AssistiveTouchView: View {
     @State private var dragPosition: CGPoint?
@@ -24,11 +25,11 @@ struct AssistiveTouchView: View {
                                 isExpanded = false
                             }
                         }) {
-                            Image(systemName: "star.fill")
-                                .font(.title)
-                                .foregroundColor(.primary)
-                                .frame(width: 50, height: 50)
-                                .liquidGlass(cornerRadius: 25)
+                                Image(systemName: "star.fill")
+                                    .font(.title)
+                                    .foregroundColor(.primary)
+                                    .frame(width: 50, height: 50)
+                                .adaptiveGlass(cornerRadius: 25)
                         }
 
                         Button(action: {
@@ -37,11 +38,11 @@ struct AssistiveTouchView: View {
                                 isExpanded = false
                             }
                         }) {
-                            Image(systemName: "bell.fill")
-                                .font(.title)
-                                .foregroundColor(.primary)
-                                .frame(width: 50, height: 50)
-                                .liquidGlass(cornerRadius: 25)
+                                Image(systemName: "bell.fill")
+                                    .font(.title)
+                                    .foregroundColor(.primary)
+                                    .frame(width: 50, height: 50)
+                                .adaptiveGlass(cornerRadius: 25)
                         }
 
                         Button(action: {
@@ -50,15 +51,15 @@ struct AssistiveTouchView: View {
                                 isExpanded = false
                             }
                         }) {
-                            Image(systemName: "xmark")
-                                .font(.title)
-                                .foregroundColor(.primary)
-                                .frame(width: 50, height: 50)
-                                .liquidGlass(cornerRadius: 25)
+                                Image(systemName: "xmark")
+                                    .font(.title)
+                                    .foregroundColor(.primary)
+                                    .frame(width: 50, height: 50)
+                                .adaptiveGlass(cornerRadius: 25)
                         }
                     }
                     .padding()
-                    .glassEffect()
+                    .adaptiveGlass(cornerRadius: 16)
                     .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
                     .transition(.scale)
                     .zIndex(0)
@@ -75,7 +76,7 @@ struct AssistiveTouchView: View {
                             .foregroundColor(.primary)
                             .frame(width: 60, height: 60)
                     }
-                    .liquidGlass(cornerRadius: 100)
+                    .adaptiveGlass(cornerRadius: 100)
                     .position(dragPosition ?? CGPoint(x: geometry.size.width - 50, y: geometry.size.height - 150))
                     .highPriorityGesture(
                         DragGesture()
@@ -106,4 +107,3 @@ struct AssistiveTouchView: View {
         }
     }
 }
-

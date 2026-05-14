@@ -1,4 +1,5 @@
 import SwiftUI
+import AdaptiveSwiftUi
 
 struct RuntimeView: View {
     let manifest: WebRuntimeManifest
@@ -70,7 +71,7 @@ struct RuntimeView: View {
                                 .font(.title)
                                 .foregroundColor(.primary)
                                 .frame(width: 50, height: 50)
-                                .liquidGlass(cornerRadius: 25)
+                                .adaptiveGlass(cornerRadius: 25)
                         }
 
                         Button(action: {
@@ -81,7 +82,7 @@ struct RuntimeView: View {
                                 .font(.title)
                                 .foregroundColor(.primary)
                                 .frame(width: 50, height: 50)
-                                .liquidGlass(cornerRadius: 25)
+                                .adaptiveGlass(cornerRadius: 25)
                         }
                     }
                     .padding()
@@ -100,7 +101,7 @@ struct RuntimeView: View {
                             .foregroundColor(.primary)
                             .frame(width: 60, height: 60)
                     }
-                    .liquidGlass(cornerRadius: 100)
+                    .adaptiveGlass(cornerRadius: 100)
                     .position(dragPosition ?? CGPoint(x: geometry.size.width - 50, y: geometry.size.height - 150))
                     .highPriorityGesture(
                         DragGesture()

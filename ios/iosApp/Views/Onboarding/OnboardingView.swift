@@ -1,4 +1,5 @@
 import SwiftUI
+import AdaptiveSwiftUi
 
 struct OnboardingView: View {
     @Binding var isCompleted: Bool
@@ -22,7 +23,7 @@ struct OnboardingView: View {
                     .tag(index)
                 }
             }
-            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
+            .adaptiveTabViewStyle(.page(indexDisplayMode: .always))
             .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
             
             Button(action: {

@@ -1,4 +1,5 @@
 import SwiftUI
+import AdaptiveSwiftUi
 
 struct DiscoveryView: View {
     @EnvironmentObject var navigation: NavigationViewModel

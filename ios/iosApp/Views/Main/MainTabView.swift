@@ -1,4 +1,5 @@
 import SwiftUI
+import AdaptiveSwiftUi
 
 struct MainTabView: View {
     @Environment(\.appContainer) private var container
@@ -28,7 +29,7 @@ struct MainTabView: View {
         }
         .navigationTitle(currentTitle)
         .navigationBarHidden(true)
-        .adaptiveTabBarMinimizeOnScroll()
+        .adaptiveTabBarMinimizeBehavior(.onScrollDown)
     }
 
     private var currentTitle: String {

@@ -1,4 +1,5 @@
 import SwiftUI
+import AdaptiveSwiftUi
 
 struct ProfileView: View {
     @EnvironmentObject var navigation: NavigationViewModel

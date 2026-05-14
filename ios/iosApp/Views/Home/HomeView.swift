@@ -1,4 +1,5 @@
 import SwiftUI
+import AdaptiveSwiftUi
 
 struct HomeView: View {
     @EnvironmentObject var navigation: NavigationViewModel

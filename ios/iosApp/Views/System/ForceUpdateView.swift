@@ -1,4 +1,5 @@
 import SwiftUI
+import AdaptiveSwiftUi
 
 struct ForceUpdateView: View {
     var onUpdate: () -> Void
@@ -32,7 +33,7 @@ struct ForceUpdateView: View {
             .padding(.horizontal, 32)
         }
         .padding()
-        .interactiveDismissDisabled()
+        .adaptiveInteractiveDismissDisabled()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color(UIColor.systemBackground))
     }

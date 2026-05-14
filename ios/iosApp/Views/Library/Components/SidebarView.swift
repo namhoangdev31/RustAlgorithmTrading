@@ -1,4 +1,5 @@
 import SwiftUI
+import AdaptiveSwiftUi
 
 struct SidebarView: View {
     @Binding var isShowing: Bool
@@ -48,7 +49,7 @@ struct SidebarView: View {
                     }
                     .padding()
                     .frame(width: 280)
-                    .applyGlassEffect()
+                    .adaptiveGlass(cornerRadius: 5)
                     .padding(.horizontal)
                     .padding(.vertical)
                     Spacer()
@@ -76,17 +77,6 @@ struct SidebarItem: View {
                 .foregroundColor(.primary)
 
             Spacer()
-        }
-    }
-}
-
-extension View {
-    @ViewBuilder
-    func applyGlassEffect() -> some View {
-        if #available(iOS 26.0, *) {
-            self.adaptiveGlass(cornerRadius: 5)
-        } else {
-            self.background(.ultraThinMaterial)
         }
     }
 }

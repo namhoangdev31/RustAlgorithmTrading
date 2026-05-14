@@ -1,4 +1,5 @@
 import SwiftUI
+import AdaptiveSwiftUi
 
 struct LoginHeaderView: View {
     var body: some View {
@@ -19,7 +20,7 @@ struct LoginFormView: View {
                 .padding()
                 .padding()
                 .background(.clear)
-                .glassEffect()
+                .adaptiveGlass(cornerRadius: 16)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .autocapitalization(.none)
                 .keyboardType(.emailAddress)
@@ -28,7 +29,7 @@ struct LoginFormView: View {
                 .padding()
                 .padding()
                 .background(.clear)
-                .glassEffect()
+                .adaptiveGlass(cornerRadius: 16)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
         }
     }
@@ -78,7 +79,7 @@ struct LiquidGlassDemoCard: View {
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(.clear)
-        .glassEffect()
+        .adaptiveGlass(cornerRadius: 16)
         .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 }

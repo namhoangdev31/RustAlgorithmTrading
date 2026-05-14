@@ -1,4 +1,5 @@
 import SwiftUI
+import AdaptiveSwiftUi
 
 struct MiniAppStickyFooterView: View {
     let isDownloaded: Bool

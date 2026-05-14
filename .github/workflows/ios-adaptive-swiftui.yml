@@ -61,10 +61,52 @@ jobs:
             echo "No .swiftlint.yml config found; skipping SwiftLint gate."
           fi
 
+  compatibility-enforcement:
+    name: Compatibility Enforcement Gate
+    runs-on: macos-latest
+    needs: lint-and-format
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fail on legacy local compatibility wrappers
+        shell: bash
+        run: |
+          set -euo pipefail
+          if rg -n "func (adaptiveGlass|adaptiveGlassButton|adaptiveBackgroundExtension|adaptiveTabBarMinimizeOnScroll|glassEffect|liquidGlass|liquidGlassButton)\\b|struct (AdaptiveGlassContainer|LiquidGlassModifier|LiquidGlassButtonModifier)\\b|enum AdaptiveGlassButtonVariant\\b" ios/iosApp/DesignSystem; then
+            echo "::error::Legacy compatibility wrappers still exist in iosApp/DesignSystem. Use AdaptiveSwiftUi package as source-of-truth."
+            exit 1
+          fi
+
+      - name: Fail on banned raw SwiftUI APIs in migrated views
+        shell: bash
+        run: |
+          set -euo pipefail
+          if rg -n "\\.(glassEffect|liquidGlass|liquidGlassButton|interactiveDismissDisabled|navigationSubtitle)\\s*\\(|\\.tabViewStyle\\s*\\(\\s*PageTabViewStyle|\\.tabBarMinimizeBehavior\\s*\\(" ios/iosApp/Views; then
+            echo "::error::Raw compatibility APIs are still used in iosApp/Views. Migrate to AdaptiveSwiftUi adaptive* APIs."
+            exit 1
+          fi
+
+      - name: Require direct AdaptiveSwiftUi imports on adaptive API call-sites
+        shell: bash
+        run: |
+          set -euo pipefail
+          missing=0
+          while IFS= read -r file; do
+            [[ -z "${file}" ]] && continue
+            if ! rg -q "^import AdaptiveSwiftUi$" "${file}"; then
+              echo "::error file=${file}::Missing direct import AdaptiveSwiftUi for adaptive* call-site."
+              missing=1
+            fi
+          done < <(rg -l "\\.adaptive[A-Z][A-Za-z0-9_]*\\(" ios/iosApp/Views || true)
+
+          if [[ "${missing}" -ne 0 ]]; then
+            exit 1
+          fi
+
   unit-tests:
     name: Swift Test Gate
     runs-on: macos-latest
-    needs: lint-and-format
+    needs: [lint-and-format, compatibility-enforcement]
     defaults:
       run:
         working-directory: ios/Libraries/AdaptiveSwiftUi
@@ -97,7 +139,7 @@ jobs:
   coverage:
     name: Coverage Gate
     runs-on: macos-latest
-    needs: lint-and-format
+    needs: [lint-and-format, compatibility-enforcement]
     defaults:
       run:
         working-directory: ios/Libraries/AdaptiveSwiftUi
@@ -135,7 +177,7 @@ jobs:
   integration-compile:
     name: iOS App Integration Compile Gate
     runs-on: macos-latest
-    needs: [unit-tests, coverage]
+    needs: [unit-tests, coverage, compatibility-enforcement]
     steps:
       - uses: actions/checkout@v4
 
