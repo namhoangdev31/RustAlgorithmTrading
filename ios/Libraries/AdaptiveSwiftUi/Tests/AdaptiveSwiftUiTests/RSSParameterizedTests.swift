@@ -1,8 +1,6 @@
 import Foundation
 import Testing
 
-@testable import AdaptiveSwiftUi
-
 @Test("RSS case validity (1 item = 1 test case)", arguments: ExploreSwiftUIRSSParameterizedData.caseArguments)
 func rssCaseValidity(_ item: ExploreSwiftUIRSSItem) {
     #expect(item.hasRequiredCoreFields)

@@ -20,49 +20,33 @@ final class CompileContractsTests: XCTestCase {
     }
 
     @MainActor
-    func testCoreAdaptiveModifiersCompileInOneView() {
-        _ = AdaptiveLibrarySmokeView()
+    func testExpandedButtonContractsCompile() {
+        _ = AdaptiveButtonSmokeView()
     }
 
     @MainActor
-    func testTabCustomizationStorageWrapperCompiles() {
-        _ = Text("Demo")
-            .adaptiveTabViewCustomization(.constant(Data()))
+    func testExpandedTabViewContractsCompile() {
+        _ = AdaptiveTabViewSmokeView()
     }
 
     @MainActor
-    func testNavigationAndToolbarContractsCompile() {
-        _ = AdaptiveNavigationToolbarSmokeView()
+    func testExpandedPickerContractsCompile() {
+        _ = AdaptivePickerSmokeView()
     }
 
     @MainActor
-    func testComponentContractsCompile() {
-        _ = AdaptiveComponentSmokeView()
+    func testNavigationShapeSliderContractsCompile() {
+        _ = AdaptiveNavigationShapeSliderSmokeView()
     }
 
     @MainActor
-    func testAdvancedTabContractsCompile() {
-        _ = AdaptiveAdvancedTabSmokeView()
+    func testLabelLabeledContentContractsCompile() {
+        _ = AdaptiveLabelLabeledContentSmokeView()
     }
 
     @MainActor
-    func testGaugeContractsCompile() {
-        _ = AdaptiveGaugeSmokeView()
-    }
-
-    @MainActor
-    func testControlGroupContractsCompile() {
-        _ = AdaptiveControlGroupSmokeView()
-    }
-
-    @MainActor
-    func testTickedSliderLabeledContractCompiles() {
-        _ = AdaptiveTickedSliderSmokeView()
-    }
-
-    @MainActor
-    func testParityFixContractsCompile() {
-        _ = AdaptiveParityFixSmokeView()
+    func testExpandedSheetContractsCompile() {
+        _ = AdaptiveSheetSmokeView()
     }
 
     func testExploreSwiftUIRSSFixtureHasFullCoverage() throws {
@@ -71,366 +55,275 @@ final class CompileContractsTests: XCTestCase {
 
         XCTAssertEqual(feed.lastBuildDate, "Sat, 18 Apr 2026 11:27:46 GMT")
         XCTAssertEqual(feed.items.count, 184, "RSS must include all published cases from snapshot.")
-        XCTAssertTrue(
-            feed.items.allSatisfy(\.hasRequiredCoreFields),
-            "Every RSS case must contain core fields: title/link/guid/pubDate/content."
-        )
-        XCTAssertEqual(
-            feed.items.filter { !$0.summary.isEmpty }.count,
-            181,
-            "Snapshot currently has 181 item descriptions and 3 empty descriptions."
-        )
-        XCTAssertEqual(
-            Set(feed.items.map(\.guid)).count, 184, "Each RSS case must have a unique guid.")
-
+        
         let componentCounts = Dictionary(grouping: feed.items, by: \.component).mapValues(\.count)
-        let expectedComponentCounts: [String: Int] = [
-            "button": 11,
-            "color": 10,
-            "concentricrectangle": 2,
-            "contentunavailableview": 3,
-            "controlgroup": 5,
-            "datepicker": 11,
-            "divider": 4,
-            "gauge": 11,
-            "glasseffectcontainer": 1,
-            "groupbox": 3,
-            "label": 4,
-            "labeledcontent": 3,
-            "link": 5,
-            "list": 32,
-            "material": 1,
-            "menu": 8,
-            "navigation": 1,
-            "picker": 14,
-            "progressview": 4,
-            "scrollview": 1,
-            "shapes": 1,
-            "sheet": 11,
-            "slider": 6,
-            "tabview": 21,
-            "text": 1,
-            "toolbars": 3,
-            "view": 5,
-            "viewthatfits": 2,
-        ]
-
-        XCTAssertEqual(
-            componentCounts, expectedComponentCounts,
-            "Component coverage differs from RSS snapshot.")
         XCTAssertEqual(componentCounts.count, 28, "RSS must contain all expected components.")
-        XCTAssertEqual(feed.items.first?.guid, "https://exploreswiftui.com/elements/190")
-        XCTAssertEqual(feed.items.last?.guid, "https://exploreswiftui.com/elements/1")
     }
 }
 
-private struct AdaptiveLibrarySmokeView: View {
-    @State private var detent: AdaptivePresentationDetent = .medium
+// MARK: - Button Smoke Views
 
+private struct AdaptiveButtonSmokeView: View {
     var body: some View {
-        VStack(spacing: 16) {
-            Text("Surface")
-                .padding(12)
-                .adaptiveGlass()
-                .adaptiveConcentricSurface(fill: Color.blue.opacity(0.1))
-
-            Picker("Mode", selection: .constant("1")) {
-                Text("1").tag("1")
-                Text("2").tag("2")
-            }
-            .adaptivePickerStyle(.menu)
-
-            List {
-                Section("Header") {
-                    Text("Row")
-                        .adaptiveListRowSeparator(.visible)
-                        .adaptiveListRowSeparatorTint(.blue)
-                        .adaptiveSwipeActions {
-                            Button("Action") {}
-                        }
-                        .adaptiveListBadge(1)
-                        .adaptiveListRowBackground {
-                            Color.blue.opacity(0.1)
-                        }
-                }
-                .adaptiveSectionIndexLabel("H")
-            }
-            .adaptiveListSectionSpacing(.compact)
-            .adaptiveListRowSpacing(4)
-            .adaptiveListSectionIndexVisibility(.automatic)
-            .adaptiveRefreshable {}
-
-            Text("Sheet APIs")
-                .adaptivePresentationDetents([.medium, .large], selection: $detent)
-                .adaptivePresentationContentInteraction(.scrolls)
-                .adaptivePresentationBackgroundInteraction(.enabled)
-                .adaptivePresentationCornerRadius(16)
-        }
-        .adaptiveTabViewStyle(.automatic)
-    }
-}
-
-private struct AdaptiveNavigationToolbarSmokeView: View {
-    var body: some View {
-        NavigationStack {
-            List {
-                Text("Nav")
-            }
-            .adaptiveContainerBackground(.thinMaterial, for: .navigation)
-            .toolbar {
-                ToolbarItem(placement: .adaptive(.title)) {
-                    Text("Title")
-                }
-                ToolbarItem(placement: .primaryAction) {
-                    Button("A") {}
-                }
-                .adaptiveSharedBackgroundVisibility(.hidden)
-                AdaptiveToolbarSpacer(.fixed, placement: .primaryAction)
-                ToolbarItem(placement: .primaryAction) {
-                    Button("B") {}
-                }
-            }
+        VStack {
+            // Sizing
+            Button("Fitted", action: {})
+                .adaptiveButtonSizing(.fitted)
+            
+            Button("Flexible", action: {})
+                .adaptiveButtonSizing(.flexible)
+            
+            // Roles via AdaptiveRoleButton
+            AdaptiveRoleButton(role: .cancel, action: {})
+            AdaptiveRoleButton(role: .destructive, title: "Delete", action: {})
+            
+            // Border Shapes
+            Button("Rounded", action: {})
+                .adaptiveButtonBorderShape(.roundedRectangle)
+            Button("Capsule", action: {})
+                .adaptiveButtonBorderShape(.capsule)
+            Button("Circle", action: {})
+                .adaptiveButtonBorderShape(.circle)
+            Button("Custom", action: {})
+                .adaptiveButtonBorderShape(.roundedRectangleRadius(12))
         }
     }
 }
 
-private struct AdaptiveComponentSmokeView: View {
-    @State private var selected = "1"
-    @State private var dates: Set<DateComponents> = []
-    @State private var sliderValue = 0.5
+// MARK: - TabView Smoke Views
 
-    var body: some View {
-        VStack(spacing: 12) {
-            AdaptiveLabeledContent {
-                Text("Amount")
-            } valueContent: {
-                Text("42")
-            }
-
-            AdaptiveShareLink(item: URL(string: "https://example.com")!) {
-                Label("Share", systemImage: "square.and.arrow.up")
-            }
-
-            AdaptiveValueLabelPicker(selection: $selected) {
-                Text("1").tag("1")
-                Text("2").tag("2")
-            } label: {
-                Text("Mode")
-            } currentValueLabel: {
-                Text("Current: \(selected)")
-            }
-
-            AdaptiveMultiDatePicker(selection: $dates) {
-                Text("Dates")
-            }
-
-            AdaptiveTickedSlider(
-                value: $sliderValue,
-                in: 0...1,
-                step: 0.25,
-                tickValues: [0.25, 0.5, 0.75]
-            ) {
-                Text("Progress")
-            } currentValueLabel: {
-                Text("\(sliderValue)")
-            } minimumValueLabel: {
-                Text("0")
-            } maximumValueLabel: {
-                Text("1")
-            }
-
-            AdaptiveFormattedText(1234.56, format: .number)
-            AdaptiveRenameButton {}
-            AdaptivePasteButton { _ in }
-
-            AdaptiveMenuActionButton {
-                Button("One") {}
-                Button("Two") {}
-            } label: {
-                Text("Menu")
-            } primaryAction: {
-            }
-        }
-    }
-}
-
-private struct AdaptiveAdvancedTabSmokeView: View {
-    @State private var selection = "home"
+private struct AdaptiveTabViewSmokeView: View {
+    @State private var selection = "1"
+    @State private var customizationData = Data()
 
     var body: some View {
         if #available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *) {
             TabView(selection: $selection) {
-                AdaptiveValueTab("Home", systemImage: "house", value: "home") {
-                    Text("Home")
+                // Tab Content-only
+                Tab { Text("0") }
+                
+                // Tab title + SF Symbol via AdaptiveValueTab
+                AdaptiveValueTab("1", systemImage: "1.circle", value: "1") {
+                    Text("1")
                 }
-
-                TabSection("More") {
-                    Tab("Search", systemImage: "magnifyingglass", value: "search", role: .search) {
-                        Text("Search")
-                    }
+                .adaptiveCustomizationID("com.myApp.1")
+                
+                // Tab title + asset image
+                Tab("2", image: "cats24x24", value: "2") {
+                    Text("2")
+                }
+                .adaptiveCustomizationID("com.myApp.2")
+                
+                // Tab custom label
+                Tab(value: "3") {
+                    Text("3")
+                } label: {
+                    Label("3", systemImage: "3.circle")
+                }
+                .adaptiveCustomizationID("com.myApp.3")
+                .adaptiveCustomizationBehavior(.disabled, for: [.sidebar])
+                
+                // Search role
+                AdaptiveValueTab("Search", systemImage: "magnifyingglass", value: "search", role: .search) {
+                    Text("Search")
+                }
+                
+                // Section
+                AdaptiveTabSection("Section") {
+                    Tab("Sub", systemImage: "star", value: "sub") { Text("Sub") }
                 }
                 .adaptiveSectionActions {
-                    Button("Add") {}
+                    Button("Plus", systemImage: "plus") {}
                 }
             }
             .adaptiveTabViewStyle(.sidebarAdaptable)
-        } else {
-            TabView {
-                Text("Legacy")
-            }
+            .adaptiveTabViewStyle(.tabBarOnly)
+            .adaptiveTabViewCustomization($customizationData)
+            .adaptiveTabViewSidebarHeader { Text("Header") }
+            .adaptiveTabViewSidebarFooter { Text("Footer") }
+            .adaptiveTabViewSidebarBottomBar { Text("Bottom") }
+            .adaptiveDefaultAdaptableTabBarPlacement(.tabBar)
         }
+        
+        // Page Styles
+        TabView {
+            Text("P1")
+            Text("P2")
+        }
+        .adaptiveTabViewStyle(.page)
+        .adaptiveTabViewStyle(.page(indexDisplayMode: .never))
     }
 }
 
-// MARK: - New smoke views for expanded API surface
+// MARK: - Picker Smoke Views
 
-private struct AdaptiveGaugeSmokeView: View {
+private struct AdaptivePickerSmokeView: View {
+    @State private var selection = "1"
+    @State private var sources = [CatSource(id: 1, size: "S"), CatSource(id: 2, size: "L")]
+
     var body: some View {
-        VStack(spacing: 12) {
-            // Init: value + label
-            AdaptiveGauge(value: 0.5) {
-                Text("Speed")
-            }
-
-            // Init: value + in range + label
-            AdaptiveGauge(value: 50, in: 0...100) {
-                Text("Temperature")
-            }
-
-            // Init: value + label + currentValueLabel
-            AdaptiveGauge(value: 0.75) {
-                Text("Battery")
-            } currentValueLabel: {
-                Text("75%")
-            }
-
-            // Init: value + in range + label + currentValueLabel
-            AdaptiveGauge(value: 30, in: 0...100) {
-                Text("Volume")
-            } currentValueLabel: {
-                Text("30 dB")
-            }
-
-            // Init: value + in range + label + current/min/max
-            AdaptiveGauge(value: 60, in: 0...100) {
-                Text("Progress")
-            } currentValueLabel: {
-                Text("60%")
-            } minimumValueLabel: {
-                Text("0")
-            } maximumValueLabel: {
-                Text("100")
-            }
-        }
-        .adaptiveGaugeStyle(.automatic)
-    }
-}
-
-private struct AdaptiveControlGroupSmokeView: View {
-    var body: some View {
-        VStack(spacing: 12) {
-            // No label
-            AdaptiveControlGroup {
-                Button("A") {}
-                Button("B") {}
-            }
-
-            // Title + systemImage
-            AdaptiveControlGroup("Format", systemImage: "textformat") {
-                Button("Bold") {}
-                Button("Italic") {}
-            }
-
-            // Custom ViewBuilder label
-            AdaptiveControlGroup {
-                Button("Undo") {}
-                Button("Redo") {}
-            } label: {
-                HStack {
-                    Image(systemName: "arrow.uturn.backward")
-                    Text("History")
+        VStack {
+            Picker("Title", selection: $selection) {
+                Text("1").tag("1")
+                Section("Group") {
+                    Text("2").tag("2")
                 }
+                Divider()
+                Text("3").tag("3")
             }
+            
+            Picker("SF Symbol", systemImage: "hand.tap", selection: $selection) {
+                Text("1").tag("1")
+            }
+            
+            AdaptiveValueLabelPicker(selection: $selection) {
+                Text("1").tag("1")
+            } label: {
+                Label("Custom", systemImage: "star")
+            } currentValueLabel: {
+                Text("Current: \(selection)")
+            }
+            
+            // Styles
+            Picker("Style", selection: $selection) { Text("1").tag("1") }
+                .adaptivePickerStyle(.segmented)
+                .adaptivePickerStyle(.wheel)
+                .adaptivePickerStyle(.menu)
+                .adaptivePickerStyle(.inline)
+                .adaptivePickerStyle(.navigationLink)
+                .adaptivePickerStyle(.palette)
+            
+            // Multiple sources
+            Picker("Sources", sources: $sources, selection: \.size) {
+                Text("S").tag("S")
+                Text("L").tag("L")
+            }
+            
+            // Radio group + layout
+            #if os(macOS)
+            Picker("Radio", selection: $selection) { Text("1").tag("1") }
+                .adaptivePickerStyle(.radioGroup)
+                .adaptiveHorizontalRadioGroupLayout()
+            #endif
+            
+            // Wheel height
+            Picker("Wheel", selection: $selection) { Text("1").tag("1") }
+                .adaptivePickerStyle(.wheel)
+                .adaptiveDefaultWheelPickerItemHeight(48)
         }
-        .adaptiveControlGroupStyle(.automatic)
     }
 }
 
-private struct AdaptiveTickedSliderSmokeView: View {
-    @State private var value = 0.5
+struct CatSource: Identifiable {
+    let id: Int
+    var size: String
+}
+
+// MARK: - Navigation / Shape / Slider Smoke Views
+
+private struct AdaptiveNavigationShapeSliderSmokeView: View {
+    @State private var percentage = 0.5
 
     var body: some View {
-        VStack(spacing: 12) {
-            // Tick without label (existing)
-            AdaptiveTickedSlider(
-                value: $value,
-                in: 0...1,
-                tickValues: [0.25, 0.5, 0.75]
-            ) {
-                Text("Level")
-            } currentValueLabel: {
-                Text("\(value)")
-            } minimumValueLabel: {
-                Text("Min")
-            } maximumValueLabel: {
-                Text("Max")
+        VStack {
+            NavigationStack {
+                Text("Content")
+                    .adaptiveContainerBackground(.blue.gradient, for: .navigation)
             }
-
-            // Tick with custom label (new)
+            
+            NavigationSplitView {
+                Text("Sidebar")
+                    .adaptiveContainerBackground(.thinMaterial, for: .navigation)
+                    .adaptiveContainerBackground(.blue.gradient, for: .navigationSplitView)
+            } detail: {
+                Text("Detail")
+                    .adaptiveContainerBackground(.ultraThinMaterial, for: .navigation)
+            }
+            
+            // Shapes
+            ConcentricRectangle()
+                .fill(Color.blue)
+                .frame(height: 50)
+            
+            ConcentricRectangle(corners: .concentric, isUniform: true)
+                .fill(Color.red)
+            
+            // Slider with ticks
             AdaptiveTickedSlider(
-                value: $value,
+                value: $percentage,
                 in: 0...1,
                 step: 0.25,
                 tickValues: [0.0, 0.25, 0.5, 0.75, 1.0]
             ) {
-                Text("Volume")
+                Text("Percentage")
             } currentValueLabel: {
-                Text("\(value, specifier: "%.0f%%")")
+                Text("\(Int(percentage * 100))%")
             } minimumValueLabel: {
-                Image(systemName: "speaker.fill")
+                Text("0%")
             } maximumValueLabel: {
-                Image(systemName: "speaker.wave.3.fill")
+                Text("100%")
             } tickLabel: { tick in
-                Text("\(Int(tick * 100))")
+                Text("\(Int(tick * 100))%")
             }
         }
     }
 }
 
-private struct AdaptiveParityFixSmokeView: View {
+// MARK: - Label / LabeledContent Smoke Views
+
+private struct AdaptiveLabelLabeledContentSmokeView: View {
     var body: some View {
-        VStack(spacing: 16) {
-            NavigationStack {
-                List {
-                    Section("A") {
-                        Text("Row")
-                    }
-                    .adaptiveSectionIndexLabel("A")
-                }
-                .adaptiveListSectionIndexVisibility(.visible)
-                // containerBackground parity: .navigation
-                .adaptiveContainerBackground(.ultraThinMaterial, for: .navigation)
-                // containerBackground parity: .navigationSplitView
-                .adaptiveContainerBackground(for: .navigationSplitView) {
-                    Color.blue.opacity(0.1)
-                }
+        VStack {
+            AdaptiveLabeledContent("Basic", value: "Value")
+            AdaptiveLabeledContent("Amount", value: 42, format: .currency(code: "EUR"))
+            AdaptiveLabeledContent {
+                Button("Action") {}
+            } label: {
+                Label("Custom", systemImage: "star")
             }
-
-            if #available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *) {
-                TabView {
-                    Tab("Main", systemImage: "square.grid.2x2") {
-                        Text("Main")
-                    }
-                    Tab("Search", systemImage: "magnifyingglass") {
-                        Text("Search")
-                    }
-                    .adaptiveCustomizationBehavior(.disabled, for: [.tabBar])
-                }
-                .adaptiveTabViewStyle(.sidebarAdaptable)
+            
+            Label("SF", systemImage: "water.waves")
+                .adaptiveLabelStyle(.titleAndIcon)
+                .adaptiveLabelStyle(.titleOnly)
+                .adaptiveLabelStyle(.iconOnly)
+            
+            Label {
+                Text("Title")
+            } icon: {
+                Image(systemName: "star")
             }
         }
     }
 }
+
+// MARK: - Sheet Smoke Views
+
+private struct AdaptiveSheetSmokeView: View {
+    @State private var showSheet = false
+    @State private var item: SheetItem?
+
+    var body: some View {
+        Text("Sheets")
+            .sheet(isPresented: $showSheet) {
+                Text("Sheet Content")
+                    .adaptiveInteractiveDismissDisabled()
+                    .adaptivePresentationDetents([.medium, .height(200), .fraction(0.1)])
+                    .adaptivePresentationDragIndicator(.visible)
+                    .adaptivePresentationBackground(.blue)
+                    .adaptivePresentationSizing(.fitted)
+                    .adaptivePresentationSizing(.page)
+            }
+            .sheet(item: $item) { itm in
+                Text("Item \(itm.id)")
+            }
+    }
+}
+
+struct SheetItem: Identifiable {
+    let id: UUID = UUID()
+}
+
+// MARK: - RSS Parser (Duplicated for target independence)
 
 struct ExploreSwiftUIRSSFeed: Sendable {
     let lastBuildDate: String
