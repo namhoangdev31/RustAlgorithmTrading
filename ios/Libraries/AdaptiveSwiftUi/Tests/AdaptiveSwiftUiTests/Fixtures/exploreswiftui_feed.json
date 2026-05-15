@@ -1,0 +1,3294 @@
+{
+  "title": "Explore SwiftUI",
+  "link": "https://exploreswiftui.com",
+  "description": "Latest SwiftUI elements added to the library",
+  "lastBuildDate": "Sat, 18 Apr 2026 11:27:46 GMT",
+  "group_descriptions": {
+    "Buttons": "API xoay quanh Button, buttonStyle, buttonBorderShape, role, tint, RenameButton, PasteButton; iOS 26 thêm buttonSizing và glass/glassProminent style.",
+    "Toolbars": "API mới iOS 26 cho title placement (.title/.subtitle/.largeTitle/.largeSubtitle), ToolbarSpacer(.fixed/.flexible), và sharedBackgroundVisibility.",
+    "Sliders": "nền tảng là Slider + step; iOS 26 thêm tick system (SliderTick, SliderTickContentForEach) để có mốc và label tick.",
+    "Pickers": "1 API Picker, nhiều style (inline/menu/navigationLink/palette/segmented/wheel/radioGroup), thêm bố cục radio theo chiều ngang, và currentValueLabel ở API đời mới.",
+    "Date Pickers": "DatePicker theo components/style (wheel/graphical/field/stepperField), range ngày (in:), và MultiDatePicker cho chọn nhiều ngày.",
+    "Gauges": "Gauge với nhiều style (linear/circular/accessory...), hỗ trợ current/min/max label, tint/color.",
+    "Progress Views": "ProgressView dạng linear/circular, có label và tint/styling.",
+    "Content Unavailable Views": "UI trạng thái rỗng, gồm custom variant và search variant (ContentUnavailableView.search).",
+    "Menus": "Menu, Section, Divider, menu lồng nhau, menuOrder(.fixed) và contextMenu (kể cả preview).",
+    "View That Fits": "fallback layout tự động theo không gian hiển thị (ưu tiên view đầu tiên fit được).",
+    "Dividers": "divider cơ bản, màu, chiều cao, và vertical usage trong HStack.",
+    "Lists": "nhóm lớn nhất; gồm style list, separators, row/background/insets/spacing, swipe/refresh, badge, edit/move/delete control, section index, outline/disclosure.",
+    "Group Boxes": "GroupBox cơ bản, có label, có backgroundStyle.",
+    "Scroll Views": "iOS 26 có scrollEdgeEffectStyle(.hard) để edge effect cứng.",
+    "Colors": "semantic/system colors, UIKit bridge colors (Color(.separator/.label/...)), gradient/opacity variants.",
+    "Text": "formatted text (Text(value, format: ...)) kiểu currency/number.",
+    "Material": "material styles (ultraThin/thin/regular/thick/...) dùng cho foreground/background effect.",
+    "Links": "Link, ShareLink, HelpLink, TextFieldLink, kèm custom preview item cho share.",
+    "Control Groups": "ControlGroup và các style (navigation/menu/compactMenu/palette).",
+    "Navigation": "iOS 26 thêm navigationSubtitle (title + subtitle).",
+    "Tab Views": "nhóm rất rộng; gồm Tab/TabSection, value-tab, search role, tabViewStyle variants (page/sidebarAdaptable/tabBarOnly/grouped), customization APIs, sidebar header/footer/bottombar, iOS 26 thêm bottom accessory + minimize tab bar on scroll.",
+    "Views": "generic view-level APIs như containerBackground, controlSize, backgroundExtensionEffect, glassEffect.",
+    "Glass Effect Containers": "container iOS 26 để gom nhiều glass elements và tối ưu compositing.",
+    "Shapes": "ContainerRelativeShape cho shape bám theo container context.",
+    "Labels": "Label với system image/custom image và label styles.",
+    "Labeled Content": "cặp “title-value” cho form/list, có formatted value và custom content.",
+    "Concentric Rectangles": "shape iOS 26 với concentric corners (uniform/non-uniform) cho style mới."
+  },
+  "items": [
+    {
+      "index": 1,
+      "group": "Buttons",
+      "title": "Button Sizing",
+      "link": "https://exploreswiftui.com/library/button/button-sizing",
+      "description": "The preferred sizing behavior of buttons in the view hierarchy.\n",
+      "pubDate": "Sat, 18 Apr 2026 11:27:46 GMT",
+      "guid": "https://exploreswiftui.com/elements/190",
+      "compatibility": {
+        "iOS": "26.0",
+        "iPadOS": "26.0",
+        "macOS": "26.0",
+        "watchOS": "26.0",
+        "tvOS": "26.0",
+        "visionOS": "26.0"
+      },
+      "code": "HStack {\n    Button(\"Tap Me\", action: action)\n        .buttonStyle(.borderedProminent)\n        .buttonSizing(.fitted)\n    Button(\"Tap Me\", action: action)\n        .buttonStyle(.borderedProminent)\n        .buttonSizing(.flexible)\n}",
+      "image_url": null
+    },
+    {
+      "index": 2,
+      "group": "Tab Views",
+      "title": "Tab View Customization Behavior",
+      "link": "https://exploreswiftui.com/library/tabview/tab-view-customization-behavior",
+      "description": "Configures the customization behavior of customizable tab view content.\n",
+      "pubDate": "Sat, 11 Apr 2026 12:56:32 GMT",
+      "guid": "https://exploreswiftui.com/elements/166",
+      "compatibility": {
+        "iOS": "18.0",
+        "iPadOS": "18.0",
+        "macOS": "15.0",
+        "visionOS": "2.0"
+      },
+      "code": "@AppStorage(\"tabCustomization\") private var customization: TabViewCustomization\n\nvar body: some View {\n    TabView {\n        Tab {\n            Text(\"0\")\n        }\n        .customizationID(\"com.myApp.0\")\n\n        Tab(\"1\", systemImage: \"1.circle\") {\n            Text(\"1\")\n        }\n        .customizationID(\"com.myApp.1\")\n        .customizationBehavior(.disabled, for: .sidebar, .tabBar)\n\n\n        Tab(\"2\", image: \"cats24x24\") {\n            Text(\"2\")\n        }\n        .customizationID(\"com.myApp.2\")\n\n        Tab {\n            Text(\"3\")\n        } label: {\n            Label(\"3\", systemImage: \"3.circle\")\n        }\n        .customizationID(\"com.myApp.3\")\n    }\n    .tabViewStyle(.sidebarAdaptable)\n    .tabViewCustomization($customization)\n}",
+      "image_url": null
+    },
+    {
+      "index": 3,
+      "group": "Tab Views",
+      "title": "Tab View Customization",
+      "link": "https://exploreswiftui.com/library/tabview/tab-view-customization",
+      "description": "Specifies the customizations to apply to the sidebar representation of the tab view.",
+      "pubDate": "Sat, 11 Apr 2026 12:56:03 GMT",
+      "guid": "https://exploreswiftui.com/elements/164",
+      "compatibility": {
+        "iOS": "18.0",
+        "iPadOS": "18.0",
+        "macOS": "15.0",
+        "visionOS": "2.0"
+      },
+      "code": "@AppStorage(\"tabCustomization\") private var customization: TabViewCustomization\n\nvar body: some View {\n    TabView {\n        Tab {\n            Text(\"0\")\n        }\n        .customizationID(\"com.myApp.0\")\n\n        Tab(\"1\", systemImage: \"1.circle\") {\n            Text(\"1\")\n        }\n        .customizationID(\"com.myApp.1\")\n\n        Tab(\"2\", image: \"cats24x24\") {\n            Text(\"2\")\n        }\n        .customizationID(\"com.myApp.2\")\n\n        Tab {\n            Text(\"3\")\n        } label: {\n            Label(\"3\", systemImage: \"3.circle\")\n        }\n        .customizationID(\"com.myApp.3\")\n    }\n    .tabViewStyle(.sidebarAdaptable)\n    .tabViewCustomization($customization)\n}",
+      "image_url": null
+    },
+    {
+      "index": 4,
+      "group": "Tab Views",
+      "title": "Tab View Side Bar Footer",
+      "link": "https://exploreswiftui.com/library/tabview/tab-view-side-bar-footer",
+      "description": "Adds a custom footer to the sidebar of a tab view.",
+      "pubDate": "Sat, 11 Apr 2026 12:54:57 GMT",
+      "guid": "https://exploreswiftui.com/elements/168",
+      "compatibility": {
+        "iOS": "18.0",
+        "iPadOS": "18.0",
+        "macOS": "15.0",
+        "visionOS": "2.0"
+      },
+      "code": "TabView {\n    Tab {\n        Text(\"0\")\n    }\n\n    Tab(\"1\", systemImage: \"1.circle\") {\n        Text(\"1\")\n    }\n\n    Tab(\"2\", image: \"cats24x24\") {\n        Text(\"2\")\n    }\n\n    Tab {\n        Text(\"3\")\n    } label: {\n        Label(\"3\", systemImage: \"3.circle\")\n    }\n}\n.tabViewStyle(.sidebarAdaptable)\n.tabViewSidebarFooter {\n        Label(\"Foo\", systemImage: \"star\")\n}",
+      "image_url": null
+    },
+    {
+      "index": 5,
+      "group": "Tab Views",
+      "title": "Tab View Side Bar Bottom Bar",
+      "link": "https://exploreswiftui.com/library/tabview/tab-view-side-bar-bottom-bar",
+      "description": "Adds a custom bottom bar to the sidebar of a tab view.\n",
+      "pubDate": "Sat, 11 Apr 2026 12:54:39 GMT",
+      "guid": "https://exploreswiftui.com/elements/169",
+      "compatibility": {
+        "iOS": "18.0",
+        "iPadOS": "18.0",
+        "visionOS": "2.0"
+      },
+      "code": "TabView {\n    Tab {\n        Text(\"0\")\n    }\n\n    Tab(\"1\", systemImage: \"1.circle\") {\n        Text(\"1\")\n    }\n\n    Tab(\"2\", image: \"cats24x24\") {\n        Text(\"2\")\n    }\n\n    Tab {\n        Text(\"3\")\n    } label: {\n        Label(\"3\", systemImage: \"3.circle\")\n    }\n}\n.tabViewStyle(.sidebarAdaptable)\n.tabViewSidebarBottomBar {\n        Label(\"Foo\", systemImage: \"star\")\n}",
+      "image_url": null
+    },
+    {
+      "index": 6,
+      "group": "Tab Views",
+      "title": "Default Adaptable Tab Bar Placement",
+      "link": "https://exploreswiftui.com/library/tabview/default-adaptable-tab-bar-placement",
+      "description": "Specifies the default placement for the tabs in a tab view using the adaptable sidebar style.\n",
+      "pubDate": "Sat, 11 Apr 2026 12:53:39 GMT",
+      "guid": "https://exploreswiftui.com/elements/170",
+      "compatibility": {
+        "iOS": "18.0",
+        "iPadOS": "18.0"
+      },
+      "code": "TabView {\n    Tab {\n        Text(\"0\")\n    }\n\n    Tab(\"1\", systemImage: \"1.circle\") {\n        Text(\"1\")\n    }\n\n    Tab(\"2\", image: \"cats24x24\") {\n        Text(\"2\")\n    }\n\n    Tab {\n        Text(\"3\")\n    } label: {\n        Label(\"3\", systemImage: \"3.circle\")\n    }\n}\n.tabViewStyle(.sidebarAdaptable)\n.defaultAdaptableTabBarPlacement(.tabBar)",
+      "image_url": null
+    },
+    {
+      "index": 7,
+      "group": "Tab Views",
+      "title": "Tab Bar Section Actions",
+      "link": "https://exploreswiftui.com/library/tabview/tab-bar-section-actions",
+      "description": "Adds custom actions to a tab section.\n",
+      "pubDate": "Sat, 11 Apr 2026 12:53:16 GMT",
+      "guid": "https://exploreswiftui.com/elements/171",
+      "compatibility": {
+        "iOS": "18.0",
+        "iPadOS": "18.0",
+        "macOS": "15.0",
+        "tvOS": "18.0",
+        "visionOS": "2.0"
+      },
+      "code": "TabView {\n    Tab {\n        Text(\"0\")\n    }\n\n    TabSection(\"Foo\") {\n        Tab(\"1\", systemImage: \"1.circle\") {\n            Text(\"1\")\n        }\n    }\n    .sectionActions {\n        Button(\"Bar\", systemImage: \"plus\", action: action)\n    }\n\n    Tab(\"2\", image: \"cats24x24\") {\n        Text(\"2\")\n    }\n\n    Tab {\n        Text(\"3\")\n    } label: {\n        Label(\"3\", systemImage: \"3.circle\")\n    }\n}\n.tabViewStyle(.sidebarAdaptable)",
+      "image_url": null
+    },
+    {
+      "index": 8,
+      "group": "Tab Views",
+      "title": "Tab View Side Bar Header",
+      "link": "https://exploreswiftui.com/library/tabview/tab-view-side-bar-header",
+      "description": "Adds a custom header to the sidebar of a tab view.\n",
+      "pubDate": "Sat, 11 Apr 2026 12:45:16 GMT",
+      "guid": "https://exploreswiftui.com/elements/167",
+      "compatibility": {
+        "iOS": "18.0",
+        "iPadOS": "18.0",
+        "macOS": "15.0",
+        "visionOS": "2.0"
+      },
+      "code": "TabView {\n    Tab {\n        Text(\"0\")\n    }\n\n    Tab(\"1\", systemImage: \"1.circle\") {\n        Text(\"1\")\n    }\n\n    Tab(\"2\", image: \"cats24x24\") {\n        Text(\"2\")\n    }\n\n    Tab {\n        Text(\"3\")\n    } label: {\n        Label(\"3\", systemImage: \"3.circle\")\n    }\n}\n.tabViewStyle(.sidebarAdaptable)\n    .tabViewSidebarHeader {\n        Label(\"Foo\", systemImage: \"star\")\n    }",
+      "image_url": null
+    },
+    {
+      "index": 9,
+      "group": "Tab Views",
+      "title": "GroupedTabViewStyle",
+      "link": "https://exploreswiftui.com/library/tabview/groupedtabviewstyle",
+      "description": "A tab view style that displays a tab bar that groups its tabs together.\n",
+      "pubDate": "Sat, 11 Apr 2026 12:27:50 GMT",
+      "guid": "https://exploreswiftui.com/elements/160",
+      "compatibility": {
+        "macOS": "15.0"
+      },
+      "code": "TabView {\n    Tab {\n        Text(\"0\")\n    }\n\n\n    Tab(\"1\", systemImage: \"1.circle\") {\n        Text(\"1\")\n    }\n\n\n    Tab(\"2\", image: \"cats24x24\") {\n        Text(\"2\")\n    }\n\n    Tab {\n        Text(\"3\")\n    } label: {\n        Label(\"3\", systemImage: \"3.circle\")\n    }\n}\n.tabViewStyle(.grouped)",
+      "image_url": null
+    },
+    {
+      "index": 10,
+      "group": "Tab Views",
+      "title": "Tab Badge",
+      "link": "https://exploreswiftui.com/library/tabview/tab-badge",
+      "description": "Generates a badge for a tab from an integer value.\n",
+      "pubDate": "Sat, 11 Apr 2026 12:26:02 GMT",
+      "guid": "https://exploreswiftui.com/elements/156",
+      "compatibility": {
+        "iOS": "18.0",
+        "iPadOS": "18.0",
+        "macOS": "15.0",
+        "visionOS": "2.0"
+      },
+      "code": "TabView {\n    Group {\n        Tab {\n            Text(\"0\")\n        }\n\n        Tab(\"1\", systemImage: \"1.circle\") {\n            Text(\"1\")\n        }\n\n        Tab(\"2\", image: \"cats24x24\") {\n            Text(\"2\")\n        }\n\n        Tab {\n            Text(\"3\")\n        } label: {\n            Label(\"3\", systemImage: \"3.circle\")\n        }\n    }\n}.badge(42)",
+      "image_url": "https://exploreswiftui.com/api/images/156/ios?v=1775910362744"
+    },
+    {
+      "index": 11,
+      "group": "Tab Views",
+      "title": "Hidden Index PageTabViewStyle",
+      "link": "https://exploreswiftui.com/library/tabview/hidden-index-pagetabviewstyle",
+      "description": "A TabViewStyle that displays a paged scrolling TabView with a hidden index.",
+      "pubDate": "Sat, 11 Apr 2026 12:15:42 GMT",
+      "guid": "https://exploreswiftui.com/elements/189",
+      "compatibility": {
+        "iOS": "14.0",
+        "iPadOS": "14.0",
+        "watchOS": "7.0",
+        "tvOS": "14.0",
+        "visionOS": "1.0"
+      },
+      "code": "TabView {\n    Tab {\n        Text(\"0\")\n    }\n\n    Tab(\"1\", systemImage: \"1.circle\") {\n        Text(\"1\")\n    }\n\n    Tab(\"2\", image: \"cats24x24\") {\n        Text(\"2\")\n    }\n\n    Tab {\n        Text(\"3\")\n    } label: {\n        Label(\"3\", systemImage: \"3.circle\")\n    }\n}\n.tabViewStyle(.page(indexDisplayMode: .never))",
+      "image_url": "https://exploreswiftui.com/api/images/189/ios?v=1775909742218"
+    },
+    {
+      "index": 12,
+      "group": "Tab Views",
+      "title": "PageTabViewStyle",
+      "link": "https://exploreswiftui.com/library/tabview/pagetabviewstyle",
+      "description": "A TabViewStyle that displays a paged scrolling TabView.\n",
+      "pubDate": "Sat, 11 Apr 2026 12:13:56 GMT",
+      "guid": "https://exploreswiftui.com/elements/161",
+      "compatibility": {
+        "iOS": "14.0",
+        "iPadOS": "14.0",
+        "watchOS": "7.0",
+        "tvOS": "14.0",
+        "visionOS": "1.0"
+      },
+      "code": "TabView {\n    Tab {\n        Text(\"0\")\n    }\n\n    Tab(\"1\", systemImage: \"1.circle\") {\n        Text(\"1\")\n    }\n\n    Tab(\"2\", image: \"cats24x24\") {\n        Text(\"2\")\n    }\n\n    Tab {\n        Text(\"3\")\n    } label: {\n        Label(\"3\", systemImage: \"3.circle\")\n    }\n}\n.tabViewStyle(.page)",
+      "image_url": "https://exploreswiftui.com/api/images/161/ios?v=1775909636772"
+    },
+    {
+      "index": 13,
+      "group": "Tab Views",
+      "title": "VerticalPageTabViewStyle",
+      "link": "https://exploreswiftui.com/library/tabview/verticalpagetabviewstyle",
+      "description": "A TabViewStyle that displays a vertical TabView interaction and appearance.\n",
+      "pubDate": "Sat, 11 Apr 2026 12:13:35 GMT",
+      "guid": "https://exploreswiftui.com/elements/162",
+      "compatibility": {
+        "watchOS": "10.0"
+      },
+      "code": "TabView {\n    Tab {\n        Text(\"0\")\n    }\n\n    Tab(\"1\", systemImage: \"1.circle\") {\n        Text(\"1\")\n    }\n\n    Tab(\"2\", image: \"cats24x24\") {\n        Text(\"2\")\n    }\n\n    Tab {\n        Text(\"3\")\n    } label: {\n        Label(\"3\", systemImage: \"3.circle\")\n    }\n}\n.tabViewStyle(.verticalPage)",
+      "image_url": null
+    },
+    {
+      "index": 14,
+      "group": "Tab Views",
+      "title": "SidebarAdaptableTabViewStyle",
+      "link": "https://exploreswiftui.com/library/tabview/sidebaradaptabletabviewstyle",
+      "description": "A tab bar style that adapts to each platform.\n",
+      "pubDate": "Sat, 11 Apr 2026 12:12:33 GMT",
+      "guid": "https://exploreswiftui.com/elements/158",
+      "compatibility": {
+        "iOS": "18.0",
+        "iPadOS": "18.0",
+        "macOS": "15.0",
+        "tvOS": "18.0",
+        "visionOS": "2.0"
+      },
+      "code": "TabView {\n    Tab {\n        Text(\"0\")\n    }\n\n    Tab(\"1\", systemImage: \"1.circle\") {\n        Text(\"1\")\n    }\n\n    Tab(\"2\", image: \"cats24x24\") {\n        Text(\"2\")\n    }\n\n    Tab {\n        Text(\"3\")\n    } label: {\n        Label(\"3\", systemImage: \"3.circle\")\n    }\n}\n.tabViewStyle(.sidebarAdaptable)",
+      "image_url": null
+    },
+    {
+      "index": 15,
+      "group": "Tab Views",
+      "title": "TabSection",
+      "link": "https://exploreswiftui.com/library/tabview/tabsection",
+      "description": "A container that you can use to add hierarchy within a tab view.\n",
+      "pubDate": "Sat, 11 Apr 2026 12:09:53 GMT",
+      "guid": "https://exploreswiftui.com/elements/157",
+      "compatibility": {
+        "iOS": "18.0",
+        "iPadOS": "18.0",
+        "macOS": "15.0",
+        "watchOS": "11.0",
+        "tvOS": "18.0",
+        "visionOS": "2.0"
+      },
+      "code": "TabView {\n    Tab {\n        Text(\"0\")\n    }\n\n    TabSection(\"Foo\") {\n        Tab(\"1\", systemImage: \"1.circle\") {\n            Text(\"1\")\n        }\n    }\n\n    Tab(\"2\", image: \"cats24x24\") {\n        Text(\"2\")\n    }\n\n    Tab {\n        Text(\"3\")\n    } label: {\n        Label(\"3\", systemImage: \"3.circle\")\n    }\n}\n.tabViewStyle(.sidebarAdaptable)",
+      "image_url": null
+    },
+    {
+      "index": 16,
+      "group": "Tab Views",
+      "title": "TabBarOnlyTabViewStyle",
+      "link": "https://exploreswiftui.com/library/tabview/tabbaronlytabviewstyle",
+      "description": "A tab view style that displays a tab bar when possible.\n",
+      "pubDate": "Sat, 11 Apr 2026 11:26:36 GMT",
+      "guid": "https://exploreswiftui.com/elements/159",
+      "compatibility": {
+        "iOS": "18.0",
+        "iPadOS": "18.0",
+        "macOS": "15.0",
+        "tvOS": "18.0",
+        "visionOS": "2.0"
+      },
+      "code": "TabView {\n    Tab {\n        Text(\"0\")\n    }\n\n    Tab(\"1\", systemImage: \"1.circle\") {\n        Text(\"1\")\n    }\n\n    Tab(\"2\", image: \"cats24x24\") {\n        Text(\"2\")\n    }\n\n    Tab {\n        Text(\"3\")\n    } label: {\n        Label(\"3\", systemImage: \"3.circle\")\n    }\n}\n.tabViewStyle(.tabBarOnly)",
+      "image_url": "https://exploreswiftui.com/api/images/159/ios?v=1775906796092"
+    },
+    {
+      "index": 17,
+      "group": "Tab Views",
+      "title": "TabView",
+      "link": "https://exploreswiftui.com/library/tabview/tabview",
+      "description": "Creates Tabs with title, image, systemImage and custom Label.",
+      "pubDate": "Sat, 11 Apr 2026 11:21:16 GMT",
+      "guid": "https://exploreswiftui.com/elements/155",
+      "compatibility": {
+        "iOS": "18.0",
+        "iPadOS": "18.0",
+        "macOS": "15.0",
+        "watchOS": "11.0",
+        "tvOS": "18.0",
+        "visionOS": "2.0"
+      },
+      "code": "TabView {\n    Tab {\n        Text(\"0\")\n    }\n\n    Tab(\"1\", systemImage: \"1.circle\") {\n        Text(\"1\")\n    }\n\n    Tab(\"2\", image: \"cats24x24\") {\n        Text(\"2\")\n    }\n\n    Tab {\n        Text(\"3\")\n    } label: {\n        Label(\"3\", systemImage: \"3.circle\")\n    }\n}",
+      "image_url": "https://exploreswiftui.com/api/images/155/ios?v=1775906476424"
+    },
+    {
+      "index": 18,
+      "group": "Tab Views",
+      "title": "Search Tab Role",
+      "link": "https://exploreswiftui.com/library/tabview/search-tab-role",
+      "description": "On Liquid Glass, this tab is placed in its own group. In left-to-right (LTR) layouts, it will always appear on the right side of the TabView.",
+      "pubDate": "Sat, 11 Apr 2026 09:04:50 GMT",
+      "guid": "https://exploreswiftui.com/elements/163",
+      "compatibility": {
+        "iOS": "18.0",
+        "iPadOS": "18.0",
+        "macOS": "15.0",
+        "watchOS": "11.0",
+        "tvOS": "18.0",
+        "visionOS": "2.0"
+      },
+      "code": "TabView {\n    Tab {\n        EmptyView()\n    }\n    Tab(\"1\", systemImage: \"1.circle\", role: .search) {\n        EmptyView()\n    }\n\n    Tab(\"2\", image: \"cats24x24\") {\n        EmptyView()\n    }\n    Tab {\n        EmptyView()\n    } label: {\n        Label(\"3\", systemImage: \"3.circle\")\n    }\n}",
+      "image_url": "https://exploreswiftui.com/api/images/163/ios?v=1775898290880"
+    },
+    {
+      "index": 19,
+      "group": "Tab Views",
+      "title": "Value Tab View",
+      "link": "https://exploreswiftui.com/library/tabview/value-tab-view",
+      "description": "Creates a tab view that uses a builder to create and specify selection values for its tabs.\n",
+      "pubDate": "Sat, 11 Apr 2026 08:58:16 GMT",
+      "guid": "https://exploreswiftui.com/elements/165",
+      "compatibility": {
+        "iOS": "18.0",
+        "iPadOS": "18.0",
+        "macOS": "15.0",
+        "watchOS": "11.0",
+        "tvOS": "18.0",
+        "visionOS": "2.0"
+      },
+      "code": "@State var selection = \"1\"\n\nvar body: some View {\n    let displayedSelection = Text(\"Selected: \\(selection)\")\n\n    TabView(selection: $selection) {\n        Tab(value: \"0\") {\n            displayedSelection\n        }\n        Tab(\"1\", systemImage: \"1.circle\", value: \"1\") {\n            displayedSelection\n        }\n\n        Tab(\"2\", image: \"cats24x24\", value: \"2\") {\n            displayedSelection\n        }\n        Tab(value: \"3\") {\n            displayedSelection\n        } label: {\n            Label(\"3\", systemImage: \"3.circle\")\n        }\n    }\n}",
+      "image_url": "https://exploreswiftui.com/api/images/165/ios?v=1775897896898"
+    },
+    {
+      "index": 20,
+      "group": "Pickers",
+      "title": "Wheel Picker Item Height",
+      "link": "https://exploreswiftui.com/library/picker/wheel-picker-item-height",
+      "description": "Sets the default wheel-style picker item height.\n",
+      "pubDate": "Sun, 05 Apr 2026 08:49:17 GMT",
+      "guid": "https://exploreswiftui.com/elements/188",
+      "compatibility": {
+        "watchOS": "6.0"
+      },
+      "code": "Picker(selection: $selection) {\n    Text(\"1\")\n        .tag(\"1\")\n    Section(\"Bar\") {\n        Text(\"2\")\n            .tag(\"2\")\n    }\n    Label(\"3\", systemImage: \"3.circle\")\n        .tag(\"3\")\n} label: {\n    Label(\"Foo\", systemImage: \"hand.tap\")\n    Text(\"Bar\")\n} currentValueLabel: {\n    Text(\"Selected: \\(selection)\")\n}\n.defaultWheelPickerItemHeight(48)",
+      "image_url": null
+    },
+    {
+      "index": 21,
+      "group": "Pickers",
+      "title": "Horizontal Radio Group Layout",
+      "link": "https://exploreswiftui.com/library/picker/horizontal-radio-group-layout",
+      "description": "Sets the style for radio group style pickers within this view to be horizontally positioned with the radio buttons inside the layout.\n",
+      "pubDate": "Sun, 05 Apr 2026 08:13:26 GMT",
+      "guid": "https://exploreswiftui.com/elements/187",
+      "compatibility": {
+        "macOS": "10.15"
+      },
+      "code": "let picker = Picker(selection: $selection) {\n    Text(\"1\")\n        .tag(\"1\")\n    Section(\"Bar\") {\n        Text(\"2\")\n            .tag(\"2\")\n    }\n    Label(\"3\", systemImage: \"3.circle\")\n        .tag(\"3\")\n} label: {\n    Label(\"Foo\", systemImage: \"hand.tap\")\n    Text(\"Bar\")\n} currentValueLabel: {\n    Text(\"Selected: \\(selection)\")\n}\n.pickerStyle(.radioGroup)\n\npicker\n\npicker\n    .horizontalRadioGroupLayout()",
+      "image_url": null
+    },
+    {
+      "index": 22,
+      "group": "Pickers",
+      "title": "WheelPickerStyle",
+      "link": "https://exploreswiftui.com/library/picker/wheelpickerstyle",
+      "description": "A picker style that presents the options in a scrollable wheel that shows the selected option and a few neighboring options.\n",
+      "pubDate": "Sun, 05 Apr 2026 07:54:46 GMT",
+      "guid": "https://exploreswiftui.com/elements/186",
+      "compatibility": {
+        "iOS": "13.0",
+        "iPadOS": "13.0",
+        "watchOS": "6.0",
+        "visionOS": "1.0"
+      },
+      "code": "List {\n    Picker(selection: $selection) {\n        Text(\"1\")\n            .tag(\"1\")\n        Section(\"Bar\") {\n            Text(\"2\")\n                .tag(\"2\")\n        }\n        Label(\"3\", systemImage: \"3.circle\")\n            .tag(\"3\")\n    } label: {\n        Label(\"Foo\", systemImage: \"hand.tap\")\n        Text(\"Bar\")\n    } currentValueLabel: {\n        Text(\"Selected: \\(selection)\")\n    }\n    .pickerStyle(.wheel)\n}",
+      "image_url": "https://exploreswiftui.com/api/images/186/ios?v=1775375686572"
+    },
+    {
+      "index": 23,
+      "group": "Pickers",
+      "title": "SegmentedPickerStyle",
+      "link": "https://exploreswiftui.com/library/picker/segmentedpickerstyle",
+      "description": "A picker style that presents the options in a segmented control. Use this style when there are two to five options. Consider using menu when there are more than five options.\n",
+      "pubDate": "Sun, 05 Apr 2026 06:49:06 GMT",
+      "guid": "https://exploreswiftui.com/elements/185",
+      "compatibility": {
+        "iOS": "13.0",
+        "iPadOS": "13.0",
+        "macOS": "10.15",
+        "tvOS": "13.0",
+        "visionOS": "1.0"
+      },
+      "code": "List {\n    Picker(selection: $selection) {\n        Text(\"1\")\n            .tag(\"1\")\n        Section(\"Bar\") {\n            Text(\"2\")\n                .tag(\"2\")\n        }\n        Label(\"3\", systemImage: \"3.circle\")\n            .tag(\"3\")\n    } label: {\n        Label(\"Foo\", systemImage: \"hand.tap\")\n        Text(\"Bar\")\n    } currentValueLabel: {\n        Text(\"Selected: \\(selection)\")\n    }\n    .pickerStyle(.segmented)\n}",
+      "image_url": "https://exploreswiftui.com/api/images/185/ios?v=1775371746115"
+    },
+    {
+      "index": 24,
+      "group": "Pickers",
+      "title": "PalettePickerStyle",
+      "link": "https://exploreswiftui.com/library/picker/palettepickerstyle",
+      "description": "A picker style that presents the options as a row of compact elements. When used outside of menus, this style is rendered as a segmented picker. If that is the intended usage, consider segmented instead.\n",
+      "pubDate": "Sun, 05 Apr 2026 06:45:20 GMT",
+      "guid": "https://exploreswiftui.com/elements/184",
+      "compatibility": {
+        "iOS": "17.0",
+        "iPadOS": "17.0",
+        "macOS": "14.0",
+        "visionOS": "1.0"
+      },
+      "code": "List {\n    Menu(\"Test\") {\n        Picker(selection: $selection) {\n            Text(\"1\")\n                .tag(\"1\")\n            Text(\"2\")\n                .tag(\"2\")\n            Section(\"Bar\") {\n                Text(\"3\")\n                    .tag(\"3\")\n                Text(\"4\")\n                    .tag(\"4\")\n            }\n            Label(\"5\", systemImage: \"5.circle\")\n                .tag(\"5\")\n            Label(\"6\", systemImage: \"6.circle\")\n                .tag(\"6\")\n        } label: {\n            Label(\"Foo\", systemImage: \"hand.tap\")\n            Text(\"Bar\")\n        } currentValueLabel: {\n            Text(\"Selected: \\(selection)\")\n        }\n        .pickerStyle(.palette)\n    }\n}",
+      "image_url": "https://exploreswiftui.com/api/images/184/ios?v=1775371520517"
+    },
+    {
+      "index": 25,
+      "group": "Pickers",
+      "title": "RadioGroupPickerStyle",
+      "link": "https://exploreswiftui.com/library/picker/radiogrouppickerstyle",
+      "description": "A picker style that presents the options as a group of radio buttons.\n",
+      "pubDate": "Sun, 05 Apr 2026 06:42:33 GMT",
+      "guid": "https://exploreswiftui.com/elements/183",
+      "compatibility": {
+        "macOS": "10.15"
+      },
+      "code": "Picker(selection: $selection) {\n    Text(\"1\")\n        .tag(\"1\")\n    Section(\"Bar\") {\n        Text(\"2\")\n            .tag(\"2\")\n    }\n    Label(\"3\", systemImage: \"3.circle\")\n        .tag(\"3\")\n} label: {\n    Label(\"Foo\", systemImage: \"hand.tap\")\n    Text(\"Bar\")\n} currentValueLabel: {\n    Text(\"Selected: \\(selection)\")\n}\n.pickerStyle(.radioGroup)",
+      "image_url": null
+    },
+    {
+      "index": 26,
+      "group": "Pickers",
+      "title": "NavigationLinkPickerStyle",
+      "link": "https://exploreswiftui.com/library/picker/navigationlinkpickerstyle",
+      "description": "A picker style represented by a navigation link that presents the options by pushing a List-style picker view.\n",
+      "pubDate": "Sun, 05 Apr 2026 06:37:30 GMT",
+      "guid": "https://exploreswiftui.com/elements/181",
+      "compatibility": {
+        "iOS": "16.0",
+        "iPadOS": "16.0",
+        "watchOS": "9.0",
+        "tvOS": "16.0",
+        "visionOS": "1.0"
+      },
+      "code": "NavigationStack {\n    List {\n        Picker(selection: $selection) {\n            Text(\"1\")\n                .tag(\"1\")\n            Section(\"Bar\") {\n                Text(\"2\")\n                    .tag(\"2\")\n            }\n            Label(\"3\", systemImage: \"3.circle\")\n                .tag(\"3\")\n        } label: {\n            Label(\"Foo\", systemImage: \"hand.tap\")\n            Text(\"Bar\")\n        } currentValueLabel: {\n            Text(\"Selected: \\(selection)\")\n        }\n        .pickerStyle(.navigationLink)\n    }\n}",
+      "image_url": "https://exploreswiftui.com/api/images/181/ios?v=1775371050851"
+    },
+    {
+      "index": 27,
+      "group": "Pickers",
+      "title": "MenuPickerStyle",
+      "link": "https://exploreswiftui.com/library/picker/menupickerstyle",
+      "description": "A picker style that presents the options as a menu when the user presses a button, or as a submenu when nested within a larger menu.",
+      "pubDate": "Sun, 05 Apr 2026 06:30:59 GMT",
+      "guid": "https://exploreswiftui.com/elements/180",
+      "compatibility": {
+        "iOS": "14.0",
+        "iPadOS": "14.0",
+        "macOS": "11.0",
+        "tvOS": "17.0",
+        "visionOS": "1.0"
+      },
+      "code": "List {\n    Picker(selection: $selection) {\n        Text(\"1\")\n            .tag(\"1\")\n        Section(\"Bar\") {\n            Text(\"2\")\n                .tag(\"2\")\n        }\n        Label(\"3\", systemImage: \"3.circle\")\n            .tag(\"3\")\n    } label: {\n        Label(\"Foo\", systemImage: \"hand.tap\")\n        Text(\"Bar\")\n    } currentValueLabel: {\n        Text(\"Selected: \\(selection)\")\n    }\n    .pickerStyle(.menu)\n}",
+      "image_url": "https://exploreswiftui.com/api/images/180/ios?v=1775370659007"
+    },
+    {
+      "index": 28,
+      "group": "Pickers",
+      "title": "InlinePickerStyle",
+      "link": "https://exploreswiftui.com/library/picker/inlinepickerstyle",
+      "description": "A PickerStyle where each option is displayed inline with other views in the current container.",
+      "pubDate": "Sun, 05 Apr 2026 06:26:42 GMT",
+      "guid": "https://exploreswiftui.com/elements/179",
+      "compatibility": {
+        "iOS": "14.0",
+        "iPadOS": "14.0",
+        "macOS": "11.0",
+        "watchOS": "7.0",
+        "tvOS": "14.0",
+        "visionOS": "1.0"
+      },
+      "code": "List {\n    Picker(selection: $selection) {\n        Text(\"1\")\n            .tag(\"1\")\n        Section(\"Bar\") {\n            Text(\"2\")\n                .tag(\"2\")\n        }\n        Label(\"3\", systemImage: \"3.circle\")\n            .tag(\"3\")\n    } label: {\n        Label(\"Foo\", systemImage: \"hand.tap\")\n        Text(\"Bar\")\n    } currentValueLabel: {\n        Text(\"Selected: \\(selection)\")\n    }\n    .pickerStyle(.inline)\n}",
+      "image_url": "https://exploreswiftui.com/api/images/179/ios?v=1775370402803"
+    },
+    {
+      "index": 29,
+      "group": "Pickers",
+      "title": "Picker Section",
+      "link": "https://exploreswiftui.com/library/picker/picker-section",
+      "description": "A Section inside a Picker",
+      "pubDate": "Sat, 04 Apr 2026 12:09:57 GMT",
+      "guid": "https://exploreswiftui.com/elements/178",
+      "compatibility": {
+        "iOS": "13.0",
+        "iPadOS": "13.0",
+        "macOS": "10.15",
+        "watchOS": "6.0",
+        "tvOS": "13.0",
+        "visionOS": "1.0"
+      },
+      "code": "List {\n    Picker(\"Foo\", selection: $selection) {\n        Text(\"1\")\n            .tag(\"1\")\n\n        Section(\"Bar\") {\n            Text(\"2\")\n                .tag(\"2\")\n        }\n        Text(\"3\")\n            .tag(\"3\")\n    }\n}",
+      "image_url": "https://exploreswiftui.com/api/images/178/ios?v=1775304597990"
+    },
+    {
+      "index": 30,
+      "group": "Pickers",
+      "title": "Picker Divider",
+      "link": "https://exploreswiftui.com/library/picker/picker-divider",
+      "description": "A Picker with a Divider",
+      "pubDate": "Sat, 04 Apr 2026 12:07:05 GMT",
+      "guid": "https://exploreswiftui.com/elements/177",
+      "compatibility": {
+        "iOS": "13.0",
+        "iPadOS": "13.0",
+        "macOS": "10.15",
+        "watchOS": "6.0",
+        "tvOS": "13.0",
+        "visionOS": "1.0"
+      },
+      "code": "List {\n    Picker(\"Foo\", selection: $selection) {\n        Text(\"1\")\n            .tag(\"1\")\n\n        Divider()\n\n        Text(\"2\")\n            .tag(\"2\")\n        Text(\"3\")\n            .tag(\"3\")\n    }\n}",
+      "image_url": "https://exploreswiftui.com/api/images/177/ios?v=1775304425415"
+    },
+    {
+      "index": 31,
+      "group": "Pickers",
+      "title": "Custom Value Label Picker",
+      "link": "https://exploreswiftui.com/library/picker/custom-value-label-picker",
+      "description": "Creates a picker that generates its label from a localized string key and accepts a custom current value label.\n",
+      "pubDate": "Sat, 04 Apr 2026 11:37:34 GMT",
+      "guid": "https://exploreswiftui.com/elements/176",
+      "compatibility": {
+        "iOS": "18.0",
+        "iPadOS": "18.0",
+        "macOS": "15.0",
+        "watchOS": "11.0",
+        "tvOS": "18.0",
+        "visionOS": "2.0"
+      },
+      "code": "@State var selection = \"1\"\nlet pickerOptions = [\"1\", \"2\", \"3\"]\n\nvar body: some View {\n    List {\n        Picker(\"Foo\", selection: $selection) {\n            ForEach(pickerOptions, id: \\.self) { option in\n                Text(option)\n            }\n        } currentValueLabel: {\n            Text(\"Current: \\(selection)\")\n        }\n    }\n}",
+      "image_url": "https://exploreswiftui.com/api/images/176/ios?v=1775302654224"
+    },
+    {
+      "index": 32,
+      "group": "Pickers",
+      "title": "Multiple Sources Picker",
+      "link": "https://exploreswiftui.com/library/picker/multiple-sources-picker",
+      "description": "Creates a picker that updates the selected property for all sources.",
+      "pubDate": "Sat, 04 Apr 2026 10:38:44 GMT",
+      "guid": "https://exploreswiftui.com/elements/175",
+      "compatibility": {
+        "iOS": "16.0",
+        "iPadOS": "16.0",
+        "macOS": "13.0",
+        "watchOS": "9.0",
+        "tvOS": "16.0",
+        "visionOS": "1.0"
+      },
+      "code": "enum SpecialProperty: String, CaseIterable, Identifiable {\n    case small, medium, large\n    var id: String { rawValue }\n}\n\nstruct Cat: Identifiable {\n    let id = UUID()\n    var name: String\n    var size: SpecialProperty\n}\n\n@State private var sources = [\n    Cat(name: \"Bella\", size: .small),\n    Cat(name: \"Max\", size: .large)\n]\n\nvar body: some View {\n    List {\n        Picker(\"Size for all pets\", sources: $sources, selection: \\.size) {\n            ForEach(SpecialProperty.allCases) { size in\n                Text(size.rawValue).tag(size)\n            }\n        }\n\n        ForEach(sources) { pet in\n            Text(\"\\(pet.name): \\(pet.size.rawValue)\")\n        }\n    }\n}",
+      "image_url": "https://exploreswiftui.com/api/images/175/ios?v=1775299124488"
+    },
+    {
+      "index": 33,
+      "group": "Pickers",
+      "title": "Picker",
+      "link": "https://exploreswiftui.com/library/picker/picker",
+      "description": "Creates a pickers with title, image, systemImage, and custom label.",
+      "pubDate": "Sat, 04 Apr 2026 09:52:47 GMT",
+      "guid": "https://exploreswiftui.com/elements/174",
+      "compatibility": {
+        "iOS": "13.0",
+        "iPadOS": "13.0",
+        "macOS": "10.15",
+        "watchOS": "6.0",
+        "tvOS": "13.0",
+        "visionOS": "1.0"
+      },
+      "code": "@State var selection = \"1\"\nlet pickerOptions = [\"1\", \"2\", \"3\"]\n\nvar body: some View {\n    List {\n        Picker(\"Foo\", selection: $selection) {\n            ForEach(pickerOptions, id: \\.self) { option in\n                Text(option)\n            }\n        }\n        Picker(\"Bar\", systemImage: \"hand.tap\", selection: $selection) {\n            ForEach(pickerOptions, id: \\.self) { option in\n                Text(option)\n            }\n        }\n        Picker(\"Bar\", image: .cats24X24, selection: $selection) {\n            ForEach(pickerOptions, id: \\.self) { option in\n                Text(option)\n            }\n        }\n        Picker(selection: $selection) {\n            ForEach(pickerOptions, id: \\.self) { option in\n                Text(option)\n            }\n        } label: {\n            Label(\"Foo\", systemImage: \"star\")\n            Text(\"Bar\")\n        }\n    }\n}",
+      "image_url": "https://exploreswiftui.com/api/images/174/ipados?v=1775296367615"
+    },
+    {
+      "index": 34,
+      "group": "Views",
+      "title": "Navigation Split View Container Background",
+      "link": "https://exploreswiftui.com/library/view/navigation-split-view-container-background",
+      "description": "A background placement behind the content of a NavigationSplitView.",
+      "pubDate": "Sun, 15 Mar 2026 16:05:00 GMT",
+      "guid": "https://exploreswiftui.com/elements/173",
+      "compatibility": {
+        "iOS": "18.0",
+        "iPadOS": "18.0",
+        "watchOS": "11.0"
+      },
+      "code": "NavigationSplitView {\n    Text(\"Foo\")\n        .containerBackground(.thinMaterial, for: .navigation)\n        .containerBackground(.blue.gradient, for: .navigationSplitView)\n} detail: {\n    Text(\"Bar\")\n        .containerBackground(.ultraThinMaterial, for: .navigation)\n}",
+      "image_url": null
+    },
+    {
+      "index": 35,
+      "group": "Views",
+      "title": "Navigation Container Background",
+      "link": "https://exploreswiftui.com/library/view/navigation-container-background",
+      "description": "Sets the container background of the enclosing container using a view.",
+      "pubDate": "Sun, 15 Mar 2026 15:21:03 GMT",
+      "guid": "https://exploreswiftui.com/elements/172",
+      "compatibility": {
+        "iOS": "17.0",
+        "iPadOS": "17.0",
+        "macOS": "14.0",
+        "watchOS": "1.0",
+        "tvOS": "17.0",
+        "visionOS": "1.0"
+      },
+      "code": "NavigationStack {\n            Text(\"Foo\")\n                .containerBackground(.blue.gradient, for: .navigation)\n        }",
+      "image_url": null
+    },
+    {
+      "index": 36,
+      "group": "Concentric Rectangles",
+      "title": "Uniform Concentric Rectangle",
+      "link": "https://exploreswiftui.com/library/concentricrectangle/uniform-concentric-rectangle",
+      "description": "Create a rectangle with the same corner style set on four corners.\n",
+      "pubDate": "Sat, 28 Feb 2026 18:33:04 GMT",
+      "guid": "https://exploreswiftui.com/elements/154",
+      "compatibility": {
+        "iOS": "26.0",
+        "iPadOS": "26.0",
+        "macOS": "26.0",
+        "watchOS": "26.0",
+        "tvOS": "26.0",
+        "visionOS": "26.0"
+      },
+      "code": "ZStack(alignment: .bottom) {\n    // Respects the device frame's corner radius\n    ConcentricRectangle(corners: .concentric, isUniform: true)\n        .fill(Color.blue)\n        .frame(height: 50)\n        .frame(maxHeight: .infinity, alignment: .bottom)\n        .padding(30)\n        .ignoresSafeArea()\n\n    ZStack {\n        // Gets radius from parent rect\n        ConcentricRectangle()\n            .fill(.secondary)\n\n        // Respects the parent rectangle's corner radius\n        ConcentricRectangle(corners: .concentric, isUniform: true)\n            .fill(.red)\n            .frame(width: 200, height: 200)\n            .padding([.trailing, .bottom])\n    }\n    .containerShape(\n            .rect(cornerRadius: 42)\n    )\n    .frame(width: 250, height: 250)\n        .padding(.bottom)\n}",
+      "image_url": null
+    },
+    {
+      "index": 37,
+      "group": "Concentric Rectangles",
+      "title": "Concentric Rectangle",
+      "link": "https://exploreswiftui.com/library/concentricrectangle/concentric-rectangle",
+      "description": "A concentric rectangle whose corner radii are defined from the same circle center as its parent element. The outermost parent is the device frame.",
+      "pubDate": "Sat, 28 Feb 2026 14:46:51 GMT",
+      "guid": "https://exploreswiftui.com/elements/153",
+      "compatibility": {
+        "iOS": "26.0",
+        "iPadOS": "26.0",
+        "macOS": "26.0",
+        "watchOS": "26.0",
+        "tvOS": "26.0",
+        "visionOS": "26.0"
+      },
+      "code": "ZStack(alignment: .bottom) {\n            // Respects radius from devide frame\n            ConcentricRectangle()\n                .fill(Color.blue)\n                .frame(height: 50)\n                .frame(maxHeight: .infinity, alignment: .bottom)\n                .padding(30)\n                .ignoresSafeArea()\n\n            ZStack {\n                // Gets radius from parent rect\n                ConcentricRectangle()\n                    .fill(.secondary)\n\n                // Respects radius from parent rect\n                ConcentricRectangle()\n                    .fill(.red)\n                    .frame(width: 200, height: 200)\n                    .padding([.trailing, .bottom])\n            }\n            .containerShape(\n                .rect(cornerRadius: 42)\n            )\n            .frame(width: 250, height: 250)\n            .padding(.bottom)\n        }",
+      "image_url": null
+    },
+    {
+      "index": 38,
+      "group": "Labeled Content",
+      "title": "Custom Labeled Content",
+      "link": "https://exploreswiftui.com/library/labeledcontent/custom-labeled-content",
+      "description": "Creates a standard labeled element, with a view that conveys the value of the element and a label.\n",
+      "pubDate": "Sun, 15 Feb 2026 13:14:23 GMT",
+      "guid": "https://exploreswiftui.com/elements/152",
+      "compatibility": {
+        "iOS": "16.0",
+        "iPadOS": "16.0",
+        "macOS": "13.0",
+        "watchOS": "9.0",
+        "tvOS": "16.0",
+        "visionOS": "1.0"
+      },
+      "code": "List {\n    LabeledContent {\n        Button(\"bar\", action: action)\n    } label: {\n        Label(\"Foo\", systemImage: \"star\")\n        Text(\"Sub\")\n    }\n}",
+      "image_url": null
+    },
+    {
+      "index": 39,
+      "group": "Labeled Content",
+      "title": "Formatted Labeled Content",
+      "link": "https://exploreswiftui.com/library/labeledcontent/formatted-labeled-content",
+      "description": "Creates a labeled informational view from a formatted value.\n",
+      "pubDate": "Sun, 15 Feb 2026 13:11:47 GMT",
+      "guid": "https://exploreswiftui.com/elements/151",
+      "compatibility": {
+        "iOS": "16.0",
+        "iPadOS": "16.0",
+        "macOS": "13.0",
+        "watchOS": "9.0",
+        "tvOS": "13.0",
+        "visionOS": "1.0"
+      },
+      "code": "List {\n    LabeledContent(\"Amount\", value: 42, format: .currency(code: \"EUR\"))\n}",
+      "image_url": null
+    },
+    {
+      "index": 40,
+      "group": "Labeled Content",
+      "title": "Labeled Content",
+      "link": "https://exploreswiftui.com/library/labeledcontent/labeled-content",
+      "description": "Creates a labeled informational view.\n",
+      "pubDate": "Sun, 15 Feb 2026 13:09:31 GMT",
+      "guid": "https://exploreswiftui.com/elements/150",
+      "compatibility": {
+        "iOS": "16.0",
+        "iPadOS": "16.0",
+        "macOS": "13.0",
+        "watchOS": "9.0",
+        "tvOS": "13.0",
+        "visionOS": "1.0"
+      },
+      "code": "List {\n    LabeledContent(\"Foo\", value: \"Bar\")\n}",
+      "image_url": null
+    },
+    {
+      "index": 41,
+      "group": "Labels",
+      "title": "Label Styles",
+      "link": "https://exploreswiftui.com/library/label/label-styles",
+      "description": "Sets the style for labels within this view.\n",
+      "pubDate": "Sun, 15 Feb 2026 11:02:14 GMT",
+      "guid": "https://exploreswiftui.com/elements/149",
+      "compatibility": {
+        "iOS": "14.0",
+        "iPadOS": "14.0",
+        "macOS": "11.0",
+        "watchOS": "7.0",
+        "tvOS": "14.0",
+        "visionOS": "1.0"
+      },
+      "code": "VStack {\n    Label(\"Foo\", systemImage: \"water.waves\")\n        .labelStyle(.titleAndIcon)\n    Label(\"Foo\", systemImage: \"water.waves\")\n        .labelStyle(.titleOnly)\n    Label(\"Foo\", systemImage: \"water.waves\")\n        .labelStyle(.iconOnly)\n}",
+      "image_url": null
+    },
+    {
+      "index": 42,
+      "group": "Labels",
+      "title": "Custom Label",
+      "link": "https://exploreswiftui.com/library/label/custom-label",
+      "description": "Creates a label with a custom title and icon.\n",
+      "pubDate": "Sun, 15 Feb 2026 10:50:34 GMT",
+      "guid": "https://exploreswiftui.com/elements/148",
+      "compatibility": {
+        "iOS": "14.0",
+        "iPadOS": "14.0",
+        "macOS": "11.0",
+        "watchOS": "7.0",
+        "tvOS": "14.0",
+        "visionOS": "1.0"
+      },
+      "code": "Label {\n    Text(\"Foo\")\n    Text(\"Bar\")\n} icon: {\n    Image(systemName: \"1.circle\")\n    Image(systemName: \"2.circle\")\n}",
+      "image_url": null
+    },
+    {
+      "index": 43,
+      "group": "Labels",
+      "title": "Image Label",
+      "link": "https://exploreswiftui.com/library/label/image-label",
+      "description": "Creates a label with an icon image and a title generated from a localized string.",
+      "pubDate": "Sun, 15 Feb 2026 10:47:45 GMT",
+      "guid": "https://exploreswiftui.com/elements/147",
+      "compatibility": {
+        "iOS": "14.0",
+        "iPadOS": "14.0",
+        "macOS": "11.0",
+        "watchOS": "7.0",
+        "tvOS": "14.0",
+        "visionOS": "1.0"
+      },
+      "code": "Label(\"Foo\", image: .cats)",
+      "image_url": null
+    },
+    {
+      "index": 44,
+      "group": "Labels",
+      "title": "System Image Label",
+      "link": "https://exploreswiftui.com/library/label/system-image-label",
+      "description": "Creates a label with a system icon image and a title generated from a localized string.",
+      "pubDate": "Sun, 15 Feb 2026 10:39:55 GMT",
+      "guid": "https://exploreswiftui.com/elements/146",
+      "compatibility": {
+        "iOS": "14.0",
+        "iPadOS": "14.0",
+        "macOS": "11.0",
+        "watchOS": "7.0",
+        "tvOS": "14.0",
+        "visionOS": "1.0"
+      },
+      "code": "Label(\"Foo\", systemImage: \"water.waves\")",
+      "image_url": null
+    },
+    {
+      "index": 45,
+      "group": "Sheets",
+      "title": "Disable Sheet Dismiss Swipe",
+      "link": "https://exploreswiftui.com/library/sheet/disable-sheet-dismiss-swipe",
+      "description": "Conditionally prevents interactive dismissal of presentations like popovers, sheets, and inspectors. Dragging the sheet is still possible to a limited extent, as shown in the screenshot, but it will never be dismissed.",
+      "pubDate": "Sat, 31 Jan 2026 19:41:18 GMT",
+      "guid": "https://exploreswiftui.com/elements/145",
+      "compatibility": {
+        "iOS": "15.0",
+        "iPadOS": "15.0",
+        "macOS": "12.0",
+        "watchOS": "8.0",
+        "tvOS": "15.0",
+        "visionOS": "1.0"
+      },
+      "code": "@State var showSheet = true\n\nvar body: some View {\n    Text(\"Foo\")\n        .sheet(isPresented: $showSheet) {\n            sheetContent\n                .interactiveDismissDisabled()\n        }\n}",
+      "image_url": null
+    },
+    {
+      "index": 46,
+      "group": "Sheets",
+      "title": "Page Screen Sheet Size",
+      "link": "https://exploreswiftui.com/library/sheet/page-screen-sheet-size",
+      "description": "On devices smaller than a page of paper, such as iPhone, Apple Watch, and 8\" or 11\" iPads, the sheet fills the entire height and, unlike the default sheet on iPad, the full width. On macOS, .page behaves like .fitted.",
+      "pubDate": "Sat, 31 Jan 2026 19:12:42 GMT",
+      "guid": "https://exploreswiftui.com/elements/144",
+      "compatibility": {
+        "iOS": "18.0",
+        "iPadOS": "18.0",
+        "macOS": "15.0",
+        "watchOS": "11.0",
+        "tvOS": "18.0",
+        "visionOS": "2.0"
+      },
+      "code": "@State var showSheet = true\n\nvar body: some View {\n    Text(\"Foo\")\n        .sheet(isPresented: $showSheet) {\n            sheetContent\n                .presentationSizing(.page)\n        }\n}",
+      "image_url": null
+    },
+    {
+      "index": 47,
+      "group": "Sheets",
+      "title": "Fitted Sheet Sizing",
+      "link": "https://exploreswiftui.com/library/sheet/fitted-sheet-sizing",
+      "description": "Sets the sizing of the containing presentation. This does not have any effect on smaller devices like iPhone and Apple Watch. On macOS, fitted is the default.\n",
+      "pubDate": "Sat, 31 Jan 2026 18:56:57 GMT",
+      "guid": "https://exploreswiftui.com/elements/143",
+      "compatibility": {
+        "iOS": "18.0",
+        "iPadOS": "18.0",
+        "macOS": "15.0",
+        "watchOS": "11.0",
+        "tvOS": "18.0",
+        "visionOS": "1.0"
+      },
+      "code": "@State var showSheet = true\n\nvar body: some View {\n    Text(\"Foo\")\n        .sheet(isPresented: $showSheet) {\n            sheetContent\n                .presentationSizing(.fitted)\n        }\n}",
+      "image_url": null
+    },
+    {
+      "index": 48,
+      "group": "Sheets",
+      "title": "Sheet Corner Radius",
+      "link": "https://exploreswiftui.com/library/sheet/sheet-corner-radius",
+      "description": "Requests that the presentation have a specific corner radius.\n",
+      "pubDate": "Sat, 31 Jan 2026 18:45:41 GMT",
+      "guid": "https://exploreswiftui.com/elements/142",
+      "compatibility": {
+        "iOS": "16.4",
+        "iPadOS": "16.4",
+        "macOS": "13.3",
+        "watchOS": "9.4",
+        "tvOS": "16.4",
+        "visionOS": "1.0"
+      },
+      "code": "@State var showSheet = true\n\nvar body: some View {\n    Text(\"Foo\")\n        .sheet(isPresented: $showSheet) {\n            sheetContent\n                .presentationCornerRadius(84)\n        }\n}",
+      "image_url": null
+    },
+    {
+      "index": 49,
+      "group": "Sheets",
+      "title": "Prioritize Sheet Content Scrolling",
+      "link": "https://exploreswiftui.com/library/sheet/prioritize-sheet-content-scrolling",
+      "description": "Configures the behavior of swipe gestures on a presentation. PresentationContentInteraction.scrolls prioritizes scrolling the content over resizing the sheet.\n",
+      "pubDate": "Sat, 31 Jan 2026 18:37:43 GMT",
+      "guid": "https://exploreswiftui.com/elements/141",
+      "compatibility": {
+        "iOS": "16.4",
+        "iPadOS": "16.4",
+        "macOS": "13.3",
+        "watchOS": "9.4",
+        "tvOS": "16.4",
+        "visionOS": "1.0"
+      },
+      "code": "@State var showSheet = true\n\nvar body: some View {\n    Text(\"Foo\")\n        .sheet(isPresented: $showSheet) {\n            ScrollView {\n                ForEach(0 ..< 50) { i in\n                    Text(\"Bar \\(i)\")\n                }\n            }\n            .presentationDetents([.medium, .large])\n            .presentationContentInteraction(.scrolls)\n        }\n}",
+      "image_url": null
+    },
+    {
+      "index": 50,
+      "group": "Sheets",
+      "title": "Sheet Background Interaction",
+      "link": "https://exploreswiftui.com/library/sheet/sheet-background-interaction",
+      "description": "Controls whether people can interact with the view behind a presentation.\n",
+      "pubDate": "Sat, 31 Jan 2026 15:38:36 GMT",
+      "guid": "https://exploreswiftui.com/elements/140",
+      "compatibility": {
+        "iOS": "16.4",
+        "iPadOS": "16.4",
+        "macOS": "13.3",
+        "watchOS": "9.4",
+        "tvOS": "16.4",
+        "visionOS": "1.0"
+      },
+      "code": "@State var showSheet = true\n\nvar body: some View {\n    Button(\"You can still tap on me with the sheet open\") {\n        showSheet.toggle()\n    }\n    .padding(.bottom, 120)\n    .sheet(isPresented: $showSheet) {\n        sheetContent\n            .presentationDetents([.medium])\n            .presentationBackgroundInteraction(.enabled)\n    }\n}",
+      "image_url": null
+    },
+    {
+      "index": 51,
+      "group": "Sheets",
+      "title": "Sheet Background",
+      "link": "https://exploreswiftui.com/library/sheet/sheet-background",
+      "description": "Sets the presentation background of the enclosing sheet using a shape style.\n",
+      "pubDate": "Sat, 31 Jan 2026 15:26:24 GMT",
+      "guid": "https://exploreswiftui.com/elements/139",
+      "compatibility": {
+        "iOS": "16.4",
+        "iPadOS": "16.4",
+        "macOS": "13.3",
+        "watchOS": "9.4",
+        "tvOS": "16.4",
+        "visionOS": "1.0"
+      },
+      "code": "@State var showSheet = true\n\nvar body: some View {\n    Text(\"Foo\")\n        .sheet(isPresented: $showSheet) {\n            sheetContent\n                .presentationBackground(.blue)\n        }\n}",
+      "image_url": null
+    },
+    {
+      "index": 52,
+      "group": "Sheets",
+      "title": "Sheet Drag Indicator Visibility",
+      "link": "https://exploreswiftui.com/library/sheet/sheet-drag-indicator-visibility",
+      "description": "Sets the visibility of the drag indicator on top of a sheet.\n",
+      "pubDate": "Sat, 31 Jan 2026 15:06:24 GMT",
+      "guid": "https://exploreswiftui.com/elements/138",
+      "compatibility": {
+        "iOS": "16.0",
+        "iPadOS": "16.0",
+        "macOS": "113.0",
+        "watchOS": "9.0",
+        "tvOS": "16.0",
+        "visionOS": "1.0"
+      },
+      "code": "@State var showSheet = true\n\nvar body: some View {\n    Text(\"Foo\")\n        .sheet(isPresented: $showSheet) {\n            sheetContent\n                .presentationDragIndicator(.visible)\n        }\n}",
+      "image_url": null
+    },
+    {
+      "index": 53,
+      "group": "Sheets",
+      "title": "Sheet Size",
+      "link": "https://exploreswiftui.com/library/sheet/sheet-size",
+      "description": "Sets the available detents for the enclosing sheet.\n",
+      "pubDate": "Sat, 31 Jan 2026 15:00:07 GMT",
+      "guid": "https://exploreswiftui.com/elements/137",
+      "compatibility": {
+        "iOS": "16.0",
+        "iPadOS": "16.0",
+        "macOS": "13.0",
+        "watchOS": "9.0",
+        "tvOS": "16.0",
+        "visionOS": "1.0"
+      },
+      "code": "@State var showSheet = true\n\nvar body: some View {\n    Text(\"Foo\")\n        .sheet(isPresented: $showSheet) {\n            sheetContent\n                .presentationDetents([.medium, .height(200), .fraction(0.1)])\n        }\n}",
+      "image_url": null
+    },
+    {
+      "index": 54,
+      "group": "Sheets",
+      "title": "Item Sheet",
+      "link": "https://exploreswiftui.com/library/sheet/item-sheet",
+      "description": "Presents a sheet using the given item as a data source for the sheet’s content.\n\nOn watchOS, sheets are displayed as fullScreenCover.",
+      "pubDate": "Sat, 31 Jan 2026 14:44:26 GMT",
+      "guid": "https://exploreswiftui.com/elements/136",
+      "compatibility": {
+        "iOS": "13.0",
+        "iPadOS": "13.0",
+        "macOS": "10.15",
+        "watchOS": "6.0",
+        "tvOS": "13.0",
+        "visionOS": "1.0"
+      },
+      "code": "struct IdentifableItem: Identifiable {\n    let id = UUID()\n}\n\n@State var item: IdentifableItem? = .init()\n\nvar body: some View {\n    Text(\"Foo\")\n        .sheet(item: $item) { itm in\n            sheetContent(item)\n        }\n}",
+      "image_url": "https://exploreswiftui.com/api/images/136/ios?v=1769870666391"
+    },
+    {
+      "index": 55,
+      "group": "Sheets",
+      "title": "Boolean Sheet",
+      "link": "https://exploreswiftui.com/library/sheet/boolean-sheet",
+      "description": "Presents a sheet when a binding to a Boolean value that you provide is true.\n\nOn watchOS, sheets are displayed as fullScreenCover.",
+      "pubDate": "Sat, 31 Jan 2026 14:08:45 GMT",
+      "guid": "https://exploreswiftui.com/elements/135",
+      "compatibility": {
+        "iOS": "13.0",
+        "iPadOS": "13.0",
+        "macOS": "10.15",
+        "watchOS": "6.0",
+        "tvOS": "13.0",
+        "visionOS": "1.0"
+      },
+      "code": "@State var showSheet = true\n\nvar body: some View {\n    Text(\"Foo\")\n        .sheet(isPresented: $showSheet) {\n            sheetContent\n        }\n}",
+      "image_url": "https://exploreswiftui.com/api/images/135/ios?v=1769868525059"
+    },
+    {
+      "index": 56,
+      "group": "Buttons",
+      "title": "Role Button With Default Label",
+      "link": "https://exploreswiftui.com/library/button/role-button-with-default-label",
+      "description": "Creates a button that displays a default label.",
+      "pubDate": "Sun, 28 Dec 2025 09:45:13 GMT",
+      "guid": "https://exploreswiftui.com/elements/134",
+      "compatibility": {
+        "iOS": "26.0",
+        "iPadOS": "26.0",
+        "macOS": "26.0",
+        "watchOS": "26.0",
+        "tvOS": "26.0",
+        "visionOS": "26.0"
+      },
+      "code": "NavigationStack {\n    VStack {\n        Button(role: .cancel, action: action)\n        Button(role: .close, action: action)\n        Button(role: .confirm, action: action)\n        Button(role: .destructive, action: action)\n        Spacer()\n    }\n    .toolbar {\n        Button(role: .cancel, action: action)\n        Button(role: .close, action: action)\n        Button(role: .confirm, action: action)\n        Button(role: .destructive, action: action)\n    }\n}",
+      "image_url": null
+    },
+    {
+      "index": 57,
+      "group": "Sliders",
+      "title": "SliderTickContentForEach",
+      "link": "https://exploreswiftui.com/library/slider/slidertickcontentforeach",
+      "description": "A type of slider content that creates content by iterating over a collection.",
+      "pubDate": "Thu, 25 Dec 2025 18:54:52 GMT",
+      "guid": "https://exploreswiftui.com/elements/133",
+      "compatibility": {
+        "iOS": "26.0",
+        "iPadOS": "26.0",
+        "macOS": "26.0",
+        "watchOS": "26.0",
+        "visionOS": "26.0"
+      },
+      "code": "Slider(value: $percentage) {\n            Text(\"Percentage\")\n        } currentValueLabel: {\n            Text(\"\\(percentage)%\")\n        } ticks: {\n            SliderTickContentForEach(\n                stride(from: 0.0, through: 1.0, by: 0.25).map { $0 },\n                id: \\.self\n            ) { value in\n                SliderTick(value) {\n                    Text(\"value: \\(value * 100)%\")\n                }\n            }\n        }\n        .padding(.horizontal)",
+      "image_url": null
+    },
+    {
+      "index": 58,
+      "group": "Lists",
+      "title": "Outline Group",
+      "link": "https://exploreswiftui.com/library/list/outline-group",
+      "description": "A structure that computes views and disclosure groups on demand from an underlying collection of tree-structured, identified data.\n",
+      "pubDate": "Mon, 11 Aug 2025 05:58:40 GMT",
+      "guid": "https://exploreswiftui.com/elements/132",
+      "compatibility": {
+        "iOS": "14.0",
+        "iPadOS": "14.0",
+        "macOS": "11.0",
+        "visionOS": "1.0"
+      },
+      "code": "struct TreeItem: Identifiable {\n  let id = UUID()\n  let name: String\n  let children: [TreeItem]?\n\n  init(_ name: String, children: [TreeItem]? = nil) {\n    self.name = name\n    self.children = children\n  }\n}\n\nlet data = [\nTreeItem(\"Header\", children: [\nTreeItem(\"Foo\", children: [\nTreeItem(\"Foo 1\"),\nTreeItem(\"Foo 2\")\n]),\nTreeItem(\"Bar\", children: [\nTreeItem(\"Bar 1\"),\nTreeItem(\"Bar 2\")\n])\n])\n]\n\nvar body: some View {\n  List {\n    OutlineGroup(data, children: \\.children) { item in\n    Text(item.name)\n  }\n}\n}",
+      "image_url": "https://exploreswiftui.com/api/images/132/ios?v=1754891920918"
+    },
+    {
+      "index": 59,
+      "group": "Lists",
+      "title": "Disclosure Group",
+      "link": "https://exploreswiftui.com/library/list/disclosure-group",
+      "description": "A view that shows or hides another content view, based on the state of a disclosure control.\n",
+      "pubDate": "Mon, 11 Aug 2025 05:44:51 GMT",
+      "guid": "https://exploreswiftui.com/elements/131",
+      "compatibility": {
+        "iOS": "14.0",
+        "iPadOS": "14.0",
+        "macOS": "11.0",
+        "visionOS": "1.0"
+      },
+      "code": "List {\n  DisclosureGroup(\"Header\") {\n    Text(\"Foo\")\n    Text(\"Bar\")\n  }\n\n}",
+      "image_url": "https://exploreswiftui.com/api/images/131/ios?v=1754891091113"
+    },
+    {
+      "index": 60,
+      "group": "Lists",
+      "title": "Edit Button",
+      "link": "https://exploreswiftui.com/library/list/edit-button",
+      "description": "A button that toggles the edit mode environment value.\n",
+      "pubDate": "Mon, 11 Aug 2025 05:33:46 GMT",
+      "guid": "https://exploreswiftui.com/elements/130",
+      "compatibility": {
+        "iOS": "13.0",
+        "iPadOS": "13.0",
+        "visionOS": "1.0"
+      },
+      "code": "@State var items = [\"Foo\", \"Bar\"]\n\nvar body: some View {\n  NavigationView {\n    List {\n      ForEach(items, id: \\.self) { item in\n      Text(item)\n    }\n    .onDelete { _ in action() }\n    .onMove { _, _ in action() }\n  }\n  .toolbar {\n    EditButton()\n  }\n}\n}",
+      "image_url": "https://exploreswiftui.com/api/images/130/ios?v=1754890426152"
+    },
+    {
+      "index": 61,
+      "group": "Lists",
+      "title": "Section Index Label and Visibility",
+      "link": "https://exploreswiftui.com/library/list/section-index-label-and-visibility",
+      "description": "Sets the label that is used in a section index to point to this section, typically only a single character long.\nChanges the visibility of the list section index.\n",
+      "pubDate": "Sun, 10 Aug 2025 18:23:17 GMT",
+      "guid": "https://exploreswiftui.com/elements/129",
+      "compatibility": {
+        "iOS": "26.0",
+        "iPadOS": "26.0",
+        "macOS": "26.0",
+        "watchOS": "26.0",
+        "tvOS": "26.0",
+        "visionOS": "26.0"
+      },
+      "code": "let items = [\"Foo\", \"Bar\"]\n\nvar body: some View {\n  List(items, id: \\.self) { item in\n  Section(item) {\n    ForEach(0 ..< 42) { number in\n    Text(String(describing: number))\n  }\n}\n.sectionIndexLabel(item)\n}\n.listSectionIndexVisibility(.visible)\n\n}",
+      "image_url": null
+    },
+    {
+      "index": 62,
+      "group": "Lists",
+      "title": "Move Disabled",
+      "link": "https://exploreswiftui.com/library/list/move-disabled",
+      "description": "Adds a condition for whether the view’s view hierarchy is movable.\n",
+      "pubDate": "Sun, 10 Aug 2025 18:12:02 GMT",
+      "guid": "https://exploreswiftui.com/elements/128",
+      "compatibility": {
+        "iOS": "13.0",
+        "iPadOS": "13.0",
+        "macOS": "10.15",
+        "watchOS": "6.0",
+        "tvOS": "13.0",
+        "visionOS": "1.0"
+      },
+      "code": "@State var items = [\"Foo\", \"Bar\"]\n\nvar body: some View {\n\n  List($items, id: \\.self, editActions: .move) { $item in\n  Text(item)\n    .moveDisabled(item == \"Foo\")\n}\n.environment(\\.editMode, .constant(.active))\n}",
+      "image_url": "https://exploreswiftui.com/api/images/128/ios?v=1754849522657"
+    },
+    {
+      "index": 63,
+      "group": "Lists",
+      "title": "Delete Disabled",
+      "link": "https://exploreswiftui.com/library/list/delete-disabled",
+      "description": "Adds a condition for whether the view’s view hierarchy is deletable.\n",
+      "pubDate": "Sun, 10 Aug 2025 18:06:12 GMT",
+      "guid": "https://exploreswiftui.com/elements/127",
+      "compatibility": {
+        "iOS": "13.0",
+        "iPadOS": "13.0",
+        "macOS": "10.15",
+        "watchOS": "6.0",
+        "tvOS": "13.0",
+        "visionOS": "1.0"
+      },
+      "code": "let items = [\"Foo\", \"Bar\"]\n\nvar body: some View {\n  List {\n    Section(\"Header\") {\n      ForEach(items, id: \\.self) { item in\n      Text(item)\n        .deleteDisabled(item == \"Foo\")\n    }.onDelete { _ in\n    action()\n  }\n}\n}\n.environment(\\.editMode, .constant(.active))\n}",
+      "image_url": "https://exploreswiftui.com/api/images/127/ios?v=1754849172087"
+    },
+    {
+      "index": 64,
+      "group": "Lists",
+      "title": "Refreshable List",
+      "link": "https://exploreswiftui.com/library/list/refreshable-list",
+      "description": "Marks this view as refreshable.\n",
+      "pubDate": "Sun, 10 Aug 2025 17:47:19 GMT",
+      "guid": "https://exploreswiftui.com/elements/126",
+      "compatibility": {
+        "iOS": "15.0",
+        "iPadOS": "15.0",
+        "macOS": "12.0",
+        "watchOS": "8.0",
+        "tvOS": "15.0",
+        "visionOS": "1.0"
+      },
+      "code": "List {\n  Section(\"Header\") {\n    Text(\"Foo\")\n    Text(\"Bar\")\n  }\n}\n.refreshable(action: action)",
+      "image_url": "https://exploreswiftui.com/api/images/126/ios?v=1754848039221"
+    },
+    {
+      "index": 65,
+      "group": "Lists",
+      "title": "Swipe Action",
+      "link": "https://exploreswiftui.com/library/list/swipe-action",
+      "description": "Adds custom swipe actions to a row in a list.",
+      "pubDate": "Sun, 10 Aug 2025 17:11:26 GMT",
+      "guid": "https://exploreswiftui.com/elements/125",
+      "compatibility": {
+        "iOS": "15.0",
+        "iPadOS": "15.0",
+        "macOS": "12.0",
+        "watchOS": "8.0",
+        "visionOS": "1.0"
+      },
+      "code": "List {\n  Section(\"Header\") {\n    Text(\"Foo\")\n      .swipeActions(edge: .leading, allowsFullSwipe: false) {\n      Button(\"Action\", systemImage: \"bolt\", action: action)\n        .tint(.accentColor)\n    }\n    Text(\"Bar\")\n  }\n}",
+      "image_url": "https://exploreswiftui.com/api/images/125/ios?v=1754845886734"
+    },
+    {
+      "index": 66,
+      "group": "Lists",
+      "title": "List Badge Prominence",
+      "link": "https://exploreswiftui.com/library/list/list-badge-prominence",
+      "description": "Specifies the prominence of badges created by this view.\n",
+      "pubDate": "Sun, 10 Aug 2025 17:03:08 GMT",
+      "guid": "https://exploreswiftui.com/elements/124",
+      "compatibility": {
+        "iOS": "17.0",
+        "iPadOS": "17.0",
+        "macOS": "14.0",
+        "visionOS": "1.0"
+      },
+      "code": "List {\n  Section(\"Header\") {\n    Text(\"Increased\")\n      .badge(\"1\")\n      .badgeProminence(.increased)\n    Text(\"Standard\")\n      .badge(2)\n      .badgeProminence(.standard)\n    Text(\"Decreased\")\n      .badge(3)\n      .badgeProminence(.decreased)\n  }\n}",
+      "image_url": "https://exploreswiftui.com/api/images/124/ios?v=1754845388668"
+    },
+    {
+      "index": 67,
+      "group": "Lists",
+      "title": "List Badge",
+      "link": "https://exploreswiftui.com/library/list/list-badge",
+      "description": "Generates a badge for the view from an integer value.\n",
+      "pubDate": "Sun, 10 Aug 2025 16:53:04 GMT",
+      "guid": "https://exploreswiftui.com/elements/123",
+      "compatibility": {
+        "iOS": "15..0",
+        "iPadOS": "15.0",
+        "macOS": "12.0",
+        "visionOS": "1.0"
+      },
+      "code": "List {\n  Section(\"Header\") {\n    Text(\"Foo\")\n      .badge(\"1\")\n    Text(\"Bar\")\n      .badge(2)\n  }\n}",
+      "image_url": "https://exploreswiftui.com/api/images/123/ios?v=1754844784597"
+    },
+    {
+      "index": 68,
+      "group": "Lists",
+      "title": "List Background Prominence",
+      "link": "https://exploreswiftui.com/library/list/list-background-prominence",
+      "description": "The prominence of the background underneath views associated with this environment.\n",
+      "pubDate": "Sun, 10 Aug 2025 16:41:50 GMT",
+      "guid": "https://exploreswiftui.com/elements/122",
+      "compatibility": {
+        "iOS": "17.0",
+        "iPadOS": "17.0",
+        "macOS": "14.0",
+        "watchOS": "10.0",
+        "tvOS": "17.0",
+        "visionOS": "1.0"
+      },
+      "code": "@State var selectedEntry: String? = \"Foo\"\nlet entries = [\"Foo\", \"Bar\"]\n\nprivate struct EntryItem: View {\n  let text: String\n\n  var body: some View {\n    VStack(alignment: .leading) {\n      HStack {\n        EntryItemChild(text: text)\n      }\n    }\n  }\n}\n\nprivate struct EntryItemChild: View {\n  let text: String\n\n  @Environment(\\.backgroundProminence) private var backgroundProminence\n\n  var body: some View {\n    if backgroundProminence == .increased {\n      Text(text)\n        .bold()\n        .italic()\n    } else {\n      Text(text)\n        .foregroundStyle(Color.accentColor)\n    }\n  }\n}\n\nvar body: some View {\n  VStack {\n    List(entries, id: \\.self, selection: $selectedEntry) { entry in\n    EntryItem(text: entry)\n  }\n}",
+      "image_url": "https://exploreswiftui.com/api/images/122/macos?v=1754844110476"
+    },
+    {
+      "index": 69,
+      "group": "Lists",
+      "title": "List Row Background",
+      "link": "https://exploreswiftui.com/library/list/list-row-background",
+      "description": "Places a custom background view behind a list row item.\n",
+      "pubDate": "Sun, 10 Aug 2025 15:57:33 GMT",
+      "guid": "https://exploreswiftui.com/elements/121",
+      "compatibility": {
+        "iOS": "13.0",
+        "iPadOS": "13.0",
+        "macOS": "10.15",
+        "watchOS": "6.0",
+        "tvOS": "13.0",
+        "visionOS": "1.0"
+      },
+      "code": "List {\n  Section(\"Header\") {\n    Text(\"Foo\")\n      .listRowBackground(Color.accentColor)\n    Text(\"Bar\")\n  }\n}",
+      "image_url": "https://exploreswiftui.com/api/images/121/ios?v=1754841453474"
+    },
+    {
+      "index": 70,
+      "group": "Lists",
+      "title": "Hidden List Row Separator",
+      "link": "https://exploreswiftui.com/library/list/hidden-list-row-separator",
+      "description": "Sets the display mode to hidden for the separator associated with this specific row.\n",
+      "pubDate": "Sun, 10 Aug 2025 15:55:44 GMT",
+      "guid": "https://exploreswiftui.com/elements/120",
+      "compatibility": {
+        "iOS": "15.0",
+        "iPadOS": "15.0",
+        "macOS": "13.0",
+        "visionOS": "1.0"
+      },
+      "code": "List {\n  Section(\"Header\") {\n    Text(\"Foo\")\n    Text(\"Bar\")\n      .listRowSeparator(.hidden)\n  }\n}",
+      "image_url": "https://exploreswiftui.com/api/images/120/ios?v=1754841344479"
+    },
+    {
+      "index": 71,
+      "group": "Lists",
+      "title": "Hidden List Section Separator",
+      "link": "https://exploreswiftui.com/library/list/hidden-list-section-separator",
+      "description": "Sets whether to hide the separator associated with a list section.\n",
+      "pubDate": "Sun, 10 Aug 2025 15:53:44 GMT",
+      "guid": "https://exploreswiftui.com/elements/119",
+      "compatibility": {
+        "iOS": "15.0",
+        "iPadOS": "15.0",
+        "macOS": "13.0",
+        "visionOS": "1.0"
+      },
+      "code": "List {\n  Section(\"Header\") {\n    Text(\"Foo\")\n  }\n  .listSectionSeparator(.hidden)\n\n  Section(\"Header\") {\n    Text(\"Bar\")\n  }\n}\n.listStyle(.grouped)",
+      "image_url": "https://exploreswiftui.com/api/images/119/ios?v=1754841224406"
+    },
+    {
+      "index": 72,
+      "group": "Lists",
+      "title": "List Section Separator Tint",
+      "link": "https://exploreswiftui.com/library/list/list-section-separator-tint",
+      "description": "Sets the tint color associated with a section.\n",
+      "pubDate": "Sun, 10 Aug 2025 15:47:18 GMT",
+      "guid": "https://exploreswiftui.com/elements/118",
+      "compatibility": {
+        "iOS": "15.0",
+        "iPadOS": "15.0",
+        "macOS": "13.0",
+        "visionOS": "1.0"
+      },
+      "code": "List {\n  Section(\"Header\") {\n    Text(\"Foo\")\n  }\n  .listSectionSeparatorTint(.accentColor)\n\n  Section(\"Header\") {\n    Text(\"Bar\")\n  }\n}\n.listStyle(.grouped)",
+      "image_url": "https://exploreswiftui.com/api/images/118/ios?v=1754840838200"
+    },
+    {
+      "index": 73,
+      "group": "Lists",
+      "title": "List Row Separator Tint",
+      "link": "https://exploreswiftui.com/library/list/list-row-separator-tint",
+      "description": "Sets the tint color associated with a row.",
+      "pubDate": "Sun, 10 Aug 2025 15:31:11 GMT",
+      "guid": "https://exploreswiftui.com/elements/117",
+      "compatibility": {
+        "iOS": "15.0",
+        "iPadOS": "15.0",
+        "macOS": "13.0",
+        "visionOS": "1.0"
+      },
+      "code": "List {\n  Section(\"Header\") {\n    Text(\"Foo\")\n    Text(\"Bar\")\n      .listRowSeparatorTint(.primary)\n  }\n}",
+      "image_url": "https://exploreswiftui.com/api/images/117/ios?v=1754839871741"
+    },
+    {
+      "index": 74,
+      "group": "Lists",
+      "title": "List Item Tint",
+      "link": "https://exploreswiftui.com/library/list/list-item-tint",
+      "description": "Sets a fixed tint color for content in a list.\n",
+      "pubDate": "Thu, 07 Aug 2025 12:58:27 GMT",
+      "guid": "https://exploreswiftui.com/elements/116",
+      "compatibility": {
+        "iOS": "14.0",
+        "iPadOS": "14.0",
+        "macOS": "11.0",
+        "watchOS": "7.0",
+        "tvOS": "14.0",
+        "visionOS": "1.0"
+      },
+      "code": "List {\n  Section(\"Header\") {\n    Text(\"Foo\")\n    Button(\"Bar\", action: action)\n    Label(\"FooBar\", systemImage: \"trash\")\n  }\n  .listItemTint(.green)\n}",
+      "image_url": "https://exploreswiftui.com/api/images/116/ios?v=1754571507625"
+    },
+    {
+      "index": 75,
+      "group": "Lists",
+      "title": "List Section Margins",
+      "link": "https://exploreswiftui.com/library/list/list-section-margins",
+      "description": "Set the section margins for the specific edges.\n",
+      "pubDate": "Thu, 07 Aug 2025 12:49:53 GMT",
+      "guid": "https://exploreswiftui.com/elements/115",
+      "compatibility": {
+        "iOS": "26.0",
+        "iPadOS": "26.0",
+        "visionOS": "26.0"
+      },
+      "code": "List {\n  Section(\"Header\") {\n    Text(\"Foo\")\n  }\n  .listSectionMargins(.horizontal, 0)\n\n  Section {\n    Text(\"Bar\")\n  } header: {\n    Text(\"Header\")\n  }\n}",
+      "image_url": null
+    },
+    {
+      "index": 76,
+      "group": "Lists",
+      "title": "Compact List Section Spacing",
+      "link": "https://exploreswiftui.com/library/list/compact-list-section-spacing",
+      "description": "Compact spacing between sections\n",
+      "pubDate": "Wed, 06 Aug 2025 13:47:16 GMT",
+      "guid": "https://exploreswiftui.com/elements/114",
+      "compatibility": {
+        "iOS": "17.0",
+        "iPadOS": "17.0",
+        "watchOS": "10.0",
+        "visionOS": "1.0"
+      },
+      "code": "List {\n  Section(\"Header\") {\n    Text(\"Foo\")\n  }\n  Section(\"Header\") {\n    Text(\"Bar\")\n  }\n\n  Section(\"Header\") {\n    Text(\"Foo\")\n  }\n}\n.listSectionSpacing(.compact)",
+      "image_url": "https://exploreswiftui.com/api/images/114/ios?v=1754488036749"
+    },
+    {
+      "index": 77,
+      "group": "Lists",
+      "title": "Custom List Section Spacing",
+      "link": "https://exploreswiftui.com/library/list/custom-list-section-spacing",
+      "description": "Sets the spacing between adjacent sections in a List to a custom value.\n",
+      "pubDate": "Wed, 06 Aug 2025 13:41:25 GMT",
+      "guid": "https://exploreswiftui.com/elements/113",
+      "compatibility": {
+        "iOS": "17.0",
+        "iPadOS": "17.0",
+        "watchOS": "10.0",
+        "visionOS": "1.0"
+      },
+      "code": "List {\n  Section(\"Header\") {\n    Text(\"Foo\")\n  }\n  Section(\"Header\") {\n    Text(\"Bar\")\n  }\n  .listSectionSpacing(42)\n  Section(\"Header\") {\n    Text(\"Foo\")\n  }\n}",
+      "image_url": "https://exploreswiftui.com/api/images/113/ios?v=1754487685124"
+    },
+    {
+      "index": 78,
+      "group": "Lists",
+      "title": "List Row Spacing",
+      "link": "https://exploreswiftui.com/library/list/list-row-spacing",
+      "description": "Sets the vertical spacing between two adjacent rows in a List.\n",
+      "pubDate": "Wed, 06 Aug 2025 13:33:03 GMT",
+      "guid": "https://exploreswiftui.com/elements/112",
+      "compatibility": {
+        "iOS": "15.0",
+        "iPadOS": "15.0",
+        "visionOS": "1.0"
+      },
+      "code": "List {\n  Section {\n    Text(\"Foo\")\n    Text(\"Bar\")\n  }\n  Text(\"FooBar\")\n  Text(\"FooBar\")\n}\n.listRowSpacing(5)",
+      "image_url": "https://exploreswiftui.com/api/images/112/ios?v=1754487183105"
+    },
+    {
+      "index": 79,
+      "group": "Lists",
+      "title": "Default Min List Header Height",
+      "link": "https://exploreswiftui.com/library/list/default-min-list-header-height",
+      "description": "The default minimum height of a header in a list.\n",
+      "pubDate": "Wed, 06 Aug 2025 13:28:07 GMT",
+      "guid": "https://exploreswiftui.com/elements/111",
+      "compatibility": {
+        "iOS": "13.0",
+        "iPadOS": "13.0",
+        "macOS": "10.15",
+        "watchOS": "6.0",
+        "tvOS": "13.0",
+        "visionOS": "1.0"
+      },
+      "code": "List {\n  Section {\n    Text(\"Foo\")\n    Text(\"Bar\")\n  } header: {\n    Text(\"Header\")\n  } footer: {\n    Text(\"Footer\")\n  }\n}\n.environment(\\.defaultMinListHeaderHeight, 100)",
+      "image_url": "https://exploreswiftui.com/api/images/111/ios?v=1754486887144"
+    },
+    {
+      "index": 80,
+      "group": "Lists",
+      "title": "Default Min List Row Height",
+      "link": "https://exploreswiftui.com/library/list/default-min-list-row-height",
+      "description": "The default minimum height of rows in a list.",
+      "pubDate": "Wed, 06 Aug 2025 13:24:10 GMT",
+      "guid": "https://exploreswiftui.com/elements/110",
+      "compatibility": {
+        "iOS": "13.0",
+        "iPadOS": "13.0",
+        "macOS": "10.15",
+        "watchOS": "6.0",
+        "tvOS": "13.0",
+        "visionOS": "1.0"
+      },
+      "code": "List {\n  Section {\n    Text(\"Foo\")\n    Text(\"Bar\")\n  } header: {\n    Text(\"Header\")\n  } footer: {\n    Text(\"Footer\")\n  }\n}\n.environment(\\.defaultMinListRowHeight, 100)",
+      "image_url": "https://exploreswiftui.com/api/images/110/ios?v=1754486650584"
+    },
+    {
+      "index": 81,
+      "group": "Lists",
+      "title": "List Row Insets",
+      "link": "https://exploreswiftui.com/library/list/list-row-insets",
+      "description": "Applies an inset to the rows in a list.\n",
+      "pubDate": "Wed, 06 Aug 2025 12:55:36 GMT",
+      "guid": "https://exploreswiftui.com/elements/109",
+      "compatibility": {
+        "iOS": "13.0",
+        "iPadOS": "13.0",
+        "macOS": "10.15",
+        "watchOS": "6.0",
+        "tvOS": "13.0",
+        "visionOS": "1.0"
+      },
+      "code": "List {\n  Section {\n    Text(\"All\")\n  } header: {\n    Text(\"Header\")\n  }\n  .listRowInsets(.all, 0)\n  Section {\n    Text(\"Header Only\")\n  } header: {\n    Text(\"Header\")\n      .listRowInsets(.all, 0)\n  }\n  Section {\n    Text(\"Normal\")\n  } header: {\n    Text(\"Header\")\n  }\n}",
+      "image_url": "https://exploreswiftui.com/api/images/109/ios?v=1754484936476"
+    },
+    {
+      "index": 82,
+      "group": "Lists",
+      "title": "Increased Header Prominence",
+      "link": "https://exploreswiftui.com/library/list/increased-header-prominence",
+      "description": "Sets the header prominence to increased for this view.\n",
+      "pubDate": "Wed, 06 Aug 2025 12:32:00 GMT",
+      "guid": "https://exploreswiftui.com/elements/108",
+      "compatibility": {
+        "iOS": "15.0",
+        "iPadOS": "15.0",
+        "macOS": "12.0",
+        "watchOS": "8.0",
+        "tvOS": "15.0",
+        "visionOS": "1.0"
+      },
+      "code": "List {\n  Section {\n    Text(\"Foo\")\n  } header: {\n    Text(\"Header\")\n  } footer: {\n    Text(\"Footer\")\n  }\n}\n.frame(height: 130)\n  .headerProminence(.increased)\nList {\n  Section {\n    Text(\"Foo\")\n  } header: {\n    Text(\"Header\")\n  } footer: {\n    Text(\"Footer\")\n  }\n}\n.frame(height: 130)",
+      "image_url": "https://exploreswiftui.com/api/images/108/ios?v=1754483520541"
+    },
+    {
+      "index": 83,
+      "group": "Lists",
+      "title": "SidebarListStyle",
+      "link": "https://exploreswiftui.com/library/list/sidebarliststyle",
+      "description": "The list style that describes the behavior and appearance of a sidebar list.\n",
+      "pubDate": "Wed, 06 Aug 2025 12:25:21 GMT",
+      "guid": "https://exploreswiftui.com/elements/107",
+      "compatibility": {
+        "iOS": "14.0",
+        "iPadOS": "14.0",
+        "macOS": "10.15",
+        "visionOS": "1.0"
+      },
+      "code": "List {\n  Section {\n    Toggle(\"Toggle\", isOn: .constant(true))\n    TextField(\"TextField\", text: .constant(\"\"))\n    Button(\"Button\", action: action)\n    Picker(\"Picker\", selection: .constant(0)) {\n      Text(\"Option 1\").tag(0)\n    }\n  }\n\n  Text(\"Foo\")\n\n  Section {\n    Text(\"Bar1\")\n    Text(\"Bar2\")\n  } header: {\n    Text(\"Header\")\n  } footer: {\n    Text(\"Footer\")\n  }\n}\n.listStyle(.sidebar)",
+      "image_url": "https://exploreswiftui.com/api/images/107/ios?v=1754483121269"
+    },
+    {
+      "index": 84,
+      "group": "Lists",
+      "title": "InsetGroupedListStyle",
+      "link": "https://exploreswiftui.com/library/list/insetgroupedliststyle",
+      "description": "The list style that describes the behavior and appearance of an inset grouped list.",
+      "pubDate": "Wed, 06 Aug 2025 12:23:41 GMT",
+      "guid": "https://exploreswiftui.com/elements/106",
+      "compatibility": {
+        "iOS": "14.0",
+        "iPadOS": "14.0",
+        "visionOS": "1.0"
+      },
+      "code": "List {\n  Section {\n    Toggle(\"Toggle\", isOn: .constant(true))\n    TextField(\"TextField\", text: .constant(\"\"))\n    Button(\"Button\", action: action)\n    Picker(\"Picker\", selection: .constant(0)) {\n      Text(\"Option 1\").tag(0)\n    }\n  }\n\n  Text(\"Foo\")\n\n  Section {\n    Text(\"Bar1\")\n    Text(\"Bar2\")\n  } header: {\n    Text(\"Header\")\n  } footer: {\n    Text(\"Footer\")\n  }\n}\n.listStyle(.plain)",
+      "image_url": "https://exploreswiftui.com/api/images/106/ios?v=1754483021752"
+    },
+    {
+      "index": 85,
+      "group": "Lists",
+      "title": "InsetGroupedListStyle",
+      "link": "https://exploreswiftui.com/library/list/insetgroupedliststyle",
+      "description": "The list style that describes the behavior and appearance of an inset grouped list.\n",
+      "pubDate": "Wed, 06 Aug 2025 12:22:22 GMT",
+      "guid": "https://exploreswiftui.com/elements/105",
+      "compatibility": {
+        "iOS": "14.0",
+        "iPadOS": "14.0",
+        "visionOS": "1.0"
+      },
+      "code": "List {\n  Section {\n    Toggle(\"Toggle\", isOn: .constant(true))\n    TextField(\"TextField\", text: .constant(\"\"))\n    Button(\"Button\", action: action)\n    Picker(\"Picker\", selection: .constant(0)) {\n      Text(\"Option 1\").tag(0)\n    }\n  }\n\n  Text(\"Foo\")\n\n  Section {\n    Text(\"Bar1\")\n    Text(\"Bar2\")\n  } header: {\n    Text(\"Header\")\n  } footer: {\n    Text(\"Footer\")\n  }\n}\n.listStyle(.insetGrouped)",
+      "image_url": "https://exploreswiftui.com/api/images/105/ios?v=1754482942960"
+    },
+    {
+      "index": 86,
+      "group": "Lists",
+      "title": "InsetListStyle",
+      "link": "https://exploreswiftui.com/library/list/insetliststyle",
+      "description": "The list style that describes the behavior and appearance of an inset list.\n",
+      "pubDate": "Wed, 06 Aug 2025 12:21:00 GMT",
+      "guid": "https://exploreswiftui.com/elements/104",
+      "compatibility": {
+        "iOS": "14.0",
+        "iPadOS": "14.0",
+        "macOS": "11.0",
+        "visionOS": "1.0"
+      },
+      "code": "List {\n  Section {\n    Toggle(\"Toggle\", isOn: .constant(true))\n    TextField(\"TextField\", text: .constant(\"\"))\n    Button(\"Button\", action: action)\n    Picker(\"Picker\", selection: .constant(0)) {\n      Text(\"Option 1\").tag(0)\n    }\n  }\n\n  Text(\"Foo\")\n\n  Section {\n    Text(\"Bar1\")\n    Text(\"Bar2\")\n  } header: {\n    Text(\"Header\")\n  } footer: {\n    Text(\"Footer\")\n  }\n}\n.listStyle(.inset)",
+      "image_url": "https://exploreswiftui.com/api/images/104/ios?v=1754482860240"
+    },
+    {
+      "index": 87,
+      "group": "Lists",
+      "title": "EllipticalListStyle",
+      "link": "https://exploreswiftui.com/library/list/ellipticalliststyle",
+      "description": "The list style that describes the behavior and appearance of an elliptical list.\n",
+      "pubDate": "Wed, 06 Aug 2025 12:17:05 GMT",
+      "guid": "https://exploreswiftui.com/elements/103",
+      "compatibility": {
+        "watchOS": "7.0"
+      },
+      "code": "List {\n  Section {\n    Toggle(\"Toggle\", isOn: .constant(true))\n    TextField(\"TextField\", text: .constant(\"\"))\n    Button(\"Button\", action: action)\n    Picker(\"Picker\", selection: .constant(0)) {\n      Text(\"Option 1\").tag(0)\n    }\n  }\n\n  Text(\"Foo\")\n\n  Section {\n    Text(\"Bar1\")\n    Text(\"Bar2\")\n  } header: {\n    Text(\"Header\")\n  } footer: {\n    Text(\"Footer\")\n  }\n}\n.listStyle(.elliptical)",
+      "image_url": "https://exploreswiftui.com/api/images/103/watchos?v=1754482625041"
+    },
+    {
+      "index": 88,
+      "group": "Lists",
+      "title": "CarouselListStyle",
+      "link": "https://exploreswiftui.com/library/list/carouselliststyle",
+      "description": "The carousel list style.\n",
+      "pubDate": "Wed, 06 Aug 2025 12:15:49 GMT",
+      "guid": "https://exploreswiftui.com/elements/102",
+      "compatibility": {
+        "watchOS": "6.0"
+      },
+      "code": "List {\n  Section {\n    Toggle(\"Toggle\", isOn: .constant(true))\n    TextField(\"TextField\", text: .constant(\"\"))\n    Button(\"Button\", action: action)\n    Picker(\"Picker\", selection: .constant(0)) {\n      Text(\"Option 1\").tag(0)\n    }\n  }\n\n  Text(\"Foo\")\n\n  Section {\n    Text(\"Bar1\")\n    Text(\"Bar2\")\n  } header: {\n    Text(\"Header\")\n  } footer: {\n    Text(\"Footer\")\n  }\n}\n.listStyle(.carousel)",
+      "image_url": "https://exploreswiftui.com/api/images/102/watchos?v=1754482549461"
+    },
+    {
+      "index": 89,
+      "group": "Lists",
+      "title": "BorderedListStyle",
+      "link": "https://exploreswiftui.com/library/list/borderedliststyle",
+      "description": "The list style that describes the behavior and appearance of a list with standard border.",
+      "pubDate": "Wed, 06 Aug 2025 10:18:50 GMT",
+      "guid": "https://exploreswiftui.com/elements/101",
+      "compatibility": {
+        "macOS": "12.0"
+      },
+      "code": "List {\n  Section {\n    Toggle(\"Toggle\", isOn: .constant(true))\n    TextField(\"TextField\", text: .constant(\"\"))\n    Button(\"Button\", action: action)\n    Picker(\"Picker\", selection: .constant(0)) {\n      Text(\"Option 1\").tag(0)\n    }\n  }\n\n  Text(\"Foo\")\n\n  Section {\n    Text(\"Bar1\")\n    Text(\"Bar2\")\n  } header: {\n    Text(\"Header\")\n  } footer: {\n    Text(\"Footer\")\n  }\n}\n.listStyle(.bordered)",
+      "image_url": "https://exploreswiftui.com/api/images/101/macos?v=1754475530897"
+    },
+    {
+      "index": 90,
+      "group": "Text",
+      "title": "Text Format",
+      "link": "https://exploreswiftui.com/library/text/text-format",
+      "description": "Creates a text view that displays the formatted representation of a nonstring type supported by a corresponding format style.\n",
+      "pubDate": "Mon, 21 Jul 2025 15:21:49 GMT",
+      "guid": "https://exploreswiftui.com/elements/99",
+      "compatibility": {
+        "iOS": "18.0",
+        "iPadOS": "18.0",
+        "macOS": "15.0",
+        "watchOS": "11.0",
+        "tvOS": "18.0",
+        "visionOS": "2.0"
+      },
+      "code": "VStack {\n  HStack {\n    Text(1234.56, format: .currency(code: Locale.current.currency?.identifier ?? \"USD\"))\n    Text(0.874, format: .percent)\n    Text(3.14159, format: .number.precision(.fractionLength(2)))\n    Text(9876543, format: .number.grouping(.automatic))\n    Text(6.022e23, format: .number.notation(.scientific))\n  }\n  HStack {\n    Text(Measurement(value: 123.45, unit: UnitLength.meters), format: .measurement(width: .wide))\n    Text(Measurement(value: 70.0, unit: UnitMass.kilograms), format: .measurement(width: .narrow))\n    Text(Measurement(value: 25.5, unit: UnitTemperature.celsius), format: .measurement(width: .abbreviated))\n    Text(Measurement(value: -30.1, unit: UnitTemperature.celsius), format: .measurement(width: .wide))\n  }\n  HStack {\n    Text(Date(), format: .dateTime.hour().minute().second())\n    Text(Date(), format: .dateTime.day().month().year())\n\n    Text(Duration.seconds(3800), format: .time(pattern: .hourMinute))\n    Text(Duration.seconds(91), format: .time(pattern: .minuteSecond))\n  }\n}",
+      "image_url": "https://exploreswiftui.com/api/images/99/ios?v=1753111309606"
+    },
+    {
+      "index": 91,
+      "group": "Shapes",
+      "title": "ContainerRelativeShape",
+      "link": "https://exploreswiftui.com/library/shapes/containerrelativeshape",
+      "description": "A shape that is replaced by an inset version of the current container shape. If no container shape was defined, is replaced by a rectangle",
+      "pubDate": "Thu, 12 Jun 2025 16:35:11 GMT",
+      "guid": "https://exploreswiftui.com/elements/98",
+      "compatibility": {
+        "iOS": "14.0",
+        "iPadOS": "14.0",
+        "macOS": "11.0",
+        "watchOS": "7.0",
+        "tvOS": "14.0",
+        "visionOS": "1.0"
+      },
+      "code": "VStack {\n    Text(\"Foo\")\n    VStack {\n        Text(\"Bar\")\n        Text(\"Foo\")\n            .padding()\n            .background(ContainerRelativeShape().fill(Color.green))\n    }\n    .padding()\n        .background(ContainerRelativeShape().fill(Color.red))\n\n}\n.padding()\n    .background(.blue, in: RoundedRectangle(cornerRadius: 40))",
+      "image_url": "https://exploreswiftui.com/api/images/98/ios?v=1749746111684"
+    },
+    {
+      "index": 92,
+      "group": "Views",
+      "title": "ControlSize",
+      "link": "https://exploreswiftui.com/library/view/controlsize",
+      "description": "A control version that is the default size",
+      "pubDate": "Thu, 12 Jun 2025 16:20:04 GMT",
+      "guid": "https://exploreswiftui.com/elements/97",
+      "compatibility": {
+        "iOS": "15.0",
+        "iPadOS": "15.0",
+        "macOS": "10.15",
+        "watchOS": "9.0",
+        "tvOS": "15.0",
+        "visionOS": "1.0"
+      },
+      "code": "VStack {\n    Button(\"Tap Me\", action: action)\n        .buttonStyle(.borderedProminent)\n        .controlSize(.mini)\n    Button(\"Tap Me\", action: action)\n        .buttonStyle(.borderedProminent)\n        .controlSize(.small)\n    Button(\"Tap Me\", action: action)\n        .buttonStyle(.borderedProminent)\n        .controlSize(.regular)\n    Button(\"Tap Me\", action: action)\n        .buttonStyle(.borderedProminent)\n        .controlSize(.large)\n    Button(\"Tap Me\", action: action)\n        .buttonStyle(.borderedProminent)\n    // only on visionOS bigger than large\n        .controlSize(.extraLarge)\n\n}",
+      "image_url": "https://exploreswiftui.com/api/images/97/ios?v=1749745204740"
+    },
+    {
+      "index": 93,
+      "group": "Glass Effect Containers",
+      "title": "Glass Effect Container",
+      "link": "https://exploreswiftui.com/library/glasseffectcontainer/glass-effect-container",
+      "description": "A view that combines multiple Liquid Glass shapes into a single shape that can morph individual shapes into one another",
+      "pubDate": "Thu, 12 Jun 2025 15:51:32 GMT",
+      "guid": "https://exploreswiftui.com/elements/96",
+      "compatibility": {
+        "iOS": "26.0",
+        "iPadOS": "26.0",
+        "macOS": "26.0",
+        "watchOS": "26.0",
+        "tvOS": "26.0"
+      },
+      "code": "VStack {\n  GlassEffectContainer(spacing: 40.0) {\n    HStack(spacing: 40.0) {\n      Image(systemName: \"1.circle\")\n        .frame(width: 80.0, height: 80.0)\n        .font(.system(size: 36))\n        .glassEffect()\n        .offset(x: 30.0, y: 0.0)\n\n      Image(systemName: \"2.circle\")\n        .frame(width: 80.0, height: 80.0)\n        .font(.system(size: 36))\n        .glassEffect()\n        .offset(x: -30.0, y: 0.0)\n    }\n  }\n\n  HStack(spacing: 40.0) {\n    Image(systemName: \"1.circle\")\n      .frame(width: 80.0, height: 80.0)\n      .font(.system(size: 36))\n      .glassEffect()\n      .offset(x: 30.0, y: 0.0)\n\n    Image(systemName: \"2.circle\")\n      .frame(width: 80.0, height: 80.0)\n      .font(.system(size: 36))\n      .glassEffect()\n      .offset(x: -30.0, y: 0.0)\n  }\n\n}",
+      "image_url": null
+    },
+    {
+      "index": 94,
+      "group": "Toolbars",
+      "title": "Title Toolbar Item Placement",
+      "link": "https://exploreswiftui.com/library/toolbars/title-toolbar-item-placement",
+      "description": "Places content in the title area",
+      "pubDate": "Tue, 10 Jun 2025 14:12:52 GMT",
+      "guid": "https://exploreswiftui.com/elements/95",
+      "compatibility": {
+        "iOS": "26.0",
+        "iPadOS": "26.0"
+      },
+      "code": "NavigationStack {\n  Text(\"Foo\")\n    .toolbar {\n    ToolbarItem(placement: .largeTitle) {\n      Text(\"1\")\n    }\n    ToolbarItem(placement: .title) {\n      Text(\"2\")\n    }\n    ToolbarItem(placement: .subtitle) {\n      Text(\"3\")\n    }\n    ToolbarItem(placement: .largeSubtitle) {\n      Text(\"4\")\n    }\n  }\n}",
+      "image_url": null
+    },
+    {
+      "index": 95,
+      "group": "Navigation",
+      "title": "Navigation Subtitle",
+      "link": "https://exploreswiftui.com/library/navigation/navigation-subtitle",
+      "description": "Configures the view’s subtitle for purposes of navigation, using a localized string",
+      "pubDate": "Tue, 10 Jun 2025 14:08:40 GMT",
+      "guid": "https://exploreswiftui.com/elements/94",
+      "compatibility": {
+        "iOS": "26.0",
+        "iPadOS": "26.0",
+        "macOS": "11.0"
+      },
+      "code": "NavigationStack {\n            Text(\"Foo\")\n                .navigationTitle(\"Foo\")\n                .navigationSubtitle(\"Bar\")\n            \n        }",
+      "image_url": null
+    },
+    {
+      "index": 96,
+      "group": "Toolbars",
+      "title": "ToolbarItem Shared Background Visibility",
+      "link": "https://exploreswiftui.com/library/toolbars/toolbaritem-shared-background-visibility",
+      "description": "Controls the visibility of the glass background effect on items in the toolbar. In certain contexts, such as the navigation bar on iOS and the window toolbar on macOS, toolbar items will be given a glass background effect that is shared with other items in the same logical grouping",
+      "pubDate": "Tue, 10 Jun 2025 13:30:10 GMT",
+      "guid": "https://exploreswiftui.com/elements/92",
+      "compatibility": {
+        "iOS": "26.0",
+        "iPadOS": "26.0",
+        "macOS": "26.0"
+      },
+      "code": "NavigationStack {\n  Text(\"Foo\")\n    .toolbar {\n    ToolbarItem {\n      Button(\"Account\", systemImage: \"person.circle\", action: action)\n    }\n    ToolbarItem {\n      Button(\"Account\", systemImage: \"person.circle\", action: action)\n    }\n    .sharedBackgroundVisibility(.hidden)\n  }\n}",
+      "image_url": null
+    },
+    {
+      "index": 97,
+      "group": "Views",
+      "title": "Background Extension Effect",
+      "link": "https://exploreswiftui.com/library/view/background-extension-effect",
+      "description": "Adds the background extension effect to the view. The view will be duplicated into mirrored copies which will be placed around the view on any edge with available safe area. Additionally, a blur effect will be applied on top to blur out the copies",
+      "pubDate": "Tue, 10 Jun 2025 12:55:53 GMT",
+      "guid": "https://exploreswiftui.com/elements/91",
+      "compatibility": {
+        "iOS": "26.0",
+        "iPadOS": "26.0",
+        "macOS": "26.0",
+        "watchOS": "26.0",
+        "tvOS": "26.0",
+        "visionOS": "26.0"
+      },
+      "code": "NavigationSplitView {\n} detail: {\n    ZStack {\n        VStack(spacing: 0) {\n            Image(.cats)\n                .resizable()\n                .aspectRatio(contentMode: .fill)\n                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)\n                .frame(maxHeight: .infinity)\n\n            Image(.cats)\n                .resizable()\n                .aspectRatio(contentMode: .fill)\n                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)\n                .backgroundExtensionEffect()\n                .frame(maxHeight: .infinity)\n        }\n    }\n}",
+      "image_url": null
+    },
+    {
+      "index": 98,
+      "group": "Tab Views",
+      "title": "TabView Bottom Accessory Placement",
+      "link": "https://exploreswiftui.com/library/tabview/tabview-bottom-accessory-placement",
+      "description": "A placement of the bottom accessory in a tab view. You can use this to adjust the content of the accessory view based on the placement",
+      "pubDate": "Tue, 10 Jun 2025 10:07:51 GMT",
+      "guid": "https://exploreswiftui.com/elements/90",
+      "compatibility": {
+        "iOS": "26.0",
+        "iPadOS": "26.0",
+        "macOS": "26.0",
+        "watchOS": "26.0",
+        "tvOS": "26.0",
+        "visionOS": "26.0"
+      },
+      "code": "var body: some View {\n    TabView {\n        Tab(\"1\", systemImage: \"1.circle\") {\n            List {\n                ForEach(0 ..< 100, id: \\.self) {\n                    Text(\"Item \\($0)\")\n                }\n            }\n        }\n\n        Tab(\"2\", systemImage: \"2.circle\") {\n            EmptyView()\n        }\n\n        Tab(\"3\", systemImage: \"3.circle\") {\n            EmptyView()\n        }\n    }\n    .tabBarMinimizeBehavior(.onScrollDown)\n        .tabViewBottomAccessory {\n            AccessoryContent()\n        }\n    }\n\n    struct AccessoryContent: View {\n        @Environment(\\.tabViewBottomAccessoryPlacement) var placement\n\n        var body: some View {\n            switch placement {\n                case .inline:\n                Text(\"Inline\")\n                case .expanded:\n                Text(\"Expanded\")\n                case .none:\n                Text(\"\")\n            }\n        }\n    }",
+      "image_url": null
+    },
+    {
+      "index": 99,
+      "group": "Tab Views",
+      "title": "Bottom Accessory",
+      "link": "https://exploreswiftui.com/library/tabview/bottom-accessory",
+      "description": "A modifier to place content above the tabs",
+      "pubDate": "Tue, 10 Jun 2025 09:58:56 GMT",
+      "guid": "https://exploreswiftui.com/elements/89",
+      "compatibility": {
+        "iOS": "26.0",
+        "iPadOS": "26..0"
+      },
+      "code": "TabView {\n  Tab(\"1\", systemImage: \"1.circle\") {\n    EmptyView()\n  }\n\n  Tab(\"2\", systemImage: \"2.circle\") {\n    EmptyView()\n  }\n\n  Tab(\"3\", systemImage: \"3.circle\") {\n    EmptyView()\n  }\n}\n.tabViewBottomAccessory {\n  Text(\"Foo\")\n}",
+      "image_url": null
+    },
+    {
+      "index": 100,
+      "group": "Tab Views",
+      "title": "Hide Tab Bar On Scroll Down",
+      "link": "https://exploreswiftui.com/library/tabview/hide-tab-bar-on-scroll-down",
+      "description": "Minimize the tab bar when downwards scrolling starts. Minimizing is supported for tab bars on only iPhone",
+      "pubDate": "Tue, 10 Jun 2025 09:53:52 GMT",
+      "guid": "https://exploreswiftui.com/elements/88",
+      "compatibility": {
+        "iOS": "26.0",
+        "iPadOS": "26.0"
+      },
+      "code": "TabView {\n    Tab(\"1\", systemImage: \"1.circle\") {\n        List {\n            ForEach(0 ..< 100, id: \\.self) {\n                Text(\"Item \\($0)\")\n            }\n        }\n    }\n\n    Tab(\"2\", systemImage: \"2.circle\") {\n        EmptyView()\n    }\n\n    Tab(\"3\", systemImage: \"3.circle\") {\n        EmptyView()\n    }\n}\n.tabBarMinimizeBehavior(.onScrollDown)",
+      "image_url": null
+    },
+    {
+      "index": 101,
+      "group": "Buttons",
+      "title": "Glass Button Styles",
+      "link": "https://exploreswiftui.com/library/button/glass-button-styles",
+      "description": "A button style that applies glass border artwork based on the button’s context",
+      "pubDate": "Tue, 10 Jun 2025 09:36:21 GMT",
+      "guid": "https://exploreswiftui.com/elements/87",
+      "compatibility": {
+        "iOS": "26.0",
+        "iPadOS": "26.0",
+        "macOS": "26.0",
+        "watchOS": "26.0",
+        "tvOS": "26.0",
+        "visionOS": "26.0"
+      },
+      "code": "VStack {\n  HStack {\n    Button(\"Tap Me\", action: action)\n      .buttonStyle(.glass)\n    Button(\"Tinted Tap Me\", action: action)\n      .buttonStyle(.glass)\n      .tint(.red)\n  }\n  HStack {\n    Button(\"Tap Me\", action: action)\n      .buttonStyle(.glassProminent)\n    Button(\"Tap Me\", action: action)\n      .buttonStyle(.glassProminent)\n      .tint(.red)\n  }\n}",
+      "image_url": null
+    },
+    {
+      "index": 102,
+      "group": "Sliders",
+      "title": "Custom Slider Ticks",
+      "link": "https://exploreswiftui.com/library/slider/custom-slider-ticks",
+      "description": "Creates a slider to select a value from a given range, subject to a step increment, which displays the provided labels and customizable ticks.",
+      "pubDate": "Tue, 10 Jun 2025 09:26:41 GMT",
+      "guid": "https://exploreswiftui.com/elements/86",
+      "compatibility": {
+        "iOS": "26.0",
+        "iPadOS": "26.0",
+        "macOS": "26.0",
+        "watchOS": "26.0",
+        "visionOS": "26.0"
+      },
+      "code": "@State private var speed = 42.0\n    \nvar body: some View {\n        Slider(value: $speed) {\n            Text(\"Foo\")\n        } ticks: {\n            SliderTick(0.2)\n            SliderTick(0.6)\n            SliderTick(0.8)\n        }\n    }",
+      "image_url": null
+    },
+    {
+      "index": 103,
+      "group": "Views",
+      "title": "Glass effect",
+      "link": "https://exploreswiftui.com/library/view/glass-effect",
+      "description": "Applies the Liquid Glass effect to a view",
+      "pubDate": "Tue, 10 Jun 2025 06:13:22 GMT",
+      "guid": "https://exploreswiftui.com/elements/85",
+      "compatibility": {
+        "iOS": "26.0",
+        "iPadOS": "26.0",
+        "macOS": "26.0",
+        "watchOS": "26.0",
+        "tvOS": "26.0"
+      },
+      "code": "HStack {\n  Text(\"Foo\")\n    .padding()\n    .glassEffect()\n  Text(\"Foo\")\n    .padding()\n    .glassEffect(in: .rect(cornerRadius: 10))\n  Text(\"Foo\")\n    .padding()\n    .glassEffect(.regular.interactive())\n  Text(\"Foo\")\n    .padding()\n    .glassEffect(.regular.tint(.red))\n}",
+      "image_url": "https://exploreswiftui.com/api/images/85/ios?v=1749536002295"
+    },
+    {
+      "index": 104,
+      "group": "Scroll Views",
+      "title": "Hard ScrollEdgeEffect",
+      "link": "https://exploreswiftui.com/library/scrollview/hard-scrolledgeeffect",
+      "description": "A scroll edge effect with a hard cutoff and dividing line",
+      "pubDate": "Tue, 10 Jun 2025 05:58:26 GMT",
+      "guid": "https://exploreswiftui.com/elements/83",
+      "compatibility": {
+        "iOS": "26.0",
+        "iPadOS": "26.0",
+        "macOS": "26.0",
+        "watchOS": "26.0",
+        "tvOS": "26.0"
+      },
+      "code": "NavigationStack {\n  List {\n    ForEach(0 ..< 100, id: \\.self) {\n      Text(\"Item \\($0)\")\n    }\n  }\n  .toolbar {\n    Button(\"foo\", action: action)\n  }\n  .scrollEdgeEffectStyle(.hard, for: .all)\n}",
+      "image_url": null
+    },
+    {
+      "index": 105,
+      "group": "Toolbars",
+      "title": "ToolbarSpacer",
+      "link": "https://exploreswiftui.com/library/toolbars/toolbarspacer",
+      "description": "A standard space item in toolbars",
+      "pubDate": "Tue, 10 Jun 2025 05:25:26 GMT",
+      "guid": "https://exploreswiftui.com/elements/82",
+      "compatibility": {
+        "iOS": "26.0",
+        "iPadOS": "26.0",
+        "macOS": "26.0"
+      },
+      "code": "content\n  .toolbar {\n  ToolbarItemGroup(placement: .primaryAction) {\n    Button(\"Up\", systemImage: \"chevron.up\", action: action)\n    Button(\"Down\", systemImage: \"chevron.down\", action: action)\n  }\n  ToolbarSpacer(.fixed, placement: .primaryAction)\n  ToolbarItem(placement: .primaryAction) {\n    Button(\"Settings\", systemImage: \"ellipsis\", action: action)\n  }\n}",
+      "image_url": null
+    },
+    {
+      "index": 106,
+      "group": "Progress Views",
+      "title": "ProgressView Colors",
+      "link": "https://exploreswiftui.com/library/progressview/progressview-colors",
+      "description": "Customizing the colors of the ProgressView",
+      "pubDate": "Thu, 05 Jun 2025 15:38:23 GMT",
+      "guid": "https://exploreswiftui.com/elements/81",
+      "compatibility": {
+        "iOS": "14.0",
+        "iPadOS": "14.0",
+        "macOS": "11",
+        "watchOS": "7.0",
+        "tvOS": "14.0",
+        "visionOS": "1.0"
+      },
+      "code": "VStack {\n    ProgressView(\"Foo\")\n    ProgressView(value: 0.42) {\n        Text(\"Foo\")\n    } currentValueLabel: {\n        Text(\"bar\")\n    }\n}\n.tint(.red)\n    .foregroundStyle(.brown)",
+      "image_url": "https://exploreswiftui.com/api/images/81/ios?v=1749137903724"
+    },
+    {
+      "index": 107,
+      "group": "Progress Views",
+      "title": "CircularProgressViewStyle",
+      "link": "https://exploreswiftui.com/library/progressview/circularprogressviewstyle",
+      "description": "The style of a progress view that uses a circular gauge to indicate the partial completion of an activity",
+      "pubDate": "Thu, 05 Jun 2025 15:22:13 GMT",
+      "guid": "https://exploreswiftui.com/elements/80",
+      "compatibility": {
+        "iOS": "14.0",
+        "iPadOS": "14.0",
+        "macOS": "11.0",
+        "tvOS": "14.0",
+        "visionOS": "1.0"
+      },
+      "code": "VStack {\n    ProgressView(\"Foo\")\n    ProgressView(value: 0.42) {\n        Text(\"Foo\")\n    } currentValueLabel: {\n        Text(\"bar\")\n    }\n}\n.progressViewStyle(.circular)",
+      "image_url": "https://exploreswiftui.com/api/images/80/ios?v=1749136933972"
+    },
+    {
+      "index": 108,
+      "group": "Progress Views",
+      "title": "LinearProgressViewStyle",
+      "link": "https://exploreswiftui.com/library/progressview/linearprogressviewstyle",
+      "description": "A progress view that visually indicates its progress using a horizontal bar",
+      "pubDate": "Thu, 05 Jun 2025 15:19:14 GMT",
+      "guid": "https://exploreswiftui.com/elements/79",
+      "compatibility": {
+        "iOS": "14.0",
+        "iPadOS": "14.0",
+        "macOS": "11.0",
+        "watchOS": "7.0",
+        "visionOS": "1.0"
+      },
+      "code": "VStack {\n    ProgressView(\"Foo\")\n    ProgressView(value: 0.42) {\n        Text(\"Foo\")\n    } currentValueLabel: {\n        Text(\"bar\")\n    }\n}\n.progressViewStyle(.linear)",
+      "image_url": "https://exploreswiftui.com/api/images/79/ios?v=1749136754752"
+    },
+    {
+      "index": 109,
+      "group": "Progress Views",
+      "title": "ProgressView",
+      "link": "https://exploreswiftui.com/library/progressview/progressview",
+      "description": "The different ProgressView initializers",
+      "pubDate": "Thu, 05 Jun 2025 14:21:39 GMT",
+      "guid": "https://exploreswiftui.com/elements/78",
+      "compatibility": {
+        "iOS": "14.0",
+        "iPadOS": "14.0",
+        "macOS": "11.0",
+        "watchOS": "7.0",
+        "tvOS": "14.0",
+        "visionOS": "1.0"
+      },
+      "code": "let workoutDateRange = Date()...Date().addingTimeInterval(5*60)\n\nvar body: some View {\n    VStack {\n        HStack(alignment: .top) {\n            ProgressView()\n            ProgressView(\"Foo\")\n        }\n        HStack(alignment: .top) {\n            ProgressView(value: 0.42)\n                .padding(.top)\n            ProgressView(value: 42, total: 100)\n                .padding(.vertical)\n        }\n        ProgressView(timerInterval: 0.42)\n            .padding(.bottom)\n        ProgressView(value: 0.42) {\n            Text(\"Foo\")\n        } currentValueLabel: {\n            Text(\"bar\")\n        }\n    }\n}",
+      "image_url": "https://exploreswiftui.com/api/images/78/ios?v=1749133299868"
+    },
+    {
+      "index": 110,
+      "group": "Links",
+      "title": "HelpLink",
+      "link": "https://exploreswiftui.com/library/link/helplink",
+      "description": "A button with a standard appearance that opens app-specific help documentation",
+      "pubDate": "Thu, 05 Jun 2025 12:33:46 GMT",
+      "guid": "https://exploreswiftui.com/elements/77",
+      "compatibility": {
+        "macOS": "14.0"
+      },
+      "code": "HelpLink {\n  print(\"user requests help\")\n}",
+      "image_url": "https://exploreswiftui.com/api/images/77/macos?v=1749126826188"
+    },
+    {
+      "index": 111,
+      "group": "Links",
+      "title": "TextFieldLink",
+      "link": "https://exploreswiftui.com/library/link/textfieldlink",
+      "description": "A control that requests text input from the user when pressed",
+      "pubDate": "Thu, 05 Jun 2025 12:27:58 GMT",
+      "guid": "https://exploreswiftui.com/elements/76",
+      "compatibility": {
+        "watchOS": "9.0"
+      },
+      "code": "TextFieldLink(\"Set Text\", prompt: Text(\"Custom Placeholder\")) { str in\n  print(\"Typed text: \\(str)\")\n}",
+      "image_url": "https://exploreswiftui.com/api/images/76/ios?v=1749126478208"
+    },
+    {
+      "index": 112,
+      "group": "Links",
+      "title": "Custom Preview Item ShareLink ",
+      "link": "https://exploreswiftui.com/library/link/custom-preview-item-sharelink-",
+      "description": "Creates an instance, with a custom label, that presents the share interface",
+      "pubDate": "Thu, 05 Jun 2025 12:22:07 GMT",
+      "guid": "https://exploreswiftui.com/elements/75",
+      "compatibility": {
+        "iOS": "16.0",
+        "iPadOS": "16.0",
+        "macOS": "13.0",
+        "watchOS": "9.0",
+        "visionOS": "1.0"
+      },
+      "code": "ShareLink(\n    \"Share Cats\",\n    item: Image(.cats),\n    subject: Text(\"Cool Photo\"),\n    message: Text(\"Check it out!\"),\n    preview: SharePreview(\n        \"Derpy Cats\",\n        image: Image(.cats)\n    )\n)",
+      "image_url": "https://exploreswiftui.com/api/images/75/ios?v=1749126127619"
+    },
+    {
+      "index": 113,
+      "group": "Links",
+      "title": "ShareLink",
+      "link": "https://exploreswiftui.com/library/link/sharelink",
+      "description": "A view that controls a sharing presentation",
+      "pubDate": "Thu, 05 Jun 2025 11:57:06 GMT",
+      "guid": "https://exploreswiftui.com/elements/74",
+      "compatibility": {
+        "iOS": "16.0",
+        "iPadOS": "16.0",
+        "macOS": "13.0",
+        "watchOS": "9.0",
+        "visionOS": "1.0"
+      },
+      "code": "HStack {\n    ShareLink(item: URL(string: \"https://exploreswiftui.com\")!)\n    ShareLink(\"Explore SwiftUI\", item: URL(string: \"https://exploreswiftui.com\")!)\n    .padding(.horizontal)\n    ShareLink(item: URL(string: \"https://exploreswiftui.com\")!) {\n        Label(\"Foo\", systemImage: \"cube.transparent\")\n    }\n}",
+      "image_url": "https://exploreswiftui.com/api/images/74/ios?v=1749124626832"
+    },
+    {
+      "index": 114,
+      "group": "Links",
+      "title": "Link",
+      "link": "https://exploreswiftui.com/library/link/link",
+      "description": "A control for navigating to a URL",
+      "pubDate": "Thu, 05 Jun 2025 11:49:18 GMT",
+      "guid": "https://exploreswiftui.com/elements/73",
+      "compatibility": {
+        "iOS": "14.0",
+        "iPadOS": "14.0",
+        "macOS": "11.0",
+        "watchOS": "7.0",
+        "tvOS": "14.0",
+        "visionOS": "1.0"
+      },
+      "code": "Link(\"Explore SwiftUI\", destination: URL(string: \"https://exploreswiftui.com\")!)\n    .environment(\\.openURL, OpenURLAction { url in\n        print(\"Open \\(url)\")\n        return .handled\n    })",
+      "image_url": "https://exploreswiftui.com/api/images/73/ios?v=1749124158884"
+    },
+    {
+      "index": 115,
+      "group": "Dividers",
+      "title": "Divider Height",
+      "link": "https://exploreswiftui.com/library/divider/divider-height",
+      "description": "Customizing the height of the Divider\n",
+      "pubDate": "Thu, 05 Jun 2025 11:34:12 GMT",
+      "guid": "https://exploreswiftui.com/elements/72",
+      "compatibility": {
+        "iOS": "13.0",
+        "iPadOS": "13.0",
+        "macOS": "10.15",
+        "watchOS": "6.0",
+        "tvOS": "13..0",
+        "visionOS": "1.0"
+      },
+      "code": "Divider()\n  .frame(height: 5)\n  .overlay(.brown)",
+      "image_url": "https://exploreswiftui.com/api/images/72/ios?v=1749123252913"
+    },
+    {
+      "index": 116,
+      "group": "Dividers",
+      "title": "Divider Color",
+      "link": "https://exploreswiftui.com/library/divider/divider-color",
+      "description": "Customizing the color of the Divider",
+      "pubDate": "Thu, 05 Jun 2025 11:00:43 GMT",
+      "guid": "https://exploreswiftui.com/elements/71",
+      "compatibility": {
+        "iOS": "13.0",
+        "iPadOS": "13.0",
+        "macOS": "10.15",
+        "watchOS": "6.0",
+        "tvOS": "13.0",
+        "visionOS": "1.0"
+      },
+      "code": "Divider()\n    .overlay(.blue)",
+      "image_url": "https://exploreswiftui.com/api/images/71/ios?v=1749121243031"
+    },
+    {
+      "index": 117,
+      "group": "Dividers",
+      "title": "Vertical Divider",
+      "link": "https://exploreswiftui.com/library/divider/vertical-divider",
+      "description": "A vertical visual element that can be used to separate other content",
+      "pubDate": "Thu, 05 Jun 2025 10:57:49 GMT",
+      "guid": "https://exploreswiftui.com/elements/70",
+      "compatibility": {
+        "iOS": "13.0",
+        "iPadOS": "13.0",
+        "macOS": "10.15",
+        "watchOS": "6.0",
+        "tvOS": "13.0",
+        "visionOS": "1.0"
+      },
+      "code": "HStack {\n    Divider()\n}",
+      "image_url": "https://exploreswiftui.com/api/images/70/ios?v=1749121069613"
+    },
+    {
+      "index": 118,
+      "group": "Dividers",
+      "title": "Divider",
+      "link": "https://exploreswiftui.com/library/divider/divider",
+      "description": "A visual element that can be used to separate other content",
+      "pubDate": "Thu, 05 Jun 2025 10:54:45 GMT",
+      "guid": "https://exploreswiftui.com/elements/69",
+      "compatibility": {
+        "iOS": "13.0",
+        "iPadOS": "13.0",
+        "macOS": "10.15",
+        "watchOS": "6.0",
+        "tvOS": "13.0",
+        "visionOS": "1.0"
+      },
+      "code": "Divider()",
+      "image_url": "https://exploreswiftui.com/api/images/69/ios?v=1749120885399"
+    },
+    {
+      "index": 119,
+      "group": "Date Pickers",
+      "title": "Future DatePicker",
+      "link": "https://exploreswiftui.com/library/datepicker/future-datepicker",
+      "description": "Creates an instance that selects multiple dates on or after some start date",
+      "pubDate": "Wed, 04 Jun 2025 18:12:46 GMT",
+      "guid": "https://exploreswiftui.com/elements/68",
+      "compatibility": {
+        "iOS": "16.0",
+        "iPadOS": "16.0",
+        "visionOS": "1.0"
+      },
+      "code": "@State private var dates: Set<DateComponents> = []\n\nvar body: some View {\n    MultiDatePicker(\"Dates Available\", selection: $dates, in: Date.now...)\n}",
+      "image_url": "https://exploreswiftui.com/api/images/68/ios?v=1749060766159"
+    },
+    {
+      "index": 120,
+      "group": "Date Pickers",
+      "title": "MultiDatePicker",
+      "link": "https://exploreswiftui.com/library/datepicker/multidatepicker",
+      "description": "A control for picking multiple dates.",
+      "pubDate": "Wed, 04 Jun 2025 18:07:43 GMT",
+      "guid": "https://exploreswiftui.com/elements/67",
+      "compatibility": {
+        "iOS": "16.0",
+        "iPadOS": "16.0",
+        "visionOS": "1.0"
+      },
+      "code": "@State private var dates: Set<DateComponents> = []\n\nvar body: some View {\n    MultiDatePicker(\"Dates Available\", selection: $dates)\n}",
+      "image_url": "https://exploreswiftui.com/api/images/67/ios?v=1749060463798"
+    },
+    {
+      "index": 121,
+      "group": "Date Pickers",
+      "title": "DatePicker Colors",
+      "link": "https://exploreswiftui.com/library/datepicker/datepicker-colors",
+      "description": "Customizing the colors of the date picker",
+      "pubDate": "Wed, 04 Jun 2025 17:58:13 GMT",
+      "guid": "https://exploreswiftui.com/elements/66",
+      "compatibility": {
+        "iOS": "13.0",
+        "iPadOS": "13.0",
+        "macOS": "10.15",
+        "watchOS": "10.10",
+        "visionOS": "1.0"
+      },
+      "code": "@State var date = Date()\n\nvar body: some View {\n    DatePicker(\"Select Date\", selection: $date)\n        .tint(.red)\n}",
+      "image_url": "https://exploreswiftui.com/api/images/66/ios?v=1749059893464"
+    },
+    {
+      "index": 122,
+      "group": "Date Pickers",
+      "title": "FieldDatePickerStyle",
+      "link": "https://exploreswiftui.com/library/datepicker/fielddatepickerstyle",
+      "description": "A date picker style that displays the components in an editable field",
+      "pubDate": "Wed, 04 Jun 2025 17:43:29 GMT",
+      "guid": "https://exploreswiftui.com/elements/65",
+      "compatibility": {
+        "macOS": "10.15"
+      },
+      "code": "@State var date = Date()\n\n    var body: some View {\n        DatePicker(\"Select Date\", selection: $date)\n            .datePickerStyle(.field)\n}",
+      "image_url": "https://exploreswiftui.com/api/images/65/macos?v=1749059009686"
+    },
+    {
+      "index": 123,
+      "group": "Date Pickers",
+      "title": "StepperFieldDatePickerStyle",
+      "link": "https://exploreswiftui.com/library/datepicker/stepperfielddatepickerstyle",
+      "description": "A system style that displays the components in an editable field, with adjoining stepper that can increment/decrement the selected component",
+      "pubDate": "Wed, 04 Jun 2025 17:31:44 GMT",
+      "guid": "https://exploreswiftui.com/elements/64",
+      "compatibility": {
+        "macOS": "10.15"
+      },
+      "code": "@State var date = Date()\n\nvar body: some View {\n  DatePicker(\"Select Date\", selection: $date)\n    .datePickerStyle(.stepperField)\n}",
+      "image_url": "https://exploreswiftui.com/api/images/64/macos?v=1749058304888"
+    },
+    {
+      "index": 124,
+      "group": "Date Pickers",
+      "title": "WheelDatePickerStyle",
+      "link": "https://exploreswiftui.com/library/datepicker/wheeldatepickerstyle",
+      "description": "A date picker style that displays each component as columns in a scrollable wheel",
+      "pubDate": "Wed, 04 Jun 2025 17:24:56 GMT",
+      "guid": "https://exploreswiftui.com/elements/63",
+      "compatibility": {
+        "iOS": "13.0",
+        "iPadOS": "13.0",
+        "watchOS": "10.0",
+        "visionOS": "1.0"
+      },
+      "code": "@State var date = Date()\n\nvar body: some View {\n    DatePicker(\"Select Date\", selection: $date)\n        .datePickerStyle(.wheel)\n\n}",
+      "image_url": "https://exploreswiftui.com/api/images/63/ios?v=1749057896768"
+    },
+    {
+      "index": 125,
+      "group": "Date Pickers",
+      "title": "GraphicalDatePickerStyle",
+      "link": "https://exploreswiftui.com/library/datepicker/graphicaldatepickerstyle",
+      "description": "A date picker style that displays an interactive calendar or clock",
+      "pubDate": "Wed, 04 Jun 2025 17:19:12 GMT",
+      "guid": "https://exploreswiftui.com/elements/62",
+      "compatibility": {
+        "iOS": "14.0",
+        "iPadOS": "14.0",
+        "macOS": "10.15",
+        "visionOS": "1.0"
+      },
+      "code": "@State var date = Date()\n\nvar body: some View {\n    DatePicker(\"Select Date\", selection: $date, displayedComponents: .date)\n        .datePickerStyle(.graphical)\n}",
+      "image_url": "https://exploreswiftui.com/api/images/62/ios?v=1749057552656"
+    },
+    {
+      "index": 126,
+      "group": "Date Pickers",
+      "title": "Hour Minute Seconds DatePicker",
+      "link": "https://exploreswiftui.com/library/datepicker/hour-minute-seconds-datepicker",
+      "description": "A DatePicker for just hour, minute, and second.",
+      "pubDate": "Wed, 04 Jun 2025 15:32:43 GMT",
+      "guid": "https://exploreswiftui.com/elements/61",
+      "compatibility": {
+        "watchOS": "10.0"
+      },
+      "code": "@State private var date = Date()\n\nvar body: some View {\n  DatePicker(\"Select Date\", selection: $date, displayedComponents: .hourMinuteAndSecond)\n}",
+      "image_url": "https://exploreswiftui.com/api/images/61/watchos?v=1749051163572"
+    },
+    {
+      "index": 127,
+      "group": "Date Pickers",
+      "title": "Future DatePicker",
+      "link": "https://exploreswiftui.com/library/datepicker/future-datepicker",
+      "description": "Creates an instance that selects a Date in a closed range",
+      "pubDate": "Wed, 04 Jun 2025 15:23:28 GMT",
+      "guid": "https://exploreswiftui.com/elements/60",
+      "compatibility": {
+        "iOS": "13.0",
+        "iPadOS": "13.0",
+        "macOS": "10.15",
+        "watchOS": "1.0",
+        "visionOS": "1.0"
+      },
+      "code": "@State var date = Date()\n\nvar body: some View {\n    DatePicker(\"Select Date\", selection: $date, in: Date.now...)\n}",
+      "image_url": "https://exploreswiftui.com/api/images/60/ios?v=1749050608021"
+    },
+    {
+      "index": 128,
+      "group": "Date Pickers",
+      "title": "DatePicker Components ",
+      "link": "https://exploreswiftui.com/library/datepicker/datepicker-components-",
+      "description": "A date picker with only one displayed component",
+      "pubDate": "Wed, 04 Jun 2025 15:15:42 GMT",
+      "guid": "https://exploreswiftui.com/elements/59",
+      "compatibility": {
+        "iOS": "13.0",
+        "iPadOS": "13.0",
+        "macOS": "10.15",
+        "watchOS": "10.0",
+        "visionOS": "1.0"
+      },
+      "code": "@State var date = Date()\n\nvar body: some View {\n    VStack {\n        DatePicker(\"Select Date\", selection: $date, displayedComponents: .date)\n        DatePicker(\"Select Date\", selection: $date, displayedComponents: .hourAndMinute)\n    }\n}",
+      "image_url": "https://exploreswiftui.com/api/images/59/ios?v=1749050142450"
+    },
+    {
+      "index": 129,
+      "group": "Date Pickers",
+      "title": "DatePicker",
+      "link": "https://exploreswiftui.com/library/datepicker/datepicker",
+      "description": "Creates an instance that selects a Date with an unbounded range",
+      "pubDate": "Wed, 04 Jun 2025 15:11:15 GMT",
+      "guid": "https://exploreswiftui.com/elements/58",
+      "compatibility": {
+        "iOS": "13.0",
+        "iPadOS": "13.0",
+        "macOS": "10.15",
+        "watchOS": "10.0",
+        "visionOS": "1.0"
+      },
+      "code": "@State var date = Date()\n\nvar body: some View {\n    DatePicker(\"Select Date\", selection: $date)\n}",
+      "image_url": "https://exploreswiftui.com/api/images/58/ios?v=1749049875060"
+    },
+    {
+      "index": 130,
+      "group": "Control Groups",
+      "title": "PaletteControlGroupStyle",
+      "link": "https://exploreswiftui.com/library/controlgroup/palettecontrolgroupstyle",
+      "description": "A control group style that presents its content as a palette.",
+      "pubDate": "Wed, 04 Jun 2025 12:46:44 GMT",
+      "guid": "https://exploreswiftui.com/elements/57",
+      "compatibility": {
+        "iOS": "17.0",
+        "iPadOS": "17.0",
+        "macOS": "14.0",
+        "visionOS": "1.0"
+      },
+      "code": "VStack {\n    ControlGroup {\n        Button(\"Increase\", systemImage: \"plus\", action: action)\n        Button(\"Decrease\", systemImage: \"minus\", action: action)\n    } label: {\n        Text(\"Foo\")\n    }\n    ControlGroup(\"Foo\", systemImage: \"magnifyingglass\") {\n        Button(\"Increase\", systemImage: \"plus\", action: action)\n        Button(\"Decrease\", systemImage: \"minus\", action: action)\n    }\n    ControlGroup {\n        Button(\"Increase\", systemImage: \"plus\", action: action)\n        Button(\"Decrease\", systemImage: \"minus\", action: action)\n    }\n}\n.controlGroupStyle(.palette)",
+      "image_url": "https://exploreswiftui.com/api/images/57/ios?v=1749041204192"
+    },
+    {
+      "index": 131,
+      "group": "Control Groups",
+      "title": "NavigationControlGroupStyle",
+      "link": "https://exploreswiftui.com/library/controlgroup/navigationcontrolgroupstyle",
+      "description": "The navigation control group style",
+      "pubDate": "Wed, 04 Jun 2025 12:37:03 GMT",
+      "guid": "https://exploreswiftui.com/elements/56",
+      "compatibility": {
+        "iOS": "15.0",
+        "iPadOS": "15.0",
+        "macOS": "12.0",
+        "visionOS": "1.0"
+      },
+      "code": "VStack {\n    ControlGroup {\n        Button(\"Increase\", systemImage: \"plus\", action: action)\n        Button(\"Decrease\", systemImage: \"minus\", action: action)\n    } label: {\n        Text(\"Foo\")\n    }\n    ControlGroup(\"Foo\", systemImage: \"magnifyingglass\") {\n        Button(\"Increase\", systemImage: \"plus\", action: action)\n        Button(\"Decrease\", systemImage: \"minus\", action: action)\n    }\n    ControlGroup {\n        Button(\"Increase\", systemImage: \"plus\", action: action)\n        Button(\"Decrease\", systemImage: \"minus\", action: action)\n    }\n}\n.controlGroupStyle(.navigation)",
+      "image_url": "https://exploreswiftui.com/api/images/56/ios?v=1749040623809"
+    },
+    {
+      "index": 132,
+      "group": "Control Groups",
+      "title": "MenuControlGroupStyle",
+      "link": "https://exploreswiftui.com/library/controlgroup/menucontrolgroupstyle",
+      "description": "A control group style that presents its content as a menu when the user presses the control, or as a submenu when nested within a larger menu",
+      "pubDate": "Wed, 04 Jun 2025 12:30:10 GMT",
+      "guid": "https://exploreswiftui.com/elements/55",
+      "compatibility": {
+        "iOS": "16.4",
+        "iPadOS": "16.4",
+        "macOS": "13.3",
+        "tvOS": "17.0",
+        "visionOS": "1.0"
+      },
+      "code": "VStack {\n    ControlGroup {\n        Button(\"Increase\", systemImage: \"plus\", action: action)\n        Button(\"Decrease\", systemImage: \"minus\", action: action)\n    } label: {\n        Text(\"Foo\")\n    }\n    ControlGroup(\"Foo\", systemImage: \"magnifyingglass\") {\n        Button(\"Increase\", systemImage: \"plus\", action: action)\n        Button(\"Decrease\", systemImage: \"minus\", action: action)\n    }\n    ControlGroup {\n        Button(\"Increase\", systemImage: \"plus\", action: action)\n        Button(\"Decrease\", systemImage: \"minus\", action: action)\n    }\n}\n.controlGroupStyle(.menu)",
+      "image_url": "https://exploreswiftui.com/api/images/55/ios?v=1749040210914"
+    },
+    {
+      "index": 133,
+      "group": "Control Groups",
+      "title": "CompactMenuControlGroupStyle",
+      "link": "https://exploreswiftui.com/library/controlgroup/compactmenucontrolgroupstyle",
+      "description": "A control group style that presents its content as a compact menu when the user presses the control, or as a submenu when nested within a larger menu",
+      "pubDate": "Wed, 04 Jun 2025 12:20:41 GMT",
+      "guid": "https://exploreswiftui.com/elements/54",
+      "compatibility": {
+        "iOS": "16.4",
+        "iPadOS": "16.4",
+        "macOS": "13.3",
+        "visionOS": "1.0"
+      },
+      "code": "VStack {\n    ControlGroup {\n        Button(\"Increase\", systemImage: \"plus\", action: action)\n        Button(\"Decrease\", systemImage: \"minus\", action: action)\n    } label: {\n        Text(\"Foo\")\n    }\n    ControlGroup(\"Foo\", systemImage: \"magnifyingglass\") {\n        Button(\"Increase\", systemImage: \"plus\", action: action)\n        Button(\"Decrease\", systemImage: \"minus\", action: action)\n    }\n    ControlGroup {\n        Button(\"Increase\", systemImage: \"plus\", action: action)\n        Button(\"Decrease\", systemImage: \"minus\", action: action)\n    }\n}\n.controlGroupStyle(.compactMenu)",
+      "image_url": "https://exploreswiftui.com/api/images/54/ios?v=1749039641812"
+    },
+    {
+      "index": 134,
+      "group": "Control Groups",
+      "title": "ControlGroup",
+      "link": "https://exploreswiftui.com/library/controlgroup/controlgroup",
+      "description": "Creates a new ControlGroup with the specified children",
+      "pubDate": "Wed, 04 Jun 2025 12:14:19 GMT",
+      "guid": "https://exploreswiftui.com/elements/53",
+      "compatibility": {
+        "iOS": "15.0",
+        "iPadOS": "15.0",
+        "macOS": "12.0",
+        "tvOS": "17.0",
+        "visionOS": "1.0"
+      },
+      "code": "ControlGroup {\n    Button(\"Increase\", action: action)\n    Button(\"Decrease\", action: action)\n}",
+      "image_url": "https://exploreswiftui.com/api/images/53/ios?v=1749039259222"
+    },
+    {
+      "index": 135,
+      "group": "Sliders",
+      "title": "Slider Color",
+      "link": "https://exploreswiftui.com/library/slider/slider-color",
+      "description": "Customizing the color of the slider",
+      "pubDate": "Wed, 04 Jun 2025 09:54:19 GMT",
+      "guid": "https://exploreswiftui.com/elements/52",
+      "compatibility": {
+        "iOS": "15.0",
+        "iPadOS": "15.0",
+        "macOS": "12.0",
+        "watchOS": "8.0",
+        "visionOS": "1.0"
+      },
+      "code": "@State private var speed = 42.0\n@State private var isEditing = false\n\nvar body: some View {\n    VStack {\n        Slider(\n            value: $speed,\n            in: 0 ... 100,\n            step: 2 // optional, by default 1,\n        )\n        Slider(\n            value: $speed,\n            in: 0 ... 100,\n            step: 2 // optional, by default 1,\n\n        ) {\n            Text(\"Foo\") // for accessibility\n        } minimumValueLabel: {\n            Text(\"0\")\n        } maximumValueLabel: {\n            Text(\"100\")\n        } onEditingChanged: { editing in\n            isEditing = editing\n        }\n    }\n    .tint(.red)\n}",
+      "image_url": "https://exploreswiftui.com/api/images/52/ios?v=1749030859285"
+    },
+    {
+      "index": 136,
+      "group": "Sliders",
+      "title": "Stepped Min Max Label Slider",
+      "link": "https://exploreswiftui.com/library/slider/stepped-min-max-label-slider",
+      "description": "Creates a slider to select a value from a given range, subject to a step increment, which displays the provided labels",
+      "pubDate": "Wed, 04 Jun 2025 09:17:25 GMT",
+      "guid": "https://exploreswiftui.com/elements/51",
+      "compatibility": {
+        "iOS": "13.0",
+        "iPadOS": "13.0",
+        "macOS": "10.15",
+        "watchOS": "6.0",
+        "visionOS": "1.0"
+      },
+      "code": "@State private var speed = 42.0\n@State private var isEditing = false\n\nvar body: some View {\n    Slider(\n        value: $speed,\n        in: 0 ... 100,\n        step: 10 // optional, by default 1,\n    ) {\n        Text(\"Foo\") // for accessibility\n    } minimumValueLabel: {\n        Text(\"0\")\n    } maximumValueLabel: {\n        Text(\"100\")\n    } onEditingChanged: { editing in // optional\n        isEditing = editing\n    }\n}",
+      "image_url": "https://exploreswiftui.com/api/images/51/ios?v=1749028645804"
+    },
+    {
+      "index": 137,
+      "group": "Sliders",
+      "title": "Stepped Slider",
+      "link": "https://exploreswiftui.com/library/slider/stepped-slider",
+      "description": "Creates a slider to select a value from a given range, subject to a step increment",
+      "pubDate": "Wed, 04 Jun 2025 08:04:52 GMT",
+      "guid": "https://exploreswiftui.com/elements/50",
+      "compatibility": {
+        "iOS": "13.0",
+        "iPadOS": "13.0",
+        "macOS": "10.15",
+        "watchOS": "6.0",
+        "visionOS": "1.0"
+      },
+      "code": "@State private var speed = 40.0\n@State private var isEditing = false\n\nvar body: some View {\n  Slider(\n  value: $speed,\n  in: 0 ... 100,\n  step: 10,\n  label: {\n    Text(\"Foo\") // for accessibility, enables ticks\n  },\n  onEditingChanged: { editing in\n  isEditing = editing\n}\n)\n}",
+      "image_url": "https://exploreswiftui.com/api/images/50/ios?v=1749024292636"
+    },
+    {
+      "index": 138,
+      "group": "Sliders",
+      "title": "Slider",
+      "link": "https://exploreswiftui.com/library/slider/slider",
+      "description": "Creates a slider to select a value from a given range",
+      "pubDate": "Wed, 04 Jun 2025 07:58:35 GMT",
+      "guid": "https://exploreswiftui.com/elements/49",
+      "compatibility": {
+        "iOS": "13.0",
+        "iPadOS": "13.0",
+        "macOS": "10.15",
+        "watchOS": "6.0",
+        "visionOS": "1.0"
+      },
+      "code": "@State private var speed = 0.42\n\nvar body: some View {\n  Slider(value: $speed)\n}",
+      "image_url": "https://exploreswiftui.com/api/images/49/ios?v=1749023915382"
+    },
+    {
+      "index": 139,
+      "group": "Gauges",
+      "title": "Gauge Colors",
+      "link": "https://exploreswiftui.com/library/gauge/gauge-colors",
+      "description": "Customizing the colors of different styles with minimal effort",
+      "pubDate": "Tue, 03 Jun 2025 19:51:25 GMT",
+      "guid": "https://exploreswiftui.com/elements/48",
+      "compatibility": {
+        "iOS": "16.0",
+        "iPadOS": "16.0",
+        "macOS": "13.0",
+        "watchOS": "7.0",
+        "visionOS": "1.0"
+      },
+      "code": "@State private var currentValue = 0.42\n\nvar body: some View {\n    VStack {\n        HStack {\n            Gauge(value: currentValue) {\n                Text(\"Foo\")\n            } currentValueLabel: {\n                Text(\"42\")\n                    .foregroundColor(.indigo)\n            } minimumValueLabel: {\n                Text(\"0\")\n                    .foregroundColor(.mint)\n            } maximumValueLabel: {\n                Text(\"100\")\n                    .foregroundColor(.blue)\n            }\n            .gaugeStyle(.accessoryCircular)\n\n            Gauge(value: currentValue) {\n                Text(\"Foo\")\n            } currentValueLabel: {\n                Text(\"42\")\n            } minimumValueLabel: {\n                Text(\"0\")\n            } maximumValueLabel: {\n                Text(\"100\")\n            }\n            .gaugeStyle(.accessoryCircularCapacity)\n        }\n        Gauge(value: currentValue) {\n            Text(\"Foo\")\n        } currentValueLabel: {\n            Text(\"42\")\n        } minimumValueLabel: {\n            Text(\"0\")\n        } maximumValueLabel: {\n            Text(\"100\")\n        }\n        .gaugeStyle(.linearCapacity)\n        Gauge(value: currentValue) {\n            Text(\"Foo\")\n        } currentValueLabel: {\n            Text(\"42\")\n        } minimumValueLabel: {\n            Text(\"0\")\n        } maximumValueLabel: {\n            Text(\"100\")\n        }\n        .gaugeStyle(.accessoryLinear)\n\n        Gauge(value: currentValue) {\n            Text(\"Foo\")\n        } currentValueLabel: {\n            Text(\"42\")\n        } minimumValueLabel: {\n            Text(\"0\")\n        } maximumValueLabel: {\n            Text(\"100\")\n        }\n        .gaugeStyle(.accessoryLinearCapacity)\n    }\n    .tint(Gradient(colors: [.green, .orange, .red]))\n        .foregroundStyle(.brown)\n}",
+      "image_url": "https://exploreswiftui.com/api/images/48/ios?v=1748980285491"
+    },
+    {
+      "index": 140,
+      "group": "Gauges",
+      "title": "CircularGaugeStyle",
+      "link": "https://exploreswiftui.com/library/gauge/circulargaugestyle",
+      "description": "A gauge style that displays an open ring with a marker that appears at a point along the ring to indicate the gauge’s current value",
+      "pubDate": "Tue, 03 Jun 2025 19:32:31 GMT",
+      "guid": "https://exploreswiftui.com/elements/47",
+      "compatibility": {
+        "watchOS": "7.0"
+      },
+      "code": "@State private var currentValue = 0.42\n\nvar body: some View {\n  HStack {\n    Gauge(value: 0.42) {\n      Text(\"Foo\")\n    }\n\n    Gauge(value: currentValue) {\n      Text(\"Foo\")\n    } currentValueLabel: {\n      Text(\"\\(currentValue)\")\n    }\n    .padding(.horizontal)\n\n    Gauge(value: currentValue) {\n      Text(\"Foo\")\n    } currentValueLabel: {\n      Text(\"42\")\n    } minimumValueLabel: {\n      Text(\"0\")\n    } maximumValueLabel: {\n      Text(\"100\")\n    }\n  }\n  .gaugeStyle(.circular)\n}",
+      "image_url": "https://exploreswiftui.com/api/images/47/ios?v=1748979151845"
+    },
+    {
+      "index": 141,
+      "group": "Gauges",
+      "title": " LinearGaugeStyle",
+      "link": "https://exploreswiftui.com/library/gauge/-lineargaugestyle",
+      "description": "A gauge style that displays a bar with a marker that appears at a point along the bar to indicate the gauge’s current value",
+      "pubDate": "Tue, 03 Jun 2025 19:29:42 GMT",
+      "guid": "https://exploreswiftui.com/elements/46",
+      "compatibility": {
+        "watchOS": "7.0"
+      },
+      "code": "@State private var currentValue = 0.42\n\nvar body: some View {\n  VStack {\n    Gauge(value: 0.42) {\n      Text(\"Foo\")\n    }\n\n    Gauge(value: currentValue) {\n      Text(\"Foo\")\n    } currentValueLabel: {\n      Text(\"\\(currentValue)\")\n    }\n    .padding(.vertical)\n\n    Gauge(value: currentValue) {\n      Text(\"Foo\")\n    } currentValueLabel: {\n      Text(\"42\")\n    } minimumValueLabel: {\n      Text(\"0\")\n    } maximumValueLabel: {\n      Text(\"100\")\n    }\n  }\n  .gaugeStyle(.linear)\n}",
+      "image_url": "https://exploreswiftui.com/api/images/46/ios?v=1748978982445"
+    },
+    {
+      "index": 142,
+      "group": "Gauges",
+      "title": "AccessoryLinearCapacityGaugeStyle",
+      "link": "https://exploreswiftui.com/library/gauge/accessorylinearcapacitygaugestyle",
+      "description": "A gauge style that displays bar that fills from leading to trailing edges as the gauge’s current value increases",
+      "pubDate": "Tue, 03 Jun 2025 19:27:09 GMT",
+      "guid": "https://exploreswiftui.com/elements/45",
+      "compatibility": {
+        "iOS": "16.0",
+        "iPadOS": "16.0",
+        "macOS": "13.0",
+        "watchOS": "9.0",
+        "visionOS": "1.0"
+      },
+      "code": "@State private var currentValue = 0.42\n\nvar body: some View {\n    VStack {\n        Gauge(value: currentValue) {\n            Text(\"Foo\")\n        }\n\n        Gauge(value: currentValue) {\n            Text(\"Foo\")\n        } currentValueLabel: {\n            Text(\"\\(currentValue)\")\n        }\n        .padding(.vertical)\n\n        Gauge(value: currentValue) {\n            Text(\"Foo\")\n        } currentValueLabel: {\n            Text(\"42\")\n        } minimumValueLabel: {\n            Text(\"0\")\n        } maximumValueLabel: {\n            Text(\"100\")\n        }\n    }\n    .gaugeStyle(.accessoryLinearCapacity)\n}",
+      "image_url": "https://exploreswiftui.com/api/images/45/ios?v=1748978829286"
+    },
+    {
+      "index": 143,
+      "group": "Gauges",
+      "title": "AccessoryLinearGaugeStyle",
+      "link": "https://exploreswiftui.com/library/gauge/accessorylineargaugestyle",
+      "description": "A gauge style that displays bar with a marker that appears at a point along the bar to indicate the gauge’s current value",
+      "pubDate": "Tue, 03 Jun 2025 19:24:26 GMT",
+      "guid": "https://exploreswiftui.com/elements/44",
+      "compatibility": {
+        "iOS": "16.0",
+        "iPadOS": "16.0",
+        "macOS": "13.0",
+        "watchOS": "9.0",
+        "visionOS": "1.0"
+      },
+      "code": "@State private var currentValue = 0.42\n\nvar body: some View {\n    VStack {\n        Gauge(value: currentValue) {\n            Text(\"Foo\")\n        }\n\n        Gauge(value: currentValue) {\n            Text(\"Foo\")\n        } currentValueLabel: {\n            Text(\"\\(currentValue)\")\n        }\n        .padding(.vertical)\n\n        Gauge(value: currentValue) {\n            Text(\"Foo\")\n        } currentValueLabel: {\n            Text(\"42\")\n        } minimumValueLabel: {\n            Text(\"0\")\n        } maximumValueLabel: {\n            Text(\"100\")\n        }\n    }\n    .gaugeStyle(.accessoryLinear)\n}",
+      "image_url": "https://exploreswiftui.com/api/images/44/ios?v=1748978666161"
+    },
+    {
+      "index": 144,
+      "group": "Gauges",
+      "title": "LinearCapacityGaugeStyle",
+      "link": "https://exploreswiftui.com/library/gauge/linearcapacitygaugestyle",
+      "description": "A gauge style that displays a bar that fills from leading to trailing edges as the gauge’s current value increases",
+      "pubDate": "Tue, 03 Jun 2025 19:06:45 GMT",
+      "guid": "https://exploreswiftui.com/elements/43",
+      "compatibility": {
+        "iOS": "16.0",
+        "iPadOS": "16.0",
+        "macOS": "13.0",
+        "watchOS": "9.0",
+        "visionOS": "1.0"
+      },
+      "code": "@State private var currentValue = 0.42\n\nvar body: some View {\n    VStack {\n        Gauge(value: currentValue) {\n            Text(\"Foo\")\n        }\n\n        Gauge(value: currentValue) {\n            Text(\"Foo\")\n        } currentValueLabel: {\n            Text(\"\\(currentValue)\")\n        }\n        .padding(.vertical)\n\n        Gauge(value: currentValue) {\n            Text(\"Foo\")\n        } currentValueLabel: {\n            Text(\"42\")\n        } minimumValueLabel: {\n            Text(\"0\")\n        } maximumValueLabel: {\n            Text(\"100\")\n        }\n    }\n    .gaugeStyle(.linearCapacity)\n}",
+      "image_url": "https://exploreswiftui.com/api/images/43/ios?v=1748977605868"
+    },
+    {
+      "index": 145,
+      "group": "Gauges",
+      "title": "AccessoryCircularCapacityGaugeStyle",
+      "link": "https://exploreswiftui.com/library/gauge/accessorycircularcapacitygaugestyle",
+      "description": "A gauge style that displays a closed ring that’s partially filled in to indicate the gauge’s current value",
+      "pubDate": "Tue, 03 Jun 2025 19:02:49 GMT",
+      "guid": "https://exploreswiftui.com/elements/42",
+      "compatibility": {
+        "iOS": "16.0",
+        "iPadOS": "16.0",
+        "macOS": "13.0",
+        "watchOS": "9.0",
+        "visionOS": "1.0"
+      },
+      "code": "@State private var currentValue = 0.42\n\nvar body: some View {\n    HStack {\n        Gauge(value: currentValue) {\n            Text(\"Foo\")\n        }\n\n        Gauge(value: currentValue) {\n            Text(\"Foo\")\n        } currentValueLabel: {\n            Text(\"\\(currentValue)\")\n        }\n        .padding(.horizontal)\n\n        Gauge(value: currentValue) {\n            Text(\"Foo\")\n        } currentValueLabel: {\n            Text(\"42\")\n        } minimumValueLabel: {\n            Text(\"0\")\n        } maximumValueLabel: {\n            Text(\"100\")\n        }\n    }\n    .gaugeStyle(.accessoryCircularCapacity)\n}",
+      "image_url": "https://exploreswiftui.com/api/images/42/ios?v=1748977369671"
+    },
+    {
+      "index": 146,
+      "group": "Gauges",
+      "title": "AccessoryCircularGaugeStyle",
+      "link": "https://exploreswiftui.com/library/gauge/accessorycirculargaugestyle",
+      "description": "A gauge style that displays an open ring with a marker that appears at a point along the ring to indicate the gauge’s current value",
+      "pubDate": "Tue, 03 Jun 2025 18:57:44 GMT",
+      "guid": "https://exploreswiftui.com/elements/41",
+      "compatibility": {
+        "iOS": "16.0",
+        "iPadOS": "16.0",
+        "macOS": "13.0",
+        "watchOS": "9.0",
+        "visionOS": "1.0"
+      },
+      "code": "@State private var currentValue = 0.42\n\nvar body: some View {\n    HStack {\n        Gauge(value: currentValue) {\n            Text(\"Foo\")\n        }\n\n        Gauge(value: currentValue) {\n            Text(\"Foo\")\n        } currentValueLabel: {\n            Text(\"\\(currentValue)\")\n        }\n        .padding(.horizontal)\n\n        Gauge(value: currentValue) {\n            Text(\"Foo\")\n        } currentValueLabel: {\n            Text(\"42\")\n        } minimumValueLabel: {\n            Text(\"0\")\n        } maximumValueLabel: {\n            Text(\"100\")\n        }\n    }\n    .gaugeStyle(.accessoryCircular)\n}",
+      "image_url": "https://exploreswiftui.com/api/images/41/ios?v=1748977064455"
+    },
+    {
+      "index": 147,
+      "group": "Gauges",
+      "title": "Min Max Current Value Gauge",
+      "link": "https://exploreswiftui.com/library/gauge/min-max-current-value-gauge",
+      "description": "Creates a gauge showing a value within a range and describes the gauge’s current, minimum, and maximum values",
+      "pubDate": "Tue, 03 Jun 2025 18:48:01 GMT",
+      "guid": "https://exploreswiftui.com/elements/40",
+      "compatibility": {
+        "iOS": "16.0",
+        "iPadOS": "16.0",
+        "macOS": "13.0",
+        "watchOS": "7.0",
+        "visionOS": "1.0"
+      },
+      "code": "Gauge(value: 0.42) {\n    Text(\"Foo\")\n} currentValueLabel: {\n    Text(\"42\")\n} minimumValueLabel: {\n    Text(\"0\")\n} maximumValueLabel: {\n    Text(\"100\")\n}",
+      "image_url": "https://exploreswiftui.com/api/images/40/ios?v=1748976481918"
+    },
+    {
+      "index": 148,
+      "group": "Gauges",
+      "title": "Current Value Gauge ",
+      "link": "https://exploreswiftui.com/library/gauge/current-value-gauge-",
+      "description": "Creates a gauge showing a value within a range and that describes the gauge’s purpose and current value",
+      "pubDate": "Tue, 03 Jun 2025 16:04:40 GMT",
+      "guid": "https://exploreswiftui.com/elements/39",
+      "compatibility": {
+        "iOS": "16.0",
+        "iPadOS": "16.0",
+        "macOS": "13.0",
+        "watchOS": "7.0",
+        "visionOS": "1.0"
+      },
+      "code": "Gauge(value: 0.42) {\n    Text(\"Foo\")\n} currentValueLabel: {\n    Text(\"\\(currentValue)\")\n}",
+      "image_url": "https://exploreswiftui.com/api/images/39/ios?v=1748966680847"
+    },
+    {
+      "index": 149,
+      "group": "Gauges",
+      "title": "Gauge",
+      "link": "https://exploreswiftui.com/library/gauge/gauge",
+      "description": "Creates a gauge showing a value within a range and describes the gauge’s purpose and current value",
+      "pubDate": "Tue, 03 Jun 2025 15:57:26 GMT",
+      "guid": "https://exploreswiftui.com/elements/38",
+      "compatibility": {
+        "iOS": "16.0",
+        "iPadOS": "16.0",
+        "macOS": "13.0",
+        "watchOS": "7.0",
+        "visionOS": "1.0"
+      },
+      "code": "Gauge(value: 0.42) {\n    Text(\"Foo\")\n}",
+      "image_url": "https://exploreswiftui.com/api/images/38/ios?v=1748966246776"
+    },
+    {
+      "index": 150,
+      "group": "Buttons",
+      "title": "RenameButton",
+      "link": "https://exploreswiftui.com/library/button/renamebutton",
+      "description": "A button that triggers a standard rename action",
+      "pubDate": "Tue, 03 Jun 2025 15:17:49 GMT",
+      "guid": "https://exploreswiftui.com/elements/37",
+      "compatibility": {
+        "iOS": "16.0",
+        "iPadOS": "16.0",
+        "macOS": "13.0",
+        "watchOS": "9.0",
+        "tvOS": "16.0",
+        "visionOS": "1.0"
+      },
+      "code": "@State private var text = \"foo\"\n\nvar body: some View {\n    HStack {\n        Text(text)\n\n        RenameButton()\n            .padding(.leading)\n            .renameAction {\n                text = \"bar\"\n            }\n        }\n    }",
+      "image_url": "https://exploreswiftui.com/api/images/37/ios?v=1748963869393"
+    },
+    {
+      "index": 151,
+      "group": "Buttons",
+      "title": "EditButton",
+      "link": "https://exploreswiftui.com/library/button/editbutton",
+      "description": "A button that toggles the edit mode environment value",
+      "pubDate": "Tue, 03 Jun 2025 14:28:16 GMT",
+      "guid": "https://exploreswiftui.com/elements/36",
+      "compatibility": {
+        "iOS": "13.0",
+        "iPadOS": "13.0",
+        "visionOS": "1.0"
+      },
+      "code": "@Environment(\\.editMode) private var editMode\n@State private var name = \"Foo\"\n\nvar body: some View {\n    HStack {\n        if editMode?.wrappedValue.isEditing == true {\n            TextField(\"Name\", text: $name)\n        } else {\n            Text(name)\n        }\n        EditButton()\n    }\n}",
+      "image_url": "https://exploreswiftui.com/api/images/36/ios?v=1748960896568"
+    },
+    {
+      "index": 152,
+      "group": "Buttons",
+      "title": "PasteButton",
+      "link": "https://exploreswiftui.com/library/button/pastebutton",
+      "description": "A system button that reads items from the pasteboard and delivers it to a closure.\n",
+      "pubDate": "Fri, 30 May 2025 14:33:02 GMT",
+      "guid": "https://exploreswiftui.com/elements/35",
+      "compatibility": {
+        "iOS": "16.0",
+        "iPadOS": "16.0",
+        "macOS": "10.15",
+        "visionOS": "1.0"
+      },
+      "code": "@State private var pastedText: String = \"\"\n\nvar body: some View {\n    PasteButton(payloadType: String.self) { strings in\n        pastedText = strings[0]\n    }\n}",
+      "image_url": "https://exploreswiftui.com/api/images/35/ios?v=1748615582634"
+    },
+    {
+      "index": 153,
+      "group": "Buttons",
+      "title": "Button Tint",
+      "link": "https://exploreswiftui.com/library/button/button-tint",
+      "description": "Sets the buttons tint color\n",
+      "pubDate": "Fri, 30 May 2025 14:00:29 GMT",
+      "guid": "https://exploreswiftui.com/elements/34",
+      "compatibility": {
+        "iOS": "15.0",
+        "iPadOS": "15.0",
+        "macOS": "12.0",
+        "watchOS": "8.0",
+        "tvOS": "15.0",
+        "visionOS": "1.0"
+      },
+      "code": "VStack {\n    HStack {\n        Button(\"Tap Me\", action: action)\n            .buttonStyle(.plain)\n        Button(\"Tap Me\", action: action)\n            .buttonStyle(.borderless)\n        Button(\"Tap Me\", action: action)\n            .buttonStyle(.bordered)\n        Button(\"Tap Me\", action: action)\n            .buttonStyle(.borderedProminent)\n    }\n    .tint(.blue)\n    HStack {\n        Button(\"Tap Me\", action: action)\n            .buttonStyle(.plain)\n        Button(\"Tap Me\", action: action)\n            .buttonStyle(.borderless)\n        Button(\"Tap Me\", action: action)\n            .buttonStyle(.bordered)\n        Button(\"Tap Me\", action: action)\n            .buttonStyle(.borderedProminent)\n    }\n    .tint(.red)\n    HStack {\n        Button(\"Tap Me\", action: action)\n            .buttonStyle(.plain)\n        Button(\"Tap Me\", action: action)\n            .buttonStyle(.borderless)\n        Button(\"Tap Me\", action: action)\n            .buttonStyle(.bordered)\n        Button(\"Tap Me\", action: action)\n            .buttonStyle(.borderedProminent)\n    }\n    .tint(.green)\n}",
+      "image_url": "https://exploreswiftui.com/api/images/34/ios?v=1748613629025"
+    },
+    {
+      "index": 154,
+      "group": "Buttons",
+      "title": "Button Roles",
+      "link": "https://exploreswiftui.com/library/button/button-roles",
+      "description": "A value that describes the purpose of a button.",
+      "pubDate": "Fri, 30 May 2025 13:57:24 GMT",
+      "guid": "https://exploreswiftui.com/elements/33",
+      "compatibility": {
+        "iOS": "15.0",
+        "iPadOS": "15.0",
+        "macOS": "12.0",
+        "watchOS": "8.0",
+        "tvOS": "15.0",
+        "visionOS": "1.0"
+      },
+      "code": "VStack {\n    HStack {\n        Button(\"Tap Me\", role: .cancel, action: action)\n            .buttonStyle(.plain)\n        Button(\"Tap Me\", role: .cancel, action: action)\n            .buttonStyle(.borderless)\n        Button(\"Tap Me\", role: .cancel, action: action)\n            .buttonStyle(.bordered)\n        Button(\"Tap Me\", role: .cancel, action: action)\n            .buttonStyle(.borderedProminent)\n    }\n    HStack {\n        Button(\"Tap Me\", role: .destructive, action: action)\n            .buttonStyle(.plain)\n        Button(\"Tap Me\", role: .destructive, action: action)\n            .buttonStyle(.borderless)\n        Button(\"Tap Me\", role: .destructive, action: action)\n            .buttonStyle(.bordered)\n        Button(\"Tap Me\", role: .destructive, action: action)\n            .buttonStyle(.borderedProminent)\n    }\n}",
+      "image_url": "https://exploreswiftui.com/api/images/33/ios?v=1748613444161"
+    },
+    {
+      "index": 155,
+      "group": "Buttons",
+      "title": "Button Border Shape",
+      "link": "https://exploreswiftui.com/library/button/button-border-shape",
+      "description": "A shape used to draw a button’s border.",
+      "pubDate": "Fri, 30 May 2025 13:53:11 GMT",
+      "guid": "https://exploreswiftui.com/elements/32",
+      "compatibility": {
+        "iOS": "15.0",
+        "iPadOS": "15.0",
+        "macOS": "12.0",
+        "watchOS": "8.0",
+        "tvOS": "15.0",
+        "visionOS": "1.0"
+      },
+      "code": "HStack {\n    Button(\"Tap Me\", action: action)\n        .buttonStyle(.borderedProminent)\n        .buttonBorderShape(.roundedRectangle)\n    Button(\"Tap Me\", action: action)\n        .buttonStyle(.borderedProminent)\n        .buttonBorderShape(.capsule)\n    Button(\"Tap Me\", action: action)\n        .buttonStyle(.borderedProminent)\n        .padding()\n        .buttonBorderShape(.circle)\n    Button(\"Tap Me\", action: action)\n        .buttonStyle(.borderedProminent)\n        .buttonBorderShape(.roundedRectangle(radius: 12))\n}",
+      "image_url": "https://exploreswiftui.com/api/images/32/ios?v=1748613191820"
+    },
+    {
+      "index": 156,
+      "group": "Buttons",
+      "title": "Button Styles",
+      "link": "https://exploreswiftui.com/library/button/button-styles",
+      "description": "A type that applies standard interaction behavior and a custom appearance to all buttons within a view hierarchy",
+      "pubDate": "Fri, 30 May 2025 13:48:41 GMT",
+      "guid": "https://exploreswiftui.com/elements/31",
+      "compatibility": {
+        "iOS": "13.0",
+        "iPadOS": "13.0",
+        "macOS": "10.15",
+        "watchOS": "6.0",
+        "tvOS": "13.0",
+        "visionOS": "1.0"
+      },
+      "code": "HStack {\n    Button(\"Tap Me\", action: action)\n        .buttonStyle(.plain)\n    Button(\"Tap Me\", action: action)\n        .buttonStyle(.borderless)\n    Button(\"Tap Me\", action: action)\n        .buttonStyle(.bordered)\n    Button(\"Tap Me\", action: action)\n        .buttonStyle(.borderedProminent)\n}",
+      "image_url": "https://exploreswiftui.com/api/images/31/ios?v=1748612921493"
+    },
+    {
+      "index": 157,
+      "group": "Buttons",
+      "title": "Button",
+      "link": "https://exploreswiftui.com/library/button/button",
+      "description": "Three ways to initialize a button",
+      "pubDate": "Fri, 30 May 2025 13:41:24 GMT",
+      "guid": "https://exploreswiftui.com/elements/30",
+      "compatibility": {
+        "iOS": "13.0",
+        "iPadOS": "13.0",
+        "macOS": "10.15",
+        "watchOS": "6.0",
+        "tvOS": "13.0",
+        "visionOS": "1.0"
+      },
+      "code": "HStack {\n    Button(\"Tap Me\", action: action)\n    Button(\"Tap Me\", systemImage: \"hand.tap\", action: action)\n        .padding(.horizontal)\n    Button(action: action) {\n        Text(\"Tap Me\")\n        Image(systemName: \"hand.tap\")\n    }\n}",
+      "image_url": "https://exploreswiftui.com/api/images/30/ios?v=1748612484646"
+    },
+    {
+      "index": 158,
+      "group": "Group Boxes",
+      "title": "GroupBox Background",
+      "link": "https://exploreswiftui.com/library/groupbox/groupbox-background",
+      "description": "Set a custom GroupBox background",
+      "pubDate": "Fri, 30 May 2025 12:34:31 GMT",
+      "guid": "https://exploreswiftui.com/elements/29",
+      "compatibility": {
+        "iOS": "16.0",
+        "iPadOS": "16.0",
+        "macOS": "13.0",
+        "watchOS": "9.0",
+        "tvOS": "16.0",
+        "visionOS": "1.0"
+      },
+      "code": "GroupBox {\n    Text(loremIpsum)\n}\n.backgroundStyle(.blue.tertiary)",
+      "image_url": "https://exploreswiftui.com/api/images/29/ios?v=1748608471665"
+    },
+    {
+      "index": 159,
+      "group": "Group Boxes",
+      "title": "GroupBox With Label",
+      "link": "https://exploreswiftui.com/library/groupbox/groupbox-with-label",
+      "description": "A GroupBox with Label",
+      "pubDate": "Fri, 30 May 2025 11:26:09 GMT",
+      "guid": "https://exploreswiftui.com/elements/28",
+      "compatibility": {
+        "iOS": "14.0",
+        "iPadOS": "14.0",
+        "macOS": "10.15",
+        "visionOS": "1.0"
+      },
+      "code": "GroupBox {\n    Text(loremIpsum)\n} label: {\n    Label(\"Hello World\", systemImage: \"globe\")\n}",
+      "image_url": "https://exploreswiftui.com/api/images/28/ios?v=1748604369510"
+    },
+    {
+      "index": 160,
+      "group": "Group Boxes",
+      "title": "GroupBox",
+      "link": "https://exploreswiftui.com/library/groupbox/groupbox",
+      "description": "A simple GroupBox",
+      "pubDate": "Fri, 30 May 2025 11:23:18 GMT",
+      "guid": "https://exploreswiftui.com/elements/27",
+      "compatibility": {
+        "iOS": "14.0",
+        "iPadOS": "14.0",
+        "macOS": "10.15",
+        "visionOS": "1.0"
+      },
+      "code": "GroupBox {\n    Text(loremIpsum)\n}",
+      "image_url": "https://exploreswiftui.com/api/images/27/ios?v=1748604198637"
+    },
+    {
+      "index": 161,
+      "group": "Material",
+      "title": "Materials",
+      "link": "https://exploreswiftui.com/library/material/materials",
+      "description": "All materials",
+      "pubDate": "Fri, 30 May 2025 09:54:14 GMT",
+      "guid": "https://exploreswiftui.com/elements/26",
+      "compatibility": {
+        "iOS": "15.0",
+        "iPadOS": "15.0",
+        "macOS": "12.0",
+        "watchOS": "8.0",
+        "tvOS": "15.0",
+        "visionOS": "1.0"
+      },
+      "code": "VStack {\n  HStack {\n    HStack {\n      smallRect\n        .foregroundStyle(.ultraThinMaterial)\n      smallRect\n        .foregroundStyle(.thinMaterial)\n      smallRect\n        .foregroundStyle(.regularMaterial)\n      smallRect\n        .foregroundStyle(.thickMaterial)\n      smallRect\n        .foregroundStyle(.ultraThickMaterial)\n    }\n  }\n  .padding()\n    .background {\n    meshGradient\n  }\n  HStack {\n    HStack {\n      smallRect\n        .foregroundStyle(.ultraThinMaterial)\n      smallRect\n        .foregroundStyle(.thinMaterial)\n      smallRect\n        .foregroundStyle(.regularMaterial)\n      smallRect\n        .foregroundStyle(.thickMaterial)\n      smallRect\n        .foregroundStyle(.ultraThickMaterial)\n    }\n  }\n  .padding()\n    .padding(.horizontal)\n    .background {\n    Image(.cats)\n      .resizable()\n      .aspectRatio(contentMode: .fill)\n      .frame(height: 50)\n      .padding()\n      .clipped()\n  }\n}",
+      "image_url": "https://exploreswiftui.com/api/images/26/ios?v=1748598854733"
+    },
+    {
+      "index": 162,
+      "group": "Menus",
+      "title": "Context Menu Preview",
+      "link": "https://exploreswiftui.com/library/menu/context-menu-preview",
+      "description": "A context menu with custom preview",
+      "pubDate": "Fri, 30 May 2025 08:25:02 GMT",
+      "guid": "https://exploreswiftui.com/elements/25",
+      "compatibility": {
+        "iOS": "16.0",
+        "iPadOS": "16.0",
+        "macOS": "13.0",
+        "tvOS": "16.0",
+        "visionOS": "1.0"
+      },
+      "code": "Text(\"Buttons\")\n    .contextMenu {\n        Button(\"Button 1\", action: action)\n        Button(\"Button 2\", systemImage: \"button.vertical.left.press\", action: action)\n        Button(action: action) {\n            Text(\"Button 3\")\n            Text(\"Description 3\")\n        }\n    } preview: {\n        Text(\"Custom Preview\")\n            .padding()\n    }",
+      "image_url": "https://exploreswiftui.com/api/images/25/ios?v=1748593502210"
+    },
+    {
+      "index": 163,
+      "group": "Menus",
+      "title": "Menu Action Button",
+      "link": "https://exploreswiftui.com/library/menu/menu-action-button",
+      "description": "Acts like a button and opens the menu on a secondary gesture",
+      "pubDate": "Fri, 30 May 2025 08:05:21 GMT",
+      "guid": "https://exploreswiftui.com/elements/23",
+      "compatibility": {
+        "iOS": "15.0",
+        "iPadOS": "15.0",
+        "macOS": "12",
+        "tvOS": "17.0",
+        "visionOS": "1.0"
+      },
+      "code": "Menu {\n    Button(\"Button 1\", action: action)\n    Button(\"Button 2\", systemImage: \"button.vertical.left.press\", action: action)\n    Button(action: action) {\n        Text(\"Button 3\")\n        Text(\"Description 3\")\n    }\n} label: {\n    Text(\"Button 0\")\n} primaryAction: {\n    print(\"Button 0 tapped\")\n}",
+      "image_url": "https://exploreswiftui.com/api/images/23/ios?v=1748592321849"
+    },
+    {
+      "index": 164,
+      "group": "Menus",
+      "title": "Context Menu",
+      "link": "https://exploreswiftui.com/library/menu/context-menu",
+      "description": "Adds a context menu to a view.",
+      "pubDate": "Fri, 30 May 2025 07:56:29 GMT",
+      "guid": "https://exploreswiftui.com/elements/22",
+      "compatibility": {
+        "iOS": "13.0",
+        "iPadOS": "13.0",
+        "macOS": "10.15",
+        "tvOS": "14.0",
+        "visionOS": "1.0"
+      },
+      "code": "Text(\"Buttons\")\n    .contextMenu {\n        Button(\"Button 1\", action: action)\n        Button(\"Button 2\", systemImage: \"button.vertical.left.press\", action: action)\n        Button(action: action) {\n            Text(\"Button 3\")\n            Text(\"Description 3\")\n        }\n    }",
+      "image_url": "https://exploreswiftui.com/api/images/22/ios?v=1748591789875"
+    },
+    {
+      "index": 165,
+      "group": "Menus",
+      "title": "Nested Menu",
+      "link": "https://exploreswiftui.com/library/menu/nested-menu",
+      "description": "A Menu inside a Menu",
+      "pubDate": "Fri, 30 May 2025 06:25:02 GMT",
+      "guid": "https://exploreswiftui.com/elements/21",
+      "compatibility": {
+        "iOS": "14.0",
+        "iPadOS": "14.0",
+        "macOS": "11",
+        "tvOS": "17.0",
+        "visionOS": "1.0"
+      },
+      "code": "Menu {\n    Button(\"Button 1\", action: action)\n    Menu(\"Other\") {\n        Button(\"Button 2\", systemImage: \"button.vertical.left.press\", action: action)\n        Button(action: action) {\n            Text(\"Button 3\")\n            Text(\"Description 3\")\n        }\n    }\n} label: {\n    Text(\"Buttons\")\n}",
+      "image_url": "https://exploreswiftui.com/api/images/21/ios?v=1748586302415"
+    },
+    {
+      "index": 166,
+      "group": "Menus",
+      "title": "Menu Divider",
+      "link": "https://exploreswiftui.com/library/menu/menu-divider",
+      "description": "A Menu with a Divider",
+      "pubDate": "Fri, 30 May 2025 06:18:43 GMT",
+      "guid": "https://exploreswiftui.com/elements/20",
+      "compatibility": {
+        "iOS": "13.0",
+        "iPadOS": "13.0",
+        "macOS": "10.15",
+        "watchOS": "6.0",
+        "tvOS": "13.0",
+        "visionOS": "1.0"
+      },
+      "code": "Menu {\n    Button(\"Button 1\", action: action)\n    Divider()\n    Button(\"Button 2\", systemImage: \"button.vertical.left.press\", action: action)\n    Button(action: action) {\n        Text(\"Button 3\")\n        Text(\"Description 3\")\n    }\n} label: {\n    Text(\"Buttons\")\n}",
+      "image_url": "https://exploreswiftui.com/api/images/20/ios?v=1748585923330"
+    },
+    {
+      "index": 167,
+      "group": "Menus",
+      "title": "Menu Section",
+      "link": "https://exploreswiftui.com/library/menu/menu-section",
+      "description": "A Section inside a Menu",
+      "pubDate": "Fri, 30 May 2025 06:09:55 GMT",
+      "guid": "https://exploreswiftui.com/elements/19",
+      "compatibility": {
+        "iOS": "13.0",
+        "iPadOS": "13.0",
+        "macOS": "10.15",
+        "watchOS": "6.0",
+        "tvOS": "13.0",
+        "visionOS": "1.0"
+      },
+      "code": "Menu {\n    Button(\"Button 1\", action: action)\n    Section(\"foo\") {\n        Button(\"Button 2\", systemImage: \"button.vertical.left.press\", action: action)\n        Button(action: action) {\n            Text(\"Button 3\")\n            Text(\"Description 3\")\n        }\n    }\n} label: {\n    Text(\"Buttons\")\n}",
+      "image_url": "https://exploreswiftui.com/api/images/19/ios?v=1748585395506"
+    },
+    {
+      "index": 168,
+      "group": "Menus",
+      "title": "Menu Fixed Order",
+      "link": "https://exploreswiftui.com/library/menu/menu-fixed-order",
+      "description": "Order items from top to bottom",
+      "pubDate": "Fri, 30 May 2025 06:04:34 GMT",
+      "guid": "https://exploreswiftui.com/elements/18",
+      "compatibility": {
+        "iOS": "16.0",
+        "iPadOS": "16.0",
+        "macOS": "13.0",
+        "watchOS": "9.0",
+        "tvOS": "16.0",
+        "visionOS": "1.0"
+      },
+      "code": "Menu {\n    Button(\"Button 1\", action: action)\n    Button(\"Button 2\", systemImage: \"button.vertical.left.press\", action: action)\n    Button(action: action) {\n        Text(\"Button 3\")\n        Text(\"Description 3\")\n    }\n} label: {\n    Text(\"Buttons\")\n}\n.menuOrder(.fixed)",
+      "image_url": "https://exploreswiftui.com/api/images/18/ios?v=1748585074969"
+    },
+    {
+      "index": 169,
+      "group": "Menus",
+      "title": "Menu",
+      "link": "https://exploreswiftui.com/library/menu/menu",
+      "description": "A control for presenting a menu of actions.",
+      "pubDate": "Fri, 30 May 2025 05:54:06 GMT",
+      "guid": "https://exploreswiftui.com/elements/17",
+      "compatibility": {
+        "iOS": "14.0",
+        "iPadOS": "14.0",
+        "macOS": "11.0",
+        "tvOS": "17.0",
+        "visionOS": "1.0"
+      },
+      "code": "Menu {\n    Button(\"Button 1\", action: action)\n    Button(\"Button 2\", systemImage: \"button.vertical.left.press\", action: action)\n    Button(action: action) {\n        Text(\"Button 3\")\n        Text(\"Description 3\")\n    }\n} label: {\n    Text(\"Buttons\")\n}",
+      "image_url": "https://exploreswiftui.com/api/images/17/ios?v=1748584446686"
+    },
+    {
+      "index": 170,
+      "group": "Colors",
+      "title": "Color Opacity",
+      "link": "https://exploreswiftui.com/library/color/color-opacity",
+      "description": "The Color opacity modifier",
+      "pubDate": "Thu, 29 May 2025 11:40:24 GMT",
+      "guid": "https://exploreswiftui.com/elements/16",
+      "compatibility": {
+        "iOS": "16.0",
+        "iPadOS": "16.0",
+        "macOS": "13.0",
+        "watchOS": "9.0",
+        "tvOS": "16.0",
+        "visionOS": "1.0"
+      },
+      "code": "HStack {\n  smallRect\n    .foregroundStyle(.blue.opacity(1))\n  smallRect\n    .foregroundStyle(.blue.opacity(0.7))\n  smallRect\n    .foregroundStyle(.blue.opacity(0.5))\n  smallRect\n    .foregroundStyle(.blue.opacity(0.3))\n  smallRect\n    .foregroundStyle(.blue.opacity(0.1))\n}",
+      "image_url": "https://exploreswiftui.com/api/images/16/ios?v=1748518824153"
+    },
+    {
+      "index": 171,
+      "group": "Colors",
+      "title": "Color Gradient",
+      "link": "https://exploreswiftui.com/library/color/color-gradient",
+      "description": "The Color gradient modifier",
+      "pubDate": "Thu, 29 May 2025 11:31:10 GMT",
+      "guid": "https://exploreswiftui.com/elements/15",
+      "compatibility": {
+        "iOS": "16.0",
+        "iPadOS": "16.0",
+        "macOS": "13.0",
+        "watchOS": "9.0",
+        "tvOS": "16.0",
+        "visionOS": "1.0"
+      },
+      "code": "VStack {\n  HStack {\n    smallRect\n      .foregroundStyle(.blue)\n    smallRect\n      .foregroundStyle(.blue.secondary)\n    smallRect\n      .foregroundStyle(.blue.tertiary)\n    smallRect\n      .foregroundStyle(.blue.quaternary)\n    smallRect\n      .foregroundStyle(.blue.quinary)\n  }\n  HStack {\n    smallRect\n      .foregroundStyle(.blue.gradient)\n    smallRect\n      .foregroundStyle(.blue.gradient.secondary)\n    smallRect\n      .foregroundStyle(.blue.gradient.tertiary)\n    smallRect\n      .foregroundStyle(.blue.gradient.quaternary)\n    smallRect\n      .foregroundStyle(.blue.gradient.quinary)\n  }\n  HStack {\n    smallRect\n      .foregroundStyle(.blue.gradient.opacity(0.9))\n    smallRect\n      .foregroundStyle(.blue.gradient.opacity(0.7))\n    smallRect\n      .foregroundStyle(.blue.gradient.tertiary.opacity(0.5))\n    smallRect\n      .foregroundStyle(.blue.gradient.quaternary.opacity(0.3))\n    smallRect\n      .foregroundStyle(.blue.gradient.quinary.opacity(0.1))\n  }\n}",
+      "image_url": "https://exploreswiftui.com/api/images/15/ios?v=1748518270283"
+    },
+    {
+      "index": 172,
+      "group": "Colors",
+      "title": "UIKit Separator Colors",
+      "link": "https://exploreswiftui.com/library/color/uikit-separator-colors",
+      "description": "The UIKit separator colors that are also used in other components, such as the TextField",
+      "pubDate": "Thu, 29 May 2025 11:17:05 GMT",
+      "guid": "https://exploreswiftui.com/elements/14",
+      "compatibility": {
+        "iOS": "13.0",
+        "iPadOS": "13.0",
+        "tvOS": "13.0",
+        "visionOS": "1.0"
+      },
+      "code": "VStack {\n  Divider()\n\n  HStack {\n    smallRect\n    // Divider color\n      .foregroundStyle(Color(.separator))\n    smallRect\n      .foregroundStyle(Color(.opaqueSeparator))\n\n    smallRect\n    // Divider color\n      .foregroundStyle(Color(.separator))\n      .background(.orange)\n    smallRect\n      .foregroundStyle(Color(.opaqueSeparator))\n      .background(.orange)\n  }\n}",
+      "image_url": "https://exploreswiftui.com/api/images/14/ios?v=1748517425461"
+    },
+    {
+      "index": 173,
+      "group": "Colors",
+      "title": "UIKit Content Background colors",
+      "link": "https://exploreswiftui.com/library/color/uikit-content-background-colors",
+      "description": "The UIKit colors that are also used in other components like in List and GroupBox",
+      "pubDate": "Thu, 29 May 2025 10:20:12 GMT",
+      "guid": "https://exploreswiftui.com/elements/13",
+      "compatibility": {
+        "iOS": "13.0.",
+        "iPadOS": "13.0",
+        "visionOS": "1.0"
+      },
+      "code": "VStack {\n  List {\n    Section {\n      Text(\"content\")\n    }\n  }\n  .frame(maxHeight: 50)\n  HStack {\n    smallRect\n    // can also be used as inverted text color\n      .foregroundStyle(Color(.systemBackground))\n    smallRect\n    // GroupBox content backgroud\n      .foregroundStyle(Color(.secondarySystemBackground))\n    smallRect\n      .foregroundStyle(Color(.tertiarySystemBackground))\n    smallRect\n    // can also be used as inverted text color\n    // List background\n      .foregroundStyle(Color(.systemGroupedBackground))\n    smallRect\n    // List content background\n      .foregroundStyle(Color(.secondarySystemGroupedBackground))\n    smallRect\n      .foregroundStyle(Color(.tertiarySystemGroupedBackground))\n  }\n  GroupBox {\n    Text(\"content\")\n  }\n  .frame(maxHeight: 50)\n}",
+      "image_url": "https://exploreswiftui.com/api/images/13/ios?v=1748514012336"
+    },
+    {
+      "index": 174,
+      "group": "Colors",
+      "title": "UIKit Text Colors",
+      "link": "https://exploreswiftui.com/library/color/uikit-text-colors",
+      "description": "The UIKit text colors that are also used in other components, such as the TextField",
+      "pubDate": "Thu, 29 May 2025 09:25:01 GMT",
+      "guid": "https://exploreswiftui.com/elements/12",
+      "compatibility": {
+        "iOS": "13.0",
+        "iPadOS": "13.0",
+        "tvOS": "13.0",
+        "visionOS": "1.0"
+      },
+      "code": "TextField(\"Placeholder\", text: .constant(\"\"))\nText(\"Placeholder\")\n  .foregroundStyle(Color(.placeholderText))",
+      "image_url": "https://exploreswiftui.com/api/images/12/ios?v=1748510701404"
+    },
+    {
+      "index": 175,
+      "group": "Colors",
+      "title": "UIKit Fill Colors",
+      "link": "https://exploreswiftui.com/library/color/uikit-fill-colors",
+      "description": null,
+      "pubDate": "Thu, 29 May 2025 09:15:48 GMT",
+      "guid": "https://exploreswiftui.com/elements/11",
+      "compatibility": {
+        "iOS": "13.0",
+        "iPadOS": "13.0",
+        "visionOS": "1.0"
+      },
+      "code": "HStack {\n  smallRect\n    .foregroundStyle(Color(.systemFill))\n  smallRect\n    .foregroundStyle(Color(.secondarySystemFill))\n  smallRect\n    .foregroundStyle(Color(.tertiarySystemFill))\n  smallRect\n    .foregroundStyle(Color(.quaternarySystemFill))\n}",
+      "image_url": "https://exploreswiftui.com/api/images/11/ios?v=1748510148506"
+    },
+    {
+      "index": 176,
+      "group": "Colors",
+      "title": "UIKit Label Colors",
+      "link": "https://exploreswiftui.com/library/color/uikit-label-colors",
+      "description": null,
+      "pubDate": "Thu, 29 May 2025 09:09:40 GMT",
+      "guid": "https://exploreswiftui.com/elements/10",
+      "compatibility": {
+        "iOS": "13.0",
+        "iPadOS": "13.0",
+        "tvOS": "13.0",
+        "visionOS": "1.0"
+      },
+      "code": "VStack {\n  HStack {\n    Text(\"Label\")\n      .foregroundStyle(Color(.label))\n    Text(\"Secondary Label\")\n      .foregroundStyle(Color(.secondaryLabel))\n  }\n  HStack {\n    Text(\"Tertiary Label\")\n      .foregroundStyle(Color(.tertiaryLabel))\n    Text(\"Quaternary Label\")\n      .foregroundStyle(Color(.quaternaryLabel))\n  }\n}",
+      "image_url": "https://exploreswiftui.com/api/images/10/ios?v=1748509780807"
+    },
+    {
+      "index": 177,
+      "group": "Colors",
+      "title": "Color Variants",
+      "link": "https://exploreswiftui.com/library/color/color-variants",
+      "description": "HierarchicalShapeStyle, a shape style that maps to one of the numbered content styles\n",
+      "pubDate": "Thu, 29 May 2025 08:54:27 GMT",
+      "guid": "https://exploreswiftui.com/elements/9",
+      "compatibility": {
+        "iOS": "15.0",
+        "iPadOS": "15.0",
+        "macOS": "12.0",
+        "watchOS": "8.0",
+        "tvOS": "15.0",
+        "visionOS": "1.0"
+      },
+      "code": "VStack {\n  HStack {\n    smallRect\n      .foregroundStyle(.blue)\n    smallRect\n      .foregroundStyle(.blue.secondary)\n    smallRect\n      .foregroundStyle(.blue.tertiary)\n    smallRect\n      .foregroundStyle(.blue.quaternary)\n    smallRect\n      .foregroundStyle(.blue.quinary)\n  }\n  HStack {\n    smallRect\n      .foregroundStyle(.red)\n    smallRect\n      .foregroundStyle(.red.secondary)\n    smallRect\n      .foregroundStyle(.red.tertiary)\n    smallRect\n      .foregroundStyle(.red.quaternary)\n    smallRect\n      .foregroundStyle(.red.quinary)\n  }\n  HStack {\n    smallRect\n      .foregroundStyle(.orange)\n    smallRect\n      .foregroundStyle(.orange.secondary)\n    smallRect\n      .foregroundStyle(.orange.tertiary)\n    smallRect\n      .foregroundStyle(.orange.quaternary)\n    smallRect\n      .foregroundStyle(.orange.quinary)\n  }\n  // ...\n}",
+      "image_url": "https://exploreswiftui.com/api/images/9/ios?v=1748508867867"
+    },
+    {
+      "index": 178,
+      "group": "Colors",
+      "title": "Semantic Colors",
+      "link": "https://exploreswiftui.com/library/color/semantic-colors",
+      "description": null,
+      "pubDate": "Thu, 29 May 2025 08:49:04 GMT",
+      "guid": "https://exploreswiftui.com/elements/8",
+      "compatibility": {
+        "iOS": "13.0.",
+        "macOS": "10.15",
+        "watchOS": "6.0",
+        "tvOS": "13.0",
+        "visionOS": "1.0"
+      },
+      "code": "Text(\"Primary Text Color\")\n  .foregroundStyle(.primary)\nText(\"Secondary Text Color\")\n  .foregroundStyle(.secondary)",
+      "image_url": "https://exploreswiftui.com/api/images/8/ios?v=1748508544933"
+    },
+    {
+      "index": 179,
+      "group": "Colors",
+      "title": "Standard Colors",
+      "link": "https://exploreswiftui.com/library/color/standard-colors",
+      "description": "The SwiftUI standard colors",
+      "pubDate": "Thu, 29 May 2025 08:33:51 GMT",
+      "guid": "https://exploreswiftui.com/elements/7",
+      "compatibility": {
+        "iOS": "13.0",
+        "iPadOS": "13.0",
+        "macOS": "10.15",
+        "watchOS": "6.0",
+        "tvOS": "13.0",
+        "visionOS": "1.0"
+      },
+      "code": "VStack {\n  HStack {\n    smallRect\n      .foregroundStyle(.black)\n    smallRect\n      .foregroundStyle(.blue)\n    smallRect\n      .foregroundStyle(.brown)\n    smallRect\n      .foregroundStyle(.clear)\n  }\n  HStack {\n    smallRect\n      .foregroundStyle(.cyan)\n    smallRect\n      .foregroundStyle(.gray)\n    smallRect\n      .foregroundStyle(.green)\n    smallRect\n      .foregroundStyle(.indigo)\n  }\n  HStack {\n    smallRect\n      .foregroundStyle(.mint)\n    smallRect\n      .foregroundStyle(.orange)\n    smallRect\n      .foregroundStyle(.pink)\n    smallRect\n      .foregroundStyle(.purple)\n  }\n  HStack {\n    smallRect\n      .foregroundStyle(.red)\n    smallRect\n      .foregroundStyle(.teal)\n    smallRect\n      .foregroundStyle(.white)\n    smallRect\n      .foregroundStyle(.yellow)\n  }\n}",
+      "image_url": "https://exploreswiftui.com/api/images/7/ios?v=1748507631377"
+    },
+    {
+      "index": 180,
+      "group": "View That Fits",
+      "title": "ViewThatFits Vertical",
+      "link": "https://exploreswiftui.com/library/viewthatfits/viewthatfits-vertical",
+      "description": "A view that adapts to the available vertical space by providing the first child view that fits.",
+      "pubDate": "Thu, 29 May 2025 08:17:10 GMT",
+      "guid": "https://exploreswiftui.com/elements/6",
+      "compatibility": {
+        "iOS": "16.0",
+        "iPadOS": "16.0",
+        "macOS": "13.0",
+        "watchOS": "9.0",
+        "tvOS": "16.0",
+        "visionOS": "1.0"
+      },
+      "code": "var body: some View {\n  VStack(alignment: .leading) {\n    testContent\n      .background(.red)\n      .frame(maxWidth: 200)\n    testContent\n      .background(.red.secondary)\n      .frame(maxHeight: 20)\n    testContent\n      .background(.red.tertiary)\n      .frame(maxHeight: 9)\n  }\n}\n\n@ViewBuilder\nvar testContent: some View {\n  ViewThatFits(in: .vertical) {\n    Text(\"Size w300 h30\")\n      .frame(width: 300, height: 30)\n      .foregroundStyle(.white)\n    Text(\"Size w200 h20\")\n      .frame(width: 200, height: 20)\n      .foregroundStyle(.white)\n    Text(\"Fallback\")\n      .frame(width: 80, height: 10)\n      .foregroundStyle(.white)\n  }\n}",
+      "image_url": "https://exploreswiftui.com/api/images/6/ios?v=1748506630282"
+    },
+    {
+      "index": 181,
+      "group": "View That Fits",
+      "title": "ViewThatFits",
+      "link": "https://exploreswiftui.com/library/viewthatfits/viewthatfits",
+      "description": "A view that adapts to the available space by providing the first child view that fits.",
+      "pubDate": "Thu, 29 May 2025 08:01:23 GMT",
+      "guid": "https://exploreswiftui.com/elements/5",
+      "compatibility": {
+        "iOS": "16.0",
+        "iPadOS": "16.0",
+        "macOS": "13.0",
+        "watchOS": "9.0",
+        "tvOS": "16.0",
+        "visionOS": "1.0"
+      },
+      "code": "var body: some View {\n  VStack(alignment: .leading) {\n    testContent\n      .background(.red)\n      .frame(maxWidth: 300)\n    testContent\n      .background(.red.secondary)\n      .frame(maxWidth: 200)\n    testContent\n      .background(.red.tertiary)\n      .frame(maxWidth: 100)\n    testContent\n      .background(.red.quaternary)\n      .frame(maxWidth: 50)\n  }\n}\n\n@ViewBuilder\nvar testContent: some View {\n  ViewThatFits {\n    Text(\"Available width 300\")\n      .frame(width: 300, height: 20)\n      .foregroundStyle(.white)\n    Text(\"Available width 200\")\n      .frame(width: 200, height: 20)\n      .foregroundStyle(.white)\n    Text(\"A. w. 100\")\n      .frame(width: 100, height: 20)\n      .foregroundStyle(.white)\n    Text(\"Fallback\")\n      .frame(width: 80, height: 20)\n      .foregroundStyle(.white)\n  }\n}",
+      "image_url": "https://exploreswiftui.com/api/images/5/ios?v=1748505683868"
+    },
+    {
+      "index": 182,
+      "group": "Content Unavailable Views",
+      "title": "Content Unavailable",
+      "link": "https://exploreswiftui.com/library/contentunavailableview/content-unavailable",
+      "description": "A placeholder for empty results with optional button",
+      "pubDate": "Thu, 29 May 2025 06:30:08 GMT",
+      "guid": "https://exploreswiftui.com/elements/4",
+      "compatibility": {
+        "iOS": "17.0",
+        "iPadOS": "17.0",
+        "macOS": "14.0",
+        "watchOS": "10.0",
+        "tvOS": "17.0",
+        "visionOS": "1.0"
+      },
+      "code": "ContentUnavailableView {\n    Label(\"No Mail\", systemImage: \"tray.fill\")\n} description: {\n    Text(\"New mails you receive will appear here.\")\n} actions: {\n    Button(\"Switch Account\") { }\n        .buttonStyle(.borderedProminent)\n}",
+      "image_url": "https://exploreswiftui.com/api/images/4/ios?v=1748500208655"
+    },
+    {
+      "index": 183,
+      "group": "Content Unavailable Views",
+      "title": "Content Unavailable Search Text",
+      "link": "https://exploreswiftui.com/library/contentunavailableview/content-unavailable-search-text",
+      "description": "A pre-built placeholder for empty search results with search text",
+      "pubDate": "Wed, 28 May 2025 19:34:08 GMT",
+      "guid": "https://exploreswiftui.com/elements/3",
+      "compatibility": {
+        "iOS": "17.0",
+        "iPadOS": "17.0",
+        "macOS": "14.0",
+        "watchOS": "10.0",
+        "tvOS": "17.0",
+        "visionOS": "1.0"
+      },
+      "code": "ContentUnavailableView.search(text: \"foo\")",
+      "image_url": "https://exploreswiftui.com/api/images/3/ios?v=1748460848653"
+    },
+    {
+      "index": 184,
+      "group": "Content Unavailable Views",
+      "title": "Content Unavailable Search",
+      "link": "https://exploreswiftui.com/library/contentunavailableview/content-unavailable-search",
+      "description": "A pre-built placeholder for empty search results",
+      "pubDate": "Wed, 28 May 2025 14:13:51 GMT",
+      "guid": "https://exploreswiftui.com/elements/1",
+      "compatibility": {
+        "iOS": "17.0",
+        "iPadOS": "17.0",
+        "macOS": "14.0",
+        "watchOS": "10.0",
+        "tvOS": "17.0",
+        "visionOS": "1.0"
+      },
+      "code": "ContentUnavailableView.search",
+      "image_url": "https://exploreswiftui.com/api/images/1/ios?v=1748441631226"
+    }
+  ]
+}

@@ -1,34 +1,35 @@
-import SwiftUI
 import AdaptiveSwiftUi
+import SwiftUI
 
 struct MainTabView: View {
     @Environment(\.appContainer) private var container
     @State private var selection = 2
 
     var body: some View {
-        TabView(selection: $selection) {
-            HomeView()
-                .tabItem { Label("Today", systemImage: "sparkles") }
-                .tag(0)
+        AdaptiveTabView(selection: $selection) {
+            AdaptiveValueTab("Today", systemImage: "sparkles", value: 0) {
+                HomeView()
+            }
 
-            DiscoveryView()
-                .tabItem { Label("Discovery", systemImage: "safari") }
-                .tag(1)
+            AdaptiveValueTab("Discovery", systemImage: "safari", value: 1) {
+                DiscoveryView()
+            }
 
-            LibraryView()
-                .tabItem { Label("Apps", systemImage: "square.stack.3d.up.fill") }
-                .tag(2)
+            AdaptiveValueTab("Apps", systemImage: "square.stack.3d.up.fill", value: 2) {
+                LibraryView()
+            }
 
-            ProfileView()
-                .tabItem { Label("Profile", systemImage: "person.crop.circle.fill") }
-                .tag(3)
+            AdaptiveValueTab("Profile", systemImage: "person.crop.circle.fill", value: 3) {
+                ProfileView()
+            }
 
-            SearchView()
-                .tabItem { Label("Search", systemImage: "magnifyingglass") }
-                .tag(4)
+            AdaptiveValueTab("Search", systemImage: "magnifyingglass", value: 4, role: .search) {
+                SearchView()
+            }
         }
         .navigationTitle(currentTitle)
         .navigationBarHidden(true)
+        .adaptiveTabViewStyle(.automatic)
         .adaptiveTabBarMinimizeBehavior(.onScrollDown)
     }
 
