@@ -1,12 +1,5 @@
 import SwiftUI
 
-/// An adaptive label style type to match native `LabelStyle`.
-public enum AdaptiveLabelStyleType: Sendable {
-    case automatic
-    case iconOnly
-    case titleAndIcon
-    case titleOnly
-}
 
 /// An adaptive label component that provides a fallback to an `HStack` of icon and title on iOS 13,
 /// and uses the native `Label` on iOS 14+.

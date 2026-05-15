@@ -1,10 +1,5 @@
 import SwiftUI
 
-public enum AdaptiveGlassButtonVariant: Sendable {
-    case regular
-    case prominent
-}
-
 public struct AdaptiveGlassContainer<Content: View>: View {
     private let spacing: CGFloat
     private let content: () -> Content
@@ -29,9 +24,9 @@ public struct AdaptiveGlassContainer<Content: View>: View {
     }
 }
 
-public extension View {
+extension View {
     @ViewBuilder
-    func adaptiveGlass(
+    public func adaptiveGlass(
         cornerRadius: CGFloat = 20,
         tint: Color? = nil,
         interactive: Bool = false,
@@ -71,7 +66,7 @@ public extension View {
     }
 
     @ViewBuilder
-    func adaptiveGlassButton(
+    public func adaptiveGlassButton(
         _ variant: AdaptiveGlassButtonVariant = .regular,
         cornerRadius: CGFloat = 20
     ) -> some View {
@@ -95,7 +90,7 @@ public extension View {
     }
 
     @ViewBuilder
-    func adaptiveBackgroundExtension(isEnabled: Bool = true) -> some View {
+    public func adaptiveBackgroundExtension(isEnabled: Bool = true) -> some View {
         if #available(iOS 26.0, macOS 26.0, tvOS 26.0, watchOS 26.0, visionOS 26.0, *) {
             self.backgroundExtensionEffect(isEnabled: isEnabled)
         } else {

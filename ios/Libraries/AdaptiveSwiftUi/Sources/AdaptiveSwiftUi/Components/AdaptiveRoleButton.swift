@@ -1,11 +1,5 @@
 import SwiftUI
 
-public enum AdaptiveButtonRole: Sendable {
-    case cancel
-    case close
-    case confirm
-    case destructive
-}
 
 public struct AdaptiveRoleButton: View {
     private let role: AdaptiveButtonRole

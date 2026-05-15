@@ -1,8 +1,5 @@
 import SwiftUI
 
-public enum AdaptiveScrollEdgeEffectStyle: Sendable {
-    case hard
-}
 
 public extension View {
     /// Applies a scroll edge effect style.

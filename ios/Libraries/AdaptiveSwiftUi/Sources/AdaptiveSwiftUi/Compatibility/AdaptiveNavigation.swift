@@ -1,9 +1,5 @@
 import SwiftUI
 
-public enum AdaptiveContainerBackgroundPlacement: Sendable {
-    case navigation
-    case navigationSplitView
-}
 
 extension View {
     @ViewBuilder

@@ -1,10 +1,5 @@
 import SwiftUI
 
-public enum AdaptiveProgressViewStyle: Sendable {
-    case automatic
-    case linear
-    case circular
-}
 
 extension View {
     @ViewBuilder

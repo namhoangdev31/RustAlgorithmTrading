@@ -1,12 +1,5 @@
 import SwiftUI
 
-public enum AdaptiveDatePickerStyle: Sendable {
-    case automatic
-    case wheel
-    case graphical
-    case field
-    case stepperField
-}
 
 public struct AdaptiveMultiDatePicker<Label: View>: View {
     private let title: () -> Label

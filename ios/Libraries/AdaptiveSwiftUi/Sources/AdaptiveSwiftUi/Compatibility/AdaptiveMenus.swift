@@ -1,10 +1,5 @@
 import SwiftUI
 
-public enum AdaptiveMenuOrder: Sendable {
-    case automatic
-    case fixed
-    case priority
-}
 
 extension View {
     @ViewBuilder

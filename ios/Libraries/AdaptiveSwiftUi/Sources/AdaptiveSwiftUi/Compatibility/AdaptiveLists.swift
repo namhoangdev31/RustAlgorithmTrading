@@ -1,16 +1,5 @@
 import SwiftUI
 
-public enum AdaptiveListStyleType: Sendable {
-    case automatic
-    case plain
-    case grouped
-    case insetGrouped
-    case sidebar
-    case inset
-    case elliptical // watchOS
-    case carousel   // watchOS
-    case bordered   // macOS
-}
 
 extension View {
     @ViewBuilder
@@ -154,11 +143,6 @@ extension View {
         #endif
     }
     
-    public enum AdaptiveListSectionSpacing: Sendable {
-        case `default`
-        case compact
-        case custom(CGFloat)
-    }
 
     @ViewBuilder
     public func adaptiveListSectionSpacing(_ spacing: AdaptiveListSectionSpacing) -> some View {
@@ -180,10 +164,6 @@ extension View {
         #endif
     }
     
-    public enum AdaptiveBackgroundProminence: Sendable {
-        case standard
-        case increased
-    }
     
     @ViewBuilder
     public func adaptiveBackgroundProminence(_ prominence: AdaptiveBackgroundProminence) -> some View {

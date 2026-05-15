@@ -1,12 +1,5 @@
 import SwiftUI
 
-public enum AdaptiveColorHierarchy: Sendable {
-    case primary
-    case secondary
-    case tertiary
-    case quaternary
-    case quinary
-}
 
 public extension View {
     /// Applies a foreground style with optional gradient, hierarchy, and opacity.

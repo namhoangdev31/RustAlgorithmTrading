@@ -1,21 +1,5 @@
 import SwiftUI
 
-public enum AdaptiveNumberFormat: Sendable {
-    case currency(code: String)
-    case percent
-    case decimal(fractionLength: Int? = nil, grouping: Bool = true, scientific: Bool = false)
-}
-
-public enum AdaptiveMeasurementWidth: Sendable {
-    case wide
-    case narrow
-    case abbreviated
-}
-
-public enum AdaptiveTimePattern: Sendable {
-    case hourMinute
-    case minuteSecond
-}
 
 /// A generic adaptive text component that polyfills modern iOS 15/18+ FormatStyle APIs
 /// by automatically falling back to classic Foundation formatters on older OS versions.

@@ -9,61 +9,23 @@ import SwiftUI
 // MARK: - Enums: TabView Style (Items #9, #11, #12, #13, #14, #16)
 
 /// Adaptive enum mirroring every `TabViewStyle` variant across OS versions.
-public enum AdaptiveTabViewStyle: Sendable {
-    /// System default.
-    case automatic
-    /// Sidebar on iPad/macOS, tab bar on iPhone. iOS 18+.
-    case sidebarAdaptable
-    /// Always tab bar, never sidebar. iOS 18+.
-    case tabBarOnly
-    /// Grouped tab bar. macOS 15+ only.
-    case grouped
-    /// Horizontal paged scrolling. iOS 14+.
-    case page(indexDisplayMode: AdaptivePageTabIndexDisplayMode = .automatic)
-    /// Vertical paged scrolling. watchOS 10+ only.
-    case verticalPage
-}
 
-public enum AdaptivePageTabIndexDisplayMode: Sendable {
-    case automatic, always, never
-}
 
 // MARK: - Enums: Tab Bar Minimize (Item #100)
 
-public enum AdaptiveTabBarMinimizeBehavior: Sendable {
-    case automatic, never, onScrollDown, onScrollUp
-}
 
 // MARK: - Enums: Adaptable Placement (Item #6)
 
-public enum AdaptiveAdaptableTabBarPlacement: Sendable {
-    case automatic, sidebar, tabBar
-}
 
 // MARK: - Enums: Bottom Accessory Placement (Item #98)
 
-public enum AdaptiveBottomAccessoryPlacement: Sendable {
-    case inline, expanded, none
-}
 
 // MARK: - Enums: Customization (Items #2, #1)
 
-@available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *)
-public enum AdaptiveTabCustomizationPlacement: Hashable, Sendable {
-    case automatic, tabBar, sidebar
-}
 
-@available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *)
-public enum AdaptiveTabCustomizationBehavior: Sendable {
-    case automatic, reorderable, disabled
-}
 
 // MARK: - Enums: Tab Role (Item #18)
 
-@available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *)
-public enum AdaptiveTabRole: Sendable {
-    case automatic, search
-}
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // MARK: - View Modifiers: TabView Style

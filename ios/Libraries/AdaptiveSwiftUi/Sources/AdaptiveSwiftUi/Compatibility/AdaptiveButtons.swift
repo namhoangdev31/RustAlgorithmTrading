@@ -1,72 +1,5 @@
 import SwiftUI
 
-public enum AdaptiveButtonSizing: Sendable {
-    case automatic
-    case fitted
-    case flexible
-}
-
-public enum AdaptiveButtonStyle: Sendable {
-    case automatic
-    case plain
-    case borderless
-    case bordered
-    case borderedProminent
-    case glass
-    case glassProminent
-}
-
-public enum AdaptiveControlSize: Sendable {
-    case mini
-    case small
-    case regular
-    case large
-    case extraLarge
-}
-
-public enum AdaptiveButtonBorderShape: Sendable {
-    case automatic
-    case roundedRectangle
-    case capsule
-    case circle
-    case roundedRectangleRadius(CGFloat)
-}
-
-public enum AdaptiveMaterialStyle: Sendable {
-    case ultraThin
-    case thin
-    case regular
-    case thick
-    case ultraThick
-}
-
-public enum AdaptiveHierarchicalVariant: Sendable {
-    case primary
-    case secondary
-    case tertiary
-    case quaternary
-    case quinary
-}
-
-public enum AdaptiveControlGroupStyle: Sendable {
-    case automatic
-    case navigation
-    case menu
-    case compactMenu
-    case palette
-}
-
-public enum AdaptiveGaugeStyle: Sendable {
-    case automatic
-    case linear
-    case circular
-    case accessoryLinear
-    case accessoryLinearCapacity
-    case linearCapacity
-    case accessoryCircular
-    case accessoryCircularCapacity
-}
-
 @available(tvOS, unavailable)
 public struct AdaptiveTickedSlider<
     V: BinaryFloatingPoint & Hashable,
@@ -87,7 +20,7 @@ public struct AdaptiveTickedSlider<
 
     public init(
         value: Binding<V>,
-        in range: ClosedRange<V> = 0 ... 1,
+        in range: ClosedRange<V> = 0...1,
         step: V.Stride? = nil,
         tickValues: [V] = [],
         onEditingChanged: @escaping (Bool) -> Void = { _ in },
@@ -110,7 +43,7 @@ public struct AdaptiveTickedSlider<
 
     public init<TickLabel: View>(
         value: Binding<V>,
-        in range: ClosedRange<V> = 0 ... 1,
+        in range: ClosedRange<V> = 0...1,
         step: V.Stride? = nil,
         tickValues: [V] = [],
         onEditingChanged: @escaping (Bool) -> Void = { _ in },
@@ -202,7 +135,7 @@ public struct AdaptiveTickedSliderLabeled<
 
     public init(
         value: Binding<V>,
-        in range: ClosedRange<V> = 0 ... 1,
+        in range: ClosedRange<V> = 0...1,
         step: V.Stride? = nil,
         tickValues: [V] = [],
         onEditingChanged: @escaping (Bool) -> Void = { _ in },
@@ -251,7 +184,7 @@ public struct AdaptiveGauge<
         @ViewBuilder label: @escaping () -> GaugeLabel
     ) where CurrentValueLabel == EmptyView, BoundValueLabel == EmptyView {
         self.value = value
-        self.range = 0 ... 1
+        self.range = 0...1
         self.label = label
         self.currentValueLabel = nil
         self.minimumValueLabel = nil
@@ -279,7 +212,7 @@ public struct AdaptiveGauge<
         @ViewBuilder currentValueLabel: @escaping () -> CurrentValueLabel
     ) where BoundValueLabel == EmptyView {
         self.value = value
-        self.range = 0 ... 1
+        self.range = 0...1
         self.label = label
         self.currentValueLabel = currentValueLabel
         self.minimumValueLabel = nil
@@ -321,42 +254,42 @@ public struct AdaptiveGauge<
     @ViewBuilder
     public var body: some View {
         #if os(iOS) || os(macOS) || os(watchOS) || os(visionOS)
-        if #available(iOS 16.0, macOS 13.0, watchOS 9.0, visionOS 1.0, *) {
-            nativeGauge
-        } else {
-            fallbackGauge
-        }
+            if #available(iOS 16.0, macOS 13.0, watchOS 9.0, visionOS 1.0, *) {
+                nativeGauge
+            } else {
+                fallbackGauge
+            }
         #else
-        fallbackGauge
+            fallbackGauge
         #endif
     }
 
     #if os(iOS) || os(macOS) || os(watchOS) || os(visionOS)
-    @available(iOS 16.0, macOS 13.0, watchOS 9.0, visionOS 1.0, *)
-    @ViewBuilder
-    private var nativeGauge: some View {
-        if let currentValueLabel, let minimumValueLabel, let maximumValueLabel {
-            Gauge(value: value, in: range) {
-                label()
-            } currentValueLabel: {
-                currentValueLabel()
-            } minimumValueLabel: {
-                minimumValueLabel()
-            } maximumValueLabel: {
-                maximumValueLabel()
-            }
-        } else if let currentValueLabel {
-            Gauge(value: value, in: range) {
-                label()
-            } currentValueLabel: {
-                currentValueLabel()
-            }
-        } else {
-            Gauge(value: value, in: range) {
-                label()
+        @available(iOS 16.0, macOS 13.0, watchOS 9.0, visionOS 1.0, *)
+        @ViewBuilder
+        private var nativeGauge: some View {
+            if let currentValueLabel, let minimumValueLabel, let maximumValueLabel {
+                Gauge(value: value, in: range) {
+                    label()
+                } currentValueLabel: {
+                    currentValueLabel()
+                } minimumValueLabel: {
+                    minimumValueLabel()
+                } maximumValueLabel: {
+                    maximumValueLabel()
+                }
+            } else if let currentValueLabel {
+                Gauge(value: value, in: range) {
+                    label()
+                } currentValueLabel: {
+                    currentValueLabel()
+                }
+            } else {
+                Gauge(value: value, in: range) {
+                    label()
+                }
             }
         }
-    }
     #endif
 
     @ViewBuilder
@@ -381,7 +314,6 @@ public struct AdaptiveGauge<
         return min(max((value - range.lowerBound) / span, 0), 1)
     }
 }
-
 
 // MARK: - AdaptiveControlGroup
 
@@ -424,29 +356,29 @@ public struct AdaptiveControlGroup<Content: View>: View {
     @ViewBuilder
     public var body: some View {
         #if os(iOS) || os(macOS) || os(tvOS) || os(visionOS)
-        if #available(iOS 15.0, macOS 12.0, tvOS 17.0, visionOS 1.0, *) {
-            if usesNativeLabeledControlGroup {
-                if #available(iOS 16.0, macOS 13.0, tvOS 17.0, visionOS 1.0, *) {
-                    ControlGroup {
-                        content()
-                    } label: {
-                        if let label {
-                            label()
+            if #available(iOS 15.0, macOS 12.0, tvOS 17.0, visionOS 1.0, *) {
+                if usesNativeLabeledControlGroup {
+                    if #available(iOS 16.0, macOS 13.0, tvOS 17.0, visionOS 1.0, *) {
+                        ControlGroup {
+                            content()
+                        } label: {
+                            if let label {
+                                label()
+                            }
                         }
+                    } else {
+                        fallbackControlGroup
                     }
                 } else {
-                    fallbackControlGroup
+                    ControlGroup {
+                        content()
+                    }
                 }
             } else {
-                ControlGroup {
-                    content()
-                }
+                fallbackControlGroup
             }
-        } else {
-            fallbackControlGroup
-        }
         #else
-        fallbackControlGroup
+            fallbackControlGroup
         #endif
     }
 
@@ -507,9 +439,9 @@ public struct AdaptiveControlGroupLabeled<Content: View, Label: View>: View {
     }
 }
 
-public extension View {
+extension View {
     @ViewBuilder
-    func adaptiveButtonSizing(_ sizing: AdaptiveButtonSizing) -> some View {
+    public func adaptiveButtonSizing(_ sizing: AdaptiveButtonSizing) -> some View {
         if #available(iOS 26.0, macOS 26.0, tvOS 26.0, watchOS 26.0, visionOS 26.0, *) {
             switch sizing {
             case .automatic:
@@ -530,7 +462,7 @@ public extension View {
     }
 
     @ViewBuilder
-    func adaptiveButtonStyle(_ style: AdaptiveButtonStyle) -> some View {
+    public func adaptiveButtonStyle(_ style: AdaptiveButtonStyle) -> some View {
         switch style {
         case .automatic:
             self.buttonStyle(.automatic)
@@ -558,39 +490,39 @@ public extension View {
     }
 
     @ViewBuilder
-    func adaptiveControlSize(_ size: AdaptiveControlSize) -> some View {
+    public func adaptiveControlSize(_ size: AdaptiveControlSize) -> some View {
         #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS) || os(visionOS)
-        if #available(iOS 15.0, macOS 10.15, tvOS 15.0, watchOS 9.0, visionOS 1.0, *) {
-            switch size {
-            case .mini:
-                self.controlSize(.mini)
-            case .small:
-                self.controlSize(.small)
-            case .regular:
-                self.controlSize(.regular)
-            case .large:
-                self.controlSize(.large)
-            case .extraLarge:
-                #if os(visionOS)
-                if #available(visionOS 1.0, *) {
-                    self.controlSize(.extraLarge)
-                } else {
+            if #available(iOS 15.0, macOS 10.15, tvOS 15.0, watchOS 9.0, visionOS 1.0, *) {
+                switch size {
+                case .mini:
+                    self.controlSize(.mini)
+                case .small:
+                    self.controlSize(.small)
+                case .regular:
+                    self.controlSize(.regular)
+                case .large:
                     self.controlSize(.large)
+                case .extraLarge:
+                    #if os(visionOS)
+                        if #available(visionOS 1.0, *) {
+                            self.controlSize(.extraLarge)
+                        } else {
+                            self.controlSize(.large)
+                        }
+                    #else
+                        self.controlSize(.large)
+                    #endif
                 }
-                #else
-                self.controlSize(.large)
-                #endif
+            } else {
+                self
             }
-        } else {
-            self
-        }
         #else
-        self
+            self
         #endif
     }
 
     @ViewBuilder
-    func adaptiveButtonTint(_ tint: Color?) -> some View {
+    public func adaptiveButtonTint(_ tint: Color?) -> some View {
         if let tint {
             if #available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, visionOS 1.0, *) {
                 self.tint(tint)
@@ -603,43 +535,43 @@ public extension View {
     }
 
     @ViewBuilder
-    func adaptiveButtonBorderShape(_ shape: AdaptiveButtonBorderShape) -> some View {
+    public func adaptiveButtonBorderShape(_ shape: AdaptiveButtonBorderShape) -> some View {
         #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS) || os(visionOS)
-        switch shape {
-        case .automatic:
-            self
-        case .roundedRectangle:
-            if #available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, visionOS 1.0, *) {
-                self.buttonBorderShape(.roundedRectangle)
-            } else {
+            switch shape {
+            case .automatic:
                 self
+            case .roundedRectangle:
+                if #available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, visionOS 1.0, *) {
+                    self.buttonBorderShape(.roundedRectangle)
+                } else {
+                    self
+                }
+            case .capsule:
+                if #available(iOS 15.0, macOS 14.0, tvOS 17.0, watchOS 8.0, visionOS 1.0, *) {
+                    self.buttonBorderShape(.capsule)
+                } else {
+                    self
+                }
+            case .circle:
+                if #available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, visionOS 1.0, *) {
+                    self.buttonBorderShape(.circle)
+                } else {
+                    self.clipShape(Circle())
+                }
+            case .roundedRectangleRadius(let radius):
+                if #available(iOS 15.0, macOS 14.0, tvOS 17.0, watchOS 8.0, visionOS 1.0, *) {
+                    self.buttonBorderShape(.roundedRectangle(radius: radius))
+                } else {
+                    self
+                }
             }
-        case .capsule:
-            if #available(iOS 15.0, macOS 14.0, tvOS 17.0, watchOS 8.0, visionOS 1.0, *) {
-                self.buttonBorderShape(.capsule)
-            } else {
-                self
-            }
-        case .circle:
-            if #available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, visionOS 1.0, *) {
-                self.buttonBorderShape(.circle)
-            } else {
-                self.clipShape(Circle())
-            }
-        case let .roundedRectangleRadius(radius):
-            if #available(iOS 15.0, macOS 14.0, tvOS 17.0, watchOS 8.0, visionOS 1.0, *) {
-                self.buttonBorderShape(.roundedRectangle(radius: radius))
-            } else {
-                self
-            }
-        }
         #else
-        self
+            self
         #endif
     }
 
     @ViewBuilder
-    func adaptiveMaterialBackground(
+    public func adaptiveMaterialBackground(
         _ material: AdaptiveMaterialStyle,
         cornerRadius: CGFloat = 12
     ) -> some View {
@@ -654,7 +586,7 @@ public extension View {
     }
 
     @ViewBuilder
-    func adaptiveForegroundStyle(
+    public func adaptiveForegroundStyle(
         _ color: Color,
         variant: AdaptiveHierarchicalVariant = .primary
     ) -> some View {
@@ -701,95 +633,95 @@ public extension View {
     }
 
     @ViewBuilder
-    func adaptiveControlGroupStyle(_ style: AdaptiveControlGroupStyle) -> some View {
+    public func adaptiveControlGroupStyle(_ style: AdaptiveControlGroupStyle) -> some View {
         #if os(iOS) || os(macOS) || os(tvOS) || os(visionOS)
-        if #available(iOS 15.0, macOS 12.0, tvOS 17.0, visionOS 1.0, *) {
-            switch style {
-            case .automatic:
-                self.controlGroupStyle(.automatic)
-            case .navigation:
-                #if os(tvOS)
-                self.controlGroupStyle(.automatic)
-                #else
-                self.controlGroupStyle(.navigation)
-                #endif
-            case .menu:
-                if #available(iOS 16.4, macOS 13.3, *) {
-                    self.controlGroupStyle(.menu)
-                } else {
+            if #available(iOS 15.0, macOS 12.0, tvOS 17.0, visionOS 1.0, *) {
+                switch style {
+                case .automatic:
                     self.controlGroupStyle(.automatic)
-                }
-            case .compactMenu:
-                if #available(iOS 16.4, macOS 13.3, *) {
-                    #if os(iOS) || os(macOS) || os(visionOS)
-                    self.controlGroupStyle(.compactMenu)
+                case .navigation:
+                    #if os(tvOS)
+                        self.controlGroupStyle(.automatic)
                     #else
-                    self.controlGroupStyle(.automatic)
+                        self.controlGroupStyle(.navigation)
                     #endif
-                } else {
-                    self.controlGroupStyle(.automatic)
+                case .menu:
+                    if #available(iOS 16.4, macOS 13.3, *) {
+                        self.controlGroupStyle(.menu)
+                    } else {
+                        self.controlGroupStyle(.automatic)
+                    }
+                case .compactMenu:
+                    if #available(iOS 16.4, macOS 13.3, *) {
+                        #if os(iOS) || os(macOS) || os(visionOS)
+                            self.controlGroupStyle(.compactMenu)
+                        #else
+                            self.controlGroupStyle(.automatic)
+                        #endif
+                    } else {
+                        self.controlGroupStyle(.automatic)
+                    }
+                case .palette:
+                    if #available(iOS 17.0, macOS 14.0, *) {
+                        #if os(iOS) || os(macOS) || os(visionOS)
+                            self.controlGroupStyle(.palette)
+                        #else
+                            self.controlGroupStyle(.automatic)
+                        #endif
+                    } else {
+                        self.controlGroupStyle(.automatic)
+                    }
                 }
-            case .palette:
-                if #available(iOS 17.0, macOS 14.0, *) {
-                    #if os(iOS) || os(macOS) || os(visionOS)
-                    self.controlGroupStyle(.palette)
-                    #else
-                    self.controlGroupStyle(.automatic)
-                    #endif
-                } else {
-                    self.controlGroupStyle(.automatic)
-                }
+            } else {
+                self
             }
-        } else {
-            self
-        }
         #else
-        self
+            self
         #endif
     }
 
     @ViewBuilder
-    func adaptiveGaugeStyle(_ style: AdaptiveGaugeStyle) -> some View {
+    public func adaptiveGaugeStyle(_ style: AdaptiveGaugeStyle) -> some View {
         #if os(iOS) || os(macOS) || os(watchOS) || os(visionOS)
-        if #available(iOS 16.0, macOS 13.0, watchOS 9.0, visionOS 1.0, *) {
-            switch style {
-            case .automatic:
-                self.gaugeStyle(.automatic)
-            case .linear:
-                #if os(watchOS)
-                self.gaugeStyle(.linear)
-                #else
-                self.gaugeStyle(.automatic)
-                #endif
-            case .circular:
-                #if os(watchOS)
-                self.gaugeStyle(.circular)
-                #else
-                self.gaugeStyle(.automatic)
-                #endif
-            case .accessoryLinear:
-                self.gaugeStyle(.accessoryLinear)
-            case .accessoryLinearCapacity:
-                self.gaugeStyle(.accessoryLinearCapacity)
-            case .linearCapacity:
-                self.gaugeStyle(.linearCapacity)
-            case .accessoryCircular:
-                self.gaugeStyle(.accessoryCircular)
-            case .accessoryCircularCapacity:
-                self.gaugeStyle(.accessoryCircularCapacity)
+            if #available(iOS 16.0, macOS 13.0, watchOS 9.0, visionOS 1.0, *) {
+                switch style {
+                case .automatic:
+                    self.gaugeStyle(.automatic)
+                case .linear:
+                    #if os(watchOS)
+                        self.gaugeStyle(.linear)
+                    #else
+                        self.gaugeStyle(.automatic)
+                    #endif
+                case .circular:
+                    #if os(watchOS)
+                        self.gaugeStyle(.circular)
+                    #else
+                        self.gaugeStyle(.automatic)
+                    #endif
+                case .accessoryLinear:
+                    self.gaugeStyle(.accessoryLinear)
+                case .accessoryLinearCapacity:
+                    self.gaugeStyle(.accessoryLinearCapacity)
+                case .linearCapacity:
+                    self.gaugeStyle(.linearCapacity)
+                case .accessoryCircular:
+                    self.gaugeStyle(.accessoryCircular)
+                case .accessoryCircularCapacity:
+                    self.gaugeStyle(.accessoryCircularCapacity)
+                }
+            } else {
+                self
             }
-        } else {
-            self
-        }
         #else
-        self
+            self
         #endif
     }
 }
 
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 10.0, visionOS 1.0, *)
-private extension AdaptiveMaterialStyle {
-    var shapeStyle: Material {
+extension AdaptiveMaterialStyle {
+    fileprivate var shapeStyle: Material {
         switch self {
         case .ultraThin:
             return .ultraThinMaterial

@@ -1,13 +1,5 @@
 import SwiftUI
 
-/// Defines the five standard levels of material thickness.
-public enum AdaptiveMaterialType: Sendable {
-    case ultraThin
-    case thin
-    case regular
-    case thick
-    case ultraThick
-}
 
 /// A component that acts as a translucent material background.
 /// On iOS 15+, it uses the native SwiftUI ShapeStyle `.regularMaterial` etc.

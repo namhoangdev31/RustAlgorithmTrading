@@ -1,15 +1,5 @@
 import SwiftUI
 
-public enum AdaptiveGaugeStyle: Sendable {
-    case automatic
-    case linear
-    case linearCapacity
-    case circular
-    case accessoryLinear
-    case accessoryLinearCapacity
-    case accessoryCircular
-    case accessoryCircularCapacity
-}
 
 extension View {
     @ViewBuilder

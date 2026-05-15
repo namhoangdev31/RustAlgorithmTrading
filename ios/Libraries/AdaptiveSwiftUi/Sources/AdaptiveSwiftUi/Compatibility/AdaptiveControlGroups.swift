@@ -1,13 +1,5 @@
 import SwiftUI
 
-/// Specifies the style for an `AdaptiveControlGroup`.
-public enum AdaptiveControlGroupStyleType: Sendable {
-    case automatic
-    case palette
-    case navigation
-    case menu
-    case compactMenu
-}
 
 struct AdaptiveControlGroupStyleKey: EnvironmentKey {
     static let defaultValue: AdaptiveControlGroupStyleType = .automatic

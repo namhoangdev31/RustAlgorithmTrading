@@ -1,19 +1,8 @@
 import SwiftUI
 
 /// Defines placements for title items in a toolbar, specifically supporting iOS 26+ title/subtitle tiers.
-public enum AdaptiveToolbarTitlePlacement: Sendable {
-    case automatic
-    case title
-    case subtitle
-    case largeTitle
-    case largeSubtitle
-}
 
 /// Sizing behavior for toolbar spacers.
-public enum AdaptiveToolbarSpacerSizing: Sendable {
-    case fixed
-    case flexible
-}
 
 extension ToolbarItemPlacement {
     private static var fallbackTitlePlacement: ToolbarItemPlacement {

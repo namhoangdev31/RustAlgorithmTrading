@@ -1,15 +1,5 @@
 import SwiftUI
 
-public enum AdaptivePickerStyle: Sendable {
-    case automatic
-    case menu
-    case inline
-    case navigationLink
-    case palette
-    case segmented
-    case wheel
-    case radioGroup
-}
 
 public struct AdaptiveValueLabelPicker<
     SelectionValue: Hashable,

@@ -1,30 +1,5 @@
 import SwiftUI
 
-public enum AdaptiveSheetSizing: Sendable {
-    case automatic
-    case fitted
-    case page
-}
-
-public enum AdaptivePresentationDetent: Hashable, Sendable {
-    case medium
-    case large
-    case fraction(CGFloat)
-    case height(CGFloat)
-}
-
-public enum AdaptivePresentationBackgroundInteraction: Sendable {
-    case automatic
-    case enabled
-    case disabled
-    case enabledUpThrough(AdaptivePresentationDetent)
-}
-
-public enum AdaptivePresentationContentInteraction: Sendable {
-    case automatic
-    case scrolls
-    case resizes
-}
 
 public extension View {
     @ViewBuilder
