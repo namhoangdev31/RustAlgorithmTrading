@@ -169,17 +169,7 @@ public struct AdaptiveProgressView<Label: View, CurrentValueLabel: View>: View {
 // MARK: - Convenience Extensions
 
 extension AdaptiveProgressView where CurrentValueLabel == EmptyView {
-    /// Creates an indeterminate adaptive progress view with a custom label.
-    public init(
-        style: AdaptiveProgressViewStyle = .automatic, @ViewBuilder label: @escaping () -> Label
-    ) {
-        self.type = .indeterminate
-        self.style = style
-        self.label = label
-        self.currentValueLabel = nil
-        self.tint = nil
-    }
-
+    
     /// Creates an adaptive progress view for a specific value and total.
     public init(
         value: Double,
