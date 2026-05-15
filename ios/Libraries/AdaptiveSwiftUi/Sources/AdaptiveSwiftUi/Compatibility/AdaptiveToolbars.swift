@@ -70,7 +70,7 @@ extension ToolbarItemPlacement {
 ///
 /// Example:
 /// ```swift
-/// ToolbarItemGroup {
+/// .toolbar {
 ///     Button(...)
 ///     AdaptiveToolbarSpacer(.flexible)
 ///     Button(...)
