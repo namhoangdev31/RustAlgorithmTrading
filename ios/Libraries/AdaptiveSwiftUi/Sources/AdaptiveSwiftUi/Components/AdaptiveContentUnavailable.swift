@@ -130,3 +130,33 @@ public extension AdaptiveContentUnavailableView where Label == SwiftUI.Label<Tex
         )
     }
 }
+
+public extension AdaptiveContentUnavailableView where Label == SwiftUI.Label<Text, Image>, Description == Text {
+    init(
+        _ title: LocalizedStringKey,
+        systemImage: String,
+        description: LocalizedStringKey? = nil,
+        @ViewBuilder actions: () -> Actions
+    ) {
+        self.init(
+            variant: .custom,
+            label: SwiftUI.Label(title, systemImage: systemImage),
+            description: description.map { Text($0) } ?? Text(""),
+            actions: actions()
+        )
+    }
+    
+    init<S: StringProtocol>(
+        _ title: S,
+        systemImage: String,
+        description: S? = nil,
+        @ViewBuilder actions: () -> Actions
+    ) {
+        self.init(
+            variant: .custom,
+            label: SwiftUI.Label(title, systemImage: systemImage),
+            description: description.map { Text($0) } ?? Text(""),
+            actions: actions()
+        )
+    }
+}

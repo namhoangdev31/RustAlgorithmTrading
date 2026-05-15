@@ -17,8 +17,17 @@ private struct ColorsSmokeView: View {
                 .fill(AdaptiveColor.systemFill)
                 .frame(width: 50, height: 50)
 
-            Text("Hi")
-                .adaptiveForegroundStyle(.blue, variant: .secondary)
+            Text("Primary")
+                .adaptiveForegroundStyle(.blue, hierarchy: .primary)
+            
+            Text("Secondary Gradient")
+                .adaptiveForegroundStyle(.blue, gradient: true, hierarchy: .secondary)
+            
+            Text("Tertiary")
+                .adaptiveForegroundStyle(.orange, hierarchy: .tertiary, opacity: 0.8)
+            
+            Text("Quaternary")
+                .adaptiveForegroundStyle(.green, hierarchy: .quaternary)
         }
     }
 }

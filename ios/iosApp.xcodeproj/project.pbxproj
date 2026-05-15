@@ -36,6 +36,7 @@
 		5A7804042F39021A004BBDBF /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 5A7804032F39021A004BBDBF /* ZIPFoundation */; };
 		5A7804072F390220004BBDBF /* GCDWebServer in Frameworks */ = {isa = PBXBuildFile; productRef = 5A7804062F390220004BBDBF /* GCDWebServer */; };
 		5A80808D2FB4E6CC00A1CCC7 /* AdaptiveSwiftUi in Frameworks */ = {isa = PBXBuildFile; productRef = 5A80808C2FB4E6CC00A1CCC7 /* AdaptiveSwiftUi */; };
+		5AE88F062FB7511F00761AD1 /* AdaptiveSwiftUi in Frameworks */ = {isa = PBXBuildFile; productRef = 5AE88F052FB7511F00761AD1 /* AdaptiveSwiftUi */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -93,6 +94,7 @@
 				5A17A6902F55798B00D38C28 /* FirebaseCore in Frameworks */,
 				5A17A6A42F55798B00D38C28 /* FirebaseMLModelDownloader in Frameworks */,
 				5A17A69C2F55798B00D38C28 /* FirebaseFunctionsCombine-Community in Frameworks */,
+				5AE88F062FB7511F00761AD1 /* AdaptiveSwiftUi in Frameworks */,
 				5A17A68C2F55798B00D38C28 /* FirebaseAuth in Frameworks */,
 				5A17A6882F55798B00D38C28 /* FirebaseAppCheck in Frameworks */,
 				5A40AFF62F55339500BE0503 /* FirebaseAnalyticsCore in Frameworks */,
@@ -186,6 +188,7 @@
 				5A17A6A92F55798B00D38C28 /* FirebaseStorage */,
 				5A17A6AB2F55798B00D38C28 /* FirebaseStorageCombine-Community */,
 				5A80808C2FB4E6CC00A1CCC7 /* AdaptiveSwiftUi */,
+				5AE88F052FB7511F00761AD1 /* AdaptiveSwiftUi */,
 			);
 			productName = iosApp;
 			productReference = 623E68E1EC5434D0E8A40C73 /* Leposapp.app */;
@@ -222,7 +225,7 @@
 				5A7804052F390220004BBDBF /* XCRemoteSwiftPackageReference "GCDWebServer" */,
 				5A40AFEE2F55339500BE0503 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				5A40AFF92F554A8C00BE0503 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
-				5A80808B2FB4E6CC00A1CCC7 /* XCLocalSwiftPackageReference "Libraries/AdaptiveSwiftUi" */,
+				5AE88F042FB7511F00761AD1 /* XCLocalSwiftPackageReference "Libraries/AdaptiveSwiftUi" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E7798370575A2CFBE4CE7BEB /* Products */;
@@ -516,7 +519,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		5A80808B2FB4E6CC00A1CCC7 /* XCLocalSwiftPackageReference "Libraries/AdaptiveSwiftUi" */ = {
+		5AE88F042FB7511F00761AD1 /* XCLocalSwiftPackageReference "Libraries/AdaptiveSwiftUi" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Libraries/AdaptiveSwiftUi;
 		};
@@ -710,6 +713,10 @@
 			productName = GCDWebServer;
 		};
 		5A80808C2FB4E6CC00A1CCC7 /* AdaptiveSwiftUi */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AdaptiveSwiftUi;
+		};
+		5AE88F052FB7511F00761AD1 /* AdaptiveSwiftUi */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = AdaptiveSwiftUi;
 		};

@@ -134,12 +134,47 @@ public struct AdaptiveProgressView<Label: View, CurrentValueLabel: View>: View {
     }
 }
 
-// Convenience initializers for title-only
-extension AdaptiveProgressView where Label == Text, CurrentValueLabel == EmptyView {
-    public init(_ titleKey: LocalizedStringKey, style: AdaptiveProgressViewStyle = .automatic) {
+// Convenience initializers
+extension AdaptiveProgressView where CurrentValueLabel == EmptyView {
+    /// Creates an indeterminate progress view with a label.
+    public init(style: AdaptiveProgressViewStyle = .automatic, @ViewBuilder label: @escaping () -> Label) {
         self.type = .indeterminate
         self.style = style
-        self.label = { Text(titleKey) }
+        self.label = label
+        self.currentValueLabel = nil
+        self.tint = nil
+    }
+
+    /// Creates a progress view for a specific value and total.
+    public init(
+        value: Double,
+        total: Double = 1.0,
+        style: AdaptiveProgressViewStyle = .automatic,
+        @ViewBuilder label: @escaping () -> Label
+    ) {
+        self.type = .value(value, total)
+        self.style = style
+        self.label = label
+        self.currentValueLabel = nil
+        self.tint = nil
+    }
+}
+
+extension AdaptiveProgressView where Label == Text, CurrentValueLabel == EmptyView {
+    /// Creates an indeterminate progress view with a title string.
+    public init<S: StringProtocol>(_ title: S, style: AdaptiveProgressViewStyle = .automatic) {
+        self.type = .indeterminate
+        self.style = style
+        self.label = { Text(title) }
+        self.currentValueLabel = nil
+        self.tint = nil
+    }
+
+    /// Creates a progress view for a specific value and total with a title string.
+    public init<S: StringProtocol>(_ title: S, value: Double, total: Double = 1.0, style: AdaptiveProgressViewStyle = .automatic) {
+        self.type = .value(value, total)
+        self.style = style
+        self.label = { Text(title) }
         self.currentValueLabel = nil
         self.tint = nil
     }

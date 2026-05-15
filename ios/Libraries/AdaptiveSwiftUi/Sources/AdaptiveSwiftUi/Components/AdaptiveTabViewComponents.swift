@@ -48,33 +48,33 @@ public func AdaptiveValueTab<Value: Hashable, Content: View>(
 
 // MARK: - AdaptiveTabSection (Item #15)
 
-/// Creates a `TabSection` with a title.
-///
-/// Covers feed item #15: Container for grouping tabs in sidebar.
-///
-/// Usage:
-/// ```swift
-/// TabView {
-///     AdaptiveTabSection("Settings") {
-///         Tab("General", systemImage: "gear", value: "general") { ... }
-///     }
-/// }
-/// .tabViewStyle(.sidebarAdaptable)
-/// ```
 @available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *)
-public func AdaptiveTabSection<Content: TabContent>(
-    _ title: LocalizedStringKey,
-    @TabContentBuilder<Content.TabValue> content: @escaping () -> Content
-) -> some TabContent<Content.TabValue> where Content.TabValue: Hashable {
-    TabSection(title) { content() }
-}
+public struct AdaptiveTabSection<Value: Hashable, Content: TabContent<Value>>: TabContent {
+    private let title: LocalizedStringKey?
+    private let content: () -> Content
 
-/// Creates a `TabSection` without a title.
-@available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *)
-public func AdaptiveTabSection<Content: TabContent>(
-    @TabContentBuilder<Content.TabValue> content: @escaping () -> Content
-) -> some TabContent<Content.TabValue> where Content.TabValue: Hashable {
-    TabSection { content() }
+    public init(
+        _ title: LocalizedStringKey,
+        @TabContentBuilder<Value> content: @escaping () -> Content
+    ) {
+        self.title = title
+        self.content = content
+    }
+
+    public init(
+        @TabContentBuilder<Value> content: @escaping () -> Content
+    ) {
+        self.title = nil
+        self.content = content
+    }
+
+    public var body: some TabContent<Value> {
+        if let title = title {
+            TabSection(title) { content() }
+        } else {
+            TabSection { content() }
+        }
+    }
 }
 
 // MARK: - AdaptiveTabViewBottomAccessoryPlacementReader (Item #98)

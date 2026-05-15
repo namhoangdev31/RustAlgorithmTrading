@@ -1,5 +1,6 @@
 import SwiftUI
 import XCTest
+
 @testable import AdaptiveSwiftUi
 
 final class DividersSmokeTests: XCTestCase {
@@ -13,8 +14,8 @@ private struct DividersSmokeView: View {
     var body: some View {
         VStack {
             AdaptiveDivider()
-                .adaptiveDividerTint(.red)
-            
+                .adaptiveDividerColor(.red)
+
             HStack {
                 Text("Left")
                 AdaptiveDivider()

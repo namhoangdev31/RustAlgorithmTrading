@@ -11,23 +11,41 @@ final class GaugesSmokeTests: XCTestCase {
 
 private struct GaugesSmokeView: View {
     var body: some View {
-        VStack {
-            AdaptiveGauge(value: 0.75) {
-                Text("Linear")
+        ScrollView {
+            VStack(spacing: 20) {
+                AdaptiveGauge(value: 0.75) {
+                    Text("Accessory Linear")
+                }
+                .adaptiveGaugeStyle(.accessoryLinear)
+                .adaptiveGaugeTint(.blue)
+                
+                AdaptiveGauge(value: 0.5, in: 0...1) {
+                    Text("Accessory Circular")
+                } currentValueLabel: {
+                    Text("50%")
+                } minimumValueLabel: {
+                    Text("0")
+                } maximumValueLabel: {
+                    Text("100")
+                }
+                .adaptiveGaugeStyle(.accessoryCircularCapacity)
+                
+                AdaptiveGauge(value: 0.3) {
+                    Text("Automatic")
+                }
+                .adaptiveGaugeStyle(.automatic)
+                
+                AdaptiveGauge(value: 0.6) {
+                    Text("Linear")
+                }
+                .adaptiveGaugeStyle(.linear)
+                
+                AdaptiveGauge(value: 0.4) {
+                    Text("Circular")
+                }
+                .adaptiveGaugeStyle(.circular)
             }
-            .adaptiveGaugeStyle(.accessoryLinear)
-            .adaptiveGaugeTint(.blue)
-            
-            AdaptiveGauge(value: 0.5, in: 0...1) {
-                Text("Circular")
-            } currentValueLabel: {
-                Text("50%")
-            } minimumValueLabel: {
-                Text("0")
-            } maximumValueLabel: {
-                Text("100")
-            }
-            .adaptiveGaugeStyle(.accessoryCircularCapacity)
+            .padding()
         }
     }
 }

@@ -95,9 +95,9 @@ public struct AdaptiveSlider<Label: View, ValueLabel: View, Ticks: View>: View {
     /// Returns a copy of the slider with the specified tint color.
     public func adaptiveTint(_ color: Color?) -> AdaptiveSlider {
         var copy = self
-        // Note: In a struct, we'd need to handle this carefully if we want to preserve type
-        // For simplicity in this adaptive wrapper, we use a private property
-        return copy // Placeholder for tint logic if we weren't using modifiers
+        /// Note: In a struct, we'd need to handle this carefully if we want to preserve type
+        /// For simplicity in this adaptive wrapper, we use a private property
+        return copy /// Placeholder for tint logic if we weren't using modifiers
     }
 }
 

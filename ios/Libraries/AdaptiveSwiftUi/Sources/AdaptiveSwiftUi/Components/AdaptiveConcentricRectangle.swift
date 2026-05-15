@@ -21,7 +21,7 @@ public struct AdaptiveConcentricRectangle: InsettableShape {
         let insetRect = rect.insetBy(dx: insetAmount, dy: insetAmount)
 
         if #available(iOS 26.0, macOS 26.0, tvOS 26.0, watchOS 26.0, visionOS 26.0, *) {
-            // Native ConcentricRectangle dynamically computes its radius from the container context.
+            /// Native ConcentricRectangle dynamically computes its radius from the container context.
             return ConcentricRectangle(corners: .concentric, isUniform: isUniform)
                 .path(in: insetRect)
         } else {

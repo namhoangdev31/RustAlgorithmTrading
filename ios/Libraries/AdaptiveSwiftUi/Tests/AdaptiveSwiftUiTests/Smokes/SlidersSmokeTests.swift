@@ -13,6 +13,11 @@ private struct SlidersSmokeView: View {
     @State private var value = 0.5
     var body: some View {
         VStack {
+            AdaptiveSlider(value: $value) {
+                Text("Simple Slider")
+            }
+            .adaptiveSliderTint(.red)
+
             AdaptiveTickedSlider(
                 value: $value,
                 in: 0...1,
