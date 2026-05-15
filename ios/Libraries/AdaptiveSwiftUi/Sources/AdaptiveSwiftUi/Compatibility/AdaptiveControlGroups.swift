@@ -35,7 +35,7 @@ public extension View {
             case .navigation:
                 styled.controlGroupStyle(.navigation)
             case .menu:
-                if #available(iOS 16.4, macOS 13.3, *) {
+                if #available(iOS 16.4, macOS 13.3, tvOS 17.0, *) {
                     styled.controlGroupStyle(.menu)
                 } else {
                     styled

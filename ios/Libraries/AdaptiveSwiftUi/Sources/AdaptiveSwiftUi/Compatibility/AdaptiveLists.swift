@@ -278,10 +278,15 @@ extension View {
     // MARK: - Prominence & Backgrounds
 
     @ViewBuilder
-    public func adaptiveBadgeProminence(_ prominence: BadgeProminence) -> some View {
+    public func adaptiveBadgeProminence(_ prominence: AdaptiveBadgeProminence) -> some View {
         #if os(iOS) || os(macOS) || os(watchOS) || os(tvOS) || os(visionOS)
             if #available(iOS 17.0, macOS 14.0, watchOS 10.0, tvOS 17.0, visionOS 1.0, *) {
-                self.badgeProminence(prominence)
+                switch prominence {
+                case .standard:
+                    self.badgeProminence(.standard)
+                case .increased:
+                    self.badgeProminence(.increased)
+                }
             } else {
                 self
             }

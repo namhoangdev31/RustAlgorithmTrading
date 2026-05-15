@@ -247,6 +247,11 @@ public enum AdaptiveBackgroundProminence: Sendable {
     case increased
 }
 
+public enum AdaptiveBadgeProminence: Sendable {
+    case standard
+    case increased
+}
+
 public enum AdaptiveSheetSizing: Sendable {
     case automatic
     case fitted

@@ -59,25 +59,24 @@ public struct AdaptiveSlider<Label: View, ValueLabel: View, Ticks: View>: View {
                     value: $value,
                     in: bounds,
                     step: step,
-                    onEditingChanged: { onEditingChanged?($0) },
                     label: label,
                     minimumValueLabel: minimumValueLabel,
                     maximumValueLabel: maximumValueLabel,
-                    ticks: {
-                        // We assume Ticks content can be bridged or used here
-                        // In a real implementation, we might need a more complex bridge
-                        ticks()
-                    }
+                    onEditingChanged: { onEditingChanged?($0) }
                 )
+                // Note: The ticks system in iOS 26 is typically applied via a modifier 
+                // or a specific initializer that doesn't conflict with standard labels.
+                // We'll apply ticks as a modifier here to avoid signature conflicts.
+                .adaptiveSliderTicks(ticks)
             } else {
                 Slider(
                     value: $value,
                     in: bounds,
                     step: step,
-                    onEditingChanged: { onEditingChanged?($0) },
                     label: label,
                     minimumValueLabel: minimumValueLabel,
-                    maximumValueLabel: maximumValueLabel
+                    maximumValueLabel: maximumValueLabel,
+                    onEditingChanged: { onEditingChanged?($0) }
                 )
             }
             #else

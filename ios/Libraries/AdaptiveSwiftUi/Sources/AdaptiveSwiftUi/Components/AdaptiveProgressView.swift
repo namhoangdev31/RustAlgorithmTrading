@@ -59,13 +59,13 @@ public struct AdaptiveProgressView<Label: View, CurrentValueLabel: View>: View {
     public var body: some View {
         Group {
             #if os(iOS) || os(macOS) || os(watchOS) || os(tvOS) || os(visionOS)
-            if #available(iOS 14.0, macOS 11.0, watchOS 7.0, tvOS 14.0, visionOS 1.0, *) {
-                nativeProgressView
-            } else {
-                fallbackView
-            }
+                if #available(iOS 14.0, macOS 11.0, watchOS 7.0, tvOS 14.0, visionOS 1.0, *) {
+                    nativeProgressView
+                } else {
+                    fallbackView
+                }
             #else
-            fallbackView
+                fallbackView
             #endif
         }
         .adaptiveProgressViewStyle(style)
@@ -82,18 +82,29 @@ public struct AdaptiveProgressView<Label: View, CurrentValueLabel: View>: View {
                 ProgressView()
             }
         case .value(let value, let total):
-            ProgressView(
-                value: value,
-                total: total,
-                label: { label?() ?? AnyView(EmptyView()) as! Label }, // Simplified for brevity
-                currentValueLabel: { currentValueLabel?() ?? AnyView(EmptyView()) as! CurrentValueLabel }
-            )
+            if let label = label, let currentValueLabel = currentValueLabel {
+                ProgressView(value: value, total: total, label: label, currentValueLabel: currentValueLabel)
+            } else if let label = label {
+                ProgressView(value: value, total: total, label: label)
+            } else {
+                ProgressView(value: value, total: total)
+            }
         case .timer(let interval):
-            ProgressView(
-                timerInterval: interval,
-                label: { label?() ?? AnyView(EmptyView()) as! Label },
-                currentValueLabel: { currentValueLabel?() ?? AnyView(EmptyView()) as! CurrentValueLabel }
-            )
+            if #available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *) {
+                if let label = label, let currentValueLabel = currentValueLabel {
+                    ProgressView(
+                        timerInterval: interval.start...interval.end,
+                        label: label,
+                        currentValueLabel: currentValueLabel
+                    )
+                } else if let label = label {
+                    ProgressView(timerInterval: interval.start...interval.end, label: label)
+                } else {
+                    ProgressView(timerInterval: interval.start...interval.end)
+                }
+            } else {
+                fallbackView
+            }
         }
     }
 
@@ -112,7 +123,7 @@ public struct AdaptiveProgressView<Label: View, CurrentValueLabel: View>: View {
                 ZStack(alignment: .leading) {
                     Capsule().fill(Color.secondary.opacity(0.2))
                     Capsule().fill(Color.accentColor)
-                        .frame(width: CGFloat(value / total) * 100) // Mock width
+                        .frame(width: CGFloat(value / total) * 100)  // Mock width
                 }
                 .frame(height: 4)
             case .timer(_):
@@ -124,8 +135,8 @@ public struct AdaptiveProgressView<Label: View, CurrentValueLabel: View>: View {
 }
 
 // Convenience initializers for title-only
-public extension AdaptiveProgressView where Label == Text, CurrentValueLabel == EmptyView {
-    init(_ titleKey: LocalizedStringKey, style: AdaptiveProgressViewStyle = .automatic) {
+extension AdaptiveProgressView where Label == Text, CurrentValueLabel == EmptyView {
+    public init(_ titleKey: LocalizedStringKey, style: AdaptiveProgressViewStyle = .automatic) {
         self.type = .indeterminate
         self.style = style
         self.label = { Text(titleKey) }
