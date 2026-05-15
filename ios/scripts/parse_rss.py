@@ -44,7 +44,8 @@ def parse_rss(xml_file):
             "Shapes": "ContainerRelativeShape cho shape bám theo container context.",
             "Labels": "Label với system image/custom image và label styles.",
             "Labeled Content": "cặp “title-value” cho form/list, có formatted value và custom content.",
-            "Concentric Rectangles": "shape iOS 26 với concentric corners (uniform/non-uniform) cho style mới."
+            "Concentric Rectangles": "shape iOS 26 với concentric corners (uniform/non-uniform) cho style mới.",
+            "Sheets": "các API liên quan đến hiển thị sheet/popover, quản lý detent (kích thước), cấm vuốt để đóng (interactiveDismissDisabled), background và cornerRadius."
         }
 
         feed_info = {
@@ -96,7 +97,8 @@ def parse_rss(xml_file):
                         'shapes': "Shapes",
                         'label': "Labels",
                         'labeledcontent': "Labeled Content",
-                        'concentricrectangle': "Concentric Rectangles"
+                        'concentricrectangle': "Concentric Rectangles",
+                        'sheet': "Sheets"
                     }
                     if group_raw in group_map:
                         group = group_map[group_raw]

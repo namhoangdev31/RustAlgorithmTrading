@@ -62,51 +62,6 @@ public struct AdaptiveValueLabelPicker<
     }
 }
 
-public struct AdaptiveMultiDatePicker<Label: View>: View {
-    private let title: () -> Label
-    private let selection: Binding<Set<DateComponents>>
-    private let dateRange: PartialRangeFrom<Date>?
-
-    public init(
-        selection: Binding<Set<DateComponents>>,
-        in dateRange: PartialRangeFrom<Date>? = nil,
-        @ViewBuilder label: @escaping () -> Label
-    ) {
-        title = label
-        self.selection = selection
-        self.dateRange = dateRange
-    }
-
-    @ViewBuilder
-    public var body: some View {
-        #if os(iOS) || os(visionOS)
-        if #available(iOS 16.0, visionOS 1.0, *) {
-            if let dateRange {
-                MultiDatePicker(selection: selection, in: dateRange) {
-                    title()
-                }
-            } else {
-                MultiDatePicker(selection: selection) {
-                    title()
-                }
-            }
-        } else {
-            DatePicker(selection: .constant(Date()), displayedComponents: [.date]) {
-                title()
-            }
-            .disabled(true)
-        }
-        #elseif os(macOS)
-        DatePicker(selection: .constant(Date()), displayedComponents: [.date]) {
-            title()
-        }
-        .disabled(true)
-        #else
-        title()
-        #endif
-    }
-}
-
 public extension View {
     @ViewBuilder
     func adaptivePickerStyle(_ style: AdaptivePickerStyle) -> some View {

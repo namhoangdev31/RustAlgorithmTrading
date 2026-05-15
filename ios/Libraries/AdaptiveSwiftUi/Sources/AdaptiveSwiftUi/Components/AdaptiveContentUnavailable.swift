@@ -1,185 +1,132 @@
 import SwiftUI
-import Foundation
 
-public struct AdaptiveContentUnavailable<Label: View, Description: View, Actions: View>: View {
-    private let label: () -> Label
-    private let description: () -> Description
-    private let actions: () -> Actions
+/// An adaptive component that mimics `ContentUnavailableView`.
+/// - On iOS 17+, it uses the native `ContentUnavailableView`.
+/// - On older versions, it falls back to a custom `VStack` implementation.
+public struct AdaptiveContentUnavailableView<Label: View, Description: View, Actions: View>: View {
+    private enum Variant {
+        case custom
+        case search(String?)
+    }
+    
+    private let variant: Variant
+    private let label: Label
+    private let description: Description
+    private let actions: Actions
 
     public init(
-        @ViewBuilder label: @escaping () -> Label,
-        @ViewBuilder description: @escaping () -> Description,
-        @ViewBuilder actions: @escaping () -> Actions
+        @ViewBuilder label: () -> Label,
+        @ViewBuilder description: () -> Description = { EmptyView() },
+        @ViewBuilder actions: () -> Actions = { EmptyView() }
     ) {
+        self.variant = .custom
+        self.label = label()
+        self.description = description()
+        self.actions = actions()
+    }
+
+    private init(variant: Variant, label: Label, description: Description, actions: Actions) {
+        self.variant = variant
         self.label = label
         self.description = description
         self.actions = actions
     }
 
-    @ViewBuilder
     public var body: some View {
         if #available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, visionOS 1.0, *) {
-            ContentUnavailableView {
-                label()
-            } description: {
-                description()
-            } actions: {
-                actions()
-            }
+            nativeView
         } else {
-            VStack(spacing: 12) {
-                label()
-                    .font(.headline)
-                description()
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                actions()
-            }
-            .multilineTextAlignment(.center)
-            .padding(24)
+            fallbackView
         }
     }
-}
 
-public extension AdaptiveContentUnavailable where Label == SwiftUI.Label<Text, Image>, Description == Text, Actions == EmptyView {
-    init(
-        _ title: LocalizedStringKey,
-        systemImage: String,
-        description: LocalizedStringKey
-    ) {
-        self.init {
-            SwiftUI.Label(title, systemImage: systemImage)
-        } description: {
-            Text(description)
-        } actions: {
-            EmptyView()
-        }
-    }
-}
-
-public struct AdaptiveSearchUnavailable: View {
-    private let text: String?
-
-    public init(text: String? = nil) {
-        self.text = text
-    }
-
+    @available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, visionOS 1.0, *)
     @ViewBuilder
-    public var body: some View {
-        if #available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, visionOS 1.0, *) {
-            if let text, !text.isEmpty {
+    private var nativeView: some View {
+        switch variant {
+        case .custom:
+            ContentUnavailableView {
+                label
+            } description: {
+                description
+            } actions: {
+                actions
+            }
+        case .search(let text):
+            if let text {
                 ContentUnavailableView.search(text: text)
             } else {
                 ContentUnavailableView.search
             }
-        } else {
-            VStack(spacing: 10) {
+        }
+    }
+
+    @ViewBuilder
+    private var fallbackView: some View {
+        VStack(spacing: 16) {
+            switch variant {
+            case .custom:
+                label
+                    .font(.headline)
+            case .search(let text):
                 Image(systemName: "magnifyingglass")
-                    .font(.title2)
+                    .font(.system(size: 48))
+                    .foregroundStyle(.secondary)
+                
                 Text("No Results")
                     .font(.headline)
+                
                 if let text, !text.isEmpty {
-                    Text("No results for \(text)")
+                    Text("No results for \"\(text)\"")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
             }
-            .multilineTextAlignment(.center)
-            .padding(24)
+            
+            description
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+            
+            actions
+                .padding(.top, 8)
         }
+        .multilineTextAlignment(.center)
+        .padding(32)
     }
 }
 
-public struct AdaptiveLabeledContent<Label: View, ValueContent: View>: View {
-    private let label: () -> Label
-    private let valueContent: () -> ValueContent
+// MARK: - Search Extension
 
-    public init(
-        @ViewBuilder label: @escaping () -> Label,
-        @ViewBuilder valueContent: @escaping () -> ValueContent
-    ) {
-        self.label = label
-        self.valueContent = valueContent
+public extension AdaptiveContentUnavailableView where Label == EmptyView, Description == EmptyView, Actions == EmptyView {
+    /// A pre-built placeholder for empty search results.
+    static var search: AdaptiveContentUnavailableView<EmptyView, EmptyView, EmptyView> {
+        AdaptiveContentUnavailableView(variant: .search(nil), label: EmptyView(), description: EmptyView(), actions: EmptyView())
     }
-
-    @ViewBuilder
-    public var body: some View {
-        if #available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, visionOS 1.0, *) {
-            LabeledContent {
-                valueContent()
-            } label: {
-                label()
-            }
-        } else {
-            HStack {
-                label()
-                Spacer(minLength: 8)
-                valueContent()
-            }
-        }
+    
+    /// A pre-built placeholder for empty search results with search text.
+    static func search(text: String) -> AdaptiveContentUnavailableView<EmptyView, EmptyView, EmptyView> {
+        AdaptiveContentUnavailableView(variant: .search(text), label: EmptyView(), description: EmptyView(), actions: EmptyView())
     }
 }
 
-public struct AdaptiveShareLink<Label: View>: View {
-    private let url: URL
-    private let label: () -> Label
-    private let subject: Text?
-    private let message: Text?
+// MARK: - Convenience Initializers
 
-    public init(
-        item url: URL,
-        subject: Text? = nil,
-        message: Text? = nil,
-        @ViewBuilder label: @escaping () -> Label
-    ) {
-        self.url = url
-        self.subject = subject
-        self.message = message
-        self.label = label
+public extension AdaptiveContentUnavailableView where Label == SwiftUI.Label<Text, Image>, Description == Text, Actions == EmptyView {
+    init(_ title: LocalizedStringKey, systemImage: String, description: LocalizedStringKey? = nil) {
+        self.init(
+            variant: .custom,
+            label: SwiftUI.Label(title, systemImage: systemImage),
+            description: description.map { Text($0) } ?? Text(""),
+            actions: EmptyView()
+        )
     }
-
-    @ViewBuilder
-    public var body: some View {
-        #if !os(tvOS)
-        if #available(iOS 16.0, macOS 13.0, watchOS 9.0, visionOS 1.0, *) {
-            if let subject, let message {
-                ShareLink(item: url, subject: subject, message: message) {
-                    label()
-                }
-            } else {
-                ShareLink(item: url) {
-                    label()
-                }
-            }
-        } else {
-            Link(destination: url) {
-                label()
-            }
-        }
-        #else
-        Link(destination: url) {
-            label()
-        }
-        #endif
-    }
-}
-
-public struct AdaptiveFormattedText<Value, Format>: View
-where Value: Equatable, Format: FormatStyle, Format.FormatInput == Value, Format.FormatOutput == String {
-    private let value: Value
-    private let format: Format
-
-    public init(_ value: Value, format: Format) {
-        self.value = value
-        self.format = format
-    }
-
-    @ViewBuilder
-    public var body: some View {
-        if #available(iOS 18.0, macOS 15.0, watchOS 11.0, tvOS 18.0, visionOS 2.0, *) {
-            Text(value, format: format)
-        } else {
-            Text(String(describing: value))
-        }
+    
+    init<S: StringProtocol>(_ title: S, systemImage: String, description: S? = nil) {
+        self.init(
+            variant: .custom,
+            label: SwiftUI.Label(title, systemImage: systemImage),
+            description: description.map { Text($0) } ?? Text(""),
+            actions: EmptyView()
+        )
     }
 }

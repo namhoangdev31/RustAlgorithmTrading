@@ -10,29 +10,47 @@ public enum AdaptiveButtonRole: Sendable {
 public struct AdaptiveRoleButton: View {
     private let role: AdaptiveButtonRole
     private let title: LocalizedStringKey?
+    private let style: AdaptiveButtonStyle
+    private let sizing: AdaptiveButtonSizing
+    private let tint: Color?
+    private let borderShape: AdaptiveButtonBorderShape
     private let action: () -> Void
 
     public init(
         role: AdaptiveButtonRole,
         title: LocalizedStringKey? = nil,
+        style: AdaptiveButtonStyle = .automatic,
+        sizing: AdaptiveButtonSizing = .automatic,
+        tint: Color? = nil,
+        borderShape: AdaptiveButtonBorderShape = .automatic,
         action: @escaping () -> Void
     ) {
         self.role = role
         self.title = title
+        self.style = style
+        self.sizing = sizing
+        self.tint = tint
+        self.borderShape = borderShape
         self.action = action
     }
 
     @ViewBuilder
     public var body: some View {
-        if #available(iOS 26.0, macOS 26.0, tvOS 26.0, watchOS 26.0, visionOS 26.0, *) {
-            if let title {
-                Button(title, role: modernRole, action: action)
+        Group {
+            if #available(iOS 26.0, macOS 26.0, tvOS 26.0, watchOS 26.0, visionOS 26.0, *) {
+                if let title {
+                    Button(title, role: modernRole, action: action)
+                } else {
+                    Button(role: modernRole, action: action)
+                }
             } else {
-                Button(role: modernRole, action: action)
+                Button(title ?? role.fallbackTitle, role: role.fallbackButtonRole, action: action)
             }
-        } else {
-            Button(title ?? role.fallbackTitle, role: role.fallbackButtonRole, action: action)
         }
+        .adaptiveButtonStyle(style)
+        .adaptiveButtonSizing(sizing)
+        .adaptiveButtonTint(tint)
+        .adaptiveButtonBorderShape(borderShape)
     }
 
     @available(iOS 26.0, macOS 26.0, tvOS 26.0, watchOS 26.0, visionOS 26.0, *)
@@ -52,54 +70,86 @@ public struct AdaptiveRoleButton: View {
 
 public struct AdaptiveRenameButton: View {
     private let title: LocalizedStringKey
+    private let sizing: AdaptiveButtonSizing
+    private let tint: Color?
     private let action: () -> Void
 
     public init(
         title: LocalizedStringKey = "Rename",
+        sizing: AdaptiveButtonSizing = .automatic,
+        tint: Color? = nil,
         action: @escaping () -> Void
     ) {
         self.title = title
+        self.sizing = sizing
+        self.tint = tint
         self.action = action
     }
 
     @ViewBuilder
     public var body: some View {
-        if #available(iOS 16.0, macOS 13.0, watchOS 9.0, tvOS 16.0, visionOS 1.0, *) {
-            RenameButton()
-                .renameAction(action)
-        } else {
-            Button(title, action: action)
+        Group {
+            if #available(iOS 16.0, macOS 13.0, watchOS 9.0, tvOS 16.0, visionOS 1.0, *) {
+                RenameButton()
+                    .renameAction(action)
+            } else {
+                Button(title, action: action)
+            }
         }
+        .adaptiveButtonSizing(sizing)
+        .adaptiveButtonTint(tint)
     }
 }
 
 public struct AdaptivePasteButton: View {
     private let title: LocalizedStringKey
+    private let sizing: AdaptiveButtonSizing
+    private let tint: Color?
     private let onPaste: (String) -> Void
 
     public init(
         title: LocalizedStringKey = "Paste",
+        sizing: AdaptiveButtonSizing = .automatic,
+        tint: Color? = nil,
         onPaste: @escaping (String) -> Void
     ) {
         self.title = title
+        self.sizing = sizing
+        self.tint = tint
         self.onPaste = onPaste
     }
 
     @ViewBuilder
     public var body: some View {
-        #if !os(tvOS) && !os(watchOS)
-        if #available(iOS 16.0, macOS 13.0, visionOS 1.0, *) {
-            PasteButton(payloadType: String.self) { strings in
-                guard let first = strings.first else { return }
-                onPaste(first)
+        Group {
+            #if !os(tvOS) && !os(watchOS)
+            if #available(iOS 16.0, macOS 13.0, visionOS 1.0, *) {
+                PasteButton(payloadType: String.self) { strings in
+                    guard let first = strings.first else { return }
+                    onPaste(first)
+                }
+            } else {
+                Button(title) {}
+                    .disabled(true)
             }
-        } else {
+            #else
             Button(title) {}
                 .disabled(true)
+            #endif
         }
+        .adaptiveButtonSizing(sizing)
+        .adaptiveButtonTint(tint)
+    }
+}
+
+public struct AdaptiveEditButton: View {
+    public init() {}
+
+    public var body: some View {
+        #if os(iOS) || os(visionOS)
+        EditButton()
         #else
-        Button(title) {}
-            .disabled(true)
+        EmptyView()
         #endif
     }
 }

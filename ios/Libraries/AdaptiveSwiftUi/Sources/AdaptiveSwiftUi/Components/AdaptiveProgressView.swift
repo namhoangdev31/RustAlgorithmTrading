@@ -1,0 +1,135 @@
+import SwiftUI
+
+public struct AdaptiveProgressView<Label: View, CurrentValueLabel: View>: View {
+    private enum ProgressType {
+        case indeterminate
+        case value(Double, Double)
+        case timer(DateInterval)
+    }
+
+    private let type: ProgressType
+    private let style: AdaptiveProgressViewStyle
+    private let label: (() -> Label)?
+    private let currentValueLabel: (() -> CurrentValueLabel)?
+    private let tint: Color?
+
+    // Indeterminate
+    public init(
+        style: AdaptiveProgressViewStyle = .automatic,
+        @ViewBuilder label: @escaping () -> Label
+    ) where CurrentValueLabel == EmptyView {
+        self.type = .indeterminate
+        self.style = style
+        self.label = label
+        self.currentValueLabel = nil
+        self.tint = nil
+    }
+
+    // Value-based
+    public init(
+        value: Double,
+        total: Double = 1.0,
+        style: AdaptiveProgressViewStyle = .automatic,
+        @ViewBuilder label: @escaping () -> Label,
+        @ViewBuilder currentValueLabel: @escaping () -> CurrentValueLabel
+    ) {
+        self.type = .value(value, total)
+        self.style = style
+        self.label = label
+        self.currentValueLabel = currentValueLabel
+        self.tint = nil
+    }
+
+    // Timer-based (available in newer OS)
+    @available(iOS 14.0, macOS 11.0, watchOS 7.0, tvOS 14.0, *)
+    public init(
+        timerInterval: DateInterval,
+        countsDown: Bool = false,
+        style: AdaptiveProgressViewStyle = .automatic,
+        @ViewBuilder label: @escaping () -> Label,
+        @ViewBuilder currentValueLabel: @escaping () -> CurrentValueLabel
+    ) {
+        self.type = .timer(timerInterval)
+        self.style = style
+        self.label = label
+        self.currentValueLabel = currentValueLabel
+        self.tint = nil
+    }
+
+    public var body: some View {
+        Group {
+            #if os(iOS) || os(macOS) || os(watchOS) || os(tvOS) || os(visionOS)
+            if #available(iOS 14.0, macOS 11.0, watchOS 7.0, tvOS 14.0, visionOS 1.0, *) {
+                nativeProgressView
+            } else {
+                fallbackView
+            }
+            #else
+            fallbackView
+            #endif
+        }
+        .adaptiveProgressViewStyle(style)
+        .adaptiveProgressTint(tint)
+    }
+
+    @ViewBuilder
+    private var nativeProgressView: some View {
+        switch type {
+        case .indeterminate:
+            if let label = label {
+                ProgressView(label: label)
+            } else {
+                ProgressView()
+            }
+        case .value(let value, let total):
+            ProgressView(
+                value: value,
+                total: total,
+                label: { label?() ?? AnyView(EmptyView()) as! Label }, // Simplified for brevity
+                currentValueLabel: { currentValueLabel?() ?? AnyView(EmptyView()) as! CurrentValueLabel }
+            )
+        case .timer(let interval):
+            ProgressView(
+                timerInterval: interval,
+                label: { label?() ?? AnyView(EmptyView()) as! Label },
+                currentValueLabel: { currentValueLabel?() ?? AnyView(EmptyView()) as! CurrentValueLabel }
+            )
+        }
+    }
+
+    @ViewBuilder
+    private var fallbackView: some View {
+        VStack(spacing: 8) {
+            label?()
+            switch type {
+            case .indeterminate:
+                // Simple placeholder for activity indicator
+                Circle()
+                    .trim(from: 0, to: 0.7)
+                    .stroke(Color.accentColor, lineWidth: 2)
+                    .frame(width: 20, height: 20)
+            case .value(let value, let total):
+                ZStack(alignment: .leading) {
+                    Capsule().fill(Color.secondary.opacity(0.2))
+                    Capsule().fill(Color.accentColor)
+                        .frame(width: CGFloat(value / total) * 100) // Mock width
+                }
+                .frame(height: 4)
+            case .timer(_):
+                Text("Timer active...")
+            }
+            currentValueLabel?()
+        }
+    }
+}
+
+// Convenience initializers for title-only
+public extension AdaptiveProgressView where Label == Text, CurrentValueLabel == EmptyView {
+    init(_ titleKey: LocalizedStringKey, style: AdaptiveProgressViewStyle = .automatic) {
+        self.type = .indeterminate
+        self.style = style
+        self.label = { Text(titleKey) }
+        self.currentValueLabel = nil
+        self.tint = nil
+    }
+}

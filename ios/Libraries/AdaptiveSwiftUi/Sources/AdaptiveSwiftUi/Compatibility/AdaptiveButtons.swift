@@ -6,6 +6,16 @@ public enum AdaptiveButtonSizing: Sendable {
     case flexible
 }
 
+public enum AdaptiveButtonStyle: Sendable {
+    case automatic
+    case plain
+    case borderless
+    case bordered
+    case borderedProminent
+    case glass
+    case glassProminent
+}
+
 public enum AdaptiveControlSize: Sendable {
     case mini
     case small
@@ -515,6 +525,34 @@ public extension View {
                 self.frame(maxWidth: .infinity)
             case .automatic, .fitted:
                 self
+            }
+        }
+    }
+
+    @ViewBuilder
+    func adaptiveButtonStyle(_ style: AdaptiveButtonStyle) -> some View {
+        switch style {
+        case .automatic:
+            self.buttonStyle(.automatic)
+        case .plain:
+            self.buttonStyle(.plain)
+        case .borderless:
+            self.buttonStyle(.borderless)
+        case .bordered:
+            self.buttonStyle(.bordered)
+        case .borderedProminent:
+            self.buttonStyle(.borderedProminent)
+        case .glass:
+            if #available(iOS 26.0, macOS 26.0, tvOS 26.0, watchOS 26.0, visionOS 26.0, *) {
+                self.buttonStyle(.glass)
+            } else {
+                self.buttonStyle(.bordered)
+            }
+        case .glassProminent:
+            if #available(iOS 26.0, macOS 26.0, tvOS 26.0, watchOS 26.0, visionOS 26.0, *) {
+                self.buttonStyle(.glassProminent)
+            } else {
+                self.buttonStyle(.borderedProminent)
             }
         }
     }
