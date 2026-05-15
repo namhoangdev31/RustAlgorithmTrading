@@ -1,17 +1,30 @@
 import SwiftUI
 
-/// An adaptive representation of the OS 26+ `ConcentricRectangle`.
-/// - Uses the native `ConcentricRectangle` on supported platforms (iOS 26.0+).
-/// - Falls back to a standard `RoundedRectangle` using the provided fallback corner radius on older versions.
+/// An adaptive representation of the modern `ConcentricRectangle` shape.
+///
+/// `AdaptiveConcentricRectangle` provides a bridge for the advanced geometry features 
+/// introduced in future OS versions (iOS 26+).
+/// - **Modern OS (iOS 26+)**: Leverages the native `ConcentricRectangle` which dynamically 
+///   computes corner radii based on its nesting context.
+/// - **Legacy Fallback**: Uses a `RoundedRectangle` with a continuous corner style and 
+///   automatically adjusts the radius based on the current inset to simulate concentricity.
+///
+/// Example:
+/// ```swift
+/// AdaptiveConcentricRectangle(fallbackCornerRadius: 30)
+///     .stroke(Color.blue, lineWidth: 2)
+///     .frame(width: 200, height: 100)
+/// ```
 public struct AdaptiveConcentricRectangle: InsettableShape {
     public var fallbackCornerRadius: CGFloat
     public var isUniform: Bool
     public var insetAmount: CGFloat = 0
 
     /// Creates an adaptive concentric rectangle.
+    ///
     /// - Parameters:
-    ///   - fallbackCornerRadius: The corner radius to use on OS versions < 26.0.
-    ///   - isUniform: Whether the corners should be uniform on OS versions >= 26.0.
+    ///   - fallbackCornerRadius: The corner radius to use on platforms that don't support native concentric rectangles.
+    ///   - isUniform: Whether the corners should be uniform on OS versions that support native concentric rectangles.
     public init(fallbackCornerRadius: CGFloat = 20, isUniform: Bool = true) {
         self.fallbackCornerRadius = fallbackCornerRadius
         self.isUniform = isUniform
@@ -32,6 +45,7 @@ public struct AdaptiveConcentricRectangle: InsettableShape {
         }
     }
 
+    /// Returns a new shape that is inset by the given amount.
     public func inset(by amount: CGFloat) -> AdaptiveConcentricRectangle {
         var shape = self
         shape.insetAmount += amount

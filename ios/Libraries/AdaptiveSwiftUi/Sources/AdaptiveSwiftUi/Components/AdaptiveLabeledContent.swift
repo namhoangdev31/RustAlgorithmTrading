@@ -1,8 +1,16 @@
 import SwiftUI
 
-/// An adaptive component that mimics `LabeledContent`.
-/// - On newer OS versions (e.g. iOS 16+), it uses the native `LabeledContent`.
-/// - On older OS versions, it falls back to an `HStack` with a `Spacer`.
+/// An adaptive component that presents a label and a related value content.
+///
+/// `AdaptiveLabeledContent` provides a bridge for the `LabeledContent` API:
+/// - **Modern OS (iOS 16+)**: Leverages the native `LabeledContent` for platform-standard alignment.
+/// - **Legacy Fallback**: Polyfills using an `HStack` with a `Spacer` and secondary 
+///   foreground styling for the value to maintain a consistent metadata look on older systems.
+///
+/// Example:
+/// ```swift
+/// AdaptiveLabeledContent("Version", value: "2.4.0")
+/// ```
 public struct AdaptiveLabeledContent<Label: View, Content: View>: View {
     private enum NativeType {
         case custom
@@ -14,6 +22,7 @@ public struct AdaptiveLabeledContent<Label: View, Content: View>: View {
     private let label: Label
     private let content: Content
 
+    /// Creates an adaptive labeled content with custom views for both label and content.
     public init(@ViewBuilder content: () -> Content, @ViewBuilder label: () -> Label) {
         self.label = label()
         self.content = content()
@@ -67,6 +76,7 @@ extension AdaptiveLabeledContent where Label == Text, Content == Text {
 
     // MARK: - String-based Initializers
 
+    /// Creates an adaptive labeled content using a title string and a value string.
     public init<S: StringProtocol>(_ title: S, value: S) {
         self.init(
             nativeType: .string(String(title), String(value)),
@@ -75,6 +85,7 @@ extension AdaptiveLabeledContent where Label == Text, Content == Text {
         )
     }
 
+    /// Creates an adaptive labeled content using a localized title key and a value string.
     public init(_ titleKey: LocalizedStringKey, value: String) {
         self.init(
             nativeType: .stringKey(titleKey, value),
@@ -85,6 +96,12 @@ extension AdaptiveLabeledContent where Label == Text, Content == Text {
 
     // MARK: - Formatted Initializers
 
+    /// Creates an adaptive labeled content using a format style for the value.
+    ///
+    /// Example:
+    /// ```swift
+    /// AdaptiveLabeledContent("Total", value: 1250, format: .currency(code: "USD"))
+    /// ```
     @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
     public init<S: StringProtocol, F: FormatStyle>(_ title: S, value: F.FormatInput, format: F)
     where F.FormatOutput == String {
@@ -96,6 +113,7 @@ extension AdaptiveLabeledContent where Label == Text, Content == Text {
         )
     }
 
+    /// Creates an adaptive labeled content with a localized title and a format style for the value.
     @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
     public init<F: FormatStyle>(_ titleKey: LocalizedStringKey, value: F.FormatInput, format: F)
     where F.FormatOutput == String {

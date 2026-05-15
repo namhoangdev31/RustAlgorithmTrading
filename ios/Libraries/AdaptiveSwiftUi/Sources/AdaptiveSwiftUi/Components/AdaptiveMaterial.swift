@@ -1,12 +1,29 @@
 import SwiftUI
 
 
-/// A component that acts as a translucent material background.
-/// On iOS 15+, it uses the native SwiftUI ShapeStyle `.regularMaterial` etc.
-/// On iOS 13/14, it uses `UIViewRepresentable` to bridge `UIVisualEffectView`.
+/// A view that represents a translucent material background, adapting to platform capabilities.
+///
+/// `AdaptiveMaterial` provides a unified way to apply blur and vibrancy effects:
+/// - **Modern OS (iOS 15+, macOS 12+)**: Uses native SwiftUI `ShapeStyle` materials 
+///   (e.g., `.ultraThinMaterial`).
+/// - **Legacy Fallback**: Bridges `UIVisualEffectView` on iOS 13/14 and `NSVisualEffectView` 
+///   on macOS to provide a consistent frosted-glass look.
+/// - **Standard Fallback**: Uses semi-transparent colors on platforms without visual effect 
+///   support (like older watchOS).
+///
+/// Example:
+/// ```swift
+/// Text("Glass Overlay")
+///     .padding()
+///     .background(AdaptiveMaterial(.ultraThin))
+///     .cornerRadius(12)
+/// ```
 public struct AdaptiveMaterial: View {
     private let type: AdaptiveMaterialType
     
+    /// Creates an adaptive material of the specified type.
+    ///
+    /// - Parameter type: The thickness/density of the material (e.g., `.thin`, `.thick`).
     public init(_ type: AdaptiveMaterialType = .regular) {
         self.type = type
     }

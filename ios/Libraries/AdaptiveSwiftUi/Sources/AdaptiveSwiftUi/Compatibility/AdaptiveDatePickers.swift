@@ -1,7 +1,17 @@
 import SwiftUI
 
-
-public struct AdaptiveMultiDatePicker<Label: View>: View {
+/// An adaptive component that provides multi-date selection when available.
+///
+/// This component leverages `MultiDatePicker` on modern systems and falls back
+/// to a disabled single `DatePicker` or simple label on older systems.
+///
+/// Example:
+/// ```swift
+/// AdaptiveMultiDatePicker(selection: $dates) {
+///     Text("Select Dates")
+/// }
+/// ```
+public struct AdaptiveMultiDatePicker<Label: View> {
     private let title: () -> Label
     private let selection: Binding<Set<DateComponents>>
     private let dateRange: PartialRangeFrom<Date>?
@@ -15,7 +25,9 @@ public struct AdaptiveMultiDatePicker<Label: View>: View {
         self.selection = selection
         self.dateRange = dateRange
     }
+}
 
+extension AdaptiveMultiDatePicker: View {
     @ViewBuilder
     public var body: some View {
         #if os(iOS) || os(visionOS)
@@ -47,6 +59,19 @@ public struct AdaptiveMultiDatePicker<Label: View>: View {
 }
 
 extension View {
+    
+    /// Sets the visual style for adaptive date pickers.
+    ///
+    /// This modifier maps `AdaptiveDatePickerStyle` to the appropriate native `DatePickerStyle`.
+    /// Not all styles are available on all platforms (e.g., `.field` and `.stepperField` are macOS specific).
+    ///
+    /// Example:
+    /// ```swift
+    /// AdaptiveDatePicker(selection: $date) {
+    ///     Text("Event Date")
+    /// }
+    /// .adaptiveDatePickerStyle(.graphical)
+    /// ```
     @ViewBuilder
     public func adaptiveDatePickerStyle(_ style: AdaptiveDatePickerStyle) -> some View {
         switch style {
@@ -87,6 +112,15 @@ extension View {
         }
     }
 
+    /// Sets the tint color for adaptive date pickers.
+    ///
+    /// Uses native `tint(_:)` on iOS 15+ and falls back to `accentColor` on older versions.
+    ///
+    /// Example:
+    /// ```swift
+    /// MyDatePicker()
+    ///     .adaptiveDatePickerTint(.blue)
+    /// ```
     @ViewBuilder
     public func adaptiveDatePickerTint(_ color: Color?) -> some View {
         if let color {

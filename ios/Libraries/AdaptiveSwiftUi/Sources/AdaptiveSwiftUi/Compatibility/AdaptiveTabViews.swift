@@ -26,6 +26,20 @@ import SwiftUI
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 extension View {
+    
+    /// Sets the visual style for adaptive tab views.
+    ///
+    /// This modifier handles cross-platform mapping for TabView styles:
+    /// - **sidebarAdaptable**: The modern iOS 18+ style that adapts between a bottom bar and a sidebar.
+    /// - **page**: Standard paging behavior for walkthroughs or carousels.
+    /// - **verticalPage**: watchOS 10+ specific vertical paging.
+    /// - **grouped**: macOS 15+ grouped tab behavior.
+    ///
+    /// Example:
+    /// ```swift
+    /// TabView { ... }
+    ///     .adaptiveTabViewStyle(.sidebarAdaptable)
+    /// ```
     @ViewBuilder
     public func adaptiveTabViewStyle(_ style: AdaptiveTabViewStyle) -> some View {
         switch style {
@@ -100,7 +114,8 @@ extension View {
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 extension View {
-    /// Item #8: Tab View Side Bar Header — iOS 18+, macOS 15+, visionOS 2+.
+    
+    /// Adds a header view to the TabView sidebar (iOS 18+).
     @ViewBuilder
     public func adaptiveTabViewSidebarHeader<Content: View>(
         @ViewBuilder _ content: @escaping () -> Content
@@ -116,7 +131,7 @@ extension View {
         #endif
     }
 
-    /// Item #4: Tab View Side Bar Footer — iOS 18+, macOS 15+, visionOS 2+.
+    /// Adds a footer view to the TabView sidebar (iOS 18+).
     @ViewBuilder
     public func adaptiveTabViewSidebarFooter<Content: View>(
         @ViewBuilder _ content: @escaping () -> Content
@@ -132,7 +147,7 @@ extension View {
         #endif
     }
 
-    /// Item #5: Tab View Side Bar Bottom Bar — iOS 18+, visionOS 2+.
+    /// Adds a bottom bar to the TabView sidebar (iOS 18+).
     @ViewBuilder
     public func adaptiveTabViewSidebarBottomBar<Content: View>(
         @ViewBuilder _ content: @escaping () -> Content
@@ -148,7 +163,7 @@ extension View {
         #endif
     }
 
-    /// Item #6: Default Adaptable Tab Bar Placement — iOS 18+, iPadOS 18+.
+    /// Configures the default placement for adaptable tab bars (iOS 18+).
     @ViewBuilder
     public func adaptiveDefaultAdaptableTabBarPlacement(
         _ placement: AdaptiveAdaptableTabBarPlacement = .automatic
@@ -174,7 +189,16 @@ extension View {
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 extension View {
-    /// Item #3: Bind customization storage via Data.
+    
+    /// Binds TabView customization state to a Data persistent store.
+    ///
+    /// This allows users to reorder or hide tabs, with the state persisted as JSON data.
+    ///
+    /// Example:
+    /// ```swift
+    /// TabView { ... }
+    ///     .adaptiveTabViewCustomization($savedTabData)
+    /// ```
     @ViewBuilder
     public func adaptiveTabViewCustomization(_ customizationData: Binding<Data>) -> some View {
         #if os(iOS) || os(macOS) || os(visionOS)
@@ -199,7 +223,7 @@ extension View {
         #endif
     }
 
-    /// Item #3: Bind customization storage via optional Data.
+    /// Binds TabView customization state to an optional Data persistent store.
     @ViewBuilder
     public func adaptiveTabViewCustomization(_ customizationData: Binding<Data?>) -> some View {
         #if os(iOS) || os(macOS) || os(visionOS)
@@ -250,7 +274,8 @@ extension View {
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 extension View {
-    /// Item #100: Hide tab bar on scroll down — iOS 26+, iPadOS 26+.
+    
+    /// Configures the tab bar minimize behavior on scroll (iOS 26+).
     @ViewBuilder
     public func adaptiveTabBarMinimizeBehavior(
         _ behavior: AdaptiveTabBarMinimizeBehavior = .onScrollDown
@@ -271,7 +296,7 @@ extension View {
         #endif
     }
 
-    /// Item #99: Bottom Accessory — iOS 26+, iPadOS 26+.
+    /// Adds a bottom accessory view to the tab bar (iOS 26+).
     @ViewBuilder
     public func adaptiveTabViewBottomAccessory<Content: View>(
         @ViewBuilder content: @escaping () -> Content
@@ -295,12 +320,13 @@ extension View {
 
 @available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *)
 extension TabContent {
-    /// Item #2: Assign a customization ID to this tab.
+    
+    /// Assigns a stable customization ID to this tab for state persistence.
     public func adaptiveCustomizationID(_ id: String) -> some TabContent<TabValue> {
         customizationID(id)
     }
 
-    /// Item #7: Add custom actions to a tab section.
+    /// Adds custom context actions to a tab section.
     #if !os(watchOS)
         public func adaptiveSectionActions<Actions: View>(
             @ViewBuilder _ content: @escaping () -> Actions
@@ -309,13 +335,13 @@ extension TabContent {
         }
     #endif
 
-    /// Item #10: Badge on a tab (integer).
+    /// Adds a numerical badge to a tab.
     #if !os(tvOS) && !os(watchOS)
         public func adaptiveTabBadge(_ value: Int) -> some TabContent<TabValue> {
             badge(value)
         }
 
-        /// Item #10: Badge on a tab (string).
+        /// Adds a string badge to a tab.
         public func adaptiveTabBadge(_ value: String) -> some TabContent<TabValue> {
             badge(value)
         }
@@ -327,7 +353,7 @@ extension TabContent {
 #if os(iOS) || os(visionOS)
     @available(iOS 18.0, visionOS 2.0, *)
     extension TabContent {
-        /// Item #1: Configure customization behavior for specific placements.
+        /// Configures the user's ability to customize this tab (reorder/hide).
         public func adaptiveCustomizationBehavior(
             _ behavior: AdaptiveTabCustomizationBehavior = .automatic,
             for placements: Set<AdaptiveTabCustomizationPlacement> = [.sidebar, .tabBar]

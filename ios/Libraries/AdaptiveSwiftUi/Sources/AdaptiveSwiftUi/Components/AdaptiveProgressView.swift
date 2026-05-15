@@ -1,5 +1,18 @@
 import SwiftUI
 
+/// A highly adaptive progress view that indicates the progress of a task.
+///
+/// `AdaptiveProgressView` handles different progress types (indeterminate, value-based, or timer-based)
+/// across all Apple platforms and OS versions:
+/// - **Modern OS (iOS 14+)**: Leverages the native `ProgressView` for system-standard appearance.
+/// - **Legacy Fallback (iOS 13)**: Polyfills using custom shapes (spinning circles or growing capsules)
+///   to ensure visual feedback on older systems.
+///
+/// Example:
+/// ```swift
+/// AdaptiveProgressView("Loading Data...", value: 0.45)
+///     .adaptiveProgressViewStyle(.linear)
+/// ```
 public struct AdaptiveProgressView<Label: View, CurrentValueLabel: View>: View {
     private enum ProgressType {
         case indeterminate
@@ -13,7 +26,11 @@ public struct AdaptiveProgressView<Label: View, CurrentValueLabel: View>: View {
     private let currentValueLabel: (() -> CurrentValueLabel)?
     private let tint: Color?
 
-    // Indeterminate
+    /// Creates an indeterminate adaptive progress view.
+    ///
+    /// - Parameters:
+    ///   - style: The visual style to apply (e.g., `.circular`, `.linear`).
+    ///   - label: A view builder describing the progress label.
     public init(
         style: AdaptiveProgressViewStyle = .automatic,
         @ViewBuilder label: @escaping () -> Label
@@ -25,7 +42,14 @@ public struct AdaptiveProgressView<Label: View, CurrentValueLabel: View>: View {
         self.tint = nil
     }
 
-    // Value-based
+    /// Creates a value-based adaptive progress view.
+    ///
+    /// - Parameters:
+    ///   - value: The current progress value.
+    ///   - total: The maximum progress value. Defaults to 1.0.
+    ///   - style: The visual style to apply.
+    ///   - label: A view builder for the progress label.
+    ///   - currentValueLabel: A view builder for the current value description.
     public init(
         value: Double,
         total: Double = 1.0,
@@ -40,7 +64,14 @@ public struct AdaptiveProgressView<Label: View, CurrentValueLabel: View>: View {
         self.tint = nil
     }
 
-    // Timer-based (available in newer OS)
+    /// Creates a timer-based adaptive progress view.
+    ///
+    /// - Parameters:
+    ///   - timerInterval: The time interval for the progress.
+    ///   - countsDown: Whether the progress counts down.
+    ///   - style: The visual style to apply.
+    ///   - label: A view builder for the progress label.
+    ///   - currentValueLabel: A view builder for the current time description.
     @available(iOS 14.0, macOS 11.0, watchOS 7.0, tvOS 14.0, *)
     public init(
         timerInterval: DateInterval,
@@ -83,7 +114,8 @@ public struct AdaptiveProgressView<Label: View, CurrentValueLabel: View>: View {
             }
         case .value(let value, let total):
             if let label = label, let currentValueLabel = currentValueLabel {
-                ProgressView(value: value, total: total, label: label, currentValueLabel: currentValueLabel)
+                ProgressView(
+                    value: value, total: total, label: label, currentValueLabel: currentValueLabel)
             } else if let label = label {
                 ProgressView(value: value, total: total, label: label)
             } else {
@@ -123,7 +155,7 @@ public struct AdaptiveProgressView<Label: View, CurrentValueLabel: View>: View {
                 ZStack(alignment: .leading) {
                     Capsule().fill(Color.secondary.opacity(0.2))
                     Capsule().fill(Color.accentColor)
-                        .frame(width: CGFloat(value / total) * 100)  // Mock width
+                        .frame(width: CGFloat(value / total) * 100)  // Mock width simulation
                 }
                 .frame(height: 4)
             case .timer(_):
@@ -134,10 +166,13 @@ public struct AdaptiveProgressView<Label: View, CurrentValueLabel: View>: View {
     }
 }
 
-// Convenience initializers
+// MARK: - Convenience Extensions
+
 extension AdaptiveProgressView where CurrentValueLabel == EmptyView {
-    /// Creates an indeterminate progress view with a label.
-    public init(style: AdaptiveProgressViewStyle = .automatic, @ViewBuilder label: @escaping () -> Label) {
+    /// Creates an indeterminate adaptive progress view with a custom label.
+    public init(
+        style: AdaptiveProgressViewStyle = .automatic, @ViewBuilder label: @escaping () -> Label
+    ) {
         self.type = .indeterminate
         self.style = style
         self.label = label
@@ -145,7 +180,7 @@ extension AdaptiveProgressView where CurrentValueLabel == EmptyView {
         self.tint = nil
     }
 
-    /// Creates a progress view for a specific value and total.
+    /// Creates an adaptive progress view for a specific value and total.
     public init(
         value: Double,
         total: Double = 1.0,
@@ -161,7 +196,7 @@ extension AdaptiveProgressView where CurrentValueLabel == EmptyView {
 }
 
 extension AdaptiveProgressView where Label == Text, CurrentValueLabel == EmptyView {
-    /// Creates an indeterminate progress view with a title string.
+    /// Creates an indeterminate adaptive progress view with a string title.
     public init<S: StringProtocol>(_ title: S, style: AdaptiveProgressViewStyle = .automatic) {
         self.type = .indeterminate
         self.style = style
@@ -170,8 +205,11 @@ extension AdaptiveProgressView where Label == Text, CurrentValueLabel == EmptyVi
         self.tint = nil
     }
 
-    /// Creates a progress view for a specific value and total with a title string.
-    public init<S: StringProtocol>(_ title: S, value: Double, total: Double = 1.0, style: AdaptiveProgressViewStyle = .automatic) {
+    /// Creates a value-based adaptive progress view with a string title.
+    public init<S: StringProtocol>(
+        _ title: S, value: Double, total: Double = 1.0,
+        style: AdaptiveProgressViewStyle = .automatic
+    ) {
         self.type = .value(value, total)
         self.style = style
         self.label = { Text(title) }

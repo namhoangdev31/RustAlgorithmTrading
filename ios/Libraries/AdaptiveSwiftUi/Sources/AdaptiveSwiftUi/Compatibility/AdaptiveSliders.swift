@@ -12,7 +12,15 @@ public struct AdaptiveSliderTickInfo: Identifiable, @unchecked Sendable {
     }
 }
 
-/// A structure that represents a tick in an adaptive slider.
+/// A structure that represents a tick mark in an adaptive slider.
+///
+/// Ticks are visual markers along the slider's track. On supported systems (iOS 26+),
+/// they are rendered as native slider ticks.
+///
+/// Example:
+/// ```swift
+/// AdaptiveSliderTick(0.5) { Text("Middle") }
+/// ```
 public struct AdaptiveSliderTick: View {
     public let value: Double
     public let label: AnyView?
@@ -50,7 +58,16 @@ public struct AdaptiveSliderTickContentForEach<Data: RandomAccessCollection, ID:
 }
 
 extension View {
-    /// Applies a tint color to a slider, with fallback for older OS versions.
+    
+    /// Applies a tint color to a slider with cross-platform support.
+    ///
+    /// Uses native `.tint()` on iOS 15+ and falls back to `.accentColor()` on older versions.
+    ///
+    /// Example:
+    /// ```swift
+    /// Slider(value: $val)
+    ///     .adaptiveSliderTint(.orange)
+    /// ```
     @ViewBuilder
     public func adaptiveSliderTint(_ color: Color?) -> some View {
         if let color = color {
@@ -64,6 +81,7 @@ extension View {
         }
     }
 
+    /// Configures tick marks for an adaptive slider (Future Support).
     @ViewBuilder
     public func adaptiveSliderTicks<T: View>(@ViewBuilder _ ticks: @escaping () -> T) -> some View {
         #if os(iOS) || os(macOS) || os(watchOS) || os(visionOS)
@@ -80,6 +98,25 @@ extension View {
     }
 }
 
+/// An adaptive slider that supports tick marks and dynamic value labels.
+///
+/// This component provides advanced slider features:
+/// - **Modern OS (iOS 26+)**: Renders a native `Slider` with ticks and current value labels.
+/// - **Legacy Fallback**: Uses a `VStack` to layout the standard `Slider` with a descriptive 
+///   label below it to maintain functional parity.
+///
+/// Example:
+/// ```swift
+/// AdaptiveTickedSlider(value: $volume, in: 0...100) {
+///     Text("Volume")
+/// } currentValueLabel: {
+///     Text("\(Int(volume))%")
+/// } minimumValueLabel: {
+///     Image(systemName: "speaker.fill")
+/// } maximumValueLabel: {
+///     Image(systemName: "speaker.wave.3.fill")
+/// }
+/// ```
 @available(tvOS, unavailable)
 public struct AdaptiveTickedSlider<
     V: BinaryFloatingPoint & Hashable,

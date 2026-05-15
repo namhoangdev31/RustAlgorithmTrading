@@ -1,6 +1,17 @@
 import SwiftUI
 
 extension View {
+    
+    /// Sets the sizing behavior for adaptive buttons.
+    ///
+    /// On iOS 26+, it uses the native `buttonSizing` modifier.
+    /// On older versions, `.flexible` is polyfilled using `maxWidth: .infinity`.
+    ///
+    /// Example:
+    /// ```swift
+    /// AdaptiveButton("Submit") {}
+    ///     .adaptiveButtonSizing(.flexible)
+    /// ```
     @ViewBuilder
     public func adaptiveButtonSizing(_ sizing: AdaptiveButtonSizing) -> some View {
         if #available(iOS 26.0, macOS 26.0, tvOS 26.0, watchOS 26.0, visionOS 26.0, *) {
@@ -22,6 +33,15 @@ extension View {
         }
     }
 
+    /// Sets the visual style for adaptive buttons.
+    ///
+    /// Supports native styles and polyfills the modern iOS 26+ "Glass" styles to "Bordered" styles on older systems.
+    ///
+    /// Example:
+    /// ```swift
+    /// AdaptiveButton("Action") {}
+    ///     .adaptiveButtonStyle(.glassProminent)
+    /// ```
     @ViewBuilder
     public func adaptiveButtonStyle(_ style: AdaptiveButtonStyle) -> some View {
         switch style {
@@ -50,6 +70,15 @@ extension View {
         }
     }
 
+    /// Sets the tint color for adaptive buttons.
+    ///
+    /// Uses native `tint(_:)` on iOS 15+ and gracefully degrades on older versions.
+    ///
+    /// Example:
+    /// ```swift
+    /// AdaptiveButton("Delete") {}
+    ///     .adaptiveButtonTint(.red)
+    /// ```
     @ViewBuilder
     public func adaptiveButtonTint(_ tint: Color?) -> some View {
         if let tint {
@@ -63,6 +92,15 @@ extension View {
         }
     }
 
+    /// Sets the border shape for adaptive buttons.
+    ///
+    /// Supports various shapes including Capsule and Circle, with automatic fallback for older OS versions.
+    ///
+    /// Example:
+    /// ```swift
+    /// AdaptiveButton("Login") {}
+    ///     .adaptiveButtonBorderShape(.capsule)
+    /// ```
     @ViewBuilder
     public func adaptiveButtonBorderShape(_ shape: AdaptiveButtonBorderShape) -> some View {
         #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS) || os(visionOS)

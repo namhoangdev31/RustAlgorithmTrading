@@ -1,8 +1,19 @@
 import SwiftUI
 
-/// An adaptive component that mimics `ContentUnavailableView`.
-/// - On iOS 17+, it uses the native `ContentUnavailableView`.
-/// - On older versions, it falls back to a custom `VStack` implementation.
+/// An adaptive view for displaying states when content is unavailable.
+///
+/// `AdaptiveContentUnavailableView` provides a consistent way to inform users about 
+/// empty states (e.g., no data, search results not found, or connection errors).
+/// - **Modern OS (iOS 17+)**: Leverages the native `ContentUnavailableView`.
+/// - **Legacy Fallback**: Uses a custom `VStack` implementation with standardized styling 
+///   to ensure functional and visual parity.
+///
+/// Example:
+/// ```swift
+/// AdaptiveContentUnavailableView("No Connection", systemImage: "wifi.slash") {
+///     Button("Retry") { reloadData() }
+/// }
+/// ```
 public struct AdaptiveContentUnavailableView<Label: View, Description: View, Actions: View>: View {
     private enum Variant {
         case custom
@@ -13,7 +24,13 @@ public struct AdaptiveContentUnavailableView<Label: View, Description: View, Act
     private let label: Label
     private let description: Description
     private let actions: Actions
-
+ 
+    /// Creates a custom adaptive content unavailable view.
+    ///
+    /// - Parameters:
+    ///   - label: A view builder for the primary label (icon/title).
+    ///   - description: A view builder for the secondary descriptive text.
+    ///   - actions: A view builder for action buttons.
     public init(
         @ViewBuilder label: () -> Label,
         @ViewBuilder description: () -> Description = { EmptyView() },
@@ -98,12 +115,13 @@ public struct AdaptiveContentUnavailableView<Label: View, Description: View, Act
 // MARK: - Search Extension
 
 public extension AdaptiveContentUnavailableView where Label == EmptyView, Description == EmptyView, Actions == EmptyView {
-    /// A pre-built placeholder for empty search results.
+    
+    /// A pre-built adaptive placeholder for empty search results.
     static var search: AdaptiveContentUnavailableView<EmptyView, EmptyView, EmptyView> {
         AdaptiveContentUnavailableView(variant: .search(nil), label: EmptyView(), description: EmptyView(), actions: EmptyView())
     }
     
-    /// A pre-built placeholder for empty search results with search text.
+    /// A pre-built adaptive placeholder for empty search results with specific search text.
     static func search(text: String) -> AdaptiveContentUnavailableView<EmptyView, EmptyView, EmptyView> {
         AdaptiveContentUnavailableView(variant: .search(text), label: EmptyView(), description: EmptyView(), actions: EmptyView())
     }
@@ -112,6 +130,8 @@ public extension AdaptiveContentUnavailableView where Label == EmptyView, Descri
 // MARK: - Convenience Initializers
 
 public extension AdaptiveContentUnavailableView where Label == SwiftUI.Label<Text, Image>, Description == Text, Actions == EmptyView {
+    
+    /// Creates an adaptive content unavailable view using a localized title and system image.
     init(_ title: LocalizedStringKey, systemImage: String, description: LocalizedStringKey? = nil) {
         self.init(
             variant: .custom,
@@ -121,6 +141,7 @@ public extension AdaptiveContentUnavailableView where Label == SwiftUI.Label<Tex
         )
     }
     
+    /// Creates an adaptive content unavailable view using a title string and system image.
     init<S: StringProtocol>(_ title: S, systemImage: String, description: S? = nil) {
         self.init(
             variant: .custom,
@@ -132,6 +153,8 @@ public extension AdaptiveContentUnavailableView where Label == SwiftUI.Label<Tex
 }
 
 public extension AdaptiveContentUnavailableView where Label == SwiftUI.Label<Text, Image>, Description == Text {
+    
+    /// Creates an adaptive content unavailable view with a localized title, image, and custom actions.
     init(
         _ title: LocalizedStringKey,
         systemImage: String,
@@ -146,6 +169,7 @@ public extension AdaptiveContentUnavailableView where Label == SwiftUI.Label<Tex
         )
     }
     
+    /// Creates an adaptive content unavailable view with a title string, image, and custom actions.
     init<S: StringProtocol>(
         _ title: S,
         systemImage: String,

@@ -1,14 +1,24 @@
 import SwiftUI
 
-
-/// An adaptive label component that provides a fallback to an `HStack` of icon and title on iOS 13,
-/// and uses the native `Label` on iOS 14+.
+/// An adaptive label component that provides platform-agnostic icon and title rendering.
+///
+/// `AdaptiveLabel` handles the transition between iOS 13 and modern OS versions:
+/// - **Modern OS (iOS 14+)**: Leverages the native `Label` component.
+/// - **Legacy Fallback (iOS 13)**: Polyfills using an `HStack` with standardized spacing 
+///   to ensure visual parity.
+///
+/// Example:
+/// ```swift
+/// AdaptiveLabel("Profile", systemImage: "person.circle")
+///     .adaptiveLabelStyle(.titleAndIcon)
+/// ```
 public struct AdaptiveLabel<Title: View, Icon: View>: View {
     let title: Title
     let icon: Icon
 
     @Environment(\.adaptiveLabelStyle) private var style: AdaptiveLabelStyleType
 
+    /// Creates an adaptive label with custom title and icon views.
     public init(@ViewBuilder title: () -> Title, @ViewBuilder icon: () -> Icon) {
         self.title = title()
         self.icon = icon()
@@ -40,20 +50,24 @@ public struct AdaptiveLabel<Title: View, Icon: View>: View {
 }
 
 public extension AdaptiveLabel where Title == Text, Icon == Image {
+    /// Creates an adaptive label using a localized title key and a system image name.
     init(_ titleKey: LocalizedStringKey, systemImage: String) {
         self.init(title: { Text(titleKey) }, icon: { Image(systemName: systemImage) })
     }
     
+    /// Creates an adaptive label using a localized title key and a custom image name.
     init(_ titleKey: LocalizedStringKey, image: String) {
         self.init(title: { Text(titleKey) }, icon: { Image(image) })
     }
 }
 
 public extension AdaptiveLabel where Title == Text, Icon == Image {
+    /// Creates an adaptive label using a title string and a system image name.
     init<S: StringProtocol>(_ title: S, systemImage: String) {
         self.init(title: { Text(title) }, icon: { Image(systemName: systemImage) })
     }
     
+    /// Creates an adaptive label using a title string and a custom image name.
     init<S: StringProtocol>(_ title: S, image: String) {
         self.init(title: { Text(title) }, icon: { Image(image) })
     }
@@ -66,6 +80,7 @@ private struct AdaptiveLabelStyleKey: EnvironmentKey {
 }
 
 public extension EnvironmentValues {
+    /// The current adaptive label style in the environment.
     var adaptiveLabelStyle: AdaptiveLabelStyleType {
         get { self[AdaptiveLabelStyleKey.self] }
         set { self[AdaptiveLabelStyleKey.self] = newValue }
@@ -73,8 +88,15 @@ public extension EnvironmentValues {
 }
 
 public extension View {
-    /// Applies an adaptive label style to the view.
-    /// This works with both `AdaptiveLabel` on iOS 13 and native `Label` on iOS 14+.
+    /// Sets the adaptive label style for this view and its subviews.
+    ///
+    /// This modifier works with both `AdaptiveLabel` and the native SwiftUI `Label`.
+    ///
+    /// Example:
+    /// ```swift
+    /// MyView()
+    ///     .adaptiveLabelStyle(.iconOnly)
+    /// ```
     @ViewBuilder
     func adaptiveLabelStyle(_ style: AdaptiveLabelStyleType) -> some View {
         if #available(iOS 14.0, macOS 11.0, watchOS 7.0, tvOS 14.0, visionOS 1.0, *) {

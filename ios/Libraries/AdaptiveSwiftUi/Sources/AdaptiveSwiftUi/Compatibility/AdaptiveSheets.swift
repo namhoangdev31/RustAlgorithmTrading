@@ -1,7 +1,17 @@
 import SwiftUI
 
-
 public extension View {
+    
+    /// Sets the adaptive sizing behavior for presented sheets.
+    ///
+    /// Available on modern systems (iOS 18+, macOS 15+, etc.).
+    /// Fallbacks gracefully on older systems.
+    ///
+    /// Example:
+    /// ```swift
+    /// View()
+    ///     .adaptivePresentationSizing(.fitted)
+    /// ```
     @ViewBuilder
     func adaptivePresentationSizing(_ sizing: AdaptiveSheetSizing) -> some View {
         if #available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *) {
@@ -18,6 +28,17 @@ public extension View {
         }
     }
 
+    /// Sets the available detents for an adaptive sheet presentation.
+    ///
+    /// This modifier handles cross-platform mapping for sheet heights (detents):
+    /// - **iOS 16+ / macOS 13+**: Maps to native `.presentationDetents()`.
+    /// - **Legacy Fallback**: Gracefully ignores the modifier on older systems.
+    ///
+    /// Example:
+    /// ```swift
+    /// MySheetContent()
+    ///     .adaptivePresentationDetents([.medium, .large])
+    /// ```
     @ViewBuilder
     func adaptivePresentationDetents(_ detents: [AdaptivePresentationDetent]) -> some View {
         if #available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, visionOS 1.0, *) {
@@ -27,6 +48,7 @@ public extension View {
         }
     }
 
+    /// Sets the available detents with a binding for selection.
     @ViewBuilder
     func adaptivePresentationDetents(
         _ detents: [AdaptivePresentationDetent],
@@ -51,6 +73,7 @@ public extension View {
         }
     }
 
+    /// Sets the corner radius for an adaptive sheet presentation.
     @ViewBuilder
     func adaptivePresentationCornerRadius(_ radius: CGFloat?) -> some View {
         if let radius {
@@ -64,6 +87,13 @@ public extension View {
         }
     }
 
+    /// Sets the background style for an adaptive sheet presentation.
+    ///
+    /// Example:
+    /// ```swift
+    /// MySheet()
+    ///     .adaptivePresentationBackground(.ultraThinMaterial)
+    /// ```
     @ViewBuilder
     func adaptivePresentationBackground<S: ShapeStyle>(_ style: S) -> some View {
         if #available(iOS 16.4, macOS 13.3, tvOS 16.4, watchOS 9.4, visionOS 1.0, *) {
@@ -73,6 +103,7 @@ public extension View {
         }
     }
 
+    /// Configures the interaction behavior for the background of a sheet.
     @ViewBuilder
     func adaptivePresentationBackgroundInteraction(
         _ interaction: AdaptivePresentationBackgroundInteraction
@@ -93,6 +124,7 @@ public extension View {
         }
     }
 
+    /// Configures the interaction behavior for the content of a sheet.
     @ViewBuilder
     func adaptivePresentationContentInteraction(
         _ interaction: AdaptivePresentationContentInteraction
@@ -111,6 +143,7 @@ public extension View {
         }
     }
 
+    /// Controls the visibility of the drag indicator on a sheet.
     @ViewBuilder
     func adaptivePresentationDragIndicator(_ visibility: Visibility = .automatic) -> some View {
         if #available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, visionOS 1.0, *) {
@@ -120,6 +153,7 @@ public extension View {
         }
     }
 
+    /// Controls whether interactive dismissal of a sheet is disabled.
     @ViewBuilder
     func adaptiveInteractiveDismissDisabled(_ isDisabled: Bool = true) -> some View {
         if #available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, visionOS 1.0, *) {

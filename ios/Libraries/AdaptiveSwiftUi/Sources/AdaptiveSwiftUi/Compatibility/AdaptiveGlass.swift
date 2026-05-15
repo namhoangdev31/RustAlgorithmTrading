@@ -1,5 +1,16 @@
 import SwiftUI
 
+/// A container that provides a dedicated environment for glass effects on supported systems.
+///
+/// On iOS 26+ and other modern platforms, this wraps content in a native `GlassEffectContainer`.
+/// On older versions, it simply renders the content as-is.
+///
+/// Example:
+/// ```swift
+/// AdaptiveGlassContainer {
+///     Text("Hello Glass")
+/// }
+/// ```
 public struct AdaptiveGlassContainer<Content: View>: View {
     private let spacing: CGFloat
     private let content: () -> Content
@@ -25,6 +36,21 @@ public struct AdaptiveGlassContainer<Content: View>: View {
 }
 
 extension View {
+    
+    /// Applies a glass effect to the view with intelligent backward compatibility.
+    ///
+    /// - Parameters:
+    ///   - cornerRadius: The radius for the rounded corners. Default is 20.
+    ///   - tint: An optional color tint to apply to the glass.
+    ///   - interactive: Whether the glass effect responds to interaction.
+    ///   - fallbackMaterial: The material to use as a fallback on older OS versions.
+    ///   - fallbackShadowRadius: The shadow radius to apply on older versions to mimic depth.
+    ///
+    /// Example:
+    /// ```swift
+    /// MyView()
+    ///     .adaptiveGlass(cornerRadius: 16, tint: .blue.opacity(0.2))
+    /// ```
     @ViewBuilder
     public func adaptiveGlass(
         cornerRadius: CGFloat = 20,
@@ -65,6 +91,15 @@ extension View {
         }
     }
 
+    /// Configures a button with a glass visual style.
+    ///
+    /// Maps to `.glass` styles on iOS 26+ and falls back to a prominent bordered style on older systems.
+    ///
+    /// Example:
+    /// ```swift
+    /// Button("Action") {}
+    ///     .adaptiveGlassButton(.prominent)
+    /// ```
     @ViewBuilder
     public func adaptiveGlassButton(
         _ variant: AdaptiveGlassButtonVariant = .regular,
@@ -89,6 +124,7 @@ extension View {
         }
     }
 
+    /// Enables or disables the background extension effect (iOS 26+).
     @ViewBuilder
     public func adaptiveBackgroundExtension(isEnabled: Bool = true) -> some View {
         if #available(iOS 26.0, macOS 26.0, tvOS 26.0, watchOS 26.0, visionOS 26.0, *) {

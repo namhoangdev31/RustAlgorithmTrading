@@ -1,8 +1,19 @@
 import SwiftUI
 
 
-/// A generic adaptive text component that polyfills modern iOS 15/18+ FormatStyle APIs
-/// by automatically falling back to classic Foundation formatters on older OS versions.
+/// A highly adaptive text component that provides a unified interface for data formatting.
+///
+/// `AdaptiveText` bridges modern SwiftUI `FormatStyle` APIs (iOS 15/16+) to older systems:
+/// - **Modern OS**: Leverages native `Text` initializers with `FormatStyle` for efficiency 
+///   and system-standard localization.
+/// - **Legacy Fallback**: Polyfills using classic Foundation formatters (`NumberFormatter`, 
+///   `DateFormatter`, etc.) to ensure consistent data presentation on older versions.
+///
+/// Example:
+/// ```swift
+/// AdaptiveText(1250.50, format: .currency(code: "USD"))
+/// AdaptiveText(date: Date(), showTime: true)
+/// ```
 public struct AdaptiveText: View {
     private let content: AnyView
 
@@ -12,12 +23,19 @@ public struct AdaptiveText: View {
 
     // MARK: - Basic String
     
+    /// Creates a text view that displays a raw string.
     public init(_ text: String) {
         self.content = AnyView(Text(text))
     }
     
     // MARK: - Number / Currency / Percent
     
+    /// Creates a text view that displays a formatted floating-point number.
+    ///
+    /// Example:
+    /// ```swift
+    /// AdaptiveText(0.75, format: .percent) // Displays "75%"
+    /// ```
     public init<T: BinaryFloatingPoint>(_ value: T, format: AdaptiveNumberFormat) {
         let doubleValue = Double(value)
         #if os(iOS) || os(macOS) || os(watchOS) || os(tvOS) || os(visionOS)
@@ -48,12 +66,20 @@ public struct AdaptiveText: View {
         #endif
     }
     
+    /// Creates a text view that displays a formatted integer.
     public init<T: BinaryInteger>(_ value: T, format: AdaptiveNumberFormat) {
         self.init(Double(value), format: format)
     }
 
     // MARK: - Measurement
     
+    /// Creates a text view that displays a physical measurement (e.g., distance, mass).
+    ///
+    /// Example:
+    /// ```swift
+    /// let distance = Measurement(value: 5, unit: UnitLength.kilometers)
+    /// AdaptiveText(distance, width: .abbreviated) // Displays "5 km"
+    /// ```
     public init<UnitType: Dimension>(_ measurement: Measurement<UnitType>, width: AdaptiveMeasurementWidth) {
         #if os(iOS) || os(macOS) || os(watchOS) || os(tvOS) || os(visionOS)
         if #available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *) {
@@ -74,6 +100,12 @@ public struct AdaptiveText: View {
 
     // MARK: - Date / Time
     
+    /// Creates a text view that displays a formatted date or time.
+    ///
+    /// Example:
+    /// ```swift
+    /// AdaptiveText(date: Date(), showTime: false) // Displays "May 15, 2026"
+    /// ```
     public init(date: Date, showTime: Bool = false, showDate: Bool = true) {
         #if os(iOS) || os(macOS) || os(watchOS) || os(tvOS) || os(visionOS)
         if #available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *) {
@@ -91,6 +123,12 @@ public struct AdaptiveText: View {
 
     // MARK: - Duration
     
+    /// Creates a text view that displays a time duration (e.g., "01:30").
+    ///
+    /// Example:
+    /// ```swift
+    /// AdaptiveText(seconds: 90, pattern: .minuteSecond) // Displays "01:30"
+    /// ```
     public init(seconds: TimeInterval, pattern: AdaptiveTimePattern) {
         #if os(iOS) || os(macOS) || os(watchOS) || os(tvOS) || os(visionOS)
         if #available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *) {

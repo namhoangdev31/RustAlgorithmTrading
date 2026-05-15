@@ -1,11 +1,28 @@
 import SwiftUI
 
+/// A container that groups related content within a visually distinct block.
+///
+/// `AdaptiveGroupBox` provides a bridge for the `GroupBox` component:
+/// - **Modern OS (iOS 14+, macOS 10.15+)**: Leverages the native `GroupBox` for system-standard appearance.
+/// - **Legacy Fallback**: Polyfills using a `VStack` with a rounded background and 
+///   adaptive system colors to maintain visual consistency on older systems.
+///
+/// Example:
+/// ```swift
+/// AdaptiveGroupBox("Settings") {
+///     Toggle("Enable Notifications", isOn: $isEnabled)
+/// }
+/// ```
 public struct AdaptiveGroupBox<Label: View, Content: View>: View {
     private let content: () -> Content
     private let label: () -> Label
     private let hasLabel: Bool
 
-    /// Creates a group box with a custom label.
+    /// Creates a group box with a custom label view.
+    ///
+    /// - Parameters:
+    ///   - content: A view builder for the group's body content.
+    ///   - label: A view builder for the group's header/label.
     public init(
         @ViewBuilder content: @escaping () -> Content,
         @ViewBuilder label: @escaping () -> Label
@@ -24,7 +41,7 @@ public struct AdaptiveGroupBox<Label: View, Content: View>: View {
         self.hasLabel = false
     }
 
-    /// Creates a group box with a text label.
+    /// Creates a group box with a localized text title.
     public init(
         _ titleKey: LocalizedStringKey,
         @ViewBuilder content: @escaping () -> Content

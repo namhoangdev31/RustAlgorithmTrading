@@ -1,7 +1,19 @@
 import SwiftUI
 
-
 extension View {
+    
+    /// Sets the visual style for adaptive progress views.
+    ///
+    /// This modifier maps `AdaptiveProgressViewStyle` to native SwiftUI `ProgressViewStyle`:
+    /// - **Automatic**: Uses the system default style for the current context.
+    /// - **Linear**: A progress bar style (iOS 14+, macOS 11+, etc.).
+    /// - **Circular**: A spinning indeterminate or determinate indicator (iOS 14+, macOS 11+, etc.).
+    ///
+    /// Example:
+    /// ```swift
+    /// AdaptiveProgressView(value: 0.5)
+    ///     .adaptiveProgressViewStyle(.linear)
+    /// ```
     @ViewBuilder
     public func adaptiveProgressViewStyle(_ style: AdaptiveProgressViewStyle) -> some View {
         switch style {
@@ -30,6 +42,16 @@ extension View {
         }
     }
 
+    /// Sets the tint color for adaptive progress views.
+    ///
+    /// This modifier uses the native `.tint()` API on modern systems and falls back to 
+    /// `.accentColor()` on older OS versions to maintain visual consistency.
+    ///
+    /// Example:
+    /// ```swift
+    /// MyProgressView()
+    ///     .adaptiveProgressTint(.blue)
+    /// ```
     @ViewBuilder
     public func adaptiveProgressTint(_ color: Color?) -> some View {
         if let color {

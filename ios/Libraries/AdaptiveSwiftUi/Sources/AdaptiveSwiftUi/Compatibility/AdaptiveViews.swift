@@ -8,9 +8,19 @@ extension View {
 
     // MARK: - ControlSize
 
-    /// Applies a control size to the view.
-    /// - Uses `.controlSize(_:)` on iOS 15.0+, macOS 10.15+, watchOS 9.0+, tvOS 15.0+, visionOS 1.0+
-    /// - Falls back to doing nothing on older versions.
+    /// Applies a control size to the view with cross-platform support.
+    ///
+    /// - Parameters:
+    ///   - size: The adaptive control size (e.g., `.small`, `.large`).
+    ///
+    /// - Platforms Supported: iOS 15.0+, macOS 10.15+, watchOS 9.0+, tvOS 15.0+, visionOS 1.0+.
+    /// - Fallback Behavior: Gracefully does nothing on older versions.
+    ///
+    /// Example:
+    /// ```swift
+    /// Button("Action") { }
+    ///     .adaptiveControlSize(.small)
+    /// ```
     @ViewBuilder
     public func adaptiveControlSize(_ size: AdaptiveControlSize) -> some View {
         if #available(iOS 15.0, macOS 10.15, tvOS 15.0, watchOS 9.0, visionOS 1.0, *) {
@@ -22,10 +32,10 @@ extension View {
 
     // MARK: - Background Extension Effect
 
-    /// Adds the background extension effect to the view.
+    /// Adds the background extension effect to the view (Future Support).
+    ///
     /// Mirrored copies will be placed around the view on any edge with available safe area.
-    /// - Uses `.backgroundExtensionEffect()` on iOS 26.0+, macOS 26.0+, watchOS 26.0+, tvOS 26.0+, visionOS 26.0+.
-    /// - Falls back to doing nothing on older versions.
+    /// - Platforms Supported: iOS 26.0+ and other OS version 26+ platforms.
     @ViewBuilder
     public func adaptiveBackgroundExtensionEffect() -> some View {
         if #available(iOS 26.0, macOS 26.0, watchOS 26.0, tvOS 26.0, visionOS 26.0, *) {
@@ -37,9 +47,15 @@ extension View {
 
     // MARK: - Glass Effect
 
-    /// Applies the Liquid Glass effect to a view.
-    /// - Uses `.glassEffect()` on iOS 26.0+, macOS 26.0+, watchOS 26.0+, tvOS 26.0+.
-    /// - Falls back to doing nothing on older versions.
+    /// Applies the Liquid Glass effect to a view (Future Support).
+    ///
+    /// Available on iOS 26+, macOS 26+, etc. Gracefully ignored on earlier versions and visionOS.
+    ///
+    /// Example:
+    /// ```swift
+    /// MyCard()
+    ///     .adaptiveGlassEffect()
+    /// ```
     @ViewBuilder
     public func adaptiveGlassEffect() -> some View {
         #if !os(visionOS)
@@ -53,9 +69,7 @@ extension View {
         #endif
     }
 
-    /// Applies the Liquid Glass effect to a view within a specific shape.
-    /// - Uses `.glassEffect(in:)` on iOS 26.0+, macOS 26.0+, watchOS 26.0+, tvOS 26.0+.
-    /// - Falls back to doing nothing on older versions.
+    /// Applies the Liquid Glass effect to a view within a specific shape (Future Support).
     @ViewBuilder
     public func adaptiveGlassEffect<S: Shape>(in shape: S) -> some View {
         #if !os(visionOS)
@@ -68,8 +82,16 @@ extension View {
             self
         #endif
     }
+    
     // MARK: - Material Background
 
+    /// Applies an adaptive material background with continuous rounded corners.
+    ///
+    /// Example:
+    /// ```swift
+    /// Text("Floating Panel")
+    ///     .adaptiveMaterialBackground(.regular, cornerRadius: 16)
+    /// ```
     @ViewBuilder
     public func adaptiveMaterialBackground(
         _ material: AdaptiveMaterialStyle,
@@ -87,6 +109,18 @@ extension View {
 
     // MARK: - Hierarchical Foreground
 
+    /// Applies a hierarchical foreground style to the view.
+    ///
+    /// This modifier handles hierarchical styles across OS versions:
+    /// - **iOS 17+**: Uses native `.foregroundStyle` with hierarchical variants (`.secondary`, `.tertiary`, etc.).
+    /// - **iOS 15-16**: Uses native `.foregroundStyle` with simulated opacity.
+    /// - **Legacy**: Falls back to `.foregroundColor` with simulated opacity to maintain visual hierarchy.
+    ///
+    /// Example:
+    /// ```swift
+    /// Text("Subtitle")
+    ///     .adaptiveForegroundStyle(.blue, variant: .secondary)
+    /// ```
     @ViewBuilder
     public func adaptiveForegroundStyle(
         _ color: Color,

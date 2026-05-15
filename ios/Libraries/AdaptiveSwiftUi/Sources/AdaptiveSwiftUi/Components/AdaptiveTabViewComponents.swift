@@ -8,20 +8,19 @@ import SwiftUI
 
 // MARK: - AdaptiveValueTab (Items #17, #18, #19)
 
-/// Creates a `Tab` with a typed selection value and optional search role.
+/// A component that represents a single tab item within an adaptive tab view, supporting selection values and roles.
 ///
-/// Covers feed items:
-/// - #17 TabView (new Tab init with title/systemImage)
-/// - #18 Search Tab Role (role: .search)
-/// - #19 Value Tab View (Tab with Hashable value)
+/// `AdaptiveValueTab` leverages modern SwiftUI `Tab` features (iOS 18+):
+/// - **Selection (Item #19)**: Associates a specific hashable value with the tab for programmatic navigation.
+/// - **Search Role (Item #18)**: Optionally marks the tab as a search interface, allowing the system to optimize its display.
 ///
-/// Usage:
+/// Example:
 /// ```swift
-/// TabView(selection: $selection) {
-///     AdaptiveValueTab("Home", systemImage: "house", value: "home") {
-///         HomeView()
+/// TabView(selection: $currentTab) {
+///     AdaptiveValueTab("Dashboard", systemImage: "chart.bar", value: TabItem.dashboard) {
+///         DashboardView()
 ///     }
-///     AdaptiveValueTab("Search", systemImage: "magnifyingglass", value: "search", role: .search) {
+///     AdaptiveValueTab("Search", systemImage: "magnifyingglass", value: TabItem.search, role: .search) {
 ///         SearchView()
 ///     }
 /// }
@@ -48,11 +47,26 @@ public func AdaptiveValueTab<Value: Hashable, Content: View>(
 
 // MARK: - AdaptiveTabSection (Item #15)
 
+/// A component that groups related tabs into a section within a tab view.
+///
+/// `AdaptiveTabSection` helps organize complex tab navigation (iOS 18+), providing 
+/// visual grouping and headers in sidebars or expanded tab bars.
+///
+/// Example:
+/// ```swift
+/// TabView {
+///     AdaptiveTabSection("Account") {
+///         AdaptiveValueTab("Profile", systemImage: "person", value: 1) { ProfileView() }
+///         AdaptiveValueTab("Settings", systemImage: "gear", value: 2) { SettingsView() }
+///     }
+/// }
+/// ```
 @available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *)
 public struct AdaptiveTabSection<Value: Hashable, Content: TabContent<Value>>: TabContent {
     private let title: LocalizedStringKey?
     private let content: () -> Content
 
+    /// Creates a tab section with a localized title.
     public init(
         _ title: LocalizedStringKey,
         @TabContentBuilder<Value> content: @escaping () -> Content
@@ -61,6 +75,7 @@ public struct AdaptiveTabSection<Value: Hashable, Content: TabContent<Value>>: T
         self.content = content
     }
 
+    /// Creates an untitled tab section.
     public init(
         @TabContentBuilder<Value> content: @escaping () -> Content
     ) {
@@ -79,17 +94,18 @@ public struct AdaptiveTabSection<Value: Hashable, Content: TabContent<Value>>: T
 
 // MARK: - AdaptiveTabViewBottomAccessoryPlacementReader (Item #98)
 
-/// Reads the `tabViewBottomAccessoryPlacement` environment value on iOS 26+.
+/// A container view that reads and exposes the placement of bottom accessories in a tab view.
 ///
-/// Covers feed item #98: Inspect whether the bottom accessory is inline or expanded.
+/// This component (iOS 26+) allows you to adjust your UI based on whether a bottom accessory 
+/// is displayed inline or in an expanded state.
 ///
-/// Usage:
+/// Example:
 /// ```swift
 /// AdaptiveTabViewBottomAccessoryPlacementReader { placement in
-///     switch placement {
-///     case .inline:   Text("Inline")
-///     case .expanded: Text("Expanded")
-///     case .none:     EmptyView()
+///     if placement == .expanded {
+///         DetailedAccessoryView()
+///     } else {
+///         CompactAccessoryView()
 ///     }
 /// }
 /// ```
@@ -100,6 +116,9 @@ public struct AdaptiveTabViewBottomAccessoryPlacementReader<Content: View>: View
 
     @Environment(\.tabViewBottomAccessoryPlacement) private var placement
 
+    /// Creates a placement reader.
+    ///
+    /// - Parameter content: A view builder that receives the current placement.
     public init(@ViewBuilder content: @escaping (AdaptiveBottomAccessoryPlacement) -> Content) {
         self.content = content
     }

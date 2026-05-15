@@ -1,5 +1,21 @@
 import SwiftUI
 
+/// An adaptive gauge component that displays a value within a range.
+///
+/// `AdaptiveGauge` provides a unified way to render gauges across platforms:
+/// - **Modern OS (iOS 16+, macOS 13+, watchOS 7+)**: Leverages the native `Gauge` component 
+///   with support for all 8 adaptive styles.
+/// - **Legacy Fallback**: Polyfills using a `VStack` containing a `ProgressView` and 
+///   descriptive labels to ensure functional parity on older systems.
+///
+/// Example:
+/// ```swift
+/// AdaptiveGauge(value: 0.75, in: 0...1, style: .accessoryCircular) {
+///     Text("Battery")
+/// } currentValueLabel: {
+///     Text("75%")
+/// }
+/// ```
 public struct AdaptiveGauge<
     Label: View,
     CurrentValueLabel: View,
@@ -16,6 +32,16 @@ public struct AdaptiveGauge<
 
     // MARK: - Initializers
 
+    /// Creates an adaptive gauge with full control over labels and range.
+    ///
+    /// - Parameters:
+    ///   - value: The current value to display.
+    ///   - range: The valid range for the value.
+    ///   - style: The adaptive gauge style to apply.
+    ///   - label: A view builder for the primary label.
+    ///   - currentValueLabel: A view builder for the current value label.
+    ///   - minimumValueLabel: A view builder for the minimum range label.
+    ///   - maximumValueLabel: A view builder for the maximum range label.
     public init(
         value: Double,
         in range: ClosedRange<Double> = 0...1,
@@ -34,7 +60,7 @@ public struct AdaptiveGauge<
         self.maximumValueLabel = maximumValueLabel
     }
 
-    // Convenience: value + label
+    /// Creates an adaptive gauge with only a value and label.
     public init(
         value: Double,
         style: AdaptiveGaugeStyle = .automatic,
@@ -52,7 +78,7 @@ public struct AdaptiveGauge<
         )
     }
 
-    // Convenience: value + range + label
+    /// Creates an adaptive gauge with a value, range, and label.
     public init(
         value: Double,
         in range: ClosedRange<Double>,
@@ -71,7 +97,7 @@ public struct AdaptiveGauge<
         )
     }
 
-    // Convenience: value + label + currentValueLabel
+    /// Creates an adaptive gauge with a value, label, and current value label.
     public init(
         value: Double,
         style: AdaptiveGaugeStyle = .automatic,

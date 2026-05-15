@@ -1,11 +1,12 @@
 import SwiftUI
 
-
+/// A custom environment key to propagate `AdaptiveControlGroupStyle` through the view hierarchy.
 struct AdaptiveControlGroupStyleKey: EnvironmentKey {
     static let defaultValue: AdaptiveControlGroupStyle = .automatic
 }
 
 public extension EnvironmentValues {
+    /// Accessor for the adaptive control group style in the environment.
     var adaptiveControlGroupStyle: AdaptiveControlGroupStyle {
         get { self[AdaptiveControlGroupStyleKey.self] }
         set { self[AdaptiveControlGroupStyleKey.self] = newValue }
@@ -14,8 +15,22 @@ public extension EnvironmentValues {
 
 public extension View {
     /// Applies a style to all `ControlGroup` and `AdaptiveControlGroup` components within this view.
-    /// Safely maps to the native `.controlGroupStyle()` modifiers on iOS 15+, while saving
-    /// the style in the environment for older versions to use in fallback rendering.
+    ///
+    /// This modifier handles cross-platform styling for control groups:
+    /// - **iOS 15+ / macOS 12+**: Maps to native `.controlGroupStyle()` for standard components.
+    /// - **Legacy/Fallback**: Saves the style to the environment, allowing `AdaptiveControlGroup`
+    ///   to replicate the visual style using alternative layouts (like `HStack` or `Menu`) on older OS versions.
+    ///
+    /// - Parameter style: The adaptive style to apply (e.g., `.navigation`, `.menu`, `.palette`).
+    ///
+    /// Example:
+    /// ```swift
+    /// AdaptiveControlGroup {
+    ///     Button("Edit") { }
+    ///     Button("Delete") { }
+    /// }
+    /// .adaptiveControlGroupStyle(.menu)
+    /// ```
     @ViewBuilder
     func adaptiveControlGroupStyle(_ style: AdaptiveControlGroupStyle) -> some View {
         let styled = self.environment(\.adaptiveControlGroupStyle, style)

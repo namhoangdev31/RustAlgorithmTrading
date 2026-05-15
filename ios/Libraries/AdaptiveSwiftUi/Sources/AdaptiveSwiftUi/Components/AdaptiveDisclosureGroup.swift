@@ -1,10 +1,29 @@
 import SwiftUI
 
+/// An adaptive component that expands and collapses a view to reveal or hide its content.
+///
+/// `AdaptiveDisclosureGroup` provides a unified way to handle expandable content:
+/// - **Modern OS (iOS 14+)**: Leverages the native `DisclosureGroup`.
+/// - **Legacy Fallback (iOS 13)**: Renders a `VStack` with the label as a headline 
+///   and the content below it to ensure visibility on older systems.
+///
+/// Example:
+/// ```swift
+/// AdaptiveDisclosureGroup("Details", isExpanded: $showDetails) {
+///     Text("More information about this item...")
+/// }
+/// ```
 public struct AdaptiveDisclosureGroup<Label: View, Content: View>: View {
     private let isExpanded: Binding<Bool>?
     private let content: () -> Content
     private let label: () -> Label
 
+    /// Creates an adaptive disclosure group with a custom label view.
+    ///
+    /// - Parameters:
+    ///   - isExpanded: A binding to a Boolean value that determines whether the group is expanded.
+    ///   - content: A view builder describing the content to reveal.
+    ///   - label: A view builder describing the label that controls the expansion.
     public init(
         isExpanded: Binding<Bool>? = nil,
         @ViewBuilder content: @escaping () -> Content,
@@ -15,6 +34,7 @@ public struct AdaptiveDisclosureGroup<Label: View, Content: View>: View {
         self.label = label
     }
 
+    /// Creates an adaptive disclosure group with a localized title key.
     public init(
         _ titleKey: LocalizedStringKey,
         isExpanded: Binding<Bool>? = nil,
@@ -34,7 +54,6 @@ public struct AdaptiveDisclosureGroup<Label: View, Content: View>: View {
             }
         } else {
             // Fallback for older OS: simple VStack (no built-in collapse/expand animation available easily)
-            // Or just a standard VStack
             VStack(alignment: .leading) {
                 label().font(.headline)
                 content()

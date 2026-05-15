@@ -1,5 +1,18 @@
 import SwiftUI
 
+/// A highly adaptive button component that works across all Apple platforms and OS versions.
+///
+/// `AdaptiveButton` abstracts away the complexities of different `Button` APIs, automatically 
+/// handling button roles, styles, and sizing. It supports modern iOS 26+ roles while providing 
+/// intelligent fallbacks for older systems.
+///
+/// Example:
+/// ```swift
+/// AdaptiveButton("Delete Item", role: .destructive) {
+///     deleteData()
+/// }
+/// .adaptiveButtonStyle(.borderedProminent)
+/// ```
 public struct AdaptiveButton<Label: View>: View {
     private let role: AdaptiveButtonRole?
     private let style: AdaptiveButtonStyle
@@ -9,6 +22,16 @@ public struct AdaptiveButton<Label: View>: View {
     private let action: () -> Void
     private let label: () -> Label
 
+    /// Creates an adaptive button with a custom label.
+    ///
+    /// - Parameters:
+    ///   - role: The button's role (e.g., `.cancel`, `.destructive`).
+    ///   - style: The visual style (e.g., `.bordered`, `.plain`).
+    ///   - sizing: The button's sizing behavior.
+    ///   - tint: An optional tint color.
+    ///   - borderShape: The shape of the button's border.
+    ///   - action: The action to perform when the button is tapped.
+    ///   - label: A view builder that describes the button's content.
     public init(
         role: AdaptiveButtonRole? = nil,
         style: AdaptiveButtonStyle = .automatic,
@@ -27,6 +50,12 @@ public struct AdaptiveButton<Label: View>: View {
         self.label = label
     }
 
+    /// Creates an adaptive button with a title key.
+    ///
+    /// Example:
+    /// ```swift
+    /// AdaptiveButton("Submit", action: submitForm)
+    /// ```
     public init(
         _ titleKey: LocalizedStringKey,
         role: AdaptiveButtonRole? = nil,
@@ -48,6 +77,12 @@ public struct AdaptiveButton<Label: View>: View {
         }
     }
 
+    /// Creates an adaptive button with a title and a system image.
+    ///
+    /// Example:
+    /// ```swift
+    /// AdaptiveButton("Settings", systemImage: "gear", action: showSettings)
+    /// ```
     public init(
         _ titleKey: LocalizedStringKey,
         systemImage: String,

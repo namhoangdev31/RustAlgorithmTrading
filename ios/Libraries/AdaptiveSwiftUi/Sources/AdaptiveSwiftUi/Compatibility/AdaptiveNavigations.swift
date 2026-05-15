@@ -1,31 +1,49 @@
 import SwiftUI
 
-public extension View {
-    
-    /// Configures the view's title and subtitle for purposes of navigation.
-    /// - On macOS 11+, uses the native `.navigationTitle` and `.navigationSubtitle(_:)`.
-    /// - On iOS 14+ and other platforms, falls back to overriding the principal toolbar item to display both.
-    /// - On iOS 13, falls back to just displaying the title.
+extension View {
+
+    /// Configures the view's adaptive title and subtitle for navigation.
+    ///
+    /// This modifier handles cross-platform navigation headers:
+    /// - **iOS 26+ / macOS 11+**: Uses native `.navigationTitle` and `.navigationSubtitle`.
+    /// - **iOS 14-18**: Polyfills the subtitle by using a `ToolbarItem` with `.principal` placement,
+    ///   stacking the title and subtitle vertically.
+    /// - **iOS 13**: Falls back to showing only the main title.
+    ///
+    /// - Parameters:
+    ///   - title: The primary title to display.
+    ///   - subtitle: The secondary title/subtitle to display.
+    ///
+    /// Example:
+    /// ```swift
+    /// View()
+    ///     .adaptiveNavigationTitle("Settings", subtitle: "Profile and Security")
+    /// ```
     @ViewBuilder
-    func adaptiveNavigationTitle(_ title: LocalizedStringKey, subtitle: LocalizedStringKey) -> some View {
+    public func adaptiveNavigationTitle(_ title: LocalizedStringKey, subtitle: LocalizedStringKey)
+        -> some View
+    {
         if #available(iOS 26.0, macOS 11.0, *) {
             self.navigationTitle(title).navigationSubtitle(subtitle)
         } else {
             fallbackTitle(titleKey: title, subtitleKey: subtitle)
         }
     }
-    
+
+    /// Configures the view's adaptive title and subtitle using string protocols.
     @ViewBuilder
-    func adaptiveNavigationTitle<S: StringProtocol>(_ title: S, subtitle: S) -> some View {
+    public func adaptiveNavigationTitle<S: StringProtocol>(_ title: S, subtitle: S) -> some View {
         if #available(iOS 26.0, macOS 11.0, *) {
             self.navigationTitle(title).navigationSubtitle(subtitle)
         } else {
             fallbackTitle(title: title, subtitle: subtitle)
         }
     }
-    
+
     @ViewBuilder
-    private func fallbackTitle(titleKey: LocalizedStringKey, subtitleKey: LocalizedStringKey) -> some View {
+    private func fallbackTitle(titleKey: LocalizedStringKey, subtitleKey: LocalizedStringKey)
+        -> some View
+    {
         if #available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *) {
             self.navigationTitle(titleKey)
                 .toolbar {
@@ -41,14 +59,13 @@ public extension View {
                 }
         } else {
             #if os(iOS) || os(tvOS) || os(watchOS)
-            self.navigationBarTitle(Text(titleKey))
+                self.navigationBarTitle(Text(titleKey))
             #else
-            self
+                self
             #endif
         }
     }
-    
-    
+
     @ViewBuilder
     private func fallbackTitle<S: StringProtocol>(title: S, subtitle: S) -> some View {
         if #available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *) {
@@ -66,15 +83,24 @@ public extension View {
                 }
         } else {
             #if os(iOS) || os(tvOS) || os(watchOS)
-            self.navigationBarTitle(Text(title))
+                self.navigationBarTitle(Text(title))
             #else
-            self
+                self
             #endif
         }
     }
 
     // MARK: - Container Background
 
+    /// Applies a background style to the navigation container on supported platforms.
+    ///
+    /// Supported on iOS 18+ and watchOS 11+.
+    ///
+    /// Example:
+    /// ```swift
+    /// NavigationStack { ... }
+    ///     .adaptiveContainerBackground(.ultraThinMaterial)
+    /// ```
     @ViewBuilder
     public func adaptiveContainerBackground<S: ShapeStyle>(
         _ style: S,
@@ -104,6 +130,7 @@ public extension View {
         }
     }
 
+    /// Applies a custom view as the background to the navigation container.
     @ViewBuilder
     public func adaptiveContainerBackground<Background: View>(
         for placement: AdaptiveContainerBackgroundPlacement = .navigation,
@@ -138,6 +165,9 @@ public extension View {
 
     // MARK: - Scroll Edge Effect
 
+    /// Enables a hard edge effect when scrolling to the edge of the navigation container.
+    ///
+    /// Supported on iOS 26+, macOS 26+, etc.
     @ViewBuilder
     public func adaptiveScrollEdgeHardEffect(isEnabled: Bool = true) -> some View {
         if isEnabled {

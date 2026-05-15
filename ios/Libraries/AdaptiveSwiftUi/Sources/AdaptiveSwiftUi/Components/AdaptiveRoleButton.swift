@@ -1,6 +1,19 @@
 import SwiftUI
 
 
+/// A button component that uses semantic roles to determine its appearance and behavior.
+///
+/// `AdaptiveRoleButton` simplifies the creation of standard system buttons:
+/// - **Modern OS (iOS 26+)**: Leverages native button roles including confirmed and close.
+/// - **Legacy Fallback**: Automatically maps to standard roles (`cancel`, `destructive`) 
+///   and provides localized fallback titles for older systems.
+///
+/// Example:
+/// ```swift
+/// AdaptiveRoleButton(role: .destructive) {
+///     deleteData()
+/// }
+/// ```
 public struct AdaptiveRoleButton: View {
     private let role: AdaptiveButtonRole
     private let title: LocalizedStringKey?
@@ -10,6 +23,16 @@ public struct AdaptiveRoleButton: View {
     private let borderShape: AdaptiveButtonBorderShape
     private let action: () -> Void
 
+    /// Creates an adaptive role-based button.
+    ///
+    /// - Parameters:
+    ///   - role: The semantic role of the button (e.g., `.cancel`, `.destructive`).
+    ///   - title: An optional localized title. If nil, a standard system title is used.
+    ///   - style: The visual style of the button.
+    ///   - sizing: The sizing behavior.
+    ///   - tint: An optional tint color.
+    ///   - borderShape: The shape of the button's border.
+    ///   - action: The action to perform when tapped.
     public init(
         role: AdaptiveButtonRole,
         title: LocalizedStringKey? = nil,
@@ -62,6 +85,14 @@ public struct AdaptiveRoleButton: View {
     }
 }
 
+/// A button that triggers a rename action, adapting to the native `RenameButton` on newer OS versions.
+///
+/// Example:
+/// ```swift
+/// AdaptiveRenameButton {
+///     startRenaming()
+/// }
+/// ```
 public struct AdaptiveRenameButton: View {
     private let title: LocalizedStringKey
     private let sizing: AdaptiveButtonSizing
@@ -95,6 +126,17 @@ public struct AdaptiveRenameButton: View {
     }
 }
 
+/// A button that reads the system clipboard and performs a paste action.
+///
+/// `AdaptivePasteButton` leverages the modern `PasteButton` API (iOS 16+) 
+/// to provide a secure and standard way for users to paste data.
+///
+/// Example:
+/// ```swift
+/// AdaptivePasteButton { string in
+///     self.text = string
+/// }
+/// ```
 public struct AdaptivePasteButton: View {
     private let title: LocalizedStringKey
     private let sizing: AdaptiveButtonSizing
@@ -136,6 +178,7 @@ public struct AdaptivePasteButton: View {
     }
 }
 
+/// A standard system edit button that toggles the editing state of a view.
 public struct AdaptiveEditButton: View {
     public init() {}
 
@@ -148,6 +191,7 @@ public struct AdaptiveEditButton: View {
     }
 }
 
+/// A button that presents a menu of additional actions, with an optional primary action.
 public struct AdaptiveMenuActionButton<Label: View, Content: View>: View {
     private let content: () -> Content
     private let label: () -> Label

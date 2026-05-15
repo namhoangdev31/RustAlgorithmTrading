@@ -1,6 +1,23 @@
 import SwiftUI
 
 extension View {
+    
+    /// Sets the visual style for adaptive gauges.
+    ///
+    /// This modifier handles cross-platform mapping for gauge styles:
+    /// - **Modern OS (iOS 16+, macOS 13+, watchOS 9+, etc.)**: Maps to native `.gaugeStyle()`.
+    /// - **watchOS Early Support**: Provides backward compatibility for `linear` and `circular` styles starting from watchOS 7.0.
+    /// - **Legacy Fallback**: Gracefully returns the original view on systems where `Gauge` is not supported.
+    ///
+    /// - Parameter style: The adaptive gauge style to apply (e.g., `.linear`, `.accessoryCircular`).
+    ///
+    /// Example:
+    /// ```swift
+    /// AdaptiveGauge(value: 0.75) {
+    ///     Text("Battery")
+    /// }
+    /// .adaptiveGaugeStyle(.accessoryCircular)
+    /// ```
     @ViewBuilder
     public func adaptiveGaugeStyle(_ style: AdaptiveGaugeStyle) -> some View {
         switch style {
@@ -99,6 +116,13 @@ extension View {
         }
     }
 
+    /// Sets the tint color or style for adaptive gauges.
+    ///
+    /// Example:
+    /// ```swift
+    /// MyGauge()
+    ///     .adaptiveGaugeTint(Color.orange)
+    /// ```
     @ViewBuilder
     public func adaptiveGaugeTint<S: ShapeStyle>(_ style: S) -> some View {
         #if os(iOS) || os(macOS) || os(watchOS) || os(visionOS)

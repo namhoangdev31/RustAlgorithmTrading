@@ -1,16 +1,30 @@
 import SwiftUI
 
-/// A component that groups related controls together, providing a unified appearance.
-/// Automatically falls back to a custom layout on OS versions where `ControlGroup` is unavailable.
+/// A container that groups related controls together with a unified visual appearance.
+///
+/// `AdaptiveControlGroup` provides a bridge for the `ControlGroup` API:
+/// - **Modern OS (iOS 15+)**: Uses the native `ControlGroup` component.
+/// - **Legacy Fallback**: Automatically adapts to a `Menu` or a custom `HStack` with 
+///   a background plate depending on the current `adaptiveControlGroupStyle`.
+///
+/// Example:
+/// ```swift
+/// AdaptiveControlGroup("Edit") {
+///     Button("Copy", systemImage: "doc.on.doc") { }
+///     Button("Paste", systemImage: "doc.on.clipboard") { }
+/// }
+/// ```
 public struct AdaptiveControlGroup<Content: View, Label: View>: View {
     let content: () -> Content
     let label: (() -> Label)?
 
+    /// Creates a control group with only content.
     public init(@ViewBuilder content: @escaping () -> Content) where Label == EmptyView {
         self.content = content
         self.label = nil
     }
 
+    /// Creates a control group with content and a custom label view.
     public init(
         @ViewBuilder content: @escaping () -> Content, @ViewBuilder label: @escaping () -> Label
     ) {
@@ -18,12 +32,14 @@ public struct AdaptiveControlGroup<Content: View, Label: View>: View {
         self.label = label
     }
 
+    /// Creates a control group with a localized title.
     public init(_ titleKey: LocalizedStringKey, @ViewBuilder content: @escaping () -> Content)
     where Label == Text {
         self.content = content
         self.label = { Text(titleKey) }
     }
 
+    /// Creates a control group with a title and system image.
     public init(
         _ titleKey: LocalizedStringKey, systemImage: String,
         @ViewBuilder content: @escaping () -> Content
@@ -32,6 +48,7 @@ public struct AdaptiveControlGroup<Content: View, Label: View>: View {
         self.label = { SwiftUI.Label(titleKey, systemImage: systemImage) }
     }
 
+    /// Creates a control group with a string title.
     public init<S: StringProtocol>(_ title: S, @ViewBuilder content: @escaping () -> Content)
     where Label == Text {
         self.content = content
@@ -117,6 +134,7 @@ public struct AdaptiveControlGroup<Content: View, Label: View>: View {
     }
 }
 
+/// A specialized control group with a title and system image.
 public struct AdaptiveControlGroupTitled<Content: View>: View {
     private let titleKey: LocalizedStringKey
     private let systemImage: String
@@ -138,6 +156,7 @@ public struct AdaptiveControlGroupTitled<Content: View>: View {
     }
 }
 
+/// A specialized control group with a custom label view.
 public struct AdaptiveControlGroupLabeled<Content: View, Label: View>: View {
     private let content: () -> Content
     private let label: () -> Label

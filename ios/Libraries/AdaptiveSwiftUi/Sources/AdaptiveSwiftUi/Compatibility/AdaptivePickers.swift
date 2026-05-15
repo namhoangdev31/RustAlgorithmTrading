@@ -1,6 +1,20 @@
 import SwiftUI
 
-
+/// An adaptive picker component that supports a custom label and a current value label.
+///
+/// On iOS 18+ and other modern platforms, it utilizes the native `Picker` with `currentValueLabel`.
+/// On older versions, it falls back to a standard `Picker` with only a primary label.
+///
+/// Example:
+/// ```swift
+/// AdaptiveValueLabelPicker(selection: $selection) {
+///     ForEach(options, id: \.self) { Text($0) }
+/// } label: {
+///     Text("Options")
+/// } currentValueLabel: {
+///     Text(selection)
+/// }
+/// ```
 public struct AdaptiveValueLabelPicker<
     SelectionValue: Hashable,
     Content: View,
@@ -53,6 +67,21 @@ public struct AdaptiveValueLabelPicker<
 }
 
 public extension View {
+    
+    /// Sets the visual style for adaptive pickers across all platforms.
+    ///
+    /// This modifier handles platform-specific styles:
+    /// - **Automatic**: Default system behavior.
+    /// - **Menu**: Standard dropdown menu (iOS 14+, macOS 11+).
+    /// - **Segmented**: Horizontal selection bar.
+    /// - **NavigationLink**: Pushes a selection view (iOS 16+, watchOS 9+).
+    /// - **RadioGroup**: macOS specific radio button layout.
+    ///
+    /// Example:
+    /// ```swift
+    /// Picker("Theme", selection: $theme) { ... }
+    ///     .adaptivePickerStyle(.segmented)
+    /// ```
     @ViewBuilder
     func adaptivePickerStyle(_ style: AdaptivePickerStyle) -> some View {
         switch style {
@@ -131,6 +160,7 @@ public extension View {
         }
     }
 
+    /// Arranges a radio group picker horizontally (macOS only).
     @ViewBuilder
     func adaptiveHorizontalRadioGroupLayout(isEnabled: Bool = true) -> some View {
         #if os(macOS)
@@ -148,6 +178,7 @@ public extension View {
         #endif
     }
 
+    /// Sets the default height for wheel picker items (watchOS only).
     @ViewBuilder
     func adaptiveDefaultWheelPickerItemHeight(_ height: CGFloat?) -> some View {
         #if os(watchOS)

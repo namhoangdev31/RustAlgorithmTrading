@@ -1,10 +1,26 @@
 import SwiftUI
 
-
 public extension View {
-    /// Applies a foreground style with optional gradient, hierarchy, and opacity.
-    /// This seamlessly polyfills iOS 15/16 color variants, gradients, and hierarchical
-    /// shape styles while safely falling back to calculated `.foregroundColor()` on iOS 13/14.
+    
+    /// Applies an adaptive foreground style with support for hierarchical variants and gradients.
+    ///
+    /// This modifier provides a unified API for modern SwiftUI coloring features while maintaining
+    /// backward compatibility:
+    /// - **iOS 17+**: Uses native hierarchical `foregroundStyle` with full gradient support.
+    /// - **iOS 16**: Uses native `gradient` with simulated hierarchical opacity.
+    /// - **iOS 13-15**: Uses `foregroundColor` or `foregroundStyle` with simulated opacity.
+    ///
+    /// - Parameters:
+    ///   - color: The base color to apply.
+    ///   - gradient: Whether to apply a gradient effect. Default is `false`.
+    ///   - hierarchy: The hierarchical level (Primary to Quinary). Default is `.primary`.
+    ///   - opacity: The global opacity to apply to the final style. Default is `1.0`.
+    ///
+    /// Example:
+    /// ```swift
+    /// Text("Hello")
+    ///     .adaptiveForegroundStyle(.blue, gradient: true, hierarchy: .secondary)
+    /// ```
     @ViewBuilder
     func adaptiveForegroundStyle(
         _ color: Color,
@@ -34,6 +50,7 @@ public extension View {
         } else if #available(iOS 16.0, macOS 13.0, watchOS 9.0, tvOS 16.0, visionOS 1.0, *) {
             if gradient {
                 // iOS 16 supports gradient but not hierarchical modifiers on it.
+                // We use simulated opacity to mimic hierarchy.
                 self.foregroundStyle(color.gradient.opacity(opacity * hierarchy.simulatedOpacity))
             } else {
                 self.foregroundStyle(color.opacity(opacity * hierarchy.simulatedOpacity))
@@ -42,7 +59,7 @@ public extension View {
             // iOS 15 Fallback
             self.foregroundStyle(color.opacity(opacity * hierarchy.simulatedOpacity))
         } else {
-            // iOS 13/14 Fallback
+            // iOS 13/14 Fallback using standard foregroundColor
             self.foregroundColor(color.opacity(opacity * hierarchy.simulatedOpacity))
         }
         #else
@@ -52,6 +69,8 @@ public extension View {
 }
 
 private extension AdaptiveColorHierarchy {
+    /// Provides a fallback opacity value for hierarchical levels on older OS versions.
+    /// These values approximate the visual difference between Primary, Secondary, etc.
     var simulatedOpacity: Double {
         switch self {
         case .primary: return 1.0

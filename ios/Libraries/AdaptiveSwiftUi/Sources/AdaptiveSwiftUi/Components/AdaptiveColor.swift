@@ -1,11 +1,23 @@
 import SwiftUI
 
-/// A namespace for adaptive colors, bridging UIKit colors to SwiftUI and providing
-/// polyfills for modern standard colors like mint, teal, cyan, indigo, and brown on iOS 13/14.
+/// A namespace for adaptive colors, bridging system colors to SwiftUI across all Apple platforms.
+///
+/// `AdaptiveColor` provides a unified API to access system-defined colors (like separators, 
+/// backgrounds, and labels) that automatically adapt to light and dark modes. It also 
+/// includes polyfills for modern colors like `mint` and `indigo` on older OS versions (iOS 13/14).
+///
+/// Example:
+/// ```swift
+/// Text("Adaptive Text")
+///     .padding()
+///     .background(AdaptiveColor.systemBackground)
+///     .foregroundColor(AdaptiveColor.label)
+/// ```
 public struct AdaptiveColor {
     
-    // MARK: - UIKit Bridge Colors (Adaptive)
+    // MARK: - UIKit/AppKit Bridge Colors
     
+    /// The standard color for thin borders or divider lines.
     public static var separator: Color {
         #if canImport(UIKit)
         return Color(UIColor.separator)
@@ -16,6 +28,7 @@ public struct AdaptiveColor {
         #endif
     }
     
+    /// The standard color for thicker, opaque borders or divider lines.
     public static var opaqueSeparator: Color {
         #if canImport(UIKit)
         return Color(UIColor.opaqueSeparator)
@@ -26,6 +39,7 @@ public struct AdaptiveColor {
         #endif
     }
     
+    /// The standard system background color.
     public static var systemBackground: Color {
         #if canImport(UIKit)
         return Color(UIColor.systemBackground)
@@ -36,6 +50,7 @@ public struct AdaptiveColor {
         #endif
     }
     
+    /// A secondary system background color, typically used for grouping elements.
     public static var secondarySystemBackground: Color {
         #if canImport(UIKit)
         return Color(UIColor.secondarySystemBackground)
@@ -46,6 +61,7 @@ public struct AdaptiveColor {
         #endif
     }
     
+    /// A tertiary system background color.
     public static var tertiarySystemBackground: Color {
         #if canImport(UIKit)
         return Color(UIColor.tertiarySystemBackground)
@@ -56,6 +72,7 @@ public struct AdaptiveColor {
         #endif
     }
     
+    /// The system background color for grouped content.
     public static var systemGroupedBackground: Color {
         #if canImport(UIKit)
         return Color(UIColor.systemGroupedBackground)
@@ -66,6 +83,7 @@ public struct AdaptiveColor {
         #endif
     }
     
+    /// A secondary system background color for grouped content.
     public static var secondarySystemGroupedBackground: Color {
         #if canImport(UIKit)
         return Color(UIColor.secondarySystemGroupedBackground)
@@ -76,6 +94,7 @@ public struct AdaptiveColor {
         #endif
     }
     
+    /// A tertiary system background color for grouped content.
     public static var tertiarySystemGroupedBackground: Color {
         #if canImport(UIKit)
         return Color(UIColor.tertiarySystemGroupedBackground)
@@ -86,6 +105,7 @@ public struct AdaptiveColor {
         #endif
     }
     
+    /// The standard color for placeholder text.
     public static var placeholderText: Color {
         #if canImport(UIKit)
         return Color(UIColor.placeholderText)
@@ -96,6 +116,7 @@ public struct AdaptiveColor {
         #endif
     }
     
+    /// A system-defined fill color.
     public static var systemFill: Color {
         #if canImport(UIKit)
         return Color(UIColor.systemFill)
@@ -106,6 +127,7 @@ public struct AdaptiveColor {
         #endif
     }
     
+    /// A secondary system-defined fill color.
     public static var secondarySystemFill: Color {
         #if canImport(UIKit)
         return Color(UIColor.secondarySystemFill)
@@ -116,6 +138,7 @@ public struct AdaptiveColor {
         #endif
     }
     
+    /// A tertiary system-defined fill color.
     public static var tertiarySystemFill: Color {
         #if canImport(UIKit)
         return Color(UIColor.tertiarySystemFill)
@@ -126,6 +149,7 @@ public struct AdaptiveColor {
         #endif
     }
     
+    /// A quaternary system-defined fill color.
     public static var quaternarySystemFill: Color {
         #if canImport(UIKit)
         return Color(UIColor.quaternarySystemFill)
@@ -136,6 +160,7 @@ public struct AdaptiveColor {
         #endif
     }
     
+    /// The standard color for primary labels.
     public static var label: Color {
         #if canImport(UIKit)
         return Color(UIColor.label)
@@ -146,6 +171,7 @@ public struct AdaptiveColor {
         #endif
     }
     
+    /// The standard color for secondary labels.
     public static var secondaryLabel: Color {
         #if canImport(UIKit)
         return Color(UIColor.secondaryLabel)
@@ -156,6 +182,7 @@ public struct AdaptiveColor {
         #endif
     }
 
+    /// The standard color for tertiary labels.
     public static var tertiaryLabel: Color {
         #if canImport(UIKit)
         return Color(UIColor.tertiaryLabel)
@@ -166,6 +193,7 @@ public struct AdaptiveColor {
         #endif
     }
     
+    /// The standard color for quaternary labels.
     public static var quaternaryLabel: Color {
         #if canImport(UIKit)
         return Color(UIColor.quaternaryLabel)
@@ -178,6 +206,7 @@ public struct AdaptiveColor {
     
     // MARK: - Modern Standard Colors Polyfill
     
+    /// An adaptive mint color. Falls back to a simulated mint on iOS 13/14.
     public static var mint: Color {
         if #available(iOS 15.0, macOS 12.0, watchOS 8.0, tvOS 15.0, *) {
             return .mint
@@ -186,6 +215,7 @@ public struct AdaptiveColor {
         }
     }
     
+    /// An adaptive teal color. Falls back to a simulated teal on iOS 13/14.
     public static var teal: Color {
         if #available(iOS 15.0, macOS 12.0, watchOS 8.0, tvOS 15.0, *) {
             return .teal
@@ -194,6 +224,7 @@ public struct AdaptiveColor {
         }
     }
     
+    /// An adaptive cyan color. Falls back to a simulated cyan on iOS 13/14.
     public static var cyan: Color {
         if #available(iOS 15.0, macOS 12.0, watchOS 8.0, tvOS 15.0, *) {
             return .cyan
@@ -202,6 +233,7 @@ public struct AdaptiveColor {
         }
     }
     
+    /// An adaptive indigo color. Falls back to a simulated indigo on iOS 13/14.
     public static var indigo: Color {
         if #available(iOS 15.0, macOS 12.0, watchOS 8.0, tvOS 15.0, *) {
             return .indigo
@@ -210,6 +242,7 @@ public struct AdaptiveColor {
         }
     }
     
+    /// An adaptive brown color. Falls back to a simulated brown on iOS 13/14.
     public static var brown: Color {
         if #available(iOS 15.0, macOS 12.0, watchOS 8.0, tvOS 15.0, *) {
             return .brown

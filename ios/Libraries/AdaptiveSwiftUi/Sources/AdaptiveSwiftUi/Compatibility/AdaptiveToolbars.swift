@@ -13,8 +13,19 @@ extension ToolbarItemPlacement {
         #endif
     }
 
-    /// Returns a native `ToolbarItemPlacement` that adapts to the current OS version,
-    /// leveraging iOS 26+ title area placements when available.
+    /// Returns a native `ToolbarItemPlacement` that adapts to the current OS version.
+    ///
+    /// This static method allows you to use modern iOS 26+ title placements while ensuring 
+    /// functional fallback on older systems:
+    /// - **iOS 26+**: Uses native `.title`, `.subtitle`, `.largeTitle`, etc.
+    /// - **Legacy**: Falls back to `.principal` (on iOS/tvOS) or `.automatic` (on watchOS).
+    ///
+    /// Example:
+    /// ```swift
+    /// ToolbarItem(placement: .adaptive(.subtitle)) {
+    ///     Text("Syncing...")
+    /// }
+    /// ```
     public static func adaptive(_ placement: AdaptiveToolbarTitlePlacement) -> ToolbarItemPlacement {
         switch placement {
         case .automatic:
@@ -51,7 +62,20 @@ extension ToolbarItemPlacement {
     }
 }
 
-/// A standard space item in toolbars that adapts to iOS 26 `ToolbarSpacer` API.
+/// A standard space item in toolbars that adapts to modern `ToolbarSpacer` APIs.
+///
+/// `AdaptiveToolbarSpacer` provides a unified way to add spacing in toolbars:
+/// - **iOS 26+**: Maps to native `ToolbarSpacer`.
+/// - **Legacy**: Falls back to a `ToolbarItem` containing a standard `Spacer`.
+///
+/// Example:
+/// ```swift
+/// ToolbarItemGroup {
+///     Button(...)
+///     AdaptiveToolbarSpacer(.flexible)
+///     Button(...)
+/// }
+/// ```
 @available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, visionOS 1.0, *)
 public struct AdaptiveToolbarSpacer: ToolbarContent {
     private let sizing: AdaptiveToolbarSpacerSizing
@@ -100,8 +124,10 @@ public struct AdaptiveToolbarSpacer: ToolbarContent {
 
 @available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, visionOS 1.0, *)
 extension ToolbarContent {
-    /// Controls the visibility of the glass background effect on items in the toolbar.
-    /// On iOS 26+ and macOS 26+, this leverages `sharedBackgroundVisibility`.
+    
+    /// Controls the visibility of the shared background effect (e.g., glass) on toolbar items.
+    ///
+    /// Maps to the native `sharedBackgroundVisibility` on iOS 26+ and macOS 26+.
     @ToolbarContentBuilder
     @available(tvOS, unavailable)
     @available(watchOS, unavailable)
@@ -115,8 +141,18 @@ extension ToolbarContent {
 }
 
 extension View {
-    /// Configures the view’s subtitle for purposes of navigation.
-    /// Supports iOS 26+ `navigationSubtitle` and macOS 11+ native API.
+    
+    /// Configures the view’s subtitle for navigation purposes with cross-platform support.
+    ///
+    /// This modifier handles subtitle display:
+    /// - **iOS 26+ / macOS 11+**: Uses native `.navigationSubtitle`.
+    /// - **Legacy Fallback**: Gracefully ignores the modifier on older iOS versions.
+    ///
+    /// Example:
+    /// ```swift
+    /// View()
+    ///     .adaptiveNavigationSubtitle(Text("Updated 5m ago"))
+    /// ```
     @ViewBuilder
     @available(tvOS, unavailable)
     @available(watchOS, unavailable)
@@ -128,6 +164,7 @@ extension View {
         }
     }
 
+    /// Configures the view’s subtitle using a localized string key.
     @ViewBuilder
     @available(tvOS, unavailable)
     @available(watchOS, unavailable)
@@ -139,6 +176,7 @@ extension View {
         }
     }
 
+    /// Configures the view’s subtitle using a string protocol.
     @ViewBuilder
     @available(tvOS, unavailable)
     @available(watchOS, unavailable)

@@ -1,10 +1,32 @@
 import SwiftUI
 
+/// An adaptive menu component that presents a list of actions when triggered.
+///
+/// `AdaptiveMenu` provides a unified interface for menus across all Apple platforms:
+/// - **Modern OS (iOS 14+, macOS 11+)**: Leverages the native `Menu` component.
+/// - **Primary Action (iOS 15+)**: Supports an optional primary action that executes 
+///   when the user taps the menu button instead of long-pressing.
+/// - **Legacy Fallback**: Automatically falls back to a standard `Menu` or equivalent 
+///   action sheet/context menu interaction depending on the OS version.
+///
+/// Example:
+/// ```swift
+/// AdaptiveMenu("Options", systemImage: "ellipsis.circle") {
+///     Button("Edit", systemImage: "pencil") { edit() }
+///     Button("Delete", role: .destructive) { delete() }
+/// }
+/// ```
 public struct AdaptiveMenu<Content: View, Label: View>: View {
     private let content: () -> Content
     private let label: () -> Label
     private let primaryAction: (() -> Void)?
 
+    /// Creates an adaptive menu with a custom label view.
+    ///
+    /// - Parameters:
+    ///   - content: A view builder for the menu items.
+    ///   - label: A view builder for the menu trigger's label.
+    ///   - primaryAction: An optional action to perform when the menu is tapped.
     public init(
         @ViewBuilder content: @escaping () -> Content,
         @ViewBuilder label: @escaping () -> Label,
@@ -15,7 +37,7 @@ public struct AdaptiveMenu<Content: View, Label: View>: View {
         self.primaryAction = primaryAction
     }
 
-    // Convenience initializers for title-based labels
+    /// Creates an adaptive menu with a localized title key.
     public init(
         _ titleKey: LocalizedStringKey,
         @ViewBuilder content: @escaping () -> Content,
@@ -28,6 +50,7 @@ public struct AdaptiveMenu<Content: View, Label: View>: View {
         )
     }
 
+    /// Creates an adaptive menu with a localized title and a system image.
     public init(
         _ titleKey: LocalizedStringKey,
         systemImage: String,
@@ -47,9 +70,7 @@ public struct AdaptiveMenu<Content: View, Label: View>: View {
             if #available(iOS 15.0, macOS 12.0, tvOS 15.0, visionOS 1.0, *) {
                 Menu(content: content, label: label, primaryAction: primaryAction)
             } else {
-                // Fallback: Use a Button for primary action and a Menu for options?
-                // Or just use a standard Menu if primaryAction is not supported.
-                // Standard behavior on older OS is just the menu.
+                // Fallback: Use standard Menu if primaryAction is not supported natively.
                 Menu(content: content, label: label)
             }
         } else {
