@@ -1,5 +1,6 @@
 import SwiftUI
 import XCTest
+
 @testable import AdaptiveSwiftUi
 
 final class ColorsSmokeTests: XCTestCase {
@@ -13,9 +14,9 @@ private struct ColorsSmokeView: View {
     var body: some View {
         VStack {
             Rectangle()
-                .fill(AdaptiveColor.systemBlue)
+                .fill(AdaptiveColor.systemFill)
                 .frame(width: 50, height: 50)
-            
+
             Text("Hi")
                 .adaptiveForegroundStyle(.blue, variant: .secondary)
         }

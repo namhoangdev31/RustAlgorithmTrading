@@ -149,23 +149,21 @@ public enum AdaptiveContainerBackgroundPlacement: Sendable {
     case navigation
     case navigationSplitView
 
-    @available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 1.0, visionOS 1.0, *)
-    public var native: ContainerBackgroundPlacement {
-        switch self {
-        case .navigation:
-            return .navigation
-        case .navigationSplitView:
-            #if os(macOS) || os(tvOS) || os(visionOS)
+    #if os(iOS) || os(watchOS)
+        @available(iOS 18.0, watchOS 10.0, *)
+        public var native: ContainerBackgroundPlacement {
+            switch self {
+            case .navigation:
                 return .navigation
-            #else
+            case .navigationSplitView:
                 if #available(iOS 18.0, watchOS 11.0, *) {
                     return .navigationSplitView
                 } else {
                     return .navigation
                 }
-            #endif
+            }
         }
-    }
+    #endif
 }
 
 public enum AdaptiveScrollEdgeEffectStyle: Sendable {
@@ -184,14 +182,6 @@ public enum AdaptiveMenuOrder: Sendable {
     case automatic
     case fixed
     case priority
-}
-
-public enum AdaptiveControlGroupStyleType: Sendable {
-    case automatic
-    case palette
-    case navigation
-    case menu
-    case compactMenu
 }
 
 public enum AdaptiveControlGroupStyle: Sendable {

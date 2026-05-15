@@ -2,11 +2,11 @@ import SwiftUI
 
 
 struct AdaptiveControlGroupStyleKey: EnvironmentKey {
-    static let defaultValue: AdaptiveControlGroupStyleType = .automatic
+    static let defaultValue: AdaptiveControlGroupStyle = .automatic
 }
 
 public extension EnvironmentValues {
-    var adaptiveControlGroupStyleType: AdaptiveControlGroupStyleType {
+    var adaptiveControlGroupStyle: AdaptiveControlGroupStyle {
         get { self[AdaptiveControlGroupStyleKey.self] }
         set { self[AdaptiveControlGroupStyleKey.self] = newValue }
     }
@@ -17,8 +17,8 @@ public extension View {
     /// Safely maps to the native `.controlGroupStyle()` modifiers on iOS 15+, while saving
     /// the style in the environment for older versions to use in fallback rendering.
     @ViewBuilder
-    func adaptiveControlGroupStyle(_ style: AdaptiveControlGroupStyleType) -> some View {
-        let styled = self.environment(\.adaptiveControlGroupStyleType, style)
+    func adaptiveControlGroupStyle(_ style: AdaptiveControlGroupStyle) -> some View {
+        let styled = self.environment(\.adaptiveControlGroupStyle, style)
         
         #if os(iOS) || os(macOS) || os(tvOS) || os(visionOS) || os(watchOS)
         if #available(iOS 15.0, macOS 12.0, tvOS 17.0, visionOS 1.0, *) {

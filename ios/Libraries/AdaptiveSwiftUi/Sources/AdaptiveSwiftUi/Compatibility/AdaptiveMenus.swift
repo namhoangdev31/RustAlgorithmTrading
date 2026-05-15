@@ -1,24 +1,27 @@
 import SwiftUI
 
-
 extension View {
     @ViewBuilder
     public func adaptiveMenuOrder(_ order: AdaptiveMenuOrder) -> some View {
         #if os(iOS) || os(macOS) || os(watchOS) || os(tvOS) || os(visionOS)
-        if #available(iOS 16.0, macOS 13.0, watchOS 9.0, tvOS 16.0, visionOS 1.0, *) {
-            switch order {
-            case .automatic:
-                self.menuOrder(.automatic)
-            case .fixed:
-                self.menuOrder(.fixed)
-            case .priority:
-                self.menuOrder(.priority)
+            if #available(iOS 16.0, macOS 13.0, watchOS 9.0, tvOS 16.0, visionOS 1.0, *) {
+                switch order {
+                case .automatic:
+                    self.menuOrder(.automatic)
+                case .fixed:
+                    self.menuOrder(.fixed)
+                case .priority:
+                    #if os(macOS)
+                        self.menuOrder(.automatic)
+                    #else
+                        self.menuOrder(.priority)
+                    #endif
+                }
+            } else {
+                self
             }
-        } else {
-            self
-        }
         #else
-        self
+            self
         #endif
     }
 
@@ -28,13 +31,13 @@ extension View {
         @ViewBuilder preview: @escaping () -> Preview
     ) -> some View {
         #if os(iOS) || os(macOS) || os(tvOS) || os(visionOS)
-        if #available(iOS 16.0, macOS 13.0, tvOS 16.0, visionOS 1.0, *) {
-            self.contextMenu(menuItems: menuItems, preview: preview)
-        } else {
-            self.contextMenu(menuItems: menuItems)
-        }
+            if #available(iOS 16.0, macOS 13.0, tvOS 16.0, visionOS 1.0, *) {
+                self.contextMenu(menuItems: menuItems, preview: preview)
+            } else {
+                self.contextMenu(menuItems: menuItems)
+            }
         #else
-        self
+            self
         #endif
     }
 }

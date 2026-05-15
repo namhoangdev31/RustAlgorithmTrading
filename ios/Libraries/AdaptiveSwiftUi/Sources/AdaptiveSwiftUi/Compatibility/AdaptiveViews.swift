@@ -20,22 +20,6 @@ extension View {
         }
     }
 
-    // MARK: - Container Background
-
-    /// Sets the container background of the enclosing container.
-    /// Supports `.navigation` (iOS 17+) and `.navigationSplitView` (iOS 18+).
-    /// - Falls back to doing nothing on versions below iOS 17.
-    @ViewBuilder
-    public func adaptiveContainerBackground<S: ShapeStyle>(
-        _ style: S, for placement: AdaptiveContainerBackgroundPlacement
-    ) -> some View {
-        if #available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 1.0, visionOS 1.0, *) {
-            self.containerBackground(style, for: placement.native)
-        } else {
-            self
-        }
-    }
-
     // MARK: - Background Extension Effect
 
     /// Adds the background extension effect to the view.
@@ -83,5 +67,88 @@ extension View {
         #else
             self
         #endif
+    }
+    // MARK: - Material Background
+
+    @ViewBuilder
+    public func adaptiveMaterialBackground(
+        _ material: AdaptiveMaterialStyle,
+        cornerRadius: CGFloat = 12
+    ) -> some View {
+        if #available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 10.0, visionOS 1.0, *) {
+            self.background(
+                material.shapeStyle,
+                in: RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+            )
+        } else {
+            self
+        }
+    }
+
+    // MARK: - Hierarchical Foreground
+
+    @ViewBuilder
+    public func adaptiveForegroundStyle(
+        _ color: Color,
+        variant: AdaptiveHierarchicalVariant = .primary
+    ) -> some View {
+        switch variant {
+        case .primary:
+            if #available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, visionOS 1.0, *) {
+                self.foregroundStyle(color)
+            } else {
+                self.foregroundColor(color)
+            }
+        case .secondary:
+            if #available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, visionOS 1.0, *) {
+                self.foregroundStyle(color.secondary)
+            } else if #available(iOS 15.0, tvOS 15.0, watchOS 8.0, *) {
+                self.foregroundStyle(color.opacity(0.6))
+            } else {
+                self.foregroundColor(color.opacity(0.6))
+            }
+        case .tertiary:
+            if #available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, visionOS 1.0, *) {
+                self.foregroundStyle(color.tertiary)
+            } else if #available(iOS 15.0, tvOS 15.0, watchOS 8.0, *) {
+                self.foregroundStyle(color.opacity(0.4))
+            } else {
+                self.foregroundColor(color.opacity(0.4))
+            }
+        case .quaternary:
+            if #available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, visionOS 1.0, *) {
+                self.foregroundStyle(color.quaternary)
+            } else if #available(iOS 15.0, tvOS 15.0, watchOS 8.0, *) {
+                self.foregroundStyle(color.opacity(0.25))
+            } else {
+                self.foregroundColor(color.opacity(0.25))
+            }
+        case .quinary:
+            if #available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, visionOS 1.0, *) {
+                self.foregroundStyle(color.quinary)
+            } else if #available(iOS 15.0, tvOS 15.0, watchOS 8.0, *) {
+                self.foregroundStyle(color.opacity(0.15))
+            } else {
+                self.foregroundColor(color.opacity(0.15))
+            }
+        }
+    }
+}
+
+@available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 10.0, visionOS 1.0, *)
+extension AdaptiveMaterialStyle {
+    var shapeStyle: Material {
+        switch self {
+        case .ultraThin:
+            return .ultraThinMaterial
+        case .thin:
+            return .thinMaterial
+        case .regular:
+            return .regularMaterial
+        case .thick:
+            return .thickMaterial
+        case .ultraThick:
+            return .ultraThickMaterial
+        }
     }
 }

@@ -18,14 +18,17 @@ public struct AdaptiveConcentricRectangle: InsettableShape {
     }
 
     public func path(in rect: CGRect) -> Path {
+        let insetRect = rect.insetBy(dx: insetAmount, dy: insetAmount)
+
         if #available(iOS 26.0, macOS 26.0, tvOS 26.0, watchOS 26.0, visionOS 26.0, *) {
             // Native ConcentricRectangle dynamically computes its radius from the container context.
             return ConcentricRectangle(corners: .concentric, isUniform: isUniform)
-                .inset(by: insetAmount)
-                .path(in: rect)
+                .path(in: insetRect)
         } else {
-            return RoundedRectangle(cornerRadius: max(0, fallbackCornerRadius - insetAmount), style: .continuous)
-                .path(in: rect)
+            return RoundedRectangle(
+                cornerRadius: max(0, fallbackCornerRadius - insetAmount), style: .continuous
+            )
+            .path(in: insetRect)
         }
     }
 

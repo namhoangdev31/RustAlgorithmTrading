@@ -1,5 +1,6 @@
 import SwiftUI
 import XCTest
+
 @testable import AdaptiveSwiftUi
 
 final class LinksSmokeTests: XCTestCase {
@@ -17,7 +18,7 @@ private struct LinksSmokeView: View {
             AdaptiveShareLink(item: URL(string: "https://apple.com")!) {
                 Text("Share")
             }
-            AdaptiveHelpLink(destination: URL(string: "https://apple.com/help")!)
+            AdaptiveHelpLink(action: URL(string: "https://apple.com/help")!)
             AdaptiveTextFieldLink("Enter", text: $text)
         }
     }
