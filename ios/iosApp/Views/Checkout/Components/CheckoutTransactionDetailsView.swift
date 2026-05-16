@@ -36,7 +36,7 @@ struct CheckoutDetailRow: View {
                 .foregroundColor(.secondary)
             Spacer()
             AdaptiveText(value, format: .currency(code: "USD"))
-                .fontWeight(.semibold)
+                .adaptiveSemi()
         }
         .font(.subheadline)
     }

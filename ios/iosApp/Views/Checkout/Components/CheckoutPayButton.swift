@@ -13,7 +13,7 @@ struct CheckoutPayButton: View {
                 Text("Pay Now • ")
                     .fontWeight(.bold)
                 AdaptiveText(total, format: .currency(code: "USD"))
-                    .fontWeight(.bold)
+                    .adaptiveBold()
             }
             .frame(maxWidth: .infinity)
             .padding()

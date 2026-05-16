@@ -64,14 +64,22 @@ extension View {
     /// - Note: Tracking is primarily a Text modifier; this is a no-op fallback for generic Views.
     @ViewBuilder
     public func adaptiveTracking(_ amount: CGFloat) -> some View {
-        self
+        if #available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *) {
+            self.tracking(amount)
+        } else {
+            self
+        }
     }
 
     /// Applies adaptive kerning to a view.
     /// - Note: Kerning is primarily a Text modifier; this is a no-op fallback for generic Views.
     @ViewBuilder
     public func adaptiveKerning(_ amount: CGFloat) -> some View {
-        self
+        if #available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *) {
+            self.kerning(amount)
+        } else {
+            self
+        }
     }
 
     /// Applies adaptive line spacing to a view.
@@ -106,6 +114,19 @@ extension View {
         if active {
             if #available(iOS 16.0, macOS 13.0, watchOS 9.0, tvOS 16.0, *) {
                 self.bold()
+            } else {
+                self
+            }
+        } else {
+            self
+        }
+    }
+    
+    @ViewBuilder
+    public func adaptiveSemi(_ active: Bool = true) -> some View {
+        if active {
+            if #available(iOS 16.0, macOS 13.0, watchOS 9.0, tvOS 16.0, *) {
+                self.fontWeight(.semibold)
             } else {
                 self
             }
