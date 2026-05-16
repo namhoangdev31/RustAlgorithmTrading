@@ -1,9 +1,9 @@
-import SwiftUI
 import AdaptiveSwiftUi
+import SwiftUI
 
 struct ActivityView: View {
     @Environment(\.dismiss) var dismiss
-    
+
     @State private var selectedFilter = "All"
     let filters = ["All", "Unread", "Mentions", "System"]
 
@@ -22,8 +22,12 @@ struct ActivityView: View {
                                     .fontWeight(.medium)
                                     .padding(.horizontal, 16)
                                     .padding(.vertical, 8)
-                                    .background(selectedFilter == filter ? Color.blue : Color(.systemGray5))
-                                    .adaptiveForegroundStyle(selectedFilter == filter ? .white : .primary)
+                                    .background(
+                                        selectedFilter == filter ? Color.blue : Color(.systemGray5)
+                                    )
+                                    .adaptiveForegroundStyle(
+                                        selectedFilter == filter ? .white : .primary
+                                    )
                                     .cornerRadius(20)
                             }
                         }
@@ -34,9 +38,9 @@ struct ActivityView: View {
 
                 // Section: Last 24 Hours
                 ActivitySectionHeaderView(title: "Last 24 Hours")
-                
+
                 SystemActivityCardView(isUnread: true)
-                
+
                 MiniAppActivityCardView(
                     appName: "Food Dash",
                     description: "Your lunch is arriving in 5 mins.",
@@ -45,7 +49,7 @@ struct ActivityView: View {
                     actionTitle: "TRACK",
                     isUnread: true
                 )
-                
+
                 MiniAppActivityCardView(
                     appName: "Fitness Hub",
                     description: "5-day activity streak reached!",
@@ -54,31 +58,31 @@ struct ActivityView: View {
                     actionTitle: "VIEW",
                     isUnread: true
                 )
-                
+
                 // Section: Earlier
                 ActivitySectionHeaderView(title: "Earlier")
-                
+
                 // Alternate System Card Style (Dark) with Adaptive Glass
                 ZStack {
                     Color.black.opacity(0.9)
-                    
+
                     VStack(alignment: .leading, spacing: 8) {
                         Text("SYSTEM SECURITY")
                             .font(.caption2)
                             .fontWeight(.bold)
                             .adaptiveForegroundStyle(.white, hierarchy: .secondary)
-                        
+
                         Text("Review Login Attempt.")
                             .font(.title2)
                             .fontWeight(.bold)
                             .foregroundColor(.white)
-                        
+
                         Spacer()
-                        
+
                         Text("We noticed a login from an recognized device in New York, US.")
                             .font(.subheadline)
                             .adaptiveForegroundStyle(.white, hierarchy: .secondary)
-                        
+
                         HStack {
                             Spacer()
                             AdaptiveButton(action: {}) {
@@ -100,7 +104,7 @@ struct ActivityView: View {
                 .cornerRadius(20)
                 .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
                 .padding(.horizontal)
-                
+
                 MiniAppActivityCardView(
                     appName: "Cloud Sync",
                     description: "Backup for 4 mini-apps complete.",
@@ -109,7 +113,7 @@ struct ActivityView: View {
                     actionTitle: "OPEN",
                     isUnread: false
                 )
-                
+
                 Spacer(minLength: 40)
             }
         }
@@ -118,7 +122,7 @@ struct ActivityView: View {
             ToolbarItemGroup(placement: .primaryAction) {
                 AdaptiveButton("Up", systemImage: "checkmark.circle.fill", action: {})
                     .adaptiveButtonTint(.blue)
-                AdaptiveToolbarSpacer(.fixed, fallbackLength: 8) // Hoạt động như một View
+                AdaptiveToolbarSpacer(.fixed, fallbackLength: 8)  // Hoạt động như một View
                 AdaptiveButton("Down", systemImage: "bell.badge.fill", action: {})
                     .adaptiveButtonTint(.blue)
             }
