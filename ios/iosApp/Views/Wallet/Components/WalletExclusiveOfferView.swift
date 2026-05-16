@@ -13,7 +13,7 @@ struct WalletExclusiveOfferView: View {
                         .font(.caption)
                         .fontWeight(.bold)
                         .adaptiveForegroundStyle(.secondary)
-                        .tracking(1)
+                        .adaptiveTracking(1)
                     
                     Text("Get 5% Cashback on\nyour next transfer")
                         .font(.title3)

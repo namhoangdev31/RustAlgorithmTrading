@@ -25,7 +25,7 @@ struct FavoriteMiniAppsView: View {
                     .font(.caption)
                     .fontWeight(.bold)
                     .adaptiveForegroundStyle(.secondary)
-                    .tracking(1)
+                    .adaptiveTracking(1)
                 
                 Spacer()
                 

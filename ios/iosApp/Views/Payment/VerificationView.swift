@@ -79,7 +79,7 @@ struct VerificationView: View {
                             .font(.caption2)
                             .fontWeight(.bold)
                             .adaptiveForegroundStyle(.secondary)
-                            .tracking(1)
+                            .adaptiveTracking(1)
                         
                         HStack(spacing: 4) {
                             Image(systemName: "shield.fill")

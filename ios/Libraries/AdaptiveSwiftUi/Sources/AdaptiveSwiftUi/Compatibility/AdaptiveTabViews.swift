@@ -26,7 +26,7 @@ import SwiftUI
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 extension View {
-    
+
     /// Sets the visual style for adaptive tab views.
     ///
     /// This modifier handles cross-platform mapping for TabView styles:
@@ -114,7 +114,7 @@ extension View {
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 extension View {
-    
+
     /// Adds a header view to the TabView sidebar (iOS 18+).
     @ViewBuilder
     public func adaptiveTabViewSidebarHeader<Content: View>(
@@ -189,7 +189,7 @@ extension View {
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 extension View {
-    
+
     /// Binds TabView customization state to a Data persistent store.
     ///
     /// This allows users to reorder or hide tabs, with the state persisted as JSON data.
@@ -274,7 +274,7 @@ extension View {
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 extension View {
-    
+
     /// Configures the tab bar minimize behavior on scroll (iOS 26+).
     @ViewBuilder
     public func adaptiveTabBarMinimizeBehavior(
@@ -320,7 +320,7 @@ extension View {
 
 @available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *)
 extension TabContent {
-    
+
     /// Assigns a stable customization ID to this tab for state persistence.
     public func adaptiveCustomizationID(_ id: String) -> some TabContent<TabValue> {
         customizationID(id)

@@ -123,7 +123,7 @@ public struct AdaptiveSlider<Label: View, ValueLabel: View, Ticks: View>: View {
 
     /// Returns a copy of the slider with the specified tint color.
     public func adaptiveTint(_ color: Color?) -> AdaptiveSlider {
-        var copy = self
+        let copy = self
         // Logic for tinting is handled via the adaptiveSliderTint modifier in body.
         return copy
     }

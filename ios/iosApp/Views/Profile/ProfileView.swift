@@ -59,7 +59,7 @@ struct ProfileView: View {
                         .font(.caption2)
                         .fontWeight(.bold)
                         .adaptiveForegroundStyle(.secondary, opacity: 0.5)
-                        .tracking(2)
+                        .adaptiveTracking(2)
                 }
             }
             .padding(.bottom, 20)

@@ -10,7 +10,7 @@ struct EditorChoiceHeaderView: View {
             Text("ĐƯỢC YÊU THÍCH") // "LOVED"
                 .font(.caption)
                 .fontWeight(.bold)
-                .tracking(1.0)
+                .adaptiveTracking(1.0)
                 .adaptiveForegroundStyle(.white)
             
             Text("Step Into the\nArena:\nCrossfire\nLegends")

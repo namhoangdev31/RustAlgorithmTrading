@@ -24,7 +24,7 @@ struct WalletPointsCard: View {
             
             Spacer()
             
-            AdaptiveProgressView(value: 0.6)
+            AdaptiveProgressView("",value: 0.6)
                 .scaleEffect(y: 2)
                 .background(Color.gray.opacity(0.1))
                 .clipShape(Capsule())

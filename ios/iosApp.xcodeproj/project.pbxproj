@@ -35,7 +35,7 @@
 		5A7804012F390214004BBDBF /* SFSafeSymbols in Frameworks */ = {isa = PBXBuildFile; productRef = 5A7804002F390214004BBDBF /* SFSafeSymbols */; };
 		5A7804042F39021A004BBDBF /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 5A7804032F39021A004BBDBF /* ZIPFoundation */; };
 		5A7804072F390220004BBDBF /* GCDWebServer in Frameworks */ = {isa = PBXBuildFile; productRef = 5A7804062F390220004BBDBF /* GCDWebServer */; };
-		5AE88F092FB79DB000761AD1 /* AdaptiveSwiftUi in Frameworks */ = {isa = PBXBuildFile; productRef = 5AE88F082FB79DB000761AD1 /* AdaptiveSwiftUi */; };
+		5AE890A72FB810C000761AD1 /* AdaptiveSwiftUi in Frameworks */ = {isa = PBXBuildFile; productRef = 5AE890A62FB810C000761AD1 /* AdaptiveSwiftUi */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -80,7 +80,7 @@
 				5A7804012F390214004BBDBF /* SFSafeSymbols in Frameworks */,
 				5A7803FE2F39020E004BBDBF /* ACarousel in Frameworks */,
 				5A17A6A62F55798B00D38C28 /* FirebasePerformance in Frameworks */,
-				5AE88F092FB79DB000761AD1 /* AdaptiveSwiftUi in Frameworks */,
+				5AE890A72FB810C000761AD1 /* AdaptiveSwiftUi in Frameworks */,
 				5A17A6A82F55798B00D38C28 /* FirebaseRemoteConfig in Frameworks */,
 				5A40AFF42F55339500BE0503 /* FirebaseAnalytics in Frameworks */,
 				5A17A6A02F55798B00D38C28 /* FirebaseInstallations in Frameworks */,
@@ -185,7 +185,7 @@
 				5A17A6A72F55798B00D38C28 /* FirebaseRemoteConfig */,
 				5A17A6A92F55798B00D38C28 /* FirebaseStorage */,
 				5A17A6AB2F55798B00D38C28 /* FirebaseStorageCombine-Community */,
-				5AE88F082FB79DB000761AD1 /* AdaptiveSwiftUi */,
+				5AE890A62FB810C000761AD1 /* AdaptiveSwiftUi */,
 			);
 			productName = iosApp;
 			productReference = 623E68E1EC5434D0E8A40C73 /* Leposapp.app */;
@@ -222,7 +222,7 @@
 				5A7804052F390220004BBDBF /* XCRemoteSwiftPackageReference "GCDWebServer" */,
 				5A40AFEE2F55339500BE0503 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				5A40AFF92F554A8C00BE0503 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
-				5AE88F072FB79DB000761AD1 /* XCLocalSwiftPackageReference "Libraries/AdaptiveSwiftUi" */,
+				5AE890A52FB810C000761AD1 /* XCLocalSwiftPackageReference "Libraries/AdaptiveSwiftUi" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E7798370575A2CFBE4CE7BEB /* Products */;
@@ -516,7 +516,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		5AE88F072FB79DB000761AD1 /* XCLocalSwiftPackageReference "Libraries/AdaptiveSwiftUi" */ = {
+		5AE890A52FB810C000761AD1 /* XCLocalSwiftPackageReference "Libraries/AdaptiveSwiftUi" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Libraries/AdaptiveSwiftUi;
 		};
@@ -709,7 +709,7 @@
 			package = 5A7804052F390220004BBDBF /* XCRemoteSwiftPackageReference "GCDWebServer" */;
 			productName = GCDWebServer;
 		};
-		5AE88F082FB79DB000761AD1 /* AdaptiveSwiftUi */ = {
+		5AE890A62FB810C000761AD1 /* AdaptiveSwiftUi */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = AdaptiveSwiftUi;
 		};
