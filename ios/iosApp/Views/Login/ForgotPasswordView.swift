@@ -74,7 +74,7 @@ struct ForgotPasswordView: View {
                     
                     AdaptiveButton(action: resetPassword) {
                         if isLoading {
-                            AdaptiveProgressView("")
+                            AdaptiveProgressView()
                                 .adaptiveProgressTint(.white)
                         } else {
                             Text("Send Reset Link")

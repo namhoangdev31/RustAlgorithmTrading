@@ -30,7 +30,7 @@ struct RuntimeView: View {
         case .idle:
             EmptyView()
         case .loading:
-            AdaptiveProgressView("")
+            AdaptiveProgressView()
                 .adaptiveForegroundStyle(.white)
                 .scaleEffect(1.5)
         case .ready(let entryUrl):

@@ -207,3 +207,23 @@ extension AdaptiveProgressView where Label == Text, CurrentValueLabel == EmptyVi
         self.tint = nil
     }
 }
+
+extension AdaptiveProgressView where Label == EmptyView, CurrentValueLabel == EmptyView {
+    /// Creates an indeterminate adaptive progress view without labels.
+    public init(style: AdaptiveProgressViewStyle = .automatic) {
+        self.type = .indeterminate
+        self.style = style
+        self.label = nil
+        self.currentValueLabel = nil
+        self.tint = nil
+    }
+
+    /// Creates a value-based adaptive progress view without labels.
+    public init(value: Double, total: Double = 1.0, style: AdaptiveProgressViewStyle = .automatic) {
+        self.type = .value(value, total)
+        self.style = style
+        self.label = nil
+        self.currentValueLabel = nil
+        self.tint = nil
+    }
+}
