@@ -60,6 +60,20 @@ extension Text {
 
 extension View {
 
+    /// Applies adaptive tracking (letter spacing) to a view.
+    /// - Note: Tracking is primarily a Text modifier; this is a no-op fallback for generic Views.
+    @ViewBuilder
+    public func adaptiveTracking(_ amount: CGFloat) -> some View {
+        self
+    }
+
+    /// Applies adaptive kerning to a view.
+    /// - Note: Kerning is primarily a Text modifier; this is a no-op fallback for generic Views.
+    @ViewBuilder
+    public func adaptiveKerning(_ amount: CGFloat) -> some View {
+        self
+    }
+
     /// Applies adaptive line spacing to a view.
     ///
     /// - Parameter amount: The amount of spacing to apply between lines.
