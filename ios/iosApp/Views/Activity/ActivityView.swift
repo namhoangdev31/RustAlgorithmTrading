@@ -113,7 +113,7 @@ struct ActivityView: View {
                 Spacer(minLength: 40)
             }
         }
-        .adaptiveNavigationTitle("Activity")
+        .adaptiveNavigationTitle("Activity", subtitle: "")
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
                 AdaptiveButton("Up", systemImage: "checkmark.circle.fill", action: {})
