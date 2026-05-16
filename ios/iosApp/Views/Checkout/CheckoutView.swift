@@ -17,8 +17,6 @@ struct CheckoutView: View {
     
     var body: some View {
         ZStack(alignment: .bottom) {
-
-            
             AdaptiveScrollView {
                 VStack(spacing: 24) {
                     
@@ -60,7 +58,7 @@ struct CheckoutView: View {
                 navigation.navigate(to: .paymentFailed)
             }
         }
-        .adaptiveNavigationTitle("Checkout")
+        .adaptiveNavigationTitle("Checkout" , subtitle: "")
     }
 }
 
