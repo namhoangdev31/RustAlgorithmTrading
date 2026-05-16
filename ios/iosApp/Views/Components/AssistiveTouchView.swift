@@ -1,5 +1,5 @@
-import SwiftUI
 import AdaptiveSwiftUi
+import SwiftUI
 
 struct AssistiveTouchView: View {
     @State private var dragPosition: CGPoint?
@@ -77,29 +77,32 @@ struct AssistiveTouchView: View {
                             .frame(width: 60, height: 60)
                     }
                     .adaptiveGlass(cornerRadius: 100)
-                    .position(dragPosition ?? CGPoint(x: geometry.size.width - 50, y: geometry.size.height - 150))
+                    .position(
+                        dragPosition
+                            ?? CGPoint(x: geometry.size.width - 50, y: geometry.size.height - 150)
+                    )
                     .highPriorityGesture(
                         DragGesture()
-                        .onChanged { gesture in
-                            self.dragPosition = gesture.location
-                        }
-                        .onEnded { value in
-                            var currentPosition = value.location
-
-                            if currentPosition.x > (geometry.size.width / 2) {
-                                currentPosition.x = geometry.size.width - 40
-                            } else {
-                                currentPosition.x = 40
+                            .onChanged { gesture in
+                                self.dragPosition = gesture.location
                             }
+                            .onEnded { value in
+                                var currentPosition = value.location
 
-                            let minY: CGFloat = 80
-                            let maxY: CGFloat = geometry.size.height - 80
-                            currentPosition.y = min(max(currentPosition.y, minY), maxY)
+                                if currentPosition.x > (geometry.size.width / 2) {
+                                    currentPosition.x = geometry.size.width - 40
+                                } else {
+                                    currentPosition.x = 40
+                                }
 
-                            withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
-                                dragPosition = currentPosition
+                                let minY: CGFloat = 80
+                                let maxY: CGFloat = geometry.size.height - 80
+                                currentPosition.y = min(max(currentPosition.y, minY), maxY)
+
+                                withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
+                                    dragPosition = currentPosition
+                                }
                             }
-                        }
                     )
                     .zIndex(1)
                 }
