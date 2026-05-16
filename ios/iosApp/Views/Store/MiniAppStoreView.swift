@@ -1,5 +1,5 @@
-import SwiftUI
 import AdaptiveSwiftUi
+import SwiftUI
 
 // import Shared — replaced by native Swift Shared module
 
@@ -25,7 +25,7 @@ struct MiniAppStoreView: View {
                                 EmptyView()
                             }
                             .opacity(0.0)
-                            
+
                             HStack {
                                 VStack(alignment: .leading) {
                                     Text(bundle.name)
@@ -35,7 +35,7 @@ struct MiniAppStoreView: View {
                                         .adaptiveForegroundStyle(.secondary)
                                 }
                                 Spacer()
-                                
+
                                 if viewModel.downloadingId == bundle.id {
                                     AdaptiveProgressView()
                                 } else {
@@ -75,7 +75,7 @@ struct MiniAppStoreView: View {
                     }
                 }
             }
-            .navigationTitle("Mini-App Store")
+            .adaptiveNavigationTitle("Mini-App Store", subtitle: "")
             .task {
                 await viewModel.loadBundles()
             }
@@ -89,7 +89,8 @@ struct MiniAppStoreView: View {
                     ).ignoresSafeArea()
                         .background(Color.black)
                         .onAppear {
-                            vm.loadBundle(manifest: manifest, bundlePath: URL(fileURLWithPath: path))
+                            vm.loadBundle(
+                                manifest: manifest, bundlePath: URL(fileURLWithPath: path))
                         }
                 }
             }

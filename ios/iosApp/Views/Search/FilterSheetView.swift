@@ -1,18 +1,19 @@
-import SwiftUI
 import AdaptiveSwiftUi
-
+import SwiftUI
 
 struct FilterSheetView: View {
     @Environment(\.dismiss) var dismiss
-    
+
     @Binding var selectedSort: String
     @Binding var selectedPrice: String
     @Binding var selectedCategory: String
-    
+
     let sortOptions = ["Relevance", "Popularity", "Rating", "Newest"]
     let priceOptions = ["Any Price", "Free", "Paid"]
-    let categoryOptions = ["All Categories", "Games", "Apps", "Entertainment", "Education", "Productivity"]
-    
+    let categoryOptions = [
+        "All Categories", "Games", "Apps", "Entertainment", "Education", "Productivity",
+    ]
+
     var body: some View {
         NavigationView {
             Form {
@@ -24,7 +25,7 @@ struct FilterSheetView: View {
                     }
                     .pickerStyle(.inline)
                 }
-                
+
                 Section(header: Text("Price")) {
                     Picker("Price", selection: $selectedPrice) {
                         ForEach(priceOptions, id: \.self) { option in
@@ -33,7 +34,7 @@ struct FilterSheetView: View {
                     }
                     .pickerStyle(.segmented)
                 }
-                
+
                 Section(header: Text("Category")) {
                     Picker("Category", selection: $selectedCategory) {
                         ForEach(categoryOptions, id: \.self) { option in
@@ -42,7 +43,7 @@ struct FilterSheetView: View {
                     }
                     .pickerStyle(.menu)
                 }
-                
+
                 Section {
                     AdaptiveButton("Reset All") {
                         selectedSort = "Relevance"
@@ -61,7 +62,7 @@ struct FilterSheetView: View {
                         dismiss()
                     }
                     .adaptiveButtonStyle(.plain)
-                    
+
                 }
             }
         }

@@ -1,6 +1,5 @@
-import SwiftUI
 import AdaptiveSwiftUi
-
+import SwiftUI
 
 struct SearchView: View {
     @State private var isSearching: Bool = false
@@ -9,7 +8,7 @@ struct SearchView: View {
     @State private var selectedSort = "Relevance"
     @State private var selectedPrice = "Any Price"
     @State private var selectedCategory = "All Categories"
-    
+
     var body: some View {
         NavigationView {
             AdaptiveScrollView {
@@ -23,13 +22,13 @@ struct SearchView: View {
                     } else {
                         SearchSuggestionsView(query: searchText)
                     }
-                    
+
                     Spacer(minLength: 50)
                 }
                 .padding(.bottom, 20)
             }
             .navigationTitle("Search")
-            
+
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     HStack(spacing: 16) {
@@ -41,7 +40,7 @@ struct SearchView: View {
                                 .adaptiveForegroundStyle(.blue)
                         }
                         .adaptiveButtonStyle(.plain)
-                        
+
                         Image(systemName: "barcode.viewfinder")
                             .font(.title2)
                             .adaptiveForegroundStyle(.secondary)
@@ -61,7 +60,9 @@ struct SearchView: View {
                 )
             }
         }
-        .searchable(text: $searchText, placement: .automatic, prompt: "Search mini-apps, services...")
+        .searchable(
+            text: $searchText, placement: .automatic, prompt: "Search mini-apps, services..."
+        )
         .onSubmit(of: .search) {
             isSearching = true
         }

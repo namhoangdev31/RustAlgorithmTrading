@@ -1,12 +1,11 @@
-import SwiftUI
 import AdaptiveSwiftUi
-
+import SwiftUI
 
 struct SettingsView: View {
     @EnvironmentObject var navigation: NavigationViewModel
     @AppStorage("isDarkMode") private var isDarkMode = true
     @AppStorage("notificationsEnabled") private var notificationsEnabled = true
-    
+
     var body: some View {
         AdaptiveList {
             // Account Section
@@ -16,7 +15,7 @@ struct SettingsView: View {
                         .resizable()
                         .frame(width: 50, height: 50)
                         .adaptiveForegroundStyle(.secondary)
-                    
+
                     VStack(alignment: .leading, spacing: 4) {
                         Text("John Doe")
                             .font(.headline)
@@ -26,7 +25,7 @@ struct SettingsView: View {
                     }
                 }
                 .padding(.vertical, 8)
-                
+
                 AdaptiveButton(action: {
                     navigation.navigate(to: .editProfile)
                 }) {
@@ -35,12 +34,12 @@ struct SettingsView: View {
                 }
                 .adaptiveButtonStyle(.plain)
             }
-            
+
             // Preferences Section
             Section(header: Text("Preferences")) {
                 Toggle("Push Notifications", isOn: $notificationsEnabled)
                 Toggle("Dark Mode", isOn: $isDarkMode)
-                
+
                 HStack {
                     Text("Language")
                     Spacer()
@@ -48,17 +47,17 @@ struct SettingsView: View {
                         .adaptiveForegroundStyle(.secondary)
                 }
             }
-            
+
             // Data & Storage Section
             Section(header: Text("Data & Storage")) {
                 AdaptiveButton(action: {
-                   navigation.navigate(to: .downloadHistory)
+                    navigation.navigate(to: .downloadHistory)
                 }) {
                     Text("Download History")
                         .adaptiveForegroundStyle(.primary)
                 }
                 .adaptiveButtonStyle(.plain)
-                
+
                 AdaptiveButton(action: {
                     // Action to clear cache
                 }) {
@@ -72,7 +71,7 @@ struct SettingsView: View {
                 }
                 .adaptiveButtonStyle(.plain)
             }
-            
+
             // About Section
             Section(header: Text("About")) {
                 AdaptiveButton(action: {
@@ -89,16 +88,16 @@ struct SettingsView: View {
                     Text("2.4.1 (Build 2024)")
                         .adaptiveForegroundStyle(.secondary)
                 }
-                
-                AdaptiveButton("Terms of Service") { }
+
+                AdaptiveButton("Terms of Service") {}
                     .adaptiveForegroundStyle(.primary)
                     .adaptiveButtonStyle(.plain)
-                
-                AdaptiveButton("Privacy Policy") { }
+
+                AdaptiveButton("Privacy Policy") {}
                     .adaptiveForegroundStyle(.primary)
                     .adaptiveButtonStyle(.plain)
             }
-            
+
             // Actions Section
             Section {
                 AdaptiveButton(action: {

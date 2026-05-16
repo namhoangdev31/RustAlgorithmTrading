@@ -1,22 +1,21 @@
-import SwiftUI
 import AdaptiveSwiftUi
-
+import SwiftUI
 
 struct AboutAppView: View {
     var body: some View {
         AdaptiveList {
             Section {
                 VStack(spacing: 16) {
-                    Image(systemName: "app.dashed") // App Icon placeholder
+                    Image(systemName: "app.dashed")  // App Icon placeholder
                         .resizable()
                         .scaledToFit()
                         .frame(width: 80, height: 80)
                         .adaptiveForegroundStyle(.blue)
-                    
+
                     Text("Lepos App")
                         .font(.title2)
                         .fontWeight(.bold)
-                    
+
                     Text("Version 1.0.0 (Build 100)")
                         .font(.subheadline)
                         .adaptiveForegroundStyle(.secondary)
@@ -25,13 +24,13 @@ struct AboutAppView: View {
                 .padding(.vertical)
             }
             .listRowBackground(Color.clear)
-            
+
             Section(header: Text("Legal")) {
                 NavigationLink(destination: LegalView(type: "terms")) { Text("Terms of Service") }
                 NavigationLink(destination: LegalView(type: "privacy")) { Text("Privacy Policy") }
                 NavigationLink(destination: LegalView(type: "licenses")) { Text("Licenses") }
             }
-            
+
             Section {
                 Text("Made with ❤️ by the Lepos Team")
                     .frame(maxWidth: .infinity, alignment: .center)

@@ -1,6 +1,5 @@
-import SwiftUI
 import AdaptiveSwiftUi
-
+import SwiftUI
 
 struct DashboardStatsView: View {
     @EnvironmentObject var navigation: NavigationViewModel
@@ -25,14 +24,14 @@ struct DashboardStatsView: View {
                                 .background(Color.white.opacity(0.2))
                                 .clipShape(Capsule())
                         }
-                        
+
                         Spacer()
-                        
+
                         Text("BALANCE")
                             .font(.caption)
                             .fontWeight(.semibold)
                             .opacity(0.8)
-                        
+
                         Text("$1,284.50")
                             .font(.title2)
                             .fontWeight(.bold)
@@ -50,7 +49,7 @@ struct DashboardStatsView: View {
                     .cornerRadius(24)
                 }
                 .adaptiveButtonStyle(.plain)
-                
+
                 VStack(spacing: 16) {
                     // Loyalty Points Card (Pink)
                     VStack(alignment: .leading) {
@@ -73,9 +72,9 @@ struct DashboardStatsView: View {
                     .adaptiveForegroundStyle(.white)
                     .padding(16)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(Color(red: 1.0, green: 0.3, blue: 0.5)) // Pink
+                    .background(Color(red: 1.0, green: 0.3, blue: 0.5))  // Pink
                     .cornerRadius(24)
-                    
+
                     // Membership Tier Card (Green)
                     VStack(alignment: .leading) {
                         HStack(alignment: .top) {
@@ -86,9 +85,9 @@ struct DashboardStatsView: View {
                                 .font(.caption2)
                                 .fontWeight(.bold)
                         }
-                        
+
                         Spacer()
-                        
+
                         Text("MEMBERSHIP")
                             .font(.caption2)
                             .opacity(0.9)
@@ -96,7 +95,7 @@ struct DashboardStatsView: View {
                     .adaptiveForegroundStyle(.white)
                     .padding(16)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(Color(red: 0.0, green: 0.7, blue: 0.5)) // Green
+                    .background(Color(red: 0.0, green: 0.7, blue: 0.5))  // Green
                     .cornerRadius(24)
                 }
                 .frame(minHeight: 160)

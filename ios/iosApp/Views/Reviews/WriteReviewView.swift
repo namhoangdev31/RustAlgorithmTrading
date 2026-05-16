@@ -1,17 +1,16 @@
-import SwiftUI
 import AdaptiveSwiftUi
-
+import SwiftUI
 
 struct WriteReviewView: View {
     let appId: String
     @Environment(\.dismiss) var dismiss
-    
+
     @State private var rating: Int = 0
     @State private var title: String = ""
     @State private var review: String = ""
     @State private var nickname: String = "AppExplorer"
     @State private var isSubmitting: Bool = false
-    
+
     var body: some View {
         NavigationView {
             Form {
@@ -22,7 +21,7 @@ struct WriteReviewView: View {
                             Text("Tap to Rate:")
                                 .font(.caption)
                                 .adaptiveForegroundStyle(.secondary)
-                            
+
                             HStack(spacing: 12) {
                                 ForEach(1...5, id: \.self) { star in
                                     Image(systemName: star <= rating ? "star.fill" : "star")
@@ -41,10 +40,10 @@ struct WriteReviewView: View {
                     .padding(.vertical)
                     .listRowBackground(Color.clear)
                 }
-                
+
                 Section(header: Text("Review Details")) {
                     TextField("Title", text: $title)
-                    
+
                     ZStack(alignment: .topLeading) {
                         if review.isEmpty {
                             Text("Review (Optional)")
@@ -56,9 +55,9 @@ struct WriteReviewView: View {
                             .frame(minHeight: 120)
                     }
                 }
-                
+
                 Section(header: Text("Reviewer Info")) {
-                     TextField("Nickname", text: $nickname)
+                    TextField("Nickname", text: $nickname)
                 }
             }
             .navigationTitle("Write a Review")
@@ -70,7 +69,7 @@ struct WriteReviewView: View {
                     }
                     .adaptiveButtonStyle(.plain)
                 }
-                
+
                 ToolbarItem(placement: .confirmationAction) {
                     if isSubmitting {
                         AdaptiveProgressView()
@@ -85,7 +84,7 @@ struct WriteReviewView: View {
             }
         }
     }
-    
+
     private func submitReview() {
         isSubmitting = true
         // Mock API Call

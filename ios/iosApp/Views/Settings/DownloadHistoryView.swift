@@ -1,6 +1,5 @@
-import SwiftUI
 import AdaptiveSwiftUi
-
+import SwiftUI
 
 struct DownloadHistoryItem: Identifiable {
     let id = UUID()
@@ -13,16 +12,26 @@ struct DownloadHistoryItem: Identifiable {
 
 struct DownloadHistoryView: View {
     @EnvironmentObject var navigation: NavigationViewModel
-    
+
     // Mock Data
     private let historyItems: [DownloadHistoryItem] = [
-        DownloadHistoryItem(name: "Social Connect", iconName: "message.fill", iconColor: .blue, date: "May 20, 2026", isInstalled: true),
-        DownloadHistoryItem(name: "FitTrack Pro", iconName: "heart.fill", iconColor: .red, date: "April 15, 2026", isInstalled: true),
-        DownloadHistoryItem(name: "Puzzle Master", iconName: "puzzlepiece.fill", iconColor: .green, date: "March 10, 2026", isInstalled: false),
-        DownloadHistoryItem(name: "Budget Planner", iconName: "dollarsign.circle.fill", iconColor: .orange, date: "February 28, 2026", isInstalled: false),
-        DownloadHistoryItem(name: "Photo Editor X", iconName: "camera.fill", iconColor: .purple, date: "January 5, 2026", isInstalled: true)
+        DownloadHistoryItem(
+            name: "Social Connect", iconName: "message.fill", iconColor: .blue,
+            date: "May 20, 2026", isInstalled: true),
+        DownloadHistoryItem(
+            name: "FitTrack Pro", iconName: "heart.fill", iconColor: .red, date: "April 15, 2026",
+            isInstalled: true),
+        DownloadHistoryItem(
+            name: "Puzzle Master", iconName: "puzzlepiece.fill", iconColor: .green,
+            date: "March 10, 2026", isInstalled: false),
+        DownloadHistoryItem(
+            name: "Budget Planner", iconName: "dollarsign.circle.fill", iconColor: .orange,
+            date: "February 28, 2026", isInstalled: false),
+        DownloadHistoryItem(
+            name: "Photo Editor X", iconName: "camera.fill", iconColor: .purple,
+            date: "January 5, 2026", isInstalled: true),
     ]
-    
+
     var body: some View {
         AdaptiveList {
             ForEach(historyItems) { item in
@@ -35,7 +44,7 @@ struct DownloadHistoryView: View {
                                 .adaptiveForegroundStyle(.white)
                                 .font(.title3)
                         )
-                    
+
                     VStack(alignment: .leading, spacing: 4) {
                         Text(item.name)
                             .font(.headline)
@@ -43,9 +52,9 @@ struct DownloadHistoryView: View {
                             .font(.caption)
                             .adaptiveForegroundStyle(.secondary)
                     }
-                    
+
                     Spacer()
-                    
+
                     if item.isInstalled {
                         AdaptiveButton("OPEN") {
                             // Open App Logic

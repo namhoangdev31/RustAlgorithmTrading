@@ -1,6 +1,5 @@
-import SwiftUI
 import AdaptiveSwiftUi
-
+import SwiftUI
 
 struct WalletMemberStatusCard: View {
     var body: some View {
@@ -11,19 +10,19 @@ struct WalletMemberStatusCard: View {
                 .padding(12)
                 .background(Color.orange.opacity(0.1))
                 .clipShape(Circle())
-            
+
             Space(height: 4)
-            
+
             Text("Gold")
                 .font(.title)
                 .fontWeight(.bold)
-            
+
             Text("Member Status")
                 .font(.subheadline)
-                .adaptiveForegroundStyle(.cyan) 
-            
+                .adaptiveForegroundStyle(.cyan)
+
             Spacer()
-            
+
             Text("VIP BENEFITS")
                 .font(.caption2)
                 .fontWeight(.bold)
@@ -37,7 +36,7 @@ struct WalletMemberStatusCard: View {
         .frame(maxWidth: .infinity, minHeight: 180, alignment: .leading)
         .adaptiveGlass(cornerRadius: 24)
     }
-    
+
     private func Space(height: CGFloat) -> some View {
         Color.clear.frame(height: height)
     }

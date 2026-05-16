@@ -365,6 +365,13 @@ public enum AdaptiveToolbarSpacerSizing: Sendable {
     case flexible
 }
 
+/// Defines kinds of default toolbar items for adaptive removal or customization.
+public enum AdaptiveToolbarDefaultItemKind: Sendable {
+    case sidebarToggle
+    case title
+    case search
+}
+
 /// Defines visual styles for `AdaptiveTabView`.
 public enum AdaptiveTabViewStyle: Sendable {
     case automatic

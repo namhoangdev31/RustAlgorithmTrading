@@ -1,27 +1,26 @@
-import SwiftUI
 import AdaptiveSwiftUi
-
+import SwiftUI
 
 struct RateLimitView: View {
     var onRetry: () -> Void
-    
+
     var body: some View {
         VStack(spacing: 24) {
             Image(systemName: "hand.raised.fill")
                 .font(.system(size: 64))
                 .adaptiveForegroundStyle(.red)
-            
+
             VStack(spacing: 8) {
                 Text("Too Many Requests")
                     .font(.title2)
                     .fontWeight(.bold)
-                
+
                 Text("Please slow down. You've made too many requests recently.")
                     .font(.body)
                     .adaptiveForegroundStyle(.secondary)
                     .multilineTextAlignment(.center)
             }
-            
+
             AdaptiveButton(action: onRetry) {
                 Text("Try Again")
                     .font(.headline)

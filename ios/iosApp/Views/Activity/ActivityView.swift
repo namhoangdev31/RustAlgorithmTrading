@@ -118,6 +118,7 @@ struct ActivityView: View {
             ToolbarItemGroup(placement: .primaryAction) {
                 AdaptiveButton("Up", systemImage: "checkmark.circle.fill", action: {})
                     .adaptiveButtonTint(.blue)
+                AdaptiveToolbarSpacer(.fixed, fallbackLength: 8) // Hoạt động như một View
                 AdaptiveButton("Down", systemImage: "bell.badge.fill", action: {})
                     .adaptiveButtonTint(.blue)
             }

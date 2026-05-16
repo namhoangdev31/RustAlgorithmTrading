@@ -1,6 +1,5 @@
-import SwiftUI
 import AdaptiveSwiftUi
-
+import SwiftUI
 
 struct UpdateItem: Identifiable {
     let id = UUID()
@@ -15,15 +14,28 @@ struct UpdateItem: Identifiable {
 
 struct UpdatesView: View {
     @EnvironmentObject var navigation: NavigationViewModel
-    
+
     // Mock Data
     @State private var updates: [UpdateItem] = [
-        UpdateItem(name: "Task Master", version: "2.1.0", size: "45 MB", date: "Yesterday", iconName: "checkmark.circle.fill", iconColor: .blue, releaseNotes: "• Added dark mode support\n• Fixed sync issues\n• Performance improvements"),
-        UpdateItem(name: "EcoLife", version: "1.4.2", size: "28 MB", date: "2 days ago", iconName: "leaf.fill", iconColor: .green, releaseNotes: "• New carbon footprint calculator\n• Weekly challenges added"),
-        UpdateItem(name: "FitPulse", version: "3.0.1", size: "120 MB", date: "Last week", iconName: "heart.fill", iconColor: .pink, releaseNotes: "• Bug fixes and stability improvements"),
-        UpdateItem(name: "Pixel Art", version: "1.2.0", size: "65 MB", date: "Last week", iconName: "paintbrush.fill", iconColor: .purple, releaseNotes: "• New brush tools\n• Layer management improvements")
+        UpdateItem(
+            name: "Task Master", version: "2.1.0", size: "45 MB", date: "Yesterday",
+            iconName: "checkmark.circle.fill", iconColor: .blue,
+            releaseNotes:
+                "• Added dark mode support\n• Fixed sync issues\n• Performance improvements"),
+        UpdateItem(
+            name: "EcoLife", version: "1.4.2", size: "28 MB", date: "2 days ago",
+            iconName: "leaf.fill", iconColor: .green,
+            releaseNotes: "• New carbon footprint calculator\n• Weekly challenges added"),
+        UpdateItem(
+            name: "FitPulse", version: "3.0.1", size: "120 MB", date: "Last week",
+            iconName: "heart.fill", iconColor: .pink,
+            releaseNotes: "• Bug fixes and stability improvements"),
+        UpdateItem(
+            name: "Pixel Art", version: "1.2.0", size: "65 MB", date: "Last week",
+            iconName: "paintbrush.fill", iconColor: .purple,
+            releaseNotes: "• New brush tools\n• Layer management improvements"),
     ]
-    
+
     var body: some View {
         AdaptiveScrollView {
             VStack(alignment: .leading, spacing: 20) {
@@ -37,9 +49,9 @@ struct UpdatesView: View {
                             .font(.title2)
                             .fontWeight(.bold)
                     }
-                    
+
                     Spacer()
-                    
+
                     AdaptiveButton(action: {
                         // Mock update all
                         updates.removeAll()
@@ -55,7 +67,7 @@ struct UpdatesView: View {
                     .adaptiveButtonStyle(.plain)
                 }
                 .padding(.top)
-                
+
                 if updates.isEmpty {
                     VStack(spacing: 20) {
                         Spacer(minLength: 50)
@@ -87,7 +99,7 @@ struct UpdatesView: View {
                                                 .font(.title)
                                                 .adaptiveForegroundStyle(.white)
                                         )
-                                    
+
                                     VStack(alignment: .leading, spacing: 4) {
                                         Text(item.name)
                                             .font(.headline)
@@ -98,11 +110,13 @@ struct UpdatesView: View {
                                             .font(.caption)
                                             .adaptiveForegroundStyle(.secondary)
                                     }
-                                    
+
                                     Spacer()
-                                    
+
                                     AdaptiveButton(action: {
-                                        if let index = updates.firstIndex(where: { $0.id == item.id }) {
+                                        if let index = updates.firstIndex(where: {
+                                            $0.id == item.id
+                                        }) {
                                             updates.remove(at: index)
                                         }
                                     }) {
@@ -117,15 +131,15 @@ struct UpdatesView: View {
                                     }
                                     .adaptiveButtonStyle(.plain)
                                 }
-                                
+
                                 // Release Notes
                                 Text(item.releaseNotes)
                                     .font(.system(size: 14))
                                     .adaptiveForegroundStyle(.secondary)
                                     .lineLimit(3)
-                                    .padding(.leading, 76) // Align with text start
+                                    .padding(.leading, 76)  // Align with text start
                             }
-                            
+
                             AdaptiveDivider()
                                 .padding(.leading, 76)
                         }

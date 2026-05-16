@@ -1,10 +1,9 @@
-import SwiftUI
 import AdaptiveSwiftUi
-
+import SwiftUI
 
 struct HelpSupportView: View {
     @Environment(\.dismiss) var dismiss
-    
+
     var body: some View {
         AdaptiveList {
             Section(header: Text("Common Issues")) {
@@ -12,12 +11,12 @@ struct HelpSupportView: View {
                 NavigationLink("Payments & Refunds", destination: Text("Payments Help"))
                 NavigationLink("App Installation", destination: Text("Installation Help"))
             }
-            
+
             Section(header: Text("Contact Us")) {
                 Link("Email Support", destination: URL(string: "mailto:support@lepos.com")!)
                 Link("Visit Help Center", destination: URL(string: "https://help.lepos.com")!)
             }
-            
+
             Section {
                 AdaptiveButton("Report a Problem") {
                     // Action

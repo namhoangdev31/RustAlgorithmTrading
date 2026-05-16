@@ -1,10 +1,9 @@
-import SwiftUI
 import AdaptiveSwiftUi
-
+import SwiftUI
 
 struct SearchSuggestionsView: View {
     let query: String
-    
+
     var suggestions: [String] {
         if query.lowercased().hasPrefix("foo") {
             return [
@@ -12,24 +11,24 @@ struct SearchSuggestionsView: View {
                 "Food recipes",
                 "Football scores",
                 "Footwear fashion",
-                "Food near me"
+                "Food near me",
             ]
         } else if query.lowercased().hasPrefix("eco") {
             return [
                 "Eco-friendly travel",
                 "Eco products",
-                "Economy news"
+                "Economy news",
             ]
         } else if !query.isEmpty {
             return [
                 "\(query) apps",
                 "\(query) services",
-                "\(query) near me"
+                "\(query) near me",
             ]
         }
         return []
     }
-    
+
     var body: some View {
         VStack(spacing: 0) {
             ForEach(suggestions, id: \.self) { suggestion in
@@ -37,19 +36,19 @@ struct SearchSuggestionsView: View {
                     Image(systemName: "magnifyingglass")
                         .font(.body)
                         .adaptiveForegroundStyle(.secondary)
-                    
+
                     Text(suggestion)
                         .font(.body)
-                    
+
                     Spacer()
-                    
+
                     Image(systemName: "arrow.up.left")
                         .font(.caption)
                         .adaptiveForegroundStyle(.secondary, opacity: 0.5)
                 }
                 .padding()
                 .background(Color(.systemBackground))
-                
+
                 AdaptiveDivider()
             }
         }

@@ -1,13 +1,15 @@
-import SwiftUI
 import AdaptiveSwiftUi
-
+import SwiftUI
 
 struct ReportReviewSheet: View {
     @Environment(\.presentationMode) var presentationMode
     @State private var selectedReason = "Spam"
-    
-    let reasons = ["Spam or advertising", "Offensive content", "Harassment or bullying", "Hate speech", "Other"]
-    
+
+    let reasons = [
+        "Spam or advertising", "Offensive content", "Harassment or bullying", "Hate speech",
+        "Other",
+    ]
+
     var body: some View {
         NavigationView {
             AdaptiveList {
@@ -28,7 +30,7 @@ struct ReportReviewSheet: View {
                         }
                     }
                 }
-                
+
                 Section {
                     AdaptiveButton(action: {
                         // Submit logic

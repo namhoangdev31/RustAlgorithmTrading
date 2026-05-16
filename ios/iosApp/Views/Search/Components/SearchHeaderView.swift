@@ -1,6 +1,5 @@
-import SwiftUI
 import AdaptiveSwiftUi
-
+import SwiftUI
 
 struct SearchHeaderView: View {
     var body: some View {
@@ -8,9 +7,9 @@ struct SearchHeaderView: View {
             Text("Search")
                 .font(.largeTitle)
                 .fontWeight(.bold)
-            
+
             Spacer()
-            
+
             Image(systemName: "person.crop.circle.fill")
                 .font(.largeTitle)
                 .adaptiveForegroundStyle(.secondary)

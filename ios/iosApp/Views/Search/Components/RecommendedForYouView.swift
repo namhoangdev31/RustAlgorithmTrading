@@ -1,6 +1,5 @@
-import SwiftUI
 import AdaptiveSwiftUi
-
+import SwiftUI
 
 struct RecommendedApp: Identifiable {
     let id = UUID()
@@ -12,10 +11,12 @@ struct RecommendedApp: Identifiable {
 
 struct RecommendedForYouView: View {
     let apps = [
-        RecommendedApp(name: "GourmetGo", subtitle: "Curated local dining", rating: 4.9, iconColor: .orange),
-        RecommendedApp(name: "TravelBuddy", subtitle: "Trip planning", rating: 4.6, iconColor: .blue)
+        RecommendedApp(
+            name: "GourmetGo", subtitle: "Curated local dining", rating: 4.9, iconColor: .orange),
+        RecommendedApp(
+            name: "TravelBuddy", subtitle: "Trip planning", rating: 4.6, iconColor: .blue),
     ]
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
@@ -23,13 +24,13 @@ struct RecommendedForYouView: View {
                     .font(.headline)
                     .fontWeight(.bold)
                 Spacer()
-                AdaptiveButton("View all") { }
+                AdaptiveButton("View all") {}
                     .font(.subheadline)
                     .adaptiveForegroundStyle(.blue)
                     .adaptiveButtonStyle(.plain)
             }
             .padding(.horizontal)
-            
+
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 16) {
                     ForEach(apps) { app in
@@ -44,7 +45,7 @@ struct RecommendedForYouView: View {
 
 struct AppRecommendationCard: View {
     let app: RecommendedApp
-    
+
     var body: some View {
         RoundedRectangle(cornerRadius: 20)
             .fill(Color(.systemGray6))
@@ -60,7 +61,7 @@ struct AppRecommendationCard: View {
                             )
                         )
                         .frame(height: 180)
-                    
+
                     HStack(alignment: .top, spacing: 12) {
                         Circle()
                             .fill(app.iconColor.opacity(0.2))
@@ -69,7 +70,7 @@ struct AppRecommendationCard: View {
                                 Image(systemName: "fork.knife")
                                     .adaptiveForegroundStyle(app.iconColor)
                             )
-                        
+
                         VStack(alignment: .leading, spacing: 4) {
                             Text(app.name)
                                 .font(.subheadline)
@@ -78,10 +79,10 @@ struct AppRecommendationCard: View {
                                 .font(.caption)
                                 .adaptiveForegroundStyle(.secondary)
                         }
-                        
+
                         Spacer()
                     }
-                    
+
                     HStack {
                         HStack(spacing: 2) {
                             Image(systemName: "star.fill")
@@ -91,9 +92,9 @@ struct AppRecommendationCard: View {
                                 .font(.caption)
                                 .fontWeight(.semibold)
                         }
-                        
+
                         Spacer()
-                        
+
                         AdaptiveButton(action: {}) {
                             Text("GET")
                                 .font(.caption)

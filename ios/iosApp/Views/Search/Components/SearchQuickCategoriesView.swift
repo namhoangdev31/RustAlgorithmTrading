@@ -1,6 +1,5 @@
-import SwiftUI
 import AdaptiveSwiftUi
-
+import SwiftUI
 
 struct CategoryItem: Identifiable {
     let id = UUID()
@@ -14,9 +13,9 @@ struct SearchQuickCategoriesView: View {
         CategoryItem(name: "Dining", icon: "fork.knife", color: Color.cyan.opacity(0.2)),
         CategoryItem(name: "Travel", icon: "airplane", color: Color.orange.opacity(0.2)),
         CategoryItem(name: "Games", icon: "gamecontroller.fill", color: Color.purple.opacity(0.2)),
-        CategoryItem(name: "Leisure", icon: "leaf.fill", color: Color.green.opacity(0.2))
+        CategoryItem(name: "Leisure", icon: "leaf.fill", color: Color.green.opacity(0.2)),
     ]
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
@@ -26,21 +25,21 @@ struct SearchQuickCategoriesView: View {
                     color: categories[0].color,
                     isLarge: true
                 )
-                
+
                 CategoryCard(
                     name: categories[1].name,
                     icon: categories[1].icon,
                     color: categories[1].color,
                     isLarge: true
                 )
-                
+
                 CategoryCard(
                     name: categories[2].name,
                     icon: categories[2].icon,
                     color: categories[2].color,
                     isLarge: false
                 )
-                
+
                 CategoryCard(
                     name: categories[3].name,
                     icon: categories[3].icon,
@@ -58,7 +57,7 @@ struct CategoryCard: View {
     let icon: String
     let color: Color
     let isLarge: Bool
-    
+
     var body: some View {
         RoundedRectangle(cornerRadius: 20)
             .fill(color)
@@ -68,13 +67,13 @@ struct CategoryCard: View {
                     if isLarge {
                         Spacer()
                     }
-                    
+
                     Image(systemName: icon)
                         .font(isLarge ? .largeTitle : .title2)
                         .adaptiveForegroundStyle(getIconColor())
-                    
+
                     Spacer()
-                    
+
                     Text(name)
                         .font(isLarge ? .title3 : .subheadline)
                         .fontWeight(.semibold)
@@ -85,7 +84,7 @@ struct CategoryCard: View {
             )
             .frame(height: isLarge ? 160 : 70)
     }
-    
+
     private func getIconColor() -> Color {
         if color == Color.cyan.opacity(0.2) {
             return .cyan

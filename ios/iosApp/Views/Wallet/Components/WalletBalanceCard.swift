@@ -1,10 +1,9 @@
-import SwiftUI
 import AdaptiveSwiftUi
-
+import SwiftUI
 
 struct WalletBalanceCard: View {
     var balance: Double = 2450.00
-    
+
     var body: some View {
         VStack(spacing: 20) {
             HStack(alignment: .top) {
@@ -12,14 +11,14 @@ struct WalletBalanceCard: View {
                     Text("TOTAL BALANCE")
                         .font(.caption)
                         .adaptiveForegroundStyle(.secondary, opacity: 0.8)
-                    
+
                     Text(String(format: "$%.2f", balance))
                         .font(.system(size: 48, weight: .bold))
                         .adaptiveForegroundStyle(.primary)
                 }
-                
+
                 Spacer()
-                
+
                 AdaptiveButton(action: {
                     // Add money or some other action
                 }) {
@@ -32,7 +31,7 @@ struct WalletBalanceCard: View {
                         .shadow(color: .cyan.opacity(0.3), radius: 10, x: 0, y: 5)
                 }
             }
-            
+
             HStack(spacing: 32) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("CURRENCY")
@@ -43,14 +42,14 @@ struct WalletBalanceCard: View {
                         .fontWeight(.semibold)
                         .adaptiveForegroundStyle(.primary)
                 }
-                
+
                 AdaptiveDivider().frame(height: 40)
-                
+
                 VStack(alignment: .leading, spacing: 4) {
                     Text("STATUS")
                         .font(.caption)
                         .adaptiveForegroundStyle(.cyan)
-                    
+
                     HStack(spacing: 4) {
                         Circle()
                             .fill(Color.green)

@@ -12,7 +12,8 @@ class iOSBundleDownloader: NSObject, BundleDownloader {
 
     func download(url: String, bundleId: String) async -> AppResult<String> {
         do {
-            let documentsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            let documentsDir = FileManager.default.urls(
+                for: .documentDirectory, in: .userDomainMask)[0]
             let bundleDir = documentsDir.appendingPathComponent("bundles/\(bundleId)")
             if FileManager.default.fileExists(atPath: bundleDir.path) {
                 let contents = try FileManager.default.contentsOfDirectory(atPath: bundleDir.path)
@@ -35,13 +36,15 @@ class iOSBundleDownloader: NSObject, BundleDownloader {
             }
 
             let (zipData, _) = try await URLSession.shared.data(from: downloadUrl)
-            let zipFile = FileManager.default.temporaryDirectory.appendingPathComponent("\(bundleId).zip")
+            let zipFile = FileManager.default.temporaryDirectory.appendingPathComponent(
+                "\(bundleId).zip")
             try zipData.write(to: zipFile)
 
             if FileManager.default.fileExists(atPath: bundleDir.path) {
                 try FileManager.default.removeItem(at: bundleDir)
             }
-            try FileManager.default.createDirectory(at: bundleDir, withIntermediateDirectories: true)
+            try FileManager.default.createDirectory(
+                at: bundleDir, withIntermediateDirectories: true)
             try FileManager.default.unzipItem(at: zipFile, to: bundleDir)
             try FileManager.default.removeItem(at: zipFile)
 
