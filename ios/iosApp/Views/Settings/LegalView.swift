@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct LegalView: View {
     let type: String // "terms" or "privacy" or "licenses"
@@ -55,7 +57,7 @@ struct LegalView: View {
     }
     
     var body: some View {
-        ScrollView {
+        AdaptiveScrollView {
             Text(content)
                 .padding()
                 .frame(maxWidth: .infinity, alignment: .leading)

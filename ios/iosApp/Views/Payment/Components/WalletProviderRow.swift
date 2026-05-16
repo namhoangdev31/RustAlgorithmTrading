@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct WalletProviderRow: View {
     let icon: String
@@ -10,7 +12,7 @@ struct WalletProviderRow: View {
         HStack(spacing: 16) {
             Image(systemName: icon)
                 .font(.title2)
-                .foregroundColor(iconColor)
+                .adaptiveForegroundStyle(iconColor)
                 .frame(width: 50, height: 50)
                 .background(Color.white)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
@@ -21,22 +23,21 @@ struct WalletProviderRow: View {
                     .font(.headline)
                 Text(subtitle)
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .adaptiveForegroundStyle(.secondary)
             }
             
             Spacer()
             
-            Button("Connect") { }
+            AdaptiveButton("Connect") { }
                 .font(.subheadline)
-                
-                .foregroundColor(.white)
+                .adaptiveForegroundStyle(.white)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
                 .background(Color.black)
                 .clipShape(Capsule())
+                .adaptiveButtonStyle(.plain)
         }
         .padding()
-        .background(Color(.secondarySystemGroupedBackground)) // Slightly different background
-        .cornerRadius(20)
+        .adaptiveGlass(cornerRadius: 20)
     }
 }

@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct SearchView: View {
     @State private var isSearching: Bool = false
@@ -10,7 +12,7 @@ struct SearchView: View {
     
     var body: some View {
         NavigationView {
-            ScrollView {
+            AdaptiveScrollView {
                 VStack(spacing: 16) {
                     if searchText.isEmpty {
                         SearchQuickCategoriesView()
@@ -31,23 +33,24 @@ struct SearchView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     HStack(spacing: 16) {
-                        Button(action: {
+                        AdaptiveButton(action: {
                             isFilterPresented = true
                         }) {
                             Image(systemName: "slider.horizontal.3")
                                 .font(.title3)
-                                .foregroundColor(.blue)
+                                .adaptiveForegroundStyle(.blue)
                         }
+                        .adaptiveButtonStyle(.plain)
                         
                         Image(systemName: "barcode.viewfinder")
                             .font(.title2)
-                            .foregroundColor(.gray)
+                            .adaptiveForegroundStyle(.secondary)
                     }
                 }
                 ToolbarItem(placement: .navigationBarLeading) {
                     Image(systemName: "mic.circle")
                         .font(.title2)
-                        .foregroundColor(.gray)
+                        .adaptiveForegroundStyle(.secondary)
                 }
             }
             .sheet(isPresented: $isFilterPresented) {

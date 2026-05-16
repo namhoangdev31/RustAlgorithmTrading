@@ -1,5 +1,6 @@
 import SwiftUI
 import ACarousel
+import AdaptiveSwiftUi
 
 // MARK: - Model
 
@@ -55,17 +56,15 @@ struct LeposCarousel: View {
             VStack(alignment: .leading, spacing: 8) {
                 Image(systemName: "person.fill")
                     .font(.largeTitle)
-                    .foregroundColor(.white.opacity(0.9))
+                    .adaptiveForegroundStyle(.white, opacity: 0.9)
 
                 Text(item.title)
                     .font(.title.bold())
-                    .foregroundColor(.white)
+                    .adaptiveForegroundStyle(.white)
             }
             .padding()
         }
         .frame(height: 175)
-        .clipShape(
-            RoundedRectangle(cornerRadius: 30, style: .continuous)
-        )
+        .adaptiveGlass(cornerRadius: 30)
     }
 }

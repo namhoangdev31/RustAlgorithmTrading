@@ -1,4 +1,5 @@
 import SwiftUI
+import AdaptiveSwiftUi
 // import Shared — replaced by native Swift Shared module
 
 struct CheckoutPayButton: View {
@@ -6,10 +7,12 @@ struct CheckoutPayButton: View {
     let action: () -> Void
     
     var body: some View {
-        Button(action: action) {
+        AdaptiveButton(action: action) {
             HStack {
                 Image(systemName: "lock.fill")
-                Text("Pay Now • \(String(format: "$%.2f", total))")
+                Text("Pay Now • ")
+                    .fontWeight(.bold)
+                AdaptiveText(total, format: .currency(code: "USD"))
                     .fontWeight(.bold)
             }
             .frame(maxWidth: .infinity)

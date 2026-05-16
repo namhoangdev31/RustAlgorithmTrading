@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct LoginView: View {
     @StateObject private var viewModel: LoginViewModel
@@ -14,7 +16,7 @@ struct LoginView: View {
             // Background
             Color.white.ignoresSafeArea()
             
-            ScrollView {
+            AdaptiveScrollView {
                 VStack(spacing: 30) {
                     Spacer().frame(height: 40)
                     
@@ -26,7 +28,7 @@ struct LoginView: View {
                         
                         if let error = viewModel.error {
                             Text(error)
-                                .foregroundColor(.red)
+                                .adaptiveForegroundStyle(.red)
                                 .font(.caption)
                                 .transition(.opacity)
                         }
@@ -35,13 +37,14 @@ struct LoginView: View {
                             Task { await viewModel.login() }
                         }, isLoading: viewModel.isLoading)
                         
-                        Button(action: {
+                        AdaptiveButton(action: {
                             navigation.navigate(to: .forgotPassword)
                         }) {
                             Text("Forgot Password?")
                                 .font(.caption)
-                                .foregroundColor(.blue)
+                                .adaptiveForegroundStyle(.blue)
                         }
+                        .adaptiveButtonStyle(.plain)
                     }
                     .padding(.horizontal)
                     

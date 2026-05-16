@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct PaymentDetailRow: View {
     let label: String
@@ -11,7 +13,7 @@ struct PaymentDetailRow: View {
                 Text(label)
                     .font(.caption)
                     .fontWeight(.bold)
-                    .foregroundColor(.secondary)
+                    .adaptiveForegroundStyle(.secondary)
                 Text(value)
                     .font(.subheadline)
                     .fontWeight(.medium)
@@ -20,7 +22,7 @@ struct PaymentDetailRow: View {
             if showCopy {
                 Image(systemName: "doc.on.doc")
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .adaptiveForegroundStyle(.secondary)
             }
         }
     }

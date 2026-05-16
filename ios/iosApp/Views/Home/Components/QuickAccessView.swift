@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct QuickAccessView: View {
     var body: some View {
@@ -11,15 +13,16 @@ struct QuickAccessView: View {
             HStack(spacing: 16) {
                 // Large item
                 RoundedRectangle(cornerRadius: 20)
-                    .fill(Color(.systemGray6))
+                    .fill(Color(.clear))
+                    .adaptiveGlass(cornerRadius: 20)
                     .overlay(
                         VStack(alignment: .leading) {
                             Image(systemName: "wallet.pass.fill")
                                 .font(.largeTitle)
-                                .foregroundColor(.blue)
+                                .adaptiveForegroundStyle(.blue)
                                 .padding(12)
                                 .background(Color.blue.opacity(0.1))
-                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                                .adaptiveGlass(cornerRadius: 12)
                             
                             Spacer()
                             
@@ -27,7 +30,7 @@ struct QuickAccessView: View {
                                 .font(.headline)
                             Text("Quick payments")
                                 .font(.caption)
-                                .foregroundColor(.gray)
+                                .adaptiveForegroundStyle(.secondary)
                         }
                         .padding(16)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -46,11 +49,12 @@ struct QuickAccessView: View {
     
     private func quickActionItem(icon: String, title: String, color: Color) -> some View {
         RoundedRectangle(cornerRadius: 20)
-            .fill(Color(.systemGray6))
+            .fill(Color(.clear))
+            .adaptiveGlass(cornerRadius: 20)
             .overlay(
                 HStack {
                     Image(systemName: icon)
-                        .foregroundColor(color)
+                        .adaptiveForegroundStyle(color)
                     Text(title)
                         .fontWeight(.medium)
                     Spacer()

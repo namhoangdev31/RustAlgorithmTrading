@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 // import Shared — replaced by native Swift Shared module
 
 struct CategoryDetailView: View {
@@ -24,7 +26,7 @@ struct CategoryDetailView: View {
     ]
     
     var body: some View {
-        ScrollView {
+        AdaptiveScrollView {
             VStack(spacing: 16) {
                 headerView
                 
@@ -32,7 +34,7 @@ struct CategoryDetailView: View {
                     ForEach(apps) { app in
                         appRow(app: app)
                         
-                        Divider()
+                        AdaptiveDivider()
                             .padding(.leading, 92)
                     }
                 }
@@ -69,7 +71,7 @@ struct CategoryDetailView: View {
     }
     
     private func appRow(app: MockApp) -> some View {
-        Button(action: {
+        AdaptiveButton(action: {
             navigation.navigate(to: .detail(itemId: app.id.uuidString))
         }) {
             HStack(spacing: 16) {
@@ -101,7 +103,7 @@ struct CategoryDetailView: View {
                 
                 Spacer()
                 
-                Button(action: {}) {
+                AdaptiveButton(action: {}) {
                     Text("GET")
                         .font(.caption)
                         .fontWeight(.bold)

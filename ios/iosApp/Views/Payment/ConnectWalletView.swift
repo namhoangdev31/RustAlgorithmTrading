@@ -1,11 +1,13 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 // import Shared — replaced by native Swift Shared module
 
 struct ConnectWalletView: View {
     @Environment(\.dismiss) var dismiss
 
     var body: some View {
-        ScrollView {
+        AdaptiveScrollView {
             VStack(spacing: 32) {
                 // Title
                 SecureConnectionCard()
@@ -14,7 +16,7 @@ struct ConnectWalletView: View {
                     Text("SELECT PROVIDER")
                         .font(.caption)
                         .fontWeight(.bold)
-                        .foregroundColor(.secondary)
+                        .adaptiveForegroundStyle(.secondary)
                         .padding(.horizontal)
 
                     VStack(spacing: 16) {
@@ -65,21 +67,19 @@ struct ConnectWalletView: View {
                     HStack(spacing: 8) {
                         Image(systemName: "lock.shield.fill")
                             .font(.caption)
-                            .foregroundColor(.green)
+                            .adaptiveForegroundStyle(.green)
                         Text("BANK-GRADE ENCRYPTION")
                             .font(.caption2)
                             .fontWeight(.bold)
-                            .foregroundColor(.secondary)
+                            .adaptiveForegroundStyle(.secondary)
                     }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
-                    .background(Color.white)
-                    .cornerRadius(20)
-                    .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
+                    .adaptiveGlass(cornerRadius: 20)
 
                     Text("We use secure tokens to access your wallet. Your\ncredentials are never stored on our servers.")
                         .font(.caption2)
-                        .foregroundColor(.secondary.opacity(0.7))
+                        .adaptiveForegroundStyle(.secondary, opacity: 0.7)
                         .multilineTextAlignment(.center)
                 }
                 .padding(.bottom, 40)

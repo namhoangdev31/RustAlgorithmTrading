@@ -1,4 +1,5 @@
 import SwiftUI
+import AdaptiveSwiftUi
 
 struct SystemActivityCardView: View {
     var isUnread: Bool = true
@@ -20,11 +21,11 @@ struct SystemActivityCardView: View {
                     endPoint: .bottomTrailing
                 )
                 
-                VStack(alignment: .leading, spacing: 8) {
+                AdaptiveGlassEffectContainer(spacing: 8) {
                     Text("SYSTEM")
                         .font(.caption2)
                         .fontWeight(.bold)
-                        .foregroundColor(.white.opacity(0.7))
+                        .adaptiveForegroundStyle(.white, hierarchy: .secondary)
                     
                     Text("V2.4.1 is ready for installation.")
                         .font(.title2)
@@ -36,13 +37,13 @@ struct SystemActivityCardView: View {
                     
                     Text("Experience 40% faster loading speeds and new visual themes across all apps.")
                         .font(.subheadline)
-                        .foregroundColor(.white.opacity(0.9))
+                        .adaptiveForegroundStyle(.white, hierarchy: .secondary)
                         .lineLimit(3)
                         .fixedSize(horizontal: false, vertical: true)
                     
                     HStack {
                         Spacer()
-                        Button(action: {}) {
+                        AdaptiveButton(action: {}) {
                             Text("UPDATE")
                                 .font(.caption)
                                 .fontWeight(.bold)

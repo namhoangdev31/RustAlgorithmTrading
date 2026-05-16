@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct NotificationPreferencesView: View {
     @State private var notifyUpdates = true
@@ -7,7 +9,7 @@ struct NotificationPreferencesView: View {
     @State private var notifySecurity = true
     
     var body: some View {
-        List {
+        AdaptiveList {
             Section(header: Text("App Activity")) {
                 Toggle("App Updates", isOn: $notifyUpdates)
                 Toggle("Recommendations", isOn: $notifyRecommendations)

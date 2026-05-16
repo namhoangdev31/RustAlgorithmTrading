@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct EditorChoiceHeaderView: View {
     var body: some View {
@@ -9,14 +11,17 @@ struct EditorChoiceHeaderView: View {
                 .font(.caption)
                 .fontWeight(.bold)
                 .tracking(1.0)
+                .adaptiveForegroundStyle(.white)
             
             Text("Step Into the\nArena:\nCrossfire\nLegends")
                 .font(.system(size: 40, weight: .black, design: .rounded))
                 .lineLimit(4)
+                .adaptiveForegroundStyle(.white)
             
             Text("Crossfire Legends")
                 .font(.title3)
                 .fontWeight(.semibold)
+                .adaptiveForegroundStyle(.white)
                 .padding(.top, 4)
         }
         .padding(.horizontal, 24)

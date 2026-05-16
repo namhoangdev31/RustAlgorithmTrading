@@ -1,11 +1,13 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct WalletMemberStatusCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Image(systemName: "rosette")
                 .font(.title2)
-                .foregroundColor(.orange)
+                .adaptiveForegroundStyle(.orange)
                 .padding(12)
                 .background(Color.orange.opacity(0.1))
                 .clipShape(Circle())
@@ -18,14 +20,14 @@ struct WalletMemberStatusCard: View {
             
             Text("Member Status")
                 .font(.subheadline)
-                .foregroundColor(.cyan) 
+                .adaptiveForegroundStyle(.cyan) 
             
             Spacer()
             
             Text("VIP BENEFITS")
                 .font(.caption2)
                 .fontWeight(.bold)
-                .foregroundColor(.orange)
+                .adaptiveForegroundStyle(.orange)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
                 .background(Color.orange.opacity(0.1))
@@ -33,9 +35,7 @@ struct WalletMemberStatusCard: View {
         }
         .padding(20)
         .frame(maxWidth: .infinity, minHeight: 180, alignment: .leading)
-        .background(Color.white)
-        .cornerRadius(24)
-        .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 5)
+        .adaptiveGlass(cornerRadius: 24)
     }
     
     private func Space(height: CGFloat) -> some View {

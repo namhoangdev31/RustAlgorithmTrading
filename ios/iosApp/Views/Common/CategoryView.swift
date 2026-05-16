@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 // import Shared — replaced by native Swift Shared module
 
 struct BrowseCategoryItem: Identifiable {
@@ -31,10 +33,10 @@ struct CategoryBrowseView: View {
     ]
     
     var body: some View {
-        ScrollView {
+        AdaptiveScrollView {
             LazyVGrid(columns: columns, spacing: 16) {
                 ForEach(categories) { category in
-                    Button(action: {
+                    AdaptiveButton(action: {
                         navigation.navigate(to: .categoryDetail(id: category.id.uuidString, title: category.name))
                     }) {
                         VStack(spacing: 12) {

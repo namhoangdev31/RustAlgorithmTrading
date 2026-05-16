@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct SearchHeaderView: View {
     var body: some View {
@@ -11,7 +13,7 @@ struct SearchHeaderView: View {
             
             Image(systemName: "person.crop.circle.fill")
                 .font(.largeTitle)
-                .foregroundColor(.gray)
+                .adaptiveForegroundStyle(.secondary)
         }
         .padding(.horizontal)
         .padding(.top)

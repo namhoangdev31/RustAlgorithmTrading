@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 // import Shared — replaced by native Swift Shared module
 
 struct PaymentMethodsView: View {
@@ -14,7 +16,7 @@ struct PaymentMethodsView: View {
     ]
     
     var body: some View {
-        ScrollView {
+        AdaptiveScrollView {
             VStack(spacing: 24) {
                 // Wallet Balance Card
                 WalletBalanceCard(balance: balance)
@@ -24,7 +26,7 @@ struct PaymentMethodsView: View {
                     Text("PRIMARY METHOD")
                         .font(.caption)
                         .fontWeight(.bold)
-                        .foregroundColor(.secondary)
+                        .adaptiveForegroundStyle(.secondary)
                         .padding(.horizontal)
                     
                     PrimaryMethodRow(method: primaryMethod)
@@ -35,7 +37,7 @@ struct PaymentMethodsView: View {
                     Text("SAVED CARDS & ACCOUNTS")
                         .font(.caption)
                         .fontWeight(.bold)
-                        .foregroundColor(.secondary)
+                        .adaptiveForegroundStyle(.secondary)
                         .padding(.horizontal)
                     
 
@@ -44,38 +46,39 @@ struct PaymentMethodsView: View {
                             SavedMethodRow(method: method)
                         }
                         
-                        Button(action: {
+                        AdaptiveButton(action: {
                             navigation.navigate(to: .addCard)
                         }) {
                             HStack {
                                 Image(systemName: "plus.circle.fill")
-                                    .foregroundColor(.cyan)
+                                    .adaptiveForegroundStyle(.cyan)
                                 Text("Add New Card")
                                     .fontWeight(.semibold)
-                                    .foregroundColor(.primary)
+                                    .adaptiveForegroundStyle(.primary)
                                 Spacer()
                             }
                             .padding()
                             .background(Color(.secondarySystemGroupedBackground))
                             .cornerRadius(12)
                         }
+                        .adaptiveButtonStyle(.plain)
                     }
                 }
                 
                 // Footer
                 HStack(spacing: 8) {
                     Image(systemName: "checkmark.shield.fill")
-                    .foregroundColor(.secondary)
+                        .adaptiveForegroundStyle(.secondary)
                     Text("PCI-DSS COMPLIANT")
                         .font(.caption)
                         .fontWeight(.bold)
-                        .foregroundColor(.secondary)
+                        .adaptiveForegroundStyle(.secondary)
                 }
                 .padding(.top, 24)
                 
                 Text("Your payment information is encrypted and never stored on our servers.")
                     .font(.caption2)
-                    .foregroundColor(.secondary)
+                    .adaptiveForegroundStyle(.secondary)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 40)
                     .padding(.bottom, 40)
@@ -90,21 +93,23 @@ struct PaymentMethodsView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 HStack {
-                    Button(action: {
+                    AdaptiveButton(action: {
                         navigation.navigate(to: .connectWallet)
                     }) {
                         Image(systemName: "link")
                             .font(.system(size: 20))
-                            .foregroundColor(.cyan)
+                            .adaptiveForegroundStyle(.cyan)
                     }
+                    .adaptiveButtonStyle(.plain)
                     
-                    Button(action: {
+                    AdaptiveButton(action: {
                         navigation.navigate(to: .addCard)
                     }) {
                         Image(systemName: "plus.circle.fill")
                             .font(.system(size: 24))
-                            .foregroundColor(.cyan)
+                            .adaptiveForegroundStyle(.cyan)
                     }
+                    .adaptiveButtonStyle(.plain)
                 }
             }
         }

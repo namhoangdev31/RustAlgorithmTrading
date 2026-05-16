@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 // import Shared — replaced by native Swift Shared module
 
 struct WishlistItem: Identifiable {
@@ -30,18 +32,27 @@ struct WishlistView: View {
         NavigationView { // Keep NavigationView for title if needed, or remove if parent handles it.
             // MainTabView items often have their own NavigationStack or View.
             // The placeholder had NavigationView.
-            ScrollView {
+            AdaptiveScrollView {
                 if wishlistItems.isEmpty {
-                    EmptyStateView(
-                        icon: "heart.slash",
-                        title: "No Saved Apps",
-                        message: "Apps you add to your wishlist will appear here.",
-                        buttonTitle: "Explore Apps",
-                        action: {
+                    AdaptiveContentUnavailableView(
+                        "No Saved Apps",
+                        systemImage: "heart.slash",
+                        description: "Apps you add to your wishlist will appear here."
+                    ) {
+                        AdaptiveButton(action: {
                             // Navigate to discovery?
-                            // For now just stay here
+                        }) {
+                            Text("Explore Apps")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(Color.blue)
+                                .cornerRadius(12)
                         }
-                    )
+                        .padding(.top, 16)
+                        .padding(.horizontal, 48)
+                    }
                 } else {
                     LazyVGrid(columns: columns, spacing: 16) {
                         ForEach(wishlistItems) { item in
@@ -58,7 +69,7 @@ struct WishlistView: View {
                                     
                                     Spacer()
                                     
-                                    Button(action: {
+                                    AdaptiveButton(action: {
                                         if let index = wishlistItems.firstIndex(where: { $0.id == item.id }) {
                                             wishlistItems.remove(at: index)
                                         }
@@ -89,7 +100,7 @@ struct WishlistView: View {
                                     }
                                 }
                                 
-                                Button(action: {
+                                AdaptiveButton(action: {
                                     // Navigate to details
                                     navigation.navigate(to: .detail(itemId: item.id.uuidString))
                                 }) {

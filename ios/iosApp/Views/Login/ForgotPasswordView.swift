@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct ForgotPasswordView: View {
     @EnvironmentObject var navigation: NavigationViewModel
@@ -13,7 +15,7 @@ struct ForgotPasswordView: View {
             
             Image(systemName: "lock.rotation")
                 .font(.system(size: 60))
-                .foregroundColor(.blue)
+                .adaptiveForegroundStyle(.blue)
             
             Text("Forgot Password?")
                 .font(.largeTitle)
@@ -21,7 +23,7 @@ struct ForgotPasswordView: View {
             
             Text("Enter your email address to receive a password reset link.")
                 .font(.body)
-                .foregroundColor(.secondary)
+                .adaptiveForegroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
             
@@ -29,25 +31,28 @@ struct ForgotPasswordView: View {
                 VStack(spacing: 16) {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.largeTitle)
-                        .foregroundColor(.green)
+                        .adaptiveForegroundStyle(.green)
                     
                     Text("Check your email!")
                         .font(.headline)
-                        .foregroundColor(.primary)
+                        .adaptiveForegroundStyle(.primary)
                     
                     Text("We have sent a password reset link to \(email).")
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .adaptiveForegroundStyle(.secondary)
                         .multilineTextAlignment(.center)
                     
-                    Button("Back to Login") {
+                    AdaptiveButton(action: {
                         navigation.goBack()
+                    }) {
+                        Text("Back to Login")
                     }
+                    .adaptiveButtonStyle(.plain)
+                    .adaptiveForegroundStyle(.blue)
                     .padding(.top)
                 }
                 .padding()
-                .background(Color.green.opacity(0.1))
-                .cornerRadius(12)
+                .adaptiveGlass(cornerRadius: 12)
                 .transition(.scale.combined(with: .opacity))
             } else {
                 VStack(spacing: 16) {
@@ -55,31 +60,31 @@ struct ForgotPasswordView: View {
                         .keyboardType(.emailAddress) // iOS 26 might use different modifier, keeping standard
                         .autocapitalization(.none) // Deprecated in favor of textInputAutocapitalization, but keeping compat
                         .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(12)
+                        .adaptiveGlass(cornerRadius: 12)
                         .overlay(
                             RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                                .stroke(Color.primary.opacity(0.1), lineWidth: 1)
                         )
                     
                     if let errorMessage = errorMessage {
                         Text(errorMessage)
-                            .foregroundColor(.red)
+                            .adaptiveForegroundStyle(.red)
                             .font(.caption)
                     }
                     
-                    Button(action: resetPassword) {
+                    AdaptiveButton(action: resetPassword) {
                         if isLoading {
-                            ProgressView()
-                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                            AdaptiveProgressView("")
+                                .adaptiveProgressTint(.white)
                         } else {
                             Text("Send Reset Link")
                                 .fontWeight(.bold)
                         }
                     }
-                    .foregroundColor(.white)
+                    .adaptiveButtonStyle(.plain)
+                    .adaptiveForegroundStyle(.white)
                     .frame(maxWidth: .infinity)
-                    .padding()
+                    .frame(height: 54)
                     .background(email.isEmpty ? Color.gray : Color.blue)
                     .cornerRadius(12)
                     .disabled(email.isEmpty || isLoading)

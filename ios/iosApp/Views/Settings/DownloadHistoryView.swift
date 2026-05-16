@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct DownloadHistoryItem: Identifiable {
     let id = UUID()
@@ -22,7 +24,7 @@ struct DownloadHistoryView: View {
     ]
     
     var body: some View {
-        List {
+        AdaptiveList {
             ForEach(historyItems) { item in
                 HStack(spacing: 16) {
                     RoundedRectangle(cornerRadius: 10)
@@ -30,7 +32,7 @@ struct DownloadHistoryView: View {
                         .frame(width: 48, height: 48)
                         .overlay(
                             Image(systemName: item.iconName)
-                                .foregroundColor(.white)
+                                .adaptiveForegroundStyle(.white)
                                 .font(.title3)
                         )
                     
@@ -39,30 +41,31 @@ struct DownloadHistoryView: View {
                             .font(.headline)
                         Text("Downloaded on \(item.date)")
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .adaptiveForegroundStyle(.secondary)
                     }
                     
                     Spacer()
                     
                     if item.isInstalled {
-                        Button("OPEN") {
+                        AdaptiveButton("OPEN") {
                             // Open App Logic
                         }
                         .font(.caption)
-                        
-                        .foregroundColor(.blue)
+                        .adaptiveForegroundStyle(.blue)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
                         .background(Color(.systemGray6))
                         .clipShape(Capsule())
+                        .adaptiveButtonStyle(.plain)
                     } else {
-                        Button(action: {
+                        AdaptiveButton(action: {
                             // Re-download Logic
                         }) {
                             Image(systemName: "icloud.and.arrow.down")
                                 .font(.title2)
-                                .foregroundColor(.blue)
+                                .adaptiveForegroundStyle(.blue)
                         }
+                        .adaptiveButtonStyle(.plain)
                     }
                 }
                 .padding(.vertical, 4)

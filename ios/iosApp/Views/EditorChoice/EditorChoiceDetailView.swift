@@ -9,7 +9,7 @@ struct EditorChoiceDetailView: View {
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
-            ScrollView {
+            AdaptiveScrollView {
                 VStack(spacing: 0) {
                     EditorChoiceHeaderView()
                     EditorChoiceContentView()
@@ -41,13 +41,15 @@ struct EditorChoiceDetailView: View {
                         VStack(alignment: .leading) {
                             Text("Crossfire Legends")
                                 .font(.title3)
+                                .adaptiveForegroundStyle(.primary)
                             Text("Start your journey today.")
                                 .font(.caption)
+                                .adaptiveForegroundStyle(.secondary)
                         }
 
                         Spacer()
 
-                        Button(action: {}) {
+                        AdaptiveButton(action: {}) {
                             Text("NHẬN")
                                 .font(.subheadline)
                                 .fontWeight(.bold)
@@ -72,9 +74,11 @@ struct EditorChoiceDetailView: View {
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem {
-                Button("Account", systemImage: "multiply", action: {
+                AdaptiveButton(action: {
                     navigation.goBack()
-                })
+                }) {
+                    Label("Account", systemImage: "multiply")
+                }
             }
         }
     }

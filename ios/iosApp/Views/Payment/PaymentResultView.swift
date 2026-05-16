@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 // import Shared — replaced by native Swift Shared module
 
 enum PaymentResultType {
@@ -12,7 +14,7 @@ struct PaymentResultView: View {
     
     var body: some View {
         VStack {
-            ScrollView {
+            AdaptiveScrollView {
                 VStack(spacing: 32) {
                     // Status Icon
                     PaymentResultAnimationView(type: type)
@@ -28,7 +30,7 @@ struct PaymentResultView: View {
                              "Something went wrong. Please check\nyour payment method and try again."
                         )
                         .font(.body)
-                        .foregroundColor(.secondary)
+                        .adaptiveForegroundStyle(.secondary)
                         .multilineTextAlignment(.center)
                         .lineLimit(3)
                     }
@@ -39,7 +41,7 @@ struct PaymentResultView: View {
                     
                     // Action Buttons
                     VStack(spacing: 16) {
-                        Button(action: {
+                        AdaptiveButton(action: {
                             if type == .success {
                                 // Launch mini app logic
                                 print("Launch Mini App")
@@ -50,19 +52,20 @@ struct PaymentResultView: View {
                         }) {
                             Text(type == .success ? "Launch Mini App" : "Retry Payment")
                                 .font(.headline)
-                                .foregroundColor(.white)
+                                .adaptiveForegroundStyle(.white)
                                 .frame(maxWidth: .infinity)
                                 .padding()
                                 .background(type == .success ? Color.green : Color.black)
                                 .cornerRadius(32)
                         }
+                        .adaptiveButtonStyle(.plain)
                         
-                        Button(action: {
+                        AdaptiveButton(action: {
                             navigation.reset()
                         }) {
                             Text(type == .success ? "Back to Home" : "Contact Support")
                                 .font(.headline)
-                                .foregroundColor(.black)
+                                .adaptiveForegroundStyle(.primary)
                                 .frame(maxWidth: .infinity)
                                 .padding()
                                 .background(Color.white)
@@ -72,6 +75,7 @@ struct PaymentResultView: View {
                                         .stroke(Color.gray.opacity(0.2), lineWidth: 1)
                                 )
                         }
+                        .adaptiveButtonStyle(.plain)
                     }
                     .padding(.horizontal)
                     .padding(.bottom, 40)
@@ -82,9 +86,10 @@ struct PaymentResultView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 if type == .failure {
-                    Button("Account", systemImage: "multiply", action: {
+                    AdaptiveButton("Account", systemImage: "multiply", action: {
                         navigation.goBack()
                     })
+                    .adaptiveButtonStyle(.plain)
                 }
             }
         }

@@ -1,4 +1,5 @@
 import SwiftUI
+import AdaptiveSwiftUi
 
 struct ActivityHeaderView: View {
     var body: some View {
@@ -17,16 +18,16 @@ struct ActivityHeaderView: View {
             Spacer()
             
             // Read All Button
-            Button(action: {
+            AdaptiveButton(action: {
                 // Action to mark all as read
             }) {
-                Image(systemName: "checkmark.circle.fill") // Replaced "checkmark.circle.badge.questionmark.fill" with a simpler SF Symbol if needed, or use custom behavior
+                Image(systemName: "checkmark.circle.fill")
                     .font(.system(size: 28))
-                    .foregroundColor(Color(.systemGray5))
+                    .adaptiveForegroundStyle(Color(.systemGray5))
                     .overlay(
                         Image(systemName: "checkmark")
                             .font(.system(size: 10, weight: .bold))
-                            .foregroundColor(.blue)
+                            .adaptiveForegroundStyle(.blue)
                     )
             }
             

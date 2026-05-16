@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 // import Shared — replaced by native Swift Shared module
 
 struct TopChartApp: Identifiable {
@@ -38,16 +40,16 @@ struct TopChartsView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            Picker("Top Charts", selection: $selectedSegment) {
+            AdaptivePicker("Top Charts", selection: $selectedSegment) {
                 Text("Paid").tag(0)
                 Text("Free").tag(1)
             }
-            .pickerStyle(SegmentedPickerStyle())
+            .adaptivePickerStyle(.segmented)
             .padding()
             
-            List {
+            AdaptiveList {
                 ForEach(currentApps) { app in
-                    Button(action: {
+                    AdaptiveButton(action: {
                         navigation.navigate(to: .detail(itemId: app.id.uuidString))
                     }) {
                         HStack(spacing: 16) {
@@ -71,7 +73,7 @@ struct TopChartsView: View {
                                     .lineLimit(1)
                                 Text(app.category)
                                     .font(.caption)
-                                    .foregroundColor(.secondary)
+                                    .adaptiveForegroundStyle(.secondary)
                             }
                             
                             Spacer()
@@ -87,10 +89,10 @@ struct TopChartsView: View {
                         }
                         .padding(.vertical, 8)
                     }
-                    .buttonStyle(PlainButtonStyle())
+                    .adaptiveButtonStyle(.plain)
                 }
             }
-            .listStyle(PlainListStyle())
+            .adaptiveListStyle(.plain)
         }
         .navigationTitle("Top Charts")
         .navigationBarTitleDisplayMode(.inline)

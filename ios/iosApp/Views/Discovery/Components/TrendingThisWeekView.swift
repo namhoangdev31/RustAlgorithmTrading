@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct TrendingApp: Identifiable {
     let id = UUID()
@@ -26,7 +28,7 @@ struct TrendingThisWeekView: View {
                 Text("UPDATED TODAY")
                     .font(.caption)
                     .fontWeight(.bold)
-                    .foregroundColor(.gray)
+                    .adaptiveForegroundStyle(.secondary)
             }
             .padding(.horizontal)
             
@@ -37,7 +39,7 @@ struct TrendingThisWeekView: View {
                             .font(.largeTitle)
                             .italic() // Approximate style
                             .fontWeight(.bold)
-                            .foregroundColor(.gray.opacity(0.3))
+                            .adaptiveForegroundStyle(.secondary, opacity: 0.3)
                             .frame(width: 30)
                         
                         RoundedRectangle(cornerRadius: 12)
@@ -55,12 +57,12 @@ struct TrendingThisWeekView: View {
                                 .font(.headline)
                             Text(app.category)
                                 .font(.subheadline)
-                                .foregroundColor(.gray)
+                                .adaptiveForegroundStyle(.secondary)
                         }
                         
                         Spacer()
                         
-                        Button(action: {}) {
+                        AdaptiveButton(action: {}) {
                             Text("GET")
                                 .font(.caption)
                                 .fontWeight(.bold)
@@ -70,6 +72,7 @@ struct TrendingThisWeekView: View {
                                 .background(Color(.systemGray6))
                                 .clipShape(Capsule())
                         }
+                        .adaptiveButtonStyle(.plain)
                     }
                     .padding(.horizontal)
                 }

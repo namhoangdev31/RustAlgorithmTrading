@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct FilterSheetView: View {
     @Environment(\.dismiss) var dismiss
@@ -42,21 +44,23 @@ struct FilterSheetView: View {
                 }
                 
                 Section {
-                    Button("Reset All") {
+                    AdaptiveButton("Reset All") {
                         selectedSort = "Relevance"
                         selectedPrice = "Any Price"
                         selectedCategory = "All Categories"
                     }
-                    .foregroundColor(.red)
+                    .adaptiveForegroundStyle(.red)
+                    .adaptiveButtonStyle(.plain)
                 }
             }
             .navigationTitle("Filters")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
+                    AdaptiveButton("Done") {
                         dismiss()
                     }
+                    .adaptiveButtonStyle(.plain)
                     
                 }
             }

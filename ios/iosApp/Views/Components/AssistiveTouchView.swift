@@ -19,42 +19,42 @@ struct AssistiveTouchView: View {
                         }
 
                     VStack(spacing: 20) {
-                        Button(action: {
+                        AdaptiveButton(action: {
                             print("Menu Item 1 tapped")
                             withAnimation {
                                 isExpanded = false
                             }
                         }) {
-                                Image(systemName: "star.fill")
-                                    .font(.title)
-                                    .foregroundColor(.primary)
-                                    .frame(width: 50, height: 50)
+                            Image(systemName: "star.fill")
+                                .font(.title)
+                                .foregroundColor(.primary)
+                                .frame(width: 50, height: 50)
                                 .adaptiveGlass(cornerRadius: 25)
                         }
 
-                        Button(action: {
+                        AdaptiveButton(action: {
                             print("Menu Item 2 tapped")
                             withAnimation {
                                 isExpanded = false
                             }
                         }) {
-                                Image(systemName: "bell.fill")
-                                    .font(.title)
-                                    .foregroundColor(.primary)
-                                    .frame(width: 50, height: 50)
+                            Image(systemName: "bell.fill")
+                                .font(.title)
+                                .foregroundColor(.primary)
+                                .frame(width: 50, height: 50)
                                 .adaptiveGlass(cornerRadius: 25)
                         }
 
-                        Button(action: {
+                        AdaptiveButton(action: {
                             print("Close tapped")
                             withAnimation {
                                 isExpanded = false
                             }
                         }) {
-                                Image(systemName: "xmark")
-                                    .font(.title)
-                                    .foregroundColor(.primary)
-                                    .frame(width: 50, height: 50)
+                            Image(systemName: "xmark")
+                                .font(.title)
+                                .foregroundColor(.primary)
+                                .frame(width: 50, height: 50)
                                 .adaptiveGlass(cornerRadius: 25)
                         }
                     }
@@ -66,7 +66,7 @@ struct AssistiveTouchView: View {
                 }
 
                 if !isExpanded {
-                    Button(action: {
+                    AdaptiveButton(action: {
                         withAnimation {
                             isExpanded.toggle()
                         }

@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct HomeHeaderView: View {
     let offsetY : CGFloat
@@ -14,7 +16,7 @@ struct HomeHeaderView: View {
                 Text("MONDAY, MAY 22")
                     .font(.caption)
                     .fontWeight(.semibold)
-                    .foregroundColor(.gray)
+                    .adaptiveForegroundStyle(.secondary)
                 
                 Text("Today")
                     .font(.largeTitle)

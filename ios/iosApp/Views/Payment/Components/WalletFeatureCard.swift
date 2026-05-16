@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct WalletFeatureCard: View {
     let icon: String
@@ -10,7 +12,7 @@ struct WalletFeatureCard: View {
         VStack(alignment: .leading, spacing: 12) {
             Image(systemName: icon)
                 .font(.title2)
-                .foregroundColor(iconColor)
+                .adaptiveForegroundStyle(iconColor)
                 .padding(10)
                 .background(iconColor.opacity(0.1))
                 .clipShape(Circle())
@@ -23,12 +25,11 @@ struct WalletFeatureCard: View {
             
             Text(subtitle)
                 .font(.caption)
-                .foregroundColor(.secondary)
+                .adaptiveForegroundStyle(.secondary)
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
         .frame(height: 140)
-        .background(Color(.secondarySystemBackground))
-        .cornerRadius(20)
+        .adaptiveGlass(cornerRadius: 20)
     }
 }

@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct RecommendedApp: Identifiable {
     let id = UUID()
@@ -21,9 +23,10 @@ struct RecommendedForYouView: View {
                     .font(.headline)
                     .fontWeight(.bold)
                 Spacer()
-                Button("View all") { }
+                AdaptiveButton("View all") { }
                     .font(.subheadline)
-                    .foregroundColor(.blue)
+                    .adaptiveForegroundStyle(.blue)
+                    .adaptiveButtonStyle(.plain)
             }
             .padding(.horizontal)
             
@@ -64,7 +67,7 @@ struct AppRecommendationCard: View {
                             .frame(width: 40, height: 40)
                             .overlay(
                                 Image(systemName: "fork.knife")
-                                    .foregroundColor(app.iconColor)
+                                    .adaptiveForegroundStyle(app.iconColor)
                             )
                         
                         VStack(alignment: .leading, spacing: 4) {
@@ -73,7 +76,7 @@ struct AppRecommendationCard: View {
                                 .fontWeight(.bold)
                             Text(app.subtitle)
                                 .font(.caption)
-                                .foregroundColor(.gray)
+                                .adaptiveForegroundStyle(.secondary)
                         }
                         
                         Spacer()
@@ -83,7 +86,7 @@ struct AppRecommendationCard: View {
                         HStack(spacing: 2) {
                             Image(systemName: "star.fill")
                                 .font(.caption2)
-                                .foregroundColor(.yellow)
+                                .adaptiveForegroundStyle(.orange)
                             Text(String(format: "%.1f", app.rating))
                                 .font(.caption)
                                 .fontWeight(.semibold)
@@ -91,20 +94,22 @@ struct AppRecommendationCard: View {
                         
                         Spacer()
                         
-                        Button(action: {}) {
+                        AdaptiveButton(action: {}) {
                             Text("GET")
                                 .font(.caption)
                                 .fontWeight(.bold)
-                                .foregroundColor(.white)
+                                .adaptiveForegroundStyle(.white)
                                 .padding(.horizontal, 20)
                                 .padding(.vertical, 6)
                                 .background(Color.blue)
                                 .clipShape(Capsule())
                         }
+                        .adaptiveButtonStyle(.plain)
                     }
                 }
                 .padding(12)
             )
             .frame(width: 250, height: 300)
+            .adaptiveGlass(cornerRadius: 20)
     }
 }

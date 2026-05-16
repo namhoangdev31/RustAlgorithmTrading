@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct NotificationInboxView: View {
     // Mock Data
@@ -19,7 +21,7 @@ struct NotificationInboxView: View {
     ]
     
     var body: some View {
-        List {
+        AdaptiveList {
             ForEach(notifications) { item in
                 NavigationLink(destination: NotificationDetailView(notification: item)) {
                     HStack(alignment: .top, spacing: 12) {
@@ -36,12 +38,12 @@ struct NotificationInboxView: View {
                             
                             Text(item.message)
                                 .font(.subheadline)
-                                .foregroundColor(.secondary)
+                                .adaptiveForegroundStyle(.secondary)
                                 .lineLimit(2)
                             
                             Text(item.time)
                                 .font(.caption)
-                                .foregroundColor(.gray)
+                                .adaptiveForegroundStyle(.secondary)
                                 .padding(.top, 2)
                         }
                     }
@@ -49,14 +51,15 @@ struct NotificationInboxView: View {
                 }
             }
         }
-        .listStyle(PlainListStyle())
+        .adaptiveListStyle(.plain)
         .navigationTitle("Notifications")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button("Mark all as read") {
+                AdaptiveButton("Mark all as read") {
                     // Action
                 }
+                .adaptiveButtonStyle(.plain)
             }
         }
     }

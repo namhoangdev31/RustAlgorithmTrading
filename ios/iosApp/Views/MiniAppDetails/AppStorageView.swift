@@ -1,10 +1,12 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct AppStorageView: View {
     let appId: String
     
     var body: some View {
-        List {
+        AdaptiveList {
             Section(header: Text("Storage Usage")) {
                 HStack {
                     Text("App Size")
@@ -30,19 +32,21 @@ struct AppStorageView: View {
             }
             
             Section {
-                Button(action: {
+                AdaptiveButton(action: {
                     // Clear cache action
                 }) {
                     Text("Offload App")
-                        .foregroundColor(.blue)
+                        .adaptiveForegroundStyle(.blue)
                 }
+                .adaptiveButtonStyle(.plain)
                 
-                Button(action: {
+                AdaptiveButton(action: {
                     // Delete documents action
                 }) {
                     Text("Delete Documents & Data")
-                        .foregroundColor(.red)
+                        .adaptiveForegroundStyle(.red)
                 }
+                .adaptiveButtonStyle(.plain)
             } footer: {
                 Text("Offloading the app will free up storage used by the app, but keep its documents and data. Reinstalling the app will place back your data if the app is still available.")
             }

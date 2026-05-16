@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct UserInfoView: View {
     @EnvironmentObject var navigation: NavigationViewModel
@@ -7,7 +9,7 @@ struct UserInfoView: View {
         VStack(spacing: 16) {
             // Avatar with Premium Badge
             ZStack(alignment: .bottom) {
-                Button(action: {
+                AdaptiveButton(action: {
                     navigation.navigate(to: .accountOverview)
                 }) {
                     Circle()
@@ -18,18 +20,18 @@ struct UserInfoView: View {
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .padding(20)
-                                .foregroundColor(.gray)
+                                .adaptiveForegroundStyle(.secondary)
                                 .background(Color(.systemGray6))
                                 .clipShape(Circle())
                                 .frame(width: 100, height: 100)
                         )
                 }
-                .buttonStyle(PlainButtonStyle())
+                .adaptiveButtonStyle(.plain)
                 
                 Text("PREMIUM")
                     .font(.caption2)
                     .fontWeight(.bold)
-                    .foregroundColor(.white)
+                    .adaptiveForegroundStyle(.white)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
                     .background(Color.orange)
@@ -46,18 +48,18 @@ struct UserInfoView: View {
                 
                 Text("Digital Explorer & Mini-app Enthusiast. Managing 12 workflows daily.")
                     .font(.subheadline)
-                    .foregroundColor(.gray)
+                    .adaptiveForegroundStyle(.secondary)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 32)
             }
             
             // Action Buttons
             HStack(spacing: 16) {
-                Button(action: {}) {
+                AdaptiveButton(action: {}) {
                     Text("Share Link")
                         .font(.subheadline)
                         .fontWeight(.semibold)
-                        .foregroundColor(.primary)
+                        .adaptiveForegroundStyle(.primary)
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(Color.white)
@@ -67,6 +69,7 @@ struct UserInfoView: View {
                                 .stroke(Color.gray.opacity(0.2), lineWidth: 1)
                         )
                 }
+                .adaptiveButtonStyle(.plain)
             }
             .padding(.horizontal)
             .padding(.top, 8)

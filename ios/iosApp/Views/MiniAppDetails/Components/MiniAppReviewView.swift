@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct MiniAppReviewView: View {
     @EnvironmentObject var navigation: NavigationViewModel
@@ -11,13 +13,14 @@ struct MiniAppReviewView: View {
                     .font(.title2)
                     .fontWeight(.bold)
                 Spacer()
-                Button(action: {
+                AdaptiveButton(action: {
                     navigation.navigate(to: .allReviews(appId: appId))
                 }) {
                     Text("See All")
                         .font(.body)
-                        .foregroundColor(.blue)
+                        .adaptiveForegroundStyle(.blue)
                 }
+                .adaptiveButtonStyle(.plain)
             }
             
             HStack(alignment: .top, spacing: 20) {
@@ -28,7 +31,7 @@ struct MiniAppReviewView: View {
                     .foregroundColor(.primary)
                     Text("out of 5")
                         .font(.system(size: 15, weight: .bold))
-                        .foregroundColor(.secondary)
+                        .adaptiveForegroundStyle(.secondary)
                 }
                 
                 // Bars
@@ -44,12 +47,12 @@ struct MiniAppReviewView: View {
                 VStack(alignment: .trailing) {
                     Text("2,432 Ratings")
                          .font(.caption)
-                         .foregroundColor(.secondary)
+                         .adaptiveForegroundStyle(.secondary)
                          .padding(.top, 80) // Align to bottom roughly
                 }
             }
             
-            Button(action: {
+            AdaptiveButton(action: {
                 navigation.navigate(to: .writeReview(appId: appId))
             }) {
                 HStack {
@@ -57,12 +60,13 @@ struct MiniAppReviewView: View {
                     Text("Write a Review")
                 }
                 .font(.headline)
-                .foregroundColor(.blue)
+                .adaptiveForegroundStyle(.blue)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 10)
                 .background(Color.blue.opacity(0.1))
                 .cornerRadius(10)
             }
+            .adaptiveButtonStyle(.plain)
             
             // Featured Review Card
             VStack(alignment: .leading, spacing: 8) {
@@ -72,7 +76,7 @@ struct MiniAppReviewView: View {
                     Spacer()
                     Text("4d ago")
                          .font(.caption)
-                         .foregroundColor(.secondary)
+                         .adaptiveForegroundStyle(.secondary)
                 }
                 
                 HStack(spacing: 2) {
@@ -89,8 +93,7 @@ struct MiniAppReviewView: View {
                     .padding(.top, 4)
             }
             .padding()
-            .background(Color(UIColor.secondarySystemBackground))
-            .cornerRadius(12)
+            .adaptiveGlass(cornerRadius: 12)
         }
         .padding()
     }

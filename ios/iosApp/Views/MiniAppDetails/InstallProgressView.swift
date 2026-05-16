@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct InstallProgressView: View {
     let appId: String
@@ -16,7 +18,7 @@ struct InstallProgressView: View {
                 .overlay(
                     Image(systemName: "app.dashed")
                         .font(.largeTitle)
-                        .foregroundColor(.secondary)
+                        .adaptiveForegroundStyle(.secondary)
                 )
             
             VStack(spacing: 8) {
@@ -26,12 +28,11 @@ struct InstallProgressView: View {
                 
                 Text(status)
                     .font(.body)
-                    .foregroundColor(.secondary)
+                    .adaptiveForegroundStyle(.secondary)
             }
             
             VStack(spacing: 8) {
-                ProgressView(value: progress)
-                    .progressViewStyle(LinearProgressViewStyle())
+                AdaptiveProgressView(value: progress)
                 
                 HStack {
                     Text("\(Int(progress * 100))%")
@@ -39,18 +40,19 @@ struct InstallProgressView: View {
                     Text("24MB / 48MB")
                 }
                 .font(.caption)
-                .foregroundColor(.secondary)
+                .adaptiveForegroundStyle(.secondary)
             }
             .padding(.horizontal)
             
-            Button(action: {
+            AdaptiveButton(action: {
                 // Cancel action
                 presentationMode.wrappedValue.dismiss()
             }) {
                 Text("Cancel")
                     .fontWeight(.medium)
-                    .foregroundColor(.red)
+                    .adaptiveForegroundStyle(.red)
             }
+            .adaptiveButtonStyle(.plain)
             .padding(.top)
         }
         .padding(32)

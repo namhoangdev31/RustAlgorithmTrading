@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct TrendingSearch: Identifiable {
     let id = UUID()
@@ -29,7 +31,7 @@ struct TrendingSearchesView: View {
                         Text("\(search.rank)")
                             .font(.title3)
                             .fontWeight(.bold)
-                            .foregroundColor(.gray.opacity(0.3))
+                            .adaptiveForegroundStyle(.secondary, opacity: 0.3)
                             .frame(width: 30)
                         
                         VStack(alignment: .leading, spacing: 4) {
@@ -39,19 +41,19 @@ struct TrendingSearchesView: View {
                             Text(search.tag)
                                 .font(.caption2)
                                 .fontWeight(.bold)
-                                .foregroundColor(search.tagColor)
+                                .adaptiveForegroundStyle(search.tagColor)
                         }
                         
                         Spacer()
                         
                         Image(systemName: "arrow.up.right")
                             .font(.caption)
-                            .foregroundColor(.gray.opacity(0.5))
+                            .adaptiveForegroundStyle(.secondary, opacity: 0.5)
                     }
                     .padding(.horizontal)
                     
                     if search.rank < searches.count {
-                        Divider()
+                        AdaptiveDivider()
                             .padding(.horizontal)
                     }
                 }

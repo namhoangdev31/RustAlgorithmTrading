@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct EditorChoiceView: View {
     var body: some View {
@@ -6,23 +8,23 @@ struct EditorChoiceView: View {
         ZStack(alignment: .bottomLeading) {
             // Background Image/Gradient
             LinearGradient(colors: [Color.blue.opacity(0.8), Color.black.opacity(0.8)], startPoint: .topLeading, endPoint: .bottomTrailing)
-                .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                .adaptiveGlass(cornerRadius: 20)
 
             VStack(alignment: .leading, spacing: 8) {
                 Text("EDITOR'S CHOICE")
                     .font(.footnote)
                     .fontWeight(.semibold)
-                    .foregroundColor(.white)
+                    .adaptiveForegroundStyle(.white)
                 Text("Master Your\nWorkflow")
                     .font(.title)
                     .fontWeight(.bold)
-                    .foregroundColor(.white)
+                    .adaptiveForegroundStyle(.white)
 
                 Spacer()
 
                 Text("The ultimate toolkit for high-performance teams, now in your pocket.")
                     .font(.subheadline)
-                    .foregroundColor(.white.opacity(0.9))
+                    .adaptiveForegroundStyle(.white, opacity: 0.9)
                     .lineLimit(3)
             }
             .padding(24)

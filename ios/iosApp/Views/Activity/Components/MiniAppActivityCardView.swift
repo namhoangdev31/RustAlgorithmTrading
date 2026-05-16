@@ -1,4 +1,5 @@
 import SwiftUI
+import AdaptiveSwiftUi
 
 struct MiniAppActivityCardView: View {
     let appName: String
@@ -47,11 +48,11 @@ struct MiniAppActivityCardView: View {
             
             Spacer()
             
-            Button(action: {}) {
+            AdaptiveButton(action: {}) {
                 Text(actionTitle)
                     .font(.caption)
                     .fontWeight(.bold)
-                    .foregroundColor(.blue)
+                    .adaptiveForegroundStyle(.blue)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
                     .background(Color.blue.opacity(0.1))

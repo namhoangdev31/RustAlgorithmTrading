@@ -6,25 +6,25 @@ struct HomeView: View {
     @State private var offsetY: CGFloat = 0
 
     var body: some View {
-        ScrollView {
+        AdaptiveScrollView {
             VStack(spacing: 16) {
                 HomeHeaderView(offsetY: offsetY) {
                     navigation.navigate(to: .activity)
                 }
 
-                Button(action: {
+                AdaptiveButton(action: {
                     navigation.navigate(to: .detail(itemId: "editor_choice"))
                 }) {
                     EditorChoiceView()
                 }
-                .buttonStyle(PlainButtonStyle())
+                .adaptiveButtonStyle(.plain)
 
-                Button(action: {
+                AdaptiveButton(action: {
                     navigation.navigate(to: .detail(itemId: "apps_we_love"))
                 }) {
                     AppsWeLoveView()
                 }
-                .buttonStyle(PlainButtonStyle())
+                .adaptiveButtonStyle(.plain)
 
                 TopCollectionsView()
 

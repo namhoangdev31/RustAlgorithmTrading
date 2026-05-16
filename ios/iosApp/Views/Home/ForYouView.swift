@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 // import Shared — replaced by native Swift Shared module
 
 struct ForYouView: View {
@@ -17,7 +19,7 @@ struct ForYouView: View {
     ]
     
     var body: some View {
-        ScrollView {
+        AdaptiveScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 Text("Because you like Productivity")
                     .font(.headline)
@@ -27,7 +29,7 @@ struct ForYouView: View {
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
                     ForEach(0..<recommendations.count, id: \.self) { index in
                         let app = recommendations[index]
-                        Button(action: {
+                        AdaptiveButton(action: {
                             navigation.navigate(to: .detail(itemId: "mock_\(index)"))
                         }) {
                             VStack(alignment: .leading, spacing: 12) {
@@ -37,18 +39,18 @@ struct ForYouView: View {
                                     .overlay(
                                         Image(systemName: app.icon)
                                             .font(.system(size: 40))
-                                            .foregroundColor(app.color)
+                                            .adaptiveForegroundStyle(app.color)
                                     )
                                 
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text(app.name)
                                         .font(.headline)
-                                        .foregroundColor(.primary)
+                                        .adaptiveForegroundStyle(.primary)
                                         .lineLimit(1)
                                     
                                     Text(app.category)
                                         .font(.caption)
-                                        .foregroundColor(.secondary)
+                                        .adaptiveForegroundStyle(.secondary)
                                     
                                     HStack(spacing: 4) {
                                         Image(systemName: "star.fill")
@@ -56,15 +58,15 @@ struct ForYouView: View {
                                             .foregroundColor(.yellow)
                                         Text(String(format: "%.1f", app.rating))
                                             .font(.caption2)
-                                            .foregroundColor(.secondary)
+                                            .adaptiveForegroundStyle(.secondary)
                                     }
                                 }
                             }
                             .padding(12)
-                            .background(Color(.systemBackground))
-                            .cornerRadius(16)
+                            .adaptiveGlass(cornerRadius: 16)
                             .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
                         }
+                        .adaptiveButtonStyle(.plain)
                     }
                 }
                 .padding(.horizontal)

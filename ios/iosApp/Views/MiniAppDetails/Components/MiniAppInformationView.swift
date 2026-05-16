@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 // import Shared — replaced by native Swift Shared module
 
 struct MiniAppInformationView: View {
@@ -12,15 +14,15 @@ struct MiniAppInformationView: View {
             
             VStack(spacing: 0) {
                 InfoRow(label: "Developer", value: "GreenLogic Labs LLC")
-                Divider().padding(.leading, 16)
+                AdaptiveDivider().padding(.leading, 16)
                 InfoRow(label: "Size", value: "42.8 MB")
-                Divider().padding(.leading, 16)
+                AdaptiveDivider().padding(.leading, 16)
                 InfoRow(label: "Category", value: "Productivity")
-                Divider().padding(.leading, 16)
+                AdaptiveDivider().padding(.leading, 16)
                 InfoRow(label: "Compatibility", value: "Works on this iPhone", isLink: true)
-                Divider().padding(.leading, 16)
+                AdaptiveDivider().padding(.leading, 16)
                 InfoRow(label: "Languages", value: "English and 12 more")
-                Divider().padding(.leading, 16)
+                AdaptiveDivider().padding(.leading, 16)
                 InfoRow(label: "Age Rating", value: "4+")
             }
         }
@@ -37,16 +39,16 @@ struct InfoRow: View {
         HStack {
             Text(label)
                 .font(.body)
-                .foregroundColor(.secondary)
+                .adaptiveForegroundStyle(.secondary)
             Spacer()
             if isLink {
                 HStack(spacing: 4) {
                     Text(value)
                         .font(.body)
-                        .foregroundColor(.blue)
+                        .adaptiveForegroundStyle(.blue)
                     Image(systemName: "chevron.down")
                         .font(.caption)
-                        .foregroundColor(.blue)
+                        .adaptiveForegroundStyle(.blue)
                 }
             } else {
                 Text(value)

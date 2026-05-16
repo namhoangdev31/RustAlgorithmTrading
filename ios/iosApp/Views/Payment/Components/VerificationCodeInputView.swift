@@ -1,4 +1,5 @@
 import SwiftUI
+import AdaptiveSwiftUi
 
 struct VerificationCodeInputView: View {
     let pin: String
@@ -9,7 +10,7 @@ struct VerificationCodeInputView: View {
             HStack(spacing: 16) {
                 Image(systemName: "bubble.left.and.bubble.right.fill")
                     .font(.system(size: 24))
-                    .foregroundColor(.cyan)
+                    .adaptiveForegroundStyle(.cyan)
                     .frame(width: 56, height: 56)
                     .background(Color.cyan.opacity(0.1))
                     .clipShape(Circle())
@@ -20,22 +21,20 @@ struct VerificationCodeInputView: View {
                         .fontWeight(.medium)
                     Text("We've sent a verification code to \nyour registered mobile number +84 \n**** 1234")
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .adaptiveForegroundStyle(.secondary)
                         .lineSpacing(4)
                 }
             }
             .padding(24)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color.white)
-            .cornerRadius(32)
-            .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 5)
+            .adaptiveGlass(cornerRadius: 32)
             .padding(.horizontal)
             
             // PIN Entry Fields
             HStack(spacing: 12) {
                 ForEach(0..<6, id: \.self) { index in
                     Circle()
-                        .fill(index < pin.count ? Color.black : Color.white)
+                        .fill(index < pin.count ? Color.primary : Color.white)
                         .frame(width: 16, height: 16)
                         .overlay(
                             Circle()

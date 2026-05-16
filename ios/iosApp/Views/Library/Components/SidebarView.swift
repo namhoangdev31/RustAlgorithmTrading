@@ -23,19 +23,19 @@ struct SidebarView: View {
                             Text("Menu")
                                 .font(.title.bold())
                             Spacer()
-                            Button(action: {
+                            AdaptiveButton(action: {
                                 withAnimation(.spring()) {
                                     isShowing = false
                                 }
                             }) {
                                 Image(systemName: "xmark.circle.fill")
                                     .font(.title2)
-                                    .foregroundColor(.gray)
+                                    .adaptiveForegroundStyle(.secondary)
                             }
                         }
                         .padding(.top, 60)
 
-                        Divider()
+                        AdaptiveDivider()
 
                         // Menu items
                         VStack(alignment: .leading, spacing: 25) {
@@ -69,12 +69,12 @@ struct SidebarItem: View {
         HStack(spacing: 15) {
             Image(systemName: icon)
                 .font(.system(size: 20))
-                .foregroundColor(.primary)
+                .adaptiveForegroundStyle(.primary)
                 .frame(width: 30)
 
             Text(title)
                 .font(.body)
-                .foregroundColor(.primary)
+                .adaptiveForegroundStyle(.primary)
 
             Spacer()
         }

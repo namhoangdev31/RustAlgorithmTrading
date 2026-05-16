@@ -33,7 +33,7 @@ struct CheckoutProductCard: View {
                 .font(.subheadline)
                 .foregroundColor(.secondary)
             
-            Text(String(format: "$%.2f", price))
+            AdaptiveText(price, format: .currency(code: "USD"))
                 .font(.system(size: 40, weight: .medium, design: .rounded))
                 .padding(.top, 4)
         }

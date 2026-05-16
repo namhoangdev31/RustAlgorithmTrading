@@ -1,4 +1,5 @@
 import SwiftUI
+import AdaptiveSwiftUi
 // import Shared — replaced by native Swift Shared module
 
 struct CheckoutTransactionDetailsView: View {
@@ -13,9 +14,9 @@ struct CheckoutTransactionDetailsView: View {
                 .foregroundColor(.secondary)
                 .padding(.bottom, 4)
             
-            CheckoutDetailRow(label: "Subscription Subtotal", value: String(format: "$%.2f", price))
-            CheckoutDetailRow(label: "Service Fee", value: "$0.00")
-            CheckoutDetailRow(label: "Estimated Tax", value: String(format: "$%.2f", tax))
+            CheckoutDetailRow(label: "Subscription Subtotal", value: price)
+            CheckoutDetailRow(label: "Service Fee", value: 0.0)
+            CheckoutDetailRow(label: "Estimated Tax", value: tax)
         }
         .padding(24)
         .background(Color.white)
@@ -27,14 +28,14 @@ struct CheckoutTransactionDetailsView: View {
 
 struct CheckoutDetailRow: View {
     let label: String
-    let value: String
+    let value: Double
     
     var body: some View {
         HStack {
             Text(label)
                 .foregroundColor(.secondary)
             Spacer()
-            Text(value)
+            AdaptiveText(value, format: .currency(code: "USD"))
                 .fontWeight(.semibold)
         }
         .font(.subheadline)

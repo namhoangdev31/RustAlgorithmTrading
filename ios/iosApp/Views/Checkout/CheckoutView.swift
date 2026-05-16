@@ -1,4 +1,5 @@
 import SwiftUI
+import AdaptiveSwiftUi
 // import Shared — replaced by native Swift Shared module
 
 struct CheckoutView: View {
@@ -18,7 +19,7 @@ struct CheckoutView: View {
         ZStack(alignment: .bottom) {
 
             
-            ScrollView {
+            AdaptiveScrollView {
                 VStack(spacing: 24) {
                     
                     // Product Card
@@ -59,8 +60,7 @@ struct CheckoutView: View {
                 navigation.navigate(to: .paymentFailed)
             }
         }
-        .navigationTitle("Checkout")
-        .navigationBarTitleDisplayMode(.inline)
+        .adaptiveNavigationTitle("Checkout")
     }
 }
 

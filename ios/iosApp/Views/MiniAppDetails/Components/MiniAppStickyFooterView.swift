@@ -21,31 +21,33 @@ struct MiniAppStickyFooterView: View {
                     .fontWeight(.semibold)
                 Text("Productivity")
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .adaptiveForegroundStyle(.secondary)
             }
 
             Spacer()
 
             if isDownloaded {
-                Button(action: onOpen) {
+                AdaptiveButton(action: onOpen) {
                     Text("OPEN")
                         .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(.white)
+                        .adaptiveForegroundStyle(.white)
                         .padding(.horizontal, 20)
                         .padding(.vertical, 8)
                         .background(Color.blue)
                         .cornerRadius(20)
                 }
+                .adaptiveButtonStyle(.plain)
             } else {
-                Button(action: onDownload) {
+                AdaptiveButton(action: onDownload) {
                     Text("GET")
                         .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(.white)
+                        .adaptiveForegroundStyle(.white)
                         .padding(.horizontal, 20)
                         .padding(.vertical, 8)
                         .background(Color.blue)
                         .cornerRadius(20)
                 }
+                .adaptiveButtonStyle(.plain)
             }
         }
         .padding(16)

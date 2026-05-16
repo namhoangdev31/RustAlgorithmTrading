@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct WalletBalanceCard: View {
     var balance: Double = 2450.00
@@ -9,23 +11,21 @@ struct WalletBalanceCard: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("TOTAL BALANCE")
                         .font(.caption)
-                        
-                        .foregroundColor(.secondary.opacity(0.8))
+                        .adaptiveForegroundStyle(.secondary, opacity: 0.8)
                     
                     Text(String(format: "$%.2f", balance))
                         .font(.system(size: 48, weight: .bold))
-                        .foregroundColor(.primary)
+                        .adaptiveForegroundStyle(.primary)
                 }
                 
                 Spacer()
                 
-                Button(action: {
+                AdaptiveButton(action: {
                     // Add money or some other action
                 }) {
                     Image(systemName: "plus")
                         .font(.title2)
-                        
-                        .foregroundColor(.white)
+                        .adaptiveForegroundStyle(.white)
                         .frame(width: 50, height: 50)
                         .background(Color.cyan)
                         .clipShape(Circle())
@@ -37,21 +37,19 @@ struct WalletBalanceCard: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("CURRENCY")
                         .font(.caption)
-                        
-                        .foregroundColor(.cyan)
+                        .adaptiveForegroundStyle(.cyan)
                     Text("USD / United\nStates")
                         .font(.subheadline)
                         .fontWeight(.semibold)
-                        .foregroundColor(.primary)
+                        .adaptiveForegroundStyle(.primary)
                 }
                 
-                Divider().frame(height: 40)
+                AdaptiveDivider().frame(height: 40)
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("STATUS")
                         .font(.caption)
-                        
-                        .foregroundColor(.cyan)
+                        .adaptiveForegroundStyle(.cyan)
                     
                     HStack(spacing: 4) {
                         Circle()
@@ -60,15 +58,13 @@ struct WalletBalanceCard: View {
                         Text("Verified\nAccount")
                             .font(.subheadline)
                             .fontWeight(.semibold)
-                            .foregroundColor(.primary)
+                            .adaptiveForegroundStyle(.primary)
                     }
                 }
                 Spacer()
             }
         }
         .padding(24)
-        .background(Color.white)
-        .cornerRadius(32)
-        .shadow(color: Color.black.opacity(0.05), radius: 15, x: 0, y: 5)
+        .adaptiveGlass(cornerRadius: 32)
     }
 }

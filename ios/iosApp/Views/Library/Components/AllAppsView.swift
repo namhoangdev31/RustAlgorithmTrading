@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct InstalledApp: Identifiable {
     let id = UUID()
@@ -43,25 +45,25 @@ struct AllAppsView: View {
                                 .font(.headline)
                             Text("Ver \(app.version) • \(app.size)")
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .adaptiveForegroundStyle(.secondary)
                         }
                         
                         Spacer()
                         
                         Image(systemName: "chevron.right")
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .adaptiveForegroundStyle(.secondary)
                     }
                     .padding()
                     .background(Color(.systemBackground))
                     
                     if app.id != apps.last?.id {
-                        Divider()
+                        AdaptiveDivider()
                             .padding(.leading, 68)
                     }
                 }
             }
-            .cornerRadius(16)
+            .adaptiveGlass(cornerRadius: 16)
             .padding(.horizontal)
         }
     }

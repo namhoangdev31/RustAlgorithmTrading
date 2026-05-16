@@ -1,10 +1,12 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct AccountOverviewView: View {
     @State private var showingEditProfile = false
     
     var body: some View {
-        List {
+        AdaptiveList {
             Section {
                 HStack(spacing: 16) {
                     Circle()
@@ -13,7 +15,7 @@ struct AccountOverviewView: View {
                         .overlay(
                             Image(systemName: "person.fill")
                                 .font(.title)
-                                .foregroundColor(.secondary)
+                                .adaptiveForegroundStyle(.secondary)
                         )
                     
                     VStack(alignment: .leading, spacing: 4) {
@@ -21,17 +23,18 @@ struct AccountOverviewView: View {
                             .font(.headline)
                         Text("john.doe@example.com")
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .adaptiveForegroundStyle(.secondary)
                     }
                 }
                 .padding(.vertical, 8)
                 
-                Button(action: {
+                AdaptiveButton(action: {
                     showingEditProfile = true
                 }) {
                     Text("Edit Profile")
-                        .foregroundColor(.blue)
+                        .adaptiveForegroundStyle(.blue)
                 }
+                .adaptiveButtonStyle(.plain)
             }
             
             Section(header: Text("Account Details")) {
@@ -39,14 +42,14 @@ struct AccountOverviewView: View {
                     Text("Username")
                     Spacer()
                     Text("johndoe123")
-                        .foregroundColor(.secondary)
+                        .adaptiveForegroundStyle(.secondary)
                 }
                 
                 HStack {
                     Text("User ID")
                     Spacer()
                     Text("849302")
-                        .foregroundColor(.secondary)
+                        .adaptiveForegroundStyle(.secondary)
                         .font(.monospacedDigit(.body)())
                 }
                 
@@ -54,7 +57,7 @@ struct AccountOverviewView: View {
                     Text("Joined")
                     Spacer()
                     Text("Feb 2024")
-                        .foregroundColor(.secondary)
+                        .adaptiveForegroundStyle(.secondary)
                 }
             }
             
@@ -63,15 +66,16 @@ struct AccountOverviewView: View {
                     Text("Plan")
                     Spacer()
                     Text("Free")
-                        .foregroundColor(.secondary)
+                        .adaptiveForegroundStyle(.secondary)
                 }
                 
-                Button(action: {
+                AdaptiveButton(action: {
                     // Upgrade action
                 }) {
                     Text("Upgrade to Pro")
-                        .foregroundColor(.blue)
+                        .adaptiveForegroundStyle(.blue)
                 }
+                .adaptiveButtonStyle(.plain)
             }
         }
         .navigationTitle("Account")

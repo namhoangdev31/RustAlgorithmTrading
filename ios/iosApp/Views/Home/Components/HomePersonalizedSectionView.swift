@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct HomePersonalizedSectionView: View {
     let title: String
@@ -24,25 +26,27 @@ struct HomePersonalizedSectionView: View {
 
                     Text(subtitle)
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .adaptiveForegroundStyle(.secondary)
                 }
 
                 Spacer()
 
-                Button("See All") {
+                AdaptiveButton(action: {
                     if title == "For You" {
                         navigation.navigate(to: .forYou)
                     } else {
                         // For other sections, maybe navigate elsewhere or do nothing for now
                         print("Navigate to \(title)")
                     }
+                }) {
+                    Text("See All")
                 }
-                .font(.subheadline)
-                .foregroundColor(.blue)
+                .adaptiveButtonStyle(.plain)
+                .adaptiveForegroundStyle(.blue)
             }
             .padding(.horizontal)
 
-            ScrollView(.horizontal, showsIndicators: false) {
+            AdaptiveScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 16) {
                     ForEach(0..<4) { index in
                         let app = apps[index]
@@ -54,7 +58,7 @@ struct HomePersonalizedSectionView: View {
                                 .overlay(
                                     Image(systemName: app.icon)
                                         .font(.system(size: 40))
-                                        .foregroundColor(app.color)
+                                        .adaptiveForegroundStyle(app.color)
                                 )
 
                             VStack(alignment: .leading, spacing: 2) {
@@ -64,7 +68,7 @@ struct HomePersonalizedSectionView: View {
 
                                 Text("Lifestyle")
                                     .font(.caption)
-                                    .foregroundColor(.secondary)
+                                    .adaptiveForegroundStyle(.secondary)
                             }
                         }
                         .frame(width: 140)

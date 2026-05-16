@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct DigitalWalletCardView: View {
     var body: some View {
@@ -14,24 +16,22 @@ struct DigitalWalletCardView: View {
                         .fontWeight(.bold)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 5)
-                        .background(Color.white.opacity(0.2))
-                        .clipShape(Capsule())
-                        .foregroundColor(.white)
+                        .adaptiveGlass(cornerRadius: 20)
+                        .adaptiveForegroundStyle(.white)
                     
                     Spacer()
                     
                     Image(systemName: "wallet.pass.fill")
                         .font(.title2)
-                        .foregroundColor(.white)
+                        .adaptiveForegroundStyle(.white)
                         .padding(10)
-                        .background(Color.white.opacity(0.2))
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .adaptiveGlass(cornerRadius: 12)
                 }
                 
                 Text("Personal\nAssets")
                     .font(.title)
                     .fontWeight(.bold)
-                    .foregroundColor(.white)
+                    .adaptiveForegroundStyle(.white)
                     .padding(.top, 8)
                 
                 Spacer()
@@ -39,16 +39,16 @@ struct DigitalWalletCardView: View {
                 Text("AVAILABLE BALANCE")
                     .font(.caption)
                     .fontWeight(.bold)
-                    .foregroundColor(.white.opacity(0.7))
+                    .adaptiveForegroundStyle(.white, opacity: 0.7)
                 
                 Text("$12,480.50")
                     .font(.system(size: 36, weight: .bold))
-                    .foregroundColor(.white)
+                    .adaptiveForegroundStyle(.white)
                 
                 Spacer().frame(height: 20)
                 
                 HStack(spacing: 16) {
-                    Button(action: {}) {
+                    AdaptiveButton(action: {}) {
                         HStack {
                             Image(systemName: "banknote")
                             Text("Pay")
@@ -56,21 +56,22 @@ struct DigitalWalletCardView: View {
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(Color.white)
-                        .foregroundColor(.blue)
-                        .clipShape(RoundedRectangle(cornerRadius: 15))
+                        .adaptiveForegroundStyle(.blue)
+                        .cornerRadius(15)
                     }
+                    .adaptiveButtonStyle(.plain)
                     
-                    Button(action: {}) {
+                    AdaptiveButton(action: {}) {
                         HStack {
                             Image(systemName: "paperplane.fill")
                             Text("Transfer")
                         }
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.white.opacity(0.2))
-                        .foregroundColor(.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 15))
+                        .adaptiveGlass(cornerRadius: 15)
+                        .adaptiveForegroundStyle(.white)
                     }
+                    .adaptiveButtonStyle(.plain)
                 }
             }
             .padding(24)

@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct SearchSuggestionsView: View {
     let query: String
@@ -34,7 +36,7 @@ struct SearchSuggestionsView: View {
                 HStack(spacing: 16) {
                     Image(systemName: "magnifyingglass")
                         .font(.body)
-                        .foregroundColor(.gray)
+                        .adaptiveForegroundStyle(.secondary)
                     
                     Text(suggestion)
                         .font(.body)
@@ -43,12 +45,12 @@ struct SearchSuggestionsView: View {
                     
                     Image(systemName: "arrow.up.left")
                         .font(.caption)
-                        .foregroundColor(.gray.opacity(0.5))
+                        .adaptiveForegroundStyle(.secondary, opacity: 0.5)
                 }
                 .padding()
                 .background(Color(.systemBackground))
                 
-                Divider()
+                AdaptiveDivider()
             }
         }
     }

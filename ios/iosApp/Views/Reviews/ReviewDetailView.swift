@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct ReviewDetailView: View {
     let reviewId: String
@@ -7,7 +9,7 @@ struct ReviewDetailView: View {
     @State private var helpfulCount = 12
     
     var body: some View {
-        ScrollView {
+        AdaptiveScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 // Header
                 HStack(spacing: 12) {
@@ -20,7 +22,7 @@ struct ReviewDetailView: View {
                             .font(.headline)
                         Text("Feb 24, 2024")
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .adaptiveForegroundStyle(.secondary)
                     }
                     
                     Spacer()
@@ -28,7 +30,7 @@ struct ReviewDetailView: View {
                     HStack(spacing: 2) {
                         ForEach(0..<5) { index in
                             Image(systemName: index < 4 ? "star.fill" : "star")
-                                .foregroundColor(.orange)
+                                .adaptiveForegroundStyle(.orange)
                                 .font(.caption)
                         }
                     }
@@ -42,16 +44,17 @@ struct ReviewDetailView: View {
                     .font(.body)
                     .lineSpacing(4)
                 
-                Divider()
+                AdaptiveDivider()
                 
                 // Developer Response
+                AdaptiveDivider()
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Developer Response")
                         .font(.headline)
                     
                     Text("Feb 25, 2024")
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .adaptiveForegroundStyle(.secondary)
                     
                     Text("Thank you so much for your kind words! We work hard to make the app useful for everyone.")
                         .font(.body)
@@ -66,11 +69,11 @@ struct ReviewDetailView: View {
                 HStack {
                     Text("Was this review helpful?")
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .adaptiveForegroundStyle(.secondary)
                     
                     Spacer()
                     
-                    Button(action: {
+                    AdaptiveButton(action: {
                         helpfulCount += 1
                     }) {
                         HStack(spacing: 4) {
@@ -78,17 +81,19 @@ struct ReviewDetailView: View {
                             Text("Helpful (\(helpfulCount))")
                         }
                         .font(.subheadline)
-                        .foregroundColor(.blue)
+                        .adaptiveForegroundStyle(.blue)
                     }
+                    .adaptiveButtonStyle(.plain)
                 }
                 
-                Button(action: {
+                AdaptiveButton(action: {
                     // Report action
                 }) {
                     Text("Report Concern")
                         .font(.caption)
-                        .foregroundColor(.red)
+                        .adaptiveForegroundStyle(.red)
                 }
+                .adaptiveButtonStyle(.plain)
                 .padding(.top, 8)
             }
             .padding()

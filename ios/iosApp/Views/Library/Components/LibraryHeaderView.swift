@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct LibraryHeaderView: View {
     let offsetY: CGFloat
@@ -14,7 +16,7 @@ struct LibraryHeaderView: View {
 
     var body: some View {
         HStack {
-            Button(action: {
+            AdaptiveButton(action: {
                 onMenuTap()
             }) {
                 Image(systemName: "slider.horizontal.3")
@@ -34,7 +36,7 @@ struct LibraryHeaderView: View {
             Spacer()
 
             HStack(spacing: 16) {
-                Button(action: {
+                AdaptiveButton(action: {
                     navigation.navigate(to: .activity)
                 }) {
                     Image(systemName: "bell.badge.fill")

@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct CollectionDetailView: View {
     let title: String
@@ -22,7 +24,7 @@ struct CollectionDetailView: View {
     ]
     
     var body: some View {
-        ScrollView {
+        AdaptiveScrollView {
             LazyVGrid(columns: columns, spacing: 16) {
                 ForEach(apps) { item in
                     VStack(alignment: .leading, spacing: 12) {
@@ -38,7 +40,7 @@ struct CollectionDetailView: View {
                             
                             Spacer()
                             
-                            Button(action: {}) {
+                            AdaptiveButton(action: {}) {
                                 Text("GET")
                                     .font(.caption)
                                     .fontWeight(.bold)
@@ -48,16 +50,17 @@ struct CollectionDetailView: View {
                                     .background(Color(.systemGray6))
                                     .clipShape(Capsule())
                             }
+                            .adaptiveButtonStyle(.plain)
                         }
                         
                         VStack(alignment: .leading, spacing: 4) {
                             Text(item.name)
                                 .font(.system(size: 16, weight: .semibold))
-                                .foregroundColor(.primary)
+                                .adaptiveForegroundStyle(.primary)
                             
                             Text(item.category)
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .adaptiveForegroundStyle(.secondary)
                             
                             HStack(spacing: 4) {
                                 ForEach(0..<5) { index in
@@ -69,8 +72,7 @@ struct CollectionDetailView: View {
                         }
                     }
                     .padding()
-                    .background(Color(.systemBackground))
-                    .cornerRadius(16)
+                    .adaptiveGlass(cornerRadius: 16)
                     .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
                 }
             }

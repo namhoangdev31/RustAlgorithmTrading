@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct EditProfileView: View {
     @Environment(\.dismiss) var dismiss
@@ -18,12 +20,14 @@ struct EditProfileView: View {
                         Image(systemName: "person.crop.circle.fill")
                             .resizable()
                             .frame(width: 100, height: 100)
-                            .foregroundColor(.gray)
+                            .adaptiveForegroundStyle(.secondary)
+                            .background(Color(.systemGray6))
                             .clipShape(Circle())
                         
-                        Button("Change Photo") {
+                        AdaptiveButton("Change Photo") {
                             // Mock photo picker
                         }
+                        .adaptiveButtonStyle(.plain)
                         .font(.footnote)
                         .padding(.top, 4)
                     }
@@ -38,7 +42,7 @@ struct EditProfileView: View {
                 VStack(alignment: .leading) {
                     Text("Bio")
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .adaptiveForegroundStyle(.secondary)
                     TextEditor(text: $bio)
                         .frame(minHeight: 80)
                 }
@@ -47,23 +51,24 @@ struct EditProfileView: View {
             Section(header: Text("Private Information")) {
                 TextField("Email", text: $email)
                     .disabled(true)
-                    .foregroundColor(.gray)
+                    .adaptiveForegroundStyle(.secondary)
             }
         }
         .navigationTitle("Edit Profile")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
-                Button("Cancel") {
+                AdaptiveButton("Cancel") {
                     dismiss()
                 }
+                .adaptiveButtonStyle(.plain)
             }
             
             ToolbarItem(placement: .confirmationAction) {
-                Button("Done") {
+                AdaptiveButton("Done") {
                     saveProfile()
                 }
-                 
+                .adaptiveButtonStyle(.plain)
                 .disabled(isLoading || name.isEmpty)
             }
         }

@@ -6,25 +6,25 @@ struct DiscoveryView: View {
     @State private var offsetY: CGFloat = 0
 
     var body: some View {
-        ScrollView {
+        AdaptiveScrollView {
             VStack(spacing: 16) {
                 DiscoveryHeaderView(offsetY: offsetY)
-
-                Button(action: {
+                
+                AdaptiveButton(action: {
                     navigation.navigate(to: .detail(itemId: "featured_story"))
                 }) {
                     FeaturedStoryView()
                 }
-                .buttonStyle(PlainButtonStyle())
+                .adaptiveButtonStyle(.plain)
 
-                Button(action: {
+                AdaptiveButton(action: {
                     navigation.navigate(to: .detail(itemId: "discovery_apps"))
                 }) {
                     DiscoveryAppsWeLoveView()
                 }
-                .buttonStyle(PlainButtonStyle())
+                .adaptiveButtonStyle(.plain)
 
-                Button(action: {
+                AdaptiveButton(action: {
                     navigation.navigate(to: .topCharts)
                 }) {
                     HStack {
@@ -33,14 +33,14 @@ struct DiscoveryView: View {
                             .fontWeight(.bold)
                         Spacer()
                         Image(systemName: "chevron.right")
-                            .foregroundColor(.gray)
+                            .adaptiveForegroundStyle(.secondary)
                     }
                     .padding()
                     .background(Color(.secondarySystemBackground))
                     .cornerRadius(12)
                     .padding(.horizontal)
                 }
-                .buttonStyle(PlainButtonStyle())
+                .adaptiveButtonStyle(.plain)
 
                 CategoriesView()
                 TrendingThisWeekView()

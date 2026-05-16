@@ -6,7 +6,7 @@ struct LoginHeaderView: View {
         Text("Welcome Back")
             .font(.largeTitle)
             .fontWeight(.bold)
-            .foregroundColor(.primary)
+            .adaptiveForegroundStyle(.primary)
     }
 }
 
@@ -40,11 +40,11 @@ struct LoginButtonView: View {
     let isLoading: Bool
 
     var body: some View {
-        Button(action: action) {
+        AdaptiveButton(action: action) {
             ZStack {
                 if isLoading {
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                    AdaptiveProgressView()
+                        .adaptiveProgressTint(.white)
                 } else {
                     Text("Login")
                         .fontWeight(.semibold)
@@ -54,7 +54,6 @@ struct LoginButtonView: View {
             .frame(height: 50)
             .background(Color.blue)
             .cornerRadius(12)
-            // Adding a glass overlay for "premium" feel
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
                     .stroke(Color.white.opacity(0.3), lineWidth: 1)
@@ -70,11 +69,11 @@ struct LiquidGlassDemoCard: View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Native iOS Liquid Glass")
                 .font(.headline)
-                .foregroundColor(.primary)
+                .adaptiveForegroundStyle(.primary)
 
             Text("This card showcases the new API features for iOS 26+ including depth and motion.")
                 .font(.subheadline)
-                .foregroundColor(.secondary)
+                .adaptiveForegroundStyle(.secondary)
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)

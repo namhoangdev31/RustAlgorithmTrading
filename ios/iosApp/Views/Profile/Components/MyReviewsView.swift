@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 // import Shared — replaced by native Swift Shared module
 
 struct MyReviewItem: Identifiable {
@@ -18,11 +20,11 @@ struct MyReviewsView: View {
     ]
     
     var body: some View {
-        ScrollView {
+        AdaptiveScrollView {
             VStack(spacing: 16) {
                 if reviews.isEmpty {
                     Text("No reviews yet")
-                        .foregroundColor(.gray)
+                        .adaptiveForegroundStyle(.secondary)
                         .padding(.top, 40)
                 } else {
                     ForEach(reviews) { review in
@@ -42,19 +44,20 @@ struct MyReviewsView: View {
                                         .font(.headline)
                                     Text(review.date)
                                         .font(.caption)
-                                        .foregroundColor(.secondary)
+                                        .adaptiveForegroundStyle(.secondary)
                                 }
                                 Spacer()
-                                Button(action: {}) {
+                                AdaptiveButton(action: {}) {
                                     Image(systemName: "ellipsis")
-                                        .foregroundColor(.gray)
+                                        .adaptiveForegroundStyle(.secondary)
                                 }
+                                .adaptiveButtonStyle(.plain)
                             }
                             
                             HStack(spacing: 2) {
                                 ForEach(0..<5) { index in
                                     Image(systemName: "star.fill")
-                                        .foregroundColor(index < review.rating ? .orange : .gray.opacity(0.3))
+                                        .adaptiveForegroundStyle(index < review.rating ? .orange : .secondary, opacity: index < review.rating ? 1.0 : 0.3)
                                         .font(.caption)
                                 }
                             }
@@ -65,8 +68,7 @@ struct MyReviewsView: View {
                                 .lineLimit(3)
                         }
                         .padding()
-                        .background(Color(.secondarySystemGroupedBackground))
-                        .cornerRadius(16)
+                        .adaptiveGlass(cornerRadius: 16)
                     }
                 }
             }

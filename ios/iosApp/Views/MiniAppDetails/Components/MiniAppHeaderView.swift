@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 // import Shared — replaced by native Swift Shared module
 
 struct MiniAppHeaderView: View {
@@ -20,7 +22,7 @@ struct MiniAppHeaderView: View {
                 .overlay(
                     Image(systemName: "cube.box.fill") // Mock Icon
                         .font(.system(size: 50))
-                        .foregroundColor(.blue)
+                        .adaptiveForegroundStyle(.blue)
                 )
                 .clipShape(RoundedRectangle(cornerRadius: 22))
                 .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
@@ -32,61 +34,62 @@ struct MiniAppHeaderView: View {
                         .fixedSize(horizontal: false, vertical: true)
                     Image(systemName: "checkmark.seal.fill") // Mock Icon
                         .font(.system(size: 22))
-                        .foregroundColor(.green)
+                        .adaptiveForegroundStyle(.green)
                 }
                 
-                Button(action: {
+                AdaptiveButton(action: {
                     navigation.navigate(to: .developer(id: "mock_dev"))
                 }) {
                     Text("EcoSolutions Inc.")
                         .font(.subheadline)
-                        .foregroundColor(.blue)
+                        .adaptiveForegroundStyle(.blue)
                 }
-                .buttonStyle(PlainButtonStyle())
+                .adaptiveButtonStyle(.plain)
                 
                 Text("Carbon Footprint Tracker") // Mock Description
                     .font(.system(size: 15))
-                    .foregroundColor(.secondary)
+                    .adaptiveForegroundStyle(.secondary)
                     .lineLimit(1)
                 
                 Spacer()
                 
                 HStack {
                     if isDownloaded {
-                        Button(action: onOpen) {
+                        AdaptiveButton(action: onOpen) {
                             Text("OPEN")
                                 .font(.system(size: 15, weight: .bold))
-                                .foregroundColor(.white)
+                                .adaptiveForegroundStyle(.white)
                                 .padding(.horizontal, 20)
                                 .padding(.vertical, 7)
                                 .background(Color.blue)
                                 .cornerRadius(50)
                         }
+                        .adaptiveButtonStyle(.plain)
                         
                         // Uninstall Button (Action Menu Style)
-                        Menu {
-                            Button(role: .cancel, action: onSettings) {
+                        AdaptiveMenu {
+                            AdaptiveButton(role: .cancel, action: onSettings) {
                                 Label("Settings" , systemImage: "gear")
                             }
-                            Button(role: .destructive, action: onUninstall) {
+                            AdaptiveButton(role: .destructive, action: onUninstall) {
                                 Label("Remove App", systemImage: "trash")
                             }
                         } label: {
                             Image(systemName: "ellipsis.circle.fill")
                                 .font(.system(size: 32))
-                                .foregroundColor(.blue.opacity(0.1))
+                                .adaptiveForegroundStyle(.blue, opacity: 0.1)
                                 .overlay(
                                     Image(systemName: "ellipsis")
                                         .font(.system(size: 14, weight: .bold))
-                                        .foregroundColor(.blue)
+                                        .adaptiveForegroundStyle(.blue)
                                 )
                         }
 
                     } else {
-                        Button(action: onDownload) {
+                        AdaptiveButton(action: onDownload) {
                             if isLoading {
-                                ProgressView()
-                                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                AdaptiveProgressView()
+                                    .adaptiveProgressTint(.white)
                                     .frame(width: 74, height: 30)
                                     .background(Color.blue)
                                     .cornerRadius(15)
@@ -94,10 +97,10 @@ struct MiniAppHeaderView: View {
                                 HStack{
                                     Image(systemName: "icloud.and.arrow.down") // Mock Icon
                                         .font(.system(size: 13))
-                                        .foregroundColor(.white)
+                                        .adaptiveForegroundStyle(.white)
                                     Text("GET")
                                         .font(.system(size: 13, weight: .bold))
-                                        .foregroundColor(.white)
+                                        .adaptiveForegroundStyle(.white)
                                         
                                 }.padding(.horizontal, 20)
                                  .padding(.vertical, 7)
@@ -105,20 +108,22 @@ struct MiniAppHeaderView: View {
                                 .cornerRadius(50)
                             }
                         }
+                        .adaptiveButtonStyle(.plain)
                     }
                     
                     Spacer()
                     
-                    Button(action: {}) {
+                    AdaptiveButton(action: {}) {
                         Image(systemName: "square.and.arrow.up")
                             .font(.system(size: 20))
-                            .foregroundColor(.blue)
+                            .adaptiveForegroundStyle(.blue)
                     }
+                    .adaptiveButtonStyle(.plain)
                 }
                 
                 Text("IN-APP PURCHASES")
                     .font(.system(size: 10, weight: .medium))
-                    .foregroundColor(.gray)
+                    .adaptiveForegroundStyle(.secondary, opacity: 0.5)
                     .padding(.top, 4)
             }
         }

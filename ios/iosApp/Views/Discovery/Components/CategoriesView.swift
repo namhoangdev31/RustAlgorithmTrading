@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct CategoriesView: View {
     var body: some View {
@@ -17,17 +19,17 @@ struct CategoriesView: View {
                             Text("Finance")
                                 .font(.title)
                                 .fontWeight(.bold)
-                                .foregroundColor(.white)
+                                .adaptiveForegroundStyle(.white)
                             Text("Tools for your future")
                                 .font(.subheadline)
-                                .foregroundColor(.white.opacity(0.8))
+                                .adaptiveForegroundStyle(.white, opacity: 0.8)
                             
                             Spacer()
                             
                             Text("142 APPS")
                                 .font(.caption2)
                                 .fontWeight(.bold)
-                                .foregroundColor(.white)
+                                .adaptiveForegroundStyle(.white)
                                 .padding(.horizontal, 10)
                                 .padding(.vertical, 5)
                                 .background(Color.white.opacity(0.3))
@@ -63,14 +65,14 @@ struct CategorySmallCard: View {
                 VStack(alignment: .leading) {
                     Image(systemName: icon)
                         .font(.title2)
-                        .foregroundColor(iconColor)
+                        .adaptiveForegroundStyle(iconColor)
                     
                     Spacer()
                     
                     Text(title)
                         .font(.caption)
                         .fontWeight(.bold)
-                        .foregroundColor(iconColor)
+                        .adaptiveForegroundStyle(iconColor)
                 }
                 .padding(16)
                 .frame(maxWidth: .infinity, alignment: .leading)

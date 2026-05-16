@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct AppShortcut: Identifiable {
     let id = UUID()
@@ -22,13 +24,13 @@ struct FavoriteMiniAppsView: View {
                 Text("FAVORITE MINI APPS")
                     .font(.caption)
                     .fontWeight(.bold)
-                    .foregroundColor(.gray)
+                    .adaptiveForegroundStyle(.secondary)
                     .tracking(1)
                 
                 Spacer()
                 
                 Image(systemName: "square.grid.2x2")
-                    .foregroundColor(.gray)
+                    .adaptiveForegroundStyle(.secondary)
             }
             .padding(.horizontal)
             
@@ -42,12 +44,12 @@ struct FavoriteMiniAppsView: View {
                             
                             Image(systemName: app.icon)
                                 .font(.title3)
-                                .foregroundColor(app.isAdd ? .gray : app.color)
+                                .adaptiveForegroundStyle(app.isAdd ? .secondary : app.color)
                         }
                         
                         Text(app.name)
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .adaptiveForegroundStyle(.secondary)
                     }
                     .frame(maxWidth: .infinity)
                 }

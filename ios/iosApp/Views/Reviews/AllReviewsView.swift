@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct ReviewItem: Identifiable {
     let id = UUID()
@@ -26,7 +28,7 @@ struct AllReviewsView: View {
     @State private var sortOption = 0 // 0: Most Recent, 1: Most Helpful, 2: Critical, 3: Positive
     
     var body: some View {
-        ScrollView {
+        AdaptiveScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 // Header / Summary (Optional, sticking to list for now)
                 
@@ -49,29 +51,28 @@ struct AllReviewsView: View {
                                 Spacer()
                                 Text(review.date)
                                     .font(.caption)
-                                    .foregroundColor(.secondary)
+                                    .adaptiveForegroundStyle(.secondary)
                             }
                             
                             HStack(spacing: 2) {
                                 ForEach(0..<5) { index in
                                     Image(systemName: index < review.rating ? "star.fill" : "star")
-                                        .foregroundColor(.orange)
+                                        .adaptiveForegroundStyle(.orange)
                                         .font(.caption)
                                 }
                                 Spacer()
                                 Text(review.author)
                                     .font(.caption)
-                                    .foregroundColor(.secondary)
+                                    .adaptiveForegroundStyle(.secondary)
                             }
                             
                             Text(review.content)
                                 .font(.body)
-                                .foregroundColor(.primary)
+                                .adaptiveForegroundStyle(.primary)
                                 .fixedSize(horizontal: false, vertical: true)
                         }
                         .padding()
-                        .background(Color(UIColor.secondarySystemBackground))
-                        .cornerRadius(12)
+                        .adaptiveGlass(cornerRadius: 12)
                     }
                 }
                 .padding(.horizontal)

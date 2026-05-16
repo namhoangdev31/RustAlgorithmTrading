@@ -1,5 +1,5 @@
-import SwiftUI
 import AdaptiveSwiftUi
+import SwiftUI
 
 struct RuntimeView: View {
     let manifest: WebRuntimeManifest
@@ -30,8 +30,8 @@ struct RuntimeView: View {
         case .idle:
             EmptyView()
         case .loading:
-            ProgressView()
-                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+            AdaptiveProgressView("")
+                .adaptiveForegroundStyle(.white)
                 .scaleEffect(1.5)
         case .ready(let entryUrl):
             RuntimeWebViewWrapper(manifest: manifest, httpUrl: entryUrl)
@@ -39,13 +39,13 @@ struct RuntimeView: View {
             VStack(spacing: 16) {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .font(.system(size: 60))
-                    .foregroundColor(.red)
+                    .adaptiveForegroundStyle(.red)
                 Text("Error")
                     .font(.title)
-                    .foregroundColor(.white)
+                    .adaptiveForegroundStyle(.white)
                 Text(message)
                     .font(.body)
-                    .foregroundColor(.white.opacity(0.8))
+                    .adaptiveForegroundStyle(.white, opacity: 0.8)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 32)
             }
@@ -63,27 +63,30 @@ struct RuntimeView: View {
                         }
 
                     VStack(spacing: 20) {
-                        Button(action: {
-                            NotificationCenter.default.post(name: NSNotification.Name("ReloadMiniApp"), object: nil)
+                        AdaptiveButton(action: {
+                            NotificationCenter.default.post(
+                                name: NSNotification.Name("ReloadMiniApp"), object: nil)
                             withAnimation { isExpanded = false }
                         }) {
                             Image(systemName: "arrow.clockwise")
                                 .font(.title)
-                                .foregroundColor(.primary)
+                                .adaptiveForegroundStyle(.primary)
                                 .frame(width: 50, height: 50)
                                 .adaptiveGlass(cornerRadius: 25)
                         }
+                        .adaptiveButtonStyle(.plain)
 
-                        Button(action: {
+                        AdaptiveButton(action: {
                             dismiss()
                             withAnimation { isExpanded = false }
                         }) {
                             Image(systemName: "xmark")
                                 .font(.title)
-                                .foregroundColor(.primary)
+                                .adaptiveForegroundStyle(.primary)
                                 .frame(width: 50, height: 50)
                                 .adaptiveGlass(cornerRadius: 25)
                         }
+                        .adaptiveButtonStyle(.plain)
                     }
                     .padding()
                     .adaptiveGlass(cornerRadius: 16)
@@ -93,16 +96,20 @@ struct RuntimeView: View {
                 }
 
                 if !isExpanded {
-                    Button(action: {
+                    AdaptiveButton(action: {
                         withAnimation { isExpanded.toggle() }
                     }) {
                         Image(systemName: "circle.grid.3x3.fill")
                             .font(.system(size: 24))
-                            .foregroundColor(.primary)
+                            .adaptiveForegroundStyle(.primary)
                             .frame(width: 60, height: 60)
                     }
+                    .adaptiveButtonStyle(.plain)
                     .adaptiveGlass(cornerRadius: 100)
-                    .position(dragPosition ?? CGPoint(x: geometry.size.width - 50, y: geometry.size.height - 150))
+                    .position(
+                        dragPosition
+                            ?? CGPoint(x: geometry.size.width - 50, y: geometry.size.height - 150)
+                    )
                     .highPriorityGesture(
                         DragGesture()
                             .onChanged { gesture in
@@ -110,7 +117,9 @@ struct RuntimeView: View {
                             }
                             .onEnded { value in
                                 var currentPosition = value.location
-                                currentPosition.x = currentPosition.x > (geometry.size.width / 2) ? geometry.size.width - 40 : 40
+                                currentPosition.x =
+                                    currentPosition.x > (geometry.size.width / 2)
+                                    ? geometry.size.width - 40 : 40
                                 let minY: CGFloat = 80
                                 let maxY: CGFloat = geometry.size.height - 80
                                 currentPosition.y = min(max(currentPosition.y, minY), maxY)
@@ -156,10 +165,11 @@ private struct RuntimeWebViewWrapper: UIViewRepresentable {
     func updateUIView(_ uiView: RuntimeWebView, context: Context) {}
 }
 
-private extension View {
-    func supportedOrientations(_ mask: UIInterfaceOrientationMask) -> some View {
+extension View {
+    fileprivate func supportedOrientations(_ mask: UIInterfaceOrientationMask) -> some View {
         self.onAppear {
-            guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return }
+            guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+            else { return }
             if #available(iOS 16.0, *) {
                 windowScene.requestGeometryUpdate(.iOS(interfaceOrientations: mask))
             }

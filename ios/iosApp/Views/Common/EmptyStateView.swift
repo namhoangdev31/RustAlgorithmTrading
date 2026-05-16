@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct EmptyStateView: View {
     let icon: String // SF Symbol name
@@ -22,25 +24,9 @@ struct EmptyStateView: View {
     }
     
     var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: icon)
-                .font(.system(size: 60))
-                .foregroundColor(.gray)
-                .padding(.bottom, 8)
-            
-            Text(title)
-                .font(.title2)
-                .fontWeight(.bold)
-                .multilineTextAlignment(.center)
-            
-            Text(message)
-                .font(.body)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 32)
-            
+        AdaptiveContentUnavailableView(title, systemImage: icon, description: message) {
             if let buttonTitle = buttonTitle, let action = action {
-                Button(action: action) {
+                AdaptiveButton(action: action) {
                     Text(buttonTitle)
                         .font(.headline)
                         .foregroundColor(.white)
@@ -53,7 +39,6 @@ struct EmptyStateView: View {
                 .padding(.horizontal, 48)
             }
         }
-        .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }

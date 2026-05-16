@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct FeaturedStoryView: View {
     var body: some View {
@@ -15,12 +17,12 @@ struct FeaturedStoryView: View {
                     Text("FEATURED STORY")
                         .font(.caption)
                         .fontWeight(.bold)
-                        .foregroundColor(.white.opacity(0.8))
+                        .adaptiveForegroundStyle(.white, opacity: 0.8)
                     
                     Text("Elevate Your\nMorning Ritual")
                         .font(.largeTitle)
                         .fontWeight(.heavy)
-                        .foregroundColor(.white)
+                        .adaptiveForegroundStyle(.white)
                         .lineLimit(2)
                     
                     Spacer().frame(height: 20)
@@ -29,20 +31,20 @@ struct FeaturedStoryView: View {
                         RoundedRectangle(cornerRadius: 12)
                             .fill(Color.gray.opacity(0.5))
                             .frame(width: 40, height: 40)
-                            .overlay(Image(systemName: "waveform").foregroundColor(.white))
+                            .overlay(Image(systemName: "waveform").adaptiveForegroundStyle(.white))
                         
                         VStack(alignment: .leading) {
                             Text("Z-Gym Pro")
                                 .font(.headline)
-                                .foregroundColor(.white)
+                                .adaptiveForegroundStyle(.white)
                             Text("AI Fitness Coaching")
                                 .font(.caption)
-                                .foregroundColor(.white.opacity(0.8))
+                                .adaptiveForegroundStyle(.white, opacity: 0.8)
                         }
                         
                         Spacer()
                         
-                        Button(action: {}) {
+                        AdaptiveButton(action: {}) {
                             Text("GET")
                                 .font(.subheadline)
                                 .fontWeight(.bold)

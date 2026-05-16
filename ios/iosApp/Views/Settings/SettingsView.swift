@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct SettingsView: View {
     @EnvironmentObject var navigation: NavigationViewModel
@@ -6,31 +8,32 @@ struct SettingsView: View {
     @AppStorage("notificationsEnabled") private var notificationsEnabled = true
     
     var body: some View {
-        Form {
+        AdaptiveList {
             // Account Section
             Section(header: Text("Account")) {
                 HStack(spacing: 16) {
                     Image(systemName: "person.crop.circle.fill")
                         .resizable()
                         .frame(width: 50, height: 50)
-                        .foregroundColor(.gray)
+                        .adaptiveForegroundStyle(.secondary)
                     
                     VStack(alignment: .leading, spacing: 4) {
                         Text("John Doe")
                             .font(.headline)
                         Text("john.doe@example.com")
                             .font(.subheadline)
-                            .foregroundColor(.gray)
+                            .adaptiveForegroundStyle(.secondary)
                     }
                 }
                 .padding(.vertical, 8)
                 
-                Button(action: {
+                AdaptiveButton(action: {
                     navigation.navigate(to: .editProfile)
                 }) {
                     Text("Edit Profile")
-                        .foregroundColor(.blue)
+                        .adaptiveForegroundStyle(.blue)
                 }
+                .adaptiveButtonStyle(.plain)
             }
             
             // Preferences Section
@@ -42,65 +45,71 @@ struct SettingsView: View {
                     Text("Language")
                     Spacer()
                     Text("English")
-                        .foregroundColor(.gray)
+                        .adaptiveForegroundStyle(.secondary)
                 }
             }
             
             // Data & Storage Section
             Section(header: Text("Data & Storage")) {
-                Button(action: {
+                AdaptiveButton(action: {
                    navigation.navigate(to: .downloadHistory)
                 }) {
                     Text("Download History")
-                        .foregroundColor(.primary)
+                        .adaptiveForegroundStyle(.primary)
                 }
+                .adaptiveButtonStyle(.plain)
                 
-                Button(action: {
+                AdaptiveButton(action: {
                     // Action to clear cache
                 }) {
                     HStack {
                         Text("Clear Cache")
-                            .foregroundColor(.primary)
+                            .adaptiveForegroundStyle(.primary)
                         Spacer()
                         Text("128 MB")
-                            .foregroundColor(.gray)
+                            .adaptiveForegroundStyle(.secondary)
                     }
                 }
+                .adaptiveButtonStyle(.plain)
             }
             
             // About Section
             Section(header: Text("About")) {
-                Button(action: {
+                AdaptiveButton(action: {
                     navigation.navigate(to: .aboutApp)
                 }) {
                     Text("About Lepos App")
-                        .foregroundColor(.primary)
+                        .adaptiveForegroundStyle(.primary)
                 }
+                .adaptiveButtonStyle(.plain)
 
                 HStack {
                     Text("Version")
                     Spacer()
                     Text("2.4.1 (Build 2024)")
-                        .foregroundColor(.gray)
+                        .adaptiveForegroundStyle(.secondary)
                 }
                 
-                Button("Terms of Service") { }
-                    .foregroundColor(.primary)
+                AdaptiveButton("Terms of Service") { }
+                    .adaptiveForegroundStyle(.primary)
+                    .adaptiveButtonStyle(.plain)
                 
-                Button("Privacy Policy") { }
-                    .foregroundColor(.primary)
+                AdaptiveButton("Privacy Policy") { }
+                    .adaptiveForegroundStyle(.primary)
+                    .adaptiveButtonStyle(.plain)
             }
             
             // Actions Section
             Section {
-                Button(action: {
+                AdaptiveButton(action: {
                     // Sign Out Logic
                     // navigation.navigate(to: .login)
                 }) {
                     Text("Sign Out")
-                        .foregroundColor(.red)
+                        .adaptiveForegroundStyle(.red)
                         .frame(maxWidth: .infinity, alignment: .center)
                 }
+                .adaptiveButtonStyle(.plain)
             }
         }
         .navigationTitle("Settings")

@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct OnboardingPage: View {
     let image: String
@@ -11,7 +13,7 @@ struct OnboardingPage: View {
                 .resizable()
                 .scaledToFit()
                 .frame(height: 200)
-                .foregroundColor(.blue)
+                .adaptiveForegroundStyle(.blue)
                 .padding(.bottom, 32)
             
             Text(title)
@@ -22,7 +24,7 @@ struct OnboardingPage: View {
             Text(description)
                 .font(.body)
                 .multilineTextAlignment(.center)
-                .foregroundColor(.secondary)
+                .adaptiveForegroundStyle(.secondary)
                 .padding(.horizontal, 32)
         }
         .padding()

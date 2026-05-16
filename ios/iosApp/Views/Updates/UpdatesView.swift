@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct UpdateItem: Identifiable {
     let id = UUID()
@@ -23,14 +25,14 @@ struct UpdatesView: View {
     ]
     
     var body: some View {
-        ScrollView {
+        AdaptiveScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 // Header with Update All
                 HStack {
                     VStack(alignment: .leading) {
                         Text("Pending Updates")
                             .font(.headline)
-                            .foregroundColor(.secondary)
+                            .adaptiveForegroundStyle(.secondary)
                         Text("\(updates.count) Apps")
                             .font(.title2)
                             .fontWeight(.bold)
@@ -38,18 +40,19 @@ struct UpdatesView: View {
                     
                     Spacer()
                     
-                    Button(action: {
+                    AdaptiveButton(action: {
                         // Mock update all
                         updates.removeAll()
                     }) {
                         Text("Update All")
                             .fontWeight(.semibold)
-                            .foregroundColor(.white)
+                            .adaptiveForegroundStyle(.white)
                             .padding(.horizontal, 20)
                             .padding(.vertical, 10)
                             .background(Color.blue)
                             .clipShape(Capsule())
                     }
+                    .adaptiveButtonStyle(.plain)
                 }
                 .padding(.top)
                 
@@ -58,13 +61,13 @@ struct UpdatesView: View {
                         Spacer(minLength: 50)
                         Image(systemName: "checkmark.shield.fill")
                             .font(.system(size: 60))
-                            .foregroundColor(.green)
+                            .adaptiveForegroundStyle(.green)
                         Text("All apps are up to date")
                             .font(.title3)
                             .fontWeight(.medium)
                         Text("Great job keeping your apps secure and feature-rich.")
                             .font(.body)
-                            .foregroundColor(.secondary)
+                            .adaptiveForegroundStyle(.secondary)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal)
                     }
@@ -82,7 +85,7 @@ struct UpdatesView: View {
                                         .overlay(
                                             Image(systemName: item.iconName)
                                                 .font(.title)
-                                                .foregroundColor(.white)
+                                                .adaptiveForegroundStyle(.white)
                                         )
                                     
                                     VStack(alignment: .leading, spacing: 4) {
@@ -90,15 +93,15 @@ struct UpdatesView: View {
                                             .font(.headline)
                                         Text("Version \(item.version) • \(item.size)")
                                             .font(.subheadline)
-                                            .foregroundColor(.secondary)
+                                            .adaptiveForegroundStyle(.secondary)
                                         Text(item.date)
                                             .font(.caption)
-                                            .foregroundColor(.gray)
+                                            .adaptiveForegroundStyle(.secondary)
                                     }
                                     
                                     Spacer()
                                     
-                                    Button(action: {
+                                    AdaptiveButton(action: {
                                         if let index = updates.firstIndex(where: { $0.id == item.id }) {
                                             updates.remove(at: index)
                                         }
@@ -106,23 +109,24 @@ struct UpdatesView: View {
                                         Text("UPDATE")
                                             .font(.caption)
                                             .fontWeight(.bold)
-                                            .foregroundColor(.blue)
+                                            .adaptiveForegroundStyle(.blue)
                                             .padding(.horizontal, 16)
                                             .padding(.vertical, 8)
                                             .background(Color.blue.opacity(0.1))
                                             .clipShape(Capsule())
                                     }
+                                    .adaptiveButtonStyle(.plain)
                                 }
                                 
                                 // Release Notes
                                 Text(item.releaseNotes)
                                     .font(.system(size: 14))
-                                    .foregroundColor(.secondary)
+                                    .adaptiveForegroundStyle(.secondary)
                                     .lineLimit(3)
                                     .padding(.leading, 76) // Align with text start
                             }
                             
-                            Divider()
+                            AdaptiveDivider()
                                 .padding(.leading, 76)
                         }
                     }

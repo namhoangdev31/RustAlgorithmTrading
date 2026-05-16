@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct MiniAppPreviewView: View {
     var body: some View {
@@ -8,7 +10,7 @@ struct MiniAppPreviewView: View {
                 .fontWeight(.bold)
                 .padding(.horizontal)
             
-            ScrollView(.horizontal, showsIndicators: false) {
+            AdaptiveScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 16) {
                     ForEach(0..<3) { i in
                         // Phone Frame Mockup
@@ -28,7 +30,7 @@ struct MiniAppPreviewView: View {
                                     VStack {
                                         Text("Screen \(i+1)")
                                             .font(.headline)
-                                            .foregroundColor(.gray)
+                                            .adaptiveForegroundStyle(.secondary)
                                     }
                                 )
                             

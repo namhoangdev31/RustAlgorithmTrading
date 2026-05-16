@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct SavedMethodRow: View {
     let method: PaymentMethod
@@ -19,44 +21,46 @@ struct SavedMethodRow: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(titleForMethod(method))
                     .font(.system(size: 16, weight: .bold))
-                    .foregroundColor(.black)
+                    .adaptiveForegroundStyle(.primary)
                 
                 // Subtitle (dots)
                 HStack(spacing: 4) {
                     if case .bank(let bankName, _, _) = method {
                          Text(bankName)
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .adaptiveForegroundStyle(.secondary)
                     } 
                     
                     HStack(spacing: 3) {
                          ForEach(0..<4) { _ in
-                             Circle().fill(Color.gray.opacity(0.7)).frame(width: 4, height: 4)
+                             Circle()
+                                 .fill(Color.gray.opacity(0.7))
+                                 .frame(width: 4, height: 4)
+                                 .adaptiveForegroundStyle(.secondary, opacity: 0.7)
                          }
                     }
                     .padding(.horizontal, 2)
                     
                     Text(last4ForMethod(method))
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .adaptiveForegroundStyle(.secondary)
                 }
             }
             
             Spacer()
             
-            Button(action: {}) {
+            AdaptiveButton(action: {}) {
                 Image(systemName: "ellipsis")
                     .rotationEffect(.degrees(90))
-                    .foregroundColor(.gray)
+                    .adaptiveForegroundStyle(.secondary)
                     .font(.system(size: 16, weight: .semibold))
                     .padding(8)
             }
+            .adaptiveButtonStyle(.plain)
         }
         .padding(20)
-        .background(Color.white)
-        .cornerRadius(28)
+        .adaptiveGlass(cornerRadius: 28)
         .padding(.horizontal)
-        .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 2)
     }
     
     func bgForMethod(_ method: PaymentMethod) -> Color {
@@ -80,7 +84,7 @@ struct SavedMethodRow: View {
                 .foregroundColor(.red)
         case .bank:
              Image(systemName: "building.columns.fill")
-                .foregroundColor(.green)
+                .adaptiveForegroundStyle(.green)
         default:
             EmptyView()
         }

@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct RecentlyOpenedView: View {
     let items = [
@@ -14,13 +16,16 @@ struct RecentlyOpenedView: View {
                 Text("Recently Opened")
                     .font(.headline)
                 Spacer()
-                Button("See All") { }
-                    .font(.caption)
-                    .foregroundColor(.blue)
+                AdaptiveButton(action: {}) {
+                    Text("See All")
+                }
+                .adaptiveButtonStyle(.plain)
+                .adaptiveForegroundStyle(.blue)
+                .font(.caption)
             }
             .padding(.horizontal)
             
-            ScrollView(.horizontal, showsIndicators: false) {
+            AdaptiveScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 20) {
                     ForEach(items, id: \.0) { item in
                         VStack(spacing: 8) {
@@ -30,12 +35,12 @@ struct RecentlyOpenedView: View {
                                 .overlay(
                                     Image(systemName: item.1)
                                         .font(.title)
-                                        .foregroundColor(item.2)
+                                        .adaptiveForegroundStyle(item.2)
                                 )
                             
                             Text(item.0)
                                 .font(.caption)
-                                .foregroundColor(.gray)
+                                .adaptiveForegroundStyle(.secondary)
                         }
                     }
                 }

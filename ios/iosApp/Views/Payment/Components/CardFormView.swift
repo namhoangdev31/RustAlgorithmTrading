@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct CardFormView: View {
     @Binding var cardName: String
@@ -11,13 +13,13 @@ struct CardFormView: View {
             Text("CARD DETAILS")
                 .font(.caption)
                 .fontWeight(.bold)
-                .foregroundColor(.secondary)
+                .adaptiveForegroundStyle(.secondary)
             
             // Name
             VStack(alignment: .leading, spacing: 8) {
                 Text("CARDHOLDER NAME")
                     .font(.caption2)
-                    .foregroundColor(.secondary)
+                    .adaptiveForegroundStyle(.secondary)
                 TextField("Name", text: $cardName)
                     .padding()
                     .background(Color.white)
@@ -29,11 +31,11 @@ struct CardFormView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("CARD NUMBER")
                     .font(.caption2)
-                    .foregroundColor(.secondary)
+                    .adaptiveForegroundStyle(.secondary)
                 HStack {
                     TextField("Number", text: $cardNumber)
                     Image(systemName: "creditcard.fill")
-                        .foregroundColor(.gray)
+                        .adaptiveForegroundStyle(.secondary)
                 }
                 .padding()
                 .background(Color.white)
@@ -45,7 +47,7 @@ struct CardFormView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("EXPIRY DATE")
                         .font(.caption2)
-                        .foregroundColor(.secondary)
+                        .adaptiveForegroundStyle(.secondary)
                     TextField("MM/YY", text: $expiryDate)
                         .padding()
                         .background(Color.white)
@@ -57,11 +59,11 @@ struct CardFormView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("CVV")
                         .font(.caption2)
-                        .foregroundColor(.secondary)
+                        .adaptiveForegroundStyle(.secondary)
                     HStack {
                         SecureField("•••", text: $cvv)
                         Image(systemName: "questionmark.circle.fill")
-                            .foregroundColor(.gray)
+                            .adaptiveForegroundStyle(.secondary)
                             .font(.caption)
                     }
                     .padding()

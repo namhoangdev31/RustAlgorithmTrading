@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct SearchResultItem: Identifiable {
     let id = UUID()
@@ -31,7 +33,7 @@ struct SearchResultsView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Results for \"\(query)\"")
                 .font(.headline)
-                .foregroundColor(.gray)
+                .adaptiveForegroundStyle(.secondary)
                 .padding(.horizontal)
                 .padding(.top, 8)
             
@@ -44,22 +46,23 @@ struct SearchResultsView: View {
                                 .frame(width: 48, height: 48)
                                 .overlay(
                                     Image(systemName: item.iconName)
-                                        .foregroundColor(.white)
+                                        .adaptiveForegroundStyle(.white)
                                         .font(.title3)
                                 )
                             
                             Spacer()
                             
-                            Button(action: {}) {
+                            AdaptiveButton(action: {}) {
                                 Text("GET")
                                     .font(.caption)
                                     .fontWeight(.bold)
-                                    .foregroundColor(.blue)
+                                    .adaptiveForegroundStyle(.blue)
                                     .padding(.horizontal, 12)
                                     .padding(.vertical, 6)
                                     .background(Color(.systemGray6))
                                     .clipShape(Capsule())
                             }
+                            .adaptiveButtonStyle(.plain)
                         }
                         
                         VStack(alignment: .leading, spacing: 4) {
@@ -69,25 +72,23 @@ struct SearchResultsView: View {
                             
                             Text(item.category)
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .adaptiveForegroundStyle(.secondary)
                             
                             HStack(spacing: 4) {
                                 ForEach(0..<5) { index in
                                     Image(systemName: "star.fill")
                                         .font(.caption2)
-                                        .foregroundColor(Double(index) < item.rating ? .orange : .gray.opacity(0.3))
+                                        .adaptiveForegroundStyle(Double(index) < item.rating ? .orange : .secondary, opacity: Double(index) < item.rating ? 1.0 : 0.3)
                                 }
                                 
                                 Text(String(format: "%.1f", item.rating))
                                     .font(.caption2)
-                                    .foregroundColor(.gray)
+                                    .adaptiveForegroundStyle(.secondary)
                             }
                         }
                     }
                     .padding()
-                    .background(Color(.systemBackground))
-                    .cornerRadius(16)
-                    .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
+                    .adaptiveGlass(cornerRadius: 16)
                 }
             }
             .padding(.horizontal)

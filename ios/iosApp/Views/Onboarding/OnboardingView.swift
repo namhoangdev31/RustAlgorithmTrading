@@ -26,7 +26,7 @@ struct OnboardingView: View {
             .adaptiveTabViewStyle(.page(indexDisplayMode: .always))
             .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
             
-            Button(action: {
+            AdaptiveButton(action: {
                 if currentPage < pages.count - 1 {
                     withAnimation {
                         currentPage += 1
@@ -39,12 +39,13 @@ struct OnboardingView: View {
             }) {
                 Text(currentPage < pages.count - 1 ? "Next" : "Get Started")
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .adaptiveForegroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(Color.blue)
                     .cornerRadius(12)
             }
+            .adaptiveButtonStyle(.plain)
             .padding(.horizontal, 24)
             .padding(.bottom, 16)
         }

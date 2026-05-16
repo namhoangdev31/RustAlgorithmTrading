@@ -1,19 +1,20 @@
 import SwiftUI
+import AdaptiveSwiftUi
 
 struct ActivityView: View {
-    @Environment(\.presentationMode) var presentationMode
+    @Environment(\.dismiss) var dismiss
     
     @State private var selectedFilter = "All"
     let filters = ["All", "Unread", "Mentions", "System"]
 
     var body: some View {
-        ScrollView {
+        AdaptiveScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 // Filters
-                ScrollView(.horizontal, showsIndicators: false) {
+                AdaptiveScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 12) {
                         ForEach(filters, id: \.self) { filter in
-                            Button(action: {
+                            AdaptiveButton(action: {
                                 selectedFilter = filter
                             }) {
                                 Text(filter)
@@ -22,7 +23,7 @@ struct ActivityView: View {
                                     .padding(.horizontal, 16)
                                     .padding(.vertical, 8)
                                     .background(selectedFilter == filter ? Color.blue : Color(.systemGray5))
-                                    .foregroundColor(selectedFilter == filter ? .white : .primary)
+                                    .adaptiveForegroundStyle(selectedFilter == filter ? .white : .primary)
                                     .cornerRadius(20)
                             }
                         }
@@ -57,7 +58,7 @@ struct ActivityView: View {
                 // Section: Earlier
                 ActivitySectionHeaderView(title: "Earlier")
                 
-                // Alternate System Card Style (Dark) for variety/Earlier
+                // Alternate System Card Style (Dark) with Adaptive Glass
                 ZStack {
                     Color.black.opacity(0.9)
                     
@@ -65,7 +66,7 @@ struct ActivityView: View {
                         Text("SYSTEM SECURITY")
                             .font(.caption2)
                             .fontWeight(.bold)
-                            .foregroundColor(.white.opacity(0.7))
+                            .adaptiveForegroundStyle(.white, hierarchy: .secondary)
                         
                         Text("Review Login Attempt.")
                             .font(.title2)
@@ -76,11 +77,11 @@ struct ActivityView: View {
                         
                         Text("We noticed a login from an recognized device in New York, US.")
                             .font(.subheadline)
-                            .foregroundColor(.white.opacity(0.8))
+                            .adaptiveForegroundStyle(.white, hierarchy: .secondary)
                         
                         HStack {
                             Spacer()
-                            Button(action: {}) {
+                            AdaptiveButton(action: {}) {
                                 Text("REVIEW")
                                     .font(.caption)
                                     .fontWeight(.bold)
@@ -95,6 +96,7 @@ struct ActivityView: View {
                     .padding(24)
                 }
                 .frame(height: 280)
+                .adaptiveGlassEffect()
                 .cornerRadius(20)
                 .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
                 .padding(.horizontal)
@@ -111,12 +113,15 @@ struct ActivityView: View {
                 Spacer(minLength: 40)
             }
         }
-        .navigationTitle("Activity")
-        .toolbar{
+        .adaptiveNavigationTitle("Activity")
+        .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
-                Button("Up", systemImage: "checkmark.circle.fill", action: {}).tint(.blue)
-                Button("Down", systemImage: "bell.badge.fill", action: {}).tint(.blue)
-              }
+                AdaptiveButton("Up", systemImage: "checkmark.circle.fill", action: {})
+                    .adaptiveButtonTint(.blue)
+                AdaptiveToolbarSpacer(.fixed, fallbackLength: 8)
+                AdaptiveButton("Down", systemImage: "bell.badge.fill", action: {})
+                    .adaptiveButtonTint(.blue)
+            }
         }
     }
 }

@@ -6,7 +6,7 @@ struct ProfileView: View {
     @State private var offsetY: CGFloat = 0
 
     var body: some View {
-        ScrollView {
+        AdaptiveScrollView {
             VStack(spacing: 16) {
                 ProfileHeaderView(offsetY: offsetY) {
                     navigation.navigate(to: .settings)
@@ -16,39 +16,39 @@ struct ProfileView: View {
                     DashboardStatsView()
 
                     VStack(spacing: 16) {
-                        Button(action: {
-                            navigation.navigate(to: .updates)
-                        }) {
+                    AdaptiveButton(action: {
+                        navigation.navigate(to: .updates)
+                    }) {
                             HStack {
                                 Image(systemName: "arrow.down.circle.fill")
                                     .font(.title2)
-                                    .foregroundColor(.blue)
+                                    .adaptiveForegroundStyle(.blue)
                                 Text("Available Updates")
                                     .font(.body)
-                                    .foregroundColor(.primary)
+                                    .adaptiveForegroundStyle(.primary)
                                 Spacer()
                                 Text("4")
                                     .font(.caption)
                                     .fontWeight(.bold)
                                     .padding(6)
                                     .background(Color.red)
-                                    .foregroundColor(.white)
+                                    .adaptiveForegroundStyle(.white)
                                     .clipShape(Circle())
                                 Image(systemName: "chevron.right")
                                     .font(.caption)
-                                    .foregroundColor(.gray)
+                                    .adaptiveForegroundStyle(.secondary)
                             }
                             .padding()
-                            .background(Color(.secondarySystemBackground))
-                            .cornerRadius(12)
+                            .adaptiveGlass(cornerRadius: 12)
                         }
+                        .adaptiveButtonStyle(.plain)
 
-                        Button(action: {
-                            navigation.navigate(to: .detail(itemId: "favorites"))
+                        AdaptiveButton(action: {
+                            navigation.navigate(to: .favorites)
                         }) {
                             FavoriteMiniAppsView()
                         }
-                        .buttonStyle(PlainButtonStyle())
+                        .adaptiveButtonStyle(.plain)
                         SettingsGridView()
                     }
                     .padding(.vertical, 32)
@@ -58,7 +58,7 @@ struct ProfileView: View {
                     Text("BUILD 2.4.1 PREMIUM STABLE")
                         .font(.caption2)
                         .fontWeight(.bold)
-                        .foregroundColor(.gray.opacity(0.5))
+                        .adaptiveForegroundStyle(.secondary, opacity: 0.5)
                         .tracking(2)
                 }
             }

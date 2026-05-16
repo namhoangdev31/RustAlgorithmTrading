@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct SettingsGridView: View {
     @EnvironmentObject var navigation: NavigationViewModel
@@ -11,7 +13,7 @@ struct SettingsGridView: View {
     
     var body: some View {
         LazyVGrid(columns: columns, spacing: 16) {
-            Button(action: {
+            AdaptiveButton(action: {
                 navigation.navigate(to: .myReviews)
             }) {
                 SettingsCard(
@@ -21,9 +23,9 @@ struct SettingsGridView: View {
                     iconColor: .orange
                 )
             }
-            .buttonStyle(PlainButtonStyle())
+            .adaptiveButtonStyle(.plain)
 
-            Button(action: {
+            AdaptiveButton(action: {
                 navigation.navigate(to: .notificationPreferences)
             }) {
                 SettingsCard(
@@ -33,9 +35,9 @@ struct SettingsGridView: View {
                     iconColor: .red
                 )
             }
-            .buttonStyle(PlainButtonStyle())
+            .adaptiveButtonStyle(.plain)
 
-            Button(action: {
+            AdaptiveButton(action: {
                 navigation.navigate(to: .activity)
             }) {
                 SettingsCard(
@@ -45,9 +47,9 @@ struct SettingsGridView: View {
                     iconColor: .orange
                 )
             }
-            .buttonStyle(PlainButtonStyle())
+            .adaptiveButtonStyle(.plain)
 
-            Button(action: {
+            AdaptiveButton(action: {
                 // Placeholder for security
             }) {
                 SettingsCard(
@@ -57,9 +59,9 @@ struct SettingsGridView: View {
                     iconColor: .blue
                 )
             }
-            .buttonStyle(PlainButtonStyle())
+            .adaptiveButtonStyle(.plain)
             
-            Button(action: {
+            AdaptiveButton(action: {
                 navigation.navigate(to: .helpSupport)
             }) {
                 SettingsCard(
@@ -69,9 +71,9 @@ struct SettingsGridView: View {
                     iconColor: .gray
                 )
             }
-            .buttonStyle(PlainButtonStyle())
+            .adaptiveButtonStyle(.plain)
             
-            Button(action: {
+            AdaptiveButton(action: {
                 showLogoutAlert = true
             }) {
                 SettingsCard(
@@ -82,7 +84,7 @@ struct SettingsGridView: View {
                     isDestructive: true
                 )
             }
-            .buttonStyle(PlainButtonStyle())
+            .adaptiveButtonStyle(.plain)
         }
         .padding(.horizontal)
         .alert("Log Out", isPresented: $showLogoutAlert) {
@@ -109,7 +111,7 @@ struct SettingsCard: View {
         VStack(alignment: .leading, spacing: 12) {
             Image(systemName: icon)
                 .font(.title3)
-                .foregroundColor(iconColor)
+                .adaptiveForegroundStyle(iconColor)
                 .padding(10)
                 .background(iconColor.opacity(0.1))
                 .clipShape(Circle())
@@ -120,18 +122,16 @@ struct SettingsCard: View {
                 Text(title)
                     .font(.subheadline)
                     .fontWeight(.bold)
-                    .foregroundColor(isDestructive ? .red : .primary)
+                    .adaptiveForegroundStyle(isDestructive ? .red : .primary)
                 
                 Text(subtitle)
                     .font(.caption)
-                    .foregroundColor(isDestructive ? .red.opacity(0.6) : .gray)
+                    .adaptiveForegroundStyle(isDestructive ? .red : .secondary, opacity: isDestructive ? 0.6 : 1.0)
             }
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
         .frame(height: 120)
-        .background(Color.white)
-        .cornerRadius(20)
-        .shadow(color: Color.black.opacity(0.03), radius: 10, x: 0, y: 5)
+        .adaptiveGlass(cornerRadius: 20)
     }
 }

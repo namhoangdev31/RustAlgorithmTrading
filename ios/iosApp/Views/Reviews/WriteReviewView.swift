@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct WriteReviewView: View {
     let appId: String
@@ -19,13 +21,13 @@ struct WriteReviewView: View {
                         VStack(spacing: 8) {
                             Text("Tap to Rate:")
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .adaptiveForegroundStyle(.secondary)
                             
                             HStack(spacing: 12) {
                                 ForEach(1...5, id: \.self) { star in
                                     Image(systemName: star <= rating ? "star.fill" : "star")
                                         .font(.title)
-                                        .foregroundColor(.orange)
+                                        .adaptiveForegroundStyle(.orange)
                                         .onTapGesture {
                                             withAnimation(.spring()) {
                                                 rating = star
@@ -46,7 +48,7 @@ struct WriteReviewView: View {
                     ZStack(alignment: .topLeading) {
                         if review.isEmpty {
                             Text("Review (Optional)")
-                                .foregroundColor(Color(UIColor.placeholderText))
+                                .adaptiveForegroundStyle(.secondary, opacity: 0.5)
                                 .padding(.top, 8)
                                 .padding(.leading, 5)
                         }
@@ -63,19 +65,20 @@ struct WriteReviewView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
+                    AdaptiveButton("Cancel") {
                         dismiss()
                     }
+                    .adaptiveButtonStyle(.plain)
                 }
                 
                 ToolbarItem(placement: .confirmationAction) {
                     if isSubmitting {
-                        ProgressView()
+                        AdaptiveProgressView()
                     } else {
-                        Button("Submit") {
+                        AdaptiveButton("Submit") {
                             submitReview()
                         }
-                         
+                        .adaptiveButtonStyle(.plain)
                         .disabled(rating == 0 || title.isEmpty)
                     }
                 }

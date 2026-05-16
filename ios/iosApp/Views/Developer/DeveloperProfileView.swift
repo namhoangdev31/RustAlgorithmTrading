@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct DeveloperAppItem: Identifiable {
     let id = UUID()
@@ -25,7 +27,7 @@ struct DeveloperProfileView: View {
     ]
     
     var body: some View {
-        ScrollView {
+        AdaptiveScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 // Header
                 HStack(alignment: .top, spacing: 16) {
@@ -43,14 +45,14 @@ struct DeveloperProfileView: View {
                             .font(.title2)
                             .fontWeight(.bold)
                         
-                        Link(website, destination: URL(string: "https://example.com")!)
+                        AdaptiveLink(website, destination: URL(string: "https://example.com")!)
                             .font(.subheadline)
-                            .foregroundColor(.blue)
+                            .adaptiveForegroundStyle(.blue)
                     }
                     
                     Spacer()
                     
-                    Button(action: {
+                    AdaptiveButton(action: {
                         // Follow action
                     }) {
                         Text("Follow")
@@ -68,10 +70,10 @@ struct DeveloperProfileView: View {
                 
                 Text(developerBio)
                     .font(.body)
-                    .foregroundColor(.secondary)
+                    .adaptiveForegroundStyle(.secondary)
                     .padding(.horizontal)
                 
-                Divider()
+                AdaptiveDivider()
                     .padding(.horizontal)
                 
                 Text("More by \(developerName)")
@@ -97,7 +99,7 @@ struct DeveloperProfileView: View {
                             
                             Text(app.category)
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .adaptiveForegroundStyle(.secondary)
                         }
                         .onTapGesture {
                             // Navigate to app detail (Mock)

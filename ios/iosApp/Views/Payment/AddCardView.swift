@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 // import Shared — replaced by native Swift Shared module
 
 struct AddCardView: View {
@@ -12,7 +14,7 @@ struct AddCardView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            ScrollView {
+            AdaptiveScrollView {
                 VStack(spacing: 24) {
                     // Scanner Area
                     ScannerOverlayView(
@@ -35,27 +37,26 @@ struct AddCardView: View {
                     .padding(.horizontal)
                     
                     VStack(spacing: 16) {
-                        Button(action: {
+                        AdaptiveButton(action: {
                             dismiss()
                         }) {
                             Text("Save & Continue")
-                                
                                 .frame(maxWidth: .infinity)
                                 .padding()
                                 .background(Color(red: 20/255, green: 40/255, blue: 50/255))
-                                .foregroundColor(.white)
+                                .adaptiveForegroundStyle(.white)
                                 .cornerRadius(16)
                         }
+                        .adaptiveButtonStyle(.plain)
                         .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 5)
                         
                         HStack(spacing: 8) {
                             Image(systemName: "lock.fill")
                                 .font(.caption)
-                                .foregroundColor(.green)
+                                .adaptiveForegroundStyle(.green)
                             Text("SECURE CHECKOUT")
                                 .font(.caption2)
-                                
-                                .foregroundColor(.secondary)
+                                .adaptiveForegroundStyle(.secondary)
                         }
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
@@ -64,7 +65,7 @@ struct AddCardView: View {
                         
                         Text("Your data is protected by bank-level 256-bit encryption.\nWe never store your full card number on our servers.")
                             .font(.system(size: 10))
-                            .foregroundColor(.secondary)
+                            .adaptiveForegroundStyle(.secondary)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 20)
                     }

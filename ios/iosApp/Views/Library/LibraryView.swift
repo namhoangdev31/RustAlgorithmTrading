@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct LibraryView: View {
     @EnvironmentObject var navigation: NavigationViewModel
@@ -7,7 +9,7 @@ struct LibraryView: View {
 
     var body: some View {
         ZStack {
-            ScrollView {
+            AdaptiveScrollView {
                 VStack(spacing: 16) {
                     LibraryHeaderView(offsetY: offsetY) {
                         withAnimation(.spring()) {
@@ -15,7 +17,7 @@ struct LibraryView: View {
                         }
                     }
 
-                    Button(action: {
+                    AdaptiveButton(action: {
                         navigation.navigate(to: .updates)
                     }) {
                         HStack {
@@ -32,24 +34,24 @@ struct LibraryView: View {
                                 .foregroundColor(.gray)
                         }
                         .padding()
-                        .background(Color(.secondarySystemGroupedBackground))
-                        .cornerRadius(12)
+                        .adaptiveGlass(cornerRadius: 12)
                         .padding(.horizontal)
                     }
+                    .adaptiveButtonStyle(.plain)
 
-                    Button(action: {
+                    AdaptiveButton(action: {
                         navigation.navigate(to: .wallet)
                     }) {
                         DigitalWalletCardView()
                     }
-                    .buttonStyle(PlainButtonStyle())
+                    .adaptiveButtonStyle(.plain)
 
-                    Button(action: {
+                    AdaptiveButton(action: {
                         navigation.navigate(to: .detail(itemId: "recently_opened"))
                     }) {
                         RecentlyOpenedView()
                     }
-                    .buttonStyle(PlainButtonStyle())
+                    .adaptiveButtonStyle(.plain)
 
                     AllAppsView()
                     ProductivityView()

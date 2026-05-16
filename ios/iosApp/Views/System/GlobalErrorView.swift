@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct GlobalErrorView: View {
     var onRetry: () -> Void
@@ -7,7 +9,7 @@ struct GlobalErrorView: View {
         VStack(spacing: 24) {
             Image(systemName: "exclamationmark.triangle")
                 .font(.system(size: 64))
-                .foregroundColor(.orange)
+                .adaptiveForegroundStyle(.orange)
             
             VStack(spacing: 8) {
                 Text("Something went wrong")
@@ -16,19 +18,20 @@ struct GlobalErrorView: View {
                 
                 Text("We encountered an unexpected error. Please try again later.")
                     .font(.body)
-                    .foregroundColor(.secondary)
+                    .adaptiveForegroundStyle(.secondary)
                     .multilineTextAlignment(.center)
             }
             
-            Button(action: onRetry) {
+            AdaptiveButton(action: onRetry) {
                 Text("Retry")
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .adaptiveForegroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(Color.blue)
                     .cornerRadius(12)
             }
+            .adaptiveButtonStyle(.plain)
             .padding(.horizontal, 32)
         }
         .padding()

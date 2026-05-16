@@ -1,4 +1,8 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
+import AdaptiveSwiftUi
+
 
 struct MiniAppSettingsView: View {
     @Environment(\.presentationMode) var presentationMode
@@ -13,13 +17,13 @@ struct MiniAppSettingsView: View {
         NavigationView {
 
                 
-                ScrollView {
+                AdaptiveScrollView {
                     VStack(spacing: 24) {
                         // Header / App Info Summary
                         VStack(spacing: 8) {
                             Image(systemName: "cube.box.fill") // Mock Icon
                                 .font(.system(size: 48))
-                                .foregroundColor(.blue)
+                                .adaptiveForegroundStyle(.blue)
                                 .padding()
                                 .background(Color.white)
                                 .cornerRadius(16)
@@ -31,7 +35,7 @@ struct MiniAppSettingsView: View {
                             
                             Text("FreshBite Tech Solutions Inc.")
                                 .font(.subheadline)
-                                .foregroundColor(.secondary)
+                                .adaptiveForegroundStyle(.secondary)
                         }
                         .padding(.top, 24)
                         
@@ -40,7 +44,7 @@ struct MiniAppSettingsView: View {
                             Text("PERMISSIONS")
                                 .font(.caption)
                                 .fontWeight(.semibold)
-                                .foregroundColor(.secondary)
+                                .adaptiveForegroundStyle(.secondary)
                                 .padding(.horizontal)
                             
                             VStack(spacing: 0) {
@@ -51,7 +55,7 @@ struct MiniAppSettingsView: View {
                                     subtitle: "While using the app",
                                     isOn: $locationAccess
                                 )
-                                Divider().padding(.leading, 56)
+                                AdaptiveDivider().padding(.leading, 56)
                                 
                                 PermissionToggleRow(
                                     icon: "camera.fill",
@@ -60,7 +64,7 @@ struct MiniAppSettingsView: View {
                                     subtitle: "For scanning and profile",
                                     isOn: $cameraAccess
                                 )
-                                Divider().padding(.leading, 56)
+                                AdaptiveDivider().padding(.leading, 56)
                                 
                                 PermissionToggleRow(
                                     icon: "bell.fill",
@@ -69,7 +73,7 @@ struct MiniAppSettingsView: View {
                                     subtitle: "Alerts and badges",
                                     isOn: $notificationsAccess
                                 )
-                                Divider().padding(.leading, 56)
+                                AdaptiveDivider().padding(.leading, 56)
                                 
                                 PermissionToggleRow(
                                     icon: "person.crop.circle.fill", // Contacts
@@ -79,8 +83,7 @@ struct MiniAppSettingsView: View {
                                     isOn: $contactsAccess
                                 )
                             }
-                            .background(Color.white) // Clean white card
-                            .cornerRadius(16)
+                            .adaptiveGlass(cornerRadius: 16)
                         }
                         .padding(.horizontal)
                         
@@ -89,43 +92,44 @@ struct MiniAppSettingsView: View {
                             Text("MINI APP INFO")
                                 .font(.caption)
                                 .fontWeight(.semibold)
-                                .foregroundColor(.secondary)
+                                .adaptiveForegroundStyle(.secondary)
                                 .padding(.horizontal)
                             
                             VStack(spacing: 0) {
                                 InfoRowSettings(label: "Developer", value: "FreshBite Tech", hasArrow: true)
-                                Divider().padding(.leading, 16)
+                                AdaptiveDivider().padding(.leading, 16)
                                 InfoRowSettings(label: "Version", value: "2.4.1 (890)")
-                                Divider().padding(.leading, 16)
+                                AdaptiveDivider().padding(.leading, 16)
                                 InfoRowSettings(label: "Last Updated", value: "Oct 12, 2023")
                             }
-                            .background(Color.white)
-                            .cornerRadius(16)
+                            .adaptiveGlass(cornerRadius: 16)
                         }
                         .padding(.horizontal)
                         
                         // ACTIONS
                         VStack(spacing: 16) {
-                            Button(action: {
+                            AdaptiveButton(action: {
                                 // Reload action
                                 presentationMode.wrappedValue.dismiss()
                             }) {
                                 Text("Reload Application")
                                     .fontWeight(.semibold)
-                                    .foregroundColor(.blue)
+                                    .adaptiveForegroundStyle(.blue)
                                     .frame(maxWidth: .infinity)
                                     .padding()
                                     .background(Color.white)
                                     .cornerRadius(16)
                             }
+                            .adaptiveButtonStyle(.plain)
                             
-                            Button(action: {
+                            AdaptiveButton(action: {
                                 // Report action
                             }) {
                                 Text("Report an Issue")
                                     .fontWeight(.medium)
-                                    .foregroundColor(.red)
+                                    .adaptiveForegroundStyle(.red)
                             }
+                            .adaptiveButtonStyle(.plain)
                         }
                         .padding(.horizontal)
                         .padding(.bottom, 32)
@@ -135,9 +139,10 @@ struct MiniAppSettingsView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
+                    AdaptiveButton("Done") {
                         presentationMode.wrappedValue.dismiss()
                     }
+                    .adaptiveButtonStyle(.plain)
                 }
             }
         }
@@ -170,7 +175,7 @@ struct PermissionToggleRow: View {
                     .fontWeight(.medium)
                 Text(subtitle)
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .adaptiveForegroundStyle(.secondary)
             }
             
             Spacer()
@@ -190,14 +195,14 @@ struct InfoRowSettings: View {
     var body: some View {
         HStack {
             Text(label)
-                .foregroundColor(.primary)
+                .adaptiveForegroundStyle(.primary)
             Spacer()
             Text(value)
-                .foregroundColor(.secondary)
+                .adaptiveForegroundStyle(.secondary)
             if hasArrow {
                 Image(systemName: "chevron.right")
                     .font(.caption)
-                    .foregroundColor(.gray.opacity(0.5))
+                    .adaptiveForegroundStyle(.secondary, opacity: 0.5)
             }
         }
         .padding()

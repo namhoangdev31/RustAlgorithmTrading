@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct AppItem: Identifiable {
     let id = UUID()
@@ -23,11 +25,13 @@ struct AppsWeLoveView: View {
                     .font(.title2)
                     .fontWeight(.bold)
                 Spacer()
-                Button("See All") {
+                AdaptiveButton(action: {
                     navigation.navigate(to: .collection(id: "apps_we_love", title: "Apps We Love"))
+                }) {
+                    Text("See All")
                 }
-                .font(.subheadline)
-                .foregroundColor(.blue)
+                .adaptiveButtonStyle(.plain)
+                .adaptiveForegroundStyle(.blue)
             }
             .padding(.horizontal)
 
@@ -47,12 +51,12 @@ struct AppsWeLoveView: View {
                             .font(.headline)
                         Text(app.category)
                             .font(.subheadline)
-                            .foregroundColor(.gray)
+                            .adaptiveForegroundStyle(.secondary)
                     }
 
                     Spacer()
 
-                    Button(action: {}) {
+                    AdaptiveButton(action: {}) {
                         Text("OPEN")
                             .font(.caption)
                             .fontWeight(.bold)
@@ -62,11 +66,12 @@ struct AppsWeLoveView: View {
                             .background(Color(.systemGray6))
                             .clipShape(Capsule())
                     }
+                    .adaptiveButtonStyle(.plain)
                 }
                 .padding(.horizontal)
 
                 if app.id != apps.last?.id {
-                    Divider().padding(.leading, 80)
+                    AdaptiveDivider().padding(.leading, 80)
                 }
             }
         }

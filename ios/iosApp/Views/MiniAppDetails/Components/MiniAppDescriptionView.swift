@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 // import Shared — replaced by native Swift Shared module
 
 struct MiniAppDescriptionView: View {
@@ -12,16 +14,16 @@ struct MiniAppDescriptionView: View {
             
             Text("Join over 500,000 eco-warriors and start making a real difference today. Our advanced AI-driven categorization seamlessly integrates with your digital receipts and smart home devices to give you a real-time view of your environmental impact.")
                 .font(.body)
-                .foregroundColor(.secondary)
+                .adaptiveForegroundStyle(.secondary)
             
             HStack {
                 Text("GreenLogic Labs")
-                    .foregroundColor(.blue)
+                    .adaptiveForegroundStyle(.blue)
                     .font(.subheadline)
                 Spacer()
                 Image(systemName: "chevron.right")
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .adaptiveForegroundStyle(.secondary)
             }
             .padding(.top, 10)
         }

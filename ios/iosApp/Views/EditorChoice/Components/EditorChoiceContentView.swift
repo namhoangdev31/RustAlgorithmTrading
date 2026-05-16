@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct EditorChoiceContentView: View {
     var body: some View {
@@ -8,6 +10,7 @@ struct EditorChoiceContentView: View {
             Text("After immense global success, Crossfire: Legends has arrived to redefine mobile shooting.")
                 .font(.title2)
                 .fontWeight(.bold)
+                .adaptiveForegroundStyle(.primary)
             
             // Inline App CTA
             HStack {
@@ -21,13 +24,15 @@ struct EditorChoiceContentView: View {
                 VStack(alignment: .leading) {
                     Text("Crossfire Legends")
                         .font(.headline)
+                        .adaptiveForegroundStyle(.primary)
                     Text("FPS Legend")
                         .font(.caption)
+                        .adaptiveForegroundStyle(.secondary)
                 }
                 
                 Spacer()
                 
-                Button(action: {}) {
+                AdaptiveButton(action: {}) {
                     Text("NHẬN")
                         .font(.subheadline)
                         .fontWeight(.bold)
@@ -39,8 +44,7 @@ struct EditorChoiceContentView: View {
                 }
             }
             .padding()
-            .background(Color(.gray))
-            .cornerRadius(16)
+            .adaptiveGlass(cornerRadius: 16)
             
             Text("Join the elite ranks of the editorial team as we dive deep into the challenges awaiting you in this legendary arena. Whether you're a seasoned veteran or a newcomer to the genre, the tactical depth here is unmatched.")
                 .font(.body)

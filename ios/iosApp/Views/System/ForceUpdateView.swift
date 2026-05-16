@@ -1,6 +1,8 @@
 import SwiftUI
 import AdaptiveSwiftUi
 
+import AdaptiveSwiftUi
+
 struct ForceUpdateView: View {
     var onUpdate: () -> Void
     
@@ -8,7 +10,7 @@ struct ForceUpdateView: View {
         VStack(spacing: 24) {
             Image(systemName: "arrow.triangle.2.circlepath.circle.fill")
                 .font(.system(size: 64))
-                .foregroundColor(.blue)
+                .adaptiveForegroundStyle(.blue)
             
             VStack(spacing: 8) {
                 Text("Update Required")
@@ -17,19 +19,20 @@ struct ForceUpdateView: View {
                 
                 Text("A new version of LeposApp is available. Please update to continue using the app.")
                     .font(.body)
-                    .foregroundColor(.secondary)
+                    .adaptiveForegroundStyle(.secondary)
                     .multilineTextAlignment(.center)
             }
             
-            Button(action: onUpdate) {
+            AdaptiveButton(action: onUpdate) {
                 Text("Update Now")
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .adaptiveForegroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(Color.blue)
                     .cornerRadius(12)
             }
+            .adaptiveButtonStyle(.plain)
             .padding(.horizontal, 32)
         }
         .padding()

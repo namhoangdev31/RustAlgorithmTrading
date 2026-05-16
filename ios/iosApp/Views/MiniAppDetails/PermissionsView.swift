@@ -1,15 +1,17 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct PermissionsView: View {
     let appId: String
     
     var body: some View {
-        List {
+        AdaptiveList {
             Section {
                 VStack(alignment: .leading, spacing: 16) {
                     Text("This app installs gracefully and does not require special permissions to run.")
                         .font(.body)
-                        .foregroundColor(.secondary)
+                        .adaptiveForegroundStyle(.secondary)
                 }
                 .padding(.vertical, 8)
             }
@@ -25,7 +27,7 @@ struct PermissionsView: View {
                     Text("Camera")
                     Spacer()
                     Text("Ask")
-                        .foregroundColor(.secondary)
+                        .adaptiveForegroundStyle(.secondary)
                 }
                 
                 HStack {
@@ -38,7 +40,7 @@ struct PermissionsView: View {
                     Text("Location")
                     Spacer()
                     Text("While Using")
-                        .foregroundColor(.secondary)
+                        .adaptiveForegroundStyle(.secondary)
                 }
                 
                 HStack {
@@ -51,7 +53,7 @@ struct PermissionsView: View {
                     Text("Notifications")
                     Spacer()
                     Text("Allowed")
-                        .foregroundColor(.secondary)
+                        .adaptiveForegroundStyle(.secondary)
                 }
             }
         }

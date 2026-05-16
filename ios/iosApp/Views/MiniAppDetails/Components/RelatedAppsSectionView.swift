@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct RelatedAppsSectionView: View {
     // Mock Data
@@ -16,7 +18,7 @@ struct RelatedAppsSectionView: View {
                 .fontWeight(.bold)
                 .padding(.horizontal)
             
-            ScrollView(.horizontal, showsIndicators: false) {
+            AdaptiveScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 16) {
                     ForEach(0..<4) { index in
                         let app = relatedApps[index]
@@ -28,7 +30,7 @@ struct RelatedAppsSectionView: View {
                                 .overlay(
                                     Image(systemName: app.icon)
                                         .font(.largeTitle)
-                                        .foregroundColor(app.color)
+                                        .adaptiveForegroundStyle(app.color)
                                 )
                             
                             Text(app.name)
@@ -37,16 +39,17 @@ struct RelatedAppsSectionView: View {
                                 .lineLimit(1)
                                 .padding(.top, 4)
                             
-                            Button(action: {}) {
+                            AdaptiveButton(action: {}) {
                                 Text("GET")
                                     .font(.caption)
                                     .fontWeight(.bold)
-                                    .foregroundColor(.blue)
+                                    .adaptiveForegroundStyle(.blue)
                                     .padding(.horizontal, 16)
                                     .padding(.vertical, 6)
                                     .background(Color.blue.opacity(0.1))
                                     .cornerRadius(12)
                             }
+                            .adaptiveButtonStyle(.plain)
                         }
                         .frame(width: 100)
                     }

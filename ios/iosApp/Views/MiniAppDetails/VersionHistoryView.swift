@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct VersionHistoryView: View {
     let appId: String
@@ -19,7 +21,7 @@ struct VersionHistoryView: View {
     ]
     
     var body: some View {
-        List {
+        AdaptiveList {
             ForEach(versions) { item in
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
@@ -30,7 +32,7 @@ struct VersionHistoryView: View {
                         
                         Text(item.date)
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .adaptiveForegroundStyle(.secondary)
                     }
                     
                     Text(item.notes)

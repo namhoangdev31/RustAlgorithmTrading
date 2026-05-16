@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 // import Shared — replaced by native Swift Shared module
 
 struct VerificationView: View {
@@ -12,22 +14,23 @@ struct VerificationView: View {
         VStack(spacing: 0) {
             // Header
             HStack {
-                Button(action: {
+                AdaptiveButton(action: {
                     dismiss()
                 }) {
                     Image(systemName: "chevron.left")
                         .font(.system(size: 16, weight: .bold))
-                        .foregroundColor(.black)
+                        .adaptiveForegroundStyle(.primary)
                         .padding(8)
                         .background(Color.white)
                         .clipShape(Circle())
                         .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
                 }
+                .adaptiveButtonStyle(.plain)
                 Spacer()
             }
             .padding()
             
-            ScrollView {
+            AdaptiveScrollView {
                 VStack(spacing: 32) {
                     // Title
                     VStack(alignment: .leading, spacing: 8) {
@@ -35,7 +38,7 @@ struct VerificationView: View {
                             .font(.system(size: 40, weight: .light))
                         Text("Security check for your new card")
                             .font(.body)
-                            .foregroundColor(.secondary)
+                            .adaptiveForegroundStyle(.secondary)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal)
@@ -47,7 +50,7 @@ struct VerificationView: View {
                     ResendTimerView(timeRemaining: timeRemaining)
                     
                     // Verify Button
-                    Button(action: {
+                    AdaptiveButton(action: {
                         // Mock success/failure logic
                         let isSuccess = Bool.random()
                         if isSuccess {
@@ -61,20 +64,21 @@ struct VerificationView: View {
                             Text("Verify & Add Card")
                         }
                         .font(.headline)
-                        .foregroundColor(.white)
+                        .adaptiveForegroundStyle(.white)
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(Color.black)
                         .cornerRadius(32)
                         .padding(.horizontal)
                     }
+                    .adaptiveButtonStyle(.plain)
                     
                     // Footer
                     VStack(spacing: 8) {
                         Text("BANK-LEVEL SECURITY")
                             .font(.caption2)
                             .fontWeight(.bold)
-                            .foregroundColor(.secondary)
+                            .adaptiveForegroundStyle(.secondary)
                             .tracking(1)
                         
                         HStack(spacing: 4) {
@@ -83,7 +87,7 @@ struct VerificationView: View {
                             Text("PCI-DSS COMPLIANT")
                                 .font(.caption2)
                         }
-                        .foregroundColor(.secondary.opacity(0.7))
+                        .adaptiveForegroundStyle(.secondary, opacity: 0.7)
                     }
                     .padding(.top, 16)
                 }

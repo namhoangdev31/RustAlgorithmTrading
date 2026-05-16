@@ -1,14 +1,16 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct NotificationDetailView: View {
     let notification: NotificationInboxView.NotificationItem
     
     var body: some View {
-        ScrollView {
+        AdaptiveScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 Text(notification.time)
                     .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .adaptiveForegroundStyle(.secondary)
                 
                 Text(notification.title)
                     .font(.title)
@@ -19,17 +21,18 @@ struct NotificationDetailView: View {
                     .lineSpacing(6)
                 
                 if notification.type == "update" {
-                    Button(action: {
+                    AdaptiveButton(action: {
                         // Update action
                     }) {
                         Text("Update Now")
                             .font(.headline)
-                            .foregroundColor(.white)
+                            .adaptiveForegroundStyle(.white)
                             .frame(maxWidth: .infinity)
                             .padding()
                             .background(Color.blue)
                             .cornerRadius(12)
                     }
+                    .adaptiveButtonStyle(.plain)
                     .padding(.top, 24)
                 }
             }

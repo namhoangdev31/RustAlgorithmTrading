@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct PrimaryMethodRow: View {
     let method: PaymentMethod
@@ -14,23 +16,21 @@ struct PrimaryMethodRow: View {
                     
                     Image(systemName: "apple.logo")
                         .font(.system(size: 26))
-                        .foregroundColor(.white)
+                        .adaptiveForegroundStyle(.white)
                 }
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Apple Pay")
                         .font(.system(size: 18, weight: .bold))
-                        .foregroundColor(.black)
+                        .adaptiveForegroundStyle(.primary)
                     Text("MacBook Pro & iPhone")
                         .font(.system(size: 14))
-                        .foregroundColor(.secondary)
+                        .adaptiveForegroundStyle(.secondary)
                 }
                 Spacer()
             }
             .padding(24)
-            .background(Color.white)
-            .cornerRadius(28)
-            .shadow(color: .black.opacity(0.06), radius: 12, x: 0, y: 4)
+            .adaptiveGlass(cornerRadius: 28)
             
             // Badge & Edit
             VStack(alignment: .trailing, spacing: 0) {
@@ -40,7 +40,7 @@ struct PrimaryMethodRow: View {
                     Text("DEFAULT")
                         .font(.system(size: 10, weight: .bold))
                 }
-                .foregroundColor(.cyan)
+                .adaptiveForegroundStyle(.cyan)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 6)
                 .background(Color.cyan.opacity(0.1))
@@ -50,11 +50,12 @@ struct PrimaryMethodRow: View {
                 
                 Spacer()
                 
-                Button(action: {}) {
+                AdaptiveButton(action: {}) {
                      Text("Edit")
                         .font(.system(size: 15, weight: .bold))
-                        .foregroundColor(.cyan)
+                        .adaptiveForegroundStyle(.cyan)
                 }
+                .adaptiveButtonStyle(.plain)
                 .padding(.bottom, 24)
                 .padding(.trailing, 24)
             }

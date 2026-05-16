@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct InfoColumn: View {
     let topText: String
@@ -35,11 +37,11 @@ struct InfoColumn: View {
              if let icon = iconName {
                  Image(systemName: icon)
                      .font(.system(size: 22, weight: .bold))
-                     .foregroundColor(.gray)
+                     .adaptiveForegroundStyle(.secondary)
              } else {
                  Text(topText)
                      .font(.system(size: 22, weight: .bold))
-                     .foregroundColor(.gray) // In App Store it is gray-ish
+                     .adaptiveForegroundStyle(.secondary)
              }
             
             if bottomText.isEmpty, subtitleText == "RATINGS" {
@@ -77,32 +79,32 @@ struct InfoColumn: View {
 
 struct MiniAppRatingsView: View {
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
+        AdaptiveScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 0) {
                 // Ratings
                 VStack(spacing: 4) {
                     HStack(spacing: 2) {
                         Text("4.8")
                             .font(.system(size: 22, weight: .bold)) // Darker gray in light mode
-                            .foregroundColor(.primary.opacity(0.6))
+                            .adaptiveForegroundStyle(.primary, opacity: 0.6)
                     }
                     HStack(spacing: 0) { // Stars
                          ForEach(0..<4) { _ in
                              Image(systemName: "star.fill")
                                  .font(.system(size: 10))
-                                 .foregroundColor(.gray)
+                                 .adaptiveForegroundStyle(.secondary)
                          }
                          Image(systemName: "star.leadinghalf.filled") // 4.5
                              .font(.system(size: 10))
-                             .foregroundColor(.gray)
+                             .adaptiveForegroundStyle(.secondary)
                      }
                     Text("2.4K Ratings")
                         .font(.system(size: 11))
-                        .foregroundColor(.gray)
+                        .adaptiveForegroundStyle(.secondary)
                 }
                 .frame(minWidth: 100)
                 
-                Divider().frame(height: 30)
+                AdaptiveDivider().frame(height: 30)
                 
                 // Age
                 VStack(spacing: 4) {
@@ -138,13 +140,13 @@ struct MiniAppRatingsView: View {
                 VStack(spacing: 4) {
                     Text("EN")
                         .font(.system(size: 22, weight: .bold))
-                        .foregroundColor(.primary.opacity(0.6))
+                        .adaptiveForegroundStyle(.primary, opacity: 0.6)
                     Text("Language")
                         .font(.system(size: 11, weight: .bold))
-                        .foregroundColor(.gray)
+                        .adaptiveForegroundStyle(.secondary)
                     Text("+ 12 More")
                         .font(.system(size: 11))
-                        .foregroundColor(.gray)
+                        .adaptiveForegroundStyle(.secondary)
                 }
                 .frame(minWidth: 100)
             }

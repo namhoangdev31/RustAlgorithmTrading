@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct DiscoveryAppItem: Identifiable {
     let id = UUID()
@@ -27,13 +29,15 @@ struct DiscoveryAppsWeLoveView: View {
                     .font(.title2)
                     .fontWeight(.bold)
                 Spacer()
-                Button("See All") { }
-                    .font(.subheadline)
-                    .foregroundColor(.blue)
+                AdaptiveButton(action: {}) {
+                    Text("See All")
+                }
+                .adaptiveButtonStyle(.plain)
+                .adaptiveForegroundStyle(.blue)
             }
             .padding(.horizontal)
             
-            ScrollView(.horizontal, showsIndicators: false) {
+            AdaptiveScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 16) {
                     ForEach(0..<3) { _ in // Mocking multiple items for scroll
                         VStack(alignment: .leading) {
@@ -44,7 +48,7 @@ struct DiscoveryAppsWeLoveView: View {
                                     .overlay(
                                         Image(systemName: item.iconName)
                                             .font(.largeTitle)
-                                            .foregroundColor(.primary)
+                                            .adaptiveForegroundStyle(.primary)
                                     )
                                 
                                 VStack(alignment: .leading, spacing: 4) {
@@ -52,11 +56,11 @@ struct DiscoveryAppsWeLoveView: View {
                                         .font(.headline)
                                     Text(item.category)
                                         .font(.caption)
-                                        .foregroundColor(.gray)
+                                        .adaptiveForegroundStyle(.secondary)
                                     
                                     Text(item.description)
                                         .font(.caption)
-                                        .foregroundColor(.gray)
+                                        .adaptiveForegroundStyle(.secondary)
                                         .lineLimit(2)
                                         .padding(.top, 4)
                                 }
@@ -76,7 +80,7 @@ struct DiscoveryAppsWeLoveView: View {
                                 
                                 Spacer()
                                 
-                                Button(action: {}) {
+                                AdaptiveButton(action: {}) {
                                     Text("GET")
                                         .font(.caption)
                                         .fontWeight(.bold)

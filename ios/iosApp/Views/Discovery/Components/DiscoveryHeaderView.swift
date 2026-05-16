@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct DiscoveryHeaderView: View {
     let offsetY: CGFloat
@@ -13,7 +15,7 @@ struct DiscoveryHeaderView: View {
                 Text("WEDNESDAY, MAY 22")
                     .font(.caption)
                     .fontWeight(.semibold)
-                    .foregroundColor(.gray)
+                    .adaptiveForegroundStyle(.secondary)
                 
                 Text("Discover")
                     .font(.largeTitle)
@@ -23,9 +25,9 @@ struct DiscoveryHeaderView: View {
             .animation(.interactiveSpring, value: offsetY)
             
             Spacer()
-            Button(action:{}){
+            AdaptiveButton(action: {}) {
                 Image(systemName: "ellipses.bubble") // AI Chat Icon Placeholder
-                    .font(.system(size: 22)) // Size it appropriately
+                    .font(.system(size: 22))
                     .foregroundColor(.leposPrimary)
             }
                 .offset(x: offsetY > -45 ? (offsetY + 45) : 0)

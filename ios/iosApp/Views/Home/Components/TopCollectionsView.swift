@@ -1,4 +1,6 @@
 import SwiftUI
+import AdaptiveSwiftUi
+
 
 struct CollectionItem: Identifiable {
     let id = UUID()
@@ -22,18 +24,20 @@ struct TopCollectionsView: View {
                     .font(.title2)
                     .fontWeight(.bold)
                 Spacer()
-                Button("See All") {
+                AdaptiveButton(action: {
                     navigation.navigate(to: .collection(id: "top_collections", title: "Top Collections"))
+                }) {
+                    Text("See All")
                 }
-                .font(.subheadline)
-                .foregroundColor(.blue)
+                .adaptiveButtonStyle(.plain)
+                .adaptiveForegroundStyle(.blue)
             }
             .padding(.horizontal)
 
-            ScrollView(.horizontal, showsIndicators: false) {
+            AdaptiveScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 16) {
                     ForEach(collections) { item in
-                        Button(action: {
+                        AdaptiveButton(action: {
                             navigation.navigate(to: .collection(id: item.id.uuidString, title: "Featured Collection"))
                         }) {
                             VStack(alignment: .leading) {
@@ -63,7 +67,7 @@ struct TopCollectionsView: View {
 
                                 Text(item.subtitle)
                                     .font(.caption)
-                                    .foregroundColor(.gray)
+                                    .adaptiveForegroundStyle(.secondary)
                                     .lineLimit(2)
                             }
                             .frame(width: 220)
