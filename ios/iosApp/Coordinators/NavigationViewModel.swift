@@ -23,6 +23,7 @@ enum AppRoute: Hashable, Identifiable {
     case allReviews(appId: String)
     case forgotPassword
     case forYou
+    case favorites
     
     // Batch 1: System & Lifecycle
     case globalError
@@ -111,6 +112,7 @@ enum AppRoute: Hashable, Identifiable {
         case .paymentSuccess: return "paymentSuccess"
         case .paymentFailed: return "paymentFailed"
         case .wallet: return "wallet"
+        case .favorites: return "favorites"
         }
     }
 
@@ -167,6 +169,7 @@ enum AppRoute: Hashable, Identifiable {
         case .paymentSuccess: hasher.combine(29)
         case .paymentFailed: hasher.combine(30)
         case .wallet: hasher.combine(31)
+        case .favorites: hasher.combine(32)
         }
     }
 
@@ -222,6 +225,7 @@ enum AppRoute: Hashable, Identifiable {
         case (.paymentSuccess, .paymentSuccess): return true
         case (.paymentFailed, .paymentFailed): return true
         case (.wallet, .wallet): return true
+        case (.favorites, .favorites): return true
         default: return false
         }
     }

@@ -7,23 +7,23 @@ struct MainTabView: View {
 
     var body: some View {
         AdaptiveTabView(selection: $selection) {
-            AdaptiveValueTab("Today", systemImage: "sparkles", value: 0) {
+            AdaptiveTab("Today", systemImage: "sparkles", value: 0) {
                 HomeView()
             }
 
-            AdaptiveValueTab("Discovery", systemImage: "safari", value: 1) {
+            AdaptiveTab("Discovery", systemImage: "safari", value: 1) {
                 DiscoveryView()
             }
 
-            AdaptiveValueTab("Apps", systemImage: "square.stack.3d.up.fill", value: 2) {
+            AdaptiveTab("Apps", systemImage: "square.stack.3d.up.fill", value: 2) {
                 LibraryView()
             }
 
-            AdaptiveValueTab("Profile", systemImage: "person.crop.circle.fill", value: 3) {
+            AdaptiveTab("Profile", systemImage: "person.crop.circle.fill", value: 3) {
                 ProfileView()
             }
 
-            AdaptiveValueTab("Search", systemImage: "magnifyingglass", value: 4, role: .search) {
+            AdaptiveTab("Search", systemImage: "magnifyingglass", value: 4, role: .search) {
                 SearchView()
             }
         }

@@ -157,6 +157,8 @@ struct AppCoordinator: View {
             PaymentResultView(type: .failure)
         case .wallet:
             WalletView()
+        case .favorites:
+            FavoriteMiniAppsView()
         }
     }
 

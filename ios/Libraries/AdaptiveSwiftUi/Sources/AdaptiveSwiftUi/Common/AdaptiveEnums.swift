@@ -403,19 +403,16 @@ public enum AdaptiveBottomAccessoryPlacement: Sendable {
 }
 
 /// Defines customization placements for tabs.
-@available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *)
 public enum AdaptiveTabCustomizationPlacement: Hashable, Sendable {
     case automatic, tabBar, sidebar
 }
 
 /// Defines customization behaviors for tabs.
-@available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *)
 public enum AdaptiveTabCustomizationBehavior: Sendable {
     case automatic, reorderable, disabled
 }
 
 /// Defines semantic roles for tabs.
-@available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *)
 public enum AdaptiveTabRole: Sendable {
     case automatic, search
 }
