@@ -82,7 +82,7 @@ struct DeveloperProfileView: View {
                     .padding(.horizontal)
 
                 // Apps Grid
-                LazyVGrid(columns: [GridItem(.uni(minimum: 150), spacing: 16)], spacing: 16) {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 150), spacing: 16)], spacing: 16) {
                     ForEach(apps) { app in
                         VStack(alignment: .leading) {
                             RoundedRectangle(cornerRadius: 12)

@@ -31,7 +31,7 @@ struct CategoryBrowseView: View {
     ]
 
     let columns = [
-        GridItem(.uni(minimum: 150), spacing: 16)
+        GridItem(.adaptive(minimum: 150), spacing: 16)
     ]
 
     var body: some View {
