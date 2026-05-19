@@ -37,7 +37,7 @@ struct WishlistView: View {
     ]
 
     var body: some View {
-        NavigationView {  // Keep NavigationView for title if needed, or remove if parent handles it.
+        UniNavigationStack {  // Use UniNavigationStack to bridge NavigationStack and NavigationView
             // MainTabView items often have their own NavigationStack or View.
             // The placeholder had NavigationView.
             UniScrollView {

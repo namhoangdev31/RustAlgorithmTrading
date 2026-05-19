@@ -86,7 +86,7 @@ struct SettingsGridView: View {
             .uniButtonStyle(.plain)
         }
         .padding(.horizontal)
-        .alert("Log Out", isPresented: $showLogoutAlert) {
+        .uniAlert("Log Out", isPresented: $showLogoutAlert) {
             Button("Cancel", role: .cancel) {}
             Button("Log Out", role: .destructive) {
                 // Reset login state

@@ -7,6 +7,7 @@ struct MiniAppDetailsView: View {
 
     @State private var showNavBarItems: Bool = false
     @State private var showSettings: Bool = false
+    @State private var showUninstallConfirmation: Bool = false
 
     let price: Double = 29.99
 
@@ -21,7 +22,7 @@ struct MiniAppDetailsView: View {
                         isLoading: viewModel.isLoading,
                         onOpen: { viewModel.openApp() },
                         onDownload: { viewModel.installApp(price: price, navigation: navigation) },
-                        onUninstall: { viewModel.uninstallApp() },
+                        onUninstall: { showUninstallConfirmation = true },
                         onSettings: { showSettings = true }
                     )
 
@@ -69,6 +70,14 @@ struct MiniAppDetailsView: View {
         }
         .sheet(isPresented: $showSettings) {
             MiniAppSettingsView()
+        }
+        .uniConfirmationDialog("Are you sure you want to remove EcoTrack Pro?", isPresented: $showUninstallConfirmation) {
+            Button("Remove App", role: .destructive) {
+                viewModel.uninstallApp()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Removing this app will delete all its data and settings.")
         }
     }
 }

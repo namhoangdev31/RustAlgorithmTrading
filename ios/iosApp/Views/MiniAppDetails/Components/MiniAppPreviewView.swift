@@ -2,6 +2,8 @@ import ExploreSwiftUI
 import SwiftUI
 
 struct MiniAppPreviewView: View {
+    @State private var activePreviewID: Int? = 0
+
     var body: some View {
         VStack(alignment: .leading) {
             Text("Preview")
@@ -53,11 +55,14 @@ struct MiniAppPreviewView: View {
                             }
                             .frame(width: 250, height: 500)
                         }
+                        .id(i)
                     }
                 }
                 .padding(.horizontal)
                 .padding(.vertical, 20)  // Space for shadow
             }
+            .uniScrollTargetBehavior(.viewAligned)
+            .uniScrollPosition(id: $activePreviewID)
         }
     }
 }

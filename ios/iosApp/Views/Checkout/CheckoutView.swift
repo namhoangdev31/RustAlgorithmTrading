@@ -61,6 +61,6 @@ struct CheckoutView: View {
                 navigation.navigate(to: .paymentFailed)
             }
         }
-        .uniNavigationTitle("Checkout", subtitle: "")
+        .uniNavigationTitle("Checkout")
     }
 }

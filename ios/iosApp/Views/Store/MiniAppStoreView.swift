@@ -75,7 +75,7 @@ struct MiniAppStoreView: View {
                     }
                 }
             }
-            .uniNavigationTitle("Mini-App Store", subtitle: "")
+            .uniNavigationTitle("Mini-App Store")
             .task {
                 await viewModel.loadBundles()
             }

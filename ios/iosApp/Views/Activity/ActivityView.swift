@@ -5,6 +5,7 @@ struct ActivityView: View {
     @Environment(\.dismiss) var dismiss
 
     @State private var selectedFilter = "All"
+    @State private var animateBell = false
     let filters = ["All", "Unread", "Mentions", "System"]
 
     var body: some View {
@@ -117,14 +118,19 @@ struct ActivityView: View {
                 Spacer(minLength: 40)
             }
         }
-        .uniNavigationTitle("Activity", subtitle: "")
+        .uniNavigationTitle("Activity")
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
                 UniButton("Up", systemImage: "checkmark.circle.fill", action: {})
                     .uniButtonTint(.blue)
                 UniToolbarSpacer(.fixed, fallbackLength: 8)  // Hoạt động như một View
-                UniButton("Down", systemImage: "bell.badge.fill", action: {})
-                    .uniButtonTint(.blue)
+                UniButton(action: {
+                    animateBell.toggle()
+                }) {
+                    Image(systemName: "bell.badge.fill")
+                        .uniSymbolEffect(.bounce, isActive: animateBell)
+                }
+                .uniButtonTint(.blue)
             }
         }
     }

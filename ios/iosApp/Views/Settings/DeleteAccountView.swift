@@ -53,16 +53,14 @@ struct DeleteAccountView: View {
         }
         .navigationTitle("Delete Account")
         .navigationBarTitleDisplayMode(.inline)
-        .alert(isPresented: $showConfirmation) {
-            Alert(
-                title: Text("Final Confirmation"),
-                message: Text("This is strictly permanent. Are you absolutely sure?"),
-                primaryButton: .destructive(Text("Delete Forever")) {
-                    // Actual delete logic here
-                    presentationMode.wrappedValue.dismiss()
-                },
-                secondaryButton: .cancel()
-            )
+        .uniAlert("Final Confirmation", isPresented: $showConfirmation) {
+            Button("Delete Forever", role: .destructive) {
+                // Actual delete logic here
+                presentationMode.wrappedValue.dismiss()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This is strictly permanent. Are you absolutely sure?")
         }
     }
 }

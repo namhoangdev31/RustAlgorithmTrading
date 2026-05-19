@@ -31,7 +31,7 @@
 		5A40AFF62F55339500BE0503 /* FirebaseAnalyticsCore in Frameworks */ = {isa = PBXBuildFile; productRef = 5A40AFF52F55339500BE0503 /* FirebaseAnalyticsCore */; };
 		5A40AFF82F55339500BE0503 /* FirebaseAnalyticsIdentitySupport in Frameworks */ = {isa = PBXBuildFile; productRef = 5A40AFF72F55339500BE0503 /* FirebaseAnalyticsIdentitySupport */; };
 		5A40AFFB2F554A8C00BE0503 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = 5A40AFFA2F554A8C00BE0503 /* GoogleMobileAds */; };
-		5A47BE382FBC3C12000F9C0D /* ExploreSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 5A47BE372FBC3C12000F9C0D /* ExploreSwiftUI */; };
+		5A47BE3B2FBC4F2F000F9C0D /* ExploreSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 5A47BE3A2FBC4F2F000F9C0D /* ExploreSwiftUI */; };
 		5A7803FE2F39020E004BBDBF /* ACarousel in Frameworks */ = {isa = PBXBuildFile; productRef = 5A7803FD2F39020E004BBDBF /* ACarousel */; };
 		5A7804012F390214004BBDBF /* SFSafeSymbols in Frameworks */ = {isa = PBXBuildFile; productRef = 5A7804002F390214004BBDBF /* SFSafeSymbols */; };
 		5A7804042F39021A004BBDBF /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 5A7804032F39021A004BBDBF /* ZIPFoundation */; };
@@ -82,7 +82,7 @@
 				5A17A6A62F55798B00D38C28 /* FirebasePerformance in Frameworks */,
 				5A17A6A82F55798B00D38C28 /* FirebaseRemoteConfig in Frameworks */,
 				5A40AFF42F55339500BE0503 /* FirebaseAnalytics in Frameworks */,
-				5A47BE382FBC3C12000F9C0D /* ExploreSwiftUI in Frameworks */,
+				5A47BE3B2FBC4F2F000F9C0D /* ExploreSwiftUI in Frameworks */,
 				5A17A6A02F55798B00D38C28 /* FirebaseInstallations in Frameworks */,
 				5A17A6962F55798B00D38C28 /* FirebaseFirestore in Frameworks */,
 				5A17A68E2F55798B00D38C28 /* FirebaseAuthCombine-Community in Frameworks */,
@@ -185,7 +185,7 @@
 				5A17A6A72F55798B00D38C28 /* FirebaseRemoteConfig */,
 				5A17A6A92F55798B00D38C28 /* FirebaseStorage */,
 				5A17A6AB2F55798B00D38C28 /* FirebaseStorageCombine-Community */,
-				5A47BE372FBC3C12000F9C0D /* ExploreSwiftUI */,
+				5A47BE3A2FBC4F2F000F9C0D /* ExploreSwiftUI */,
 			);
 			productName = iosApp;
 			productReference = 623E68E1EC5434D0E8A40C73 /* Leposapp.app */;
@@ -222,7 +222,7 @@
 				5A7804052F390220004BBDBF /* XCRemoteSwiftPackageReference "GCDWebServer" */,
 				5A40AFEE2F55339500BE0503 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				5A40AFF92F554A8C00BE0503 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
-				5A47BE362FBC3C12000F9C0D /* XCRemoteSwiftPackageReference "ExploreSwiftUI" */,
+				5A47BE392FBC4F2F000F9C0D /* XCRemoteSwiftPackageReference "ExploreSwiftUI" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E7798370575A2CFBE4CE7BEB /* Products */;
@@ -532,12 +532,12 @@
 				minimumVersion = 13.1.0;
 			};
 		};
-		5A47BE362FBC3C12000F9C0D /* XCRemoteSwiftPackageReference "ExploreSwiftUI" */ = {
+		5A47BE392FBC4F2F000F9C0D /* XCRemoteSwiftPackageReference "ExploreSwiftUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/namhoangdev31/ExploreSwiftUI";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
+				branch = main;
+				kind = branch;
 			};
 		};
 		5A7803FC2F39020E004BBDBF /* XCRemoteSwiftPackageReference "ACarousel" */ = {
@@ -690,9 +690,9 @@
 			package = 5A40AFF92F554A8C00BE0503 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
 			productName = GoogleMobileAds;
 		};
-		5A47BE372FBC3C12000F9C0D /* ExploreSwiftUI */ = {
+		5A47BE3A2FBC4F2F000F9C0D /* ExploreSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 5A47BE362FBC3C12000F9C0D /* XCRemoteSwiftPackageReference "ExploreSwiftUI" */;
+			package = 5A47BE392FBC4F2F000F9C0D /* XCRemoteSwiftPackageReference "ExploreSwiftUI" */;
 			productName = ExploreSwiftUI;
 		};
 		5A7803FD2F39020E004BBDBF /* ACarousel */ = {
