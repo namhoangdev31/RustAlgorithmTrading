@@ -1,9 +1,9 @@
+import ExploreSwiftUI
 import SwiftUI
-import AdaptiveSwiftUi
 
 struct SystemActivityCardView: View {
     var isUnread: Bool = true
-    
+
     var body: some View {
         HStack(spacing: 0) {
             // Left indicator line for System cards
@@ -12,7 +12,7 @@ struct SystemActivityCardView: View {
                     .fill(Color.blue)
                     .frame(width: 4)
             }
-            
+
             ZStack {
                 // Deep Gradient Background
                 LinearGradient(
@@ -20,30 +20,32 @@ struct SystemActivityCardView: View {
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 )
-                
-                AdaptiveGlassEffectContainer(spacing: 8) {
+
+                UniGlassEffectContainer(spacing: 8) {
                     Text("SYSTEM")
                         .font(.caption2)
                         .fontWeight(.bold)
-                        .adaptiveForegroundStyle(.white, hierarchy: .secondary)
-                    
+                        .uniForegroundStyle(.white, hierarchy: .secondary)
+
                     Text("V2.4.1 is ready for installation.")
                         .font(.title2)
                         .fontWeight(.bold)
                         .foregroundColor(.white)
                         .fixedSize(horizontal: false, vertical: true)
-                    
+
                     Spacer()
-                    
-                    Text("Experience 40% faster loading speeds and new visual themes across all apps.")
-                        .font(.subheadline)
-                        .adaptiveForegroundStyle(.white, hierarchy: .secondary)
-                        .lineLimit(3)
-                        .fixedSize(horizontal: false, vertical: true)
-                    
+
+                    Text(
+                        "Experience 40% faster loading speeds and new visual themes across all apps."
+                    )
+                    .font(.subheadline)
+                    .uniForegroundStyle(.white, hierarchy: .secondary)
+                    .lineLimit(3)
+                    .fixedSize(horizontal: false, vertical: true)
+
                     HStack {
                         Spacer()
-                        AdaptiveButton(action: {}) {
+                        UniButton(action: {}) {
                             Text("UPDATE")
                                 .font(.caption)
                                 .fontWeight(.bold)

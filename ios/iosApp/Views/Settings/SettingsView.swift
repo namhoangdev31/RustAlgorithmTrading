@@ -1,4 +1,4 @@
-import AdaptiveSwiftUi
+import ExploreSwiftUI
 import SwiftUI
 
 struct SettingsView: View {
@@ -7,32 +7,32 @@ struct SettingsView: View {
     @AppStorage("notificationsEnabled") private var notificationsEnabled = true
 
     var body: some View {
-        AdaptiveList {
+        UniList {
             // Account Section
             Section(header: Text("Account")) {
                 HStack(spacing: 16) {
                     Image(systemName: "person.crop.circle.fill")
                         .resizable()
                         .frame(width: 50, height: 50)
-                        .adaptiveForegroundStyle(.secondary)
+                        .uniForegroundStyle(.secondary)
 
                     VStack(alignment: .leading, spacing: 4) {
                         Text("John Doe")
                             .font(.headline)
                         Text("john.doe@example.com")
                             .font(.subheadline)
-                            .adaptiveForegroundStyle(.secondary)
+                            .uniForegroundStyle(.secondary)
                     }
                 }
                 .padding(.vertical, 8)
 
-                AdaptiveButton(action: {
+                UniButton(action: {
                     navigation.navigate(to: .editProfile)
                 }) {
                     Text("Edit Profile")
-                        .adaptiveForegroundStyle(.blue)
+                        .uniForegroundStyle(.blue)
                 }
-                .adaptiveButtonStyle(.plain)
+                .uniButtonStyle(.plain)
             }
 
             // Preferences Section
@@ -44,71 +44,71 @@ struct SettingsView: View {
                     Text("Language")
                     Spacer()
                     Text("English")
-                        .adaptiveForegroundStyle(.secondary)
+                        .uniForegroundStyle(.secondary)
                 }
             }
 
             // Data & Storage Section
             Section(header: Text("Data & Storage")) {
-                AdaptiveButton(action: {
+                UniButton(action: {
                     navigation.navigate(to: .downloadHistory)
                 }) {
                     Text("Download History")
-                        .adaptiveForegroundStyle(.primary)
+                        .uniForegroundStyle(.primary)
                 }
-                .adaptiveButtonStyle(.plain)
+                .uniButtonStyle(.plain)
 
-                AdaptiveButton(action: {
+                UniButton(action: {
                     // Action to clear cache
                 }) {
                     HStack {
                         Text("Clear Cache")
-                            .adaptiveForegroundStyle(.primary)
+                            .uniForegroundStyle(.primary)
                         Spacer()
                         Text("128 MB")
-                            .adaptiveForegroundStyle(.secondary)
+                            .uniForegroundStyle(.secondary)
                     }
                 }
-                .adaptiveButtonStyle(.plain)
+                .uniButtonStyle(.plain)
             }
 
             // About Section
             Section(header: Text("About")) {
-                AdaptiveButton(action: {
+                UniButton(action: {
                     navigation.navigate(to: .aboutApp)
                 }) {
                     Text("About Lepos App")
-                        .adaptiveForegroundStyle(.primary)
+                        .uniForegroundStyle(.primary)
                 }
-                .adaptiveButtonStyle(.plain)
+                .uniButtonStyle(.plain)
 
                 HStack {
                     Text("Version")
                     Spacer()
                     Text("2.4.1 (Build 2024)")
-                        .adaptiveForegroundStyle(.secondary)
+                        .uniForegroundStyle(.secondary)
                 }
 
-                AdaptiveButton("Terms of Service") {}
-                    .adaptiveForegroundStyle(.primary)
-                    .adaptiveButtonStyle(.plain)
+                UniButton("Terms of Service") {}
+                    .uniForegroundStyle(.primary)
+                    .uniButtonStyle(.plain)
 
-                AdaptiveButton("Privacy Policy") {}
-                    .adaptiveForegroundStyle(.primary)
-                    .adaptiveButtonStyle(.plain)
+                UniButton("Privacy Policy") {}
+                    .uniForegroundStyle(.primary)
+                    .uniButtonStyle(.plain)
             }
 
             // Actions Section
             Section {
-                AdaptiveButton(action: {
+                UniButton(action: {
                     // Sign Out Logic
                     // navigation.navigate(to: .login)
                 }) {
                     Text("Sign Out")
-                        .adaptiveForegroundStyle(.red)
+                        .uniForegroundStyle(.red)
                         .frame(maxWidth: .infinity, alignment: .center)
                 }
-                .adaptiveButtonStyle(.plain)
+                .uniButtonStyle(.plain)
             }
         }
         .navigationTitle("Settings")

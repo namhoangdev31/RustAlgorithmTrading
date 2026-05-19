@@ -1,6 +1,6 @@
-import SwiftUI
-import AdaptiveSwiftUi
+import ExploreSwiftUI
 import SFSafeSymbols
+import SwiftUI
 
 struct EditorChoiceDetailView: View {
     @EnvironmentObject var navigation: NavigationViewModel
@@ -9,7 +9,7 @@ struct EditorChoiceDetailView: View {
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
-            AdaptiveScrollView {
+            UniScrollView {
                 VStack(spacing: 0) {
                     EditorChoiceHeaderView()
                     EditorChoiceContentView()
@@ -41,15 +41,15 @@ struct EditorChoiceDetailView: View {
                         VStack(alignment: .leading) {
                             Text("Crossfire Legends")
                                 .font(.title3)
-                                .adaptiveForegroundStyle(.primary)
+                                .uniForegroundStyle(.primary)
                             Text("Start your journey today.")
                                 .font(.caption)
-                                .adaptiveForegroundStyle(.secondary)
+                                .uniForegroundStyle(.secondary)
                         }
 
                         Spacer()
 
-                        AdaptiveButton(action: {}) {
+                        UniButton(action: {}) {
                             Text("NHẬN")
                                 .font(.subheadline)
                                 .fontWeight(.bold)
@@ -63,7 +63,7 @@ struct EditorChoiceDetailView: View {
                     .padding(.vertical)
                     .padding(.horizontal)
                     .background(.clear)
-                    .adaptiveGlass(cornerRadius: 16)
+                    .uniGlass(cornerRadius: 16)
                     .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
                 .padding(.vertical)
@@ -74,7 +74,7 @@ struct EditorChoiceDetailView: View {
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem {
-                AdaptiveButton(action: {
+                UniButton(action: {
                     navigation.goBack()
                 }) {
                     Label("Account", systemImage: "multiply")

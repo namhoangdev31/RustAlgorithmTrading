@@ -1,4 +1,4 @@
-import AdaptiveSwiftUi
+import ExploreSwiftUI
 import SwiftUI
 
 struct WalletBalanceCard: View {
@@ -10,21 +10,21 @@ struct WalletBalanceCard: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("TOTAL BALANCE")
                         .font(.caption)
-                        .adaptiveForegroundStyle(.secondary, opacity: 0.8)
+                        .uniForegroundStyle(.secondary, opacity: 0.8)
 
                     Text(String(format: "$%.2f", balance))
                         .font(.system(size: 48, weight: .bold))
-                        .adaptiveForegroundStyle(.primary)
+                        .uniForegroundStyle(.primary)
                 }
 
                 Spacer()
 
-                AdaptiveButton(action: {
+                UniButton(action: {
                     // Add money or some other action
                 }) {
                     Image(systemName: "plus")
                         .font(.title2)
-                        .adaptiveForegroundStyle(.white)
+                        .uniForegroundStyle(.white)
                         .frame(width: 50, height: 50)
                         .background(Color.cyan)
                         .clipShape(Circle())
@@ -36,19 +36,19 @@ struct WalletBalanceCard: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("CURRENCY")
                         .font(.caption)
-                        .adaptiveForegroundStyle(.cyan)
+                        .uniForegroundStyle(.cyan)
                     Text("USD / United\nStates")
                         .font(.subheadline)
                         .fontWeight(.semibold)
-                        .adaptiveForegroundStyle(.primary)
+                        .uniForegroundStyle(.primary)
                 }
 
-                AdaptiveDivider().frame(height: 40)
+                UniDivider().frame(height: 40)
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("STATUS")
                         .font(.caption)
-                        .adaptiveForegroundStyle(.cyan)
+                        .uniForegroundStyle(.cyan)
 
                     HStack(spacing: 4) {
                         Circle()
@@ -57,13 +57,13 @@ struct WalletBalanceCard: View {
                         Text("Verified\nAccount")
                             .font(.subheadline)
                             .fontWeight(.semibold)
-                            .adaptiveForegroundStyle(.primary)
+                            .uniForegroundStyle(.primary)
                     }
                 }
                 Spacer()
             }
         }
         .padding(24)
-        .adaptiveGlass(cornerRadius: 32)
+        .uniGlass(cornerRadius: 32)
     }
 }

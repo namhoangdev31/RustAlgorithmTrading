@@ -1,12 +1,12 @@
+import ExploreSwiftUI
 import SwiftUI
-import AdaptiveSwiftUi
 
 // import Shared — replaced by native Swift Shared module
 
 struct CategoryDetailView: View {
     let categoryTitle: String
     @EnvironmentObject var navigation: NavigationViewModel
-    
+
     // Mock Apps
     struct MockApp: Identifiable {
         let id = UUID()
@@ -15,26 +15,26 @@ struct CategoryDetailView: View {
         let rating: Double
         let iconColor: Color
     }
-    
+
     let apps: [MockApp] = [
         MockApp(name: "App One", developer: "Dev Studio A", rating: 4.5, iconColor: .blue),
         MockApp(name: "Super App", developer: "Indie Dev", rating: 4.8, iconColor: .red),
         MockApp(name: "Toolbox Pro", developer: "Utility Corp", rating: 4.2, iconColor: .orange),
         MockApp(name: "Daily Task", developer: "Prod Inc", rating: 4.6, iconColor: .green),
         MockApp(name: "Zen Space", developer: "Mindful", rating: 4.9, iconColor: .purple),
-        MockApp(name: "Quick Notes", developer: "FastApps", rating: 4.3, iconColor: .yellow)
+        MockApp(name: "Quick Notes", developer: "FastApps", rating: 4.3, iconColor: .yellow),
     ]
-    
+
     var body: some View {
-        AdaptiveScrollView {
+        UniScrollView {
             VStack(spacing: 16) {
                 headerView
-                
+
                 LazyVStack(spacing: 0) {
                     ForEach(apps) { app in
                         appRow(app: app)
-                        
-                        AdaptiveDivider()
+
+                        UniDivider()
                             .padding(.leading, 92)
                     }
                 }
@@ -46,7 +46,7 @@ struct CategoryDetailView: View {
         }
         .navigationTitle(categoryTitle)
     }
-    
+
     private var headerView: some View {
         RoundedRectangle(cornerRadius: 16)
             .fill(Color.blue.opacity(0.1))
@@ -69,9 +69,9 @@ struct CategoryDetailView: View {
             )
             .padding(.horizontal)
     }
-    
+
     private func appRow(app: MockApp) -> some View {
-        AdaptiveButton(action: {
+        UniButton(action: {
             navigation.navigate(to: .detail(itemId: app.id.uuidString))
         }) {
             HStack(spacing: 16) {
@@ -84,7 +84,7 @@ struct CategoryDetailView: View {
                             .font(.title2)
                             .fontWeight(.bold)
                     )
-                
+
                 VStack(alignment: .leading, spacing: 4) {
                     Text(app.name)
                         .font(.headline)
@@ -96,14 +96,15 @@ struct CategoryDetailView: View {
                         ForEach(0..<5) { index in
                             Image(systemName: "star.fill")
                                 .font(.caption2)
-                                .foregroundColor(Double(index) < app.rating ? .orange : .gray.opacity(0.3))
+                                .foregroundColor(
+                                    Double(index) < app.rating ? .orange : .gray.opacity(0.3))
                         }
                     }
                 }
-                
+
                 Spacer()
-                
-                AdaptiveButton(action: {}) {
+
+                UniButton(action: {}) {
                     Text("GET")
                         .font(.caption)
                         .fontWeight(.bold)

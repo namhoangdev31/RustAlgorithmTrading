@@ -1,19 +1,18 @@
+import ExploreSwiftUI
 import SwiftUI
-import AdaptiveSwiftUi
-
 
 struct SettingsGridView: View {
     @EnvironmentObject var navigation: NavigationViewModel
     @State private var showLogoutAlert = false
-    
+
     let columns = [
         GridItem(.flexible(), spacing: 16),
-        GridItem(.flexible(), spacing: 16)
+        GridItem(.flexible(), spacing: 16),
     ]
-    
+
     var body: some View {
         LazyVGrid(columns: columns, spacing: 16) {
-            AdaptiveButton(action: {
+            UniButton(action: {
                 navigation.navigate(to: .myReviews)
             }) {
                 SettingsCard(
@@ -23,9 +22,9 @@ struct SettingsGridView: View {
                     iconColor: .orange
                 )
             }
-            .adaptiveButtonStyle(.plain)
+            .uniButtonStyle(.plain)
 
-            AdaptiveButton(action: {
+            UniButton(action: {
                 navigation.navigate(to: .notificationPreferences)
             }) {
                 SettingsCard(
@@ -35,9 +34,9 @@ struct SettingsGridView: View {
                     iconColor: .red
                 )
             }
-            .adaptiveButtonStyle(.plain)
+            .uniButtonStyle(.plain)
 
-            AdaptiveButton(action: {
+            UniButton(action: {
                 navigation.navigate(to: .activity)
             }) {
                 SettingsCard(
@@ -47,9 +46,9 @@ struct SettingsGridView: View {
                     iconColor: .orange
                 )
             }
-            .adaptiveButtonStyle(.plain)
+            .uniButtonStyle(.plain)
 
-            AdaptiveButton(action: {
+            UniButton(action: {
                 // Placeholder for security
             }) {
                 SettingsCard(
@@ -59,9 +58,9 @@ struct SettingsGridView: View {
                     iconColor: .blue
                 )
             }
-            .adaptiveButtonStyle(.plain)
-            
-            AdaptiveButton(action: {
+            .uniButtonStyle(.plain)
+
+            UniButton(action: {
                 navigation.navigate(to: .helpSupport)
             }) {
                 SettingsCard(
@@ -71,9 +70,9 @@ struct SettingsGridView: View {
                     iconColor: .gray
                 )
             }
-            .adaptiveButtonStyle(.plain)
-            
-            AdaptiveButton(action: {
+            .uniButtonStyle(.plain)
+
+            UniButton(action: {
                 showLogoutAlert = true
             }) {
                 SettingsCard(
@@ -84,11 +83,11 @@ struct SettingsGridView: View {
                     isDestructive: true
                 )
             }
-            .adaptiveButtonStyle(.plain)
+            .uniButtonStyle(.plain)
         }
         .padding(.horizontal)
         .alert("Log Out", isPresented: $showLogoutAlert) {
-            Button("Cancel", role: .cancel) { }
+            Button("Cancel", role: .cancel) {}
             Button("Log Out", role: .destructive) {
                 // Reset login state
                 UserDefaults.standard.set(false, forKey: "isLoggedIn")
@@ -106,32 +105,33 @@ struct SettingsCard: View {
     let icon: String
     let iconColor: Color
     var isDestructive: Bool = false
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Image(systemName: icon)
                 .font(.title3)
-                .adaptiveForegroundStyle(iconColor)
+                .uniForegroundStyle(iconColor)
                 .padding(10)
                 .background(iconColor.opacity(0.1))
                 .clipShape(Circle())
-            
+
             Spacer()
-            
+
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.subheadline)
                     .fontWeight(.bold)
-                    .adaptiveForegroundStyle(isDestructive ? .red : .primary)
-                
+                    .uniForegroundStyle(isDestructive ? .red : .primary)
+
                 Text(subtitle)
                     .font(.caption)
-                    .adaptiveForegroundStyle(isDestructive ? .red : .secondary, opacity: isDestructive ? 0.6 : 1.0)
+                    .uniForegroundStyle(
+                        isDestructive ? .red : .secondary, opacity: isDestructive ? 0.6 : 1.0)
             }
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
         .frame(height: 120)
-        .adaptiveGlass(cornerRadius: 20)
+        .uniGlass(cornerRadius: 20)
     }
 }

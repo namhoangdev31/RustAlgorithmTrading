@@ -1,5 +1,5 @@
+import ExploreSwiftUI
 import SwiftUI
-import AdaptiveSwiftUi
 
 struct MiniAppStickyFooterView: View {
     let isDownloaded: Bool
@@ -21,38 +21,38 @@ struct MiniAppStickyFooterView: View {
                     .fontWeight(.semibold)
                 Text("Productivity")
                     .font(.caption)
-                    .adaptiveForegroundStyle(.secondary)
+                    .uniForegroundStyle(.secondary)
             }
 
             Spacer()
 
             if isDownloaded {
-                AdaptiveButton(action: onOpen) {
+                UniButton(action: onOpen) {
                     Text("OPEN")
                         .font(.system(size: 14, weight: .bold))
-                        .adaptiveForegroundStyle(.white)
+                        .uniForegroundStyle(.white)
                         .padding(.horizontal, 20)
                         .padding(.vertical, 8)
                         .background(Color.blue)
                         .cornerRadius(20)
                 }
-                .adaptiveButtonStyle(.plain)
+                .uniButtonStyle(.plain)
             } else {
-                AdaptiveButton(action: onDownload) {
+                UniButton(action: onDownload) {
                     Text("GET")
                         .font(.system(size: 14, weight: .bold))
-                        .adaptiveForegroundStyle(.white)
+                        .uniForegroundStyle(.white)
                         .padding(.horizontal, 20)
                         .padding(.vertical, 8)
                         .background(Color.blue)
                         .cornerRadius(20)
                 }
-                .adaptiveButtonStyle(.plain)
+                .uniButtonStyle(.plain)
             }
         }
         .padding(16)
         .background(.clear)
-        .adaptiveGlass(cornerRadius: 16)
+        .uniGlass(cornerRadius: 16)
         .padding(.horizontal)
     }
 }

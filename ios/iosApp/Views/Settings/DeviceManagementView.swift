@@ -1,4 +1,4 @@
-import AdaptiveSwiftUi
+import ExploreSwiftUI
 import SwiftUI
 
 struct DeviceManagementView: View {
@@ -19,7 +19,7 @@ struct DeviceManagementView: View {
     ]
 
     var body: some View {
-        AdaptiveList {
+        UniList {
             Section(header: Text("Current Device")) {
                 ForEach(devices.filter { $0.isCurrent }) { device in
                     DeviceRow(device: device)
@@ -33,13 +33,13 @@ struct DeviceManagementView: View {
             }
 
             Section {
-                AdaptiveButton(action: {
+                UniButton(action: {
                     // Sign out all action
                 }) {
                     Text("Sign Out All Other Devices")
-                        .adaptiveForegroundStyle(.red)
+                        .uniForegroundStyle(.red)
                 }
-                .adaptiveButtonStyle(.plain)
+                .uniButtonStyle(.plain)
             } footer: {
                 Text("Signing out will remove access to your account on those devices.")
             }
@@ -66,7 +66,7 @@ struct DeviceRow: View {
         HStack(spacing: 12) {
             Image(systemName: iconName)
                 .font(.title2)
-                .adaptiveForegroundStyle(.blue)
+                .uniForegroundStyle(.blue)
                 .frame(width: 32)
 
             VStack(alignment: .leading, spacing: 4) {
@@ -76,7 +76,7 @@ struct DeviceRow: View {
 
                 Text(device.lastActive)
                     .font(.caption)
-                    .adaptiveForegroundStyle(device.isCurrent ? .green : .secondary)
+                    .uniForegroundStyle(device.isCurrent ? .green : .secondary)
             }
 
             Spacer()

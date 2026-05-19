@@ -1,4 +1,4 @@
-import AdaptiveSwiftUi
+import ExploreSwiftUI
 import SwiftUI
 
 struct RecommendedApp: Identifiable {
@@ -24,10 +24,10 @@ struct RecommendedForYouView: View {
                     .font(.headline)
                     .fontWeight(.bold)
                 Spacer()
-                AdaptiveButton("View all") {}
+                UniButton("View all") {}
                     .font(.subheadline)
-                    .adaptiveForegroundStyle(.blue)
-                    .adaptiveButtonStyle(.plain)
+                    .uniForegroundStyle(.blue)
+                    .uniButtonStyle(.plain)
             }
             .padding(.horizontal)
 
@@ -68,7 +68,7 @@ struct AppRecommendationCard: View {
                             .frame(width: 40, height: 40)
                             .overlay(
                                 Image(systemName: "fork.knife")
-                                    .adaptiveForegroundStyle(app.iconColor)
+                                    .uniForegroundStyle(app.iconColor)
                             )
 
                         VStack(alignment: .leading, spacing: 4) {
@@ -77,7 +77,7 @@ struct AppRecommendationCard: View {
                                 .fontWeight(.bold)
                             Text(app.subtitle)
                                 .font(.caption)
-                                .adaptiveForegroundStyle(.secondary)
+                                .uniForegroundStyle(.secondary)
                         }
 
                         Spacer()
@@ -87,7 +87,7 @@ struct AppRecommendationCard: View {
                         HStack(spacing: 2) {
                             Image(systemName: "star.fill")
                                 .font(.caption2)
-                                .adaptiveForegroundStyle(.orange)
+                                .uniForegroundStyle(.orange)
                             Text(String(format: "%.1f", app.rating))
                                 .font(.caption)
                                 .fontWeight(.semibold)
@@ -95,22 +95,22 @@ struct AppRecommendationCard: View {
 
                         Spacer()
 
-                        AdaptiveButton(action: {}) {
+                        UniButton(action: {}) {
                             Text("GET")
                                 .font(.caption)
                                 .fontWeight(.bold)
-                                .adaptiveForegroundStyle(.white)
+                                .uniForegroundStyle(.white)
                                 .padding(.horizontal, 20)
                                 .padding(.vertical, 6)
                                 .background(Color.blue)
                                 .clipShape(Capsule())
                         }
-                        .adaptiveButtonStyle(.plain)
+                        .uniButtonStyle(.plain)
                     }
                 }
                 .padding(12)
             )
             .frame(width: 250, height: 300)
-            .adaptiveGlass(cornerRadius: 20)
+            .uniGlass(cornerRadius: 20)
     }
 }

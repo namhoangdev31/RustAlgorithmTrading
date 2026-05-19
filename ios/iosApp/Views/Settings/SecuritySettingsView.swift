@@ -1,4 +1,4 @@
-import AdaptiveSwiftUi
+import ExploreSwiftUI
 import SwiftUI
 
 struct SecuritySettingsView: View {
@@ -7,7 +7,7 @@ struct SecuritySettingsView: View {
     @State private var biometricsEnabled = true
 
     var body: some View {
-        AdaptiveList {
+        UniList {
             Section(header: Text("Login Security")) {
                 NavigationLink(destination: Text("Change Password View")) {
                     Text("Change Password")
@@ -26,27 +26,27 @@ struct SecuritySettingsView: View {
                 }) {
                     HStack {
                         Text("Recent Login Activity")
-                            .adaptiveForegroundStyle(.primary)
+                            .uniForegroundStyle(.primary)
                         Spacer()
                         Text("Safe")
-                            .adaptiveForegroundStyle(.green)
+                            .uniForegroundStyle(.green)
                             .font(.caption)
                         Image(systemName: "chevron.right")
                             .font(.caption)
-                            .adaptiveForegroundStyle(.secondary)
+                            .uniForegroundStyle(.secondary)
                     }
                 }
-                .adaptiveButtonStyle(.plain)
+                .uniButtonStyle(.plain)
             }
 
             Section(header: Text("Data Privacy")) {
-                AdaptiveButton(action: {
+                UniButton(action: {
                     // Download data action
                 }) {
                     Text("Download My Data")
-                        .adaptiveForegroundStyle(.blue)
+                        .uniForegroundStyle(.blue)
                 }
-                .adaptiveButtonStyle(.plain)
+                .uniButtonStyle(.plain)
             }
         }
         .navigationTitle("Security")

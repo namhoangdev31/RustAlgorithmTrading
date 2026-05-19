@@ -1,4 +1,4 @@
-import AdaptiveSwiftUi
+import ExploreSwiftUI
 import SwiftUI
 
 struct SearchResultItem: Identifiable {
@@ -44,7 +44,7 @@ struct SearchResultsView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Results for \"\(query)\"")
                 .font(.headline)
-                .adaptiveForegroundStyle(.secondary)
+                .uniForegroundStyle(.secondary)
                 .padding(.horizontal)
                 .padding(.top, 8)
 
@@ -57,23 +57,23 @@ struct SearchResultsView: View {
                                 .frame(width: 48, height: 48)
                                 .overlay(
                                     Image(systemName: item.iconName)
-                                        .adaptiveForegroundStyle(.white)
+                                        .uniForegroundStyle(.white)
                                         .font(.title3)
                                 )
 
                             Spacer()
 
-                            AdaptiveButton(action: {}) {
+                            UniButton(action: {}) {
                                 Text("GET")
                                     .font(.caption)
                                     .fontWeight(.bold)
-                                    .adaptiveForegroundStyle(.blue)
+                                    .uniForegroundStyle(.blue)
                                     .padding(.horizontal, 12)
                                     .padding(.vertical, 6)
                                     .background(Color(.systemGray6))
                                     .clipShape(Capsule())
                             }
-                            .adaptiveButtonStyle(.plain)
+                            .uniButtonStyle(.plain)
                         }
 
                         VStack(alignment: .leading, spacing: 4) {
@@ -83,25 +83,25 @@ struct SearchResultsView: View {
 
                             Text(item.category)
                                 .font(.caption)
-                                .adaptiveForegroundStyle(.secondary)
+                                .uniForegroundStyle(.secondary)
 
                             HStack(spacing: 4) {
                                 ForEach(0..<5) { index in
                                     Image(systemName: "star.fill")
                                         .font(.caption2)
-                                        .adaptiveForegroundStyle(
+                                        .uniForegroundStyle(
                                             Double(index) < item.rating ? .orange : .secondary,
                                             opacity: Double(index) < item.rating ? 1.0 : 0.3)
                                 }
 
                                 Text(String(format: "%.1f", item.rating))
                                     .font(.caption2)
-                                    .adaptiveForegroundStyle(.secondary)
+                                    .uniForegroundStyle(.secondary)
                             }
                         }
                     }
                     .padding()
-                    .adaptiveGlass(cornerRadius: 16)
+                    .uniGlass(cornerRadius: 16)
                 }
             }
             .padding(.horizontal)

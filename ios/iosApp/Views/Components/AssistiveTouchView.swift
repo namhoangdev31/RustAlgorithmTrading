@@ -1,4 +1,4 @@
-import AdaptiveSwiftUi
+import ExploreSwiftUI
 import SwiftUI
 
 struct AssistiveTouchView: View {
@@ -19,7 +19,7 @@ struct AssistiveTouchView: View {
                         }
 
                     VStack(spacing: 20) {
-                        AdaptiveButton(action: {
+                        UniButton(action: {
                             print("Menu Item 1 tapped")
                             withAnimation {
                                 isExpanded = false
@@ -29,10 +29,10 @@ struct AssistiveTouchView: View {
                                 .font(.title)
                                 .foregroundColor(.primary)
                                 .frame(width: 50, height: 50)
-                                .adaptiveGlass(cornerRadius: 25)
+                                .uniGlass(cornerRadius: 25)
                         }
 
-                        AdaptiveButton(action: {
+                        UniButton(action: {
                             print("Menu Item 2 tapped")
                             withAnimation {
                                 isExpanded = false
@@ -42,10 +42,10 @@ struct AssistiveTouchView: View {
                                 .font(.title)
                                 .foregroundColor(.primary)
                                 .frame(width: 50, height: 50)
-                                .adaptiveGlass(cornerRadius: 25)
+                                .uniGlass(cornerRadius: 25)
                         }
 
-                        AdaptiveButton(action: {
+                        UniButton(action: {
                             print("Close tapped")
                             withAnimation {
                                 isExpanded = false
@@ -55,18 +55,18 @@ struct AssistiveTouchView: View {
                                 .font(.title)
                                 .foregroundColor(.primary)
                                 .frame(width: 50, height: 50)
-                                .adaptiveGlass(cornerRadius: 25)
+                                .uniGlass(cornerRadius: 25)
                         }
                     }
                     .padding()
-                    .adaptiveGlass(cornerRadius: 16)
+                    .uniGlass(cornerRadius: 16)
                     .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
                     .transition(.scale)
                     .zIndex(0)
                 }
 
                 if !isExpanded {
-                    AdaptiveButton(action: {
+                    UniButton(action: {
                         withAnimation {
                             isExpanded.toggle()
                         }
@@ -76,7 +76,7 @@ struct AssistiveTouchView: View {
                             .foregroundColor(.primary)
                             .frame(width: 60, height: 60)
                     }
-                    .adaptiveGlass(cornerRadius: 100)
+                    .uniGlass(cornerRadius: 100)
                     .position(
                         dragPosition
                             ?? CGPoint(x: geometry.size.width - 50, y: geometry.size.height - 150)

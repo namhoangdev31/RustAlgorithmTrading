@@ -1,5 +1,5 @@
+import ExploreSwiftUI
 import SwiftUI
-import AdaptiveSwiftUi
 
 // import Shared — replaced by native Swift Shared module
 
@@ -14,32 +14,40 @@ struct WishlistItem: Identifiable {
 
 struct WishlistView: View {
     @EnvironmentObject var navigation: NavigationViewModel
-    
+
     // Mock Data
     @State private var wishlistItems: [WishlistItem] = [
-        WishlistItem(name: "Zen Space", category: "Health", iconName: "heart.fill", iconColor: .pink, rating: 4.9),
-        WishlistItem(name: "Pixel Art", category: "Design", iconName: "paintbrush.fill", iconColor: .purple, rating: 4.7),
-        WishlistItem(name: "Travel Mate", category: "Travel", iconName: "airplane", iconColor: .cyan, rating: 4.4),
-        WishlistItem(name: "CryptoWatch", category: "Finance", iconName: "bitcoinsign.circle.fill", iconColor: .orange, rating: 4.3)
+        WishlistItem(
+            name: "Zen Space", category: "Health", iconName: "heart.fill", iconColor: .pink,
+            rating: 4.9),
+        WishlistItem(
+            name: "Pixel Art", category: "Design", iconName: "paintbrush.fill", iconColor: .purple,
+            rating: 4.7),
+        WishlistItem(
+            name: "Travel Mate", category: "Travel", iconName: "airplane", iconColor: .cyan,
+            rating: 4.4),
+        WishlistItem(
+            name: "CryptoWatch", category: "Finance", iconName: "bitcoinsign.circle.fill",
+            iconColor: .orange, rating: 4.3),
     ]
-    
+
     let columns = [
         GridItem(.flexible()),
-        GridItem(.flexible())
+        GridItem(.flexible()),
     ]
-    
+
     var body: some View {
-        NavigationView { // Keep NavigationView for title if needed, or remove if parent handles it.
+        NavigationView {  // Keep NavigationView for title if needed, or remove if parent handles it.
             // MainTabView items often have their own NavigationStack or View.
             // The placeholder had NavigationView.
-            AdaptiveScrollView {
+            UniScrollView {
                 if wishlistItems.isEmpty {
-                    AdaptiveContentUnavailableView(
+                    UniContentUnavailableView(
                         "No Saved Apps",
                         systemImage: "heart.slash",
                         description: "Apps you add to your wishlist will appear here."
                     ) {
-                        AdaptiveButton(action: {
+                        UniButton(action: {
                             // Navigate to discovery?
                         }) {
                             Text("Explore Apps")
@@ -66,11 +74,13 @@ struct WishlistView: View {
                                                 .foregroundColor(.white)
                                                 .font(.title3)
                                         )
-                                    
+
                                     Spacer()
-                                    
-                                    AdaptiveButton(action: {
-                                        if let index = wishlistItems.firstIndex(where: { $0.id == item.id }) {
+
+                                    UniButton(action: {
+                                        if let index = wishlistItems.firstIndex(where: {
+                                            $0.id == item.id
+                                        }) {
                                             wishlistItems.remove(at: index)
                                         }
                                     }) {
@@ -81,7 +91,7 @@ struct WishlistView: View {
                                             .clipShape(Circle())
                                     }
                                 }
-                                
+
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text(item.name)
                                         .font(.headline)
@@ -89,7 +99,7 @@ struct WishlistView: View {
                                     Text(item.category)
                                         .font(.caption)
                                         .foregroundColor(.secondary)
-                                    
+
                                     HStack(spacing: 4) {
                                         Image(systemName: "star.fill")
                                             .font(.caption2)
@@ -99,8 +109,8 @@ struct WishlistView: View {
                                             .foregroundColor(.gray)
                                     }
                                 }
-                                
-                                AdaptiveButton(action: {
+
+                                UniButton(action: {
                                     // Navigate to details
                                     navigation.navigate(to: .detail(itemId: item.id.uuidString))
                                 }) {

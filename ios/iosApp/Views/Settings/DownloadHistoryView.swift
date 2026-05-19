@@ -1,4 +1,4 @@
-import AdaptiveSwiftUi
+import ExploreSwiftUI
 import SwiftUI
 
 struct DownloadHistoryItem: Identifiable {
@@ -33,7 +33,7 @@ struct DownloadHistoryView: View {
     ]
 
     var body: some View {
-        AdaptiveList {
+        UniList {
             ForEach(historyItems) { item in
                 HStack(spacing: 16) {
                     RoundedRectangle(cornerRadius: 10)
@@ -41,7 +41,7 @@ struct DownloadHistoryView: View {
                         .frame(width: 48, height: 48)
                         .overlay(
                             Image(systemName: item.iconName)
-                                .adaptiveForegroundStyle(.white)
+                                .uniForegroundStyle(.white)
                                 .font(.title3)
                         )
 
@@ -50,31 +50,31 @@ struct DownloadHistoryView: View {
                             .font(.headline)
                         Text("Downloaded on \(item.date)")
                             .font(.caption)
-                            .adaptiveForegroundStyle(.secondary)
+                            .uniForegroundStyle(.secondary)
                     }
 
                     Spacer()
 
                     if item.isInstalled {
-                        AdaptiveButton("OPEN") {
+                        UniButton("OPEN") {
                             // Open App Logic
                         }
                         .font(.caption)
-                        .adaptiveForegroundStyle(.blue)
+                        .uniForegroundStyle(.blue)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
                         .background(Color(.systemGray6))
                         .clipShape(Capsule())
-                        .adaptiveButtonStyle(.plain)
+                        .uniButtonStyle(.plain)
                     } else {
-                        AdaptiveButton(action: {
+                        UniButton(action: {
                             // Re-download Logic
                         }) {
                             Image(systemName: "icloud.and.arrow.down")
                                 .font(.title2)
-                                .adaptiveForegroundStyle(.blue)
+                                .uniForegroundStyle(.blue)
                         }
-                        .adaptiveButtonStyle(.plain)
+                        .uniButtonStyle(.plain)
                     }
                 }
                 .padding(.vertical, 4)

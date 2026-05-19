@@ -1,5 +1,5 @@
+import ExploreSwiftUI
 import SwiftUI
-import AdaptiveSwiftUi
 
 struct ActivityHeaderView: View {
     var body: some View {
@@ -9,35 +9,35 @@ struct ActivityHeaderView: View {
                     .font(.caption)
                     .fontWeight(.semibold)
                     .foregroundColor(.gray)
-                
+
                 Text("Activity")
                     .font(.largeTitle)
                     .fontWeight(.bold)
             }
-            
+
             Spacer()
-            
+
             // Read All Button
-            AdaptiveButton(action: {
+            UniButton(action: {
                 // Action to mark all as read
             }) {
                 Image(systemName: "checkmark.circle.fill")
                     .font(.system(size: 28))
-                    .adaptiveForegroundStyle(Color(.systemGray5))
+                    .uniForegroundStyle(Color(.systemGray5))
                     .overlay(
                         Image(systemName: "checkmark")
                             .font(.system(size: 10, weight: .bold))
-                            .adaptiveForegroundStyle(.blue)
+                            .uniForegroundStyle(.blue)
                     )
             }
-            
+
             // Profile Icon (optional, if needed to match Home, but requirements didn't explicitly ask for it here, keeping it clean based on "Read All" request)
-             Image(systemName: "person.crop.circle.fill") // Placeholder
-                 .resizable()
-                 .frame(width: 30, height: 30)
-                 .foregroundColor(.orange.opacity(0.8))
-                 .background(Color(.systemGray6))
-                 .clipShape(Circle())
+            Image(systemName: "person.crop.circle.fill")  // Placeholder
+                .resizable()
+                .frame(width: 30, height: 30)
+                .foregroundColor(.orange.opacity(0.8))
+                .background(Color(.systemGray6))
+                .clipShape(Circle())
         }
         .padding(.horizontal)
         .padding(.bottom, 8)

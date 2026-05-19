@@ -1,14 +1,13 @@
+import ExploreSwiftUI
 import SwiftUI
-import AdaptiveSwiftUi
-
 
 struct EmptyStateView: View {
-    let icon: String // SF Symbol name
+    let icon: String  // SF Symbol name
     let title: String
     let message: String
     let buttonTitle: String?
     let action: (() -> Void)?
-    
+
     init(
         icon: String = "magnifyingglass",
         title: String,
@@ -22,11 +21,11 @@ struct EmptyStateView: View {
         self.buttonTitle = buttonTitle
         self.action = action
     }
-    
+
     var body: some View {
-        AdaptiveContentUnavailableView(title, systemImage: icon, description: message) {
+        UniContentUnavailableView(title, systemImage: icon, description: message) {
             if let buttonTitle = buttonTitle, let action = action {
-                AdaptiveButton(action: action) {
+                UniButton(action: action) {
                     Text(buttonTitle)
                         .font(.headline)
                         .foregroundColor(.white)

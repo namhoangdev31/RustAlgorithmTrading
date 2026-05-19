@@ -1,30 +1,45 @@
+import ExploreSwiftUI
 import SwiftUI
-import AdaptiveSwiftUi
-
 
 struct CollectionDetailView: View {
     let title: String
     let collectionId: String
-    
+
     // Mock Data - In a real app, you would fetch this based on collectionId
     let apps: [SearchResultItem] = [
-        SearchResultItem(name: "Crossfire", category: "Action", iconName: "flame.fill", iconColor: .red, rating: 4.8),
-        SearchResultItem(name: "Task Master", category: "Productivity", iconName: "checkmark.circle.fill", iconColor: .blue, rating: 4.5),
-        SearchResultItem(name: "EcoLife", category: "Lifestyle", iconName: "leaf.fill", iconColor: .green, rating: 4.2),
-        SearchResultItem(name: "Pixel Art", category: "Design", iconName: "paintbrush.fill", iconColor: .purple, rating: 4.7),
-        SearchResultItem(name: "FitPulse", category: "Health", iconName: "heart.fill", iconColor: .pink, rating: 4.6),
-        SearchResultItem(name: "CryptoWatch", category: "Finance", iconName: "bitcoinsign.circle.fill", iconColor: .orange, rating: 4.3),
-        SearchResultItem(name: "MindfulMoments", category: "Health", iconName: "brain.head.profile", iconColor: .teal, rating: 4.9),
-        SearchResultItem(name: "CodeRunner", category: "Developer", iconName: "terminal.fill", iconColor: .gray, rating: 4.4)
+        SearchResultItem(
+            name: "Crossfire", category: "Action", iconName: "flame.fill", iconColor: .red,
+            rating: 4.8),
+        SearchResultItem(
+            name: "Task Master", category: "Productivity", iconName: "checkmark.circle.fill",
+            iconColor: .blue, rating: 4.5),
+        SearchResultItem(
+            name: "EcoLife", category: "Lifestyle", iconName: "leaf.fill", iconColor: .green,
+            rating: 4.2),
+        SearchResultItem(
+            name: "Pixel Art", category: "Design", iconName: "paintbrush.fill", iconColor: .purple,
+            rating: 4.7),
+        SearchResultItem(
+            name: "FitPulse", category: "Health", iconName: "heart.fill", iconColor: .pink,
+            rating: 4.6),
+        SearchResultItem(
+            name: "CryptoWatch", category: "Finance", iconName: "bitcoinsign.circle.fill",
+            iconColor: .orange, rating: 4.3),
+        SearchResultItem(
+            name: "MindfulMoments", category: "Health", iconName: "brain.head.profile",
+            iconColor: .teal, rating: 4.9),
+        SearchResultItem(
+            name: "CodeRunner", category: "Developer", iconName: "terminal.fill", iconColor: .gray,
+            rating: 4.4),
     ]
-    
+
     let columns = [
         GridItem(.flexible()),
-        GridItem(.flexible())
+        GridItem(.flexible()),
     ]
-    
+
     var body: some View {
-        AdaptiveScrollView {
+        UniScrollView {
             LazyVGrid(columns: columns, spacing: 16) {
                 ForEach(apps) { item in
                     VStack(alignment: .leading, spacing: 12) {
@@ -37,10 +52,10 @@ struct CollectionDetailView: View {
                                         .foregroundColor(.white)
                                         .font(.title3)
                                 )
-                            
+
                             Spacer()
-                            
-                            AdaptiveButton(action: {}) {
+
+                            UniButton(action: {}) {
                                 Text("GET")
                                     .font(.caption)
                                     .fontWeight(.bold)
@@ -50,29 +65,31 @@ struct CollectionDetailView: View {
                                     .background(Color(.systemGray6))
                                     .clipShape(Capsule())
                             }
-                            .adaptiveButtonStyle(.plain)
+                            .uniButtonStyle(.plain)
                         }
-                        
+
                         VStack(alignment: .leading, spacing: 4) {
                             Text(item.name)
                                 .font(.system(size: 16, weight: .semibold))
-                                .adaptiveForegroundStyle(.primary)
-                            
+                                .uniForegroundStyle(.primary)
+
                             Text(item.category)
                                 .font(.caption)
-                                .adaptiveForegroundStyle(.secondary)
-                            
+                                .uniForegroundStyle(.secondary)
+
                             HStack(spacing: 4) {
                                 ForEach(0..<5) { index in
                                     Image(systemName: "star.fill")
                                         .font(.caption2)
-                                        .foregroundColor(Double(index) < item.rating ? .orange : .gray.opacity(0.3))
+                                        .foregroundColor(
+                                            Double(index) < item.rating
+                                                ? .orange : .gray.opacity(0.3))
                                 }
                             }
                         }
                     }
                     .padding()
-                    .adaptiveGlass(cornerRadius: 16)
+                    .uniGlass(cornerRadius: 16)
                     .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
                 }
             }

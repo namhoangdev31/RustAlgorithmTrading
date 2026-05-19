@@ -1,11 +1,10 @@
+import ExploreSwiftUI
 import SwiftUI
-import AdaptiveSwiftUi
-
 
 struct EditProfileView: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var navigation: NavigationViewModel
-    
+
     @State private var name: String = "John Doe"
     @State private var bio: String = "Digital enthusiast and app connoisseur."
     @State private var email: String = "john.doe@example.com"
@@ -20,14 +19,14 @@ struct EditProfileView: View {
                         Image(systemName: "person.crop.circle.fill")
                             .resizable()
                             .frame(width: 100, height: 100)
-                            .adaptiveForegroundStyle(.secondary)
+                            .uniForegroundStyle(.secondary)
                             .background(Color(.systemGray6))
                             .clipShape(Circle())
-                        
-                        AdaptiveButton("Change Photo") {
+
+                        UniButton("Change Photo") {
                             // Mock photo picker
                         }
-                        .adaptiveButtonStyle(.plain)
+                        .uniButtonStyle(.plain)
                         .font(.footnote)
                         .padding(.top, 4)
                     }
@@ -35,45 +34,45 @@ struct EditProfileView: View {
                 }
                 .listRowBackground(Color.clear)
             }
-            
+
             Section(header: Text("Public Profile")) {
                 TextField("Name", text: $name)
-                
+
                 VStack(alignment: .leading) {
                     Text("Bio")
                         .font(.caption)
-                        .adaptiveForegroundStyle(.secondary)
+                        .uniForegroundStyle(.secondary)
                     TextEditor(text: $bio)
                         .frame(minHeight: 80)
                 }
             }
-            
+
             Section(header: Text("Private Information")) {
                 TextField("Email", text: $email)
                     .disabled(true)
-                    .adaptiveForegroundStyle(.secondary)
+                    .uniForegroundStyle(.secondary)
             }
         }
         .navigationTitle("Edit Profile")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
-                AdaptiveButton("Cancel") {
+                UniButton("Cancel") {
                     dismiss()
                 }
-                .adaptiveButtonStyle(.plain)
+                .uniButtonStyle(.plain)
             }
-            
+
             ToolbarItem(placement: .confirmationAction) {
-                AdaptiveButton("Done") {
+                UniButton("Done") {
                     saveProfile()
                 }
-                .adaptiveButtonStyle(.plain)
+                .uniButtonStyle(.plain)
                 .disabled(isLoading || name.isEmpty)
             }
         }
     }
-    
+
     private func saveProfile() {
         isLoading = true
         // Mock save delay

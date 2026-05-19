@@ -1,4 +1,4 @@
-import AdaptiveSwiftUi
+import ExploreSwiftUI
 import SwiftUI
 
 struct ActivityView: View {
@@ -8,13 +8,13 @@ struct ActivityView: View {
     let filters = ["All", "Unread", "Mentions", "System"]
 
     var body: some View {
-        AdaptiveScrollView {
+        UniScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 // Filters
-                AdaptiveScrollView(.horizontal, showsIndicators: false) {
+                UniScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 12) {
                         ForEach(filters, id: \.self) { filter in
-                            AdaptiveButton(action: {
+                            UniButton(action: {
                                 selectedFilter = filter
                             }) {
                                 Text(filter)
@@ -25,7 +25,7 @@ struct ActivityView: View {
                                     .background(
                                         selectedFilter == filter ? Color.blue : Color(.systemGray5)
                                     )
-                                    .adaptiveForegroundStyle(
+                                    .uniForegroundStyle(
                                         selectedFilter == filter ? .white : .primary
                                     )
                                     .cornerRadius(20)
@@ -62,7 +62,7 @@ struct ActivityView: View {
                 // Section: Earlier
                 ActivitySectionHeaderView(title: "Earlier")
 
-                // Alternate System Card Style (Dark) with Adaptive Glass
+                // Alternate System Card Style (Dark) with Uni Glass
                 ZStack {
                     Color.black.opacity(0.9)
 
@@ -70,7 +70,7 @@ struct ActivityView: View {
                         Text("SYSTEM SECURITY")
                             .font(.caption2)
                             .fontWeight(.bold)
-                            .adaptiveForegroundStyle(.white, hierarchy: .secondary)
+                            .uniForegroundStyle(.white, hierarchy: .secondary)
 
                         Text("Review Login Attempt.")
                             .font(.title2)
@@ -81,11 +81,11 @@ struct ActivityView: View {
 
                         Text("We noticed a login from an recognized device in New York, US.")
                             .font(.subheadline)
-                            .adaptiveForegroundStyle(.white, hierarchy: .secondary)
+                            .uniForegroundStyle(.white, hierarchy: .secondary)
 
                         HStack {
                             Spacer()
-                            AdaptiveButton(action: {}) {
+                            UniButton(action: {}) {
                                 Text("REVIEW")
                                     .font(.caption)
                                     .fontWeight(.bold)
@@ -100,7 +100,7 @@ struct ActivityView: View {
                     .padding(24)
                 }
                 .frame(height: 280)
-                .adaptiveGlassEffect()
+                .uniGlassEffect()
                 .cornerRadius(20)
                 .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
                 .padding(.horizontal)
@@ -117,14 +117,14 @@ struct ActivityView: View {
                 Spacer(minLength: 40)
             }
         }
-        .adaptiveNavigationTitle("Activity", subtitle: "")
+        .uniNavigationTitle("Activity", subtitle: "")
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
-                AdaptiveButton("Up", systemImage: "checkmark.circle.fill", action: {})
-                    .adaptiveButtonTint(.blue)
-                AdaptiveToolbarSpacer(.fixed, fallbackLength: 8)  // Hoạt động như một View
-                AdaptiveButton("Down", systemImage: "bell.badge.fill", action: {})
-                    .adaptiveButtonTint(.blue)
+                UniButton("Up", systemImage: "checkmark.circle.fill", action: {})
+                    .uniButtonTint(.blue)
+                UniToolbarSpacer(.fixed, fallbackLength: 8)  // Hoạt động như một View
+                UniButton("Down", systemImage: "bell.badge.fill", action: {})
+                    .uniButtonTint(.blue)
             }
         }
     }

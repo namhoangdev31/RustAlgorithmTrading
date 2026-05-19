@@ -1,4 +1,4 @@
-import AdaptiveSwiftUi
+import ExploreSwiftUI
 import SwiftUI
 
 struct LegalView: View {
@@ -56,7 +56,7 @@ struct LegalView: View {
     }
 
     var body: some View {
-        AdaptiveScrollView {
+        UniScrollView {
             Text(content)
                 .padding()
                 .frame(maxWidth: .infinity, alignment: .leading)

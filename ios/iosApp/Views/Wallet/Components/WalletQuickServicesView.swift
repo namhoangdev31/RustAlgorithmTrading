@@ -1,4 +1,4 @@
-import AdaptiveSwiftUi
+import ExploreSwiftUI
 import SwiftUI
 
 struct WalletQuickServicesView: View {
@@ -8,10 +8,10 @@ struct WalletQuickServicesView: View {
                 Text("Quick Services")
                     .font(.headline)
                 Spacer()
-                AdaptiveButton("See All") {}
+                UniButton("See All") {}
                     .font(.subheadline)
-                    .adaptiveForegroundStyle(.cyan)
-                    .adaptiveButtonStyle(.plain)
+                    .uniForegroundStyle(.cyan)
+                    .uniButtonStyle(.plain)
             }
             .padding(.horizontal)
 
@@ -30,11 +30,11 @@ struct QuickServiceButton: View {
     let title: String
 
     var body: some View {
-        AdaptiveButton(action: {}) {
+        UniButton(action: {}) {
             VStack(spacing: 12) {
                 Image(systemName: icon)
                     .font(.title2)
-                    .adaptiveForegroundStyle(.primary)
+                    .uniForegroundStyle(.primary)
                     .frame(width: 50, height: 50)
                     .background(Color(.systemGray6))
                     .clipShape(Circle())
@@ -42,12 +42,12 @@ struct QuickServiceButton: View {
                 Text(title)
                     .font(.subheadline)
                     .fontWeight(.semibold)
-                    .adaptiveForegroundStyle(.primary)
+                    .uniForegroundStyle(.primary)
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 20)
-            .adaptiveGlass(cornerRadius: 20)
+            .uniGlass(cornerRadius: 20)
         }
-        .adaptiveButtonStyle(.plain)
+        .uniButtonStyle(.plain)
     }
 }

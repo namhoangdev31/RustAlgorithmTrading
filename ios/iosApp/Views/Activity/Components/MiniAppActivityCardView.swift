@@ -1,5 +1,5 @@
+import ExploreSwiftUI
 import SwiftUI
-import AdaptiveSwiftUi
 
 struct MiniAppActivityCardView: View {
     let appName: String
@@ -8,7 +8,7 @@ struct MiniAppActivityCardView: View {
     let iconColor: Color
     let actionTitle: String
     var isUnread: Bool = false
-    
+
     var body: some View {
         HStack(alignment: .top, spacing: 16) {
             // App Icon
@@ -16,43 +16,43 @@ struct MiniAppActivityCardView: View {
                 .fill(iconColor)
                 .frame(width: 48, height: 48)
                 .overlay(
-                    Image(systemName: "cube.box.fill") // Placeholder icon
+                    Image(systemName: "cube.box.fill")  // Placeholder icon
                         .foregroundColor(.white)
                 )
-            
+
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
                     Text(appName)
                         .font(.headline)
                         .foregroundColor(.primary)
-                    
+
                     Text(timeAgo)
                         .font(.caption)
                         .foregroundColor(.gray)
-                    
+
                     Spacer()
-                    
+
                     if isUnread {
                         Circle()
                             .fill(Color.blue)
                             .frame(width: 8, height: 8)
                     }
                 }
-                
+
                 Text(description)
                     .font(.subheadline)
                     .foregroundColor(.gray)
                     .lineLimit(2)
                     .fixedSize(horizontal: false, vertical: true)
             }
-            
+
             Spacer()
-            
-            AdaptiveButton(action: {}) {
+
+            UniButton(action: {}) {
                 Text(actionTitle)
                     .font(.caption)
                     .fontWeight(.bold)
-                    .adaptiveForegroundStyle(.blue)
+                    .uniForegroundStyle(.blue)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
                     .background(Color.blue.opacity(0.1))

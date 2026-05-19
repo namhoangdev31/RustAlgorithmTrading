@@ -1,4 +1,4 @@
-import AdaptiveSwiftUi
+import ExploreSwiftUI
 import SwiftUI
 
 // import Shared — replaced by native Swift Shared module
@@ -7,7 +7,7 @@ struct WalletView: View {
     @EnvironmentObject var navigation: NavigationViewModel
 
     var body: some View {
-        AdaptiveScrollView {
+        UniScrollView {
             VStack(spacing: 24) {
                 // Main Balance Card
                 WalletBalanceCard()

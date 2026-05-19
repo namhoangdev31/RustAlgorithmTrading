@@ -1,4 +1,4 @@
-import AdaptiveSwiftUi
+import ExploreSwiftUI
 import SwiftUI
 
 struct WalletPointsCard: View {
@@ -6,7 +6,7 @@ struct WalletPointsCard: View {
         VStack(alignment: .leading, spacing: 12) {
             Image(systemName: "star.fill")
                 .font(.title2)
-                .adaptiveForegroundStyle(.cyan)
+                .uniForegroundStyle(.cyan)
                 .padding(12)
                 .background(Color.cyan.opacity(0.1))
                 .clipShape(Circle())
@@ -19,18 +19,18 @@ struct WalletPointsCard: View {
 
             Text("Loyalty Points")
                 .font(.subheadline)
-                .adaptiveForegroundStyle(.cyan)
+                .uniForegroundStyle(.cyan)
 
             Spacer()
 
-            AdaptiveProgressView(value: 0.6)
+            UniProgressView(value: 0.6)
                 .scaleEffect(y: 2)
                 .background(Color.gray.opacity(0.1))
                 .clipShape(Capsule())
         }
         .padding(20)
         .frame(maxWidth: .infinity, minHeight: 180, alignment: .leading)
-        .adaptiveGlass(cornerRadius: 24)
+        .uniGlass(cornerRadius: 24)
     }
 
     private func Space(height: CGFloat) -> some View {

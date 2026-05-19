@@ -1,12 +1,12 @@
+import ExploreSwiftUI
 import SwiftUI
-import AdaptiveSwiftUi
 
 struct ProfileView: View {
     @EnvironmentObject var navigation: NavigationViewModel
     @State private var offsetY: CGFloat = 0
 
     var body: some View {
-        AdaptiveScrollView {
+        UniScrollView {
             VStack(spacing: 16) {
                 ProfileHeaderView(offsetY: offsetY) {
                     navigation.navigate(to: .settings)
@@ -16,39 +16,39 @@ struct ProfileView: View {
                     DashboardStatsView()
 
                     VStack(spacing: 16) {
-                    AdaptiveButton(action: {
-                        navigation.navigate(to: .updates)
-                    }) {
+                        UniButton(action: {
+                            navigation.navigate(to: .updates)
+                        }) {
                             HStack {
                                 Image(systemName: "arrow.down.circle.fill")
                                     .font(.title2)
-                                    .adaptiveForegroundStyle(.blue)
+                                    .uniForegroundStyle(.blue)
                                 Text("Available Updates")
                                     .font(.body)
-                                    .adaptiveForegroundStyle(.primary)
+                                    .uniForegroundStyle(.primary)
                                 Spacer()
                                 Text("4")
                                     .font(.caption)
                                     .fontWeight(.bold)
                                     .padding(6)
                                     .background(Color.red)
-                                    .adaptiveForegroundStyle(.white)
+                                    .uniForegroundStyle(.white)
                                     .clipShape(Circle())
                                 Image(systemName: "chevron.right")
                                     .font(.caption)
-                                    .adaptiveForegroundStyle(.secondary)
+                                    .uniForegroundStyle(.secondary)
                             }
                             .padding()
-                            .adaptiveGlass(cornerRadius: 12)
+                            .uniGlass(cornerRadius: 12)
                         }
-                        .adaptiveButtonStyle(.plain)
+                        .uniButtonStyle(.plain)
 
-                        AdaptiveButton(action: {
+                        UniButton(action: {
                             navigation.navigate(to: .favorites)
                         }) {
                             FavoriteMiniAppsView()
                         }
-                        .adaptiveButtonStyle(.plain)
+                        .uniButtonStyle(.plain)
                         SettingsGridView()
                     }
                     .padding(.vertical, 32)
@@ -58,15 +58,15 @@ struct ProfileView: View {
                     Text("BUILD 2.4.1 PREMIUM STABLE")
                         .font(.caption2)
                         .fontWeight(.bold)
-                        .adaptiveForegroundStyle(.secondary, opacity: 0.5)
-                        .adaptiveTracking(2)
+                        .uniForegroundStyle(.secondary, opacity: 0.5)
+                        .uniTracking(2)
                 }
             }
             .padding(.bottom, 20)
             .onCompatScrollOffsetChange { offsetY = $0 }
         }
         .coordinateSpace(name: "scroll")
-        .adaptiveBackgroundExtension()
+        .uniBackgroundExtension()
         .navigationBarHidden(true)
     }
 }

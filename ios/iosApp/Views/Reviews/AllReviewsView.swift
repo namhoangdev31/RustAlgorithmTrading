@@ -1,4 +1,4 @@
-import AdaptiveSwiftUi
+import ExploreSwiftUI
 import SwiftUI
 
 struct ReviewItem: Identifiable {
@@ -45,7 +45,7 @@ struct AllReviewsView: View {
     @State private var sortOption = 0  // 0: Most Recent, 1: Most Helpful, 2: Critical, 3: Positive
 
     var body: some View {
-        AdaptiveScrollView {
+        UniScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 // Header / Summary (Optional, sticking to list for now)
 
@@ -68,28 +68,28 @@ struct AllReviewsView: View {
                                 Spacer()
                                 Text(review.date)
                                     .font(.caption)
-                                    .adaptiveForegroundStyle(.secondary)
+                                    .uniForegroundStyle(.secondary)
                             }
 
                             HStack(spacing: 2) {
                                 ForEach(0..<5) { index in
                                     Image(systemName: index < review.rating ? "star.fill" : "star")
-                                        .adaptiveForegroundStyle(.orange)
+                                        .uniForegroundStyle(.orange)
                                         .font(.caption)
                                 }
                                 Spacer()
                                 Text(review.author)
                                     .font(.caption)
-                                    .adaptiveForegroundStyle(.secondary)
+                                    .uniForegroundStyle(.secondary)
                             }
 
                             Text(review.content)
                                 .font(.body)
-                                .adaptiveForegroundStyle(.primary)
+                                .uniForegroundStyle(.primary)
                                 .fixedSize(horizontal: false, vertical: true)
                         }
                         .padding()
-                        .adaptiveGlass(cornerRadius: 12)
+                        .uniGlass(cornerRadius: 12)
                     }
                 }
                 .padding(.horizontal)

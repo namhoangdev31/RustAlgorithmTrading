@@ -1,4 +1,4 @@
-import AdaptiveSwiftUi
+import ExploreSwiftUI
 import SwiftUI
 
 struct NoInternetView: View {
@@ -8,7 +8,7 @@ struct NoInternetView: View {
         VStack(spacing: 24) {
             Image(systemName: "wifi.slash")
                 .font(.system(size: 64))
-                .adaptiveForegroundStyle(.secondary)
+                .uniForegroundStyle(.secondary)
 
             VStack(spacing: 8) {
                 Text("No Internet Connection")
@@ -17,20 +17,20 @@ struct NoInternetView: View {
 
                 Text("Please check your connection and try again.")
                     .font(.body)
-                    .adaptiveForegroundStyle(.secondary)
+                    .uniForegroundStyle(.secondary)
                     .multilineTextAlignment(.center)
             }
 
-            AdaptiveButton(action: onRetry) {
+            UniButton(action: onRetry) {
                 Text("Try Again")
                     .font(.headline)
-                    .adaptiveForegroundStyle(.white)
+                    .uniForegroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(Color.blue)
                     .cornerRadius(12)
             }
-            .adaptiveButtonStyle(.plain)
+            .uniButtonStyle(.plain)
             .padding(.horizontal, 32)
         }
         .padding()

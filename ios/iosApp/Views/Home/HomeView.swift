@@ -1,30 +1,30 @@
+import ExploreSwiftUI
 import SwiftUI
-import AdaptiveSwiftUi
 
 struct HomeView: View {
     @EnvironmentObject var navigation: NavigationViewModel
     @State private var offsetY: CGFloat = 0
 
     var body: some View {
-        AdaptiveScrollView {
+        UniScrollView {
             VStack(spacing: 16) {
                 HomeHeaderView(offsetY: offsetY) {
                     navigation.navigate(to: .activity)
                 }
 
-                AdaptiveButton(action: {
+                UniButton(action: {
                     navigation.navigate(to: .detail(itemId: "editor_choice"))
                 }) {
                     EditorChoiceView()
                 }
-                .adaptiveButtonStyle(.plain)
+                .uniButtonStyle(.plain)
 
-                AdaptiveButton(action: {
+                UniButton(action: {
                     navigation.navigate(to: .detail(itemId: "apps_we_love"))
                 }) {
                     AppsWeLoveView()
                 }
-                .adaptiveButtonStyle(.plain)
+                .uniButtonStyle(.plain)
 
                 TopCollectionsView()
 
@@ -39,7 +39,7 @@ struct HomeView: View {
             .onCompatScrollOffsetChange { offsetY = $0 }
         }
         .coordinateSpace(name: "scroll")
-        .adaptiveBackgroundExtension()
+        .uniBackgroundExtension()
         .navigationBarHidden(true)
     }
 }

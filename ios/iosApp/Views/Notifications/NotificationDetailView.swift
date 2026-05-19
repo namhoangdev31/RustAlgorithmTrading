@@ -1,38 +1,37 @@
+import ExploreSwiftUI
 import SwiftUI
-import AdaptiveSwiftUi
-
 
 struct NotificationDetailView: View {
     let notification: NotificationInboxView.NotificationItem
-    
+
     var body: some View {
-        AdaptiveScrollView {
+        UniScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 Text(notification.time)
                     .font(.subheadline)
-                    .adaptiveForegroundStyle(.secondary)
-                
+                    .uniForegroundStyle(.secondary)
+
                 Text(notification.title)
                     .font(.title)
                     .fontWeight(.bold)
-                
+
                 Text(notification.message)
                     .font(.body)
                     .lineSpacing(6)
-                
+
                 if notification.type == "update" {
-                    AdaptiveButton(action: {
+                    UniButton(action: {
                         // Update action
                     }) {
                         Text("Update Now")
                             .font(.headline)
-                            .adaptiveForegroundStyle(.white)
+                            .uniForegroundStyle(.white)
                             .frame(maxWidth: .infinity)
                             .padding()
                             .background(Color.blue)
                             .cornerRadius(12)
                     }
-                    .adaptiveButtonStyle(.plain)
+                    .uniButtonStyle(.plain)
                     .padding(.top, 24)
                 }
             }
@@ -45,6 +44,8 @@ struct NotificationDetailView: View {
 
 #Preview {
     NavigationView {
-        NotificationDetailView(notification: NotificationInboxView.NotificationItem(title: "Test", message: "Test Message", time: "Now", isRead: false, type: "update"))
+        NotificationDetailView(
+            notification: NotificationInboxView.NotificationItem(
+                title: "Test", message: "Test Message", time: "Now", isRead: false, type: "update"))
     }
 }

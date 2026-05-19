@@ -1,6 +1,5 @@
+import ExploreSwiftUI
 import SwiftUI
-import AdaptiveSwiftUi
-
 
 struct DiscoveryAppItem: Identifiable {
     let id = UUID()
@@ -21,7 +20,7 @@ struct DiscoveryAppsWeLoveView: View {
         tagColor: .blue.opacity(0.2),
         iconName: "iphone"
     )
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
@@ -29,17 +28,17 @@ struct DiscoveryAppsWeLoveView: View {
                     .font(.title2)
                     .fontWeight(.bold)
                 Spacer()
-                AdaptiveButton(action: {}) {
+                UniButton(action: {}) {
                     Text("See All")
                 }
-                .adaptiveButtonStyle(.plain)
-                .adaptiveForegroundStyle(.blue)
+                .uniButtonStyle(.plain)
+                .uniForegroundStyle(.blue)
             }
             .padding(.horizontal)
-            
-            AdaptiveScrollView(.horizontal, showsIndicators: false) {
+
+            UniScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 16) {
-                    ForEach(0..<3) { _ in // Mocking multiple items for scroll
+                    ForEach(0..<3) { _ in  // Mocking multiple items for scroll
                         VStack(alignment: .leading) {
                             HStack(alignment: .top, spacing: 16) {
                                 RoundedRectangle(cornerRadius: 12)
@@ -48,26 +47,26 @@ struct DiscoveryAppsWeLoveView: View {
                                     .overlay(
                                         Image(systemName: item.iconName)
                                             .font(.largeTitle)
-                                            .adaptiveForegroundStyle(.primary)
+                                            .uniForegroundStyle(.primary)
                                     )
-                                
+
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text(item.name)
                                         .font(.headline)
                                     Text(item.category)
                                         .font(.caption)
-                                        .adaptiveForegroundStyle(.secondary)
-                                    
+                                        .uniForegroundStyle(.secondary)
+
                                     Text(item.description)
                                         .font(.caption)
-                                        .adaptiveForegroundStyle(.secondary)
+                                        .uniForegroundStyle(.secondary)
                                         .lineLimit(2)
                                         .padding(.top, 4)
                                 }
                             }
-                            
+
                             Spacer()
-                            
+
                             HStack {
                                 Text(item.tag)
                                     .font(.caption2)
@@ -77,10 +76,10 @@ struct DiscoveryAppsWeLoveView: View {
                                     .padding(.vertical, 4)
                                     .background(item.tagColor)
                                     .cornerRadius(4)
-                                
+
                                 Spacer()
-                                
-                                AdaptiveButton(action: {}) {
+
+                                UniButton(action: {}) {
                                     Text("GET")
                                         .font(.caption)
                                         .fontWeight(.bold)

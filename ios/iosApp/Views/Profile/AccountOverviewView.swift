@@ -1,12 +1,11 @@
+import ExploreSwiftUI
 import SwiftUI
-import AdaptiveSwiftUi
-
 
 struct AccountOverviewView: View {
     @State private var showingEditProfile = false
-    
+
     var body: some View {
-        AdaptiveList {
+        UniList {
             Section {
                 HStack(spacing: 16) {
                     Circle()
@@ -15,67 +14,67 @@ struct AccountOverviewView: View {
                         .overlay(
                             Image(systemName: "person.fill")
                                 .font(.title)
-                                .adaptiveForegroundStyle(.secondary)
+                                .uniForegroundStyle(.secondary)
                         )
-                    
+
                     VStack(alignment: .leading, spacing: 4) {
                         Text("John Doe")
                             .font(.headline)
                         Text("john.doe@example.com")
                             .font(.subheadline)
-                            .adaptiveForegroundStyle(.secondary)
+                            .uniForegroundStyle(.secondary)
                     }
                 }
                 .padding(.vertical, 8)
-                
-                AdaptiveButton(action: {
+
+                UniButton(action: {
                     showingEditProfile = true
                 }) {
                     Text("Edit Profile")
-                        .adaptiveForegroundStyle(.blue)
+                        .uniForegroundStyle(.blue)
                 }
-                .adaptiveButtonStyle(.plain)
+                .uniButtonStyle(.plain)
             }
-            
+
             Section(header: Text("Account Details")) {
                 HStack {
                     Text("Username")
                     Spacer()
                     Text("johndoe123")
-                        .adaptiveForegroundStyle(.secondary)
+                        .uniForegroundStyle(.secondary)
                 }
-                
+
                 HStack {
                     Text("User ID")
                     Spacer()
                     Text("849302")
-                        .adaptiveForegroundStyle(.secondary)
+                        .uniForegroundStyle(.secondary)
                         .font(.monospacedDigit(.body)())
                 }
-                
+
                 HStack {
                     Text("Joined")
                     Spacer()
                     Text("Feb 2024")
-                        .adaptiveForegroundStyle(.secondary)
+                        .uniForegroundStyle(.secondary)
                 }
             }
-            
+
             Section(header: Text("Subscription")) {
                 HStack {
                     Text("Plan")
                     Spacer()
                     Text("Free")
-                        .adaptiveForegroundStyle(.secondary)
+                        .uniForegroundStyle(.secondary)
                 }
-                
-                AdaptiveButton(action: {
+
+                UniButton(action: {
                     // Upgrade action
                 }) {
                     Text("Upgrade to Pro")
-                        .adaptiveForegroundStyle(.blue)
+                        .uniForegroundStyle(.blue)
                 }
-                .adaptiveButtonStyle(.plain)
+                .uniButtonStyle(.plain)
             }
         }
         .navigationTitle("Account")

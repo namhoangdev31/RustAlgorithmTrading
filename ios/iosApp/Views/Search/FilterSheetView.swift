@@ -1,4 +1,4 @@
-import AdaptiveSwiftUi
+import ExploreSwiftUI
 import SwiftUI
 
 struct FilterSheetView: View {
@@ -45,23 +45,23 @@ struct FilterSheetView: View {
                 }
 
                 Section {
-                    AdaptiveButton("Reset All") {
+                    UniButton("Reset All") {
                         selectedSort = "Relevance"
                         selectedPrice = "Any Price"
                         selectedCategory = "All Categories"
                     }
-                    .adaptiveForegroundStyle(.red)
-                    .adaptiveButtonStyle(.plain)
+                    .uniForegroundStyle(.red)
+                    .uniButtonStyle(.plain)
                 }
             }
             .navigationTitle("Filters")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    AdaptiveButton("Done") {
+                    UniButton("Done") {
                         dismiss()
                     }
-                    .adaptiveButtonStyle(.plain)
+                    .uniButtonStyle(.plain)
 
                 }
             }

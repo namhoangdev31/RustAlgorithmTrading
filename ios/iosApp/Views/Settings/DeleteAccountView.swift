@@ -1,4 +1,4 @@
-import AdaptiveSwiftUi
+import ExploreSwiftUI
 import SwiftUI
 
 struct DeleteAccountView: View {
@@ -9,7 +9,7 @@ struct DeleteAccountView: View {
         VStack(spacing: 24) {
             Image(systemName: "exclamationmark.shield.fill")
                 .font(.system(size: 64))
-                .adaptiveForegroundStyle(.red)
+                .uniForegroundStyle(.red)
                 .padding(.top, 40)
 
             VStack(spacing: 12) {
@@ -20,7 +20,7 @@ struct DeleteAccountView: View {
                 Text("Are you sure you want to delete your account? This action cannot be undone.")
                     .font(.body)
                     .multilineTextAlignment(.center)
-                    .adaptiveForegroundStyle(.secondary)
+                    .uniForegroundStyle(.secondary)
                     .padding(.horizontal)
             }
 
@@ -36,18 +36,18 @@ struct DeleteAccountView: View {
 
             Spacer()
 
-            AdaptiveButton(action: {
+            UniButton(action: {
                 showConfirmation = true
             }) {
                 Text("Delete My Account")
                     .font(.headline)
-                    .adaptiveForegroundStyle(.white)
+                    .uniForegroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(Color.red)
                     .cornerRadius(12)
             }
-            .adaptiveButtonStyle(.plain)
+            .uniButtonStyle(.plain)
             .padding(.horizontal, 32)
             .padding(.bottom, 20)
         }
@@ -79,7 +79,7 @@ struct BulletPoint: View {
 
             Text(text)
                 .font(.subheadline)
-                .adaptiveForegroundStyle(.primary)
+                .uniForegroundStyle(.primary)
         }
     }
 }

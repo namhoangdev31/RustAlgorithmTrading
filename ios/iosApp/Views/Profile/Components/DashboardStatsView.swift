@@ -1,4 +1,4 @@
-import AdaptiveSwiftUi
+import ExploreSwiftUI
 import SwiftUI
 
 struct DashboardStatsView: View {
@@ -8,7 +8,7 @@ struct DashboardStatsView: View {
         VStack(spacing: 16) {
             HStack(spacing: 16) {
                 // Balance Card (Blue)
-                AdaptiveButton(action: {
+                UniButton(action: {
                     navigation.navigate(to: .wallet)
                 }) {
                     VStack(alignment: .leading) {
@@ -36,7 +36,7 @@ struct DashboardStatsView: View {
                             .font(.title2)
                             .fontWeight(.bold)
                     }
-                    .adaptiveForegroundStyle(.white)
+                    .uniForegroundStyle(.white)
                     .padding(20)
                     .frame(maxWidth: .infinity, minHeight: 160)
                     .background(
@@ -48,7 +48,7 @@ struct DashboardStatsView: View {
                     )
                     .cornerRadius(24)
                 }
-                .adaptiveButtonStyle(.plain)
+                .uniButtonStyle(.plain)
 
                 VStack(spacing: 16) {
                     // Loyalty Points Card (Pink)
@@ -69,7 +69,7 @@ struct DashboardStatsView: View {
                             .fontWeight(.bold)
                             .opacity(0.9)
                     }
-                    .adaptiveForegroundStyle(.white)
+                    .uniForegroundStyle(.white)
                     .padding(16)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background(Color(red: 1.0, green: 0.3, blue: 0.5))  // Pink
@@ -92,7 +92,7 @@ struct DashboardStatsView: View {
                             .font(.caption2)
                             .opacity(0.9)
                     }
-                    .adaptiveForegroundStyle(.white)
+                    .uniForegroundStyle(.white)
                     .padding(16)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background(Color(red: 0.0, green: 0.7, blue: 0.5))  // Green

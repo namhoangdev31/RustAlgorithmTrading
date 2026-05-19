@@ -1,4 +1,4 @@
-import AdaptiveSwiftUi
+import ExploreSwiftUI
 import SwiftUI
 
 struct EditorChoiceContentView: View {
@@ -11,7 +11,7 @@ struct EditorChoiceContentView: View {
             )
             .font(.title2)
             .fontWeight(.bold)
-            .adaptiveForegroundStyle(.primary)
+            .uniForegroundStyle(.primary)
 
             // Inline App CTA
             HStack {
@@ -25,15 +25,15 @@ struct EditorChoiceContentView: View {
                 VStack(alignment: .leading) {
                     Text("Crossfire Legends")
                         .font(.headline)
-                        .adaptiveForegroundStyle(.primary)
+                        .uniForegroundStyle(.primary)
                     Text("FPS Legend")
                         .font(.caption)
-                        .adaptiveForegroundStyle(.secondary)
+                        .uniForegroundStyle(.secondary)
                 }
 
                 Spacer()
 
-                AdaptiveButton(action: {}) {
+                UniButton(action: {}) {
                     Text("NHẬN")
                         .font(.subheadline)
                         .fontWeight(.bold)
@@ -45,7 +45,7 @@ struct EditorChoiceContentView: View {
                 }
             }
             .padding()
-            .adaptiveGlass(cornerRadius: 16)
+            .uniGlass(cornerRadius: 16)
 
             Text(
                 "Join the elite ranks of the editorial team as we dive deep into the challenges awaiting you in this legendary arena. Whether you're a seasoned veteran or a newcomer to the genre, the tactical depth here is unmatched."

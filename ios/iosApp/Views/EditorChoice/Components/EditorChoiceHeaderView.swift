@@ -1,27 +1,26 @@
+import ExploreSwiftUI
 import SwiftUI
-import AdaptiveSwiftUi
-
 
 struct EditorChoiceHeaderView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Spacer()
-            
-            Text("ĐƯỢC YÊU THÍCH") // "LOVED"
+
+            Text("ĐƯỢC YÊU THÍCH")  // "LOVED"
                 .font(.caption)
                 .fontWeight(.bold)
-                .adaptiveTracking(1.0)
-                .adaptiveForegroundStyle(.white)
-            
+                .uniTracking(1.0)
+                .uniForegroundStyle(.white)
+
             Text("Step Into the\nArena:\nCrossfire\nLegends")
                 .font(.system(size: 40, weight: .black, design: .rounded))
                 .lineLimit(4)
-                .adaptiveForegroundStyle(.white)
-            
+                .uniForegroundStyle(.white)
+
             Text("Crossfire Legends")
                 .font(.title3)
                 .fontWeight(.semibold)
-                .adaptiveForegroundStyle(.white)
+                .uniForegroundStyle(.white)
                 .padding(.top, 4)
         }
         .padding(.horizontal, 24)
@@ -35,13 +34,14 @@ struct EditorChoiceHeaderView: View {
                     .aspectRatio(contentMode: .fill)
                     .frame(height: 500)
                     .clipped()
-                
+
                 LinearGradient(
-                    gradient: Gradient(colors: [Color.clear, Color.black.opacity(0.8), Color.black]),
+                    gradient: Gradient(colors: [Color.clear, Color.black.opacity(0.8), Color.black]
+                    ),
                     startPoint: .center,
                     endPoint: .bottom
                 )
-                
+
                 LinearGradient(
                     gradient: Gradient(colors: [Color.black.opacity(0.6), Color.clear]),
                     startPoint: .top,
@@ -49,6 +49,6 @@ struct EditorChoiceHeaderView: View {
                 )
             }
         )
-        .clipped() // Ensure background doesn't bleed
+        .clipped()  // Ensure background doesn't bleed
     }
 }

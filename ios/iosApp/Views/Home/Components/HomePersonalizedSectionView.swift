@@ -1,6 +1,5 @@
+import ExploreSwiftUI
 import SwiftUI
-import AdaptiveSwiftUi
-
 
 struct HomePersonalizedSectionView: View {
     let title: String
@@ -13,7 +12,7 @@ struct HomePersonalizedSectionView: View {
         (name: "Zen Focus", icon: "brain.head.profile", color: Color.purple),
         (name: "Daily Planner", icon: "calendar", color: Color.blue),
         (name: "Hydrate", icon: "drop.fill", color: Color.cyan),
-        (name: "Sleep Well", icon: "moon.stars.fill", color: Color.indigo)
+        (name: "Sleep Well", icon: "moon.stars.fill", color: Color.indigo),
     ]
 
     var body: some View {
@@ -26,12 +25,12 @@ struct HomePersonalizedSectionView: View {
 
                     Text(subtitle)
                         .font(.subheadline)
-                        .adaptiveForegroundStyle(.secondary)
+                        .uniForegroundStyle(.secondary)
                 }
 
                 Spacer()
 
-                AdaptiveButton(action: {
+                UniButton(action: {
                     if title == "For You" {
                         navigation.navigate(to: .forYou)
                     } else {
@@ -41,12 +40,12 @@ struct HomePersonalizedSectionView: View {
                 }) {
                     Text("See All")
                 }
-                .adaptiveButtonStyle(.plain)
-                .adaptiveForegroundStyle(.blue)
+                .uniButtonStyle(.plain)
+                .uniForegroundStyle(.blue)
             }
             .padding(.horizontal)
 
-            AdaptiveScrollView(.horizontal, showsIndicators: false) {
+            UniScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 16) {
                     ForEach(0..<4) { index in
                         let app = apps[index]
@@ -58,7 +57,7 @@ struct HomePersonalizedSectionView: View {
                                 .overlay(
                                     Image(systemName: app.icon)
                                         .font(.system(size: 40))
-                                        .adaptiveForegroundStyle(app.color)
+                                        .uniForegroundStyle(app.color)
                                 )
 
                             VStack(alignment: .leading, spacing: 2) {
@@ -68,7 +67,7 @@ struct HomePersonalizedSectionView: View {
 
                                 Text("Lifestyle")
                                     .font(.caption)
-                                    .adaptiveForegroundStyle(.secondary)
+                                    .uniForegroundStyle(.secondary)
                             }
                         }
                         .frame(width: 140)

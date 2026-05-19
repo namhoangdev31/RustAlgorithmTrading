@@ -1,11 +1,11 @@
-import AdaptiveSwiftUi
+import ExploreSwiftUI
 import SwiftUI
 
 struct HelpSupportView: View {
     @Environment(\.dismiss) var dismiss
 
     var body: some View {
-        AdaptiveList {
+        UniList {
             Section(header: Text("Common Issues")) {
                 NavigationLink("Account & Login", destination: Text("Account & Login Help"))
                 NavigationLink("Payments & Refunds", destination: Text("Payments Help"))
@@ -18,10 +18,10 @@ struct HelpSupportView: View {
             }
 
             Section {
-                AdaptiveButton("Report a Problem") {
+                UniButton("Report a Problem") {
                     // Action
                 }
-                .adaptiveButtonStyle(.plain)
+                .uniButtonStyle(.plain)
             }
         }
         .navigationTitle("Help & Support")

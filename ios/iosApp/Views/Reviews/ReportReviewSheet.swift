@@ -1,4 +1,4 @@
-import AdaptiveSwiftUi
+import ExploreSwiftUI
 import SwiftUI
 
 struct ReportReviewSheet: View {
@@ -12,7 +12,7 @@ struct ReportReviewSheet: View {
 
     var body: some View {
         NavigationView {
-            AdaptiveList {
+            UniList {
                 Section(header: Text("Why are you reporting this review?")) {
                     ForEach(reasons, id: \.self) { reason in
                         Button(action: {
@@ -20,11 +20,11 @@ struct ReportReviewSheet: View {
                         }) {
                             HStack {
                                 Text(reason)
-                                    .adaptiveForegroundStyle(.primary)
+                                    .uniForegroundStyle(.primary)
                                 Spacer()
                                 if selectedReason == reason {
                                     Image(systemName: "checkmark")
-                                        .adaptiveForegroundStyle(.blue)
+                                        .uniForegroundStyle(.blue)
                                 }
                             }
                         }
@@ -32,19 +32,19 @@ struct ReportReviewSheet: View {
                 }
 
                 Section {
-                    AdaptiveButton(action: {
+                    UniButton(action: {
                         // Submit logic
                         presentationMode.wrappedValue.dismiss()
                     }) {
                         Text("Submit Report")
                             .fontWeight(.medium)
-                            .adaptiveForegroundStyle(.white)
+                            .uniForegroundStyle(.white)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 8)
                             .background(Color.blue)
                             .cornerRadius(8)
                     }
-                    .adaptiveButtonStyle(.plain)
+                    .uniButtonStyle(.plain)
                     .listRowBackground(Color.clear)
                     .listRowInsets(EdgeInsets())
                 }
@@ -54,10 +54,10 @@ struct ReportReviewSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    AdaptiveButton("Cancel") {
+                    UniButton("Cancel") {
                         presentationMode.wrappedValue.dismiss()
                     }
-                    .adaptiveButtonStyle(.plain)
+                    .uniButtonStyle(.plain)
                 }
             }
         }

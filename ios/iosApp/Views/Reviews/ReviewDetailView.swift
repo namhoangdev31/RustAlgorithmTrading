@@ -1,4 +1,4 @@
-import AdaptiveSwiftUi
+import ExploreSwiftUI
 import SwiftUI
 
 struct ReviewDetailView: View {
@@ -8,7 +8,7 @@ struct ReviewDetailView: View {
     @State private var helpfulCount = 12
 
     var body: some View {
-        AdaptiveScrollView {
+        UniScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 // Header
                 HStack(spacing: 12) {
@@ -21,7 +21,7 @@ struct ReviewDetailView: View {
                             .font(.headline)
                         Text("Feb 24, 2024")
                             .font(.caption)
-                            .adaptiveForegroundStyle(.secondary)
+                            .uniForegroundStyle(.secondary)
                     }
 
                     Spacer()
@@ -29,7 +29,7 @@ struct ReviewDetailView: View {
                     HStack(spacing: 2) {
                         ForEach(0..<5) { index in
                             Image(systemName: index < 4 ? "star.fill" : "star")
-                                .adaptiveForegroundStyle(.orange)
+                                .uniForegroundStyle(.orange)
                                 .font(.caption)
                         }
                     }
@@ -45,17 +45,17 @@ struct ReviewDetailView: View {
                 .font(.body)
                 .lineSpacing(4)
 
-                AdaptiveDivider()
+                UniDivider()
 
                 // Developer Response
-                AdaptiveDivider()
+                UniDivider()
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Developer Response")
                         .font(.headline)
 
                     Text("Feb 25, 2024")
                         .font(.caption)
-                        .adaptiveForegroundStyle(.secondary)
+                        .uniForegroundStyle(.secondary)
 
                     Text(
                         "Thank you so much for your kind words! We work hard to make the app useful for everyone."
@@ -72,11 +72,11 @@ struct ReviewDetailView: View {
                 HStack {
                     Text("Was this review helpful?")
                         .font(.subheadline)
-                        .adaptiveForegroundStyle(.secondary)
+                        .uniForegroundStyle(.secondary)
 
                     Spacer()
 
-                    AdaptiveButton(action: {
+                    UniButton(action: {
                         helpfulCount += 1
                     }) {
                         HStack(spacing: 4) {
@@ -84,19 +84,19 @@ struct ReviewDetailView: View {
                             Text("Helpful (\(helpfulCount))")
                         }
                         .font(.subheadline)
-                        .adaptiveForegroundStyle(.blue)
+                        .uniForegroundStyle(.blue)
                     }
-                    .adaptiveButtonStyle(.plain)
+                    .uniButtonStyle(.plain)
                 }
 
-                AdaptiveButton(action: {
+                UniButton(action: {
                     // Report action
                 }) {
                     Text("Report Concern")
                         .font(.caption)
-                        .adaptiveForegroundStyle(.red)
+                        .uniForegroundStyle(.red)
                 }
-                .adaptiveButtonStyle(.plain)
+                .uniButtonStyle(.plain)
                 .padding(.top, 8)
             }
             .padding()

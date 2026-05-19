@@ -1,5 +1,5 @@
+import ExploreSwiftUI
 import SwiftUI
-import AdaptiveSwiftUi
 
 // import Shared — replaced by native Swift Shared module
 
@@ -7,7 +7,7 @@ struct ConnectWalletView: View {
     @Environment(\.dismiss) var dismiss
 
     var body: some View {
-        AdaptiveScrollView {
+        UniScrollView {
             VStack(spacing: 32) {
                 // Title
                 SecureConnectionCard()
@@ -16,7 +16,7 @@ struct ConnectWalletView: View {
                     Text("SELECT PROVIDER")
                         .font(.caption)
                         .fontWeight(.bold)
-                        .adaptiveForegroundStyle(.secondary)
+                        .uniForegroundStyle(.secondary)
                         .padding(.horizontal)
 
                     VStack(spacing: 16) {
@@ -67,25 +67,25 @@ struct ConnectWalletView: View {
                     HStack(spacing: 8) {
                         Image(systemName: "lock.shield.fill")
                             .font(.caption)
-                            .adaptiveForegroundStyle(.green)
+                            .uniForegroundStyle(.green)
                         Text("BANK-GRADE ENCRYPTION")
                             .font(.caption2)
                             .fontWeight(.bold)
-                            .adaptiveForegroundStyle(.secondary)
+                            .uniForegroundStyle(.secondary)
                     }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
-                    .adaptiveGlass(cornerRadius: 20)
+                    .uniGlass(cornerRadius: 20)
 
-                    Text("We use secure tokens to access your wallet. Your\ncredentials are never stored on our servers.")
-                        .font(.caption2)
-                        .adaptiveForegroundStyle(.secondary, opacity: 0.7)
-                        .multilineTextAlignment(.center)
+                    Text(
+                        "We use secure tokens to access your wallet. Your\ncredentials are never stored on our servers."
+                    )
+                    .font(.caption2)
+                    .uniForegroundStyle(.secondary, opacity: 0.7)
+                    .multilineTextAlignment(.center)
                 }
                 .padding(.bottom, 40)
             }.navigationTitle("Connect Wallet")
         }
     }
 }
-
-

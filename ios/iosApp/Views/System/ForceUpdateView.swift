@@ -1,4 +1,4 @@
-import AdaptiveSwiftUi
+import ExploreSwiftUI
 import SwiftUI
 
 struct ForceUpdateView: View {
@@ -8,7 +8,7 @@ struct ForceUpdateView: View {
         VStack(spacing: 24) {
             Image(systemName: "arrow.triangle.2.circlepath.circle.fill")
                 .font(.system(size: 64))
-                .adaptiveForegroundStyle(.blue)
+                .uniForegroundStyle(.blue)
 
             VStack(spacing: 8) {
                 Text("Update Required")
@@ -19,24 +19,24 @@ struct ForceUpdateView: View {
                     "A new version of LeposApp is available. Please update to continue using the app."
                 )
                 .font(.body)
-                .adaptiveForegroundStyle(.secondary)
+                .uniForegroundStyle(.secondary)
                 .multilineTextAlignment(.center)
             }
 
-            AdaptiveButton(action: onUpdate) {
+            UniButton(action: onUpdate) {
                 Text("Update Now")
                     .font(.headline)
-                    .adaptiveForegroundStyle(.white)
+                    .uniForegroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(Color.blue)
                     .cornerRadius(12)
             }
-            .adaptiveButtonStyle(.plain)
+            .uniButtonStyle(.plain)
             .padding(.horizontal, 32)
         }
         .padding()
-        .adaptiveInteractiveDismissDisabled()
+        .uniInteractiveDismissDisabled()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color(UIColor.systemBackground))
     }

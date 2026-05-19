@@ -1,4 +1,4 @@
-import AdaptiveSwiftUi
+import ExploreSwiftUI
 import SwiftUI
 
 struct MainTabView: View {
@@ -6,31 +6,31 @@ struct MainTabView: View {
     @State private var selection = 2
 
     var body: some View {
-        AdaptiveTabView(selection: $selection) {
-            AdaptiveTab("Today", systemImage: "sparkles", value: 0) {
+        UniTabView(selection: $selection) {
+            UniTab("Today", systemImage: "sparkles", value: 0) {
                 HomeView()
             }
 
-            AdaptiveTab("Discovery", systemImage: "safari", value: 1) {
+            UniTab("Discovery", systemImage: "safari", value: 1) {
                 DiscoveryView()
             }
 
-            AdaptiveTab("Apps", systemImage: "square.stack.3d.up.fill", value: 2) {
+            UniTab("Apps", systemImage: "square.stack.3d.up.fill", value: 2) {
                 LibraryView()
             }
 
-            AdaptiveTab("Profile", systemImage: "person.crop.circle.fill", value: 3) {
+            UniTab("Profile", systemImage: "person.crop.circle.fill", value: 3) {
                 ProfileView()
             }
 
-            AdaptiveTab("Search", systemImage: "magnifyingglass", value: 4, role: .search) {
+            UniTab("Search", systemImage: "magnifyingglass", value: 4, role: .search) {
                 SearchView()
             }
         }
         .navigationTitle(currentTitle)
         .navigationBarHidden(true)
-        .adaptiveTabViewStyle(.automatic)
-        .adaptiveTabBarMinimizeBehavior(.onScrollDown)
+        .uniTabViewStyle(.automatic)
+        .uniTabBarMinimizeBehavior(.onScrollDown)
     }
 
     private var currentTitle: String {

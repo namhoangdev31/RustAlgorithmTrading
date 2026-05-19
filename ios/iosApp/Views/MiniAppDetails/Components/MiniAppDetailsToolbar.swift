@@ -1,6 +1,5 @@
+import ExploreSwiftUI
 import SwiftUI
-import AdaptiveSwiftUi
-
 
 struct MiniAppDetailsToolbar: ToolbarContent {
     let showNavBarItems: Bool
@@ -22,7 +21,7 @@ struct MiniAppDetailsToolbar: ToolbarContent {
         ToolbarItem(placement: .navigationBarTrailing) {
             Group {
                 if showNavBarItems {
-                    AdaptiveButton(action: {
+                    UniButton(action: {
                         if !isDownloaded {
                             onInstall()
                         } else {
@@ -33,23 +32,23 @@ struct MiniAppDetailsToolbar: ToolbarContent {
                             Text("Open")
                                 .font(.callout)
                                 .fontWeight(.bold)
-                                .adaptiveForegroundStyle(.white)
+                                .uniForegroundStyle(.white)
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 6)
                         } else if isLoading {
-                            AdaptiveProgressView()
-                                .adaptiveProgressTint(.white)
+                            UniProgressView()
+                                .uniProgressTint(.white)
                                 .padding(.horizontal, 12)
                         } else {
                             Text(price > 0 ? String(format: "$%.2f", price) : "Get")
                                 .font(.callout)
                                 .fontWeight(.bold)
-                                .adaptiveForegroundStyle(.white)
+                                .uniForegroundStyle(.white)
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 6)
                         }
                     }
-                    .adaptiveButtonStyle(.plain)
+                    .uniButtonStyle(.plain)
                     .background(Color.blue)
                     .cornerRadius(16)
                     .transition(.opacity.combined(with: .scale))

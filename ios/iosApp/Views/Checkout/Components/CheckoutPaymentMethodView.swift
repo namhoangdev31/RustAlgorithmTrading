@@ -1,10 +1,11 @@
+import ExploreSwiftUI
 import SwiftUI
-import AdaptiveSwiftUi
+
 // import Shared — replaced by native Swift Shared module
 
 struct CheckoutPaymentMethodView: View {
     @EnvironmentObject var navigation: NavigationViewModel
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
@@ -13,17 +14,17 @@ struct CheckoutPaymentMethodView: View {
                     .fontWeight(.bold)
                     .foregroundColor(.secondary)
                 Spacer()
-                AdaptiveButton(action: {
+                UniButton(action: {
                     navigation.navigate(to: .paymentMethods)
                 }) {
                     Text("Manage")
                 }
                 .font(.caption)
-                .adaptiveForegroundStyle(.cyan)
+                .uniForegroundStyle(.cyan)
             }
             .padding(.horizontal)
-            
-            AdaptiveScrollView(.horizontal, showsIndicators: false) {
+
+            UniScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 12) {
                     // Apple Pay (Selected)
                     CheckoutPaymentMethodCard(isSelected: true) {
@@ -38,7 +39,7 @@ struct CheckoutPaymentMethodView: View {
                                 .fontWeight(.semibold)
                         }
                     }
-                    
+
                     // Visa
                     CheckoutPaymentMethodCard(isSelected: false) {
                         VStack(alignment: .leading, spacing: 8) {
@@ -54,7 +55,7 @@ struct CheckoutPaymentMethodView: View {
                                 .fontWeight(.bold)
                         }
                     }
-                    
+
                     // Bank
                     CheckoutPaymentMethodCard(isSelected: false) {
                         VStack(alignment: .leading, spacing: 8) {

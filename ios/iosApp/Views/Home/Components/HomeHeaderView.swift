@@ -1,11 +1,10 @@
+import ExploreSwiftUI
 import SwiftUI
-import AdaptiveSwiftUi
-
 
 struct HomeHeaderView: View {
-    let offsetY : CGFloat
+    let offsetY: CGFloat
     var onNotificationTap: () -> Void = {}
-    
+
     init(offsetY: CGFloat, onNotificationTap: @escaping () -> Void = {}) {
         self.offsetY = offsetY
         self.onNotificationTap = onNotificationTap
@@ -16,18 +15,18 @@ struct HomeHeaderView: View {
                 Text("MONDAY, MAY 22")
                     .font(.caption)
                     .fontWeight(.semibold)
-                    .adaptiveForegroundStyle(.secondary)
-                
+                    .uniForegroundStyle(.secondary)
+
                 Text("Today")
                     .font(.largeTitle)
                     .fontWeight(.bold)
             }
             .offset(x: offsetY > -45 ? -(offsetY + 45) : 0)
             .animation(.interactiveSpring, value: offsetY)
-            
+
             Spacer()
-            
-            Image(systemName: "person.crop.circle.fill") // Avatar placeholder
+
+            Image(systemName: "person.crop.circle.fill")  // Avatar placeholder
                 .resizable()
                 .frame(width: 40, height: 40)
                 .foregroundColor(.gray)

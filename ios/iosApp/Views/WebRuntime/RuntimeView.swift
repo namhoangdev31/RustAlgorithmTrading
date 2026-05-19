@@ -1,4 +1,4 @@
-import AdaptiveSwiftUi
+import ExploreSwiftUI
 import SwiftUI
 
 struct RuntimeView: View {
@@ -30,8 +30,8 @@ struct RuntimeView: View {
         case .idle:
             EmptyView()
         case .loading:
-            AdaptiveProgressView()
-                .adaptiveForegroundStyle(.white)
+            UniProgressView()
+                .uniForegroundStyle(.white)
                 .scaleEffect(1.5)
         case .ready(let entryUrl):
             RuntimeWebViewWrapper(manifest: manifest, httpUrl: entryUrl)
@@ -39,13 +39,13 @@ struct RuntimeView: View {
             VStack(spacing: 16) {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .font(.system(size: 60))
-                    .adaptiveForegroundStyle(.red)
+                    .uniForegroundStyle(.red)
                 Text("Error")
                     .font(.title)
-                    .adaptiveForegroundStyle(.white)
+                    .uniForegroundStyle(.white)
                 Text(message)
                     .font(.body)
-                    .adaptiveForegroundStyle(.white, opacity: 0.8)
+                    .uniForegroundStyle(.white, opacity: 0.8)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 32)
             }
@@ -63,49 +63,49 @@ struct RuntimeView: View {
                         }
 
                     VStack(spacing: 20) {
-                        AdaptiveButton(action: {
+                        UniButton(action: {
                             NotificationCenter.default.post(
                                 name: NSNotification.Name("ReloadMiniApp"), object: nil)
                             withAnimation { isExpanded = false }
                         }) {
                             Image(systemName: "arrow.clockwise")
                                 .font(.title)
-                                .adaptiveForegroundStyle(.primary)
+                                .uniForegroundStyle(.primary)
                                 .frame(width: 50, height: 50)
-                                .adaptiveGlass(cornerRadius: 25)
+                                .uniGlass(cornerRadius: 25)
                         }
-                        .adaptiveButtonStyle(.plain)
+                        .uniButtonStyle(.plain)
 
-                        AdaptiveButton(action: {
+                        UniButton(action: {
                             dismiss()
                             withAnimation { isExpanded = false }
                         }) {
                             Image(systemName: "xmark")
                                 .font(.title)
-                                .adaptiveForegroundStyle(.primary)
+                                .uniForegroundStyle(.primary)
                                 .frame(width: 50, height: 50)
-                                .adaptiveGlass(cornerRadius: 25)
+                                .uniGlass(cornerRadius: 25)
                         }
-                        .adaptiveButtonStyle(.plain)
+                        .uniButtonStyle(.plain)
                     }
                     .padding()
-                    .adaptiveGlass(cornerRadius: 16)
+                    .uniGlass(cornerRadius: 16)
                     .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
                     .transition(.scale)
                     .zIndex(2)
                 }
 
                 if !isExpanded {
-                    AdaptiveButton(action: {
+                    UniButton(action: {
                         withAnimation { isExpanded.toggle() }
                     }) {
                         Image(systemName: "circle.grid.3x3.fill")
                             .font(.system(size: 24))
-                            .adaptiveForegroundStyle(.primary)
+                            .uniForegroundStyle(.primary)
                             .frame(width: 60, height: 60)
                     }
-                    .adaptiveButtonStyle(.plain)
-                    .adaptiveGlass(cornerRadius: 100)
+                    .uniButtonStyle(.plain)
+                    .uniGlass(cornerRadius: 100)
                     .position(
                         dragPosition
                             ?? CGPoint(x: geometry.size.width - 50, y: geometry.size.height - 150)

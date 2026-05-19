@@ -1,6 +1,5 @@
+import ExploreSwiftUI
 import SwiftUI
-import AdaptiveSwiftUi
-
 
 struct FeaturedStoryView: View {
     var body: some View {
@@ -8,43 +7,47 @@ struct FeaturedStoryView: View {
             ZStack(alignment: .bottom) {
                 // Background Image Placeholder
                 RoundedRectangle(cornerRadius: 20)
-                    .fill(LinearGradient(colors: [Color.green.opacity(0.3), Color.black.opacity(0.6)], startPoint: .topLeading, endPoint: .bottom))
+                    .fill(
+                        LinearGradient(
+                            colors: [Color.green.opacity(0.3), Color.black.opacity(0.6)],
+                            startPoint: .topLeading, endPoint: .bottom)
+                    )
                     .frame(height: 450)
-                
+
                 VStack(alignment: .leading, spacing: 10) {
                     Spacer()
-                    
+
                     Text("FEATURED STORY")
                         .font(.caption)
                         .fontWeight(.bold)
-                        .adaptiveForegroundStyle(.white, opacity: 0.8)
-                    
+                        .uniForegroundStyle(.white, opacity: 0.8)
+
                     Text("Elevate Your\nMorning Ritual")
                         .font(.largeTitle)
                         .fontWeight(.heavy)
-                        .adaptiveForegroundStyle(.white)
+                        .uniForegroundStyle(.white)
                         .lineLimit(2)
-                    
+
                     Spacer().frame(height: 20)
-                    
+
                     HStack {
                         RoundedRectangle(cornerRadius: 12)
                             .fill(Color.gray.opacity(0.5))
                             .frame(width: 40, height: 40)
-                            .overlay(Image(systemName: "waveform").adaptiveForegroundStyle(.white))
-                        
+                            .overlay(Image(systemName: "waveform").uniForegroundStyle(.white))
+
                         VStack(alignment: .leading) {
                             Text("Z-Gym Pro")
                                 .font(.headline)
-                                .adaptiveForegroundStyle(.white)
+                                .uniForegroundStyle(.white)
                             Text("AI Fitness Coaching")
                                 .font(.caption)
-                                .adaptiveForegroundStyle(.white, opacity: 0.8)
+                                .uniForegroundStyle(.white, opacity: 0.8)
                         }
-                        
+
                         Spacer()
-                        
-                        AdaptiveButton(action: {}) {
+
+                        UniButton(action: {}) {
                             Text("GET")
                                 .font(.subheadline)
                                 .fontWeight(.bold)

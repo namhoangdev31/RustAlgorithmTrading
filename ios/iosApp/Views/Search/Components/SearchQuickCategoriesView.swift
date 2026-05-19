@@ -1,4 +1,4 @@
-import AdaptiveSwiftUi
+import ExploreSwiftUI
 import SwiftUI
 
 struct CategoryItem: Identifiable {
@@ -61,7 +61,7 @@ struct CategoryCard: View {
     var body: some View {
         RoundedRectangle(cornerRadius: 20)
             .fill(color)
-            .adaptiveGlass(cornerRadius: 20)
+            .uniGlass(cornerRadius: 20)
             .overlay(
                 VStack(alignment: .leading) {
                     if isLarge {
@@ -70,7 +70,7 @@ struct CategoryCard: View {
 
                     Image(systemName: icon)
                         .font(isLarge ? .largeTitle : .title2)
-                        .adaptiveForegroundStyle(getIconColor())
+                        .uniForegroundStyle(getIconColor())
 
                     Spacer()
 

@@ -1,9 +1,9 @@
-import AdaptiveSwiftUi
+import ExploreSwiftUI
 import SwiftUI
 
 struct ReviewGuidelinesView: View {
     var body: some View {
-        AdaptiveScrollView {
+        UniScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 Text("Review Guidelines")
                     .font(.largeTitle)
@@ -13,7 +13,7 @@ struct ReviewGuidelinesView: View {
                     "Help keep our community helpful and safe by following these guidelines when writing reviews."
                 )
                 .font(.body)
-                .adaptiveForegroundStyle(.secondary)
+                .uniForegroundStyle(.secondary)
 
                 VStack(alignment: .leading, spacing: 16) {
                     GuidelineItem(
@@ -41,7 +41,7 @@ struct ReviewGuidelinesView: View {
 
                 Text("Reviews that violate these guidelines may be removed.")
                     .font(.caption)
-                    .adaptiveForegroundStyle(.secondary)
+                    .uniForegroundStyle(.secondary)
                     .padding(.top, 24)
             }
             .padding()
@@ -61,7 +61,7 @@ struct GuidelineItem: View {
         HStack(alignment: .top, spacing: 12) {
             Image(systemName: icon)
                 .font(.title3)
-                .adaptiveForegroundStyle(color)
+                .uniForegroundStyle(color)
                 .padding(.top, 2)
 
             VStack(alignment: .leading, spacing: 4) {
@@ -69,7 +69,7 @@ struct GuidelineItem: View {
                     .font(.headline)
                 Text(description)
                     .font(.body)
-                    .adaptiveForegroundStyle(.secondary)
+                    .uniForegroundStyle(.secondary)
             }
         }
     }

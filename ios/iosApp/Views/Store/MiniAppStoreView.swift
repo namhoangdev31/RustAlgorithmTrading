@@ -1,4 +1,4 @@
-import AdaptiveSwiftUi
+import ExploreSwiftUI
 import SwiftUI
 
 // import Shared — replaced by native Swift Shared module
@@ -17,9 +17,9 @@ struct MiniAppStoreView: View {
         NavigationView {
             ZStack {
                 if viewModel.isLoading && viewModel.bundles.isEmpty {
-                    AdaptiveProgressView()
+                    UniProgressView()
                 } else {
-                    AdaptiveList(viewModel.bundles, id: \.id) { bundle in
+                    UniList(viewModel.bundles, id: \.id) { bundle in
                         ZStack {
                             NavigationLink(destination: MiniAppDetailsView()) {
                                 EmptyView()
@@ -32,14 +32,14 @@ struct MiniAppStoreView: View {
                                         .font(.headline)
                                     Text("v\(bundle.id)")
                                         .font(.caption)
-                                        .adaptiveForegroundStyle(.secondary)
+                                        .uniForegroundStyle(.secondary)
                                 }
                                 Spacer()
 
                                 if viewModel.downloadingId == bundle.id {
-                                    AdaptiveProgressView()
+                                    UniProgressView()
                                 } else {
-                                    AdaptiveButton(action: {
+                                    UniButton(action: {
                                         Task {
                                             await viewModel.downloadAndLaunch(bundle: bundle)
                                         }
@@ -47,13 +47,13 @@ struct MiniAppStoreView: View {
                                         Text("OPEN")
                                             .font(.caption)
                                             .fontWeight(.bold)
-                                            .adaptiveForegroundStyle(.blue)
+                                            .uniForegroundStyle(.blue)
                                             .padding(.horizontal, 12)
                                             .padding(.vertical, 6)
                                             .background(Color.blue.opacity(0.1))
                                             .cornerRadius(12)
                                     }
-                                    .adaptiveButtonStyle(.plain)
+                                    .uniButtonStyle(.plain)
                                 }
                             }
                         }
@@ -69,13 +69,13 @@ struct MiniAppStoreView: View {
                         Text(error)
                             .padding()
                             .background(Color.red.opacity(0.8))
-                            .adaptiveForegroundStyle(.white)
+                            .uniForegroundStyle(.white)
                             .cornerRadius(8)
                             .padding()
                     }
                 }
             }
-            .adaptiveNavigationTitle("Mini-App Store", subtitle: "")
+            .uniNavigationTitle("Mini-App Store", subtitle: "")
             .task {
                 await viewModel.loadBundles()
             }

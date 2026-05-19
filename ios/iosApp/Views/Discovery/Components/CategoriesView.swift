@@ -1,6 +1,5 @@
+import ExploreSwiftUI
 import SwiftUI
-import AdaptiveSwiftUi
-
 
 struct CategoriesView: View {
     var body: some View {
@@ -9,7 +8,7 @@ struct CategoriesView: View {
                 .font(.title2)
                 .fontWeight(.bold)
                 .padding(.horizontal)
-            
+
             HStack(spacing: 16) {
                 // Large Blue Card
                 RoundedRectangle(cornerRadius: 20)
@@ -19,17 +18,17 @@ struct CategoriesView: View {
                             Text("Finance")
                                 .font(.title)
                                 .fontWeight(.bold)
-                                .adaptiveForegroundStyle(.white)
+                                .uniForegroundStyle(.white)
                             Text("Tools for your future")
                                 .font(.subheadline)
-                                .adaptiveForegroundStyle(.white, opacity: 0.8)
-                            
+                                .uniForegroundStyle(.white, opacity: 0.8)
+
                             Spacer()
-                            
+
                             Text("142 APPS")
                                 .font(.caption2)
                                 .fontWeight(.bold)
-                                .adaptiveForegroundStyle(.white)
+                                .uniForegroundStyle(.white)
                                 .padding(.horizontal, 10)
                                 .padding(.vertical, 5)
                                 .background(Color.white.opacity(0.3))
@@ -39,11 +38,15 @@ struct CategoriesView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                     )
                     .frame(height: 250)
-                
+
                 // Right Column
                 VStack(spacing: 16) {
-                    CategorySmallCard(title: "RETAIL", icon: "bag.fill", color: Color.red.opacity(0.1), iconColor: .red)
-                    CategorySmallCard(title: "FOOD", icon: "fork.knife", color: Color.orange.opacity(0.1), iconColor: .orange)
+                    CategorySmallCard(
+                        title: "RETAIL", icon: "bag.fill", color: Color.red.opacity(0.1),
+                        iconColor: .red)
+                    CategorySmallCard(
+                        title: "FOOD", icon: "fork.knife", color: Color.orange.opacity(0.1),
+                        iconColor: .orange)
                 }
                 .frame(width: 120)
             }
@@ -57,7 +60,7 @@ struct CategorySmallCard: View {
     let icon: String
     let color: Color
     let iconColor: Color
-    
+
     var body: some View {
         RoundedRectangle(cornerRadius: 20)
             .fill(color)
@@ -65,18 +68,18 @@ struct CategorySmallCard: View {
                 VStack(alignment: .leading) {
                     Image(systemName: icon)
                         .font(.title2)
-                        .adaptiveForegroundStyle(iconColor)
-                    
+                        .uniForegroundStyle(iconColor)
+
                     Spacer()
-                    
+
                     Text(title)
                         .font(.caption)
                         .fontWeight(.bold)
-                        .adaptiveForegroundStyle(iconColor)
+                        .uniForegroundStyle(iconColor)
                 }
                 .padding(16)
                 .frame(maxWidth: .infinity, alignment: .leading)
             )
-            .frame(height: 117) // approx half of 250 - spacing
+            .frame(height: 117)  // approx half of 250 - spacing
     }
 }

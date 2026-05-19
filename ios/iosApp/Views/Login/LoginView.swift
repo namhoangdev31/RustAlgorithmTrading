@@ -1,60 +1,60 @@
+import ExploreSwiftUI
 import SwiftUI
-import AdaptiveSwiftUi
-
 
 struct LoginView: View {
     @StateObject private var viewModel: LoginViewModel
     @EnvironmentObject var navigation: NavigationViewModel
-    @Namespace private var animation // For matchedGeometryEffect if needed
-    
+    @Namespace private var animation  // For matchedGeometryEffect if needed
+
     init(viewModel: LoginViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
     }
-    
+
     var body: some View {
         ZStack {
             // Background
             Color.white.ignoresSafeArea()
-            
-            AdaptiveScrollView {
+
+            UniScrollView {
                 VStack(spacing: 30) {
                     Spacer().frame(height: 40)
-                    
+
                     LoginHeaderView()
                         .transition(.slide)
-                    
+
                     VStack(spacing: 24) {
                         LoginFormView(email: $viewModel.email, password: $viewModel.password)
-                        
+
                         if let error = viewModel.error {
                             Text(error)
-                                .adaptiveForegroundStyle(.red)
+                                .uniForegroundStyle(.red)
                                 .font(.caption)
                                 .transition(.opacity)
                         }
-                        
-                        LoginButtonView(action: {
-                            Task { await viewModel.login() }
-                        }, isLoading: viewModel.isLoading)
-                        
-                        AdaptiveButton(action: {
+
+                        LoginButtonView(
+                            action: {
+                                Task { await viewModel.login() }
+                            }, isLoading: viewModel.isLoading)
+
+                        UniButton(action: {
                             navigation.navigate(to: .forgotPassword)
                         }) {
                             Text("Forgot Password?")
                                 .font(.caption)
-                                .adaptiveForegroundStyle(.blue)
+                                .uniForegroundStyle(.blue)
                         }
-                        .adaptiveButtonStyle(.plain)
+                        .uniButtonStyle(.plain)
                     }
                     .padding(.horizontal)
-                    
+
                     Spacer().frame(height: 20)
-                    
+
                     LiquidGlassDemoCard()
                         .padding(.horizontal)
                 }
                 .padding()
-                .animation(.spring(), value: viewModel.isLoading) // Smooth state changes
+                .animation(.spring(), value: viewModel.isLoading)  // Smooth state changes
             }
         }
         .fullScreenCover(isPresented: $viewModel.isLoggedIn) {

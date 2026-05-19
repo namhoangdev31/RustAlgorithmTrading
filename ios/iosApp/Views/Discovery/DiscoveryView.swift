@@ -1,30 +1,30 @@
+import ExploreSwiftUI
 import SwiftUI
-import AdaptiveSwiftUi
 
 struct DiscoveryView: View {
     @EnvironmentObject var navigation: NavigationViewModel
     @State private var offsetY: CGFloat = 0
 
     var body: some View {
-        AdaptiveScrollView {
+        UniScrollView {
             VStack(spacing: 16) {
                 DiscoveryHeaderView(offsetY: offsetY)
-                
-                AdaptiveButton(action: {
+
+                UniButton(action: {
                     navigation.navigate(to: .detail(itemId: "featured_story"))
                 }) {
                     FeaturedStoryView()
                 }
-                .adaptiveButtonStyle(.plain)
+                .uniButtonStyle(.plain)
 
-                AdaptiveButton(action: {
+                UniButton(action: {
                     navigation.navigate(to: .detail(itemId: "discovery_apps"))
                 }) {
                     DiscoveryAppsWeLoveView()
                 }
-                .adaptiveButtonStyle(.plain)
+                .uniButtonStyle(.plain)
 
-                AdaptiveButton(action: {
+                UniButton(action: {
                     navigation.navigate(to: .topCharts)
                 }) {
                     HStack {
@@ -33,14 +33,14 @@ struct DiscoveryView: View {
                             .fontWeight(.bold)
                         Spacer()
                         Image(systemName: "chevron.right")
-                            .adaptiveForegroundStyle(.secondary)
+                            .uniForegroundStyle(.secondary)
                     }
                     .padding()
                     .background(Color(.secondarySystemBackground))
                     .cornerRadius(12)
                     .padding(.horizontal)
                 }
-                .adaptiveButtonStyle(.plain)
+                .uniButtonStyle(.plain)
 
                 CategoriesView()
                 TrendingThisWeekView()
@@ -48,7 +48,7 @@ struct DiscoveryView: View {
             .onCompatScrollOffsetChange { offsetY = $0 }
         }
         .coordinateSpace(name: "scroll")
-        .adaptiveBackgroundExtension()
+        .uniBackgroundExtension()
         .navigationBarHidden(true)
     }
 }

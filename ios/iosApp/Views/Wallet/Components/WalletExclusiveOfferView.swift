@@ -1,4 +1,4 @@
-import AdaptiveSwiftUi
+import ExploreSwiftUI
 import SwiftUI
 
 struct WalletExclusiveOfferView: View {
@@ -13,25 +13,25 @@ struct WalletExclusiveOfferView: View {
                     Text("EXCLUSIVE OFFER")
                         .font(.caption)
                         .fontWeight(.bold)
-                        .adaptiveForegroundStyle(.secondary)
-                        .adaptiveTracking(1)
+                        .uniForegroundStyle(.secondary)
+                        .uniTracking(1)
 
                     Text("Get 5% Cashback on\nyour next transfer")
                         .font(.title3)
                         .fontWeight(.bold)
-                        .adaptiveForegroundStyle(.white)
+                        .uniForegroundStyle(.white)
 
-                    AdaptiveButton(action: {}) {
+                    UniButton(action: {}) {
                         Text("ACTIVATE")
                             .font(.caption)
                             .fontWeight(.bold)
-                            .adaptiveForegroundStyle(.black)
+                            .uniForegroundStyle(.black)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 8)
                             .background(Color.white)
                             .clipShape(Capsule())
                     }
-                    .adaptiveButtonStyle(.plain)
+                    .uniButtonStyle(.plain)
                     .padding(.top, 8)
                 }
 
@@ -44,6 +44,6 @@ struct WalletExclusiveOfferView: View {
             }
             .padding(24)
         }
-        .adaptiveGlass(cornerRadius: 24)
+        .uniGlass(cornerRadius: 24)
     }
 }

@@ -1,5 +1,5 @@
+import ExploreSwiftUI
 import SwiftUI
-import AdaptiveSwiftUi
 
 struct SidebarView: View {
     @Binding var isShowing: Bool
@@ -23,19 +23,19 @@ struct SidebarView: View {
                             Text("Menu")
                                 .font(.title.bold())
                             Spacer()
-                            AdaptiveButton(action: {
+                            UniButton(action: {
                                 withAnimation(.spring()) {
                                     isShowing = false
                                 }
                             }) {
                                 Image(systemName: "xmark.circle.fill")
                                     .font(.title2)
-                                    .adaptiveForegroundStyle(.secondary)
+                                    .uniForegroundStyle(.secondary)
                             }
                         }
                         .padding(.top, 60)
 
-                        AdaptiveDivider()
+                        UniDivider()
 
                         // Menu items
                         VStack(alignment: .leading, spacing: 25) {
@@ -49,7 +49,7 @@ struct SidebarView: View {
                     }
                     .padding()
                     .frame(width: 280)
-                    .adaptiveGlass(cornerRadius: 5)
+                    .uniGlass(cornerRadius: 5)
                     .padding(.horizontal)
                     .padding(.vertical)
                     Spacer()
@@ -69,12 +69,12 @@ struct SidebarItem: View {
         HStack(spacing: 15) {
             Image(systemName: icon)
                 .font(.system(size: 20))
-                .adaptiveForegroundStyle(.primary)
+                .uniForegroundStyle(.primary)
                 .frame(width: 30)
 
             Text(title)
                 .font(.body)
-                .adaptiveForegroundStyle(.primary)
+                .uniForegroundStyle(.primary)
 
             Spacer()
         }

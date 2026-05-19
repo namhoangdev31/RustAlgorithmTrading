@@ -1,16 +1,25 @@
+import ExploreSwiftUI
 import SwiftUI
-import AdaptiveSwiftUi
 
 struct OnboardingView: View {
     @Binding var isCompleted: Bool
     @State private var currentPage = 0
-    
+
     let pages = [
-        (image: "sparkles", title: "Welcome to Lepos", description: "Discover a world of mini-apps and seamless experiences."),
-        (image: "square.grid.2x2", title: "Instant Apps", description: "Use apps instantly without downloading. Fast, secure, and lightweight."),
-        (image: "shield.checkerboard", title: "Safe & Secure", description: "Your privacy is our priority. Enjoy a secure ecosystem.")
+        (
+            image: "sparkles", title: "Welcome to Lepos",
+            description: "Discover a world of mini-apps and seamless experiences."
+        ),
+        (
+            image: "square.grid.2x2", title: "Instant Apps",
+            description: "Use apps instantly without downloading. Fast, secure, and lightweight."
+        ),
+        (
+            image: "shield.checkerboard", title: "Safe & Secure",
+            description: "Your privacy is our priority. Enjoy a secure ecosystem."
+        ),
     ]
-    
+
     var body: some View {
         VStack {
             TabView(selection: $currentPage) {
@@ -23,10 +32,10 @@ struct OnboardingView: View {
                     .tag(index)
                 }
             }
-            .adaptiveTabViewStyle(.page(indexDisplayMode: .always))
+            .uniTabViewStyle(.page(indexDisplayMode: .always))
             .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
-            
-            AdaptiveButton(action: {
+
+            UniButton(action: {
                 if currentPage < pages.count - 1 {
                     withAnimation {
                         currentPage += 1
@@ -39,13 +48,13 @@ struct OnboardingView: View {
             }) {
                 Text(currentPage < pages.count - 1 ? "Next" : "Get Started")
                     .font(.headline)
-                    .adaptiveForegroundStyle(.white)
+                    .uniForegroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(Color.blue)
                     .cornerRadius(12)
             }
-            .adaptiveButtonStyle(.plain)
+            .uniButtonStyle(.plain)
             .padding(.horizontal, 24)
             .padding(.bottom, 16)
         }

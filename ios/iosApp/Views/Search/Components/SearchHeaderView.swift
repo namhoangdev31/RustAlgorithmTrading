@@ -1,4 +1,4 @@
-import AdaptiveSwiftUi
+import ExploreSwiftUI
 import SwiftUI
 
 struct SearchHeaderView: View {
@@ -12,7 +12,7 @@ struct SearchHeaderView: View {
 
             Image(systemName: "person.crop.circle.fill")
                 .font(.largeTitle)
-                .adaptiveForegroundStyle(.secondary)
+                .uniForegroundStyle(.secondary)
         }
         .padding(.horizontal)
         .padding(.top)

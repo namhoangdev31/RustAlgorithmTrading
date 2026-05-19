@@ -1,6 +1,5 @@
+import ExploreSwiftUI
 import SwiftUI
-import AdaptiveSwiftUi
-
 
 struct AppItem: Identifiable {
     let id = UUID()
@@ -13,9 +12,13 @@ struct AppItem: Identifiable {
 struct AppsWeLoveView: View {
     @EnvironmentObject var navigation: NavigationViewModel
     let apps: [AppItem] = [
-        AppItem(name: "QuickTask Pro", category: "Productivity", iconColor: .black, iconName: "checkmark.circle.fill"),
-        AppItem(name: "Wealth Insights", category: "Finance", iconColor: .blue, iconName: "chart.bar.fill"),
-        AppItem(name: "EcoTrack", category: "Lifestyle", iconColor: .green, iconName: "leaf.fill")
+        AppItem(
+            name: "QuickTask Pro", category: "Productivity", iconColor: .black,
+            iconName: "checkmark.circle.fill"),
+        AppItem(
+            name: "Wealth Insights", category: "Finance", iconColor: .blue,
+            iconName: "chart.bar.fill"),
+        AppItem(name: "EcoTrack", category: "Lifestyle", iconColor: .green, iconName: "leaf.fill"),
     ]
 
     var body: some View {
@@ -25,13 +28,13 @@ struct AppsWeLoveView: View {
                     .font(.title2)
                     .fontWeight(.bold)
                 Spacer()
-                AdaptiveButton(action: {
+                UniButton(action: {
                     navigation.navigate(to: .collection(id: "apps_we_love", title: "Apps We Love"))
                 }) {
                     Text("See All")
                 }
-                .adaptiveButtonStyle(.plain)
-                .adaptiveForegroundStyle(.blue)
+                .uniButtonStyle(.plain)
+                .uniForegroundStyle(.blue)
             }
             .padding(.horizontal)
 
@@ -51,12 +54,12 @@ struct AppsWeLoveView: View {
                             .font(.headline)
                         Text(app.category)
                             .font(.subheadline)
-                            .adaptiveForegroundStyle(.secondary)
+                            .uniForegroundStyle(.secondary)
                     }
 
                     Spacer()
 
-                    AdaptiveButton(action: {}) {
+                    UniButton(action: {}) {
                         Text("OPEN")
                             .font(.caption)
                             .fontWeight(.bold)
@@ -66,12 +69,12 @@ struct AppsWeLoveView: View {
                             .background(Color(.systemGray6))
                             .clipShape(Capsule())
                     }
-                    .adaptiveButtonStyle(.plain)
+                    .uniButtonStyle(.plain)
                 }
                 .padding(.horizontal)
 
                 if app.id != apps.last?.id {
-                    AdaptiveDivider().padding(.leading, 80)
+                    UniDivider().padding(.leading, 80)
                 }
             }
         }

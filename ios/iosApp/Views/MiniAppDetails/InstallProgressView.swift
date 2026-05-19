@@ -1,13 +1,12 @@
+import ExploreSwiftUI
 import SwiftUI
-import AdaptiveSwiftUi
-
 
 struct InstallProgressView: View {
     let appId: String
     @State private var progress: Double = 0.0
     @State private var status: String = "Waiting..."
     @Environment(\.presentationMode) var presentationMode
-    
+
     var body: some View {
         VStack(spacing: 24) {
             // App Icon Placeholder
@@ -18,41 +17,41 @@ struct InstallProgressView: View {
                 .overlay(
                     Image(systemName: "app.dashed")
                         .font(.largeTitle)
-                        .adaptiveForegroundStyle(.secondary)
+                        .uniForegroundStyle(.secondary)
                 )
-            
+
             VStack(spacing: 8) {
                 Text("Installing App")
                     .font(.title3)
                     .fontWeight(.bold)
-                
+
                 Text(status)
                     .font(.body)
-                    .adaptiveForegroundStyle(.secondary)
+                    .uniForegroundStyle(.secondary)
             }
-            
+
             VStack(spacing: 8) {
-                AdaptiveProgressView(value: progress)
-                
+                UniProgressView(value: progress)
+
                 HStack {
                     Text("\(Int(progress * 100))%")
                     Spacer()
                     Text("24MB / 48MB")
                 }
                 .font(.caption)
-                .adaptiveForegroundStyle(.secondary)
+                .uniForegroundStyle(.secondary)
             }
             .padding(.horizontal)
-            
-            AdaptiveButton(action: {
+
+            UniButton(action: {
                 // Cancel action
                 presentationMode.wrappedValue.dismiss()
             }) {
                 Text("Cancel")
                     .fontWeight(.medium)
-                    .adaptiveForegroundStyle(.red)
+                    .uniForegroundStyle(.red)
             }
-            .adaptiveButtonStyle(.plain)
+            .uniButtonStyle(.plain)
             .padding(.top)
         }
         .padding(32)

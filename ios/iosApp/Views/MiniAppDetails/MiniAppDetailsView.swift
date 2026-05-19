@@ -1,6 +1,5 @@
+import ExploreSwiftUI
 import SwiftUI
-import AdaptiveSwiftUi
-
 
 struct MiniAppDetailsView: View {
     @EnvironmentObject var navigation: NavigationViewModel
@@ -15,7 +14,7 @@ struct MiniAppDetailsView: View {
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            AdaptiveScrollView {
+            UniScrollView {
                 VStack(spacing: 0) {
                     MiniAppHeaderView(
                         isDownloaded: viewModel.isDownloaded,
@@ -26,15 +25,15 @@ struct MiniAppDetailsView: View {
                         onSettings: { showSettings = true }
                     )
 
-                    AdaptiveDivider().padding(.horizontal)
+                    UniDivider().padding(.horizontal)
                     MiniAppRatingsView()
-                    AdaptiveDivider().padding(.horizontal)
+                    UniDivider().padding(.horizontal)
                     MiniAppWhatsNewView()
                     MiniAppPreviewView()
                     MiniAppDescriptionView()
                     MiniAppReviewView()
                     MiniAppInformationView()
-                    AdaptiveDivider().padding(.horizontal)
+                    UniDivider().padding(.horizontal)
                     RelatedAppsSectionView()
                     Color.clear.frame(height: 60)
                 }

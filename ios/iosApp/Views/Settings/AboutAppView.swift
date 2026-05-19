@@ -1,16 +1,16 @@
-import AdaptiveSwiftUi
+import ExploreSwiftUI
 import SwiftUI
 
 struct AboutAppView: View {
     var body: some View {
-        AdaptiveList {
+        UniList {
             Section {
                 VStack(spacing: 16) {
                     Image(systemName: "app.dashed")  // App Icon placeholder
                         .resizable()
                         .scaledToFit()
                         .frame(width: 80, height: 80)
-                        .adaptiveForegroundStyle(.blue)
+                        .uniForegroundStyle(.blue)
 
                     Text("Lepos App")
                         .font(.title2)
@@ -18,7 +18,7 @@ struct AboutAppView: View {
 
                     Text("Version 1.0.0 (Build 100)")
                         .font(.subheadline)
-                        .adaptiveForegroundStyle(.secondary)
+                        .uniForegroundStyle(.secondary)
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical)
@@ -35,7 +35,7 @@ struct AboutAppView: View {
                 Text("Made with ❤️ by the Lepos Team")
                     .frame(maxWidth: .infinity, alignment: .center)
                     .font(.caption)
-                    .adaptiveForegroundStyle(.secondary)
+                    .uniForegroundStyle(.secondary)
             }
             .listRowBackground(Color.clear)
         }

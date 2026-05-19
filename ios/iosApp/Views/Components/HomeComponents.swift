@@ -1,6 +1,6 @@
-import SwiftUI
 import ACarousel
-import AdaptiveSwiftUi
+import ExploreSwiftUI
+import SwiftUI
 
 // MARK: - Model
 
@@ -21,7 +21,7 @@ let carouselItems: [CarouselItem] = [
     .init(id: "Chopper", title: "Chopper", colors: [.pink, .red]),
     .init(id: "Robin", title: "Robin", colors: [.purple, .indigo]),
     .init(id: "Franky", title: "Franky", colors: [.teal, .blue]),
-    .init(id: "Brook", title: "Brook", colors: [.gray, .black])
+    .init(id: "Brook", title: "Brook", colors: [.gray, .black]),
 ]
 
 struct LeposCarousel: View {
@@ -56,15 +56,15 @@ struct LeposCarousel: View {
             VStack(alignment: .leading, spacing: 8) {
                 Image(systemName: "person.fill")
                     .font(.largeTitle)
-                    .adaptiveForegroundStyle(.white, opacity: 0.9)
+                    .uniForegroundStyle(.white, opacity: 0.9)
 
                 Text(item.title)
                     .font(.title.bold())
-                    .adaptiveForegroundStyle(.white)
+                    .uniForegroundStyle(.white)
             }
             .padding()
         }
         .frame(height: 175)
-        .adaptiveGlass(cornerRadius: 30)
+        .uniGlass(cornerRadius: 30)
     }
 }

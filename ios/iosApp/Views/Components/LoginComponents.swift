@@ -1,12 +1,12 @@
+import ExploreSwiftUI
 import SwiftUI
-import AdaptiveSwiftUi
 
 struct LoginHeaderView: View {
     var body: some View {
         Text("Welcome Back")
             .font(.largeTitle)
             .fontWeight(.bold)
-            .adaptiveForegroundStyle(.primary)
+            .uniForegroundStyle(.primary)
     }
 }
 
@@ -20,7 +20,7 @@ struct LoginFormView: View {
                 .padding()
                 .padding()
                 .background(.clear)
-                .adaptiveGlass(cornerRadius: 16)
+                .uniGlass(cornerRadius: 16)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .autocapitalization(.none)
                 .keyboardType(.emailAddress)
@@ -29,7 +29,7 @@ struct LoginFormView: View {
                 .padding()
                 .padding()
                 .background(.clear)
-                .adaptiveGlass(cornerRadius: 16)
+                .uniGlass(cornerRadius: 16)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
         }
     }
@@ -40,11 +40,11 @@ struct LoginButtonView: View {
     let isLoading: Bool
 
     var body: some View {
-        AdaptiveButton(action: action) {
+        UniButton(action: action) {
             ZStack {
                 if isLoading {
-                    AdaptiveProgressView()
-                        .adaptiveProgressTint(.white)
+                    UniProgressView()
+                        .uniProgressTint(.white)
                 } else {
                     Text("Login")
                         .fontWeight(.semibold)
@@ -69,16 +69,16 @@ struct LiquidGlassDemoCard: View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Native iOS Liquid Glass")
                 .font(.headline)
-                .adaptiveForegroundStyle(.primary)
+                .uniForegroundStyle(.primary)
 
             Text("This card showcases the new API features for iOS 26+ including depth and motion.")
                 .font(.subheadline)
-                .adaptiveForegroundStyle(.secondary)
+                .uniForegroundStyle(.secondary)
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(.clear)
-        .adaptiveGlass(cornerRadius: 16)
+        .uniGlass(cornerRadius: 16)
         .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 }

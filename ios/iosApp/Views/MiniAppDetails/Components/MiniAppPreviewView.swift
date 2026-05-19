@@ -1,6 +1,5 @@
+import ExploreSwiftUI
 import SwiftUI
-import AdaptiveSwiftUi
-
 
 struct MiniAppPreviewView: View {
     var body: some View {
@@ -9,8 +8,8 @@ struct MiniAppPreviewView: View {
                 .font(.title2)
                 .fontWeight(.bold)
                 .padding(.horizontal)
-            
-            AdaptiveScrollView(.horizontal, showsIndicators: false) {
+
+            UniScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 16) {
                     ForEach(0..<3) { i in
                         // Phone Frame Mockup
@@ -21,7 +20,7 @@ struct MiniAppPreviewView: View {
                                 .clipShape(RoundedRectangle(cornerRadius: 38))
                                 .frame(width: 250, height: 500)
                                 .shadow(color: .black.opacity(0.05), radius: 10, x: 5, y: 5)
-                            
+
                             // Screen Content
                             RoundedRectangle(cornerRadius: 34)
                                 .fill(Color.gray.opacity(0.1))
@@ -30,10 +29,10 @@ struct MiniAppPreviewView: View {
                                     VStack {
                                         Text("Screen \(i+1)")
                                             .font(.headline)
-                                            .adaptiveForegroundStyle(.secondary)
+                                            .uniForegroundStyle(.secondary)
                                     }
                                 )
-                            
+
                             // Notch/Island area
                             VStack {
                                 Capsule()
@@ -43,7 +42,7 @@ struct MiniAppPreviewView: View {
                                 Spacer()
                             }
                             .frame(width: 250, height: 500)
-                            
+
                             // Home indicator
                             VStack {
                                 Spacer()
@@ -57,7 +56,7 @@ struct MiniAppPreviewView: View {
                     }
                 }
                 .padding(.horizontal)
-                .padding(.vertical, 20) // Space for shadow
+                .padding(.vertical, 20)  // Space for shadow
             }
         }
     }

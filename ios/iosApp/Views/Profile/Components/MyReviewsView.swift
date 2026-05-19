@@ -1,5 +1,5 @@
+import ExploreSwiftUI
 import SwiftUI
-import AdaptiveSwiftUi
 
 // import Shared — replaced by native Swift Shared module
 
@@ -14,17 +14,23 @@ struct MyReviewItem: Identifiable {
 
 struct MyReviewsView: View {
     let reviews: [MyReviewItem] = [
-        MyReviewItem(appName: "EcoTrack Pro", appIconColor: .green, rating: 5, date: "2 days ago", comment: "Amazing app! Helped me reduce my carbon footprint significantly."),
-        MyReviewItem(appName: "Pixel Art", appIconColor: .purple, rating: 4, date: "1 week ago", comment: "Great tools, but needs more layers in the free version."),
-        MyReviewItem(appName: "Zen Space", appIconColor: .pink, rating: 5, date: "2 weeks ago", comment: "Visuals are stunning. Very relaxing.")
+        MyReviewItem(
+            appName: "EcoTrack Pro", appIconColor: .green, rating: 5, date: "2 days ago",
+            comment: "Amazing app! Helped me reduce my carbon footprint significantly."),
+        MyReviewItem(
+            appName: "Pixel Art", appIconColor: .purple, rating: 4, date: "1 week ago",
+            comment: "Great tools, but needs more layers in the free version."),
+        MyReviewItem(
+            appName: "Zen Space", appIconColor: .pink, rating: 5, date: "2 weeks ago",
+            comment: "Visuals are stunning. Very relaxing."),
     ]
-    
+
     var body: some View {
-        AdaptiveScrollView {
+        UniScrollView {
             VStack(spacing: 16) {
                 if reviews.isEmpty {
                     Text("No reviews yet")
-                        .adaptiveForegroundStyle(.secondary)
+                        .uniForegroundStyle(.secondary)
                         .padding(.top, 40)
                 } else {
                     ForEach(reviews) { review in
@@ -38,37 +44,40 @@ struct MyReviewsView: View {
                                             .foregroundColor(.white)
                                             .fontWeight(.bold)
                                     )
-                                
+
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(review.appName)
                                         .font(.headline)
                                     Text(review.date)
                                         .font(.caption)
-                                        .adaptiveForegroundStyle(.secondary)
+                                        .uniForegroundStyle(.secondary)
                                 }
                                 Spacer()
-                                AdaptiveButton(action: {}) {
+                                UniButton(action: {}) {
                                     Image(systemName: "ellipsis")
-                                        .adaptiveForegroundStyle(.secondary)
+                                        .uniForegroundStyle(.secondary)
                                 }
-                                .adaptiveButtonStyle(.plain)
+                                .uniButtonStyle(.plain)
                             }
-                            
+
                             HStack(spacing: 2) {
                                 ForEach(0..<5) { index in
                                     Image(systemName: "star.fill")
-                                        .adaptiveForegroundStyle(index < review.rating ? .orange : .secondary, opacity: index < review.rating ? 1.0 : 0.3)
+                                        .uniForegroundStyle(
+                                            index < review.rating ? .orange : .secondary,
+                                            opacity: index < review.rating ? 1.0 : 0.3
+                                        )
                                         .font(.caption)
                                 }
                             }
-                            
+
                             Text(review.comment)
                                 .font(.body)
                                 .foregroundColor(.primary)
                                 .lineLimit(3)
                         }
                         .padding()
-                        .adaptiveGlass(cornerRadius: 16)
+                        .uniGlass(cornerRadius: 16)
                     }
                 }
             }
