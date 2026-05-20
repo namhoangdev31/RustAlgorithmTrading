@@ -17,7 +17,7 @@
 
 - **CPU**: 8+ cores (High clock speed preferred for Rust kernel)
 - **RAM**: 16GB minimum (32GB+ recommended for large-scale backtesting)
-- **Storage**: 100GB+ NVMe SSD (High IOPS for DuckDB/SQLite)
+- **Storage**: 100GB+ NVMe SSD (High IOPS for DuckDB/PostgreSQL)
 - **Network**: Low-latency connection (<5ms to Alpaca exchange endpoints)
 
 #### Software Requirements (Tri-Runtime Stack)
@@ -27,7 +27,7 @@
 - **Go Control Plane**: Go 1.22+
 - **Persistence**:
   - **DuckDB**: Analytical time-series metrics (`data/observability.duckdb`)
-  - **SQLite**: Transactional trade logs (`data/trades.db`)
+  - **PostgreSQL**: Transactional trade logs (`data/postgresql://localhost:5432/trading`)
 - **Messaging**: ZeroMQ 4.3+
 - **Containerization**: Docker 25.0+ & Docker Compose 2.24+
 
@@ -70,7 +70,7 @@ PAPER_TRADING=false
 
 # === STORAGE PATHS ===
 DUCKDB_PATH=data/observability.duckdb
-SQLITE_PATH=data/trades.db
+PostgreSQL_PATH=data/postgresql://localhost:5432/trading
 
 # === CONTROL PLANE ===
 LISTEN_ADDR=0.0.0.0:8081

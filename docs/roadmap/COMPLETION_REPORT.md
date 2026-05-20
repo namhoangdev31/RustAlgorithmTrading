@@ -33,7 +33,7 @@ As of May 11, 2026, the **RustAlgorithmTrading** platform has successfully compl
 ## 3. Operational Readiness
 
 - **Health Monitoring**: Unified `scripts/health_check.sh` validates all tri-runtime services.
-- **Persistence**: Hybrid storage using DuckDB (Analytical) and SQLite (Transactional).
+- **Persistence**: Hybrid storage using DuckDB (Analytical) and PostgreSQL (Transactional).
 - **Operations**: Authoritative standards established in `docs/operations/OPERATIONS_GUIDE.md`.
 
 ## 4. Final Verdict

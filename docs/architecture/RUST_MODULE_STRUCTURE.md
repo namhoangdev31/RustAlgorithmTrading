@@ -10,7 +10,7 @@ The Rust database layer provides high-performance storage access for trading ope
 **Primary Ownership (Phase 3.5)**:
 - **Go Control-Plane**: Authoritative writer for `trading_metrics` (DuckDB) and primary REST/WS API server.
 - **Rust Services**: Authoritative writers for operational data (`trades`, `positions`, `audit_logs`) via the `database` crate documented below.
-- **Shared Storage**: Both runtimes operate on the same data files (`data/observability.duckdb` and `data/trades.db`).
+- **Shared Storage**: Both runtimes operate on the same data files (`data/observability.duckdb` and `data/postgresql://localhost:5432/trading`).
 
 ## 1. Directory Structure
 

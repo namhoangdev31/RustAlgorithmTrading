@@ -1,17 +1,17 @@
-# Storage Operations Guide (DuckDB & SQLite)
+# Storage Operations Guide (DuckDB & PostgreSQL)
 
 ## Overview
 
 The platform uses a hybrid storage model:
 - **DuckDB**: Columnar storage for high-frequency time-series metrics.
-- **SQLite**: Transactional storage for trade history, configuration, and audit logs.
+- **PostgreSQL**: Transactional storage for trade history, configuration, and audit logs.
 
 ## 1. Database Locations
 
 | Database | Filesystem Path | Usage |
 |:---|:---|:---|
 | **Metrics** | `data/observability.duckdb` | Metric history, analytics |
-| **Trades** | `data/trades.db` | Order history, position state |
+| **Trades** | `data/postgresql://localhost:5432/trading` | Order history, position state |
 | **Metadata** | `data/system.db` | Operational metadata |
 
 ## 2. Maintenance Tasks
@@ -47,14 +47,14 @@ AND timestamp > now() - INTERVAL 1 HOUR
 GROUP BY symbol;
 ```
 
-### Inspecting Trade History via SQLite CLI
+### Inspecting Trade History via PostgreSQL CLI
 ```bash
-sqlite3 data/trades.db "SELECT * FROM trades ORDER BY timestamp DESC LIMIT 10;"
+PostgreSQL3 data/postgresql://localhost:5432/trading "SELECT * FROM trades ORDER BY timestamp DESC LIMIT 10;"
 ```
 
 ## 4. Troubleshooting
 
-### Database Locked (SQLite)
+### Database Locked (PostgreSQL)
 If you see `database is locked`, ensure only one process is writing. The Go Control-Plane should be the primary writer for trades in production.
 
 ### Corruption Check (DuckDB)

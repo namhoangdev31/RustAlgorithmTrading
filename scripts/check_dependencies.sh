@@ -3,7 +3,7 @@
 # DEPENDENCY CHECK SCRIPT
 #
 # Verifies all required dependencies for the observability stack:
-# - Go binary/runtime and Python data stack (DuckDB, SQLite, etc.)
+# - Go binary/runtime and Python data stack (DuckDB, PostgreSQL, etc.)
 # - Node.js and npm (for React dashboard)
 # - System utilities (curl, jq)
 # - Directory structure
@@ -348,11 +348,11 @@ check_databases() {
         log_error "DuckDB NOT installed"
     fi
 
-    # SQLite (usually built into Python)
-    if $python_cmd -c "import sqlite3" 2>/dev/null; then
-        log_success "SQLite Python package available"
+    # PostgreSQL (asyncpg)
+    if $python_cmd -c "import asyncpg" 2>/dev/null; then
+        log_success "PostgreSQL Python package (asyncpg) available"
     else
-        log_error "SQLite NOT available"
+        log_error "PostgreSQL Python package (asyncpg) NOT available"
     fi
 }
 

@@ -39,14 +39,14 @@ This document defines the metrics collected by the **Go Control-Plane** and stor
 |:---|:---|:---|
 | `cpu_usage_percent` | Gauge | Component-level CPU utilization |
 | `memory_usage_mb` | Gauge | Component-level memory footprint |
-| `db_disk_usage_mb` | Gauge | DuckDB + SQLite filesystem footprint |
+| `db_disk_usage_mb` | Gauge | DuckDB + PostgreSQL filesystem footprint |
 | `active_websockets` | Gauge | Number of connected dashboard clients |
 
 ## Data Retention Policy
 
 - **High-Resolution (1Hz)**: Retained for 7 days in DuckDB.
 - **Aggregated (1m)**: Retained for 90 days in DuckDB.
-- **Trade Records**: Retained indefinitely in SQLite.
+- **Trade Records**: Retained indefinitely in PostgreSQL.
 
 ---
 **Maintained By**: Trading Infrastructure Team

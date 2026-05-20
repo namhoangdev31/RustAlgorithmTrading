@@ -149,18 +149,18 @@ The platform is fully migrated.
 
 | Module | Ownership | Key types/functions | Primary tests |
 |---|---|---|---|
-| `go/cmd/server/main.go` | Entrypoint for Phase 3 API | `main()`, Env var parsing (`duckDBPath`, `sqlitePath`), Server Initialization | `tests/observability/test_go_parity.py` |
-| `go/internal/http/routes.go` | HTTP Route definitions | `SetupRoutes()`, defining `/health`, `/metrics`, `/ws` | `go/internal/http/routes_test.go` |
-| `go/internal/http/middleware.go` | HTTP Middleware | `AuthMiddleware()`, `RateLimitMiddleware()` | `go/internal/http/routes_test.go` |
-| `go/internal/ws/manager.go` | WebSocket fanout logic | `Manager` struct, `ServeWS()`, `broadcastMessage()`, `Client` struct | `go/internal/ws/manager_test.go` |
-| `go/internal/storage/duckdb.go` | DuckDB read adapter | `DuckDBReader` struct, `QueryAnalytics()`, Connection pooling setup | `tests/observability/test_go_parity.py` |
-| `go/internal/storage/sqlite.go` | SQLite read adapter | `SQLiteReader` struct, `QueryTransactions()`, `InsertLog()` | `tests/observability/test_go_parity.py` |
-| `go/internal/storage/postgres.go` | Postgres read/write adapter | `PostgresReader` struct, Database URL handling | `go/tests/integration/duckdb_integration_test.go` |
-| `go/internal/health/aggregator.go` | Health aggregation logic | `Aggregator` struct, `CollectHealthStatus()`, `ComponentHealth` type | `tests/observability/test_go_parity.py` |
-| `go/internal/worker/collector.go` | Metrics broadcast worker | `MetricsCollector` struct, `Start()`, `Stop()`, Time ticker loops | `tests/observability/test_go_parity.py` |
-| `go/internal/alpaca/client.go` | Go-native Alpaca adapter | `Client` struct, `PlaceMarketOrder()`, `CancelOrder()` | `go/internal/alpaca/client_test.go` |
-| `go/internal/integrity/integrity.go` | Go integrity gate evaluator | `ValidateRunIntegrity()`, Checking `schema_version` and invariants | `go/internal/integrity/integrity_test.go` |
-| `go/internal/zmqbridge/envelope.go` | ZMQ Envelope handling | `Envelope` struct parsing, Message deserialization logic | `go/internal/zmqbridge/envelope_test.go` |
+| go/cmd/server/main.go | Entrypoint for Phase 3 API | `main()`, Env var parsing (`duckDBPath`, `databaseURL`), Server Initialization | `tests/observability/test_go_parity.py` |
+| go/internal/entities/entities.go | DB Schema Entities | Go structures mapped to PostgreSQL tables (`Order`, `RiskEvent`) | `N/A` |
+| go/internal/http/routes.go | HTTP Route definitions | `SetupRoutes()`, defining `/health`, `/metrics`, `/ws` | `go/internal/http/routes_test.go` |
+| go/internal/http/middleware.go | HTTP Middleware | `AuthMiddleware()`, `RateLimitMiddleware()` | `go/internal/http/routes_test.go` |
+| go/internal/ws/manager.go | WebSocket fanout logic | `Manager` struct, `ServeWS()`, `broadcastMessage()`, `Client` struct | `go/internal/ws/manager_test.go` |
+| go/internal/storage/duckdb.go | DuckDB read adapter | `DuckDBReader` struct, `QueryAnalytics()`, Connection pooling setup | `tests/observability/test_go_parity.py` |
+| go/internal/storage/postgres.go | Postgres read/write adapter | `PostgresReader` struct, Database URL handling | `go/tests/integration/duckdb_integration_test.go` |
+| go/internal/health/aggregator.go | Health aggregation logic | `Aggregator` struct, `CollectHealthStatus()`, `ComponentHealth` type | `tests/observability/test_go_parity.py` |
+| go/internal/worker/collector.go | Metrics broadcast worker | `MetricsCollector` struct, `Start()`, `Stop()`, Time ticker loops | `tests/observability/test_go_parity.py` |
+| go/internal/alpaca/client.go | Go-native Alpaca adapter | `Client` struct, `PlaceMarketOrder()`, `CancelOrder()` | `go/internal/alpaca/client_test.go` |
+| go/internal/integrity/integrity.go | Go integrity gate evaluator | `ValidateRunIntegrity()`, Checking `schema_version` and invariants | `go/internal/integrity/integrity_test.go` |
+| go/internal/zmqbridge/envelope.go | ZMQ Envelope handling | `Envelope` struct parsing, Message deserialization logic | `go/internal/zmqbridge/envelope_test.go` |
 
 ---
 
@@ -287,7 +287,8 @@ Standalone iOS project (SwiftUI + Liquid Glass). Migrated from `leposapp/iosApp`
 | `frontend/components/layout/` | Page shell and section components | `navbar.tsx`, `theme-provider.tsx`, `sections/hero.tsx`, `sections/features.tsx`, `sections/pricing.tsx`. |
 | `frontend/components/ui/` | shadcn source components | Primitive UI elements: `button.tsx`, `card.tsx`, `sheet.tsx`, `navigation-menu.tsx`, `accordion.tsx`, `form.tsx`. |
 | `frontend/public/` | Static landing assets | Images, SVG icons, Favicon. |
-| `frontend/package.json` | Dependencies and scripts | Next.js, React, Tailwind, Framer Motion, Lucide icons dependencies. |
+| frontend/package.json | Dependencies and scripts | Next.js, React, Tailwind, Framer Motion, Lucide icons dependencies. |
+| frontend/prisma/schema.prisma | Prisma Schema Definition | Database connection & entity schemas (`Order`, `RiskEvent`) mapping to PostgreSQL |
 
 Validate with:
 

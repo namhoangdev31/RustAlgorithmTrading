@@ -5,7 +5,7 @@
 This project uses a dual-database architecture for optimal performance:
 
 - **DuckDB**: Time-series analytics (OLAP) - Blazing fast aggregations
-- **SQLite**: Operational data (OLTP) - ACID transactions
+- **PostgreSQL**: Operational data (OLTP) - ACID transactions
 
 ## Why DuckDB?
 
@@ -25,7 +25,7 @@ DuckDB is perfect for trading analytics:
 ├─────────────────────────────────────────────────┤
 │          StorageManager (integration.py)        │
 ├──────────────────────┬──────────────────────────┤
-│   DuckDBClient       │   SQLiteClient           │
+│   DuckDBClient       │   PostgresClient           │
 │  (Analytics/OLAP)    │  (Operations/OLTP)       │
 ├──────────────────────┼──────────────────────────┤
 │ • Metrics            │ • Trade Log              │
@@ -41,12 +41,12 @@ src/observability/storage/
 ├── __init__.py              # Package exports
 ├── schemas.py               # Data models & SQL schemas
 ├── duckdb_client.py         # DuckDB time-series client
-├── sqlite_client.py         # SQLite operational client
+├── postgres_client.py         # PostgreSQL operational client
 └── integration.py           # Control-plane integration (Go primary, legacy compatibility (retired)) helpers
 
 tests/observability/
 ├── test_duckdb_client.py    # DuckDB tests with benchmarks
-└── test_sqlite_client.py    # SQLite tests
+└── test_postgres_client.py    # PostgreSQL tests
 ```
 
 ## Quick Start
@@ -54,21 +54,21 @@ tests/observability/
 ### 1. Install Dependencies
 
 ```bash
-pip install duckdb>=0.9.0 aiosqlite>=0.19.0
+pip install duckdb>=0.9.0 asyncpg>=0.19.0
 ```
 
 ### 2. Initialize Storage
 
 ```python
-from observability.storage import DuckDBClient, SQLiteClient
+from observability.storage import DuckDBClient, PostgresClient
 
 # DuckDB for analytics
 duckdb = DuckDBClient("data/metrics.duckdb")
 await duckdb.initialize()
 
-# SQLite for operations
-sqlite = SQLiteClient("data/trades.db")
-await sqlite.initialize()
+# PostgreSQL for operations
+PostgreSQL = PostgresClient("data/postgresql://localhost:5432/trading")
+await PostgreSQL.initialize()
 ```
 
 ### 3. Go control-plane Integration
@@ -192,7 +192,7 @@ summary = await duckdb.get_performance_summary(
 
 ```python
 # Log trade execution
-trade_id = await sqlite.log_trade(
+trade_id = await PostgreSQL.log_trade(
     timestamp=datetime.utcnow(),
     symbol="BTC/USD",
     side="buy",
@@ -204,7 +204,7 @@ trade_id = await sqlite.log_trade(
 )
 
 # Get trade history
-trades = await sqlite.get_trades(
+trades = await PostgreSQL.get_trades(
     start_time=datetime.utcnow() - timedelta(days=7),
     symbol="BTC/USD"
 )
@@ -214,7 +214,7 @@ trades = await sqlite.get_trades(
 
 ```python
 # Log system event
-await sqlite.log_event(
+await PostgreSQL.log_event(
     event_type="order",
     severity="error",
     message="Order failed: insufficient funds",
@@ -222,7 +222,7 @@ await sqlite.log_event(
 )
 
 # Query events
-events = await sqlite.get_events(
+events = await PostgreSQL.get_events(
     start_time=datetime.utcnow() - timedelta(hours=1),
     severity="error"
 )
@@ -237,7 +237,7 @@ events = await sqlite.get_events(
 - **Aggregation**: Blazing fast with columnar storage
 - **Throughput**: >10,000 records/sec
 
-### SQLite Benchmarks
+### PostgreSQL Benchmarks
 
 - **Insert**: <1ms per record
 - **Query**: <10ms for most operational queries
@@ -327,8 +327,8 @@ stats = await duckdb.get_table_stats()
 #     }
 # }
 
-# SQLite size
-size_bytes = await sqlite.get_db_size()
+# PostgreSQL size
+size_bytes = await PostgreSQL.get_db_size()
 ```
 
 ## Grafana Integration (Optional)
@@ -367,7 +367,7 @@ async def grafana_metrics(
 
 ### "Database is locked"
 
-SQLite: Ensure WAL mode is enabled (done automatically in `initialize()`)
+PostgreSQL: Ensure WAL mode is enabled (done automatically in `initialize()`)
 
 ### "Out of memory"
 
@@ -385,7 +385,7 @@ self._conn.execute("PRAGMA memory_limit='2GB'")
 ## Best Practices
 
 1. ✅ **Use DuckDB for analytics** (aggregations, time-series)
-2. ✅ **Use SQLite for transactions** (trade logs, events)
+2. ✅ **Use PostgreSQL for transactions** (trade logs, events)
 3. ✅ **Batch insert when possible** (10-100x faster)
 4. ✅ **Always use time range filters** (prevent full table scans)
 5. ✅ **Set query limits** (prevent memory issues)
@@ -433,4 +433,4 @@ conn.execute("""
 For issues or questions:
 1. Check tests for usage examples
 2. Review DuckDB docs: https://duckdb.org/docs/
-3. SQLite docs: https://www.sqlite.org/docs.html
+3. PostgreSQL docs: https://www.PostgreSQL.org/docs.html

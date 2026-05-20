@@ -204,7 +204,7 @@ Use these as templates when spawning agents or batching operations.
   Task("Obs Research", "Map issue to observability API/storage/logging ownership.", "researcher")
   Task("Obs Fix", "Patch src/observability owners only.", "coder")
   Task("Obs Validation", "Run tests/observability and integration checks.", "tester")
-  Bash "rg \"duckdb|sqlite|metrics|structured_logger|websocket\" src/observability tests docs"
+  Bash "rg \"duckdb|postgres|metrics|structured_logger|websocket\" src/observability tests docs"
   Bash "python -m pytest tests/observability -q"
   Bash "python -m pytest tests/integration/test_observability_integration.py -q"
 ```

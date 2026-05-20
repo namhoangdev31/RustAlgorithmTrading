@@ -32,7 +32,6 @@ func (a *Aggregator) HealthCheckHandler(w http.ResponseWriter, r *http.Request) 
 
 func (a *Aggregator) ReadinessCheckHandler(w http.ResponseWriter, r *http.Request) {
 	duckReady := a.store != nil && a.store.PingDuckDB() == nil
-	sqliteReady := a.store != nil && a.store.PingSQLite() == nil
 	postgresReady := a.store != nil && a.store.PingPostgres() == nil
 
 	collectors := map[string]interface{}{
@@ -40,16 +39,12 @@ func (a *Aggregator) ReadinessCheckHandler(w http.ResponseWriter, r *http.Reques
 			"ready":  duckReady,
 			"status": readinessStatus(duckReady),
 		},
-		"sqlite": map[string]interface{}{
-			"ready":  sqliteReady,
-			"status": readinessStatus(sqliteReady),
-		},
 		"postgres": map[string]interface{}{
 			"ready":  postgresReady,
 			"status": readinessStatus(postgresReady),
 		},
 	}
-	ready := duckReady || sqliteReady || postgresReady
+	ready := duckReady || postgresReady
 	code := http.StatusOK
 	if !ready {
 		code = http.StatusServiceUnavailable
@@ -74,10 +69,6 @@ func (a *Aggregator) SystemHealthHandler(w http.ResponseWriter, r *http.Request)
 	if a.store != nil && a.store.PingDuckDB() == nil {
 		duckStatus = "connected"
 	}
-	sqliteStatus := "error"
-	if a.store != nil && a.store.PingSQLite() == nil {
-		sqliteStatus = "connected"
-	}
 	postgresStatus := "error"
 	if a.store != nil && a.store.PingPostgres() == nil {
 		postgresStatus = "connected"
@@ -92,7 +83,6 @@ func (a *Aggregator) SystemHealthHandler(w http.ResponseWriter, r *http.Request)
 		"resources": map[string]float64{},
 		"connections": map[string]interface{}{
 			"duckdb":   duckStatus,
-			"sqlite":   sqliteStatus,
 			"postgres": postgresStatus,
 		},
 	})
@@ -109,9 +99,6 @@ func (a *Aggregator) ComponentsSnapshot() map[string]interface{} {
 			},
 			"duckdb": map[string]interface{}{
 				"status": readinessStatus(a.store != nil && a.store.PingDuckDB() == nil),
-			},
-			"sqlite": map[string]interface{}{
-				"status": readinessStatus(a.store != nil && a.store.PingSQLite() == nil),
 			},
 			"postgres": map[string]interface{}{
 				"status": readinessStatus(a.store != nil && a.store.PingPostgres() == nil),

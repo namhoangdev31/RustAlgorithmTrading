@@ -1,0 +1,33 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Order {
+  id          Int      @id @default(autoincrement())
+  orderId     String   @unique @map("order_id") @db.VarChar(255)
+  symbol      String   @db.VarChar(50)
+  side        String   @db.VarChar(10)
+  orderType   String   @map("order_type") @db.VarChar(50)
+  quantity    Float
+  price       Float?
+  status      String   @db.VarChar(50)
+  submittedAt DateTime @map("submitted_at") @db.Timestamptz
+
+  @@map("orders")
+}
+
+model RiskEvent {
+  id         Int      @id @default(autoincrement())
+  eventType  String   @map("event_type") @db.VarChar(50)
+  severity   String   @db.VarChar(20)
+  message    String
+  metadata   Json?
+  occurredAt DateTime @map("occurred_at") @db.Timestamptz
+
+  @@map("risk_events")
+}

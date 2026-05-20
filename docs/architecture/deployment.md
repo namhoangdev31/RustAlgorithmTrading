@@ -35,7 +35,7 @@ The system uses a **Tri-Runtime Architecture** optimized for specific workloads:
 
 ## 4. Database Strategy
 
--   **`data/trades.db` (SQLite)**: Primary transactional store for orders, fills, and positions. Managed by Rust.
+-   **`data/postgresql://localhost:5432/trading` (PostgreSQL)**: Primary transactional store for orders, fills, and positions. Managed by Rust.
 -   **`data/observability.duckdb` (DuckDB)**: Analytical store for high-frequency metrics and logs. Managed by Go.
 -   **`data/cache/`**: Temporary storage for historical bar data (Parquet format).
 

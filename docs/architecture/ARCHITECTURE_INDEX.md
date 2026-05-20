@@ -35,13 +35,13 @@ This index tracks the architectural evolution of the system from a Python-Rust h
 
 ## Architectural Decision Records (ADRs)
 
-### ADR-002: Hybrid Persistence (DuckDB + SQLite)
+### ADR-002: Hybrid Persistence (DuckDB + PostgreSQL)
 
-**Decision**: Use DuckDB for analytical time-series metrics and SQLite for transactional trade logs.
+**Decision**: Use DuckDB for analytical time-series metrics and PostgreSQL for transactional trade logs.
 **Rationale**:
 
 - DuckDB provides 100x faster analytical queries than traditional RDBMS.
-- SQLite ensures ACID compliance for trade records without the overhead of a separate DB server.
+- PostgreSQL ensures ACID compliance for trade records without the overhead of a separate DB server.
 - **Note**: PostgreSQL remains a supported secondary sink but is not on the hot observability path.
 
 ### ADR-005: Go-Native Control-Plane

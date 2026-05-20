@@ -1,6 +1,5 @@
 """
-SQLite Operational Data Client
-Lightweight database for operational data and metadata (OLTP).
+DuckDB Time-Series and Analytics Client
 Optimized for OLAP queries with blazing fast aggregations.
 Performance targets:
 - Insert latency: <1ms

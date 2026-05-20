@@ -69,7 +69,7 @@ bash scripts/health_check.sh
 ### Database Access
 
 - **Metrics**: Open `data/observability.duckdb` using the DuckDB CLI.
-- **Trades**: Open `data/trades.db` using the SQLite CLI.
+- **Trades**: Open `data/postgresql://localhost:5432/trading` using the PostgreSQL CLI.
 
 ## 4. Testing
 

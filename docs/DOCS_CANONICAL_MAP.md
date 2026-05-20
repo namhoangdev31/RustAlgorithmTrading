@@ -24,7 +24,7 @@ For non-trivial work, read in this exact order:
 ### D. Observability & Data Plane
 - `docs/observability/OBSERVABILITY_OVERVIEW.md` (Port 8081 guide)
 - `docs/observability/METRICS_CATALOG.md` (Metric definitions)
-- `docs/observability/STORAGE_OPERATIONS.md` (DuckDB/SQLite maintenance)
+- `docs/observability/STORAGE_OPERATIONS.md` (DuckDB/PostgreSQL maintenance)
 - `docs/observability/LOGGING_STANDARDS.md` (Logging format)
 
 ### E. Security & Optimization
@@ -45,7 +45,7 @@ For non-trivial work, read in this exact order:
 ## 4) Active Technology Posture
 - Broker: **Alpaca-only (active)**
 - Metrics: **DuckDB-first (active)**
-- Transactions: **SQLite (active)**
+- Transactions: **PostgreSQL (active)**
 
 ---
 **Status**: Authoritative Static Canon

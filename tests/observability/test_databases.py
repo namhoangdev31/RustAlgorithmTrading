@@ -4,12 +4,10 @@ Database Performance and Persistence Tests.
 Tests:
 - DuckDB write performance (>1000 inserts/sec)
 - DuckDB query performance (<50ms)
-- SQLite trade recording
 - Data persistence after restart
 """
 
 import asyncio
-import sqlite3
 import time
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -31,12 +29,6 @@ class TestDatabasePerformance:
     def duckdb_path(self, project_root: Path, tmp_path: Path) -> Path:
         """Create temporary DuckDB database."""
         db_path = tmp_path / "test_metrics.duckdb"
-        return db_path
-
-    @pytest.fixture
-    def sqlite_path(self, project_root: Path, tmp_path: Path) -> Path:
-        """Create temporary SQLite database."""
-        db_path = tmp_path / "test_trades.db"
         return db_path
 
     @pytest.mark.performance
@@ -154,76 +146,7 @@ class TestDatabasePerformance:
 
         conn.close()
 
-    @pytest.mark.performance
-    def test_sqlite_trade_recording(self, sqlite_path: Path):
-        """Test SQLite trade recording with realistic trade volume."""
-        conn = sqlite3.connect(str(sqlite_path))
-        cursor = conn.cursor()
 
-        # Create trades table
-        cursor.execute("""
-            CREATE TABLE trades (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                timestamp TEXT NOT NULL,
-                symbol TEXT NOT NULL,
-                side TEXT NOT NULL,
-                quantity REAL NOT NULL,
-                price REAL NOT NULL,
-                execution_time_ms REAL,
-                strategy TEXT
-            )
-            """)
-        conn.commit()
-
-        # Generate realistic trade data
-        symbols = ["AAPL", "GOOGL", "MSFT", "AMZN", "TSLA"]
-        sides = ["buy", "sell"]
-        strategies = ["momentum", "mean_reversion", "arbitrage"]
-
-        trades = [
-            (
-                (datetime.now() + timedelta(minutes=i)).isoformat(),
-                symbols[i % len(symbols)],
-                sides[i % len(sides)],
-                float((i % 10 + 1) * 10),  # quantity
-                150.0 + (i % 100) * 0.5,  # price
-                3.5 + (i % 5) * 0.2,  # execution_time_ms
-                strategies[i % len(strategies)],
-            )
-            for i in range(1000)
-        ]
-
-        # Benchmark insert
-        start_time = time.perf_counter()
-
-        cursor.executemany(
-            """
-            INSERT INTO trades
-            (timestamp, symbol, side, quantity, price, execution_time_ms, strategy)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-            """,
-            trades,
-        )
-        conn.commit()
-
-        elapsed = time.perf_counter() - start_time
-        logger.info(f"Inserted 1000 trades in {elapsed:.3f}s")
-
-        # Verify trades
-        cursor.execute("SELECT COUNT(*) FROM trades")
-        count = cursor.fetchone()[0]
-        assert count == 1000
-
-        # Test queries
-        cursor.execute("SELECT * FROM trades WHERE symbol = 'AAPL'")
-        aapl_trades = cursor.fetchall()
-        assert len(aapl_trades) > 0
-
-        cursor.execute("SELECT SUM(quantity) FROM trades WHERE side = 'buy'")
-        buy_volume = cursor.fetchone()[0]
-        assert buy_volume > 0
-
-        conn.close()
 
     @pytest.mark.integration
     def test_duckdb_data_persistence(self, duckdb_path: Path):
@@ -254,35 +177,7 @@ class TestDatabasePerformance:
 
         conn2.close()
 
-    @pytest.mark.integration
-    def test_sqlite_data_persistence(self, sqlite_path: Path):
-        """Test that SQLite data persists after connection close."""
-        # First connection: create and populate
-        conn1 = sqlite3.connect(str(sqlite_path))
-        cursor1 = conn1.cursor()
 
-        cursor1.execute("""
-            CREATE TABLE persistent_trades (
-                id INTEGER PRIMARY KEY,
-                symbol TEXT
-            )
-            """)
-        cursor1.execute("INSERT INTO persistent_trades VALUES (1, 'AAPL')")
-        conn1.commit()
-        conn1.close()
-
-        # Second connection: verify data exists
-        conn2 = sqlite3.connect(str(sqlite_path))
-        cursor2 = conn2.cursor()
-
-        cursor2.execute("SELECT * FROM persistent_trades WHERE id = 1")
-        result = cursor2.fetchone()
-
-        assert result is not None
-        assert result[0] == 1
-        assert result[1] == "AAPL"
-
-        conn2.close()
 
     @pytest.mark.performance
     def test_concurrent_database_access(self, duckdb_path: Path):

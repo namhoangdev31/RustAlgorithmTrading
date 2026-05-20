@@ -47,7 +47,7 @@ This directory contains the complete system architecture documentation for the *
 | **ML & Research** | Model Training | Python (PyTorch, Pandas) |
 | **Observability** | Control Plane | Go (internal/collector, internal/ws) |
 | **Persistence** | Analytics | DuckDB |
-| **Persistence** | Operational | SQLite |
+| **Persistence** | Operational | PostgreSQL |
 | **Messaging** | IPC | ZeroMQ (ZMQ) |
 
 ### Performance Targets

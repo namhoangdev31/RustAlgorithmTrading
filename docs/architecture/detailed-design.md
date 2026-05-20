@@ -146,7 +146,7 @@ The architecture follows a **Tri-Runtime Pattern** (Rust/Python/Go) with loosely
 | Runtime | Rust (Tokio) | Low-latency, memory safe execution kernel |
 | Research | Python (uv) | High-velocity research & ML development |
 | Control | Go (1.22+) | High-concurrency metrics fanout (Port 8081) |
-| Storage | DuckDB / SQLite | Columnar analytics + Transactional integrity |
+| Storage | DuckDB / PostgreSQL | Columnar analytics + Transactional integrity |
 | Messaging | ZeroMQ | Sub-10μs inter-process communication |
 | Metrics | OpenMetrics | Exported by Rust, scraped by Go |
 

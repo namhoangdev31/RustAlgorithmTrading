@@ -82,6 +82,9 @@ go/observability-api
 data/benchmarks/
 go/vendor/
 go/.go_cache/
+go/.bin/
+go/.gocache/
+go/.gopath/
 
 # iOS / SwiftPM generated artifacts
 **/.swiftpm/xcode/xcuserdata/

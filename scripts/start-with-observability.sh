@@ -110,7 +110,6 @@ start_observability() {
 
             # Export environment
             export DUCKDB_PATH="$PROJECT_ROOT/data/metrics.duckdb"
-            export SQLITE_PATH="$PROJECT_ROOT/data/trading.db"
             export LOG_PATH="$PROJECT_ROOT/logs"
 
             # Start API in background

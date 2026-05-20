@@ -11,7 +11,6 @@ import logging
 import os
 
 from .duckdb_client import DuckDBClient
-from .sqlite_client import SQLiteClient
 from .postgres_client import PostgresClient
 from .schemas import MetricRecord, TimeInterval
 
@@ -22,13 +21,12 @@ class StorageManager:
     """
     Unified storage manager for observability runtime
 
-    Manages DuckDB (analytics) and operational storage (Postgres or SQLite).
+    Manages DuckDB (analytics) and operational storage (Postgres).
     """
 
     def __init__(
         self,
         duckdb_path: str = "data/observability.duckdb",
-        sqlite_path: str = "data/trades.db",
         postgres_dsn: Optional[str] = os.getenv("DATABASE_URL"),
     ):
         """
@@ -36,15 +34,12 @@ class StorageManager:
 
         Args:
             duckdb_path: Path to DuckDB database
-            sqlite_path: Path to SQLite database
             postgres_dsn: DSN for PostgreSQL (optional)
         """
         self.duckdb_path = duckdb_path
-        self.sqlite_path = sqlite_path
-        self.postgres_dsn = postgres_dsn
+        self.postgres_dsn = postgres_dsn or "postgresql://postgres:postgres@localhost:5432/trading"
         
         self._duckdb: Optional[DuckDBClient] = None
-        self._sqlite: Optional[SQLiteClient] = None
         self._postgres: Optional[PostgresClient] = None
         self._initialized = False
 
@@ -56,12 +51,8 @@ class StorageManager:
         self._duckdb = DuckDBClient(self.duckdb_path)
         await self._duckdb.initialize()
 
-        if self.postgres_dsn:
-            self._postgres = PostgresClient(self.postgres_dsn)
-            await self._postgres.initialize()
-        else:
-            self._sqlite = SQLiteClient(self.sqlite_path)
-            await self._sqlite.initialize()
+        self._postgres = PostgresClient(self.postgres_dsn)
+        await self._postgres.initialize()
 
         self._initialized = True
         logger.info("[cid:INIT] Storage manager initialized")
@@ -70,8 +61,6 @@ class StorageManager:
         """Close all database connections"""
         if self._duckdb:
             await self._duckdb.close()
-        if self._sqlite:
-            await self._sqlite.close()
         if self._postgres:
             await self._postgres.close()
         self._initialized = False
@@ -85,11 +74,11 @@ class StorageManager:
         return self._duckdb
 
     @property
-    def operational(self):
-        """Get operational storage client (Postgres or SQLite)"""
-        if not self._initialized:
-            raise RuntimeError("StorageManager not initialized")
-        return self._postgres if self._postgres else self._sqlite
+    def operational(self) -> PostgresClient:
+        """Get operational storage client (Postgres)"""
+        if not self._initialized or not self._postgres:
+            raise RuntimeError("StorageManager not initialized or PostgreSQL not connected")
+        return self._postgres
 
     # ========== Convenience Methods ==========
 
@@ -259,3 +248,4 @@ async def get_storage() -> StorageManager:
     if not storage._initialized:
         await storage.initialize()
     return storage
+

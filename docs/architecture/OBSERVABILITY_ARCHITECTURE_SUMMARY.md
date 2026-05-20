@@ -58,7 +58,7 @@ The observability system provides comprehensive monitoring of the algorithmic tr
 **Schema**:
 
 - `trading_metrics`: Columnar time-series data.
-- `trades.db`: SQLite-based transactional history (synchronized with Go API).
+- `postgresql://localhost:5432/trading`: PostgreSQL-based transactional history (synchronized with Go API).
 
 **Features**:
 

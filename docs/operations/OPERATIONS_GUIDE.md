@@ -83,15 +83,15 @@ uv run python scripts/liquidate_positions.py --confirm
 ### 4.1 Backup Schedule
 
 - **Metrics (DuckDB)**: Daily snapshot to `backups/`.
-- **Trades (SQLite)**: Real-time sync + daily snapshot to `backups/`.
+- **Trades (PostgreSQL)**: Real-time sync + daily snapshot to `backups/`.
 - **Logs**: Archived daily to `logs/archive/`.
 
 ### 4.2 Database Restoration
 
-To restore a corrupted DuckDB or SQLite database:
+To restore a corrupted DuckDB or PostgreSQL database:
 
 1. Stop all services.
-2. Replace `data/observability.duckdb` or `data/trades.db` with the latest file from `backups/`.
+2. Replace `data/observability.duckdb` or `data/postgresql://localhost:5432/trading` with the latest file from `backups/`.
 3. Restart the Go Control Plane.
 4. Verify integrity via `scripts/health_check.sh`.
 

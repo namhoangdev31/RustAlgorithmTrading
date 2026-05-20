@@ -5,9 +5,10 @@
 The observability control-plane is served by **Go** as of Phase 3.5. The legacy Python-based metrics collection has been fully decommissioned and purged.
 
 Phase 3.5 Status:
+
 - **Verdict**: **GO (FINALIZED)**
 - **Runtime**: Go (port 8081)
-- **Storage**: DuckDB (Primary metrics), SQLite (Trades/Metadata)
+- **Storage**: DuckDB (Primary metrics), PostgreSQL (Trades/Metadata)
 - **Scraping**: High-performance Go-native concurrent collector.
 
 ## Architecture
@@ -28,7 +29,7 @@ Phase 3.5 Status:
 │  ├─ ExecutionCollector     (Orders, Fills, Latency)     │
 │  └─ SystemCollector        (CPU, Memory, Health)        │
 ├─────────────────────────────────────────────────────────┤
-│           Storage Engine (DuckDB + SQLite)              │
+│           Storage Engine (DuckDB + PostgreSQL)              │
 │  ├─ Automated Schema Initialization                     │
 │  ├─ High-Speed Batch Ingestion                          │
 │  └─ Columnar Analytics for Performance History          │
@@ -45,9 +46,11 @@ Phase 3.5 Status:
 ### 2. Metrics API
 
 #### `GET /api/metrics/current`
+
 Returns a live snapshot of the most recent metrics for all symbols.
 
 **Response Example**:
+
 ```json
 {
   "market_data": {
@@ -74,9 +77,11 @@ Returns a live snapshot of the most recent metrics for all symbols.
 ```
 
 #### `POST /api/metrics/history`
+
 Query historical metrics from DuckDB.
 
 **Request Body**:
+
 ```json
 {
   "metric_name": "market_data_price",
@@ -90,9 +95,11 @@ Query historical metrics from DuckDB.
 ### 3. Trades API
 
 #### `GET /api/trades`
+
 Fetch trade history with filtering support.
 
 **Response Example**:
+
 ```json
 [
   {
@@ -123,6 +130,7 @@ Fetch trade history with filtering support.
 The Go WebSocket server broadcasts updates at **10Hz** (100ms intervals) using a thread-safe Hub.
 
 ### Message Format
+
 Each message is a JSON object containing the full system state snapshot:
 
 ```json
@@ -138,6 +146,7 @@ Each message is a JSON object containing the full system state snapshot:
 ```
 
 ### Connection Management
+
 - **Ping/Pong**: Required every 20s to prevent stale connections.
 - **Latency**: Sub-20ms (p99) fanout from ingestion to client.
 
@@ -156,7 +165,7 @@ Each message is a JSON object containing the full system state snapshot:
 |---|---|---|
 | `PORT` | API Listening Port | `8081` |
 | `DUCKDB_PATH` | Metrics Database | `data/observability.duckdb` |
-| `SQLITE_PATH` | Trades Database | `data/trades.db` |
+| `PostgreSQL_PATH` | Trades Database | `data/postgresql://localhost:5432/trading` |
 
 ## Support & Logs
 

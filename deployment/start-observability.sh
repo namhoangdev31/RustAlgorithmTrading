@@ -126,7 +126,6 @@ start_native() {
 
     # Export environment variables
     export DUCKDB_PATH="$PROJECT_ROOT/data/metrics.duckdb"
-    export SQLITE_PATH="$PROJECT_ROOT/data/trading.db"
     export LOG_PATH="$PROJECT_ROOT/logs"
     export PROMETHEUS_URL="http://localhost:9090"
     export GRAFANA_URL="http://localhost:3000"

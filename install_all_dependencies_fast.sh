@@ -275,7 +275,7 @@ uv pip install -q "psutil>=5.9.0"
 
 # Database & Storage
 log_info "Installing database packages..."
-uv pip install -q "duckdb>=0.9.0" "aiosqlite>=0.19.0"
+uv pip install -q "duckdb>=0.9.0" "asyncpg>=0.29.0"
 
 # Async HTTP Client
 log_info "Installing async HTTP client..."

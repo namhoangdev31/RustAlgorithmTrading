@@ -23,7 +23,7 @@ This document defines the security policies and standards for the RustAlgorithmT
 
 ## 4. Auditing
 
-- **Immutable Logs**: All trade decisions and risk events are logged in structured JSON format and persisted to SQLite for auditing.
+- **Immutable Logs**: All trade decisions and risk events are logged in structured JSON format and persisted to PostgreSQL for auditing.
 - **Traceability**: Every transaction must be linked to a `correlation_id` originating from the market data tick that triggered it.
 
 ---

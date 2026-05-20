@@ -25,7 +25,7 @@ The system follows a **Tri-Runtime Architecture** optimized for specific perform
 | **Research** | Python 3.11+ | ML & Backtesting |
 | **Observability** | Go 1.22+ | Control plane & API serving |
 | **Analytics DB** | DuckDB | Columnar storage for metrics (observability.duckdb) |
-| **Operational DB** | SQLite | Trade logs & metadata (trades.db) |
+| **Operational DB** | PostgreSQL | Trade logs & metadata (postgresql://localhost:5432/trading) |
 | **Messaging** | ZeroMQ | Inter-process communication |
 | **Containerization**| Docker | Deployment |
 
@@ -145,7 +145,7 @@ The system follows a **Tri-Runtime Architecture** optimized for specific perform
 
 ### 6.3 Database Connection Failure
 - **DuckDB Lock**: Go service handles retries; trading remains unaffected due to decoupling.
-- **Operational Data**: SQLite ensures trade logging integrity.
+- **Operational Data**: PostgreSQL ensures trade logging integrity.
 
 ### 6.4 Observability Outage
 - **Impact**: Dashboard is blank; trading engine continues operating normally (Control-plane separation).

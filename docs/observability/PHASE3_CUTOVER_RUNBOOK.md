@@ -12,7 +12,7 @@ Current status note:
 - Go stack: `chi` + `gorilla/websocket`
 - Rollout mode: Big Bang switch
 - Cutover policy: Hard Gate Required
-- Data path v1: Go reads DuckDB/SQLite directly
+- Data path v1: Go reads DuckDB/PostgreSQL directly
 - Auth v1: internal `X-API-Key` + rate limit
 - Out-of-scope: trading decisions, risk decisions, execution routing
 

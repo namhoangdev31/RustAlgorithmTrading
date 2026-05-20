@@ -16,7 +16,7 @@ Served on **Port 8081**. High-performance Go-native ingestion and serving.
 - `GET /api/metrics/current` - Live snapshot
 - `POST /api/metrics/history` - DuckDB historical query
 - `GET /api/metrics/summary` - Performance metrics (CAGR, Sharpe)
-- `GET /api/trades/` - SQLite trade history
+- `GET /api/trades/` - PostgreSQL trade history
 
 ### Streaming (WebSocket)
 - `WS /ws/metrics` - 10Hz fanout of latest system state.

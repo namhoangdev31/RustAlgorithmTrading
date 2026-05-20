@@ -1,6 +1,6 @@
 FROM golang:1.21-alpine AS builder
 
-# Install build dependencies for cgo (required for go-duckdb and go-sqlite3)
+# Install build dependencies for cgo (required for go-duckdb)
 RUN apk add --no-cache gcc g++ musl-dev
 
 WORKDIR /app
@@ -35,7 +35,6 @@ EXPOSE 8080
 # Set environment variables
 ENV PORT=8080
 ENV DUCKDB_PATH=/data/observability.duckdb
-ENV SQLITE_PATH=/data/trading_operational.db
 ENV OBSERVABILITY_API_KEY=""
 
 # Run the binary

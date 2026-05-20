@@ -1,7 +1,7 @@
 ## Status Note (Phase 3.5 COMPLETE)
 
 - **Primary Storage Owner**: The Go control-plane (`go/`) is the authoritative writer and server for observability data.
-- **Database Path**: Standardized to `data/observability.duckdb` for metrics and `data/trades.db` for transactional data.
+- **Database Path**: Standardized to `data/observability.duckdb` for metrics and `data/postgresql://localhost:5432/trading` for transactional data.
 - **Python Usage**: Python clients documented below are for **read-only** research, backtesting analysis, and offline reporting. Do not use Python to write metrics in production.
 
 ## Architecture
@@ -12,7 +12,7 @@
 ├─────────────────────────────────────────────────────────┤
 │    Go Binary (Writer/API)       Python SDK (Analytics)  │
 │    ├─ DuckDB Ingestion         ├─ Research Reports      │
-│    ├─ SQLite Logging           ├─ Backtest Validation   │
+│    ├─ PostgreSQL Logging           ├─ Backtest Validation   │
 │    └─ REST/WS Serving          └─ Notebook Integration  │
 └─────────────────────────────────────────────────────────┘
 ```
@@ -297,18 +297,18 @@ async with duckdb_session("data/metrics.duckdb") as client:
 # Connection automatically closed
 ```
 
-## SQLite Client
+## PostgreSQL Client
 
-### Class: `SQLiteClient`
+### Class: `PostgresClient`
 
 Operational database for transactional data (trade logs, system events).
 
 #### Initialization
 
 ```python
-from observability.storage import SQLiteClient
+from observability.storage import PostgresClient
 
-client = SQLiteClient("data/trades.db")
+client = PostgresClient("data/postgresql://localhost:5432/trading")
 await client.initialize()
 ```
 
@@ -472,12 +472,12 @@ async def get_metrics(
 
 ### StorageManager
 
-Unified interface for DuckDB and SQLite.
+Unified interface for DuckDB and PostgreSQL.
 
 ```python
 class StorageManager:
     duckdb: DuckDBClient    # Time-series analytics
-    sqlite: SQLiteClient    # Operational data
+    PostgreSQL: PostgresClient    # Operational data
 
     async def get_recent_metrics(
         self,

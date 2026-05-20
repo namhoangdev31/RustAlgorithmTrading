@@ -10,7 +10,7 @@ The RustAlgorithmTrading platform uses a **Go-native Control-Plane** (port 8081)
 |:---|:---|:---|
 | **Control Plane** | Go 1.22+ | REST API, WebSocket streaming, and data aggregation |
 | **Primary Storage** | DuckDB | High-speed columnar storage for time-series metrics |
-| **Secondary Storage** | SQLite | Transactional storage for trade history and metadata |
+| **Secondary Storage** | PostgreSQL | Transactional storage for trade history and metadata |
 | **Telemetry Bus** | ZeroMQ | Event-driven messaging between Rust/Python and Go |
 
 ## Documentation Roadmap
@@ -20,7 +20,7 @@ The RustAlgorithmTrading platform uses a **Go-native Control-Plane** (port 8081)
 - **[PHASE3_API_PARITY_MATRIX.md](./PHASE3_API_PARITY_MATRIX.md)**: Status of Go-native endpoints vs. legacy requirements.
 
 ### 2. Operational Guides
-- **[STORAGE_OPERATIONS.md](./STORAGE_OPERATIONS.md)**: How to manage DuckDB/SQLite, backups, and maintenance.
+- **[STORAGE_OPERATIONS.md](./STORAGE_OPERATIONS.md)**: How to manage DuckDB/PostgreSQL, backups, and maintenance.
 - **[LOGGING_STANDARDS.md](./LOGGING_STANDARDS.md)**: Unified logging patterns for Rust, Python, and Go.
 - **[PHASE3_CUTOVER_RUNBOOK.md](./PHASE3_CUTOVER_RUNBOOK.md)**: Procedures for production transition and rollback.
 
@@ -44,7 +44,7 @@ graph TD
     subgraph "Control Plane (Go)"
         GC[Go Controller :8081]
         DDB[(DuckDB)]
-        SQL[(SQLite)]
+        SQL[(PostgreSQL)]
     end
 
     MD -->|ZMQ| SB
