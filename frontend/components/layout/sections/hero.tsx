@@ -1,7 +1,7 @@
-"use client";
 import { Button } from "@/components/ui/button";
-import { Activity, ArrowRight, Github, ShieldCheck } from "lucide-react";
+import { Activity, ArrowRight, ShieldCheck } from "lucide-react";
 import Link from "next/link";
+import { GithubIcon } from "@/components/ui/icon";
 
 export const HeroSection = () => {
   return (
@@ -44,7 +44,7 @@ export const HeroSection = () => {
                 href="https://github.com/SamoraDC/RustAlgorithmTrading"
                 target="_blank"
               >
-                <Github data-icon="inline-start" />
+                <GithubIcon className="mr-2 h-4 w-4" data-icon="inline-start" />
                 View GitHub
               </Link>
             </Button>

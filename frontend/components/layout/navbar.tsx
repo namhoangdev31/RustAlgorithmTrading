@@ -2,7 +2,6 @@
 import {
   Activity,
   Blocks,
-  Github,
   Menu,
   ShieldCheck,
   Zap,
@@ -28,6 +27,7 @@ import {
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { ToggleTheme } from "./toogle-theme";
+import { GithubIcon } from "../ui/icon";
 
 interface RouteProps {
   href: string;
@@ -198,7 +198,7 @@ export const Navbar = () => {
             href="https://github.com/SamoraDC/RustAlgorithmTrading"
             target="_blank"
           >
-            <Github />
+            <GithubIcon className="h-4 w-4" />
           </Link>
         </Button>
       </div>
