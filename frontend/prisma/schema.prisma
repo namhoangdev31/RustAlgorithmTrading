@@ -1,10 +1,19 @@
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+generator client {
+  provider            = "prisma-client"
+  output              = "./generated"
+  importFileExtension = "ts"
 }
 
-generator client {
-  provider = "prisma-client-js"
+generator pothos {
+  provider          = "prisma-pothos-types"
+  clientOutput      = "../prisma/generated/"
+  output            = "../lib/pothos-prisma-types.ts"
+  generateDatamodel = "true"
+}
+
+datasource db {
+  provider = "postgresql"
+  // url      = env("DATABASE_URL")
 }
 
 model Order {
