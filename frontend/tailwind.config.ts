@@ -63,7 +63,17 @@ module.exports = {
   			mute: '#aea69c',
   			canvas: '#2b2622',
   			'canvas-soft': '#383330',
-  			hairline: '#3f3a36'
+  			hairline: '#3f3a36',
+  			sidebar: {
+  				DEFAULT: 'hsl(var(--sidebar-background))',
+  				foreground: 'hsl(var(--sidebar-foreground))',
+  				primary: 'hsl(var(--sidebar-primary))',
+  				'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
+  				accent: 'hsl(var(--sidebar-accent))',
+  				'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
+  				border: 'hsl(var(--sidebar-border))',
+  				ring: 'hsl(var(--sidebar-ring))'
+  			}
   		},
   		borderRadius: {
   			none: '0px',
@@ -181,13 +191,13 @@ module.exports = {
   					fontWeight: '500'
   				}
   			],
-  			'caption': [
+  			caption: [
   				'12px',
   				{
   					lineHeight: '16px'
   				}
   			],
-  			'code': [
+  			code: [
   				'13px',
   				{
   					lineHeight: '18px'
