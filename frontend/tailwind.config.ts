@@ -22,45 +22,96 @@ module.exports = {
     },
     extend: {
       colors: {
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
+        // Semantic overrides matching DESIGN.md
+        border: "#3f3a36", // hairline
+        input: "#3f3a36",  // hairline
+        ring: "#f7f5f0",   // primary / ink
+        background: "#2b2622", // canvas
+        foreground: "#f7f5f0", // ink
         primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
+          DEFAULT: "#f7f5f0",
+          foreground: "#2b2622",
         },
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
+          DEFAULT: "#383330", // canvas-soft
+          foreground: "#f7f5f0",
         },
         destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
+          DEFAULT: "#ef4444",
+          foreground: "#f7f5f0",
         },
         muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
+          DEFAULT: "#383330",
+          foreground: "#aea69c", // mute
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
+          DEFAULT: "#383330",
+          foreground: "#f7f5f0",
         },
         popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
+          DEFAULT: "#383330",
+          foreground: "#f7f5f0",
         },
         card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
+          DEFAULT: "#383330",
+          foreground: "#f7f5f0",
         },
+
+        // Brand-specific custom colors from DESIGN.md
+        primaryBrand: "#f7f5f0",
+        "on-primary": "#2b2622",
+        ink: "#f7f5f0",
+        body: "#c9c0ad",
+        "body-strong": "#dad2c1",
+        mute: "#aea69c",
+        canvas: "#2b2622",
+        "canvas-soft": "#383330",
+        hairline: "#3f3a36",
       },
       borderRadius: {
+        none: "0px",
+        xxs: "1px",
+        xs: "2px",
+        sm: "3px", // Default button radius (extremely tight)
+        md: "4px", // Card chrome base
+        lg: "6px",
+        pill: "9999px",
+        full: "9999px",
         xl: "calc(var(--radius) + 4px)",
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+      },
+      spacing: {
+        xxs: "2px",
+        xs: "4px",
+        sm: "8px",
+        md: "10px",
+        lg: "16px",
+        xl: "24px",
+        "2xl": "32px",
+        "3xl": "48px",
+        "4xl": "64px",
+        "5xl": "96px",
+      },
+      fontFamily: {
+        sans: ["Inter", "system-ui", "-apple-system", "sans-serif"],
+        serif: ["Instrument Serif", "Georgia", "Times New Roman", "serif"],
+        mono: ["DM Mono", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
+        abel: ["Abel", "sans-serif"],
+      },
+      fontSize: {
+        "display-xl": ["64px", { lineHeight: "70.4px", letterSpacing: "-1.6px" }],
+        "display-lg": ["48px", { lineHeight: "52.8px", letterSpacing: "-1.2px" }],
+        "display-md": ["32px", { lineHeight: "40px", letterSpacing: "-0.8px" }],
+        "display-sm": ["24px", { lineHeight: "32px", letterSpacing: "-0.4px" }],
+        "display-serif": ["48px", { lineHeight: "52px", letterSpacing: "-0.5px" }],
+        "body-lg": ["18px", { lineHeight: "28px" }],
+        "body-md": ["16px", { lineHeight: "24px" }],
+        "body-md-strong": ["16px", { lineHeight: "24px", fontWeight: "500" }],
+        "body-sm": ["14px", { lineHeight: "20px" }],
+        "body-sm-strong": ["14px", { lineHeight: "20px", fontWeight: "500" }],
+        "caption": ["12px", { lineHeight: "16px" }],
+        "code": ["13px", { lineHeight: "18px" }],
+        "code-md": ["14px", { lineHeight: "20px" }],
+        "button-md": ["14px", { lineHeight: "20px", fontWeight: "500" }],
       },
       keyframes: {
         "accordion-down": {
@@ -90,3 +141,4 @@ module.exports = {
   },
   plugins: [animate],
 };
+

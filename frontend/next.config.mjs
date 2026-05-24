@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  optimizeFonts: false,
   images: {
     remotePatterns: [
       {
@@ -19,3 +20,4 @@ const nextConfig = {
 };
 
 export default nextConfig;
+

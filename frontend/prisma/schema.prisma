@@ -31,3 +31,1276 @@ model RiskEvent {
 
   @@map("risk_events")
 }
+
+model File {
+  id          String  @id @db.Uuid
+  path        String  @db.VarChar(500)
+  bucket      String? @db.VarChar(255)
+  size        BigInt?
+  contentType String? @map("contentType") @db.VarChar(255)
+  filename    String? @db.VarChar(255)
+  mimetype    String? @db.VarChar(255)
+
+  usersWithPhoto User[] @relation("UserPhoto")
+
+  @@map("files")
+}
+
+model User {
+  id           String    @id @db.Uuid
+  email        String?   @unique @db.VarChar(255)
+  password     String?   @db.VarChar(255)
+  provider     String    @default("email") @db.VarChar(255)
+  socialId     String?   @map("socialId") @db.VarChar(255)
+  firstName    String?   @map("firstName") @db.VarChar(255)
+  lastName     String?   @map("lastName") @db.VarChar(255)
+  fullName     String?   @map("fullName") @db.VarChar(255)
+  phone        String?   @unique @db.VarChar(255)
+  dateOfBirth  DateTime? @map("dateOfBirth") @db.Timestamp(6)
+  gender       String?   @db.VarChar(50)
+  userType     String    @default("individual") @map("userType") @db.VarChar(50)
+  photoId      String?   @map("photoId") @db.Uuid
+  registerType String?   @map("registerType") @db.VarChar(50)
+  createdAt    DateTime  @map("createdAt") @db.Timestamp(6)
+  updatedAt    DateTime  @map("updatedAt") @db.Timestamp(6)
+  deletedAt    DateTime? @map("deletedAt") @db.Timestamp(6)
+
+  // Relations
+  photo File? @relation("UserPhoto", fields: [photoId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  payouts                BundlePayouts[]
+  bundles                Bundles[]
+  notificationsActor     Notifications[]             @relation("NotificationActor")
+  notificationsRecipient Notifications[]             @relation("NotificationRecipient")
+  sessions               Session[]
+  deviceTokens           UserDeviceToken[]
+  analytics              BundleAnalyticsEvents[]
+  auditLogs              BundleAuditLog[]
+  betaTesters            BundleBetaTesters[]
+  changedLogs            BundleChangeLogs[]
+  collaboratorsInvited   BundleCollaborators[]       @relation("CollaboratorInvitedBy")
+  collaborators          BundleCollaborators[]       @relation("CollaboratorUser")
+  developerStrikes       BundleDeveloperStrikes[]    @relation("StrikeDeveloper")
+  developerStrikesIssued BundleDeveloperStrikes[]    @relation("StrikeIssuedBy")
+  installEvents          BundleInstallEvents[]
+  orders                 BundleOrders[]
+  reviews                BundleReviews[]
+  stateTransitions       BundleStateTransitions[]
+  userReportsReported    BundleUserReports[]         @relation("ReportReportedBy")
+  userReportsReviewed    BundleUserReports[]         @relation("ReportReviewedBy")
+  refundRequestsReviewed BundleRefundRequests[]      @relation("RefundReviewedBy")
+  refundRequests         BundleRefundRequests[]      @relation("RefundUser")
+  userEntitlements       BundleUserEntitlements[]
+  reviewReportsReported  BundleReviewReports[]       @relation("ReviewReportReportedBy")
+  reviewReportsReviewed  BundleReviewReports[]       @relation("ReviewReportReviewedBy")
+  subscriptionHistory    BundleSubscriptionHistory[]
+  reviewHistory          BundleReviewHistory[]
+  reviewQueueReviewed    BundleReviewQueue[]         @relation("ReviewQueueReviewer")
+
+  @@map("users")
+}
+
+model BundlePayouts {
+  id             String   @id @db.Uuid
+  developerId    String   @map("developer_id") @db.Uuid
+  amount         Float
+  currency       String   @default("VND") @db.VarChar(10)
+  periodStart    BigInt   @map("period_start")
+  periodEnd      BigInt   @map("period_end")
+  status         String   @default("pending") @db.VarChar(30)
+  bankAccount    String?  @map("bank_account") @db.VarChar(255)
+  transactionRef String?  @map("transaction_ref") @db.VarChar(255)
+  createdAt      DateTime @map("created_at") @db.Timestamp(6)
+  updatedAt      DateTime @map("updated_at") @db.Timestamp(6)
+
+  developer User @relation(fields: [developerId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([developerId], map: "bundle_payouts_developer_id")
+  @@index([status], map: "bundle_payouts_status")
+  @@map("bundle_payouts")
+}
+
+model Bundles {
+  id                String    @id @db.Uuid
+  bundleKey         String?   @unique @map("bundle_key") @db.VarChar(255)
+  name              String    @db.VarChar(255)
+  slug              String?   @unique @db.VarChar(255)
+  version           String    @default("1.0.0") @db.VarChar(50)
+  buildNumber       Int       @default(1) @map("build_number")
+  iconUrl           String?   @map("icon_url") @db.VarChar(500)
+  bannerUrl         String?   @map("banner_url") @db.VarChar(500)
+  shortDescription  String?   @map("short_description") @db.VarChar(255)
+  description       String?
+  privacyPolicyUrl  String?   @map("privacy_policy_url") @db.VarChar(500)
+  supportUrl        String?   @map("support_url") @db.VarChar(500)
+  websiteUrl        String?   @map("website_url") @db.VarChar(500)
+  developerName     String?   @map("developer_name") @db.VarChar(255)
+  developerId       String?   @map("developer_id") @db.Uuid
+  developerEmail    String?   @map("developer_email") @db.VarChar(255)
+  category          String?   @db.VarChar(100)
+  subCategory       String?   @map("sub_category") @db.VarChar(100)
+  storagePath       String    @map("storage_path") @db.VarChar(500)
+  bucket            String    @db.VarChar(100)
+  fileSize          BigInt?   @map("file_size")
+  checksum          String?   @db.VarChar(128)
+  price             Float?
+  currency          String?   @db.VarChar(10)
+  isFree            Boolean   @default(true) @map("is_free")
+  isOneTimePayment  Boolean   @default(false) @map("is_one_time_payment")
+  hasInAppPurchases Boolean   @default(false) @map("has_in_app_purchases")
+  hasSubscription   Boolean   @default(false) @map("has_subscription")
+  status            String    @default("draft") @db.VarChar(50)
+  rejectionReason   String?   @map("rejection_reason")
+  publishedAt       DateTime? @map("published_at") @db.Timestamp(6)
+  expiresAt         DateTime? @map("expires_at") @db.Timestamp(6)
+  changelog         String?
+  releaseNotes      String?   @map("release_notes")
+  ageRating         String?   @map("age_rating") @db.VarChar(10)
+  contentAdvisory   String?   @map("content_advisory")
+  createdAt         DateTime  @map("created_at") @db.Timestamp(6)
+  updatedAt         DateTime  @map("updated_at") @db.Timestamp(6)
+  deletedAt         DateTime? @map("deleted_at") @db.Timestamp(6)
+
+  developer User? @relation(fields: [developerId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  abTests              BundleAbTests[]
+  abuseSignals         BundleAbuseSignals?
+  adConfigurations     BundleAdConfigurations?
+  analyticsEvents      BundleAnalyticsEvents[]
+  apiUsageStats        BundleApiUsageStats[]
+  auditLogs            BundleAuditLog[]
+  betaTesters          BundleBetaTesters[]
+  changeLogs           BundleChangeLogs[]
+  collaborators        BundleCollaborators[]
+  contentRatings       BundleContentRatings[]
+  countries            BundleCountries[]
+  dependencies         BundleDependencies[]         @relation("BundleSource")
+  dependentBundles     BundleDependencies[]         @relation("BundleDependency")
+  developerStrikes     BundleDeveloperStrikes[]
+  deviceSupports       BundleDeviceSupport[]
+  externalIntegrations BundleExternalIntegrations[]
+  featuredSlots        BundleFeaturedSlots[]
+  inAppPurchases       BundleInAppPurchases[]
+  installEvents        BundleInstallEvents[]
+  languages            BundleLanguages[]
+  localizations        BundleLocalizations[]
+  monetizationConfigs  BundleMonetizationConfigs?
+  orders               BundleOrders[]
+  permissions          BundlePermissions[]
+  privacyDeclarations  BundlePrivacyDeclarations?
+  promotions           BundlePromotions[]
+  rankingScores        BundleRankingScores?
+  releaseTracks        BundleReleaseTracks[]
+  retentionStats       BundleRetentionStats[]
+  reviews              BundleReviews[]
+  runtimeConfig        BundleRuntimeConfig?
+  screenshots          BundleScreenshots[]
+  searchKeywords       BundleSearchKeywords[]
+  stateTransitions     BundleStateTransitions[]
+  stats                BundleStats?
+  storeFlags           BundleStoreFlags?
+  storeListings        BundleStoreListings[]
+  subscriptionPlans    BundleSubscriptionPlans[]
+  tags                 BundleTags[]
+  trendingSnapshots    BundleTrendingSnapshots[]
+  userReports          BundleUserReports[]
+  versionHistories     BundleVersionHistory[]
+  webhooks             BundleWebhooks[]
+  userEntitlements     BundleUserEntitlements[]
+  rollouts             BundleRollouts[]
+  subscriptionHistory  BundleSubscriptionHistory[]
+  crashReports         BundleCrashReports[]
+  reviewHistory        BundleReviewHistory[]
+  reviewQueue          BundleReviewQueue[]
+  securityScanResults  BundleSecurityScanResults[]
+  updatePhases         BundleUpdatePhases[]
+
+  @@index([category, status], map: "bundles_category_status")
+  @@index([createdAt], map: "bundles_created_at")
+  @@index([status], map: "bundles_status")
+  @@map("bundles")
+}
+
+model Notifications {
+  id           String    @id @db.Uuid
+  title        String    @db.VarChar(255)
+  body         String?
+  type         String    @db.VarChar(50)
+  isRead       Boolean   @default(false) @map("isRead")
+  readAt       DateTime? @map("readAt") @db.Timestamp(6)
+  recipientId  String    @map("recipientId") @db.Uuid
+  actorId      String?   @map("actorId") @db.Uuid
+  resourceId   String?   @map("resourceId") @db.Uuid
+  resourceType String?   @map("resourceType") @db.VarChar(50)
+  metadata     String?
+  createdAt    DateTime  @map("createdAt") @db.Timestamp(6)
+  updatedAt    DateTime  @map("updatedAt") @db.Timestamp(6)
+  deletedAt    DateTime? @map("deletedAt") @db.Timestamp(6)
+
+  actor     User? @relation("NotificationActor", fields: [actorId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  recipient User  @relation("NotificationRecipient", fields: [recipientId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@map("notifications")
+}
+
+model Session {
+  id        String    @id @db.Uuid
+  userId    String    @map("userId") @db.Uuid
+  hash      String    @db.VarChar(255)
+  createdAt DateTime  @map("createdAt") @db.Timestamp(6)
+  updatedAt DateTime  @map("updatedAt") @db.Timestamp(6)
+  deletedAt DateTime? @map("deletedAt") @db.Timestamp(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@map("sessions")
+}
+
+model UserDeviceToken {
+  id          String   @id @db.Uuid
+  userId      String   @map("user_id") @db.Uuid
+  fcmToken    String   @map("fcmToken") @db.VarChar(500)
+  platform    String   @db.VarChar(20)
+  deviceModel String?  @map("deviceModel") @db.VarChar(255)
+  osVersion   String?  @map("osVersion") @db.VarChar(50)
+  isActive    Boolean  @default(true) @map("isActive")
+  createdAt   DateTime @map("createdAt") @db.Timestamp(6)
+  updatedAt   DateTime @map("updatedAt") @db.Timestamp(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@map("user_device_token")
+}
+
+model BundleAbTests {
+  id             String    @id @db.Uuid
+  bundleId       String    @map("bundle_id") @db.Uuid
+  testName       String    @map("test_name") @db.VarChar(255)
+  hypothesis     String?
+  variantAConfig String    @map("variant_a_config")
+  variantBConfig String    @map("variant_b_config")
+  metric         String    @db.VarChar(100)
+  trafficSplit   Int       @default(50) @map("traffic_split")
+  status         String    @default("draft") @db.VarChar(20)
+  winnerVariant  String?   @map("winner_variant") @db.VarChar(5)
+  startedAt      DateTime? @map("started_at") @db.Timestamp(6)
+  endedAt        DateTime? @map("ended_at") @db.Timestamp(6)
+  createdAt      DateTime  @map("created_at") @db.Timestamp(6)
+
+  bundle Bundles @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@index([bundleId], map: "bundle_ab_tests_bundle_id")
+  @@index([status], map: "bundle_ab_tests_status")
+  @@map("bundle_ab_tests")
+}
+
+model BundleAbuseSignals {
+  id                      String   @id @db.Uuid
+  bundleId                String   @unique @map("bundle_id") @db.Uuid
+  fakeReviewScore         Float    @default(0.0) @map("fake_review_score")
+  suspiciousInstallRate   Float    @default(0.0) @map("suspicious_install_rate")
+  anomalyScore            Float    @default(0.0) @map("anomaly_score")
+  clickFarmScore          Float    @default(0.0) @map("click_farm_score")
+  ratingManipulationScore Float    @default(0.0) @map("rating_manipulation_score")
+  overallRiskScore        Float    @default(0.0) @map("overall_risk_score")
+  riskLevel               String   @default("low") @map("risk_level") @db.VarChar(20)
+  lastCalculatedAt        DateTime @map("last_calculated_at") @db.Timestamp(6)
+  flaggedForReview        Boolean  @default(false) @map("flagged_for_review")
+
+  bundle Bundles @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@index([flaggedForReview], map: "bundle_abuse_signals_flagged_for_review")
+  @@index([overallRiskScore], map: "bundle_abuse_signals_overall_risk_score")
+  @@index([riskLevel], map: "bundle_abuse_signals_risk_level")
+  @@map("bundle_abuse_signals")
+}
+
+model BundleAdConfigurations {
+  id             String   @id @db.Uuid
+  bundleId       String   @unique @map("bundle_id") @db.Uuid
+  provider       String   @db.VarChar(50)
+  appId          String   @map("app_id") @db.VarChar(255)
+  bannerId       String?  @map("banner_id") @db.VarChar(255)
+  interstitialId String?  @map("interstitial_id") @db.VarChar(255)
+  rewardedId     String?  @map("rewarded_id") @db.VarChar(255)
+  nativeId       String?  @map("native_id") @db.VarChar(255)
+  isTestMode     Boolean  @default(false) @map("is_test_mode")
+  isActive       Boolean  @default(true) @map("is_active")
+  createdAt      DateTime @map("created_at") @db.Timestamp(6)
+  updatedAt      DateTime @map("updated_at") @db.Timestamp(6)
+
+  bundle Bundles @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@map("bundle_ad_configurations")
+}
+
+model BundleAnalyticsEvents {
+  id              String   @id @db.Uuid
+  bundleId        String   @map("bundle_id") @db.Uuid
+  userId          String?  @map("user_id") @db.Uuid
+  sessionId       String?  @map("session_id") @db.VarChar(100)
+  eventType       String   @map("event_type") @db.VarChar(50)
+  eventData       String?  @map("event_data")
+  platformVersion String?  @map("platform_version") @db.VarChar(20)
+  bundleVersion   String?  @map("bundle_version") @db.VarChar(50)
+  ipAddress       String?  @map("ip_address") @db.VarChar(45)
+  createdAt       DateTime @map("created_at") @db.Timestamp(6)
+
+  bundle Bundles @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([bundleId], map: "bundle_analytics_events_bundle_id")
+  @@index([createdAt], map: "bundle_analytics_events_created_at")
+  @@index([eventType], map: "bundle_analytics_events_event_type")
+  @@map("bundle_analytics_events")
+}
+
+model BundleApiUsageStats {
+  id           String   @id @db.Uuid
+  bundleId     String   @map("bundle_id") @db.Uuid
+  statsDate    String   @map("stats_date") @db.VarChar(10)
+  endpoint     String   @db.VarChar(255)
+  method       String   @db.VarChar(10)
+  callCount    BigInt   @default(0) @map("call_count")
+  errorCount   BigInt   @default(0) @map("error_count")
+  avgLatencyMs Float?   @map("avg_latency_ms")
+  p99LatencyMs Float?   @map("p99_latency_ms")
+  createdAt    DateTime @map("created_at") @db.Timestamp(6)
+
+  bundle Bundles @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@index([bundleId], map: "bundle_api_usage_stats_bundle_id")
+  @@index([statsDate], map: "bundle_api_usage_stats_stats_date")
+  @@map("bundle_api_usage_stats")
+}
+
+model BundleAuditLog {
+  id          String   @id @db.Uuid
+  bundleId    String   @map("bundle_id") @db.Uuid
+  userId      String?  @map("user_id") @db.Uuid
+  action      String   @db.VarChar(50)
+  fieldName   String?  @map("field_name") @db.VarChar(100)
+  oldValue    String?  @map("old_value")
+  countryCode String?  @map("country_code") @db.VarChar(5)
+  createdAt   DateTime @map("created_at") @db.Timestamp(6)
+
+  bundle Bundles @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([action], map: "bundle_audit_log_action")
+  @@index([bundleId], map: "bundle_audit_log_bundle_id")
+  @@index([countryCode], map: "bundle_audit_log_country_code")
+  @@index([createdAt], map: "bundle_audit_log_created_at")
+  @@map("bundle_audit_log")
+}
+
+model BundleBetaTesters {
+  id         String    @id @db.Uuid
+  bundleId   String    @map("bundle_id") @db.Uuid
+  userId     String?   @map("user_id") @db.Uuid
+  email      String    @db.VarChar(255)
+  inviteCode String?   @unique @map("invite_code") @db.VarChar(64)
+  status     String    @default("invited") @db.VarChar(30)
+  expiresAt  DateTime? @map("expires_at") @db.Timestamp(6)
+  createdAt  DateTime  @map("created_at") @db.Timestamp(6)
+
+  bundle Bundles @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@unique([bundleId, email])
+  @@index([bundleId], map: "bundle_beta_testers_bundle_id")
+  @@index([status], map: "bundle_beta_testers_status")
+  @@map("bundle_beta_testers")
+}
+
+model BundleChangeLogs {
+  id         String   @id @db.Uuid
+  bundleId   String   @map("bundle_id") @db.Uuid
+  entityType String   @map("entity_type") @db.VarChar(50)
+  entityId   String   @map("entity_id") @db.VarChar(50)
+  changeType String   @map("change_type") @db.VarChar(30)
+  diff       String
+  changedBy  String?  @map("changed_by") @db.Uuid
+  createdAt  DateTime @map("created_at") @db.Timestamp(6)
+
+  bundle Bundles @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  user   User?   @relation(fields: [changedBy], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([bundleId], map: "bundle_change_logs_bundle_id")
+  @@index([changeType], map: "bundle_change_logs_change_type")
+  @@index([createdAt], map: "bundle_change_logs_created_at")
+  @@index([entityType], map: "bundle_change_logs_entity_type")
+  @@map("bundle_change_logs")
+}
+
+model BundleCollaborators {
+  id         String    @id @db.Uuid
+  bundleId   String    @map("bundle_id") @db.Uuid
+  userId     String    @map("user_id") @db.Uuid
+  role       String    @default("editor") @db.VarChar(30)
+  invitedBy  String?   @map("invited_by") @db.Uuid
+  acceptedAt DateTime? @map("accepted_at") @db.Timestamp(6)
+  createdAt  DateTime  @map("created_at") @db.Timestamp(6)
+
+  bundle      Bundles @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  invitedUser User?   @relation("CollaboratorInvitedBy", fields: [invitedBy], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  user        User    @relation("CollaboratorUser", fields: [userId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@unique([bundleId, userId])
+  @@map("bundle_collaborators")
+}
+
+model BundleContentRatings {
+  id          String   @id @db.Uuid
+  bundleId    String   @map("bundle_id") @db.Uuid
+  ratingBoard String   @map("rating_board") @db.VarChar(20)
+  rating      String   @db.VarChar(20)
+  descriptors String?
+  createdAt   DateTime @map("created_at") @db.Timestamp(6)
+
+  bundle Bundles @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@unique([bundleId, ratingBoard])
+  @@map("bundle_content_ratings")
+}
+
+model BundleCountries {
+  id            String  @id @db.Uuid
+  bundleId      String  @map("bundle_id") @db.Uuid
+  countryCode   String  @map("country_code") @db.VarChar(5)
+  isAvailable   Boolean @default(true) @map("is_available")
+  priceOverride Float?  @map("price_override")
+  currency      String? @db.VarChar(10)
+
+  bundle Bundles @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@unique([bundleId, countryCode])
+  @@map("bundle_countries")
+}
+
+model BundleDependencies {
+  id                  String   @id @db.Uuid
+  bundleId            String   @map("bundle_id") @db.Uuid
+  dependencyBundleId  String   @map("dependency_bundle_id") @db.Uuid
+  dependencyBundleKey String?  @map("dependency_bundle_key") @db.VarChar(255)
+  minVersion          String?  @map("min_version") @db.VarChar(50)
+  maxVersion          String?  @map("max_version") @db.VarChar(50)
+  isOptional          Boolean  @default(false) @map("is_optional")
+  createdAt           DateTime @map("created_at") @db.Timestamp(6)
+
+  bundle           Bundles @relation("BundleSource", fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  dependencyBundle Bundles @relation("BundleDependency", fields: [dependencyBundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@unique([bundleId, dependencyBundleId])
+  @@map("bundle_dependencies")
+}
+
+model BundleDeveloperStrikes {
+  id          String    @id @db.Uuid
+  developerId String    @map("developer_id") @db.Uuid
+  bundleId    String?   @map("bundle_id") @db.Uuid
+  strikeType  String    @map("strike_type") @db.VarChar(50)
+  severity    String    @default("minor") @db.VarChar(20)
+  description String
+  issuedBy    String?   @map("issued_by") @db.Uuid
+  expiresAt   DateTime? @map("expires_at") @db.Timestamp(6)
+  createdAt   DateTime  @map("created_at") @db.Timestamp(6)
+
+  bundle    Bundles? @relation(fields: [bundleId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  developer User     @relation("StrikeDeveloper", fields: [developerId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  issuer    User?    @relation("StrikeIssuedBy", fields: [issuedBy], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([developerId], map: "bundle_developer_strikes_developer_id")
+  @@map("bundle_developer_strikes")
+}
+
+model BundleDeviceSupport {
+  id          String  @id @db.Uuid
+  bundleId    String  @map("bundle_id") @db.Uuid
+  deviceModel String  @map("device_model") @db.VarChar(100)
+  platform    String  @db.VarChar(20)
+  minOs       String? @map("min_os") @db.VarChar(20)
+  maxOs       String? @map("max_os") @db.VarChar(20)
+  isSupported Boolean @default(true) @map("is_supported")
+  notes       String? @db.VarChar(255)
+
+  bundle Bundles @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@unique([bundleId, deviceModel, platform])
+  @@map("bundle_device_support")
+}
+
+model BundleExternalIntegrations {
+  id              String    @id @db.Uuid
+  bundleId        String    @map("bundle_id") @db.Uuid
+  integrationType String    @map("integration_type") @db.VarChar(50)
+  displayName     String    @map("display_name") @db.VarChar(255)
+  config          String
+  isActive        Boolean   @default(true) @map("is_active")
+  lastSyncAt      DateTime? @map("last_sync_at") @db.Timestamp(6)
+  createdAt       DateTime  @map("created_at") @db.Timestamp(6)
+  updatedAt       DateTime  @map("updated_at") @db.Timestamp(6)
+
+  bundle Bundles @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@unique([bundleId, integrationType])
+  @@index([bundleId], map: "bundle_external_integrations_bundle_id")
+  @@index([isActive], map: "bundle_external_integrations_is_active")
+  @@map("bundle_external_integrations")
+}
+
+model BundleFeaturedSlots {
+  id        String    @id @db.Uuid
+  bundleId  String    @map("bundle_id") @db.Uuid
+  slotType  String    @map("slot_type") @db.VarChar(50)
+  title     String?   @db.VarChar(255)
+  subtitle  String?   @db.VarChar(255)
+  bannerUrl String?   @map("banner_url") @db.VarChar(500)
+  ctaLabel  String?   @map("cta_label") @db.VarChar(100)
+  region    String?   @db.VarChar(10)
+  sortOrder Int       @default(0) @map("sort_order")
+  startsAt  DateTime  @map("starts_at") @db.Timestamp(6)
+  endsAt    DateTime? @map("ends_at") @db.Timestamp(6)
+  isActive  Boolean   @default(true) @map("is_active")
+  createdAt DateTime  @map("created_at") @db.Timestamp(6)
+  updatedAt DateTime  @map("updated_at") @db.Timestamp(6)
+
+  bundle Bundles @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@index([bundleId], map: "bundle_featured_slots_bundle_id")
+  @@index([isActive], map: "bundle_featured_slots_is_active")
+  @@map("bundle_featured_slots")
+}
+
+model BundleInAppPurchases {
+  id           String   @id @db.Uuid
+  bundleId     String   @map("bundle_id") @db.Uuid
+  productId    String   @map("product_id") @db.VarChar(255)
+  name         String   @db.VarChar(255)
+  description  String?
+  price        Float
+  currency     String   @default("VND") @db.VarChar(10)
+  purchaseType String   @map("purchase_type") @db.VarChar(50)
+  createdAt    DateTime @map("created_at") @db.Timestamp(6)
+
+  bundle Bundles @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@unique([bundleId, productId])
+  @@index([bundleId], map: "bundle_in_app_purchases_bundle_id")
+  @@map("bundle_in_app_purchases")
+}
+
+model BundleInstallEvents {
+  id            String   @id @db.Uuid
+  bundleId      String   @map("bundle_id") @db.Uuid
+  userId        String   @map("user_id") @db.Uuid
+  eventType     String   @map("event_type") @db.VarChar(20)
+  deviceId      String?  @map("device_id") @db.VarChar(100)
+  platform      String?  @db.VarChar(20)
+  osVersion     String?  @map("os_version") @db.VarChar(30)
+  bundleVersion String?  @map("bundle_version") @db.VarChar(50)
+  countryCode   String?  @map("country_code") @db.VarChar(5)
+  createdAt     DateTime @map("created_at") @db.Timestamp(6)
+
+  bundle Bundles @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  user   User    @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([bundleId], map: "bundle_install_events_bundle_id")
+  @@index([countryCode], map: "bundle_install_events_country_code")
+  @@index([createdAt], map: "bundle_install_events_created_at")
+  @@index([eventType], map: "bundle_install_events_event_type")
+  @@index([userId], map: "bundle_install_events_user_id")
+  @@map("bundle_install_events")
+}
+
+model BundleLanguages {
+  id           String  @id @db.Uuid
+  bundleId     String  @map("bundle_id") @db.Uuid
+  languageCode String  @map("language_code") @db.VarChar(10)
+  languageName String? @map("language_name") @db.VarChar(100)
+
+  bundle Bundles @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@unique([bundleId, languageCode])
+  @@map("bundle_languages")
+}
+
+model BundleLocalizations {
+  id                   String   @id @db.Uuid
+  bundleId             String   @map("bundle_id") @db.Uuid
+  languageCode         String   @map("language_code") @db.VarChar(10)
+  localizedName        String?  @map("localized_name") @db.VarChar(255)
+  localizedShortDesc   String?  @map("localized_short_desc") @db.VarChar(255)
+  localizedDescription String?  @map("localized_description")
+  localizedChangelog   String?  @map("localized_changelog")
+  createdAt            DateTime @map("created_at") @db.Timestamp(6)
+  updatedAt            DateTime @map("updated_at") @db.Timestamp(6)
+
+  bundle Bundles @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@unique([bundleId, languageCode])
+  @@map("bundle_localizations")
+}
+
+model BundleMonetizationConfigs {
+  id                  String   @id @db.Uuid
+  bundleId            String   @unique @map("bundle_id") @db.Uuid
+  monetizationType    String   @default("free") @map("monetization_type") @db.VarChar(30)
+  defaultPriceTier    String?  @map("default_price_tier") @db.VarChar(20)
+  revenueSharePercent Float    @default(30.0) @map("revenue_share_percent")
+  trialPeriodDays     Int      @default(0) @map("trial_period_days")
+  adsEnabled          Boolean  @default(false) @map("ads_enabled")
+  adsProvider         String?  @map("ads_provider") @db.VarChar(50)
+  crossSellEnabled    Boolean  @default(false) @map("cross_sell_enabled")
+  updatedAt           DateTime @map("updated_at") @db.Timestamp(6)
+  createdAt           DateTime @map("created_at") @db.Timestamp(6)
+
+  bundle Bundles @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@map("bundle_monetization_configs")
+}
+
+model BundleOrders {
+  id              String   @id @db.Uuid
+  bundleId        String   @map("bundle_id") @db.Uuid
+  userId          String   @map("user_id") @db.Uuid
+  totalAmount     Float    @map("total_amount")
+  currency        String   @default("VND") @db.VarChar(10)
+  status          String   @default("pending") @db.VarChar(30)
+  paymentProvider String?  @map("payment_provider") @db.VarChar(50)
+  transactionRef  String?  @unique @map("transaction_ref") @db.VarChar(255)
+  notes           String?
+  createdAt       DateTime @map("created_at") @db.Timestamp(6)
+  updatedAt       DateTime @map("updated_at") @db.Timestamp(6)
+
+  bundle Bundles @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  user   User    @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  orderItems       BundleOrderItems[]
+  paymentLogs      BundlePaymentLogs[]
+  refundRequests   BundleRefundRequests[]
+  userEntitlements BundleUserEntitlements[]
+
+  @@index([bundleId], map: "bundle_orders_bundle_id")
+  @@index([createdAt], map: "bundle_orders_created_at")
+  @@index([status], map: "bundle_orders_status")
+  @@index([userId], map: "bundle_orders_user_id")
+  @@map("bundle_orders")
+}
+
+model BundlePermissions {
+  id              String   @id @db.Uuid
+  bundleId        String   @map("bundle_id") @db.Uuid
+  permissionKey   String   @map("permission_key") @db.VarChar(100)
+  permissionLabel String?  @map("permission_label") @db.VarChar(255)
+  isRequired      Boolean  @default(true) @map("is_required")
+  rationale       String?
+  createdAt       DateTime @map("created_at") @db.Timestamp(6)
+
+  bundle Bundles @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@unique([bundleId, permissionKey])
+  @@map("bundle_permissions")
+}
+
+model BundlePrivacyDeclarations {
+  id                   String   @id @db.Uuid
+  bundleId             String   @unique @map("bundle_id") @db.Uuid
+  collectsPersonalData Boolean  @default(false) @map("collects_personal_data")
+  dataTypes            String?  @map("data_types")
+  purposeOfCollection  String?  @map("purpose_of_collection")
+  thirdPartySharing    Boolean  @default(false) @map("third_party_sharing")
+  thirdParties         String?  @map("third_parties")
+  dataRetentionDays    Int?     @map("data_retention_days")
+  privacyContactEmail  String?  @map("privacy_contact_email") @db.VarChar(255)
+  updatedAt            DateTime @map("updated_at") @db.Timestamp(6)
+  createdAt            DateTime @map("created_at") @db.Timestamp(6)
+
+  bundle Bundles @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@map("bundle_privacy_declarations")
+}
+
+model BundlePromotions {
+  id                 String    @id @db.Uuid
+  bundleId           String    @map("bundle_id") @db.Uuid
+  promoCode          String?   @unique @map("promo_code") @db.VarChar(64)
+  promoType          String    @map("promo_type") @db.VarChar(30)
+  discountValue      Float     @map("discount_value")
+  maxRedemptions     Int?      @map("max_redemptions")
+  currentRedemptions Int       @default(0) @map("current_redemptions")
+  minOrderAmount     Float?    @map("min_order_amount")
+  startsAt           DateTime  @map("starts_at") @db.Timestamp(6)
+  endsAt             DateTime? @map("ends_at") @db.Timestamp(6)
+  isActive           Boolean   @default(true) @map("is_active")
+  createdAt          DateTime  @map("created_at") @db.Timestamp(6)
+  updatedAt          DateTime  @map("updated_at") @db.Timestamp(6)
+
+  bundle Bundles @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@index([bundleId], map: "bundle_promotions_bundle_id")
+  @@index([isActive], map: "bundle_promotions_is_active")
+  @@map("bundle_promotions")
+}
+
+model BundleRankingScores {
+  id              String   @id @db.Uuid
+  bundleId        String   @unique @map("bundle_id") @db.Uuid
+  popularityScore Float    @default(0.0) @map("popularity_score")
+  retentionScore  Float    @default(0.0) @map("retention_score")
+  qualityScore    Float    @default(0.0) @map("quality_score")
+  crashScore      Float    @default(0.0) @map("crash_score")
+  overallScore    Float    @default(0.0) @map("overall_score")
+  updatedAt       DateTime @map("updated_at") @db.Timestamp(6)
+
+  bundle Bundles @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@index([overallScore], map: "bundle_ranking_scores_overall_score")
+  @@map("bundle_ranking_scores")
+}
+
+model BundleReleaseTracks {
+  id           String   @id @db.Uuid
+  bundleId     String   @map("bundle_id") @db.Uuid
+  track        String   @db.VarChar(30)
+  version      String   @db.VarChar(50)
+  buildNumber  Int      @map("build_number")
+  storagePath  String   @map("storage_path") @db.VarChar(500)
+  releaseNotes String?  @map("release_notes")
+  status       String   @default("active") @db.VarChar(30)
+  createdAt    DateTime @map("created_at") @db.Timestamp(6)
+
+  bundle Bundles @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  rollouts BundleRollouts[]
+
+  @@unique([bundleId, track, version])
+  @@index([bundleId], map: "bundle_release_tracks_bundle_id")
+  @@map("bundle_release_tracks")
+}
+
+model BundleRetentionStats {
+  id                 String   @id @db.Uuid
+  bundleId           String   @map("bundle_id") @db.Uuid
+  statsDate          String   @map("stats_date") @db.VarChar(10)
+  d1Retention        Float?   @map("d1_retention")
+  d7Retention        Float?   @map("d7_retention")
+  d30Retention       Float?   @map("d30_retention")
+  dau                BigInt   @default(0)
+  mau                BigInt   @default(0)
+  sessionCount       BigInt   @default(0) @map("session_count")
+  avgSessionDuration Float?   @map("avg_session_duration")
+  createdAt          DateTime @map("created_at") @db.Timestamp(6)
+
+  bundle Bundles @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@unique([bundleId, statsDate])
+  @@index([bundleId], map: "bundle_retention_stats_bundle_id")
+  @@index([statsDate], map: "bundle_retention_stats_stats_date")
+  @@map("bundle_retention_stats")
+}
+
+model BundleReviews {
+  id             String   @id @db.Uuid
+  bundleId       String   @map("bundle_id") @db.Uuid
+  userId         String   @map("user_id") @db.Uuid
+  rating         Int
+  title          String?  @db.VarChar(255)
+  body           String?
+  isVerified     Boolean  @default(false) @map("is_verified")
+  developerReply String?  @map("developer_reply")
+  helpfulCount   Int      @default(0) @map("helpful_count")
+  reportCount    Int      @default(0) @map("report_count")
+  createdAt      DateTime @map("created_at") @db.Timestamp(6)
+  updatedAt      DateTime @map("updated_at") @db.Timestamp(6)
+
+  bundle Bundles @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  user   User    @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  reviewReports BundleReviewReports[]
+
+  @@unique([bundleId, userId])
+  @@index([bundleId], map: "bundle_reviews_bundle_id")
+  @@index([createdAt], map: "bundle_reviews_created_at")
+  @@map("bundle_reviews")
+}
+
+model BundleRuntimeConfig {
+  id               String   @id @db.Uuid
+  bundleId         String   @unique @map("bundle_id") @db.Uuid
+  minOsVersion     String?  @map("min_os_version") @db.VarChar(20)
+  runtimeType      String   @default("standard") @map("runtime_type") @db.VarChar(30)
+  targetPlatforms  String?  @map("target_platforms") @db.VarChar(100)
+  sdkVersion       String?  @map("sdk_version") @db.VarChar(30)
+  offlineSupported Boolean  @default(false) @map("offline_supported")
+  updatedAt        DateTime @map("updated_at") @db.Timestamp(6)
+
+  bundle Bundles @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@map("bundle_runtime_config")
+}
+
+model BundleScreenshots {
+  id         String   @id @db.Uuid
+  bundleId   String   @map("bundle_id") @db.Uuid
+  url        String   @db.VarChar(500)
+  caption    String?  @db.VarChar(255)
+  deviceType String?  @map("device_type") @db.VarChar(30)
+  sortOrder  Int      @default(0) @map("sort_order")
+  createdAt  DateTime @map("created_at") @db.Timestamp(6)
+
+  bundle Bundles @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@index([bundleId], map: "bundle_screenshots_bundle_id")
+  @@map("bundle_screenshots")
+}
+
+model BundleSearchKeywords {
+  id       String @id @db.Uuid
+  bundleId String @map("bundle_id") @db.Uuid
+  keyword  String @db.VarChar(100)
+  locale   String @default("en") @db.VarChar(10)
+  weight   Int    @default(1)
+
+  bundle Bundles @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@unique([bundleId, keyword, locale])
+  @@map("bundle_search_keywords")
+}
+
+model BundleStateTransitions {
+  id          String   @id @db.Uuid
+  bundleId    String   @map("bundle_id") @db.Uuid
+  fromState   String   @map("from_state") @db.VarChar(50)
+  toState     String   @map("to_state") @db.VarChar(50)
+  trigger     String   @db.VarChar(100)
+  triggeredBy String?  @map("triggered_by") @db.Uuid
+  metadata    String?
+  createdAt   DateTime @map("created_at") @db.Timestamp(6)
+
+  bundle Bundles @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  user   User?   @relation(fields: [triggeredBy], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([bundleId], map: "bundle_state_transitions_bundle_id")
+  @@index([createdAt], map: "bundle_state_transitions_created_at")
+  @@index([toState], map: "bundle_state_transitions_to_state")
+  @@map("bundle_state_transitions")
+}
+
+model BundleStats {
+  id             String   @id @db.Uuid
+  bundleId       String   @unique @map("bundle_id") @db.Uuid
+  rating         Float?
+  ratingCount    Int      @default(0) @map("rating_count")
+  rating1        Int      @default(0) @map("rating_1")
+  rating2        Int      @default(0) @map("rating_2")
+  rating3        Int      @default(0) @map("rating_3")
+  rating4        Int      @default(0) @map("rating_4")
+  rating5        Int      @default(0) @map("rating_5")
+  downloadCount  BigInt   @default(0) @map("download_count")
+  activeInstalls BigInt   @default(0) @map("active_installs")
+  updatedAt      DateTime @map("updated_at") @db.Timestamp(6)
+
+  bundle Bundles @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@map("bundle_stats")
+}
+
+model BundleStoreFlags {
+  id             String   @id @db.Uuid
+  bundleId       String   @unique @map("bundle_id") @db.Uuid
+  isFeatured     Boolean  @default(false) @map("is_featured")
+  isVerified     Boolean  @default(false) @map("is_verified")
+  isEditorChoice Boolean  @default(false) @map("is_editor_choice")
+  featuredOrder  Int?     @map("featured_order")
+  updatedAt      DateTime @map("updated_at") @db.Timestamp(6)
+
+  bundle Bundles @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@index([isEditorChoice], map: "bundle_store_flags_is_editor_choice")
+  @@index([isFeatured], map: "bundle_store_flags_is_featured")
+  @@map("bundle_store_flags")
+}
+
+model BundleStoreListings {
+  id               String   @id @db.Uuid
+  bundleId         String   @map("bundle_id") @db.Uuid
+  region           String   @db.VarChar(10)
+  name             String?  @db.VarChar(255)
+  shortDescription String?  @map("short_description") @db.VarChar(255)
+  description      String?
+  isActive         Boolean  @default(true) @map("is_active")
+  createdAt        DateTime @map("created_at") @db.Timestamp(6)
+  updatedAt        DateTime @map("updated_at") @db.Timestamp(6)
+
+  bundle Bundles @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@unique([bundleId, region])
+  @@map("bundle_store_listings")
+}
+
+model BundleSubscriptionPlans {
+  id            String   @id @db.Uuid
+  bundleId      String   @map("bundle_id") @db.Uuid
+  planKey       String   @map("plan_key") @db.VarChar(100)
+  name          String   @db.VarChar(255)
+  description   String?
+  price         Float
+  currency      String   @default("VND") @db.VarChar(10)
+  billingPeriod String   @map("billing_period") @db.VarChar(30)
+  trialDays     Int      @default(0) @map("trial_days")
+  isActive      Boolean  @default(true) @map("is_active")
+  createdAt     DateTime @map("created_at") @db.Timestamp(6)
+  updatedAt     DateTime @map("updated_at") @db.Timestamp(6)
+
+  bundle Bundles @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  subscriptions BundleSubscriptionHistory[]
+
+  @@unique([bundleId, planKey])
+  @@index([bundleId], map: "bundle_subscription_plans_bundle_id")
+  @@map("bundle_subscription_plans")
+}
+
+model BundleTags {
+  id       String @id @db.Uuid
+  bundleId String @map("bundle_id") @db.Uuid
+  tag      String @db.VarChar(100)
+
+  bundle Bundles @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@unique([bundleId, tag])
+  @@map("bundle_tags")
+}
+
+model BundleTrendingSnapshots {
+  id             String   @id @db.Uuid
+  bundleId       String   @map("bundle_id") @db.Uuid
+  snapshotDate   String   @map("snapshot_date") @db.VarChar(10)
+  downloadCount  BigInt   @default(0) @map("download_count")
+  activeInstalls BigInt   @default(0) @map("active_installs")
+  rankPosition   Int?     @map("rank_position")
+  category       String?  @db.VarChar(100)
+  createdAt      DateTime @map("created_at") @db.Timestamp(6)
+
+  bundle Bundles @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@unique([bundleId, snapshotDate])
+  @@index([bundleId], map: "bundle_trending_snapshots_bundle_id")
+  @@index([snapshotDate], map: "bundle_trending_snapshots_snapshot_date")
+  @@map("bundle_trending_snapshots")
+}
+
+model BundleUserReports {
+  id           String   @id @db.Uuid
+  bundleId     String   @map("bundle_id") @db.Uuid
+  reportedBy   String   @map("reported_by") @db.Uuid
+  reason       String   @db.VarChar(100)
+  description  String?
+  evidenceUrls String?  @map("evidence_urls")
+  status       String   @default("pending") @db.VarChar(30)
+  reviewedBy   String?  @map("reviewed_by") @db.Uuid
+  resolution   String?
+  createdAt    DateTime @map("created_at") @db.Timestamp(6)
+  updatedAt    DateTime @map("updated_at") @db.Timestamp(6)
+
+  bundle   Bundles @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  reporter User    @relation("ReportReportedBy", fields: [reportedBy], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  reviewer User?   @relation("ReportReviewedBy", fields: [reviewedBy], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([bundleId], map: "bundle_user_reports_bundle_id")
+  @@index([status], map: "bundle_user_reports_status")
+  @@map("bundle_user_reports")
+}
+
+model BundleVersionHistory {
+  id          String    @id @db.Uuid
+  bundleId    String    @map("bundle_id") @db.Uuid
+  version     String    @db.VarChar(50)
+  buildNumber Int       @map("build_number")
+  storagePath String    @map("storage_path") @db.VarChar(500)
+  fileSize    BigInt?   @map("file_size")
+  changelog   String?
+  status      String    @default("archived") @db.VarChar(50)
+  publishedAt DateTime? @map("published_at") @db.Timestamp(6)
+  createdAt   DateTime  @map("created_at") @db.Timestamp(6)
+
+  bundle Bundles @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  crashReports        BundleCrashReports[]
+  reviewHistory       BundleReviewHistory[]
+  reviewQueue         BundleReviewQueue[]
+  securityScanResults BundleSecurityScanResults[]
+  updatePhases        BundleUpdatePhases[]
+
+  @@unique([bundleId, version, buildNumber])
+  @@index([bundleId], map: "bundle_version_history_bundle_id")
+  @@map("bundle_version_history")
+}
+
+model BundleWebhooks {
+  id              String    @id @db.Uuid
+  bundleId        String    @map("bundle_id") @db.Uuid
+  url             String    @db.VarChar(500)
+  secret          String?   @db.VarChar(255)
+  events          String
+  isActive        Boolean   @default(true) @map("is_active")
+  failureCount    Int       @default(0) @map("failure_count")
+  lastTriggeredAt DateTime? @map("last_triggered_at") @db.Timestamp(6)
+  createdAt       DateTime  @map("created_at") @db.Timestamp(6)
+  updatedAt       DateTime  @map("updated_at") @db.Timestamp(6)
+
+  bundle Bundles @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@index([bundleId], map: "bundle_webhooks_bundle_id")
+  @@index([isActive], map: "bundle_webhooks_is_active")
+  @@map("bundle_webhooks")
+}
+
+model BundleOrderItems {
+  id          String  @id @db.Uuid
+  orderId     String  @map("order_id") @db.Uuid
+  productType String  @map("product_type") @db.VarChar(30)
+  productId   String  @map("product_id") @db.VarChar(50)
+  productName String? @map("product_name") @db.VarChar(255)
+  price       Float
+  currency    String  @default("VND") @db.VarChar(10)
+  quantity    Int     @default(1)
+
+  order BundleOrders @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@index([orderId], map: "bundle_order_items_order_id")
+  @@map("bundle_order_items")
+}
+
+model BundlePaymentLogs {
+  id         String   @id @db.Uuid
+  orderId    String   @map("order_id") @db.Uuid
+  provider   String   @db.VarChar(50)
+  event      String   @db.VarChar(100)
+  rawPayload String   @map("raw_payload")
+  status     String   @default("received") @db.VarChar(30)
+  createdAt  DateTime @map("created_at") @db.Timestamp(6)
+
+  order BundleOrders @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@index([createdAt], map: "bundle_payment_logs_created_at")
+  @@index([orderId], map: "bundle_payment_logs_order_id")
+  @@index([status], map: "bundle_payment_logs_status")
+  @@map("bundle_payment_logs")
+}
+
+model BundleRefundRequests {
+  id         String   @id @db.Uuid
+  orderId    String   @map("order_id") @db.Uuid
+  userId     String   @map("user_id") @db.Uuid
+  reason     String
+  amount     Float
+  status     String   @default("pending") @db.VarChar(30)
+  reviewedBy String?  @map("reviewed_by") @db.Uuid
+  reviewNote String?  @map("review_note")
+  createdAt  DateTime @map("created_at") @db.Timestamp(6)
+  updatedAt  DateTime @map("updated_at") @db.Timestamp(6)
+
+  order    BundleOrders @relation(fields: [orderId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  reviewer User?        @relation("RefundReviewedBy", fields: [reviewedBy], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  user     User         @relation("RefundUser", fields: [userId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([orderId], map: "bundle_refund_requests_order_id")
+  @@index([status], map: "bundle_refund_requests_status")
+  @@index([userId], map: "bundle_refund_requests_user_id")
+  @@map("bundle_refund_requests")
+}
+
+model BundleUserEntitlements {
+  id              String    @id @db.Uuid
+  userId          String    @map("user_id") @db.Uuid
+  bundleId        String    @map("bundle_id") @db.Uuid
+  orderId         String?   @map("order_id") @db.Uuid
+  entitlementType String    @map("entitlement_type") @db.VarChar(30)
+  expiresAt       DateTime? @map("expires_at") @db.Timestamp(6)
+  isActive        Boolean   @default(true) @map("is_active")
+  createdAt       DateTime  @map("created_at") @db.Timestamp(6)
+  updatedAt       DateTime  @map("updated_at") @db.Timestamp(6)
+
+  bundle Bundles       @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  order  BundleOrders? @relation(fields: [orderId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  user   User          @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@unique([userId, bundleId, entitlementType])
+  @@index([bundleId], map: "bundle_user_entitlements_bundle_id")
+  @@index([isActive], map: "bundle_user_entitlements_is_active")
+  @@index([userId], map: "bundle_user_entitlements_user_id")
+  @@map("bundle_user_entitlements")
+}
+
+model BundleRollouts {
+  id             String    @id @db.Uuid
+  bundleId       String    @map("bundle_id") @db.Uuid
+  trackId        String    @map("track_id") @db.Uuid
+  rolloutPercent Int       @default(0) @map("rollout_percent")
+  targetCountry  String?   @map("target_country") @db.VarChar(5)
+  startedAt      DateTime  @map("started_at") @db.Timestamp(6)
+  completedAt    DateTime? @map("completed_at") @db.Timestamp(6)
+  createdAt      DateTime  @map("created_at") @db.Timestamp(6)
+
+  bundle Bundles             @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  track  BundleReleaseTracks @relation(fields: [trackId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([bundleId], map: "bundle_rollouts_bundle_id")
+  @@map("bundle_rollouts")
+}
+
+model BundleReviewReports {
+  id          String   @id @db.Uuid
+  reviewId    String   @map("review_id") @db.Uuid
+  reportedBy  String   @map("reported_by") @db.Uuid
+  reason      String   @db.VarChar(100)
+  description String?
+  status      String   @default("pending") @db.VarChar(30)
+  reviewedBy  String?  @map("reviewed_by") @db.Uuid
+  createdAt   DateTime @map("created_at") @db.Timestamp(6)
+  updatedAt   DateTime @map("updated_at") @db.Timestamp(6)
+
+  reporter User          @relation("ReviewReportReportedBy", fields: [reportedBy], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  review   BundleReviews @relation(fields: [reviewId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  reviewer User?         @relation("ReviewReportReviewedBy", fields: [reviewedBy], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@unique([reviewId, reportedBy])
+  @@index([reviewId], map: "bundle_review_reports_review_id")
+  @@index([status], map: "bundle_review_reports_status")
+  @@map("bundle_review_reports")
+}
+
+model BundleSubscriptionHistory {
+  id           String    @id @db.Uuid
+  userId       String    @map("user_id") @db.Uuid
+  planId       String    @map("plan_id") @db.Uuid
+  bundleId     String    @map("bundle_id") @db.Uuid
+  startAt      DateTime  @map("start_at") @db.Timestamp(6)
+  endAt        DateTime? @map("end_at") @db.Timestamp(6)
+  status       String    @default("active") @db.VarChar(30)
+  cancelReason String?   @map("cancel_reason")
+  createdAt    DateTime  @map("created_at") @db.Timestamp(6)
+  updatedAt    DateTime  @map("updated_at") @db.Timestamp(6)
+
+  bundle Bundles                 @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  plan   BundleSubscriptionPlans @relation(fields: [planId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  user   User                    @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([bundleId], map: "bundle_subscription_history_bundle_id")
+  @@index([planId], map: "bundle_subscription_history_plan_id")
+  @@index([status], map: "bundle_subscription_history_status")
+  @@index([userId], map: "bundle_subscription_history_user_id")
+  @@map("bundle_subscription_history")
+}
+
+model BundleCrashReports {
+  id              String   @id @db.Uuid
+  bundleId        String   @map("bundle_id") @db.Uuid
+  versionId       String?  @map("version_id") @db.Uuid
+  deviceModel     String?  @map("device_model") @db.VarChar(100)
+  osVersion       String?  @map("os_version") @db.VarChar(30)
+  platform        String?  @db.VarChar(20)
+  stackTraceHash  String   @map("stack_trace_hash") @db.VarChar(64)
+  stackTrace      String?  @map("stack_trace")
+  occurrenceCount Int      @default(1) @map("occurrence_count")
+  affectedUsers   Int      @default(1) @map("affected_users")
+  firstSeen       BigInt   @map("first_seen")
+  lastSeen        BigInt   @map("last_seen")
+  isResolved      Boolean  @default(false) @map("is_resolved")
+  createdAt       DateTime @map("created_at") @db.Timestamp(6)
+  updatedAt       DateTime @map("updated_at") @db.Timestamp(6)
+
+  bundle  Bundles               @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  version BundleVersionHistory? @relation(fields: [versionId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@unique([bundleId, versionId, stackTraceHash])
+  @@index([bundleId], map: "bundle_crash_reports_bundle_id")
+  @@index([isResolved], map: "bundle_crash_reports_is_resolved")
+  @@index([lastSeen], map: "bundle_crash_reports_last_seen")
+  @@index([stackTraceHash], map: "bundle_crash_reports_stack_trace_hash")
+  @@map("bundle_crash_reports")
+}
+
+model BundleReviewHistory {
+  id        String   @id @db.Uuid
+  bundleId  String   @map("bundle_id") @db.Uuid
+  versionId String?  @map("version_id") @db.Uuid
+  action    String   @db.VarChar(30)
+  actorId   String   @map("actor_id") @db.Uuid
+  reason    String?
+  metadata  String?
+  createdAt DateTime @map("created_at") @db.Timestamp(6)
+
+  actor   User                  @relation(fields: [actorId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  bundle  Bundles               @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  version BundleVersionHistory? @relation(fields: [versionId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([action], map: "bundle_review_history_action")
+  @@index([bundleId], map: "bundle_review_history_bundle_id")
+  @@index([createdAt], map: "bundle_review_history_created_at")
+  @@map("bundle_review_history")
+}
+
+model BundleReviewQueue {
+  id                 String    @id @db.Uuid
+  bundleId           String    @map("bundle_id") @db.Uuid
+  submittedVersionId String?   @map("submitted_version_id") @db.Uuid
+  status             String    @default("pending") @db.VarChar(30)
+  reviewerId         String?   @map("reviewer_id") @db.Uuid
+  priority           Int       @default(0)
+  reviewedAt         DateTime? @map("reviewed_at") @db.Timestamp(6)
+  notes              String?
+  createdAt          DateTime  @map("created_at") @db.Timestamp(6)
+  updatedAt          DateTime  @map("updated_at") @db.Timestamp(6)
+
+  bundle           Bundles               @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  reviewer         User?                 @relation("ReviewQueueReviewer", fields: [reviewerId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  submittedVersion BundleVersionHistory? @relation(fields: [submittedVersionId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([bundleId], map: "bundle_review_queue_bundle_id")
+  @@index([createdAt], map: "bundle_review_queue_created_at")
+  @@index([priority], map: "bundle_review_queue_priority")
+  @@index([status], map: "bundle_review_queue_status")
+  @@map("bundle_review_queue")
+}
+
+model BundleSecurityScanResults {
+  id             String   @id @db.Uuid
+  bundleId       String   @map("bundle_id") @db.Uuid
+  versionId      String?  @map("version_id") @db.Uuid
+  scanType       String   @map("scan_type") @db.VarChar(50)
+  result         String   @db.VarChar(20)
+  severity       String?  @db.VarChar(20)
+  findings       String?
+  scannedAt      DateTime @map("scanned_at") @db.Timestamp(6)
+  scannerVersion String?  @map("scanner_version") @db.VarChar(30)
+
+  bundle  Bundles               @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  version BundleVersionHistory? @relation(fields: [versionId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([bundleId], map: "bundle_security_scan_results_bundle_id")
+  @@index([result], map: "bundle_security_scan_results_result")
+  @@index([scannedAt], map: "bundle_security_scan_results_scanned_at")
+  @@map("bundle_security_scan_results")
+}
+
+model BundleUpdatePhases {
+  id            String    @id @db.Uuid
+  bundleId      String    @map("bundle_id") @db.Uuid
+  versionId     String    @map("version_id") @db.Uuid
+  phaseOrder    Int       @map("phase_order")
+  percentage    Int
+  targetCountry String?   @map("target_country") @db.VarChar(5)
+  startedAt     DateTime? @map("started_at") @db.Timestamp(6)
+  endedAt       DateTime? @map("ended_at") @db.Timestamp(6)
+  status        String    @default("pending") @db.VarChar(20)
+  createdAt     DateTime  @map("created_at") @db.Timestamp(6)
+
+  bundle  Bundles              @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  version BundleVersionHistory @relation(fields: [versionId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([bundleId], map: "bundle_update_phases_bundle_id")
+  @@map("bundle_update_phases")
+}
