@@ -281,8 +281,13 @@ Standalone iOS project (SwiftUI + Liquid Glass). Migrated from `leposapp/iosApp`
 
 | Path | Responsibility | Key components |
 |---|---|---|
-| `frontend/app/page.tsx` | Landing page composition | Main entry point composing `Hero`, `Benefits`, `Features`, `Pricing`, `Contact`, `FAQ`, `Footer`. |
 | `frontend/app/layout.tsx` | Global layout wrapper | Root HTML layout, font loading, `ThemeProvider` injection. |
+| `frontend/app/(marketing)/layout.tsx` | Marketing layout wrapper | Contains the shared `<Navbar />` component for marketing pages. |
+| `frontend/app/(marketing)/page.tsx` | Landing page composition | Main entry point composing `Hero`, `Benefits`, `Features`, `Pricing`, `Contact`, `FAQ`, `Footer`. |
+| `frontend/app/login/page.tsx` | Login page component | Server Component rendering a premium login form without Navbar. |
+| `frontend/app/dashboard/layout.tsx` | Dashboard layout wrapper | Dashboard layout with global layout compatibility. |
+| `frontend/app/dashboard/page.tsx` | Dashboard root page | Dashboard landing / control panel. |
+| `frontend/app/dashboard/[id]/page.tsx` | Dashboard detail page | Dynamically displays individual dashboard instance data via `id` param. |
 | `frontend/app/globals.css` | Tailwind/shadcn theme tokens | CSS variables for Light/dark trading platform palette. |
 | `frontend/components/layout/` | Page shell and section components | `navbar.tsx`, `theme-provider.tsx`, `sections/hero.tsx`, `sections/features.tsx`, `sections/pricing.tsx`. |
 | `frontend/components/ui/` | shadcn source components | Primitive UI elements: `button.tsx`, `card.tsx`, `sheet.tsx`, `navigation-menu.tsx`, `accordion.tsx`, `form.tsx`. |
