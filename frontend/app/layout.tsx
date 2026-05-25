@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/layout/theme-provider";
-import { Navbar } from "@/components/layout/navbar";
-import { RecaptchaProvider } from "@/components/layout/recaptcha-provider";
 
 export const metadata: Metadata = {
   title: "RustAlgorithmTrading - Hybrid Trading Platform",
@@ -25,12 +23,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <RecaptchaProvider>
-            {children}
-          </RecaptchaProvider>
+          {children}
         </ThemeProvider>
       </body>
     </html>
   );
 }
-

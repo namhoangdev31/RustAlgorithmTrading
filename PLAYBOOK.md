@@ -277,27 +277,40 @@ Standalone iOS project (SwiftUI + Liquid Glass). Migrated from `leposapp/iosApp`
 
 ---
 
-## 8) Frontend Landing Page (`frontend/`)
+## 8) Frontend SSR App (`frontend/`)
 
 | Path | Responsibility | Key components |
 |---|---|---|
-| `frontend/app/layout.tsx` | Global layout wrapper | Root HTML layout, font loading, `ThemeProvider` and `RecaptchaProvider` injection. |
-| `frontend/app/api/verify-recaptcha/route.ts` | Server-side reCAPTCHA token verification API | Validates client tokens against Google's reCAPTCHA API. |
-| `frontend/components/layout/recaptcha-provider.tsx` | Client reCAPTCHA provider wrapper | Integrates `ReCaptchaProvider` from `next-recaptcha-v3` into App Layout. |
+| `frontend/app/layout.tsx` | Global layout wrapper | Root HTML layout, font loading, and `ThemeProvider` injection. |
+| `frontend/app/actions/auth.ts` | SSR auth mutations | Server Actions for Firebase email/password login, registration, reset, and NextAuth sign-out. |
+| `frontend/app/actions/dashboard.ts` | SSR dashboard mutations | Server Actions for Prisma-backed risk event create/update/delete. |
+| `frontend/app/api/auth/[...nextauth]/route.ts` | NextAuth route handler | Required Auth.js handler for issuing and clearing encrypted cookie sessions. |
 | `frontend/app/(marketing)/layout.tsx` | Marketing layout wrapper | Contains the shared `<Navbar />` component for marketing pages. |
 | `frontend/app/(marketing)/page.tsx` | Landing page composition | Main entry point composing `Hero`, `Benefits`, `Features`, `Pricing`, `Contact`, `FAQ`, `Footer`. |
-| `frontend/app/login/page.tsx` | Login page component | Server Component rendering a premium login form without Navbar. |
-| `frontend/app/dashboard/layout.tsx` | Dashboard layout wrapper | Dashboard layout with global layout compatibility. |
-| `frontend/app/dashboard/page.tsx` | Dashboard root page | Dashboard landing / control panel. |
-| `frontend/app/dashboard/[id]/page.tsx` | Dashboard detail page | Dynamically displays individual dashboard instance data via `id` param. |
+| `frontend/app/login/page.tsx` | Login/reset page component | Server Component rendering Firebase-backed auth forms without a custom API route. |
+| `frontend/app/register/page.tsx` | Registration page component | Server Component rendering Firebase-backed registration through Server Actions. |
+| `frontend/app/dashboard/layout.tsx` | Dashboard layout wrapper | SSR auth guard plus NextAuth cookie sign-out form. |
+| `frontend/app/dashboard/page.tsx` | Dashboard root page | SSR Prisma reads plus Server Action CRUD for risk events. |
+| `frontend/app/dashboard/[id]/page.tsx` | Dashboard detail page | Protected dynamic dashboard detail route via server-side session guard. |
 | `frontend/app/globals.css` | Tailwind/shadcn theme tokens | CSS variables for Light/dark trading platform palette. |
-| `frontend/components/layout/` | Page shell and section components | `navbar.tsx`, `theme-provider.tsx`, `sections/hero.tsx`, `sections/features.tsx`, `sections/pricing.tsx`. |
-| `frontend/components/layout/reset-password.tsx` | Password reset view | Firebase password reset UI component. |
-| `frontend/components/layout/Signup.tsx` | Signup page view | Firebase user registration UI component. |
+| `frontend/components/layout/` | Page shell and section components | `navbar.tsx`, `theme-provider.tsx`, auth form components, and landing sections. |
+| `frontend/components/layout/login.tsx` | Login form view | Server-rendered email/password and reset request forms bound to Server Actions. |
+| `frontend/components/layout/reset-password.tsx` | Password reset view | Server-rendered Firebase password reset confirmation form. |
+| `frontend/components/layout/signup.tsx` | Signup page view | Server-rendered Firebase user registration form. |
+| `frontend/components/layout/social-login-buttons.tsx` | Firebase social login island | Client-only popup bridge for Google/GitHub and macOS Apple login that returns Firebase ID tokens to Server Actions. |
 | `frontend/components/ui/` | shadcn source components | Primitive UI elements: `button.tsx`, `card.tsx`, `sheet.tsx`, `navigation-menu.tsx`, `accordion.tsx`, `form.tsx`. |
+| `frontend/firebase/config.ts` | Firebase public config | Centralized Firebase browser/server configuration defaults with environment overrides. |
+| `frontend/firebase/firebase.ts` | Firebase browser client | Client SDK initialization for any future browser-only Firebase workflows. |
+| `frontend/lib/server/auth.ts` | NextAuth configuration | Credentials provider backed by Firebase Auth and Prisma user synchronization. |
+| `frontend/lib/server/current-user.ts` | SSR session helper | Cached current-user lookup and protected-route redirect helper. |
+| `frontend/lib/server/dashboard-data.ts` | Dashboard query helper | Prisma read model for dashboard SSR counts and recent records. |
+| `frontend/lib/server/firebase-auth.ts` | Firebase Auth REST adapter | Server-side Firebase Auth calls for password login/signup/reset without browser SDK. |
+| `frontend/lib/server/prisma.ts` | Prisma client singleton | Prisma 7 client initialization using `@prisma/adapter-pg`. |
+| `frontend/lib/stores/session-store.ts` | Zustand vanilla store factory | Optional session state factory for future client islands without moving SSR data fetching client-side. |
 | `frontend/public/` | Static landing assets | Images, SVG icons, Favicon. |
-| frontend/package.json | Dependencies and scripts | Next.js, React, Tailwind, Framer Motion, Lucide icons dependencies. |
+| frontend/package.json | Dependencies and scripts | Next.js, React, NextAuth, Firebase, Prisma, Zustand, Tailwind, Lucide icons dependencies. |
 | `frontend/types/lodash.d.ts` | Custom lodash type declarations | Polyfills typescript type definitions for lodash sub-imports. |
+| `frontend/types/next-auth.d.ts` | NextAuth type augmentation | Adds Prisma/Firebase session fields to NextAuth `Session`, `User`, and JWT types. |
 | frontend/prisma/schema.prisma | Prisma Schema Definition | Database connection & entity schemas (`Order`, `RiskEvent`) mapping to PostgreSQL |
 
 Validate with:
