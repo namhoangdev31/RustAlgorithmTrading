@@ -10,6 +10,8 @@ export type FirebaseAuthUser = {
   providerId?: string;
 };
 
+type FirebaseIdentityProvider = "google.com" | "github.com" | "apple.com";
+
 type FirebaseErrorResponse = {
   error?: {
     message?: string;
@@ -134,6 +136,43 @@ export async function lookupFirebaseUser(idToken: string) {
     idToken,
     providerId: user.providerId ?? "firebase",
   };
+}
+
+export async function signInFirebaseWithIdentityProvider({
+  providerId,
+  idToken,
+  accessToken,
+  requestUri,
+}: {
+  providerId: FirebaseIdentityProvider;
+  idToken?: string;
+  accessToken?: string;
+  requestUri?: string;
+}) {
+  const credentials = new URLSearchParams({ providerId });
+
+  if (idToken) {
+    credentials.set("id_token", idToken);
+  }
+
+  if (accessToken) {
+    credentials.set("access_token", accessToken);
+  }
+
+  if (!idToken && !accessToken) {
+    throw new FirebaseAuthError("Missing OAuth credential from provider.");
+  }
+
+  return firebaseRequest<FirebaseAuthUser>("accounts:signInWithIdp", {
+    postBody: credentials.toString(),
+    requestUri:
+      requestUri ??
+      process.env.AUTH_URL ??
+      process.env.NEXTAUTH_URL ??
+      "http://localhost",
+    returnIdpCredential: true,
+    returnSecureToken: true,
+  });
 }
 
 export async function sendFirebasePasswordReset(email: string) {

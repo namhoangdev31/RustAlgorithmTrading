@@ -8,13 +8,18 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import { SocialLoginButtons } from "@/components/layout/social-login-buttons"
 import Link from "next/link"
 
 export default function Signup({
     action,
+    socialLoginAction,
+    showApple = false,
     error,
 }: {
     action: (formData: FormData) => Promise<void>;
+    socialLoginAction: (formData: FormData) => Promise<void>;
+    showApple?: boolean;
     error?: string;
 }) {
     return (
@@ -49,7 +54,13 @@ export default function Signup({
                     </Button>
                 </form>
             </CardContent>
-            <CardFooter className="flex-col gap-2 pb-4">
+            <CardFooter className="flex-col gap-4 pb-4">
+                <div className="w-full flex items-center gap-2">
+                    <div className="flex-grow h-px bg-gray-300"></div>
+                    <span className="text-gray-400 text-xs font-medium px-2">QUICK SIGN UP</span>
+                    <div className="flex-grow h-px bg-gray-300"></div>
+                </div>
+                <SocialLoginButtons action={socialLoginAction} showApple={showApple} />
                 <Button asChild variant="outline" className="w-full bg-white text-slate-900 border-gray-300 h-10">
                     <Link href="/login">Back</Link>
                 </Button>

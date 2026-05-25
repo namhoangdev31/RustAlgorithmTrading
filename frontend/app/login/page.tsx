@@ -1,10 +1,11 @@
 import React from "react";
+import { headers } from "next/headers";
 import { CardLogin } from "@/components/layout/login";
 import ResetPassword from "@/components/layout/reset-password";
 import {
   confirmPasswordResetAction,
   loginWithEmailAction,
-  loginWithFirebaseIdTokenAction,
+  loginWithOAuthAction,
   requestPasswordResetAction,
 } from "@/app/actions/auth";
 
@@ -18,9 +19,11 @@ type LoginPageProps = {
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {
   const params = await searchParams;
+  const headerStore = await headers();
   const error = params.error;
   const info = params.info;
   const oobCode = params.oobCode || "";
+  const showApple = /Macintosh|Mac OS X/.test(headerStore.get("user-agent") ?? "");
 
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gradient-to-br from-background via-muted/50 to-background p-4 relative">
@@ -40,8 +43,9 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
         ) : (
           <CardLogin
             loginAction={loginWithEmailAction}
-            socialLoginAction={loginWithFirebaseIdTokenAction}
+            socialLoginAction={loginWithOAuthAction}
             resetAction={requestPasswordResetAction}
+            showApple={showApple}
             error={error}
             info={info}
           />

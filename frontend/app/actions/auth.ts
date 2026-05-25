@@ -11,6 +11,8 @@ import {
 } from "@/lib/server/firebase-auth";
 import { signIn, signOut } from "@/lib/server/auth";
 
+const oauthProviders = new Set(["google", "github", "apple"]);
+
 function readFormValue(formData: FormData, key: string) {
   const value = formData.get(key);
   return typeof value === "string" ? value.trim() : "";
@@ -56,6 +58,26 @@ export async function loginWithFirebaseIdTokenAction(idToken: string) {
   } catch (error) {
     if (error instanceof AuthError) {
       redirectWithMessage("/login", "error", "Firebase social login failed.");
+    }
+
+    throw error;
+  }
+}
+
+export async function loginWithOAuthAction(formData: FormData) {
+  const provider = readFormValue(formData, "provider").toLowerCase();
+
+  if (!oauthProviders.has(provider)) {
+    redirectWithMessage("/login", "error", "Unsupported social login provider.");
+  }
+
+  try {
+    await signIn(provider, {
+      redirectTo: "/dashboard",
+    });
+  } catch (error) {
+    if (error instanceof AuthError) {
+      redirectWithMessage("/login", "error", "Social login failed.");
     }
 
     throw error;

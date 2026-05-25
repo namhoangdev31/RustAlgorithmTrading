@@ -13,13 +13,21 @@ import Link from "next/link"
 
 interface CardLoginProps {
     loginAction: (formData: FormData) => Promise<void>;
-    socialLoginAction: (idToken: string) => Promise<void>;
+    socialLoginAction: (formData: FormData) => Promise<void>;
     resetAction: (formData: FormData) => Promise<void>;
+    showApple?: boolean;
     error?: string;
     info?: string;
 }
 
-export function CardLogin({ loginAction, socialLoginAction, resetAction, error, info }: CardLoginProps) {
+export function CardLogin({
+    loginAction,
+    socialLoginAction,
+    resetAction,
+    showApple = false,
+    error,
+    info,
+}: CardLoginProps) {
     return (
         <Card className="w-full max-w-sm m-4 py-0 pt-4">
             <CardHeader>
@@ -67,7 +75,7 @@ export function CardLogin({ loginAction, socialLoginAction, resetAction, error, 
                     <div className="flex-grow h-px bg-gray-300"></div>
                 </div>
 
-                <SocialLoginButtons action={socialLoginAction} />
+                <SocialLoginButtons action={socialLoginAction} showApple={showApple} />
 
                 <div className="w-full flex items-center gap-2">
                     <div className="flex-grow h-px bg-gray-300"></div>

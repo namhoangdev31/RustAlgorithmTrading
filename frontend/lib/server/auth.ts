@@ -1,12 +1,17 @@
 import NextAuth from "next-auth";
+import Apple from "next-auth/providers/apple";
 import Credentials from "next-auth/providers/credentials";
+import GitHub from "next-auth/providers/github";
+import Google from "next-auth/providers/google";
 
 import {
   lookupFirebaseUser,
+  signInFirebaseWithIdentityProvider,
   signInFirebaseWithPassword,
   type FirebaseAuthUser,
 } from "@/lib/server/firebase-auth";
 import { prisma } from "@/lib/server/prisma";
+import { ensureUserOrganizations } from "@/lib/server/workspace";
 
 function readCredential(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
@@ -22,11 +27,19 @@ function splitDisplayName(displayName?: string) {
   };
 }
 
-async function syncFirebaseUser(firebaseUser: FirebaseAuthUser) {
-  const email = firebaseUser.email?.toLowerCase();
-  const names = splitDisplayName(firebaseUser.displayName);
+async function syncFirebaseUser(
+  firebaseUser: FirebaseAuthUser,
+  fallback: {
+    email?: string | null;
+    name?: string | null;
+    provider?: string | null;
+  } = {}
+) {
+  const email = (firebaseUser.email ?? fallback.email)?.toLowerCase();
+  const displayName = firebaseUser.displayName ?? fallback.name ?? undefined;
+  const names = splitDisplayName(displayName);
   const now = new Date();
-  const provider = firebaseUser.providerId ?? "firebase";
+  const provider = fallback.provider ?? firebaseUser.providerId ?? "firebase";
 
   const existing = await prisma.user.findFirst({
     where: {
@@ -38,10 +51,10 @@ async function syncFirebaseUser(firebaseUser: FirebaseAuthUser) {
   });
 
   if (existing) {
-    return prisma.user.update({
+    const user = await prisma.user.update({
       where: { id: existing.id },
       data: {
-        email,
+        email: email ?? existing.email,
         provider: existing.provider || provider,
         socialId: firebaseUser.localId,
         firstName: names.firstName ?? existing.firstName,
@@ -51,9 +64,13 @@ async function syncFirebaseUser(firebaseUser: FirebaseAuthUser) {
         updatedAt: now,
       },
     });
+
+    await ensureUserOrganizations(user);
+
+    return user;
   }
 
-  return prisma.user.create({
+  const user = await prisma.user.create({
     data: {
       id: crypto.randomUUID(),
       email,
@@ -66,6 +83,56 @@ async function syncFirebaseUser(firebaseUser: FirebaseAuthUser) {
       createdAt: now,
       updatedAt: now,
     },
+  });
+
+  await ensureUserOrganizations(user);
+
+  return user;
+}
+
+function getFirebaseProviderId(provider?: string) {
+  switch (provider) {
+    case "google":
+      return "google.com";
+    case "github":
+      return "github.com";
+    case "apple":
+      return "apple.com";
+    default:
+      return null;
+  }
+}
+
+async function syncOAuthUser({
+  account,
+  user,
+}: {
+  account: {
+    provider?: string;
+    id_token?: string;
+    access_token?: string;
+  };
+  user: {
+    email?: string | null;
+    name?: string | null;
+  };
+}) {
+  const providerId = getFirebaseProviderId(account.provider);
+
+  if (!providerId) {
+    return null;
+  }
+
+  const firebaseUser = await signInFirebaseWithIdentityProvider({
+    providerId,
+    idToken: account.id_token,
+    accessToken: account.access_token,
+  });
+
+  return syncFirebaseUser(firebaseUser, {
+    email: user.email,
+    name: user.name,
+    provider: account.provider,
   });
 }
 
@@ -115,14 +182,32 @@ export const {
         };
       },
     }),
+    Google({
+      allowDangerousEmailAccountLinking: true,
+    }),
+    GitHub({
+      allowDangerousEmailAccountLinking: true,
+    }),
+    Apple({
+      allowDangerousEmailAccountLinking: true,
+    }),
   ],
   callbacks: {
-    jwt({ token, user }) {
-      if (user) {
+    async jwt({ token, user, account }) {
+      if (account && account.provider !== "credentials" && user) {
+        const syncedUser = await syncOAuthUser({ account, user });
+
+        if (syncedUser) {
+          token.sub = syncedUser.id;
+          token.firebaseUid = syncedUser.socialId ?? undefined;
+          token.provider = syncedUser.provider;
+          token.userType = syncedUser.userType;
+        }
+      } else if (user) {
         token.sub = user.id;
         token.firebaseUid = user.firebaseUid;
-        token.provider = user.provider;
-        token.userType = user.userType;
+        token.provider = user.provider ?? undefined;
+        token.userType = user.userType ?? undefined;
       }
 
       return token;
