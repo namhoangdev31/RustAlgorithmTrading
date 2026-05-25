@@ -22,48 +22,49 @@ module.exports = {
   	},
   	extend: {
   		colors: {
-  			border: '#3f3a36',
-  			input: '#3f3a36',
-  			ring: '#f7f5f0',
-  			background: '#2b2622',
-  			foreground: '#f7f5f0',
+  			border: 'hsl(var(--border))',
+  			input: 'hsl(var(--input))',
+  			ring: 'hsl(var(--ring))',
+  			background: 'hsl(var(--background))',
+  			foreground: 'hsl(var(--foreground))',
   			primary: {
-  				DEFAULT: '#f7f5f0',
-  				foreground: '#2b2622'
+  				DEFAULT: 'hsl(var(--primary))',
+  				foreground: 'hsl(var(--primary-foreground))'
   			},
   			secondary: {
-  				DEFAULT: '#383330',
-  				foreground: '#f7f5f0'
+  				DEFAULT: 'hsl(var(--secondary))',
+  				foreground: 'hsl(var(--secondary-foreground))'
   			},
   			destructive: {
-  				DEFAULT: '#ef4444',
-  				foreground: '#f7f5f0'
+  				DEFAULT: 'hsl(var(--destructive))',
+  				foreground: 'hsl(var(--destructive-foreground))'
   			},
   			muted: {
-  				DEFAULT: '#383330',
-  				foreground: '#aea69c'
+  				DEFAULT: 'hsl(var(--muted))',
+  				foreground: 'hsl(var(--muted-foreground))'
   			},
   			accent: {
-  				DEFAULT: '#383330',
-  				foreground: '#f7f5f0'
+  				DEFAULT: 'hsl(var(--accent))',
+  				foreground: 'hsl(var(--accent-foreground))'
   			},
   			popover: {
-  				DEFAULT: '#383330',
-  				foreground: '#f7f5f0'
+  				DEFAULT: 'hsl(var(--popover))',
+  				foreground: 'hsl(var(--popover-foreground))'
   			},
   			card: {
-  				DEFAULT: '#383330',
-  				foreground: '#f7f5f0'
+  				DEFAULT: 'hsl(var(--card))',
+  				foreground: 'hsl(var(--card-foreground))'
   			},
-  			primaryBrand: '#f7f5f0',
-  			'on-primary': '#2b2622',
-  			ink: '#f7f5f0',
-  			body: '#c9c0ad',
-  			'body-strong': '#dad2c1',
-  			mute: '#aea69c',
-  			canvas: '#2b2622',
-  			'canvas-soft': '#383330',
-  			hairline: '#3f3a36',
+  			posthogYellow: 'hsl(var(--posthog-yellow))',
+  			charcoal: 'hsl(var(--posthog-charcoal))',
+  			ash: 'hsl(var(--posthog-ash))',
+  			stone: 'hsl(var(--posthog-stone))',
+  			linkBlue: 'hsl(var(--posthog-link-blue))',
+  			linkTeal: 'hsl(var(--posthog-link-teal))',
+  			blueSoft: 'hsl(var(--posthog-blue-soft))',
+  			greenSoft: 'hsl(var(--posthog-green-soft))',
+  			redSoft: 'hsl(var(--posthog-red-soft))',
+  			purpleSoft: 'hsl(var(--posthog-purple-soft))',
   			sidebar: {
   				DEFAULT: 'hsl(var(--sidebar-background))',
   				foreground: 'hsl(var(--sidebar-foreground))',
@@ -77,92 +78,90 @@ module.exports = {
   		},
   		borderRadius: {
   			none: '0px',
-  			xxs: '1px',
   			xs: '2px',
-  			sm: '3px',
-  			md: '4px',
-  			lg: '6px',
+  			sm: '4px',
+  			md: '6px',
+  			lg: '8px',
   			pill: '9999px',
   			full: '9999px',
-  			xl: 'calc(var(--radius) + 4px)'
   		},
   		spacing: {
   			xxs: '2px',
   			xs: '4px',
   			sm: '8px',
-  			md: '10px',
+  			md: '12px',
   			lg: '16px',
   			xl: '24px',
+  			xxl: '32px',
   			'2xl': '32px',
   			'3xl': '48px',
   			'4xl': '64px',
-  			'5xl': '96px'
+  			'5xl': '96px',
+  			section: '80px'
   		},
   		fontFamily: {
   			sans: [
+  				'IBM Plex Sans Variable',
+  				'IBM Plex Sans',
   				'Inter',
   				'system-ui',
   				'-apple-system',
   				'sans-serif'
   			],
   			serif: [
-  				'Instrument Serif',
   				'Georgia',
   				'Times New Roman',
   				'serif'
   			],
   			mono: [
-  				'DM Mono',
+  				'Source Code Pro',
   				'ui-monospace',
   				'SFMono-Regular',
   				'Menlo',
   				'monospace'
-  			],
-  			abel: [
-  				'Abel',
-  				'sans-serif'
   			]
   		},
   		fontSize: {
   			'display-xl': [
-  				'64px',
+  				'36px',
   				{
-  					lineHeight: '70.4px',
-  					letterSpacing: '-1.6px'
+  					lineHeight: '54px',
+  					letterSpacing: '0px'
   				}
   			],
   			'display-lg': [
-  				'48px',
-  				{
-  					lineHeight: '52.8px',
-  					letterSpacing: '-1.2px'
-  				}
-  			],
-  			'display-md': [
-  				'32px',
-  				{
-  					lineHeight: '40px',
-  					letterSpacing: '-0.8px'
-  				}
-  			],
-  			'display-sm': [
   				'24px',
   				{
   					lineHeight: '32px',
-  					letterSpacing: '-0.4px'
+  					letterSpacing: '-0.6px'
   				}
   			],
-  			'display-serif': [
-  				'48px',
+  			'heading-lg': [
+  				'21px',
   				{
-  					lineHeight: '52px',
+  					lineHeight: '29.4px',
   					letterSpacing: '-0.5px'
   				}
   			],
-  			'body-lg': [
+  			'heading-md': [
+  				'20px',
+  				{
+  					lineHeight: '28px',
+  					letterSpacing: '0'
+  				}
+  			],
+  			'heading-sm': [
   				'18px',
   				{
-  					lineHeight: '28px'
+  					lineHeight: '27px',
+  					letterSpacing: '0'
+  				}
+  			],
+  			'heading-sm-mixed': [
+  				'18px',
+  				{
+  					lineHeight: '28px',
+  					letterSpacing: '0'
   				}
   			],
   			'body-md': [
@@ -171,45 +170,88 @@ module.exports = {
   					lineHeight: '24px'
   				}
   			],
-  			'body-md-strong': [
+  			'body-strong': [
   				'16px',
   				{
   					lineHeight: '24px',
-  					fontWeight: '500'
+  					fontWeight: '600'
   				}
   			],
   			'body-sm': [
-  				'14px',
+  				'15px',
   				{
-  					lineHeight: '20px'
+  					lineHeight: '25.65px'
   				}
   			],
   			'body-sm-strong': [
+  				'15px',
+  				{
+  					lineHeight: '25.65px',
+  					fontWeight: '600'
+  				}
+  			],
+  			'body-xs': [
   				'14px',
   				{
   					lineHeight: '20px',
   					fontWeight: '500'
   				}
   			],
-  			caption: [
-  				'12px',
+  			'caption-md': [
+  				'14px',
   				{
-  					lineHeight: '16px'
+  					lineHeight: '24px',
+  					fontWeight: '700'
   				}
   			],
-  			code: [
+  			'caption-sm': [
   				'13px',
   				{
-  					lineHeight: '18px'
+  					lineHeight: '19.5px',
+  					fontWeight: '500'
   				}
   			],
-  			'code-md': [
+  			'caption-xs': [
+  				'12px',
+  				{
+  					lineHeight: '16px',
+  					fontWeight: '600'
+  				}
+  			],
+  			'utility-xs': [
+  				'12px',
+  				{
+  					lineHeight: '16px',
+  					fontWeight: '700'
+  				}
+  			],
+  			'link-md': [
+  				'16px',
+  				{
+  					lineHeight: '24px'
+  				}
+  			],
+  			'button-md': [
+  				'14px',
+  				{
+  					lineHeight: '21px',
+  					fontWeight: '700'
+  				}
+  			],
+  			'button-sm': [
+  				'13px',
+  				{
+  					lineHeight: '13px',
+  					fontWeight: '500'
+  				}
+  			],
+  			'code-sm': [
   				'14px',
   				{
   					lineHeight: '20px'
   				}
   			],
-  			'button-md': [
+  			'code-xs': [
   				'14px',
   				{
   					lineHeight: '20px',
