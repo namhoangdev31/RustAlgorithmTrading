@@ -280,7 +280,7 @@ export type UserWhereInput = {
   deletedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   photo?: Prisma.XOR<Prisma.FileNullableScalarRelationFilter, Prisma.FileWhereInput> | null
   payouts?: Prisma.BundlePayoutsListRelationFilter
-  bundles?: Prisma.BundlesListRelationFilter
+  organizations?: Prisma.OrganizationListRelationFilter
   notificationsActor?: Prisma.NotificationsListRelationFilter
   notificationsRecipient?: Prisma.NotificationsListRelationFilter
   sessions?: Prisma.SessionListRelationFilter
@@ -329,7 +329,7 @@ export type UserOrderByWithRelationInput = {
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   photo?: Prisma.FileOrderByWithRelationInput
   payouts?: Prisma.BundlePayoutsOrderByRelationAggregateInput
-  bundles?: Prisma.BundlesOrderByRelationAggregateInput
+  organizations?: Prisma.OrganizationOrderByRelationAggregateInput
   notificationsActor?: Prisma.NotificationsOrderByRelationAggregateInput
   notificationsRecipient?: Prisma.NotificationsOrderByRelationAggregateInput
   sessions?: Prisma.SessionOrderByRelationAggregateInput
@@ -381,7 +381,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   deletedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   photo?: Prisma.XOR<Prisma.FileNullableScalarRelationFilter, Prisma.FileWhereInput> | null
   payouts?: Prisma.BundlePayoutsListRelationFilter
-  bundles?: Prisma.BundlesListRelationFilter
+  organizations?: Prisma.OrganizationListRelationFilter
   notificationsActor?: Prisma.NotificationsListRelationFilter
   notificationsRecipient?: Prisma.NotificationsListRelationFilter
   sessions?: Prisma.SessionListRelationFilter
@@ -475,7 +475,7 @@ export type UserCreateInput = {
   deletedAt?: Date | string | null
   photo?: Prisma.FileCreateNestedOneWithoutUsersWithPhotoInput
   payouts?: Prisma.BundlePayoutsCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -523,7 +523,7 @@ export type UserUncheckedCreateInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesUncheckedCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationUncheckedCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsUncheckedCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -571,7 +571,7 @@ export type UserUpdateInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   photo?: Prisma.FileUpdateOneWithoutUsersWithPhotoNestedInput
   payouts?: Prisma.BundlePayoutsUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -619,7 +619,7 @@ export type UserUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUncheckedUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUncheckedUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUncheckedUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUncheckedUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -833,6 +833,20 @@ export type NullableDateTimeFieldUpdateOperationsInput = {
   set?: Date | string | null
 }
 
+export type UserCreateNestedOneWithoutOrganizationsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutOrganizationsInput, Prisma.UserUncheckedCreateWithoutOrganizationsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutOrganizationsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutOrganizationsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutOrganizationsInput, Prisma.UserUncheckedCreateWithoutOrganizationsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutOrganizationsInput
+  upsert?: Prisma.UserUpsertWithoutOrganizationsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutOrganizationsInput, Prisma.UserUpdateWithoutOrganizationsInput>, Prisma.UserUncheckedUpdateWithoutOrganizationsInput>
+}
+
 export type UserCreateNestedOneWithoutPayoutsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutPayoutsInput, Prisma.UserUncheckedCreateWithoutPayoutsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutPayoutsInput
@@ -845,22 +859,6 @@ export type UserUpdateOneRequiredWithoutPayoutsNestedInput = {
   upsert?: Prisma.UserUpsertWithoutPayoutsInput
   connect?: Prisma.UserWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPayoutsInput, Prisma.UserUpdateWithoutPayoutsInput>, Prisma.UserUncheckedUpdateWithoutPayoutsInput>
-}
-
-export type UserCreateNestedOneWithoutBundlesInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutBundlesInput, Prisma.UserUncheckedCreateWithoutBundlesInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutBundlesInput
-  connect?: Prisma.UserWhereUniqueInput
-}
-
-export type UserUpdateOneWithoutBundlesNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutBundlesInput, Prisma.UserUncheckedCreateWithoutBundlesInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutBundlesInput
-  upsert?: Prisma.UserUpsertWithoutBundlesInput
-  disconnect?: Prisma.UserWhereInput | boolean
-  delete?: Prisma.UserWhereInput | boolean
-  connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutBundlesInput, Prisma.UserUpdateWithoutBundlesInput>, Prisma.UserUncheckedUpdateWithoutBundlesInput>
 }
 
 export type UserCreateNestedOneWithoutNotificationsActorInput = {
@@ -1269,7 +1267,7 @@ export type UserCreateWithoutPhotoInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   payouts?: Prisma.BundlePayoutsCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -1316,7 +1314,7 @@ export type UserUncheckedCreateWithoutPhotoInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesUncheckedCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationUncheckedCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsUncheckedCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -1394,6 +1392,210 @@ export type UserScalarWhereInput = {
   deletedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
 }
 
+export type UserCreateWithoutOrganizationsInput = {
+  id: string
+  email?: string | null
+  password?: string | null
+  provider?: string
+  socialId?: string | null
+  firstName?: string | null
+  lastName?: string | null
+  fullName?: string | null
+  phone?: string | null
+  dateOfBirth?: Date | string | null
+  gender?: string | null
+  userType?: string
+  registerType?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  photo?: Prisma.FileCreateNestedOneWithoutUsersWithPhotoInput
+  payouts?: Prisma.BundlePayoutsCreateNestedManyWithoutDeveloperInput
+  notificationsActor?: Prisma.NotificationsCreateNestedManyWithoutActorInput
+  notificationsRecipient?: Prisma.NotificationsCreateNestedManyWithoutRecipientInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.UserDeviceTokenCreateNestedManyWithoutUserInput
+  analytics?: Prisma.BundleAnalyticsEventsCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.BundleAuditLogCreateNestedManyWithoutUserInput
+  betaTesters?: Prisma.BundleBetaTestersCreateNestedManyWithoutUserInput
+  changedLogs?: Prisma.BundleChangeLogsCreateNestedManyWithoutUserInput
+  collaboratorsInvited?: Prisma.BundleCollaboratorsCreateNestedManyWithoutInvitedUserInput
+  collaborators?: Prisma.BundleCollaboratorsCreateNestedManyWithoutUserInput
+  developerStrikes?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutDeveloperInput
+  developerStrikesIssued?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutIssuerInput
+  installEvents?: Prisma.BundleInstallEventsCreateNestedManyWithoutUserInput
+  orders?: Prisma.BundleOrdersCreateNestedManyWithoutUserInput
+  reviews?: Prisma.BundleReviewsCreateNestedManyWithoutUserInput
+  stateTransitions?: Prisma.BundleStateTransitionsCreateNestedManyWithoutUserInput
+  userReportsReported?: Prisma.BundleUserReportsCreateNestedManyWithoutReporterInput
+  userReportsReviewed?: Prisma.BundleUserReportsCreateNestedManyWithoutReviewerInput
+  refundRequestsReviewed?: Prisma.BundleRefundRequestsCreateNestedManyWithoutReviewerInput
+  refundRequests?: Prisma.BundleRefundRequestsCreateNestedManyWithoutUserInput
+  userEntitlements?: Prisma.BundleUserEntitlementsCreateNestedManyWithoutUserInput
+  reviewReportsReported?: Prisma.BundleReviewReportsCreateNestedManyWithoutReporterInput
+  reviewReportsReviewed?: Prisma.BundleReviewReportsCreateNestedManyWithoutReviewerInput
+  subscriptionHistory?: Prisma.BundleSubscriptionHistoryCreateNestedManyWithoutUserInput
+  reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutActorInput
+  reviewQueueReviewed?: Prisma.BundleReviewQueueCreateNestedManyWithoutReviewerInput
+}
+
+export type UserUncheckedCreateWithoutOrganizationsInput = {
+  id: string
+  email?: string | null
+  password?: string | null
+  provider?: string
+  socialId?: string | null
+  firstName?: string | null
+  lastName?: string | null
+  fullName?: string | null
+  phone?: string | null
+  dateOfBirth?: Date | string | null
+  gender?: string | null
+  userType?: string
+  photoId?: string | null
+  registerType?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  payouts?: Prisma.BundlePayoutsUncheckedCreateNestedManyWithoutDeveloperInput
+  notificationsActor?: Prisma.NotificationsUncheckedCreateNestedManyWithoutActorInput
+  notificationsRecipient?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRecipientInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.UserDeviceTokenUncheckedCreateNestedManyWithoutUserInput
+  analytics?: Prisma.BundleAnalyticsEventsUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.BundleAuditLogUncheckedCreateNestedManyWithoutUserInput
+  betaTesters?: Prisma.BundleBetaTestersUncheckedCreateNestedManyWithoutUserInput
+  changedLogs?: Prisma.BundleChangeLogsUncheckedCreateNestedManyWithoutUserInput
+  collaboratorsInvited?: Prisma.BundleCollaboratorsUncheckedCreateNestedManyWithoutInvitedUserInput
+  collaborators?: Prisma.BundleCollaboratorsUncheckedCreateNestedManyWithoutUserInput
+  developerStrikes?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutDeveloperInput
+  developerStrikesIssued?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutIssuerInput
+  installEvents?: Prisma.BundleInstallEventsUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.BundleOrdersUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.BundleReviewsUncheckedCreateNestedManyWithoutUserInput
+  stateTransitions?: Prisma.BundleStateTransitionsUncheckedCreateNestedManyWithoutUserInput
+  userReportsReported?: Prisma.BundleUserReportsUncheckedCreateNestedManyWithoutReporterInput
+  userReportsReviewed?: Prisma.BundleUserReportsUncheckedCreateNestedManyWithoutReviewerInput
+  refundRequestsReviewed?: Prisma.BundleRefundRequestsUncheckedCreateNestedManyWithoutReviewerInput
+  refundRequests?: Prisma.BundleRefundRequestsUncheckedCreateNestedManyWithoutUserInput
+  userEntitlements?: Prisma.BundleUserEntitlementsUncheckedCreateNestedManyWithoutUserInput
+  reviewReportsReported?: Prisma.BundleReviewReportsUncheckedCreateNestedManyWithoutReporterInput
+  reviewReportsReviewed?: Prisma.BundleReviewReportsUncheckedCreateNestedManyWithoutReviewerInput
+  subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedCreateNestedManyWithoutUserInput
+  reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutActorInput
+  reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReviewerInput
+}
+
+export type UserCreateOrConnectWithoutOrganizationsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutOrganizationsInput, Prisma.UserUncheckedCreateWithoutOrganizationsInput>
+}
+
+export type UserUpsertWithoutOrganizationsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutOrganizationsInput, Prisma.UserUncheckedUpdateWithoutOrganizationsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutOrganizationsInput, Prisma.UserUncheckedCreateWithoutOrganizationsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutOrganizationsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutOrganizationsInput, Prisma.UserUncheckedUpdateWithoutOrganizationsInput>
+}
+
+export type UserUpdateWithoutOrganizationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  provider?: Prisma.StringFieldUpdateOperationsInput | string
+  socialId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userType?: Prisma.StringFieldUpdateOperationsInput | string
+  registerType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  photo?: Prisma.FileUpdateOneWithoutUsersWithPhotoNestedInput
+  payouts?: Prisma.BundlePayoutsUpdateManyWithoutDeveloperNestedInput
+  notificationsActor?: Prisma.NotificationsUpdateManyWithoutActorNestedInput
+  notificationsRecipient?: Prisma.NotificationsUpdateManyWithoutRecipientNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.UserDeviceTokenUpdateManyWithoutUserNestedInput
+  analytics?: Prisma.BundleAnalyticsEventsUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.BundleAuditLogUpdateManyWithoutUserNestedInput
+  betaTesters?: Prisma.BundleBetaTestersUpdateManyWithoutUserNestedInput
+  changedLogs?: Prisma.BundleChangeLogsUpdateManyWithoutUserNestedInput
+  collaboratorsInvited?: Prisma.BundleCollaboratorsUpdateManyWithoutInvitedUserNestedInput
+  collaborators?: Prisma.BundleCollaboratorsUpdateManyWithoutUserNestedInput
+  developerStrikes?: Prisma.BundleDeveloperStrikesUpdateManyWithoutDeveloperNestedInput
+  developerStrikesIssued?: Prisma.BundleDeveloperStrikesUpdateManyWithoutIssuerNestedInput
+  installEvents?: Prisma.BundleInstallEventsUpdateManyWithoutUserNestedInput
+  orders?: Prisma.BundleOrdersUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.BundleReviewsUpdateManyWithoutUserNestedInput
+  stateTransitions?: Prisma.BundleStateTransitionsUpdateManyWithoutUserNestedInput
+  userReportsReported?: Prisma.BundleUserReportsUpdateManyWithoutReporterNestedInput
+  userReportsReviewed?: Prisma.BundleUserReportsUpdateManyWithoutReviewerNestedInput
+  refundRequestsReviewed?: Prisma.BundleRefundRequestsUpdateManyWithoutReviewerNestedInput
+  refundRequests?: Prisma.BundleRefundRequestsUpdateManyWithoutUserNestedInput
+  userEntitlements?: Prisma.BundleUserEntitlementsUpdateManyWithoutUserNestedInput
+  reviewReportsReported?: Prisma.BundleReviewReportsUpdateManyWithoutReporterNestedInput
+  reviewReportsReviewed?: Prisma.BundleReviewReportsUpdateManyWithoutReviewerNestedInput
+  subscriptionHistory?: Prisma.BundleSubscriptionHistoryUpdateManyWithoutUserNestedInput
+  reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutActorNestedInput
+  reviewQueueReviewed?: Prisma.BundleReviewQueueUpdateManyWithoutReviewerNestedInput
+}
+
+export type UserUncheckedUpdateWithoutOrganizationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  provider?: Prisma.StringFieldUpdateOperationsInput | string
+  socialId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userType?: Prisma.StringFieldUpdateOperationsInput | string
+  photoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registerType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  payouts?: Prisma.BundlePayoutsUncheckedUpdateManyWithoutDeveloperNestedInput
+  notificationsActor?: Prisma.NotificationsUncheckedUpdateManyWithoutActorNestedInput
+  notificationsRecipient?: Prisma.NotificationsUncheckedUpdateManyWithoutRecipientNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.UserDeviceTokenUncheckedUpdateManyWithoutUserNestedInput
+  analytics?: Prisma.BundleAnalyticsEventsUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.BundleAuditLogUncheckedUpdateManyWithoutUserNestedInput
+  betaTesters?: Prisma.BundleBetaTestersUncheckedUpdateManyWithoutUserNestedInput
+  changedLogs?: Prisma.BundleChangeLogsUncheckedUpdateManyWithoutUserNestedInput
+  collaboratorsInvited?: Prisma.BundleCollaboratorsUncheckedUpdateManyWithoutInvitedUserNestedInput
+  collaborators?: Prisma.BundleCollaboratorsUncheckedUpdateManyWithoutUserNestedInput
+  developerStrikes?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutDeveloperNestedInput
+  developerStrikesIssued?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutIssuerNestedInput
+  installEvents?: Prisma.BundleInstallEventsUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.BundleOrdersUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.BundleReviewsUncheckedUpdateManyWithoutUserNestedInput
+  stateTransitions?: Prisma.BundleStateTransitionsUncheckedUpdateManyWithoutUserNestedInput
+  userReportsReported?: Prisma.BundleUserReportsUncheckedUpdateManyWithoutReporterNestedInput
+  userReportsReviewed?: Prisma.BundleUserReportsUncheckedUpdateManyWithoutReviewerNestedInput
+  refundRequestsReviewed?: Prisma.BundleRefundRequestsUncheckedUpdateManyWithoutReviewerNestedInput
+  refundRequests?: Prisma.BundleRefundRequestsUncheckedUpdateManyWithoutUserNestedInput
+  userEntitlements?: Prisma.BundleUserEntitlementsUncheckedUpdateManyWithoutUserNestedInput
+  reviewReportsReported?: Prisma.BundleReviewReportsUncheckedUpdateManyWithoutReporterNestedInput
+  reviewReportsReviewed?: Prisma.BundleReviewReportsUncheckedUpdateManyWithoutReviewerNestedInput
+  subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedUpdateManyWithoutUserNestedInput
+  reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutActorNestedInput
+  reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReviewerNestedInput
+}
+
 export type UserCreateWithoutPayoutsInput = {
   id: string
   email?: string | null
@@ -1412,7 +1614,7 @@ export type UserCreateWithoutPayoutsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   photo?: Prisma.FileCreateNestedOneWithoutUsersWithPhotoInput
-  bundles?: Prisma.BundlesCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -1459,7 +1661,7 @@ export type UserUncheckedCreateWithoutPayoutsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  bundles?: Prisma.BundlesUncheckedCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationUncheckedCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsUncheckedCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -1522,7 +1724,7 @@ export type UserUpdateWithoutPayoutsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   photo?: Prisma.FileUpdateOneWithoutUsersWithPhotoNestedInput
-  bundles?: Prisma.BundlesUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -1569,211 +1771,7 @@ export type UserUncheckedUpdateWithoutPayoutsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  bundles?: Prisma.BundlesUncheckedUpdateManyWithoutDeveloperNestedInput
-  notificationsActor?: Prisma.NotificationsUncheckedUpdateManyWithoutActorNestedInput
-  notificationsRecipient?: Prisma.NotificationsUncheckedUpdateManyWithoutRecipientNestedInput
-  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
-  deviceTokens?: Prisma.UserDeviceTokenUncheckedUpdateManyWithoutUserNestedInput
-  analytics?: Prisma.BundleAnalyticsEventsUncheckedUpdateManyWithoutUserNestedInput
-  auditLogs?: Prisma.BundleAuditLogUncheckedUpdateManyWithoutUserNestedInput
-  betaTesters?: Prisma.BundleBetaTestersUncheckedUpdateManyWithoutUserNestedInput
-  changedLogs?: Prisma.BundleChangeLogsUncheckedUpdateManyWithoutUserNestedInput
-  collaboratorsInvited?: Prisma.BundleCollaboratorsUncheckedUpdateManyWithoutInvitedUserNestedInput
-  collaborators?: Prisma.BundleCollaboratorsUncheckedUpdateManyWithoutUserNestedInput
-  developerStrikes?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutDeveloperNestedInput
-  developerStrikesIssued?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutIssuerNestedInput
-  installEvents?: Prisma.BundleInstallEventsUncheckedUpdateManyWithoutUserNestedInput
-  orders?: Prisma.BundleOrdersUncheckedUpdateManyWithoutUserNestedInput
-  reviews?: Prisma.BundleReviewsUncheckedUpdateManyWithoutUserNestedInput
-  stateTransitions?: Prisma.BundleStateTransitionsUncheckedUpdateManyWithoutUserNestedInput
-  userReportsReported?: Prisma.BundleUserReportsUncheckedUpdateManyWithoutReporterNestedInput
-  userReportsReviewed?: Prisma.BundleUserReportsUncheckedUpdateManyWithoutReviewerNestedInput
-  refundRequestsReviewed?: Prisma.BundleRefundRequestsUncheckedUpdateManyWithoutReviewerNestedInput
-  refundRequests?: Prisma.BundleRefundRequestsUncheckedUpdateManyWithoutUserNestedInput
-  userEntitlements?: Prisma.BundleUserEntitlementsUncheckedUpdateManyWithoutUserNestedInput
-  reviewReportsReported?: Prisma.BundleReviewReportsUncheckedUpdateManyWithoutReporterNestedInput
-  reviewReportsReviewed?: Prisma.BundleReviewReportsUncheckedUpdateManyWithoutReviewerNestedInput
-  subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedUpdateManyWithoutUserNestedInput
-  reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutActorNestedInput
-  reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReviewerNestedInput
-}
-
-export type UserCreateWithoutBundlesInput = {
-  id: string
-  email?: string | null
-  password?: string | null
-  provider?: string
-  socialId?: string | null
-  firstName?: string | null
-  lastName?: string | null
-  fullName?: string | null
-  phone?: string | null
-  dateOfBirth?: Date | string | null
-  gender?: string | null
-  userType?: string
-  registerType?: string | null
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  photo?: Prisma.FileCreateNestedOneWithoutUsersWithPhotoInput
-  payouts?: Prisma.BundlePayoutsCreateNestedManyWithoutDeveloperInput
-  notificationsActor?: Prisma.NotificationsCreateNestedManyWithoutActorInput
-  notificationsRecipient?: Prisma.NotificationsCreateNestedManyWithoutRecipientInput
-  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
-  deviceTokens?: Prisma.UserDeviceTokenCreateNestedManyWithoutUserInput
-  analytics?: Prisma.BundleAnalyticsEventsCreateNestedManyWithoutUserInput
-  auditLogs?: Prisma.BundleAuditLogCreateNestedManyWithoutUserInput
-  betaTesters?: Prisma.BundleBetaTestersCreateNestedManyWithoutUserInput
-  changedLogs?: Prisma.BundleChangeLogsCreateNestedManyWithoutUserInput
-  collaboratorsInvited?: Prisma.BundleCollaboratorsCreateNestedManyWithoutInvitedUserInput
-  collaborators?: Prisma.BundleCollaboratorsCreateNestedManyWithoutUserInput
-  developerStrikes?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutDeveloperInput
-  developerStrikesIssued?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutIssuerInput
-  installEvents?: Prisma.BundleInstallEventsCreateNestedManyWithoutUserInput
-  orders?: Prisma.BundleOrdersCreateNestedManyWithoutUserInput
-  reviews?: Prisma.BundleReviewsCreateNestedManyWithoutUserInput
-  stateTransitions?: Prisma.BundleStateTransitionsCreateNestedManyWithoutUserInput
-  userReportsReported?: Prisma.BundleUserReportsCreateNestedManyWithoutReporterInput
-  userReportsReviewed?: Prisma.BundleUserReportsCreateNestedManyWithoutReviewerInput
-  refundRequestsReviewed?: Prisma.BundleRefundRequestsCreateNestedManyWithoutReviewerInput
-  refundRequests?: Prisma.BundleRefundRequestsCreateNestedManyWithoutUserInput
-  userEntitlements?: Prisma.BundleUserEntitlementsCreateNestedManyWithoutUserInput
-  reviewReportsReported?: Prisma.BundleReviewReportsCreateNestedManyWithoutReporterInput
-  reviewReportsReviewed?: Prisma.BundleReviewReportsCreateNestedManyWithoutReviewerInput
-  subscriptionHistory?: Prisma.BundleSubscriptionHistoryCreateNestedManyWithoutUserInput
-  reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutActorInput
-  reviewQueueReviewed?: Prisma.BundleReviewQueueCreateNestedManyWithoutReviewerInput
-}
-
-export type UserUncheckedCreateWithoutBundlesInput = {
-  id: string
-  email?: string | null
-  password?: string | null
-  provider?: string
-  socialId?: string | null
-  firstName?: string | null
-  lastName?: string | null
-  fullName?: string | null
-  phone?: string | null
-  dateOfBirth?: Date | string | null
-  gender?: string | null
-  userType?: string
-  photoId?: string | null
-  registerType?: string | null
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  payouts?: Prisma.BundlePayoutsUncheckedCreateNestedManyWithoutDeveloperInput
-  notificationsActor?: Prisma.NotificationsUncheckedCreateNestedManyWithoutActorInput
-  notificationsRecipient?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRecipientInput
-  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
-  deviceTokens?: Prisma.UserDeviceTokenUncheckedCreateNestedManyWithoutUserInput
-  analytics?: Prisma.BundleAnalyticsEventsUncheckedCreateNestedManyWithoutUserInput
-  auditLogs?: Prisma.BundleAuditLogUncheckedCreateNestedManyWithoutUserInput
-  betaTesters?: Prisma.BundleBetaTestersUncheckedCreateNestedManyWithoutUserInput
-  changedLogs?: Prisma.BundleChangeLogsUncheckedCreateNestedManyWithoutUserInput
-  collaboratorsInvited?: Prisma.BundleCollaboratorsUncheckedCreateNestedManyWithoutInvitedUserInput
-  collaborators?: Prisma.BundleCollaboratorsUncheckedCreateNestedManyWithoutUserInput
-  developerStrikes?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutDeveloperInput
-  developerStrikesIssued?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutIssuerInput
-  installEvents?: Prisma.BundleInstallEventsUncheckedCreateNestedManyWithoutUserInput
-  orders?: Prisma.BundleOrdersUncheckedCreateNestedManyWithoutUserInput
-  reviews?: Prisma.BundleReviewsUncheckedCreateNestedManyWithoutUserInput
-  stateTransitions?: Prisma.BundleStateTransitionsUncheckedCreateNestedManyWithoutUserInput
-  userReportsReported?: Prisma.BundleUserReportsUncheckedCreateNestedManyWithoutReporterInput
-  userReportsReviewed?: Prisma.BundleUserReportsUncheckedCreateNestedManyWithoutReviewerInput
-  refundRequestsReviewed?: Prisma.BundleRefundRequestsUncheckedCreateNestedManyWithoutReviewerInput
-  refundRequests?: Prisma.BundleRefundRequestsUncheckedCreateNestedManyWithoutUserInput
-  userEntitlements?: Prisma.BundleUserEntitlementsUncheckedCreateNestedManyWithoutUserInput
-  reviewReportsReported?: Prisma.BundleReviewReportsUncheckedCreateNestedManyWithoutReporterInput
-  reviewReportsReviewed?: Prisma.BundleReviewReportsUncheckedCreateNestedManyWithoutReviewerInput
-  subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedCreateNestedManyWithoutUserInput
-  reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutActorInput
-  reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReviewerInput
-}
-
-export type UserCreateOrConnectWithoutBundlesInput = {
-  where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutBundlesInput, Prisma.UserUncheckedCreateWithoutBundlesInput>
-}
-
-export type UserUpsertWithoutBundlesInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutBundlesInput, Prisma.UserUncheckedUpdateWithoutBundlesInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutBundlesInput, Prisma.UserUncheckedCreateWithoutBundlesInput>
-  where?: Prisma.UserWhereInput
-}
-
-export type UserUpdateToOneWithWhereWithoutBundlesInput = {
-  where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutBundlesInput, Prisma.UserUncheckedUpdateWithoutBundlesInput>
-}
-
-export type UserUpdateWithoutBundlesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  provider?: Prisma.StringFieldUpdateOperationsInput | string
-  socialId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userType?: Prisma.StringFieldUpdateOperationsInput | string
-  registerType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  photo?: Prisma.FileUpdateOneWithoutUsersWithPhotoNestedInput
-  payouts?: Prisma.BundlePayoutsUpdateManyWithoutDeveloperNestedInput
-  notificationsActor?: Prisma.NotificationsUpdateManyWithoutActorNestedInput
-  notificationsRecipient?: Prisma.NotificationsUpdateManyWithoutRecipientNestedInput
-  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
-  deviceTokens?: Prisma.UserDeviceTokenUpdateManyWithoutUserNestedInput
-  analytics?: Prisma.BundleAnalyticsEventsUpdateManyWithoutUserNestedInput
-  auditLogs?: Prisma.BundleAuditLogUpdateManyWithoutUserNestedInput
-  betaTesters?: Prisma.BundleBetaTestersUpdateManyWithoutUserNestedInput
-  changedLogs?: Prisma.BundleChangeLogsUpdateManyWithoutUserNestedInput
-  collaboratorsInvited?: Prisma.BundleCollaboratorsUpdateManyWithoutInvitedUserNestedInput
-  collaborators?: Prisma.BundleCollaboratorsUpdateManyWithoutUserNestedInput
-  developerStrikes?: Prisma.BundleDeveloperStrikesUpdateManyWithoutDeveloperNestedInput
-  developerStrikesIssued?: Prisma.BundleDeveloperStrikesUpdateManyWithoutIssuerNestedInput
-  installEvents?: Prisma.BundleInstallEventsUpdateManyWithoutUserNestedInput
-  orders?: Prisma.BundleOrdersUpdateManyWithoutUserNestedInput
-  reviews?: Prisma.BundleReviewsUpdateManyWithoutUserNestedInput
-  stateTransitions?: Prisma.BundleStateTransitionsUpdateManyWithoutUserNestedInput
-  userReportsReported?: Prisma.BundleUserReportsUpdateManyWithoutReporterNestedInput
-  userReportsReviewed?: Prisma.BundleUserReportsUpdateManyWithoutReviewerNestedInput
-  refundRequestsReviewed?: Prisma.BundleRefundRequestsUpdateManyWithoutReviewerNestedInput
-  refundRequests?: Prisma.BundleRefundRequestsUpdateManyWithoutUserNestedInput
-  userEntitlements?: Prisma.BundleUserEntitlementsUpdateManyWithoutUserNestedInput
-  reviewReportsReported?: Prisma.BundleReviewReportsUpdateManyWithoutReporterNestedInput
-  reviewReportsReviewed?: Prisma.BundleReviewReportsUpdateManyWithoutReviewerNestedInput
-  subscriptionHistory?: Prisma.BundleSubscriptionHistoryUpdateManyWithoutUserNestedInput
-  reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutActorNestedInput
-  reviewQueueReviewed?: Prisma.BundleReviewQueueUpdateManyWithoutReviewerNestedInput
-}
-
-export type UserUncheckedUpdateWithoutBundlesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  provider?: Prisma.StringFieldUpdateOperationsInput | string
-  socialId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userType?: Prisma.StringFieldUpdateOperationsInput | string
-  photoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  registerType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  payouts?: Prisma.BundlePayoutsUncheckedUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUncheckedUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUncheckedUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUncheckedUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -1821,7 +1819,7 @@ export type UserCreateWithoutNotificationsActorInput = {
   deletedAt?: Date | string | null
   photo?: Prisma.FileCreateNestedOneWithoutUsersWithPhotoInput
   payouts?: Prisma.BundlePayoutsCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationCreateNestedManyWithoutUserInput
   notificationsRecipient?: Prisma.NotificationsCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   deviceTokens?: Prisma.UserDeviceTokenCreateNestedManyWithoutUserInput
@@ -1868,7 +1866,7 @@ export type UserUncheckedCreateWithoutNotificationsActorInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesUncheckedCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationUncheckedCreateNestedManyWithoutUserInput
   notificationsRecipient?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   deviceTokens?: Prisma.UserDeviceTokenUncheckedCreateNestedManyWithoutUserInput
@@ -1920,7 +1918,7 @@ export type UserCreateWithoutNotificationsRecipientInput = {
   deletedAt?: Date | string | null
   photo?: Prisma.FileCreateNestedOneWithoutUsersWithPhotoInput
   payouts?: Prisma.BundlePayoutsCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsCreateNestedManyWithoutActorInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   deviceTokens?: Prisma.UserDeviceTokenCreateNestedManyWithoutUserInput
@@ -1967,7 +1965,7 @@ export type UserUncheckedCreateWithoutNotificationsRecipientInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesUncheckedCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationUncheckedCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsUncheckedCreateNestedManyWithoutActorInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   deviceTokens?: Prisma.UserDeviceTokenUncheckedCreateNestedManyWithoutUserInput
@@ -2030,7 +2028,7 @@ export type UserUpdateWithoutNotificationsActorInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   photo?: Prisma.FileUpdateOneWithoutUsersWithPhotoNestedInput
   payouts?: Prisma.BundlePayoutsUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUpdateManyWithoutUserNestedInput
   notificationsRecipient?: Prisma.NotificationsUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   deviceTokens?: Prisma.UserDeviceTokenUpdateManyWithoutUserNestedInput
@@ -2077,7 +2075,7 @@ export type UserUncheckedUpdateWithoutNotificationsActorInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUncheckedUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUncheckedUpdateManyWithoutUserNestedInput
   notificationsRecipient?: Prisma.NotificationsUncheckedUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   deviceTokens?: Prisma.UserDeviceTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -2135,7 +2133,7 @@ export type UserUpdateWithoutNotificationsRecipientInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   photo?: Prisma.FileUpdateOneWithoutUsersWithPhotoNestedInput
   payouts?: Prisma.BundlePayoutsUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUpdateManyWithoutActorNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   deviceTokens?: Prisma.UserDeviceTokenUpdateManyWithoutUserNestedInput
@@ -2182,7 +2180,7 @@ export type UserUncheckedUpdateWithoutNotificationsRecipientInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUncheckedUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUncheckedUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUncheckedUpdateManyWithoutActorNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   deviceTokens?: Prisma.UserDeviceTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -2229,7 +2227,7 @@ export type UserCreateWithoutSessionsInput = {
   deletedAt?: Date | string | null
   photo?: Prisma.FileCreateNestedOneWithoutUsersWithPhotoInput
   payouts?: Prisma.BundlePayoutsCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsCreateNestedManyWithoutRecipientInput
   deviceTokens?: Prisma.UserDeviceTokenCreateNestedManyWithoutUserInput
@@ -2276,7 +2274,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesUncheckedCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationUncheckedCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsUncheckedCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRecipientInput
   deviceTokens?: Prisma.UserDeviceTokenUncheckedCreateNestedManyWithoutUserInput
@@ -2339,7 +2337,7 @@ export type UserUpdateWithoutSessionsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   photo?: Prisma.FileUpdateOneWithoutUsersWithPhotoNestedInput
   payouts?: Prisma.BundlePayoutsUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUpdateManyWithoutRecipientNestedInput
   deviceTokens?: Prisma.UserDeviceTokenUpdateManyWithoutUserNestedInput
@@ -2386,7 +2384,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUncheckedUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUncheckedUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUncheckedUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUncheckedUpdateManyWithoutRecipientNestedInput
   deviceTokens?: Prisma.UserDeviceTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -2433,7 +2431,7 @@ export type UserCreateWithoutDeviceTokensInput = {
   deletedAt?: Date | string | null
   photo?: Prisma.FileCreateNestedOneWithoutUsersWithPhotoInput
   payouts?: Prisma.BundlePayoutsCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -2480,7 +2478,7 @@ export type UserUncheckedCreateWithoutDeviceTokensInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesUncheckedCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationUncheckedCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsUncheckedCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -2543,7 +2541,7 @@ export type UserUpdateWithoutDeviceTokensInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   photo?: Prisma.FileUpdateOneWithoutUsersWithPhotoNestedInput
   payouts?: Prisma.BundlePayoutsUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -2590,7 +2588,7 @@ export type UserUncheckedUpdateWithoutDeviceTokensInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUncheckedUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUncheckedUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUncheckedUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUncheckedUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -2637,7 +2635,7 @@ export type UserCreateWithoutAnalyticsInput = {
   deletedAt?: Date | string | null
   photo?: Prisma.FileCreateNestedOneWithoutUsersWithPhotoInput
   payouts?: Prisma.BundlePayoutsCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -2684,7 +2682,7 @@ export type UserUncheckedCreateWithoutAnalyticsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesUncheckedCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationUncheckedCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsUncheckedCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -2747,7 +2745,7 @@ export type UserUpdateWithoutAnalyticsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   photo?: Prisma.FileUpdateOneWithoutUsersWithPhotoNestedInput
   payouts?: Prisma.BundlePayoutsUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -2794,7 +2792,7 @@ export type UserUncheckedUpdateWithoutAnalyticsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUncheckedUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUncheckedUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUncheckedUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUncheckedUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -2841,7 +2839,7 @@ export type UserCreateWithoutAuditLogsInput = {
   deletedAt?: Date | string | null
   photo?: Prisma.FileCreateNestedOneWithoutUsersWithPhotoInput
   payouts?: Prisma.BundlePayoutsCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -2888,7 +2886,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesUncheckedCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationUncheckedCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsUncheckedCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -2951,7 +2949,7 @@ export type UserUpdateWithoutAuditLogsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   photo?: Prisma.FileUpdateOneWithoutUsersWithPhotoNestedInput
   payouts?: Prisma.BundlePayoutsUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -2998,7 +2996,7 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUncheckedUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUncheckedUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUncheckedUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUncheckedUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -3045,7 +3043,7 @@ export type UserCreateWithoutBetaTestersInput = {
   deletedAt?: Date | string | null
   photo?: Prisma.FileCreateNestedOneWithoutUsersWithPhotoInput
   payouts?: Prisma.BundlePayoutsCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -3092,7 +3090,7 @@ export type UserUncheckedCreateWithoutBetaTestersInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesUncheckedCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationUncheckedCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsUncheckedCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -3155,7 +3153,7 @@ export type UserUpdateWithoutBetaTestersInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   photo?: Prisma.FileUpdateOneWithoutUsersWithPhotoNestedInput
   payouts?: Prisma.BundlePayoutsUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -3202,7 +3200,7 @@ export type UserUncheckedUpdateWithoutBetaTestersInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUncheckedUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUncheckedUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUncheckedUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUncheckedUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -3249,7 +3247,7 @@ export type UserCreateWithoutChangedLogsInput = {
   deletedAt?: Date | string | null
   photo?: Prisma.FileCreateNestedOneWithoutUsersWithPhotoInput
   payouts?: Prisma.BundlePayoutsCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -3296,7 +3294,7 @@ export type UserUncheckedCreateWithoutChangedLogsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesUncheckedCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationUncheckedCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsUncheckedCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -3359,7 +3357,7 @@ export type UserUpdateWithoutChangedLogsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   photo?: Prisma.FileUpdateOneWithoutUsersWithPhotoNestedInput
   payouts?: Prisma.BundlePayoutsUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -3406,7 +3404,7 @@ export type UserUncheckedUpdateWithoutChangedLogsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUncheckedUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUncheckedUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUncheckedUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUncheckedUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -3453,7 +3451,7 @@ export type UserCreateWithoutCollaboratorsInvitedInput = {
   deletedAt?: Date | string | null
   photo?: Prisma.FileCreateNestedOneWithoutUsersWithPhotoInput
   payouts?: Prisma.BundlePayoutsCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -3500,7 +3498,7 @@ export type UserUncheckedCreateWithoutCollaboratorsInvitedInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesUncheckedCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationUncheckedCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsUncheckedCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -3552,7 +3550,7 @@ export type UserCreateWithoutCollaboratorsInput = {
   deletedAt?: Date | string | null
   photo?: Prisma.FileCreateNestedOneWithoutUsersWithPhotoInput
   payouts?: Prisma.BundlePayoutsCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -3599,7 +3597,7 @@ export type UserUncheckedCreateWithoutCollaboratorsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesUncheckedCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationUncheckedCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsUncheckedCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -3662,7 +3660,7 @@ export type UserUpdateWithoutCollaboratorsInvitedInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   photo?: Prisma.FileUpdateOneWithoutUsersWithPhotoNestedInput
   payouts?: Prisma.BundlePayoutsUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -3709,7 +3707,7 @@ export type UserUncheckedUpdateWithoutCollaboratorsInvitedInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUncheckedUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUncheckedUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUncheckedUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUncheckedUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -3767,7 +3765,7 @@ export type UserUpdateWithoutCollaboratorsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   photo?: Prisma.FileUpdateOneWithoutUsersWithPhotoNestedInput
   payouts?: Prisma.BundlePayoutsUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -3814,7 +3812,7 @@ export type UserUncheckedUpdateWithoutCollaboratorsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUncheckedUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUncheckedUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUncheckedUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUncheckedUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -3861,7 +3859,7 @@ export type UserCreateWithoutDeveloperStrikesInput = {
   deletedAt?: Date | string | null
   photo?: Prisma.FileCreateNestedOneWithoutUsersWithPhotoInput
   payouts?: Prisma.BundlePayoutsCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -3908,7 +3906,7 @@ export type UserUncheckedCreateWithoutDeveloperStrikesInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesUncheckedCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationUncheckedCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsUncheckedCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -3960,7 +3958,7 @@ export type UserCreateWithoutDeveloperStrikesIssuedInput = {
   deletedAt?: Date | string | null
   photo?: Prisma.FileCreateNestedOneWithoutUsersWithPhotoInput
   payouts?: Prisma.BundlePayoutsCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -4007,7 +4005,7 @@ export type UserUncheckedCreateWithoutDeveloperStrikesIssuedInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesUncheckedCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationUncheckedCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsUncheckedCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -4070,7 +4068,7 @@ export type UserUpdateWithoutDeveloperStrikesInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   photo?: Prisma.FileUpdateOneWithoutUsersWithPhotoNestedInput
   payouts?: Prisma.BundlePayoutsUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -4117,7 +4115,7 @@ export type UserUncheckedUpdateWithoutDeveloperStrikesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUncheckedUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUncheckedUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUncheckedUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUncheckedUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -4175,7 +4173,7 @@ export type UserUpdateWithoutDeveloperStrikesIssuedInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   photo?: Prisma.FileUpdateOneWithoutUsersWithPhotoNestedInput
   payouts?: Prisma.BundlePayoutsUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -4222,7 +4220,7 @@ export type UserUncheckedUpdateWithoutDeveloperStrikesIssuedInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUncheckedUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUncheckedUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUncheckedUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUncheckedUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -4269,7 +4267,7 @@ export type UserCreateWithoutInstallEventsInput = {
   deletedAt?: Date | string | null
   photo?: Prisma.FileCreateNestedOneWithoutUsersWithPhotoInput
   payouts?: Prisma.BundlePayoutsCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -4316,7 +4314,7 @@ export type UserUncheckedCreateWithoutInstallEventsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesUncheckedCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationUncheckedCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsUncheckedCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -4379,7 +4377,7 @@ export type UserUpdateWithoutInstallEventsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   photo?: Prisma.FileUpdateOneWithoutUsersWithPhotoNestedInput
   payouts?: Prisma.BundlePayoutsUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -4426,7 +4424,7 @@ export type UserUncheckedUpdateWithoutInstallEventsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUncheckedUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUncheckedUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUncheckedUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUncheckedUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -4473,7 +4471,7 @@ export type UserCreateWithoutOrdersInput = {
   deletedAt?: Date | string | null
   photo?: Prisma.FileCreateNestedOneWithoutUsersWithPhotoInput
   payouts?: Prisma.BundlePayoutsCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -4520,7 +4518,7 @@ export type UserUncheckedCreateWithoutOrdersInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesUncheckedCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationUncheckedCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsUncheckedCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -4583,7 +4581,7 @@ export type UserUpdateWithoutOrdersInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   photo?: Prisma.FileUpdateOneWithoutUsersWithPhotoNestedInput
   payouts?: Prisma.BundlePayoutsUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -4630,7 +4628,7 @@ export type UserUncheckedUpdateWithoutOrdersInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUncheckedUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUncheckedUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUncheckedUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUncheckedUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -4677,7 +4675,7 @@ export type UserCreateWithoutReviewsInput = {
   deletedAt?: Date | string | null
   photo?: Prisma.FileCreateNestedOneWithoutUsersWithPhotoInput
   payouts?: Prisma.BundlePayoutsCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -4724,7 +4722,7 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesUncheckedCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationUncheckedCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsUncheckedCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -4787,7 +4785,7 @@ export type UserUpdateWithoutReviewsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   photo?: Prisma.FileUpdateOneWithoutUsersWithPhotoNestedInput
   payouts?: Prisma.BundlePayoutsUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -4834,7 +4832,7 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUncheckedUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUncheckedUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUncheckedUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUncheckedUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -4881,7 +4879,7 @@ export type UserCreateWithoutStateTransitionsInput = {
   deletedAt?: Date | string | null
   photo?: Prisma.FileCreateNestedOneWithoutUsersWithPhotoInput
   payouts?: Prisma.BundlePayoutsCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -4928,7 +4926,7 @@ export type UserUncheckedCreateWithoutStateTransitionsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesUncheckedCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationUncheckedCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsUncheckedCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -4991,7 +4989,7 @@ export type UserUpdateWithoutStateTransitionsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   photo?: Prisma.FileUpdateOneWithoutUsersWithPhotoNestedInput
   payouts?: Prisma.BundlePayoutsUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -5038,7 +5036,7 @@ export type UserUncheckedUpdateWithoutStateTransitionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUncheckedUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUncheckedUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUncheckedUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUncheckedUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -5085,7 +5083,7 @@ export type UserCreateWithoutUserReportsReportedInput = {
   deletedAt?: Date | string | null
   photo?: Prisma.FileCreateNestedOneWithoutUsersWithPhotoInput
   payouts?: Prisma.BundlePayoutsCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -5132,7 +5130,7 @@ export type UserUncheckedCreateWithoutUserReportsReportedInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesUncheckedCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationUncheckedCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsUncheckedCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -5184,7 +5182,7 @@ export type UserCreateWithoutUserReportsReviewedInput = {
   deletedAt?: Date | string | null
   photo?: Prisma.FileCreateNestedOneWithoutUsersWithPhotoInput
   payouts?: Prisma.BundlePayoutsCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -5231,7 +5229,7 @@ export type UserUncheckedCreateWithoutUserReportsReviewedInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesUncheckedCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationUncheckedCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsUncheckedCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -5294,7 +5292,7 @@ export type UserUpdateWithoutUserReportsReportedInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   photo?: Prisma.FileUpdateOneWithoutUsersWithPhotoNestedInput
   payouts?: Prisma.BundlePayoutsUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -5341,7 +5339,7 @@ export type UserUncheckedUpdateWithoutUserReportsReportedInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUncheckedUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUncheckedUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUncheckedUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUncheckedUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -5399,7 +5397,7 @@ export type UserUpdateWithoutUserReportsReviewedInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   photo?: Prisma.FileUpdateOneWithoutUsersWithPhotoNestedInput
   payouts?: Prisma.BundlePayoutsUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -5446,7 +5444,7 @@ export type UserUncheckedUpdateWithoutUserReportsReviewedInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUncheckedUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUncheckedUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUncheckedUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUncheckedUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -5493,7 +5491,7 @@ export type UserCreateWithoutRefundRequestsReviewedInput = {
   deletedAt?: Date | string | null
   photo?: Prisma.FileCreateNestedOneWithoutUsersWithPhotoInput
   payouts?: Prisma.BundlePayoutsCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -5540,7 +5538,7 @@ export type UserUncheckedCreateWithoutRefundRequestsReviewedInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesUncheckedCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationUncheckedCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsUncheckedCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -5592,7 +5590,7 @@ export type UserCreateWithoutRefundRequestsInput = {
   deletedAt?: Date | string | null
   photo?: Prisma.FileCreateNestedOneWithoutUsersWithPhotoInput
   payouts?: Prisma.BundlePayoutsCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -5639,7 +5637,7 @@ export type UserUncheckedCreateWithoutRefundRequestsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesUncheckedCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationUncheckedCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsUncheckedCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -5702,7 +5700,7 @@ export type UserUpdateWithoutRefundRequestsReviewedInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   photo?: Prisma.FileUpdateOneWithoutUsersWithPhotoNestedInput
   payouts?: Prisma.BundlePayoutsUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -5749,7 +5747,7 @@ export type UserUncheckedUpdateWithoutRefundRequestsReviewedInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUncheckedUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUncheckedUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUncheckedUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUncheckedUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -5807,7 +5805,7 @@ export type UserUpdateWithoutRefundRequestsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   photo?: Prisma.FileUpdateOneWithoutUsersWithPhotoNestedInput
   payouts?: Prisma.BundlePayoutsUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -5854,7 +5852,7 @@ export type UserUncheckedUpdateWithoutRefundRequestsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUncheckedUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUncheckedUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUncheckedUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUncheckedUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -5901,7 +5899,7 @@ export type UserCreateWithoutUserEntitlementsInput = {
   deletedAt?: Date | string | null
   photo?: Prisma.FileCreateNestedOneWithoutUsersWithPhotoInput
   payouts?: Prisma.BundlePayoutsCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -5948,7 +5946,7 @@ export type UserUncheckedCreateWithoutUserEntitlementsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesUncheckedCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationUncheckedCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsUncheckedCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -6011,7 +6009,7 @@ export type UserUpdateWithoutUserEntitlementsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   photo?: Prisma.FileUpdateOneWithoutUsersWithPhotoNestedInput
   payouts?: Prisma.BundlePayoutsUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -6058,7 +6056,7 @@ export type UserUncheckedUpdateWithoutUserEntitlementsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUncheckedUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUncheckedUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUncheckedUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUncheckedUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -6105,7 +6103,7 @@ export type UserCreateWithoutReviewReportsReportedInput = {
   deletedAt?: Date | string | null
   photo?: Prisma.FileCreateNestedOneWithoutUsersWithPhotoInput
   payouts?: Prisma.BundlePayoutsCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -6152,7 +6150,7 @@ export type UserUncheckedCreateWithoutReviewReportsReportedInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesUncheckedCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationUncheckedCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsUncheckedCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -6204,7 +6202,7 @@ export type UserCreateWithoutReviewReportsReviewedInput = {
   deletedAt?: Date | string | null
   photo?: Prisma.FileCreateNestedOneWithoutUsersWithPhotoInput
   payouts?: Prisma.BundlePayoutsCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -6251,7 +6249,7 @@ export type UserUncheckedCreateWithoutReviewReportsReviewedInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesUncheckedCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationUncheckedCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsUncheckedCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -6314,7 +6312,7 @@ export type UserUpdateWithoutReviewReportsReportedInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   photo?: Prisma.FileUpdateOneWithoutUsersWithPhotoNestedInput
   payouts?: Prisma.BundlePayoutsUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -6361,7 +6359,7 @@ export type UserUncheckedUpdateWithoutReviewReportsReportedInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUncheckedUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUncheckedUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUncheckedUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUncheckedUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -6419,7 +6417,7 @@ export type UserUpdateWithoutReviewReportsReviewedInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   photo?: Prisma.FileUpdateOneWithoutUsersWithPhotoNestedInput
   payouts?: Prisma.BundlePayoutsUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -6466,7 +6464,7 @@ export type UserUncheckedUpdateWithoutReviewReportsReviewedInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUncheckedUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUncheckedUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUncheckedUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUncheckedUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -6513,7 +6511,7 @@ export type UserCreateWithoutSubscriptionHistoryInput = {
   deletedAt?: Date | string | null
   photo?: Prisma.FileCreateNestedOneWithoutUsersWithPhotoInput
   payouts?: Prisma.BundlePayoutsCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -6560,7 +6558,7 @@ export type UserUncheckedCreateWithoutSubscriptionHistoryInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesUncheckedCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationUncheckedCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsUncheckedCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -6623,7 +6621,7 @@ export type UserUpdateWithoutSubscriptionHistoryInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   photo?: Prisma.FileUpdateOneWithoutUsersWithPhotoNestedInput
   payouts?: Prisma.BundlePayoutsUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -6670,7 +6668,7 @@ export type UserUncheckedUpdateWithoutSubscriptionHistoryInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUncheckedUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUncheckedUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUncheckedUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUncheckedUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -6717,7 +6715,7 @@ export type UserCreateWithoutReviewHistoryInput = {
   deletedAt?: Date | string | null
   photo?: Prisma.FileCreateNestedOneWithoutUsersWithPhotoInput
   payouts?: Prisma.BundlePayoutsCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -6764,7 +6762,7 @@ export type UserUncheckedCreateWithoutReviewHistoryInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesUncheckedCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationUncheckedCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsUncheckedCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -6827,7 +6825,7 @@ export type UserUpdateWithoutReviewHistoryInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   photo?: Prisma.FileUpdateOneWithoutUsersWithPhotoNestedInput
   payouts?: Prisma.BundlePayoutsUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -6874,7 +6872,7 @@ export type UserUncheckedUpdateWithoutReviewHistoryInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUncheckedUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUncheckedUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUncheckedUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUncheckedUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -6921,7 +6919,7 @@ export type UserCreateWithoutReviewQueueReviewedInput = {
   deletedAt?: Date | string | null
   photo?: Prisma.FileCreateNestedOneWithoutUsersWithPhotoInput
   payouts?: Prisma.BundlePayoutsCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -6968,7 +6966,7 @@ export type UserUncheckedCreateWithoutReviewQueueReviewedInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedCreateNestedManyWithoutDeveloperInput
-  bundles?: Prisma.BundlesUncheckedCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationUncheckedCreateNestedManyWithoutUserInput
   notificationsActor?: Prisma.NotificationsUncheckedCreateNestedManyWithoutActorInput
   notificationsRecipient?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRecipientInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -7031,7 +7029,7 @@ export type UserUpdateWithoutReviewQueueReviewedInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   photo?: Prisma.FileUpdateOneWithoutUsersWithPhotoNestedInput
   payouts?: Prisma.BundlePayoutsUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -7078,7 +7076,7 @@ export type UserUncheckedUpdateWithoutReviewQueueReviewedInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUncheckedUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUncheckedUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUncheckedUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUncheckedUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -7143,7 +7141,7 @@ export type UserUpdateWithoutPhotoInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   payouts?: Prisma.BundlePayoutsUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -7190,7 +7188,7 @@ export type UserUncheckedUpdateWithoutPhotoInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   payouts?: Prisma.BundlePayoutsUncheckedUpdateManyWithoutDeveloperNestedInput
-  bundles?: Prisma.BundlesUncheckedUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUncheckedUpdateManyWithoutUserNestedInput
   notificationsActor?: Prisma.NotificationsUncheckedUpdateManyWithoutActorNestedInput
   notificationsRecipient?: Prisma.NotificationsUncheckedUpdateManyWithoutRecipientNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -7245,7 +7243,7 @@ export type UserUncheckedUpdateManyWithoutPhotoInput = {
 
 export type UserCountOutputType = {
   payouts: number
-  bundles: number
+  organizations: number
   notificationsActor: number
   notificationsRecipient: number
   sessions: number
@@ -7276,7 +7274,7 @@ export type UserCountOutputType = {
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   payouts?: boolean | UserCountOutputTypeCountPayoutsArgs
-  bundles?: boolean | UserCountOutputTypeCountBundlesArgs
+  organizations?: boolean | UserCountOutputTypeCountOrganizationsArgs
   notificationsActor?: boolean | UserCountOutputTypeCountNotificationsActorArgs
   notificationsRecipient?: boolean | UserCountOutputTypeCountNotificationsRecipientArgs
   sessions?: boolean | UserCountOutputTypeCountSessionsArgs
@@ -7325,8 +7323,8 @@ export type UserCountOutputTypeCountPayoutsArgs<ExtArgs extends runtime.Types.Ex
 /**
  * UserCountOutputType without action
  */
-export type UserCountOutputTypeCountBundlesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.BundlesWhereInput
+export type UserCountOutputTypeCountOrganizationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.OrganizationWhereInput
 }
 
 /**
@@ -7532,7 +7530,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   deletedAt?: boolean
   photo?: boolean | Prisma.User$photoArgs<ExtArgs>
   payouts?: boolean | Prisma.User$payoutsArgs<ExtArgs>
-  bundles?: boolean | Prisma.User$bundlesArgs<ExtArgs>
+  organizations?: boolean | Prisma.User$organizationsArgs<ExtArgs>
   notificationsActor?: boolean | Prisma.User$notificationsActorArgs<ExtArgs>
   notificationsRecipient?: boolean | Prisma.User$notificationsRecipientArgs<ExtArgs>
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
@@ -7628,7 +7626,7 @@ export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = run
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   photo?: boolean | Prisma.User$photoArgs<ExtArgs>
   payouts?: boolean | Prisma.User$payoutsArgs<ExtArgs>
-  bundles?: boolean | Prisma.User$bundlesArgs<ExtArgs>
+  organizations?: boolean | Prisma.User$organizationsArgs<ExtArgs>
   notificationsActor?: boolean | Prisma.User$notificationsActorArgs<ExtArgs>
   notificationsRecipient?: boolean | Prisma.User$notificationsRecipientArgs<ExtArgs>
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
@@ -7669,7 +7667,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   objects: {
     photo: Prisma.$FilePayload<ExtArgs> | null
     payouts: Prisma.$BundlePayoutsPayload<ExtArgs>[]
-    bundles: Prisma.$BundlesPayload<ExtArgs>[]
+    organizations: Prisma.$OrganizationPayload<ExtArgs>[]
     notificationsActor: Prisma.$NotificationsPayload<ExtArgs>[]
     notificationsRecipient: Prisma.$NotificationsPayload<ExtArgs>[]
     sessions: Prisma.$SessionPayload<ExtArgs>[]
@@ -8111,7 +8109,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   readonly [Symbol.toStringTag]: "PrismaPromise"
   photo<T extends Prisma.User$photoArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$photoArgs<ExtArgs>>): Prisma.Prisma__FileClient<runtime.Types.Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   payouts<T extends Prisma.User$payoutsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$payoutsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BundlePayoutsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  bundles<T extends Prisma.User$bundlesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$bundlesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BundlesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  organizations<T extends Prisma.User$organizationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$organizationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notificationsActor<T extends Prisma.User$notificationsActorArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notificationsActorArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notificationsRecipient<T extends Prisma.User$notificationsRecipientArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notificationsRecipientArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   sessions<T extends Prisma.User$sessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -8628,27 +8626,27 @@ export type User$payoutsArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
 }
 
 /**
- * User.bundles
+ * User.organizations
  */
-export type User$bundlesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type User$organizationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Bundles
+   * Select specific fields to fetch from the Organization
    */
-  select?: Prisma.BundlesSelect<ExtArgs> | null
+  select?: Prisma.OrganizationSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Bundles
+   * Omit specific fields from the Organization
    */
-  omit?: Prisma.BundlesOmit<ExtArgs> | null
+  omit?: Prisma.OrganizationOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.BundlesInclude<ExtArgs> | null
-  where?: Prisma.BundlesWhereInput
-  orderBy?: Prisma.BundlesOrderByWithRelationInput | Prisma.BundlesOrderByWithRelationInput[]
-  cursor?: Prisma.BundlesWhereUniqueInput
+  include?: Prisma.OrganizationInclude<ExtArgs> | null
+  where?: Prisma.OrganizationWhereInput
+  orderBy?: Prisma.OrganizationOrderByWithRelationInput | Prisma.OrganizationOrderByWithRelationInput[]
+  cursor?: Prisma.OrganizationWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.BundlesScalarFieldEnum | Prisma.BundlesScalarFieldEnum[]
+  distinct?: Prisma.OrganizationScalarFieldEnum | Prisma.OrganizationScalarFieldEnum[]
 }
 
 /**

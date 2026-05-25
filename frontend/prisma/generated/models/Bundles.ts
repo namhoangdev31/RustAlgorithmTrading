@@ -78,6 +78,7 @@ export type BundlesMinAggregateOutputType = {
   createdAt: Date | null
   updatedAt: Date | null
   deletedAt: Date | null
+  projectId: string | null
 }
 
 export type BundlesMaxAggregateOutputType = {
@@ -120,6 +121,7 @@ export type BundlesMaxAggregateOutputType = {
   createdAt: Date | null
   updatedAt: Date | null
   deletedAt: Date | null
+  projectId: string | null
 }
 
 export type BundlesCountAggregateOutputType = {
@@ -162,6 +164,7 @@ export type BundlesCountAggregateOutputType = {
   createdAt: number
   updatedAt: number
   deletedAt: number
+  projectId: number
   _all: number
 }
 
@@ -218,6 +221,7 @@ export type BundlesMinAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
+  projectId?: true
 }
 
 export type BundlesMaxAggregateInputType = {
@@ -260,6 +264,7 @@ export type BundlesMaxAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
+  projectId?: true
 }
 
 export type BundlesCountAggregateInputType = {
@@ -302,6 +307,7 @@ export type BundlesCountAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
+  projectId?: true
   _all?: true
 }
 
@@ -431,6 +437,7 @@ export type BundlesGroupByOutputType = {
   createdAt: Date
   updatedAt: Date
   deletedAt: Date | null
+  projectId: string | null
   _count: BundlesCountAggregateOutputType | null
   _avg: BundlesAvgAggregateOutputType | null
   _sum: BundlesSumAggregateOutputType | null
@@ -496,7 +503,8 @@ export type BundlesWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Bundles"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Bundles"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Bundles"> | Date | string | null
-  developer?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  projectId?: Prisma.UuidNullableFilter<"Bundles"> | string | null
+  project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
   abTests?: Prisma.BundleAbTestsListRelationFilter
   abuseSignals?: Prisma.XOR<Prisma.BundleAbuseSignalsNullableScalarRelationFilter, Prisma.BundleAbuseSignalsWhereInput> | null
   adConfigurations?: Prisma.XOR<Prisma.BundleAdConfigurationsNullableScalarRelationFilter, Prisma.BundleAdConfigurationsWhereInput> | null
@@ -590,7 +598,8 @@ export type BundlesOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
-  developer?: Prisma.UserOrderByWithRelationInput
+  projectId?: Prisma.SortOrderInput | Prisma.SortOrder
+  project?: Prisma.ProjectOrderByWithRelationInput
   abTests?: Prisma.BundleAbTestsOrderByRelationAggregateInput
   abuseSignals?: Prisma.BundleAbuseSignalsOrderByWithRelationInput
   adConfigurations?: Prisma.BundleAdConfigurationsOrderByWithRelationInput
@@ -648,6 +657,7 @@ export type BundlesWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   bundleKey?: string
   slug?: string
+  projectId?: string
   AND?: Prisma.BundlesWhereInput | Prisma.BundlesWhereInput[]
   OR?: Prisma.BundlesWhereInput[]
   NOT?: Prisma.BundlesWhereInput | Prisma.BundlesWhereInput[]
@@ -687,7 +697,7 @@ export type BundlesWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Bundles"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Bundles"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Bundles"> | Date | string | null
-  developer?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
   abTests?: Prisma.BundleAbTestsListRelationFilter
   abuseSignals?: Prisma.XOR<Prisma.BundleAbuseSignalsNullableScalarRelationFilter, Prisma.BundleAbuseSignalsWhereInput> | null
   adConfigurations?: Prisma.XOR<Prisma.BundleAdConfigurationsNullableScalarRelationFilter, Prisma.BundleAdConfigurationsWhereInput> | null
@@ -739,7 +749,7 @@ export type BundlesWhereUniqueInput = Prisma.AtLeast<{
   reviewQueue?: Prisma.BundleReviewQueueListRelationFilter
   securityScanResults?: Prisma.BundleSecurityScanResultsListRelationFilter
   updatePhases?: Prisma.BundleUpdatePhasesListRelationFilter
-}, "id" | "bundleKey" | "slug">
+}, "id" | "bundleKey" | "slug" | "projectId">
 
 export type BundlesOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -781,6 +791,7 @@ export type BundlesOrderByWithAggregationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  projectId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.BundlesCountOrderByAggregateInput
   _avg?: Prisma.BundlesAvgOrderByAggregateInput
   _max?: Prisma.BundlesMaxOrderByAggregateInput
@@ -831,6 +842,7 @@ export type BundlesScalarWhereWithAggregatesInput = {
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Bundles"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Bundles"> | Date | string
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Bundles"> | Date | string | null
+  projectId?: Prisma.UuidNullableWithAggregatesFilter<"Bundles"> | string | null
 }
 
 export type BundlesCreateInput = {
@@ -848,6 +860,7 @@ export type BundlesCreateInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -872,7 +885,7 @@ export type BundlesCreateInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -966,6 +979,7 @@ export type BundlesUncheckedCreateInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -1034,6 +1048,7 @@ export type BundlesUpdateInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1058,7 +1073,7 @@ export type BundlesUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -1152,6 +1167,7 @@ export type BundlesUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -1245,6 +1261,7 @@ export type BundlesCreateManyInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
 }
 
 export type BundlesUpdateManyMutationInput = {
@@ -1262,6 +1279,7 @@ export type BundlesUpdateManyMutationInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1328,16 +1346,12 @@ export type BundlesUncheckedUpdateManyInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
-export type BundlesListRelationFilter = {
-  every?: Prisma.BundlesWhereInput
-  some?: Prisma.BundlesWhereInput
-  none?: Prisma.BundlesWhereInput
-}
-
-export type BundlesOrderByRelationAggregateInput = {
-  _count?: Prisma.SortOrder
+export type BundlesNullableScalarRelationFilter = {
+  is?: Prisma.BundlesWhereInput | null
+  isNot?: Prisma.BundlesWhereInput | null
 }
 
 export type BundlesCountOrderByAggregateInput = {
@@ -1380,6 +1394,7 @@ export type BundlesCountOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
+  projectId?: Prisma.SortOrder
 }
 
 export type BundlesAvgOrderByAggregateInput = {
@@ -1428,6 +1443,7 @@ export type BundlesMaxOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
+  projectId?: Prisma.SortOrder
 }
 
 export type BundlesMinOrderByAggregateInput = {
@@ -1470,6 +1486,7 @@ export type BundlesMinOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
+  projectId?: Prisma.SortOrder
 }
 
 export type BundlesSumOrderByAggregateInput = {
@@ -1483,51 +1500,36 @@ export type BundlesScalarRelationFilter = {
   isNot?: Prisma.BundlesWhereInput
 }
 
-export type BundlesNullableScalarRelationFilter = {
-  is?: Prisma.BundlesWhereInput | null
-  isNot?: Prisma.BundlesWhereInput | null
+export type BundlesCreateNestedOneWithoutProjectInput = {
+  create?: Prisma.XOR<Prisma.BundlesCreateWithoutProjectInput, Prisma.BundlesUncheckedCreateWithoutProjectInput>
+  connectOrCreate?: Prisma.BundlesCreateOrConnectWithoutProjectInput
+  connect?: Prisma.BundlesWhereUniqueInput
 }
 
-export type BundlesCreateNestedManyWithoutDeveloperInput = {
-  create?: Prisma.XOR<Prisma.BundlesCreateWithoutDeveloperInput, Prisma.BundlesUncheckedCreateWithoutDeveloperInput> | Prisma.BundlesCreateWithoutDeveloperInput[] | Prisma.BundlesUncheckedCreateWithoutDeveloperInput[]
-  connectOrCreate?: Prisma.BundlesCreateOrConnectWithoutDeveloperInput | Prisma.BundlesCreateOrConnectWithoutDeveloperInput[]
-  createMany?: Prisma.BundlesCreateManyDeveloperInputEnvelope
-  connect?: Prisma.BundlesWhereUniqueInput | Prisma.BundlesWhereUniqueInput[]
+export type BundlesUncheckedCreateNestedOneWithoutProjectInput = {
+  create?: Prisma.XOR<Prisma.BundlesCreateWithoutProjectInput, Prisma.BundlesUncheckedCreateWithoutProjectInput>
+  connectOrCreate?: Prisma.BundlesCreateOrConnectWithoutProjectInput
+  connect?: Prisma.BundlesWhereUniqueInput
 }
 
-export type BundlesUncheckedCreateNestedManyWithoutDeveloperInput = {
-  create?: Prisma.XOR<Prisma.BundlesCreateWithoutDeveloperInput, Prisma.BundlesUncheckedCreateWithoutDeveloperInput> | Prisma.BundlesCreateWithoutDeveloperInput[] | Prisma.BundlesUncheckedCreateWithoutDeveloperInput[]
-  connectOrCreate?: Prisma.BundlesCreateOrConnectWithoutDeveloperInput | Prisma.BundlesCreateOrConnectWithoutDeveloperInput[]
-  createMany?: Prisma.BundlesCreateManyDeveloperInputEnvelope
-  connect?: Prisma.BundlesWhereUniqueInput | Prisma.BundlesWhereUniqueInput[]
+export type BundlesUpdateOneWithoutProjectNestedInput = {
+  create?: Prisma.XOR<Prisma.BundlesCreateWithoutProjectInput, Prisma.BundlesUncheckedCreateWithoutProjectInput>
+  connectOrCreate?: Prisma.BundlesCreateOrConnectWithoutProjectInput
+  upsert?: Prisma.BundlesUpsertWithoutProjectInput
+  disconnect?: Prisma.BundlesWhereInput | boolean
+  delete?: Prisma.BundlesWhereInput | boolean
+  connect?: Prisma.BundlesWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BundlesUpdateToOneWithWhereWithoutProjectInput, Prisma.BundlesUpdateWithoutProjectInput>, Prisma.BundlesUncheckedUpdateWithoutProjectInput>
 }
 
-export type BundlesUpdateManyWithoutDeveloperNestedInput = {
-  create?: Prisma.XOR<Prisma.BundlesCreateWithoutDeveloperInput, Prisma.BundlesUncheckedCreateWithoutDeveloperInput> | Prisma.BundlesCreateWithoutDeveloperInput[] | Prisma.BundlesUncheckedCreateWithoutDeveloperInput[]
-  connectOrCreate?: Prisma.BundlesCreateOrConnectWithoutDeveloperInput | Prisma.BundlesCreateOrConnectWithoutDeveloperInput[]
-  upsert?: Prisma.BundlesUpsertWithWhereUniqueWithoutDeveloperInput | Prisma.BundlesUpsertWithWhereUniqueWithoutDeveloperInput[]
-  createMany?: Prisma.BundlesCreateManyDeveloperInputEnvelope
-  set?: Prisma.BundlesWhereUniqueInput | Prisma.BundlesWhereUniqueInput[]
-  disconnect?: Prisma.BundlesWhereUniqueInput | Prisma.BundlesWhereUniqueInput[]
-  delete?: Prisma.BundlesWhereUniqueInput | Prisma.BundlesWhereUniqueInput[]
-  connect?: Prisma.BundlesWhereUniqueInput | Prisma.BundlesWhereUniqueInput[]
-  update?: Prisma.BundlesUpdateWithWhereUniqueWithoutDeveloperInput | Prisma.BundlesUpdateWithWhereUniqueWithoutDeveloperInput[]
-  updateMany?: Prisma.BundlesUpdateManyWithWhereWithoutDeveloperInput | Prisma.BundlesUpdateManyWithWhereWithoutDeveloperInput[]
-  deleteMany?: Prisma.BundlesScalarWhereInput | Prisma.BundlesScalarWhereInput[]
-}
-
-export type BundlesUncheckedUpdateManyWithoutDeveloperNestedInput = {
-  create?: Prisma.XOR<Prisma.BundlesCreateWithoutDeveloperInput, Prisma.BundlesUncheckedCreateWithoutDeveloperInput> | Prisma.BundlesCreateWithoutDeveloperInput[] | Prisma.BundlesUncheckedCreateWithoutDeveloperInput[]
-  connectOrCreate?: Prisma.BundlesCreateOrConnectWithoutDeveloperInput | Prisma.BundlesCreateOrConnectWithoutDeveloperInput[]
-  upsert?: Prisma.BundlesUpsertWithWhereUniqueWithoutDeveloperInput | Prisma.BundlesUpsertWithWhereUniqueWithoutDeveloperInput[]
-  createMany?: Prisma.BundlesCreateManyDeveloperInputEnvelope
-  set?: Prisma.BundlesWhereUniqueInput | Prisma.BundlesWhereUniqueInput[]
-  disconnect?: Prisma.BundlesWhereUniqueInput | Prisma.BundlesWhereUniqueInput[]
-  delete?: Prisma.BundlesWhereUniqueInput | Prisma.BundlesWhereUniqueInput[]
-  connect?: Prisma.BundlesWhereUniqueInput | Prisma.BundlesWhereUniqueInput[]
-  update?: Prisma.BundlesUpdateWithWhereUniqueWithoutDeveloperInput | Prisma.BundlesUpdateWithWhereUniqueWithoutDeveloperInput[]
-  updateMany?: Prisma.BundlesUpdateManyWithWhereWithoutDeveloperInput | Prisma.BundlesUpdateManyWithWhereWithoutDeveloperInput[]
-  deleteMany?: Prisma.BundlesScalarWhereInput | Prisma.BundlesScalarWhereInput[]
+export type BundlesUncheckedUpdateOneWithoutProjectNestedInput = {
+  create?: Prisma.XOR<Prisma.BundlesCreateWithoutProjectInput, Prisma.BundlesUncheckedCreateWithoutProjectInput>
+  connectOrCreate?: Prisma.BundlesCreateOrConnectWithoutProjectInput
+  upsert?: Prisma.BundlesUpsertWithoutProjectInput
+  disconnect?: Prisma.BundlesWhereInput | boolean
+  delete?: Prisma.BundlesWhereInput | boolean
+  connect?: Prisma.BundlesWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BundlesUpdateToOneWithWhereWithoutProjectInput, Prisma.BundlesUpdateWithoutProjectInput>, Prisma.BundlesUncheckedUpdateWithoutProjectInput>
 }
 
 export type BoolFieldUpdateOperationsInput = {
@@ -2250,7 +2252,7 @@ export type BundlesUpdateOneRequiredWithoutUpdatePhasesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.BundlesUpdateToOneWithWhereWithoutUpdatePhasesInput, Prisma.BundlesUpdateWithoutUpdatePhasesInput>, Prisma.BundlesUncheckedUpdateWithoutUpdatePhasesInput>
 }
 
-export type BundlesCreateWithoutDeveloperInput = {
+export type BundlesCreateWithoutProjectInput = {
   id: string
   bundleKey?: string | null
   name: string
@@ -2265,6 +2267,7 @@ export type BundlesCreateWithoutDeveloperInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -2342,7 +2345,7 @@ export type BundlesCreateWithoutDeveloperInput = {
   updatePhases?: Prisma.BundleUpdatePhasesCreateNestedManyWithoutBundleInput
 }
 
-export type BundlesUncheckedCreateWithoutDeveloperInput = {
+export type BundlesUncheckedCreateWithoutProjectInput = {
   id: string
   bundleKey?: string | null
   name: string
@@ -2357,6 +2360,7 @@ export type BundlesUncheckedCreateWithoutDeveloperInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -2434,75 +2438,206 @@ export type BundlesUncheckedCreateWithoutDeveloperInput = {
   updatePhases?: Prisma.BundleUpdatePhasesUncheckedCreateNestedManyWithoutBundleInput
 }
 
-export type BundlesCreateOrConnectWithoutDeveloperInput = {
+export type BundlesCreateOrConnectWithoutProjectInput = {
   where: Prisma.BundlesWhereUniqueInput
-  create: Prisma.XOR<Prisma.BundlesCreateWithoutDeveloperInput, Prisma.BundlesUncheckedCreateWithoutDeveloperInput>
+  create: Prisma.XOR<Prisma.BundlesCreateWithoutProjectInput, Prisma.BundlesUncheckedCreateWithoutProjectInput>
 }
 
-export type BundlesCreateManyDeveloperInputEnvelope = {
-  data: Prisma.BundlesCreateManyDeveloperInput | Prisma.BundlesCreateManyDeveloperInput[]
-  skipDuplicates?: boolean
+export type BundlesUpsertWithoutProjectInput = {
+  update: Prisma.XOR<Prisma.BundlesUpdateWithoutProjectInput, Prisma.BundlesUncheckedUpdateWithoutProjectInput>
+  create: Prisma.XOR<Prisma.BundlesCreateWithoutProjectInput, Prisma.BundlesUncheckedCreateWithoutProjectInput>
+  where?: Prisma.BundlesWhereInput
 }
 
-export type BundlesUpsertWithWhereUniqueWithoutDeveloperInput = {
-  where: Prisma.BundlesWhereUniqueInput
-  update: Prisma.XOR<Prisma.BundlesUpdateWithoutDeveloperInput, Prisma.BundlesUncheckedUpdateWithoutDeveloperInput>
-  create: Prisma.XOR<Prisma.BundlesCreateWithoutDeveloperInput, Prisma.BundlesUncheckedCreateWithoutDeveloperInput>
+export type BundlesUpdateToOneWithWhereWithoutProjectInput = {
+  where?: Prisma.BundlesWhereInput
+  data: Prisma.XOR<Prisma.BundlesUpdateWithoutProjectInput, Prisma.BundlesUncheckedUpdateWithoutProjectInput>
 }
 
-export type BundlesUpdateWithWhereUniqueWithoutDeveloperInput = {
-  where: Prisma.BundlesWhereUniqueInput
-  data: Prisma.XOR<Prisma.BundlesUpdateWithoutDeveloperInput, Prisma.BundlesUncheckedUpdateWithoutDeveloperInput>
+export type BundlesUpdateWithoutProjectInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  bundleKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  version?: Prisma.StringFieldUpdateOperationsInput | string
+  buildNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  iconUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyPolicyUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  storagePath?: Prisma.StringFieldUpdateOperationsInput | string
+  bucket?: Prisma.StringFieldUpdateOperationsInput | string
+  fileSize?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  checksum?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  price?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isOneTimePayment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasInAppPurchases?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasSubscription?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  changelog?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  releaseNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ageRating?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contentAdvisory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
+  abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
+  adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsUpdateManyWithoutBundleNestedInput
+  apiUsageStats?: Prisma.BundleApiUsageStatsUpdateManyWithoutBundleNestedInput
+  auditLogs?: Prisma.BundleAuditLogUpdateManyWithoutBundleNestedInput
+  betaTesters?: Prisma.BundleBetaTestersUpdateManyWithoutBundleNestedInput
+  changeLogs?: Prisma.BundleChangeLogsUpdateManyWithoutBundleNestedInput
+  collaborators?: Prisma.BundleCollaboratorsUpdateManyWithoutBundleNestedInput
+  contentRatings?: Prisma.BundleContentRatingsUpdateManyWithoutBundleNestedInput
+  countries?: Prisma.BundleCountriesUpdateManyWithoutBundleNestedInput
+  dependencies?: Prisma.BundleDependenciesUpdateManyWithoutBundleNestedInput
+  dependentBundles?: Prisma.BundleDependenciesUpdateManyWithoutDependencyBundleNestedInput
+  developerStrikes?: Prisma.BundleDeveloperStrikesUpdateManyWithoutBundleNestedInput
+  deviceSupports?: Prisma.BundleDeviceSupportUpdateManyWithoutBundleNestedInput
+  externalIntegrations?: Prisma.BundleExternalIntegrationsUpdateManyWithoutBundleNestedInput
+  featuredSlots?: Prisma.BundleFeaturedSlotsUpdateManyWithoutBundleNestedInput
+  inAppPurchases?: Prisma.BundleInAppPurchasesUpdateManyWithoutBundleNestedInput
+  installEvents?: Prisma.BundleInstallEventsUpdateManyWithoutBundleNestedInput
+  languages?: Prisma.BundleLanguagesUpdateManyWithoutBundleNestedInput
+  localizations?: Prisma.BundleLocalizationsUpdateManyWithoutBundleNestedInput
+  monetizationConfigs?: Prisma.BundleMonetizationConfigsUpdateOneWithoutBundleNestedInput
+  orders?: Prisma.BundleOrdersUpdateManyWithoutBundleNestedInput
+  permissions?: Prisma.BundlePermissionsUpdateManyWithoutBundleNestedInput
+  privacyDeclarations?: Prisma.BundlePrivacyDeclarationsUpdateOneWithoutBundleNestedInput
+  promotions?: Prisma.BundlePromotionsUpdateManyWithoutBundleNestedInput
+  rankingScores?: Prisma.BundleRankingScoresUpdateOneWithoutBundleNestedInput
+  releaseTracks?: Prisma.BundleReleaseTracksUpdateManyWithoutBundleNestedInput
+  retentionStats?: Prisma.BundleRetentionStatsUpdateManyWithoutBundleNestedInput
+  reviews?: Prisma.BundleReviewsUpdateManyWithoutBundleNestedInput
+  runtimeConfig?: Prisma.BundleRuntimeConfigUpdateOneWithoutBundleNestedInput
+  screenshots?: Prisma.BundleScreenshotsUpdateManyWithoutBundleNestedInput
+  searchKeywords?: Prisma.BundleSearchKeywordsUpdateManyWithoutBundleNestedInput
+  stateTransitions?: Prisma.BundleStateTransitionsUpdateManyWithoutBundleNestedInput
+  stats?: Prisma.BundleStatsUpdateOneWithoutBundleNestedInput
+  storeFlags?: Prisma.BundleStoreFlagsUpdateOneWithoutBundleNestedInput
+  storeListings?: Prisma.BundleStoreListingsUpdateManyWithoutBundleNestedInput
+  subscriptionPlans?: Prisma.BundleSubscriptionPlansUpdateManyWithoutBundleNestedInput
+  tags?: Prisma.BundleTagsUpdateManyWithoutBundleNestedInput
+  trendingSnapshots?: Prisma.BundleTrendingSnapshotsUpdateManyWithoutBundleNestedInput
+  userReports?: Prisma.BundleUserReportsUpdateManyWithoutBundleNestedInput
+  versionHistories?: Prisma.BundleVersionHistoryUpdateManyWithoutBundleNestedInput
+  webhooks?: Prisma.BundleWebhooksUpdateManyWithoutBundleNestedInput
+  userEntitlements?: Prisma.BundleUserEntitlementsUpdateManyWithoutBundleNestedInput
+  rollouts?: Prisma.BundleRolloutsUpdateManyWithoutBundleNestedInput
+  subscriptionHistory?: Prisma.BundleSubscriptionHistoryUpdateManyWithoutBundleNestedInput
+  crashReports?: Prisma.BundleCrashReportsUpdateManyWithoutBundleNestedInput
+  reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutBundleNestedInput
+  reviewQueue?: Prisma.BundleReviewQueueUpdateManyWithoutBundleNestedInput
+  securityScanResults?: Prisma.BundleSecurityScanResultsUpdateManyWithoutBundleNestedInput
+  updatePhases?: Prisma.BundleUpdatePhasesUpdateManyWithoutBundleNestedInput
 }
 
-export type BundlesUpdateManyWithWhereWithoutDeveloperInput = {
-  where: Prisma.BundlesScalarWhereInput
-  data: Prisma.XOR<Prisma.BundlesUpdateManyMutationInput, Prisma.BundlesUncheckedUpdateManyWithoutDeveloperInput>
-}
-
-export type BundlesScalarWhereInput = {
-  AND?: Prisma.BundlesScalarWhereInput | Prisma.BundlesScalarWhereInput[]
-  OR?: Prisma.BundlesScalarWhereInput[]
-  NOT?: Prisma.BundlesScalarWhereInput | Prisma.BundlesScalarWhereInput[]
-  id?: Prisma.UuidFilter<"Bundles"> | string
-  bundleKey?: Prisma.StringNullableFilter<"Bundles"> | string | null
-  name?: Prisma.StringFilter<"Bundles"> | string
-  slug?: Prisma.StringNullableFilter<"Bundles"> | string | null
-  version?: Prisma.StringFilter<"Bundles"> | string
-  buildNumber?: Prisma.IntFilter<"Bundles"> | number
-  iconUrl?: Prisma.StringNullableFilter<"Bundles"> | string | null
-  bannerUrl?: Prisma.StringNullableFilter<"Bundles"> | string | null
-  shortDescription?: Prisma.StringNullableFilter<"Bundles"> | string | null
-  description?: Prisma.StringNullableFilter<"Bundles"> | string | null
-  privacyPolicyUrl?: Prisma.StringNullableFilter<"Bundles"> | string | null
-  supportUrl?: Prisma.StringNullableFilter<"Bundles"> | string | null
-  websiteUrl?: Prisma.StringNullableFilter<"Bundles"> | string | null
-  developerName?: Prisma.StringNullableFilter<"Bundles"> | string | null
-  developerId?: Prisma.UuidNullableFilter<"Bundles"> | string | null
-  developerEmail?: Prisma.StringNullableFilter<"Bundles"> | string | null
-  category?: Prisma.StringNullableFilter<"Bundles"> | string | null
-  subCategory?: Prisma.StringNullableFilter<"Bundles"> | string | null
-  storagePath?: Prisma.StringFilter<"Bundles"> | string
-  bucket?: Prisma.StringFilter<"Bundles"> | string
-  fileSize?: Prisma.BigIntNullableFilter<"Bundles"> | bigint | number | null
-  checksum?: Prisma.StringNullableFilter<"Bundles"> | string | null
-  price?: Prisma.FloatNullableFilter<"Bundles"> | number | null
-  currency?: Prisma.StringNullableFilter<"Bundles"> | string | null
-  isFree?: Prisma.BoolFilter<"Bundles"> | boolean
-  isOneTimePayment?: Prisma.BoolFilter<"Bundles"> | boolean
-  hasInAppPurchases?: Prisma.BoolFilter<"Bundles"> | boolean
-  hasSubscription?: Prisma.BoolFilter<"Bundles"> | boolean
-  status?: Prisma.StringFilter<"Bundles"> | string
-  rejectionReason?: Prisma.StringNullableFilter<"Bundles"> | string | null
-  publishedAt?: Prisma.DateTimeNullableFilter<"Bundles"> | Date | string | null
-  expiresAt?: Prisma.DateTimeNullableFilter<"Bundles"> | Date | string | null
-  changelog?: Prisma.StringNullableFilter<"Bundles"> | string | null
-  releaseNotes?: Prisma.StringNullableFilter<"Bundles"> | string | null
-  ageRating?: Prisma.StringNullableFilter<"Bundles"> | string | null
-  contentAdvisory?: Prisma.StringNullableFilter<"Bundles"> | string | null
-  createdAt?: Prisma.DateTimeFilter<"Bundles"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"Bundles"> | Date | string
-  deletedAt?: Prisma.DateTimeNullableFilter<"Bundles"> | Date | string | null
+export type BundlesUncheckedUpdateWithoutProjectInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  bundleKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  version?: Prisma.StringFieldUpdateOperationsInput | string
+  buildNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  iconUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyPolicyUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  storagePath?: Prisma.StringFieldUpdateOperationsInput | string
+  bucket?: Prisma.StringFieldUpdateOperationsInput | string
+  fileSize?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  checksum?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  price?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isOneTimePayment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasInAppPurchases?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasSubscription?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  changelog?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  releaseNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ageRating?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contentAdvisory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
+  abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
+  adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsUncheckedUpdateManyWithoutBundleNestedInput
+  apiUsageStats?: Prisma.BundleApiUsageStatsUncheckedUpdateManyWithoutBundleNestedInput
+  auditLogs?: Prisma.BundleAuditLogUncheckedUpdateManyWithoutBundleNestedInput
+  betaTesters?: Prisma.BundleBetaTestersUncheckedUpdateManyWithoutBundleNestedInput
+  changeLogs?: Prisma.BundleChangeLogsUncheckedUpdateManyWithoutBundleNestedInput
+  collaborators?: Prisma.BundleCollaboratorsUncheckedUpdateManyWithoutBundleNestedInput
+  contentRatings?: Prisma.BundleContentRatingsUncheckedUpdateManyWithoutBundleNestedInput
+  countries?: Prisma.BundleCountriesUncheckedUpdateManyWithoutBundleNestedInput
+  dependencies?: Prisma.BundleDependenciesUncheckedUpdateManyWithoutBundleNestedInput
+  dependentBundles?: Prisma.BundleDependenciesUncheckedUpdateManyWithoutDependencyBundleNestedInput
+  developerStrikes?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutBundleNestedInput
+  deviceSupports?: Prisma.BundleDeviceSupportUncheckedUpdateManyWithoutBundleNestedInput
+  externalIntegrations?: Prisma.BundleExternalIntegrationsUncheckedUpdateManyWithoutBundleNestedInput
+  featuredSlots?: Prisma.BundleFeaturedSlotsUncheckedUpdateManyWithoutBundleNestedInput
+  inAppPurchases?: Prisma.BundleInAppPurchasesUncheckedUpdateManyWithoutBundleNestedInput
+  installEvents?: Prisma.BundleInstallEventsUncheckedUpdateManyWithoutBundleNestedInput
+  languages?: Prisma.BundleLanguagesUncheckedUpdateManyWithoutBundleNestedInput
+  localizations?: Prisma.BundleLocalizationsUncheckedUpdateManyWithoutBundleNestedInput
+  monetizationConfigs?: Prisma.BundleMonetizationConfigsUncheckedUpdateOneWithoutBundleNestedInput
+  orders?: Prisma.BundleOrdersUncheckedUpdateManyWithoutBundleNestedInput
+  permissions?: Prisma.BundlePermissionsUncheckedUpdateManyWithoutBundleNestedInput
+  privacyDeclarations?: Prisma.BundlePrivacyDeclarationsUncheckedUpdateOneWithoutBundleNestedInput
+  promotions?: Prisma.BundlePromotionsUncheckedUpdateManyWithoutBundleNestedInput
+  rankingScores?: Prisma.BundleRankingScoresUncheckedUpdateOneWithoutBundleNestedInput
+  releaseTracks?: Prisma.BundleReleaseTracksUncheckedUpdateManyWithoutBundleNestedInput
+  retentionStats?: Prisma.BundleRetentionStatsUncheckedUpdateManyWithoutBundleNestedInput
+  reviews?: Prisma.BundleReviewsUncheckedUpdateManyWithoutBundleNestedInput
+  runtimeConfig?: Prisma.BundleRuntimeConfigUncheckedUpdateOneWithoutBundleNestedInput
+  screenshots?: Prisma.BundleScreenshotsUncheckedUpdateManyWithoutBundleNestedInput
+  searchKeywords?: Prisma.BundleSearchKeywordsUncheckedUpdateManyWithoutBundleNestedInput
+  stateTransitions?: Prisma.BundleStateTransitionsUncheckedUpdateManyWithoutBundleNestedInput
+  stats?: Prisma.BundleStatsUncheckedUpdateOneWithoutBundleNestedInput
+  storeFlags?: Prisma.BundleStoreFlagsUncheckedUpdateOneWithoutBundleNestedInput
+  storeListings?: Prisma.BundleStoreListingsUncheckedUpdateManyWithoutBundleNestedInput
+  subscriptionPlans?: Prisma.BundleSubscriptionPlansUncheckedUpdateManyWithoutBundleNestedInput
+  tags?: Prisma.BundleTagsUncheckedUpdateManyWithoutBundleNestedInput
+  trendingSnapshots?: Prisma.BundleTrendingSnapshotsUncheckedUpdateManyWithoutBundleNestedInput
+  userReports?: Prisma.BundleUserReportsUncheckedUpdateManyWithoutBundleNestedInput
+  versionHistories?: Prisma.BundleVersionHistoryUncheckedUpdateManyWithoutBundleNestedInput
+  webhooks?: Prisma.BundleWebhooksUncheckedUpdateManyWithoutBundleNestedInput
+  userEntitlements?: Prisma.BundleUserEntitlementsUncheckedUpdateManyWithoutBundleNestedInput
+  rollouts?: Prisma.BundleRolloutsUncheckedUpdateManyWithoutBundleNestedInput
+  subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedUpdateManyWithoutBundleNestedInput
+  crashReports?: Prisma.BundleCrashReportsUncheckedUpdateManyWithoutBundleNestedInput
+  reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutBundleNestedInput
+  reviewQueue?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutBundleNestedInput
+  securityScanResults?: Prisma.BundleSecurityScanResultsUncheckedUpdateManyWithoutBundleNestedInput
+  updatePhases?: Prisma.BundleUpdatePhasesUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutAbTestsInput = {
@@ -2520,6 +2655,7 @@ export type BundlesCreateWithoutAbTestsInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -2544,7 +2680,7 @@ export type BundlesCreateWithoutAbTestsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
   analyticsEvents?: Prisma.BundleAnalyticsEventsCreateNestedManyWithoutBundleInput
@@ -2637,6 +2773,7 @@ export type BundlesUncheckedCreateWithoutAbTestsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
   analyticsEvents?: Prisma.BundleAnalyticsEventsUncheckedCreateNestedManyWithoutBundleInput
@@ -2720,6 +2857,7 @@ export type BundlesUpdateWithoutAbTestsInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2744,7 +2882,7 @@ export type BundlesUpdateWithoutAbTestsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
   analyticsEvents?: Prisma.BundleAnalyticsEventsUpdateManyWithoutBundleNestedInput
@@ -2837,6 +2975,7 @@ export type BundlesUncheckedUpdateWithoutAbTestsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
   analyticsEvents?: Prisma.BundleAnalyticsEventsUncheckedUpdateManyWithoutBundleNestedInput
@@ -2904,6 +3043,7 @@ export type BundlesCreateWithoutAbuseSignalsInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -2928,7 +3068,7 @@ export type BundlesCreateWithoutAbuseSignalsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
   analyticsEvents?: Prisma.BundleAnalyticsEventsCreateNestedManyWithoutBundleInput
@@ -3021,6 +3161,7 @@ export type BundlesUncheckedCreateWithoutAbuseSignalsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
   analyticsEvents?: Prisma.BundleAnalyticsEventsUncheckedCreateNestedManyWithoutBundleInput
@@ -3104,6 +3245,7 @@ export type BundlesUpdateWithoutAbuseSignalsInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3128,7 +3270,7 @@ export type BundlesUpdateWithoutAbuseSignalsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
   analyticsEvents?: Prisma.BundleAnalyticsEventsUpdateManyWithoutBundleNestedInput
@@ -3221,6 +3363,7 @@ export type BundlesUncheckedUpdateWithoutAbuseSignalsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
   analyticsEvents?: Prisma.BundleAnalyticsEventsUncheckedUpdateManyWithoutBundleNestedInput
@@ -3288,6 +3431,7 @@ export type BundlesCreateWithoutAdConfigurationsInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -3312,7 +3456,7 @@ export type BundlesCreateWithoutAdConfigurationsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   analyticsEvents?: Prisma.BundleAnalyticsEventsCreateNestedManyWithoutBundleInput
@@ -3405,6 +3549,7 @@ export type BundlesUncheckedCreateWithoutAdConfigurationsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   analyticsEvents?: Prisma.BundleAnalyticsEventsUncheckedCreateNestedManyWithoutBundleInput
@@ -3488,6 +3633,7 @@ export type BundlesUpdateWithoutAdConfigurationsInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3512,7 +3658,7 @@ export type BundlesUpdateWithoutAdConfigurationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   analyticsEvents?: Prisma.BundleAnalyticsEventsUpdateManyWithoutBundleNestedInput
@@ -3605,6 +3751,7 @@ export type BundlesUncheckedUpdateWithoutAdConfigurationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   analyticsEvents?: Prisma.BundleAnalyticsEventsUncheckedUpdateManyWithoutBundleNestedInput
@@ -3672,6 +3819,7 @@ export type BundlesCreateWithoutAnalyticsEventsInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -3696,7 +3844,7 @@ export type BundlesCreateWithoutAnalyticsEventsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -3789,6 +3937,7 @@ export type BundlesUncheckedCreateWithoutAnalyticsEventsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -3872,6 +4021,7 @@ export type BundlesUpdateWithoutAnalyticsEventsInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3896,7 +4046,7 @@ export type BundlesUpdateWithoutAnalyticsEventsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -3989,6 +4139,7 @@ export type BundlesUncheckedUpdateWithoutAnalyticsEventsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -4056,6 +4207,7 @@ export type BundlesCreateWithoutApiUsageStatsInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -4080,7 +4232,7 @@ export type BundlesCreateWithoutApiUsageStatsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -4173,6 +4325,7 @@ export type BundlesUncheckedCreateWithoutApiUsageStatsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -4256,6 +4409,7 @@ export type BundlesUpdateWithoutApiUsageStatsInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4280,7 +4434,7 @@ export type BundlesUpdateWithoutApiUsageStatsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -4373,6 +4527,7 @@ export type BundlesUncheckedUpdateWithoutApiUsageStatsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -4440,6 +4595,7 @@ export type BundlesCreateWithoutAuditLogsInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -4464,7 +4620,7 @@ export type BundlesCreateWithoutAuditLogsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -4557,6 +4713,7 @@ export type BundlesUncheckedCreateWithoutAuditLogsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -4640,6 +4797,7 @@ export type BundlesUpdateWithoutAuditLogsInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4664,7 +4822,7 @@ export type BundlesUpdateWithoutAuditLogsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -4757,6 +4915,7 @@ export type BundlesUncheckedUpdateWithoutAuditLogsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -4824,6 +4983,7 @@ export type BundlesCreateWithoutBetaTestersInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -4848,7 +5008,7 @@ export type BundlesCreateWithoutBetaTestersInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -4941,6 +5101,7 @@ export type BundlesUncheckedCreateWithoutBetaTestersInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -5024,6 +5185,7 @@ export type BundlesUpdateWithoutBetaTestersInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5048,7 +5210,7 @@ export type BundlesUpdateWithoutBetaTestersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -5141,6 +5303,7 @@ export type BundlesUncheckedUpdateWithoutBetaTestersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -5208,6 +5371,7 @@ export type BundlesCreateWithoutChangeLogsInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -5232,7 +5396,7 @@ export type BundlesCreateWithoutChangeLogsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -5325,6 +5489,7 @@ export type BundlesUncheckedCreateWithoutChangeLogsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -5408,6 +5573,7 @@ export type BundlesUpdateWithoutChangeLogsInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5432,7 +5598,7 @@ export type BundlesUpdateWithoutChangeLogsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -5525,6 +5691,7 @@ export type BundlesUncheckedUpdateWithoutChangeLogsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -5592,6 +5759,7 @@ export type BundlesCreateWithoutCollaboratorsInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -5616,7 +5784,7 @@ export type BundlesCreateWithoutCollaboratorsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -5709,6 +5877,7 @@ export type BundlesUncheckedCreateWithoutCollaboratorsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -5792,6 +5961,7 @@ export type BundlesUpdateWithoutCollaboratorsInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5816,7 +5986,7 @@ export type BundlesUpdateWithoutCollaboratorsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -5909,6 +6079,7 @@ export type BundlesUncheckedUpdateWithoutCollaboratorsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -5976,6 +6147,7 @@ export type BundlesCreateWithoutContentRatingsInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -6000,7 +6172,7 @@ export type BundlesCreateWithoutContentRatingsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -6093,6 +6265,7 @@ export type BundlesUncheckedCreateWithoutContentRatingsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -6176,6 +6349,7 @@ export type BundlesUpdateWithoutContentRatingsInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6200,7 +6374,7 @@ export type BundlesUpdateWithoutContentRatingsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -6293,6 +6467,7 @@ export type BundlesUncheckedUpdateWithoutContentRatingsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -6360,6 +6535,7 @@ export type BundlesCreateWithoutCountriesInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -6384,7 +6560,7 @@ export type BundlesCreateWithoutCountriesInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -6477,6 +6653,7 @@ export type BundlesUncheckedCreateWithoutCountriesInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -6560,6 +6737,7 @@ export type BundlesUpdateWithoutCountriesInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6584,7 +6762,7 @@ export type BundlesUpdateWithoutCountriesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -6677,6 +6855,7 @@ export type BundlesUncheckedUpdateWithoutCountriesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -6744,6 +6923,7 @@ export type BundlesCreateWithoutDependenciesInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -6768,7 +6948,7 @@ export type BundlesCreateWithoutDependenciesInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -6861,6 +7041,7 @@ export type BundlesUncheckedCreateWithoutDependenciesInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -6933,6 +7114,7 @@ export type BundlesCreateWithoutDependentBundlesInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -6957,7 +7139,7 @@ export type BundlesCreateWithoutDependentBundlesInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -7050,6 +7232,7 @@ export type BundlesUncheckedCreateWithoutDependentBundlesInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -7133,6 +7316,7 @@ export type BundlesUpdateWithoutDependenciesInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -7157,7 +7341,7 @@ export type BundlesUpdateWithoutDependenciesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -7250,6 +7434,7 @@ export type BundlesUncheckedUpdateWithoutDependenciesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -7328,6 +7513,7 @@ export type BundlesUpdateWithoutDependentBundlesInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -7352,7 +7538,7 @@ export type BundlesUpdateWithoutDependentBundlesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -7445,6 +7631,7 @@ export type BundlesUncheckedUpdateWithoutDependentBundlesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -7512,6 +7699,7 @@ export type BundlesCreateWithoutDeveloperStrikesInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -7536,7 +7724,7 @@ export type BundlesCreateWithoutDeveloperStrikesInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -7629,6 +7817,7 @@ export type BundlesUncheckedCreateWithoutDeveloperStrikesInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -7712,6 +7901,7 @@ export type BundlesUpdateWithoutDeveloperStrikesInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -7736,7 +7926,7 @@ export type BundlesUpdateWithoutDeveloperStrikesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -7829,6 +8019,7 @@ export type BundlesUncheckedUpdateWithoutDeveloperStrikesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -7896,6 +8087,7 @@ export type BundlesCreateWithoutDeviceSupportsInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -7920,7 +8112,7 @@ export type BundlesCreateWithoutDeviceSupportsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -8013,6 +8205,7 @@ export type BundlesUncheckedCreateWithoutDeviceSupportsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -8096,6 +8289,7 @@ export type BundlesUpdateWithoutDeviceSupportsInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -8120,7 +8314,7 @@ export type BundlesUpdateWithoutDeviceSupportsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -8213,6 +8407,7 @@ export type BundlesUncheckedUpdateWithoutDeviceSupportsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -8280,6 +8475,7 @@ export type BundlesCreateWithoutExternalIntegrationsInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -8304,7 +8500,7 @@ export type BundlesCreateWithoutExternalIntegrationsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -8397,6 +8593,7 @@ export type BundlesUncheckedCreateWithoutExternalIntegrationsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -8480,6 +8677,7 @@ export type BundlesUpdateWithoutExternalIntegrationsInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -8504,7 +8702,7 @@ export type BundlesUpdateWithoutExternalIntegrationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -8597,6 +8795,7 @@ export type BundlesUncheckedUpdateWithoutExternalIntegrationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -8664,6 +8863,7 @@ export type BundlesCreateWithoutFeaturedSlotsInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -8688,7 +8888,7 @@ export type BundlesCreateWithoutFeaturedSlotsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -8781,6 +8981,7 @@ export type BundlesUncheckedCreateWithoutFeaturedSlotsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -8864,6 +9065,7 @@ export type BundlesUpdateWithoutFeaturedSlotsInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -8888,7 +9090,7 @@ export type BundlesUpdateWithoutFeaturedSlotsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -8981,6 +9183,7 @@ export type BundlesUncheckedUpdateWithoutFeaturedSlotsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -9048,6 +9251,7 @@ export type BundlesCreateWithoutInAppPurchasesInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -9072,7 +9276,7 @@ export type BundlesCreateWithoutInAppPurchasesInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -9165,6 +9369,7 @@ export type BundlesUncheckedCreateWithoutInAppPurchasesInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -9248,6 +9453,7 @@ export type BundlesUpdateWithoutInAppPurchasesInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -9272,7 +9478,7 @@ export type BundlesUpdateWithoutInAppPurchasesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -9365,6 +9571,7 @@ export type BundlesUncheckedUpdateWithoutInAppPurchasesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -9432,6 +9639,7 @@ export type BundlesCreateWithoutInstallEventsInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -9456,7 +9664,7 @@ export type BundlesCreateWithoutInstallEventsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -9549,6 +9757,7 @@ export type BundlesUncheckedCreateWithoutInstallEventsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -9632,6 +9841,7 @@ export type BundlesUpdateWithoutInstallEventsInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -9656,7 +9866,7 @@ export type BundlesUpdateWithoutInstallEventsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -9749,6 +9959,7 @@ export type BundlesUncheckedUpdateWithoutInstallEventsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -9816,6 +10027,7 @@ export type BundlesCreateWithoutLanguagesInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -9840,7 +10052,7 @@ export type BundlesCreateWithoutLanguagesInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -9933,6 +10145,7 @@ export type BundlesUncheckedCreateWithoutLanguagesInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -10016,6 +10229,7 @@ export type BundlesUpdateWithoutLanguagesInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -10040,7 +10254,7 @@ export type BundlesUpdateWithoutLanguagesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -10133,6 +10347,7 @@ export type BundlesUncheckedUpdateWithoutLanguagesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -10200,6 +10415,7 @@ export type BundlesCreateWithoutLocalizationsInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -10224,7 +10440,7 @@ export type BundlesCreateWithoutLocalizationsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -10317,6 +10533,7 @@ export type BundlesUncheckedCreateWithoutLocalizationsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -10400,6 +10617,7 @@ export type BundlesUpdateWithoutLocalizationsInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -10424,7 +10642,7 @@ export type BundlesUpdateWithoutLocalizationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -10517,6 +10735,7 @@ export type BundlesUncheckedUpdateWithoutLocalizationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -10584,6 +10803,7 @@ export type BundlesCreateWithoutMonetizationConfigsInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -10608,7 +10828,7 @@ export type BundlesCreateWithoutMonetizationConfigsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -10701,6 +10921,7 @@ export type BundlesUncheckedCreateWithoutMonetizationConfigsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -10784,6 +11005,7 @@ export type BundlesUpdateWithoutMonetizationConfigsInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -10808,7 +11030,7 @@ export type BundlesUpdateWithoutMonetizationConfigsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -10901,6 +11123,7 @@ export type BundlesUncheckedUpdateWithoutMonetizationConfigsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -10968,6 +11191,7 @@ export type BundlesCreateWithoutOrdersInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -10992,7 +11216,7 @@ export type BundlesCreateWithoutOrdersInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -11085,6 +11309,7 @@ export type BundlesUncheckedCreateWithoutOrdersInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -11168,6 +11393,7 @@ export type BundlesUpdateWithoutOrdersInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -11192,7 +11418,7 @@ export type BundlesUpdateWithoutOrdersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -11285,6 +11511,7 @@ export type BundlesUncheckedUpdateWithoutOrdersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -11352,6 +11579,7 @@ export type BundlesCreateWithoutPermissionsInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -11376,7 +11604,7 @@ export type BundlesCreateWithoutPermissionsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -11469,6 +11697,7 @@ export type BundlesUncheckedCreateWithoutPermissionsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -11552,6 +11781,7 @@ export type BundlesUpdateWithoutPermissionsInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -11576,7 +11806,7 @@ export type BundlesUpdateWithoutPermissionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -11669,6 +11899,7 @@ export type BundlesUncheckedUpdateWithoutPermissionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -11736,6 +11967,7 @@ export type BundlesCreateWithoutPrivacyDeclarationsInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -11760,7 +11992,7 @@ export type BundlesCreateWithoutPrivacyDeclarationsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -11853,6 +12085,7 @@ export type BundlesUncheckedCreateWithoutPrivacyDeclarationsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -11936,6 +12169,7 @@ export type BundlesUpdateWithoutPrivacyDeclarationsInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -11960,7 +12194,7 @@ export type BundlesUpdateWithoutPrivacyDeclarationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -12053,6 +12287,7 @@ export type BundlesUncheckedUpdateWithoutPrivacyDeclarationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -12120,6 +12355,7 @@ export type BundlesCreateWithoutPromotionsInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -12144,7 +12380,7 @@ export type BundlesCreateWithoutPromotionsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -12237,6 +12473,7 @@ export type BundlesUncheckedCreateWithoutPromotionsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -12320,6 +12557,7 @@ export type BundlesUpdateWithoutPromotionsInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -12344,7 +12582,7 @@ export type BundlesUpdateWithoutPromotionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -12437,6 +12675,7 @@ export type BundlesUncheckedUpdateWithoutPromotionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -12504,6 +12743,7 @@ export type BundlesCreateWithoutRankingScoresInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -12528,7 +12768,7 @@ export type BundlesCreateWithoutRankingScoresInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -12621,6 +12861,7 @@ export type BundlesUncheckedCreateWithoutRankingScoresInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -12704,6 +12945,7 @@ export type BundlesUpdateWithoutRankingScoresInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -12728,7 +12970,7 @@ export type BundlesUpdateWithoutRankingScoresInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -12821,6 +13063,7 @@ export type BundlesUncheckedUpdateWithoutRankingScoresInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -12888,6 +13131,7 @@ export type BundlesCreateWithoutReleaseTracksInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -12912,7 +13156,7 @@ export type BundlesCreateWithoutReleaseTracksInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -13005,6 +13249,7 @@ export type BundlesUncheckedCreateWithoutReleaseTracksInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -13088,6 +13333,7 @@ export type BundlesUpdateWithoutReleaseTracksInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -13112,7 +13358,7 @@ export type BundlesUpdateWithoutReleaseTracksInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -13205,6 +13451,7 @@ export type BundlesUncheckedUpdateWithoutReleaseTracksInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -13272,6 +13519,7 @@ export type BundlesCreateWithoutRetentionStatsInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -13296,7 +13544,7 @@ export type BundlesCreateWithoutRetentionStatsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -13389,6 +13637,7 @@ export type BundlesUncheckedCreateWithoutRetentionStatsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -13472,6 +13721,7 @@ export type BundlesUpdateWithoutRetentionStatsInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -13496,7 +13746,7 @@ export type BundlesUpdateWithoutRetentionStatsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -13589,6 +13839,7 @@ export type BundlesUncheckedUpdateWithoutRetentionStatsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -13656,6 +13907,7 @@ export type BundlesCreateWithoutReviewsInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -13680,7 +13932,7 @@ export type BundlesCreateWithoutReviewsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -13773,6 +14025,7 @@ export type BundlesUncheckedCreateWithoutReviewsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -13856,6 +14109,7 @@ export type BundlesUpdateWithoutReviewsInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -13880,7 +14134,7 @@ export type BundlesUpdateWithoutReviewsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -13973,6 +14227,7 @@ export type BundlesUncheckedUpdateWithoutReviewsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -14040,6 +14295,7 @@ export type BundlesCreateWithoutRuntimeConfigInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -14064,7 +14320,7 @@ export type BundlesCreateWithoutRuntimeConfigInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -14157,6 +14413,7 @@ export type BundlesUncheckedCreateWithoutRuntimeConfigInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -14240,6 +14497,7 @@ export type BundlesUpdateWithoutRuntimeConfigInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -14264,7 +14522,7 @@ export type BundlesUpdateWithoutRuntimeConfigInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -14357,6 +14615,7 @@ export type BundlesUncheckedUpdateWithoutRuntimeConfigInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -14424,6 +14683,7 @@ export type BundlesCreateWithoutScreenshotsInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -14448,7 +14708,7 @@ export type BundlesCreateWithoutScreenshotsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -14541,6 +14801,7 @@ export type BundlesUncheckedCreateWithoutScreenshotsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -14624,6 +14885,7 @@ export type BundlesUpdateWithoutScreenshotsInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -14648,7 +14910,7 @@ export type BundlesUpdateWithoutScreenshotsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -14741,6 +15003,7 @@ export type BundlesUncheckedUpdateWithoutScreenshotsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -14808,6 +15071,7 @@ export type BundlesCreateWithoutSearchKeywordsInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -14832,7 +15096,7 @@ export type BundlesCreateWithoutSearchKeywordsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -14925,6 +15189,7 @@ export type BundlesUncheckedCreateWithoutSearchKeywordsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -15008,6 +15273,7 @@ export type BundlesUpdateWithoutSearchKeywordsInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -15032,7 +15298,7 @@ export type BundlesUpdateWithoutSearchKeywordsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -15125,6 +15391,7 @@ export type BundlesUncheckedUpdateWithoutSearchKeywordsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -15192,6 +15459,7 @@ export type BundlesCreateWithoutStateTransitionsInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -15216,7 +15484,7 @@ export type BundlesCreateWithoutStateTransitionsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -15309,6 +15577,7 @@ export type BundlesUncheckedCreateWithoutStateTransitionsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -15392,6 +15661,7 @@ export type BundlesUpdateWithoutStateTransitionsInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -15416,7 +15686,7 @@ export type BundlesUpdateWithoutStateTransitionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -15509,6 +15779,7 @@ export type BundlesUncheckedUpdateWithoutStateTransitionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -15576,6 +15847,7 @@ export type BundlesCreateWithoutStatsInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -15600,7 +15872,7 @@ export type BundlesCreateWithoutStatsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -15693,6 +15965,7 @@ export type BundlesUncheckedCreateWithoutStatsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -15776,6 +16049,7 @@ export type BundlesUpdateWithoutStatsInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -15800,7 +16074,7 @@ export type BundlesUpdateWithoutStatsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -15893,6 +16167,7 @@ export type BundlesUncheckedUpdateWithoutStatsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -15960,6 +16235,7 @@ export type BundlesCreateWithoutStoreFlagsInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -15984,7 +16260,7 @@ export type BundlesCreateWithoutStoreFlagsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -16077,6 +16353,7 @@ export type BundlesUncheckedCreateWithoutStoreFlagsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -16160,6 +16437,7 @@ export type BundlesUpdateWithoutStoreFlagsInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -16184,7 +16462,7 @@ export type BundlesUpdateWithoutStoreFlagsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -16277,6 +16555,7 @@ export type BundlesUncheckedUpdateWithoutStoreFlagsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -16344,6 +16623,7 @@ export type BundlesCreateWithoutStoreListingsInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -16368,7 +16648,7 @@ export type BundlesCreateWithoutStoreListingsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -16461,6 +16741,7 @@ export type BundlesUncheckedCreateWithoutStoreListingsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -16544,6 +16825,7 @@ export type BundlesUpdateWithoutStoreListingsInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -16568,7 +16850,7 @@ export type BundlesUpdateWithoutStoreListingsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -16661,6 +16943,7 @@ export type BundlesUncheckedUpdateWithoutStoreListingsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -16728,6 +17011,7 @@ export type BundlesCreateWithoutSubscriptionPlansInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -16752,7 +17036,7 @@ export type BundlesCreateWithoutSubscriptionPlansInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -16845,6 +17129,7 @@ export type BundlesUncheckedCreateWithoutSubscriptionPlansInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -16928,6 +17213,7 @@ export type BundlesUpdateWithoutSubscriptionPlansInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -16952,7 +17238,7 @@ export type BundlesUpdateWithoutSubscriptionPlansInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -17045,6 +17331,7 @@ export type BundlesUncheckedUpdateWithoutSubscriptionPlansInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -17112,6 +17399,7 @@ export type BundlesCreateWithoutTagsInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -17136,7 +17424,7 @@ export type BundlesCreateWithoutTagsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -17229,6 +17517,7 @@ export type BundlesUncheckedCreateWithoutTagsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -17312,6 +17601,7 @@ export type BundlesUpdateWithoutTagsInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -17336,7 +17626,7 @@ export type BundlesUpdateWithoutTagsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -17429,6 +17719,7 @@ export type BundlesUncheckedUpdateWithoutTagsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -17496,6 +17787,7 @@ export type BundlesCreateWithoutTrendingSnapshotsInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -17520,7 +17812,7 @@ export type BundlesCreateWithoutTrendingSnapshotsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -17613,6 +17905,7 @@ export type BundlesUncheckedCreateWithoutTrendingSnapshotsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -17696,6 +17989,7 @@ export type BundlesUpdateWithoutTrendingSnapshotsInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -17720,7 +18014,7 @@ export type BundlesUpdateWithoutTrendingSnapshotsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -17813,6 +18107,7 @@ export type BundlesUncheckedUpdateWithoutTrendingSnapshotsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -17880,6 +18175,7 @@ export type BundlesCreateWithoutUserReportsInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -17904,7 +18200,7 @@ export type BundlesCreateWithoutUserReportsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -17997,6 +18293,7 @@ export type BundlesUncheckedCreateWithoutUserReportsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -18080,6 +18377,7 @@ export type BundlesUpdateWithoutUserReportsInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -18104,7 +18402,7 @@ export type BundlesUpdateWithoutUserReportsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -18197,6 +18495,7 @@ export type BundlesUncheckedUpdateWithoutUserReportsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -18264,6 +18563,7 @@ export type BundlesCreateWithoutVersionHistoriesInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -18288,7 +18588,7 @@ export type BundlesCreateWithoutVersionHistoriesInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -18381,6 +18681,7 @@ export type BundlesUncheckedCreateWithoutVersionHistoriesInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -18464,6 +18765,7 @@ export type BundlesUpdateWithoutVersionHistoriesInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -18488,7 +18790,7 @@ export type BundlesUpdateWithoutVersionHistoriesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -18581,6 +18883,7 @@ export type BundlesUncheckedUpdateWithoutVersionHistoriesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -18648,6 +18951,7 @@ export type BundlesCreateWithoutWebhooksInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -18672,7 +18976,7 @@ export type BundlesCreateWithoutWebhooksInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -18765,6 +19069,7 @@ export type BundlesUncheckedCreateWithoutWebhooksInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -18848,6 +19153,7 @@ export type BundlesUpdateWithoutWebhooksInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -18872,7 +19178,7 @@ export type BundlesUpdateWithoutWebhooksInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -18965,6 +19271,7 @@ export type BundlesUncheckedUpdateWithoutWebhooksInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -19032,6 +19339,7 @@ export type BundlesCreateWithoutUserEntitlementsInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -19056,7 +19364,7 @@ export type BundlesCreateWithoutUserEntitlementsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -19149,6 +19457,7 @@ export type BundlesUncheckedCreateWithoutUserEntitlementsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -19232,6 +19541,7 @@ export type BundlesUpdateWithoutUserEntitlementsInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -19256,7 +19566,7 @@ export type BundlesUpdateWithoutUserEntitlementsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -19349,6 +19659,7 @@ export type BundlesUncheckedUpdateWithoutUserEntitlementsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -19416,6 +19727,7 @@ export type BundlesCreateWithoutRolloutsInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -19440,7 +19752,7 @@ export type BundlesCreateWithoutRolloutsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -19533,6 +19845,7 @@ export type BundlesUncheckedCreateWithoutRolloutsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -19616,6 +19929,7 @@ export type BundlesUpdateWithoutRolloutsInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -19640,7 +19954,7 @@ export type BundlesUpdateWithoutRolloutsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -19733,6 +20047,7 @@ export type BundlesUncheckedUpdateWithoutRolloutsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -19800,6 +20115,7 @@ export type BundlesCreateWithoutSubscriptionHistoryInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -19824,7 +20140,7 @@ export type BundlesCreateWithoutSubscriptionHistoryInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -19917,6 +20233,7 @@ export type BundlesUncheckedCreateWithoutSubscriptionHistoryInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -20000,6 +20317,7 @@ export type BundlesUpdateWithoutSubscriptionHistoryInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -20024,7 +20342,7 @@ export type BundlesUpdateWithoutSubscriptionHistoryInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -20117,6 +20435,7 @@ export type BundlesUncheckedUpdateWithoutSubscriptionHistoryInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -20184,6 +20503,7 @@ export type BundlesCreateWithoutCrashReportsInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -20208,7 +20528,7 @@ export type BundlesCreateWithoutCrashReportsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -20301,6 +20621,7 @@ export type BundlesUncheckedCreateWithoutCrashReportsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -20384,6 +20705,7 @@ export type BundlesUpdateWithoutCrashReportsInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -20408,7 +20730,7 @@ export type BundlesUpdateWithoutCrashReportsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -20501,6 +20823,7 @@ export type BundlesUncheckedUpdateWithoutCrashReportsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -20568,6 +20891,7 @@ export type BundlesCreateWithoutReviewHistoryInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -20592,7 +20916,7 @@ export type BundlesCreateWithoutReviewHistoryInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -20685,6 +21009,7 @@ export type BundlesUncheckedCreateWithoutReviewHistoryInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -20768,6 +21093,7 @@ export type BundlesUpdateWithoutReviewHistoryInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -20792,7 +21118,7 @@ export type BundlesUpdateWithoutReviewHistoryInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -20885,6 +21211,7 @@ export type BundlesUncheckedUpdateWithoutReviewHistoryInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -20952,6 +21279,7 @@ export type BundlesCreateWithoutReviewQueueInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -20976,7 +21304,7 @@ export type BundlesCreateWithoutReviewQueueInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -21069,6 +21397,7 @@ export type BundlesUncheckedCreateWithoutReviewQueueInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -21152,6 +21481,7 @@ export type BundlesUpdateWithoutReviewQueueInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -21176,7 +21506,7 @@ export type BundlesUpdateWithoutReviewQueueInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -21269,6 +21599,7 @@ export type BundlesUncheckedUpdateWithoutReviewQueueInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -21336,6 +21667,7 @@ export type BundlesCreateWithoutSecurityScanResultsInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -21360,7 +21692,7 @@ export type BundlesCreateWithoutSecurityScanResultsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -21453,6 +21785,7 @@ export type BundlesUncheckedCreateWithoutSecurityScanResultsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -21536,6 +21869,7 @@ export type BundlesUpdateWithoutSecurityScanResultsInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -21560,7 +21894,7 @@ export type BundlesUpdateWithoutSecurityScanResultsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -21653,6 +21987,7 @@ export type BundlesUncheckedUpdateWithoutSecurityScanResultsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -21720,6 +22055,7 @@ export type BundlesCreateWithoutUpdatePhasesInput = {
   supportUrl?: string | null
   websiteUrl?: string | null
   developerName?: string | null
+  developerId?: string | null
   developerEmail?: string | null
   category?: string | null
   subCategory?: string | null
@@ -21744,7 +22080,7 @@ export type BundlesCreateWithoutUpdatePhasesInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
-  developer?: Prisma.UserCreateNestedOneWithoutBundlesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -21837,6 +22173,7 @@ export type BundlesUncheckedCreateWithoutUpdatePhasesInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  projectId?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -21920,6 +22257,7 @@ export type BundlesUpdateWithoutUpdatePhasesInput = {
   supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -21944,7 +22282,7 @@ export type BundlesUpdateWithoutUpdatePhasesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  developer?: Prisma.UserUpdateOneWithoutBundlesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -22037,6 +22375,7 @@ export type BundlesUncheckedUpdateWithoutUpdatePhasesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -22087,272 +22426,6 @@ export type BundlesUncheckedUpdateWithoutUpdatePhasesInput = {
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutBundleNestedInput
   reviewQueue?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutBundleNestedInput
   securityScanResults?: Prisma.BundleSecurityScanResultsUncheckedUpdateManyWithoutBundleNestedInput
-}
-
-export type BundlesCreateManyDeveloperInput = {
-  id: string
-  bundleKey?: string | null
-  name: string
-  slug?: string | null
-  version?: string
-  buildNumber?: number
-  iconUrl?: string | null
-  bannerUrl?: string | null
-  shortDescription?: string | null
-  description?: string | null
-  privacyPolicyUrl?: string | null
-  supportUrl?: string | null
-  websiteUrl?: string | null
-  developerName?: string | null
-  developerEmail?: string | null
-  category?: string | null
-  subCategory?: string | null
-  storagePath: string
-  bucket: string
-  fileSize?: bigint | number | null
-  checksum?: string | null
-  price?: number | null
-  currency?: string | null
-  isFree?: boolean
-  isOneTimePayment?: boolean
-  hasInAppPurchases?: boolean
-  hasSubscription?: boolean
-  status?: string
-  rejectionReason?: string | null
-  publishedAt?: Date | string | null
-  expiresAt?: Date | string | null
-  changelog?: string | null
-  releaseNotes?: string | null
-  ageRating?: string | null
-  contentAdvisory?: string | null
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-}
-
-export type BundlesUpdateWithoutDeveloperInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  bundleKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  version?: Prisma.StringFieldUpdateOperationsInput | string
-  buildNumber?: Prisma.IntFieldUpdateOperationsInput | number
-  iconUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  privacyPolicyUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  storagePath?: Prisma.StringFieldUpdateOperationsInput | string
-  bucket?: Prisma.StringFieldUpdateOperationsInput | string
-  fileSize?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-  checksum?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  price?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isOneTimePayment?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasInAppPurchases?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasSubscription?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  status?: Prisma.StringFieldUpdateOperationsInput | string
-  rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  changelog?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  releaseNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  ageRating?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  contentAdvisory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
-  abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
-  adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
-  analyticsEvents?: Prisma.BundleAnalyticsEventsUpdateManyWithoutBundleNestedInput
-  apiUsageStats?: Prisma.BundleApiUsageStatsUpdateManyWithoutBundleNestedInput
-  auditLogs?: Prisma.BundleAuditLogUpdateManyWithoutBundleNestedInput
-  betaTesters?: Prisma.BundleBetaTestersUpdateManyWithoutBundleNestedInput
-  changeLogs?: Prisma.BundleChangeLogsUpdateManyWithoutBundleNestedInput
-  collaborators?: Prisma.BundleCollaboratorsUpdateManyWithoutBundleNestedInput
-  contentRatings?: Prisma.BundleContentRatingsUpdateManyWithoutBundleNestedInput
-  countries?: Prisma.BundleCountriesUpdateManyWithoutBundleNestedInput
-  dependencies?: Prisma.BundleDependenciesUpdateManyWithoutBundleNestedInput
-  dependentBundles?: Prisma.BundleDependenciesUpdateManyWithoutDependencyBundleNestedInput
-  developerStrikes?: Prisma.BundleDeveloperStrikesUpdateManyWithoutBundleNestedInput
-  deviceSupports?: Prisma.BundleDeviceSupportUpdateManyWithoutBundleNestedInput
-  externalIntegrations?: Prisma.BundleExternalIntegrationsUpdateManyWithoutBundleNestedInput
-  featuredSlots?: Prisma.BundleFeaturedSlotsUpdateManyWithoutBundleNestedInput
-  inAppPurchases?: Prisma.BundleInAppPurchasesUpdateManyWithoutBundleNestedInput
-  installEvents?: Prisma.BundleInstallEventsUpdateManyWithoutBundleNestedInput
-  languages?: Prisma.BundleLanguagesUpdateManyWithoutBundleNestedInput
-  localizations?: Prisma.BundleLocalizationsUpdateManyWithoutBundleNestedInput
-  monetizationConfigs?: Prisma.BundleMonetizationConfigsUpdateOneWithoutBundleNestedInput
-  orders?: Prisma.BundleOrdersUpdateManyWithoutBundleNestedInput
-  permissions?: Prisma.BundlePermissionsUpdateManyWithoutBundleNestedInput
-  privacyDeclarations?: Prisma.BundlePrivacyDeclarationsUpdateOneWithoutBundleNestedInput
-  promotions?: Prisma.BundlePromotionsUpdateManyWithoutBundleNestedInput
-  rankingScores?: Prisma.BundleRankingScoresUpdateOneWithoutBundleNestedInput
-  releaseTracks?: Prisma.BundleReleaseTracksUpdateManyWithoutBundleNestedInput
-  retentionStats?: Prisma.BundleRetentionStatsUpdateManyWithoutBundleNestedInput
-  reviews?: Prisma.BundleReviewsUpdateManyWithoutBundleNestedInput
-  runtimeConfig?: Prisma.BundleRuntimeConfigUpdateOneWithoutBundleNestedInput
-  screenshots?: Prisma.BundleScreenshotsUpdateManyWithoutBundleNestedInput
-  searchKeywords?: Prisma.BundleSearchKeywordsUpdateManyWithoutBundleNestedInput
-  stateTransitions?: Prisma.BundleStateTransitionsUpdateManyWithoutBundleNestedInput
-  stats?: Prisma.BundleStatsUpdateOneWithoutBundleNestedInput
-  storeFlags?: Prisma.BundleStoreFlagsUpdateOneWithoutBundleNestedInput
-  storeListings?: Prisma.BundleStoreListingsUpdateManyWithoutBundleNestedInput
-  subscriptionPlans?: Prisma.BundleSubscriptionPlansUpdateManyWithoutBundleNestedInput
-  tags?: Prisma.BundleTagsUpdateManyWithoutBundleNestedInput
-  trendingSnapshots?: Prisma.BundleTrendingSnapshotsUpdateManyWithoutBundleNestedInput
-  userReports?: Prisma.BundleUserReportsUpdateManyWithoutBundleNestedInput
-  versionHistories?: Prisma.BundleVersionHistoryUpdateManyWithoutBundleNestedInput
-  webhooks?: Prisma.BundleWebhooksUpdateManyWithoutBundleNestedInput
-  userEntitlements?: Prisma.BundleUserEntitlementsUpdateManyWithoutBundleNestedInput
-  rollouts?: Prisma.BundleRolloutsUpdateManyWithoutBundleNestedInput
-  subscriptionHistory?: Prisma.BundleSubscriptionHistoryUpdateManyWithoutBundleNestedInput
-  crashReports?: Prisma.BundleCrashReportsUpdateManyWithoutBundleNestedInput
-  reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutBundleNestedInput
-  reviewQueue?: Prisma.BundleReviewQueueUpdateManyWithoutBundleNestedInput
-  securityScanResults?: Prisma.BundleSecurityScanResultsUpdateManyWithoutBundleNestedInput
-  updatePhases?: Prisma.BundleUpdatePhasesUpdateManyWithoutBundleNestedInput
-}
-
-export type BundlesUncheckedUpdateWithoutDeveloperInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  bundleKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  version?: Prisma.StringFieldUpdateOperationsInput | string
-  buildNumber?: Prisma.IntFieldUpdateOperationsInput | number
-  iconUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  privacyPolicyUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  storagePath?: Prisma.StringFieldUpdateOperationsInput | string
-  bucket?: Prisma.StringFieldUpdateOperationsInput | string
-  fileSize?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-  checksum?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  price?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isOneTimePayment?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasInAppPurchases?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasSubscription?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  status?: Prisma.StringFieldUpdateOperationsInput | string
-  rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  changelog?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  releaseNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  ageRating?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  contentAdvisory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
-  abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
-  adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
-  analyticsEvents?: Prisma.BundleAnalyticsEventsUncheckedUpdateManyWithoutBundleNestedInput
-  apiUsageStats?: Prisma.BundleApiUsageStatsUncheckedUpdateManyWithoutBundleNestedInput
-  auditLogs?: Prisma.BundleAuditLogUncheckedUpdateManyWithoutBundleNestedInput
-  betaTesters?: Prisma.BundleBetaTestersUncheckedUpdateManyWithoutBundleNestedInput
-  changeLogs?: Prisma.BundleChangeLogsUncheckedUpdateManyWithoutBundleNestedInput
-  collaborators?: Prisma.BundleCollaboratorsUncheckedUpdateManyWithoutBundleNestedInput
-  contentRatings?: Prisma.BundleContentRatingsUncheckedUpdateManyWithoutBundleNestedInput
-  countries?: Prisma.BundleCountriesUncheckedUpdateManyWithoutBundleNestedInput
-  dependencies?: Prisma.BundleDependenciesUncheckedUpdateManyWithoutBundleNestedInput
-  dependentBundles?: Prisma.BundleDependenciesUncheckedUpdateManyWithoutDependencyBundleNestedInput
-  developerStrikes?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutBundleNestedInput
-  deviceSupports?: Prisma.BundleDeviceSupportUncheckedUpdateManyWithoutBundleNestedInput
-  externalIntegrations?: Prisma.BundleExternalIntegrationsUncheckedUpdateManyWithoutBundleNestedInput
-  featuredSlots?: Prisma.BundleFeaturedSlotsUncheckedUpdateManyWithoutBundleNestedInput
-  inAppPurchases?: Prisma.BundleInAppPurchasesUncheckedUpdateManyWithoutBundleNestedInput
-  installEvents?: Prisma.BundleInstallEventsUncheckedUpdateManyWithoutBundleNestedInput
-  languages?: Prisma.BundleLanguagesUncheckedUpdateManyWithoutBundleNestedInput
-  localizations?: Prisma.BundleLocalizationsUncheckedUpdateManyWithoutBundleNestedInput
-  monetizationConfigs?: Prisma.BundleMonetizationConfigsUncheckedUpdateOneWithoutBundleNestedInput
-  orders?: Prisma.BundleOrdersUncheckedUpdateManyWithoutBundleNestedInput
-  permissions?: Prisma.BundlePermissionsUncheckedUpdateManyWithoutBundleNestedInput
-  privacyDeclarations?: Prisma.BundlePrivacyDeclarationsUncheckedUpdateOneWithoutBundleNestedInput
-  promotions?: Prisma.BundlePromotionsUncheckedUpdateManyWithoutBundleNestedInput
-  rankingScores?: Prisma.BundleRankingScoresUncheckedUpdateOneWithoutBundleNestedInput
-  releaseTracks?: Prisma.BundleReleaseTracksUncheckedUpdateManyWithoutBundleNestedInput
-  retentionStats?: Prisma.BundleRetentionStatsUncheckedUpdateManyWithoutBundleNestedInput
-  reviews?: Prisma.BundleReviewsUncheckedUpdateManyWithoutBundleNestedInput
-  runtimeConfig?: Prisma.BundleRuntimeConfigUncheckedUpdateOneWithoutBundleNestedInput
-  screenshots?: Prisma.BundleScreenshotsUncheckedUpdateManyWithoutBundleNestedInput
-  searchKeywords?: Prisma.BundleSearchKeywordsUncheckedUpdateManyWithoutBundleNestedInput
-  stateTransitions?: Prisma.BundleStateTransitionsUncheckedUpdateManyWithoutBundleNestedInput
-  stats?: Prisma.BundleStatsUncheckedUpdateOneWithoutBundleNestedInput
-  storeFlags?: Prisma.BundleStoreFlagsUncheckedUpdateOneWithoutBundleNestedInput
-  storeListings?: Prisma.BundleStoreListingsUncheckedUpdateManyWithoutBundleNestedInput
-  subscriptionPlans?: Prisma.BundleSubscriptionPlansUncheckedUpdateManyWithoutBundleNestedInput
-  tags?: Prisma.BundleTagsUncheckedUpdateManyWithoutBundleNestedInput
-  trendingSnapshots?: Prisma.BundleTrendingSnapshotsUncheckedUpdateManyWithoutBundleNestedInput
-  userReports?: Prisma.BundleUserReportsUncheckedUpdateManyWithoutBundleNestedInput
-  versionHistories?: Prisma.BundleVersionHistoryUncheckedUpdateManyWithoutBundleNestedInput
-  webhooks?: Prisma.BundleWebhooksUncheckedUpdateManyWithoutBundleNestedInput
-  userEntitlements?: Prisma.BundleUserEntitlementsUncheckedUpdateManyWithoutBundleNestedInput
-  rollouts?: Prisma.BundleRolloutsUncheckedUpdateManyWithoutBundleNestedInput
-  subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedUpdateManyWithoutBundleNestedInput
-  crashReports?: Prisma.BundleCrashReportsUncheckedUpdateManyWithoutBundleNestedInput
-  reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutBundleNestedInput
-  reviewQueue?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutBundleNestedInput
-  securityScanResults?: Prisma.BundleSecurityScanResultsUncheckedUpdateManyWithoutBundleNestedInput
-  updatePhases?: Prisma.BundleUpdatePhasesUncheckedUpdateManyWithoutBundleNestedInput
-}
-
-export type BundlesUncheckedUpdateManyWithoutDeveloperInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  bundleKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  version?: Prisma.StringFieldUpdateOperationsInput | string
-  buildNumber?: Prisma.IntFieldUpdateOperationsInput | number
-  iconUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  privacyPolicyUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  storagePath?: Prisma.StringFieldUpdateOperationsInput | string
-  bucket?: Prisma.StringFieldUpdateOperationsInput | string
-  fileSize?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-  checksum?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  price?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isOneTimePayment?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasInAppPurchases?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasSubscription?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  status?: Prisma.StringFieldUpdateOperationsInput | string
-  rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  changelog?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  releaseNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  ageRating?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  contentAdvisory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 
@@ -22804,7 +22877,8 @@ export type BundlesSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
-  developer?: boolean | Prisma.Bundles$developerArgs<ExtArgs>
+  projectId?: boolean
+  project?: boolean | Prisma.Bundles$projectArgs<ExtArgs>
   abTests?: boolean | Prisma.Bundles$abTestsArgs<ExtArgs>
   abuseSignals?: boolean | Prisma.Bundles$abuseSignalsArgs<ExtArgs>
   adConfigurations?: boolean | Prisma.Bundles$adConfigurationsArgs<ExtArgs>
@@ -22899,7 +22973,8 @@ export type BundlesSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
-  developer?: boolean | Prisma.Bundles$developerArgs<ExtArgs>
+  projectId?: boolean
+  project?: boolean | Prisma.Bundles$projectArgs<ExtArgs>
 }, ExtArgs["result"]["bundles"]>
 
 export type BundlesSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -22942,7 +23017,8 @@ export type BundlesSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
-  developer?: boolean | Prisma.Bundles$developerArgs<ExtArgs>
+  projectId?: boolean
+  project?: boolean | Prisma.Bundles$projectArgs<ExtArgs>
 }, ExtArgs["result"]["bundles"]>
 
 export type BundlesSelectScalar = {
@@ -22985,11 +23061,12 @@ export type BundlesSelectScalar = {
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
+  projectId?: boolean
 }
 
-export type BundlesOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bundleKey" | "name" | "slug" | "version" | "buildNumber" | "iconUrl" | "bannerUrl" | "shortDescription" | "description" | "privacyPolicyUrl" | "supportUrl" | "websiteUrl" | "developerName" | "developerId" | "developerEmail" | "category" | "subCategory" | "storagePath" | "bucket" | "fileSize" | "checksum" | "price" | "currency" | "isFree" | "isOneTimePayment" | "hasInAppPurchases" | "hasSubscription" | "status" | "rejectionReason" | "publishedAt" | "expiresAt" | "changelog" | "releaseNotes" | "ageRating" | "contentAdvisory" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["bundles"]>
+export type BundlesOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bundleKey" | "name" | "slug" | "version" | "buildNumber" | "iconUrl" | "bannerUrl" | "shortDescription" | "description" | "privacyPolicyUrl" | "supportUrl" | "websiteUrl" | "developerName" | "developerId" | "developerEmail" | "category" | "subCategory" | "storagePath" | "bucket" | "fileSize" | "checksum" | "price" | "currency" | "isFree" | "isOneTimePayment" | "hasInAppPurchases" | "hasSubscription" | "status" | "rejectionReason" | "publishedAt" | "expiresAt" | "changelog" | "releaseNotes" | "ageRating" | "contentAdvisory" | "createdAt" | "updatedAt" | "deletedAt" | "projectId", ExtArgs["result"]["bundles"]>
 export type BundlesInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  developer?: boolean | Prisma.Bundles$developerArgs<ExtArgs>
+  project?: boolean | Prisma.Bundles$projectArgs<ExtArgs>
   abTests?: boolean | Prisma.Bundles$abTestsArgs<ExtArgs>
   abuseSignals?: boolean | Prisma.Bundles$abuseSignalsArgs<ExtArgs>
   adConfigurations?: boolean | Prisma.Bundles$adConfigurationsArgs<ExtArgs>
@@ -23044,16 +23121,16 @@ export type BundlesInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   _count?: boolean | Prisma.BundlesCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type BundlesIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  developer?: boolean | Prisma.Bundles$developerArgs<ExtArgs>
+  project?: boolean | Prisma.Bundles$projectArgs<ExtArgs>
 }
 export type BundlesIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  developer?: boolean | Prisma.Bundles$developerArgs<ExtArgs>
+  project?: boolean | Prisma.Bundles$projectArgs<ExtArgs>
 }
 
 export type $BundlesPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Bundles"
   objects: {
-    developer: Prisma.$UserPayload<ExtArgs> | null
+    project: Prisma.$ProjectPayload<ExtArgs> | null
     abTests: Prisma.$BundleAbTestsPayload<ExtArgs>[]
     abuseSignals: Prisma.$BundleAbuseSignalsPayload<ExtArgs> | null
     adConfigurations: Prisma.$BundleAdConfigurationsPayload<ExtArgs> | null
@@ -23146,6 +23223,7 @@ export type $BundlesPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     createdAt: Date
     updatedAt: Date
     deletedAt: Date | null
+    projectId: string | null
   }, ExtArgs["result"]["bundles"]>
   composites: {}
 }
@@ -23540,7 +23618,7 @@ readonly fields: BundlesFieldRefs;
  */
 export interface Prisma__BundlesClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  developer<T extends Prisma.Bundles$developerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Bundles$developerArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  project<T extends Prisma.Bundles$projectArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Bundles$projectArgs<ExtArgs>>): Prisma.Prisma__ProjectClient<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   abTests<T extends Prisma.Bundles$abTestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Bundles$abTestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BundleAbTestsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   abuseSignals<T extends Prisma.Bundles$abuseSignalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Bundles$abuseSignalsArgs<ExtArgs>>): Prisma.Prisma__BundleAbuseSignalsClient<runtime.Types.Result.GetResult<Prisma.$BundleAbuseSignalsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   adConfigurations<T extends Prisma.Bundles$adConfigurationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Bundles$adConfigurationsArgs<ExtArgs>>): Prisma.Prisma__BundleAdConfigurationsClient<runtime.Types.Result.GetResult<Prisma.$BundleAdConfigurationsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
@@ -23660,6 +23738,7 @@ export interface BundlesFieldRefs {
   readonly createdAt: Prisma.FieldRef<"Bundles", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Bundles", 'DateTime'>
   readonly deletedAt: Prisma.FieldRef<"Bundles", 'DateTime'>
+  readonly projectId: Prisma.FieldRef<"Bundles", 'String'>
 }
     
 
@@ -24061,22 +24140,22 @@ export type BundlesDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
 }
 
 /**
- * Bundles.developer
+ * Bundles.project
  */
-export type Bundles$developerArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Bundles$projectArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the User
+   * Select specific fields to fetch from the Project
    */
-  select?: Prisma.UserSelect<ExtArgs> | null
+  select?: Prisma.ProjectSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the User
+   * Omit specific fields from the Project
    */
-  omit?: Prisma.UserOmit<ExtArgs> | null
+  omit?: Prisma.ProjectOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.UserInclude<ExtArgs> | null
-  where?: Prisma.UserWhereInput
+  include?: Prisma.ProjectInclude<ExtArgs> | null
+  where?: Prisma.ProjectWhereInput
 }
 
 /**

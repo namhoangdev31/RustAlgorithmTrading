@@ -55,6 +55,8 @@ export const ModelName = {
   RiskEvent: 'RiskEvent',
   File: 'File',
   User: 'User',
+  Organization: 'Organization',
+  Project: 'Project',
   BundlePayouts: 'BundlePayouts',
   Bundles: 'Bundles',
   Notifications: 'Notifications',
@@ -195,6 +197,32 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+export const OrganizationScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  type: 'type',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+} as const
+
+export type OrganizationScalarFieldEnum = (typeof OrganizationScalarFieldEnum)[keyof typeof OrganizationScalarFieldEnum]
+
+
+export const ProjectScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  organizationId: 'organizationId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+} as const
+
+export type ProjectScalarFieldEnum = (typeof ProjectScalarFieldEnum)[keyof typeof ProjectScalarFieldEnum]
+
+
 export const BundlePayoutsScalarFieldEnum = {
   id: 'id',
   developerId: 'developerId',
@@ -251,7 +279,8 @@ export const BundlesScalarFieldEnum = {
   contentAdvisory: 'contentAdvisory',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  deletedAt: 'deletedAt'
+  deletedAt: 'deletedAt',
+  projectId: 'projectId'
 } as const
 
 export type BundlesScalarFieldEnum = (typeof BundlesScalarFieldEnum)[keyof typeof BundlesScalarFieldEnum]
