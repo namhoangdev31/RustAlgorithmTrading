@@ -290,6 +290,7 @@ Standalone iOS project (SwiftUI + Liquid Glass). Migrated from `leposapp/iosApp`
 | `frontend/app/dashboard/[id]/page.tsx` | Dashboard detail page | Dynamically displays individual dashboard instance data via `id` param. |
 | `frontend/app/globals.css` | Tailwind/shadcn theme tokens | CSS variables for Light/dark trading platform palette. |
 | `frontend/components/layout/` | Page shell and section components | `navbar.tsx`, `theme-provider.tsx`, `sections/hero.tsx`, `sections/features.tsx`, `sections/pricing.tsx`. |
+| `frontend/components/layout/reset-password.tsx` | Password reset view | Firebase password reset UI component. |
 | `frontend/components/ui/` | shadcn source components | Primitive UI elements: `button.tsx`, `card.tsx`, `sheet.tsx`, `navigation-menu.tsx`, `accordion.tsx`, `form.tsx`. |
 | `frontend/public/` | Static landing assets | Images, SVG icons, Favicon. |
 | frontend/package.json | Dependencies and scripts | Next.js, React, Tailwind, Framer Motion, Lucide icons dependencies. |
