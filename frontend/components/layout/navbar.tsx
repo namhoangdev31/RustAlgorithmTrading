@@ -2,6 +2,7 @@
 import {
   Activity,
   Blocks,
+  LogIn,
   Menu,
   ShieldCheck,
   Zap,
@@ -27,7 +28,6 @@ import {
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { ToggleTheme } from "./toogle-theme";
-import { GithubIcon } from "../ui/icon";
 
 interface RouteProps {
   href: string;
@@ -158,18 +158,18 @@ export const Navbar = () => {
                   {featureList.map(({ title, description }, index) => {
                     const FeatureIcon = featureIcons[index];
                     return (
-                    <li
-                      key={title}
-                      className="rounded-md p-3 text-sm hover:bg-muted"
-                    >
-                      <div className="mb-1 flex items-center gap-2 font-semibold leading-none text-foreground">
-                        <FeatureIcon className="size-4 text-primary" />
-                        {title}
-                      </div>
-                      <p className="line-clamp-2 text-muted-foreground">
-                        {description}
-                      </p>
-                    </li>
+                      <li
+                        key={title}
+                        className="rounded-md p-3 text-sm hover:bg-muted"
+                      >
+                        <div className="mb-1 flex items-center gap-2 font-semibold leading-none text-foreground">
+                          <FeatureIcon className="size-4 text-primary" />
+                          {title}
+                        </div>
+                        <p className="line-clamp-2 text-muted-foreground">
+                          {description}
+                        </p>
+                      </li>
                     );
                   })}
                 </ul>
@@ -192,13 +192,12 @@ export const Navbar = () => {
       <div className="hidden lg:flex">
         <ToggleTheme />
 
-        <Button asChild size="sm" variant="ghost" aria-label="View on GitHub">
+        <Button asChild size="sm" variant="ghost" aria-label="Login to Platform">
           <Link
-            aria-label="View on GitHub"
-            href="https://github.com/SamoraDC/RustAlgorithmTrading"
-            target="_blank"
+            aria-label="Login to Platform"
+            href="/login"
           >
-            <GithubIcon className="h-4 w-4" />
+            <LogIn className="h-4 w-4" />
           </Link>
         </Button>
       </div>

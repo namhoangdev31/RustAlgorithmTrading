@@ -2,8 +2,8 @@ import {
   ScanFace,
   BookOpenText,
   ChevronsLeftRight,
-  Github,
 } from "lucide-react";
+import { GithubIcon } from "@/components/ui/icon";
 
 /**
  * Splash screen displayed when no resources are configured yet.
@@ -46,7 +46,7 @@ export const Ready = () => (
       </div>
       <div className="text-xl">
         <a href="https://github.com/marmelab/shadcn-admin-kit">
-          <Github className="inline mr-4 w-10 h-10" />
+          <GithubIcon className="inline mr-4 w-10 h-10" />
           GitHub
         </a>
       </div>

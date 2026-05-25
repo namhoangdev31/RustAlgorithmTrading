@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label"
 import React, { useState } from "react"
 import { signInWithEmailAndPassword, signInWithPopup, sendPasswordResetEmail, User } from "firebase/auth"
 import { auth, googleProvider } from "@/firebase/firebase"
+import { useReCaptcha } from "next-recaptcha-v3"
 
 interface CardLoginProps {
     onShowSignup?: () => void;
@@ -24,12 +25,29 @@ export function CardLogin({ onShowSignup, onLoginSuccess }: CardLoginProps) {
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [error, setError] = useState("")
     const [info, setInfo] = useState("")
+    const { executeRecaptcha } = useReCaptcha()
 
     const handleSubmit = async (e: React.SyntheticEvent) => {
         e.preventDefault()
         setError("")
         setIsSubmitting(true)
         try {
+            if (!executeRecaptcha) {
+                throw new Error("reCAPTCHA script has not loaded yet. Please try again.")
+            }
+            const token = await executeRecaptcha("login")
+            const verifyRes = await fetch("/api/verify-recaptcha", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ token, action: "login" }),
+            })
+            const verifyData = await verifyRes.json()
+            if (!verifyData.success) {
+                throw new Error(verifyData.error || "reCAPTCHA verification failed")
+            }
+
             const cred = await signInWithEmailAndPassword(auth, email, password)
             const user = cred?.user || auth.currentUser
             onLoginSuccess && onLoginSuccess(user)
@@ -107,7 +125,7 @@ export function CardLogin({ onShowSignup, onLoginSuccess }: CardLoginProps) {
             })
     }
     return (
-        <Card className="w-full max-w-sm m-4">
+        <Card className="w-full max-w-sm m-4 py-0 pt-4">
             <CardHeader>
                 <CardTitle className="text-center mt-2">Let's Get You In</CardTitle>
                 <CardDescription className="text-center mt-2">
@@ -151,7 +169,7 @@ export function CardLogin({ onShowSignup, onLoginSuccess }: CardLoginProps) {
                 </form>
             </CardContent>
 
-            <CardFooter className="flex-col gap-4">
+            <CardFooter className="flex-col gap-4 pb-4">
                 <Button type="submit" className="w-full bg-slate-900 hover:bg-slate-800 text-white h-11" disabled={isSubmitting} onClick={handleSubmit}>
                     {isSubmitting ? "Signing in..." : "Sign in"}
                 </Button>

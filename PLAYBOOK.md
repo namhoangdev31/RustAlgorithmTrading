@@ -281,7 +281,9 @@ Standalone iOS project (SwiftUI + Liquid Glass). Migrated from `leposapp/iosApp`
 
 | Path | Responsibility | Key components |
 |---|---|---|
-| `frontend/app/layout.tsx` | Global layout wrapper | Root HTML layout, font loading, `ThemeProvider` injection. |
+| `frontend/app/layout.tsx` | Global layout wrapper | Root HTML layout, font loading, `ThemeProvider` and `RecaptchaProvider` injection. |
+| `frontend/app/api/verify-recaptcha/route.ts` | Server-side reCAPTCHA token verification API | Validates client tokens against Google's reCAPTCHA API. |
+| `frontend/components/layout/recaptcha-provider.tsx` | Client reCAPTCHA provider wrapper | Integrates `ReCaptchaProvider` from `next-recaptcha-v3` into App Layout. |
 | `frontend/app/(marketing)/layout.tsx` | Marketing layout wrapper | Contains the shared `<Navbar />` component for marketing pages. |
 | `frontend/app/(marketing)/page.tsx` | Landing page composition | Main entry point composing `Hero`, `Benefits`, `Features`, `Pricing`, `Contact`, `FAQ`, `Footer`. |
 | `frontend/app/login/page.tsx` | Login page component | Server Component rendering a premium login form without Navbar. |
@@ -295,6 +297,7 @@ Standalone iOS project (SwiftUI + Liquid Glass). Migrated from `leposapp/iosApp`
 | `frontend/components/ui/` | shadcn source components | Primitive UI elements: `button.tsx`, `card.tsx`, `sheet.tsx`, `navigation-menu.tsx`, `accordion.tsx`, `form.tsx`. |
 | `frontend/public/` | Static landing assets | Images, SVG icons, Favicon. |
 | frontend/package.json | Dependencies and scripts | Next.js, React, Tailwind, Framer Motion, Lucide icons dependencies. |
+| `frontend/types/lodash.d.ts` | Custom lodash type declarations | Polyfills typescript type definitions for lodash sub-imports. |
 | frontend/prisma/schema.prisma | Prisma Schema Definition | Database connection & entity schemas (`Order`, `RiskEvent`) mapping to PostgreSQL |
 
 Validate with:
