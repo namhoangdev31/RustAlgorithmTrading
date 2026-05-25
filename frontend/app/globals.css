@@ -73,98 +73,106 @@ html {
   }
 } */
 
-/* *=========== Trading platform theme =========== */
+/* *=========== Figma Design System theme =========== */
 @layer base {
   :root {
-    --background: 70 11% 93%; /* #eeefe9 (cream canvas) */
-    --foreground: 78 11% 13%; /* #23251d (deep olive-charcoal ink) */
+    --background: 0 0% 100%; /* #ffffff (canvas) */
+    --foreground: 0 0% 0%; /* #000000 (ink) */
 
-    --card: 0 0% 100%; /* #ffffff (true white) */
-    --card-foreground: 78 11% 13%; /* #23251d */
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 0%;
 
-    --popover: 0 0% 100%; /* #ffffff */
-    --popover-foreground: 78 11% 13%; /* #23251d */
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 0%;
 
-    --primary: 40 99% 49%; /* #f7a501 (PostHog Yellow) */
-    --primary-foreground: 78 11% 13%; /* #23251d */
+    --primary: 0 0% 0%; /* #000000 */
+    --primary-foreground: 0 0% 100%; /* #ffffff */
 
-    --secondary: 77 9% 89%; /* #e5e7e0 (surface-soft) */
-    --secondary-foreground: 78 11% 13%; /* #23251d */
+    --secondary: 60 8% 96%; /* #f7f7f5 (surface-soft) */
+    --secondary-foreground: 0 0% 0%;
 
-    --muted: 77 9% 89%; /* #e5e7e0 */
-    --muted-foreground: 73 5% 41%; /* #6c6e63 (mute) */
+    --muted: 60 8% 96%;
+    --muted-foreground: 0 0% 40%;
 
-    --accent: 77 9% 89%; /* #e5e7e0 */
-    --accent-foreground: 78 11% 13%; /* #23251d */
+    --accent: 60 8% 96%;
+    --accent-foreground: 0 0% 0%;
 
-    --destructive: 4 60% 52%; /* #cd4239 (accent-red) */
-    --destructive-foreground: 0 0% 100%; /* #ffffff */
+    --destructive: 336 100% 62%; /* #ff3d8b (accent-magenta) */
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 75 6% 74%; /* #bfc1b7 (hairline) */
-    --input: 75 6% 74%; /* #bfc1b7 */
-    --ring: 210 74% 53%; /* #2c84e0 (accent-blue) */
+    --border: 0 0% 90%; /* #e6e6e6 (hairline) */
+    --input: 0 0% 90%;
+    --ring: 0 0% 0%;
 
-    --radius: 0.375rem; /* 6px */
+    --radius: 0.5rem; /* 8px default */
 
-    /* Custom PostHog palette to be mapped in Tailwind */
-    --posthog-yellow: 40 99% 49%;
-    --posthog-charcoal: 73 7% 19%;
-    --posthog-ash: 73 5% 59%;
-    --posthog-stone: 75 5% 70%;
-    --posthog-link-blue: 224 76% 48%;
-    --posthog-link-teal: 198 82% 35%;
-    --posthog-blue-soft: 208 56% 91%;
-    --posthog-green-soft: 140 36% 89%;
-    --posthog-red-soft: 5 69% 90%;
-    --posthog-purple-soft: 280 38% 89%;
+    /* Figma Design System Custom Tokens */
+    --ink: 0 0% 0%;
+    --canvas: 0 0% 100%;
+    --inverse-canvas: 0 0% 0%;
+    --inverse-ink: 0 0% 100%;
+    --on-inverse-soft: 0 0% 100%;
+    --hairline: 0 0% 90%;
+    --hairline-soft: 0 0% 95%;
+    --surface-soft: 60 8% 96%;
+    --block-lime: 78 61% 81%;
+    --block-lilac: 259 74% 82%;
+    --block-cream: 45 54% 90%;
+    --block-pink: 0 43% 88%;
+    --block-mint: 130 35% 84%;
+    --block-coral: 19 71% 83%;
+    --block-navy: 243 35% 18%;
+    --accent-magenta: 336 100% 62%;
+    --semantic-success: 139 69% 38%;
+    --overlay-scrim: 0 0% 0%;
 
-    --sidebar-background: 70 11% 93%;
-    --sidebar-foreground: 78 11% 13%;
-    --sidebar-primary: 40 99% 49%;
-    --sidebar-primary-foreground: 78 11% 13%;
-    --sidebar-accent: 77 9% 89%;
-    --sidebar-accent-foreground: 78 11% 13%;
-    --sidebar-border: 75 6% 74%;
-    --sidebar-ring: 210 74% 53%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 0 0% 0%;
+    --sidebar-primary: 0 0% 0%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 60 8% 96%;
+    --sidebar-accent-foreground: 0 0% 0%;
+    --sidebar-border: 0 0% 90%;
+    --sidebar-ring: 0 0% 0%;
   }
 
   .dark {
-    --background: 78 11% 13%; /* #23251d (deep olive-charcoal) */
-    --foreground: 70 11% 93%; /* #eeefe9 (cream canvas) */
+    --background: 243 35% 18%; /* #1f1d3d (block-navy) */
+    --foreground: 0 0% 100%; /* #ffffff (inverse-ink) */
 
-    --card: 73 7% 19%; /* #33342d (charcoal) */
-    --card-foreground: 70 11% 93%;
+    --card: 243 35% 18%;
+    --card-foreground: 0 0% 100%;
 
-    --popover: 73 7% 19%; /* #33342d */
-    --popover-foreground: 70 11% 93%;
+    --popover: 243 35% 18%;
+    --popover-foreground: 0 0% 100%;
 
-    --primary: 40 99% 49%; /* #f7a501 */
-    --primary-foreground: 78 11% 13%;
+    --primary: 0 0% 100%;
+    --primary-foreground: 243 35% 18%;
 
-    --secondary: 76 7% 29%; /* #4d4f46 (olive-gray) */
-    --secondary-foreground: 70 11% 93%;
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 76 7% 29%;
-    --muted-foreground: 73 5% 59%; /* #9b9c92 (ash) */
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 70%;
 
-    --accent: 76 7% 29%;
-    --accent-foreground: 70 11% 93%;
+    --accent: 0 0% 15%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 4 60% 52%; /* #cd4239 */
+    --destructive: 336 100% 62%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 76 7% 29%; /* #4d4f46 */
-    --input: 76 7% 29%;
-    --ring: 210 74% 53%;
+    --border: 0 0% 30%;
+    --input: 0 0% 30%;
+    --ring: 0 0% 100%;
 
-    --sidebar-background: 73 7% 19%;
-    --sidebar-foreground: 70 11% 93%;
-    --sidebar-primary: 40 99% 49%;
-    --sidebar-primary-foreground: 78 11% 13%;
-    --sidebar-accent: 76 7% 29%;
-    --sidebar-accent-foreground: 70 11% 93%;
-    --sidebar-border: 76 7% 29%;
-    --sidebar-ring: 210 74% 53%;
+    --sidebar-background: 243 35% 18%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 0 0% 100%;
+    --sidebar-primary-foreground: 243 35% 18%;
+    --sidebar-accent: 0 0% 15%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 0 0% 30%;
+    --sidebar-ring: 0 0% 100%;
   }
 }
 

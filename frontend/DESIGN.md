@@ -1,499 +1,404 @@
 ---
 version: alpha
-name: PostHog-design-analysis
-description: |
-  A playful developer-tools system rendered on a warm cream canvas with hand-drawn hedgehog mascots dotted across every page like marginalia in a sketchbook. The chrome reads like a friendly engineering blog: olive-gray ink (#4d4f46) for body, deep olive-charcoal (#23251d) for headlines, IBM Plex Sans Variable typography in tight 1.43-line-height paragraphs, and a single saturated yellow-orange CTA pill (#f7a501) carrying every primary action. The system actively rejects the genre's typical somber dark-tech aesthetic in favor of a creamy, textbook-illustration sensibility — bordered cards stack on the cream canvas with 4–6px radii, doc sidebars use rounded outline-icon mini-illustrations, and the home page leans on cartoon characters (hedgehogs in lab coats, hedgehogs at terminals, hedgehogs in lounge chairs) as its signature decoration. Code samples and product analytics charts live inside white-on-cream cards with thin olive borders; the contrast between the playful illustration and the data-dense product imagery is the brand's signature voice.
+name: Figma-design-analysis
+description: "A confident black-and-white editorial frame interrupted by oversized, hand-cut pastel color blocks. The marketing canvas is rigorously monochrome — figmaSans variable type, pure white surfaces, pure black ink, pill-shaped CTAs — while each story section drops the page into a saturated lime, lavender, cream, mint, or pink panel that reads like a sticky note placed on a clean desk. The result is a design system that feels both technical and joyful — a tool for serious work, made by people who like color."
 
 colors:
-  primary: "#f7a501"
-  primary-pressed: "#dd9001"
-  primary-active: "#b17816"
-  on-primary: "#23251d"
-  ink: "#23251d"
-  body: "#4d4f46"
-  charcoal: "#33342d"
-  mute: "#6c6e63"
-  ash: "#9b9c92"
-  stone: "#b6b7af"
-  hairline: "#bfc1b7"
-  hairline-soft: "#dcdfd2"
-  on-dark: "#ffffff"
-  canvas: "#eeefe9"
-  surface-soft: "#e5e7e0"
-  surface-card: "#ffffff"
-  surface-doc: "#fcfcfa"
-  surface-dark: "#23251d"
-  link-blue: "#1d4ed8"
-  link-teal: "#1078a3"
-  accent-blue: "#2c84e0"
-  accent-blue-soft: "#dceaf6"
-  accent-red: "#cd4239"
-  accent-red-soft: "#f7d6d3"
-  accent-green: "#2c8c66"
-  accent-green-soft: "#d9eddf"
-  accent-purple: "#7c44a6"
-  accent-purple-soft: "#e7d8ee"
-  focus-ring: "rgba(59,130,246,0.5)"
+  primary: "#000000"
+  on-primary: "#ffffff"
+  ink: "#000000"
+  canvas: "#ffffff"
+  inverse-canvas: "#000000"
+  inverse-ink: "#ffffff"
+  on-inverse-soft: "#ffffff"
+  hairline: "#e6e6e6"
+  hairline-soft: "#f1f1f1"
+  surface-soft: "#f7f7f5"
+  block-lime: "#dceeb1"
+  block-lilac: "#c5b0f4"
+  block-cream: "#f4ecd6"
+  block-pink: "#efd4d4"
+  block-mint: "#c8e6cd"
+  block-coral: "#f3c9b6"
+  block-navy: "#1f1d3d"
+  accent-magenta: "#ff3d8b"
+  semantic-success: "#1ea64a"
+  overlay-scrim: "#000000"
 
 typography:
   display-xl:
-    fontFamily: IBM Plex Sans Variable
-    fontSize: 36px
-    fontWeight: 700
-    lineHeight: 1.5
-    letterSpacing: 0
+    fontFamily: figmaSans
+    fontSize: 86px
+    fontWeight: 340
+    lineHeight: 1.00
+    letterSpacing: -1.72px
+    fontFeature: kern
   display-lg:
-    fontFamily: IBM Plex Sans Variable
+    fontFamily: figmaSans
+    fontSize: 64px
+    fontWeight: 340
+    lineHeight: 1.10
+    letterSpacing: -0.96px
+    fontFeature: kern
+  headline:
+    fontFamily: figmaSans
+    fontSize: 26px
+    fontWeight: 540
+    lineHeight: 1.35
+    letterSpacing: -0.26px
+    fontFeature: kern
+  subhead:
+    fontFamily: figmaSans
+    fontSize: 26px
+    fontWeight: 340
+    lineHeight: 1.35
+    letterSpacing: -0.26px
+    fontFeature: kern
+  card-title:
+    fontFamily: figmaSans
     fontSize: 24px
-    fontWeight: 800
-    lineHeight: 1.33
-    letterSpacing: -0.6px
-  heading-lg:
-    fontFamily: IBM Plex Sans Variable
-    fontSize: 21px
     fontWeight: 700
-    lineHeight: 1.4
-    letterSpacing: -0.5px
-  heading-md:
-    fontFamily: IBM Plex Sans Variable
+    lineHeight: 1.45
+    letterSpacing: 0
+    fontFeature: kern
+  body-lg:
+    fontFamily: figmaSans
     fontSize: 20px
-    fontWeight: 700
-    lineHeight: 1.4
-    letterSpacing: 0
-  heading-sm:
-    fontFamily: IBM Plex Sans Variable
+    fontWeight: 330
+    lineHeight: 1.40
+    letterSpacing: -0.14px
+    fontFeature: kern
+  body:
+    fontFamily: figmaSans
     fontSize: 18px
-    fontWeight: 700
-    lineHeight: 1.5
-    letterSpacing: 0
-    textTransform: uppercase
-  heading-sm-mixed:
-    fontFamily: IBM Plex Sans Variable
-    fontSize: 18px
-    fontWeight: 600
-    lineHeight: 1.56
-    letterSpacing: 0
-  body-md:
-    fontFamily: IBM Plex Sans Variable
-    fontSize: 16px
-    fontWeight: 400
-    lineHeight: 1.5
-    letterSpacing: 0
-  body-strong:
-    fontFamily: IBM Plex Sans Variable
-    fontSize: 16px
-    fontWeight: 600
-    lineHeight: 1.5
-    letterSpacing: 0
+    fontWeight: 320
+    lineHeight: 1.45
+    letterSpacing: -0.26px
+    fontFeature: kern
   body-sm:
-    fontFamily: IBM Plex Sans Variable
-    fontSize: 15px
-    fontWeight: 400
-    lineHeight: 1.71
-    letterSpacing: 0
-  body-sm-strong:
-    fontFamily: IBM Plex Sans Variable
-    fontSize: 15px
-    fontWeight: 600
-    lineHeight: 1.71
-    letterSpacing: 0
-  body-xs:
-    fontFamily: IBM Plex Sans Variable
-    fontSize: 14px
-    fontWeight: 500
-    lineHeight: 1.43
-    letterSpacing: 0
-  caption-md:
-    fontFamily: IBM Plex Sans Variable
-    fontSize: 14px
-    fontWeight: 700
-    lineHeight: 1.71
-    letterSpacing: 0
-  caption-sm:
-    fontFamily: IBM Plex Sans Variable
-    fontSize: 13px
-    fontWeight: 500
-    lineHeight: 1.5
-    letterSpacing: 0
-  caption-xs:
-    fontFamily: IBM Plex Sans Variable
-    fontSize: 12px
-    fontWeight: 600
-    lineHeight: 1.33
-    letterSpacing: 0
-    textTransform: uppercase
-  utility-xs:
-    fontFamily: IBM Plex Sans Variable
-    fontSize: 12px
-    fontWeight: 700
-    lineHeight: 1.33
-    letterSpacing: 0
-    textTransform: uppercase
-  link-md:
-    fontFamily: IBM Plex Sans Variable
+    fontFamily: figmaSans
     fontSize: 16px
+    fontWeight: 330
+    lineHeight: 1.45
+    letterSpacing: -0.14px
+    fontFeature: kern
+  link:
+    fontFamily: figmaSans
+    fontSize: 20px
+    fontWeight: 480
+    lineHeight: 1.40
+    letterSpacing: -0.10px
+    fontFeature: kern
+  button:
+    fontFamily: figmaSans
+    fontSize: 20px
+    fontWeight: 480
+    lineHeight: 1.40
+    letterSpacing: -0.10px
+    fontFeature: kern
+  eyebrow:
+    fontFamily: figmaMono
+    fontSize: 18px
     fontWeight: 400
-    lineHeight: 1.5
-    letterSpacing: 0
-  button-md:
-    fontFamily: IBM Plex Sans Variable
-    fontSize: 14px
-    fontWeight: 700
-    lineHeight: 1.5
-    letterSpacing: 0
-  button-sm:
-    fontFamily: IBM Plex Sans Variable
-    fontSize: 13px
-    fontWeight: 500
-    lineHeight: 1
-    letterSpacing: 0
-  code-sm:
-    fontFamily: ui-monospace
-    fontSize: 14px
+    lineHeight: 1.30
+    letterSpacing: 0.54px
+    fontFeature: kern
+  caption:
+    fontFamily: figmaMono
+    fontSize: 12px
     fontWeight: 400
-    lineHeight: 1.43
-    letterSpacing: 0
-  code-xs:
-    fontFamily: Source Code Pro
-    fontSize: 14px
-    fontWeight: 500
-    lineHeight: 1.43
-    letterSpacing: 0
+    lineHeight: 1.00
+    letterSpacing: 0.60px
+    fontFeature: kern
 
 rounded:
-  none: 0px
   xs: 2px
-  sm: 4px
-  md: 6px
-  lg: 8px
+  sm: 6px
+  md: 8px
+  lg: 24px
+  xl: 32px
+  pill: 50px
   full: 9999px
 
 spacing:
-  xxs: 2px
-  xs: 4px
-  sm: 8px
-  md: 12px
-  lg: 16px
-  xl: 24px
-  xxl: 32px
-  section: 80px
+  hair: 1px
+  xxs: 4px
+  xs: 8px
+  sm: 12px
+  md: 16px
+  lg: 24px
+  xl: 32px
+  xxl: 48px
+  section: 96px
 
 components:
   button-primary:
     backgroundColor: "{colors.primary}"
     textColor: "{colors.on-primary}"
-    typography: "{typography.button-md}"
-    rounded: "{rounded.md}"
-    padding: 8px 16px
-    height: 40px
+    typography: "{typography.button}"
+    rounded: "{rounded.pill}"
+    padding: 10px 20px
   button-primary-pressed:
-    backgroundColor: "{colors.primary-pressed}"
+    backgroundColor: "{colors.primary}"
     textColor: "{colors.on-primary}"
-    typography: "{typography.button-md}"
-    rounded: "{rounded.md}"
+    typography: "{typography.button}"
+    rounded: "{rounded.pill}"
   button-secondary:
-    backgroundColor: "{colors.surface-soft}"
+    backgroundColor: "{colors.canvas}"
     textColor: "{colors.ink}"
-    typography: "{typography.button-md}"
-    rounded: "{rounded.md}"
-    padding: 8px 16px
-    height: 40px
-  button-tertiary:
-    backgroundColor: "transparent"
+    typography: "{typography.button}"
+    rounded: "{rounded.pill}"
+    padding: 8px 18px 10px
+  button-tertiary-text:
+    backgroundColor: "{colors.canvas}"
     textColor: "{colors.ink}"
-    typography: "{typography.button-md}"
-    rounded: "{rounded.md}"
+    typography: "{typography.link}"
+    rounded: "{rounded.full}"
     padding: 8px 12px
-  button-disabled:
+  button-icon-circular:
     backgroundColor: "{colors.surface-soft}"
-    textColor: "{colors.ash}"
-    rounded: "{rounded.md}"
+    textColor: "{colors.ink}"
+    typography: "{typography.button}"
+    rounded: "{rounded.full}"
+    size: 40px
+  button-icon-circular-inverse:
+    backgroundColor: "{colors.on-inverse-soft}"
+    textColor: "{colors.inverse-ink}"
+    typography: "{typography.button}"
+    rounded: "{rounded.full}"
+    size: 40px
+  button-magenta-promo:
+    backgroundColor: "{colors.accent-magenta}"
+    textColor: "{colors.on-primary}"
+    typography: "{typography.button}"
+    rounded: "{rounded.pill}"
+    padding: 10px 18px
+  pricing-tab-default:
+    backgroundColor: "{colors.canvas}"
+    textColor: "{colors.ink}"
+    typography: "{typography.button}"
+    rounded: "{rounded.pill}"
+    padding: 8px 18px
+  pricing-tab-selected:
+    backgroundColor: "{colors.primary}"
+    textColor: "{colors.on-primary}"
+    typography: "{typography.button}"
+    rounded: "{rounded.pill}"
+    padding: 8px 18px
   text-input:
-    backgroundColor: "{colors.surface-card}"
+    backgroundColor: "{colors.canvas}"
     textColor: "{colors.ink}"
-    typography: "{typography.body-md}"
+    typography: "{typography.body}"
     rounded: "{rounded.md}"
-    padding: 8px 12px
-    height: 36px
+    padding: 12px 14px
   text-input-focused:
-    backgroundColor: "{colors.surface-card}"
+    backgroundColor: "{colors.canvas}"
     textColor: "{colors.ink}"
+    typography: "{typography.body}"
     rounded: "{rounded.md}"
-  search-input:
-    backgroundColor: "{colors.surface-card}"
+    padding: 12px 14px
+  pricing-card:
+    backgroundColor: "{colors.canvas}"
     textColor: "{colors.ink}"
-    typography: "{typography.body-md}"
-    rounded: "{rounded.md}"
-    padding: 8px 12px
-    height: 36px
-  product-card:
-    backgroundColor: "{colors.surface-card}"
-    textColor: "{colors.ink}"
-    typography: "{typography.body-md}"
-    rounded: "{rounded.md}"
+    typography: "{typography.body}"
+    rounded: "{rounded.lg}"
     padding: 24px
-  doc-card:
-    backgroundColor: "{colors.surface-doc}"
+  pricing-card-feature-row:
+    backgroundColor: "{colors.canvas}"
     textColor: "{colors.ink}"
-    typography: "{typography.body-md}"
-    rounded: "{rounded.md}"
-    padding: 24px
-  feature-tile:
-    backgroundColor: "{colors.surface-card}"
-    textColor: "{colors.ink}"
-    typography: "{typography.heading-sm-mixed}"
-    rounded: "{rounded.md}"
-    padding: 20px
-  pricing-tier-card:
-    backgroundColor: "{colors.surface-card}"
-    textColor: "{colors.ink}"
-    typography: "{typography.body-md}"
-    rounded: "{rounded.md}"
-    padding: 32px
-  hedgehog-mascot-card:
-    backgroundColor: "{colors.surface-card}"
-    textColor: "{colors.ink}"
-    typography: "{typography.body-md}"
-    rounded: "{rounded.md}"
-    padding: 24px
-  product-tab:
-    backgroundColor: "transparent"
-    textColor: "{colors.body}"
-    typography: "{typography.body-strong}"
-    rounded: "{rounded.md}"
-    padding: 8px 12px
-  product-tab-active:
-    backgroundColor: "{colors.surface-card}"
-    textColor: "{colors.ink}"
-    typography: "{typography.body-strong}"
-    rounded: "{rounded.md}"
-  pill-tab:
-    backgroundColor: "transparent"
-    textColor: "{colors.body}"
-    typography: "{typography.button-sm}"
-    rounded: "{rounded.full}"
-    padding: 6px 14px
-  pill-tab-active:
-    backgroundColor: "{colors.ink}"
-    textColor: "{colors.on-dark}"
-    typography: "{typography.button-sm}"
-    rounded: "{rounded.full}"
-  badge-uppercase:
-    backgroundColor: "transparent"
-    textColor: "{colors.body}"
-    typography: "{typography.utility-xs}"
-    rounded: "{rounded.none}"
-  badge-promo:
-    backgroundColor: "{colors.accent-blue-soft}"
-    textColor: "{colors.link-blue}"
-    typography: "{typography.caption-xs}"
-    rounded: "{rounded.full}"
-    padding: 2px 8px
-  banner-tip-blue:
-    backgroundColor: "{colors.accent-blue-soft}"
-    textColor: "{colors.ink}"
-    typography: "{typography.body-md}"
-    rounded: "{rounded.md}"
-    padding: 16px 20px
-  banner-tip-green:
-    backgroundColor: "{colors.accent-green-soft}"
-    textColor: "{colors.ink}"
-    typography: "{typography.body-md}"
-    rounded: "{rounded.md}"
-    padding: 16px 20px
-  banner-tip-red:
-    backgroundColor: "{colors.accent-red-soft}"
-    textColor: "{colors.ink}"
-    typography: "{typography.body-md}"
-    rounded: "{rounded.md}"
-    padding: 16px 20px
-  banner-tip-purple:
-    backgroundColor: "{colors.accent-purple-soft}"
-    textColor: "{colors.ink}"
-    typography: "{typography.body-md}"
-    rounded: "{rounded.md}"
-    padding: 16px 20px
-  code-block:
-    backgroundColor: "{colors.surface-dark}"
-    textColor: "{colors.on-dark}"
-    typography: "{typography.code-sm}"
-    rounded: "{rounded.md}"
-    padding: 16px 20px
-  inline-code:
-    backgroundColor: "{colors.surface-soft}"
-    textColor: "{colors.ink}"
-    typography: "{typography.code-xs}"
+    typography: "{typography.body-sm}"
     rounded: "{rounded.xs}"
-    padding: 2px 6px
-  primary-nav:
+  color-block-section:
+    backgroundColor: "{colors.block-lime}"
+    textColor: "{colors.ink}"
+    typography: "{typography.subhead}"
+    rounded: "{rounded.lg}"
+    padding: 48px
+  color-block-section-lilac:
+    backgroundColor: "{colors.block-lilac}"
+    textColor: "{colors.ink}"
+    typography: "{typography.subhead}"
+    rounded: "{rounded.lg}"
+    padding: 48px
+  color-block-section-navy:
+    backgroundColor: "{colors.block-navy}"
+    textColor: "{colors.inverse-ink}"
+    typography: "{typography.subhead}"
+    rounded: "{rounded.lg}"
+    padding: 48px
+  promo-banner-lilac:
+    backgroundColor: "{colors.block-lilac}"
+    textColor: "{colors.ink}"
+    typography: "{typography.body-sm}"
+    rounded: "{rounded.md}"
+    padding: 16px 24px
+  template-card:
+    backgroundColor: "{colors.surface-soft}"
+    textColor: "{colors.ink}"
+    typography: "{typography.body-sm}"
+    rounded: "{rounded.md}"
+    padding: 16px
+  feature-illustration-tile:
+    backgroundColor: "{colors.surface-soft}"
+    textColor: "{colors.ink}"
+    typography: "{typography.eyebrow}"
+    rounded: "{rounded.md}"
+    padding: 24px
+  top-nav:
     backgroundColor: "{colors.canvas}"
     textColor: "{colors.ink}"
-    typography: "{typography.body-strong}"
-    rounded: "{rounded.none}"
+    typography: "{typography.body-sm}"
+    rounded: "{rounded.xs}"
     height: 56px
-  sub-nav-strip:
-    backgroundColor: "{colors.surface-soft}"
-    textColor: "{colors.body}"
-    typography: "{typography.body-xs}"
-    rounded: "{rounded.none}"
-    height: 40px
-  doc-sidebar:
+  marquee-strip:
+    backgroundColor: "{colors.inverse-canvas}"
+    textColor: "{colors.inverse-ink}"
+    typography: "{typography.body-sm}"
+    rounded: "{rounded.xs}"
+    height: 36px
+  comparison-checkmark:
     backgroundColor: "{colors.canvas}"
-    textColor: "{colors.body}"
-    typography: "{typography.body-xs}"
-    rounded: "{rounded.none}"
-    width: 240px
-  footer-section:
+    textColor: "{colors.semantic-success}"
+    typography: "{typography.body-sm}"
+    rounded: "{rounded.full}"
+    size: 16px
+  footer:
     backgroundColor: "{colors.canvas}"
-    textColor: "{colors.body}"
-    typography: "{typography.body-xs}"
-    rounded: "{rounded.none}"
-    padding: 32px 24px
-  link-inline:
-    textColor: "{colors.link-teal}"
-    typography: "{typography.link-md}"
+    textColor: "{colors.ink}"
+    typography: "{typography.caption}"
+    rounded: "{rounded.xs}"
+    padding: 64px 32px
 ---
 
 ## Overview
 
-PostHog's marketing system is built on the visual contradiction at the heart of the brand: a serious open-source product analytics platform rendered as if it were a friendly engineering sketchbook. The chrome runs on a warm cream canvas (`{colors.canvas}` — `#eeefe9`) — not white — and every page is dotted with hand-drawn hedgehog mascots in lab coats, lounge chairs, terminals, and reading glasses, scattered across the layout like marginalia in a textbook. Type sits in IBM Plex Sans Variable at olive-gray (`{colors.body}` — `#4d4f46`) for body and deep olive-charcoal (`{colors.ink}` — `#23251d`) for headlines, with weights stepped tightly between 400, 600, 700, and 800 to create hierarchy without color. The single saturated yellow-orange pill (`{colors.primary}` — `#f7a501`) is the brand's only loud chromatic moment; everything else is cream, olive, white card, and the occasional pastel callout band.
+Figma's marketing canvas is, at the system level, an editor-clean black-and-white frame. The chrome — top nav, body type, footer, primary CTA — is monochrome. Headlines are oversized `{typography.display-xl}` set in `figmaSans` with aggressive negative tracking, body copy hovers around weight 320–340 of the same variable family, and small mono `{typography.eyebrow}` and `{typography.caption}` labels (figmaMono, all-caps, positive tracking) act as section markers. Every CTA is a pill — `{rounded.pill}` — and the primary action across the entire site is the same black `{components.button-primary}` paired with the same white `{components.button-secondary}`.
 
-The system has a distinctive **two-mode body layout**: marketing pages (home, workflows, pricing) lean on alternating-pastel callout bands and feature tiles in white cards on cream, while documentation pages add a sticky 240px left sidebar with a rounded outline-icon section list. Code samples are full-width dark blocks on `{colors.surface-dark}` (the same olive-charcoal that carries body ink, used inverted) inside white doc cards, creating the system's most distinctive visual moment: a dark-on-dark code island floating inside a white card on a cream canvas, with a hedgehog mascot doodled in the margin.
+What makes the design unique is what happens **between** those monochrome bookends: the page repeatedly drops into oversized pastel **color-block sections** — lime, lavender, cream, mint, pink, coral, and a deep navy — that span the full content width with `{rounded.lg}` corners and `{spacing.xxl}` interior padding. These blocks are where the storytelling lives. They aren't accents tucked into a card; they take over a whole viewport's worth of vertical space, like a designer arranging giant sticky notes on a clean wall. FigJam is the most pastel-saturated, the home page rotates through the full set, and the pricing page ends with a lime FAQ panel — same vocabulary, different rhythm per route.
 
-Sections stack at `{spacing.section}` (80px) rhythm with cream canvas continuing edge-to-edge between them. The only color bands that interrupt the cream are pastel `{component.banner-tip-blue}` / `-green` / `-red` / `-purple` callout panels inside doc articles — soft tinted boxes that carry "💡 Tip", "✅ Success", "⚠️ Warning", "📘 Info" inline annotations. There are no decorative gradients, no atmospheric mesh backgrounds, and no full-bleed dark hero chapters; the cream canvas runs uninterrupted top to bottom and the hedgehogs are the entire visual identity.
+This is a system built on contrast: the monochrome chrome makes the color blocks feel intentional rather than decorative, and the color blocks make the monochrome chrome feel like editorial paper rather than enterprise SaaS. Density is generous, line-heights are tight on display sizes, and the interface never reaches for shadows or gradients to do the work that color blocks and confident typography already do.
 
 **Key Characteristics:**
 
-- Warm cream canvas (`{colors.canvas}` — #eeefe9) end-to-end with no surface alternation between sections — the page is one continuous sheet
-- Single yellow-orange CTA pill (`{colors.primary}` — #f7a501) with deep olive text (`{colors.on-primary}`) — the brand's only saturated color
-- IBM Plex Sans Variable across every text role with weights 400/500/600/700/800 — no other typeface in the system
-- Hand-drawn hedgehog mascots scattered across the layout as the entire decorative system — no gradients, no mesh, no atmospheric backgrounds
-- 4–8px radius card vocabulary: `{rounded.md}` (6px) for most components, `{rounded.lg}` (8px) for select containers, fully rounded for pill chips
-- Pastel callout banners (`{colors.accent-blue-soft}`, `{colors.accent-green-soft}`, `{colors.accent-red-soft}`, `{colors.accent-purple-soft}`) break up doc article body with soft tinted side rails for tips/warnings/info
-- Documentation pages add a sticky 240px `{component.doc-sidebar}` with rounded outline-icon section nav and an "Ask PostHog AI" CTA at the top
+- Monochrome system core: `{colors.primary}` (black) and `{colors.canvas}` (white) carry every CTA, every body line, every footer link.
+- Oversized pastel **color-block sections** (`{colors.block-lime}`, `{colors.block-lilac}`, `{colors.block-cream}`, `{colors.block-mint}`, `{colors.block-pink}`, `{colors.block-coral}`, `{colors.block-navy}`) define the narrative rhythm of every long-form page.
+- Pill is the only button shape — `{rounded.pill}` for text CTAs, `{rounded.full}` for icon buttons. No square buttons anywhere.
+- `figmaSans` variable typeface used at unusually fine weight increments (320, 330, 340, 450, 480, 540) — the type system reads as a single voice that flexes rather than a multi-weight family.
+- Tight negative letter-spacing on display sizes (-1.72px at 86px, -0.96px at 64px) creates a confident editorial cadence.
+- `figmaMono` reserved for category labels, eyebrows, and captions — always uppercase, positive tracking — to flag taxonomy without competing with display type.
+- Color-block page rhythm (home): white hero → marquee strip → white feature → lime systems block → navy ship-products block → coral developer block → white template grid → white footer.
 
 ## Colors
 
-> **Source pages:** `/` (home), `/pricing` (pricing detail), `/docs/product-analytics` (docs article), `/workflows` (product feature page). The chrome palette is identical across all four pages — only doc-specific accents (callout-banner pastels, code-block dark surface) appear exclusively inside the docs experience.
+> Source pages: figma.com (home), /design/, /figjam/brainstorming-tool/, /pricing/, /contact/.
 
 ### Brand & Accent
 
-- **PostHog Yellow** (`{colors.primary}` — `#f7a501`): the universal primary CTA. Sticky "Get started — free" pill in the top-right of every nav, hero CTAs, pricing-tier subscribe buttons, footer signup pill. The system's only saturated chromatic moment.
-- **Yellow Pressed** (`{colors.primary-pressed}` — `#dd9001`): pressed state for the primary pill.
-- **Yellow Active** (`{colors.primary-active}` — `#b17816`): deeply-pressed yellow + the system's gold-toned border accent (rare 1px gold rule on inline form elements).
+- **Black** ({colors.primary}): The system primary. Every primary CTA, every headline, every body line, the marquee strip, the inverse canvas of dark sections.
+- **White** ({colors.on-primary}): Inverse text on black surfaces; also the canvas color used as the foreground of secondary pill buttons (`{components.button-secondary}`).
+- **Magenta Promo** ({colors.accent-magenta}): A single saturated CTA pink reserved for promotional inline buttons — appears, for example, on the lilac "Save your spot" Release Notes banner. Use scarcely; it is not a section color.
 
 ### Surface
 
-- **Canvas** (`{colors.canvas}` — `#eeefe9`): the warm cream page background. End-to-end on every page; the brand's most distinctive surface choice.
-- **Soft Surface** (`{colors.surface-soft}` — `#e5e7e0`): button-secondary fill, sub-nav strip background, inline-code chip background.
-- **Surface Card** (`{colors.surface-card}` — `#ffffff`): true white card and tile background sitting on top of the cream canvas. The dominant card surface.
-- **Surface Doc** (`{colors.surface-doc}` — `#fcfcfa`): a faintly cream-warm white used inside doc article body cards — slightly softer than pure white to keep the page tonally unified.
-- **Surface Dark** (`{colors.surface-dark}` — `#23251d`): the deep olive-charcoal used inverted as code-block background. The same hex as `{colors.ink}` — the brand uses one olive-near-black for both text and dark code surfaces.
-- **Hairline** (`{colors.hairline}` — `#bfc1b7`): 1px card border, table rule, footer column dividers.
-- **Hairline Soft** (`{colors.hairline-soft}` — `#dcdfd2`): in-card row divider, soft inset rule.
-- **On Dark** (`{colors.on-dark}` — `#ffffff`): primary text on `{colors.surface-dark}` code blocks.
+- **Canvas** ({colors.canvas}): Default page background and the body of every white card.
+- **Inverse Canvas** ({colors.inverse-canvas}): Footer, marquee strip, and a subset of "ship products"-style story sections.
+- **Surface Soft** ({colors.surface-soft}): Off-white tile background used for icon buttons, template cards, and feature illustration tiles when they sit on the white canvas.
+- **Hairline** ({colors.hairline}): 1px borders on form inputs, pricing cards, and table dividers.
+- **Hairline Soft** ({colors.hairline-soft}): Even subtler dividers — comparison-table row separators and footer column rules.
+- **Block Lime** ({colors.block-lime}): The signature **systems / FAQ / contact-form** color block. Recurs across home, pricing, contact.
+- **Block Lilac** ({colors.block-lilac}): Hero block on `/design/`; also the inline Release Notes promo banner.
+- **Block Cream** ({colors.block-cream}): Soft warm background — FigJam hero strip, template-grid section.
+- **Block Mint** ({colors.block-mint}): FigJam pastel section.
+- **Block Pink** ({colors.block-pink}): FigJam pastel section.
+- **Block Coral** ({colors.block-coral}): "Ship products" coral story block on home.
+- **Block Navy** ({colors.block-navy}): Deep indigo story block — only place dark surfaces appear above the footer.
 
 ### Text
 
-- **Ink** (`{colors.ink}` — `#23251d`): headlines, button text on light, primary nav links — deep olive-charcoal that reads near-black against cream.
-- **Body** (`{colors.body}` — `#4d4f46`): default paragraph text, doc article body, inline link color before hover. The brand's most-used text color.
-- **Charcoal** (`{colors.charcoal}` — `#33342d`): emphasized body text where body is too soft.
-- **Mute** (`{colors.mute}` — `#6c6e63`): metadata, footer link text, in-list secondary annotations.
-- **Ash** (`{colors.ash}` — `#9b9c92`): disabled-state text and lowest-emphasis utility.
-- **Stone** (`{colors.stone}` — `#b6b7af`): least-emphasis caption text and disabled icon color.
+- **Ink** ({colors.ink}): All headline, body, and caption type on light surfaces. There is no softer mid-gray text role on marketing — body copy is always black at weight 320–340, and weight (not opacity) carries the hierarchy.
+- **Inverse Ink** ({colors.inverse-ink}): Type on inverse-canvas surfaces (footer, marquee strip, navy color block).
+- **On-Inverse Soft** ({colors.on-inverse-soft}): White used at ~16% opacity for circular icon-button surfaces against dark sections (token captures the base color; the translucency is applied at render time).
 
 ### Semantic
 
-- **Link Blue** (`{colors.link-blue}` — `#1d4ed8`): inline anchor link inside body prose. The system's primary informational link color.
-- **Link Teal** (`{colors.link-teal}` — `#1078a3`): doc-article inline link variant, paired with body text.
-- **Accent Blue** (`{colors.accent-blue}` — `#2c84e0`) + **Accent Blue Soft** (`{colors.accent-blue-soft}` — `#dceaf6`): "💡 Tip / Info" callout banner inside docs.
-- **Accent Red** (`{colors.accent-red}` — `#cd4239`) + **Accent Red Soft** (`{colors.accent-red-soft}` — `#f7d6d3`): "⚠️ Warning / Caution" callout banner.
-- **Accent Green** (`{colors.accent-green}` — `#2c8c66`) + **Accent Green Soft** (`{colors.accent-green-soft}` — `#d9eddf`): "✅ Success / Positive" callout banner.
-- **Accent Purple** (`{colors.accent-purple}` — `#7c44a6`) + **Accent Purple Soft** (`{colors.accent-purple-soft}` — `#e7d8ee`): "📘 Note / Reference" callout banner.
-- **Focus Ring** (`{colors.focus-ring}` — `rgba(59,130,246,0.5)`): translucent blue browser-default focus ring around interactive elements.
+- **Success Green** ({colors.semantic-success}): Comparison-table checkmarks on pricing. Used as a glyph fill, not a surface.
+- **Overlay Scrim** ({colors.overlay-scrim}): Black used at ~60% opacity behind modal / video-overlay surfaces (token captures the base; opacity applied at render time).
 
 ## Typography
 
 ### Font Family
 
-**IBM Plex Sans Variable** is the system's primary face — used across every text role on every page at weights 400 (regular), 500 (medium), 600 (semibold), 700 (bold), and 800 (extra-bold). Falls back through `IBM Plex Sans` → `-apple-system` → `system-ui` → broad cross-platform sans stack.
+- **figmaSans** — Figma's proprietary variable typeface; fallback stack `figmaSans Fallback, SF Pro Display, system-ui, helvetica`. Variable weight axis is exercised at unusually fine increments (320, 330, 340, 450, 480, 540, 700) — the design system reads as a single voice modulating rather than a stepped weight family.
+- **figmaMono** — Proprietary monospace; fallback `figmaMono Fallback, SF Mono, menlo`. Used exclusively for eyebrow labels and captions, always uppercase with positive letter-spacing.
 
-**ui-monospace** + **Source Code Pro** carry code samples and inline-code chips at 14px / 1.43 line-height. Source Code Pro is the explicit display monospace; ui-monospace handles inline `<code>` chips.
-
-The brand-distinctive choice is the **mixed weight ladder** (400 / 500 / 600 / 700 / 800) — most chrome lives in the 400–700 band, with weight 800 reserved exclusively for the larger display headlines on home and pricing. This gives the system its "engineering blog" feel: hierarchy is built from weight contrast much more than from size.
+OpenType `kern` is enabled across every role.
 
 ### Hierarchy
 
 | Token | Size | Weight | Line Height | Letter Spacing | Use |
 |---|---|---|---|---|---|
-| `{typography.display-xl}` | 36px | 700 | 1.5 | 0 | Hero headline ("The new way to build products") |
-| `{typography.display-lg}` | 24px | 800 | 1.33 | -0.6px | Section headline, pricing tier name |
-| `{typography.heading-lg}` | 21px | 700 | 1.4 | -0.5px | Sub-section heading, doc-article H2 |
-| `{typography.heading-md}` | 20px | 700 | 1.4 | 0 | Card group title, in-grid heading |
-| `{typography.heading-sm}` | 18px | 700 | 1.5 | 0 (uppercase) | Section eyebrow ("UNDERSTAND PRODUCT USAGE") |
-| `{typography.heading-sm-mixed}` | 18px | 600 | 1.56 | 0 | Card title in mixed-case (no uppercase transform) |
-| `{typography.body-md}` | 16px | 400 | 1.5 | 0 | Body copy, default paragraph |
-| `{typography.body-strong}` | 16px | 600 | 1.5 | 0 | Inline emphasis, primary nav link, in-card label |
-| `{typography.body-sm}` | 15px | 400 | 1.71 | 0 | Doc article body, marketing card description |
-| `{typography.body-sm-strong}` | 15px | 600 | 1.71 | 0 | Sub-section emphasis inside doc article |
-| `{typography.body-xs}` | 14px | 500 | 1.43 | 0 | Doc sidebar item, metadata, in-list caption |
-| `{typography.caption-md}` | 14px | 700 | 1.71 | 0 | Card eyebrow, link cluster header |
-| `{typography.caption-sm}` | 13px | 500 | 1.5 | 0 | Compact metadata caption |
-| `{typography.caption-xs}` | 12px | 600 | 1.33 | 0 (uppercase) | Inline badge label |
-| `{typography.utility-xs}` | 12px | 700 | 1.33 | 0 (uppercase) | Section-eyebrow utility text, footer category header |
-| `{typography.link-md}` | 16px | 400 | 1.5 | 0 | Inline body anchor link |
-| `{typography.button-md}` | 14px | 700 | 1.5 | 0 | Standard primary/secondary button label |
-| `{typography.button-sm}` | 13px | 500 | 1 | 0 | Pill chip / compact CTA |
-| `{typography.code-sm}` | 14px | 400 | 1.43 | 0 | Code block content |
-| `{typography.code-xs}` | 14px | 500 | 1.43 | 0 | Inline code chip |
+| `{typography.display-xl}` | 86px | 340 | 1.00 | -1.72px | Hero headlines (home, FigJam) |
+| `{typography.display-lg}` | 64px | 340 | 1.10 | -0.96px | Section opener headlines |
+| `{typography.headline}` | 26px | 540 | 1.35 | -0.26px | Story-block titles inside color blocks |
+| `{typography.subhead}` | 26px | 340 | 1.35 | -0.26px | Long-form intro paragraphs that sit at near-headline scale |
+| `{typography.card-title}` | 24px | 700 | 1.45 | 0 | Pricing-tier titles, feature card titles |
+| `{typography.body-lg}` | 20px | 330 | 1.40 | -0.14px | Lead body copy on hero, contact form labels |
+| `{typography.body}` | 18px | 320 | 1.45 | -0.26px | Default body |
+| `{typography.body-sm}` | 16px | 330 | 1.45 | -0.14px | Card body, footer link list |
+| `{typography.link}` | 20px | 480 | 1.40 | -0.10px | Inline link emphasis |
+| `{typography.button}` | 20px | 480 | 1.40 | -0.10px | All pill buttons, primary and secondary |
+| `{typography.eyebrow}` | 18px | 400 | 1.30 | 0.54px | figmaMono uppercase section eyebrows |
+| `{typography.caption}` | 12px | 400 | 1.00 | 0.60px | figmaMono uppercase captions, footer column heads |
 
 ### Principles
 
-The hierarchy is explicitly built from weight + size + occasional uppercase transform — there is no italic style, no decorative display variant, no proprietary face. The biggest display moments use weight 800 with -0.6px tracking, and the body settles at 400 with 1.5 line-height; everything else fills the band between. Section eyebrows (`{typography.heading-sm}` and `{typography.utility-xs}`) consistently render uppercase, which gives the doc layout its textbook-chapter feel.
+- **Weight, not size, carries hierarchy on body copy.** A 20px paragraph at weight 330 sits next to a 20px link at weight 480 — the eye reads emphasis without scale change.
+- **Negative letter-spacing scales with size.** Display-xl pulls -1.72px; subhead pulls only -0.26px. Body copy stays near-zero. The result is editorial-feeling display type without sacrificing readability at body size.
+- **Mono is taxonomy, not body.** figmaMono is reserved for eyebrows and captions — never used to set a paragraph.
+- **Tight line-heights on display, generous on body.** Display sizes run 1.00–1.10; body runs 1.40–1.45. The contrast reinforces that headlines are graphics and body copy is for reading.
 
 ### Note on Font Substitutes
 
-IBM Plex Sans Variable is open-source and Google-Fonts-hosted. There is no need for a substitute — load it directly. If a substitute is genuinely needed, **Inter** is the closest geometric match at all five weights; pair with Inter's letter-spacing -0.5 to -0.6px on display sizes to approximate Plex's display tracking. For monospace, **JetBrains Mono** is a near-perfect substitute for Source Code Pro at body sizes.
+If implementing without access to figmaSans / figmaMono, suitable open-source substitutes are **Inter** (or **Geist**) for the sans, and **JetBrains Mono** (or **Geist Mono**) for the mono. Inter at variable weights closely matches the fine-grained weight axis figmaSans uses; expect to manually adjust line-heights down by ~0.02 to compensate for Inter's slightly taller x-height.
 
 ## Layout
 
 ### Spacing System
 
-- **Base unit:** 8px (with finer 2/4/6px steps for tight inline gaps in callout banners and pill buttons).
-- **Tokens (front matter):** `{spacing.xxs}` (2px) · `{spacing.xs}` (4px) · `{spacing.sm}` (8px) · `{spacing.md}` (12px) · `{spacing.lg}` (16px) · `{spacing.xl}` (24px) · `{spacing.xxl}` (32px) · `{spacing.section}` (80px).
-- **Universal section rhythm:** every page in the set uses `{spacing.section}` (80px) as the vertical gap between major content blocks. Card grids use `{spacing.lg}` (16px) gutters; card internal padding sits at `{spacing.xl}` (24px) for product cards and `{spacing.xxl}` (32px) for pricing tier cards.
+- **Base unit**: 8px.
+- **Tokens (front matter)**: `{spacing.hair}` 1px · `{spacing.xxs}` 4px · `{spacing.xs}` 8px · `{spacing.sm}` 12px · `{spacing.md}` 16px · `{spacing.lg}` 24px · `{spacing.xl}` 32px · `{spacing.xxl}` 48px · `{spacing.section}` 96px.
+- Section interior padding: `{spacing.xxl}` (48px) on color-block sections.
+- Card interior padding: `{spacing.lg}` (24px) on pricing cards and template tiles.
+- Form input padding: `{spacing.sm}` 12px vertical · 14px horizontal.
+- Button padding: `{spacing.xs}` 8px vertical · `{spacing.lg}` 24px horizontal for pill buttons (the asymmetric `8px 18px 10px` extracted on `button-secondary` nudges the type optically inside the pill).
+- Universal rhythm constant: `{spacing.section}` (96px) — the vertical gap between major content sections holds across home, pricing, and FigJam pages.
 
 ### Grid & Container
 
-- **Max width:** ~1280px content area at desktop with 24px gutters (~48px at ultrawide). Doc article body sits at ~720px max width with the 240px sidebar pushing the article column right of center.
-- **Marketing card grid:** 4-up at desktop, 3-up at 1024px, 2-up at 768px, 1-up at 480px. Cards preserve a fixed 1:1 or 4:3 ratio.
-- **Pricing tier grid:** 3-up at desktop with a left rail of plan info, collapsing to 2-up + 1 at tablet and 1-up at mobile.
-- **Doc layout:** desktop 240px sticky left sidebar + ~720px article body + (optional) 200px right TOC rail = ~1160px content width.
-- **Footer:** 6-column horizontal link grid at desktop, 3-up at tablet, 2-up at mobile.
+- Max content width sits around 1280px (one of the explicit breakpoints), with side gutters that scale from `{spacing.xxl}` on desktop down to `{spacing.lg}` on mobile.
+- Three- and four-column grids on the desktop pricing comparison and FigJam template galleries.
+- Color-block sections break the column grid — they span content width with full bleed inside the rounded `{rounded.lg}` corners, then place a single editorial column of headline + body inside.
 
 ### Whitespace Philosophy
 
-Whitespace is generous on marketing pages and tight on doc pages. The home and workflows pages stack feature tiles with `{spacing.lg}` (16px) gutters and 24px internal padding, while doc articles tighten internal spacing to `{spacing.md}` (12px) between paragraphs to maximize information density. The cream canvas runs continuously through every section — there are no decorative dividers, no shaded section bands; only the 1px hairline beneath section eyebrows and footer column rules separate content blocks.
+White space is used to make the color blocks feel deliberate. Between every colored panel and the next, the page returns to white canvas with `{spacing.section}` of breathing room. Inside a color block, the type itself is given generous side margins (often more than 1/4 of the block's width on each side) so the panel reads as a poster, not a wall of copy.
 
 ## Elevation & Depth
 
 | Level | Treatment | Use |
 |---|---|---|
-| 0 — Flat | No border, no shadow | Default for canvas-on-canvas blocks, hero text, body sections |
-| 1 — Hairline border | 1px solid `{colors.hairline}` | Marketing cards, pricing tier cards, doc sidebar items, footer column rules |
-| 2 — Hairline soft | 1px solid `{colors.hairline-soft}` | In-card row divider between adjacent rows |
-| 3 — Inverted dark code block | `{colors.surface-dark}` fill | Code samples inside doc cards — the system's only "elevated" surface uses color, not shadow |
+| 0 (flat) | No shadow, no border | Default for color-block sections, inverse-canvas footer, hero |
+| 1 (hairline) | 1px `{colors.hairline}` border on `{colors.canvas}` | Pricing cards, form inputs, comparison table cells |
+| 2 (soft elevation) | Subtle drop shadow approx 0 4px 16px rgba(0,0,0,0.06) | Floating template tiles, dropdown menus |
+| 3 (modal) | Stronger shadow + `{colors.overlay-scrim}` behind | Video / image lightbox overlays |
 
-The system has no drop-shadow elevation in marketing or product chrome. Cards sit flat on cream with thin olive borders. The single inverted moment is the dark code-block surface used inside doc article body cards.
+Figma's marketing system is shadow-light by design — the color blocks substitute for traditional elevation. Where most SaaS sites use a shadowed white card to draw attention, Figma uses a saturated background panel. This makes the rare actual shadow (e.g., a floating template card hovering over a cream section) feel like an exception worth noticing.
 
 ### Decorative Depth
 
-Depth comes entirely from illustration and the pastel callout band system, not from CSS effects:
-
-- **Hand-drawn hedgehog mascots** — characters in various costumes (lab coat, terminal, lounge chair, magnifying glass, hammock, hat) scattered across pages as marginalia. Always rendered as flat color illustrations, never photographs.
-- **Pastel callout banners** — `{component.banner-tip-blue}` / `-green` / `-red` / `-purple` soft tinted side-rail panels inside doc articles, each prefixed with an emoji icon (💡 ✅ ⚠️ 📘) and carrying tip/warning/note copy.
-- **Code blocks** — full-width dark olive-charcoal panels on `{colors.surface-dark}` with white code text. The system's most cinematic surface, used inside white doc cards.
-- **Outline product icons** in the doc sidebar — small rounded-square mini-illustrations (chart icon, funnel, session-replay icon) mark each major product section.
+- **Color-block sections** are the primary depth device. The change from white canvas to lime / lavender / cream is the section break.
+- **Sticky-note style component thumbnails** in FigJam — slightly off-axis pastel rectangles arranged like notes on a board — read as collage, not card-stack.
+- **Embedded product UI mocks** (Figma Design panels, FigJam canvas snippets) appear as flat compositions on color blocks; their internal shadows are subtle and stay within the mock.
 
 ## Shapes
 
@@ -501,185 +406,150 @@ Depth comes entirely from illustration and the pastel callout band system, not f
 
 | Token | Value | Use |
 |---|---|---|
-| `{rounded.none}` | 0px | Sub-nav strip, footer, doc sidebar, primary nav — flat structural surfaces |
-| `{rounded.xs}` | 2px | Inline `<code>` chips, micro-rule highlights |
-| `{rounded.sm}` | 4px | Inline buttons, form inputs, micro chips |
-| `{rounded.md}` | 6px | Marketing cards, pricing cards, doc cards, code blocks, every standard CTA |
-| `{rounded.lg}` | 8px | Tab top corners (`6px 6px 0 0` on active tab) and rare large containers |
-| `{rounded.full}` | 9999px | Pill chips and pill-style CTAs ("Get started — free" sticky CTA in nav) |
+| `{rounded.xs}` | 2px | Anchor / link decoration corners |
+| `{rounded.sm}` | 6px | Small chips, sub-nav tabs |
+| `{rounded.md}` | 8px | Form inputs, list items, image frames |
+| `{rounded.lg}` | 24px | Pricing cards, color-block sections, large image containers |
+| `{rounded.xl}` | 32px | Hero feature panels, oversized callouts |
+| `{rounded.pill}` | 50px | All text CTAs (primary, secondary, tab toggles) |
+| `{rounded.full}` | 9999px | Circular icon buttons, comparison-table checkmark glyphs |
 
-The radius vocabulary clusters around 4–6px for nearly everything; the only fully-rounded element is the pill-style sticky nav CTA and inline pill chips.
+### Photography & Illustration Geometry
 
-### Photography Geometry
-
-There is no photography. Visual elements are limited to:
-
-- **Hedgehog character illustrations** — flat-color cartoon hedgehogs ranging from ~80px (in-card mascot) to ~240px (hero illustration). Always at native aspect, never cropped to a frame.
-- **Outline product icons** in the doc sidebar — 20–24px rounded-square illustrations.
-- **Inline emoji** at 14–16px inside callout banners (💡 ✅ ⚠️ 📘) — used as functional iconography rather than decoration.
-- **Section illustrations** on the home page — small hedgehog vignettes paired with each "Understand product usage" / "Build sticky habits" / "Test before launch" feature row.
+- Image frames use `{rounded.md}` (8px) — generous enough to feel friendly, conservative enough to read as editorial.
+- Template thumbnails on the home grid sit in `{rounded.md}` tiles with `{spacing.md}` interior padding around the embedded preview.
+- FigJam pastel sticky-note component thumbnails preserve a small `{rounded.sm}` corner that mimics actual sticky paper.
+- No avatar circles appear in marketing surfaces — Figma's marketing avoids personification.
 
 ## Components
 
-> **No hover states documented** per system policy. Each spec covers Default and Active/Pressed only.
-
 ### Buttons
 
-**`button-primary`** — the universal PostHog CTA
+**`button-primary`** — The black "Get started for free" pill that appears in the top nav, every hero, and every closing CTA.
 
-- Background `{colors.primary}` (yellow-orange), text `{colors.on-primary}` (deep olive), type `{typography.button-md}`, padding `8px 16px`, height `40px`, rounded `{rounded.md}`.
-- Used for "Get started — free" (sticky top-nav CTA), "Sign up", "Try it free", "Subscribe" — every primary action.
-- Pressed state lives in `button-primary-pressed` — background drops to `{colors.primary-pressed}`.
+- Background `{colors.primary}`, text `{colors.on-primary}`, type `{typography.button}`, padding 10px 20px, rounded `{rounded.pill}`.
+- Pressed state lives in `button-primary-pressed` (same surface; the live site relies on micro-scale rather than a darkened fill).
 
-**`button-secondary`** — soft alternative on cream canvas
+**`button-secondary`** — White pill with black text. Used for tertiary navigation actions ("Contact sales") and as the visual counterpart to the primary pill.
 
-- Background `{colors.surface-soft}` (`#e5e7e0`), text `{colors.ink}`, type `{typography.button-md}`, padding `8px 16px`, height `40px`, rounded `{rounded.md}`.
-- "Talk to sales", "Read docs", "Watch demo" — second-tier actions paired with the yellow primary.
+- Background `{colors.canvas}`, text `{colors.ink}`, type `{typography.button}`, padding 8px 18px 10px (asymmetric vertical to optically center the type), rounded `{rounded.pill}`. No border.
 
-**`button-tertiary`** — ghost text button
+**`button-tertiary-text`** — Plain text link styled as a button hit target inside top nav and footer.
 
-- Background transparent, text `{colors.ink}`, type `{typography.button-md}`, padding `8px 12px`, rounded `{rounded.md}`.
-- Lowest-emphasis action: "See all docs →", "Browse all features".
+- Background `{colors.canvas}`, text `{colors.ink}`, type `{typography.link}`, rounded `{rounded.full}` (hit target only), padding `{spacing.xs}` `{spacing.sm}`.
 
-**`button-disabled`**
+**`button-icon-circular`** — 40px circular icon button used for carousel controls, social links, and inline actions on light surfaces.
 
-- Background `{colors.surface-soft}`, text `{colors.ash}` — flat soft cream-gray.
+- Background `{colors.surface-soft}`, text `{colors.ink}`, rounded `{rounded.full}`, size 40px.
 
-### Tabs & Chips
+**`button-icon-circular-inverse`** — Same shape, used on inverse-canvas / dark color blocks.
 
-**`product-tab`** + **`product-tab-active`** — major product section tabs
+- Background `{colors.on-inverse-soft}` (translucent white), text `{colors.inverse-ink}`, rounded `{rounded.full}`, size 40px.
 
-- Default: transparent background, text `{colors.body}`, type `{typography.body-strong}`, padding `8px 12px`, rounded `{rounded.md}`.
-- Active: background flips to `{colors.surface-card}` (white), text `{colors.ink}` — the tab card lifts off the cream canvas as the visual signal of selection.
+**`button-magenta-promo`** — Saturated pink pill used only inside promotional surfaces such as the lilac "Save your spot" Release Notes banner. Reserved for moments where Figma's product team wants the CTA to pop against an already-colored panel.
 
-**`pill-tab`** + **`pill-tab-active`** — compact filter pill
+- Background `{colors.accent-magenta}`, text `{colors.on-primary}`, type `{typography.button}`, rounded `{rounded.pill}`, padding 10px 18px.
 
-- Default: transparent background, text `{colors.body}`, type `{typography.button-sm}`, padding `6px 14px`, rounded `{rounded.full}`.
-- Active: background flips to `{colors.ink}`, text `{colors.on-dark}` — the chip flips fully inverted on selection.
+### Pricing Tabs
 
-**`badge-uppercase`** — text-only utility label
+**`pricing-tab-default`** + **`pricing-tab-selected`** — The pill-toggle that switches between Starter / Professional / Organization / Enterprise on `/pricing/`.
 
-- Background transparent, text `{colors.body}` in `{typography.utility-xs}` (uppercase) — used as in-list category prefix ("FEATURE FLAG", "EXPERIMENT", "HEATMAP").
-
-**`badge-promo`** — small inline pill chip
-
-- Background `{colors.accent-blue-soft}`, text `{colors.link-blue}`, type `{typography.caption-xs}`, padding `2px 8px`, rounded `{rounded.full}`.
-- "New", "Beta", "Coming soon" pill labels overlaid on cards.
+- Default: `{colors.canvas}` background, `{colors.ink}` text, rounded `{rounded.pill}`.
+- Selected: `{colors.primary}` background, `{colors.on-primary}` text — exactly the same surface as `button-primary`, which makes the selected tab feel like an active CTA, not a passive state.
 
 ### Inputs & Forms
 
-**`text-input`** + **`text-input-focused`**
+**`text-input`** + **`text-input-focused`** — Form fields on `/contact/` and pricing seat-count steppers.
 
-- Default: background `{colors.surface-card}`, text `{colors.ink}`, 1px solid `{colors.hairline}`, type `{typography.body-md}`, padding `8px 12px`, height `36px`, rounded `{rounded.md}`.
-- Focused: same surface; 2px solid `{colors.accent-blue}` border replaces the 1px hairline + a translucent `{colors.focus-ring}` outline.
-
-**`search-input`** — utility search field (doc sidebar, "Ask PostHog AI")
-
-- Same dimensions as `text-input` with a magnifier glyph at the left edge in `{colors.mute}`.
+- Background `{colors.canvas}`, text `{colors.ink}`, type `{typography.body}`, rounded `{rounded.md}`, padding 12px 14px.
+- Focused state retains the same surface — focus is communicated via ring, not via fill change.
 
 ### Cards & Containers
 
-**`product-card`** — marketing tile / feature card
+**`pricing-card`** — Each tier on `/pricing/`.
 
-- Container: background `{colors.surface-card}` (white), 1px solid `{colors.hairline}`, padding `{spacing.xl}` (24px), rounded `{rounded.md}`.
-- Layout: small hedgehog illustration at top-left, `{typography.heading-sm-mixed}` title, `{typography.body-sm}` description, optional `{component.button-tertiary}` "Learn more →" link.
+- Background `{colors.canvas}`, text `{colors.ink}`, type `{typography.body}`, rounded `{rounded.lg}`, padding `{spacing.lg}`. Stroked with `{colors.hairline}` rather than shadowed.
 
-**`doc-card`** — doc article body card
+**`pricing-card-feature-row`** — Single row inside the comparison table.
 
-- Container: background `{colors.surface-doc}` (`#fcfcfa` warm-white), 1px solid `{colors.hairline}`, padding `{spacing.xl}` (24px), rounded `{rounded.md}`.
-- Carries article body sections, code blocks, callout banners, and tables inside doc pages.
+- Background `{colors.canvas}`, text `{colors.ink}`, type `{typography.body-sm}`. Row separator is `{colors.hairline-soft}`.
 
-**`feature-tile`** — small marketing feature tile
+**`template-card`** — Thumbnail tile in the home "Explore what people are making" grid and the FigJam template gallery.
 
-- Container: background `{colors.surface-card}`, 1px solid `{colors.hairline}`, padding `{spacing.lg}` (20px), rounded `{rounded.md}`.
-- Used in 3-up or 4-up grids on home and workflows pages — paired with a small icon and a 1-line description.
+- Background `{colors.surface-soft}`, text `{colors.ink}`, type `{typography.body-sm}`, rounded `{rounded.md}`, padding `{spacing.md}`.
 
-**`pricing-tier-card`** — pricing plan card
+**`feature-illustration-tile`** — Larger composition tile that holds a product UI mock or pastel illustration.
 
-- Container: background `{colors.surface-card}`, 1px solid `{colors.hairline}`, padding `{spacing.xxl}` (32px), rounded `{rounded.md}`.
-- Layout: tier name in `{typography.display-lg}` (24px / 800 / -0.6px), large price + period, feature checklist with check-icon bullets, primary or secondary CTA at bottom.
+- Background `{colors.surface-soft}`, text `{colors.ink}`, type `{typography.eyebrow}`, rounded `{rounded.md}`, padding `{spacing.lg}`.
 
-**`hedgehog-mascot-card`** — feature card with margin-anchored hedgehog
+### Color-Block Sections (signature)
 
-- Same chrome as `{component.product-card}` but with a hand-drawn hedgehog illustration anchored in the right margin or top-right corner — the brand's signature card variant.
+The defining surface of Figma's marketing. Each is a full-content-width panel with `{rounded.lg}` corners and `{spacing.xxl}` interior padding. Variants:
 
-### Callout Banners
+**`color-block-section`** — lime ground for "systems" stories (home), pricing FAQ, and the contact form.
 
-**`banner-tip-blue`** + **`banner-tip-green`** + **`banner-tip-red`** + **`banner-tip-purple`**
+- Background `{colors.block-lime}`, text `{colors.ink}`, type `{typography.subhead}`, rounded `{rounded.lg}`, padding `{spacing.xxl}`.
 
-- Background `{colors.accent-blue-soft}` / `{colors.accent-green-soft}` / `{colors.accent-red-soft}` / `{colors.accent-purple-soft}`, text `{colors.ink}`, type `{typography.body-md}`, padding `16px 20px`, rounded `{rounded.md}`.
-- Each prefixed with an inline emoji icon (💡 / ✅ / ⚠️ / 📘) followed by an inline label and body copy.
-- Only appear inside doc article body. The four-color callout family is the brand's information-architecture vocabulary for inline tips/warnings/info inside long-form documentation.
+**`color-block-section-lilac`** — lavender ground for `/design/` hero and FigJam highlight sections.
 
-### Code
+- Background `{colors.block-lilac}`, otherwise identical structure.
 
-**`code-block`** — dark code sample inside doc card
+**`color-block-section-navy`** — deep indigo ground for the home "Ship products" story block. The only inverse color-block surface above the footer.
 
-- Container: background `{colors.surface-dark}` (deep olive-charcoal), text `{colors.on-dark}` in `{typography.code-sm}`, padding `16px 20px`, rounded `{rounded.md}`.
-- Syntax highlighting uses muted accent colors (blue for keywords, green for strings, purple for numbers) — never the bright accent colors used in callout banners.
+- Background `{colors.block-navy}`, text `{colors.inverse-ink}`, otherwise identical structure.
 
-**`inline-code`** — small inline `<code>` chip
+(Cream, mint, pink, and coral block variants follow the same shape with their respective `{colors.block-*}` surface.)
 
-- Background `{colors.surface-soft}`, text `{colors.ink}` in `{typography.code-xs}`, padding `2px 6px`, rounded `{rounded.xs}` (2px).
-- Used inside body prose to mark code snippets and identifiers.
+### Promo Banner
+
+**`promo-banner-lilac`** — The Release Notes / "Save your spot" inline banner that floats above the contact form.
+
+- Background `{colors.block-lilac}`, text `{colors.ink}`, type `{typography.body-sm}`, rounded `{rounded.md}`, padding `{spacing.md}` `{spacing.lg}`. Carries a `button-magenta-promo` on the right edge.
 
 ### Navigation
 
-**`primary-nav`**
+**`top-nav`** — Sticky white bar with logo, primary nav links, sign-in link, and the right-anchored `button-secondary` ("Contact sales") + `button-primary` ("Get started for free") pair.
 
-- Background `{colors.canvas}` (cream — same as the page), text `{colors.ink}`, height `56px`, type `{typography.body-strong}`, rounded `{rounded.none}`.
-- Layout (desktop): PostHog wordmark + hedgehog logo at left, nav menu cluster ("Pricing · Docs · Community · Company"), right cluster with a search-glyph, "Login" link, and the always-yellow `{component.button-primary}` "Get started — free" pill anchored to the far right.
+- Background `{colors.canvas}`, text `{colors.ink}`, type `{typography.body-sm}`, height 56px.
+- Mobile: collapses primary links into a hamburger that opens a full-canvas overlay; the two pill CTAs remain visible on the bar.
 
-**`sub-nav-strip`** — secondary nav bar (under primary)
+**`marquee-strip`** — Thin black ribbon directly under the nav that scrolls through customer logos in white.
 
-- Background `{colors.surface-soft}`, text `{colors.body}` in `{typography.body-xs}`, height `40px`, rounded `{rounded.none}`.
-- Sits directly below the primary nav on workflows / product pages with section anchor links and a contextual "Get started →" link at the right.
+- Background `{colors.inverse-canvas}`, text `{colors.inverse-ink}`, type `{typography.body-sm}`, height 36px.
 
-**`doc-sidebar`** — sticky doc-page left sidebar
+### Comparison Glyphs
 
-- Background `{colors.canvas}`, text `{colors.body}` in `{typography.body-xs}`, width `240px`, rounded `{rounded.none}`.
-- Layout: search-input "Ask PostHog AI" at top, then a vertical list of section headers each with a small rounded outline-icon mini-illustration, then nested item links indented under the active header.
+**`comparison-checkmark`** — Green check used in the pricing comparison matrix.
 
-**Top Nav (Mobile)**
-
-- Hamburger menu icon at left, PostHog wordmark + hedgehog at center, search + sticky yellow "Get started — free" CTA at right. Primary nav collapses into a full-height drawer that slides from the left.
+- Background `{colors.canvas}`, glyph color `{colors.semantic-success}`, rounded `{rounded.full}`, size 16px.
 
 ### Footer
 
-**`footer-section`**
+**`footer`** — Dense link grid on white canvas with the wordmark "Figma" set in display weight at the top-left.
 
-- Background `{colors.canvas}`, text `{colors.body}` in `{typography.body-xs}`, padding `32px 24px`, rounded `{rounded.none}`, with a 1px `{colors.hairline}` top rule.
-- Layout: 6-column horizontal link grid (Product · Resources · Company · Community · Pricing · Legal), each column with a `{typography.utility-xs}` (uppercase) header and a vertical list of links in `{typography.body-xs}` `{colors.body}`.
-- Bottom row: PostHog wordmark + small hedgehog illustration, copyright in `{typography.caption-xs}` `{colors.mute}`, social-icon row at far-right.
-
-### Inline
-
-**`link-inline`** — body-prose anchor link
-
-- `{colors.link-teal}` (`#1078a3`) in body prose with no underline by default; underline appears on focus. The brand's primary inline link color.
+- Background `{colors.canvas}`, text `{colors.ink}`, type `{typography.caption}` for column headings and small links, padding `{spacing.section}` top/bottom · `{spacing.xl}` sides.
 
 ## Do's and Don'ts
 
 ### Do
 
-- Use `{colors.canvas}` (cream — `#eeefe9`) as the page body. Never substitute pure white as the canvas.
-- Reserve `{colors.primary}` (yellow-orange) for the primary CTA pill only. The "Get started — free" treatment is the brand's anchor.
-- Render the brand wordmark with the hedgehog illustration alongside it, not as a stand-alone wordmark. The hedgehog IS the brand identity.
-- Use IBM Plex Sans Variable across every text role — body 400, emphasis 600/700, display 800.
-- Stack content sections at `{spacing.section}` (80px) rhythm with no decorative dividers between them; let the cream canvas continue uninterrupted.
-- Use `{component.banner-tip-blue}` / `-green` / `-red` / `-purple` only inside doc article body for tip/warning/note panels — keep marketing chrome out of the four-color callout family.
-- Pair every code sample with the dark `{component.code-block}` surface; inline `<code>` chips use `{component.inline-code}` (cream surface-soft chip).
-- Anchor a hedgehog mascot illustration in feature tile margins on home and workflows pages — the system's signature decoration.
+- Reserve `{colors.primary}` for genuine primary CTAs and selected states (e.g., `pricing-tab-selected`). Don't use it as a decorative accent.
+- When introducing a story section, choose **one** color block from the `{colors.block-*}` family and let it span full content width with `{rounded.lg}` corners and `{spacing.xxl}` interior padding.
+- Keep type in `figmaSans` at variable weights — pick from 320, 330, 340, 480, 540, 700 to express hierarchy. Avoid intermediate weights outside this set.
+- Use `figmaMono` only for eyebrows and captions, always uppercase, with the documented positive letter-spacing.
+- Compose every CTA as a pill (`{rounded.pill}`) and every icon button as a circle (`{rounded.full}`).
+- Allow the page to **return to white canvas** between every two color blocks so each block reads as deliberate.
+- Pair `button-primary` and `button-secondary` whenever a section needs both a primary action and a sales / secondary action — the black-and-white pair is the brand signature.
 
 ### Don't
 
-- Don't introduce drop shadows on cards. Cards sit flat on cream with thin olive borders only.
-- Don't add a second saturated chromatic CTA. Yellow-orange is the only loud color in the system.
-- Don't replace the cream canvas with pure white or full-bleed dark hero bands. The cream is the brand.
-- Don't use the four-color callout banner pastels (`{colors.accent-blue-soft}`, `-green`, `-red`, `-purple`) as marketing-card backgrounds. They belong to inline doc content only.
-- Don't substitute the hedgehog illustration with a generic icon set. The character system is the brand.
-- Don't use uppercase transform outside of `{typography.heading-sm}`, `{typography.utility-xs}`, and `{typography.caption-xs}`. Uppercase is reserved for eyebrows and footer category headers.
-- Don't pad cards with 32px+ on all sides except for `{component.pricing-tier-card}`. Standard cards sit at 24px internal padding.
+- Don't introduce mid-gray text. Body hierarchy comes from `figmaSans` weight, not from opacity.
+- Don't add drop shadows to color-block sections — the color is the depth device.
+- Don't introduce new accent colors outside the documented `{colors.block-*}` palette and `{colors.accent-magenta}`. Adding, e.g., a saturated brand orange would break the system.
+- Don't combine more than one color block visible inside a single viewport — Figma's pacing always lets the white canvas separate them.
+- Don't square off CTAs. Square buttons read as a different brand.
+- Don't put `figmaMono` in body copy — it's a taxonomy tool, not a reading typeface.
+- Don't replace the `pricing-tab-selected` black fill with a colored tab; the brand pattern is "selected = primary surface".
 
 ## Responsive Behavior
 
@@ -687,48 +557,47 @@ There is no photography. Visual elements are limited to:
 
 | Name | Width | Key Changes |
 |---|---|---|
-| ultrawide | 1920px+ | Content max-width holds at 1280px; outer gutters grow to ~80px |
-| desktop-large | 1440px | Default — 4-up feature tile grid, 240px sticky doc sidebar visible |
-| desktop | 1280px | Same layout with narrower outer gutters |
-| desktop-small | 1024px | 4-up tiles collapse to 3-up; doc sidebar remains visible |
-| tablet | 768px | 3-up tiles collapse to 2-up; doc sidebar collapses into a top accordion; primary nav becomes hamburger |
-| mobile | 480px | Single-column everything; hero `{typography.display-xl}` scales 36px → ~28px |
-| mobile-narrow | 320px | Section padding tightens to 32px |
+| 4k | 1920px | Max content width holds at 1280px; gutters expand |
+| Desktop-XL | 1440px | Default desktop layout |
+| Desktop | 1400px | Comparison table column widths normalize |
+| Desktop-S | 1280px | Pricing 4-up tier grid maintained |
+| Tablet | 960px | Pricing collapses 4-up → 2-up; nav becomes hamburger |
+| Mobile-L | 768px | Color-block sections become full-bleed (no rounded corners on edges) |
+| Mobile | 560px | Display-xl reduces from 86px to ~48px; pill CTAs go full-width |
+| Mobile-XS | 559px | Two-column footer collapses to single column |
 
 ### Touch Targets
 
-All interactive elements meet WCAG AA (≥ 40×40px). `{component.button-primary}` and `{component.button-secondary}` sit at 40px height with 16px padding. `{component.text-input}` sits at 36px (just under AAA but above AA at this size). `{component.pill-tab}` is ~32–36px height with 14px padding extending to ~44px tappable via inline padding. Doc-sidebar items use 14px text with ~32px line-height + 6px vertical padding for ~44px tap rows.
+- Pill buttons (`button-primary`, `button-secondary`) maintain a minimum 44px tap height across all viewports — achieved by combining `{typography.button}` 20px line-height with the documented vertical padding.
+- Circular icon buttons (`button-icon-circular`) are 40px on desktop and grow to 44px on touch viewports.
+- Form input minimum tap target on `/contact/` is 48px high.
 
 ### Collapsing Strategy
 
-- **Primary nav:** desktop horizontal cluster → tablet hamburger drawer at 768px. The yellow "Get started — free" CTA stays visible at every breakpoint.
-- **Sub-nav strip:** desktop horizontal anchor row → tablet horizontal scroll → mobile select dropdown.
-- **Marketing card grid:** 4-up → 3-up → 2-up → 1-up at 1024, 768, and 480px; gutters drop from 16px to 12px on mobile.
-- **Pricing grid:** 3-up → 2+1 → 1-up stacked at tablet and below.
-- **Doc layout:** desktop 240px sidebar + 720px article → tablet sidebar collapses to a top accordion → mobile fully collapsed accordion.
-- **Footer:** 6-up link columns → 3-up at tablet → 2-up at mobile.
-- **Section padding:** `{spacing.section}` (80px) desktop → 64px tablet → 48px mobile.
-- **Hero headline:** `{typography.display-xl}` (36px) at desktop, scaling to ~28px at mobile, line-height holding at 1.5.
+- **Nav**: desktop horizontal nav with two right-anchored pills collapses to a hamburger overlay below 960px. The two pills (`Contact sales`, `Get started for free`) stay visible on the bar above 560px and stack in the overlay below.
+- **Pricing tier grid**: 4-up → 2-up at 960px → 1-up below 768px. The pill toggle stays horizontal and scrolls horizontally if needed below 560px.
+- **Color-block sections**: above 768px the section keeps `{spacing.xxl}` of canvas around it so the rounded corners read; below 768px the corners are removed and the block bleeds to viewport edge for a poster effect.
+- **Comparison table**: below 960px the matrix collapses into per-tier accordions to avoid horizontal scroll.
 
 ### Image Behavior
 
-The only "imagery" in the system is hand-drawn hedgehog illustrations rendered as inline SVG. They preserve their natural aspect at every breakpoint and scale via CSS `width: auto; max-width: 100%`. There is no responsive art-direction needed because there is no photography.
+- Product UI mocks inside color blocks scale proportionally and never crop. Below 768px they shrink rather than reflow.
+- Template thumbnails in the home grid use lazy loading and animate in on scroll.
+- Sticky-note style FigJam thumbnails maintain their slight off-axis rotation across breakpoints — the rotation is a brand signal, not a desktop-only flourish.
 
 ## Iteration Guide
 
-1. Focus on ONE component at a time. Pull its YAML entry and verify every property resolves.
-2. Reference component names and tokens directly (`{colors.primary}`, `{component.button-primary-pressed}`, `{rounded.md}`) — do not paraphrase.
-3. Run `npx @google/design.md lint DESIGN.md` after edits — `broken-ref`, `contrast-ratio`, and `orphaned-tokens` warnings flag issues automatically.
-4. Add new variants as separate component entries (`-pressed`, `-disabled`, `-focused`) — do not bury them inside prose.
-5. Default body to `{typography.body-md}` (16px / 400 / 1.5); reach for `{typography.body-strong}` for emphasis; reserve `{typography.display-lg}` (24px / 800) strictly for marketing display moments.
-6. Keep `{colors.primary}` scarce per viewport — at most one yellow-orange pill per fold.
-7. When introducing a new component, ask whether it can be expressed with the existing card + 6px-radius + cream-canvas vocabulary before adding new tokens. The system's strength is that it almost never needs new ones.
+1. Focus on ONE component at a time and reference it by its `components:` token name (e.g., `{components.button-primary}`, `{components.color-block-section}`).
+2. When introducing a new section, decide **first** which `{colors.block-*}` token it sits on; the surface choice is the most consequential decision.
+3. Default body type to `{typography.body}`; reach for `{typography.subhead}` or `{typography.headline}` only inside a color block.
+4. Run `npx @google/design.md lint DESIGN.md` after edits — `broken-ref`, `contrast-ratio`, and `orphaned-tokens` warnings flag issues automatically.
+5. Add new variants as separate component entries (`-pressed`, `-selected`) — do not bury them in prose.
+6. Keep `{colors.primary}` scarce. If two `button-primary` instances appear in the same viewport, the section is doing too much — neutralize one to `button-secondary`.
+7. Treat `{colors.accent-magenta}` as a single-shot color: one promo CTA per page, never two.
 
 ## Known Gaps
 
-- **Mobile screenshots not captured** — responsive behavior synthesizes PostHog's mobile pattern (hamburger drawer, single-column grid, doc sidebar accordion) from desktop evidence and the breakpoint stack.
-- **Hover states not documented** by system policy.
-- **In-product app chrome** (PostHog dashboard, charts, session replay player) not in the captured set — the marketing site is documented here, not the in-product analytics interface.
-- **Authenticated chrome** (login modal, account dashboard, billing settings) not in the captured pages.
-- **Form validation states** beyond the focused-state input not present in the captured surfaces.
-- **Marketing illustration set** — the full library of hedgehog character poses is not enumerated here; specific poses (lab coat hedgehog, terminal hedgehog, hammock hedgehog) are noted as visible in screenshots but the full asset library is page-specific.
+- The exact pastel hex values of `{colors.block-*}` are derived from screenshot pixels; the production source likely uses named tokens that aren't exposed via CSS variables. Treat the documented hex values as faithful approximations rather than exact brand specs.
+- Dark mode is not documented because the marketing site does not ship a dark theme — the closest analog is the navy color-block (`color-block-section-navy`) and the inverse-canvas footer.
+- Form-field error and validation styling is not visible on `/contact/` because no error states render in the static screenshot. Inputs have hairline borders and rounded `{rounded.md}` corners; error treatment is not documented.
+- The animated marquee-strip and color-block reveal animations are not documented (per the no-interaction policy).

@@ -55,16 +55,24 @@ module.exports = {
   				DEFAULT: 'hsl(var(--card))',
   				foreground: 'hsl(var(--card-foreground))'
   			},
-  			posthogYellow: 'hsl(var(--posthog-yellow))',
-  			charcoal: 'hsl(var(--posthog-charcoal))',
-  			ash: 'hsl(var(--posthog-ash))',
-  			stone: 'hsl(var(--posthog-stone))',
-  			linkBlue: 'hsl(var(--posthog-link-blue))',
-  			linkTeal: 'hsl(var(--posthog-link-teal))',
-  			blueSoft: 'hsl(var(--posthog-blue-soft))',
-  			greenSoft: 'hsl(var(--posthog-green-soft))',
-  			redSoft: 'hsl(var(--posthog-red-soft))',
-  			purpleSoft: 'hsl(var(--posthog-purple-soft))',
+  			ink: 'hsl(var(--ink))',
+  			canvas: 'hsl(var(--canvas))',
+  			'inverse-canvas': 'hsl(var(--inverse-canvas))',
+  			'inverse-ink': 'hsl(var(--inverse-ink))',
+  			'on-inverse-soft': 'hsl(var(--on-inverse-soft))',
+  			hairline: 'hsl(var(--hairline))',
+  			'hairline-soft': 'hsl(var(--hairline-soft))',
+  			'surface-soft': 'hsl(var(--surface-soft))',
+  			'block-lime': 'hsl(var(--block-lime))',
+  			'block-lilac': 'hsl(var(--block-lilac))',
+  			'block-cream': 'hsl(var(--block-cream))',
+  			'block-pink': 'hsl(var(--block-pink))',
+  			'block-mint': 'hsl(var(--block-mint))',
+  			'block-coral': 'hsl(var(--block-coral))',
+  			'block-navy': 'hsl(var(--block-navy))',
+  			'accent-magenta': 'hsl(var(--accent-magenta))',
+  			'semantic-success': 'hsl(var(--semantic-success))',
+  			'overlay-scrim': 'hsl(var(--overlay-scrim))',
   			sidebar: {
   				DEFAULT: 'hsl(var(--sidebar-background))',
   				foreground: 'hsl(var(--sidebar-foreground))',
@@ -79,30 +87,29 @@ module.exports = {
   		borderRadius: {
   			none: '0px',
   			xs: '2px',
-  			sm: '4px',
-  			md: '6px',
-  			lg: '8px',
-  			pill: '9999px',
+  			sm: '6px',
+  			md: '8px',
+  			lg: '24px',
+  			xl: '32px',
+  			pill: '50px',
   			full: '9999px',
   		},
   		spacing: {
-  			xxs: '2px',
-  			xs: '4px',
-  			sm: '8px',
-  			md: '12px',
-  			lg: '16px',
-  			xl: '24px',
-  			xxl: '32px',
-  			'2xl': '32px',
-  			'3xl': '48px',
-  			'4xl': '64px',
-  			'5xl': '96px',
-  			section: '80px'
+  			hair: '1px',
+  			xxs: '4px',
+  			xs: '8px',
+  			sm: '12px',
+  			md: '16px',
+  			lg: '24px',
+  			xl: '32px',
+  			xxl: '48px',
+  			section: '96px',
   		},
   		fontFamily: {
   			sans: [
-  				'IBM Plex Sans Variable',
-  				'IBM Plex Sans',
+  				'figmaSans',
+  				'figmaSans Fallback',
+  				'SF Pro Display',
   				'Inter',
   				'system-ui',
   				'-apple-system',
@@ -114,7 +121,10 @@ module.exports = {
   				'serif'
   			],
   			mono: [
-  				'Source Code Pro',
+  				'figmaMono',
+  				'figmaMono Fallback',
+  				'SF Mono',
+  				'JetBrains Mono',
   				'ui-monospace',
   				'SFMono-Regular',
   				'Menlo',
@@ -123,17 +133,99 @@ module.exports = {
   		},
   		fontSize: {
   			'display-xl': [
-  				'36px',
+  				'86px',
   				{
-  					lineHeight: '54px',
-  					letterSpacing: '0px'
+  					lineHeight: '1.00',
+  					letterSpacing: '-1.72px',
+  					fontWeight: '340'
   				}
   			],
   			'display-lg': [
+  				'64px',
+  				{
+  					lineHeight: '1.10',
+  					letterSpacing: '-0.96px',
+  					fontWeight: '340'
+  				}
+  			],
+  			'headline': [
+  				'26px',
+  				{
+  					lineHeight: '1.35',
+  					letterSpacing: '-0.26px',
+  					fontWeight: '540'
+  				}
+  			],
+  			'subhead': [
+  				'26px',
+  				{
+  					lineHeight: '1.35',
+  					letterSpacing: '-0.26px',
+  					fontWeight: '340'
+  				}
+  			],
+  			'card-title': [
   				'24px',
   				{
-  					lineHeight: '32px',
-  					letterSpacing: '-0.6px'
+  					lineHeight: '1.45',
+  					letterSpacing: '0',
+  					fontWeight: '700'
+  				}
+  			],
+  			'body-lg': [
+  				'20px',
+  				{
+  					lineHeight: '1.40',
+  					letterSpacing: '-0.14px',
+  					fontWeight: '330'
+  				}
+  			],
+  			'body': [
+  				'18px',
+  				{
+  					lineHeight: '1.45',
+  					letterSpacing: '-0.26px',
+  					fontWeight: '320'
+  				}
+  			],
+  			'body-sm': [
+  				'16px',
+  				{
+  					lineHeight: '1.45',
+  					letterSpacing: '-0.14px',
+  					fontWeight: '330'
+  				}
+  			],
+  			'link': [
+  				'20px',
+  				{
+  					lineHeight: '1.40',
+  					letterSpacing: '-0.10px',
+  					fontWeight: '480'
+  				}
+  			],
+  			'button': [
+  				'20px',
+  				{
+  					lineHeight: '1.40',
+  					letterSpacing: '-0.10px',
+  					fontWeight: '480'
+  				}
+  			],
+  			'eyebrow': [
+  				'18px',
+  				{
+  					lineHeight: '1.30',
+  					letterSpacing: '0.54px',
+  					fontWeight: '400'
+  				}
+  			],
+  			'caption': [
+  				'12px',
+  				{
+  					lineHeight: '1.00',
+  					letterSpacing: '0.60px',
+  					fontWeight: '400'
   				}
   			],
   			'heading-lg': [
@@ -175,12 +267,6 @@ module.exports = {
   				{
   					lineHeight: '24px',
   					fontWeight: '600'
-  				}
-  			],
-  			'body-sm': [
-  				'15px',
-  				{
-  					lineHeight: '25.65px'
   				}
   			],
   			'body-sm-strong': [
