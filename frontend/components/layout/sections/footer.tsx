@@ -72,8 +72,14 @@ export const FooterSection = () => {
           <div className="flex flex-col gap-2">
             <h3 className="font-bold text-lg">{t("resources")}</h3>
             <div>
-              <Link href="#" className="opacity-60 hover:opacity-100">
+              <Link href="/docs" className="opacity-60 hover:opacity-100">
                 {t("documentation")}
+              </Link>
+            </div>
+
+            <div>
+              <Link href="/roadmap" className="opacity-60 hover:opacity-100">
+                {t("roadmap")}
               </Link>
             </div>
 

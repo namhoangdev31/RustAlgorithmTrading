@@ -59,8 +59,12 @@ export const Navbar = () => {
       label: t("route_pricing"),
     },
     {
-      href: "#contact",
-      label: t("route_contact"),
+      href: "/roadmap",
+      label: t("route_roadmap"),
+    },
+    {
+      href: "/docs",
+      label: t("route_docs"),
     },
     {
       href: "#faq",

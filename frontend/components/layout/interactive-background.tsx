@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
+import { usePathname } from "@/i18n/navigation";
 
 interface SmokeParticle {
   x: number;
@@ -16,6 +17,13 @@ interface SmokeParticle {
 }
 
 export const InteractiveBackground = () => {
+  const pathname = usePathname();
+  const pathnameRef = useRef(pathname);
+
+  useEffect(() => {
+    pathnameRef.current = pathname;
+  }, [pathname]);
+
   const containerRef = useRef<HTMLDivElement>(null);
   const interactiveWrapperRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -176,9 +184,14 @@ export const InteractiveBackground = () => {
       const startFade = viewportHeight * 0.35;
       const endFade = viewportHeight * 0.8;
       
-      let scrollFactor = 0;
-      if (scrollY > startFade) {
-        scrollFactor = Math.min((scrollY - startFade) / (endFade - startFade), 1.0);
+      const isHomepage = pathnameRef.current === "/" || pathnameRef.current === "";
+      let scrollFactor = 1.0;
+      
+      if (isHomepage) {
+        scrollFactor = 0;
+        if (scrollY > startFade) {
+          scrollFactor = Math.min((scrollY - startFade) / (endFade - startFade), 1.0);
+        }
       }
 
       // 1. Clear Canvas
@@ -338,11 +351,13 @@ export const InteractiveBackground = () => {
     };
   }, []);
 
+  const isHomepage = pathname === "/" || pathname === "";
+
   return (
     <div
       ref={containerRef}
       className="fixed inset-0 -z-10 pointer-events-none overflow-hidden bg-background transition-opacity duration-500"
-      style={{ opacity: 0 }}
+      style={{ opacity: isHomepage ? 0 : 1 }}
     >
       {/* High-performance canvas that draws the concave deformed grid and the smoke particles */}
       <canvas
