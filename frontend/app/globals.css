@@ -76,6 +76,7 @@ html {
 /* *=========== Supabaze Design System theme =========== */
 @layer base {
   :root {
+    color-scheme: light;
     --background: #ffffff; /* canvas */
     --foreground: #171717; /* ink */
 
@@ -145,6 +146,7 @@ html {
   }
 
   .dark {
+    color-scheme: dark;
     --background: #1c1c1c; /* canvas-night */
     --foreground: #ffffff;
 

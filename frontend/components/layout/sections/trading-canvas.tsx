@@ -106,12 +106,14 @@ export const TradingCanvas = () => {
         uMouse: { value: new THREE.Vector3(0, 0, 0) },
         uScrollY: { value: 0.0 },
         uMouseStrength: { value: 0.0 },
+        uIsDark: { value: 1.0 },
       },
       vertexShader: `
         uniform float uTime;
         uniform vec3 uMouse;
         uniform float uScrollY;
         uniform float uMouseStrength;
+        uniform float uIsDark;
 
         attribute vec4 aRandom;
         attribute vec3 aColor;
@@ -180,11 +182,13 @@ export const TradingCanvas = () => {
           // Depth attenuation & volume bounds fadeout
           vOpacity = smoothstep(-600.0, -100.0, mvPosition.z) * (1.0 - smoothstep(120.0, 480.0, length(finalPos.xz)));
 
-          // Perspective particle sizing
-          gl_PointSize = (aRandom.x * 4.5 + 2.5) * (300.0 / -mvPosition.z);
+          // Perspective particle sizing: make particles slightly larger in light mode to stand out
+          float sizeMultiplier = uIsDark > 0.5 ? 1.0 : 1.35;
+          gl_PointSize = (aRandom.x * 4.5 + 2.5) * sizeMultiplier * (300.0 / -mvPosition.z);
         }
       `,
       fragmentShader: `
+        uniform float uIsDark;
         varying vec3 vColor;
         varying float vOpacity;
         varying float vWeight;
@@ -197,13 +201,21 @@ export const TradingCanvas = () => {
           // Smooth radial fadeout
           float alpha = smoothstep(0.5, 0.08, dist);
 
-          // Enhance glow brightness for active swarming particles
+          // Color calculation
           vec3 glowColor = vColor;
-          if (vWeight > 0.15) {
-            glowColor += vec3(0.12, 0.04, 0.18) * vWeight;
+          if (uIsDark > 0.5) {
+            // Enhance glow brightness for active swarming particles (Additive Blending)
+            if (vWeight > 0.15) {
+              glowColor += vec3(0.12, 0.04, 0.18) * vWeight;
+            }
+          } else {
+            // Darken/saturate particle colors in light mode to make them stand out on light background
+            glowColor = mix(glowColor * 0.72, glowColor, 0.25);
           }
 
-          gl_FragColor = vec4(glowColor, alpha * vOpacity * 0.85);
+          // Boost opacity in light mode to compensate for lack of Additive Blending glow
+          float opacityMultiplier = uIsDark > 0.5 ? 0.85 : 1.15;
+          gl_FragColor = vec4(glowColor, alpha * vOpacity * opacityMultiplier);
         }
       `,
       transparent: true,
@@ -277,6 +289,22 @@ export const TradingCanvas = () => {
       // 4. Subtle background rotation of the whole scene
       particles.rotation.y = elapsed * 0.015;
       particles.rotation.x = elapsed * 0.008;
+
+      // 5. Dynamic theme switching for blending and fog
+      const isDark = document.documentElement.classList.contains("dark");
+      material.uniforms.uIsDark.value = isDark ? 1.0 : 0.0;
+      
+      if (isDark) {
+        material.blending = THREE.AdditiveBlending;
+        if (scene.fog) {
+          (scene.fog as THREE.FogExp2).color.setHex(0x0a0a0c);
+        }
+      } else {
+        material.blending = THREE.NormalBlending;
+        if (scene.fog) {
+          (scene.fog as THREE.FogExp2).color.setHex(0xffffff);
+        }
+      }
 
       renderer.render(scene, camera);
     };

@@ -27,7 +27,7 @@ import {
 } from "../ui/navigation-menu";
 import { Button } from "../ui/button";
 import Link from "next/link";
-import { ToggleTheme } from "./toogle-theme";
+
 
 interface RouteProps {
   href: string;
@@ -127,12 +127,6 @@ export const Navbar = () => {
                 ))}
               </div>
             </div>
-
-            <SheetFooter className="flex-col sm:flex-col justify-start items-start">
-              <Separator className="mb-2" />
-
-              <ToggleTheme />
-            </SheetFooter>
           </SheetContent>
         </Sheet>
       </div>
@@ -190,8 +184,6 @@ export const Navbar = () => {
       </NavigationMenu>
 
       <div className="hidden lg:flex">
-        <ToggleTheme />
-
         <Button asChild size="sm" variant="ghost" aria-label="Login to Platform">
           <Link
             aria-label="Login to Platform"

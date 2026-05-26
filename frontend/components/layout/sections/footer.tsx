@@ -106,7 +106,7 @@ export const FooterSection = () => {
 
         <Separator className="my-6" />
         <section className="">
-          <h3 className="">
+          <h3 className="text-muted-foreground text-sm">
             &copy; 2026 RustAT. All rights reserved. Built with Next.js,
             shadcn/ui, TypeScript, and Tailwind.
           </h3>
