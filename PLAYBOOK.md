@@ -307,6 +307,9 @@ Standalone iOS project (SwiftUI + Liquid Glass). Migrated from `leposapp/iosApp`
 | `frontend/app/globals.css` | Tailwind/shadcn theme tokens | CSS variables for Light/dark trading platform palette. |
 | `frontend/components/dashboard/` | Admin dashboard components | Shadcn Admin-style shell, sidebar, command search, navbar, settings/profile controls, profile-form.tsx, appearance-form.tsx, organization-form.tsx, notifications-form.tsx, display-form.tsx (TanStack Forms), new-chat-dialog.tsx, page headers, and metric cards. |
 | `frontend/components/layout/` | Page shell and section components | `navbar.tsx`, `theme-provider.tsx`, auth form components, and landing sections. |
+| `frontend/components/layout/animation-provider.tsx` | Smooth scroll manager | Set up Lenis smooth scrolling and coordinate with GSAP ScrollTrigger ticker. |
+| `frontend/components/layout/transition-provider.tsx` | Route transition manager | Implement next-transition-router page animation wipes using GSAP. |
+| `frontend/components/layout/sections/trading-canvas.tsx` | Interactive 3D Background | WebGL canvas showing nodes network drawn with Three.js. |
 | `frontend/components/layout/login.tsx` | Login form view | Server-rendered email/password and reset request forms bound to Server Actions. |
 | `frontend/components/layout/reset-password.tsx` | Password reset view | Server-rendered Firebase password reset confirmation form. |
 | `frontend/components/layout/signup.tsx` | Signup page view | Server-rendered Firebase user registration form. |
