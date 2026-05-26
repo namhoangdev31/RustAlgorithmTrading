@@ -10,26 +10,26 @@ import { SponsorsSection } from "@/components/layout/sections/sponsors";
 import { TestimonialSection } from "@/components/layout/sections/testimonial";
 
 export const metadata = {
-  title: "RustAT — App Distribution & Cloud Hosting Platform",
+  title: "Lepos — App Distribution & Cloud Hosting Platform",
   description: "Deploy Mini Apps, host websites, and run algorithmic trading — all from one unified platform.",
   openGraph: {
     type: "website",
     url: "https://github.com/SamoraDC/RustAlgorithmTrading",
-    title: "RustAT — App Distribution & Cloud Hosting Platform",
+    title: "Lepos — App Distribution & Cloud Hosting Platform",
     description: "Deploy Mini Apps, host websites, and run algorithmic trading — all from one unified platform.",
     images: [
       {
         url: "https://res.cloudinary.com/dbzv9xfjp/image/upload/v1723499276/og-images/shadcn-vue.jpg",
         width: 1200,
         height: 630,
-        alt: "RustAT platform landing page",
+        alt: "Lepos platform landing page",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
     site: "https://github.com/SamoraDC/RustAlgorithmTrading",
-    title: "RustAT — App Distribution & Cloud Hosting Platform",
+    title: "Lepos — App Distribution & Cloud Hosting Platform",
     description: "Deploy Mini Apps, host websites, and run algorithmic trading — all from one unified platform.",
     images: [
       "https://res.cloudinary.com/dbzv9xfjp/image/upload/v1723499276/og-images/shadcn-vue.jpg",

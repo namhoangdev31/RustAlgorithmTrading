@@ -8,6 +8,8 @@ import {
   Zap,
 } from "lucide-react";
 import React from "react";
+import Image from "next/image";
+import logoImg from "@/app/logo_nonbg.png";
 import {
   Sheet,
   SheetContent,
@@ -84,7 +86,13 @@ export const Navbar = () => {
   return (
     <header className="shadow-inner bg-opacity-15 w-[90%] md:w-[70%] lg:w-[75%] lg:max-w-screen-xl top-5 mx-auto sticky border border-secondary z-40 rounded-2xl flex justify-between items-center p-2 bg-card/95 backdrop-blur">
       <Link href="/" className="font-bold text-lg flex items-center">
-        <ShieldCheck className="bg-gradient-to-tr border-secondary from-primary via-primary/70 to-primary rounded-lg size-9 mr-2 border text-primary-foreground" />
+        <Image
+          src={logoImg}
+          alt="Lepos Logo"
+          width={36}
+          height={36}
+          className="mr-2 object-contain"
+        />
         {t("logo")}
       </Link>
       {/* <!-- Mobile --> */}
@@ -105,7 +113,13 @@ export const Navbar = () => {
               <SheetHeader className="mb-4 ml-4">
                 <SheetTitle className="flex items-center">
                   <Link href="/" className="flex items-center">
-                    <ShieldCheck className="bg-gradient-to-tr border-secondary from-primary via-primary/70 to-primary rounded-lg size-9 mr-2 border text-primary-foreground" />
+                    <Image
+                      src={logoImg}
+                      alt="Lepos Logo"
+                      width={36}
+                      height={36}
+                      className="mr-2 object-contain"
+                    />
                     {t("logo")}
                   </Link>
                 </SheetTitle>
