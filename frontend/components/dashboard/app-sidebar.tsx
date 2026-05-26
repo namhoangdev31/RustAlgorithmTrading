@@ -151,7 +151,7 @@ const navGroups: NavGroup[] = [
           },
           {
             title: "Maintenance Error",
-            url: "/dashboard/errors/maintenance",
+            url: "/dashboard/errors/maintenance-error",
             icon: Construction,
           },
         ],
