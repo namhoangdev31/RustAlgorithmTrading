@@ -29,7 +29,9 @@ module.exports = {
   			foreground: 'hsl(var(--foreground))',
   			primary: {
   				DEFAULT: 'hsl(var(--primary))',
-  				foreground: 'hsl(var(--primary-foreground))'
+  				foreground: 'hsl(var(--primary-foreground))',
+  				deep: 'hsl(var(--primary-deep))',
+  				soft: 'hsl(var(--primary-soft))'
   			},
   			secondary: {
   				DEFAULT: 'hsl(var(--secondary))',
@@ -55,24 +57,34 @@ module.exports = {
   				DEFAULT: 'hsl(var(--card))',
   				foreground: 'hsl(var(--card-foreground))'
   			},
-  			ink: 'hsl(var(--ink))',
-  			canvas: 'hsl(var(--canvas))',
-  			'inverse-canvas': 'hsl(var(--inverse-canvas))',
-  			'inverse-ink': 'hsl(var(--inverse-ink))',
-  			'on-inverse-soft': 'hsl(var(--on-inverse-soft))',
-  			hairline: 'hsl(var(--hairline))',
-  			'hairline-soft': 'hsl(var(--hairline-soft))',
-  			'surface-soft': 'hsl(var(--surface-soft))',
-  			'block-lime': 'hsl(var(--block-lime))',
-  			'block-lilac': 'hsl(var(--block-lilac))',
-  			'block-cream': 'hsl(var(--block-cream))',
-  			'block-pink': 'hsl(var(--block-pink))',
-  			'block-mint': 'hsl(var(--block-mint))',
-  			'block-coral': 'hsl(var(--block-coral))',
-  			'block-navy': 'hsl(var(--block-navy))',
-  			'accent-magenta': 'hsl(var(--accent-magenta))',
-  			'semantic-success': 'hsl(var(--semantic-success))',
-  			'overlay-scrim': 'hsl(var(--overlay-scrim))',
+  			ink: {
+  				DEFAULT: 'hsl(var(--ink))',
+  				secondary: 'hsl(var(--ink-secondary))',
+  				mute: 'hsl(var(--ink-mute))',
+  				'mute-2': 'hsl(var(--ink-mute-2))',
+  				faint: 'hsl(var(--ink-faint))'
+  			},
+  			canvas: {
+  				DEFAULT: 'hsl(var(--canvas))',
+  				soft: 'hsl(var(--canvas-soft))',
+  				night: 'hsl(var(--canvas-night))',
+  				'night-soft': 'hsl(var(--canvas-night-soft))'
+  			},
+  			hairline: {
+  				DEFAULT: 'hsl(var(--hairline))',
+  				strong: 'hsl(var(--hairline-strong))',
+  				cool: 'hsl(var(--hairline-cool))',
+  				'cool-2': 'hsl(var(--hairline-cool-2))',
+  				'cool-3': 'hsl(var(--hairline-cool-3))'
+  			},
+  			'accent-purple': 'hsl(var(--accent-purple))',
+  			'accent-violet': 'hsl(var(--accent-violet))',
+  			'accent-purple-soft': 'hsl(var(--accent-purple-soft))',
+  			'accent-yellow': 'hsl(var(--accent-yellow))',
+  			'accent-tomato': 'hsl(var(--accent-tomato))',
+  			'accent-pink': 'hsl(var(--accent-pink))',
+  			'accent-indigo': 'hsl(var(--accent-indigo))',
+  			'accent-crimson': 'hsl(var(--accent-crimson))',
   			sidebar: {
   				DEFAULT: 'hsl(var(--sidebar-background))',
   				foreground: 'hsl(var(--sidebar-foreground))',
@@ -86,33 +98,35 @@ module.exports = {
   		},
   		borderRadius: {
   			none: '0px',
-  			xs: '2px',
+  			xs: '4px',
   			sm: '6px',
   			md: '8px',
-  			lg: '24px',
-  			xl: '32px',
-  			pill: '50px',
+  			lg: '12px',
+  			xl: '16px',
   			full: '9999px',
   		},
   		spacing: {
   			hair: '1px',
-  			xxs: '4px',
-  			xs: '8px',
-  			sm: '12px',
-  			md: '16px',
-  			lg: '24px',
-  			xl: '32px',
-  			xxl: '48px',
+  			xxs: '2px',
+  			xs: '4px',
+  			sm: '8px',
+  			md: '12px',
+  			lg: '16px',
+  			xl: '24px',
+  			xxl: '32px',
+  			huge: '64px',
   			section: '96px',
   		},
   		fontFamily: {
   			sans: [
-  				'figmaSans',
-  				'figmaSans Fallback',
-  				'SF Pro Display',
   				'Inter',
-  				'system-ui',
+  				'Circular',
   				'-apple-system',
+  				'BlinkMacSystemFont',
+  				'Segoe UI',
+  				'Roboto',
+  				'Helvetica Neue',
+  				'Arial',
   				'sans-serif'
   			],
   			serif: [
@@ -121,33 +135,112 @@ module.exports = {
   				'serif'
   			],
   			mono: [
-  				'figmaMono',
-  				'figmaMono Fallback',
-  				'SF Mono',
-  				'JetBrains Mono',
   				'ui-monospace',
-  				'SFMono-Regular',
   				'Menlo',
+  				'Monaco',
+  				'Consolas',
+  				'Liberation Mono',
   				'monospace'
   			]
   		},
   		fontSize: {
-  			'display-xl': [
-  				'86px',
+  			'display-xxl': [
+  				'64px',
   				{
-  					lineHeight: '1.00',
-  					letterSpacing: '-1.72px',
-  					fontWeight: '340'
+  					lineHeight: '1.1',
+  					letterSpacing: '-1.92px',
+  					fontWeight: '500'
+  				}
+  			],
+  			'display-xl': [
+  				'48px',
+  				{
+  					lineHeight: '1.1',
+  					letterSpacing: '-1.44px',
+  					fontWeight: '500'
   				}
   			],
   			'display-lg': [
-  				'64px',
+  				'36px',
   				{
-  					lineHeight: '1.10',
-  					letterSpacing: '-0.96px',
-  					fontWeight: '340'
+  					lineHeight: '1.15',
+  					letterSpacing: '-0.72px',
+  					fontWeight: '500'
   				}
   			],
+  			'display-md': [
+  				'28px',
+  				{
+  					lineHeight: '1.2',
+  					letterSpacing: '-0.42px',
+  					fontWeight: '500'
+  				}
+  			],
+  			'heading-lg': [
+  				'22px',
+  				{
+  					lineHeight: '1.2',
+  					letterSpacing: '0',
+  					fontWeight: '500'
+  				}
+  			],
+  			'heading-md': [
+  				'18px',
+  				{
+  					lineHeight: '1.4',
+  					letterSpacing: '0',
+  					fontWeight: '500'
+  				}
+  			],
+  			'body-lg': [
+  				'18px',
+  				{
+  					lineHeight: '1.55',
+  					letterSpacing: '0',
+  					fontWeight: '400'
+  				}
+  			],
+  			'body-md': [
+  				'16px',
+  				{
+  					lineHeight: '1.5',
+  					letterSpacing: '0',
+  					fontWeight: '400'
+  				}
+  			],
+  			'button-md': [
+  				'14px',
+  				{
+  					lineHeight: '1.0',
+  					letterSpacing: '0',
+  					fontWeight: '500'
+  				}
+  			],
+  			'caption': [
+  				'13px',
+  				{
+  					lineHeight: '1.45',
+  					letterSpacing: '0',
+  					fontWeight: '400'
+  				}
+  			],
+  			'micro': [
+  				'12px',
+  				{
+  					lineHeight: '1.45',
+  					letterSpacing: '0',
+  					fontWeight: '400'
+  				}
+  			],
+  			'code': [
+  				'14px',
+  				{
+  					lineHeight: '1.5',
+  					letterSpacing: '0',
+  					fontWeight: '400'
+  				}
+  			],
+  			// Keep previous system keys for full backwards-compatibility
   			'headline': [
   				'26px',
   				{
@@ -170,22 +263,6 @@ module.exports = {
   					lineHeight: '1.45',
   					letterSpacing: '0',
   					fontWeight: '700'
-  				}
-  			],
-  			'body-lg': [
-  				'20px',
-  				{
-  					lineHeight: '1.40',
-  					letterSpacing: '-0.14px',
-  					fontWeight: '330'
-  				}
-  			],
-  			'body': [
-  				'18px',
-  				{
-  					lineHeight: '1.45',
-  					letterSpacing: '-0.26px',
-  					fontWeight: '320'
   				}
   			],
   			'body-sm': [
@@ -220,28 +297,6 @@ module.exports = {
   					fontWeight: '400'
   				}
   			],
-  			'caption': [
-  				'12px',
-  				{
-  					lineHeight: '1.00',
-  					letterSpacing: '0.60px',
-  					fontWeight: '400'
-  				}
-  			],
-  			'heading-lg': [
-  				'21px',
-  				{
-  					lineHeight: '29.4px',
-  					letterSpacing: '-0.5px'
-  				}
-  			],
-  			'heading-md': [
-  				'20px',
-  				{
-  					lineHeight: '28px',
-  					letterSpacing: '0'
-  				}
-  			],
   			'heading-sm': [
   				'18px',
   				{
@@ -254,12 +309,6 @@ module.exports = {
   				{
   					lineHeight: '28px',
   					letterSpacing: '0'
-  				}
-  			],
-  			'body-md': [
-  				'16px',
-  				{
-  					lineHeight: '24px'
   				}
   			],
   			'body-strong': [
@@ -315,13 +364,6 @@ module.exports = {
   				'16px',
   				{
   					lineHeight: '24px'
-  				}
-  			],
-  			'button-md': [
-  				'14px',
-  				{
-  					lineHeight: '21px',
-  					fontWeight: '700'
   				}
   			],
   			'button-sm': [
