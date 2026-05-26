@@ -1,6 +1,6 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Icon } from "@/components/ui/icon";
 import { icons } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "../card";
 
 interface BenefitsProps {
   icon: string;
@@ -10,28 +10,28 @@ interface BenefitsProps {
 
 const benefitList: BenefitsProps[] = [
   {
-    icon: "Rocket",
-    title: "Fast local start",
+    icon: "Blocks",
+    title: "Build Brand Trust",
     description:
       "A clear template structure lets you swap copy, visuals, and sections without touching the runtime stack.",
   },
   {
-    icon: "GitBranch",
-    title: "Runtime boundaries",
+    icon: "LineChart",
+    title: "More Leads",
     description:
-      "Explain Python, Rust, and Go ownership in a way product, ops, and engineering teams can scan quickly.",
+      "Lorem ipsum dolor sit amet consectetur adipisicing elit. A odio velit cum aliquam, natus consectetur.",
   },
   {
-    icon: "ShieldCheck",
-    title: "Trust by design",
+    icon: "Wallet",
+    title: "Higher Conversions",
     description:
-      "Put risk limits, health checks, and rollback language near the top instead of hiding it in docs.",
+      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus consectetur. A odio velit cum aliquam",
   },
   {
-    icon: "MousePointerClick",
-    title: "Easy to adapt",
+    icon: "Sparkle",
+    title: "Test Marketing Ideas",
     description:
-      "Every section is a focused React component with shadcn primitives and Tailwind tokens.",
+      "Lorem ipsum dolor sit amet consectetur adipisicing elit. A odio velit cum aliquam. Natus consectetur dolores.",
   },
 ];
 
@@ -43,12 +43,12 @@ export const BenefitsSection = () => {
           <h2 className="text-lg text-primary mb-2 tracking-wider">Benefits</h2>
 
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Launch the story faster
+            Your Shortcut to Success
           </h2>
           <p className="text-xl text-muted-foreground mb-8">
-            This landing page is built for maintainers who need a polished
-            front door without turning the trading system into a marketing
-            project.
+            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Non
+            ducimus reprehenderit architecto rerum similique facere odit
+            deleniti necessitatibus quo quae.
           </p>
         </div>
 
@@ -63,7 +63,6 @@ export const BenefitsSection = () => {
                   <Icon
                     name={icon as keyof typeof icons}
                     size={32}
-                    color="hsl(var(--primary))"
                     className="mb-6 text-primary"
                   />
                   <span className="text-5xl text-muted-foreground/15 font-medium transition-all delay-75 group-hover/number:text-muted-foreground/30">

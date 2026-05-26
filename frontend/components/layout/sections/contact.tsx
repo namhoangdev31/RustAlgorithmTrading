@@ -1,10 +1,11 @@
 "use client";
+
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
-} from "@/components/ui/card";
+} from "../card";
 import { Building2, Clock, Mail, Phone } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -43,15 +44,16 @@ export const ContactSection = () => {
       firstName: "",
       lastName: "",
       email: "",
-      subject: "Landing page walkthrough",
+      subject: "Web Development",
       message: "",
     },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     const { firstName, lastName, email, subject, message } = values;
+    console.log(values);
 
-    const mailToLink = `mailto:trading-ops@example.com?subject=${subject}&body=Hello, I am ${firstName} ${lastName}. My email is ${email}. %0D%0A${message}`;
+    const mailToLink = `mailto:leomirandadev@gmail.com?subject=${subject}&body=Hello I am ${firstName} ${lastName}, my Email is ${email}. %0D%0A${message}`;
 
     window.location.href = mailToLink;
   }
@@ -65,53 +67,50 @@ export const ContactSection = () => {
               Contact
             </h2>
 
-            <h2 className="text-3xl md:text-4xl font-bold">
-              Request a walkthrough
-            </h2>
+            <h2 className="text-3xl md:text-4xl font-bold">Connect With Us</h2>
           </div>
           <p className="mb-8 text-muted-foreground lg:w-5/6">
-            Use this form pattern for demo requests, staging access, or
-            stakeholder feedback. It opens an email draft so the template works
-            without backend setup.
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatum
+            ipsam sint enim exercitationem ex autem corrupti quas tenetur
           </p>
 
           <div className="flex flex-col gap-4">
             <div>
               <div className="flex gap-2 mb-1">
                 <Building2 />
-                <div className="font-bold">Runtime docs</div>
+                <div className="font-bold">Find us</div>
               </div>
 
-              <div>Start with docs/DOCS_CANONICAL_MAP.md</div>
+              <div>742 Evergreen Terrace, Springfield, IL 62704</div>
             </div>
 
             <div>
               <div className="flex gap-2 mb-1">
                 <Phone />
-                <div className="font-bold">Local setup</div>
+                <div className="font-bold">Call us</div>
               </div>
 
-              <div>uv sync, cargo check, and the frontend dev server</div>
+              <div>+1 (619) 123-4567</div>
             </div>
 
             <div>
               <div className="flex gap-2 mb-1">
                 <Mail />
-                <div className="font-bold">Email flow</div>
+                <div className="font-bold">Mail US</div>
               </div>
 
-              <div>trading-ops@example.com</div>
+              <div>leomirandadev@gmail.com</div>
             </div>
 
             <div>
               <div className="flex gap-2">
                 <Clock />
-                <div className="font-bold">Best use</div>
+                <div className="font-bold">Visit us</div>
               </div>
 
               <div>
-                <div>Paper trading demos</div>
-                <div>Production readiness briefings</div>
+                <div>Monday - Friday</div>
+                <div>8AM - 4PM</div>
               </div>
             </div>
           </div>
@@ -133,7 +132,7 @@ export const ContactSection = () => {
                       <FormItem className="w-full">
                         <FormLabel>First Name</FormLabel>
                         <FormControl>
-                          <Input placeholder="Ada" {...field} />
+                          <Input placeholder="Leopoldo" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -146,7 +145,7 @@ export const ContactSection = () => {
                       <FormItem className="w-full">
                         <FormLabel>Last Name</FormLabel>
                         <FormControl>
-                          <Input placeholder="Lovelace" {...field} />
+                          <Input placeholder="Miranda" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -164,7 +163,7 @@ export const ContactSection = () => {
                         <FormControl>
                           <Input
                             type="email"
-                            placeholder="ada@example.com"
+                            placeholder="leomirandadev@gmail.com"
                             {...field}
                           />
                         </FormControl>
@@ -191,20 +190,18 @@ export const ContactSection = () => {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="Landing page walkthrough">
-                              Landing page walkthrough
+                            <SelectItem value="Web Development">
+                              Web Development
                             </SelectItem>
-                            <SelectItem value="Paper trading demo">
-                              Paper trading demo
+                            <SelectItem value="Mobile Development">
+                              Mobile Development
                             </SelectItem>
-                            <SelectItem value="Production readiness">
-                              Production readiness
+                            <SelectItem value="Figma Design">
+                              Figma Design
                             </SelectItem>
-                            <SelectItem value="Observability handoff">
-                              Observability handoff
-                            </SelectItem>
-                            <SelectItem value="Template customization">
-                              Template customization
+                            <SelectItem value="REST API">REST API</SelectItem>
+                            <SelectItem value="FullStack Project">
+                              FullStack Project
                             </SelectItem>
                           </SelectContent>
                         </Select>
@@ -224,7 +221,7 @@ export const ContactSection = () => {
                         <FormControl>
                           <Textarea
                             rows={5}
-                            placeholder="What do you want the landing page to explain?"
+                            placeholder="Your message..."
                             className="resize-none"
                             {...field}
                           />

@@ -6,7 +6,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "../card";
 import {
   Carousel,
   CarouselContent,
@@ -27,51 +27,51 @@ interface ReviewProps {
 const reviewList: ReviewProps[] = [
   {
     image: "https://github.com/shadcn.png",
-    name: "Operations lead",
-    userName: "Paper trading rollout",
+    name: "John Doe",
+    userName: "Product Manager",
     comment:
-      "The first screen finally explains the runtime split without sending every stakeholder into the docs.",
+      "Wow NextJs + Shadcn is awesome!. This template lets me change colors, fonts and images to match my brand identity. ",
     rating: 5.0,
   },
   {
     image: "https://github.com/shadcn.png",
-    name: "Quant researcher",
-    userName: "Strategy validation",
+    name: "Sophia Collins",
+    userName: "Cybersecurity Analyst",
     comment:
-      "It keeps the research workflow visible while making it clear that production execution is owned elsewhere.",
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna. ",
     rating: 4.8,
   },
 
   {
     image: "https://github.com/shadcn.png",
-    name: "Platform engineer",
-    userName: "Rust runtime",
+    name: "Adam Johnson",
+    userName: "Chief Technology Officer",
     comment:
-      "The section structure is easy to adapt, and the shadcn source files make the UI behavior straightforward.",
+      "Lorem ipsum dolor sit amet,exercitation. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
     rating: 4.9,
   },
   {
     image: "https://github.com/shadcn.png",
-    name: "SRE reviewer",
-    userName: "Observability handoff",
+    name: "Ethan Parker",
+    userName: "Data Scientist",
     comment:
-      "Health, metrics, rollback, and ownership are presented in a way non-specialists can scan.",
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod labore et dolore magna aliqua. Ut enim ad minim veniam.",
     rating: 5.0,
   },
   {
     image: "https://github.com/shadcn.png",
-    name: "Product partner",
-    userName: "Stakeholder demo",
+    name: "Ava Mitchell",
+    userName: "IT Project Manager",
     comment:
-      "It feels like a real landing page, but still leaves the implementation simple enough for engineers to maintain.",
+      "Lorem ipsum dolor sit amet, tempor incididunt  aliqua. Ut enim ad minim veniam, quis nostrud incididunt consectetur adipiscing elit.",
     rating: 5.0,
   },
   {
     image: "https://github.com/shadcn.png",
-    name: "Release manager",
-    userName: "LTS messaging",
+    name: "Isabella Reed",
+    userName: "DevOps Engineer",
     comment:
-      "The production-ready story now matches the canonical docs instead of old gate artifacts.",
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     rating: 4.9,
   },
 ];
@@ -81,11 +81,11 @@ export const TestimonialSection = () => {
     <section id="testimonials" className="container py-24 sm:py-32">
       <div className="text-center mb-8">
         <h2 className="text-lg text-primary text-center mb-2 tracking-wider">
-          Proof
+          Testimonials
         </h2>
 
         <h2 className="text-3xl md:text-4xl text-center font-bold mb-4">
-          Built for technical stakeholders
+          Hear What Our 1000+ Clients Say
         </h2>
       </div>
 

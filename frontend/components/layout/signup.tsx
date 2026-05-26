@@ -34,22 +34,22 @@ export default function Signup({
                 <form action={action}>
                     <div className="flex flex-col gap-4">
                         <div className="grid gap-4 text-left">
-                            <label htmlFor="name" className="text-sm font-medium text-black">Name</label>
+                            <label htmlFor="name" className="text-sm font-medium">Name</label>
                             <Input id="name" name="name" type="text" placeholder="Prince Tan" required />
                         </div>
                         <div className="grid gap-2 text-left">
-                            <label htmlFor="email" className="text-sm font-medium text-black">Email</label>
+                            <label htmlFor="email" className="text-sm font-medium">Email</label>
                             <Input id="email" name="email" type="email" placeholder="lowishxx@example.com" required />
                         </div>
                         <div className="grid gap-2 text-left">
-                            <label htmlFor="password" className="text-sm font-medium text-black">Password</label>
+                            <label htmlFor="password" className="text-sm font-medium">Password</label>
                             <Input id="password" name="password" type="password" required />
                         </div>
                         {error && (
                             <p className="text-sm text-destructive" role="alert">{error}</p>
                         )}
                     </div>
-                    <Button type="submit" className="mt-6 w-full bg-slate-900 hover:bg-slate-800 text-white h-11">
+                    <Button type="submit" className="mt-6 w-full h-11">
                         Create account
                     </Button>
                 </form>
@@ -61,7 +61,7 @@ export default function Signup({
                     <div className="flex-grow h-px bg-gray-300"></div>
                 </div>
                 <SocialLoginButtons action={socialLoginAction} showApple={showApple} />
-                <Button asChild variant="outline" className="w-full bg-white text-slate-900 border-gray-300 h-10">
+                <Button asChild variant="outline" className="w-full h-10">
                     <Link href="/login">Back</Link>
                 </Button>
             </CardFooter>

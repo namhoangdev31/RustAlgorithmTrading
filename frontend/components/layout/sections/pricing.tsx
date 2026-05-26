@@ -6,7 +6,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "../card";
 import { Check } from "lucide-react";
 
 enum PopularPlan {
@@ -17,7 +17,7 @@ enum PopularPlan {
 interface PlanProps {
   title: string;
   popular: PopularPlan;
-  price: string;
+  price: number;
   description: string;
   buttonText: string;
   benefitList: string[];
@@ -25,63 +25,65 @@ interface PlanProps {
 
 const plans: PlanProps[] = [
   {
-    title: "Explore",
+    title: "Free",
     popular: 0,
-    price: "Free",
+    price: 0,
     description:
-      "Best for reviewing the design and adapting the copy to your team.",
-    buttonText: "Preview template",
+      "Lorem ipsum dolor sit, amet ipsum consectetur adipisicing elit.",
+    buttonText: "Start Free Trial",
     benefitList: [
-      "Next.js App Router",
-      "Shadcn components",
-      "Light and dark themes",
-      "Local hero imagery",
+      "1 team member",
+      "1 GB storage",
+      "Upto 2 pages",
+      "Community support",
+      "AI assistance",
     ],
   },
   {
-    title: "Paper trading",
+    title: "Premium",
     popular: 1,
-    price: "Ops",
+    price: 45,
     description:
-      "Shape the page around staging, paper validation, and runbook links.",
-    buttonText: "Use this path",
+      "Lorem ipsum dolor sit, amet ipsum consectetur adipisicing elit.",
+    buttonText: "Get starterd",
     benefitList: [
-      "Risk-first messaging",
-      "Observability sections",
-      "Contact capture",
-      "FAQ for maintainers",
+      "4 team member",
+      "8 GB storage",
+      "Upto 6 pages",
+      "Priority support",
+      "AI assistance",
     ],
   },
   {
-    title: "Production",
+    title: "Enterprise",
     popular: 0,
-    price: "LTS",
+    price: 120,
     description:
-      "Keep the landing page aligned with the production-ready migration story.",
-    buttonText: "Plan rollout",
+      "Lorem ipsum dolor sit, amet ipsum consectetur adipisicing elit.",
+    buttonText: "Contact US",
     benefitList: [
-      "Tri-runtime positioning",
-      "GitHub handoff CTA",
-      "Reusable copy blocks",
-      "Production status framing",
+      "10 team member",
+      "20 GB storage",
+      "Upto 10 pages",
+      "Phone & email support",
+      "AI assistance",
     ],
   },
 ];
 
 export const PricingSection = () => {
   return (
-    <section id="pricing" className="container py-24 sm:py-32">
+    <section className="container py-24 sm:py-32">
       <h2 className="text-lg text-primary text-center mb-2 tracking-wider">
-        Plans
+        Pricing
       </h2>
 
       <h2 className="text-3xl md:text-4xl text-center font-bold mb-4">
-        Pick a landing page path
+        Get unlimitted access
       </h2>
 
       <h3 className="md:w-1/2 mx-auto text-xl text-center text-muted-foreground pb-14">
-        Use the same layout for a quick demo, a paper-trading launch, or a
-        production-readiness handoff.
+        Lorem ipsum dolor sit amet consectetur adipisicing reiciendis.
       </h3>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-4">
@@ -103,15 +105,15 @@ export const PricingSection = () => {
                 </CardDescription>
 
                 <div>
-                  <span className="text-3xl font-bold">{price}</span>
-                  <span className="text-muted-foreground"> mode</span>
+                  <span className="text-3xl font-bold">${price}</span>
+                  <span className="text-muted-foreground"> /month</span>
                 </div>
               </CardHeader>
 
               <CardContent className="flex">
-                <div className="flex flex-col gap-4">
+                <div className="space-y-4">
                   {benefitList.map((benefit) => (
-                    <span key={benefit} className="flex gap-2">
+                    <span key={benefit} className="flex">
                       <Check className="text-primary mr-2" />
                       <h3>{benefit}</h3>
                     </span>

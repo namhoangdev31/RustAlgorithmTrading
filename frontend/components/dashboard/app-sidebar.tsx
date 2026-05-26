@@ -115,49 +115,49 @@ const navGroups: NavGroup[] = [
       { title: "Apps", url: "/dashboard/apps", icon: Package },
       { title: "Chats", url: "/dashboard/chats", badge: "3", icon: MessagesSquare },
       { title: "Users", url: "/dashboard/users", icon: Users },
-      {
-        title: "Secured by Firebase",
-        url: "/dashboard/settings/account",
-        icon: ShieldCheck,
-      },
+      // {
+      //   title: "Secured by Firebase",
+      //   url: "/dashboard/settings/account",
+      //   icon: ShieldCheck,
+      // },
     ],
   },
-  {
-    title: "Pages",
-    items: [
-      {
-        title: "Errors",
-        icon: Bug,
-        items: [
-          {
-            title: "Unauthorized",
-            url: "/dashboard/errors/unauthorized",
-            icon: Lock,
-          },
-          {
-            title: "Forbidden",
-            url: "/dashboard/errors/forbidden",
-            icon: UserX,
-          },
-          {
-            title: "Not Found",
-            url: "/dashboard/errors/not-found",
-            icon: FileX,
-          },
-          {
-            title: "Internal Server Error",
-            url: "/dashboard/errors/internal-server-error",
-            icon: ServerOff,
-          },
-          {
-            title: "Maintenance Error",
-            url: "/dashboard/errors/maintenance-error",
-            icon: Construction,
-          },
-        ],
-      },
-    ],
-  },
+  // {
+  //   title: "Pages",
+  //   items: [
+  //     {
+  //       title: "Errors",
+  //       icon: Bug,
+  //       items: [
+  //         {
+  //           title: "Unauthorized",
+  //           url: "/dashboard/errors/unauthorized",
+  //           icon: Lock,
+  //         },
+  //         {
+  //           title: "Forbidden",
+  //           url: "/dashboard/errors/forbidden",
+  //           icon: UserX,
+  //         },
+  //         {
+  //           title: "Not Found",
+  //           url: "/dashboard/errors/not-found",
+  //           icon: FileX,
+  //         },
+  //         {
+  //           title: "Internal Server Error",
+  //           url: "/dashboard/errors/internal-server-error",
+  //           icon: ServerOff,
+  //         },
+  //         {
+  //           title: "Maintenance Error",
+  //           url: "/dashboard/errors/maintenance-error",
+  //           icon: Construction,
+  //         },
+  //       ],
+  //     },
+  //   ],
+  // },
   {
     title: "Other",
     items: [

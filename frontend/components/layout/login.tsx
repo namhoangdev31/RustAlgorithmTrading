@@ -40,7 +40,7 @@ export function CardLogin({
                 <form action={loginAction}>
                     <div className="flex flex-col gap-6">
                         <div className="grid gap-2 text-left">
-                            <label htmlFor="email" className="text-sm font-medium text-black">Email</label>
+                            <label htmlFor="email" className="text-sm font-medium">Email</label>
                             <Input
                                 id="email"
                                 name="email"
@@ -51,7 +51,7 @@ export function CardLogin({
                         </div>
                         <div className="grid gap-2">
                             <div className="flex items-center justify-between">
-                                <label htmlFor="password" className="text-sm font-medium text-black">Password</label>
+                                <label htmlFor="password" className="text-sm font-medium">Password</label>
                             </div>
                             <Input id="password" name="password" type="password" required />
                         </div>
@@ -62,7 +62,7 @@ export function CardLogin({
                             <p className="text-sm text-green-600" role="status">{info}</p>
                         )}
                     </div>
-                    <Button type="submit" className="mt-6 w-full bg-slate-900 hover:bg-slate-800 text-white h-11">
+                    <Button type="submit" className="mt-6 w-full h-11">
                         Sign in
                     </Button>
                 </form>
@@ -85,7 +85,7 @@ export function CardLogin({
 
                 <form action={resetAction} className="grid w-full gap-2">
                     <Input name="resetEmail" type="email" placeholder="email@example.com" required />
-                    <Button variant="outline" className="w-full bg-white text-slate-900 border-gray-300" type="submit">
+                    <Button variant="outline" className="w-full" type="submit">
                         Send reset email
                     </Button>
                 </form>

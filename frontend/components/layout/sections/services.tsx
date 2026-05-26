@@ -1,10 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardDescription, CardHeader, CardTitle } from "../card";
 
 enum ProService {
   YES = 1,
@@ -17,25 +12,25 @@ interface ServiceProps {
 }
 const serviceList: ServiceProps[] = [
   {
-    title: "Hero and product preview",
+    title: "Custom Domain Integration",
     description:
-      "A sharp first screen with local dashboard imagery and two focused calls to action.",
+      "Lorem ipsum dolor sit, amet consectetur adipisicing elit adipisicing.",
     pro: 0,
   },
   {
-    title: "Feature and benefit blocks",
+    title: "Social Media Integrations",
     description:
-      "Short copy modules for runtime ownership, risk, observability, and research workflows.",
+      "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Molestiae, dicta.",
     pro: 0,
   },
   {
-    title: "Lead capture form",
-    description: "A working client-side form that opens an email draft for demo follow-up.",
+    title: "Email Marketing Integrations",
+    description: "Lorem dolor sit amet adipisicing.",
     pro: 0,
   },
   {
-    title: "Themeable shadcn system",
-    description: "Semantic tokens, dark mode, and source-owned components are ready to customize.",
+    title: "SEO Optimization",
+    description: "Lorem ipsum dolor sit amet consectetur.",
     pro: 1,
   },
 ];
@@ -44,15 +39,15 @@ export const ServicesSection = () => {
   return (
     <section id="services" className="container py-24 sm:py-32">
       <h2 className="text-lg text-primary text-center mb-2 tracking-wider">
-        Template
+        Services
       </h2>
 
       <h2 className="text-3xl md:text-4xl text-center font-bold mb-4">
-        Sections you can keep or remove
+        Grow Your Business
       </h2>
       <h3 className="md:w-1/2 mx-auto text-xl text-center text-muted-foreground mb-8">
-        The page stays intentionally simple: every block has a clear job and a
-        small file surface.
+        From marketing and sales to operations and strategy, we have the
+        expertise to help you achieve your goals.
       </h3>
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
 
@@ -71,7 +66,7 @@ export const ServicesSection = () => {
               variant="secondary"
               className="absolute -top-2 -right-3 data-[pro=false]:hidden"
             >
-              READY
+              PRO
             </Badge>
           </Card>
         ))}
