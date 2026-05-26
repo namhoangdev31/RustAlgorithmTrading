@@ -126,17 +126,6 @@ const navGroups: NavGroup[] = [
     title: "Pages",
     items: [
       {
-        title: "Auth",
-        icon: ShieldCheck,
-        items: [
-          { title: "Sign In", url: "/login" },
-          { title: "Sign In (2 Col)", url: "/login?layout=two-column" },
-          { title: "Sign Up", url: "/register" },
-          { title: "Forgot Password", url: "/login?step=forgot-password" },
-          { title: "OTP", url: "/login?step=otp" },
-        ],
-      },
-      {
         title: "Errors",
         icon: Bug,
         items: [
@@ -235,12 +224,12 @@ function TeamSwitcher({
     organizations[0];
   const ActiveIcon =
     teamIcons[
-      Math.max(
-        0,
-        organizations.findIndex(
-          (organization) => organization.id === activeOrganization?.id
-        )
-      ) % teamIcons.length
+    Math.max(
+      0,
+      organizations.findIndex(
+        (organization) => organization.id === activeOrganization?.id
+      )
+    ) % teamIcons.length
     ];
 
   return (

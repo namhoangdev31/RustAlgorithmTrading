@@ -1,7 +1,5 @@
-import { updateDisplayPreferenceAction } from "@/app/actions/admin";
+import { cookies } from "next/headers";
 import { PageHeader } from "@/components/dashboard/page-header";
-import { SettingsNav } from "@/components/dashboard/settings-nav";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -9,8 +7,25 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { DisplayForm } from "@/components/dashboard/display-form";
 
-export default function DisplaySettingsPage() {
+export default async function DisplaySettingsPage() {
+  const cookieStore = await cookies();
+  const displayCookie = cookieStore.get("dashboard_display");
+  let initialDensity = "comfortable";
+  let initialTheme = "light";
+  if (displayCookie) {
+    try {
+      const parsed = JSON.parse(displayCookie.value);
+      if (parsed.density) {
+        initialDensity = parsed.density;
+      }
+      if (parsed.theme) {
+        initialTheme = parsed.theme;
+      }
+    } catch (_) {}
+  }
+
   return (
     <>
       <PageHeader
@@ -18,29 +33,14 @@ export default function DisplaySettingsPage() {
         title="Display"
       />
       <div className="grid gap-4 xl:grid-cols-[0.3fr_1fr]">
-        <SettingsNav />
+        {/* <SettingsNav /> */}
         <Card>
           <CardHeader>
             <CardTitle>Display density</CardTitle>
             <CardDescription>Saved without localStorage or client hydration.</CardDescription>
           </CardHeader>
           <CardContent>
-            <form action={updateDisplayPreferenceAction} className="flex flex-col gap-4">
-              <input type="hidden" name="returnTo" value="/dashboard/settings/display" />
-              <input type="hidden" name="theme" value="system" />
-              <label className="grid gap-2 text-sm">
-                Density
-                <select
-                  className="h-10 rounded-md border border-input bg-background px-3 text-sm"
-                  name="density"
-                >
-                  <option value="comfortable">Comfortable</option>
-                  <option value="compact">Compact</option>
-                  <option value="spacious">Spacious</option>
-                </select>
-              </label>
-              <Button className="w-fit" type="submit">Save display</Button>
-            </form>
+            <DisplayForm initialDensity={initialDensity} initialTheme={initialTheme} />
           </CardContent>
         </Card>
       </div>

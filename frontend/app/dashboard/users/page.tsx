@@ -3,7 +3,8 @@ import {
   removeCollaboratorAction,
   updateCollaboratorRoleAction,
 } from "@/app/actions/admin";
-import { PageHeader } from "@/components/dashboard/page-header";
+import { MailPlus, MoreHorizontal, UserPlus } from "lucide-react";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,6 +15,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
   TableBody,
@@ -24,6 +26,20 @@ import {
 } from "@/components/ui/table";
 import { getUsersData } from "@/lib/server/admin-data";
 import { requireCurrentUser } from "@/lib/server/current-user";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 type UsersPageProps = {
   searchParams: Promise<{
@@ -38,134 +54,151 @@ export default async function UsersPage({ searchParams }: UsersPageProps) {
 
   return (
     <>
-      <PageHeader
-        description="Collaborator management uses existing User and BundleCollaborators records."
-        title="Users"
-      />
+      <div className="flex flex-wrap items-end justify-between gap-2">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">User List</h2>
+          <p className="text-muted-foreground">
+            Manage your users and their roles here.
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Button asChild variant="outline">
+            <a href="#invite-user">
+              Invite User
+              <MailPlus data-icon="inline-end" />
+            </a>
+          </Button>
+          <Button asChild>
+            <a href="#invite-user">
+              Add User
+              <UserPlus data-icon="inline-end" />
+            </a>
+          </Button>
+        </div>
+      </div>
 
-      <section className="grid gap-4 xl:grid-cols-[0.75fr_1.25fr]">
-        <Card>
-          <CardHeader>
-            <CardTitle>Invite collaborator</CardTitle>
-            <CardDescription>Invite requires an existing user email.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form action={inviteCollaboratorAction} className="flex flex-col gap-4">
-              <input type="hidden" name="returnTo" value="/dashboard/users" />
-              <label className="grid gap-2 text-sm">
-                Bundle
-                <select
-                  className="h-10 rounded-md border border-input bg-background px-3 text-sm"
-                  name="bundleId"
-                  required
-                >
-                  {data.bundles.map((bundle) => (
-                    <option key={bundle.id} value={bundle.id}>
-                      {bundle.name}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label className="grid gap-2 text-sm">
-                User email
-                <Input name="email" placeholder="person@example.com" required />
-              </label>
-              <label className="grid gap-2 text-sm">
-                Role
-                <select
-                  className="h-10 rounded-md border border-input bg-background px-3 text-sm"
-                  name="role"
-                >
-                  <option value="viewer">Viewer</option>
-                  <option value="editor">Editor</option>
-                  <option value="admin">Admin</option>
-                </select>
-              </label>
-              <Button type="submit">Invite</Button>
-            </form>
-          </CardContent>
-        </Card>
+      <div className="flex flex-1 flex-col gap-4">
+        <form action="/dashboard/users" className="flex flex-wrap items-center gap-2" method="get">
+          <Input className="h-8 w-[150px] lg:w-[250px]" name="q" placeholder="Filter users..." />
+          <Select name="status" defaultValue="all">
+            <SelectTrigger className="h-8 w-[150px]">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Status (All)</SelectItem>
+              <SelectItem value="active">Active</SelectItem>
+              <SelectItem value="invited">Invited</SelectItem>
+              <SelectItem value="inactive">Inactive</SelectItem>
+              <SelectItem value="suspended">Suspended</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select name="role" defaultValue="all">
+            <SelectTrigger className="h-8 w-[150px]">
+              <SelectValue placeholder="Role" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Role (All)</SelectItem>
+              <SelectItem value="admin">Admin</SelectItem>
+              <SelectItem value="editor">Editor</SelectItem>
+              <SelectItem value="viewer">Viewer</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button className="h-8" type="submit" variant="outline">Reset</Button>
+        </form>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Collaborators</CardTitle>
-            <CardDescription>Roles are scoped to bundles.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form action="/dashboard/users" className="mb-4 flex gap-2" method="get">
-              <Input name="q" placeholder="Search collaborators" />
-              <Button type="submit" variant="outline">Search</Button>
-            </form>
-
+        <div className="overflow-hidden rounded-md border">
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>User</TableHead>
+                <TableRow className="group/row">
+                  <TableHead className="w-10 bg-background group-hover/row:bg-muted">
+                    <Checkbox aria-label="Select all" />
+                  </TableHead>
+                  <TableHead className="bg-background group-hover/row:bg-muted">Username</TableHead>
+                  <TableHead className="bg-background group-hover/row:bg-muted">Name</TableHead>
+                  <TableHead className="bg-background group-hover/row:bg-muted">Email</TableHead>
+                  <TableHead className="bg-background group-hover/row:bg-muted">Status</TableHead>
+                  <TableHead className="bg-background group-hover/row:bg-muted">Role</TableHead>
                   <TableHead>Bundle</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Accepted</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead className="w-10" />
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {data.collaborators.length ? (
                   data.collaborators.map((collaborator) => (
-                    <TableRow key={collaborator.id}>
-                      <TableCell>
-                        <div className="font-medium">
-                          {collaborator.user.fullName ?? "Unnamed"}
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          {collaborator.user.email}
-                        </div>
+                    <TableRow className="group/row" key={collaborator.id}>
+                      <TableCell className="bg-background group-hover/row:bg-muted">
+                        <Checkbox aria-label="Select row" />
+                      </TableCell>
+                      <TableCell className="bg-background font-medium group-hover/row:bg-muted">
+                        {collaborator.user.email?.split("@")[0] ?? "user"}
+                      </TableCell>
+                      <TableCell className="bg-background group-hover/row:bg-muted">
+                        {collaborator.user.fullName ?? "Unnamed"}
+                      </TableCell>
+                      <TableCell className="bg-background group-hover/row:bg-muted">
+                        <div className="text-nowrap">{collaborator.user.email}</div>
+                      </TableCell>
+                      <TableCell className="bg-background group-hover/row:bg-muted">
+                        <Badge variant="outline" className="capitalize">
+                          {collaborator.acceptedAt ? "active" : "invited"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="bg-background capitalize group-hover/row:bg-muted">
+                        {collaborator.role}
                       </TableCell>
                       <TableCell>{collaborator.bundle.name}</TableCell>
-                      <TableCell><Badge variant="secondary">{collaborator.role}</Badge></TableCell>
                       <TableCell>
-                        {collaborator.acceptedAt
-                          ? collaborator.acceptedAt.toLocaleDateString()
-                          : "Pending"}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex justify-end gap-2">
-                          <form action={updateCollaboratorRoleAction} className="flex gap-2">
-                            <input
-                              type="hidden"
-                              name="collaboratorId"
-                              value={collaborator.id}
-                            />
-                            <input
-                              type="hidden"
-                              name="returnTo"
-                              value="/dashboard/users"
-                            />
-                            <select
-                              className="h-9 rounded-md border border-input bg-background px-2 text-sm"
-                              defaultValue={collaborator.role}
-                              name="role"
-                            >
-                              <option value="viewer">Viewer</option>
-                              <option value="editor">Editor</option>
-                              <option value="admin">Admin</option>
-                            </select>
-                            <Button size="sm" type="submit" variant="outline">
-                              Save
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button size="icon" variant="ghost">
+                              <MoreHorizontal data-icon="inline-start" />
+                              <span className="sr-only">Open menu</span>
                             </Button>
-                          </form>
-                          <form action={removeCollaboratorAction}>
-                            <input
-                              type="hidden"
-                              name="collaboratorId"
-                              value={collaborator.id}
-                            />
-                            <input
-                              type="hidden"
-                              name="returnTo"
-                              value="/dashboard/users"
-                            />
-                            <Button size="sm" type="submit" variant="ghost">Remove</Button>
-                          </form>
-                        </div>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-52 p-2">
+                            <form action={updateCollaboratorRoleAction} className="flex gap-2">
+                              <input
+                                type="hidden"
+                                name="collaboratorId"
+                                value={collaborator.id}
+                              />
+                              <input
+                                type="hidden"
+                                name="returnTo"
+                                value="/dashboard/users"
+                              />
+                              <Select
+                                defaultValue={collaborator.role}
+                                name="role"
+                              >
+                                <SelectTrigger className="h-9 flex-1">
+                                  <SelectValue placeholder="Select role..." />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="viewer">Viewer</SelectItem>
+                                  <SelectItem value="editor">Editor</SelectItem>
+                                  <SelectItem value="admin">Admin</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <Button size="sm" type="submit" variant="outline">
+                                Save
+                              </Button>
+                            </form>
+                            <form action={removeCollaboratorAction} className="mt-2">
+                              <input
+                                type="hidden"
+                                name="collaboratorId"
+                                value={collaborator.id}
+                              />
+                              <input
+                                type="hidden"
+                                name="returnTo"
+                                value="/dashboard/users"
+                              />
+                              <Button className="w-full justify-start text-destructive hover:bg-destructive/10 hover:text-destructive" size="sm" type="submit" variant="ghost">Remove</Button>
+                            </form>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </TableCell>
                     </TableRow>
                   ))
@@ -178,10 +211,60 @@ export default async function UsersPage({ searchParams }: UsersPageProps) {
                 )}
               </TableBody>
             </Table>
-          </CardContent>
-        </Card>
-      </section>
+        </div>
+      </div>
+
+      <Card id="invite-user">
+        <CardHeader>
+          <CardTitle>Invite User</CardTitle>
+          <CardDescription>Invite requires an existing user email.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form action={inviteCollaboratorAction} className="grid gap-4 md:grid-cols-4">
+            <input type="hidden" name="returnTo" value="/dashboard/users" />
+            <Label className="grid gap-2 text-sm">
+              Bundle
+              <Select
+                name="bundleId"
+                required
+              >
+                <SelectTrigger className="h-10">
+                  <SelectValue placeholder="Select bundle..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {data.bundles.map((bundle) => (
+                    <SelectItem key={bundle.id} value={bundle.id}>
+                      {bundle.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </Label>
+            <Label className="grid gap-2 text-sm">
+              User email
+              <Input name="email" placeholder="person@example.com" required />
+            </Label>
+            <Label className="grid gap-2 text-sm">
+              Role
+              <Select
+                name="role"
+              >
+                <SelectTrigger className="h-10">
+                  <SelectValue placeholder="Select role..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="viewer">Viewer</SelectItem>
+                  <SelectItem value="editor">Editor</SelectItem>
+                  <SelectItem value="admin">Admin</SelectItem>
+                </SelectContent>
+              </Select>
+            </Label>
+            <div className="flex items-end">
+              <Button type="submit">Invite</Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
     </>
   );
 }
-

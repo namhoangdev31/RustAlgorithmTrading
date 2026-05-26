@@ -1,17 +1,8 @@
-import { updateProfileAction } from "@/app/actions/admin";
-import { PageHeader } from "@/components/dashboard/page-header";
 import { SettingsNav } from "@/components/dashboard/settings-nav";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
 import { getSettingsData } from "@/lib/server/admin-data";
 import { requireCurrentUser } from "@/lib/server/current-user";
+import { ProfileForm } from "@/components/dashboard/profile-form";
 
 export default async function SettingsPage() {
   const currentUser = await requireCurrentUser();
@@ -20,51 +11,32 @@ export default async function SettingsPage() {
 
   return (
     <>
-      <PageHeader
-        description="Profile settings are written directly to the User model."
-        title="Settings"
-      />
+      <div className="flex flex-col gap-0.5">
+        <h1 className="text-2xl font-bold tracking-tight md:text-3xl">Settings</h1>
+        <p className="text-muted-foreground">
+          Manage your account settings and set e-mail preferences.
+        </p>
+      </div>
+      <Separator className="my-4 lg:my-6" />
 
-      <div className="grid gap-4 xl:grid-cols-[0.3fr_1fr]">
-        <SettingsNav />
-        <Card>
-          <CardHeader>
-            <CardTitle>Profile</CardTitle>
-            <CardDescription>Update public account details.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form action={updateProfileAction} className="grid gap-4 md:grid-cols-2">
-              <input type="hidden" name="returnTo" value="/dashboard/settings" />
-              <label className="grid gap-2 text-sm">
-                First name
-                <Input defaultValue={user?.firstName ?? ""} name="firstName" />
-              </label>
-              <label className="grid gap-2 text-sm">
-                Last name
-                <Input defaultValue={user?.lastName ?? ""} name="lastName" />
-              </label>
-              <label className="grid gap-2 text-sm">
-                Full name
-                <Input defaultValue={user?.fullName ?? ""} name="fullName" />
-              </label>
-              <label className="grid gap-2 text-sm">
-                Phone
-                <Input defaultValue={user?.phone ?? ""} name="phone" />
-              </label>
-              <label className="grid gap-2 text-sm">
-                Gender
-                <Input defaultValue={user?.gender ?? ""} name="gender" />
-              </label>
-              <label className="grid gap-2 text-sm">
-                Email
-                <Input defaultValue={user?.email ?? ""} disabled />
-              </label>
-              <div className="md:col-span-2">
-                <Button type="submit">Update profile</Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
+      <div className="flex flex-1 flex-col gap-2 overflow-hidden lg:flex-row lg:gap-12">
+        {/* <aside className="top-0 lg:sticky lg:w-1/5">
+          <SettingsNav />
+        </aside> */}
+        <div className="flex w-full overflow-y-hidden p-1">
+          <div className="flex flex-1 flex-col">
+            <div className="flex-none">
+              <h3 className="text-lg font-medium">Profile</h3>
+              <p className="text-sm text-muted-foreground">
+                This is how others will see you on the site.
+              </p>
+            </div>
+            <Separator className="my-4 flex-none" />
+            <div className="faded-bottom h-full w-full overflow-y-auto scroll-smooth pb-12 pe-4">
+              <ProfileForm user={user as any} />
+            </div>
+          </div>
+        </div>
       </div>
     </>
   );

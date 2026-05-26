@@ -1,7 +1,5 @@
-import { updateOrganizationAction } from "@/app/actions/admin";
 import { PageHeader } from "@/components/dashboard/page-header";
 import { SettingsNav } from "@/components/dashboard/settings-nav";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -9,9 +7,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { getSettingsData } from "@/lib/server/admin-data";
 import { requireCurrentUser } from "@/lib/server/current-user";
+import { OrganizationForm } from "@/components/dashboard/organization-form";
 
 export default async function AccountSettingsPage() {
   const currentUser = await requireCurrentUser();
@@ -35,20 +33,7 @@ export default async function AccountSettingsPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <form action={updateOrganizationAction} className="flex flex-col gap-4">
-                  <input type="hidden" name="organizationId" value={organization.id} />
-                  <input type="hidden" name="type" value={organization.type} />
-                  <input
-                    type="hidden"
-                    name="returnTo"
-                    value="/dashboard/settings/account"
-                  />
-                  <label className="grid gap-2 text-sm">
-                    Name
-                    <Input name="name" defaultValue={organization.name} />
-                  </label>
-                  <Button className="w-fit" type="submit">Save organization</Button>
-                </form>
+                <OrganizationForm organization={organization} />
               </CardContent>
             </Card>
           ))}

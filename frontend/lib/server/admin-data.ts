@@ -230,12 +230,13 @@ export async function getTasksData(userId: string, params: SearchParamsInput) {
   const { workspace, projects, bundleIds } = await getWorkspaceProjects(userId);
   const q = readParam(params, "q").toLowerCase();
   const status = readParam(params, "status");
-  const priority = Number(readParam(params, "priority"));
+  const priorityParam = readParam(params, "priority");
+  const priority = priorityParam === "all" ? NaN : Number(priorityParam);
 
   const tasks = await prisma.bundleReviewQueue.findMany({
     where: {
       bundleId: { in: bundleIds },
-      ...(status ? { status } : {}),
+      ...(status && status !== "all" ? { status } : {}),
       ...(Number.isInteger(priority) ? { priority } : {}),
     },
     orderBy: [{ priority: "desc" }, { createdAt: "desc" }],

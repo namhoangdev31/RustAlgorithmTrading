@@ -38,6 +38,14 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getDashboardOverview, getProjectBundleData } from "@/lib/server/admin-data";
 import { requireCurrentUser } from "@/lib/server/current-user";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 
 type DashboardPageProps = {
   searchParams: Promise<{
@@ -280,56 +288,64 @@ function ProjectForm({
         <form action={action} className="grid gap-4 md:grid-cols-2">
           {project ? <input type="hidden" name="projectId" value={project.id} /> : null}
           <input type="hidden" name="returnTo" value={returnTo} />
-          <label className="grid gap-2 text-sm">
+          <Label className="grid gap-2 text-sm">
             Project name
             <Input name="projectName" defaultValue={project?.name} required />
-          </label>
-          <label className="grid gap-2 text-sm">
+          </Label>
+          <Label className="grid gap-2 text-sm">
             Organization
-            <select
-              className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+            <Select
               defaultValue={project?.organizationId}
               name="organizationId"
             >
-              {organizations.map((organization) => (
-                <option key={organization.id} value={organization.id}>
-                  {organization.name}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="grid gap-2 text-sm">
+              <SelectTrigger className="h-10">
+                <SelectValue placeholder="Select organization..." />
+              </SelectTrigger>
+              <SelectContent>
+                {organizations.map((organization) => (
+                  <SelectItem key={organization.id} value={organization.id}>
+                    {organization.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </Label>
+          <Label className="grid gap-2 text-sm">
             Bundle name
             <Input name="bundleName" defaultValue={project?.bundle?.name ?? project?.name} />
-          </label>
-          <label className="grid gap-2 text-sm">
+          </Label>
+          <Label className="grid gap-2 text-sm">
             Status
-            <select
-              className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+            <Select
               defaultValue={project?.bundle?.status ?? "draft"}
               name="status"
             >
-              <option value="draft">Draft</option>
-              <option value="review">Review</option>
-              <option value="published">Published</option>
-              <option value="archived">Archived</option>
-            </select>
-          </label>
-          <label className="grid gap-2 text-sm">
+              <SelectTrigger className="h-10">
+                <SelectValue placeholder="Select status..." />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="draft">Draft</SelectItem>
+                <SelectItem value="review">Review</SelectItem>
+                <SelectItem value="published">Published</SelectItem>
+                <SelectItem value="archived">Archived</SelectItem>
+              </SelectContent>
+            </Select>
+          </Label>
+          <Label className="grid gap-2 text-sm">
             Category
             <Input name="category" defaultValue={project?.bundle?.category ?? ""} />
-          </label>
-          <label className="grid gap-2 text-sm">
+          </Label>
+          <Label className="grid gap-2 text-sm">
             Project description
             <Input name="description" defaultValue={project?.description ?? ""} />
-          </label>
-          <label className="grid gap-2 text-sm md:col-span-2">
+          </Label>
+          <Label className="grid gap-2 text-sm md:col-span-2">
             Bundle summary
             <Input
               name="shortDescription"
               defaultValue={project?.bundle?.shortDescription ?? ""}
             />
-          </label>
+          </Label>
           <div className="flex gap-2 md:col-span-2">
             <Button type="submit">{project ? "Save changes" : "Create project"}</Button>
             <Button asChild variant="outline">
