@@ -309,7 +309,8 @@ Standalone iOS project (SwiftUI + Liquid Glass). Migrated from `leposapp/iosApp`
 | `frontend/components/layout/` | Page shell and section components | `navbar.tsx`, `theme-provider.tsx`, auth form components, and landing sections. |
 | `frontend/components/layout/animation-provider.tsx` | Smooth scroll manager | Set up Lenis smooth scrolling and coordinate with GSAP ScrollTrigger ticker. |
 | `frontend/components/layout/transition-provider.tsx` | Route transition manager | Implement next-transition-router page animation wipes using GSAP. |
-| `frontend/components/layout/sections/trading-canvas.tsx` | Interactive 3D Background | WebGL canvas showing nodes network drawn with Three.js. |
+| `frontend/components/layout/interactive-background.tsx` | Pixel-perfect Interactive Background | Glowing spotlights and interactive grid highlight overlays that track mouse movements precisely. |
+| `frontend/components/layout/sections/trading-canvas.tsx` | Interactive 3D Background | WebGL canvas showing dense 3D particles with wave/jellyfish motion and cursor swarming. |
 | `frontend/components/layout/login.tsx` | Login form view | Server-rendered email/password and reset request forms bound to Server Actions. |
 | `frontend/components/layout/reset-password.tsx` | Password reset view | Server-rendered Firebase password reset confirmation form. |
 | `frontend/components/layout/signup.tsx` | Signup page view | Server-rendered Firebase user registration form. |
