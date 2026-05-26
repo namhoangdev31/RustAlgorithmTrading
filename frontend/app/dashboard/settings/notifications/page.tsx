@@ -6,6 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { getSettingsData } from "@/lib/server/admin-data";
 import { requireCurrentUser } from "@/lib/server/current-user";
 import { NotificationsForm } from "@/components/dashboard/notifications-form";
+import { Input } from "@/components/ui/input";
 
 export default async function NotificationSettingsPage() {
   const currentUser = await requireCurrentUser();
@@ -63,12 +64,12 @@ export default async function NotificationSettingsPage() {
                         </div>
                         {!notification.isRead ? (
                           <form action={markNotificationReadAction}>
-                            <input
+                            <Input
                               type="hidden"
                               name="notificationId"
                               value={notification.id}
                             />
-                            <input
+                            <Input
                               type="hidden"
                               name="returnTo"
                               value="/dashboard/settings/notifications"

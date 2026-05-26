@@ -238,16 +238,16 @@ export default async function AppsPage({ searchParams }: AppsPageProps) {
               <SelectItem value="notConnected">Not Connected</SelectItem>
             </SelectContent>
           </Select>
-          <input name="sort" type="hidden" value={sort} />
+          <Input name="sort" type="hidden" value={sort} />
           <Button className="h-9" type="submit" variant="outline">
             Filter
           </Button>
         </form>
 
         <form action="/dashboard/apps" method="get">
-          <input name="filter" type="hidden" value={params.filter ?? params.q ?? ""} />
-          <input name="type" type="hidden" value={appType} />
-          <input name="sort" type="hidden" value={sort === "asc" ? "desc" : "asc"} />
+          <Input name="filter" type="hidden" value={params.filter ?? params.q ?? ""} />
+          <Input name="type" type="hidden" value={appType} />
+          <Input name="sort" type="hidden" value={sort === "asc" ? "desc" : "asc"} />
           <Button className="h-9 w-16" type="submit" variant="outline">
             <SlidersHorizontal data-icon="inline-start" />
             <span className="sr-only">
@@ -271,12 +271,12 @@ export default async function AppsPage({ searchParams }: AppsPageProps) {
                 </div>
                 {app.integration ? (
                   <form action={toggleIntegrationAction}>
-                    <input name="integrationId" type="hidden" value={app.integration.id} />
-                    <input name="returnTo" type="hidden" value="/dashboard/apps" />
+                    <Input name="integrationId" type="hidden" value={app.integration.id} />
+                    <Input name="returnTo" type="hidden" value="/dashboard/apps" />
                     <Button
                       className={cn(
                         app.connected &&
-                          "border-blue-300 bg-blue-50 hover:bg-blue-100 dark:border-blue-700 dark:bg-blue-950 dark:hover:bg-blue-900"
+                        "border-blue-300 bg-blue-50 hover:bg-blue-100 dark:border-blue-700 dark:bg-blue-950 dark:hover:bg-blue-900"
                       )}
                       size="sm"
                       type="submit"
@@ -287,11 +287,11 @@ export default async function AppsPage({ searchParams }: AppsPageProps) {
                   </form>
                 ) : (
                   <form action={upsertIntegrationAction}>
-                    <input name="returnTo" type="hidden" value="/dashboard/apps" />
-                    <input name="bundleId" type="hidden" value={firstBundle?.id ?? ""} />
-                    <input name="integrationType" type="hidden" value={app.key} />
-                    <input name="displayName" type="hidden" value={app.name} />
-                    <input name="isActive" type="hidden" value="true" />
+                    <Input name="returnTo" type="hidden" value="/dashboard/apps" />
+                    <Input name="bundleId" type="hidden" value={firstBundle?.id ?? ""} />
+                    <Input name="integrationType" type="hidden" value={app.key} />
+                    <Input name="displayName" type="hidden" value={app.name} />
+                    <Input name="isActive" type="hidden" value="true" />
                     <Button disabled={!firstBundle} size="sm" type="submit" variant="outline">
                       Connect
                     </Button>
@@ -310,8 +310,8 @@ export default async function AppsPage({ searchParams }: AppsPageProps) {
                     </Link>
                   </Button>
                   <form action={deleteIntegrationAction}>
-                    <input name="integrationId" type="hidden" value={app.integration.id} />
-                    <input name="returnTo" type="hidden" value="/dashboard/apps" />
+                    <Input name="integrationId" type="hidden" value={app.integration.id} />
+                    <Input name="returnTo" type="hidden" value="/dashboard/apps" />
                     <Button size="sm" type="submit" variant="ghost">
                       Remove
                     </Button>
@@ -372,7 +372,7 @@ function IntegrationForm({
       </CardHeader>
       <CardContent>
         <form action={action} className="grid gap-4 md:grid-cols-2">
-          <input type="hidden" name="returnTo" value={returnTo} />
+          <Input type="hidden" name="returnTo" value={returnTo} />
           <Label className="grid gap-2 text-sm">
             Bundle
             <Select

@@ -305,7 +305,7 @@ Standalone iOS project (SwiftUI + Liquid Glass). Migrated from `leposapp/iosApp`
 | `frontend/app/dashboard/help-center/page.tsx` | Admin help center page | SSR help content for organization, project, task, and integration flows. |
 | `frontend/app/dashboard/errors/[error]/page.tsx` | Admin error page | SSR dashboard error states aligned with shadcn-admin-style pages. |
 | `frontend/app/globals.css` | Tailwind/shadcn theme tokens | CSS variables for Light/dark trading platform palette. |
-| `frontend/components/dashboard/` | Admin dashboard components | Shadcn Admin-style shell, sidebar, command search, navbar, settings/profile controls, profile-form.tsx, appearance-form.tsx, organization-form.tsx, notifications-form.tsx, display-form.tsx (TanStack Forms), page headers, and metric cards. |
+| `frontend/components/dashboard/` | Admin dashboard components | Shadcn Admin-style shell, sidebar, command search, navbar, settings/profile controls, profile-form.tsx, appearance-form.tsx, organization-form.tsx, notifications-form.tsx, display-form.tsx (TanStack Forms), new-chat-dialog.tsx, page headers, and metric cards. |
 | `frontend/components/layout/` | Page shell and section components | `navbar.tsx`, `theme-provider.tsx`, auth form components, and landing sections. |
 | `frontend/components/layout/login.tsx` | Login form view | Server-rendered email/password and reset request forms bound to Server Actions. |
 | `frontend/components/layout/reset-password.tsx` | Password reset view | Server-rendered Firebase password reset confirmation form. |

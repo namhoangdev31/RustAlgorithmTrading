@@ -240,8 +240,8 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           </CardHeader>
           <CardContent className="flex gap-2">
             <form action={deleteProjectAction}>
-              <input type="hidden" name="projectId" value={selectedProject.id} />
-              <input type="hidden" name="returnTo" value="/dashboard" />
+              <Input type="hidden" name="projectId" value={selectedProject.id} />
+              <Input type="hidden" name="returnTo" value="/dashboard" />
               <Button type="submit" variant="destructive">Delete project</Button>
             </form>
             <Button asChild variant="outline">
@@ -286,8 +286,8 @@ function ProjectForm({
       </CardHeader>
       <CardContent>
         <form action={action} className="grid gap-4 md:grid-cols-2">
-          {project ? <input type="hidden" name="projectId" value={project.id} /> : null}
-          <input type="hidden" name="returnTo" value={returnTo} />
+          {project ? <Input type="hidden" name="projectId" value={project.id} /> : null}
+          <Input type="hidden" name="returnTo" value={returnTo} />
           <Label className="grid gap-2 text-sm">
             Project name
             <Input name="projectName" defaultValue={project?.name} required />

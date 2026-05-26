@@ -95,37 +95,37 @@ export default async function TasksPage({ searchParams }: TasksPageProps) {
       </div>
 
       <div className="flex flex-1 flex-col gap-4">
-          <form action="/dashboard/tasks" className="flex flex-wrap items-center gap-2" method="get">
-            <Input className="h-8 w-[150px] lg:w-[250px]" name="q" placeholder="Filter by title or ID..." />
-            <Select name="status" defaultValue={params.status || "all"}>
-              <SelectTrigger className="h-8 w-[150px]">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Status (All)</SelectItem>
-                <SelectItem value="backlog">Backlog</SelectItem>
-                <SelectItem value="todo">Todo</SelectItem>
-                <SelectItem value="in progress">In Progress</SelectItem>
-                <SelectItem value="done">Done</SelectItem>
-                <SelectItem value="canceled">Canceled</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="in_review">In Review</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select name="priority" defaultValue={params.priority || "all"}>
-              <SelectTrigger className="h-8 w-[150px]">
-                <SelectValue placeholder="Priority" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Priority (All)</SelectItem>
-                <SelectItem value="1">Low</SelectItem>
-                <SelectItem value="2">Medium</SelectItem>
-                <SelectItem value="3">High</SelectItem>
-                <SelectItem value="4">Critical</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button className="h-8" type="submit" variant="outline">Reset</Button>
-          </form>
+        <form action="/dashboard/tasks" className="flex flex-wrap items-center gap-2" method="get">
+          <Input className="h-8 w-[150px] lg:w-[250px]" name="q" placeholder="Filter by title or ID..." />
+          <Select name="status" defaultValue={params.status || "all"}>
+            <SelectTrigger className="h-8 w-[150px]">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Status (All)</SelectItem>
+              <SelectItem value="backlog">Backlog</SelectItem>
+              <SelectItem value="todo">Todo</SelectItem>
+              <SelectItem value="in progress">In Progress</SelectItem>
+              <SelectItem value="done">Done</SelectItem>
+              <SelectItem value="canceled">Canceled</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="in_review">In Review</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select name="priority" defaultValue={params.priority || "all"}>
+            <SelectTrigger className="h-8 w-[150px]">
+              <SelectValue placeholder="Priority" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Priority (All)</SelectItem>
+              <SelectItem value="1">Low</SelectItem>
+              <SelectItem value="2">Medium</SelectItem>
+              <SelectItem value="3">High</SelectItem>
+              <SelectItem value="4">Critical</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button className="h-8" type="submit" variant="outline">Reset</Button>
+        </form>
 
         <div className="overflow-hidden rounded-md border">
           <Table className="min-w-xl">
@@ -150,58 +150,58 @@ export default async function TasksPage({ searchParams }: TasksPageProps) {
                   const PriorityIcon = priority.icon;
 
                   return (
-                  <TableRow key={task.id}>
-                    <TableCell>
-                      <Checkbox aria-label="Select row" />
-                    </TableCell>
-                    <TableCell>
-                      <div className="w-20">TASK-{String(index + 1).padStart(3, "0")}</div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex gap-2">
-                        <Badge variant="outline">{task.bundle.status === "published" ? "Feature" : "Bug"}</Badge>
-                        <span className="truncate font-medium">
-                          {task.notes || task.bundle.name}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex w-28 items-center gap-2">
-                        <StatusIcon className="size-4 text-muted-foreground" />
-                        <span>{status.label}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <PriorityIcon className="size-4 text-muted-foreground" />
-                        <span>{priority.label}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button size="icon" variant="ghost">
-                            <MoreHorizontal data-icon="inline-start" />
-                            <span className="sr-only">Open menu</span>
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem asChild>
-                            <Link href={`/dashboard/tasks?dialog=edit&id=${task.id}`}>
-                              Edit
-                            </Link>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem asChild>
-                            <form action={deleteReviewTaskAction} className="w-full">
-                              <input type="hidden" name="taskId" value={task.id} />
-                              <input type="hidden" name="returnTo" value="/dashboard/tasks" />
-                              <Button className="w-full justify-start" size="sm" type="submit" variant="ghost">Remove</Button>
-                            </form>
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
+                    <TableRow key={task.id}>
+                      <TableCell>
+                        <Checkbox aria-label="Select row" />
+                      </TableCell>
+                      <TableCell>
+                        <div className="w-20">TASK-{String(index + 1).padStart(3, "0")}</div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex gap-2">
+                          <Badge variant="outline">{task.bundle.status === "published" ? "Feature" : "Bug"}</Badge>
+                          <span className="truncate font-medium">
+                            {task.notes || task.bundle.name}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex w-28 items-center gap-2">
+                          <StatusIcon className="size-4 text-muted-foreground" />
+                          <span>{status.label}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <PriorityIcon className="size-4 text-muted-foreground" />
+                          <span>{priority.label}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button size="icon" variant="ghost">
+                              <MoreHorizontal data-icon="inline-start" />
+                              <span className="sr-only">Open menu</span>
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem asChild>
+                              <Link href={`/dashboard/tasks?dialog=edit&id=${task.id}`}>
+                                Edit
+                              </Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                              <form action={deleteReviewTaskAction} className="w-full">
+                                <Input type="hidden" name="taskId" value={task.id} />
+                                <Input type="hidden" name="returnTo" value="/dashboard/tasks" />
+                                <Button className="w-full justify-start" size="sm" type="submit" variant="ghost">Remove</Button>
+                              </form>
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
                   );
                 })
               ) : (
@@ -295,8 +295,8 @@ function TaskForm({
       </CardHeader>
       <CardContent>
         <form action={action} className="grid gap-4 md:grid-cols-2">
-          {task ? <input type="hidden" name="taskId" value={task.id} /> : null}
-          <input type="hidden" name="returnTo" value={returnTo} />
+          {task ? <Input type="hidden" name="taskId" value={task.id} /> : null}
+          <Input type="hidden" name="returnTo" value={returnTo} />
           <Label className="grid gap-2 text-sm">
             Bundle
             <Select

@@ -5,6 +5,7 @@ import {
 } from "@/app/actions/admin";
 import {
   ArrowLeft,
+  Check,
   Edit,
   ImagePlus,
   MessagesSquare,
@@ -14,6 +15,7 @@ import {
   Plus,
   Search as SearchIcon,
   Send,
+  Trash2,
   Video,
 } from "lucide-react";
 import Link from "next/link";
@@ -35,13 +37,7 @@ import { Separator } from "@/components/ui/separator";
 import { getChatsData } from "@/lib/server/admin-data";
 import { requireCurrentUser } from "@/lib/server/current-user";
 import { cn } from "@/lib/utils";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { NewChatDialog } from "@/components/dashboard/new-chat-dialog";
 
 type ChatsPageProps = {
   searchParams: Promise<{
@@ -56,9 +52,23 @@ export default async function ChatsPage({ searchParams }: ChatsPageProps) {
   const user = await requireCurrentUser();
   const data = await getChatsData(user.id, params);
   const contacts = buildContacts(data.messages, data.users, user.id);
-  const selectedContact = params.chat
+  let selectedContact = params.chat
     ? contacts.find((contact) => contact.id === params.chat) ?? null
     : null;
+
+  if (params.chat && !selectedContact) {
+    const chatUser = data.users.find((u) => u.id === params.chat);
+    if (chatUser) {
+      selectedContact = {
+        id: chatUser.id,
+        fullName: chatUser.fullName ?? chatUser.email ?? "Unknown",
+        email: chatUser.email,
+        title: pickTitle(chatUser.fullName ?? chatUser.email ?? ""),
+        messages: [],
+      };
+    }
+  }
+
   const groupedMessages = selectedContact
     ? groupMessagesByDate(selectedContact.messages)
     : [];
@@ -185,52 +195,92 @@ export default async function ChatsPage({ searchParams }: ChatsPageProps) {
                           return (
                             <div
                               className={cn(
-                                "max-w-72 px-3 py-2 shadow-lg wrap-break-word",
-                                outgoing
-                                  ? "self-end rounded-[16px_16px_0_16px] bg-primary/90 text-primary-foreground/75"
-                                  : "self-start rounded-[16px_16px_16px_0] bg-muted"
+                                "group relative flex flex-col gap-1 max-w-[70%] transition-all",
+                                outgoing ? "self-end items-end" : "self-start items-start"
                               )}
                               key={message.id}
                             >
-                              {message.body}
-                              <span
-                                className={cn(
-                                  "mt-1 block text-xs font-light italic text-foreground/75",
-                                  outgoing && "text-end text-primary-foreground/85"
+                              <div className="flex items-center gap-2">
+                                {outgoing && (
+                                  <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex gap-1">
+                                    <form action={deleteChatMessageAction}>
+                                      <Input name="notificationId" type="hidden" value={message.id} />
+                                      <Input name="returnTo" type="hidden" value={`/dashboard/chats?chat=${selectedContact.id}`} />
+                                      <Button
+                                        className="size-7 rounded-full text-slate-400 hover:text-red-500 hover:bg-slate-100 dark:hover:bg-slate-800 animate-in fade-in-0 duration-100"
+                                        size="icon"
+                                        type="submit"
+                                        variant="ghost"
+                                      >
+                                        <Trash2 className="size-3.5" />
+                                        <span className="sr-only">Delete</span>
+                                      </Button>
+                                    </form>
+                                  </div>
                                 )}
-                              >
+
+                                <div
+                                  className={cn(
+                                    "px-4 py-2 text-sm shadow-xs break-words whitespace-pre-wrap max-w-full",
+                                    outgoing
+                                      ? "rounded-2xl rounded-tr-none bg-primary text-primary-foreground font-medium"
+                                      : "rounded-2xl rounded-tl-none bg-muted text-muted-foreground"
+                                  )}
+                                >
+                                  {message.body}
+                                </div>
+
+                                {!outgoing && (
+                                  <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex gap-1">
+                                    {!message.isRead && (
+                                      <form action={markChatReadAction}>
+                                        <Input name="notificationId" type="hidden" value={message.id} />
+                                        <Input name="returnTo" type="hidden" value={`/dashboard/chats?chat=${selectedContact.id}`} />
+                                        <Button
+                                          className="size-7 rounded-full text-slate-400 hover:text-green-600 hover:bg-slate-100 dark:hover:bg-slate-800 animate-in fade-in-0 duration-100"
+                                          size="icon"
+                                          type="submit"
+                                          variant="ghost"
+                                        >
+                                          <Check className="size-3.5" />
+                                          <span className="sr-only">Mark read</span>
+                                        </Button>
+                                      </form>
+                                    )}
+                                    <form action={deleteChatMessageAction}>
+                                      <Input name="notificationId" type="hidden" value={message.id} />
+                                      <Input name="returnTo" type="hidden" value={`/dashboard/chats?chat=${selectedContact.id}`} />
+                                      <Button
+                                        className="size-7 rounded-full text-slate-400 hover:text-red-500 hover:bg-slate-100 dark:hover:bg-slate-800 animate-in fade-in-0 duration-100"
+                                        size="icon"
+                                        type="submit"
+                                        variant="ghost"
+                                      >
+                                        <Trash2 className="size-3.5" />
+                                        <span className="sr-only">Delete</span>
+                                      </Button>
+                                    </form>
+                                  </div>
+                                )}
+                              </div>
+
+                              <span className="text-[10px] text-slate-400 dark:text-slate-500 px-1 mt-0.5">
                                 {formatTime(message.createdAt)}
                               </span>
-                              <div className="mt-2 flex justify-end gap-2">
-                                {!outgoing && !message.isRead ? (
-                                  <form action={markChatReadAction}>
-                                    <input name="notificationId" type="hidden" value={message.id} />
-                                    <input name="returnTo" type="hidden" value={`/dashboard/chats?chat=${selectedContact.id}`} />
-                                    <Button className="h-auto p-0 text-xs underline" type="submit" variant="link">
-                                      Mark read
-                                    </Button>
-                                  </form>
-                                ) : null}
-                                <form action={deleteChatMessageAction}>
-                                  <input name="notificationId" type="hidden" value={message.id} />
-                                  <input name="returnTo" type="hidden" value={`/dashboard/chats?chat=${selectedContact.id}`} />
-                                  <Button className="h-auto p-0 text-xs underline" type="submit" variant="link">
-                                    Delete
-                                  </Button>
-                                </form>
-                              </div>
                             </div>
                           );
                         })}
-                        <div className="text-center text-xs">{date}</div>
+                        <div className="text-center text-xs text-slate-400 dark:text-slate-500 my-4 font-medium">
+                          {date}
+                        </div>
                       </Fragment>
                     ))}
                   </div>
                 </div>
               </div>
               <form action={sendChatMessageAction} className="flex w-full flex-none gap-2">
-                <input name="recipientId" type="hidden" value={selectedContact.id} />
-                <input name="returnTo" type="hidden" value={`/dashboard/chats?chat=${selectedContact.id}`} />
+                <Input name="recipientId" type="hidden" value={selectedContact.id} />
+                <Input name="returnTo" type="hidden" value={`/dashboard/chats?chat=${selectedContact.id}`} />
                 <div className="flex flex-1 items-center gap-2 rounded-md border border-input bg-card px-2 py-1 focus-within:outline-none focus-within:ring-1 focus-within:ring-ring lg:gap-4">
                   <div className="flex gap-1">
                     <Button className="h-8 rounded-md" size="icon" type="button" variant="ghost">
@@ -284,7 +334,7 @@ export default async function ChatsPage({ searchParams }: ChatsPageProps) {
         )}
       </section>
 
-      {params.dialog === "new" ? <NewChatCard users={data.users} /> : null}
+      {params.dialog === "new" ? <NewChatDialog users={data.users} /> : null}
     </>
   );
 }
@@ -385,46 +435,3 @@ function pickTitle(value: string) {
   return titles[seed % titles.length];
 }
 
-function NewChatCard({ users }: { users: ChatUser[] }) {
-  return (
-    <Card className="fixed left-1/2 top-1/2 z-50 w-[min(420px,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 shadow-2xl">
-      <CardHeader>
-        <CardTitle>New chat</CardTitle>
-        <CardDescription>Select a teammate and send the first message.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form action={sendChatMessageAction} className="flex flex-col gap-4">
-          <input name="returnTo" type="hidden" value="/dashboard/chats" />
-          <Label className="grid gap-2 text-sm">
-            Recipient
-            <Select
-              name="recipientId"
-              required
-            >
-              <SelectTrigger className="h-10">
-                <SelectValue placeholder="Select recipient..." />
-              </SelectTrigger>
-              <SelectContent>
-                {users.map((chatUser) => (
-                  <SelectItem key={chatUser.id} value={chatUser.id}>
-                    {chatUser.fullName ?? chatUser.email ?? chatUser.id}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </Label>
-          <Label className="grid gap-2 text-sm">
-            Message
-            <Input name="body" placeholder="Type your message..." required />
-          </Label>
-          <div className="flex gap-2">
-            <Button type="submit">Chat</Button>
-            <Button asChild variant="outline">
-              <Link href="/dashboard/chats">Cancel</Link>
-            </Button>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
-  );
-}
