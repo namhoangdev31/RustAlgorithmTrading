@@ -6,6 +6,7 @@ import { icons } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../card";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useTranslations } from "next-intl";
 
 interface BenefitsProps {
   icon: string;
@@ -13,37 +14,34 @@ interface BenefitsProps {
   description: string;
 }
 
-const benefitList: BenefitsProps[] = [
-  {
-    icon: "Rocket",
-    title: "Instant Multi-Platform Deployment",
-    description:
-      "Push your mini apps, micro-frontends, and websites live in seconds with zero-config CI/CD pipelines.",
-  },
-  {
-    icon: "Globe",
-    title: "Global Edge Network",
-    description:
-      "Deliver assets from 200+ edge locations worldwide with sub-50ms response times and automatic SSL.",
-  },
-  {
-    icon: "TrendingUp",
-    title: "Integrated Trading Engine",
-    description:
-      "Access a production-grade algorithmic trading engine built in Rust, directly from your platform dashboard.",
-  },
-  {
-    icon: "BarChart3",
-    title: "Unified Analytics",
-    description:
-      "Monitor deployments, traffic, and trading performance from a single real-time dashboard with AI insights.",
-  },
-];
-
 export const BenefitsSection = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
   const cardsContainerRef = useRef<HTMLDivElement>(null);
+  const t = useTranslations("Benefits");
+
+  const benefitList: BenefitsProps[] = [
+    {
+      icon: "Rocket",
+      title: t("benefit_1_title"),
+      description: t("benefit_1_desc"),
+    },
+    {
+      icon: "Globe",
+      title: t("benefit_2_title"),
+      description: t("benefit_2_desc"),
+    },
+    {
+      icon: "TrendingUp",
+      title: t("benefit_3_title"),
+      description: t("benefit_3_desc"),
+    },
+    {
+      icon: "BarChart3",
+      title: t("benefit_4_title"),
+      description: t("benefit_4_desc"),
+    },
+  ];
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -182,14 +180,15 @@ export const BenefitsSection = () => {
     <section id="benefits" ref={containerRef} className="container py-24 sm:py-32 overflow-hidden">
       <div className="grid lg:grid-cols-2 place-items-center lg:gap-24">
         <div ref={textRef} className="w-full">
-          <h2 className="text-lg text-primary mb-2 tracking-wider">Benefits</h2>
+          <h2 className="text-lg text-primary mb-2 tracking-wider">{t("section_title")}</h2>
 
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Why Teams Choose <span className="text-primary">RustAT</span>
+            {t.rich("main_title", {
+              brand: (chunks) => <span className="text-primary">{chunks}</span>
+            })}
           </h2>
           <p className="text-xl text-muted-foreground mb-8">
-            From mini app distribution to algorithmic trading, our platform
-            accelerates every stage of your digital product lifecycle.
+            {t("description")}
           </p>
         </div>
 

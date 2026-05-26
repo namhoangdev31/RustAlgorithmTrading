@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardDescription, CardHeader, CardTitle } from "../card";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useTranslations } from "next-intl";
 
 enum ProService {
   YES = 1,
@@ -15,35 +16,34 @@ interface ServiceProps {
   pro: ProService;
   description: string;
 }
-const serviceList: ServiceProps[] = [
-  {
-    title: "Mini App Distribution",
-    description:
-      "Publish and manage custom mini apps and micro-frontends through our integrated marketplace.",
-    pro: 0,
-  },
-  {
-    title: "Website Hosting & CI/CD",
-    description:
-      "Automatic deployments from Git with preview URLs, rollback, and custom domains.",
-    pro: 0,
-  },
-  {
-    title: "Trading Strategy Builder",
-    description:
-      "Visual strategy editor with backtesting, paper trading, and live execution.",
-    pro: 0,
-  },
-  {
-    title: "Advanced Analytics & AI Insights",
-    description: "AI-powered analytics across all platform products with real-time alerts.",
-    pro: 1,
-  },
-];
 
 export const ServicesSection = () => {
+  const t = useTranslations("Services");
   const headerRef = useRef<HTMLDivElement>(null);
   const cardsContainerRef = useRef<HTMLDivElement>(null);
+
+  const serviceList: ServiceProps[] = [
+    {
+      title: t("s1_title"),
+      description: t("s1_desc"),
+      pro: 0,
+    },
+    {
+      title: t("s2_title"),
+      description: t("s2_desc"),
+      pro: 0,
+    },
+    {
+      title: t("s3_title"),
+      description: t("s3_desc"),
+      pro: 0,
+    },
+    {
+      title: t("s4_title"),
+      description: t("s4_desc"),
+      pro: 1,
+    },
+  ];
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -119,15 +119,14 @@ export const ServicesSection = () => {
     <section id="services" className="container py-24 sm:py-32 overflow-hidden">
       <div ref={headerRef} className="text-center mb-12">
         <h2 className="text-lg text-primary mb-2 tracking-wider">
-          Services
+          {t("section_title")}
         </h2>
 
         <h2 className="text-3xl md:text-4xl font-bold mb-4">
-          Platform Capabilities
+          {t("main_title")}
         </h2>
         <h3 className="md:w-1/2 mx-auto text-xl text-muted-foreground">
-          From app distribution to financial trading, explore the full range
-          of platform services.
+          {t("description")}
         </h3>
       </div>
 

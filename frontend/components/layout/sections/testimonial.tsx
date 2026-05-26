@@ -19,6 +19,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Star } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface ReviewProps {
   image: string;
@@ -28,60 +29,55 @@ interface ReviewProps {
   rating: number;
 }
 
-const reviewList: ReviewProps[] = [
-  {
-    image: "https://github.com/shadcn.png",
-    name: "Minh Nguyen",
-    userName: "CTO @ VietTech",
-    comment:
-      "RustAT cut our mini app deployment time from hours to minutes. The integrated trading engine is a game-changer for our fintech products.",
-    rating: 5.0,
-  },
-  {
-    image: "https://github.com/shadcn.png",
-    name: "Sarah Chen",
-    userName: "VP Engineering @ ShopFlow",
-    comment:
-      "We migrated from Vercel and saved 40% on hosting costs. The edge network performance is outstanding.",
-    rating: 4.8,
-  },
-  {
-    image: "https://github.com/shadcn.png",
-    name: "James Park",
-    userName: "Head of Trading @ QuantFi",
-    comment:
-      "The Rust-based trading engine handles 50,000 orders per second with sub-millisecond latency. Nothing else comes close.",
-    rating: 4.9,
-  },
-  {
-    image: "https://github.com/shadcn.png",
-    name: "Linh Tran",
-    userName: "Product Lead @ MiniApp Studio",
-    comment:
-      "Deploying custom mini apps used to be painful. RustAT made it as simple as a git push.",
-    rating: 5.0,
-  },
-  {
-    image: "https://github.com/shadcn.png",
-    name: "David Kim",
-    userName: "DevOps Lead @ CloudScale",
-    comment:
-      "The unified dashboard for hosting, mini apps, and trading is exactly what our team needed. Zero context switching.",
-    rating: 5.0,
-  },
-  {
-    image: "https://github.com/shadcn.png",
-    name: "Maria Santos",
-    userName: "Founder @ TradeBot Labs",
-    comment:
-      "From prototype to production trading in 2 weeks. The backtesting tools and risk management are enterprise-grade.",
-    rating: 4.9,
-  },
-];
-
 export const TestimonialSection = () => {
+  const t = useTranslations("Testimonials");
   const headerRef = useRef<HTMLDivElement>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
+
+  const reviewList: ReviewProps[] = [
+    {
+      image: "https://github.com/shadcn.png",
+      name: "Minh Nguyen",
+      userName: "CTO @ VietTech",
+      comment: t("comment_minh"),
+      rating: 5.0,
+    },
+    {
+      image: "https://github.com/shadcn.png",
+      name: "Sarah Chen",
+      userName: "VP Engineering @ ShopFlow",
+      comment: t("comment_sarah"),
+      rating: 4.8,
+    },
+    {
+      image: "https://github.com/shadcn.png",
+      name: "James Park",
+      userName: "Head of Trading @ QuantFi",
+      comment: t("comment_james"),
+      rating: 4.9,
+    },
+    {
+      image: "https://github.com/shadcn.png",
+      name: "Linh Tran",
+      userName: "Product Lead @ MiniApp Studio",
+      comment: t("comment_linh"),
+      rating: 5.0,
+    },
+    {
+      image: "https://github.com/shadcn.png",
+      name: "David Kim",
+      userName: "DevOps Lead @ CloudScale",
+      comment: t("comment_david"),
+      rating: 5.0,
+    },
+    {
+      image: "https://github.com/shadcn.png",
+      name: "Maria Santos",
+      userName: "Founder @ TradeBot Labs",
+      comment: t("comment_maria"),
+      rating: 4.9,
+    },
+  ];
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -165,11 +161,11 @@ export const TestimonialSection = () => {
     <section id="testimonials" className="container py-24 sm:py-32 overflow-hidden">
       <div ref={headerRef} className="text-center mb-8">
         <h2 className="text-lg text-primary text-center mb-2 tracking-wider">
-          Testimonials
+          {t("section_title")}
         </h2>
 
         <h2 className="text-3xl md:text-4xl text-center font-bold mb-4">
-          Trusted by 2,000+ Teams Worldwide
+          {t("main_title")}
         </h2>
       </div>
 

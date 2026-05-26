@@ -31,6 +31,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { useTranslations } from "next-intl";
 
 const formSchema = z.object({
   firstName: z.string().min(2).max(255),
@@ -41,6 +42,7 @@ const formSchema = z.object({
 });
 
 export const ContactSection = () => {
+  const t = useTranslations("Contact");
   const leftColRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -148,21 +150,20 @@ export const ContactSection = () => {
         <div ref={leftColRef}>
           <div className="mb-4">
             <h2 className="text-lg text-primary mb-2 tracking-wider">
-              Contact
+              {t("section_title")}
             </h2>
 
-            <h2 className="text-3xl md:text-4xl font-bold">Get in Touch</h2>
+            <h2 className="text-3xl md:text-4xl font-bold">{t("main_title")}</h2>
           </div>
           <p className="mb-8 text-muted-foreground lg:w-5/6">
-            Have questions about our platform? Want a custom enterprise plan?
-            We'd love to hear from you.
+            {t("description")}
           </p>
 
           <div className="flex flex-col gap-4">
             <div className="info-item">
               <div className="flex gap-2 mb-1">
                 <Building2 className="text-primary" />
-                <div className="font-bold">Find us</div>
+                <div className="font-bold">{t("find_us")}</div>
               </div>
 
               <div>742 Evergreen Terrace, Springfield, IL 62704</div>
@@ -171,7 +172,7 @@ export const ContactSection = () => {
             <div className="info-item">
               <div className="flex gap-2 mb-1">
                 <Phone className="text-primary" />
-                <div className="font-bold">Call us</div>
+                <div className="font-bold">{t("call_us")}</div>
               </div>
 
               <div>+1 (619) 123-4567</div>
@@ -180,7 +181,7 @@ export const ContactSection = () => {
             <div className="info-item">
               <div className="flex gap-2 mb-1">
                 <Mail className="text-primary" />
-                <div className="font-bold">Mail US</div>
+                <div className="font-bold">{t("mail_us")}</div>
               </div>
 
               <div>leomirandadev@gmail.com</div>
@@ -189,11 +190,11 @@ export const ContactSection = () => {
             <div className="info-item">
               <div className="flex gap-2">
                 <Clock className="text-primary" />
-                <div className="font-bold">Visit us</div>
+                <div className="font-bold">{t("visit_us")}</div>
               </div>
 
               <div>
-                <div>Monday - Friday</div>
+                <div>{t("monday_friday")}</div>
                 <div>8AM - 4PM</div>
               </div>
             </div>
@@ -219,7 +220,7 @@ export const ContactSection = () => {
                       name="firstName"
                       render={({ field }) => (
                         <FormItem className="w-full">
-                          <FormLabel>First Name</FormLabel>
+                          <FormLabel>{t("first_name")}</FormLabel>
                           <FormControl>
                             <Input placeholder="Leopoldo" {...field} />
                           </FormControl>
@@ -232,7 +233,7 @@ export const ContactSection = () => {
                       name="lastName"
                       render={({ field }) => (
                         <FormItem className="w-full">
-                          <FormLabel>Last Name</FormLabel>
+                          <FormLabel>{t("last_name")}</FormLabel>
                           <FormControl>
                             <Input placeholder="Miranda" {...field} />
                           </FormControl>
@@ -248,7 +249,7 @@ export const ContactSection = () => {
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Email</FormLabel>
+                          <FormLabel>{t("email")}</FormLabel>
                           <FormControl>
                             <Input
                               type="email"
@@ -268,31 +269,31 @@ export const ContactSection = () => {
                       name="subject"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Subject</FormLabel>
+                          <FormLabel>{t("subject")}</FormLabel>
                           <Select
                             onValueChange={field.onChange}
                             defaultValue={field.value}
                           >
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder="Select a subject" />
+                                <SelectValue placeholder={t("subject_placeholder")} />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
                               <SelectItem value="Mini App Deployment">
-                                Mini App Deployment
+                                {t("subject_deployment")}
                               </SelectItem>
                               <SelectItem value="Web Hosting">
-                                Web Hosting
+                                {t("subject_hosting")}
                               </SelectItem>
                               <SelectItem value="Trading Engine">
-                                Trading Engine
+                                {t("subject_trading")}
                               </SelectItem>
                               <SelectItem value="Enterprise Plan">
-                                Enterprise Plan
+                                {t("subject_enterprise")}
                               </SelectItem>
                               <SelectItem value="Partnership">
-                                Partnership
+                                {t("subject_partnership")}
                               </SelectItem>
                             </SelectContent>
                           </Select>
@@ -308,11 +309,11 @@ export const ContactSection = () => {
                       name="message"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Message</FormLabel>
+                          <FormLabel>{t("message")}</FormLabel>
                           <FormControl>
                             <Textarea
                               rows={5}
-                              placeholder="Your message..."
+                              placeholder={t("message_placeholder")}
                               className="resize-none"
                               {...field}
                             />
@@ -324,7 +325,7 @@ export const ContactSection = () => {
                     />
                   </div>
 
-                  <Button className="mt-4">Send message</Button>
+                  <Button className="mt-4">{t("send_button")}</Button>
                 </form>
               </Form>
             </CardContent>

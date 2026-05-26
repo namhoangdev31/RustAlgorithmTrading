@@ -7,45 +7,47 @@ import { icons } from "lucide-react";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useTranslations } from "next-intl";
 
 interface sponsorsProps {
   icon: string;
   name: string;
 }
 
-const sponsors: sponsorsProps[] = [
-  {
-    icon: "Smartphone",
-    name: "iOS Mini Apps",
-  },
-  {
-    icon: "Smartphone",
-    name: "Android Mini Apps",
-  },
-  {
-    icon: "Globe",
-    name: "Vercel Edge",
-  },
-  {
-    icon: "Cloud",
-    name: "Cloudflare Workers",
-  },
-  {
-    icon: "Cpu",
-    name: "Rust Engine",
-  },
-  {
-    icon: "Code",
-    name: "Next.js",
-  },
-  {
-    icon: "Layers",
-    name: "React Native",
-  },
-];
-
 export const SponsorsSection = () => {
+  const t = useTranslations("Sponsors");
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const sponsors: sponsorsProps[] = [
+    {
+      icon: "Smartphone",
+      name: t("ios_apps"),
+    },
+    {
+      icon: "Smartphone",
+      name: t("android_apps"),
+    },
+    {
+      icon: "Globe",
+      name: t("vercel_edge"),
+    },
+    {
+      icon: "Cloud",
+      name: t("cloudflare_workers"),
+    },
+    {
+      icon: "Cpu",
+      name: t("rust_engine"),
+    },
+    {
+      icon: "Code",
+      name: t("nextjs"),
+    },
+    {
+      icon: "Layers",
+      name: t("react_native"),
+    },
+  ];
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -82,7 +84,7 @@ export const SponsorsSection = () => {
   return (
     <section id="sponsors" ref={containerRef} className="max-w-[75%] mx-auto pb-24 sm:pb-32">
       <h2 className="text-lg md:text-xl text-center mb-6">
-        Trusted by leading teams worldwide
+        {t("title")}
       </h2>
 
       <div className="mx-auto">

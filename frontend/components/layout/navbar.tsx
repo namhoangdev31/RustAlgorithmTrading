@@ -11,12 +11,10 @@ import React from "react";
 import {
   Sheet,
   SheetContent,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from "../ui/sheet";
-import { Separator } from "../ui/separator";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -26,8 +24,8 @@ import {
   NavigationMenuTrigger,
 } from "../ui/navigation-menu";
 import { Button } from "../ui/button";
-import Link from "next/link";
-
+import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 
 interface RouteProps {
   href: string;
@@ -39,55 +37,55 @@ interface FeatureProps {
   description: string;
 }
 
-const routeList: RouteProps[] = [
-  {
-    href: "#benefits",
-    label: "Benefits",
-  },
-  {
-    href: "#features",
-    label: "Features",
-  },
-  {
-    href: "#pricing",
-    label: "Plans",
-  },
-  {
-    href: "#contact",
-    label: "Contact",
-  },
-  {
-    href: "#faq",
-    label: "FAQ",
-  },
-];
-
-const featureList: FeatureProps[] = [
-  {
-    title: "Rust runtime",
-    description: "Keep signal, risk, and execution paths fast and bounded.",
-  },
-  {
-    title: "Python research",
-    description:
-      "Move from backtest ideas to runtime contracts without copy drift.",
-  },
-  {
-    title: "Go observability",
-    description:
-      "Surface health, metrics, and dashboard events on a clean control plane.",
-  },
-];
-
 const featureIcons = [Zap, Blocks, Activity];
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = React.useState(false);
+  const t = useTranslations("Navbar");
+
+  const routeList: RouteProps[] = [
+    {
+      href: "#benefits",
+      label: t("route_benefits"),
+    },
+    {
+      href: "#features",
+      label: t("route_features"),
+    },
+    {
+      href: "#pricing",
+      label: t("route_pricing"),
+    },
+    {
+      href: "#contact",
+      label: t("route_contact"),
+    },
+    {
+      href: "#faq",
+      label: t("route_faq"),
+    },
+  ];
+
+  const featureList: FeatureProps[] = [
+    {
+      title: t("rust_title"),
+      description: t("rust_desc"),
+    },
+    {
+      title: t("python_title"),
+      description: t("python_desc"),
+    },
+    {
+      title: t("go_title"),
+      description: t("go_desc"),
+    },
+  ];
+
   return (
     <header className="shadow-inner bg-opacity-15 w-[90%] md:w-[70%] lg:w-[75%] lg:max-w-screen-xl top-5 mx-auto sticky border border-secondary z-40 rounded-2xl flex justify-between items-center p-2 bg-card/95 backdrop-blur">
       <Link href="/" className="font-bold text-lg flex items-center">
         <ShieldCheck className="bg-gradient-to-tr border-secondary from-primary via-primary/70 to-primary rounded-lg size-9 mr-2 border text-primary-foreground" />
-        RustAT
+        {t("logo")}
       </Link>
       {/* <!-- Mobile --> */}
       <div className="flex items-center lg:hidden">
@@ -108,7 +106,7 @@ export const Navbar = () => {
                 <SheetTitle className="flex items-center">
                   <Link href="/" className="flex items-center">
                     <ShieldCheck className="bg-gradient-to-tr border-secondary from-primary via-primary/70 to-primary rounded-lg size-9 mr-2 border text-primary-foreground" />
-                    RustAT
+                    {t("logo")}
                   </Link>
                 </SheetTitle>
               </SheetHeader>
@@ -136,16 +134,16 @@ export const Navbar = () => {
         <NavigationMenuList>
           <NavigationMenuItem>
             <NavigationMenuTrigger className="bg-card text-base">
-              Features
+              {t("features_trigger")}
             </NavigationMenuTrigger>
             <NavigationMenuContent>
               <div className="grid w-[600px] grid-cols-2 gap-5 p-4">
                 <div className="rounded-md border border-secondary bg-muted/60 p-5">
                   <p className="text-sm font-medium text-muted-foreground">
-                    Tri-runtime posture
+                    {t("features_label")}
                   </p>
                   <p className="mt-3 text-2xl font-bold leading-tight">
-                    Research in Python. Execute in Rust. Observe in Go.
+                    {t("features_tagline")}
                   </p>
                 </div>
                 <ul className="flex flex-col gap-2">

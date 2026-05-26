@@ -1,8 +1,12 @@
 import { Separator } from "@/components/ui/separator";
 import { ShieldCheck } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
+import { LanguageSwitcher } from "../language-switcher";
+import { useTranslations } from "next-intl";
 
 export const FooterSection = () => {
+  const t = useTranslations("Footer");
+
   return (
     <footer id="footer" className="container py-24 sm:py-32">
       <div className="p-10 bg-card border border-secondary rounded-2xl">
@@ -16,100 +20,100 @@ export const FooterSection = () => {
           </div>
 
           <div className="flex flex-col gap-2">
-            <h3 className="font-bold text-lg">Platform</h3>
+            <h3 className="font-bold text-lg">{t("platform")}</h3>
             <div>
               <Link href="#benefits" className="opacity-60 hover:opacity-100">
-                Benefits
+                {t("benefits")}
               </Link>
             </div>
 
             <div>
               <Link href="#features" className="opacity-60 hover:opacity-100">
-                Features
+                {t("features")}
               </Link>
             </div>
 
             <div>
               <Link href="#pricing" className="opacity-60 hover:opacity-100">
-                Pricing
+                {t("pricing")}
               </Link>
             </div>
           </div>
 
           <div className="flex flex-col gap-2">
-            <h3 className="font-bold text-lg">Products</h3>
+            <h3 className="font-bold text-lg">{t("products")}</h3>
             <div>
               <Link href="#" className="opacity-60 hover:opacity-100">
-                Mini Apps
+                {t("mini_apps")}
               </Link>
             </div>
 
             <div>
               <Link href="#" className="opacity-60 hover:opacity-100">
-                Web Hosting
+                {t("web_hosting")}
               </Link>
             </div>
 
             <div>
               <Link href="#" className="opacity-60 hover:opacity-100">
-                Trading Engine
+                {t("trading_engine")}
               </Link>
             </div>
           </div>
 
           <div className="flex flex-col gap-2">
-            <h3 className="font-bold text-lg">Resources</h3>
+            <h3 className="font-bold text-lg">{t("resources")}</h3>
             <div>
               <Link href="#" className="opacity-60 hover:opacity-100">
-                Documentation
+                {t("documentation")}
               </Link>
             </div>
 
             <div>
               <Link href="#faq" className="opacity-60 hover:opacity-100">
-                FAQ
+                {t("faq")}
               </Link>
             </div>
 
             <div>
               <Link href="#" className="opacity-60 hover:opacity-100">
-                API Reference
+                {t("api_reference")}
               </Link>
             </div>
           </div>
 
           <div className="flex flex-col gap-2">
-            <h3 className="font-bold text-lg">Links</h3>
+            <h3 className="font-bold text-lg">{t("links")}</h3>
             <div>
               <Link
                 href="https://github.com/SamoraDC/RustAlgorithmTrading"
                 target="_blank"
                 className="opacity-60 hover:opacity-100"
               >
-                GitHub
+                {t("github")}
               </Link>
             </div>
 
             <div>
               <Link href="#contact" className="opacity-60 hover:opacity-100">
-                Contact Us
+                {t("contact_us")}
               </Link>
             </div>
 
             <div>
               <Link href="#" className="opacity-60 hover:opacity-100">
-                Status Page
+                {t("status_page")}
               </Link>
             </div>
           </div>
         </div>
 
         <Separator className="my-6" />
-        <section className="">
+        <section className="flex flex-col md:flex-row justify-between items-center gap-4">
           <h3 className="text-muted-foreground text-sm">
-            &copy; 2026 RustAT. All rights reserved. Built with Next.js,
-            shadcn/ui, TypeScript, and Tailwind.
+            &copy; 2026 RustAT. {t("rights")}
           </h3>
+          <LanguageSwitcher />
         </section>
       </div>
     </footer>

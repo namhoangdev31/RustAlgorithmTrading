@@ -13,6 +13,7 @@ import {
 import { Check } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useTranslations } from "next-intl";
 
 enum PopularPlan {
   NO = 0,
@@ -28,57 +29,55 @@ interface PlanProps {
   benefitList: string[];
 }
 
-const plans: PlanProps[] = [
-  {
-    title: "Starter",
-    popular: 0,
-    price: 0,
-    description:
-      "Perfect for individuals and small projects getting started.",
-    buttonText: "Start Free",
-    benefitList: [
-      "3 Mini Apps",
-      "5 Websites",
-      "Community support",
-      "Basic analytics",
-      "1 GB storage",
-    ],
-  },
-  {
-    title: "Pro",
-    popular: 1,
-    price: 49,
-    description:
-      "For growing teams that need more power and flexibility.",
-    buttonText: "Get Started",
-    benefitList: [
-      "25 Mini Apps",
-      "Unlimited websites",
-      "Priority support",
-      "Advanced analytics",
-      "Paper trading",
-    ],
-  },
-  {
-    title: "Enterprise",
-    popular: 0,
-    price: 199,
-    description:
-      "For organizations with advanced requirements and scale.",
-    buttonText: "Contact Sales",
-    benefitList: [
-      "Unlimited Mini Apps",
-      "Unlimited websites",
-      "24/7 dedicated support",
-      "Live trading engine",
-      "500 GB storage",
-    ],
-  },
-];
-
 export const PricingSection = () => {
+  const t = useTranslations("Pricing");
   const headerRef = useRef<HTMLDivElement>(null);
   const cardsContainerRef = useRef<HTMLDivElement>(null);
+
+  const plans: PlanProps[] = [
+    {
+      title: "Starter",
+      popular: 0,
+      price: 0,
+      description: t("starter_desc"),
+      buttonText: t("starter_btn"),
+      benefitList: [
+        t("b_mini_apps", { count: 3 }),
+        t("b_websites", { count: 5 }),
+        t("b_support_community"),
+        t("b_analytics_basic"),
+        t("b_storage", { size: "1 GB" }),
+      ],
+    },
+    {
+      title: "Pro",
+      popular: 1,
+      price: 49,
+      description: t("pro_desc"),
+      buttonText: t("pro_btn"),
+      benefitList: [
+        t("b_mini_apps", { count: 25 }),
+        t("b_websites_unlimited"),
+        t("b_support_priority"),
+        t("b_analytics_advanced"),
+        t("b_paper_trading"),
+      ],
+    },
+    {
+      title: "Enterprise",
+      popular: 0,
+      price: 199,
+      description: t("enterprise_desc"),
+      buttonText: t("enterprise_btn"),
+      benefitList: [
+        t("b_mini_apps_unlimited"),
+        t("b_websites_unlimited"),
+        t("b_support_dedicated"),
+        t("b_live_trading"),
+        t("b_storage", { size: "500 GB" }),
+      ],
+    },
+  ];
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -160,15 +159,15 @@ export const PricingSection = () => {
     <section id="pricing" className="container py-24 sm:py-32 overflow-hidden">
       <div ref={headerRef} className="text-center mb-12">
         <h2 className="text-lg text-primary mb-2 tracking-wider">
-          Pricing
+          {t("section_title")}
         </h2>
 
         <h2 className="text-3xl md:text-4xl font-bold mb-4">
-          Simple, Transparent Pricing
+          {t("main_title")}
         </h2>
 
         <h3 className="md:w-1/2 mx-auto text-xl text-muted-foreground">
-          Start free and scale as you grow. No hidden fees.
+          {t("description")}
         </h3>
       </div>
 
@@ -204,7 +203,7 @@ export const PricingSection = () => {
 
                     <div>
                       <span className="text-3xl font-bold">${price}</span>
-                      <span className="text-muted-foreground"> /month</span>
+                      <span className="text-muted-foreground">{t("per_month")}</span>
                     </div>
                   </CardHeader>
 

@@ -9,6 +9,7 @@ import {
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useTranslations } from "next-intl";
 
 interface FAQProps {
   question: string;
@@ -16,42 +17,38 @@ interface FAQProps {
   value: string;
 }
 
-const FAQList: FAQProps[] = [
-  {
-    question: "What types of apps can I deploy?",
-    answer:
-      "You can deploy custom mini apps, micro-frontends, Next.js and Vite websites, and static sites. Our platform handles builds, CDN distribution, and SSL automatically.",
-    value: "item-1",
-  },
-  {
-    question: "How does the trading engine integrate with my apps?",
-    answer:
-      "The trading engine runs as a separate Rust-powered service accessible via REST and WebSocket APIs. You can embed trading widgets in your mini apps or use it standalone from the dashboard.",
-    value: "item-2",
-  },
-  {
-    question: "Is there a free tier?",
-    answer:
-      "Yes! Our Starter plan includes 3 mini apps and 5 websites at no cost. Upgrade to Pro or Enterprise for unlimited deployments and live trading access.",
-    value: "item-3",
-  },
-  {
-    question: "How fast are deployments?",
-    answer:
-      "Most deployments complete in under 30 seconds. Our Edge CDN ensures your apps load in sub-50ms from 200+ global locations.",
-    value: "item-4",
-  },
-  {
-    question: "Is the trading engine safe for production?",
-    answer:
-      "Absolutely. The engine includes built-in risk management, circuit breakers, exposure limits, and paper trading mode for strategy validation before going live.",
-    value: "item-5",
-  },
-];
-
 export const FAQSection = () => {
+  const t = useTranslations("FAQ");
   const headerRef = useRef<HTMLDivElement>(null);
   const accordionRef = useRef<HTMLDivElement>(null);
+
+  const FAQList: FAQProps[] = [
+    {
+      question: t("q1"),
+      answer: t("a1"),
+      value: "item-1",
+    },
+    {
+      question: t("q2"),
+      answer: t("a2"),
+      value: "item-2",
+    },
+    {
+      question: t("q3"),
+      answer: t("a3"),
+      value: "item-3",
+    },
+    {
+      question: t("q4"),
+      answer: t("a4"),
+      value: "item-4",
+    },
+    {
+      question: t("q5"),
+      answer: t("a5"),
+      value: "item-5",
+    },
+  ];
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -116,11 +113,11 @@ export const FAQSection = () => {
     <section id="faq" className="container md:w-[700px] py-24 sm:py-32 overflow-hidden">
       <div ref={headerRef} className="text-center mb-8">
         <h2 className="text-lg text-primary text-center mb-2 tracking-wider">
-          FAQ
+          {t("section_title")}
         </h2>
 
         <h2 className="text-3xl md:text-4xl text-center font-bold">
-          Common Questions
+          {t("main_title")}
         </h2>
       </div>
 

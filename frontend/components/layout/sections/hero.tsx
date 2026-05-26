@@ -3,15 +3,17 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Activity, ArrowRight, ShieldCheck } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { GithubIcon } from "@/components/ui/icon";
 import { motion } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { TradingCanvas } from "./trading-canvas";
+import { useTranslations } from "next-intl";
 
 export const HeroSection = () => {
-  const headingText = "Ship Apps & Websites at lightning speed";
+  const t = useTranslations("Hero");
+  const headingText = t("title");
   const words = headingText.split(" ");
 
   return (
@@ -29,14 +31,14 @@ export const HeroSection = () => {
             className="mx-auto inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary shadow-[0_0_15px_rgba(210,71,191,0.1)]"
           >
             <ShieldCheck className="size-4 animate-pulse" />
-            <span>Unified Platform — Deploy Everywhere</span>
+            <span>{t("badge")}</span>
           </motion.div>
 
           {/* Title - Word Stagger Reveal */}
           <div className="max-w-screen-md mx-auto text-center text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight">
             <h1 className="leading-tight overflow-hidden py-1">
               {words.map((word, i) => {
-                const isSpecial = word === "lightning" || word === "speed";
+                const isSpecial = word === "lightning" || word === "speed" || word === "ánh" || word === "sáng" || word === "tốc" || word === "độ";
                 return (
                   <motion.span
                     key={i}
@@ -67,9 +69,7 @@ export const HeroSection = () => {
             transition={{ duration: 0.6, delay: 0.5 }}
             className="max-w-screen-sm mx-auto text-xl text-muted-foreground"
           >
-            Deploy cross-platform Mini Apps, micro-frontends, and production websites
-            in seconds. Powered by a blazing-fast Rust trading engine under the
-            hood.
+            {t("subtitle")}
           </motion.p>
 
           {/* CTA Buttons */}
@@ -81,7 +81,7 @@ export const HeroSection = () => {
           >
             <Button asChild className="w-full font-bold group/arrow hover:scale-105 transition-transform shadow-[0_0_20px_rgba(210,71,191,0.2)] hover:shadow-[0_0_25px_rgba(210,71,191,0.4)]">
               <Link href="#pricing">
-                Start Deploying
+                {t("cta_deploy")}
                 <ArrowRight
                   data-icon="inline-end"
                   className="group-hover/arrow:translate-x-1 transition-transform"
@@ -95,11 +95,11 @@ export const HeroSection = () => {
               className="w-full font-bold hover:scale-105 transition-transform"
             >
               <Link
-                href="https://github.com/SamoraDC/RustAlgorithmTrading"
+                href="https://github.comsamoraDC/RustAlgorithmTrading"
                 target="_blank"
               >
                 <GithubIcon className="mr-2 h-4 w-4" data-icon="inline-start" />
-                View GitHub
+                {t("cta_github")}
               </Link>
             </Button>
           </motion.div>
@@ -118,6 +118,8 @@ const TradingPreview = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<HTMLDivElement>(null);
+
+  const t = useTranslations("Hero");
 
   // Live state variables to make dashboard feel alive
   const [latency, setLatency] = useState("18.4ms");
@@ -262,16 +264,16 @@ const TradingPreview = () => {
             <div className="size-3 rounded-full bg-accent" />
           </div>
           <div className="text-sm font-medium text-muted-foreground">
-            Platform Dashboard
+            {t("dashboard_title")}
           </div>
         </div>
 
         <div className="grid gap-0 lg:grid-cols-[240px_1fr]">
           <aside className="hidden border-r border-secondary bg-muted/40 p-5 lg:block">
             <div className="mb-6 text-sm font-semibold text-muted-foreground">
-              Runtime
+              {t("runtime")}
             </div>
-            {["Mini Apps", "Web Hosting", "Trading Engine", "Edge CDN"].map(
+            {[t("mini_apps"), t("web_hosting"), t("trading_engine"), t("edge_cdn")].map(
               (item, index) => (
                 <div
                   key={item}
@@ -285,7 +287,7 @@ const TradingPreview = () => {
                         : "text-muted-foreground"
                     }
                   >
-                    {index === 2 ? "armed" : "live"}
+                    {index === 2 ? t("armed") : t("live")}
                   </span>
                 </div>
               )
@@ -295,9 +297,9 @@ const TradingPreview = () => {
           <div className="p-4 sm:p-6">
             <div className="grid gap-4 md:grid-cols-3">
               {[
-                ["Active Deployments", latency.replace("ms", ""), "apps & sites"],
-                ["Uptime", "99.99%", "last 30 days"],
-                ["Transactions", signals.toString() + "k", "per second"],
+                [t("active_deployments"), latency.replace("ms", ""), t("apps_sites")],
+                [t("uptime"), "99.99%", t("last_30_days")],
+                [t("transactions"), signals.toString() + "k", t("per_second")],
               ].map(([label, value, meta]) => (
                 <div
                   key={label}
@@ -316,9 +318,9 @@ const TradingPreview = () => {
               <div className="rounded-md border border-secondary bg-background p-4">
                 <div className="mb-5 flex items-center justify-between">
                   <div>
-                    <p className="font-semibold">Platform Activity</p>
+                    <p className="font-semibold">{t("activity_title")}</p>
                     <p className="text-sm text-muted-foreground">
-                      Deployments, traffic, and trading volume
+                      {t("activity_subtitle")}
                     </p>
                   </div>
                   <Activity className="text-primary animate-pulse" />
@@ -342,13 +344,13 @@ const TradingPreview = () => {
               <div className="rounded-md border border-secondary bg-background p-4">
                 <div className="mb-4 flex items-center gap-2">
                   <ShieldCheck className="text-primary" />
-                  <p className="font-semibold">Platform Status</p>
+                  <p className="font-semibold">{t("status_title")}</p>
                 </div>
                 {[
-                  ["SSL Certificates", "active"],
-                  ["Edge CDN", "online"],
-                  ["Mini App Runtime", "live"],
-                  ["Trading API", "ready"],
+                  [t("ssl_certs"), t("status_active")],
+                  [t("edge_cdn"), t("status_online")],
+                  [t("mini_apps"), t("status_live")],
+                  [t("trading_engine"), t("status_ready")],
                 ].map(([label, value]) => (
                   <div
                     key={label}
@@ -368,3 +370,4 @@ const TradingPreview = () => {
     </div>
   );
 };
+

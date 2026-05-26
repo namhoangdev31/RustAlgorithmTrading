@@ -6,6 +6,7 @@ import { icons } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../card";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useTranslations } from "next-intl";
 
 interface FeaturesProps {
   icon: string;
@@ -13,48 +14,43 @@ interface FeaturesProps {
   description: string;
 }
 
-const featureList: FeaturesProps[] = [
-  {
-    icon: "Smartphone",
-    title: "Cross-Platform Mini Apps",
-    description:
-      "Build and distribute mini apps directly to mobile devices and web browsers with our native SDK support.",
-  },
-  {
-    icon: "Globe",
-    title: "Serverless Web Hosting",
-    description:
-      "Deploy Next.js, Vite, and static sites with automatic HTTPS, preview deployments, and custom domains.",
-  },
-  {
-    icon: "TrendingUp",
-    title: "Rust Trading Engine",
-    description:
-      "Execute algorithmic trading strategies with microsecond-level latency and built-in risk management.",
-  },
-  {
-    icon: "LayoutDashboard",
-    title: "Real-time Dashboard",
-    description:
-      "Monitor deployments, app performance, user analytics, and trading P&L in a single unified interface.",
-  },
-  {
-    icon: "Webhook",
-    title: "API-First Architecture",
-    description:
-      "RESTful and WebSocket APIs for programmatic control over deployments, trading, and data pipelines.",
-  },
-  {
-    icon: "ShieldCheck",
-    title: "Enterprise Security",
-    description:
-      "SOC 2 compliance, role-based access control, and end-to-end encryption for all platform operations.",
-  },
-];
-
 export const FeaturesSection = () => {
+  const t = useTranslations("Features");
   const headerRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
+
+  const featureList: FeaturesProps[] = [
+    {
+      icon: "Smartphone",
+      title: t("f1_title"),
+      description: t("f1_desc"),
+    },
+    {
+      icon: "Globe",
+      title: t("f2_title"),
+      description: t("f2_desc"),
+    },
+    {
+      icon: "TrendingUp",
+      title: t("f3_title"),
+      description: t("f3_desc"),
+    },
+    {
+      icon: "LayoutDashboard",
+      title: t("f4_title"),
+      description: t("f4_desc"),
+    },
+    {
+      icon: "Webhook",
+      title: t("f5_title"),
+      description: t("f5_desc"),
+    },
+    {
+      icon: "ShieldCheck",
+      title: t("f6_title"),
+      description: t("f6_desc"),
+    },
+  ];
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -178,16 +174,15 @@ export const FeaturesSection = () => {
     <section id="features" className="container py-24 sm:py-32 overflow-hidden">
       <div ref={headerRef} className="text-center mb-12">
         <h2 className="text-lg text-primary mb-2 tracking-wider">
-          Features
+          {t("section_title")}
         </h2>
 
         <h2 className="text-3xl md:text-4xl font-bold mb-4">
-          Everything You Need, In One Platform
+          {t("main_title")}
         </h2>
 
         <h3 className="md:w-1/2 mx-auto text-xl text-muted-foreground">
-          Build, deploy, and scale mini apps, websites, and trading strategies
-          — all powered by a unified cloud infrastructure.
+          {t("description")}
         </h3>
       </div>
 
