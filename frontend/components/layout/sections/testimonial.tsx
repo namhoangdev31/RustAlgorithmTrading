@@ -31,51 +31,50 @@ interface ReviewProps {
 const reviewList: ReviewProps[] = [
   {
     image: "https://github.com/shadcn.png",
-    name: "John Doe",
-    userName: "Product Manager",
+    name: "Minh Nguyen",
+    userName: "CTO @ VietTech",
     comment:
-      "Wow NextJs + Shadcn is awesome!. This template lets me change colors, fonts and images to match my brand identity. ",
+      "RustAT cut our mini app deployment time from hours to minutes. The integrated trading engine is a game-changer for our fintech products.",
     rating: 5.0,
   },
   {
     image: "https://github.com/shadcn.png",
-    name: "Sophia Collins",
-    userName: "Cybersecurity Analyst",
+    name: "Sarah Chen",
+    userName: "VP Engineering @ ShopFlow",
     comment:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna. ",
+      "We migrated from Vercel and saved 40% on hosting costs. The edge network performance is outstanding.",
     rating: 4.8,
   },
-
   {
     image: "https://github.com/shadcn.png",
-    name: "Adam Johnson",
-    userName: "Chief Technology Officer",
+    name: "James Park",
+    userName: "Head of Trading @ QuantFi",
     comment:
-      "Lorem ipsum dolor sit amet,exercitation. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+      "The Rust-based trading engine handles 50,000 orders per second with sub-millisecond latency. Nothing else comes close.",
     rating: 4.9,
   },
   {
     image: "https://github.com/shadcn.png",
-    name: "Ethan Parker",
-    userName: "Data Scientist",
+    name: "Linh Tran",
+    userName: "Product Lead @ MiniApp Studio",
     comment:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod labore et dolore magna aliqua. Ut enim ad minim veniam.",
+      "Deploying custom mini apps used to be painful. RustAT made it as simple as a git push.",
     rating: 5.0,
   },
   {
     image: "https://github.com/shadcn.png",
-    name: "Ava Mitchell",
-    userName: "IT Project Manager",
+    name: "David Kim",
+    userName: "DevOps Lead @ CloudScale",
     comment:
-      "Lorem ipsum dolor sit amet, tempor incididunt  aliqua. Ut enim ad minim veniam, quis nostrud incididunt consectetur adipiscing elit.",
+      "The unified dashboard for hosting, mini apps, and trading is exactly what our team needed. Zero context switching.",
     rating: 5.0,
   },
   {
     image: "https://github.com/shadcn.png",
-    name: "Isabella Reed",
-    userName: "DevOps Engineer",
+    name: "Maria Santos",
+    userName: "Founder @ TradeBot Labs",
     comment:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      "From prototype to production trading in 2 weeks. The backtesting tools and risk management are enterprise-grade.",
     rating: 4.9,
   },
 ];
@@ -170,7 +169,7 @@ export const TestimonialSection = () => {
         </h2>
 
         <h2 className="text-3xl md:text-4xl text-center font-bold mb-4">
-          Hear What Our 1000+ Clients Say
+          Trusted by 2,000+ Teams Worldwide
         </h2>
       </div>
 

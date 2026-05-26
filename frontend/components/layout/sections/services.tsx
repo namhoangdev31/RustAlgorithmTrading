@@ -17,25 +17,26 @@ interface ServiceProps {
 }
 const serviceList: ServiceProps[] = [
   {
-    title: "Custom Domain Integration",
+    title: "Mini App Distribution",
     description:
-      "Lorem ipsum dolor sit, amet consectetur adipisicing elit adipisicing.",
+      "Publish and manage custom mini apps and micro-frontends through our integrated marketplace.",
     pro: 0,
   },
   {
-    title: "Social Media Integrations",
+    title: "Website Hosting & CI/CD",
     description:
-      "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Molestiae, dicta.",
+      "Automatic deployments from Git with preview URLs, rollback, and custom domains.",
     pro: 0,
   },
   {
-    title: "Email Marketing Integrations",
-    description: "Lorem dolor sit amet adipisicing.",
+    title: "Trading Strategy Builder",
+    description:
+      "Visual strategy editor with backtesting, paper trading, and live execution.",
     pro: 0,
   },
   {
-    title: "SEO Optimization",
-    description: "Lorem ipsum dolor sit amet consectetur.",
+    title: "Advanced Analytics & AI Insights",
+    description: "AI-powered analytics across all platform products with real-time alerts.",
     pro: 1,
   },
 ];
@@ -95,9 +96,9 @@ export const ServicesSection = () => {
   const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
     gsap.to(e.currentTarget, {
       scale: 1.03,
-      borderColor: "rgba(210, 71, 191, 0.4)",
-      boxShadow: "0 10px 25px -10px rgba(210, 71, 191, 0.15)",
-      backgroundColor: "rgba(210, 71, 191, 0.01)",
+      borderColor: "rgba(62, 207, 142, 0.4)",
+      boxShadow: "0 10px 25px -10px rgba(62, 207, 142, 0.15)",
+      backgroundColor: "rgba(62, 207, 142, 0.01)",
       duration: 0.3,
       ease: "power2.out",
     });
@@ -122,11 +123,11 @@ export const ServicesSection = () => {
         </h2>
 
         <h2 className="text-3xl md:text-4xl font-bold mb-4">
-          Grow Your Business
+          Platform Capabilities
         </h2>
         <h3 className="md:w-1/2 mx-auto text-xl text-muted-foreground">
-          From marketing and sales to operations and strategy, we have the
-          expertise to help you achieve your goals.
+          From app distribution to financial trading, explore the full range
+          of platform services.
         </h3>
       </div>
 

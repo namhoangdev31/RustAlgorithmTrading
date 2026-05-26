@@ -11,7 +11,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { TradingCanvas } from "./trading-canvas";
 
 export const HeroSection = () => {
-  const headingText = "RustAlgorithm Trading made simple";
+  const headingText = "Ship Apps & Websites at lightning speed";
   const words = headingText.split(" ");
 
   return (
@@ -29,14 +29,14 @@ export const HeroSection = () => {
             className="mx-auto inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary shadow-[0_0_15px_rgba(210,71,191,0.1)]"
           >
             <ShieldCheck className="size-4 animate-pulse" />
-            <span>Tri-Runtime Production Ready (v3.5)</span>
+            <span>Unified Platform — Deploy Everywhere</span>
           </motion.div>
 
           {/* Title - Word Stagger Reveal */}
           <div className="max-w-screen-md mx-auto text-center text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight">
             <h1 className="leading-tight overflow-hidden py-1">
               {words.map((word, i) => {
-                const isSpecial = word === "made" || word === "simple";
+                const isSpecial = word === "lightning" || word === "speed";
                 return (
                   <motion.span
                     key={i}
@@ -67,9 +67,9 @@ export const HeroSection = () => {
             transition={{ duration: 0.6, delay: 0.5 }}
             className="max-w-screen-sm mx-auto text-xl text-muted-foreground"
           >
-            A clean Next.js landing template for the hybrid trading stack:
-            Python research, Rust runtime, Go observability, and a path from
-            paper validation to production readiness.
+            Deploy cross-platform Mini Apps, micro-frontends, and production websites
+            in seconds. Powered by a blazing-fast Rust trading engine under the
+            hood.
           </motion.p>
 
           {/* CTA Buttons */}
@@ -81,7 +81,7 @@ export const HeroSection = () => {
           >
             <Button asChild className="w-full font-bold group/arrow hover:scale-105 transition-transform shadow-[0_0_20px_rgba(210,71,191,0.2)] hover:shadow-[0_0_25px_rgba(210,71,191,0.4)]">
               <Link href="#pricing">
-                Start in minutes
+                Start Deploying
                 <ArrowRight
                   data-icon="inline-end"
                   className="group-hover/arrow:translate-x-1 transition-transform"
@@ -262,7 +262,7 @@ const TradingPreview = () => {
             <div className="size-3 rounded-full bg-accent" />
           </div>
           <div className="text-sm font-medium text-muted-foreground">
-            Live trading cockpit
+            Platform Dashboard
           </div>
         </div>
 
@@ -271,7 +271,7 @@ const TradingPreview = () => {
             <div className="mb-6 text-sm font-semibold text-muted-foreground">
               Runtime
             </div>
-            {["Market data", "Signal bridge", "Risk manager", "Execution"].map(
+            {["Mini Apps", "Web Hosting", "Trading Engine", "Edge CDN"].map(
               (item, index) => (
                 <div
                   key={item}
@@ -295,9 +295,9 @@ const TradingPreview = () => {
           <div className="p-4 sm:p-6">
             <div className="grid gap-4 md:grid-cols-3">
               {[
-                ["P99 latency", latency, "Go API"],
-                ["Risk state", "Clear", "pre-trade"],
-                ["Signals", signals.toString(), "last hour"],
+                ["Active Deployments", latency.replace("ms", ""), "apps & sites"],
+                ["Uptime", "99.99%", "last 30 days"],
+                ["Transactions", signals.toString() + "k", "per second"],
               ].map(([label, value, meta]) => (
                 <div
                   key={label}
@@ -316,9 +316,9 @@ const TradingPreview = () => {
               <div className="rounded-md border border-secondary bg-background p-4">
                 <div className="mb-5 flex items-center justify-between">
                   <div>
-                    <p className="font-semibold">SPY signal stream</p>
+                    <p className="font-semibold">Platform Activity</p>
                     <p className="text-sm text-muted-foreground">
-                      Momentum confirmation with risk gate overlay
+                      Deployments, traffic, and trading volume
                     </p>
                   </div>
                   <Activity className="text-primary animate-pulse" />
@@ -342,13 +342,13 @@ const TradingPreview = () => {
               <div className="rounded-md border border-secondary bg-background p-4">
                 <div className="mb-4 flex items-center gap-2">
                   <ShieldCheck className="text-primary" />
-                  <p className="font-semibold">Execution checks</p>
+                  <p className="font-semibold">Platform Status</p>
                 </div>
                 {[
-                  ["Exposure limit", "pass"],
-                  ["Circuit breaker", "idle"],
-                  ["Order route", "paper"],
-                  ["Correlation id", "attached"],
+                  ["SSL Certificates", "active"],
+                  ["Edge CDN", "online"],
+                  ["Mini App Runtime", "live"],
+                  ["Trading API", "ready"],
                 ].map(([label, value]) => (
                   <div
                     key={label}

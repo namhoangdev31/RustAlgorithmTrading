@@ -15,32 +15,32 @@ interface sponsorsProps {
 
 const sponsors: sponsorsProps[] = [
   {
-    icon: "Code",
-    name: "Python Research",
+    icon: "Smartphone",
+    name: "iOS Mini Apps",
+  },
+  {
+    icon: "Smartphone",
+    name: "Android Mini Apps",
+  },
+  {
+    icon: "Globe",
+    name: "Vercel Edge",
+  },
+  {
+    icon: "Cloud",
+    name: "Cloudflare Workers",
   },
   {
     icon: "Cpu",
-    name: "Rust Runtime",
+    name: "Rust Engine",
   },
   {
-    icon: "Activity",
-    name: "Go Control Plane",
+    icon: "Code",
+    name: "Next.js",
   },
   {
-    icon: "Database",
-    name: "DuckDB Metrics",
-  },
-  {
-    icon: "ShieldCheck",
-    name: "Risk Guardrails",
-  },
-  {
-    icon: "RadioTower",
-    name: "ZeroMQ Bridge",
-  },
-  {
-    icon: "Workflow",
-    name: "Alpaca Paper Flow",
+    icon: "Layers",
+    name: "React Native",
   },
 ];
 
@@ -82,7 +82,7 @@ export const SponsorsSection = () => {
   return (
     <section id="sponsors" ref={containerRef} className="max-w-[75%] mx-auto pb-24 sm:pb-32">
       <h2 className="text-lg md:text-xl text-center mb-6">
-        Built around the stack your team already uses
+        Trusted by leading teams worldwide
       </h2>
 
       <div className="mx-auto">

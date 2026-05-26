@@ -50,7 +50,7 @@ export const ContactSection = () => {
       firstName: "",
       lastName: "",
       email: "",
-      subject: "Web Development",
+      subject: "Mini App Deployment",
       message: "",
     },
   });
@@ -151,11 +151,11 @@ export const ContactSection = () => {
               Contact
             </h2>
 
-            <h2 className="text-3xl md:text-4xl font-bold">Connect With Us</h2>
+            <h2 className="text-3xl md:text-4xl font-bold">Get in Touch</h2>
           </div>
           <p className="mb-8 text-muted-foreground lg:w-5/6">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatum
-            ipsam sint enim exercitationem ex autem corrupti quas tenetur
+            Have questions about our platform? Want a custom enterprise plan?
+            We'd love to hear from you.
           </p>
 
           <div className="flex flex-col gap-4">
@@ -279,18 +279,20 @@ export const ContactSection = () => {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="Web Development">
-                                Web Development
+                              <SelectItem value="Mini App Deployment">
+                                Mini App Deployment
                               </SelectItem>
-                              <SelectItem value="Mobile Development">
-                                Mobile Development
+                              <SelectItem value="Web Hosting">
+                                Web Hosting
                               </SelectItem>
-                              <SelectItem value="Figma Design">
-                                Figma Design
+                              <SelectItem value="Trading Engine">
+                                Trading Engine
                               </SelectItem>
-                              <SelectItem value="REST API">REST API</SelectItem>
-                              <SelectItem value="FullStack Project">
-                                FullStack Project
+                              <SelectItem value="Enterprise Plan">
+                                Enterprise Plan
+                              </SelectItem>
+                              <SelectItem value="Partnership">
+                                Partnership
                               </SelectItem>
                             </SelectContent>
                           </Select>

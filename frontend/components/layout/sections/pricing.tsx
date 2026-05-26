@@ -30,48 +30,48 @@ interface PlanProps {
 
 const plans: PlanProps[] = [
   {
-    title: "Free",
+    title: "Starter",
     popular: 0,
     price: 0,
     description:
-      "Lorem ipsum dolor sit, amet ipsum consectetur adipisicing elit.",
-    buttonText: "Start Free Trial",
+      "Perfect for individuals and small projects getting started.",
+    buttonText: "Start Free",
     benefitList: [
-      "1 team member",
-      "1 GB storage",
-      "Upto 2 pages",
+      "3 Mini Apps",
+      "5 Websites",
       "Community support",
-      "AI assistance",
+      "Basic analytics",
+      "1 GB storage",
     ],
   },
   {
-    title: "Premium",
+    title: "Pro",
     popular: 1,
-    price: 45,
+    price: 49,
     description:
-      "Lorem ipsum dolor sit, amet ipsum consectetur adipisicing elit.",
-    buttonText: "Get starterd",
+      "For growing teams that need more power and flexibility.",
+    buttonText: "Get Started",
     benefitList: [
-      "4 team member",
-      "8 GB storage",
-      "Upto 6 pages",
+      "25 Mini Apps",
+      "Unlimited websites",
       "Priority support",
-      "AI assistance",
+      "Advanced analytics",
+      "Paper trading",
     ],
   },
   {
     title: "Enterprise",
     popular: 0,
-    price: 120,
+    price: 199,
     description:
-      "Lorem ipsum dolor sit, amet ipsum consectetur adipisicing elit.",
-    buttonText: "Contact US",
+      "For organizations with advanced requirements and scale.",
+    buttonText: "Contact Sales",
     benefitList: [
-      "10 team member",
-      "20 GB storage",
-      "Upto 10 pages",
-      "Phone & email support",
-      "AI assistance",
+      "Unlimited Mini Apps",
+      "Unlimited websites",
+      "24/7 dedicated support",
+      "Live trading engine",
+      "500 GB storage",
     ],
   },
 ];
@@ -164,11 +164,11 @@ export const PricingSection = () => {
         </h2>
 
         <h2 className="text-3xl md:text-4xl font-bold mb-4">
-          Get unlimitted access
+          Simple, Transparent Pricing
         </h2>
 
         <h3 className="md:w-1/2 mx-auto text-xl text-muted-foreground">
-          Lorem ipsum dolor sit amet consectetur adipisicing reiciendis.
+          Start free and scale as you grow. No hidden fees.
         </h3>
       </div>
 

@@ -16,7 +16,7 @@ export const FooterSection = () => {
           </div>
 
           <div className="flex flex-col gap-2">
-            <h3 className="font-bold text-lg">Project</h3>
+            <h3 className="font-bold text-lg">Platform</h3>
             <div>
               <Link href="#benefits" className="opacity-60 hover:opacity-100">
                 Benefits
@@ -31,37 +31,37 @@ export const FooterSection = () => {
 
             <div>
               <Link href="#pricing" className="opacity-60 hover:opacity-100">
-                Plans
+                Pricing
               </Link>
             </div>
           </div>
 
           <div className="flex flex-col gap-2">
-            <h3 className="font-bold text-lg">Runtime</h3>
+            <h3 className="font-bold text-lg">Products</h3>
             <div>
               <Link href="#" className="opacity-60 hover:opacity-100">
-                Python research
+                Mini Apps
               </Link>
             </div>
 
             <div>
               <Link href="#" className="opacity-60 hover:opacity-100">
-                Rust kernel
+                Web Hosting
               </Link>
             </div>
 
             <div>
               <Link href="#" className="opacity-60 hover:opacity-100">
-                Go control plane
+                Trading Engine
               </Link>
             </div>
           </div>
 
           <div className="flex flex-col gap-2">
-            <h3 className="font-bold text-lg">Docs</h3>
+            <h3 className="font-bold text-lg">Resources</h3>
             <div>
-              <Link href="#contact" className="opacity-60 hover:opacity-100">
-                Contact
+              <Link href="#" className="opacity-60 hover:opacity-100">
+                Documentation
               </Link>
             </div>
 
@@ -73,7 +73,7 @@ export const FooterSection = () => {
 
             <div>
               <Link href="#" className="opacity-60 hover:opacity-100">
-                Playbook
+                API Reference
               </Link>
             </div>
           </div>
@@ -92,13 +92,13 @@ export const FooterSection = () => {
 
             <div>
               <Link href="#contact" className="opacity-60 hover:opacity-100">
-                Demo request
+                Contact Us
               </Link>
             </div>
 
             <div>
-              <Link href="#footer" className="opacity-60 hover:opacity-100">
-                Top
+              <Link href="#" className="opacity-60 hover:opacity-100">
+                Status Page
               </Link>
             </div>
           </div>
@@ -107,14 +107,8 @@ export const FooterSection = () => {
         <Separator className="my-6" />
         <section className="">
           <h3 className="">
-            &copy; 2026 Built with Next.js, shadcn/ui, TypeScript, and Tailwind.
-            <Link
-              target="_blank"
-              href="https://github.com/nobruf/shadcn-landing-page"
-              className="text-primary transition-all border-primary hover:border-b-2 ml-1"
-            >
-              Template reference
-            </Link>
+            &copy; 2026 RustAT. All rights reserved. Built with Next.js,
+            shadcn/ui, TypeScript, and Tailwind.
           </h3>
         </section>
       </div>

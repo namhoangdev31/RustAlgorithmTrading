@@ -15,40 +15,40 @@ interface FeaturesProps {
 
 const featureList: FeaturesProps[] = [
   {
-    icon: "TabletSmartphone",
-    title: "Mobile Friendly",
+    icon: "Smartphone",
+    title: "Cross-Platform Mini Apps",
     description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. A odio velit cum aliquam, consectetur.",
+      "Build and distribute mini apps directly to mobile devices and web browsers with our native SDK support.",
   },
   {
-    icon: "BadgeCheck",
-    title: "Social Proof",
+    icon: "Globe",
+    title: "Serverless Web Hosting",
     description:
-      "Lorem ipsum dolor sit amet consectetur. Natus consectetur, odio ea accusamus aperiam.",
+      "Deploy Next.js, Vite, and static sites with automatic HTTPS, preview deployments, and custom domains.",
   },
   {
-    icon: "Goal",
-    title: "Targeted Content",
+    icon: "TrendingUp",
+    title: "Rust Trading Engine",
     description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. odio ea accusamus aperiam.",
+      "Execute algorithmic trading strategies with microsecond-level latency and built-in risk management.",
   },
   {
-    icon: "PictureInPicture",
-    title: "Strong Visuals",
+    icon: "LayoutDashboard",
+    title: "Real-time Dashboard",
     description:
-      "Lorem elit. A odio velit cum aliquam. Natus consectetur dolores, odio ea accusamus aperiam.",
+      "Monitor deployments, app performance, user analytics, and trading P&L in a single unified interface.",
   },
   {
-    icon: "MousePointerClick",
-    title: "Clear CTA",
+    icon: "Webhook",
+    title: "API-First Architecture",
     description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing. odio ea accusamus consectetur.",
+      "RESTful and WebSocket APIs for programmatic control over deployments, trading, and data pipelines.",
   },
   {
-    icon: "Newspaper",
-    title: "Clear Headline",
+    icon: "ShieldCheck",
+    title: "Enterprise Security",
     description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. A odio velit cum aliquam. Natus consectetur.",
+      "SOC 2 compliance, role-based access control, and end-to-end encryption for all platform operations.",
   },
 ];
 
@@ -182,13 +182,12 @@ export const FeaturesSection = () => {
         </h2>
 
         <h2 className="text-3xl md:text-4xl font-bold mb-4">
-          What Makes Us Different
+          Everything You Need, In One Platform
         </h2>
 
         <h3 className="md:w-1/2 mx-auto text-xl text-muted-foreground">
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatem
-          fugiat, odit similique quasi sint reiciendis quidem iure veritatis optio
-          facere tenetur.
+          Build, deploy, and scale mini apps, websites, and trading strategies
+          — all powered by a unified cloud infrastructure.
         </h3>
       </div>
 

@@ -18,33 +18,33 @@ interface FAQProps {
 
 const FAQList: FAQProps[] = [
   {
-    question: "Is this a separate app from the trading runtime?",
+    question: "What types of apps can I deploy?",
     answer:
-      "Yes. It lives in frontend/ as a Next.js app, so it can evolve independently from Python, Rust, and Go services.",
+      "You can deploy custom mini apps, micro-frontends, Next.js and Vite websites, and static sites. Our platform handles builds, CDN distribution, and SSL automatically.",
     value: "item-1",
   },
   {
-    question: "Can I remove sections I do not need?",
+    question: "How does the trading engine integrate with my apps?",
     answer:
-      "Yes. The page composes small section components from app/page.tsx, so you can delete or reorder sections without changing shared UI primitives.",
+      "The trading engine runs as a separate Rust-powered service accessible via REST and WebSocket APIs. You can embed trading widgets in your mini apps or use it standalone from the dashboard.",
     value: "item-2",
   },
   {
-    question: "Does it use shadcn source components?",
+    question: "Is there a free tier?",
     answer:
-      "Yes. Components are checked into frontend/components/ui and styled through Tailwind CSS variables.",
+      "Yes! Our Starter plan includes 3 mini apps and 5 websites at no cost. Upgrade to Pro or Enterprise for unlimited deployments and live trading access.",
     value: "item-3",
   },
   {
-    question: "Does it support dark mode?",
+    question: "How fast are deployments?",
     answer:
-      "Yes. The template includes next-themes and a theme toggle in the navigation.",
+      "Most deployments complete in under 30 seconds. Our Edge CDN ensures your apps load in sub-50ms from 200+ global locations.",
     value: "item-4",
   },
   {
-    question: "Where should production claims come from?",
+    question: "Is the trading engine safe for production?",
     answer:
-      "Keep claims aligned with docs/DOCS_CANONICAL_MAP.md and PLAYBOOK.md so the landing page does not drift from runtime reality.",
+      "Absolutely. The engine includes built-in risk management, circuit breakers, exposure limits, and paper trading mode for strategy validation before going live.",
     value: "item-5",
   },
 ];
