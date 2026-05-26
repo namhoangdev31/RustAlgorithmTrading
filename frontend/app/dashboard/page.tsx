@@ -1,10 +1,9 @@
 import Link from "next/link";
 import {
   Activity,
-  Boxes,
-  CircleDollarSign,
-  FolderKanban,
-  PackageCheck,
+  CreditCard,
+  DollarSign,
+  Download,
   Users,
 } from "lucide-react";
 
@@ -13,9 +12,12 @@ import {
   deleteProjectAction,
   updateProjectBundleAction,
 } from "@/app/actions/admin";
-import { PageHeader } from "@/components/dashboard/page-header";
-import { StatCard } from "@/components/dashboard/stat-card";
+import {
+  AnalyticsChart,
+  OverviewChart,
+} from "@/components/dashboard/dashboard-charts";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -33,6 +35,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getDashboardOverview, getProjectBundleData } from "@/lib/server/admin-data";
 import { requireCurrentUser } from "@/lib/server/current-user";
 
@@ -43,14 +46,6 @@ type DashboardPageProps = {
     id?: string;
   }>;
 };
-
-function formatCurrency(value: number) {
-  return new Intl.NumberFormat("vi-VN", {
-    style: "currency",
-    currency: "VND",
-    maximumFractionDigits: 0,
-  }).format(value);
-}
 
 export default async function DashboardPage({ searchParams }: DashboardPageProps) {
   const params = await searchParams;
@@ -64,105 +59,91 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
   return (
     <>
-      <PageHeader
-        actionHref="/dashboard?dialog=create"
-        actionLabel="New project"
-        description="Manage organizations, projects, and one bundle per project through SSR Prisma actions."
-        title="Dashboard"
-      />
+      <div className="mb-2 flex items-center justify-between gap-2">
+        <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
+        <Button>
+          <Download data-icon="inline-start" />
+          Download
+        </Button>
+      </div>
 
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard
-          description={`${overview.metrics.bundleCount} bundles attached`}
-          icon={FolderKanban}
-          title="Projects"
-          value={overview.metrics.projectCount}
-        />
-        <StatCard
-          description={`${overview.metrics.publishedBundleCount} published`}
-          icon={PackageCheck}
-          title="Bundles"
-          value={overview.metrics.bundleCount}
-        />
-        <StatCard
-          description={`${overview.metrics.orderCount} bundle orders`}
-          icon={CircleDollarSign}
-          title="Revenue"
-          value={formatCurrency(overview.metrics.totalRevenue)}
-        />
-        <StatCard
-          description={`${overview.metrics.collaboratorCount} collaborators`}
-          icon={Users}
-          title="Team"
-          value={overview.metrics.unreadChatCount}
-        />
-      </section>
+      <Tabs className="flex flex-col gap-4" defaultValue="overview" orientation="vertical">
+        <div className="w-full overflow-x-auto pb-2">
+          <TabsList>
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="analytics">Analytics</TabsTrigger>
+            <TabsTrigger disabled value="reports">
+              Reports
+            </TabsTrigger>
+            <TabsTrigger disabled value="notifications">
+              Notifications
+            </TabsTrigger>
+          </TabsList>
+        </div>
+        <TabsContent className="mt-0 flex flex-col gap-4" value="overview">
+          <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <DashboardMetricCard
+              description="+20.1% from last month"
+              icon={DollarSign}
+              title="Total Revenue"
+              value="$45,231.89"
+            />
+            <DashboardMetricCard
+              description="+180.1% from last month"
+              icon={Users}
+              title="Subscriptions"
+              value="+2350"
+            />
+            <DashboardMetricCard
+              description="+19% from last month"
+              icon={CreditCard}
+              title="Sales"
+              value="+12,234"
+            />
+            <DashboardMetricCard
+              description="+201 since last hour"
+              icon={Activity}
+              title="Active Now"
+              value="+573"
+            />
+          </section>
 
-      <section className="grid gap-4 xl:grid-cols-[1.4fr_0.8fr]">
-        <Card>
-          <CardHeader>
-            <CardTitle>Overview</CardTitle>
-            <CardDescription>Bundle activity for the active organization.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-col gap-3">
-              {[
-                ["Downloads", overview.metrics.totalDownloads],
-                ["Review tasks", overview.metrics.reviewTaskCount],
-                ["Integrations", overview.metrics.integrationCount],
-                ["Unread chats", overview.metrics.unreadChatCount],
-              ].map(([label, value]) => {
-                const width = Math.max(8, Math.min(100, Number(value) * 8));
-                return (
-                  <div className="flex flex-col gap-2" key={label}>
-                    <div className="flex items-center justify-between text-sm">
-                      <span>{label}</span>
-                      <span className="font-medium">{value}</span>
-                    </div>
-                    <div className="h-2 rounded-full bg-muted">
-                      <div
-                        className="h-2 rounded-full bg-primary"
-                        style={{ width: `${width}%` }}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent tasks</CardTitle>
-            <CardDescription>Mapped from bundle review queue.</CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-3">
-            {overview.recentTasks.length ? (
-              overview.recentTasks.map((task) => (
-                <div className="rounded-md border p-3" key={task.id}>
-                  <div className="flex items-center justify-between gap-2">
-                    <p className="font-medium">{task.bundle.name}</p>
-                    <Badge variant="outline">{task.status}</Badge>
-                  </div>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {task.notes || `Priority ${task.priority}`}
-                  </p>
-                </div>
-              ))
-            ) : (
-              <p className="text-sm text-muted-foreground">No review tasks yet.</p>
-            )}
-          </CardContent>
-        </Card>
-      </section>
+          <section className="grid grid-cols-1 gap-4 lg:grid-cols-7">
+            <Card className="col-span-1 lg:col-span-4">
+              <CardHeader>
+                <CardTitle>Overview</CardTitle>
+              </CardHeader>
+              <CardContent className="ps-2">
+                <OverviewChart />
+              </CardContent>
+            </Card>
+            <Card className="col-span-1 lg:col-span-3">
+              <CardHeader>
+                <CardTitle>Recent Sales</CardTitle>
+                <CardDescription>You made 265 sales this month.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <RecentSales />
+              </CardContent>
+            </Card>
+          </section>
+        </TabsContent>
+        <TabsContent className="mt-0" value="analytics">
+          <AnalyticsSection />
+        </TabsContent>
+      </Tabs>
 
       <Card>
-        <CardHeader>
-          <CardTitle>Projects and bundles</CardTitle>
-          <CardDescription>
-            Each project is maintained with exactly one draft or published bundle.
-          </CardDescription>
+        <CardHeader className="flex flex-row items-start justify-between gap-4">
+          <div className="flex flex-col gap-1">
+            <CardTitle>Projects and bundles</CardTitle>
+            <CardDescription>
+              Each project is maintained with exactly one draft or published bundle.
+            </CardDescription>
+          </div>
+          <Button asChild>
+            <Link href="/dashboard?dialog=create">New project</Link>
+          </Button>
         </CardHeader>
         <CardContent>
           <form action="/dashboard" className="mb-4 flex max-w-md gap-2" method="get">
@@ -361,3 +342,173 @@ function ProjectForm({
   );
 }
 
+function DashboardMetricCard({
+  description,
+  icon: Icon,
+  title,
+  value,
+}: {
+  description: string;
+  icon: typeof DollarSign;
+  title: string;
+  value: string;
+}) {
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+        <Icon className="text-muted-foreground" data-icon="inline-start" />
+      </CardHeader>
+      <CardContent>
+        <div className="text-2xl font-bold">{value}</div>
+        <p className="text-xs text-muted-foreground">{description}</p>
+      </CardContent>
+    </Card>
+  );
+}
+
+function RecentSales() {
+  const sales = [
+    ["Olivia Martin", "olivia.martin@email.com", "+$1,999.00", "OM"],
+    ["Jackson Lee", "jackson.lee@email.com", "+$39.00", "JL"],
+    ["Isabella Nguyen", "isabella.nguyen@email.com", "+$299.00", "IN"],
+    ["William Kim", "will@email.com", "+$99.00", "WK"],
+    ["Sofia Davis", "sofia.davis@email.com", "+$39.00", "SD"],
+  ];
+
+  return (
+    <div className="flex flex-col gap-8">
+      {sales.map(([name, email, amount, initials]) => (
+        <div className="flex items-center gap-4" key={email}>
+          <Avatar className="size-9">
+            <AvatarFallback>{initials}</AvatarFallback>
+          </Avatar>
+          <div className="flex flex-1 flex-wrap items-center justify-between">
+            <div className="flex flex-col gap-1">
+              <p className="text-sm font-medium leading-none">{name}</p>
+              <p className="text-sm text-muted-foreground">{email}</p>
+            </div>
+            <div className="font-medium">{amount}</div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function AnalyticsSection() {
+  return (
+    <div className="flex flex-col gap-4">
+      <Card>
+        <CardHeader>
+          <CardTitle>Traffic Overview</CardTitle>
+          <CardDescription>Weekly clicks and unique visitors</CardDescription>
+        </CardHeader>
+        <CardContent className="px-6">
+          <AnalyticsChart />
+        </CardContent>
+      </Card>
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <DashboardMetricCard
+          description="+12.4% vs last week"
+          icon={Activity}
+          title="Total Clicks"
+          value="1,248"
+        />
+        <DashboardMetricCard
+          description="+5.8% vs last week"
+          icon={Users}
+          title="Unique Visitors"
+          value="832"
+        />
+        <DashboardMetricCard
+          description="-3.2% vs last week"
+          icon={Activity}
+          title="Bounce Rate"
+          value="42%"
+        />
+        <DashboardMetricCard
+          description="+18s vs last week"
+          icon={Activity}
+          title="Avg. Session"
+          value="3m 24s"
+        />
+      </section>
+      <section className="grid grid-cols-1 gap-4 lg:grid-cols-7">
+        <Card className="col-span-1 lg:col-span-4">
+          <CardHeader>
+            <CardTitle>Referrers</CardTitle>
+            <CardDescription>Top sources driving traffic</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <SimpleBarList
+              items={[
+                { name: "Direct", value: 512 },
+                { name: "Product Hunt", value: 238 },
+                { name: "Twitter", value: 174 },
+                { name: "Blog", value: 104 },
+              ]}
+              valueFormatter={(value) => `${value}`}
+            />
+          </CardContent>
+        </Card>
+        <Card className="col-span-1 lg:col-span-3">
+          <CardHeader>
+            <CardTitle>Devices</CardTitle>
+            <CardDescription>How users access your app</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <SimpleBarList
+              items={[
+                { name: "Desktop", value: 74 },
+                { name: "Mobile", value: 22 },
+                { name: "Tablet", value: 4 },
+              ]}
+              muted
+              valueFormatter={(value) => `${value}%`}
+            />
+          </CardContent>
+        </Card>
+      </section>
+    </div>
+  );
+}
+
+function SimpleBarList({
+  items,
+  muted,
+  valueFormatter,
+}: {
+  items: { name: string; value: number }[];
+  muted?: boolean;
+  valueFormatter: (value: number) => string;
+}) {
+  const max = Math.max(...items.map((item) => item.value), 1);
+
+  return (
+    <ul className="flex flex-col gap-3">
+      {items.map((item) => {
+        const width = `${Math.round((item.value / max) * 100)}%`;
+
+        return (
+          <li className="flex items-center justify-between gap-3" key={item.name}>
+            <div className="min-w-0 flex-1">
+              <div className="mb-1 truncate text-xs text-muted-foreground">
+                {item.name}
+              </div>
+              <div className="h-2.5 w-full rounded-full bg-muted">
+                <div
+                  className={muted ? "h-2.5 rounded-full bg-muted-foreground" : "h-2.5 rounded-full bg-primary"}
+                  style={{ width }}
+                />
+              </div>
+            </div>
+            <div className="ps-2 text-xs font-medium tabular-nums">
+              {valueFormatter(item.value)}
+            </div>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}

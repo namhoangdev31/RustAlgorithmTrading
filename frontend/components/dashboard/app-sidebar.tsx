@@ -1,0 +1,482 @@
+"use client";
+
+import {
+  AudioWaveform,
+  BadgeCheck,
+  Bell,
+  ChevronsUpDown,
+  Command,
+  Construction,
+  CreditCard,
+  FileX,
+  GalleryVerticalEnd,
+  HelpCircle,
+  LayoutDashboard,
+  ListTodo,
+  Lock,
+  LogOut,
+  MessagesSquare,
+  Monitor,
+  Package,
+  Palette,
+  ServerOff,
+  Settings,
+  ShieldCheck,
+  Sparkles,
+  UserCog,
+  Users,
+  UserX,
+  Wrench,
+  Bug,
+  Plus,
+  type LucideIcon,
+} from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+import { logoutAction } from "@/app/actions/auth";
+import { switchOrganizationAction } from "@/app/actions/admin";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuBadge,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
+  SidebarRail,
+  useSidebar,
+} from "@/components/ui/sidebar";
+
+type AppSidebarProps = {
+  user: {
+    email: string | null;
+    fullName: string | null;
+    provider: string;
+  };
+  organizations: {
+    id: string;
+    name: string;
+    type: string;
+    projects: unknown[];
+  }[];
+  activeOrganizationId?: string;
+  variant?: "inset" | "floating" | "sidebar";
+  collapsible?: "icon" | "offcanvas";
+};
+
+type NavSubItem = {
+  title: string;
+  url: string;
+  icon?: LucideIcon;
+};
+
+type NavItem = {
+  title: string;
+  url?: string;
+  icon: LucideIcon;
+  badge?: string;
+  items?: NavSubItem[];
+};
+
+type NavGroup = {
+  title: string;
+  items: NavItem[];
+};
+
+const navGroups: NavGroup[] = [
+  {
+    title: "General",
+    items: [
+      { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+      { title: "Tasks", url: "/dashboard/tasks", icon: ListTodo },
+      { title: "Apps", url: "/dashboard/apps", icon: Package },
+      { title: "Chats", url: "/dashboard/chats", badge: "3", icon: MessagesSquare },
+      { title: "Users", url: "/dashboard/users", icon: Users },
+      {
+        title: "Secured by Firebase",
+        url: "/dashboard/settings/account",
+        icon: ShieldCheck,
+      },
+    ],
+  },
+  {
+    title: "Pages",
+    items: [
+      {
+        title: "Auth",
+        icon: ShieldCheck,
+        items: [
+          { title: "Sign In", url: "/login" },
+          { title: "Sign In (2 Col)", url: "/login?layout=two-column" },
+          { title: "Sign Up", url: "/register" },
+          { title: "Forgot Password", url: "/login?step=forgot-password" },
+          { title: "OTP", url: "/login?step=otp" },
+        ],
+      },
+      {
+        title: "Errors",
+        icon: Bug,
+        items: [
+          {
+            title: "Unauthorized",
+            url: "/dashboard/errors/unauthorized",
+            icon: Lock,
+          },
+          {
+            title: "Forbidden",
+            url: "/dashboard/errors/forbidden",
+            icon: UserX,
+          },
+          {
+            title: "Not Found",
+            url: "/dashboard/errors/not-found",
+            icon: FileX,
+          },
+          {
+            title: "Internal Server Error",
+            url: "/dashboard/errors/internal-server-error",
+            icon: ServerOff,
+          },
+          {
+            title: "Maintenance Error",
+            url: "/dashboard/errors/maintenance",
+            icon: Construction,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    title: "Other",
+    items: [
+      {
+        title: "Settings",
+        icon: Settings,
+        items: [
+          { title: "Profile", url: "/dashboard/settings", icon: UserCog },
+          { title: "Account", url: "/dashboard/settings/account", icon: Wrench },
+          {
+            title: "Appearance",
+            url: "/dashboard/settings/appearance",
+            icon: Palette,
+          },
+          {
+            title: "Notifications",
+            url: "/dashboard/settings/notifications",
+            icon: Bell,
+          },
+          { title: "Display", url: "/dashboard/settings/display", icon: Monitor },
+        ],
+      },
+      { title: "Help Center", url: "/dashboard/help-center", icon: HelpCircle },
+    ],
+  },
+];
+
+export function AppSidebar({
+  user,
+  organizations,
+  activeOrganizationId,
+  collapsible = "icon",
+  variant = "sidebar",
+}: AppSidebarProps) {
+  return (
+    <Sidebar collapsible={collapsible} variant={variant}>
+      <SidebarHeader>
+        <TeamSwitcher
+          activeOrganizationId={activeOrganizationId}
+          organizations={organizations}
+        />
+      </SidebarHeader>
+      <SidebarContent>
+        {navGroups.map((group) => (
+          <NavGroup group={group} key={group.title} />
+        ))}
+      </SidebarContent>
+      <SidebarFooter>
+        <NavUser user={user} />
+      </SidebarFooter>
+      <SidebarRail />
+    </Sidebar>
+  );
+}
+
+function TeamSwitcher({
+  organizations,
+  activeOrganizationId,
+}: Pick<AppSidebarProps, "organizations" | "activeOrganizationId">) {
+  const { isMobile } = useSidebar();
+  const teamIcons = [Command, GalleryVerticalEnd, AudioWaveform];
+  const activeOrganization =
+    organizations.find((organization) => organization.id === activeOrganizationId) ??
+    organizations[0];
+  const ActiveIcon =
+    teamIcons[
+      Math.max(
+        0,
+        organizations.findIndex(
+          (organization) => organization.id === activeOrganization?.id
+        )
+      ) % teamIcons.length
+    ];
+
+  return (
+    <SidebarMenu>
+      <SidebarMenuItem>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <SidebarMenuButton
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              size="lg"
+            >
+              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                <ActiveIcon data-icon="inline-start" />
+              </div>
+              <div className="grid flex-1 text-start text-sm leading-tight">
+                <span className="truncate font-semibold">
+                  {activeOrganization?.name ?? "Shadcn Admin"}
+                </span>
+                <span className="truncate text-xs">
+                  {activeOrganization?.type ?? "Next + ShadcnUI"}
+                </span>
+              </div>
+              <ChevronsUpDown className="ms-auto" />
+            </SidebarMenuButton>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            align="start"
+            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+            side={isMobile ? "bottom" : "right"}
+            sideOffset={4}
+          >
+            <DropdownMenuLabel className="text-xs text-muted-foreground">
+              Teams
+            </DropdownMenuLabel>
+            <DropdownMenuGroup>
+              {organizations.map((organization, index) => (
+                <DropdownMenuItem asChild className="gap-2 p-2" key={organization.id}>
+                  <form action={switchOrganizationAction}>
+                    <input
+                      type="hidden"
+                      name="organizationId"
+                      value={organization.id}
+                    />
+                    <input type="hidden" name="returnTo" value="/dashboard" />
+                    <button className="flex w-full items-center gap-2" type="submit">
+                      <div className="flex size-6 items-center justify-center rounded-sm border">
+                        {(() => {
+                          const TeamIcon = teamIcons[index % teamIcons.length];
+                          return <TeamIcon data-icon="inline-start" />;
+                        })()}
+                      </div>
+                      <span className="flex-1 text-start">{organization.name}</span>
+                      <span className="text-xs text-muted-foreground">⌘{index + 1}</span>
+                    </button>
+                  </form>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="gap-2 p-2">
+              <div className="flex size-6 items-center justify-center rounded-md border bg-background">
+                <Plus data-icon="inline-start" />
+              </div>
+              <div className="font-medium text-muted-foreground">Add team</div>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </SidebarMenuItem>
+    </SidebarMenu>
+  );
+}
+
+function NavGroup({
+  group,
+}: {
+  group: NavGroup;
+}) {
+  const pathname = usePathname();
+
+  return (
+    <SidebarGroup>
+      <SidebarGroupLabel>{group.title}</SidebarGroupLabel>
+      <SidebarMenu>
+        {group.items.map((item) => {
+          const Icon = item.icon;
+          const isActive = Boolean(item.url && pathname === item.url);
+
+          if (item.items?.length) {
+            const hasActiveChild = item.items.some(
+              (subItem) => pathname === subItem.url.split("?")[0]
+            );
+
+            return (
+              <Collapsible
+                asChild
+                className="group/collapsible"
+                defaultOpen={hasActiveChild}
+                key={item.title}
+              >
+                <SidebarMenuItem>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton tooltip={item.title}>
+                      <Icon data-icon="inline-start" />
+                      <span>{item.title}</span>
+                      <ChevronsUpDown className="ms-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-180" />
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <SidebarMenuSub>
+                      {item.items.map((subItem) => {
+                        const SubIcon = subItem.icon;
+
+                        return (
+                          <SidebarMenuSubItem key={subItem.url}>
+                            <SidebarMenuSubButton
+                              asChild
+                              isActive={pathname === subItem.url.split("?")[0]}
+                            >
+                              <Link href={subItem.url}>
+                                {SubIcon ? <SubIcon data-icon="inline-start" /> : null}
+                                <span>{subItem.title}</span>
+                              </Link>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                        );
+                      })}
+                    </SidebarMenuSub>
+                  </CollapsibleContent>
+                </SidebarMenuItem>
+              </Collapsible>
+            );
+          }
+
+          if (!item.url) {
+            return null;
+          }
+
+          return (
+            <SidebarMenuItem key={item.url}>
+              <SidebarMenuButton asChild isActive={isActive} tooltip={item.title}>
+                <Link href={item.url}>
+                  <Icon data-icon="inline-start" />
+                  <span>{item.title}</span>
+                  {item.badge ? <SidebarMenuBadge>{item.badge}</SidebarMenuBadge> : null}
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          );
+        })}
+      </SidebarMenu>
+    </SidebarGroup>
+  );
+}
+
+function NavUser({ user }: Pick<AppSidebarProps, "user">) {
+  const { isMobile } = useSidebar();
+  const displayName = user.fullName ?? user.email ?? "satnaing";
+  const initials = displayName.slice(0, 2).toUpperCase();
+
+  return (
+    <SidebarMenu>
+      <SidebarMenuItem>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <SidebarMenuButton
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              size="lg"
+            >
+              <Avatar className="size-8 rounded-lg">
+                <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
+              </Avatar>
+              <div className="grid flex-1 text-start text-sm leading-tight">
+                <span className="truncate font-semibold">{displayName}</span>
+                <span className="truncate text-xs">{user.email}</span>
+              </div>
+              <ChevronsUpDown className="ms-auto size-4" />
+            </SidebarMenuButton>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            align="end"
+            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+            side={isMobile ? "bottom" : "right"}
+            sideOffset={4}
+          >
+            <DropdownMenuLabel className="p-0 font-normal">
+              <div className="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
+                <Avatar className="size-8 rounded-lg">
+                  <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
+                </Avatar>
+                <div className="grid flex-1 text-start text-sm leading-tight">
+                  <span className="truncate font-semibold">{displayName}</span>
+                  <span className="truncate text-xs">{user.email}</span>
+                </div>
+              </div>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem>
+                <Sparkles data-icon="inline-start" />
+                Upgrade to Pro
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem asChild>
+                <Link href="/dashboard/settings/account">
+                  <BadgeCheck data-icon="inline-start" />
+                  Account
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/dashboard/settings">
+                  <CreditCard data-icon="inline-start" />
+                  Billing
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/dashboard/settings/notifications">
+                  <Bell data-icon="inline-start" />
+                  Notifications
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <form action={logoutAction}>
+                <button className="flex w-full items-center gap-2 text-destructive" type="submit">
+                  <LogOut data-icon="inline-start" />
+                  Sign out
+                  <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+                </button>
+              </form>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </SidebarMenuItem>
+    </SidebarMenu>
+  );
+}
