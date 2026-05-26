@@ -40,6 +40,7 @@ const tagColors: Record<string, string> = {
   "Edge CDN": "bg-emerald-500/15 text-emerald-400 border-emerald-500/20",
   RBAC: "bg-rose-500/15 text-rose-400 border-rose-500/20",
   ML: "bg-fuchsia-500/15 text-fuchsia-400 border-fuchsia-500/20",
+  Stripe: "bg-purple-500/15 text-purple-400 border-purple-500/20",
 };
 
 export default function RoadmapPage() {
@@ -53,22 +54,34 @@ export default function RoadmapPage() {
       { text: t("p1_m1"), tags: ["Rust"] }, { text: t("p1_m2"), tags: ["Rust"] },
       { text: t("p1_m3"), tags: ["Rust"] }, { text: t("p1_m4"), tags: ["Python"] },
       { text: t("p1_m5"), tags: ["Python"] }, { text: t("p1_m6"), tags: ["Python", "Rust", "ZMQ"] },
+      { text: t("p1_m7"), tags: ["Python", "Rust", "ZMQ"] },
     ]},
     { id: "phase2", status: "completed", icon: LineChart, milestones: [
       { text: t("p2_m1"), tags: ["Go", "DuckDB", "Postgres"] }, { text: t("p2_m2"), tags: ["Go", "WebSocket"] },
       { text: t("p2_m3"), tags: ["Go"] }, { text: t("p2_m4"), tags: ["Rust"] },
+      { text: t("p2_m5"), tags: ["Go", "DuckDB"] }, { text: t("p2_m6"), tags: ["Go"] },
     ]},
     { id: "phase3", status: "in-progress", icon: Smartphone, milestones: [
-      { text: t("p3_m1"), tags: ["Swift", "SwiftUI"] }, { text: t("p3_m2"), tags: ["Kotlin"] },
-      { text: t("p3_m3"), tags: ["Next.js", "TypeScript"] }, { text: t("p3_m4"), tags: ["Firebase", "Next.js"] },
+      { text: t("p3_m1"), tags: ["Swift", "SwiftUI"] },
+      { text: t("p3_m2"), tags: ["Kotlin"] },
+      { text: t("p3_m3"), tags: ["Go"] },
+      { text: t("p3_m4"), tags: ["Next.js", "TypeScript"] },
+      { text: t("p3_m5"), tags: ["Next.js", "TypeScript"] },
+      { text: t("p3_m6"), tags: ["Next.js", "Postgres"] },
+      { text: t("p3_m7"), tags: ["Rust", "Python", "TypeScript"] },
+      { text: t("p3_m8"), tags: ["SwiftUI", "Go"] },
+      { text: t("p3_m9"), tags: ["Go", "Stripe"] },
+      { text: t("p3_m10"), tags: ["Go", "Edge CDN"] },
     ]},
     { id: "phase4", status: "planned", icon: Terminal, milestones: [
       { text: t("p4_m1"), tags: ["Next.js", "TypeScript"] }, { text: t("p4_m2"), tags: ["Swift", "Kotlin", "TypeScript"] },
       { text: t("p4_m3"), tags: ["Go"] }, { text: t("p4_m4"), tags: ["Next.js", "Edge CDN"] },
+      { text: t("p4_m5"), tags: ["Go"] }, { text: t("p4_m6"), tags: ["Go", "WebSocket"] },
     ]},
     { id: "phase5", status: "future", icon: Shield, milestones: [
       { text: t("p5_m1"), tags: ["Rust", "Go"] }, { text: t("p5_m2"), tags: ["RBAC"] },
       { text: t("p5_m3"), tags: ["Edge CDN"] }, { text: t("p5_m4"), tags: ["ML", "Python"] },
+      { text: t("p5_m5"), tags: ["Go"] }, { text: t("p5_m6"), tags: ["Edge CDN"] },
     ]},
   ];
 
@@ -134,7 +147,10 @@ export default function RoadmapPage() {
                       </div>
                     </div>
                     <p className="text-sm text-muted-foreground mb-1">{t(`${phase.id}_timeline`)}</p>
-                    <ul className="mt-4 space-y-3">
+                    <p className={`text-sm text-foreground/80 mt-2 leading-relaxed border-l-2 border-primary/20 pl-3 italic ${isEven ? "lg:border-l-0 lg:border-r-2 lg:pl-0 lg:pr-3" : ""}`}>
+                      {t(`${phase.id}_desc`)}
+                    </p>
+                    <ul className="mt-6 space-y-3">
                       {phase.milestones.map((m, mi) => (
                         <li key={mi} className={`flex items-start gap-2 text-sm ${isEven ? "lg:flex-row-reverse lg:text-right" : ""}`}>
                           {phase.status === "completed" ? <CheckCircle2 className="size-4 mt-0.5 text-emerald-500 shrink-0" /> :

@@ -26,7 +26,7 @@ import {
   NavigationMenuTrigger,
 } from "../ui/navigation-menu";
 import { Button } from "../ui/button";
-import { Link } from "@/i18n/navigation";
+import { Link, usePathname } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 
 interface RouteProps {
@@ -44,6 +44,7 @@ const featureIcons = [Zap, Blocks, Activity];
 export const Navbar = () => {
   const [isOpen, setIsOpen] = React.useState(false);
   const t = useTranslations("Navbar");
+  const pathname = usePathname();
 
   const routeList: RouteProps[] = [
     {
@@ -71,6 +72,14 @@ export const Navbar = () => {
       label: t("route_faq"),
     },
   ];
+
+  const isDocOrRoadmap = pathname === "/roadmap" || pathname === "/docs";
+  const filteredRouteList = routeList.filter(route => {
+    if (isDocOrRoadmap && route.href.startsWith("#")) {
+      return false;
+    }
+    return true;
+  });
 
   const featureList: FeatureProps[] = [
     {
@@ -130,7 +139,7 @@ export const Navbar = () => {
               </SheetHeader>
 
               <div className="flex flex-col gap-2">
-                {routeList.map(({ href, label }) => (
+                {filteredRouteList.map(({ href, label }) => (
                   <Button
                     key={href}
                     onClick={() => setIsOpen(false)}
@@ -188,7 +197,7 @@ export const Navbar = () => {
           </NavigationMenuItem>
 
           <NavigationMenuItem>
-            {routeList.map(({ href, label }) => (
+            {filteredRouteList.map(({ href, label }) => (
               <NavigationMenuLink key={href} asChild>
                 <Link href={href} className="text-base px-2">
                   {label}

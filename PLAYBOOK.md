@@ -322,6 +322,9 @@ Standalone iOS project (SwiftUI + Liquid Glass). Migrated from `leposapp/iosApp`
 | `frontend/components/layout/signup.tsx` | Signup page view | Server-rendered Firebase user registration form. |
 | `frontend/components/layout/social-login-buttons.tsx` | SSR OAuth login buttons | Server-rendered Google/GitHub/macOS Apple provider forms for Auth.js OAuth login. |
 | `frontend/components/ui/` | shadcn source components | Primitive UI elements: `button.tsx`, `card.tsx`, `sheet.tsx`, `navigation-menu.tsx`, `accordion.tsx`, `form.tsx`, `field.tsx`, `tanstack-form.tsx`. |
+| `frontend/.firebaserc` | Firebase project link | Maps local workspace environment to Firebase project ID `reactjs-ts`. |
+| `frontend/.npmrc` | Npm settings override | Configures legacy-peer-deps=true to bypass peer dependency conflicts during firebase functions build. |
+| `frontend/firebase.json` | Firebase configuration | Caches settings, defines source frameworks directory, and overrides the function region for Next.js SSR. |
 | `frontend/firebase/config.ts` | Firebase public config | Centralized Firebase browser/server configuration defaults with environment overrides. |
 | `frontend/firebase/firebase.ts` | Firebase browser client | Client SDK initialization for any future browser-only Firebase workflows. |
 | `frontend/lib/server/auth.ts` | NextAuth configuration | Credentials and OAuth providers backed by Firebase Auth REST and Prisma user/organization synchronization. |
