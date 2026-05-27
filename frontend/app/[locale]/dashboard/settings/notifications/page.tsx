@@ -1,4 +1,5 @@
 import { markNotificationReadAction } from "@/app/actions/admin";
+import { getTranslations } from "next-intl/server";
 import { SettingsNav } from "@/components/dashboard/settings-nav";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,13 +12,14 @@ import { Input } from "@/components/ui/input";
 export default async function NotificationSettingsPage() {
   const currentUser = await requireCurrentUser();
   const data = await getSettingsData(currentUser.id);
+  const t = await getTranslations("Settings");
 
   return (
     <>
       <div className="flex flex-col gap-0.5">
-        <h1 className="text-2xl font-bold tracking-tight md:text-3xl">Settings</h1>
+        <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{t("title")}</h1>
         <p className="text-muted-foreground">
-          Manage your account settings and set e-mail preferences.
+          {t("description")}
         </p>
       </div>
       <Separator className="my-4 lg:my-6" />
@@ -29,9 +31,9 @@ export default async function NotificationSettingsPage() {
         <div className="flex w-full overflow-y-hidden p-1">
           <div className="flex flex-1 flex-col">
             <div className="flex-none">
-              <h3 className="text-lg font-medium">Notifications</h3>
+              <h3 className="text-lg font-medium">{t("notifications.title")}</h3>
               <p className="text-sm text-muted-foreground">
-                Configure how you receive notifications.
+                {t("notifications.description")}
               </p>
             </div>
             <Separator className="my-4 flex-none" />
@@ -42,9 +44,9 @@ export default async function NotificationSettingsPage() {
 
               <div className="flex max-w-xl flex-col gap-3">
                 <div>
-                  <h3 className="text-lg font-medium">Recent notifications</h3>
+                  <h3 className="text-lg font-medium">{t("notifications.recent_notifications_title")}</h3>
                   <p className="text-sm text-muted-foreground">
-                    Mark messages and system events as read.
+                    {t("notifications.recent_notifications_desc")}
                   </p>
                 </div>
                 {data.notifications.length ? (
@@ -55,7 +57,7 @@ export default async function NotificationSettingsPage() {
                           <div className="flex flex-wrap items-center gap-2">
                             <p className="font-medium">{notification.title}</p>
                             <Badge variant={notification.isRead ? "outline" : "default"}>
-                              {notification.isRead ? "Read" : "Unread"}
+                              {notification.isRead ? t("notifications.status_read") : t("notifications.status_unread")}
                             </Badge>
                           </div>
                           <p className="mt-1 text-sm text-muted-foreground">
@@ -75,7 +77,7 @@ export default async function NotificationSettingsPage() {
                               value="/dashboard/settings/notifications"
                             />
                             <Button size="sm" type="submit" variant="outline">
-                              Mark read
+                              {t("notifications.mark_read_btn")}
                             </Button>
                           </form>
                         ) : null}
@@ -83,7 +85,7 @@ export default async function NotificationSettingsPage() {
                     </div>
                   ))
                 ) : (
-                  <p className="text-sm text-muted-foreground">No notifications found.</p>
+                  <p className="text-sm text-muted-foreground">{t("notifications.no_notifications")}</p>
                 )}
               </div>
             </div>
@@ -93,3 +95,4 @@ export default async function NotificationSettingsPage() {
     </>
   );
 }
+

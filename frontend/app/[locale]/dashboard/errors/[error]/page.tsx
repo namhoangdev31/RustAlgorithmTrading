@@ -1,71 +1,7 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
+import { getTranslations } from "next-intl/server";
 
 import { Button } from "@/components/ui/button";
-
-const messages: Record<
-  string,
-  {
-    code: string;
-    title: string;
-    description: React.ReactNode;
-    actions: "home" | "maintenance";
-  }
-> = {
-  unauthorized: {
-    code: "401",
-    title: "Unauthorized Access",
-    description: (
-      <>
-        Please log in with the appropriate credentials <br /> to access this
-        resource.
-      </>
-    ),
-    actions: "home",
-  },
-  forbidden: {
-    code: "403",
-    title: "Access Forbidden",
-    description: (
-      <>
-        You don&apos;t have necessary permission <br />
-        to view this resource.
-      </>
-    ),
-    actions: "home",
-  },
-  "not-found": {
-    code: "404",
-    title: "Oops! Page Not Found!",
-    description: (
-      <>
-        It seems like the page you&apos;re looking for <br />
-        does not exist or might have been removed.
-      </>
-    ),
-    actions: "home",
-  },
-  "internal-server-error": {
-    code: "500",
-    title: "Oops! Something went wrong {`:')`}",
-    description: (
-      <>
-        We apologize for the inconvenience. <br /> Please try again later.
-      </>
-    ),
-    actions: "home",
-  },
-  "maintenance-error": {
-    code: "503",
-    title: "Website is under maintenance!",
-    description: (
-      <>
-        The site is not available at the moment. <br />
-        We&apos;ll be back online shortly.
-      </>
-    ),
-    actions: "maintenance",
-  },
-};
 
 type ErrorPageProps = {
   params: Promise<{
@@ -73,28 +9,45 @@ type ErrorPageProps = {
   }>;
 };
 
+const VALID_ERRORS = [
+  "unauthorized",
+  "forbidden",
+  "not-found",
+  "internal-server-error",
+  "maintenance-error",
+];
+
 export default async function DashboardErrorPage({ params }: ErrorPageProps) {
   const { error } = await params;
-  const message = messages[error] ?? messages["internal-server-error"];
+  const errorKey = VALID_ERRORS.includes(error) ? error : "internal-server-error";
+  const t = await getTranslations("Errors");
+
+  const code = t(`${errorKey}.code`);
+  const title = t(`${errorKey}.title`);
+  const description = t.rich(`${errorKey}.description`, {
+    br: () => <br />,
+  });
+
+  const actions = errorKey === "maintenance-error" ? "maintenance" : "home";
 
   return (
     <div className="h-svh">
       <div className="m-auto flex h-full w-full flex-col items-center justify-center gap-2">
-        <h1 className="text-[7rem] font-bold leading-tight">{message.code}</h1>
-        <span className="font-medium">{message.title}</span>
-        <p className="text-center text-muted-foreground">{message.description}</p>
+        <h1 className="text-[7rem] font-bold leading-tight">{code}</h1>
+        <span className="font-medium">{title}</span>
+        <p className="text-center text-muted-foreground">{description}</p>
         <div className="mt-6 flex gap-4">
-          {message.actions === "maintenance" ? (
+          {actions === "maintenance" ? (
             <Button asChild variant="outline">
-              <Link href="/dashboard/help-center">Learn more</Link>
+              <Link href="/dashboard/help-center">{t("actions.learn_more")}</Link>
             </Button>
           ) : (
             <>
               <Button asChild variant="outline">
-                <Link href="/dashboard">Go Back</Link>
+                <Link href="/dashboard">{t("actions.go_back")}</Link>
               </Button>
               <Button asChild>
-                <Link href="/">Back to Home</Link>
+                <Link href="/">{t("actions.back_to_home")}</Link>
               </Button>
             </>
           )}

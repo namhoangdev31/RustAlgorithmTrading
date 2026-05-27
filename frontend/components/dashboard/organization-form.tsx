@@ -1,19 +1,12 @@
-"use client"
-
 import * as React from "react"
 import { useForm } from "@tanstack/react-form"
 import * as z from "zod"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { FormInputField } from "@/components/ui/tanstack-form"
 import { updateOrganizationAction } from "@/app/actions/admin"
 import { toast } from "sonner"
 import { Loader2 } from "lucide-react"
-
-const organizationFormSchema = z.object({
-  name: z.string().min(2, "Organization name must be at least 2 characters.").max(100, "Organization name must be at most 100 characters."),
-})
-
-type OrganizationFormValues = z.infer<typeof organizationFormSchema>
 
 interface OrganizationFormProps {
   organization: {
@@ -25,6 +18,17 @@ interface OrganizationFormProps {
 
 export function OrganizationForm({ organization }: OrganizationFormProps) {
   const [isSubmitting, setIsSubmitting] = React.useState(false)
+  const t = useTranslations("Settings")
+
+  const organizationFormSchema = React.useMemo(() => {
+    return z.object({
+      name: z.string()
+        .min(2, t("account.org_form.validation_min"))
+        .max(100, t("account.org_form.validation_max")),
+    })
+  }, [t])
+
+  type OrganizationFormValues = z.infer<typeof organizationFormSchema>
 
   const form = useForm({
     defaultValues: {
@@ -43,9 +47,9 @@ export function OrganizationForm({ organization }: OrganizationFormProps) {
         formData.append("returnTo", "/dashboard/settings/account")
 
         await updateOrganizationAction(formData)
-        toast.success("Organization updated successfully")
+        toast.success(t("account.org_form.success_msg"))
       } catch (error) {
-        toast.error("Failed to update organization")
+        toast.error(t("account.org_form.error_msg"))
       } finally {
         setIsSubmitting(false)
       }
@@ -66,15 +70,16 @@ export function OrganizationForm({ organization }: OrganizationFormProps) {
         children={(field) => (
           <FormInputField
             field={field}
-            label="Name"
-            placeholder="Organization Name"
+            label={t("account.org_form.name_label")}
+            placeholder={t("account.org_form.name_placeholder")}
           />
         )}
       />
       <Button className="w-fit" type="submit" disabled={isSubmitting}>
         {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        Save organization
+        {t("account.org_form.save_org_btn")}
       </Button>
     </form>
   )
 }
+

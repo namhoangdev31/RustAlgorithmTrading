@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button"
 import {
     Card,
@@ -8,6 +10,8 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import { Link } from "@/i18n/navigation"
+import { useTranslations } from "next-intl"
 
 export default function ResetPassword({
     action,
@@ -20,13 +24,14 @@ export default function ResetPassword({
     error?: string;
     info?: string;
 }) {
+    const t = useTranslations("ResetPassword");
 
     return (
         <Card className="w-full max-w-sm">
             <CardHeader>
-                <CardTitle>Reset password</CardTitle>
+                <CardTitle>{t("title")}</CardTitle>
                 <CardDescription>
-                    Enter a new password for your Firebase account
+                    {t("description")}
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -34,11 +39,11 @@ export default function ResetPassword({
                     <input type="hidden" name="oobCode" value={oobCode} />
                     <div className="flex flex-col gap-6">
                         <div className="grid gap-2">
-                            <label htmlFor="password" className="text-sm font-medium">New password</label>
+                            <label htmlFor="password" className="text-sm font-medium">{t("new_password")}</label>
                             <Input id="password" name="password" type="password" required />
                         </div>
                         <div className="grid gap-2">
-                            <label htmlFor="confirm" className="text-sm font-medium">Confirm password</label>
+                            <label htmlFor="confirm" className="text-sm font-medium">{t("confirm_password")}</label>
                             <Input id="confirm" name="confirm" type="password" required />
                         </div>
                         {error && (
@@ -53,13 +58,13 @@ export default function ResetPassword({
                         )}
                     </div>
                     <Button className="mt-6 w-full" type="submit">
-                        Update password
+                        {t("update_password")}
                     </Button>
                 </form>
             </CardContent>
             <CardFooter className="flex-col gap-2">
                 <Button asChild variant="outline" className="w-full">
-                    <a href="/login">Back to Login</a>
+                    <Link href="/login">{t("back_to_login")}</Link>
                 </Button>
             </CardFooter>
         </Card>

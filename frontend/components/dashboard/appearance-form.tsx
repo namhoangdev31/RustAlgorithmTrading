@@ -9,6 +9,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { updateDisplayPreferenceAction } from "@/app/actions/admin"
 import { toast } from "sonner"
 import { Loader2 } from "lucide-react"
+import { useTranslations } from "next-intl"
 
 const appearanceFormSchema = z.object({
   font: z.string(),
@@ -23,6 +24,7 @@ interface AppearanceFormProps {
 
 export function AppearanceForm({ initialTheme = "light" }: AppearanceFormProps) {
   const [isSubmitting, setIsSubmitting] = React.useState(false)
+  const t = useTranslations("Settings")
 
   const form = useForm({
     defaultValues: {
@@ -41,9 +43,9 @@ export function AppearanceForm({ initialTheme = "light" }: AppearanceFormProps) 
         formData.append("returnTo", "/dashboard/settings/appearance")
 
         await updateDisplayPreferenceAction(formData)
-        toast.success("Preferences updated successfully")
+        toast.success(t("appearance.success_msg"))
       } catch (error) {
-        toast.error("Failed to update preferences")
+        toast.error(t("appearance.error_msg"))
       } finally {
         setIsSubmitting(false)
       }
@@ -64,22 +66,22 @@ export function AppearanceForm({ initialTheme = "light" }: AppearanceFormProps) 
         children={(field) => (
           <FormSelectField
             field={field}
-            label="Font"
-            placeholder="Select font..."
+            label={t("appearance.font_label")}
+            placeholder={t("appearance.font_placeholder")}
             options={[
               { label: "inter", value: "inter" },
               { label: "manrope", value: "manrope" },
               { label: "system", value: "system" },
             ]}
-            description="Set the font you want to use in the dashboard."
+            description={t("appearance.font_desc")}
           />
         )}
       />
 
       <div className="grid gap-2 text-sm">
-        <div>Theme</div>
+        <div>{t("appearance.theme_label")}</div>
         <p className="text-sm text-muted-foreground">
-          Select the theme for the dashboard.
+          {t("appearance.theme_desc")}
         </p>
 
         <form.Field
@@ -109,7 +111,7 @@ export function AppearanceForm({ initialTheme = "light" }: AppearanceFormProps) 
                   </div>
                 </div>
                 <span className="block w-full p-2 text-center font-normal">
-                  Light
+                  {t("appearance.theme_light")}
                 </span>
               </label>
 
@@ -132,7 +134,7 @@ export function AppearanceForm({ initialTheme = "light" }: AppearanceFormProps) 
                   </div>
                 </div>
                 <span className="block w-full p-2 text-center font-normal">
-                  Dark
+                  {t("appearance.theme_dark")}
                 </span>
               </label>
             </RadioGroup>
@@ -142,8 +144,9 @@ export function AppearanceForm({ initialTheme = "light" }: AppearanceFormProps) 
 
       <Button className="w-fit" type="submit" disabled={isSubmitting}>
         {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        Update preferences
+        {t("appearance.update_preferences_btn")}
       </Button>
     </form>
   )
 }
+

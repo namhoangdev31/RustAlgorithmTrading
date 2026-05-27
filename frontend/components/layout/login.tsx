@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button"
 import {
     Card,
@@ -9,7 +11,8 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { SocialLoginButtons } from "@/components/layout/social-login-buttons"
-import Link from "next/link"
+import { Link } from "@/i18n/navigation"
+import { useTranslations } from "next-intl"
 
 interface CardLoginProps {
     loginAction: (formData: FormData) => Promise<void>;
@@ -28,30 +31,32 @@ export function CardLogin({
     error,
     info,
 }: CardLoginProps) {
+    const t = useTranslations("Login");
+
     return (
         <Card className="w-full max-w-sm m-4 py-0 pt-4">
             <CardHeader>
-                <CardTitle className="text-center mt-2">Let's Get You In</CardTitle>
+                <CardTitle className="text-center mt-2">{t("title")}</CardTitle>
                 <CardDescription className="text-center mt-2">
-                    Enter your credentials to access your account
+                    {t("description")}
                 </CardDescription>
             </CardHeader>
             <CardContent>
                 <form action={loginAction}>
                     <div className="flex flex-col gap-6">
                         <div className="grid gap-2 text-left">
-                            <label htmlFor="email" className="text-sm font-medium">Email</label>
+                            <label htmlFor="email" className="text-sm font-medium">{t("email")}</label>
                             <Input
                                 id="email"
                                 name="email"
                                 type="email"
-                                placeholder="lowishxx@example.com"
+                                placeholder={t("email_placeholder")}
                                 required
                             />
                         </div>
                         <div className="grid gap-2">
                             <div className="flex items-center justify-between">
-                                <label htmlFor="password" className="text-sm font-medium">Password</label>
+                                <label htmlFor="password" className="text-sm font-medium">{t("password")}</label>
                             </div>
                             <Input id="password" name="password" type="password" required />
                         </div>
@@ -63,7 +68,7 @@ export function CardLogin({
                         )}
                     </div>
                     <Button type="submit" className="mt-6 w-full h-11">
-                        Sign in
+                        {t("sign_in")}
                     </Button>
                 </form>
             </CardContent>
@@ -71,7 +76,7 @@ export function CardLogin({
             <CardFooter className="flex-col gap-4 pb-4">
                 <div className="w-full flex items-center gap-2">
                     <div className="flex-grow h-px bg-gray-300"></div>
-                    <span className="text-gray-400 text-xs font-medium px-2">QUICK LOGIN</span>
+                    <span className="text-gray-400 text-xs font-medium px-2">{t("quick_login")}</span>
                     <div className="flex-grow h-px bg-gray-300"></div>
                 </div>
 
@@ -79,24 +84,24 @@ export function CardLogin({
 
                 <div className="w-full flex items-center gap-2">
                     <div className="flex-grow h-px bg-gray-300"></div>
-                    <span className="text-gray-400 text-xs font-medium px-2">ACCOUNT HELP</span>
+                    <span className="text-gray-400 text-xs font-medium px-2">{t("account_help")}</span>
                     <div className="flex-grow h-px bg-gray-300"></div>
                 </div>
 
                 <form action={resetAction} className="grid w-full gap-2">
-                    <Input name="resetEmail" type="email" placeholder="email@example.com" required />
+                    <Input name="resetEmail" type="email" placeholder={t("reset_email_placeholder")} required />
                     <Button variant="outline" className="w-full" type="submit">
-                        Send reset email
+                        {t("send_reset_email")}
                     </Button>
                 </form>
 
                 <p className="text-sm text-center text-gray-600">
-                    Don't have an account?{' '}
+                    {t("no_account")}{' '}
                     <Link
                         href="/register"
                         className="text-gray-600 underline-offset-4 hover:underline font-medium"
                     >
-                        Sign up
+                        {t("sign_up")}
                     </Link>
                 </p>
             </CardFooter>

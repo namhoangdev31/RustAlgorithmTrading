@@ -18,18 +18,11 @@ import {
   Trash2,
   Video,
 } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Fragment } from "react";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -38,8 +31,12 @@ import { getChatsData } from "@/lib/server/admin-data";
 import { requireCurrentUser } from "@/lib/server/current-user";
 import { cn } from "@/lib/utils";
 import { NewChatDialog } from "@/components/dashboard/new-chat-dialog";
+import { getTranslations } from "next-intl/server";
 
 type ChatsPageProps = {
+  params: Promise<{
+    locale: string;
+  }>;
   searchParams: Promise<{
     q?: string;
     chat?: string;
@@ -47,30 +44,33 @@ type ChatsPageProps = {
   }>;
 };
 
-export default async function ChatsPage({ searchParams }: ChatsPageProps) {
-  const params = await searchParams;
+export default async function ChatsPage({ params, searchParams }: ChatsPageProps) {
+  const { locale } = await params;
+  const searchParamsValue = await searchParams;
   const user = await requireCurrentUser();
-  const data = await getChatsData(user.id, params);
-  const contacts = buildContacts(data.messages, data.users, user.id);
-  let selectedContact = params.chat
-    ? contacts.find((contact) => contact.id === params.chat) ?? null
+  const data = await getChatsData(user.id, searchParamsValue);
+  const t = await getTranslations("Chats");
+  
+  const contacts = buildContacts(data.messages, data.users, user.id, t);
+  let selectedContact = searchParamsValue.chat
+    ? contacts.find((contact) => contact.id === searchParamsValue.chat) ?? null
     : null;
 
-  if (params.chat && !selectedContact) {
-    const chatUser = data.users.find((u) => u.id === params.chat);
+  if (searchParamsValue.chat && !selectedContact) {
+    const chatUser = data.users.find((u) => u.id === searchParamsValue.chat);
     if (chatUser) {
       selectedContact = {
         id: chatUser.id,
-        fullName: chatUser.fullName ?? chatUser.email ?? "Unknown",
+        fullName: chatUser.fullName ?? chatUser.email ?? t("unknown_user"),
         email: chatUser.email,
-        title: pickTitle(chatUser.fullName ?? chatUser.email ?? ""),
-        messages: [],
+        title: t(`titles.${pickTitleKey(chatUser.fullName ?? chatUser.email ?? "")}`),
+        messages: [] as Message[],
       };
     }
   }
 
   const groupedMessages = selectedContact
-    ? groupMessagesByDate(selectedContact.messages)
+    ? groupMessagesByDate(selectedContact.messages, locale)
     : [];
 
   return (
@@ -80,14 +80,14 @@ export default async function ChatsPage({ searchParams }: ChatsPageProps) {
           <div className="sticky top-0 z-10 -mx-4 bg-background px-4 pb-3 shadow-md sm:static sm:z-auto sm:mx-0 sm:p-0 sm:shadow-none">
             <div className="flex items-center justify-between py-2">
               <div className="flex gap-2">
-                <h1 className="text-2xl font-bold">Inbox</h1>
+                <h1 className="text-2xl font-bold">{t("inbox")}</h1>
                 <MessagesSquare className="size-5" />
               </div>
 
               <Button asChild className="rounded-lg" size="icon" variant="ghost">
                 <Link href="/dashboard/chats?dialog=new">
                   <Edit className="size-6 stroke-muted-foreground" />
-                  <span className="sr-only">New chat</span>
+                  <span className="sr-only">{t("new_chat")}</span>
                 </Link>
               </Button>
             </div>
@@ -96,9 +96,9 @@ export default async function ChatsPage({ searchParams }: ChatsPageProps) {
               <SearchIcon className="absolute left-3 size-4 stroke-slate-500" />
               <Input
                 className="pl-9 h-10 w-full"
-                defaultValue={params.q ?? ""}
+                defaultValue={searchParamsValue.q ?? ""}
                 name="q"
-                placeholder="Search chat..."
+                placeholder={t("search_chat_placeholder")}
                 type="text"
               />
             </form>
@@ -109,10 +109,10 @@ export default async function ChatsPage({ searchParams }: ChatsPageProps) {
               const lastMessage = contact.messages[0];
               const lastText = lastMessage
                 ? lastMessage.actorId === user.id
-                  ? `You: ${lastMessage.body}`
+                  ? `${t("you_prefix")}${lastMessage.body}`
                   : lastMessage.body
-                : "Send a message to start a chat.";
-              const href = `/dashboard/chats?chat=${contact.id}${params.q ? `&q=${encodeURIComponent(params.q)}` : ""}`;
+                : t("send_first_message");
+              const href = `/dashboard/chats?chat=${contact.id}${searchParamsValue.q ? `&q=${encodeURIComponent(searchParamsValue.q)}` : ""}`;
 
               return (
                 <Fragment key={contact.id}>
@@ -149,7 +149,7 @@ export default async function ChatsPage({ searchParams }: ChatsPageProps) {
                 <Button asChild className="-ms-2 h-full sm:hidden" size="icon" variant="ghost">
                   <Link href="/dashboard/chats">
                     <ArrowLeft className="rtl:rotate-180" />
-                    <span className="sr-only">Back</span>
+                    <span className="sr-only">{t("back")}</span>
                   </Link>
                 </Button>
                 <div className="flex items-center gap-2 lg:gap-4">
@@ -170,15 +170,15 @@ export default async function ChatsPage({ searchParams }: ChatsPageProps) {
               <div className="-me-1 flex items-center gap-1 lg:gap-2">
                 <Button className="hidden size-8 rounded-full sm:inline-flex lg:size-10" size="icon" variant="ghost">
                   <Video className="size-5 stroke-muted-foreground" />
-                  <span className="sr-only">Video</span>
+                  <span className="sr-only">{t("video")}</span>
                 </Button>
                 <Button className="hidden size-8 rounded-full sm:inline-flex lg:size-10" size="icon" variant="ghost">
                   <Phone className="size-5 stroke-muted-foreground" />
-                  <span className="sr-only">Phone</span>
+                  <span className="sr-only">{t("phone")}</span>
                 </Button>
                 <Button className="h-10 rounded-md sm:size-8 lg:h-10 lg:w-6" size="icon" variant="ghost">
                   <MoreVertical className="stroke-muted-foreground sm:size-5" />
-                  <span className="sr-only">More</span>
+                  <span className="sr-only">{t("more")}</span>
                 </Button>
               </div>
             </div>
@@ -213,7 +213,7 @@ export default async function ChatsPage({ searchParams }: ChatsPageProps) {
                                         variant="ghost"
                                       >
                                         <Trash2 className="size-3.5" />
-                                        <span className="sr-only">Delete</span>
+                                        <span className="sr-only">{t("delete")}</span>
                                       </Button>
                                     </form>
                                   </div>
@@ -243,7 +243,7 @@ export default async function ChatsPage({ searchParams }: ChatsPageProps) {
                                           variant="ghost"
                                         >
                                           <Check className="size-3.5" />
-                                          <span className="sr-only">Mark read</span>
+                                          <span className="sr-only">{t("mark_read")}</span>
                                         </Button>
                                       </form>
                                     )}
@@ -257,7 +257,7 @@ export default async function ChatsPage({ searchParams }: ChatsPageProps) {
                                         variant="ghost"
                                       >
                                         <Trash2 className="size-3.5" />
-                                        <span className="sr-only">Delete</span>
+                                        <span className="sr-only">{t("delete")}</span>
                                       </Button>
                                     </form>
                                   </div>
@@ -265,7 +265,7 @@ export default async function ChatsPage({ searchParams }: ChatsPageProps) {
                               </div>
 
                               <span className="text-[10px] text-slate-400 dark:text-slate-500 px-1 mt-0.5">
-                                {formatTime(message.createdAt)}
+                                {formatTime(message.createdAt, locale)}
                               </span>
                             </div>
                           );
@@ -298,18 +298,18 @@ export default async function ChatsPage({ searchParams }: ChatsPageProps) {
                     <Input
                       className="h-8 w-full border-none focus-visible:ring-0 bg-transparent shadow-none"
                       name="body"
-                      placeholder="Type your messages..."
+                      placeholder={t("type_message_placeholder")}
                       required
                       type="text"
                     />
                   </div>
                   <Button className="hidden sm:inline-flex" size="icon" type="submit" variant="ghost">
                     <Send className="size-5" />
-                    <span className="sr-only">Send</span>
+                    <span className="sr-only">{t("send")}</span>
                   </Button>
                 </div>
                 <Button className="h-full sm:hidden" type="submit">
-                  <Send className="size-4" /> Send
+                  <Send className="size-4" /> {t("send")}
                 </Button>
               </form>
             </div>
@@ -321,20 +321,20 @@ export default async function ChatsPage({ searchParams }: ChatsPageProps) {
                 <MessagesSquare className="size-8" />
               </div>
               <div className="flex flex-col gap-2 text-center">
-                <h1 className="text-xl font-semibold">Your messages</h1>
+                <h1 className="text-xl font-semibold">{t("your_messages")}</h1>
                 <p className="text-sm text-muted-foreground">
-                  Send a message to start a chat.
+                  {t("send_first_message")}
                 </p>
               </div>
               <Button asChild>
-                <Link href="/dashboard/chats?dialog=new">Send message</Link>
+                <Link href="/dashboard/chats?dialog=new">{t("send_message")}</Link>
               </Button>
             </div>
           </div>
         )}
       </section>
 
-      {params.dialog === "new" ? <NewChatDialog users={data.users} /> : null}
+      {searchParamsValue.dialog === "new" ? <NewChatDialog users={data.users} /> : null}
     </>
   );
 }
@@ -342,7 +342,26 @@ export default async function ChatsPage({ searchParams }: ChatsPageProps) {
 type Message = Awaited<ReturnType<typeof getChatsData>>["messages"][number];
 type ChatUser = Awaited<ReturnType<typeof getChatsData>>["users"][number];
 
-function buildContacts(messages: Message[], users: ChatUser[], currentUserId: string) {
+function pickTitleKey(value: string) {
+  const titles = [
+    "senior_backend",
+    "tech_lead",
+    "qa",
+    "jr_developer",
+    "senior_designer",
+    "product_designer",
+    "ceo",
+  ];
+  const seed = value.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
+  return titles[seed % titles.length];
+}
+
+function buildContacts(
+  messages: Message[],
+  users: ChatUser[],
+  currentUserId: string,
+  t: any
+) {
   const contacts = new Map<
     string,
     {
@@ -357,9 +376,9 @@ function buildContacts(messages: Message[], users: ChatUser[], currentUserId: st
   for (const chatUser of users) {
     contacts.set(chatUser.id, {
       id: chatUser.id,
-      fullName: chatUser.fullName ?? chatUser.email ?? "Unknown",
+      fullName: chatUser.fullName ?? chatUser.email ?? t("unknown_user"),
       email: chatUser.email,
-      title: pickTitle(chatUser.fullName ?? chatUser.email ?? ""),
+      title: t(`titles.${pickTitleKey(chatUser.fullName ?? chatUser.email ?? "")}`),
       messages: [],
     });
   }
@@ -374,10 +393,10 @@ function buildContacts(messages: Message[], users: ChatUser[], currentUserId: st
 
     const existing = contacts.get(counterpart.id) ?? {
       id: counterpart.id,
-      fullName: counterpart.fullName ?? counterpart.email ?? "Unknown",
+      fullName: counterpart.fullName ?? counterpart.email ?? t("unknown_user"),
       email: counterpart.email,
-      title: pickTitle(counterpart.fullName ?? counterpart.email ?? ""),
-      messages: [],
+      title: t(`titles.${pickTitleKey(counterpart.fullName ?? counterpart.email ?? "")}`),
+      messages: [] as Message[],
     };
 
     existing.messages.push(message);
@@ -391,14 +410,14 @@ function buildContacts(messages: Message[], users: ChatUser[], currentUserId: st
   });
 }
 
-function groupMessagesByDate(messages: Message[]) {
+function groupMessagesByDate(messages: Message[], locale: string) {
   const sorted = [...messages].sort(
     (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
   );
   const groups = new Map<string, Message[]>();
 
   for (const message of sorted) {
-    const key = new Intl.DateTimeFormat("en", {
+    const key = new Intl.DateTimeFormat(locale, {
       day: "numeric",
       month: "short",
       year: "numeric",
@@ -409,8 +428,8 @@ function groupMessagesByDate(messages: Message[]) {
   return Array.from(groups.entries()).reverse();
 }
 
-function formatTime(value: Date) {
-  return new Intl.DateTimeFormat("en", {
+function formatTime(value: Date, locale: string) {
+  return new Intl.DateTimeFormat(locale, {
     hour: "numeric",
     minute: "2-digit",
   }).format(value);
@@ -420,18 +439,3 @@ function getInitials(value: string) {
   const words = value.trim().split(/\s+/).filter(Boolean);
   return (words[0]?.[0] ?? "U").concat(words[1]?.[0] ?? "").toUpperCase();
 }
-
-function pickTitle(value: string) {
-  const titles = [
-    "Senior Backend Dev",
-    "Tech Lead",
-    "QA",
-    "Jr Developer",
-    "Senior UI/UX Designer",
-    "Product Designer",
-    "CEO",
-  ];
-  const seed = value.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
-  return titles[seed % titles.length];
-}
-

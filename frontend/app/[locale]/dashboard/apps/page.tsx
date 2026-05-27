@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import {
   Bot,
   Code2,
@@ -44,6 +44,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { getTranslations } from "next-intl/server";
 
 type AppsPageProps = {
   searchParams: Promise<{
@@ -184,6 +185,7 @@ export default async function AppsPage({ searchParams }: AppsPageProps) {
   const appType = params.type ?? (params.active === "true" ? "connected" : "all");
   const sort = params.sort === "desc" ? "desc" : "asc";
   const firstBundle = data.bundles[0];
+  const t = await getTranslations("Apps");
 
   const apps = catalogApps
     .map((app) => {
@@ -195,6 +197,8 @@ export default async function AppsPage({ searchParams }: AppsPageProps) {
 
       return {
         ...app,
+        name: t(`items.${app.key}.name`),
+        desc: t(`items.${app.key}.desc`),
         integration,
         connected: Boolean(integration?.isActive),
       };
@@ -214,9 +218,9 @@ export default async function AppsPage({ searchParams }: AppsPageProps) {
   return (
     <>
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">App Integrations</h1>
+        <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
         <p className="text-muted-foreground">
-          Here&apos;s a list of your apps for the integration!
+          {t("description")}
         </p>
       </div>
 
@@ -226,21 +230,21 @@ export default async function AppsPage({ searchParams }: AppsPageProps) {
             className="h-9 w-40 lg:w-[15.625rem]"
             defaultValue={params.filter ?? params.q ?? ""}
             name="filter"
-            placeholder="Filter apps..."
+            placeholder={t("filter_placeholder")}
           />
           <Select defaultValue={appType} name="type">
             <SelectTrigger className="h-9 w-36">
-              <SelectValue placeholder="All Apps" />
+              <SelectValue placeholder={t("all_apps")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Apps</SelectItem>
-              <SelectItem value="connected">Connected</SelectItem>
-              <SelectItem value="notConnected">Not Connected</SelectItem>
+              <SelectItem value="all">{t("all_apps")}</SelectItem>
+              <SelectItem value="connected">{t("connected")}</SelectItem>
+              <SelectItem value="notConnected">{t("not_connected")}</SelectItem>
             </SelectContent>
           </Select>
           <Input name="sort" type="hidden" value={sort} />
           <Button className="h-9" type="submit" variant="outline">
-            Filter
+            {t("filter_btn")}
           </Button>
         </form>
 
@@ -251,7 +255,7 @@ export default async function AppsPage({ searchParams }: AppsPageProps) {
           <Button className="h-9 w-16" type="submit" variant="outline">
             <SlidersHorizontal data-icon="inline-start" />
             <span className="sr-only">
-              {sort === "asc" ? "Descending" : "Ascending"}
+              {sort === "asc" ? t("descending") : t("ascending")}
             </span>
           </Button>
         </form>
@@ -282,7 +286,7 @@ export default async function AppsPage({ searchParams }: AppsPageProps) {
                       type="submit"
                       variant="outline"
                     >
-                      {app.connected ? "Connected" : "Connect"}
+                      {app.connected ? t("connected") : t("connect_btn")}
                     </Button>
                   </form>
                 ) : (
@@ -293,7 +297,7 @@ export default async function AppsPage({ searchParams }: AppsPageProps) {
                     <Input name="displayName" type="hidden" value={app.name} />
                     <Input name="isActive" type="hidden" value="true" />
                     <Button disabled={!firstBundle} size="sm" type="submit" variant="outline">
-                      Connect
+                      {t("connect_btn")}
                     </Button>
                   </form>
                 )}
@@ -306,14 +310,14 @@ export default async function AppsPage({ searchParams }: AppsPageProps) {
                 <div className="mt-4 flex gap-2">
                   <Button asChild size="sm" variant="ghost">
                     <Link href={`/dashboard/apps?dialog=edit&id=${app.integration.id}`}>
-                      Edit
+                      {t("edit_btn")}
                     </Link>
                   </Button>
                   <form action={deleteIntegrationAction}>
                     <Input name="integrationId" type="hidden" value={app.integration.id} />
                     <Input name="returnTo" type="hidden" value="/dashboard/apps" />
                     <Button size="sm" type="submit" variant="ghost">
-                      Remove
+                      {t("remove_btn")}
                     </Button>
                   </form>
                 </div>
@@ -328,7 +332,8 @@ export default async function AppsPage({ searchParams }: AppsPageProps) {
           action={upsertIntegrationAction}
           bundles={data.bundles}
           returnTo="/dashboard/apps"
-          title="Connect app"
+          title={t("connect_app_title")}
+          t={t}
         />
       ) : null}
 
@@ -338,7 +343,8 @@ export default async function AppsPage({ searchParams }: AppsPageProps) {
           bundles={data.bundles}
           integration={selectedIntegration}
           returnTo="/dashboard/apps"
-          title="Edit integration"
+          title={t("edit_integration_title")}
+          t={t}
         />
       ) : null}
     </>
@@ -351,6 +357,7 @@ function IntegrationForm({
   integration,
   returnTo,
   title,
+  t,
 }: {
   action: (formData: FormData) => Promise<void>;
   bundles: { id: string; name: string }[];
@@ -363,25 +370,26 @@ function IntegrationForm({
   };
   returnTo: string;
   title: string;
+  t: any;
 }) {
   return (
     <Card>
       <CardHeader>
         <CardTitle>{title}</CardTitle>
-        <CardDescription>Stored as BundleExternalIntegrations config JSON.</CardDescription>
+        <CardDescription>{t("form_description")}</CardDescription>
       </CardHeader>
       <CardContent>
         <form action={action} className="grid gap-4 md:grid-cols-2">
           <Input type="hidden" name="returnTo" value={returnTo} />
           <Label className="grid gap-2 text-sm">
-            Bundle
+            {t("bundle_label")}
             <Select
               defaultValue={integration?.bundle.id}
               name="bundleId"
               required
             >
               <SelectTrigger className="h-10">
-                <SelectValue placeholder="Select bundle..." />
+                <SelectValue placeholder={t("select_bundle_placeholder")} />
               </SelectTrigger>
               <SelectContent>
                 {bundles.map((bundle) => (
@@ -393,7 +401,7 @@ function IntegrationForm({
             </Select>
           </Label>
           <Label className="grid gap-2 text-sm">
-            Integration type
+            {t("integration_type_label")}
             <Input
               defaultValue={integration?.integrationType ?? ""}
               name="integrationType"
@@ -402,36 +410,36 @@ function IntegrationForm({
             />
           </Label>
           <Label className="grid gap-2 text-sm">
-            Display name
+            {t("display_name_label")}
             <Input defaultValue={integration?.displayName ?? ""} name="displayName" />
           </Label>
           <Label className="grid gap-2 text-sm">
-            Active
+            {t("active_label")}
             <Select
               defaultValue={integration?.isActive === false ? "false" : "true"}
               name="isActive"
             >
               <SelectTrigger className="h-10">
-                <SelectValue placeholder="Select status..." />
+                <SelectValue placeholder={t("select_status_placeholder")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="true">Active</SelectItem>
-                <SelectItem value="false">Inactive</SelectItem>
+                <SelectItem value="true">{t("active_status")}</SelectItem>
+                <SelectItem value="false">{t("inactive_status")}</SelectItem>
               </SelectContent>
             </Select>
           </Label>
           <Label className="grid gap-2 text-sm">
-            Endpoint
+            {t("endpoint_label")}
             <Input name="endpoint" placeholder="https://example.com/webhook" />
           </Label>
           <Label className="grid gap-2 text-sm">
-            Notes
+            {t("notes_label")}
             <Input name="notes" />
           </Label>
           <div className="flex gap-2 md:col-span-2">
-            <Button type="submit">Save integration</Button>
+            <Button type="submit">{t("save_integration_btn")}</Button>
             <Button asChild variant="outline">
-              <Link href={returnTo}>Cancel</Link>
+              <Link href={returnTo}>{t("cancel_btn")}</Link>
             </Button>
           </div>
         </form>

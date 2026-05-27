@@ -281,5 +281,607 @@
     "github": "GitHub",
     "contact_us": "Contact Us",
     "status_page": "Status Page"
+  },
+  "Login": {
+    "title": "Let's Get You In",
+    "description": "Enter your credentials to access your account",
+    "email": "Email",
+    "password": "Password",
+    "sign_in": "Sign in",
+    "quick_login": "QUICK LOGIN",
+    "account_help": "ACCOUNT HELP",
+    "send_reset_email": "Send reset email",
+    "no_account": "Don't have an account?",
+    "sign_up": "Sign up",
+    "reset_email_placeholder": "email@example.com",
+    "email_placeholder": "lowishxx@example.com"
+  },
+  "Register": {
+    "title": "Create an account",
+    "description": "Enter your details to sign up",
+    "name": "Name",
+    "name_placeholder": "Prince Tan",
+    "email": "Email",
+    "email_placeholder": "lowishxx@example.com",
+    "password": "Password",
+    "create_account": "Create account",
+    "quick_sign_up": "QUICK SIGN UP",
+    "back": "Back"
+  },
+  "ResetPassword": {
+    "title": "Reset password",
+    "description": "Enter a new password for your Firebase account",
+    "new_password": "New password",
+    "confirm_password": "Confirm password",
+    "update_password": "Update password",
+    "back_to_login": "Back to Login"
+  },
+  "Dashboard": {
+    "title": "Dashboard",
+    "download": "Download",
+    "tabs": {
+      "overview": "Overview",
+      "analytics": "Analytics",
+      "reports": "Reports",
+      "notifications": "Notifications"
+    },
+    "metrics": {
+      "total_revenue": "Total Revenue",
+      "subscriptions": "Subscriptions",
+      "sales": "Sales",
+      "active_now": "Active Now",
+      "total_clicks": "Total Clicks",
+      "unique_visitors": "Unique Visitors",
+      "bounce_rate": "Bounce Rate",
+      "avg_session": "Avg. Session",
+      "vs_last_month": "{value} from last month",
+      "vs_last_week": "{value} vs last week",
+      "since_last_hour": "{value} since last hour"
+    },
+    "overview_chart": "Overview",
+    "recent_sales": {
+      "title": "Recent Sales",
+      "description": "You made {count} sales this month."
+    },
+    "projects_and_bundles": {
+      "title": "Projects and bundles",
+      "description": "Each project is maintained with exactly one draft or published bundle.",
+      "new_project": "New project",
+      "search_placeholder": "Search project or bundle",
+      "filter": "Filter",
+      "no_description": "No description",
+      "missing_bundle": "Missing bundle",
+      "no_projects": "No projects found."
+    },
+    "table": {
+      "project": "Project",
+      "bundle": "Bundle",
+      "status": "Status",
+      "updated": "Updated",
+      "actions": "Actions",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "form": {
+      "create_title": "Create project",
+      "edit_title": "Edit project",
+      "description": "Project and bundle are written together in one action.",
+      "project_name": "Project name",
+      "organization": "Organization",
+      "select_organization": "Select organization...",
+      "bundle_name": "Bundle name",
+      "status": "Status",
+      "select_status": "Select status...",
+      "category": "Category",
+      "project_description": "Project description",
+      "bundle_summary": "Bundle summary",
+      "save_changes": "Save changes",
+      "create_project": "Create project",
+      "cancel": "Cancel",
+      "status_options": {
+        "draft": "Draft",
+        "review": "Review",
+        "published": "Published",
+        "archived": "Archived"
+      }
+    },
+    "delete_dialog": {
+      "title": "Delete {name}",
+      "description": "This uses the existing project-to-bundle cascade relation.",
+      "delete_project": "Delete project",
+      "cancel": "Cancel"
+    },
+    "analytics": {
+      "traffic_overview": "Traffic Overview",
+      "traffic_description": "Weekly clicks and unique visitors",
+      "referrers": "Referrers",
+      "referrers_desc": "Top sources driving traffic",
+      "devices": "Devices",
+      "devices_desc": "How users access your app",
+      "sources": {
+        "Direct": "Direct",
+        "Product Hunt": "Product Hunt",
+        "Twitter": "Twitter",
+        "Blog": "Blog"
+      },
+      "device_types": {
+        "Desktop": "Desktop",
+        "Mobile": "Mobile",
+        "Tablet": "Tablet"
+      }
+    },
+    "shell": {
+      "brand_name": "Shadcn Admin",
+      "brand_subtitle": "SSR workspace",
+      "no_organization": "No organization",
+      "workspace": "workspace",
+      "default_user": "Dashboard user",
+      "search_placeholder": "Search projects...",
+      "search_aria": "Search dashboard",
+      "search_btn": "Search",
+      "notifications_aria": "Notifications",
+      "sign_out": "Sign out",
+      "nav": {
+        "general": "General",
+        "other": "Other",
+        "dashboard": "Dashboard",
+        "tasks": "Tasks",
+        "apps": "Apps",
+        "chats": "Chats",
+        "users": "Users",
+        "settings": "Settings",
+        "help_center": "Help Center",
+        "profile": "Profile",
+        "account": "Account",
+        "appearance": "Appearance",
+        "notifications": "Notifications",
+        "display": "Display"
+      },
+      "header": {
+        "overview": "Overview",
+        "customers": "Customers",
+        "products": "Products",
+        "settings": "Settings"
+      },
+      "teams": {
+        "label": "Teams",
+        "add_team": "Add team"
+      },
+      "user_menu": {
+        "open": "Open user menu",
+        "upgrade": "Upgrade to Pro",
+        "account": "Account",
+        "billing": "Billing",
+        "notifications": "Notifications",
+        "profile": "Profile",
+        "new_team": "New Team",
+        "sign_out": "Sign out"
+      },
+      "search": {
+        "button": "Search",
+        "placeholder": "Type a command or search...",
+        "no_results": "No results found.",
+        "general": "General",
+        "pages": "Pages",
+        "other": "Other",
+        "theme": "Theme",
+        "auth": "Auth",
+        "sign_in": "Sign In",
+        "errors": "Errors",
+        "not_found": "Not Found",
+        "light": "Light",
+        "dark": "Dark",
+        "system": "System",
+        "quick_filters": "Quick filters",
+        "pending_tasks": "Pending tasks",
+        "active_integrations": "Active integrations"
+      }
+    }
+  },
+  "Apps": {
+    "title": "App Integrations",
+    "description": "Here's a list of your apps for the integration!",
+    "filter_placeholder": "Filter apps...",
+    "all_apps": "All Apps",
+    "connected": "Connected",
+    "not_connected": "Not Connected",
+    "filter_btn": "Filter",
+    "descending": "Descending",
+    "ascending": "Ascending",
+    "connect_btn": "Connect",
+    "edit_btn": "Edit",
+    "remove_btn": "Remove",
+    "connect_app_title": "Connect app",
+    "edit_integration_title": "Edit integration",
+    "form_description": "Stored as BundleExternalIntegrations config JSON.",
+    "bundle_label": "Bundle",
+    "select_bundle_placeholder": "Select bundle...",
+    "integration_type_label": "Integration type",
+    "display_name_label": "Display name",
+    "active_label": "Active",
+    "select_status_placeholder": "Select status...",
+    "active_status": "Active",
+    "inactive_status": "Inactive",
+    "endpoint_label": "Endpoint",
+    "notes_label": "Notes",
+    "save_integration_btn": "Save integration",
+    "cancel_btn": "Cancel",
+    "items": {
+      "telegram": {
+        "name": "Telegram",
+        "desc": "Connect with Telegram for real-time communication."
+      },
+      "notion": {
+        "name": "Notion",
+        "desc": "Effortlessly sync Notion pages for seamless collaboration."
+      },
+      "figma": {
+        "name": "Figma",
+        "desc": "View and collaborate on Figma designs in one place."
+      },
+      "trello": {
+        "name": "Trello",
+        "desc": "Sync Trello cards for streamlined project management."
+      },
+      "slack": {
+        "name": "Slack",
+        "desc": "Integrate Slack for efficient team communication"
+      },
+      "zoom": {
+        "name": "Zoom",
+        "desc": "Host Zoom meetings directly from the dashboard."
+      },
+      "stripe": {
+        "name": "Stripe",
+        "desc": "Easily manage Stripe transactions and payments."
+      },
+      "gmail": {
+        "name": "Gmail",
+        "desc": "Access and manage Gmail messages effortlessly."
+      },
+      "medium": {
+        "name": "Medium",
+        "desc": "Explore and share Medium stories on your dashboard."
+      },
+      "skype": {
+        "name": "Skype",
+        "desc": "Connect with Skype contacts seamlessly."
+      },
+      "docker": {
+        "name": "Docker",
+        "desc": "Effortlessly manage Docker containers on your dashboard."
+      },
+      "github": {
+        "name": "GitHub",
+        "desc": "Streamline code management with GitHub integration."
+      },
+      "gitlab": {
+        "name": "GitLab",
+        "desc": "Efficiently manage code projects with GitLab integration."
+      },
+      "discord": {
+        "name": "Discord",
+        "desc": "Connect with Discord for seamless team communication."
+      },
+      "whatsapp": {
+        "name": "WhatsApp",
+        "desc": "Easily integrate WhatsApp for direct messaging."
+      }
+    }
+  },
+  "Chats": {
+    "inbox": "Inbox",
+    "new_chat": "New chat",
+    "search_chat_placeholder": "Search chat...",
+    "you_prefix": "You: ",
+    "send_first_message": "Send a message to start a chat.",
+    "back": "Back",
+    "video": "Video",
+    "phone": "Phone",
+    "more": "More",
+    "delete": "Delete",
+    "mark_read": "Mark read",
+    "type_message_placeholder": "Type your messages...",
+    "send": "Send",
+    "your_messages": "Your messages",
+    "new_message": "New message",
+    "to": "To:",
+    "search_people_placeholder": "Search people...",
+    "unknown_user": "Unknown",
+    "no_users_found": "No users found.",
+    "chat_btn": "Chat",
+    "send_message": "Send message",
+    "titles": {
+      "senior_backend": "Senior Backend Dev",
+      "tech_lead": "Tech Lead",
+      "qa": "QA",
+      "jr_developer": "Jr Developer",
+      "senior_designer": "Senior UI/UX Designer",
+      "product_designer": "Product Designer",
+      "ceo": "CEO"
+    }
+  },
+  "HelpCenter": {
+    "title": "Help Center",
+    "description": "Operational notes for the SSR admin dashboard.",
+    "open_dashboard": "Open dashboard",
+    "topics": {
+      "organizations": {
+        "title": "Organizations",
+        "body": "Every account owns one personal and one corporate organization. Switch from the sidebar."
+      },
+      "projects_and_bundles": {
+        "title": "Projects and bundles",
+        "body": "Create a project from the dashboard. The server action creates its bundle in the same transaction."
+      },
+      "tasks": {
+        "title": "Tasks",
+        "body": "Tasks are review queue records scoped to bundles owned by the active organization."
+      },
+      "apps": {
+        "title": "Apps",
+        "body": "Connected apps are bundle external integrations. Use active/inactive state to pause integrations."
+      }
+    }
+  },
+  "Settings": {
+    "title": "Settings",
+    "description": "Manage your account settings and set e-mail preferences.",
+    "nav": {
+      "profile": "Profile",
+      "account": "Account",
+      "appearance": "Appearance",
+      "notifications": "Notifications",
+      "display": "Display",
+      "select_tab": "Select tab..."
+    },
+    "profile": {
+      "title": "Profile",
+      "description": "This is how others will see you on the site.",
+      "username_label": "Username",
+      "username_placeholder": "Username",
+      "username_desc": "This is your public display name. It can be your real name or a pseudonym. You can only change this once every 30 days.",
+      "email_label": "Email",
+      "email_placeholder": "Select email",
+      "email_desc": "You can manage verified email addresses in your email settings.",
+      "bio_label": "Bio",
+      "bio_placeholder": "Tell us a little bit about yourself",
+      "bio_desc": "You can @mention other users and organizations to link to them.",
+      "urls_label": "URLs",
+      "urls_primary_placeholder": "https://example.com",
+      "urls_desc": "Add links to your website, blog, or social media profiles.",
+      "urls_secondary_placeholder": "http://twitter.com/example",
+      "update_profile_btn": "Update profile",
+      "success_msg": "Profile updated successfully",
+      "error_msg": "Failed to update profile",
+      "validation": {
+        "username_min": "Username/Full name must be at least 2 characters.",
+        "username_max": "Username/Full name must be at most 50 characters.",
+        "bio_max": "Bio must be at most 160 characters.",
+        "url_invalid": "Please enter a valid URL."
+      }
+    },
+    "account": {
+      "title": "Account",
+      "description": "Organization settings preserve one personal and one corporate workspace.",
+      "org_title": "{type} organization",
+      "org_desc": "{count} projects in this workspace.",
+      "org_personal": "personal",
+      "org_corporate": "corporate",
+      "org_form": {
+        "name_label": "Name",
+        "name_placeholder": "Organization Name",
+        "save_org_btn": "Save organization",
+        "success_msg": "Organization updated successfully",
+        "error_msg": "Failed to update organization",
+        "validation_min": "Organization name must be at least 2 characters.",
+        "validation_max": "Organization name must be at most 100 characters."
+      }
+    },
+    "appearance": {
+      "title": "Appearance",
+      "description": "Customize the appearance of the app. Automatically switch between day and night themes.",
+      "font_label": "Font",
+      "font_placeholder": "Select font...",
+      "font_desc": "Set the font you want to use in the dashboard.",
+      "theme_label": "Theme",
+      "theme_desc": "Select the theme for the dashboard.",
+      "theme_light": "Light",
+      "theme_dark": "Dark",
+      "update_preferences_btn": "Update preferences",
+      "success_msg": "Preferences updated successfully",
+      "error_msg": "Failed to update preferences"
+    },
+    "display": {
+      "title": "Display",
+      "description": "Density and layout are server preferences, not client state.",
+      "density_card_title": "Display density",
+      "density_card_desc": "Saved without localStorage or client hydration.",
+      "density_label": "Density",
+      "density_placeholder": "Select density...",
+      "density_comfortable": "Comfortable",
+      "density_compact": "Compact",
+      "density_spacious": "Spacious",
+      "save_display_btn": "Save display",
+      "success_msg": "Display settings updated successfully",
+      "error_msg": "Failed to update display settings"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Configure how you receive notifications.",
+      "notify_me_label": "Notify me about...",
+      "option_all": "All new messages",
+      "option_mentions": "Direct messages and mentions",
+      "option_none": "Nothing",
+      "email_notifications_title": "Email Notifications",
+      "comm_emails_label": "Communication emails",
+      "comm_emails_desc": "Receive emails about your account activity.",
+      "mkt_emails_label": "Marketing emails",
+      "mkt_emails_desc": "Receive emails about new products, features, and more.",
+      "social_emails_label": "Social emails",
+      "social_emails_desc": "Receive emails for friend requests, follows, and more.",
+      "security_emails_label": "Security emails",
+      "security_emails_desc": "Receive emails about your account activity and security.",
+      "mobile_label": "Use different settings for my mobile devices",
+      "mobile_desc": "You can manage your mobile notifications in the mobile settings page.",
+      "update_notifications_btn": "Update notifications",
+      "success_msg": "Notifications preferences updated successfully",
+      "error_msg": "Failed to update notification settings",
+      "recent_notifications_title": "Recent notifications",
+      "recent_notifications_desc": "Mark messages and system events as read.",
+      "no_notifications": "No notifications found.",
+      "status_read": "Read",
+      "status_unread": "Unread",
+      "mark_read_btn": "Mark read"
+    }
+  },
+  "Tasks": {
+    "title": "Tasks",
+    "description": "Here's a list of your tasks for this month!",
+    "import": "Import",
+    "add_task": "Add Task",
+    "filter_placeholder": "Filter by title or ID...",
+    "status": "Status",
+    "status_all": "Status (All)",
+    "status_backlog": "Backlog",
+    "status_todo": "Todo",
+    "status_in_progress": "In Progress",
+    "status_done": "Done",
+    "status_canceled": "Canceled",
+    "status_pending": "Pending",
+    "status_in_review": "In Review",
+    "priority": "Priority",
+    "priority_all": "Priority (All)",
+    "priority_low": "Low",
+    "priority_medium": "Medium",
+    "priority_high": "High",
+    "priority_critical": "Critical",
+    "reset": "Reset",
+    "table": {
+      "select_all": "Select all",
+      "select_row": "Select row",
+      "task": "Task",
+      "title": "Title",
+      "status": "Status",
+      "priority": "Priority",
+      "feature": "Feature",
+      "bug": "Bug",
+      "open_menu": "Open menu",
+      "edit": "Edit",
+      "remove": "Remove",
+      "no_results": "No results."
+    },
+    "form": {
+      "create_title": "Create review task",
+      "edit_title": "Edit review task",
+      "description": "Tasks are stored as bundle review queue records.",
+      "bundle": "Bundle",
+      "select_bundle_placeholder": "Select bundle...",
+      "status": "Status",
+      "select_status_placeholder": "Select status...",
+      "pending": "Pending",
+      "in_review": "In review",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "priority": "Priority",
+      "assign_to_me": "Assign to me",
+      "select_assign_placeholder": "Select...",
+      "no": "No",
+      "yes": "Yes",
+      "notes": "Notes",
+      "save_task": "Save task",
+      "create_task": "Create task",
+      "cancel": "Cancel"
+    }
+  },
+  "Users": {
+    "title": "User List",
+    "description": "Manage your users and their roles here.",
+    "invite_user_btn": "Invite User",
+    "add_user_btn": "Add User",
+    "filter_placeholder": "Filter users...",
+    "status": "Status",
+    "status_all": "Status (All)",
+    "status_active": "Active",
+    "status_invited": "Invited",
+    "status_inactive": "Inactive",
+    "status_suspended": "Suspended",
+    "role": "Role",
+    "role_all": "Role (All)",
+    "role_admin": "Admin",
+    "role_editor": "Editor",
+    "role_viewer": "Viewer",
+    "reset": "Reset",
+    "roles": {
+      "admin": "Admin",
+      "editor": "Editor",
+      "viewer": "Viewer"
+    },
+    "table": {
+      "select_all": "Select all",
+      "select_row": "Select row",
+      "username": "Username",
+      "name": "Name",
+      "email": "Email",
+      "status": "Status",
+      "role": "Role",
+      "bundle": "Bundle",
+      "active": "active",
+      "invited": "invited",
+      "open_menu": "Open menu",
+      "select_role_placeholder": "Select role...",
+      "role_viewer": "Viewer",
+      "role_editor": "Editor",
+      "role_admin": "Admin",
+      "save": "Save",
+      "remove": "Remove",
+      "no_results": "No collaborators found."
+    },
+    "invite_card": {
+      "title": "Invite User",
+      "description": "Invite requires an existing user email.",
+      "bundle": "Bundle",
+      "select_bundle_placeholder": "Select bundle...",
+      "user_email": "User email",
+      "email_placeholder": "person@example.com",
+      "role": "Role",
+      "select_role_placeholder": "Select role...",
+      "role_viewer": "Viewer",
+      "role_editor": "Editor",
+      "role_admin": "Admin",
+      "invite_btn": "Invite"
+    }
+  },
+  "Errors": {
+    "unauthorized": {
+      "code": "401",
+      "title": "Unauthorized Access",
+      "description": "Please log in with the appropriate credentials <br/> to access this resource."
+    },
+    "forbidden": {
+      "code": "403",
+      "title": "Access Forbidden",
+      "description": "You don't have necessary permission <br/> to view this resource."
+    },
+    "not-found": {
+      "code": "404",
+      "title": "Oops! Page Not Found!",
+      "description": "It seems like the page you're looking for <br/> does not exist or might have been removed."
+    },
+    "internal-server-error": {
+      "code": "500",
+      "title": "Oops! Something went wrong :')",
+      "description": "We apologize for the inconvenience. <br/> Please try again later."
+    },
+    "maintenance-error": {
+      "code": "503",
+      "title": "Website is under maintenance!",
+      "description": "The site is not available at the moment. <br/> We'll be back online shortly."
+    },
+    "actions": {
+      "learn_more": "Learn more",
+      "go_back": "Go Back",
+      "back_to_home": "Back to Home"
+    }
   }
 }

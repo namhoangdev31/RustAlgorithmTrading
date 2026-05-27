@@ -1,8 +1,9 @@
 "use client"
 
 import * as React from "react"
-import { useRouter } from "next/navigation"
+import { useRouter } from "@/i18n/navigation"
 import { Search } from "lucide-react"
+import { useTranslations } from "next-intl"
 import {
   Dialog,
   DialogContent,
@@ -27,6 +28,7 @@ interface NewChatDialogProps {
 
 export function NewChatDialog({ users }: NewChatDialogProps) {
   const router = useRouter()
+  const t = useTranslations("Chats")
   const [search, setSearch] = React.useState("")
   const [selectedUserId, setSelectedUserId] = React.useState<string | null>(null)
 
@@ -56,9 +58,9 @@ export function NewChatDialog({ users }: NewChatDialogProps) {
       <DialogContent className="sm:max-w-[460px] p-0 overflow-hidden gap-0 rounded-lg">
         <DialogHeader className="p-6 pb-2">
           <DialogTitle className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
-            New message
+            {t("new_message")}
           </DialogTitle>
-          <div className="text-sm font-semibold text-slate-600 mt-2">To:</div>
+          <div className="text-sm font-semibold text-slate-600 mt-2">{t("to")}</div>
         </DialogHeader>
 
         <div className="px-6 pb-4">
@@ -67,7 +69,7 @@ export function NewChatDialog({ users }: NewChatDialogProps) {
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search people..."
+              placeholder={t("search_people_placeholder")}
               className="pl-9 h-11 w-full bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 focus-visible:ring-1 focus-visible:ring-slate-300 dark:focus-visible:ring-slate-700"
             />
           </div>
@@ -78,7 +80,7 @@ export function NewChatDialog({ users }: NewChatDialogProps) {
             {filteredUsers.length > 0 ? (
               filteredUsers.map((user) => {
                 const isSelected = selectedUserId === user.id
-                const displayName = user.fullName ?? user.email ?? "Unknown"
+                const displayName = user.fullName ?? user.email ?? t("unknown_user")
                 const handle = user.email ? user.email.split("@")[0] : "unknown"
                 const initials = displayName
                   .trim()
@@ -119,7 +121,7 @@ export function NewChatDialog({ users }: NewChatDialogProps) {
               })
             ) : (
               <div className="text-center py-8 text-sm text-slate-500">
-                No users found.
+                {t("no_users_found")}
               </div>
             )}
           </div>
@@ -137,7 +139,7 @@ export function NewChatDialog({ users }: NewChatDialogProps) {
                 : "bg-slate-300 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed"
             )}
           >
-            Chat
+            {t("chat_btn")}
           </Button>
         </div>
       </DialogContent>

@@ -1,8 +1,7 @@
-"use client"
-
 import * as React from "react"
 import { useForm } from "@tanstack/react-form"
 import * as z from "zod"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { FormInputField, FormTextareaField } from "@/components/ui/tanstack-form"
 import { updateProfileAction } from "@/app/actions/admin"
@@ -10,21 +9,26 @@ import { toast } from "sonner"
 import { Loader2 } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
-const profileFormSchema = z.object({
-  fullName: z.string().min(2, "Username/Full name must be at least 2 characters.").max(50, "Username/Full name must be at most 50 characters."),
-  bio: z.string().max(160, "Bio must be at most 160 characters.").optional(),
-  urlPrimary: z.string().url("Please enter a valid URL.").or(z.literal("")).optional(),
-  urlSecondary: z.string().url("Please enter a valid URL.").or(z.literal("")).optional(),
-})
-
-type ProfileFormValues = z.infer<typeof profileFormSchema>
-
 interface ProfileFormProps {
   user: any;
 }
 
 export function ProfileForm({ user }: ProfileFormProps) {
   const [isSubmitting, setIsSubmitting] = React.useState(false)
+  const t = useTranslations("Settings")
+
+  const profileFormSchema = React.useMemo(() => {
+    return z.object({
+      fullName: z.string()
+        .min(2, t("profile.validation.username_min"))
+        .max(50, t("profile.validation.username_max")),
+      bio: z.string().max(160, t("profile.validation.bio_max")).optional(),
+      urlPrimary: z.string().url(t("profile.validation.url_invalid")).or(z.literal("")).optional(),
+      urlSecondary: z.string().url(t("profile.validation.url_invalid")).or(z.literal("")).optional(),
+    })
+  }, [t])
+
+  type ProfileFormValues = z.infer<typeof profileFormSchema>
 
   if (!user) {
     return null;
@@ -55,9 +59,9 @@ export function ProfileForm({ user }: ProfileFormProps) {
         formData.append("returnTo", "/dashboard/settings")
 
         await updateProfileAction(formData)
-        toast.success("Profile updated successfully")
+        toast.success(t("profile.success_msg"))
       } catch (error) {
-        toast.error("Failed to update profile")
+        toast.error(t("profile.error_msg"))
       } finally {
         setIsSubmitting(false)
       }
@@ -78,15 +82,15 @@ export function ProfileForm({ user }: ProfileFormProps) {
         children={(field) => (
           <FormInputField
             field={field}
-            label="Username"
-            placeholder="Username"
-            description="This is your public display name. It can be your real name or a pseudonym. You can only change this once every 30 days."
+            label={t("profile.username_label")}
+            placeholder={t("profile.username_placeholder")}
+            description={t("profile.username_desc")}
           />
         )}
       />
 
       <div className="flex flex-col gap-2">
-        <span className="text-sm font-medium">Email</span>
+        <span className="text-sm font-medium">{t("profile.email_label")}</span>
         <Select
           defaultValue={user.email || "m@example.com"}
           disabled
@@ -101,7 +105,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
           </SelectContent>
         </Select>
         <span className="text-sm text-muted-foreground">
-          You can manage verified email addresses in your email settings.
+          {t("profile.email_desc")}
         </span>
       </div>
 
@@ -110,10 +114,10 @@ export function ProfileForm({ user }: ProfileFormProps) {
         children={(field) => (
           <FormTextareaField
             field={field}
-            label="Bio"
+            label={t("profile.bio_label")}
             className="resize-none"
-            placeholder="Tell us a little bit about yourself"
-            description="You can @mention other users and organizations to link to them."
+            placeholder={t("profile.bio_placeholder")}
+            description={t("profile.bio_desc")}
           />
         )}
       />
@@ -124,9 +128,9 @@ export function ProfileForm({ user }: ProfileFormProps) {
           children={(field) => (
             <FormInputField
               field={field}
-              label="URLs"
-              placeholder="https://example.com"
-              description="Add links to your website, blog, or social media profiles."
+              label={t("profile.urls_label")}
+              placeholder={t("profile.urls_primary_placeholder")}
+              description={t("profile.urls_desc")}
             />
           )}
         />
@@ -136,7 +140,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
           children={(field) => (
             <FormInputField
               field={field}
-              placeholder="http://twitter.com/example"
+              placeholder={t("profile.urls_secondary_placeholder")}
             />
           )}
         />
@@ -144,8 +148,9 @@ export function ProfileForm({ user }: ProfileFormProps) {
 
       <Button className="w-fit" type="submit" disabled={isSubmitting}>
         {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        Update profile
+        {t("profile.update_profile_btn")}
       </Button>
     </form>
   )
 }
+

@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { getTranslations } from "next-intl/server";
 import { PageHeader } from "@/components/dashboard/page-header";
 import {
   Card,
@@ -26,18 +27,20 @@ export default async function DisplaySettingsPage() {
     } catch (_) {}
   }
 
+  const t = await getTranslations("Settings");
+
   return (
     <>
       <PageHeader
-        description="Density and layout are server preferences, not client state."
-        title="Display"
+        description={t("display.description")}
+        title={t("display.title")}
       />
       <div className="grid gap-4 xl:grid-cols-[0.3fr_1fr]">
         {/* <SettingsNav /> */}
         <Card>
           <CardHeader>
-            <CardTitle>Display density</CardTitle>
-            <CardDescription>Saved without localStorage or client hydration.</CardDescription>
+            <CardTitle>{t("display.density_card_title")}</CardTitle>
+            <CardDescription>{t("display.density_card_desc")}</CardDescription>
           </CardHeader>
           <CardContent>
             <DisplayForm initialDensity={initialDensity} initialTheme={initialTheme} />
@@ -47,4 +50,5 @@ export default async function DisplaySettingsPage() {
     </>
   );
 }
+
 

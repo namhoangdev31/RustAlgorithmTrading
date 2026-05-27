@@ -6,36 +6,30 @@ import {
   Bell,
   ChevronsUpDown,
   Command,
-  Construction,
-  CreditCard,
-  FileX,
   GalleryVerticalEnd,
   HelpCircle,
   LayoutDashboard,
   ListTodo,
-  Lock,
   LogOut,
   MessagesSquare,
   Monitor,
   Package,
   Palette,
-  ServerOff,
   Settings,
-  ShieldCheck,
   Sparkles,
   UserCog,
   Users,
-  UserX,
   Wrench,
-  Bug,
+  CreditCard,
   Plus,
   type LucideIcon,
 } from "lucide-react";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 import { logoutAction } from "@/app/actions/auth";
 import { switchOrganizationAction } from "@/app/actions/admin";
+import { Link } from "@/i18n/navigation";
 import {
   Collapsible,
   CollapsibleContent,
@@ -106,85 +100,6 @@ type NavGroup = {
   items: NavItem[];
 };
 
-const navGroups: NavGroup[] = [
-  {
-    title: "General",
-    items: [
-      { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
-      { title: "Tasks", url: "/dashboard/tasks", icon: ListTodo },
-      { title: "Apps", url: "/dashboard/apps", icon: Package },
-      { title: "Chats", url: "/dashboard/chats", badge: "3", icon: MessagesSquare },
-      { title: "Users", url: "/dashboard/users", icon: Users },
-      // {
-      //   title: "Secured by Firebase",
-      //   url: "/dashboard/settings/account",
-      //   icon: ShieldCheck,
-      // },
-    ],
-  },
-  // {
-  //   title: "Pages",
-  //   items: [
-  //     {
-  //       title: "Errors",
-  //       icon: Bug,
-  //       items: [
-  //         {
-  //           title: "Unauthorized",
-  //           url: "/dashboard/errors/unauthorized",
-  //           icon: Lock,
-  //         },
-  //         {
-  //           title: "Forbidden",
-  //           url: "/dashboard/errors/forbidden",
-  //           icon: UserX,
-  //         },
-  //         {
-  //           title: "Not Found",
-  //           url: "/dashboard/errors/not-found",
-  //           icon: FileX,
-  //         },
-  //         {
-  //           title: "Internal Server Error",
-  //           url: "/dashboard/errors/internal-server-error",
-  //           icon: ServerOff,
-  //         },
-  //         {
-  //           title: "Maintenance Error",
-  //           url: "/dashboard/errors/maintenance-error",
-  //           icon: Construction,
-  //         },
-  //       ],
-  //     },
-  //   ],
-  // },
-  {
-    title: "Other",
-    items: [
-      {
-        title: "Settings",
-        icon: Settings,
-        items: [
-          { title: "Profile", url: "/dashboard/settings", icon: UserCog },
-          { title: "Account", url: "/dashboard/settings/account", icon: Wrench },
-          {
-            title: "Appearance",
-            url: "/dashboard/settings/appearance",
-            icon: Palette,
-          },
-          {
-            title: "Notifications",
-            url: "/dashboard/settings/notifications",
-            icon: Bell,
-          },
-          { title: "Display", url: "/dashboard/settings/display", icon: Monitor },
-        ],
-      },
-      { title: "Help Center", url: "/dashboard/help-center", icon: HelpCircle },
-    ],
-  },
-];
-
 export function AppSidebar({
   user,
   organizations,
@@ -192,6 +107,38 @@ export function AppSidebar({
   collapsible = "icon",
   variant = "sidebar",
 }: AppSidebarProps) {
+  const t = useTranslations("Dashboard.shell");
+
+  const navGroups: NavGroup[] = [
+    {
+      title: t("nav.general"),
+      items: [
+        { title: t("nav.dashboard"), url: "/dashboard", icon: LayoutDashboard },
+        { title: t("nav.tasks"), url: "/dashboard/tasks", icon: ListTodo },
+        { title: t("nav.apps"), url: "/dashboard/apps", icon: Package },
+        { title: t("nav.chats"), url: "/dashboard/chats", badge: "3", icon: MessagesSquare },
+        { title: t("nav.users"), url: "/dashboard/users", icon: Users },
+      ],
+    },
+    {
+      title: t("nav.other"),
+      items: [
+        {
+          title: t("nav.settings"),
+          icon: Settings,
+          items: [
+            { title: t("nav.profile"), url: "/dashboard/settings", icon: UserCog },
+            { title: t("nav.account"), url: "/dashboard/settings/account", icon: Wrench },
+            { title: t("nav.appearance"), url: "/dashboard/settings/appearance", icon: Palette },
+            { title: t("nav.notifications"), url: "/dashboard/settings/notifications", icon: Bell },
+            { title: t("nav.display"), url: "/dashboard/settings/display", icon: Monitor },
+          ],
+        },
+        { title: t("nav.help_center"), url: "/dashboard/help-center", icon: HelpCircle },
+      ],
+    },
+  ];
+
   return (
     <Sidebar collapsible={collapsible} variant={variant}>
       <SidebarHeader>
@@ -218,6 +165,7 @@ function TeamSwitcher({
   activeOrganizationId,
 }: Pick<AppSidebarProps, "organizations" | "activeOrganizationId">) {
   const { isMobile } = useSidebar();
+  const t = useTranslations("Dashboard.shell");
   const teamIcons = [Command, GalleryVerticalEnd, AudioWaveform];
   const activeOrganization =
     organizations.find((organization) => organization.id === activeOrganizationId) ??
@@ -246,10 +194,10 @@ function TeamSwitcher({
               </div>
               <div className="grid flex-1 text-start text-sm leading-tight">
                 <span className="truncate font-semibold">
-                  {activeOrganization?.name ?? "Shadcn Admin"}
+                  {activeOrganization?.name ?? t("brand_name")}
                 </span>
                 <span className="truncate text-xs">
-                  {activeOrganization?.type ?? "Next + ShadcnUI"}
+                  {activeOrganization?.type ?? t("brand_subtitle")}
                 </span>
               </div>
               <ChevronsUpDown className="ms-auto" />
@@ -262,7 +210,7 @@ function TeamSwitcher({
             sideOffset={4}
           >
             <DropdownMenuLabel className="text-xs text-muted-foreground">
-              Teams
+              {t("teams.label")}
             </DropdownMenuLabel>
             <DropdownMenuGroup>
               {organizations.map((organization, index) => (
@@ -293,7 +241,7 @@ function TeamSwitcher({
               <div className="flex size-6 items-center justify-center rounded-md border bg-background">
                 <Plus data-icon="inline-start" />
               </div>
-              <div className="font-medium text-muted-foreground">Add team</div>
+              <div className="font-medium text-muted-foreground">{t("teams.add_team")}</div>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -386,6 +334,7 @@ function NavGroup({
 
 function NavUser({ user }: Pick<AppSidebarProps, "user">) {
   const { isMobile } = useSidebar();
+  const t = useTranslations("Dashboard.shell");
   const displayName = user.fullName ?? user.email ?? "satnaing";
   const initials = displayName.slice(0, 2).toUpperCase();
 
@@ -429,7 +378,7 @@ function NavUser({ user }: Pick<AppSidebarProps, "user">) {
             <DropdownMenuGroup>
               <DropdownMenuItem>
                 <Sparkles data-icon="inline-start" />
-                Upgrade to Pro
+                {t("user_menu.upgrade")}
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
@@ -437,19 +386,19 @@ function NavUser({ user }: Pick<AppSidebarProps, "user">) {
               <DropdownMenuItem asChild>
                 <Link href="/dashboard/settings/account">
                   <BadgeCheck data-icon="inline-start" />
-                  Account
+                  {t("user_menu.account")}
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href="/dashboard/settings">
                   <CreditCard data-icon="inline-start" />
-                  Billing
+                  {t("user_menu.billing")}
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href="/dashboard/settings/notifications">
                   <Bell data-icon="inline-start" />
-                  Notifications
+                  {t("user_menu.notifications")}
                 </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
@@ -458,7 +407,7 @@ function NavUser({ user }: Pick<AppSidebarProps, "user">) {
               <form action={logoutAction}>
                 <button className="flex w-full items-center gap-2 text-destructive" type="submit">
                   <LogOut data-icon="inline-start" />
-                  Sign out
+                  {t("user_menu.sign_out")}
                   <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
                 </button>
               </form>

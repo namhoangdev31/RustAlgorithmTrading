@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {
   Bell,
   HelpCircle,
@@ -9,9 +8,11 @@ import {
   Settings,
   Users,
 } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
 import { logoutAction } from "@/app/actions/auth";
 import { switchOrganizationAction } from "@/app/actions/admin";
+import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -27,28 +28,29 @@ type AdminShellProps = {
   children: React.ReactNode;
 };
 
-const navGroups = [
-  {
-    title: "General",
-    items: [
-      { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-      { title: "Tasks", href: "/dashboard/tasks", icon: ListTodo },
-      { title: "Apps", href: "/dashboard/apps", icon: Package },
-      { title: "Chats", href: "/dashboard/chats", icon: MessagesSquare },
-      { title: "Users", href: "/dashboard/users", icon: Users },
-    ],
-  },
-  {
-    title: "Other",
-    items: [
-      { title: "Settings", href: "/dashboard/settings", icon: Settings },
-      { title: "Help Center", href: "/dashboard/help-center", icon: HelpCircle },
-    ],
-  },
-];
+export async function AdminShell({ user, workspace, children }: AdminShellProps) {
+  const t = await getTranslations("Dashboard.shell");
+  const displayName = user.fullName || user.email || t("default_user");
 
-export function AdminShell({ user, workspace, children }: AdminShellProps) {
-  const displayName = user.fullName || user.email || "Dashboard user";
+  const navGroups = [
+    {
+      title: t("nav.general"),
+      items: [
+        { title: t("nav.dashboard"), href: "/dashboard", icon: LayoutDashboard },
+        { title: t("nav.tasks"), href: "/dashboard/tasks", icon: ListTodo },
+        { title: t("nav.apps"), href: "/dashboard/apps", icon: Package },
+        { title: t("nav.chats"), href: "/dashboard/chats", icon: MessagesSquare },
+        { title: t("nav.users"), href: "/dashboard/users", icon: Users },
+      ],
+    },
+    {
+      title: t("nav.other"),
+      items: [
+        { title: t("nav.settings"), href: "/dashboard/settings", icon: Settings },
+        { title: t("nav.help_center"), href: "/dashboard/help-center", icon: HelpCircle },
+      ],
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-muted/30 text-foreground">
@@ -58,8 +60,8 @@ export function AdminShell({ user, workspace, children }: AdminShellProps) {
             <LayoutDashboard data-icon="inline-start" />
           </div>
           <div className="min-w-0">
-            <p className="truncate font-semibold">Shadcn Admin</p>
-            <p className="truncate text-xs text-muted-foreground">SSR workspace</p>
+            <p className="truncate font-semibold">{t("brand_name")}</p>
+            <p className="truncate text-xs text-muted-foreground">{t("brand_subtitle")}</p>
           </div>
         </div>
 
@@ -68,10 +70,10 @@ export function AdminShell({ user, workspace, children }: AdminShellProps) {
             <summary className="flex cursor-pointer list-none items-center justify-between rounded-md border bg-card px-3 py-2 text-sm">
               <span className="min-w-0">
                 <span className="block truncate font-medium">
-                  {workspace.activeOrganization?.name ?? "No organization"}
+                  {workspace.activeOrganization?.name ?? t("no_organization")}
                 </span>
                 <span className="block truncate text-xs text-muted-foreground">
-                  {workspace.activeOrganization?.type ?? "workspace"}
+                  {workspace.activeOrganization?.type ?? t("workspace")}
                 </span>
               </span>
               <Badge variant="outline">{workspace.organizations.length}</Badge>
@@ -145,7 +147,7 @@ export function AdminShell({ user, workspace, children }: AdminShellProps) {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">
-                  {workspace.activeOrganization?.name ?? "Dashboard"}
+                  {workspace.activeOrganization?.name ?? t("brand_name")}
                 </p>
                 <h1 className="text-lg font-semibold">{displayName}</h1>
               </div>
@@ -154,21 +156,21 @@ export function AdminShell({ user, workspace, children }: AdminShellProps) {
             <div className="flex flex-wrap items-center gap-2">
               <form action="/dashboard" className="flex min-w-56 flex-1 gap-2" method="get">
                 <input
-                  aria-label="Search dashboard"
+                  aria-label={t("search_aria")}
                   className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
                   name="q"
-                  placeholder="Search projects..."
+                  placeholder={t("search_placeholder")}
                   type="search"
                 />
-                <Button type="submit" variant="outline">Search</Button>
+                <Button type="submit" variant="outline">{t("search_btn")}</Button>
               </form>
               <Button asChild size="icon" variant="ghost">
-                <Link href="/dashboard/settings/notifications" aria-label="Notifications">
+                <Link href="/dashboard/settings/notifications" aria-label={t("notifications_aria")}>
                   <Bell data-icon="inline-start" />
                 </Link>
               </Button>
               <form action={logoutAction}>
-                <Button type="submit" variant="outline">Sign out</Button>
+                <Button type="submit" variant="outline">{t("sign_out")}</Button>
               </form>
             </div>
           </div>
@@ -190,4 +192,3 @@ export function AdminShell({ user, workspace, children }: AdminShellProps) {
     </div>
   );
 }
-

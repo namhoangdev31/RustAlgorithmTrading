@@ -29,6 +29,8 @@ import { Button } from "../ui/button";
 import { Link, usePathname } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { ProfileDropdown } from "@/components/dashboard/profile-dropdown";
+import { auth } from "@/firebase/firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
 interface NavbarProps {
   user?: {
@@ -54,6 +56,49 @@ export const Navbar = ({ user }: NavbarProps) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const t = useTranslations("Navbar");
   const pathname = usePathname();
+
+  const [currentUser, setCurrentUser] = React.useState<NavbarProps["user"]>(user);
+
+  React.useEffect(() => {
+    setCurrentUser(user);
+  }, [user]);
+
+  React.useEffect(() => {
+    if (!currentUser) {
+      fetch("/api/auth/session")
+        .then((res) => res.json())
+        .then((session) => {
+          if (session?.user) {
+            setCurrentUser({
+              email: session.user.email ?? null,
+              fullName: session.user.name ?? null,
+              provider: session.user.provider ?? "credentials",
+            });
+          }
+        })
+        .catch((err) => console.error("Error fetching session:", err));
+    }
+  }, [currentUser]);
+
+  React.useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        setCurrentUser((prev) => {
+          if (prev) return prev;
+          return {
+            email: firebaseUser.email,
+            fullName: firebaseUser.displayName || firebaseUser.email,
+            provider: firebaseUser.providerData[0]?.providerId || "firebase",
+          };
+        });
+      } else {
+        if (!user) {
+          setCurrentUser(null);
+        }
+      }
+    });
+    return () => unsubscribe();
+  }, [user]);
 
   const routeList: RouteProps[] = [
     {
@@ -119,7 +164,18 @@ export const Navbar = ({ user }: NavbarProps) => {
       </Link>
       {/* <!-- Mobile --> */}
       <div className="flex items-center lg:hidden gap-4">
-        {user && <ProfileDropdown user={user} />}
+        {currentUser ? (
+          <ProfileDropdown user={currentUser} />
+        ) : (
+          <Button asChild size="sm" variant="ghost" aria-label="Login to Platform">
+            <Link
+              aria-label="Login to Platform"
+              href="/login"
+            >
+              <LogIn className="h-4 w-4" />
+            </Link>
+          </Button>
+        )}
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild>
             <Menu
@@ -219,8 +275,8 @@ export const Navbar = ({ user }: NavbarProps) => {
       </NavigationMenu>
 
       <div className="hidden lg:flex">
-        {user ? (
-          <ProfileDropdown user={user} />
+        {currentUser ? (
+          <ProfileDropdown user={currentUser} />
         ) : (
           <Button asChild size="sm" variant="ghost" aria-label="Login to Platform">
             <Link

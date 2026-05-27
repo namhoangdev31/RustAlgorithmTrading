@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { FormRadioGroupField, FormSwitchField, FormCheckboxField } from "@/components/ui/tanstack-form"
 import { toast } from "sonner"
 import { Loader2 } from "lucide-react"
+import { useTranslations } from "next-intl"
 
 const notificationsFormSchema = z.object({
   type: z.enum(["all", "mentions", "none"]),
@@ -21,6 +22,7 @@ type NotificationsFormValues = z.infer<typeof notificationsFormSchema>
 
 export function NotificationsForm() {
   const [isSubmitting, setIsSubmitting] = React.useState(false)
+  const t = useTranslations("Settings")
 
   const form = useForm({
     defaultValues: {
@@ -38,9 +40,9 @@ export function NotificationsForm() {
       setIsSubmitting(true)
       try {
         await new Promise((resolve) => setTimeout(resolve, 500))
-        toast.success("Notifications preferences updated successfully")
+        toast.success(t("notifications.success_msg"))
       } catch (error) {
-        toast.error("Failed to update notification settings")
+        toast.error(t("notifications.error_msg"))
       } finally {
         setIsSubmitting(false)
       }
@@ -61,26 +63,26 @@ export function NotificationsForm() {
         children={(field) => (
           <FormRadioGroupField
             field={field}
-            label="Notify me about..."
+            label={t("notifications.notify_me_label")}
             options={[
-              { label: "All new messages", value: "all" },
-              { label: "Direct messages and mentions", value: "mentions" },
-              { label: "Nothing", value: "none" },
+              { label: t("notifications.option_all"), value: "all" },
+              { label: t("notifications.option_mentions"), value: "mentions" },
+              { label: t("notifications.option_none"), value: "none" },
             ]}
           />
         )}
       />
 
       <div className="relative">
-        <h3 className="mb-4 text-lg font-medium">Email Notifications</h3>
+        <h3 className="mb-4 text-lg font-medium">{t("notifications.email_notifications_title")}</h3>
         <div className="flex flex-col gap-4">
           <form.Field
             name="communication_emails"
             children={(field) => (
               <FormSwitchField
                 field={field}
-                label="Communication emails"
-                description="Receive emails about your account activity."
+                label={t("notifications.comm_emails_label")}
+                description={t("notifications.comm_emails_desc")}
               />
             )}
           />
@@ -90,8 +92,8 @@ export function NotificationsForm() {
             children={(field) => (
               <FormSwitchField
                 field={field}
-                label="Marketing emails"
-                description="Receive emails about new products, features, and more."
+                label={t("notifications.mkt_emails_label")}
+                description={t("notifications.mkt_emails_desc")}
               />
             )}
           />
@@ -101,8 +103,8 @@ export function NotificationsForm() {
             children={(field) => (
               <FormSwitchField
                 field={field}
-                label="Social emails"
-                description="Receive emails for friend requests, follows, and more."
+                label={t("notifications.social_emails_label")}
+                description={t("notifications.social_emails_desc")}
               />
             )}
           />
@@ -112,8 +114,8 @@ export function NotificationsForm() {
             children={(field) => (
               <FormSwitchField
                 field={field}
-                label="Security emails"
-                description="Receive emails about your account activity and security."
+                label={t("notifications.security_emails_label")}
+                description={t("notifications.security_emails_desc")}
                 disabled
               />
             )}
@@ -126,16 +128,17 @@ export function NotificationsForm() {
         children={(field) => (
           <FormCheckboxField
             field={field}
-            label="Use different settings for my mobile devices"
-            description="You can manage your mobile notifications in the mobile settings page."
+            label={t("notifications.mobile_label")}
+            description={t("notifications.mobile_desc")}
           />
         )}
       />
 
       <Button className="w-fit" type="submit" disabled={isSubmitting}>
         {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        Update notifications
+        {t("notifications.update_notifications_btn")}
       </Button>
     </form>
   )
 }
+

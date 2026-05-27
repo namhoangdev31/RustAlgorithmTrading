@@ -281,5 +281,607 @@
     "github": "GitHub",
     "contact_us": "Liên hệ",
     "status_page": "Trang Trạng thái"
+  },
+  "Login": {
+    "title": "Đăng Nhập Ngay",
+    "description": "Nhập thông tin đăng nhập để truy cập tài khoản của bạn",
+    "email": "Email",
+    "password": "Mật khẩu",
+    "sign_in": "Đăng nhập",
+    "quick_login": "ĐĂNG NHẬP NHANH",
+    "account_help": "TRỢ GIÚP TÀI KHOẢN",
+    "send_reset_email": "Gửi email khôi phục",
+    "no_account": "Chưa có tài khoản?",
+    "sign_up": "Đăng ký",
+    "reset_email_placeholder": "email@example.com",
+    "email_placeholder": "lowishxx@example.com"
+  },
+  "Register": {
+    "title": "Tạo tài khoản",
+    "description": "Nhập thông tin chi tiết của bạn để đăng ký",
+    "name": "Họ và tên",
+    "name_placeholder": "Prince Tan",
+    "email": "Email",
+    "email_placeholder": "lowishxx@example.com",
+    "password": "Mật khẩu",
+    "create_account": "Tạo tài khoản",
+    "quick_sign_up": "ĐĂNG KÝ NHANH",
+    "back": "Quay lại"
+  },
+  "ResetPassword": {
+    "title": "Đặt lại mật khẩu",
+    "description": "Nhập mật khẩu mới cho tài khoản Firebase của bạn",
+    "new_password": "Mật khẩu mới",
+    "confirm_password": "Xác nhận mật khẩu",
+    "update_password": "Cập nhật mật khẩu",
+    "back_to_login": "Quay lại Đăng nhập"
+  },
+  "Dashboard": {
+    "title": "Bảng điều khiển",
+    "download": "Tải xuống",
+    "tabs": {
+      "overview": "Tổng quan",
+      "analytics": "Phân tích",
+      "reports": "Báo cáo",
+      "notifications": "Thông báo"
+    },
+    "metrics": {
+      "total_revenue": "Doanh thu",
+      "subscriptions": "Đăng ký mới",
+      "sales": "Doanh số",
+      "active_now": "Đang hoạt động",
+      "total_clicks": "Tổng lượt click",
+      "unique_visitors": "Khách truy cập",
+      "bounce_rate": "Tỷ lệ thoát",
+      "avg_session": "Thời lượng phiên",
+      "vs_last_month": "{value} so với tháng trước",
+      "vs_last_week": "{value} so với tuần trước",
+      "since_last_hour": "{value} từ giờ trước"
+    },
+    "overview_chart": "Tổng quan",
+    "recent_sales": {
+      "title": "Giao dịch Gần đây",
+      "description": "Bạn đã thực hiện {count} giao dịch trong tháng này."
+    },
+    "projects_and_bundles": {
+      "title": "Dự án và gói ứng dụng",
+      "description": "Mỗi dự án được duy trì với đúng một bản nháp hoặc gói ứng dụng đã xuất bản.",
+      "new_project": "Dự án mới",
+      "search_placeholder": "Tìm kiếm dự án hoặc gói",
+      "filter": "Lọc",
+      "no_description": "Không có mô tả",
+      "missing_bundle": "Thiếu gói ứng dụng",
+      "no_projects": "Không tìm thấy dự án nào."
+    },
+    "table": {
+      "project": "Dự án",
+      "bundle": "Gói ứng dụng",
+      "status": "Trạng thái",
+      "updated": "Cập nhật",
+      "actions": "Hành động",
+      "edit": "Sửa",
+      "delete": "Xóa"
+    },
+    "form": {
+      "create_title": "Tạo dự án",
+      "edit_title": "Chỉnh sửa dự án",
+      "description": "Dự án và gói ứng dụng được ghi đồng thời trong một hành động.",
+      "project_name": "Tên dự án",
+      "organization": "Tổ chức",
+      "select_organization": "Chọn tổ chức...",
+      "bundle_name": "Tên gói ứng dụng",
+      "status": "Trạng thái",
+      "select_status": "Chọn trạng thái...",
+      "category": "Danh mục",
+      "project_description": "Mô tả dự án",
+      "bundle_summary": "Tóm tắt gói ứng dụng",
+      "save_changes": "Lưu thay đổi",
+      "create_project": "Tạo dự án",
+      "cancel": "Hủy",
+      "status_options": {
+        "draft": "Bản nháp",
+        "review": "Chờ duyệt",
+        "published": "Đã xuất bản",
+        "archived": "Lưu trữ"
+      }
+    },
+    "delete_dialog": {
+      "title": "Xóa {name}",
+      "description": "Hành động này sử dụng mối quan hệ xóa theo tầng (cascade) từ dự án đến gói ứng dụng.",
+      "delete_project": "Xóa dự án",
+      "cancel": "Hủy"
+    },
+    "analytics": {
+      "traffic_overview": "Tổng quan lưu lượng",
+      "traffic_description": "Lượt click và khách truy cập độc duy hàng tuần",
+      "referrers": "Nguồn giới thiệu",
+      "referrers_desc": "Các nguồn hàng đầu dẫn lưu lượng truy cập",
+      "devices": "Thiết bị",
+      "devices_desc": "Cách người dùng truy cập ứng dụng của bạn",
+      "sources": {
+        "Direct": "Trực tiếp",
+        "Product Hunt": "Product Hunt",
+        "Twitter": "Twitter",
+        "Blog": "Blog"
+      },
+      "device_types": {
+        "Desktop": "Máy tính",
+        "Mobile": "Điện thoại",
+        "Tablet": "Máy tính bảng"
+      }
+    },
+    "shell": {
+      "brand_name": "Lepos Admin",
+      "brand_subtitle": "Không gian làm việc SSR",
+      "no_organization": "Chưa có tổ chức",
+      "workspace": "không gian làm việc",
+      "default_user": "Người dùng",
+      "search_placeholder": "Tìm kiếm dự án...",
+      "search_aria": "Tìm kiếm bảng điều khiển",
+      "search_btn": "Tìm kiếm",
+      "notifications_aria": "Thông báo",
+      "sign_out": "Đăng xuất",
+      "nav": {
+        "general": "Tổng quan",
+        "other": "Khác",
+        "dashboard": "Bảng điều khiển",
+        "tasks": "Nhiệm vụ",
+        "apps": "Ứng dụng",
+        "chats": "Trò chuyện",
+        "users": "Người dùng",
+        "settings": "Cài đặt",
+        "help_center": "Trung tâm trợ giúp",
+        "profile": "Hồ sơ",
+        "account": "Tài khoản",
+        "appearance": "Giao diện",
+        "notifications": "Thông báo",
+        "display": "Hiển thị"
+      },
+      "header": {
+        "overview": "Tổng quan",
+        "customers": "Khách hàng",
+        "products": "Sản phẩm",
+        "settings": "Cài đặt"
+      },
+      "teams": {
+        "label": "Nhóm",
+        "add_team": "Thêm nhóm"
+      },
+      "user_menu": {
+        "open": "Mở menu người dùng",
+        "upgrade": "Nâng cấp Pro",
+        "account": "Tài khoản",
+        "billing": "Thanh toán",
+        "notifications": "Thông báo",
+        "profile": "Hồ sơ",
+        "new_team": "Nhóm mới",
+        "sign_out": "Đăng xuất"
+      },
+      "search": {
+        "button": "Tìm kiếm",
+        "placeholder": "Nhập lệnh hoặc từ khóa...",
+        "no_results": "Không tìm thấy kết quả.",
+        "general": "Tổng quan",
+        "pages": "Trang",
+        "other": "Khác",
+        "theme": "Giao diện",
+        "auth": "Xác thực",
+        "sign_in": "Đăng nhập",
+        "errors": "Lỗi",
+        "not_found": "Không tìm thấy",
+        "light": "Sáng",
+        "dark": "Tối",
+        "system": "Hệ thống",
+        "quick_filters": "Bộ lọc nhanh",
+        "pending_tasks": "Nhiệm vụ chờ xử lý",
+        "active_integrations": "Tích hợp đang hoạt động"
+      }
+    }
+  },
+  "Apps": {
+    "title": "Tích hợp ứng dụng",
+    "description": "Dưới đây là danh sách các ứng dụng để tích hợp của bạn!",
+    "filter_placeholder": "Lọc ứng dụng...",
+    "all_apps": "Tất cả ứng dụng",
+    "connected": "Đã kết nối",
+    "not_connected": "Chưa kết nối",
+    "filter_btn": "Lọc",
+    "descending": "Giảm dần",
+    "ascending": "Tăng dần",
+    "connect_btn": "Kết nối",
+    "edit_btn": "Sửa",
+    "remove_btn": "Gỡ bỏ",
+    "connect_app_title": "Kết nối ứng dụng",
+    "edit_integration_title": "Chỉnh sửa tích hợp",
+    "form_description": "Được lưu trữ dưới dạng cấu hình JSON BundleExternalIntegrations.",
+    "bundle_label": "Gói ứng dụng",
+    "select_bundle_placeholder": "Chọn gói...",
+    "integration_type_label": "Loại tích hợp",
+    "display_name_label": "Tên hiển thị",
+    "active_label": "Kích hoạt",
+    "select_status_placeholder": "Chọn trạng thái...",
+    "active_status": "Hoạt động",
+    "inactive_status": "Không hoạt động",
+    "endpoint_label": "Endpoint (Điểm cuối)",
+    "notes_label": "Ghi chú",
+    "save_integration_btn": "Lưu tích hợp",
+    "cancel_btn": "Hủy",
+    "items": {
+      "telegram": {
+        "name": "Telegram",
+        "desc": "Kết nối với Telegram để liên lạc trong thời gian thực."
+      },
+      "notion": {
+        "name": "Notion",
+        "desc": "Đồng bộ hóa các trang Notion dễ dàng để cộng tác liền mạch."
+      },
+      "figma": {
+        "name": "Figma",
+        "desc": "Xem và cộng tác trên các thiết kế Figma tại một nơi."
+      },
+      "trello": {
+        "name": "Trello",
+        "desc": "Đồng bộ hóa thẻ Trello để quản lý dự án hợp lý."
+      },
+      "slack": {
+        "name": "Slack",
+        "desc": "Tích hợp Slack để giao tiếp nhóm hiệu quả"
+      },
+      "zoom": {
+        "name": "Zoom",
+        "desc": "Tổ chức các cuộc họp Zoom trực tiếp từ bảng điều khiển."
+      },
+      "stripe": {
+        "name": "Stripe",
+        "desc": "Dễ dàng quản lý các giao dịch và thanh toán qua Stripe."
+      },
+      "gmail": {
+        "name": "Gmail",
+        "desc": "Truy cập và quản lý thư Gmail một cách dễ dàng."
+      },
+      "medium": {
+        "name": "Medium",
+        "desc": "Khám phá và chia sẻ các câu chuyện trên Medium trên bảng điều khiển."
+      },
+      "skype": {
+        "name": "Skype",
+        "desc": "Kết nối liền mạch với danh bạ Skype."
+      },
+      "docker": {
+        "name": "Docker",
+        "desc": "Dễ dàng quản lý các container Docker trên bảng điều khiển của bạn."
+      },
+      "github": {
+        "name": "GitHub",
+        "desc": "Hợp lý hóa việc quản lý mã nguồn bằng tích hợp GitHub."
+      },
+      "gitlab": {
+        "name": "GitLab",
+        "desc": "Quản lý các dự án mã nguồn hiệu quả bằng tích hợp GitLab."
+      },
+      "discord": {
+        "name": "Discord",
+        "desc": "Kết nối với Discord để giao tiếp nhóm liền mạch."
+      },
+      "whatsapp": {
+        "name": "WhatsApp",
+        "desc": "Dễ dàng tích hợp WhatsApp để nhắn tin trực tiếp."
+      }
+    }
+  },
+  "Chats": {
+    "inbox": "Hộp thư đến",
+    "new_chat": "Cuộc trò chuyện mới",
+    "search_chat_placeholder": "Tìm kiếm cuộc trò chuyện...",
+    "you_prefix": "Bạn: ",
+    "send_first_message": "Gửi một tin nhắn để bắt đầu cuộc trò chuyện.",
+    "back": "Quay lại",
+    "video": "Video",
+    "phone": "Điện thoại",
+    "more": "Thêm",
+    "delete": "Xóa",
+    "mark_read": "Đánh dấu đã đọc",
+    "type_message_placeholder": "Nhập tin nhắn...",
+    "send": "Gửi",
+    "your_messages": "Tin nhắn của bạn",
+    "new_message": "Tin nhắn mới",
+    "to": "Tới:",
+    "search_people_placeholder": "Tìm kiếm người dùng...",
+    "unknown_user": "Không xác định",
+    "no_users_found": "Không tìm thấy người dùng.",
+    "chat_btn": "Trò chuyện",
+    "send_message": "Gửi tin nhắn",
+    "titles": {
+      "senior_backend": "Lập trình viên Backend Cấp cao",
+      "tech_lead": "Trưởng nhóm Công nghệ",
+      "qa": "Kiểm thử phần mềm (QA)",
+      "jr_developer": "Lập trình viên Sơ cấp",
+      "senior_designer": "Nhà thiết kế UI/UX Cấp cao",
+      "product_designer": "Nhà thiết kế Sản phẩm",
+      "ceo": "Giám đốc Điều hành (CEO)"
+    }
+  },
+  "HelpCenter": {
+    "title": "Trung tâm trợ giúp",
+    "description": "Các ghi chú vận hành cho trang quản trị SSR.",
+    "open_dashboard": "Mở bảng điều khiển",
+    "topics": {
+      "organizations": {
+        "title": "Tổ chức",
+        "body": "Mỗi tài khoản sở hữu một tổ chức cá nhân và một tổ chức doanh nghiệp. Chuyển đổi từ thanh bên."
+      },
+      "projects_and_bundles": {
+        "title": "Dự án và bundle",
+        "body": "Tạo dự án từ bảng điều khiển. Hành động máy chủ (server action) sẽ tạo ra bundle tương ứng trong cùng một giao dịch."
+      },
+      "tasks": {
+        "title": "Nhiệm vụ",
+        "body": "Nhiệm vụ là các bản ghi hàng đợi đánh giá được phân chia phạm vi theo các bundle do tổ chức hiện tại sở hữu."
+      },
+      "apps": {
+        "title": "Ứng dụng",
+        "body": "Các ứng dụng đã kết nối là những tích hợp bên ngoài của bundle. Sử dụng trạng thái hoạt động/không hoạt động để tạm dừng tích hợp."
+      }
+    }
+  },
+  "Settings": {
+    "title": "Cài đặt",
+    "description": "Quản lý cài đặt tài khoản của bạn và thiết lập tùy chọn email.",
+    "nav": {
+      "profile": "Hồ sơ",
+      "account": "Tài khoản",
+      "appearance": "Giao diện",
+      "notifications": "Thông báo",
+      "display": "Hiển thị",
+      "select_tab": "Chọn tab..."
+    },
+    "profile": {
+      "title": "Hồ sơ",
+      "description": "Đây là cách những người khác sẽ nhìn thấy bạn trên trang web.",
+      "username_label": "Tên người dùng",
+      "username_placeholder": "Tên người dùng",
+      "username_desc": "Đây là tên hiển thị công khai của bạn. Nó có thể là tên thật hoặc biệt danh của bạn. Bạn chỉ có thể thay đổi tên này 30 ngày một lần.",
+      "email_label": "Thư điện tử",
+      "email_placeholder": "Chọn email",
+      "email_desc": "Bạn có thể quản lý các địa chỉ email đã xác minh trong phần cài đặt email.",
+      "bio_label": "Tiểu sử",
+      "bio_placeholder": "Giới thiệu một chút về bản thân bạn",
+      "bio_desc": "Bạn có thể @nhắc đến các người dùng và tổ chức khác để liên kết đến họ.",
+      "urls_label": "Liên kết (URLs)",
+      "urls_primary_placeholder": "https://example.com",
+      "urls_desc": "Thêm liên kết đến trang web, blog hoặc hồ sơ mạng xã hội của bạn.",
+      "urls_secondary_placeholder": "http://twitter.com/example",
+      "update_profile_btn": "Cập nhật hồ sơ",
+      "success_msg": "Cập nhật hồ sơ thành công",
+      "error_msg": "Cập nhật hồ sơ thất bại",
+      "validation": {
+        "username_min": "Tên người dùng/Họ tên phải có ít nhất 2 ký tự.",
+        "username_max": "Tên người dùng/Họ tên chỉ được tối đa 50 ký tự.",
+        "bio_max": "Tiểu sử chỉ được tối đa 160 ký tự.",
+        "url_invalid": "Vui lòng nhập một liên kết hợp lệ."
+      }
+    },
+    "account": {
+      "title": "Tài khoản",
+      "description": "Cài đặt tổ chức duy trì một không gian làm việc cá nhân và một doanh nghiệp.",
+      "org_title": "Tổ chức {type}",
+      "org_desc": "Có {count} dự án trong không gian làm việc này.",
+      "org_personal": "cá nhân",
+      "org_corporate": "doanh nghiệp",
+      "org_form": {
+        "name_label": "Tên",
+        "name_placeholder": "Tên tổ chức",
+        "save_org_btn": "Lưu tổ chức",
+        "success_msg": "Cập nhật tổ chức thành công",
+        "error_msg": "Cập nhật tổ chức thất bại",
+        "validation_min": "Tên tổ chức phải có ít nhất 2 ký tự.",
+        "validation_max": "Tên tổ chức chỉ được tối đa 100 ký tự."
+      }
+    },
+    "appearance": {
+      "title": "Giao diện",
+      "description": "Tùy chỉnh giao diện của ứng dụng. Tự động chuyển đổi giữa chủ đề sáng và tối.",
+      "font_label": "Phông chữ",
+      "font_placeholder": "Chọn phông chữ...",
+      "font_desc": "Đặt phông chữ bạn muốn sử dụng trong bảng điều khiển.",
+      "theme_label": "Chủ đề",
+      "theme_desc": "Chọn chủ đề cho bảng điều khiển.",
+      "theme_light": "Sáng",
+      "theme_dark": "Tối",
+      "update_preferences_btn": "Cập nhật tùy chọn",
+      "success_msg": "Cập nhật tùy chọn thành công",
+      "error_msg": "Cập nhật tùy chọn thất bại"
+    },
+    "display": {
+      "title": "Hiển thị",
+      "description": "Mật độ và bố cục hiển thị là tùy chọn của máy chủ, không phải trạng thái của máy khách.",
+      "density_card_title": "Mật độ hiển thị",
+      "density_card_desc": "Được lưu mà không cần localStorage hay hydration ở phía máy khách.",
+      "density_label": "Mật độ",
+      "density_placeholder": "Chọn mật độ...",
+      "density_comfortable": "Dễ nhìn",
+      "density_compact": "Nhỏ gọn",
+      "density_spacious": "Rộng rãi",
+      "save_display_btn": "Lưu hiển thị",
+      "success_msg": "Cập nhật cài đặt hiển thị thành công",
+      "error_msg": "Cập nhật cài đặt hiển thị thất bại"
+    },
+    "notifications": {
+      "title": "Thông báo",
+      "description": "Cấu hình cách bạn nhận thông báo.",
+      "notify_me_label": "Thông báo cho tôi về...",
+      "option_all": "Tất cả tin nhắn mới",
+      "option_mentions": "Tin nhắn trực tiếp và lượt nhắc đến",
+      "option_none": "Không có gì",
+      "email_notifications_title": "Thông báo qua Email",
+      "comm_emails_label": "Email liên lạc",
+      "comm_emails_desc": "Nhận email về hoạt động tài khoản của bạn.",
+      "mkt_emails_label": "Email tiếp thị",
+      "mkt_emails_desc": "Nhận email về các sản phẩm mới, tính năng mới và nhiều hơn nữa.",
+      "social_emails_label": "Email mạng xã hội",
+      "social_emails_desc": "Nhận email cho các yêu cầu kết bạn, lượt theo dõi và nhiều hơn nữa.",
+      "security_emails_label": "Email bảo mật",
+      "security_emails_desc": "Nhận email về hoạt động tài khoản và bảo mật của bạn.",
+      "mobile_label": "Sử dụng các cài đặt khác cho thiết bị di động của tôi",
+      "mobile_desc": "Bạn có thể quản lý thông báo di động của mình trong trang cài đặt di động.",
+      "update_notifications_btn": "Cập nhật thông báo",
+      "success_msg": "Cập nhật tùy chọn thông báo thành công",
+      "error_msg": "Cập nhật cài đặt thông báo thất bại",
+      "recent_notifications_title": "Thông báo gần đây",
+      "recent_notifications_desc": "Đánh dấu tin nhắn và sự kiện hệ thống là đã đọc.",
+      "no_notifications": "Không tìm thấy thông báo nào.",
+      "status_read": "Đã đọc",
+      "status_unread": "Chưa đọc",
+      "mark_read_btn": "Đánh dấu đã đọc"
+    }
+  },
+  "Tasks": {
+    "title": "Nhiệm vụ",
+    "description": "Dưới đây là danh sách nhiệm vụ của bạn trong tháng này!",
+    "import": "Nhập dữ liệu",
+    "add_task": "Thêm nhiệm vụ",
+    "filter_placeholder": "Lọc theo tiêu đề hoặc ID...",
+    "status": "Trạng thái",
+    "status_all": "Trạng thái (Tất cả)",
+    "status_backlog": "Tồn đọng",
+    "status_todo": "Cần làm",
+    "status_in_progress": "Đang làm",
+    "status_done": "Hoàn thành",
+    "status_canceled": "Đã hủy",
+    "status_pending": "Chờ xử lý",
+    "status_in_review": "Đang duyệt",
+    "priority": "Độ ưu tiên",
+    "priority_all": "Độ ưu tiên (Tất cả)",
+    "priority_low": "Thấp",
+    "priority_medium": "Trung bình",
+    "priority_high": "Cao",
+    "priority_critical": "Khẩn cấp",
+    "reset": "Đặt lại",
+    "table": {
+      "select_all": "Chọn tất cả",
+      "select_row": "Chọn dòng",
+      "task": "Nhiệm vụ",
+      "title": "Tiêu đề",
+      "status": "Trạng thái",
+      "priority": "Độ ưu tiên",
+      "feature": "Tính năng",
+      "bug": "Lỗi",
+      "open_menu": "Mở thực đơn",
+      "edit": "Chỉnh sửa",
+      "remove": "Xóa",
+      "no_results": "Không tìm thấy kết quả."
+    },
+    "form": {
+      "create_title": "Tạo nhiệm vụ xét duyệt",
+      "edit_title": "Sửa nhiệm vụ xét duyệt",
+      "description": "Các nhiệm vụ được lưu dưới dạng hồ sơ hàng đợi xét duyệt gói.",
+      "bundle": "Gói",
+      "select_bundle_placeholder": "Chọn gói...",
+      "status": "Trạng thái",
+      "select_status_placeholder": "Chọn trạng thái...",
+      "pending": "Chờ xử lý",
+      "in_review": "Đang duyệt",
+      "approved": "Đã duyệt",
+      "rejected": "Bị từ chối",
+      "priority": "Độ ưu tiên",
+      "assign_to_me": "Giao cho tôi",
+      "select_assign_placeholder": "Chọn...",
+      "no": "Không",
+      "yes": "Có",
+      "notes": "Ghi chú",
+      "save_task": "Lưu nhiệm vụ",
+      "create_task": "Tạo nhiệm vụ",
+      "cancel": "Hủy"
+    }
+  },
+  "Users": {
+    "title": "Danh sách người dùng",
+    "description": "Quản lý người dùng và vai trò của họ tại đây.",
+    "invite_user_btn": "Mời người dùng",
+    "add_user_btn": "Thêm người dùng",
+    "filter_placeholder": "Lọc người dùng...",
+    "status": "Trạng thái",
+    "status_all": "Trạng thái (Tất cả)",
+    "status_active": "Hoạt động",
+    "status_invited": "Đã mời",
+    "status_inactive": "Không hoạt động",
+    "status_suspended": "Đang bị khóa",
+    "role": "Vai trò",
+    "role_all": "Vai trò (Tất cả)",
+    "role_admin": "Quản trị viên",
+    "role_editor": "Biên tập viên",
+    "role_viewer": "Người xem",
+    "reset": "Đặt lại",
+    "roles": {
+      "admin": "Quản trị viên",
+      "editor": "Biên tập viên",
+      "viewer": "Người xem"
+    },
+    "table": {
+      "select_all": "Chọn tất cả",
+      "select_row": "Chọn dòng",
+      "username": "Tên đăng nhập",
+      "name": "Họ tên",
+      "email": "Email",
+      "status": "Trạng thái",
+      "role": "Vai trò",
+      "bundle": "Gói",
+      "active": "hoạt động",
+      "invited": "đã mời",
+      "open_menu": "Mở thực đơn",
+      "select_role_placeholder": "Chọn vai trò...",
+      "role_viewer": "Người xem",
+      "role_editor": "Biên tập viên",
+      "role_admin": "Quản trị viên",
+      "save": "Lưu",
+      "remove": "Xóa",
+      "no_results": "Không tìm thấy cộng tác viên nào."
+    },
+    "invite_card": {
+      "title": "Mời người dùng",
+      "description": "Mời cộng tác viên yêu cầu email người dùng hiện có.",
+      "bundle": "Gói",
+      "select_bundle_placeholder": "Chọn gói...",
+      "user_email": "Email người dùng",
+      "email_placeholder": "person@example.com",
+      "role": "Vai trò",
+      "select_role_placeholder": "Chọn vai trò...",
+      "role_viewer": "Người xem",
+      "role_editor": "Biên tập viên",
+      "role_admin": "Quản trị viên",
+      "invite_btn": "Mời"
+    }
+  },
+  "Errors": {
+    "unauthorized": {
+      "code": "401",
+      "title": "Truy cập không hợp lệ",
+      "description": "Vui lòng đăng nhập với thông tin xác thực phù hợp <br/> để truy cập tài nguyên này."
+    },
+    "forbidden": {
+      "code": "403",
+      "title": "Truy cập bị cấm",
+      "description": "Bạn không có quyền hạn cần thiết <br/> để xem tài nguyên này."
+    },
+    "not-found": {
+      "code": "404",
+      "title": "Rất tiếc! Không tìm thấy trang!",
+      "description": "Có vẻ như trang bạn đang tìm kiếm <br/> không tồn tại hoặc đã bị xóa."
+    },
+    "internal-server-error": {
+      "code": "500",
+      "title": "Rất tiếc! Đã có lỗi xảy ra :')",
+      "description": "Chúng tôi thành thật xin lỗi vì sự bất tiện này. <br/> Vui lòng thử lại sau."
+    },
+    "maintenance-error": {
+      "code": "503",
+      "title": "Trang web đang bảo trì!",
+      "description": "Trang web hiện không hoạt động vào lúc này. <br/> Chúng tôi sẽ sớm hoạt động trở lại."
+    },
+    "actions": {
+      "learn_more": "Tìm hiểu thêm",
+      "go_back": "Quay lại",
+      "back_to_home": "Quay lại trang chủ"
+    }
   }
 }

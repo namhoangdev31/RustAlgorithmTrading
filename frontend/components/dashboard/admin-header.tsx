@@ -1,8 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 
+import { Link } from "@/i18n/navigation";
 import { ConfigDrawer } from "@/components/dashboard/config-drawer";
 import { ProfileDropdown } from "@/components/dashboard/profile-dropdown";
 import { Search } from "@/components/dashboard/search";
@@ -20,15 +21,16 @@ type AdminHeaderProps = {
   };
 };
 
-const topNav = [
-  { title: "Overview", href: "/dashboard" },
-  { title: "Customers", href: "/dashboard/users" },
-  { title: "Products", href: "/dashboard/apps" },
-  { title: "Settings", href: "/dashboard/settings" },
-];
-
 export function AdminHeader({ user }: AdminHeaderProps) {
   const pathname = usePathname();
+  const t = useTranslations("Dashboard.shell");
+
+  const topNav = [
+    { title: t("header.overview"), href: "/dashboard" },
+    { title: t("header.customers"), href: "/dashboard/users" },
+    { title: t("header.products"), href: "/dashboard/apps" },
+    { title: t("header.settings"), href: "/dashboard/settings" },
+  ];
 
   return (
     <header className="sticky top-0 z-20 flex h-16 shrink-0 items-center gap-2 border-b bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/60">

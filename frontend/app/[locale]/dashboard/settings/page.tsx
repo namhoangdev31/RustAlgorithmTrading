@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { SettingsNav } from "@/components/dashboard/settings-nav";
 import { Separator } from "@/components/ui/separator";
 import { getSettingsData } from "@/lib/server/admin-data";
@@ -8,13 +9,14 @@ export default async function SettingsPage() {
   const currentUser = await requireCurrentUser();
   const data = await getSettingsData(currentUser.id);
   const user = data.user;
+  const t = await getTranslations("Settings");
 
   return (
     <>
       <div className="flex flex-col gap-0.5">
-        <h1 className="text-2xl font-bold tracking-tight md:text-3xl">Settings</h1>
+        <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{t("title")}</h1>
         <p className="text-muted-foreground">
-          Manage your account settings and set e-mail preferences.
+          {t("description")}
         </p>
       </div>
       <Separator className="my-4 lg:my-6" />
@@ -26,9 +28,9 @@ export default async function SettingsPage() {
         <div className="flex w-full overflow-y-hidden p-1">
           <div className="flex flex-1 flex-col">
             <div className="flex-none">
-              <h3 className="text-lg font-medium">Profile</h3>
+              <h3 className="text-lg font-medium">{t("profile.title")}</h3>
               <p className="text-sm text-muted-foreground">
-                This is how others will see you on the site.
+                {t("profile.description")}
               </p>
             </div>
             <Separator className="my-4 flex-none" />
@@ -41,3 +43,4 @@ export default async function SettingsPage() {
     </>
   );
 }
+

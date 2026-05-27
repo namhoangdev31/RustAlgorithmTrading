@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { PageHeader } from "@/components/dashboard/page-header";
 import { SettingsNav } from "@/components/dashboard/settings-nav";
 import {
@@ -14,32 +15,41 @@ import { OrganizationForm } from "@/components/dashboard/organization-form";
 export default async function AccountSettingsPage() {
   const currentUser = await requireCurrentUser();
   const data = await getSettingsData(currentUser.id);
+  const t = await getTranslations("Settings");
 
   return (
     <>
       <PageHeader
-        description="Organization settings preserve one personal and one corporate workspace."
-        title="Account"
+        description={t("account.description")}
+        title={t("account.title")}
       />
       <div className="grid gap-4 xl:grid-cols-[0.3fr_1fr]">
         <SettingsNav />
         <div className="flex flex-col gap-4">
-          {data.workspace.organizations.map((organization) => (
-            <Card key={organization.id}>
-              <CardHeader>
-                <CardTitle>{organization.type} organization</CardTitle>
-                <CardDescription>
-                  {organization.projects.length} projects in this workspace.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <OrganizationForm organization={organization} />
-              </CardContent>
-            </Card>
-          ))}
+          {data.workspace.organizations.map((organization) => {
+            const orgTypeLocalized = organization.type === "personal" 
+              ? t("account.org_personal") 
+              : t("account.org_corporate");
+            return (
+              <Card key={organization.id}>
+                <CardHeader>
+                  <CardTitle>
+                    {t("account.org_title", { type: orgTypeLocalized })}
+                  </CardTitle>
+                  <CardDescription>
+                    {t("account.org_desc", { count: organization.projects.length })}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <OrganizationForm organization={organization} />
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       </div>
     </>
   );
 }
+
 

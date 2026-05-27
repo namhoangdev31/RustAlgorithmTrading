@@ -8,6 +8,7 @@ import { FormSelectField } from "@/components/ui/tanstack-form"
 import { updateDisplayPreferenceAction } from "@/app/actions/admin"
 import { toast } from "sonner"
 import { Loader2 } from "lucide-react"
+import { useTranslations } from "next-intl"
 
 const displayFormSchema = z.object({
   density: z.enum(["comfortable", "compact", "spacious"]),
@@ -22,6 +23,7 @@ interface DisplayFormProps {
 
 export function DisplayForm({ initialDensity = "comfortable", initialTheme = "light" }: DisplayFormProps) {
   const [isSubmitting, setIsSubmitting] = React.useState(false)
+  const t = useTranslations("Settings")
 
   const form = useForm({
     defaultValues: {
@@ -39,9 +41,9 @@ export function DisplayForm({ initialDensity = "comfortable", initialTheme = "li
         formData.append("returnTo", "/dashboard/settings/display")
 
         await updateDisplayPreferenceAction(formData)
-        toast.success("Display settings updated successfully")
+        toast.success(t("display.success_msg"))
       } catch (error) {
-        toast.error("Failed to update display settings")
+        toast.error(t("display.error_msg"))
       } finally {
         setIsSubmitting(false)
       }
@@ -62,20 +64,21 @@ export function DisplayForm({ initialDensity = "comfortable", initialTheme = "li
         children={(field) => (
           <FormSelectField
             field={field}
-            label="Density"
-            placeholder="Select density..."
+            label={t("display.density_label")}
+            placeholder={t("display.density_placeholder")}
             options={[
-              { label: "Comfortable", value: "comfortable" },
-              { label: "Compact", value: "compact" },
-              { label: "Spacious", value: "spacious" },
+              { label: t("display.density_comfortable"), value: "comfortable" },
+              { label: t("display.density_compact"), value: "compact" },
+              { label: t("display.density_spacious"), value: "spacious" },
             ]}
           />
         )}
       />
       <Button className="w-fit" type="submit" disabled={isSubmitting}>
         {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        Save display
+        {t("display.save_display_btn")}
       </Button>
     </form>
   )
 }
+
