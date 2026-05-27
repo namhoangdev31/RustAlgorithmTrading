@@ -17,6 +17,7 @@ type AdminHeaderProps = {
     email: string | null;
     fullName: string | null;
     provider: string;
+    photoUrl: string | null;
   };
 };
 

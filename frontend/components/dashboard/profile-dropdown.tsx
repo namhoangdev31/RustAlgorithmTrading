@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 
 import { logoutAction } from "@/app/actions/auth";
 import { Link } from "@/i18n/navigation";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -25,6 +25,7 @@ type ProfileDropdownProps = {
     email: string | null;
     fullName: string | null;
     provider: string;
+    photoUrl: string | null;
   };
 };
 
@@ -38,6 +39,13 @@ export function ProfileDropdown({ user }: ProfileDropdownProps) {
       <DropdownMenuTrigger asChild>
         <Button className="relative size-8 rounded-full" size="icon" variant="ghost">
           <Avatar className="size-8">
+            {user.photoUrl ? (
+              <AvatarImage
+                alt={displayName}
+                referrerPolicy="no-referrer"
+                src={user.photoUrl}
+              />
+            ) : null}
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
           <span className="sr-only">{t("user_menu.open")}</span>

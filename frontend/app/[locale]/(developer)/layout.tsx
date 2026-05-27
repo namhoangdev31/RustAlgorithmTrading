@@ -25,6 +25,7 @@ export default async function DashboardLayout({
         email: user.email ?? null,
         fullName: user.fullName ?? null,
         provider: user.provider,
+        photoUrl: user.photo?.path ?? null,
       }}
     >
       {children}

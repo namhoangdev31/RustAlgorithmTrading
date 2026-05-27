@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/server/prisma";
 import { getWorkspaceContext } from "@/lib/server/workspace";
+import { lookupFirebaseUserByLocalId } from "@/lib/server/firebase-auth";
 
 export type SearchParamsInput = {
   [key: string]: string | string[] | undefined;
@@ -557,6 +558,65 @@ export async function getUsersData(userId: string, params: SearchParamsInput) {
 }
 
 export async function getSettingsData(userId: string) {
+  // Keep account data aligned with Firebase provider profile when possible.
+  const current = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      id: true,
+      socialId: true,
+      email: true,
+      firstName: true,
+      lastName: true,
+      fullName: true,
+      provider: true,
+      photoId: true,
+    },
+  });
+
+  if (current?.socialId) {
+    try {
+      const firebaseUser = await lookupFirebaseUserByLocalId(current.socialId);
+      const displayName = (firebaseUser.displayName ?? "").trim();
+      const [firstName, ...rest] = displayName.split(/\s+/).filter(Boolean);
+      const lastName = rest.join(" ") || null;
+      const provider =
+        firebaseUser.providerId?.replace(".com", "") || current.provider || "firebase";
+      let photoId = current.photoId ?? null;
+
+      if (firebaseUser.photoUrl) {
+        if (photoId) {
+          await prisma.file.update({
+            where: { id: photoId },
+            data: { path: firebaseUser.photoUrl },
+          });
+        } else {
+          photoId = crypto.randomUUID();
+          await prisma.file.create({
+            data: {
+              id: photoId,
+              path: firebaseUser.photoUrl,
+            },
+          });
+        }
+      }
+
+      await prisma.user.update({
+        where: { id: userId },
+        data: {
+          email: firebaseUser.email?.toLowerCase() ?? current.email,
+          firstName: firstName ?? current.firstName,
+          lastName: lastName ?? current.lastName,
+          fullName: displayName || current.fullName,
+          provider,
+          photoId,
+          updatedAt: new Date(),
+        },
+      });
+    } catch {
+      // If Firebase lookup is unavailable, keep existing account data.
+    }
+  }
+
   const workspace = await getWorkspaceContext(userId);
   const [user, notifications] = await Promise.all([
     prisma.user.findUnique({
@@ -571,6 +631,11 @@ export async function getSettingsData(userId: string) {
         gender: true,
         userType: true,
         provider: true,
+        photo: {
+          select: {
+            path: true,
+          },
+        },
       },
     }),
     prisma.notifications.findMany({

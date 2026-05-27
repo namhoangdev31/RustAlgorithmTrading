@@ -71,6 +71,7 @@ type AppSidebarProps = {
     email: string | null;
     fullName: string | null;
     provider: string;
+    photoUrl: string | null;
   };
   organizations: {
     id: string;

@@ -11,6 +11,7 @@ import {
 import { getSettingsData } from "@/lib/server/admin-data";
 import { requireCurrentUser } from "@/lib/server/current-user";
 import { OrganizationForm } from "@/components/dashboard/organization-form";
+import { AccountForm } from "@/components/dashboard/account-form";
 
 export default async function AccountSettingsPage() {
   const currentUser = await requireCurrentUser();
@@ -26,6 +27,15 @@ export default async function AccountSettingsPage() {
       <div className="grid gap-4 xl:grid-cols-[0.3fr_1fr]">
         <SettingsNav />
         <div className="flex flex-col gap-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>{t("account.profile_title")}</CardTitle>
+              <CardDescription>{t("account.profile_desc")}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <AccountForm user={data.user as any} />
+            </CardContent>
+          </Card>
           {data.workspace.organizations.map((organization) => {
             const orgTypeLocalized = organization.type === "personal" 
               ? t("account.org_personal") 
@@ -51,5 +61,4 @@ export default async function AccountSettingsPage() {
     </>
   );
 }
-
 

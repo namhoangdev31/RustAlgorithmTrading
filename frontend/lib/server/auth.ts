@@ -32,6 +32,7 @@ async function syncFirebaseUser(
     email?: string | null;
     name?: string | null;
     provider?: string | null;
+    image?: string | null;
   } = {}
 ) {
   const email = (firebaseUser.email ?? fallback.email)?.toLowerCase();
@@ -39,6 +40,7 @@ async function syncFirebaseUser(
   const names = splitDisplayName(displayName);
   const now = new Date();
   const provider = fallback.provider ?? firebaseUser.providerId ?? "firebase";
+  const photoUrl = firebaseUser.photoUrl ?? fallback.image ?? undefined;
 
   const existing = await prisma.user.findFirst({
     where: {
@@ -48,6 +50,26 @@ async function syncFirebaseUser(
       ],
     },
   });
+
+  let photoId: string | null = existing?.photoId ?? null;
+
+  if (photoUrl) {
+    if (existing?.photoId) {
+      await prisma.file.update({
+        where: { id: existing.photoId },
+        data: { path: photoUrl },
+      });
+    } else {
+      const newFileId = crypto.randomUUID();
+      await prisma.file.create({
+        data: {
+          id: newFileId,
+          path: photoUrl,
+        },
+      });
+      photoId = newFileId;
+    }
+  }
 
   if (existing) {
     const user = await prisma.user.update({
@@ -60,6 +82,7 @@ async function syncFirebaseUser(
         lastName: names.lastName ?? existing.lastName,
         fullName: names.fullName ?? existing.fullName,
         registerType: existing.registerType ?? provider,
+        photoId: photoId,
         updatedAt: now,
       },
     });
@@ -77,6 +100,7 @@ async function syncFirebaseUser(
       lastName: names.lastName,
       fullName: names.fullName,
       registerType: provider,
+      photoId: photoId,
       createdAt: now,
       updatedAt: now,
     },
@@ -110,6 +134,7 @@ async function syncOAuthUser({
   user: {
     email?: string | null;
     name?: string | null;
+    image?: string | null;
   };
 }) {
   const providerId = getFirebaseProviderId(account.provider);
@@ -128,6 +153,7 @@ async function syncOAuthUser({
     email: user.email,
     name: user.name,
     provider: account.provider,
+    image: user.image,
   });
 }
 

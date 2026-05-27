@@ -715,6 +715,8 @@
     "account": {
       "title": "Account",
       "description": "Organization settings preserve one personal and one corporate workspace.",
+      "profile_title": "Provider Account Profile",
+      "profile_desc": "Account information is synced from Firebase Auth providers such as Google, GitHub, Apple, and Email.",
       "org_title": "{type} organization",
       "org_desc": "{count} projects in this workspace.",
       "org_personal": "personal",
@@ -727,6 +729,29 @@
         "error_msg": "Failed to update organization",
         "validation_min": "Organization name must be at least 2 characters.",
         "validation_max": "Organization name must be at most 100 characters."
+      },
+      "first_name_label": "First Name",
+      "first_name_placeholder": "Your first name",
+      "last_name_label": "Last Name",
+      "last_name_placeholder": "Your last name",
+      "full_name_label": "Full Name",
+      "full_name_placeholder": "Your full name",
+      "phone_label": "Phone Number",
+      "phone_placeholder": "Your phone number",
+      "gender_label": "Gender",
+      "gender_placeholder": "Select gender",
+      "gender_male": "Male",
+      "gender_female": "Female",
+      "gender_other": "Other",
+      "gender_prefer_not_to_say": "Prefer not to say",
+      "save_btn": "Save Changes",
+      "success_msg": "Account details updated successfully",
+      "error_msg": "Failed to update account details",
+      "provider_info": "Sign in via {provider}",
+      "validation": {
+        "first_name_min": "First name must be at least 2 characters.",
+        "last_name_min": "Last name must be at least 2 characters.",
+        "full_name_min": "Full name must be at least 2 characters."
       }
     },
     "appearance": {

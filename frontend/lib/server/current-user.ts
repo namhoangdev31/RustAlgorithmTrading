@@ -19,10 +19,17 @@ export const getCurrentUser = cache(async () => {
       firstName: true,
       lastName: true,
       fullName: true,
+      phone: true,
+      gender: true,
       provider: true,
       socialId: true,
       userType: true,
       createdAt: true,
+      photo: {
+        select: {
+          path: true,
+        },
+      },
     },
   });
 });

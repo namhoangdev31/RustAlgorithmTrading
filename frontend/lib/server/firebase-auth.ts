@@ -8,6 +8,13 @@ export type FirebaseAuthUser = {
   displayName?: string;
   idToken?: string;
   providerId?: string;
+  photoUrl?: string;
+  providerUserInfo?: Array<{
+    providerId?: string;
+    photoUrl?: string;
+    displayName?: string;
+    email?: string;
+  }>;
 };
 
 type FirebaseIdentityProvider = "google.com" | "github.com" | "apple.com";
@@ -134,7 +141,24 @@ export async function lookupFirebaseUser(idToken: string) {
   return {
     ...user,
     idToken,
-    providerId: user.providerId ?? "firebase",
+    providerId: user.providerId ?? user.providerUserInfo?.[0]?.providerId ?? "firebase",
+  };
+}
+
+export async function lookupFirebaseUserByLocalId(localId: string) {
+  const response = await firebaseRequest<{ users?: FirebaseAuthUser[] }>("accounts:lookup", {
+    localId: [localId],
+  });
+
+  const user = response.users?.[0];
+  if (!user) {
+    throw new FirebaseAuthError("Firebase user not found.");
+  }
+
+  return {
+    ...user,
+    providerId: user.providerId ?? user.providerUserInfo?.[0]?.providerId ?? "firebase",
+    photoUrl: user.photoUrl ?? user.providerUserInfo?.[0]?.photoUrl,
   };
 }
 

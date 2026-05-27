@@ -715,6 +715,8 @@
     "account": {
       "title": "Tài khoản",
       "description": "Cài đặt tổ chức duy trì một không gian làm việc cá nhân và một doanh nghiệp.",
+      "profile_title": "Hồ sơ tài khoản từ Provider",
+      "profile_desc": "Thông tin tài khoản được đồng bộ từ Firebase Auth như Google, GitHub, Apple và Email.",
       "org_title": "Tổ chức {type}",
       "org_desc": "Có {count} dự án trong không gian làm việc này.",
       "org_personal": "cá nhân",
@@ -727,6 +729,29 @@
         "error_msg": "Cập nhật tổ chức thất bại",
         "validation_min": "Tên tổ chức phải có ít nhất 2 ký tự.",
         "validation_max": "Tên tổ chức chỉ được tối đa 100 ký tự."
+      },
+      "first_name_label": "Tên",
+      "first_name_placeholder": "Tên của bạn",
+      "last_name_label": "Họ",
+      "last_name_placeholder": "Họ của bạn",
+      "full_name_label": "Họ và tên",
+      "full_name_placeholder": "Họ và tên của bạn",
+      "phone_label": "Số điện thoại",
+      "phone_placeholder": "Số điện thoại của bạn",
+      "gender_label": "Giới tính",
+      "gender_placeholder": "Chọn giới tính",
+      "gender_male": "Nam",
+      "gender_female": "Nữ",
+      "gender_other": "Khác",
+      "gender_prefer_not_to_say": "Không muốn trả lời",
+      "save_btn": "Lưu thay đổi",
+      "success_msg": "Cập nhật thông tin tài khoản thành công",
+      "error_msg": "Cập nhật thông tin tài khoản thất bại",
+      "provider_info": "Đăng nhập qua {provider}",
+      "validation": {
+        "first_name_min": "Tên phải có ít nhất 2 ký tự.",
+        "last_name_min": "Họ phải có ít nhất 2 ký tự.",
+        "full_name_min": "Họ và tên phải có ít nhất 2 ký tự."
       }
     },
     "appearance": {
