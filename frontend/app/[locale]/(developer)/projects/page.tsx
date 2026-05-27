@@ -56,7 +56,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { getTranslations } from "next-intl/server";
 
-type TasksPageProps = {
+type ProjectsPageProps = {
   searchParams: Promise<{
     q?: string;
     status?: string;
@@ -66,12 +66,12 @@ type TasksPageProps = {
   }>;
 };
 
-export default async function TasksPage({ searchParams }: TasksPageProps) {
+export default async function ProjectsPage({ searchParams }: ProjectsPageProps) {
   const params = await searchParams;
   const user = await requireCurrentUser();
   const data = await getTasksData(user.id, params);
   const selectedTask = data.tasks.find((task) => task.id === params.id);
-  const t = await getTranslations("Tasks");
+  const t = await getTranslations("Projects");
 
   return (
     <>
@@ -88,7 +88,7 @@ export default async function TasksPage({ searchParams }: TasksPageProps) {
             <Upload data-icon="inline-end" />
           </Button>
           <Button asChild>
-            <Link href="/dashboard/tasks?dialog=create">
+            <Link href="/projects?dialog=create">
               {t("add_task")}
               <ListPlus data-icon="inline-end" />
             </Link>
@@ -97,7 +97,7 @@ export default async function TasksPage({ searchParams }: TasksPageProps) {
       </div>
 
       <div className="flex flex-1 flex-col gap-4">
-        <form action="/dashboard/tasks" className="flex flex-wrap items-center gap-2" method="get">
+        <form action="/projects" className="flex flex-wrap items-center gap-2" method="get">
           <Input className="h-8 w-[150px] lg:w-[250px]" name="q" placeholder={t("filter_placeholder")} />
           <Select name="status" defaultValue={params.status || "all"}>
             <SelectTrigger className="h-8 w-[150px]">
@@ -189,14 +189,14 @@ export default async function TasksPage({ searchParams }: TasksPageProps) {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem asChild>
-                              <Link href={`/dashboard/tasks?dialog=edit&id=${task.id}`}>
+                              <Link href={`/projects?dialog=edit&id=${task.id}`}>
                                 {t("table.edit")}
                               </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem asChild>
                               <form action={deleteReviewTaskAction} className="w-full">
                                 <Input type="hidden" name="taskId" value={task.id} />
-                                <Input type="hidden" name="returnTo" value="/dashboard/tasks" />
+                                <Input type="hidden" name="returnTo" value="/projects" />
                                 <Button className="w-full justify-start" size="sm" type="submit" variant="ghost">{t("table.remove")}</Button>
                               </form>
                             </DropdownMenuItem>
@@ -222,7 +222,7 @@ export default async function TasksPage({ searchParams }: TasksPageProps) {
         <TaskForm
           action={createReviewTaskAction}
           bundles={data.bundles}
-          returnTo="/dashboard/tasks"
+          returnTo="/projects"
           title={t("form.create_title")}
           t={t}
         />
@@ -232,7 +232,7 @@ export default async function TasksPage({ searchParams }: TasksPageProps) {
         <TaskForm
           action={updateReviewTaskAction}
           bundles={data.bundles}
-          returnTo="/dashboard/tasks"
+          returnTo="/projects"
           task={selectedTask}
           title={t("form.edit_title")}
           t={t}

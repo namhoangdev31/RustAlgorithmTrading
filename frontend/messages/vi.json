@@ -476,7 +476,7 @@
         "general": "Tổng quan",
         "other": "Khác",
         "dashboard": "Bảng điều khiển",
-        "tasks": "Nhiệm vụ",
+        "projects": "Dự Án",
         "apps": "Ứng dụng",
         "chats": "Trò chuyện",
         "users": "Người dùng",
@@ -524,7 +524,7 @@
         "dark": "Tối",
         "system": "Hệ thống",
         "quick_filters": "Bộ lọc nhanh",
-        "pending_tasks": "Nhiệm vụ chờ xử lý",
+        "pending_projects": "Projects chờ xử lý",
         "active_integrations": "Tích hợp đang hoạt động"
       }
     }
@@ -665,9 +665,9 @@
         "title": "Dự án và bundle",
         "body": "Tạo dự án từ bảng điều khiển. Hành động máy chủ (server action) sẽ tạo ra bundle tương ứng trong cùng một giao dịch."
       },
-      "tasks": {
-        "title": "Nhiệm vụ",
-        "body": "Nhiệm vụ là các bản ghi hàng đợi đánh giá được phân chia phạm vi theo các bundle do tổ chức hiện tại sở hữu."
+      "projects": {
+        "title": "Quản lý Dự Án",
+        "body": "Quản lý hàng đợi xét duyệt project theo các bundle do tổ chức hiện tại sở hữu."
       },
       "apps": {
         "title": "Ứng dụng",
@@ -786,9 +786,9 @@
       "mark_read_btn": "Đánh dấu đã đọc"
     }
   },
-  "Tasks": {
-    "title": "Nhiệm vụ",
-    "description": "Dưới đây là danh sách nhiệm vụ của bạn trong tháng này!",
+  "Projects": {
+    "title": "Quản lý Projects",
+    "description": "Danh sách quản lý project trong tháng này.",
     "import": "Nhập dữ liệu",
     "add_task": "Thêm nhiệm vụ",
     "filter_placeholder": "Lọc theo tiêu đề hoặc ID...",

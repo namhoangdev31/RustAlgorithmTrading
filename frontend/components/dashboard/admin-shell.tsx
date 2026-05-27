@@ -37,7 +37,7 @@ export async function AdminShell({ user, workspace, children }: AdminShellProps)
       title: t("nav.general"),
       items: [
         { title: t("nav.dashboard"), href: "/dashboard", icon: LayoutDashboard },
-        { title: t("nav.tasks"), href: "/dashboard/tasks", icon: ListTodo },
+        { title: t("nav.projects"), href: "/projects", icon: ListTodo },
         { title: t("nav.apps"), href: "/dashboard/apps", icon: Package },
         { title: t("nav.chats"), href: "/dashboard/chats", icon: MessagesSquare },
         { title: t("nav.users"), href: "/dashboard/users", icon: Users },

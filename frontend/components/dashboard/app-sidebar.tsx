@@ -23,6 +23,7 @@ import {
   CreditCard,
   Plus,
   type LucideIcon,
+  FolderGit,
 } from "lucide-react";
 import { usePathname } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
@@ -63,6 +64,7 @@ import {
   SidebarRail,
   useSidebar,
 } from "@/components/ui/sidebar";
+import Image from "next/image";
 
 type AppSidebarProps = {
   user: {
@@ -114,10 +116,7 @@ export function AppSidebar({
       title: t("nav.general"),
       items: [
         { title: t("nav.dashboard"), url: "/dashboard", icon: LayoutDashboard },
-        { title: t("nav.tasks"), url: "/dashboard/tasks", icon: ListTodo },
-        { title: t("nav.apps"), url: "/dashboard/apps", icon: Package },
-        { title: t("nav.chats"), url: "/dashboard/chats", badge: "3", icon: MessagesSquare },
-        { title: t("nav.users"), url: "/dashboard/users", icon: Users },
+        { title: t("nav.projects"), url: "/projects", icon: FolderGit },
       ],
     },
     {
@@ -181,6 +180,8 @@ function TeamSwitcher({
     ) % teamIcons.length
     ];
 
+  const logoImg = '/logo_nonbg.png';
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -191,7 +192,13 @@ function TeamSwitcher({
               size="lg"
             >
               <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                <ActiveIcon data-icon="inline-start" />
+                <Image
+                  src={logoImg}
+                  alt="Logo"
+                  width={24}
+                  height={24}
+                  className="object-contain"
+                />
               </div>
               <div className="grid flex-1 text-start text-sm leading-tight">
                 <span className="truncate font-semibold">

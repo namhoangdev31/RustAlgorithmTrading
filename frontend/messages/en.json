@@ -476,7 +476,7 @@
         "general": "General",
         "other": "Other",
         "dashboard": "Dashboard",
-        "tasks": "Tasks",
+        "projects": "Projects",
         "apps": "Apps",
         "chats": "Chats",
         "users": "Users",
@@ -524,7 +524,7 @@
         "dark": "Dark",
         "system": "System",
         "quick_filters": "Quick filters",
-        "pending_tasks": "Pending tasks",
+        "pending_projects": "Pending projects",
         "active_integrations": "Active integrations"
       }
     }
@@ -665,9 +665,9 @@
         "title": "Projects and bundles",
         "body": "Create a project from the dashboard. The server action creates its bundle in the same transaction."
       },
-      "tasks": {
-        "title": "Tasks",
-        "body": "Tasks are review queue records scoped to bundles owned by the active organization."
+      "projects": {
+        "title": "Project Management",
+        "body": "Manage project review queue records scoped to bundles owned by the active organization."
       },
       "apps": {
         "title": "Apps",
@@ -786,9 +786,9 @@
       "mark_read_btn": "Mark read"
     }
   },
-  "Tasks": {
-    "title": "Tasks",
-    "description": "Here's a list of your tasks for this month!",
+  "Projects": {
+    "title": "Project Management",
+    "description": "Manage your project review queue for this month.",
     "import": "Import",
     "add_task": "Add Task",
     "filter_placeholder": "Filter by title or ID...",

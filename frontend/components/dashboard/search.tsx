@@ -58,7 +58,7 @@ export function Search({ className }: { className?: string }) {
       heading: t("general"),
       items: [
         { title: tn("dashboard"), href: "/dashboard", icon: LayoutDashboard },
-        { title: tn("tasks"), href: "/dashboard/tasks", icon: ListTodo },
+        { title: tn("projects"), href: "/projects", icon: ListTodo },
         { title: tn("apps"), href: "/dashboard/apps", icon: AppWindow },
         { title: tn("chats"), href: "/dashboard/chats", icon: MessagesSquare },
         { title: tn("users"), href: "/dashboard/users", icon: Users },
@@ -147,10 +147,10 @@ export function Search({ className }: { className?: string }) {
           <CommandGroup heading={t("quick_filters")}>
             <CommandItem
               onSelect={() =>
-                runCommand(() => router.push("/dashboard/tasks?status=pending"))
+                runCommand(() => router.push("/projects?status=pending"))
               }
             >
-              {t("pending_tasks")}
+              {t("pending_projects")}
             </CommandItem>
             <CommandItem
               onSelect={() => runCommand(() => router.push("/dashboard/apps?active=true"))}

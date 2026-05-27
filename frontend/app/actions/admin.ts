@@ -316,7 +316,7 @@ export async function deleteProjectAction(formData: FormData) {
 export async function createReviewTaskAction(formData: FormData) {
   const user = await requireCurrentUser();
   const bundleId = readFormValue(formData, "bundleId");
-  const returnTo = await readReturnTo(formData, "/dashboard/tasks");
+  const returnTo = await readReturnTo(formData, "/dashboard/projects");
   const bundle = await requireOwnedBundle(user.id, bundleId);
 
   if (!bundle) {
@@ -337,14 +337,14 @@ export async function createReviewTaskAction(formData: FormData) {
     },
   });
 
-  revalidatePath("/dashboard/tasks");
+  revalidatePath("/projects");
   redirect(returnTo);
 }
 
 export async function updateReviewTaskAction(formData: FormData) {
   const user = await requireCurrentUser();
   const taskId = readFormValue(formData, "taskId");
-  const returnTo = await readReturnTo(formData, "/dashboard/tasks");
+  const returnTo = await readReturnTo(formData, "/projects");
   const task = await prisma.bundleReviewQueue.findUnique({
     where: { id: taskId },
     select: { id: true, bundleId: true },
@@ -368,14 +368,14 @@ export async function updateReviewTaskAction(formData: FormData) {
     });
   }
 
-  revalidatePath("/dashboard/tasks");
+  revalidatePath("/projects");
   redirect(returnTo);
 }
 
 export async function deleteReviewTaskAction(formData: FormData) {
   const user = await requireCurrentUser();
   const taskId = readFormValue(formData, "taskId");
-  const returnTo = await readReturnTo(formData, "/dashboard/tasks");
+  const returnTo = await readReturnTo(formData, "/dashboard/projects");
   const task = await prisma.bundleReviewQueue.findUnique({
     where: { id: taskId },
     select: { id: true, bundleId: true },
@@ -387,7 +387,7 @@ export async function deleteReviewTaskAction(formData: FormData) {
     });
   }
 
-  revalidatePath("/dashboard/tasks");
+  revalidatePath("/dashboard/projects");
   redirect(returnTo);
 }
 

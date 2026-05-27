@@ -26,9 +26,9 @@ export default async function HelpCenterPage() {
       body: t("topics.projects_and_bundles.body"),
     },
     {
-      key: "tasks",
-      title: t("topics.tasks.title"),
-      body: t("topics.tasks.body"),
+      key: "projects",
+      title: t("topics.projects.title"),
+      body: t("topics.projects.body"),
     },
     {
       key: "apps",
@@ -61,5 +61,4 @@ export default async function HelpCenterPage() {
     </>
   );
 }
-
 
