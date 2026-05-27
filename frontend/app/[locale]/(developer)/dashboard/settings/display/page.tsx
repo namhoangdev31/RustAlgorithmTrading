@@ -24,7 +24,7 @@ export default async function DisplaySettingsPage() {
       if (parsed.theme) {
         initialTheme = parsed.theme;
       }
-    } catch (_) {}
+    } catch (_) { }
   }
 
   const t = await getTranslations("Settings");
