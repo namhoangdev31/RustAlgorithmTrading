@@ -24,7 +24,7 @@ import {
   Plus,
   type LucideIcon,
 } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { usePathname } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 
 import { logoutAction } from "@/app/actions/auth";
