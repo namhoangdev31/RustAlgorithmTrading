@@ -166,6 +166,7 @@ function TeamSwitcher({
 }: Pick<AppSidebarProps, "organizations" | "activeOrganizationId">) {
   const { isMobile } = useSidebar();
   const t = useTranslations("Dashboard.shell");
+  const pathname = usePathname(); // Returns /vi/dashboard, /en/dashboard, etc.
   const teamIcons = [Command, GalleryVerticalEnd, AudioWaveform];
   const activeOrganization =
     organizations.find((organization) => organization.id === activeOrganizationId) ??
@@ -221,7 +222,7 @@ function TeamSwitcher({
                       name="organizationId"
                       value={organization.id}
                     />
-                    <input type="hidden" name="returnTo" value="/dashboard" />
+                    <input type="hidden" name="returnTo" value={pathname} />
                     <button className="flex w-full items-center gap-2" type="submit">
                       <div className="flex size-6 items-center justify-center rounded-sm border">
                         {(() => {

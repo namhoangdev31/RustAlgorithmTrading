@@ -1,3 +1,5 @@
+"use client"
+
 import * as React from "react"
 import { useForm } from "@tanstack/react-form"
 import * as z from "zod"
@@ -134,7 +136,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
             />
           )}
         />
-        
+
         <form.Field
           name="urlSecondary"
           children={(field) => (
