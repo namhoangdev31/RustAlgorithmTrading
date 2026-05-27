@@ -283,7 +283,7 @@ export async function updateReviewTaskAction(formData: FormData) {
         reviewerId: readBoolean(formData, "assignToMe") ? user.id : null,
         reviewedAt:
           readFormValue(formData, "status") === "approved" ||
-          readFormValue(formData, "status") === "rejected"
+            readFormValue(formData, "status") === "rejected"
             ? new Date()
             : null,
         updatedAt: new Date(),
@@ -500,9 +500,9 @@ export async function inviteCollaboratorAction(formData: FormData) {
   const bundle = await requireOwnedBundle(user.id, bundleId);
   const invitedUser = email
     ? await prisma.user.findUnique({
-        where: { email },
-        select: { id: true },
-      })
+      where: { email },
+      select: { id: true },
+    })
     : null;
 
   if (!bundle || !invitedUser) {

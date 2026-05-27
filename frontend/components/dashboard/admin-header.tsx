@@ -1,9 +1,8 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePathname, Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 
-import { Link } from "@/i18n/navigation";
 import { ConfigDrawer } from "@/components/dashboard/config-drawer";
 import { ProfileDropdown } from "@/components/dashboard/profile-dropdown";
 import { Search } from "@/components/dashboard/search";
