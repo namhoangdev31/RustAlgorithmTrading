@@ -883,5 +883,9 @@
       "go_back": "Go Back",
       "back_to_home": "Back to Home"
     }
+  },
+  "Metadata": {
+    "title": "Lepos — App Distribution & Cloud Hosting Platform",
+    "description": "Deploy Mini Apps, host websites, and run algorithmic trading — all from one unified platform."
   }
 }

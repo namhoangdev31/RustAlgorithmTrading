@@ -883,5 +883,9 @@
       "go_back": "Quay lại",
       "back_to_home": "Quay lại trang chủ"
     }
+  },
+  "Metadata": {
+    "title": "Lepos — Nền tảng Phân phối Ứng dụng & Lưu trữ Đám mây",
+    "description": "Triển khai Mini App, lưu trữ trang web và vận hành giao dịch thuật toán — tất cả trên một nền tảng thống nhất."
   }
 }
