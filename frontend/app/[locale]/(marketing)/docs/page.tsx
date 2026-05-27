@@ -5,7 +5,6 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useTranslations } from "next-intl";
 import { FooterSection } from "@/components/layout/sections/footer";
-import { Link } from "@/i18n/navigation";
 import {
   ArrowRight, BookOpen, Cpu, Code2, Globe, Server,
   Smartphone, Terminal, Webhook, Database, Layers, Shield,

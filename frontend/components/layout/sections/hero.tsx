@@ -17,11 +17,11 @@ export const HeroSection = () => {
   const words = headingText.split(" ");
 
   return (
-    <section className="relative container w-full overflow-hidden min-h-[90vh] flex items-center justify-center">
+    <section className="relative w-full overflow-hidden min-h-[90vh] flex items-center justify-center">
       {/* 3D WebGL network background */}
       <TradingCanvas />
 
-      <div className="relative z-10 grid place-items-center lg:max-w-screen-xl gap-8 mx-auto py-20 md:py-32 w-full">
+      <div className="relative z-10 grid place-items-center lg:max-w-screen-xl gap-8 mx-auto px-6 md:px-8 py-20 md:py-32 w-full">
         <div className="text-center flex flex-col gap-8 max-w-4xl">
           {/* Animated Badge */}
           <motion.div 

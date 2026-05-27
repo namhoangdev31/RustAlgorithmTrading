@@ -179,6 +179,7 @@ The platform is fully migrated.
 | `deployment/Makefile` | Docker stack management commands | `make up`, `make down`, `make health`, `make logs`. |
 | `deployment/Dockerfile` | Multi-stage Rust build | Builder stage -> Runtime stages for each Rust binary (`market_data_service`, etc.). |
 | `deployment/go.Dockerfile` | Go control plane build | Multi-stage Alpine build for the `observability-api` binary. |
+| `.vercelignore` | Excludes backend & cache files from Vercel deployment uploads | Avoids the 10MB payload size limit by ensuring only Next.js frontend is sent. |
 
 ---
 
@@ -337,6 +338,7 @@ Standalone iOS project (SwiftUI + Liquid Glass). Migrated from `leposapp/iosApp`
 | `frontend/lib/stores/session-store.ts` | Zustand vanilla store factory | Optional session state factory for future client islands without moving SSR data fetching client-side. |
 | `frontend/public/` | Static landing assets | Images, SVG icons, Favicon. |
 | frontend/package.json | Dependencies and scripts | Next.js, React, NextAuth, Firebase, Prisma, Zustand, Tailwind, Lucide icons dependencies. |
+| `frontend/.vercelignore` | Local deployment exclude configuration | Excludes local dev build directories, cache files, and local environments from Vercel deployment uploads. |
 | `frontend/types/lodash.d.ts` | Custom lodash type declarations | Polyfills typescript type definitions for lodash sub-imports. |
 | `frontend/types/next-auth.d.ts` | NextAuth type augmentation | Adds Prisma/Firebase session fields to NextAuth `Session`, `User`, and JWT types. |
 | frontend/prisma/schema.prisma | Prisma Schema Definition | Database connection & entity schemas (`Order`, `RiskEvent`) mapping to PostgreSQL |
