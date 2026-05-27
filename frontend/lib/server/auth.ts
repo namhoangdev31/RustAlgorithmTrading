@@ -11,7 +11,6 @@ import {
   type FirebaseAuthUser,
 } from "@/lib/server/firebase-auth";
 import { prisma } from "@/lib/server/prisma";
-import { ensureUserOrganizations } from "@/lib/server/workspace";
 
 function readCredential(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
@@ -65,8 +64,6 @@ async function syncFirebaseUser(
       },
     });
 
-    await ensureUserOrganizations(user);
-
     return user;
   }
 
@@ -84,8 +81,6 @@ async function syncFirebaseUser(
       updatedAt: now,
     },
   });
-
-  await ensureUserOrganizations(user);
 
   return user;
 }

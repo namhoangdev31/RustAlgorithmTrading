@@ -67,6 +67,7 @@ async function getWorkspaceProjects(userId: string) {
               rating: true,
               ratingCount: true,
               downloadCount: true,
+              activeInstalls: true,
             },
           },
         },
@@ -85,6 +86,11 @@ async function getWorkspaceProjects(userId: string) {
 
 export async function getDashboardOverview(userId: string) {
   const { workspace, projects, bundleIds } = await getWorkspaceProjects(userId);
+  const now = new Date();
+  const year = now.getFullYear();
+  const monthStart = new Date(year, now.getMonth(), 1);
+  const sevenDaysAgo = new Date(now);
+  sevenDaysAgo.setDate(now.getDate() - 6);
 
   const [
     publishedBundleCount,
@@ -93,6 +99,8 @@ export async function getDashboardOverview(userId: string) {
     unreadChatCount,
     collaboratorCount,
     orderSummary,
+    monthlyOrders,
+    weeklyAnalyticsEvents,
     recentTasks,
     recentChats,
   ] = await Promise.all([
@@ -135,6 +143,32 @@ export async function getDashboardOverview(userId: string) {
         totalAmount: true,
       },
       _count: true,
+    }),
+    prisma.bundleOrders.findMany({
+      where: {
+        bundleId: { in: bundleIds },
+        createdAt: {
+          gte: new Date(year, 0, 1),
+        },
+      },
+      select: {
+        totalAmount: true,
+        createdAt: true,
+      },
+    }),
+    prisma.bundleAnalyticsEvents.findMany({
+      where: {
+        bundleId: { in: bundleIds },
+        createdAt: {
+          gte: sevenDaysAgo,
+        },
+      },
+      select: {
+        eventType: true,
+        sessionId: true,
+        userId: true,
+        createdAt: true,
+      },
     }),
     prisma.bundleReviewQueue.findMany({
       where: {
@@ -185,10 +219,57 @@ export async function getDashboardOverview(userId: string) {
     const downloads = project.bundle?.stats?.downloadCount;
     return sum + (downloads ? Number(downloads) : 0);
   }, 0);
+  const activeInstalls = projects.reduce((sum, project) => {
+    const installs = project.bundle?.stats?.activeInstalls;
+    return sum + (installs ? Number(installs) : 0);
+  }, 0);
+  const monthlyRevenue = Array.from({ length: 12 }, (_, month) => ({
+    name: new Date(year, month, 1).toLocaleString("en", { month: "short" }),
+    total: 0,
+  }));
+
+  for (const order of monthlyOrders) {
+    monthlyRevenue[order.createdAt.getMonth()].total += order.totalAmount;
+  }
+
+  const weeklyEvents = Array.from({ length: 7 }, (_, index) => {
+    const date = new Date(sevenDaysAgo);
+    date.setDate(sevenDaysAgo.getDate() + index);
+
+    return {
+      date,
+      name: date.toLocaleString("en", { weekday: "short" }),
+      clicks: 0,
+      uniques: new Set<string>(),
+    };
+  });
+
+  for (const event of weeklyAnalyticsEvents) {
+    const bucket = weeklyEvents.find(
+      (item) => item.date.toDateString() === event.createdAt.toDateString()
+    );
+
+    if (bucket) {
+      bucket.clicks += 1;
+      bucket.uniques.add(event.userId ?? event.sessionId ?? event.eventType);
+    }
+  }
+
+  const analyticsSeries = weeklyEvents.map((event) => ({
+    name: event.name,
+    clicks: event.clicks,
+    uniques: event.uniques.size,
+  }));
+  const totalClicks = analyticsSeries.reduce((sum, event) => sum + event.clicks, 0);
+  const uniqueVisitors = analyticsSeries.reduce((sum, event) => sum + event.uniques, 0);
 
   return {
     workspace,
     projects: projectRows,
+    charts: {
+      monthlyRevenue,
+      analyticsSeries,
+    },
     metrics: {
       projectCount: projects.length,
       bundleCount: bundleIds.length,
@@ -198,8 +279,14 @@ export async function getDashboardOverview(userId: string) {
       unreadChatCount,
       collaboratorCount,
       totalRevenue: orderSummary._sum.totalAmount ?? 0,
+      currentMonthRevenue: monthlyOrders
+        .filter((order) => order.createdAt >= monthStart)
+        .reduce((sum, order) => sum + order.totalAmount, 0),
       orderCount: orderSummary._count,
       totalDownloads,
+      activeInstalls,
+      totalClicks,
+      uniqueVisitors,
     },
     recentTasks,
     recentChats,

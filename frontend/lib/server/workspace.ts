@@ -20,83 +20,9 @@ export function getDefaultOrganizationName(
     : `${owner} Business`;
 }
 
-export async function ensureUserOrganizations(user: {
-  id: string;
-  fullName?: string | null;
-  email?: string | null;
-}) {
-  const now = new Date();
-
-  const [personal, corporate] = await prisma.$transaction([
-    prisma.organization.upsert({
-      where: {
-        userId_type: {
-          userId: user.id,
-          type: OrganizationType.personal,
-        },
-      },
-      create: {
-        id: crypto.randomUUID(),
-        name: getDefaultOrganizationName(
-          OrganizationType.personal,
-          user.fullName,
-          user.email
-        ),
-        type: OrganizationType.personal,
-        userId: user.id,
-        createdAt: now,
-        updatedAt: now,
-      },
-      update: {
-        deletedAt: null,
-        updatedAt: now,
-      },
-    }),
-    prisma.organization.upsert({
-      where: {
-        userId_type: {
-          userId: user.id,
-          type: OrganizationType.corporate,
-        },
-      },
-      create: {
-        id: crypto.randomUUID(),
-        name: getDefaultOrganizationName(
-          OrganizationType.corporate,
-          user.fullName,
-          user.email
-        ),
-        type: OrganizationType.corporate,
-        userId: user.id,
-        createdAt: now,
-        updatedAt: now,
-      },
-      update: {
-        deletedAt: null,
-        updatedAt: now,
-      },
-    }),
-  ]);
-
-  return [personal, corporate];
-}
-
 export const getWorkspaceContext = cache(async (userId: string) => {
   const cookieStore = await cookies();
   const activeOrganizationId = cookieStore.get(ACTIVE_ORG_COOKIE)?.value;
-
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: {
-      id: true,
-      email: true,
-      fullName: true,
-    },
-  });
-
-  if (user) {
-    await ensureUserOrganizations(user);
-  }
 
   const organizations = await prisma.organization.findMany({
     where: {
@@ -153,4 +79,3 @@ export async function clearActiveOrganizationCookie() {
   const cookieStore = await cookies();
   cookieStore.delete(ACTIVE_ORG_COOKIE);
 }
-

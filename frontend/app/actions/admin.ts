@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect, localizedHref } from "@/i18n/navigation";
+import { OrganizationType } from "@/prisma/generated/enums";
 
 import { requireCurrentUser } from "@/lib/server/current-user";
 import { prisma } from "@/lib/server/prisma";
@@ -33,6 +34,16 @@ function readBoolean(formData: FormData, key: string) {
 function readPriority(formData: FormData) {
   const value = Number(readFormValue(formData, "priority"));
   return Number.isInteger(value) ? value : 0;
+}
+
+function readAgeAsDateOfBirth(formData: FormData) {
+  const age = Number(readFormValue(formData, "age"));
+
+  if (!Number.isInteger(age) || age < 13 || age > 120) {
+    return null;
+  }
+
+  return new Date(new Date().getFullYear() - age, 0, 1);
 }
 
 async function getUserOrganizationIds(userId: string) {
@@ -99,6 +110,71 @@ export async function switchOrganizationAction(formData: FormData) {
     await setActiveOrganizationCookie(organizationId);
   }
 
+  redirect(returnTo);
+}
+
+export async function createOrganizationOnboardingAction(formData: FormData) {
+  const user = await requireCurrentUser();
+  const returnTo = await readReturnTo(formData, "/dashboard");
+  const accountType = readFormValue(formData, "accountType");
+  const organizationType =
+    accountType === "corporate"
+      ? OrganizationType.corporate
+      : OrganizationType.personal;
+  const organizationName = readFormValue(formData, "organizationName");
+  const fullName = readFormValue(formData, "fullName");
+  const phone = readFormValue(formData, "phone");
+  const verificationEmail = readFormValue(formData, "verificationEmail");
+  const developerRole = readFormValue(formData, "developerRole");
+  const industry = readFormValue(formData, "industry");
+  const profileType =
+    organizationType === OrganizationType.corporate
+      ? `corp:${industry || "general"}`
+      : `dev:${developerRole || "developer"}`;
+
+  if (!organizationName || !fullName || !phone) {
+    redirect(returnTo);
+  }
+
+  const now = new Date();
+  const organization = await prisma.$transaction(async (tx) => {
+    await tx.user.update({
+      where: { id: user.id },
+      data: {
+        fullName,
+        phone,
+        email: user.email ?? (verificationEmail || null),
+        dateOfBirth: readAgeAsDateOfBirth(formData),
+        userType: profileType.slice(0, 50),
+        updatedAt: now,
+      },
+    });
+
+    return tx.organization.upsert({
+      where: {
+        userId_type: {
+          userId: user.id,
+          type: organizationType,
+        },
+      },
+      create: {
+        id: crypto.randomUUID(),
+        name: organizationName,
+        type: organizationType,
+        userId: user.id,
+        createdAt: now,
+        updatedAt: now,
+      },
+      update: {
+        name: organizationName,
+        deletedAt: null,
+        updatedAt: now,
+      },
+    });
+  });
+
+  await setActiveOrganizationCookie(organization.id);
+  revalidatePath("/dashboard");
   redirect(returnTo);
 }
 

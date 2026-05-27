@@ -10,35 +10,21 @@ import {
   YAxis,
 } from "recharts";
 
-const overviewData = [
-  { name: "Jan", total: 2200 },
-  { name: "Feb", total: 3100 },
-  { name: "Mar", total: 2800 },
-  { name: "Apr", total: 4200 },
-  { name: "May", total: 3600 },
-  { name: "Jun", total: 5100 },
-  { name: "Jul", total: 4600 },
-  { name: "Aug", total: 3900 },
-  { name: "Sep", total: 4800 },
-  { name: "Oct", total: 5300 },
-  { name: "Nov", total: 4900 },
-  { name: "Dec", total: 6100 },
-];
+type OverviewPoint = {
+  name: string;
+  total: number;
+};
 
-const analyticsData = [
-  { name: "Mon", clicks: 640, uniques: 420 },
-  { name: "Tue", clicks: 760, uniques: 510 },
-  { name: "Wed", clicks: 590, uniques: 430 },
-  { name: "Thu", clicks: 880, uniques: 690 },
-  { name: "Fri", clicks: 720, uniques: 540 },
-  { name: "Sat", clicks: 940, uniques: 710 },
-  { name: "Sun", clicks: 810, uniques: 620 },
-];
+type AnalyticsPoint = {
+  name: string;
+  clicks: number;
+  uniques: number;
+};
 
-export function OverviewChart() {
+export function OverviewChart({ data }: { data: OverviewPoint[] }) {
   return (
     <ResponsiveContainer height={350} width="100%">
-      <BarChart data={overviewData}>
+      <BarChart data={data}>
         <XAxis
           axisLine={false}
           dataKey="name"
@@ -64,10 +50,10 @@ export function OverviewChart() {
   );
 }
 
-export function AnalyticsChart() {
+export function AnalyticsChart({ data }: { data: AnalyticsPoint[] }) {
   return (
     <ResponsiveContainer height={300} width="100%">
-      <AreaChart data={analyticsData}>
+      <AreaChart data={data}>
         <XAxis
           axisLine={false}
           dataKey="name"

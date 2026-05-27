@@ -1,7 +1,7 @@
 "use server";
 
 import { AuthError } from "next-auth";
-import { redirect } from "next/navigation";
+import { redirect, localizedHref } from "@/i18n/navigation";
 
 import {
   FirebaseAuthError,
@@ -18,8 +18,9 @@ function readFormValue(formData: FormData, key: string) {
   return typeof value === "string" ? value.trim() : "";
 }
 
-function redirectWithMessage(path: string, key: "error" | "info", message: string) {
-  redirect(`${path}?${key}=${encodeURIComponent(message)}`);
+async function redirectWithMessage(path: string, key: "error" | "info", message: string) {
+  const localized = await localizedHref(path);
+  redirect(`${localized}?${key}=${encodeURIComponent(message)}`);
 }
 
 export async function loginWithEmailAction(formData: FormData) {
@@ -27,18 +28,18 @@ export async function loginWithEmailAction(formData: FormData) {
   const password = readFormValue(formData, "password");
 
   if (!email || !password) {
-    redirectWithMessage("/login", "error", "Email and password are required.");
+    await redirectWithMessage("/login", "error", "Email and password are required.");
   }
 
   try {
     await signIn("credentials", {
       email,
       password,
-      redirectTo: "/dashboard",
+      redirectTo: await localizedHref("/dashboard"),
     });
   } catch (error) {
     if (error instanceof AuthError) {
-      redirectWithMessage("/login", "error", "Invalid email or password.");
+      await redirectWithMessage("/login", "error", "Invalid email or password.");
     }
 
     throw error;
@@ -47,17 +48,17 @@ export async function loginWithEmailAction(formData: FormData) {
 
 export async function loginWithFirebaseIdTokenAction(idToken: string) {
   if (!idToken) {
-    redirectWithMessage("/login", "error", "Firebase social login did not return a token.");
+    await redirectWithMessage("/login", "error", "Firebase social login did not return a token.");
   }
 
   try {
     await signIn("credentials", {
       idToken,
-      redirectTo: "/dashboard",
+      redirectTo: await localizedHref("/dashboard"),
     });
   } catch (error) {
     if (error instanceof AuthError) {
-      redirectWithMessage("/login", "error", "Firebase social login failed.");
+      await redirectWithMessage("/login", "error", "Firebase social login failed.");
     }
 
     throw error;
@@ -68,16 +69,16 @@ export async function loginWithOAuthAction(formData: FormData) {
   const provider = readFormValue(formData, "provider").toLowerCase();
 
   if (!oauthProviders.has(provider)) {
-    redirectWithMessage("/login", "error", "Unsupported social login provider.");
+    await redirectWithMessage("/login", "error", "Unsupported social login provider.");
   }
 
   try {
     await signIn(provider, {
-      redirectTo: "/dashboard",
+      redirectTo: await localizedHref("/dashboard"),
     });
   } catch (error) {
     if (error instanceof AuthError) {
-      redirectWithMessage("/login", "error", "Social login failed.");
+      await redirectWithMessage("/login", "error", "Social login failed.");
     }
 
     throw error;
@@ -90,11 +91,11 @@ export async function registerWithEmailAction(formData: FormData) {
   const password = readFormValue(formData, "password");
 
   if (!name || !email || !password) {
-    redirectWithMessage("/register", "error", "Name, email, and password are required.");
+    await redirectWithMessage("/register", "error", "Name, email, and password are required.");
   }
 
   if (password.length < 6) {
-    redirectWithMessage("/register", "error", "Password must be at least 6 characters.");
+    await redirectWithMessage("/register", "error", "Password must be at least 6 characters.");
   }
 
   try {
@@ -102,11 +103,11 @@ export async function registerWithEmailAction(formData: FormData) {
 
     await signIn("credentials", {
       idToken: firebaseUser.idToken,
-      redirectTo: "/dashboard",
+      redirectTo: await localizedHref("/dashboard"),
     });
   } catch (error) {
     if (error instanceof AuthError || error instanceof FirebaseAuthError) {
-      redirectWithMessage("/register", "error", error.message || "Registration failed.");
+      await redirectWithMessage("/register", "error", error.message || "Registration failed.");
     }
 
     throw error;
@@ -117,15 +118,15 @@ export async function requestPasswordResetAction(formData: FormData) {
   const email = readFormValue(formData, "resetEmail").toLowerCase();
 
   if (!email) {
-    redirectWithMessage("/login", "error", "Enter your email before requesting a reset.");
+    await redirectWithMessage("/login", "error", "Enter your email before requesting a reset.");
   }
 
   try {
     await sendFirebasePasswordReset(email);
-    redirectWithMessage("/login", "info", "Password reset email sent.");
+    await redirectWithMessage("/login", "info", "Password reset email sent.");
   } catch (error) {
     if (error instanceof FirebaseAuthError) {
-      redirectWithMessage("/login", "error", error.message);
+      await redirectWithMessage("/login", "error", error.message);
     }
 
     throw error;
@@ -138,23 +139,23 @@ export async function confirmPasswordResetAction(formData: FormData) {
   const confirm = readFormValue(formData, "confirm");
 
   if (!oobCode) {
-    redirectWithMessage("/login", "error", "Password reset code is missing.");
+    await redirectWithMessage("/login", "error", "Password reset code is missing.");
   }
 
   if (password.length < 6) {
-    redirectWithMessage("/login", "error", "Password must be at least 6 characters.");
+    await redirectWithMessage("/login", "error", "Password must be at least 6 characters.");
   }
 
   if (password !== confirm) {
-    redirectWithMessage("/login", "error", "Passwords do not match.");
+    await redirectWithMessage("/login", "error", "Passwords do not match.");
   }
 
   try {
     await confirmFirebasePasswordReset(oobCode, password);
-    redirectWithMessage("/login", "info", "Password updated. You can sign in now.");
+    await redirectWithMessage("/login", "info", "Password updated. You can sign in now.");
   } catch (error) {
     if (error instanceof FirebaseAuthError) {
-      redirectWithMessage("/login", "error", error.message);
+      await redirectWithMessage("/login", "error", error.message);
     }
 
     throw error;
@@ -163,6 +164,6 @@ export async function confirmPasswordResetAction(formData: FormData) {
 
 export async function logoutAction() {
   await signOut({
-    redirectTo: "/login",
+    redirectTo: await localizedHref("/login"),
   });
 }
