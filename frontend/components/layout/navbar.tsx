@@ -28,6 +28,15 @@ import {
 import { Button } from "../ui/button";
 import { Link, usePathname } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
+import { ProfileDropdown } from "@/components/dashboard/profile-dropdown";
+
+interface NavbarProps {
+  user?: {
+    email: string | null;
+    fullName: string | null;
+    provider: string;
+  } | null;
+}
 
 interface RouteProps {
   href: string;
@@ -41,7 +50,7 @@ interface FeatureProps {
 
 const featureIcons = [Zap, Blocks, Activity];
 
-export const Navbar = () => {
+export const Navbar = ({ user }: NavbarProps) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const t = useTranslations("Navbar");
   const pathname = usePathname();
@@ -109,7 +118,8 @@ export const Navbar = () => {
         {t("logo")}
       </Link>
       {/* <!-- Mobile --> */}
-      <div className="flex items-center lg:hidden">
+      <div className="flex items-center lg:hidden gap-4">
+        {user && <ProfileDropdown user={user} />}
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild>
             <Menu
@@ -209,14 +219,18 @@ export const Navbar = () => {
       </NavigationMenu>
 
       <div className="hidden lg:flex">
-        <Button asChild size="sm" variant="ghost" aria-label="Login to Platform">
-          <Link
-            aria-label="Login to Platform"
-            href="/login"
-          >
-            <LogIn className="h-4 w-4" />
-          </Link>
-        </Button>
+        {user ? (
+          <ProfileDropdown user={user} />
+        ) : (
+          <Button asChild size="sm" variant="ghost" aria-label="Login to Platform">
+            <Link
+              aria-label="Login to Platform"
+              href="/login"
+            >
+              <LogIn className="h-4 w-4" />
+            </Link>
+          </Button>
+        )}
       </div>
     </header>
   );
