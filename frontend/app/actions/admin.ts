@@ -23,7 +23,7 @@ function readFormValue(formData: FormData, key: string) {
 
 async function readReturnTo(formData: FormData, fallback: string) {
   const value = readFormValue(formData, "returnTo");
-  return value || (await localizedHref(fallback));
+  return localizedHref(value || fallback);
 }
 
 function readBoolean(formData: FormData, key: string) {
