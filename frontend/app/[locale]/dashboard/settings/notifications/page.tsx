@@ -1,6 +1,5 @@
 import { markNotificationReadAction } from "@/app/actions/admin";
 import { getTranslations } from "next-intl/server";
-import { SettingsNav } from "@/components/dashboard/settings-nav";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";

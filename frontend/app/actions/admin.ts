@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { redirect, localizedHref } from "@/i18n/navigation";
 
 import { requireCurrentUser } from "@/lib/server/current-user";
 import { prisma } from "@/lib/server/prisma";
@@ -21,8 +21,9 @@ function readFormValue(formData: FormData, key: string) {
   return typeof value === "string" ? value.trim() : "";
 }
 
-function readReturnTo(formData: FormData, fallback: string) {
-  return readFormValue(formData, "returnTo") || fallback;
+async function readReturnTo(formData: FormData, fallback: string) {
+  const value = readFormValue(formData, "returnTo");
+  return value || (await localizedHref(fallback));
 }
 
 function readBoolean(formData: FormData, key: string) {
@@ -91,7 +92,7 @@ async function requireOwnedBundle(userId: string, bundleId: string) {
 export async function switchOrganizationAction(formData: FormData) {
   const user = await requireCurrentUser();
   const organizationId = readFormValue(formData, "organizationId");
-  const returnTo = readReturnTo(formData, "/dashboard");
+  const returnTo = await readReturnTo(formData, "/dashboard");
   const organizationIds = await getUserOrganizationIds(user.id);
 
   if (organizationIds.includes(organizationId)) {
@@ -107,7 +108,7 @@ export async function createProjectWithBundleAction(formData: FormData) {
   const organizationId =
     readFormValue(formData, "organizationId") || workspace.activeOrganization?.id;
   const organizationIds = workspace.organizations.map((organization) => organization.id);
-  const returnTo = readReturnTo(formData, "/dashboard");
+  const returnTo = await readReturnTo(formData, "/dashboard");
   const projectName = readFormValue(formData, "projectName");
 
   if (!projectName || !organizationId || !organizationIds.includes(organizationId)) {
@@ -159,7 +160,7 @@ export async function createProjectWithBundleAction(formData: FormData) {
 export async function updateProjectBundleAction(formData: FormData) {
   const user = await requireCurrentUser();
   const projectId = readFormValue(formData, "projectId");
-  const returnTo = readReturnTo(formData, "/dashboard");
+  const returnTo = await readReturnTo(formData, "/dashboard");
   const project = await requireOwnedProject(user.id, projectId);
   const projectName = readFormValue(formData, "projectName");
 
@@ -223,7 +224,7 @@ export async function updateProjectBundleAction(formData: FormData) {
 export async function deleteProjectAction(formData: FormData) {
   const user = await requireCurrentUser();
   const projectId = readFormValue(formData, "projectId");
-  const returnTo = readReturnTo(formData, "/dashboard");
+  const returnTo = await readReturnTo(formData, "/dashboard");
   const project = await requireOwnedProject(user.id, projectId);
 
   if (project) {
@@ -239,7 +240,7 @@ export async function deleteProjectAction(formData: FormData) {
 export async function createReviewTaskAction(formData: FormData) {
   const user = await requireCurrentUser();
   const bundleId = readFormValue(formData, "bundleId");
-  const returnTo = readReturnTo(formData, "/dashboard/tasks");
+  const returnTo = await readReturnTo(formData, "/dashboard/tasks");
   const bundle = await requireOwnedBundle(user.id, bundleId);
 
   if (!bundle) {
@@ -267,7 +268,7 @@ export async function createReviewTaskAction(formData: FormData) {
 export async function updateReviewTaskAction(formData: FormData) {
   const user = await requireCurrentUser();
   const taskId = readFormValue(formData, "taskId");
-  const returnTo = readReturnTo(formData, "/dashboard/tasks");
+  const returnTo = await readReturnTo(formData, "/dashboard/tasks");
   const task = await prisma.bundleReviewQueue.findUnique({
     where: { id: taskId },
     select: { id: true, bundleId: true },
@@ -298,7 +299,7 @@ export async function updateReviewTaskAction(formData: FormData) {
 export async function deleteReviewTaskAction(formData: FormData) {
   const user = await requireCurrentUser();
   const taskId = readFormValue(formData, "taskId");
-  const returnTo = readReturnTo(formData, "/dashboard/tasks");
+  const returnTo = await readReturnTo(formData, "/dashboard/tasks");
   const task = await prisma.bundleReviewQueue.findUnique({
     where: { id: taskId },
     select: { id: true, bundleId: true },
@@ -317,7 +318,7 @@ export async function deleteReviewTaskAction(formData: FormData) {
 export async function upsertIntegrationAction(formData: FormData) {
   const user = await requireCurrentUser();
   const bundleId = readFormValue(formData, "bundleId");
-  const returnTo = readReturnTo(formData, "/dashboard/apps");
+  const returnTo = await readReturnTo(formData, "/dashboard/apps");
   const bundle = await requireOwnedBundle(user.id, bundleId);
   const integrationType = readFormValue(formData, "integrationType").toLowerCase();
 
@@ -366,7 +367,7 @@ export async function upsertIntegrationAction(formData: FormData) {
 export async function toggleIntegrationAction(formData: FormData) {
   const user = await requireCurrentUser();
   const integrationId = readFormValue(formData, "integrationId");
-  const returnTo = readReturnTo(formData, "/dashboard/apps");
+  const returnTo = await readReturnTo(formData, "/dashboard/apps");
   const integration = await prisma.bundleExternalIntegrations.findUnique({
     where: { id: integrationId },
     select: { id: true, bundleId: true, isActive: true },
@@ -389,7 +390,7 @@ export async function toggleIntegrationAction(formData: FormData) {
 export async function deleteIntegrationAction(formData: FormData) {
   const user = await requireCurrentUser();
   const integrationId = readFormValue(formData, "integrationId");
-  const returnTo = readReturnTo(formData, "/dashboard/apps");
+  const returnTo = await readReturnTo(formData, "/dashboard/apps");
   const integration = await prisma.bundleExternalIntegrations.findUnique({
     where: { id: integrationId },
     select: { id: true, bundleId: true },
@@ -409,7 +410,7 @@ export async function sendChatMessageAction(formData: FormData) {
   const user = await requireCurrentUser();
   const recipientId = readFormValue(formData, "recipientId");
   const body = readFormValue(formData, "body");
-  const returnTo = readReturnTo(formData, "/dashboard/chats");
+  const returnTo = await readReturnTo(formData, "/dashboard/chats");
 
   if (!recipientId || !body) {
     redirect(returnTo);
@@ -451,7 +452,7 @@ export async function sendChatMessageAction(formData: FormData) {
 export async function markChatReadAction(formData: FormData) {
   const user = await requireCurrentUser();
   const notificationId = readFormValue(formData, "notificationId");
-  const returnTo = readReturnTo(formData, "/dashboard/chats");
+  const returnTo = await readReturnTo(formData, "/dashboard/chats");
 
   await prisma.notifications.updateMany({
     where: {
@@ -473,7 +474,7 @@ export async function markChatReadAction(formData: FormData) {
 export async function deleteChatMessageAction(formData: FormData) {
   const user = await requireCurrentUser();
   const notificationId = readFormValue(formData, "notificationId");
-  const returnTo = readReturnTo(formData, "/dashboard/chats");
+  const returnTo = await readReturnTo(formData, "/dashboard/chats");
 
   await prisma.notifications.updateMany({
     where: {
@@ -496,7 +497,7 @@ export async function inviteCollaboratorAction(formData: FormData) {
   const bundleId = readFormValue(formData, "bundleId");
   const email = readFormValue(formData, "email").toLowerCase();
   const role = readFormValue(formData, "role") || "editor";
-  const returnTo = readReturnTo(formData, "/dashboard/users");
+  const returnTo = await readReturnTo(formData, "/dashboard/users");
   const bundle = await requireOwnedBundle(user.id, bundleId);
   const invitedUser = email
     ? await prisma.user.findUnique({
@@ -539,7 +540,7 @@ export async function inviteCollaboratorAction(formData: FormData) {
 export async function updateCollaboratorRoleAction(formData: FormData) {
   const user = await requireCurrentUser();
   const collaboratorId = readFormValue(formData, "collaboratorId");
-  const returnTo = readReturnTo(formData, "/dashboard/users");
+  const returnTo = await readReturnTo(formData, "/dashboard/users");
   const collaborator = await prisma.bundleCollaborators.findUnique({
     where: { id: collaboratorId },
     select: { id: true, bundleId: true },
@@ -561,7 +562,7 @@ export async function updateCollaboratorRoleAction(formData: FormData) {
 export async function removeCollaboratorAction(formData: FormData) {
   const user = await requireCurrentUser();
   const collaboratorId = readFormValue(formData, "collaboratorId");
-  const returnTo = readReturnTo(formData, "/dashboard/users");
+  const returnTo = await readReturnTo(formData, "/dashboard/users");
   const collaborator = await prisma.bundleCollaborators.findUnique({
     where: { id: collaboratorId },
     select: { id: true, bundleId: true },
@@ -593,14 +594,14 @@ export async function updateProfileAction(formData: FormData) {
   });
 
   revalidatePath("/dashboard/settings");
-  redirect(readReturnTo(formData, "/dashboard/settings"));
+  redirect(await readReturnTo(formData, "/dashboard/settings"));
 }
 
 export async function updateOrganizationAction(formData: FormData) {
   const user = await requireCurrentUser();
   const organizationId = readFormValue(formData, "organizationId");
   const name = readFormValue(formData, "name");
-  const returnTo = readReturnTo(formData, "/dashboard/settings/account");
+  const returnTo = await readReturnTo(formData, "/dashboard/settings/account");
   const organizationIds = await getUserOrganizationIds(user.id);
 
   if (organizationIds.includes(organizationId)) {
@@ -640,13 +641,13 @@ export async function updateDisplayPreferenceAction(formData: FormData) {
     maxAge: 60 * 60 * 24 * 365,
   });
 
-  redirect(readReturnTo(formData, "/dashboard/settings/display"));
+  redirect(await readReturnTo(formData, "/dashboard/settings/display"));
 }
 
 export async function markNotificationReadAction(formData: FormData) {
   const user = await requireCurrentUser();
   const notificationId = readFormValue(formData, "notificationId");
-  const returnTo = readReturnTo(formData, "/dashboard/settings/notifications");
+  const returnTo = await readReturnTo(formData, "/dashboard/settings/notifications");
 
   await prisma.notifications.updateMany({
     where: {
