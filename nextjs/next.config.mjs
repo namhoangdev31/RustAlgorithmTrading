@@ -24,6 +24,18 @@ const nextConfig = {
       },
     ],
   },
+  webpack: (config) => {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      "react-router-dom": "react-router",
+    };
+    return config;
+  },
+  turbopack: {
+    resolveAlias: {
+      "react-router-dom": "react-router",
+    },
+  },
 };
 
 export default withNextIntl(nextConfig);

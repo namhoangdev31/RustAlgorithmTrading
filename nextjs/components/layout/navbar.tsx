@@ -164,18 +164,6 @@ export const Navbar = ({ user }: NavbarProps) => {
       </Link>
       {/* <!-- Mobile --> */}
       <div className="flex items-center lg:hidden gap-4">
-        {currentUser ? (
-          <ProfileDropdown user={currentUser} />
-        ) : (
-          <Button asChild size="sm" variant="ghost" aria-label="Login to Platform">
-            <Link
-              aria-label="Login to Platform"
-              href="/login"
-            >
-              <LogIn className="h-4 w-4" />
-            </Link>
-          </Button>
-        )}
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild>
             <Menu

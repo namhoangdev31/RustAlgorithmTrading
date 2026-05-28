@@ -24,6 +24,9 @@
     "paths": {
       "@/*": [
         "./*"
+      ],
+      "react-router-dom": [
+        "./node_modules/react-router"
       ]
     },
     "target": "ES2017"
