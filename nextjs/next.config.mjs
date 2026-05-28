@@ -4,6 +4,10 @@ import createMDX from "@next/mdx";
 const withNextIntl = createNextIntlPlugin();
 const withMDX = createMDX({
   extension: /\.(md|mdx)$/,
+  options: {
+    remarkPlugins: ["remark-gfm"],
+    rehypePlugins: [],
+  },
 });
 
 /** @type {import('next').NextConfig} */

@@ -3,6 +3,7 @@
 ## Overview
 
 The platform uses a hybrid storage model:
+
 - **DuckDB**: Columnar storage for high-frequency time-series metrics.
 - **PostgreSQL**: Transactional storage for trade history, configuration, and audit logs.
 
@@ -17,7 +18,9 @@ The platform uses a hybrid storage model:
 ## 2. Maintenance Tasks
 
 ### DuckDB Optimization
+
 DuckDB handles high-speed inserts but benefits from periodic vacuuming:
+
 ```sql
 -- Connect via DuckDB CLI
 duckdb data/observability.duckdb
@@ -29,15 +32,19 @@ ANALYZE;
 ```
 
 ### Automated Backups
+
 Run the project backup script daily:
+
 ```bash
 bash ops/scripts/backup_storage.sh
 ```
+
 *Backups are stored in `backups/` with a 7-day retention policy.*
 
 ## 3. Common Queries
 
 ### Querying Metrics via DuckDB CLI
+
 ```sql
 -- Find average latency for last hour
 SELECT symbol, AVG(value)
@@ -48,6 +55,7 @@ GROUP BY symbol;
 ```
 
 ### Inspecting Trade History via PostgreSQL CLI
+
 ```bash
 PostgreSQL3 data/postgresql://localhost:5432/trading "SELECT * FROM trades ORDER BY timestamp DESC LIMIT 10;"
 ```
@@ -55,10 +63,13 @@ PostgreSQL3 data/postgresql://localhost:5432/trading "SELECT * FROM trades ORDER
 ## 4. Troubleshooting
 
 ### Database Locked (PostgreSQL)
+
 If you see `database is locked`, ensure only one process is writing. The Go Control-Plane should be the primary writer for trades in production.
 
 ### Corruption Check (DuckDB)
+
 If DuckDB fails to open:
+
 1. Try `duckdb data/observability.duckdb "PRAGMA integrity_check;"`
 2. If corrupted, restore from the last nightly backup in `backups/`.
 
