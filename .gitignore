@@ -95,3 +95,4 @@ nextjs/.firebase/
 nextjs/.config/
 nextjs/.cache/
 .vercel
+.vercelignore
