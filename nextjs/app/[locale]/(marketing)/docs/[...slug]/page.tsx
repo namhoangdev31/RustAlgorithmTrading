@@ -1,6 +1,6 @@
 import React from "react";
 import { notFound } from "next/navigation";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { docsNavigation } from "@/lib/docs";
 import { ArrowLeft, ArrowRight, ChevronRight, Edit3 } from "lucide-react";
 
@@ -69,15 +69,14 @@ export default async function DocPage({ params }: PageProps) {
   const nextDoc = currentIndex < allDocs.length - 1 ? allDocs[currentIndex + 1] : null;
 
   // Paths formatted with locale support
-  const prefix = locale === "vi" ? "/vi" : "/en";
-  const prevPath = prevDoc ? `${prefix}/docs/${prevDoc.slug}` : "";
-  const nextPath = nextDoc ? `${prefix}/docs/${nextDoc.slug}` : "";
+  const prevPath = prevDoc ? `/docs/${prevDoc.slug}` : "";
+  const nextPath = nextDoc ? `/docs/${nextDoc.slug}` : "";
 
   return (
     <div className="space-y-8">
       {/* Breadcrumbs */}
       <nav className="flex items-center gap-1.5 text-xs text-zinc-500 font-medium border-b border-zinc-800/40 pb-4 mb-4">
-        <Link href={`${prefix}/docs`} className="hover:text-primary transition-colors">
+        <Link href="/docs" className="hover:text-primary transition-colors">
           Docs
         </Link>
         {currentGroupTitle && (

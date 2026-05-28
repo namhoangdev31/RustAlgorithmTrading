@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { usePathname } from "next/navigation";
 import { docsNavigation } from "@/lib/docs";
 import { cn } from "@/lib/utils";
@@ -88,14 +88,10 @@ export default function DocLayout({ children }: { children: React.ReactNode }) {
               <ul className="space-y-1">
                 {group.items.map((item) => {
                   const isActive = activeSlug === item.slug;
-                  const itemPath = pathname.startsWith("/vi")
-                    ? `/vi/docs/${item.slug}`
-                    : `/en/docs/${item.slug}`;
-
                   return (
                     <li key={item.slug}>
                       <Link
-                        href={itemPath}
+                        href={`/docs/${item.slug}`}
                         className={cn(
                           "group flex items-center justify-between px-3 py-2 text-sm rounded-md transition-all",
                           isActive

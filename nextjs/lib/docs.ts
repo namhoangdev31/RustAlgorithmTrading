@@ -34,6 +34,8 @@ export const docsNavigation: DocNavGroup[] = [
       { title: "Rust Module Structure", slug: "architecture/RUST_MODULE_STRUCTURE" },
       { title: "API Documentation", slug: "API_DOCUMENTATION" },
       { title: "ZMQ Protocol", slug: "api/ZMQ_PROTOCOL" },
+      { title: "Rust API Reference", slug: "api/rust" },
+      { title: "Python API Reference", slug: "api/python" },
     ],
   },
   {
