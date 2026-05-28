@@ -100,11 +100,11 @@ export function TableOfContents() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider">
+      <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
         <List className="size-3 text-primary" />
         <span>On this page</span>
       </div>
-      <ul className="relative border-l border-zinc-800/60 pl-4 space-y-2.5 text-sm">
+      <ul className="relative border-l border-border/60 pl-4 space-y-2.5 text-sm">
         {headings.map((heading) => {
           const isActive = activeId === heading.id;
           return (
@@ -119,14 +119,14 @@ export function TableOfContents() {
                 href={`#${heading.id}`}
                 onClick={(e) => handleClick(e, heading.id)}
                 className={cn(
-                  "block hover:text-zinc-200 transition-colors relative py-0.5",
+                  "block hover:text-foreground transition-colors relative py-0.5",
                   isActive
                     ? "text-primary font-medium pl-1"
-                    : "text-zinc-500 font-normal"
+                    : "text-muted-foreground font-normal"
                 )}
               >
                 {isActive && (
-                  <span className="absolute -left-[17px] top-[9px] size-1.5 rounded-full bg-primary shadow-[0_0_8px_rgba(52,211,153,0.8)] animate-pulse" />
+                  <span className="absolute -left-[17px] top-[9px] size-1.5 rounded-full bg-primary shadow-[0_0_8px_rgba(62,207,142,0.8)] animate-pulse" />
                 )}
                 {heading.text}
               </a>

@@ -31,6 +31,7 @@ import { useTranslations } from "next-intl";
 import { ProfileDropdown } from "@/components/dashboard/profile-dropdown";
 import { auth } from "@/firebase/firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import { ToggleTheme } from "./toogle-theme";
 
 interface NavbarProps {
   user?: {
@@ -163,7 +164,8 @@ export const Navbar = ({ user }: NavbarProps) => {
         {t("logo")}
       </Link>
       {/* <!-- Mobile --> */}
-      <div className="flex items-center lg:hidden gap-4">
+      <div className="flex items-center lg:hidden gap-2">
+        <ToggleTheme showLabel={false} className="w-9 h-9 p-0 justify-center" />
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild>
             <Menu
@@ -204,6 +206,9 @@ export const Navbar = ({ user }: NavbarProps) => {
                     <Link href={href}>{label}</Link>
                   </Button>
                 ))}
+                <div className="border-t border-secondary/40 pt-4 mt-4">
+                  <ToggleTheme showLabel={true} className="w-full justify-start" />
+                </div>
               </div>
             </div>
           </SheetContent>
@@ -262,7 +267,8 @@ export const Navbar = ({ user }: NavbarProps) => {
         </NavigationMenuList>
       </NavigationMenu>
 
-      <div className="hidden lg:flex">
+      <div className="hidden lg:flex items-center gap-2">
+        <ToggleTheme showLabel={false} className="w-9 h-9 p-0 justify-center" />
         {currentUser ? (
           <ProfileDropdown user={currentUser} />
         ) : (

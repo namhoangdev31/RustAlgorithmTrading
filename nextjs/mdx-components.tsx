@@ -135,12 +135,23 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       />
     ),
     pre: PreBlock,
-    code: ({ className, ...props }) => (
-      <code
-        className="relative rounded bg-zinc-900 border border-zinc-800 px-[0.3rem] py-[0.2rem] font-mono text-sm text-emerald-400"
-        {...props}
-      />
-    ),
+    code: ({ className, ...props }) => {
+      const isInline = !className;
+      if (isInline) {
+        return (
+          <code
+            className="relative rounded bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/20 dark:border-emerald-400/20 px-[0.35rem] py-[0.15rem] font-mono text-[0.85em] text-emerald-700 dark:text-emerald-300 font-medium"
+            {...props}
+          />
+        );
+      }
+      return (
+        <code
+          className={className}
+          {...props}
+        />
+      );
+    },
     Callout,
     Steps,
     Card,

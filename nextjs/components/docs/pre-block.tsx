@@ -35,7 +35,7 @@ export function PreBlock({ children, className, ...props }: PreBlockProps) {
       <pre
         ref={preRef}
         className={cn(
-          "overflow-x-auto rounded-xl border border-zinc-800 bg-zinc-950/70 p-4 font-mono text-sm leading-relaxed select-text shadow-inner",
+          "overflow-x-auto rounded-sm border border-border bg-muted/40 dark:bg-canvas-night/70 p-4 font-mono text-sm leading-relaxed select-text shadow-inner",
           className
         )}
         {...props}
@@ -48,8 +48,8 @@ export function PreBlock({ children, className, ...props }: PreBlockProps) {
         type="button"
         onClick={handleCopy}
         className={cn(
-          "absolute right-3 top-3 p-1.5 rounded-lg border border-zinc-800 bg-zinc-900/80 text-zinc-400 opacity-0 hover:opacity-100 focus:opacity-100 group-hover/code-block:opacity-100 transition-all duration-200 hover:text-zinc-200 hover:bg-zinc-800/80",
-          copied ? "text-emerald-400 border-emerald-500/20 bg-emerald-500/10 opacity-100 group-hover/code-block:opacity-100" : ""
+          "absolute right-3 top-3 p-1.5 rounded-sm border border-border bg-background/80 text-muted-foreground opacity-0 hover:opacity-100 focus:opacity-100 group-hover/code-block:opacity-100 transition-all duration-200 hover:text-foreground hover:bg-accent/80",
+          copied ? "text-primary border-primary/20 bg-primary/10 opacity-100 group-hover/code-block:opacity-100" : ""
         )}
         aria-label="Copy code to clipboard"
       >

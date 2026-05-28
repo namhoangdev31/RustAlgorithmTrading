@@ -54,12 +54,12 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
                 key={item.slug}
                 value={item.title}
                 onSelect={() => handleSelect(item.slug)}
-                className="flex items-center gap-3 px-4 py-3 hover:bg-zinc-800/50 cursor-pointer rounded-md transition-colors"
+                className="flex items-center gap-3 px-4 py-3 hover:bg-accent/50 cursor-pointer rounded-md transition-colors"
               >
-                <FileText className="size-4 text-zinc-400 shrink-0" />
+                <FileText className="size-4 text-muted-foreground shrink-0" />
                 <div className="flex flex-col">
-                  <span className="text-zinc-200 font-medium text-sm">{item.title}</span>
-                  <span className="text-zinc-500 text-xs font-mono">{`/docs/${item.slug}`}</span>
+                  <span className="text-foreground font-medium text-sm">{item.title}</span>
+                  <span className="text-muted-foreground text-xs font-mono">{`/docs/${item.slug}`}</span>
                 </div>
               </CommandItem>
             ))}
@@ -75,11 +75,11 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
               onOpenChange(false);
               router.push("/");
             }}
-            className="flex items-center gap-3 px-4 py-3 hover:bg-zinc-800/50 cursor-pointer rounded-md transition-colors"
+            className="flex items-center gap-3 px-4 py-3 hover:bg-accent/50 cursor-pointer rounded-md transition-colors"
           >
-            <Home className="size-4 text-zinc-400" />
-            <span className="text-zinc-200">Go to Homepage</span>
-            <CommandShortcut className="text-xs text-zinc-500 font-mono">/home</CommandShortcut>
+            <Home className="size-4 text-muted-foreground" />
+            <span className="text-foreground">Go to Homepage</span>
+            <CommandShortcut className="text-xs text-muted-foreground font-mono">/home</CommandShortcut>
           </CommandItem>
           
           <CommandItem
@@ -87,10 +87,10 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
               onOpenChange(false);
               window.open("https://github.com/namhoangdev31/RustAlgorithmTrading", "_blank");
             }}
-            className="flex items-center gap-3 px-4 py-3 hover:bg-zinc-800/50 cursor-pointer rounded-md transition-colors"
+            className="flex items-center gap-3 px-4 py-3 hover:bg-accent/50 cursor-pointer rounded-md transition-colors"
           >
-            <GithubIcon className="size-4 text-zinc-400" />
-            <span className="text-zinc-200">Open GitHub Repository</span>
+            <GithubIcon className="size-4 text-muted-foreground" />
+            <span className="text-foreground">Open GitHub Repository</span>
           </CommandItem>
         </CommandGroup>
       </CommandList>
@@ -107,7 +107,7 @@ function CommandShortcut({
   className?: string;
 }) {
   return (
-    <kbd className="ml-auto pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border border-zinc-800 bg-zinc-900 px-1.5 font-mono text-[10px] font-medium text-zinc-400 opacity-100">
+    <kbd className="ml-auto pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded-xs border border-border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
       {children}
     </kbd>
   );

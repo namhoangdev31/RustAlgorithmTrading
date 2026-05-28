@@ -21,27 +21,27 @@ interface CalloutProps {
 const calloutConfigs = {
   info: {
     icon: Info,
-    styles: "border-blue-500/20 bg-blue-500/5 text-blue-300",
-    iconColor: "text-blue-400",
-    glow: "shadow-[0_0_20px_rgba(59,130,246,0.05)]",
+    styles: "border-accent-indigo/20 bg-accent-indigo/5 text-accent-indigo dark:text-accent-indigo/90",
+    iconColor: "text-accent-indigo",
+    glow: "shadow-[0_0_20px_rgba(5,76,255,0.02)]",
   },
   warning: {
     icon: AlertTriangle,
-    styles: "border-yellow-500/20 bg-yellow-500/5 text-yellow-300",
-    iconColor: "text-yellow-400",
-    glow: "shadow-[0_0_20px_rgba(234,179,8,0.05)]",
+    styles: "border-accent-yellow/20 bg-accent-yellow/5 text-accent-yellow dark:text-accent-yellow/90",
+    iconColor: "text-accent-yellow",
+    glow: "shadow-[0_0_20px_rgba(255,219,19,0.02)]",
   },
   danger: {
     icon: AlertOctagon,
-    styles: "border-rose-500/20 bg-rose-500/5 text-rose-300",
-    iconColor: "text-rose-400",
-    glow: "shadow-[0_0_20px_rgba(244,63,94,0.05)]",
+    styles: "border-destructive/20 bg-destructive/5 text-destructive dark:text-destructive/90",
+    iconColor: "text-destructive",
+    glow: "shadow-[0_0_20px_rgba(255,34,1,0.02)]",
   },
   success: {
     icon: CheckCircle2,
-    styles: "border-emerald-500/20 bg-emerald-500/5 text-emerald-300",
-    iconColor: "text-emerald-400",
-    glow: "shadow-[0_0_20px_rgba(52,211,153,0.05)]",
+    styles: "border-primary/20 bg-primary/5 text-primary dark:text-primary/90",
+    iconColor: "text-primary",
+    glow: "shadow-[0_0_20px_rgba(62,207,142,0.02)]",
   },
 };
 
@@ -52,17 +52,17 @@ export function Callout({ type = "info", children, title }: CalloutProps) {
   return (
     <div
       className={cn(
-        "my-6 flex items-start gap-4 rounded-xl border p-4 backdrop-blur-sm transition-all duration-300",
+        "my-6 flex items-start gap-4 rounded-md border p-4 backdrop-blur-sm transition-all duration-300",
         config.styles,
         config.glow
       )}
     >
-      <div className={cn("mt-0.5 p-1 rounded-lg bg-zinc-900 border border-zinc-800", config.iconColor)}>
+      <div className={cn("mt-0.5 p-1 rounded-sm bg-muted border border-border", config.iconColor)}>
         <Icon className="size-4" />
       </div>
       <div className="flex-1 min-w-0">
         {title && <h5 className="font-bold text-foreground mb-1">{title}</h5>}
-        <div className="text-sm leading-relaxed prose prose-zinc dark:prose-invert max-w-none text-zinc-300">
+        <div className="text-sm leading-relaxed prose prose-zinc dark:prose-invert max-w-none text-muted-foreground">
           {children}
         </div>
       </div>
@@ -77,7 +77,7 @@ interface StepsProps {
 
 export function Steps({ children }: StepsProps) {
   return (
-    <div className="steps-container my-10 pl-6 border-l border-zinc-800 relative space-y-8">
+    <div className="steps-container my-10 pl-6 border-l border-border relative space-y-8">
       {React.Children.map(children, (child, index) => {
         if (!React.isValidElement(child)) return child;
         
@@ -86,7 +86,7 @@ export function Steps({ children }: StepsProps) {
 
         return (
           <div key={index} className={cn("relative step-item", isHeading ? "mt-0" : "")}>
-            <span className="absolute -left-[35px] top-0 flex items-center justify-center size-5 rounded-full bg-zinc-900 border border-zinc-700 text-[10px] font-bold text-zinc-400 shadow-inner">
+            <span className="absolute -left-[35px] top-0 flex items-center justify-center size-5 rounded-full bg-muted border border-border text-[10px] font-bold text-muted-foreground shadow-inner">
               {index + 1}
             </span>
             {child}
@@ -115,12 +115,12 @@ export function Card({ title, description, href, icon: Icon }: CardProps) {
   return (
     <LinkComponent
       {...(linkProps as any)}
-      className="group block rounded-xl border border-zinc-800 bg-zinc-950/40 p-5 hover:border-zinc-700 hover:bg-zinc-900/30 transition-all duration-300 shadow-sm hover:shadow-md"
+      className="group block rounded-lg border border-border bg-card/40 p-5 hover:border-border/80 hover:bg-muted/30 transition-all duration-300 shadow-sm hover:shadow-md"
     >
       <div className="flex flex-col h-full justify-between">
         <div>
           {Icon && (
-            <div className="inline-flex p-2 rounded-lg bg-zinc-900 border border-zinc-800 text-primary mb-4 group-hover:scale-105 transition-transform duration-300">
+            <div className="inline-flex p-2 rounded-sm bg-muted border border-border text-primary mb-4 group-hover:scale-105 transition-transform duration-300">
               <Icon className="size-4" />
             </div>
           )}
@@ -128,7 +128,7 @@ export function Card({ title, description, href, icon: Icon }: CardProps) {
             {title}
             <ArrowRight className="size-3.5 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
           </h4>
-          <p className="text-zinc-400 text-sm leading-relaxed">{description}</p>
+          <p className="text-muted-foreground text-sm leading-relaxed">{description}</p>
         </div>
       </div>
     </LinkComponent>
