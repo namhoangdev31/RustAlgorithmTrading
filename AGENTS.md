@@ -14,12 +14,12 @@ This repository is organized as a multi-domain workspace. The root agent coordin
 | `android/` | Android Agent | Android/Kotlin/Compose app |
 | `ops/` | Ops Agent | Runtime config, Docker image definitions, minimal local scripts |
 | `development/` | Development Agent | Bootstrap helpers and analysis utilities |
-| `docs/` | Docs Agent | Canonical docs, research notes, testing documentation |
+| `nextjs/app/[locale]/(marketing)/docs/content/` | Docs Agent | Canonical docs, research notes, testing documentation |
 | `data/` | Data Agent | Local datasets, sample historical data, runtime database artifacts |
 
 ## Routing Rules
 
-1. Read `docs/DOCS_CANONICAL_MAP.md`, `README_VI.md`, and `PLAYBOOK.md` before non-trivial edits.
+1. Read `nextjs/app/[locale]/(marketing)/docs/content/DOCS_CANONICAL_MAP.md`, `nextjs/app/[locale]/(marketing)/docs/content/README_VI.md`, and `nextjs/app/[locale]/(marketing)/docs/content/PLAYBOOK.md` before non-trivial edits.
 2. Work inside the owning folder whenever possible.
 3. If a task crosses folders, coordinate through this root agent and update each touched domain together.
 4. Do not create working files in the repository root.

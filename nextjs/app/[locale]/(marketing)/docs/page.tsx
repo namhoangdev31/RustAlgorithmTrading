@@ -5,6 +5,8 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useTranslations } from "next-intl";
 import { FooterSection } from "@/components/layout/sections/footer";
+import { Link } from "@/i18n/navigation";
+import { useParams } from "next/navigation";
 import {
   ArrowRight, BookOpen, Cpu, Code2, Globe, Server,
   Smartphone, Terminal, Webhook, Database, Layers, Shield,
@@ -21,18 +23,20 @@ interface DocCard {
 
 export default function DocsPage() {
   const t = useTranslations("Docs");
+  const params = useParams();
+  const locale = params?.locale as string || "vi";
   const headerRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
 
   const docCards: DocCard[] = [
-    { icon: Layers, titleKey: "arch_title", descKey: "arch_desc", href: "#architecture", accent: "border-emerald-500/30 hover:border-emerald-500/60 hover:shadow-[0_0_25px_rgba(52,211,153,0.1)]", iconColor: "text-emerald-500 bg-emerald-500/10" },
-    { icon: Cpu, titleKey: "rust_title", descKey: "rust_desc", href: "#rust-engine", accent: "border-orange-500/30 hover:border-orange-500/60 hover:shadow-[0_0_25px_rgba(249,115,22,0.1)]", iconColor: "text-orange-400 bg-orange-500/10" },
-    { icon: Code2, titleKey: "python_title", descKey: "python_desc", href: "#python-sdk", accent: "border-yellow-500/30 hover:border-yellow-500/60 hover:shadow-[0_0_25px_rgba(234,179,8,0.1)]", iconColor: "text-yellow-400 bg-yellow-500/10" },
-    { icon: Server, titleKey: "go_title", descKey: "go_desc", href: "#go-observability", accent: "border-cyan-500/30 hover:border-cyan-500/60 hover:shadow-[0_0_25px_rgba(6,182,212,0.1)]", iconColor: "text-cyan-400 bg-cyan-500/10" },
-    { icon: Smartphone, titleKey: "mobile_title", descKey: "mobile_desc", href: "#mobile-sdk", accent: "border-pink-500/30 hover:border-pink-500/60 hover:shadow-[0_0_25px_rgba(236,72,153,0.1)]", iconColor: "text-pink-400 bg-pink-500/10" },
-    { icon: Webhook, titleKey: "api_title", descKey: "api_desc", href: "#api-reference", accent: "border-blue-500/30 hover:border-blue-500/60 hover:shadow-[0_0_25px_rgba(59,130,246,0.1)]", iconColor: "text-blue-400 bg-blue-500/10" },
-    { icon: Terminal, titleKey: "cli_title", descKey: "cli_desc", href: "#cli", accent: "border-violet-500/30 hover:border-violet-500/60 hover:shadow-[0_0_25px_rgba(139,92,246,0.1)]", iconColor: "text-violet-400 bg-violet-500/10" },
-    { icon: Shield, titleKey: "security_title", descKey: "security_desc", href: "#security", accent: "border-rose-500/30 hover:border-rose-500/60 hover:shadow-[0_0_25px_rgba(244,63,94,0.1)]", iconColor: "text-rose-400 bg-rose-500/10" },
+    { icon: Layers, titleKey: "arch_title", descKey: "arch_desc", href: "/docs/architecture/SYSTEM_ARCHITECTURE", accent: "border-emerald-500/30 hover:border-emerald-500/60 hover:shadow-[0_0_25px_rgba(52,211,153,0.1)]", iconColor: "text-emerald-500 bg-emerald-500/10" },
+    { icon: Cpu, titleKey: "rust_title", descKey: "rust_desc", href: "/docs/rust/LOB", accent: "border-orange-500/30 hover:border-orange-500/60 hover:shadow-[0_0_25px_rgba(249,115,22,0.1)]", iconColor: "text-orange-400 bg-orange-500/10" },
+    { icon: Code2, titleKey: "python_title", descKey: "python_desc", href: "/docs/python/STRATEGY_DEV", accent: "border-yellow-500/30 hover:border-yellow-500/60 hover:shadow-[0_0_25px_rgba(234,179,8,0.1)]", iconColor: "text-yellow-400 bg-yellow-500/10" },
+    { icon: Server, titleKey: "go_title", descKey: "go_desc", href: "/docs/go/METRICS", accent: "border-cyan-500/30 hover:border-cyan-500/60 hover:shadow-[0_0_25px_rgba(6,182,212,0.1)]", iconColor: "text-cyan-400 bg-cyan-500/10" },
+    { icon: Smartphone, titleKey: "mobile_title", descKey: "mobile_desc", href: "/docs/mobile/ARCHITECTURE", accent: "border-pink-500/30 hover:border-pink-500/60 hover:shadow-[0_0_25px_rgba(236,72,153,0.1)]", iconColor: "text-pink-400 bg-pink-500/10" },
+    { icon: Webhook, titleKey: "api_title", descKey: "api_desc", href: "/docs/go/TELEMETRY", accent: "border-blue-500/30 hover:border-blue-500/60 hover:shadow-[0_0_25px_rgba(59,130,246,0.1)]", iconColor: "text-blue-400 bg-blue-500/10" },
+    { icon: Terminal, titleKey: "cli_title", descKey: "cli_desc", href: "/docs/cli/TUI", accent: "border-violet-500/30 hover:border-violet-500/60 hover:shadow-[0_0_25px_rgba(139,92,246,0.1)]", iconColor: "text-violet-400 bg-violet-500/10" },
+    { icon: Shield, titleKey: "security_title", descKey: "security_desc", href: "/docs/architecture/SYSTEM_ARCHITECTURE#security", accent: "border-rose-500/30 hover:border-rose-500/60 hover:shadow-[0_0_25px_rgba(244,63,94,0.1)]", iconColor: "text-rose-400 bg-rose-500/10" },
   ];
 
   useEffect(() => {
@@ -51,17 +55,19 @@ export default function DocsPage() {
     return () => ctx.revert();
   }, []);
 
-  const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseEnter = (e: React.MouseEvent<HTMLAnchorElement>) => {
     const icon = e.currentTarget.querySelector(".doc-icon");
     gsap.to(e.currentTarget, { y: -6, duration: 0.3, ease: "power2.out" });
     if (icon) gsap.to(icon, { scale: 1.15, rotation: 10, duration: 0.4, ease: "power2.out" });
   };
 
-  const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseLeave = (e: React.MouseEvent<HTMLAnchorElement>) => {
     const icon = e.currentTarget.querySelector(".doc-icon");
     gsap.to(e.currentTarget, { y: 0, duration: 0.4, ease: "power2.out" });
     if (icon) gsap.to(icon, { scale: 1, rotation: 0, duration: 0.5, ease: "power2.out" });
   };
+
+  const prefix = locale === "vi" ? "/vi" : "/en";
 
   return (
     <>
@@ -100,8 +106,13 @@ export default function DocsPage() {
         {/* Doc cards grid */}
         <div ref={gridRef} className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl mx-auto">
           {docCards.map(({ icon: CardIcon, titleKey, descKey, href, accent, iconColor }) => (
-            <div key={titleKey} className={`doc-card group rounded-xl border bg-card/80 backdrop-blur-sm p-6 transition-all duration-300 cursor-pointer ${accent}`}
-              onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+            <Link
+              key={titleKey}
+              href={`${prefix}${href}`}
+              className={`doc-card group rounded-xl border bg-card/80 backdrop-blur-sm p-6 transition-all duration-300 cursor-pointer ${accent}`}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+            >
               <div className={`doc-icon inline-flex items-center justify-center size-11 rounded-lg mb-4 ${iconColor}`}>
                 <CardIcon className="size-5" />
               </div>
@@ -110,7 +121,7 @@ export default function DocsPage() {
               <span className="inline-flex items-center gap-1 text-xs font-medium text-primary group-hover:gap-2 transition-all">
                 {t("read_more")} <ArrowRight className="size-3" />
               </span>
-            </div>
+            </Link>
           ))}
         </div>
 
