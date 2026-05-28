@@ -1,32 +1,85 @@
 import type { MDXComponents } from "mdx/types";
 import React from "react";
+import { PreBlock } from "@/components/docs/pre-block";
+import { Callout, Steps, Card, CardGroup } from "@/components/docs/mdx-elements";
+
+// Helper to slugify text for heading IDs
+const slugify = (text: string) => {
+  return text
+    .toString()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // Remove accents for Vietnamese support
+    .replace(/\s+/g, "-")
+    .replace(/[^\w\-]+/g, "")
+    .replace(/\-\-+/g, "-")
+    .replace(/^-+/, "")
+    .replace(/-+$/, "");
+};
+
+// Helper to extract text from React children tree
+const getTextContent = (children: React.ReactNode): string => {
+  if (!children) return "";
+  if (typeof children === "string") return children;
+  if (typeof children === "number") return children.toString();
+  if (Array.isArray(children)) return children.map(getTextContent).join("");
+  if (React.isValidElement(children)) {
+    const props = children.props as { children?: React.ReactNode };
+    return props.children ? getTextContent(props.children) : "";
+  }
+  return "";
+};
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
-    h1: ({ className, ...props }) => (
-      <h1
-        className="scroll-m-20 text-4xl font-extrabold tracking-tight text-foreground mb-6"
-        {...props}
-      />
-    ),
-    h2: ({ className, ...props }) => (
-      <h2
-        className="scroll-m-20 border-b border-border/40 pb-2 text-2xl font-bold tracking-tight text-foreground mt-10 mb-4 first:mt-0"
-        {...props}
-      />
-    ),
-    h3: ({ className, ...props }) => (
-      <h3
-        className="scroll-m-20 text-xl font-semibold tracking-tight text-foreground mt-8 mb-4"
-        {...props}
-      />
-    ),
-    h4: ({ className, ...props }) => (
-      <h4
-        className="scroll-m-20 text-lg font-medium tracking-tight text-foreground mt-6 mb-2"
-        {...props}
-      />
-    ),
+    h1: ({ className, children, ...props }) => {
+      const id = slugify(getTextContent(children));
+      return (
+        <h1
+          id={id}
+          className="scroll-m-20 text-4xl font-extrabold tracking-tight text-foreground mb-6"
+          {...props}
+        >
+          {children}
+        </h1>
+      );
+    },
+    h2: ({ className, children, ...props }) => {
+      const id = slugify(getTextContent(children));
+      return (
+        <h2
+          id={id}
+          className="scroll-m-20 border-b border-border/40 pb-2 text-2xl font-bold tracking-tight text-foreground mt-10 mb-4 first:mt-0"
+          {...props}
+        >
+          {children}
+        </h2>
+      );
+    },
+    h3: ({ className, children, ...props }) => {
+      const id = slugify(getTextContent(children));
+      return (
+        <h3
+          id={id}
+          className="scroll-m-20 text-xl font-semibold tracking-tight text-foreground mt-8 mb-4"
+          {...props}
+        >
+          {children}
+        </h3>
+      );
+    },
+    h4: ({ className, children, ...props }) => {
+      const id = slugify(getTextContent(children));
+      return (
+        <h4
+          id={id}
+          className="scroll-m-20 text-lg font-medium tracking-tight text-foreground mt-6 mb-2"
+          {...props}
+        >
+          {children}
+        </h4>
+      );
+    },
     p: ({ className, ...props }) => (
       <p
         className="leading-7 [&:not(:first-child)]:mt-4 text-muted-foreground mb-4"
@@ -81,18 +134,17 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
         {...props}
       />
     ),
-    pre: ({ className, ...props }) => (
-      <pre
-        className="mb-4 mt-6 overflow-x-auto rounded-lg border border-border/40 bg-zinc-950 p-4 font-mono text-sm leading-relaxed"
-        {...props}
-      />
-    ),
+    pre: PreBlock,
     code: ({ className, ...props }) => (
       <code
         className="relative rounded bg-zinc-900 border border-zinc-800 px-[0.3rem] py-[0.2rem] font-mono text-sm text-emerald-400"
         {...props}
       />
     ),
+    Callout,
+    Steps,
+    Card,
+    CardGroup,
     ...components,
   };
 }

@@ -5,6 +5,8 @@ import { Link } from "@/i18n/navigation";
 import { usePathname } from "next/navigation";
 import { docsNavigation } from "@/lib/docs";
 import { cn } from "@/lib/utils";
+import { TableOfContents } from "@/components/docs/table-of-contents";
+import { SearchDialog } from "@/components/docs/search-dialog";
 import {
   BookOpen,
   Cpu,
@@ -15,7 +17,6 @@ import {
   TrendingUp,
   Milestone,
   Menu,
-  X,
   ChevronRight,
   Search,
 } from "lucide-react";
@@ -34,7 +35,7 @@ const iconMap: Record<string, React.ElementType> = {
 export default function DocLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchOpen, setSearchOpen] = useState(false);
   const [activeSlug, setActiveSlug] = useState("");
 
   useEffect(() => {
@@ -50,34 +51,26 @@ export default function DocLayout({ children }: { children: React.ReactNode }) {
     setMobileOpen(false);
   }, [pathname]);
 
-  // Filter navigation items based on search query
-  const filteredNav = docsNavigation.map((group) => {
-    const matchedItems = group.items.filter((item) =>
-      item.title.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-    return {
-      ...group,
-      items: matchedItems,
-    };
-  }).filter((group) => group.items.length > 0);
-
   const sidebarContent = (
-    <div className="flex flex-col h-full bg-zinc-950/80 backdrop-blur-md border-r border-zinc-800/60 p-6 overflow-y-auto">
-      {/* Search Input */}
-      <div className="relative mb-6">
-        <Search className="absolute left-3 top-2.5 size-4 text-zinc-500" />
-        <input
-          type="text"
-          placeholder="Search docs..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full bg-zinc-900/60 border border-zinc-800 rounded-md py-2 pl-9 pr-4 text-sm text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-primary/50 transition-all focus:ring-1 focus:ring-primary/20"
-        />
-      </div>
+    <div className="flex flex-col h-full bg-zinc-950/20 backdrop-blur-sm p-6 overflow-y-auto">
+      {/* Search Input Trigger */}
+      <button
+        type="button"
+        onClick={() => setSearchOpen(true)}
+        className="flex items-center justify-between w-full bg-zinc-900/40 hover:bg-zinc-900/80 border border-zinc-800 hover:border-zinc-700/80 rounded-lg py-2 pl-3 pr-2 text-sm text-zinc-400 hover:text-zinc-300 transition-all mb-6 group cursor-pointer focus:outline-none"
+      >
+        <div className="flex items-center gap-2">
+          <Search className="size-4 text-zinc-500 group-hover:text-zinc-400 transition-colors" />
+          <span>Search docs...</span>
+        </div>
+        <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-0.5 rounded border border-zinc-850 bg-zinc-900 px-1.5 font-mono text-[10px] font-medium text-zinc-500 group-hover:text-zinc-400 transition-colors">
+          <span className="text-xs">⌘</span>K
+        </kbd>
+      </button>
 
       {/* Navigation Groups */}
       <nav className="space-y-6 flex-1">
-        {filteredNav.map((group) => {
+        {docsNavigation.map((group) => {
           const Icon = iconMap[group.title] || BookOpen;
           return (
             <div key={group.title} className="space-y-2">
@@ -85,7 +78,7 @@ export default function DocLayout({ children }: { children: React.ReactNode }) {
                 <Icon className="size-3.5 text-primary/80" />
                 <span>{group.title}</span>
               </h4>
-              <ul className="space-y-1">
+              <ul className="space-y-1 border-l border-zinc-900/60 ml-3.5 pl-3">
                 {group.items.map((item) => {
                   const isActive = activeSlug === item.slug;
                   return (
@@ -93,10 +86,10 @@ export default function DocLayout({ children }: { children: React.ReactNode }) {
                       <Link
                         href={`/docs/${item.slug}`}
                         className={cn(
-                          "group flex items-center justify-between px-3 py-2 text-sm rounded-md transition-all",
+                          "group flex items-center justify-between px-3 py-1.5 text-sm rounded-md transition-all relative",
                           isActive
-                            ? "bg-primary/10 text-primary font-medium border-l-2 border-primary pl-2.5 shadow-[0_0_15px_rgba(52,211,153,0.05)]"
-                            : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/40"
+                            ? "text-primary font-medium bg-primary/5 border-l-2 border-primary -ml-[14px] pl-[12px] shadow-[0_0_15px_rgba(52,211,153,0.02)]"
+                            : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/30"
                         )}
                       >
                         <span>{item.title}</span>
@@ -119,9 +112,13 @@ export default function DocLayout({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <div className="flex min-h-screen bg-zinc-950 text-zinc-100 pt-20">
-      {/* Desktop Sidebar (hidden on mobile) */}
-      <aside className="hidden md:block w-72 shrink-0 h-[calc(100vh-5rem)] sticky top-20">
+    <div className="flex min-h-screen bg-zinc-950 text-zinc-100 pt-20 relative bg-[linear-gradient(to_right,#80808005_1px,transparent_1px),linear-gradient(to_bottom,#80808005_1px,transparent_1px)] bg-[size:32px_32px]">
+      
+      {/* Background gradients */}
+      <div className="absolute top-0 left-1/4 right-1/4 h-[350px] bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none" />
+
+      {/* Desktop Sidebar (sticky) */}
+      <aside className="hidden md:block w-72 shrink-0 h-[calc(100vh-5rem)] sticky top-20 border-r border-zinc-800/40 bg-zinc-950/20 backdrop-blur-sm z-30">
         {sidebarContent}
       </aside>
 
@@ -140,7 +137,7 @@ export default function DocLayout({ children }: { children: React.ReactNode }) {
         {/* Drawer Content */}
         <div
           className={cn(
-            "absolute top-0 bottom-0 left-0 w-80 max-w-[85vw] transition-transform duration-300 transform shadow-2xl",
+            "absolute top-0 bottom-0 left-0 w-80 max-w-[85vw] transition-transform duration-300 transform shadow-2xl z-50 border-r border-zinc-800/60 bg-zinc-950",
             mobileOpen ? "translate-x-0" : "-translate-x-full"
           )}
         >
@@ -162,10 +159,21 @@ export default function DocLayout({ children }: { children: React.ReactNode }) {
         </span>
       </div>
 
-      {/* Main Document Content */}
-      <main className="flex-1 min-w-0 px-4 py-8 md:px-12 md:py-12 max-w-4xl mx-auto mt-12 md:mt-0">
-        {children}
-      </main>
+      {/* Content Container */}
+      <div className="flex-1 min-w-0 flex gap-10 max-w-6xl mx-auto px-4 py-8 md:px-8 md:py-10">
+        
+        {/* Main Document Content */}
+        <main className="flex-1 min-w-0 mt-12 md:mt-0 select-text">
+          {children}
+        </main>
+
+        {/* Right Sidebar - Table of Contents (hidden on desktop under 1024px) */}
+        <aside className="hidden lg:block w-60 shrink-0 h-[calc(100vh-8rem)] sticky top-28 overflow-y-auto pr-2">
+          <TableOfContents />
+        </aside>
+      </div>
+
+      <SearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
     </div>
   );
 }
