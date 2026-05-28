@@ -13,22 +13,17 @@ target
 # Contains mutation testing data
 **/mutants.out*/
 
-# RustRover
-#  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
-#  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
-#  and can be added to the global gitignore or merged into this file.  For a more nuclear
-#  option (not recommended) you can uncomment the following to ignore the entire idea folder.
-#.idea/
+# Local editor/tool state
+.idea/
+.vscode/
+.agents/
+.claude/
+.codex/
+.DS_Store
 
-
-# Removed Windows wrapper files per user request
-hive-mind-prompt-*.txt
-
+# Local environment and secrets
 .env
-
-
-# Removed Windows wrapper files per user request
-hive-mind-prompt-*.txt
+.env*
 
 # Virtual Environments (consolidated to .venv)
 venv/
@@ -37,7 +32,6 @@ ENV/
 env/
 
 # Claude Flow generated files
-.claude/settings.local.json
 .mcp.json
 claude-flow.config.json
 .swarm/
@@ -60,7 +54,6 @@ coordination/orchestration/*
 *.sqlite-journal
 *.sqlite-wal
 claude-flow
-# Removed Windows wrapper files per user request
 hive-mind-prompt-*.txt
 data/backtest_results/*.json
 
@@ -75,8 +68,8 @@ data/backtest_results/*.json
 *.duckdb.wal
 *.log
 logs/
-tests/logs/
-tests/reports/
+python/tests/logs/
+python/tests/reports/
 go/.cache/
 go/observability-api
 data/benchmarks/
@@ -92,11 +85,12 @@ ios/Libraries/AdaptiveSwiftUi/.build/
 ios/Libraries/AdaptiveSwiftUi/.swiftpm/
 ios/Libraries/AdaptiveSwiftUi/**/*.DS_Store
 ios/.DS_Store
-frontend/.firebaserc
-frontend/.npmrc
-frontend/node_modules
-frontend/.firebase
-frontend/firebase.json
-frontend/.config
+nextjs/.firebaserc
+nextjs/.npmrc
+nextjs/node_modules/
+nextjs/.next/
+nextjs/.vercel/
+nextjs/.firebase/
+nextjs/.config/
+nextjs/.cache/
 .vercel
-.env*

@@ -98,14 +98,14 @@ docker network create trading_network
 
 ```bash
 # This starts the Go-native metrics scraper and WebSocket hub
-docker compose -f deployment/docker-compose.observability.yml up -d
+docker compose -f ops/deployment/docker-compose.observability.yml up -d
 ```
 
 #### Step 3: Deploy Rust Trading Kernel
 
 ```bash
 # Builds and starts Market Data, Execution, and Risk services
-docker compose -f deployment/docker-compose.yml up -d
+docker compose -f ops/deployment/docker-compose.yml up -d
 ```
 
 ### Method 2: Native Binary Deployment (Ultra-Low Latency)
@@ -123,7 +123,7 @@ cd go && go build -o ../bin/observability-api ./cmd/server/main.go
 ./bin/observability-api &
 
 # 4. Start Trading Kernel
-./scripts/start_rust_services.sh --release
+./ops/scripts/start_rust_services.sh --release
 ```
 
 ### Method 3: Systemd Service Deployment (Robust Native)

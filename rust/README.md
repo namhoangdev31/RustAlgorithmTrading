@@ -162,7 +162,7 @@ cargo check --workspace
 
 ## Configuration
 
-All components load configuration from `config/system.json`:
+All components load configuration from `ops/config/system.json`:
 
 ```json
 {

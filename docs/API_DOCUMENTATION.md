@@ -39,7 +39,7 @@ Out of scope:
 
 ## Core Modules
 
-### 1. Alpaca Client (`src/api/alpaca_client.py`)
+### 1. Alpaca Client (`python/src/api/alpaca_client.py`)
 
 #### `AlpacaClient`
 
@@ -70,7 +70,7 @@ client = AlpacaClient(
 
 ---
 
-### 2. Data Fetcher (`src/data/fetcher.py`)
+### 2. Data Fetcher (`python/src/data/fetcher.py`)
 
 #### `DataFetcher`
 
@@ -92,7 +92,7 @@ fetcher = DataFetcher(client)
 
 ---
 
-### 3. Data Preprocessor (`src/data/preprocessor.py`)
+### 3. Data Preprocessor (`python/src/data/preprocessor.py`)
 
 #### `DataPreprocessor`
 
@@ -109,7 +109,7 @@ Preprocesses and transforms market data.
 
 ---
 
-### 4. Strategies (`src/strategies/`)
+### 4. Strategies (`python/src/strategies/`)
 
 #### Base Strategy Class
 
@@ -162,7 +162,7 @@ strategy = MomentumStrategy(
 
 ---
 
-### 5. Backtest Engine (`src/backtesting/engine.py`)
+### 5. Backtest Engine (`python/src/backtesting/engine.py`)
 
 #### `BacktestEngine`
 
@@ -204,7 +204,7 @@ engine = BacktestEngine(
 
 ---
 
-### 6. Monte Carlo Simulator (`src/simulations/monte_carlo.py`)
+### 6. Monte Carlo Simulator (`python/src/simulations/monte_carlo.py`)
 
 #### `MonteCarloSimulator`
 
@@ -254,7 +254,7 @@ simulator = MonteCarloSimulator(
 
 ---
 
-### 7. Configuration (`config/config.py`)
+### 7. Configuration (`ops/config/config.py`)
 
 #### `ConfigManager`
 
@@ -284,7 +284,7 @@ config_dict = config.to_dict()
 
 ---
 
-### 8. Utilities (`src/utils/`)
+### 8. Utilities (`python/src/utils/`)
 
 #### Logger Setup
 

@@ -9,18 +9,18 @@ The machine learning layer provides advanced feature engineering and predictive 
 
 ```
 RustAlgorithmTrading/
-├── src/strategies/ml/              # Strategy Logic (Python)
-├── src/models/                     # Persisted Model Artifacts
-├── src/data/features.py            # Feature Engineering Core
-├── tests/ml/                       # Validation Suites
-└── config/ml/                      # Hyperparameters & Config
+├── python/src/strategies/ml/              # Strategy Logic (Python)
+├── python/src/models/                     # Persisted Model Artifacts
+├── python/src/data/features.py            # Feature Engineering Core
+├── python/tests/ml/                       # Validation Suites
+└── ops/config/ml/                      # Hyperparameters & Config
 ```
 
 ---
 
 ## ✨ Key Capabilities
 
-### 1. Feature Engineering (`src/data/features.py`)
+### 1. Feature Engineering (`python/src/data/features.py`)
 - **Technical Indicators**: 50+ indicators including momentum, volatility, and trend.
 - **FFI-Optimized**: Features are prepared in Python and passed to Rust via the columnar FFI bridge.
 - **Statistical Descriptors**: Moving averages, standard deviation, and volume-weighted metrics.
@@ -59,7 +59,7 @@ signals = model.generate_signal_frame(data)
 ## 🛠️ Production Deployment
 
 ML signals are serialized to the **Signal Frame** format and pushed to the Rust Kernel:
-1. **Model Loading**: Models are loaded from `src/models/`.
+1. **Model Loading**: Models are loaded from `python/src/models/`.
 2. **Inference**: High-confidence signals are pushed via ZMQ to the Rust Signal Bridge.
 3. **Execution**: Rust validates the signals against `RiskConfig` and executes via Alpaca.
 

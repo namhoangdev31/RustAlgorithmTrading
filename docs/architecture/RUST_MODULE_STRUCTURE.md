@@ -20,7 +20,7 @@ rust/
 ├── database/                           # NEW: DuckDB database crate
 │   ├── Cargo.toml
 │   ├── README.md
-│   ├── src/
+│   ├── python/src/
 │   │   ├── lib.rs                      # Public API exports
 │   │   ├── config.rs                   # Configuration management
 │   │   ├── error.rs                    # Error types and handling
@@ -95,7 +95,7 @@ rust/
 │   └── Cargo.toml
 └── common/                             # Existing shared crate
     ├── Cargo.toml
-    └── src/
+    └── python/src/
         ├── lib.rs
         └── types.rs                    # Shared types across all crates
 ```

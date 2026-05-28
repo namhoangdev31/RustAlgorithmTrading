@@ -25,12 +25,12 @@ All gates must PASS with evidence in:
 Required:
 
 1. Python observability baseline tests:
-   - `python -m pytest tests/observability -q`
-   - `python -m pytest tests/integration/test_observability_integration.py -q`
+   - `python -m pytest python/tests/observability -q`
+   - `python -m pytest python/tests/integration/test_observability_integration.py -q`
 2. Go module tests:
    - `cd go && go test ./...`
 3. API parity suite PASS:
-   - `python -m pytest tests/observability/test_go_parity.py -q`
+   - `python -m pytest python/tests/observability/test_go_parity.py -q`
 4. WS parity/soak PASS:
    - 10Hz stream stability
    - ping/pong + reconnect stability

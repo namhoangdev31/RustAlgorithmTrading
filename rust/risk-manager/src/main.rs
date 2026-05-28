@@ -8,7 +8,7 @@ use tokio::signal::unix::{signal, SignalKind};
 use tokio::sync::RwLock;
 use tracing_subscriber::{fmt, prelude::*, EnvFilter};
 
-const RISK_LIMITS_CONFIG_PATH: &str = "config/risk_limits.toml";
+const RISK_LIMITS_CONFIG_PATH: &str = "ops/config/risk_limits.toml";
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -21,7 +21,7 @@ async fn main() -> anyhow::Result<()> {
     tracing::info!("[cid:INIT] Risk Manager Service starting...");
 
     // Load configuration with validation
-    let config = match SystemConfig::from_file("config/system.json") {
+    let config = match SystemConfig::from_file("ops/config/system.json") {
         Ok(cfg) => {
             tracing::info!(
                 "[cid:INIT] Configuration loaded successfully - Environment: {}",

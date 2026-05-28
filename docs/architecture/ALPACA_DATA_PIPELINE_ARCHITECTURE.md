@@ -203,7 +203,7 @@ impl ProviderManager {
 #### Provider Configuration
 
 ```toml
-# config/providers.toml
+# ops/config/providers.toml
 
 [providers.alpaca]
 enabled = true

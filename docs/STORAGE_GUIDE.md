@@ -37,14 +37,14 @@ DuckDB is perfect for trading analytics:
 ## File Structure
 
 ```
-src/observability/storage/
+python/src/observability/storage/
 ├── __init__.py              # Package exports
 ├── schemas.py               # Data models & SQL schemas
 ├── duckdb_client.py         # DuckDB time-series client
 ├── postgres_client.py         # PostgreSQL operational client
 └── integration.py           # Control-plane integration (Go primary, legacy compatibility (retired)) helpers
 
-tests/observability/
+python/tests/observability/
 ├── test_duckdb_client.py    # DuckDB tests with benchmarks
 └── test_postgres_client.py    # PostgreSQL tests
 ```
@@ -303,13 +303,13 @@ Run comprehensive tests with benchmarks:
 
 ```bash
 # Run all tests
-pytest tests/observability/
+pytest python/tests/observability/
 
 # Run with verbose output
-pytest tests/observability/ -v -s
+pytest python/tests/observability/ -v -s
 
 # Run specific tests
-pytest tests/observability/test_duckdb_client.py::TestPerformanceBenchmarks
+pytest python/tests/observability/test_duckdb_client.py::TestPerformanceBenchmarks
 ```
 
 ## Monitoring

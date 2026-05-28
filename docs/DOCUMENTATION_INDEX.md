@@ -37,11 +37,11 @@ This index is organized for production maintenance, not weekly gate execution.
 ## 5) Testing & Quality
 
 - `docs/TEST_EXECUTION_GUIDE.md`
-- `tests/docs/COMPREHENSIVE_TESTING_STRATEGY.md`
+- `docs/testing/strategy/COMPREHENSIVE_TESTING_STRATEGY.md`
 
 ## 6) Script Inventory
 
-- `scripts/README.md`
+- `ops/scripts/README.md`
 
 ## 7) Roadmap Summary
 

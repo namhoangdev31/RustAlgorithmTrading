@@ -16,28 +16,28 @@ Market Data → Signal Generation → Order Creation → Risk Check → Order Ex
 
 ### Core Components
 
-1. **BacktestEngine** (`src/backtesting/engine.py`)
+1. **BacktestEngine** (`python/src/backtesting/engine.py`)
    - Event queue management
    - Event dispatch and routing
    - Performance metrics calculation
 
-2. **HistoricalDataHandler** (`src/backtesting/data_handler.py`)
+2. **HistoricalDataHandler** (`python/src/backtesting/data_handler.py`)
    - CSV/Parquet data loading
    - Historical data replay
    - Bar aggregation
 
-3. **SimulatedExecutionHandler** (`src/backtesting/execution_handler.py`)
+3. **SimulatedExecutionHandler** (`python/src/backtesting/execution_handler.py`)
    - Realistic fill simulation
    - Commission modeling
    - Slippage and market impact
 
-4. **PortfolioHandler** (`src/backtesting/portfolio_handler.py`)
+4. **PortfolioHandler** (`python/src/backtesting/portfolio_handler.py`)
    - Position tracking
    - Cash management
    - Equity curve generation
    - Position sizing strategies
 
-5. **PerformanceAnalyzer** (`src/backtesting/performance.py`)
+5. **PerformanceAnalyzer** (`python/src/backtesting/performance.py`)
    - Sharpe/Sortino ratio
    - Maximum drawdown
    - Win rate, profit factor
@@ -358,7 +358,7 @@ let signal: f64 = py_module.call_method1("generate_signal", (price, indicators))
 ## File Structure
 
 ```
-src/
+python/src/
 ├── backtesting/
 │   ├── __init__.py
 │   ├── engine.py              # Main backtest engine

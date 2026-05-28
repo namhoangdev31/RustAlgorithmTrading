@@ -12,7 +12,7 @@ Run this 30 minutes before market open:
 
 ```bash
 # 1. Verify environment health
-bash scripts/health_check.sh
+bash ops/scripts/health_check.sh
 
 # 2. Check Go Control Plane connectivity
 curl http://localhost:8081/health
@@ -44,13 +44,13 @@ The system uses a strict startup/shutdown order to ensure state consistency.
 ### Start All Services
 
 ```bash
-bash scripts/start_trading.sh
+bash ops/scripts/start_trading.sh
 ```
 
 ### Stop All Services
 
 ```bash
-bash scripts/stop_trading.sh
+bash ops/scripts/stop_trading.sh
 ```
 
 ## 3. Incident Response
@@ -67,7 +67,7 @@ If the system is acting erratically and fails to auto-trip:
 
 ```bash
 # Force stop all trading components
-bash scripts/stop_trading.sh
+bash ops/scripts/stop_trading.sh
 ```
 
 ### 3.3 Manual Liquidation
@@ -75,7 +75,7 @@ bash scripts/stop_trading.sh
 To close all positions via Alpaca immediately:
 
 ```bash
-uv run python scripts/liquidate_positions.py --confirm
+uv run python ops/scripts/liquidate_positions.py --confirm
 ```
 
 ## 4. Disaster Recovery
@@ -93,14 +93,14 @@ To restore a corrupted DuckDB or PostgreSQL database:
 1. Stop all services.
 2. Replace `data/observability.duckdb` or `data/postgresql://localhost:5432/trading` with the latest file from `backups/`.
 3. Restart the Go Control Plane.
-4. Verify integrity via `scripts/health_check.sh`.
+4. Verify integrity via `ops/scripts/health_check.sh`.
 
 ### 4.3 Position Reconciliation
 
 After a crash, always reconcile local state with Alpaca:
 
 ```bash
-uv run python scripts/reconcile_positions.py
+uv run python ops/scripts/reconcile_positions.py
 ```
 
 ---

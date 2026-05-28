@@ -36,12 +36,15 @@ jobs:
             ${{ runner.os }}-cargo-
 
       - name: Check formatting
+        working-directory: ./rust
         run: cargo fmt --all -- --check
 
       - name: Run clippy
+        working-directory: ./rust
         run: cargo clippy --all-targets --all-features -- -D warnings
 
       - name: Check documentation
+        working-directory: ./rust
         run: cargo doc --no-deps --all-features
 
   test:
@@ -66,22 +69,26 @@ jobs:
       - name: Cache cargo build
         uses: actions/cache@v4
         with:
-          path: target/
+          path: rust/target/
           key: ${{ runner.os }}-cargo-build-${{ matrix.rust }}-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
             ${{ runner.os }}-cargo-build-${{ matrix.rust }}-
             ${{ runner.os }}-cargo-build-
 
       - name: Build all components
+        working-directory: ./rust
         run: cargo build --workspace --all-features
 
       - name: Run unit tests
+        working-directory: ./rust
         run: cargo test --workspace --lib --all-features
 
       - name: Run integration tests
+        working-directory: ./rust
         run: cargo test --workspace --test '*' --all-features
 
       - name: Run doc tests
+        working-directory: ./rust
         run: cargo test --workspace --doc --all-features
 
   security:
@@ -97,9 +104,11 @@ jobs:
         run: cargo install cargo-audit
 
       - name: Run security audit
+        working-directory: ./rust
         run: cargo audit
 
       - name: Check for outdated dependencies
+        working-directory: ./rust
         run: |
           cargo install cargo-outdated
           cargo outdated --exit-code 1 || echo "::warning::Outdated dependencies found"
@@ -121,12 +130,14 @@ jobs:
           sudo apt-get install -y libzmq3-dev pkg-config
 
       - name: Build release binaries
+        working-directory: ./rust
         run: |
           cargo build --release --workspace
         env:
           RUSTFLAGS: '-C link-arg=-s -C lto=fat -C embed-bitcode=yes'
 
       - name: Strip binaries
+        working-directory: ./rust
         run: |
           strip target/release/market_data_service || true
           strip target/release/order_execution_service || true
@@ -178,7 +189,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./docker/Dockerfile
+          file: ./ops/deployment/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -203,10 +214,11 @@ jobs:
         run: cargo install cargo-tarpaulin
 
       - name: Generate coverage
+        working-directory: ./rust
         run: cargo tarpaulin --workspace --all-features --out Xml --timeout 300
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
-          files: ./cobertura.xml
+          files: ./rust/cobertura.xml
           fail_ci_if_error: false

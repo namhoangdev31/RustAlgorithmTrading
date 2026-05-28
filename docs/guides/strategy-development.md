@@ -33,7 +33,7 @@ class Signal:
 ```
 
 ### 2.2 The `Strategy` Base Class
-Found in `src/strategies/base.py`. Every strategy must implement these methods:
+Found in `python/src/strategies/base.py`. Every strategy must implement these methods:
 
 ```python
 class MyStrategy(Strategy):
@@ -126,7 +126,7 @@ def test_momentum_signal():
 
 1. **Parameterize**: Use the `parameters` dict in `__init__`.
 2. **Type Safety**: Ensure `generate_signals` returns a list of `Signal` objects.
-3. **Bridge Verification**: Check `src/bridge/zmq_bridge.py` to see how your signals are serialized for the Rust kernel.
+3. **Bridge Verification**: Check `python/src/bridge/zmq_bridge.py` to see how your signals are serialized for the Rust kernel.
 
 ---
 **Architect**: Antigravity AI

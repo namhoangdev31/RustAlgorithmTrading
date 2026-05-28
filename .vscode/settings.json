@@ -1,4 +1,0 @@
-{
-  "python.analysis.extraPaths": ["./src", "./"],
-  "python.analysis.autoSearchPaths": false
-}

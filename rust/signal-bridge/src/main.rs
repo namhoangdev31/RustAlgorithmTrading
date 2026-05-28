@@ -16,7 +16,7 @@ async fn main() -> anyhow::Result<()> {
     tracing::info!("[cid:INIT] Signal Bridge Service starting...");
 
     // Load configuration with validation
-    let config = match SystemConfig::from_file("config/system.json") {
+    let config = match SystemConfig::from_file("ops/config/system.json") {
         Ok(cfg) => {
             tracing::info!(
                 "[cid:INIT] Configuration loaded successfully - Environment: {}",

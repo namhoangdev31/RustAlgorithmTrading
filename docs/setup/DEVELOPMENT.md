@@ -53,7 +53,7 @@ LOG_LEVEL=info
 The easiest way to start all components is using the unified start script:
 
 ```bash
-bash scripts/start_trading.sh
+bash ops/scripts/start_trading.sh
 ```
 
 This script initializes the Go Control Plane, followed by the Rust kernel and Python Signal Bridge.
@@ -63,7 +63,7 @@ This script initializes the Go Control Plane, followed by the Rust kernel and Py
 Run the health check utility frequently during development:
 
 ```bash
-bash scripts/health_check.sh
+bash ops/scripts/health_check.sh
 ```
 
 ### Database Access

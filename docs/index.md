@@ -16,7 +16,7 @@ Welcome to the active documentation index.
 - **API Contracts**: `docs/api/`, `docs/API_DOCUMENTATION.md`
 - **Observability**: `docs/observability/`
 - **Guides**: `docs/guides/`
-- **Testing**: `tests/docs/`
+- **Testing**: `docs/testing/strategy/`
 
 ## Roadmap Status
 

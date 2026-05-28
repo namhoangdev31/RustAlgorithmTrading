@@ -69,7 +69,7 @@ cargo bench -p signal-bridge
 Verify long-term stability and memory safety:
 
 ```bash
-python scripts/run_go_soak_test.py
+python ops/scripts/run_go_soak_test.py
 ```
 
 ---

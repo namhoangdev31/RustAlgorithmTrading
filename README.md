@@ -28,33 +28,33 @@ cd rust && cargo check --workspace
 ### 2) Configure runtime
 
 1. Create `.env` from your secure template.
-2. Review `config/` risk limits and runtime settings.
+2. Review `ops/config/` risk limits and runtime settings.
 3. Validate local environment:
 
 ```bash
-bash scripts/check_dependencies.sh
+bash ops/scripts/check_dependencies.sh
 ```
 
 ### 3) Start services
 
 ```bash
-bash scripts/start_trading_system.sh
+bash ops/scripts/start_trading_system.sh
 ```
 
 Alternative runtime paths are documented in:
 
-- `scripts/autonomous_trading_system.sh`
-- `scripts/start_trading.sh`
-- `scripts/start_services.sh`
+- `ops/scripts/autonomous_trading_system.sh`
+- `ops/scripts/start_trading.sh`
+- `ops/scripts/start_services.sh`
 
 ### 4) Observe health
 
 ```bash
-bash scripts/health_check.sh
+bash ops/scripts/health_check.sh
 ```
 
 ```bash
-bash scripts/start_observability.sh
+bash ops/scripts/start_observability.sh
 ```
 
 ## Runtime Architecture Snapshot
@@ -65,7 +65,7 @@ Core flow:
 2. `rust/signal-bridge` computes technical/ML signals.
 3. `rust/risk-manager` enforces risk and safety controls.
 4. `rust/execution-engine` routes and manages execution lifecycle.
-5. Python modules in `src/` provide research, orchestration, and observability layers.
+5. Python modules in `python/src/` provide research, orchestration, and observability layers.
 
 Provider posture:
 
@@ -95,28 +95,31 @@ Roadmap lifecycle has been consolidated to one static completion report:
 ## Phase 3 Gate Commands
 
 ```bash
-python -m pytest tests/observability/test_go_parity.py -q
-python -m pytest tests/observability -q
-python -m pytest tests/integration/test_observability_integration.py -q
+cd python && python -m pytest tests/observability/test_go_parity.py -q
+cd python && python -m pytest tests/observability -q
+cd python && python -m pytest tests/integration/test_observability_integration.py -q
 ```
 
 ## Scripts Hub
 
 Runtime and maintenance scripts are indexed here:
 
-- `scripts/README.md`
+- `ops/scripts/README.md`
 
 ## Repository Layout
 
 ```text
 [REPO_ROOT]/
-├── src/                  # Python source code
-├── rust/                 # Rust workspace
-├── tests/                # Python + Rust tests
-├── scripts/              # Runtime / maintenance scripts
-├── config/               # Runtime configs
-├── docs/                 # Active operational docs
-└── data/                 # Runtime and research data
+├── python/              # Python source, packaging, and tests
+├── rust/                # Rust workspace and Rust tests
+├── go/                  # Go observability control plane
+├── nextjs/              # Next.js dashboard/web app
+├── ios/                 # iOS SwiftUI app
+├── android/             # Android Kotlin/Compose app
+├── ops/                 # Runtime config, scripts, deployment
+├── development/         # Local bootstrap and analysis utilities
+├── docs/                # Active docs, research, testing reports
+└── data/                # Runtime and research data
 ```
 
 ## Notes

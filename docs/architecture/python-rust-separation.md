@@ -993,7 +993,7 @@ T+2.2 ms: Fill published to Python via ZMQ
 ### B.1 Risk Limits Configuration
 
 ```toml
-# config/risk_limits.toml
+# ops/config/risk_limits.toml
 
 [position_limits]
 max_position_usd = 100000.0          # $100k max position
@@ -1016,7 +1016,7 @@ margin_call_threshold = 0.05          # 5% to margin call
 ### B.2 Strategy Configuration
 
 ```toml
-# config/strategy_btc_momentum.toml
+# ops/config/strategy_btc_momentum.toml
 
 [strategy]
 name = "BTC Momentum"

@@ -47,10 +47,10 @@ The system is orchestrated using Docker Compose to ensure isolation and consiste
 
 ```bash
 # Start the core trading stack (Rust + Python Bridge)
-docker-compose -f deployment/docker-compose.yml up -d
+docker-compose -f ops/deployment/docker-compose.yml up -d
 
 # Start the observability control plane (Go)
-docker-compose -f deployment/docker-compose.observability.yml up -d
+docker-compose -f ops/deployment/docker-compose.observability.yml up -d
 ```
 
 ### 5.2 Systemd (Native Linux)
@@ -67,7 +67,7 @@ After=network.target
 Type=simple
 User=trading
 WorkingDirectory=/opt/trading
-ExecStart=/opt/trading/bin/execution-engine --config config/production.json
+ExecStart=/opt/trading/bin/execution-engine --config ops/config/production.json
 Restart=always
 RestartSec=5
 
@@ -95,4 +95,4 @@ LISTEN_ADDR=0.0.0.0:8081
 1.  [ ] **Connectivity**: `curl http://localhost:8081/health` returns 200.
 2.  [ ] **ZMQ Connectivity**: Check Rust logs for successful ZMQ binding on ports 5555-5558.
 3.  [ ] **Database Access**: Ensure the `data/` directory is writable by both the Rust binary and Go container.
-4.  [ ] **Latency**: Run `tests/integration/test_end_to_end.rs` to verify sub-millisecond internal latency.
+4.  [ ] **Latency**: Run `python/tests/integration/test_end_to_end.rs` to verify sub-millisecond internal latency.

@@ -15,7 +15,7 @@ The Python layer provides:
 ## Module Structure
 
 ```
-src/
+python/src/
 ├── api/                   # API clients
 │   └── alpaca_client.py  # Alpaca Markets integration
 ├── strategies/            # Trading strategies
@@ -39,21 +39,21 @@ src/
 
 ### Core Modules
 
-- [Strategies](../../../src/strategies/) - Trading strategy base classes
-- [Backtesting](../../../src/backtesting/) - Backtesting engine
-- [Data](../../../src/data/) - Data fetching and preprocessing
-- [API Clients](../../../src/api/) - External API integrations
+- [Strategies](../../../python/src/strategies/) - Trading strategy base classes
+- [Backtesting](../../../python/src/backtesting/) - Backtesting engine
+- [Data](../../../python/src/data/) - Data fetching and preprocessing
+- [API Clients](../../../python/src/api/) - External API integrations
 
 ### ML Modules
 
-- [Features](../../../src/strategies/ml/features/) - Feature engineering
-- [Models](../../../src/strategies/ml/models/) - ML model classes
-- [Validation](../../../src/strategies/ml/validation/) - Model validation
+- [Features](../../../python/src/strategies/ml/features/) - Feature engineering
+- [Models](../../../python/src/strategies/ml/models/) - ML model classes
+- [Validation](../../../python/src/strategies/ml/validation/) - Model validation
 
 ### Utilities
 
-- [Utilities](../../../src/utils/) - Shared helper utilities
-- [Observability Logging](../../../src/observability/logging/) - Logging configuration
+- [Utilities](../../../python/src/utils/) - Shared helper utilities
+- [Observability Logging](../../../python/src/observability/logging/) - Logging configuration
 
 ## Installation
 
@@ -366,12 +366,12 @@ uv run pytest
 uv run pytest --cov=src --cov-report=html
 
 # Run specific test file
-uv run pytest tests/unit/python/test_strategies.py
+uv run pytest python/tests/unit/python/test_strategies.py
 ```
 
 ## Examples
 
-See the [ML examples](../../../src/strategies/ml/examples/) directory for complete examples:
+See the [ML examples](../../../python/src/strategies/ml/examples/) directory for complete examples:
 
 - `basic_backtest.py` - Simple strategy backtest
 - `monte_carlo_simulation.py` - Risk analysis

@@ -41,7 +41,7 @@ For non-trivial work, read in this exact order:
 ### F. Testing
 
 - `docs/TEST_EXECUTION_GUIDE.md`
-- `tests/docs/COMPREHENSIVE_TESTING_STRATEGY.md`
+- `docs/testing/strategy/COMPREHENSIVE_TESTING_STRATEGY.md`
 
 ### G. Machine Learning & Strategies
 

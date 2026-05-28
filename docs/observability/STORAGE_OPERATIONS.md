@@ -31,7 +31,7 @@ ANALYZE;
 ### Automated Backups
 Run the project backup script daily:
 ```bash
-bash scripts/backup_storage.sh
+bash ops/scripts/backup_storage.sh
 ```
 *Backups are stored in `backups/` with a 7-day retention policy.*
 

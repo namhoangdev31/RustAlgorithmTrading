@@ -77,7 +77,7 @@ sudo snap install go --classic
 Run the health check script to ensure all runtimes are operational:
 
 ```bash
-./scripts/health_check.sh
+./ops/scripts/health_check.sh
 ```
 
 **Expected Output:**

@@ -10,7 +10,7 @@ This guide provides comprehensive documentation for implementing and deploying m
 The ML module is designed for **Research in Python, Execution in Rust**.
 
 ```
-src/strategies/ml/
+python/src/strategies/ml/
 ├── features/                   # Feature Engineering (Vectorized)
 │   └── feature_engineering.py  # Main pipeline
 ├── models/                     # Model Definitions
@@ -65,7 +65,7 @@ results = validator.validate_model(model, X, y, method='walk_forward')
 ```
 
 ### Model Artifacts
-Trained models are saved to `src/models/` using a combination of `joblib` for weights and `JSON` for metadata (features, parameters, version).
+Trained models are saved to `python/src/models/` using a combination of `joblib` for weights and `JSON` for metadata (features, parameters, version).
 
 ---
 

@@ -1,0 +1,14 @@
+{
+  "hosting": {
+    "site": "lepos",
+    "source": ".",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "frameworksBackend": {
+      "region": "asia-southeast1"
+    }
+  }
+}

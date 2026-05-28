@@ -17,7 +17,7 @@ async fn main() -> anyhow::Result<()> {
     tracing::info!("Market Data Service starting...");
 
     // Load configuration with validation
-    let config = match SystemConfig::from_file("config/system.json") {
+    let config = match SystemConfig::from_file("ops/config/system.json") {
         Ok(cfg) => {
             tracing::info!(
                 "Configuration loaded successfully - Environment: {}, Paper Trading: {}",

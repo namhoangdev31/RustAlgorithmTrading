@@ -8,7 +8,7 @@ This document defines the security policies and standards for the RustAlgorithmT
 
 - **Zero-Storage Policy**: API keys (Alpaca, etc.) must **never** be committed to version control.
 - **Environment Injection**: Keys should be injected via `.env` files or system environment variables (`ALPACA_API_KEY`).
-- **Restrictive Permissions**: Ensure `.env` and `config/` files have `600` permissions on production servers.
+- **Restrictive Permissions**: Ensure `.env` and `ops/config/` files have `600` permissions on production servers.
 
 ## 2. Runtime Resilience (Rust)
 

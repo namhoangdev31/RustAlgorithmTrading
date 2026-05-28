@@ -34,14 +34,16 @@ jobs:
 
       - name: Install dependencies
         run: |
+          cd python
           uv venv
           source .venv/bin/activate
           uv pip install -e ".[dev]"
 
       - name: Run pytest with coverage
         run: |
+          cd python
           source .venv/bin/activate
-          pytest tests/unit/python tests/integration/python tests/property \
+          pytest tests/unit tests/integration tests/e2e tests/ml tests/observability \
             --cov=src \
             --cov-report=xml \
             --cov-report=html \
@@ -51,7 +53,7 @@ jobs:
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
-          file: ./coverage.xml
+          file: ./python/coverage.xml
           flags: python
           name: python-${{ matrix.python-version }}
 
@@ -60,7 +62,7 @@ jobs:
         if: always()
         with:
           name: pytest-results-${{ matrix.python-version }}
-          path: junit/test-results-${{ matrix.python-version }}.xml
+          path: python/junit/test-results-${{ matrix.python-version }}.xml
 
   # Rust tests
   rust-tests:
@@ -133,22 +135,26 @@ jobs:
         run: |
           curl -LsSf https://astral.sh/uv/install.sh | sh
           echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+          cd python
           uv venv
           source .venv/bin/activate
           uv pip install -e ".[dev]"
 
       - name: Run black (code formatting)
         run: |
+          cd python
           source .venv/bin/activate
           black --check src tests
 
       - name: Run flake8 (linting)
         run: |
+          cd python
           source .venv/bin/activate
           flake8 src tests --max-line-length=100
 
       - name: Run mypy (type checking)
         run: |
+          cd python
           source .venv/bin/activate
           mypy src tests --ignore-missing-imports
 
@@ -197,12 +203,14 @@ jobs:
         run: |
           curl -LsSf https://astral.sh/uv/install.sh | sh
           echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+          cd python
           uv venv
           source .venv/bin/activate
           uv pip install -e ".[dev]"
 
       - name: Run Python benchmarks
         run: |
+          cd python
           source .venv/bin/activate
           pytest tests/benchmarks --benchmark-only --benchmark-json=benchmark-results.json
 
@@ -210,7 +218,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: benchmark-results
-          path: benchmark-results.json
+          path: python/benchmark-results.json
 
   # Security audit
   security:
@@ -242,18 +250,21 @@ jobs:
         run: |
           curl -LsSf https://astral.sh/uv/install.sh | sh
           echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+          cd python
           uv venv
           source .venv/bin/activate
           uv pip install -e ".[dev]"
 
       - name: Run safety (Python dependency audit)
         run: |
+          cd python
           source .venv/bin/activate
           pip install safety
           safety check
 
       - name: Run bandit (Python security linter)
         run: |
+          cd python
           source .venv/bin/activate
           pip install bandit
           bandit -r src -f json -o bandit-report.json
@@ -263,7 +274,7 @@ jobs:
         if: always()
         with:
           name: security-reports
-          path: bandit-report.json
+          path: python/bandit-report.json
 
   # Integration tests (requires running services)
   integration-tests:
@@ -297,6 +308,7 @@ jobs:
         run: |
           curl -LsSf https://astral.sh/uv/install.sh | sh
           echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+          cd python
           uv venv
           source .venv/bin/activate
           uv pip install -e ".[dev]"
@@ -314,6 +326,7 @@ jobs:
 
       - name: Run integration tests
         run: |
+          cd python
           source .venv/bin/activate
           pytest tests/integration tests/e2e -v --tb=short
 

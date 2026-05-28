@@ -28,7 +28,7 @@ cp .env.example .env.staging
 # Edit .env.staging with Paper Trading Keys
 
 # 2. Deploy with Staging Profile
-docker compose -f deployment/docker-compose.yml -f deployment/docker-compose.staging.yml up -d
+docker compose -f ops/deployment/docker-compose.yml -f ops/deployment/docker-compose.staging.yml up -d
 ```
 
 ---
@@ -58,7 +58,7 @@ docker compose up -d
 ```
 
 ### Mocking Market Data
-If the exchange is closed, use the `scripts/mock_market_data.py` to feed the ZMQ pipeline.
+If the exchange is closed, use the `ops/scripts/mock_market_data.py` to feed the ZMQ pipeline.
 
 ---
 

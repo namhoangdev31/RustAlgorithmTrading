@@ -9,14 +9,14 @@ We recommend using `uv` for fast dependency management.
 uv sync
 
 # Verify ML components
-pytest tests/ml/ -v
+pytest python/tests/ml/ -v
 ```
 
 ### 2. Run the Reference Strategy
 The project includes a complete end-to-end example that generates synthetic data, trains a model, and performs a backtest.
 
 ```bash
-python src/strategies/ml/examples/ml_strategy_example.py
+python python/src/strategies/ml/examples/ml_strategy_example.py
 ```
 
 ### 3. Core Implementation Pattern
@@ -44,8 +44,8 @@ signals = model.generate_signal_frame(df)
 
 ### 4. Integration with Rust Kernel
 To use your ML model in production:
-1. Save the model to `src/models/my_model.joblib`.
-2. Configure your strategy in `config/strategies.yaml` to point to this model.
+1. Save the model to `python/src/models/my_model.joblib`.
+2. Configure your strategy in `ops/config/strategies.yaml` to point to this model.
 3. The **Rust Signal Bridge** will automatically load the model for inference.
 
 ---

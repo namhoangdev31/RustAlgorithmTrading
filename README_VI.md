@@ -28,33 +28,33 @@ cd rust && cargo check --workspace
 ### 2) Cấu hình môi trường
 
 1. Tạo file `.env` từ template nội bộ an toàn.
-2. Rà soát `config/` (risk limits, runtime params).
+2. Rà soát `ops/config/` (risk limits, runtime params).
 3. Kiểm tra dependencies:
 
 ```bash
-bash scripts/check_dependencies.sh
+bash ops/scripts/check_dependencies.sh
 ```
 
 ### 3) Chạy hệ thống
 
 ```bash
-bash scripts/start_trading_system.sh
+bash ops/scripts/start_trading_system.sh
 ```
 
 Các đường chạy khác:
 
-- `scripts/autonomous_trading_system.sh`
-- `scripts/start_trading.sh`
-- `scripts/start_services.sh`
+- `ops/scripts/autonomous_trading_system.sh`
+- `ops/scripts/start_trading.sh`
+- `ops/scripts/start_services.sh`
 
 ### 4) Theo dõi sức khỏe
 
 ```bash
-bash scripts/health_check.sh
+bash ops/scripts/health_check.sh
 ```
 
 ```bash
-bash scripts/start_observability.sh
+bash ops/scripts/start_observability.sh
 ```
 
 ## Snapshot kiến trúc runtime
@@ -65,7 +65,7 @@ Luồng chính:
 2. `rust/signal-bridge`: sinh tín hiệu kỹ thuật/ML
 3. `rust/risk-manager`: chặn rủi ro và policy safety
 4. `rust/execution-engine`: định tuyến và quản lý lifecycle lệnh
-5. `src/` (Python): research + orchestration + observability
+5. `python/src/` (Python): research + orchestration + observability
 
 Chuẩn công nghệ active:
 
@@ -95,26 +95,29 @@ Tài liệu roadmap tuần đã được gom về một completion report tĩnh:
 ## Lệnh gate cho Phase 3
 
 ```bash
-python -m pytest tests/observability/test_go_parity.py -q
-python -m pytest tests/observability -q
-python -m pytest tests/integration/test_observability_integration.py -q
+cd python && python -m pytest tests/observability/test_go_parity.py -q
+cd python && python -m pytest tests/observability -q
+cd python && python -m pytest tests/integration/test_observability_integration.py -q
 ```
 
 ## Hub scripts
 
-- `scripts/README.md`
+- `ops/scripts/README.md`
 
 ## Cấu trúc repo
 
 ```text
 [REPO_ROOT]/
-├── src/                  # Python source
-├── rust/                 # Rust workspace
-├── tests/                # Test suites
-├── scripts/              # Runtime / maintenance scripts
-├── config/               # Config runtime
-├── docs/                 # Tài liệu active
-└── data/                 # Dữ liệu runtime/research
+├── python/              # Python source, packaging, tests
+├── rust/                # Rust workspace and Rust tests
+├── go/                  # Go observability control plane
+├── nextjs/              # Next.js dashboard/web app
+├── ios/                 # iOS SwiftUI app
+├── android/             # Android Kotlin/Compose app
+├── ops/                 # Runtime config, scripts, deployment
+├── development/         # Local bootstrap and analysis utilities
+├── docs/                # Tài liệu active, research, testing reports
+└── data/                # Dữ liệu runtime/research
 ```
 
 ## Ghi chú quan trọng

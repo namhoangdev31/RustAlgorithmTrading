@@ -43,7 +43,7 @@ for msg in receiver.listen():
 
 ## 3. Historical Data Download
 
-We provide a production-grade downloader script in `scripts/download_historical_data.py`.
+We provide a production-grade downloader script in `ops/scripts/download_historical_data.py`.
 
 ### Features
 
@@ -55,7 +55,7 @@ We provide a production-grade downloader script in `scripts/download_historical_
 
 ```bash
 # Download 1 year of daily data for tech stocks
-python scripts/download_historical_data.py \
+python ops/scripts/download_historical_data.py \
   --symbols AAPL MSFT GOOGL \
   --start 2024-01-01 \
   --end 2024-12-31 \
@@ -93,7 +93,7 @@ df = bars.df  # Convert to Pandas DataFrame
 1. **Use Parquet**: For large datasets (>100k bars), use Parquet to reduce disk I/O and memory usage.
 2. **Timezone Awareness**: Alpaca returns UTC. Always convert to `US/Eastern` for market hour analysis.
 3. **Pagination**: The API has a 10,000 bar limit per request. Our `download_historical_data.py` script handles pagination automatically.
-4. **Data Integrity**: Before training ML models, use `scripts/validate_data_integrity.py` to check for missing bars during market hours.
+4. **Data Integrity**: Before training ML models, use `ops/scripts/validate_data_integrity.py` to check for missing bars during market hours.
 
 ---
 **Architect**: Antigravity AI

@@ -162,7 +162,7 @@ The architecture follows a **Tri-Runtime Pattern** (Rust/Python/Go) with loosely
 
 ```
 market-data/
-├── src/
+├── python/src/
 │   ├── websocket/
 │   │   ├── connection.rs      # WebSocket client with auto-reconnect
 │   │   ├── auth.rs             # API key authentication
@@ -302,7 +302,7 @@ snapshot_interval_secs = 60
 
 ```
 risk-manager/
-├── src/
+├── python/src/
 │   ├── limits/
 │   │   ├── position.rs         # Max position size per symbol
 │   │   ├── notional.rs         # Max dollar exposure
@@ -754,7 +754,7 @@ impl TripReason {
 
 ```
 execution-engine/
-├── src/
+├── python/src/
 │   ├── router/
 │   │   ├── alpaca.rs           # Alpaca API client
 │   │   ├── retry.rs            # Exponential backoff retry
@@ -1872,7 +1872,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:8081/health || exit 1
 
 ENTRYPOINT ["/usr/local/bin/market-data"]
-CMD ["--config", "/config/market-data.toml"]
+CMD ["--config", "/ops/config/market-data.toml"]
 ```
 
 **Benefits:**

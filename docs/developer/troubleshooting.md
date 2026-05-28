@@ -66,8 +66,8 @@ Common issues, error scenarios, and solutions for the Rust/Python/Go trading eco
 **Symptoms**: `ERROR risk_manager: Risk check failed: Position limit exceeded`
 **Solutions**:
 
-- Check current positions: `python scripts/check_positions.py`
-- Verify `config/risk_limits.toml` thresholds.
+- Check current positions: `python ops/scripts/check_positions.py`
+- Verify `ops/config/risk_limits.toml` thresholds.
 - If circuit breaker tripped incorrectly, reset via Go Control Plane (Port 8081).
 
 ### Execution Engine: "API Rate Limit Exceeded"
@@ -75,7 +75,7 @@ Common issues, error scenarios, and solutions for the Rust/Python/Go trading eco
 **Symptoms**: `ERROR execution_engine: 429 Too Many Requests`
 **Solutions**:
 
-- Reduce `rate_limit_per_second` in `config/system.json`.
+- Reduce `rate_limit_per_second` in `ops/config/system.json`.
 - Implement order batching in the strategy layer.
 
 ---

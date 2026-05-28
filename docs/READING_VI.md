@@ -44,11 +44,11 @@ Tài liệu kiến trúc quan trọng:
 
 ## 3) Cấu trúc repo cần biết
 
-- `src/`: Python core (API, data, strategies, backtesting, simulations, observability).
+- `python/src/`: Python core (API, data, strategies, backtesting, simulations, observability).
 - `rust/`: Rust workspace (common, market-data, signal-bridge, risk-manager, execution-engine, database).
 - `tests/`: test Python/Rust/integration/e2e/perf.
 - `docs/`: tài liệu kỹ thuật, vận hành, triển khai.
-- `medium/`: bài nghiên cứu/insight chiến lược (tham khảo tư duy, không phải runbook vận hành).
+- `docs/research/`: bài nghiên cứu/insight chiến lược (tham khảo tư duy, không phải runbook vận hành).
 
 ---
 
@@ -56,12 +56,12 @@ Tài liệu kiến trúc quan trọng:
 
 ### Python side
 
-- `src/api/alpaca_client.py`: giao tiếp Alpaca.
-- `src/data/fetcher.py`, `src/data/preprocessor.py`: ingest + tiền xử lý dữ liệu.
-- `src/strategies/`: chiến lược (momentum, mean reversion, MA crossover...).
-- `src/backtesting/engine.py`: backtest engine.
-- `src/simulations/monte_carlo.py`: mô phỏng rủi ro.
-- `src/observability/`: backend API + lưu trữ metric + dashboard.
+- `python/src/api/alpaca_client.py`: giao tiếp Alpaca.
+- `python/src/data/fetcher.py`, `python/src/data/preprocessor.py`: ingest + tiền xử lý dữ liệu.
+- `python/src/strategies/`: chiến lược (momentum, mean reversion, MA crossover...).
+- `python/src/backtesting/engine.py`: backtest engine.
+- `python/src/simulations/monte_carlo.py`: mô phỏng rủi ro.
+- `python/src/observability/`: backend API + lưu trữ metric + dashboard.
 
 ### Rust side
 
@@ -102,7 +102,7 @@ cd ..
 
 1. Tạo `.env` từ template.
 2. Cấu hình Alpaca key.
-3. Tạo/chỉnh `config/system.json`.
+3. Tạo/chỉnh `ops/config/system.json`.
 
 Tham khảo:
 
@@ -144,7 +144,7 @@ Lưu ý: một số tài liệu cũ vẫn nói PostgreSQL là mặc định obse
 
 Tài liệu chiến lược test tổng:
 
-- `tests/docs/COMPREHENSIVE_TESTING_STRATEGY.md`
+- `docs/testing/strategy/COMPREHENSIVE_TESTING_STRATEGY.md`
 
 Bạn sẽ thấy đầy đủ:
 
@@ -242,10 +242,10 @@ Kết quả cần đạt:
 
 Đọc:
 
-- `tests/docs/COMPREHENSIVE_TESTING_STRATEGY.md`
+- `docs/testing/strategy/COMPREHENSIVE_TESTING_STRATEGY.md`
 - `rust/docs/SIMD_MIGRATION_RESEARCH.md`
 - `rust/docs/SIMD_MIGRATION_QUICK_GUIDE.md`
-- Chọn 2-3 bài trong `medium/` theo chủ đề bạn quan tâm.
+- Chọn 2-3 bài trong `docs/research/` theo chủ đề bạn quan tâm.
 
 Kết quả cần đạt:
 
@@ -274,7 +274,7 @@ Mục tiêu tuần đầu:
 
 Ưu tiên:
 
-- `src/backtesting`, `src/strategies`, `src/simulations`, `src/data`
+- `python/src/backtesting`, `python/src/strategies`, `python/src/simulations`, `python/src/data`
 - docs backtesting + strategy-development + ONNX integration
 
 Mục tiêu tuần đầu:
@@ -287,7 +287,7 @@ Mục tiêu tuần đầu:
 
 Ưu tiên:
 
-- docs deployment/operations/DR/observability
+- docs ops/deployment/operations/DR/observability
 - health metrics, alerting, backup scripts
 
 Mục tiêu tuần đầu:
