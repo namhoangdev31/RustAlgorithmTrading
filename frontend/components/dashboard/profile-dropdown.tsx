@@ -25,7 +25,7 @@ type ProfileDropdownProps = {
     email: string | null;
     fullName: string | null;
     provider: string;
-    photoUrl: string | null;
+    photoUrl?: string | null;
   };
 };
 

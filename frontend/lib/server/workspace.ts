@@ -70,7 +70,7 @@ export async function setActiveOrganizationCookie(organizationId: string) {
   cookieStore.set(ACTIVE_ORG_COOKIE, organizationId, {
     httpOnly: true,
     sameSite: "lax",
-    path: "/dashboard",
+    path: "/",
     maxAge: 60 * 60 * 24 * 30,
   });
 }

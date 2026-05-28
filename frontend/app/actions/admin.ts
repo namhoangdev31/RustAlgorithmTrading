@@ -230,6 +230,8 @@ export async function createProjectWithBundleAction(formData: FormData) {
   });
 
   revalidatePath("/dashboard");
+  revalidatePath("/projects");
+  revalidatePath("/[locale]/(developer)/projects", "layout");
   redirect(returnTo);
 }
 
@@ -294,6 +296,8 @@ export async function updateProjectBundleAction(formData: FormData) {
   });
 
   revalidatePath("/dashboard");
+  revalidatePath("/projects");
+  revalidatePath("/[locale]/(developer)/projects", "layout");
   redirect(returnTo);
 }
 
@@ -310,6 +314,8 @@ export async function deleteProjectAction(formData: FormData) {
   }
 
   revalidatePath("/dashboard");
+  revalidatePath("/projects");
+  revalidatePath("/[locale]/(developer)/projects", "layout");
   redirect(returnTo);
 }
 
