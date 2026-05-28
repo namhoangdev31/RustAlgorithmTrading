@@ -34,7 +34,7 @@ Scope: Multi-domain Rust/Python/Go/Next.js/iOS/Android trading workspace
 | `python/src/strategies` | Strategy contracts, signal logic, strategy router |
 | `python/src/backtesting` | Backtest orchestration, metrics, portfolio state, risk parity |
 | `python/src/bridge` | Python side of Rust/ZMQ handoff |
-| `python/tests` | Python unit, integration, e2e, benchmark, observability parity tests |
+| `python/tests` | Python unit, integration, e2e, benchmark, parity tests |
 | `rust/common` | Shared Rust types, config, errors, messaging, health |
 | `rust/market-data` | Alpaca websocket ingest, orderbook, aggregation |
 | `rust/signal-bridge` | Low-latency indicators, features, PyO3 bridge, backtest runtime |
@@ -44,12 +44,12 @@ Scope: Multi-domain Rust/Python/Go/Next.js/iOS/Android trading workspace
 | `rust/tests` | Rust integration, unit, property, benchmark tests |
 | `go/internal` | Observability API, health, metrics, storage, websocket fanout |
 | `nextjs/app` | App Router routes, server actions, auth handlers |
-| `nextjs/components` | UI, admin, dashboard, layout components |
+| `nextjs/components` | UI, admin, telemetry/config, layout components |
 | `nextjs/prisma` | Prisma schema and generated client models |
 | `ops/config` | Runtime config and risk limits |
-| `ops/scripts` | Runtime, maintenance, validation, data download scripts |
-| `ops/deployment` | Docker, Compose, monitoring, staging/prod deployment |
-| `development` | Local bootstrap and exploratory analysis tools |
+| `ops/scripts` | Minimal runtime, validation, data download, and backtest scripts |
+| `ops/deployment` | Docker image definitions only |
+| `development` | Sparse local-only scratch space |
 | `docs/research` | Strategy and quant research notes |
 | `docs/testing` | Testing reports and strategy docs |
 
@@ -59,8 +59,8 @@ Scope: Multi-domain Rust/Python/Go/Next.js/iOS/Android trading workspace
 |---|---|---|
 | Python-Rust signal handoff | `docs/api/ZMQ_PROTOCOL.md`, `docs/architecture/python-rust-separation.md` | `cd python && python -m pytest tests/integration/test_backtest_signal_flow.py -q`; `cd rust && cargo test -p signal-bridge` |
 | Runtime config | `ops/config/README.md`, `docs/deployment/PRODUCTION_DEPLOYMENT.md` | `bash ops/scripts/check_dependencies.sh` |
-| Observability API | `docs/observability/OBSERVABILITY_OVERVIEW.md` | `cd go && go test ./...`; `cd python && python -m pytest tests/observability/test_go_parity.py -q` |
-| Web dashboard/API | `go/AGENTS.md`, `nextjs/AGENTS.md` | Go API tests + Next.js typecheck |
+| Telemetry API | `docs/observability/OBSERVABILITY_OVERVIEW.md` | `cd go && go test ./...`; `cd python && python -m pytest tests/observability/test_go_parity.py -q` |
+| Web telemetry/config | `go/AGENTS.md`, `nextjs/AGENTS.md` | Go API tests + Next.js typecheck |
 | Mobile/runtime manifest | `ios/AGENTS.md`, `android/AGENTS.md`, `nextjs/AGENTS.md` | Platform build/test for touched app |
 
 ## Maintenance Rules

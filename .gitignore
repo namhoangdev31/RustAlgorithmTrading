@@ -68,6 +68,7 @@ data/backtest_results/*.json
 *.duckdb.wal
 *.log
 logs/
+pids/
 python/tests/logs/
 python/tests/reports/
 go/.cache/

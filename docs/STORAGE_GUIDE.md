@@ -331,36 +331,23 @@ stats = await duckdb.get_table_stats()
 size_bytes = await PostgreSQL.get_db_size()
 ```
 
-## Grafana Integration (Optional)
+## Web Integration
 
-DuckDB can export to Grafana via:
+DuckDB metrics should be exposed through the Go control-plane and consumed by the web UI:
 
-1. **Parquet files**: Export query results
-2. **PostgreSQL wire protocol**: Coming in future DuckDB versions
-3. **Custom API**: Expose queries via Go control-plane endpoints
+1. **Custom API**: Expose query-backed endpoints through Go.
+2. **WebSocket snapshots**: Stream live telemetry to the Next.js UI.
+3. **Parquet exports**: Export research snapshots when needed.
 
-Example API endpoint for Grafana:
+Example API response shape:
 
 ```python
-@app.get("/grafana/metrics")
-async def grafana_metrics(
-    metric_name: str,
-    start: int,
-    end: int,
-    storage: StorageManager = Depends(get_storage)
-):
-    metrics = await storage.duckdb.get_metrics(
-        metric_name,
-        datetime.fromtimestamp(start),
-        datetime.fromtimestamp(end)
-    )
-    return {
-        "target": metric_name,
-        "datapoints": [
-            [m["value"], int(m["timestamp"].timestamp() * 1000)]
-            for m in metrics
-        ]
-    }
+{
+    "metric": "latency_ms",
+    "points": [
+        {"timestamp": "2026-05-28T00:00:00Z", "value": 0.42}
+    ]
+}
 ```
 
 ## Troubleshooting
@@ -424,7 +411,7 @@ conn.execute("""
 - [ ] Automatic data retention policies
 - [ ] Streaming inserts with buffering
 - [ ] Real-time aggregation views
-- [ ] Grafana native integration
+- [ ] Web-managed telemetry and runtime config
 - [ ] S3/cloud storage backends
 - [ ] Multi-database sharding
 

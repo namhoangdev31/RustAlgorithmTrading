@@ -22,6 +22,7 @@ func main() {
 	slog.SetDefault(logger)
 
 	port := getenvOrDefault("PORT", "8081") // Finalized port 8081
+	host := getenvOrDefault("HOST", "127.0.0.1")
 	duckDBPath := getenvOrDefault("DUCKDB_PATH", "data/observability.duckdb")
 	databaseURL := os.Getenv("DATABASE_URL")
 
@@ -67,13 +68,13 @@ func main() {
 	handler := internalhttp.SetupRoutes(store, wsManager, healthAgg)
 
 	server := &http.Server{
-		Addr:              "127.0.0.1:" + port,
+		Addr:              host + ":" + port,
 		Handler:           handler,
 		ReadHeaderTimeout: 10 * time.Second,
 	}
 
 	go func() {
-		slog.Info("go_control_plane_started", "port", port)
+		slog.Info("go_control_plane_started", "host", host, "port", port)
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			slog.Error("go_control_plane_listen_error", "error", err)
 			os.Exit(1)

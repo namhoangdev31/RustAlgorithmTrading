@@ -1,23 +1,9 @@
 #!/bin/bash
-################################################################################
-# DEPENDENCY CHECK SCRIPT
-#
-# Verifies all required dependencies for the observability stack:
-# - Go binary/runtime and Python data stack (DuckDB, PostgreSQL, etc.)
-# - Node.js and npm (for React dashboard)
-# - System utilities (curl, jq)
-# - Directory structure
-#
-# Usage: ./ops/scripts/check_dependencies.sh
-# Returns: 0 if all dependencies met, 1 otherwise
-################################################################################
-
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
-# Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -26,444 +12,86 @@ NC='\033[0m'
 
 ERRORS=0
 WARNINGS=0
-REQUIRED_DEPS=0
-REQUIRED_MET=0
-OPTIONAL_DEPS=0
-OPTIONAL_MET=0
 
-log_info() {
-    echo -e "${BLUE}[INFO]${NC} $*"
-}
+info() { echo -e "${BLUE}[INFO]${NC} $*"; }
+ok() { echo -e "${GREEN}[OK]${NC} $*"; }
+warn() { echo -e "${YELLOW}[WARN]${NC} $*"; WARNINGS=$((WARNINGS + 1)); }
+err() { echo -e "${RED}[ERR]${NC} $*"; ERRORS=$((ERRORS + 1)); }
 
-log_success() {
-    echo -e "${GREEN}[✓]${NC} $*"
-}
-
-log_success_required() {
-    echo -e "${GREEN}[✓]${NC} $* ${BLUE}(required)${NC}"
-    REQUIRED_MET=$((REQUIRED_MET + 1))
-}
-
-log_success_optional() {
-    echo -e "${GREEN}[✓]${NC} $* ${BLUE}(optional)${NC}"
-    OPTIONAL_MET=$((OPTIONAL_MET + 1))
-}
-
-log_warning() {
-    echo -e "${YELLOW}[⚠]${NC} $*"
-    WARNINGS=$((WARNINGS + 1))
-}
-
-log_warning_optional() {
-    echo -e "${YELLOW}[⚠]${NC} $* ${BLUE}(optional - not required)${NC}"
-    WARNINGS=$((WARNINGS + 1))
-}
-
-log_error() {
-    echo -e "${RED}[✗]${NC} $*"
-    ERRORS=$((ERRORS + 1))
-}
-
-################################################################################
-# System Command Checks
-################################################################################
-
-check_system_commands() {
-    log_info "Checking system commands..."
-
-    # Required commands
-    local required_commands=("python3" "pip3" "cargo" "curl")
-    REQUIRED_DEPS=$((REQUIRED_DEPS + ${#required_commands[@]}))
-
-    for cmd in "${required_commands[@]}"; do
-        if command -v "$cmd" &> /dev/null; then
-            log_success_required "$cmd is installed"
-        else
-            log_error "$cmd is NOT installed - REQUIRED for system operation"
-        fi
-    done
-
-    echo ""
-    log_info "Checking optional system commands..."
-
-    # Optional but recommended commands
-    local optional_commands=("node" "npm" "jq")
-    OPTIONAL_DEPS=$((OPTIONAL_DEPS + ${#optional_commands[@]}))
-
-    if command -v node &> /dev/null; then
-        log_success_optional "Node.js is installed ($(node --version))"
+require_cmd() {
+    if command -v "$1" >/dev/null 2>&1; then
+        ok "$1 found"
     else
-        log_warning_optional "Node.js is NOT installed - recommended for React dashboard"
-    fi
-
-    if command -v npm &> /dev/null; then
-        log_success_optional "npm is installed ($(npm --version))"
-    else
-        log_warning_optional "npm is NOT installed - recommended for React dashboard"
-    fi
-
-    if command -v jq &> /dev/null; then
-        log_success_optional "jq is installed - useful for JSON parsing"
-    else
-        log_warning_optional "jq is NOT installed - install for better JSON parsing capabilities"
+        err "$1 missing"
     fi
 }
 
-################################################################################
-# Python Environment Checks
-################################################################################
-
-check_python_environment() {
-    log_info "Checking Python environment..."
-
-    REQUIRED_DEPS=$((REQUIRED_DEPS + 1))
-
-    # Python version
-    local python_version=$(python3 --version 2>&1 | cut -d' ' -f2)
-    local major_version=$(echo "$python_version" | cut -d'.' -f1)
-    local minor_version=$(echo "$python_version" | cut -d'.' -f2)
-
-    if [[ "$major_version" -ge 3 ]] && [[ "$minor_version" -ge 8 ]]; then
-        log_success_required "Python $python_version (>= 3.8)"
+optional_cmd() {
+    if command -v "$1" >/dev/null 2>&1; then
+        ok "$1 found"
     else
-        log_error "Python $python_version is too old - Python >= 3.8 REQUIRED"
-    fi
-
-    echo ""
-    log_info "Checking optional Python tools..."
-
-    OPTIONAL_DEPS=$((OPTIONAL_DEPS + 1))
-
-    # Check for uv (faster package manager)
-    if command -v uv &> /dev/null; then
-        log_success_optional "uv is installed ($(uv --version))"
-    else
-        log_warning_optional "uv is NOT installed - recommended for faster package management"
-        log_info "Install with: curl -LsSf https://astral.sh/uv/install.sh | sh"
+        warn "$1 missing (optional)"
     fi
 }
 
-################################################################################
-# Python Package Checks
-################################################################################
-
-check_python_packages() {
-    log_info "Checking required Python packages..."
-
-    local required_packages=(
-        "websockets"
-        "pydantic"
-        "duckdb"
-        "loguru"
-        "psutil"
-        "numpy"
-        "pandas"
-    )
-
-    REQUIRED_DEPS=$((REQUIRED_DEPS + ${#required_packages[@]}))
-
-    # Detect Python to use
-    local python_cmd="python3"
-    if [[ -f "$PROJECT_ROOT/python/.venv/bin/python" ]]; then
-        python_cmd="$PROJECT_ROOT/python/.venv/bin/python"
-        log_info "Using virtual environment Python: $python_cmd"
-    fi
-
-    for package in "${required_packages[@]}"; do
-        if $python_cmd -c "import $package" &> /dev/null; then
-            local version=$($python_cmd -c "import $package; print(getattr($package, '__version__', 'unknown'))" 2>/dev/null)
-            log_success_required "$package is installed ($version)"
-        else
-            log_error "$package is NOT installed - REQUIRED Python package"
-            log_info "Install with: pip3 install $package"
-        fi
-    done
-}
-
-################################################################################
-# Directory Structure Checks
-################################################################################
-
-check_directory_structure() {
-    log_info "Checking directory structure..."
-
-    local required_dirs=(
-        "$PROJECT_ROOT/logs"
-        "$PROJECT_ROOT/data"
-        "$PROJECT_ROOT/ops/deployment/monitoring"
-        "$PROJECT_ROOT/python/src/observability"
-        "$PROJECT_ROOT/ops/scripts"
-    )
-
-    for dir in "${required_dirs[@]}"; do
-        if [[ -d "$dir" ]]; then
-            log_success "Directory exists: $dir"
-        else
-            log_warning "Directory missing: $dir (will be created)"
-            mkdir -p "$dir"
-        fi
-    done
-}
-
-################################################################################
-# Configuration File Checks
-################################################################################
-
-check_configuration_files() {
-    log_info "Checking configuration files..."
-
-    # .env file
-    if [[ -f "$PROJECT_ROOT/.env" ]]; then
-        log_success ".env file exists"
-
-        # Check for required variables
-        if grep -q "ALPACA_API_KEY" "$PROJECT_ROOT/.env" && \
-           grep -q "ALPACA_SECRET_KEY" "$PROJECT_ROOT/.env"; then
-            log_success ".env contains required Alpaca credentials"
-        else
-            log_error ".env missing ALPACA_API_KEY or ALPACA_SECRET_KEY"
-        fi
+require_path() {
+    if [ -e "$PROJECT_ROOT/$1" ]; then
+        ok "$1 exists"
     else
-        log_error ".env file NOT found"
-        log_info "Create .env with: ALPACA_API_KEY, ALPACA_SECRET_KEY, ALPACA_PAPER=true"
-    fi
-
-    # Config files
-    if [[ -f "$PROJECT_ROOT/ops/config/system.json" ]]; then
-        log_success "system.json exists"
-    else
-        log_warning "system.json NOT found (may be optional)"
-    fi
-
-    if [[ -f "$PROJECT_ROOT/ops/config/risk_limits.toml" ]]; then
-        log_success "risk_limits.toml exists"
-    else
-        log_warning "risk_limits.toml NOT found (may be optional)"
+        err "$1 missing"
     fi
 }
 
-################################################################################
-# Port Availability Checks
-################################################################################
-
-check_port_availability() {
-    log_info "Checking port availability..."
-
-    local required_ports=(
-        "8081:Observability API"
-        "3000:React Dashboard"
-        "5001:Market Data Service"
-        "5002:Risk Manager Service"
-        "5003:Execution Engine Service"
-    )
-
-    for port_info in "${required_ports[@]}"; do
-        IFS=':' read -r port service <<< "$port_info"
-
-        if lsof -Pi :"$port" -sTCP:LISTEN -t >/dev/null 2>&1; then
-            log_warning "Port $port is IN USE ($service)"
-            log_info "Kill with: lsof -ti:$port | xargs kill -9"
-        else
-            log_success "Port $port is available ($service)"
-        fi
-    done
-}
-
-################################################################################
-# Rust Build Checks
-################################################################################
-
-check_rust_build() {
-    log_info "Checking Rust build status..."
-
-    if [[ ! -d "$PROJECT_ROOT/rust" ]]; then
-        log_warning "Rust directory not found"
-        return
-    fi
-
-    cd "$PROJECT_ROOT/rust"
-
-    # Check if binaries exist
-    local services=("market-data" "risk-manager" "execution-engine")
-
-    for service in "${services[@]}"; do
-        if [[ -f "target/release/$service" ]]; then
-            log_success "Rust binary exists: $service"
-        else
-            log_warning "Rust binary NOT found: $service (will be built)"
-        fi
-    done
-
-    cd "$PROJECT_ROOT"
-}
-
-################################################################################
-# Dashboard Checks
-################################################################################
-
-check_dashboard() {
-    log_info "Checking React dashboard..."
-
-    if [[ -d "$PROJECT_ROOT/python/src/observability/dashboard" ]]; then
-        log_success "Dashboard directory exists"
-
-        if [[ -f "$PROJECT_ROOT/python/src/observability/dashboard/package.json" ]]; then
-            log_success "package.json exists"
-
-            if [[ -d "$PROJECT_ROOT/python/src/observability/dashboard/node_modules" ]]; then
-                log_success "node_modules exists (dependencies installed)"
-            else
-                log_warning "node_modules NOT found (run: npm install)"
-            fi
-        else
-            log_warning "package.json NOT found in dashboard"
-        fi
+optional_path() {
+    if [ -e "$PROJECT_ROOT/$1" ]; then
+        ok "$1 exists"
     else
-        log_warning "Dashboard directory NOT found (optional)"
+        warn "$1 missing (optional)"
     fi
 }
 
-################################################################################
-# Database Checks
-################################################################################
+info "Checking core toolchain"
+require_cmd python3
+require_cmd cargo
+require_cmd rustc
+require_cmd go
+optional_cmd uv
+optional_cmd docker
+optional_cmd jq
 
-check_databases() {
-    log_info "Checking database files..."
+info "Checking workspace manifests"
+require_path python/pyproject.toml
+require_path rust/Cargo.toml
+require_path go/go.mod
+optional_path nextjs/package.json
 
-    local python_cmd="python3"
-    if [[ -f "$PROJECT_ROOT/python/.venv/bin/python" ]]; then
-        python_cmd="$PROJECT_ROOT/python/.venv/bin/python"
-    fi
+info "Checking runtime configuration"
+optional_path .env
+require_path ops/config/system.json
+require_path ops/config/risk_limits.toml
+optional_path ops/config/data_download.json
 
-    # DuckDB
-    if $python_cmd -c "import duckdb" 2>/dev/null; then
-        log_success "DuckDB Python package installed"
+info "Checking writable runtime directories"
+mkdir -p "$PROJECT_ROOT/logs" "$PROJECT_ROOT/data" "$PROJECT_ROOT/pids"
+ok "logs, data, and pids directories are ready"
 
-        if [[ -f "$PROJECT_ROOT/data/metrics.duckdb" ]]; then
-            log_success "DuckDB database file exists"
-        else
-            log_warning "DuckDB database will be created on first run"
-        fi
-    else
-        log_error "DuckDB NOT installed"
-    fi
+info "Checking Python import surface"
+if (cd "$PROJECT_ROOT/python" && python3 - <<'PY'
+import importlib.util
+missing = [name for name in ("numpy", "pandas", "pydantic") if importlib.util.find_spec(name) is None]
+if missing:
+    raise SystemExit("missing: " + ", ".join(missing))
+PY
+); then
+    ok "Python baseline packages are importable"
+else
+    warn "Python baseline packages are incomplete; run dependency install inside python/ when needed"
+fi
 
-    # PostgreSQL (asyncpg)
-    if $python_cmd -c "import asyncpg" 2>/dev/null; then
-        log_success "PostgreSQL Python package (asyncpg) available"
-    else
-        log_error "PostgreSQL Python package (asyncpg) NOT available"
-    fi
-}
+if [ "$ERRORS" -eq 0 ]; then
+    ok "Dependency check completed with $WARNINGS warning(s)"
+    exit 0
+fi
 
-################################################################################
-# Summary Report
-################################################################################
-
-print_summary() {
-    echo ""
-    echo "=========================================="
-    echo "DEPENDENCY CHECK SUMMARY"
-    echo "=========================================="
-    echo ""
-
-    # Required dependencies summary
-    echo -e "${BLUE}Required Dependencies:${NC}"
-    if [[ $REQUIRED_DEPS -gt 0 ]]; then
-        if [[ $REQUIRED_MET -eq $REQUIRED_DEPS ]]; then
-            echo -e "  ${GREEN}✓ All required dependencies met ($REQUIRED_MET/$REQUIRED_DEPS)${NC}"
-        else
-            echo -e "  ${RED}✗ Missing required dependencies ($REQUIRED_MET/$REQUIRED_DEPS met)${NC}"
-        fi
-    else
-        echo -e "  ${BLUE}No required dependencies tracked${NC}"
-    fi
-
-    echo ""
-
-    # Optional dependencies summary
-    echo -e "${BLUE}Optional Dependencies:${NC}"
-    if [[ $OPTIONAL_DEPS -gt 0 ]]; then
-        local optional_missing=$((OPTIONAL_DEPS - OPTIONAL_MET))
-        if [[ $OPTIONAL_MET -eq $OPTIONAL_DEPS ]]; then
-            echo -e "  ${GREEN}✓ All optional dependencies met ($OPTIONAL_MET/$OPTIONAL_DEPS)${NC}"
-        else
-            echo -e "  ${YELLOW}⚠ $optional_missing optional dependencies missing ($OPTIONAL_MET/$OPTIONAL_DEPS met)${NC}"
-            echo -e "  ${BLUE}These are recommended but not required for basic operation${NC}"
-        fi
-    else
-        echo -e "  ${BLUE}No optional dependencies tracked${NC}"
-    fi
-
-    echo ""
-
-    # Overall status
-    if [[ $ERRORS -eq 0 ]]; then
-        echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-        echo -e "${GREEN}✓ DEPENDENCY CHECK PASSED${NC}"
-        echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-
-        if [[ $WARNINGS -gt 0 ]]; then
-            echo ""
-            echo -e "${YELLOW}Note: $WARNINGS optional dependencies missing (non-critical)${NC}"
-        fi
-
-        echo ""
-        return 0
-    else
-        echo -e "${RED}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-        echo -e "${RED}✗ DEPENDENCY CHECK FAILED${NC}"
-        echo -e "${RED}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-        echo ""
-        echo -e "${RED}Errors: $ERRORS${NC}"
-        if [[ $WARNINGS -gt 0 ]]; then
-            echo -e "${YELLOW}Warnings: $WARNINGS (optional)${NC}"
-        fi
-        echo ""
-        echo "Please fix the errors above before starting the system."
-        echo ""
-        return 1
-    fi
-}
-
-################################################################################
-# Main Execution
-################################################################################
-
-main() {
-    echo "=========================================="
-    echo "OBSERVABILITY STACK DEPENDENCY CHECK"
-    echo "=========================================="
-    echo ""
-
-    check_system_commands
-    echo ""
-
-    check_python_environment
-    echo ""
-
-    check_python_packages
-    echo ""
-
-    check_directory_structure
-    echo ""
-
-    check_configuration_files
-    echo ""
-
-    check_port_availability
-    echo ""
-
-    check_rust_build
-    echo ""
-
-    check_dashboard
-    echo ""
-
-    check_databases
-    echo ""
-
-    print_summary
-}
-
-main "$@"
+err "Dependency check failed with $ERRORS error(s) and $WARNINGS warning(s)"
+exit 1

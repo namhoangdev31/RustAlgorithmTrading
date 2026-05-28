@@ -1,98 +1,47 @@
-# Deployment Guide: Tri-Runtime Architecture
-## Phase 3.5 Production Standard
+# Deployment Guide: Docker-First Workspace
 
-**Document Version:** 1.6.0 (Phase 3.5 Hardened)
-**Updated:** 2026-05-10
-**Status:** Production Ready
+**Status:** Active ops standard after cleanup
 
----
+## Overview
 
-## 1. Overview
+The repository no longer stores Docker Compose, Grafana, Prometheus, or Alertmanager bundles. Deployment is image-first:
 
-The system uses a **Tri-Runtime Architecture** optimized for specific workloads:
-1.  **Rust (Execution Kernel)**: Low-latency market data ingestion, risk management, and order execution.
-2.  **Go (Control Plane)**: High-performance observability, metrics aggregation, and real-time dashboard streaming.
-3.  **Python (Research/ML)**: Strategy development, backtesting, and machine learning feature engineering.
+1. Build Rust service images from `ops/deployment/Dockerfile`.
+2. Build the Go control-plane image from `ops/deployment/go.Dockerfile`.
+3. Wire orchestration outside this repo, or through the future web-managed deployment/config surface.
 
-## 2. Infrastructure Requirements
+## Services
 
-| Resource | Recommendation | Rationale |
-| :--- | :--- | :--- |
-| **CPU** | 4+ Cores (High single-thread performance) | Rust execution threads are CPU-bound |
-| **RAM** | 8GB+ | In-memory order books and DuckDB buffers |
-| **Storage** | 50GB+ NVMe SSD | High-throughput logging and metrics storage |
-| **Network** | < 10ms to Exchange (Alpaca) | Latency-sensitive execution |
+| Service | Runtime | Image source |
+|---|---|---|
+| Market Data | Rust | `ops/deployment/Dockerfile` with `BIN=market-data` |
+| Signal Bridge | Rust | `ops/deployment/Dockerfile` with `BIN=signal-bridge` |
+| Risk Manager | Rust | `ops/deployment/Dockerfile` with `BIN=risk-manager` |
+| Execution Engine | Rust | `ops/deployment/Dockerfile` with `BIN=execution-engine` |
+| Go Control Plane | Go | `ops/deployment/go.Dockerfile` |
 
-## 3. Component Port Mapping
-
-| Service | Port | Protocol | Runtime |
-| :--- | :--- | :--- | :--- |
-| **Market Data Feed** | 5555 | ZMQ (PUB) | Rust |
-| **Risk Manager** | 5556 | ZMQ (REQ/REP) | Rust |
-| **Execution Engine** | 5557 | ZMQ (REQ/REP) | Rust |
-| **Signal Bridge** | 5558 | ZMQ (PUSH/PULL) | Rust/Python |
-| **Observability API** | **8081** | HTTP / WebSocket | **Go** |
-
-## 4. Database Strategy
-
--   **`data/postgresql://localhost:5432/trading` (PostgreSQL)**: Primary transactional store for orders, fills, and positions. Managed by Rust.
--   **`data/observability.duckdb` (DuckDB)**: Analytical store for high-frequency metrics and logs. Managed by Go.
--   **`data/cache/`**: Temporary storage for historical bar data (Parquet format).
-
-## 5. Deployment Options
-
-### 5.1 Docker Compose (Recommended)
-
-The system is orchestrated using Docker Compose to ensure isolation and consistent networking.
+## Build Examples
 
 ```bash
-# Start the core trading stack (Rust + Python Bridge)
-docker-compose -f ops/deployment/docker-compose.yml up -d
-
-# Start the observability control plane (Go)
-docker-compose -f ops/deployment/docker-compose.observability.yml up -d
+docker build -f ops/deployment/Dockerfile --build-arg BIN=market-data -t trading/market-data:local .
+docker build -f ops/deployment/Dockerfile --build-arg BIN=signal-bridge -t trading/signal-bridge:local .
+docker build -f ops/deployment/Dockerfile --build-arg BIN=risk-manager -t trading/risk-manager:local .
+docker build -f ops/deployment/Dockerfile --build-arg BIN=execution-engine -t trading/execution-engine:local .
+docker build -f ops/deployment/go.Dockerfile -t trading/go-control-plane:local .
 ```
 
-### 5.2 Systemd (Native Linux)
+## Runtime Config
 
-For bare-metal or VPS deployments, use systemd units for auto-restart and logging.
+- Config files live in `ops/config/`.
+- Secrets come from environment variables or platform secret stores.
+- User-facing configuration should be implemented in the Go/Next.js web layer, not as ops-side monitoring/config bundles.
 
-#### Example: `tr-execution.service`
-```ini
-[Unit]
-Description=Trading System Execution Engine
-After=network.target
+## Local Native Fallback
 
-[Service]
-Type=simple
-User=trading
-WorkingDirectory=/opt/trading
-ExecStart=/opt/trading/bin/execution-engine --config ops/config/production.json
-Restart=always
-RestartSec=5
-
-[Install]
-WantedBy=multi-user.target
-```
-
-## 6. Environment Configuration
-
-Required environment variables in `.env`:
+For local development only:
 
 ```bash
-# Alpaca API Credentials
-ALPACA_API_KEY=your_key
-ALPACA_SECRET_KEY=your_secret
-PAPER_TRADING=true
-
-# Go Observability Settings
-DUCKDB_PATH=/data/observability.duckdb
-LISTEN_ADDR=0.0.0.0:8081
+bash ops/scripts/start_services.sh
+bash ops/scripts/health_check.sh
+bash ops/scripts/stop_services.sh
 ```
-
-## 7. Verification Checklist
-
-1.  [ ] **Connectivity**: `curl http://localhost:8081/health` returns 200.
-2.  [ ] **ZMQ Connectivity**: Check Rust logs for successful ZMQ binding on ports 5555-5558.
-3.  [ ] **Database Access**: Ensure the `data/` directory is writable by both the Rust binary and Go container.
-4.  [ ] **Latency**: Run `python/tests/integration/test_end_to_end.rs` to verify sub-millisecond internal latency.

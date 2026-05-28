@@ -1,7 +1,7 @@
 # Development Agent
 
-Owns local-only bootstrap and analysis utilities under `development/`.
+Owns local-only scratch utilities under `development/`.
 
-Use this agent for onboarding scripts, exploratory analysis, dependency install helpers, and one-off developer workflows.
+This folder is intentionally sparse after the ops cleanup. Use it only for temporary developer-only helpers that do not belong to production runtime, Docker images, or domain code.
 
 Do not put production runtime scripts here; those belong in `ops/`.

@@ -1,83 +1,71 @@
-# RustAlgorithmTrading — Production-First Hybrid Trading Platform
+# RustAlgorithmTrading
 
-RustAlgorithmTrading is a production-focused algorithmic trading platform that separates:
+RustAlgorithmTrading is a multi-domain algorithmic trading workspace with clear ownership boundaries:
 
-- **Python offline workloads** (research, feature engineering, backtesting, diagnostics)
-- **Rust online workloads** (market data, signal bridge, risk checks, execution path)
+- `rust/` owns the low-latency execution kernel.
+- `python/` owns research, backtesting, strategies, and Python tests.
+- `go/` owns the telemetry/control-plane API.
+- `nextjs/` owns the user-facing web surface for dashboards and future configuration.
+- `ops/` owns only runtime config, Docker image definitions, and a small set of local scripts.
 
-The repository now follows a **static operations documentation model** (no weekly gate artifacts in active docs).
-
-## Current Rollout Status (Phase 3.5)
-
-- Rust execution kernel, Go control-plane, and Python research layer are in place.
-- Current verdict is **PRODUCTION READY** for the completed migration scope.
-- Active migration lifecycle is closed; ongoing work is LTS maintenance and strategy optimization.
+The ops tree is intentionally lean. Docker Compose, Grafana, Prometheus, Alertmanager, staging bundles, and old autonomous/bootstrap scripts have been removed. Monitoring and user-editable runtime configuration should be exposed through the Go/Next.js web layer instead of living as ops-side dashboards.
 
 ## Quick Start
 
 ### 1) Install dependencies
 
 ```bash
-uv sync
-```
-
-```bash
-cd rust && cargo check --workspace
+cd python && uv sync
+cd ../rust && cargo check --workspace
+cd ../go && go test ./...
 ```
 
 ### 2) Configure runtime
 
-1. Create `.env` from your secure template.
-2. Review `ops/config/` risk limits and runtime settings.
-3. Validate local environment:
+1. Create `.env` from your secure internal template.
+2. Review `ops/config/system.json` and `ops/config/risk_limits.toml`.
+3. Validate the local environment:
 
 ```bash
 bash ops/scripts/check_dependencies.sh
 ```
 
-### 3) Start services
+### 3) Run local services
 
 ```bash
-bash ops/scripts/start_trading_system.sh
+bash ops/scripts/start_services.sh
 ```
-
-Alternative runtime paths are documented in:
-
-- `ops/scripts/autonomous_trading_system.sh`
-- `ops/scripts/start_trading.sh`
-- `ops/scripts/start_services.sh`
-
-### 4) Observe health
 
 ```bash
 bash ops/scripts/health_check.sh
 ```
 
 ```bash
-bash ops/scripts/start_observability.sh
+bash ops/scripts/stop_services.sh
 ```
 
-## Runtime Architecture Snapshot
+## Docker Images
 
-Core flow:
+Rust service image example:
+
+```bash
+docker build -f ops/deployment/Dockerfile --build-arg BIN=market-data -t trading/market-data:local .
+```
+
+Go control-plane image:
+
+```bash
+docker build -f ops/deployment/go.Dockerfile -t trading/go-control-plane:local .
+```
+
+## Runtime Flow
 
 1. `rust/market-data` ingests and normalizes market events.
 2. `rust/signal-bridge` computes technical/ML signals.
 3. `rust/risk-manager` enforces risk and safety controls.
 4. `rust/execution-engine` routes and manages execution lifecycle.
-5. Python modules in `python/src/` provide research, orchestration, and observability layers.
-
-Provider posture:
-
-- **Broker/API provider**: Alpaca (active)
-- **Observability/persistence posture**: DuckDB-first for analytics/telemetry workloads
-
-## Risk Controls (Operational Highlights)
-
-- Pre-trade limits and circuit breakers
-- Position and exposure enforcement
-- Kill-switch and rollback readiness workflows
-- Correlation-first event tracking (`correlation_id`)
+5. `go/` exposes telemetry/control-plane APIs for web consumption.
+6. `nextjs/` owns the user-facing web UI and future runtime config surface.
 
 ## Documentation Hub
 
@@ -88,23 +76,9 @@ Read in this order:
 3. `docs/index.md`
 4. `PLAYBOOK.md`
 
-Roadmap lifecycle has been consolidated to one static completion report:
-
-- `docs/roadmap/COMPLETION_REPORT.md`
-
-## Phase 3 Gate Commands
-
-```bash
-cd python && python -m pytest tests/observability/test_go_parity.py -q
-cd python && python -m pytest tests/observability -q
-cd python && python -m pytest tests/integration/test_observability_integration.py -q
-```
-
 ## Scripts Hub
 
-Runtime and maintenance scripts are indexed here:
-
-- `ops/scripts/README.md`
+Runtime and data/backtest helpers are indexed in `ops/scripts/README.md`.
 
 ## Repository Layout
 
@@ -112,22 +86,12 @@ Runtime and maintenance scripts are indexed here:
 [REPO_ROOT]/
 ├── python/              # Python source, packaging, and tests
 ├── rust/                # Rust workspace and Rust tests
-├── go/                  # Go observability control plane
-├── nextjs/              # Next.js dashboard/web app
+├── go/                  # Go telemetry/control-plane API
+├── nextjs/              # Next.js web app and user config surface
 ├── ios/                 # iOS SwiftUI app
 ├── android/             # Android Kotlin/Compose app
-├── ops/                 # Runtime config, scripts, deployment
-├── development/         # Local bootstrap and analysis utilities
+├── ops/                 # Runtime config, Docker images, minimal scripts
+├── development/         # Sparse local-only scratch space
 ├── docs/                # Active docs, research, testing reports
 └── data/                # Runtime and research data
 ```
-
-## Notes
-
-- Public envelope contract remains unchanged:
-  - `schema_version`
-  - `correlation_id`
-  - `event_type`
-  - `timestamp`
-  - `payload`
-- This cleanup intentionally removes weekly governance artifacts from active tree to keep operations docs concise and maintainable.

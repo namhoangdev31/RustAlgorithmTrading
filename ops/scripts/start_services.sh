@@ -5,6 +5,9 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+LOG_DIR="$PROJECT_ROOT/logs"
+
+mkdir -p "$LOG_DIR" "$PROJECT_ROOT/pids"
 
 # Source environment variables
 if [ -f "$PROJECT_ROOT/.env" ]; then
@@ -45,33 +48,33 @@ cargo build --release
 # Start services in background
 echo ""
 echo "Starting Market Data Service..."
-RUST_LOG=info ./target/release/market-data > "$PROJECT_ROOT/logs/market-data.log" 2>&1 &
+RUST_LOG=info ./target/release/market-data > "$LOG_DIR/market-data.log" 2>&1 &
 MARKET_DATA_PID=$!
 echo "  PID: $MARKET_DATA_PID"
 
 sleep 2
 
 echo "Starting Risk Manager..."
-RUST_LOG=info ./target/release/risk-manager > "$PROJECT_ROOT/logs/risk-manager.log" 2>&1 &
+RUST_LOG=info ./target/release/risk-manager > "$LOG_DIR/risk-manager.log" 2>&1 &
 RISK_MANAGER_PID=$!
 echo "  PID: $RISK_MANAGER_PID"
 
 sleep 2
 
 echo "Starting Execution Engine..."
-RUST_LOG=info ./target/release/execution-engine > "$PROJECT_ROOT/logs/execution-engine.log" 2>&1 &
+RUST_LOG=info ./target/release/execution-engine > "$LOG_DIR/execution-engine.log" 2>&1 &
 EXECUTION_PID=$!
 echo "  PID: $EXECUTION_PID"
 
 sleep 2
 
 echo "Starting Signal Bridge..."
-RUST_LOG=info ./target/release/signal-bridge > "$PROJECT_ROOT/logs/signal-bridge.log" 2>&1 &
+RUST_LOG=info ./target/release/signal-bridge > "$LOG_DIR/signal-bridge.log" 2>&1 &
 SIGNAL_BRIDGE_PID=$!
 echo "  PID: $SIGNAL_BRIDGE_PID"
 
 echo ""
-echo "✅ All services started!"
+echo "All services started."
 echo ""
 echo "PIDs:"
 echo "  Market Data: $MARKET_DATA_PID"

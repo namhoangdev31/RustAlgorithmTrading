@@ -50,13 +50,13 @@ LOG_LEVEL=info
 
 ### Starting the System
 
-The easiest way to start all components is using the unified start script:
+The local native fallback starts the Rust runtime services:
 
 ```bash
-bash ops/scripts/start_trading.sh
+bash ops/scripts/start_services.sh
 ```
 
-This script initializes the Go Control Plane, followed by the Rust kernel and Python Signal Bridge.
+Container orchestration and user-facing telemetry/configuration are intentionally outside `ops/` after the cleanup.
 
 ### Verifying Health
 

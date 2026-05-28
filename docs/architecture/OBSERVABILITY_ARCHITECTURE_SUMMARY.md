@@ -120,13 +120,7 @@ The observability system provides comprehensive monitoring of the algorithmic tr
 
 ### Starting the System
 
-```bash
-# 1. Start Go Observability (Handles Build + Launch)
-./ops/scripts/start_go_observability.sh
-
-# 2. Start Rust Services
-# (See RUST_MODULE_STRUCTURE.md)
-```
+Build the Go control-plane image with `ops/deployment/go.Dockerfile`, or run `go test ./...` and `go run ./cmd/server/main.go` from `go/` for local development.
 
 ### Health Monitoring
 

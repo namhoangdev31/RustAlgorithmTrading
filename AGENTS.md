@@ -6,13 +6,13 @@ This repository is organized as a multi-domain workspace. The root agent coordin
 
 | Folder | Agent owner | Scope |
 |---|---|---|
-| `python/` | Python Agent | Research, backtesting, strategy logic, Python observability, Python tests |
+| `python/` | Python Agent | Research, backtesting, strategy logic, Python tests |
 | `rust/` | Rust Agent | Low-latency runtime crates, shared protocol types, Rust integration tests |
 | `go/` | Go Agent | Observability control plane, HTTP/WS API, DuckDB/Postgres adapters |
-| `nextjs/` | Next.js Agent | Web app, dashboard, Prisma, Firebase/Auth.js, Vercel surface |
+| `nextjs/` | Next.js Agent | Web app, user-facing telemetry/config UI, Prisma, Firebase/Auth.js |
 | `ios/` | iOS Agent | SwiftUI app and AdaptiveSwiftUi package |
 | `android/` | Android Agent | Android/Kotlin/Compose app |
-| `ops/` | Ops Agent | Runtime config, Docker, deployment, scripts, monitoring |
+| `ops/` | Ops Agent | Runtime config, Docker image definitions, minimal local scripts |
 | `development/` | Development Agent | Bootstrap helpers and analysis utilities |
 | `docs/` | Docs Agent | Canonical docs, research notes, testing documentation |
 | `data/` | Data Agent | Local datasets, sample historical data, runtime database artifacts |
@@ -37,7 +37,7 @@ Folder agents are peers. The root agent owns orchestration only:
 
 - Python <-> Rust: strategy, backtest, feature parity, ZMQ contracts.
 - Rust <-> Go: metrics, runtime health, storage contracts.
-- Go <-> Next.js: observability API and dashboard contract.
+- Go <-> Next.js: telemetry API and user-facing config contract.
 - iOS/Android <-> Go: product/runtime manifest alignment.
 - Ops <-> all domains: config, deployment, service startup, CI.
 

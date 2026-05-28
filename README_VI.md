@@ -1,85 +1,73 @@
-# RustAlgorithmTrading — Nền Tảng Giao Dịch Hybrid Python-Rust (Production-First)
+# RustAlgorithmTrading
 
-RustAlgorithmTrading là nền tảng giao dịch thuật toán tập trung vận hành production, tách rõ:
+RustAlgorithmTrading là workspace giao dịch thuật toán được tách rõ theo domain:
 
-- **Python (offline)**: nghiên cứu, orchestration backtest, batch strategy signal generation, công cụ quan sát
-- **Rust (runtime)**: market data, signal bridge, risk checks, execution, production backtest core
+- `rust/` sở hữu runtime low-latency.
+- `python/` sở hữu research, backtesting, strategies, và Python tests.
+- `go/` sở hữu telemetry/control-plane API.
+- `nextjs/` sở hữu web UI cho dashboard và cấu hình runtime sau này.
+- `ops/` chỉ giữ runtime config, Docker image definitions, và một bộ script local tối thiểu.
 
-Kho tài liệu đã chuyển sang mô hình **vận hành tĩnh** (không còn bộ tài liệu tuần trong cây active).
+Cây ops đã được làm gọn. Docker Compose, Grafana, Prometheus, Alertmanager, staging bundle, và các script autonomous/bootstrap cũ đã được bỏ. Phần theo dõi và cấu hình cho user sẽ đi qua Go/Next.js web layer thay vì nằm trong ops.
 
-## Trạng thái rollout hiện tại (Phase 3.5)
-
-- Rust execution kernel, Go control-plane, và Python research layer đã vào trạng thái hoàn chỉnh theo phạm vi migration.
-- Verdict hiện tại là **PRODUCTION READY** cho phạm vi migration đã hoàn tất.
-- Lifecycle migration đã đóng; công việc tiếp theo là LTS maintenance và tối ưu chiến lược.
-
-## Khởi động nhanh
+## Khởi Động Nhanh
 
 ### 1) Cài dependencies
 
 ```bash
-uv sync
+cd python && uv sync
+cd ../rust && cargo check --workspace
+cd ../go && go test ./...
 ```
 
-```bash
-cd rust && cargo check --workspace
-```
+### 2) Cấu hình runtime
 
-### 2) Cấu hình môi trường
-
-1. Tạo file `.env` từ template nội bộ an toàn.
-2. Rà soát `ops/config/` (risk limits, runtime params).
-3. Kiểm tra dependencies:
+1. Tạo `.env` từ secure template nội bộ.
+2. Rà soát `ops/config/system.json` và `ops/config/risk_limits.toml`.
+3. Kiểm tra môi trường local:
 
 ```bash
 bash ops/scripts/check_dependencies.sh
 ```
 
-### 3) Chạy hệ thống
+### 3) Chạy services local
 
 ```bash
-bash ops/scripts/start_trading_system.sh
+bash ops/scripts/start_services.sh
 ```
-
-Các đường chạy khác:
-
-- `ops/scripts/autonomous_trading_system.sh`
-- `ops/scripts/start_trading.sh`
-- `ops/scripts/start_services.sh`
-
-### 4) Theo dõi sức khỏe
 
 ```bash
 bash ops/scripts/health_check.sh
 ```
 
 ```bash
-bash ops/scripts/start_observability.sh
+bash ops/scripts/stop_services.sh
 ```
 
-## Snapshot kiến trúc runtime
+## Docker Images
 
-Luồng chính:
+Ví dụ build Rust service:
 
-1. `rust/market-data`: ingest/normalize market events
-2. `rust/signal-bridge`: sinh tín hiệu kỹ thuật/ML
-3. `rust/risk-manager`: chặn rủi ro và policy safety
-4. `rust/execution-engine`: định tuyến và quản lý lifecycle lệnh
-5. `python/src/` (Python): research + orchestration + observability
+```bash
+docker build -f ops/deployment/Dockerfile --build-arg BIN=market-data -t trading/market-data:local .
+```
 
-Chuẩn công nghệ active:
+Build Go control-plane:
 
-- **Provider**: Alpaca (active)
-- **Observability/Persistence**: DuckDB-first cho analytics/telemetry
+```bash
+docker build -f ops/deployment/go.Dockerfile -t trading/go-control-plane:local .
+```
 
-## Trục kiểm soát rủi ro
+## Luồng Runtime
 
-- Pre-trade limits và circuit breaker
-- Exposure/position controls
-- Kill-switch + rollback readiness
-- Event correlation theo `correlation_id`
+1. `rust/market-data`: ingest và normalize market events.
+2. `rust/signal-bridge`: sinh tín hiệu kỹ thuật/ML.
+3. `rust/risk-manager`: thực thi risk và safety policy.
+4. `rust/execution-engine`: định tuyến và quản lý lifecycle lệnh.
+5. `go/`: expose telemetry/control-plane API cho web.
+6. `nextjs/`: sở hữu web UI và surface cấu hình runtime sau này.
 
-## Hub tài liệu
+## Hub Tài Liệu
 
 Đọc theo thứ tự:
 
@@ -88,44 +76,22 @@ Chuẩn công nghệ active:
 3. `docs/index.md`
 4. `PLAYBOOK.md`
 
-Tài liệu roadmap tuần đã được gom về một completion report tĩnh:
+## Hub Scripts
 
-- `docs/roadmap/COMPLETION_REPORT.md`
+Script runtime/data/backtest được index trong `ops/scripts/README.md`.
 
-## Lệnh gate cho Phase 3
-
-```bash
-cd python && python -m pytest tests/observability/test_go_parity.py -q
-cd python && python -m pytest tests/observability -q
-cd python && python -m pytest tests/integration/test_observability_integration.py -q
-```
-
-## Hub scripts
-
-- `ops/scripts/README.md`
-
-## Cấu trúc repo
+## Cấu Trúc Repo
 
 ```text
 [REPO_ROOT]/
 ├── python/              # Python source, packaging, tests
 ├── rust/                # Rust workspace and Rust tests
-├── go/                  # Go observability control plane
-├── nextjs/              # Next.js dashboard/web app
+├── go/                  # Go telemetry/control-plane API
+├── nextjs/              # Next.js web app and user config surface
 ├── ios/                 # iOS SwiftUI app
 ├── android/             # Android Kotlin/Compose app
-├── ops/                 # Runtime config, scripts, deployment
-├── development/         # Local bootstrap and analysis utilities
+├── ops/                 # Runtime config, Docker images, script tối thiểu
+├── development/         # Local-only scratch space tối giản
 ├── docs/                # Tài liệu active, research, testing reports
 └── data/                # Dữ liệu runtime/research
 ```
-
-## Ghi chú quan trọng
-
-- Không thay đổi public envelope:
-  - `schema_version`
-  - `correlation_id`
-  - `event_type`
-  - `timestamp`
-  - `payload`
-- Cleanup này ưu tiên codebase gọn, dễ vận hành, dễ bảo trì production.

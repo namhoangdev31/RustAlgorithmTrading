@@ -1,41 +1,26 @@
-FROM golang:1.21-alpine AS builder
+# Go control-plane image. Build from repository root.
+# docker build -f ops/deployment/go.Dockerfile -t trading/go-control-plane:local .
 
-# Install build dependencies for cgo (required for go-duckdb)
+FROM golang:1.25-alpine AS builder
+
 RUN apk add --no-cache gcc g++ musl-dev
 
-WORKDIR /app
+WORKDIR /workspace/go
+COPY go/go.mod go/go.sum* ./
+RUN go mod download
+COPY go ./
+RUN CGO_ENABLED=1 GOOS=linux go build -o /out/go-control-plane ./cmd/server/main.go
 
-# Copy go mod and sum files (go.sum might not exist yet)
-COPY go.mod ./
-COPY go.sum* ./
+FROM alpine:3.20
 
-# Download dependencies
-RUN go mod tidy
-
-# Copy source code
-COPY . .
-
-# Build the application
-RUN CGO_ENABLED=1 GOOS=linux go build -a -o observability-api ./cmd/server/main.go
-
-# Final stage
-FROM alpine:3.19
-
-WORKDIR /app
-
-# Install runtime dependencies if needed
 RUN apk add --no-cache ca-certificates tzdata
 
-# Copy binary from builder
-COPY --from=builder /app/observability-api .
+WORKDIR /workspace
+COPY --from=builder /out/go-control-plane /usr/local/bin/go-control-plane
 
-# Expose port
-EXPOSE 8080
-
-# Set environment variables
-ENV PORT=8080
+ENV PORT=8081
+ENV HOST=0.0.0.0
 ENV DUCKDB_PATH=/data/observability.duckdb
-ENV OBSERVABILITY_API_KEY=""
 
-# Run the binary
-CMD ["./observability-api"]
+EXPOSE 8081
+CMD ["/usr/local/bin/go-control-plane"]

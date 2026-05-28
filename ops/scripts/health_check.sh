@@ -1,52 +1,61 @@
 #!/bin/bash
-# Check health status of all services
+set -euo pipefail
 
-echo "=== Trading System Health Check ==="
-echo ""
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
-# Check if services are running
 check_process() {
-    local name=$1
-    if pgrep -f "$name" > /dev/null; then
-        echo "✓ $name is running (PID: $(pgrep -f $name))"
-        return 0
+    local name="$1"
+    if pgrep -f "$name" >/dev/null 2>&1; then
+        echo "[OK] $name running: $(pgrep -f "$name" | tr '\n' ' ')"
     else
-        echo "✗ $name is NOT running"
-        return 1
+        echo "[--] $name not running"
     fi
 }
 
-echo "Service Status:"
+echo "=== Trading Runtime Health ==="
+echo ""
+
+echo "Processes:"
 check_process "market-data"
 check_process "risk-manager"
 check_process "execution-engine"
 check_process "signal-bridge"
 
 echo ""
-echo "Configuration:"
-if [ -f "ops/config/system.json" ]; then
-    ENV=$(jq -r '.metadata.environment' ops/config/system.json)
-    PAPER=$(jq -r '.execution.paper_trading' ops/config/system.json)
-    echo "  Environment: $ENV"
-    echo "  Paper Trading: $PAPER"
+echo "Config:"
+if [ -f "$PROJECT_ROOT/ops/config/system.json" ]; then
+    if command -v jq >/dev/null 2>&1; then
+        echo "  environment: $(jq -r '.metadata.environment // "unknown"' "$PROJECT_ROOT/ops/config/system.json")"
+        echo "  paper_trading: $(jq -r '.execution.paper_trading // "unknown"' "$PROJECT_ROOT/ops/config/system.json")"
+    else
+        echo "  ops/config/system.json exists (install jq for parsed output)"
+    fi
 else
-    echo "  ERROR: ops/config/system.json not found"
+    echo "  missing ops/config/system.json"
+fi
+
+if [ -f "$PROJECT_ROOT/ops/config/risk_limits.toml" ]; then
+    echo "  risk_limits: present"
+else
+    echo "  risk_limits: missing"
 fi
 
 echo ""
-echo "Environment Variables:"
-echo "  ALPACA_API_KEY: ${ALPACA_API_KEY:0:10}..."
-echo "  ALPACA_SECRET_KEY: ${ALPACA_SECRET_KEY:0:10}..."
-echo "  ALPACA_BASE_URL: $ALPACA_BASE_URL"
+echo "Secrets:"
+if [ -f "$PROJECT_ROOT/.env" ]; then
+    grep -q '^ALPACA_API_KEY=' "$PROJECT_ROOT/.env" && echo "  ALPACA_API_KEY: set" || echo "  ALPACA_API_KEY: missing"
+    grep -q '^ALPACA_SECRET_KEY=' "$PROJECT_ROOT/.env" && echo "  ALPACA_SECRET_KEY: set" || echo "  ALPACA_SECRET_KEY: missing"
+else
+    echo "  .env not found"
+fi
 
 echo ""
-echo "Recent Logs:"
-if [ -f "logs/market-data.log" ]; then
-    echo "  Market Data (last 3 lines):"
-    tail -3 logs/market-data.log | sed 's/^/    /'
-fi
-
-if [ -f "logs/risk-manager.log" ]; then
-    echo "  Risk Manager (last 3 lines):"
-    tail -3 logs/risk-manager.log | sed 's/^/    /'
-fi
+echo "Recent logs:"
+for service in market-data risk-manager execution-engine signal-bridge; do
+    log_file="$PROJECT_ROOT/logs/${service}.log"
+    if [ -f "$log_file" ]; then
+        echo "  ${service}:"
+        tail -3 "$log_file" | sed 's/^/    /'
+    fi
+done

@@ -1,66 +1,35 @@
-# Staging Deployment Guide
-## Rust Algorithmic Trading System
+# Staging Deployment
 
-**Version**: 2.0.0 (Phase 3.5 Hardened)
-**Last Updated**: May 11, 2026
-**Environment**: 🧪 **STAGING (Paper Trading)**
-**Goal**: Validate strategies and system stability before production cutover.
+Staging is now image-first and paper-trading only. The old staging Docker Compose bundle was removed with the ops cleanup.
 
----
-
-## 1. Staging Environment Overview
-
-The staging environment is a 1:1 replica of production but configured for **Alpaca Paper Trading**.
-
-### Key Differences from Production
-- `PAPER_TRADING=true`
-- `ALPACA_API_URL=https://paper-api.alpaca.markets`
-- Lower risk limits (e.g., $10k max position vs $100k)
-- Debug logging enabled for detailed trace analysis
-
----
-
-## 2. Quick Setup
+## Build Images
 
 ```bash
-# 1. Create Staging Environment
-cp .env.example .env.staging
-# Edit .env.staging with Paper Trading Keys
-
-# 2. Deploy with Staging Profile
-docker compose -f ops/deployment/docker-compose.yml -f ops/deployment/docker-compose.staging.yml up -d
+docker build -f ops/deployment/Dockerfile --build-arg BIN=market-data -t trading/market-data:staging .
+docker build -f ops/deployment/Dockerfile --build-arg BIN=signal-bridge -t trading/signal-bridge:staging .
+docker build -f ops/deployment/Dockerfile --build-arg BIN=risk-manager -t trading/risk-manager:staging .
+docker build -f ops/deployment/Dockerfile --build-arg BIN=execution-engine -t trading/execution-engine:staging .
+docker build -f ops/deployment/go.Dockerfile -t trading/go-control-plane:staging .
 ```
 
----
+## Configuration
 
-## 3. Verification Checklist
+- Use `ops/config/system.staging.json`.
+- Keep `paper_trading=true`.
+- Inject Alpaca paper credentials through the deployment platform, not checked-in files.
 
-### 3.1 Connectivity
-- [ ] Go Control Plane reachable at `http://localhost:8081`
-- [ ] Alpaca Paper WebSocket connected (check `market_data` logs)
-- [ ] Rust services emitting metrics to Go scraper
+## Verification
 
-### 3.2 Strategy Validation
-- [ ] Run a 1-hour "Dry Run" strategy
-- [ ] Verify orders appear in Alpaca Paper Dashboard
-- [ ] Check DuckDB for correct metric ingestion
-
----
-
-## 4. Troubleshooting Staging
-
-### Resetting Data
-To start fresh in staging:
 ```bash
-docker compose down -v
-rm data/*.db data/*.duckdb
-docker compose up -d
+bash ops/scripts/check_dependencies.sh
+cd go && go test ./...
+cd rust && cargo test --workspace
 ```
 
-### Mocking Market Data
-If the exchange is closed, use the `ops/scripts/mock_market_data.py` to feed the ZMQ pipeline.
+Local native fallback:
 
----
-
-**Architect**: Antigravity AI
-**Documentation Version**: 2.0.0
+```bash
+TRADING_ENV=staging bash ops/scripts/start_services.sh
+bash ops/scripts/health_check.sh
+bash ops/scripts/stop_services.sh
+```

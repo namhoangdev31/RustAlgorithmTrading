@@ -21,9 +21,9 @@ curl http://localhost:8081/health
 # (Handled automatically by market-data startup logs)
 ```
 
-### 1.2 Monitoring Strategy
+### 1.2 Telemetry Strategy
 
-The **Go Control Plane (Port 8081)** is the primary monitoring interface.
+The **Go Control Plane (Port 8081)** is the primary telemetry interface.
 
 - **Metrics**: Available via `GET /api/v1/metrics`.
 - **WebSocket**: Stream 10Hz updates via `ws://localhost:8081/ws/metrics`.
@@ -36,7 +36,7 @@ The system uses a strict startup/shutdown order to ensure state consistency.
 | Service | Port | Dependency |
 |:---|:---|:---|
 | **Go Control Plane** | 8081 | None |
-| **Market Data** | ZMQ | Go CP |
+| **Market Data** | ZMQ | Config + broker credentials |
 | **Signal Bridge** | ZMQ | Market Data |
 | **Risk Manager** | ZMQ | Signal Bridge |
 | **Execution Engine** | ZMQ | Risk Manager |
@@ -44,13 +44,13 @@ The system uses a strict startup/shutdown order to ensure state consistency.
 ### Start All Services
 
 ```bash
-bash ops/scripts/start_trading.sh
+bash ops/scripts/start_services.sh
 ```
 
 ### Stop All Services
 
 ```bash
-bash ops/scripts/stop_trading.sh
+bash ops/scripts/stop_services.sh
 ```
 
 ## 3. Incident Response
@@ -59,7 +59,7 @@ bash ops/scripts/stop_trading.sh
 
 - **P0 (Critical)**: Circuit breaker tripped, API down, or financial loss > $1,000.
 - **P1 (High)**: Latency > 1ms, partial data gaps.
-- **P2 (Medium)**: Dashboard/Observability API issues.
+- **P2 (Medium)**: Telemetry/control-plane API issues.
 
 ### 3.2 Emergency Kill Switch
 
@@ -67,16 +67,14 @@ If the system is acting erratically and fails to auto-trip:
 
 ```bash
 # Force stop all trading components
-bash ops/scripts/stop_trading.sh
+bash ops/scripts/stop_services.sh
 ```
 
 ### 3.3 Manual Liquidation
 
 To close all positions via Alpaca immediately:
 
-```bash
-uv run python ops/scripts/liquidate_positions.py --confirm
-```
+Manual liquidation should be implemented through the execution API or broker console. The old ops-side liquidation script is no longer part of the active scripts set.
 
 ## 4. Disaster Recovery
 
@@ -92,16 +90,14 @@ To restore a corrupted DuckDB or PostgreSQL database:
 
 1. Stop all services.
 2. Replace `data/observability.duckdb` or `data/postgresql://localhost:5432/trading` with the latest file from `backups/`.
-3. Restart the Go Control Plane.
+3. Restart the affected service/container.
 4. Verify integrity via `ops/scripts/health_check.sh`.
 
 ### 4.3 Position Reconciliation
 
 After a crash, always reconcile local state with Alpaca:
 
-```bash
-uv run python ops/scripts/reconcile_positions.py
-```
+Position reconciliation should run through the execution API or a purpose-built domain tool, not ad-hoc ops scripts.
 
 ---
 **Maintained By**: Trading Operations
