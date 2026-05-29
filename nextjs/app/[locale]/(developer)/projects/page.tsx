@@ -48,6 +48,8 @@ import { SettingsTab } from "@/components/projects/tabs/SettingsTab";
 import { OverviewTab } from "@/components/projects/tabs/OverviewTab";
 import { ProjectForm } from "@/components/projects/dialogs/ProjectForm";
 import { DeleteConfirmationDialog } from "@/components/projects/dialogs/DeleteConfirmationDialog";
+import { hasVercelApiKey, getVercelClient } from "@/lib/server/vercel";
+import { DeploymentsTab } from "@/components/projects/tabs/DeploymentsTab";
 
 function buildQueryString(search: any, newParams: Record<string, string | undefined>) {
   const params = new URLSearchParams();
@@ -104,6 +106,42 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
   const data = await getProjectBundleData(user.id, search);
   const github = await getGithubOverviewData();
 
+  // Check Vercel key connection
+  const vercelConnected = await hasVercelApiKey(user.id);
+  let vercelAliases: any[] = [];
+  let vercelDeployments: any[] = [];
+  let vercelConnectionError = false;
+
+  if (vercelConnected) {
+    try {
+      const vercel = await getVercelClient(user.id);
+      const [
+        aliasesRes,
+        deploymentsRes,
+      ] = await Promise.allSettled([
+        vercel.aliases.listAliases({ limit: 50 }),
+        vercel.deployments.getDeployments({ limit: 50 }),
+      ]);
+
+      if (aliasesRes.status === "fulfilled") {
+        vercelAliases = aliasesRes.value.aliases || [];
+      } else {
+        console.error("Error fetching Vercel aliases:", aliasesRes.reason);
+        vercelConnectionError = true;
+      }
+
+      if (deploymentsRes.status === "fulfilled") {
+        vercelDeployments = (deploymentsRes.value as any).deployments || [];
+      } else {
+        console.error("Error fetching Vercel deployments:", deploymentsRes.reason);
+        vercelConnectionError = true;
+      }
+    } catch (err) {
+      console.error("Error fetching Vercel data:", err);
+      vercelConnectionError = true;
+    }
+  }
+
   const t = await getTranslations("Dashboard");
   const tProjects = await getTranslations("Projects");
   const projectsPath = "/projects";
@@ -121,7 +159,7 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="flex items-center gap-2 px-2.5 py-1.5 -ml-2 rounded-md hover:bg-canvas-soft text-ink transition-all cursor-pointer select-none border border-transparent hover:border-hairline">
-                <div className="size-5 rounded-md bg-canvas-night flex items-center justify-center text-[10px] font-bold text-canvas shrink-0 shadow-sm select-none">
+                <div className="size-5 rounded-md bg-canvas-night flex items-center justify-center text-[10px] font-bold text-white shrink-0 shadow-sm select-none">
                   {(data.workspace.activeOrganization?.name || "O").charAt(0).toUpperCase()}
                 </div>
                 <span className="font-semibold text-ink text-sm">
@@ -165,14 +203,17 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
         <Link href={`/projects${buildQueryString(search, { tab: "overview" })}`} className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "overview" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
           Overview
         </Link>
+        <Link href={`/projects${buildQueryString(search, { tab: "deployments" })}`} className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "deployments" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
+          Deployments
+        </Link>
+        <Link href={`/projects${buildQueryString(search, { tab: "domains" })}`} className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "domains" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
+          Domains
+        </Link>
         <Link href={`/projects${buildQueryString(search, { tab: "integrations" })}`} className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "integrations" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
           Integrations
         </Link>
         <Link href={`/projects${buildQueryString(search, { tab: "activity" })}`} className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "activity" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
           Activity
-        </Link>
-        <Link href={`/projects${buildQueryString(search, { tab: "domains" })}`} className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "domains" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
-          Domains
         </Link>
         <Link href={`/projects${buildQueryString(search, { tab: "settings" })}`} className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "settings" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
           Settings
@@ -243,9 +284,21 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
         {activeTab === "integrations" ? (
           <IntegrationsTab data={data} />
         ) : activeTab === "activity" ? (
-          <ActivityTab data={data} locale={locale} formatRelativeTime={formatRelativeTime} />
+          <ActivityTab data={data} locale={locale} />
         ) : activeTab === "domains" ? (
-          <DomainsTab data={data} locale={locale} formatRelativeTime={formatRelativeTime} />
+          <DomainsTab
+            vercelConnected={vercelConnected}
+            vercelAliases={vercelAliases}
+            vercelConnectionError={vercelConnectionError}
+            locale={locale}
+          />
+        ) : activeTab === "deployments" ? (
+          <DeploymentsTab
+            vercelConnected={vercelConnected}
+            vercelDeployments={vercelDeployments}
+            vercelConnectionError={vercelConnectionError}
+            locale={locale}
+          />
         ) : activeTab === "settings" ? (
           <SettingsTab />
         ) : (
@@ -259,7 +312,6 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
             getProjectAvatarStyles={getProjectAvatarStyles}
             mapBundleStatus={mapBundleStatus}
             getCategoryIcon={getCategoryIcon}
-            formatRelativeTime={formatRelativeTime}
           />
         )}
       </div>
@@ -354,27 +406,4 @@ function getCategoryIcon(category: string | null | undefined) {
     default:
       return Layers;
   }
-}
-
-function formatRelativeTime(dateInput: Date | string | null | undefined, locale: string = "en") {
-  if (!dateInput) return "";
-  const date = new Date(dateInput);
-  const now = new Date();
-  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-
-  const isVi = locale === "vi";
-
-  if (diffInSeconds < 60) return isVi ? "Vừa xong" : "Just now";
-  const diffInMinutes = Math.floor(diffInSeconds / 60);
-  if (diffInMinutes < 60) return isVi ? `${diffInMinutes} phút trước` : `${diffInMinutes}m ago`;
-  const diffInHours = Math.floor(diffInMinutes / 60);
-  if (diffInHours < 24) return isVi ? `${diffInHours} giờ trước` : `${diffInHours}h ago`;
-  const diffInDays = Math.floor(diffInHours / 24);
-  if (diffInDays < 30) return isVi ? `${diffInDays} ngày trước` : `${diffInDays}d ago`;
-
-  return date.toLocaleDateString(isVi ? "vi-VN" : "en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
 }

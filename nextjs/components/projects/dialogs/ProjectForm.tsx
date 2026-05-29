@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 
 const fieldLabelClass = "text-[11px] font-bold text-ink-mute uppercase tracking-wider";
 const fieldControlClass =
-  "h-10 bg-canvas border-hairline focus-visible:ring-1 focus-visible:ring-primary transition-all rounded-sm text-sm shadow-light";
+  "h-10 bg-canvas border-hairline focus-visible:ring-1 focus-visible:ring-primary transition-all rounded-sm text-sm shadow-light text-ink";
 
 export function ProjectForm({
   action,
@@ -30,7 +30,7 @@ export function ProjectForm({
   t: any;
 }) {
   return (
-    <Card className="border border-hairline shadow-dark bg-canvas overflow-hidden rounded-xl animate-in fade-in zoom-in-95 duration-200">
+    <Card className="border border-hairline shadow-dark bg-canvas overflow-hidden rounded-xl animate-in fade-in zoom-in-95 duration-200 py-0">
       <CardHeader className="border-b border-hairline-cool pb-5 bg-canvas-soft/60">
         <CardTitle className="text-xl font-bold tracking-tight text-ink flex items-center gap-2">
           <Sparkles className="size-5 text-primary" />
@@ -105,7 +105,7 @@ export function ProjectForm({
 
           <div className="grid gap-2 md:col-span-2">
             <Label className={fieldLabelClass}>{t("form.project_description") || "Project Description"}</Label>
-            <Textarea name="description" defaultValue={project?.description ?? ""} rows={3} placeholder="Explain what this project is about..." className="border-hairline bg-canvas text-sm shadow-light" />
+            <Textarea name="description" defaultValue={project?.description ?? ""} rows={3} placeholder="Explain what this project is about..." className="border-hairline bg-canvas text-sm shadow-light text-ink" />
           </div>
 
           <div className="grid gap-2 md:col-span-2">

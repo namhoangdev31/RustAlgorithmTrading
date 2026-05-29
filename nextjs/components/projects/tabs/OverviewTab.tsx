@@ -1,5 +1,6 @@
 import { Edit3, ExternalLink, Folder, GitBranch, MoreHorizontal, Plus, Trash2 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import { formatRelativeTime } from "@/lib/shared/time";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -45,7 +46,6 @@ type OverviewTabProps = {
   getProjectAvatarStyles: (name: string) => string;
   mapBundleStatus: (status: string | null | undefined, t: any) => { label: string; dotClass: string };
   getCategoryIcon: (category: string | null | undefined) => any;
-  formatRelativeTime: (dateInput: Date | string | null | undefined, locale: string) => string;
 };
 
 function GithubAside({
@@ -173,7 +173,6 @@ export function OverviewTab({
   getProjectAvatarStyles,
   mapBundleStatus,
   getCategoryIcon,
-  formatRelativeTime,
 }: OverviewTabProps) {
   const projectKeys = new Set<string>(
     data.projects.map((project: any) => String(project.name ?? "").trim().toLowerCase())

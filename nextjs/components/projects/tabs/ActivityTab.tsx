@@ -9,8 +9,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import type { ProjectTabData } from "./types";
+import { formatRelativeTime } from "@/lib/shared/time";
 
-export function ActivityTab({ data, locale, formatRelativeTime }: { data: ProjectTabData; locale: string; formatRelativeTime: (v: any, l: string) => string }) {
+export function ActivityTab({ data, locale }: { data: ProjectTabData; locale: string }) {
   const events = data.projects
     .flatMap((project) => {
       const bundle = project.bundle;

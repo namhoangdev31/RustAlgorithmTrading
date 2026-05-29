@@ -16,7 +16,7 @@ export function DeleteConfirmationDialog({
   t: any;
 }) {
   return (
-    <Card className="border border-hairline shadow-dark bg-canvas overflow-hidden rounded-xl max-w-md w-full mx-auto animate-in fade-in zoom-in-95 duration-200">
+    <Card className="border border-hairline shadow-dark bg-canvas overflow-hidden rounded-xl max-w-md w-full mx-auto animate-in fade-in zoom-in-95 duration-200 py-0">
       <CardHeader className="pb-4 bg-canvas-soft/60 border-b border-hairline-cool">
         <CardTitle className="text-lg font-bold text-destructive flex items-center gap-2">
           <AlertCircle className="size-5 shrink-0" />

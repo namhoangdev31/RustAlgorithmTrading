@@ -202,10 +202,12 @@ html {
     --ink-mute: #9a9a9a;
     --ink-mute-2: #707070;
     --ink-faint: #4e4e4e;
-    
-    --canvas: #1c1c1c; /* canvas-night */
-    --canvas-soft: #202020; /* canvas-night-soft */
-    
+
+    --canvas: #1c1c1c;
+    /* canvas-night */
+    --canvas-soft: #202020;
+    /* canvas-night-soft */
+
     --hairline: #333333;
     --hairline-strong: #444444;
     --hairline-cool: #262626;
