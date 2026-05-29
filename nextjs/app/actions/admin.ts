@@ -46,6 +46,10 @@ function readAgeAsDateOfBirth(formData: FormData) {
   return new Date(new Date().getFullYear() - age, 0, 1);
 }
 
+function trimToMax(value: string, max: number) {
+  return value.length > max ? value.slice(0, max) : value;
+}
+
 async function getUserOrganizationIds(userId: string) {
   const workspace = await getWorkspaceContext(userId);
   return workspace.organizations.map((organization) => organization.id);
@@ -232,6 +236,77 @@ export async function createProjectWithBundleAction(formData: FormData) {
   revalidatePath("/dashboard");
   revalidatePath("/projects");
   revalidatePath("/[locale]/(developer)/projects", "layout");
+  redirect(returnTo);
+}
+
+export async function createProjectFromGithubRepoAction(formData: FormData) {
+  const user = await requireCurrentUser();
+  const workspace = await getWorkspaceContext(user.id);
+  const returnTo = await readReturnTo(formData, "/projects?tab=overview");
+  const projectName = trimToMax(readFormValue(formData, "repoName"), 255);
+  const repoDescription = trimToMax(
+    readFormValue(formData, "repoDescription"),
+    255
+  );
+
+  const organizationId = workspace.activeOrganization?.id;
+  if (!projectName || !organizationId) {
+    redirect(returnTo);
+  }
+
+  const now = new Date();
+  const bundleDefaults = buildBundleDefaults(projectName, projectName);
+
+  await prisma.$transaction(async (tx) => {
+    const project = await tx.project.create({
+      data: {
+        id: crypto.randomUUID(),
+        name: projectName,
+        description: repoDescription || null,
+        organizationId,
+        createdAt: now,
+        updatedAt: now,
+      },
+    });
+
+    await tx.bundles.create({
+      data: {
+        id: crypto.randomUUID(),
+        name: trimToMax(bundleDefaults.name, 255),
+        slug: bundleDefaults.slug,
+        shortDescription: repoDescription || null,
+        category: "web",
+        status: "draft",
+        storagePath: bundleDefaults.storagePath,
+        bucket: bundleDefaults.bucket,
+        projectId: project.id,
+        developerId: user.id,
+        developerName: user.fullName ?? user.email,
+        developerEmail: user.email,
+        createdAt: now,
+        updatedAt: now,
+      },
+    });
+  });
+
+  revalidatePath("/dashboard");
+  revalidatePath("/projects");
+  revalidatePath("/[locale]/(developer)/projects", "layout");
+  redirect(returnTo);
+}
+
+export async function connectGithubAction(formData: FormData) {
+  await requireCurrentUser();
+  const returnTo = await readReturnTo(formData, "/projects?tab=overview");
+  redirect(`/api/github/connect?returnTo=${encodeURIComponent(returnTo)}`);
+}
+
+export async function disconnectGithubAction(formData: FormData) {
+  await requireCurrentUser();
+  const returnTo = await readReturnTo(formData, "/projects?tab=overview");
+  const cookieStore = await cookies();
+  cookieStore.delete("github_access_token");
+  revalidatePath("/projects");
   redirect(returnTo);
 }
 

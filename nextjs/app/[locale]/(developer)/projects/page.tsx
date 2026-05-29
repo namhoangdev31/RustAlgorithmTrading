@@ -38,10 +38,12 @@ import {
 import { getProjectBundleData } from "@/lib/server/admin-data";
 import { requireCurrentUser } from "@/lib/server/current-user";
 import { getTranslations } from "next-intl/server";
+import { getGithubOverviewData } from "@/lib/server/github";
 import { IntegrationsTab } from "@/components/projects/tabs/IntegrationsTab";
 import { ActivityTab } from "@/components/projects/tabs/ActivityTab";
 import { DomainsTab } from "@/components/projects/tabs/DomainsTab";
 import { SettingsTab } from "@/components/projects/tabs/SettingsTab";
+import { OverviewTab } from "@/components/projects/tabs/OverviewTab";
 import { ProjectForm } from "@/components/projects/dialogs/ProjectForm";
 import { DeleteConfirmationDialog } from "@/components/projects/dialogs/DeleteConfirmationDialog";
 
@@ -98,6 +100,7 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
   const search = await searchParams;
   const user = await requireCurrentUser();
   const data = await getProjectBundleData(user.id, search);
+  const github = await getGithubOverviewData();
 
   const t = await getTranslations("Dashboard");
   const tProjects = await getTranslations("Projects");
@@ -107,7 +110,7 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
   const activeTab = search.tab || "overview";
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8 animate-in fade-in duration-300">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8 animate-in fade-in duration-300 w-full">
       {/* Vercel-like Header Section */}
       <div className="flex flex-col gap-1.5">
         <div className="flex items-center gap-2 select-none text-xs font-medium text-ink-mute">
@@ -176,6 +179,7 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
       <div className="w-full">
         <form action="/projects" className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full" method="get">
           {search.layout && <input type="hidden" name="layout" value={search.layout} />}
+          {search.tab && <input type="hidden" name="tab" value={search.tab} />}
           <div className="relative flex-1">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-ink-mute-2" />
             <Input
@@ -202,27 +206,6 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
               </Button>
             ) : null}
 
-            <div className="hidden md:flex items-center border border-hairline rounded-sm p-0.5 bg-canvas-soft/70 gap-0.5 select-none shadow-light">
-              <Link
-                href={`/projects${buildQueryString(search, { layout: "grid" })}`}
-                className={`size-8 rounded-md flex items-center justify-center transition-all ${layout === "grid"
-                  ? "bg-canvas text-ink shadow-light border border-hairline"
-                  : "text-ink-mute-2 hover:text-ink-secondary"
-                  }`}
-              >
-                <LayoutGrid className="size-4" />
-              </Link>
-              <Link
-                href={`/projects${buildQueryString(search, { layout: "list" })}`}
-                className={`size-8 rounded-md flex items-center justify-center transition-all ${layout === "list"
-                  ? "bg-canvas text-ink shadow-light border border-hairline"
-                  : "text-ink-mute-2 hover:text-ink-secondary"
-                  }`}
-              >
-                <List className="size-4" />
-              </Link>
-            </div>
-
             <Button asChild className="h-10 text-xs font-semibold bg-primary hover:bg-primary-deep text-primary-foreground transition-colors rounded-sm px-5 shadow-light cursor-pointer shrink-0">
               <Link href="/projects?dialog=create">
                 <Plus className="size-4 mr-1.5" />
@@ -243,250 +226,19 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
           <DomainsTab data={data} locale={locale} formatRelativeTime={formatRelativeTime} />
         ) : activeTab === "settings" ? (
           <SettingsTab />
-        ) : data.projects.length > 0 ? (
-          layout === "grid" ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {data.projects.map((project) => {
-                const bundle = project.bundle;
-                const statusInfo = mapBundleStatus(bundle?.status, t);
-                const CategoryIcon = getCategoryIcon(bundle?.category);
-                const projectSlug = bundle?.slug || project.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-                const avatarStyles = getProjectAvatarStyles(project.name);
-
-                return (
-                  <Card
-                    key={project.id}
-                    className="group flex flex-col justify-between bg-canvas border border-hairline hover:border-hairline-strong hover:shadow-dark transition-all duration-300 rounded-lg p-5 min-h-[220px] relative overflow-hidden"
-                  >
-                    {/* Background visual detail */}
-                    <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-primary/10 to-transparent rounded-bl-full pointer-events-none" />
-
-                    <div>
-                      {/* Top Header Row */}
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex items-center gap-3 min-w-0">
-                          {/* Rich Gradient Monogram Icon */}
-                          <div className={`size-10 rounded-lg bg-gradient-to-br ${avatarStyles} border flex items-center justify-center text-sm font-bold shrink-0 shadow-inner select-none`}>
-                            {project.name.charAt(0).toUpperCase()}
-                          </div>
-
-                          <div className="min-w-0">
-                            <Link
-                              href={`/projects?dialog=edit&id=${project.id}`}
-                              className="font-bold text-base text-ink hover:text-ink-secondary transition-colors tracking-tight block truncate"
-                            >
-                              {project.name}
-                            </Link>
-
-                            {/* Connected Git repo info */}
-                            <div className="flex items-center gap-1.5 mt-0.5 text-ink-mute">
-                              <GithubIcon className="size-3.5 shrink-0" />
-                              <span className="text-xs font-mono truncate max-w-[140px]" title={`namhoangdev31/${projectSlug}`}>
-                                {`namhoangdev31/${projectSlug}`}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Dropdown Menu */}
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button size="icon" variant="ghost" className="size-8 text-ink-mute-2 hover:text-ink-secondary hover:bg-canvas-soft rounded-sm shrink-0 transition-colors border border-transparent hover:border-hairline">
-                              <MoreHorizontal className="size-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="w-[140px] bg-canvas border border-hairline rounded-lg shadow-dark p-1 z-50">
-                            <DropdownMenuItem asChild className="cursor-pointer text-xs font-semibold py-2 rounded-md">
-                              <Link href={`/projects?dialog=edit&id=${project.id}`}>
-                                <Edit3 className="size-3.5 mr-2 text-ink-mute" />
-                                {t("table.edit") || "Edit"}
-                              </Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem asChild className="cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10 text-xs font-semibold py-2 rounded-md">
-                              <Link href={`/projects?dialog=delete&id=${project.id}`}>
-                                <Trash2 className="size-3.5 mr-2 text-destructive" />
-                                {t("table.delete") || "Delete"}
-                              </Link>
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
-
-                      {/* Description */}
-                      <p className="mt-3.5 text-xs text-ink-mute line-clamp-2 leading-relaxed" title={project.description || bundle?.shortDescription || "No description."}>
-                        {project.description || bundle?.shortDescription || "No description provided."}
-                      </p>
-
-                      {/* Vercel production URL Bar */}
-                      <div className="flex items-center gap-2 bg-canvas-soft/80 border border-hairline-cool px-2.5 py-1.5 rounded-md mt-4 group-hover:border-hairline-strong transition-colors">
-                        <span className={`size-2 rounded-full shrink-0 ${statusInfo.dotClass}`} />
-                        <a
-                          href={`https://${projectSlug}.rustalgorithm.net`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-[11px] font-mono font-medium text-ink-mute hover:text-ink transition-colors truncate flex-1"
-                        >
-                          {`${projectSlug}.rustalgorithm.net`}
-                        </a>
-                        <ExternalLink className="size-3 text-ink-mute-2 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
-                      </div>
-                    </div>
-
-                    {/* Card Footer */}
-                    <div className="mt-5 pt-3.5 border-t border-hairline-cool flex items-center justify-between text-xs text-ink-mute">
-                      <div className="flex items-center gap-1.5 bg-canvas-soft border border-hairline px-2 py-1 rounded-full text-[10px] font-semibold text-ink-mute uppercase tracking-wide">
-                        <CategoryIcon className="size-3" />
-                        <span>{bundle?.category || "web"}</span>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        <span className="text-[11px] text-ink-mute-2">
-                          {formatRelativeTime(project.updatedAt, locale)}
-                        </span>
-                        <div className="size-5 rounded-full bg-canvas-soft flex items-center justify-center text-[10px] font-bold text-ink-secondary border border-hairline shadow-light" title={(user.fullName || user.email) ?? undefined}>
-                          {(user.firstName || user.fullName || "U").charAt(0).toUpperCase()}
-                        </div>
-                      </div>
-                    </div>
-                  </Card>
-                );
-              })}
-            </div>
-          ) : (
-            <div className="flex flex-col gap-4">
-              {data.projects.map((project) => {
-                const bundle = project.bundle;
-                const statusInfo = mapBundleStatus(bundle?.status, t);
-                const CategoryIcon = getCategoryIcon(bundle?.category);
-                const projectSlug = bundle?.slug || project.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-                const avatarStyles = getProjectAvatarStyles(project.name);
-
-                return (
-                  <div
-                    key={project.id}
-                    className="group relative flex flex-col md:flex-row md:items-center justify-between gap-4 bg-canvas border border-hairline hover:border-hairline-strong hover:shadow-light transition-all duration-300 rounded-lg p-5"
-                  >
-                    <div className="flex items-center gap-4.5 min-w-0 flex-1">
-                      {/* Monogram avatar icon */}
-                      <div className={`size-10 rounded-lg bg-gradient-to-br ${avatarStyles} border flex items-center justify-center text-sm font-bold shrink-0 shadow-inner select-none`}>
-                        {project.name.charAt(0).toUpperCase()}
-                      </div>
-
-                      {/* Project details */}
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2.5 flex-wrap">
-                          <Link
-                            href={`/projects?dialog=edit&id=${project.id}`}
-                            className="font-bold text-base tracking-tight text-ink hover:text-ink-secondary transition-colors truncate"
-                          >
-                            {project.name}
-                          </Link>
-
-                          <a
-                            href={`https://${projectSlug}.rustalgorithm.net`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-xs font-mono font-medium text-ink-mute hover:text-ink-secondary transition-colors flex items-center gap-1 bg-canvas-soft border border-hairline px-2 py-0.5 rounded-md"
-                          >
-                            <span>{`${projectSlug}.rustalgorithm.net`}</span>
-                            <ExternalLink className="size-3 shrink-0 opacity-60" />
-                          </a>
-                        </div>
-
-                        {/* Repo/Commit info */}
-                        <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 mt-1.5 text-xs text-ink-mute">
-                          <div className="flex items-center gap-1 bg-canvas-soft px-1.5 py-0.5 rounded border border-hairline-cool">
-                            <GithubIcon className="size-3 text-ink-secondary shrink-0" />
-                            <span className="font-mono truncate max-w-[150px]" title={`namhoangdev31/${projectSlug}`}>
-                              {`namhoangdev31/${projectSlug}`}
-                            </span>
-                            <span className="text-hairline-strong select-none">•</span>
-                            <span className="font-mono text-[10px] text-ink-mute flex items-center gap-0.5">
-                              <GitBranch className="size-2.5" />
-                              main
-                            </span>
-                          </div>
-                          <span className="text-hairline-strong select-none">•</span>
-                          <span className="truncate max-w-[320px] text-ink-mute-2" title={project.description || bundle?.shortDescription || "No description provided."}>
-                            {project.description || bundle?.shortDescription || "No description provided."}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Right section: status + updated time + dropdown menu */}
-                    <div className="flex items-center justify-between md:justify-end gap-5 border-t border-hairline-cool md:border-t-0 pt-3 md:pt-0 shrink-0">
-                      <div className="flex flex-row items-center gap-4 text-xs text-ink-mute">
-                        {/* Status dot */}
-                        <div className="flex items-center gap-1.5 bg-canvas-soft px-2 py-1 rounded-full border border-hairline">
-                          <span className={`size-1.5 rounded-full ${statusInfo.dotClass}`} />
-                          <span className="font-semibold text-ink-secondary">{statusInfo.label}</span>
-                        </div>
-
-                        <div className="flex items-center gap-1 text-[11px] text-ink-mute-2 capitalize">
-                          <CategoryIcon className="size-3" />
-                          <span>{bundle?.category || "web"}</span>
-                        </div>
-
-                        <span className="text-hairline-strong select-none">•</span>
-
-                        <span className="font-sans text-[11px] text-ink-mute-2">
-                          {formatRelativeTime(project.updatedAt, locale)}
-                        </span>
-
-                        <div className="size-5 rounded-full bg-canvas-soft flex items-center justify-center text-[10px] font-bold text-ink-secondary border border-hairline shadow-light" title={(user.fullName || user.email) ?? undefined}>
-                          {(user.firstName || user.fullName || "U").charAt(0).toUpperCase()}
-                        </div>
-                      </div>
-
-                      {/* Action menu */}
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button size="icon" variant="ghost" className="size-8 text-ink-mute-2 hover:text-ink-secondary hover:bg-canvas-soft rounded-sm shrink-0 transition-colors border border-transparent hover:border-hairline">
-                            <MoreHorizontal className="size-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-[140px] bg-canvas border border-hairline rounded-lg shadow-dark p-1 z-50">
-                          <DropdownMenuItem asChild className="cursor-pointer text-xs font-semibold py-2 rounded-md">
-                            <Link href={`/projects?dialog=edit&id=${project.id}`}>
-                              <Edit3 className="size-3.5 mr-2 text-ink-mute" />
-                              {t("table.edit") || "Edit"}
-                            </Link>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem asChild className="cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10 text-xs font-semibold py-2 rounded-md">
-                            <Link href={`/projects?dialog=delete&id=${project.id}`}>
-                              <Trash2 className="size-3.5 mr-2 text-destructive" />
-                              {t("table.delete") || "Delete"}
-                            </Link>
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )
         ) : (
-          <div className="flex flex-col items-center justify-center p-12 text-center bg-canvas-soft/50 border border-dashed border-hairline rounded-xl space-y-4 min-h-[300px] animate-in fade-in duration-300">
-            <div className="bg-canvas p-4 rounded-lg border border-hairline shadow-light">
-              <Folder className="size-8 text-ink-mute-2" />
-            </div>
-            <div className="space-y-1.5 max-w-sm">
-              <h3 className="font-bold text-lg text-ink">
-                {t("projects_and_bundles.no_projects") || "No projects yet"}
-              </h3>
-              <p className="text-sm text-ink-mute leading-relaxed">
-                {t("empty.projects_description") || "Create your first project to get started."}
-              </p>
-            </div>
-            <Button asChild className="h-10 gap-2 text-xs font-semibold bg-primary hover:bg-primary-deep text-primary-foreground transition-all rounded-sm px-5 shadow-light mt-2">
-              <Link href="/projects?dialog=create">
-                <Plus className="size-4" />
-                {t("projects_and_bundles.new_project") || "New Project"}
-              </Link>
-            </Button>
-          </div>
+          <OverviewTab
+            data={data}
+            github={github}
+            layout={layout}
+            locale={locale}
+            user={user}
+            t={t}
+            getProjectAvatarStyles={getProjectAvatarStyles}
+            mapBundleStatus={mapBundleStatus}
+            getCategoryIcon={getCategoryIcon}
+            formatRelativeTime={formatRelativeTime}
+          />
         )}
       </div>
 

@@ -664,7 +664,7 @@ export async function getSettingsData(userId: string) {
 }
 
 export function buildBundleDefaults(projectName: string, bundleName?: string) {
-  const name = takeText(bundleName ?? "", projectName);
+  const name = takeText(bundleName ?? "", projectName).slice(0, 255);
   const slug = name
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
