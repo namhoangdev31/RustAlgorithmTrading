@@ -368,6 +368,8 @@ export async function deleteVercelApiKeyAction(formData: FormData) {
 export async function testVercelApiKeyAction(formData: FormData) {
   const user = await requireCurrentUser();
   const returnTo = await readReturnTo(formData, "/dashboard/settings");
+  const buildStatusUrl = (status: "ok" | "invalid_key" | "missing_key" | "test_failed") =>
+    `${returnTo}${returnTo.includes("?") ? "&" : "?"}vercel=${status}`;
 
   const rows = await prisma.$queryRawUnsafe<Array<{ encrypted_value: string }>>(
     "SELECT encrypted_value FROM user_secrets WHERE user_id = $1 AND provider = $2 LIMIT 1",
@@ -376,8 +378,10 @@ export async function testVercelApiKeyAction(formData: FormData) {
   );
 
   if (!rows.length) {
-    redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}vercel=missing_key`);
+    redirect(buildStatusUrl("missing_key"));
   }
+
+  let status: "ok" | "invalid_key" | "test_failed" = "ok";
 
   try {
     const apiKey = decryptSecret(rows[0].encrypted_value);
@@ -389,13 +393,13 @@ export async function testVercelApiKeyAction(formData: FormData) {
     });
 
     if (!res.ok) {
-      redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}vercel=invalid_key`);
+      status = res.status === 401 || res.status === 403 ? "invalid_key" : "test_failed";
     }
   } catch {
-    redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}vercel=test_failed`);
+    status = "test_failed";
   }
 
-  redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}vercel=ok`);
+  redirect(buildStatusUrl(status));
 }
 
 export async function updateProjectBundleAction(formData: FormData) {
