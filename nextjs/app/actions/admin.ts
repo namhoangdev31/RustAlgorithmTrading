@@ -7,6 +7,7 @@ import { OrganizationType } from "@/prisma/generated/enums";
 
 import { requireCurrentUser } from "@/lib/server/current-user";
 import { prisma } from "@/lib/server/prisma";
+import { decryptSecret, encryptSecret } from "@/lib/server/secret-crypto";
 import {
   buildBundleDefaults,
   type SearchParamsInput,
@@ -308,6 +309,93 @@ export async function disconnectGithubAction(formData: FormData) {
   cookieStore.delete("github_access_token");
   revalidatePath("/projects");
   redirect(returnTo);
+}
+
+export async function saveVercelApiKeyAction(formData: FormData) {
+  const user = await requireCurrentUser();
+  const returnTo = await readReturnTo(formData, "/dashboard/settings");
+  const apiKey = readFormValue(formData, "vercelApiKey");
+
+  if (!apiKey) {
+    redirect(returnTo);
+  }
+
+  const encrypted = encryptSecret(apiKey);
+
+  await prisma.$executeRawUnsafe(`
+    CREATE TABLE IF NOT EXISTS user_secrets (
+      id UUID PRIMARY KEY,
+      user_id UUID NOT NULL,
+      provider VARCHAR(64) NOT NULL,
+      encrypted_value TEXT NOT NULL,
+      created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+      UNIQUE (user_id, provider)
+    )
+  `);
+
+  await prisma.$executeRawUnsafe(
+    `
+    INSERT INTO user_secrets (id, user_id, provider, encrypted_value, created_at, updated_at)
+    VALUES ($1, $2, $3, $4, NOW(), NOW())
+    ON CONFLICT (user_id, provider)
+    DO UPDATE SET encrypted_value = EXCLUDED.encrypted_value, updated_at = NOW()
+    `,
+    crypto.randomUUID(),
+    user.id,
+    "vercel",
+    encrypted
+  );
+
+  revalidatePath("/dashboard/settings");
+  redirect(returnTo);
+}
+
+export async function deleteVercelApiKeyAction(formData: FormData) {
+  const user = await requireCurrentUser();
+  const returnTo = await readReturnTo(formData, "/dashboard/settings");
+
+  await prisma.$executeRawUnsafe(
+    "DELETE FROM user_secrets WHERE user_id = $1 AND provider = $2",
+    user.id,
+    "vercel"
+  );
+
+  revalidatePath("/dashboard/settings");
+  redirect(returnTo);
+}
+
+export async function testVercelApiKeyAction(formData: FormData) {
+  const user = await requireCurrentUser();
+  const returnTo = await readReturnTo(formData, "/dashboard/settings");
+
+  const rows = await prisma.$queryRawUnsafe<Array<{ encrypted_value: string }>>(
+    "SELECT encrypted_value FROM user_secrets WHERE user_id = $1 AND provider = $2 LIMIT 1",
+    user.id,
+    "vercel"
+  );
+
+  if (!rows.length) {
+    redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}vercel=missing_key`);
+  }
+
+  try {
+    const apiKey = decryptSecret(rows[0].encrypted_value);
+    const res = await fetch("https://api.vercel.com/v2/user", {
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+      },
+      cache: "no-store",
+    });
+
+    if (!res.ok) {
+      redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}vercel=invalid_key`);
+    }
+  } catch {
+    redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}vercel=test_failed`);
+  }
+
+  redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}vercel=ok`);
 }
 
 export async function updateProjectBundleAction(formData: FormData) {
