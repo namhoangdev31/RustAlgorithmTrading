@@ -1,0 +1,23 @@
+# CancelDeploymentMicrofrontends1
+
+## Example Usage
+
+```typescript
+import { CancelDeploymentMicrofrontends1 } from "@vercel/sdk/models/canceldeploymentop.js";
+
+let value: CancelDeploymentMicrofrontends1 = {
+  defaultAppProjectName: "<value>",
+  groupIds: [
+    "<value 1>",
+  ],
+};
+```
+
+## Fields
+
+| Field                                                                                                                                                                                | Type                                                                                                                                                                                 | Required                                                                                                                                                                             | Description                                                                                                                                                                          |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `isDefaultApp`                                                                                                                                                                       | *false*                                                                                                                                                                              | :heavy_minus_sign:                                                                                                                                                                   | N/A                                                                                                                                                                                  |
+| `defaultAppProjectName`                                                                                                                                                              | *string*                                                                                                                                                                             | :heavy_check_mark:                                                                                                                                                                   | The project name of the default app of this deployment's microfrontends group.                                                                                                       |
+| `defaultRoute`                                                                                                                                                                       | *string*                                                                                                                                                                             | :heavy_minus_sign:                                                                                                                                                                   | A path that is used to take screenshots and as the default path in preview links when a domain for this microfrontend is shown in the UI.                                            |
+| `groupIds`                                                                                                                                                                           | *string*[]                                                                                                                                                                           | :heavy_check_mark:                                                                                                                                                                   | The group of microfrontends that this project belongs to. Each microfrontend project must belong to a microfrontends group that is the set of microfrontends that are used together. |

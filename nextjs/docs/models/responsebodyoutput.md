@@ -1,0 +1,19 @@
+# ResponseBodyOutput
+
+## Example Usage
+
+```typescript
+import { ResponseBodyOutput } from "@vercel/sdk/models/responsebodyproject.js";
+
+let value: ResponseBodyOutput = {
+  path: "/net",
+  functionName: "<value>",
+};
+```
+
+## Fields
+
+| Field              | Type               | Required           | Description        |
+| ------------------ | ------------------ | ------------------ | ------------------ |
+| `path`             | *string*           | :heavy_check_mark: | N/A                |
+| `functionName`     | *string*           | :heavy_check_mark: | N/A                |

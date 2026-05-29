@@ -1,0 +1,41 @@
+# RoutesMissing
+
+
+## Supported Types
+
+### `models.CancelDeploymentMissing1`
+
+```typescript
+const value: models.CancelDeploymentMissing1 = {
+  type: "host",
+  value: "<value>",
+};
+```
+
+### `models.CancelDeploymentMissing2`
+
+```typescript
+const value: models.CancelDeploymentMissing2 = {
+  type: "header",
+  key: "<key>",
+};
+```
+
+### `models.CancelDeploymentMissing2`
+
+```typescript
+const value: models.CancelDeploymentMissing2 = {
+  type: "header",
+  key: "<key>",
+};
+```
+
+### `models.CancelDeploymentMissing2`
+
+```typescript
+const value: models.CancelDeploymentMissing2 = {
+  type: "header",
+  key: "<key>",
+};
+```
+

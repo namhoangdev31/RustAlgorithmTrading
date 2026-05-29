@@ -1,0 +1,21 @@
+# CreateProjectHas2
+
+## Example Usage
+
+```typescript
+import { CreateProjectHas2 } from "@vercel/sdk/models/createprojectresponsebody.js";
+
+let value: CreateProjectHas2 = {
+  type: "host",
+  value: {
+    eq: "<value>",
+  },
+};
+```
+
+## Fields
+
+| Field                                                                              | Type                                                                               | Required                                                                           | Description                                                                        |
+| ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `type`                                                                             | *"host"*                                                                           | :heavy_check_mark:                                                                 | N/A                                                                                |
+| `value`                                                                            | [models.CreateProjectHasProjectsValue](../models/createprojecthasprojectsvalue.md) | :heavy_check_mark:                                                                 | N/A                                                                                |

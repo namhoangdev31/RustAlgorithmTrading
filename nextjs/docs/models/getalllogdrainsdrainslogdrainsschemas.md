@@ -1,0 +1,20 @@
+# GetAllLogDrainsDrainsLogDrainsSchemas
+
+## Example Usage
+
+```typescript
+import { GetAllLogDrainsDrainsLogDrainsSchemas } from "@vercel/sdk/models/getalllogdrainsop.js";
+
+let value: GetAllLogDrainsDrainsLogDrainsSchemas = {};
+```
+
+## Fields
+
+| Field                                                                                                  | Type                                                                                                   | Required                                                                                               | Description                                                                                            |
+| ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
+| `log`                                                                                                  | [models.GetAllLogDrainsDrainsLogDrainsLog](../models/getalllogdrainsdrainslogdrainslog.md)             | :heavy_minus_sign:                                                                                     | N/A                                                                                                    |
+| `trace`                                                                                                | [models.GetAllLogDrainsDrainsLogDrainsTrace](../models/getalllogdrainsdrainslogdrainstrace.md)         | :heavy_minus_sign:                                                                                     | N/A                                                                                                    |
+| `analytics`                                                                                            | [models.GetAllLogDrainsDrainsLogDrainsAnalytics](../models/getalllogdrainsdrainslogdrainsanalytics.md) | :heavy_minus_sign:                                                                                     | N/A                                                                                                    |
+| `speedInsights`                                                                                        | [models.GetAllLogDrainsDrainsSpeedInsights](../models/getalllogdrainsdrainsspeedinsights.md)           | :heavy_minus_sign:                                                                                     | N/A                                                                                                    |
+| `aiGateway`                                                                                            | [models.GetAllLogDrainsDrainsLogDrainsAiGateway](../models/getalllogdrainsdrainslogdrainsaigateway.md) | :heavy_minus_sign:                                                                                     | N/A                                                                                                    |
+| `auditLog`                                                                                             | [models.GetAllLogDrainsDrainsLogDrainsAuditLog](../models/getalllogdrainsdrainslogdrainsauditlog.md)   | :heavy_minus_sign:                                                                                     | N/A                                                                                                    |

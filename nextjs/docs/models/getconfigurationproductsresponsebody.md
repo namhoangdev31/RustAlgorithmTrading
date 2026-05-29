@@ -1,0 +1,29 @@
+# GetConfigurationProductsResponseBody
+
+List of products available for this integration configuration
+
+## Example Usage
+
+```typescript
+import { GetConfigurationProductsResponseBody } from "@vercel/sdk/models/getconfigurationproductsresponsebody.js";
+
+let value: GetConfigurationProductsResponseBody = {
+  products: [],
+  integration: {
+    id: "<id>",
+    slug: "<value>",
+    name: "<value>",
+  },
+  configuration: {
+    id: "<id>",
+  },
+};
+```
+
+## Fields
+
+| Field                                                                                              | Type                                                                                               | Required                                                                                           | Description                                                                                        |
+| -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `products`                                                                                         | [models.Products](../models/products.md)[]                                                         | :heavy_check_mark:                                                                                 | N/A                                                                                                |
+| `integration`                                                                                      | [models.GetConfigurationProductsIntegration](../models/getconfigurationproductsintegration.md)     | :heavy_check_mark:                                                                                 | N/A                                                                                                |
+| `configuration`                                                                                    | [models.GetConfigurationProductsConfiguration](../models/getconfigurationproductsconfiguration.md) | :heavy_check_mark:                                                                                 | N/A                                                                                                |

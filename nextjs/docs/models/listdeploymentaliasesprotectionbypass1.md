@@ -1,0 +1,24 @@
+# ListDeploymentAliasesProtectionBypass1
+
+The protection bypass for the alias
+
+## Example Usage
+
+```typescript
+import { ListDeploymentAliasesProtectionBypass1 } from "@vercel/sdk/models/listdeploymentaliasesop.js";
+
+let value: ListDeploymentAliasesProtectionBypass1 = {
+  createdAt: 3886.17,
+  createdBy: "<value>",
+  scope: "shareable-link",
+};
+```
+
+## Fields
+
+| Field              | Type               | Required           | Description        |
+| ------------------ | ------------------ | ------------------ | ------------------ |
+| `createdAt`        | *number*           | :heavy_check_mark: | N/A                |
+| `createdBy`        | *string*           | :heavy_check_mark: | N/A                |
+| `scope`            | *"shareable-link"* | :heavy_check_mark: | N/A                |
+| `expires`          | *number*           | :heavy_minus_sign: | N/A                |

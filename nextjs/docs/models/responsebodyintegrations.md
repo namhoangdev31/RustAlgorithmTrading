@@ -1,0 +1,23 @@
+# ResponseBodyIntegrations
+
+## Example Usage
+
+```typescript
+import { ResponseBodyIntegrations } from "@vercel/sdk/models/responsebodyproject.js";
+
+let value: ResponseBodyIntegrations = {
+  status: "error",
+  startedAt: 1770.55,
+};
+```
+
+## Fields
+
+| Field                                                                                                                        | Type                                                                                                                         | Required                                                                                                                     | Description                                                                                                                  |
+| ---------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `status`                                                                                                                     | [models.GetDeploymentResponseBodyDeploymentsResponseStatus](../models/getdeploymentresponsebodydeploymentsresponsestatus.md) | :heavy_check_mark:                                                                                                           | N/A                                                                                                                          |
+| `startedAt`                                                                                                                  | *number*                                                                                                                     | :heavy_check_mark:                                                                                                           | N/A                                                                                                                          |
+| `claimedAt`                                                                                                                  | *number*                                                                                                                     | :heavy_minus_sign:                                                                                                           | N/A                                                                                                                          |
+| `completedAt`                                                                                                                | *number*                                                                                                                     | :heavy_minus_sign:                                                                                                           | N/A                                                                                                                          |
+| `skippedAt`                                                                                                                  | *number*                                                                                                                     | :heavy_minus_sign:                                                                                                           | N/A                                                                                                                          |
+| `skippedBy`                                                                                                                  | *string*                                                                                                                     | :heavy_minus_sign:                                                                                                           | N/A                                                                                                                          |

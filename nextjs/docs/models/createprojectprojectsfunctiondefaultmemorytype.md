@@ -1,0 +1,15 @@
+# CreateProjectProjectsFunctionDefaultMemoryType
+
+## Example Usage
+
+```typescript
+import { CreateProjectProjectsFunctionDefaultMemoryType } from "@vercel/sdk/models/createprojecttopreset.js";
+
+let value: CreateProjectProjectsFunctionDefaultMemoryType = "standard";
+```
+
+## Values
+
+```typescript
+"standard_legacy" | "standard" | "performance"
+```

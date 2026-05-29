@@ -1,0 +1,21 @@
+# ResponseBodyFirewallRoutes
+
+## Example Usage
+
+```typescript
+import { ResponseBodyFirewallRoutes } from "@vercel/sdk/models/getprojectslink4.js";
+
+let value: ResponseBodyFirewallRoutes = {};
+```
+
+## Fields
+
+| Field                                                                                                  | Type                                                                                                   | Required                                                                                               | Description                                                                                            |
+| ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
+| `src`                                                                                                  | *models.ResponseBodySrc*                                                                               | :heavy_minus_sign:                                                                                     | N/A                                                                                                    |
+| `has`                                                                                                  | [models.GetProjectsResponseBodyProjectsHas](../models/getprojectsresponsebodyprojectshas.md)[]         | :heavy_minus_sign:                                                                                     | N/A                                                                                                    |
+| `missing`                                                                                              | [models.GetProjectsResponseBodyProjectsMissing](../models/getprojectsresponsebodyprojectsmissing.md)[] | :heavy_minus_sign:                                                                                     | N/A                                                                                                    |
+| `dest`                                                                                                 | *string*                                                                                               | :heavy_minus_sign:                                                                                     | N/A                                                                                                    |
+| `status`                                                                                               | *number*                                                                                               | :heavy_minus_sign:                                                                                     | N/A                                                                                                    |
+| `handle`                                                                                               | [models.GetProjectsResponseBodyHandle](../models/getprojectsresponsebodyhandle.md)                     | :heavy_minus_sign:                                                                                     | N/A                                                                                                    |
+| `mitigate`                                                                                             | [models.GetProjectsResponseBodyProjectsMitigate](../models/getprojectsresponsebodyprojectsmitigate.md) | :heavy_minus_sign:                                                                                     | N/A                                                                                                    |

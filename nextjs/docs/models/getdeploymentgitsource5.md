@@ -1,0 +1,22 @@
+# GetDeploymentGitSource5
+
+## Example Usage
+
+```typescript
+import { GetDeploymentGitSource5 } from "@vercel/sdk/models/responsebodyproject.js";
+
+let value: GetDeploymentGitSource5 = {
+  type: "github-limited",
+  repoId: "<id>",
+};
+```
+
+## Fields
+
+| Field                                                                                                                    | Type                                                                                                                     | Required                                                                                                                 | Description                                                                                                              |
+| ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| `type`                                                                                                                   | [models.GetDeploymentGitSourceDeploymentsResponse200Type](../models/getdeploymentgitsourcedeploymentsresponse200type.md) | :heavy_check_mark:                                                                                                       | N/A                                                                                                                      |
+| `repoId`                                                                                                                 | *models.GetDeploymentGitSourceRepoId*                                                                                    | :heavy_check_mark:                                                                                                       | N/A                                                                                                                      |
+| `ref`                                                                                                                    | *string*                                                                                                                 | :heavy_minus_sign:                                                                                                       | N/A                                                                                                                      |
+| `sha`                                                                                                                    | *string*                                                                                                                 | :heavy_minus_sign:                                                                                                       | N/A                                                                                                                      |
+| `prId`                                                                                                                   | *number*                                                                                                                 | :heavy_minus_sign:                                                                                                       | N/A                                                                                                                      |

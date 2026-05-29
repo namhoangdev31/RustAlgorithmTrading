@@ -1,0 +1,19 @@
+# BlobTotalAdvancedRequests
+
+## Example Usage
+
+```typescript
+import { BlobTotalAdvancedRequests } from "@vercel/sdk/models/edgemiddlewareinvocations.js";
+
+let value: BlobTotalAdvancedRequests = {
+  currentThreshold: 8152.88,
+};
+```
+
+## Fields
+
+| Field              | Type               | Required           | Description        |
+| ------------------ | ------------------ | ------------------ | ------------------ |
+| `currentThreshold` | *number*           | :heavy_check_mark: | N/A                |
+| `warningAt`        | *number*           | :heavy_minus_sign: | N/A                |
+| `blockedAt`        | *number*           | :heavy_minus_sign: | N/A                |
