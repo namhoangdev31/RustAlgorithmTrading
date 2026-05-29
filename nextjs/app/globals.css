@@ -195,6 +195,22 @@ html {
     --sidebar-accent-foreground: #ffffff;
     --sidebar-border: #333333;
     --sidebar-ring: #3ecf8e;
+
+    /* Supabaze Design System Custom Tokens for Dark Mode */
+    --ink: #ffffff;
+    --ink-secondary: #ededed;
+    --ink-mute: #9a9a9a;
+    --ink-mute-2: #707070;
+    --ink-faint: #4e4e4e;
+    
+    --canvas: #1c1c1c; /* canvas-night */
+    --canvas-soft: #202020; /* canvas-night-soft */
+    
+    --hairline: #333333;
+    --hairline-strong: #444444;
+    --hairline-cool: #262626;
+    --hairline-cool-2: #2e2e2e;
+    --hairline-cool-3: #3e3e3e;
   }
 }
 
