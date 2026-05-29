@@ -1,4 +1,5 @@
 import { Link } from "@/i18n/navigation";
+import { localizedHref } from "@/i18n/navigation";
 import {
   Edit3,
   ExternalLink,
@@ -21,13 +22,14 @@ import {
 
 import {
   createProjectWithBundleAction,
+  connectGithubAction,
   deleteProjectAction,
   updateProjectBundleAction,
   switchOrganizationAction,
 } from "@/app/actions/admin";
 import { GithubIcon } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
@@ -104,13 +106,15 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
 
   const t = await getTranslations("Dashboard");
   const tProjects = await getTranslations("Projects");
+  const projectsPath = "/projects";
+  const localizedProjectsPath = await localizedHref("/projects");
 
   const selectedProject = data.projects.find((project) => project.id === search.id);
   const layout = search.layout || "grid";
   const activeTab = search.tab || "overview";
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8 animate-in fade-in duration-300 w-full">
+    <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-300 w-full">
       {/* Vercel-like Header Section */}
       <div className="flex flex-col gap-1.5">
         <div className="flex items-center gap-2 select-none text-xs font-medium text-ink-mute">
@@ -134,7 +138,7 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
                 <DropdownMenuItem key={org.id} asChild className="cursor-pointer text-xs font-medium py-2 rounded-md focus:bg-canvas-soft">
                   <form action={switchOrganizationAction} className="w-full">
                     <input type="hidden" name="organizationId" value={org.id} />
-                    <input type="hidden" name="returnTo" value="/projects" />
+                    <input type="hidden" name="returnTo" value={projectsPath} />
                     <button type="submit" className="w-full text-left flex items-center justify-between cursor-pointer">
                       <div className="flex items-center gap-2">
                         <div className="size-4.5 rounded bg-canvas-soft border border-hairline flex items-center justify-center text-[8px] font-bold text-ink-secondary">
@@ -177,7 +181,7 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
 
       {/* Filter and Search Section */}
       <div className="w-full">
-        <form action="/projects" className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full" method="get">
+        <form action={localizedProjectsPath} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full" method="get">
           {search.layout && <input type="hidden" name="layout" value={search.layout} />}
           {search.tab && <input type="hidden" name="tab" value={search.tab} />}
           <div className="relative flex-1">
@@ -202,16 +206,34 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
 
             {search.q ? (
               <Button className="h-10 text-xs font-semibold text-ink-mute hover:text-ink" asChild variant="ghost">
-                <Link href="/projects">{tProjects("reset") || "Reset"}</Link>
+                <Link href={projectsPath}>{tProjects("reset") || "Reset"}</Link>
               </Button>
             ) : null}
 
-            <Button asChild className="h-10 text-xs font-semibold bg-primary hover:bg-primary-deep text-primary-foreground transition-colors rounded-sm px-5 shadow-light cursor-pointer shrink-0">
-              <Link href="/projects?dialog=create">
-                <Plus className="size-4 mr-1.5" />
-                New Project
-              </Link>
-            </Button>
+            {github.connected ? (
+              <Button asChild className="h-10 text-xs font-semibold bg-primary hover:bg-primary-deep text-primary-foreground transition-colors rounded-sm px-3.5 shadow-light cursor-pointer shrink-0">
+                <a
+                  href={github.profileUrl || `https://github.com/${github.login}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2"
+                >
+                  <Avatar className="size-5">
+                    <AvatarImage src={github.avatarUrl} alt={github.login || "GitHub"} />
+                    <AvatarFallback>{(github.login || "GH").slice(0, 2).toUpperCase()}</AvatarFallback>
+                  </Avatar>
+                  <span>@{github.login || "github-user"}</span>
+                </a>
+              </Button>
+            ) : (
+              <form action={connectGithubAction}>
+                <input type="hidden" name="returnTo" value={`${projectsPath}?tab=overview`} />
+                <Button type="submit" className="h-10 text-xs font-semibold bg-primary hover:bg-primary-deep text-primary-foreground transition-colors rounded-sm px-5 shadow-light cursor-pointer shrink-0">
+                  <GithubIcon className="size-4 mr-1.5" />
+                  Connect GitHub
+                </Button>
+              </form>
+            )}
           </div>
         </form>
       </div>
@@ -244,14 +266,14 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
 
       {/* Modal Dialog Form for Create */}
       {search.dialog === "create" ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-canvas-night/70 backdrop-blur-md transition-all duration-300 animate-in fade-in">
-          <Link href="/projects" className="absolute inset-0 cursor-default" aria-hidden="true" />
+        <div className="fixed inset-x-0 -top-20 h-[calc(100vh+5rem)] z-[120] flex items-center justify-center p-4 bg-canvas-night/70 backdrop-blur-md transition-all duration-300 animate-in fade-in">
+          <Link href={projectsPath} className="absolute inset-0 cursor-default" aria-hidden="true" />
           <div className="w-full max-w-2xl animate-in fade-in zoom-in-95 duration-200 relative z-10">
             <ProjectForm
               action={createProjectWithBundleAction}
               organizations={data.workspace.organizations}
               activeOrganizationId={data.workspace.activeOrganization?.id}
-              returnTo="/projects"
+              returnTo={projectsPath}
               title={t("form.create_title") || "Create Project"}
               t={t}
             />
@@ -261,13 +283,13 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
 
       {/* Modal Dialog Form for Edit */}
       {search.dialog === "edit" && selectedProject ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-canvas-night/70 backdrop-blur-md transition-all duration-300 animate-in fade-in">
-          <Link href="/projects" className="absolute inset-0 cursor-default" aria-hidden="true" />
+        <div className="fixed inset-x-0 -top-20 h-[calc(100vh+5rem)] z-[120] flex items-center justify-center p-4 bg-canvas-night/70 backdrop-blur-md transition-all duration-300 animate-in fade-in">
+          <Link href={projectsPath} className="absolute inset-0 cursor-default" aria-hidden="true" />
           <div className="w-full max-w-2xl animate-in fade-in zoom-in-95 duration-200 relative z-10">
             <ProjectForm
               action={updateProjectBundleAction}
               project={selectedProject}
-              returnTo="/projects"
+              returnTo={projectsPath}
               title={t("form.edit_title") || "Edit Project"}
               t={t}
             />
@@ -277,13 +299,13 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
 
       {/* Modal Dialog for Delete Confirmation */}
       {search.dialog === "delete" && selectedProject ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-canvas-night/70 backdrop-blur-md transition-all duration-300 animate-in fade-in">
-          <Link href="/projects" className="absolute inset-0 cursor-default" aria-hidden="true" />
+        <div className="fixed inset-x-0 -top-20 h-[calc(100vh+5rem)] z-[120] flex items-center justify-center p-4 bg-canvas-night/70 backdrop-blur-md transition-all duration-300 animate-in fade-in">
+          <Link href={projectsPath} className="absolute inset-0 cursor-default" aria-hidden="true" />
           <div className="w-full max-w-md animate-in fade-in zoom-in-95 duration-200 relative z-10">
             <DeleteConfirmationDialog
               project={selectedProject}
               action={deleteProjectAction}
-              returnTo="/projects"
+              returnTo={projectsPath}
               t={t}
             />
           </div>

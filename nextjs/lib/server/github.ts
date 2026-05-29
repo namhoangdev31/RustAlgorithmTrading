@@ -15,6 +15,8 @@ export type GithubRepoSummary = {
 export type GithubOverviewData = {
   connected: boolean;
   login?: string;
+  avatarUrl?: string;
+  profileUrl?: string;
   repos: GithubRepoSummary[];
   error?: string;
 };
@@ -42,6 +44,8 @@ export async function getGithubOverviewData(): Promise<GithubOverviewData> {
     return {
       connected: true,
       login: profile.login,
+      avatarUrl: profile.avatar_url,
+      profileUrl: profile.html_url,
       repos: repos.map((repo) => ({
         id: repo.id,
         name: repo.name,

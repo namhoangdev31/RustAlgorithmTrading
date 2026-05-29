@@ -1,9 +1,18 @@
 import { Edit3, ExternalLink, Folder, GitBranch, MoreHorizontal, Plus, Trash2 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { GithubIcon } from "@/components/ui/icon";
+import { Separator } from "@/components/ui/separator";
 import {
   connectGithubAction,
   createProjectFromGithubRepoAction,
@@ -15,6 +24,8 @@ type OverviewTabProps = {
   github: {
     connected: boolean;
     login?: string;
+    avatarUrl?: string;
+    profileUrl?: string;
     repos: {
       id: number;
       name: string;
@@ -37,18 +48,25 @@ type OverviewTabProps = {
   formatRelativeTime: (dateInput: Date | string | null | undefined, locale: string) => string;
 };
 
-function GithubAside({ github }: { github: OverviewTabProps["github"] }) {
+function GithubAside({
+  github,
+  projectKeys,
+}: {
+  github: OverviewTabProps["github"];
+  projectKeys: Set<string>;
+}) {
   return (
-    <Card className="bg-canvas border border-hairline rounded-lg p-4 h-fit sticky top-4">
-      <div className="flex items-center justify-between gap-2">
+    <Card className="h-fit sticky top-4 border border-hairline">
+      <CardHeader className="flex-row items-start justify-between gap-2 space-y-0">
         <div>
-          <h3 className="text-sm font-semibold text-ink">GitHub Repositories</h3>
-          <p className="text-[11px] text-ink-mute mt-0.5">
+          <CardTitle className="text-sm">GitHub Repositories</CardTitle>
+          <CardDescription className="text-[11px]">
             {github.connected ? `Connected as ${github.login || "GitHub user"}` : "Connect GitHub to import repositories."}
-          </p>
+          </CardDescription>
         </div>
         <GithubIcon className="size-4 text-ink-mute" />
-      </div>
+      </CardHeader>
+      <CardContent className="pt-0">
 
       {!github.connected ? (
         <form action={connectGithubAction} className="mt-3">
@@ -57,16 +75,31 @@ function GithubAside({ github }: { github: OverviewTabProps["github"] }) {
         </form>
       ) : (
         <>
-          <form action={disconnectGithubAction} className="mt-3">
+          <a
+            href={github.profileUrl || `https://github.com/${github.login}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 flex items-center gap-2 rounded-md border border-hairline bg-canvas-soft/40 px-2.5 py-2 hover:bg-canvas-soft transition-colors"
+          >
+            <Avatar className="size-6">
+              <AvatarImage src={github.avatarUrl} alt={github.login || "GitHub"} />
+              <AvatarFallback>{(github.login || "GH").slice(0, 2).toUpperCase()}</AvatarFallback>
+            </Avatar>
+            <span className="text-xs font-medium text-ink">@{github.login || "github-user"}</span>
+          </a>
+          <form action={disconnectGithubAction} className="mt-2">
             <input type="hidden" name="returnTo" value="/projects?tab=overview" />
-            <Button variant="outline" className="h-9 w-full rounded-sm text-xs border-hairline-strong">Disconnect</Button>
+            <Button variant="outline" className="h-8 w-full rounded-sm text-xs border-hairline-strong">Disconnect</Button>
           </form>
 
           {github.error ? <p className="text-xs text-destructive mt-3">{github.error}</p> : null}
 
           <div className="mt-3 space-y-2 max-h-[520px] overflow-y-auto pr-1">
             {github.repos.length ? (
-              github.repos.map((repo) => (
+              github.repos.map((repo) => {
+                const repoKey = repo.name.trim().toLowerCase();
+                const isCreated = projectKeys.has(repoKey);
+                return (
                 <div key={repo.id} className="rounded-md border border-hairline bg-canvas-soft/40 p-2.5">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
@@ -84,25 +117,33 @@ function GithubAside({ github }: { github: OverviewTabProps["github"] }) {
                       </p>
                     </div>
                   </div>
+                  <Separator className="my-2" />
                   <div className="mt-2 flex items-center justify-between gap-2">
-                    <span className="text-[10px] text-ink-mute font-mono">{repo.defaultBranch}</span>
-                    <form action={createProjectFromGithubRepoAction}>
-                      <input type="hidden" name="repoName" value={repo.name} />
-                      <input type="hidden" name="repoDescription" value={repo.description || ""} />
-                      <input type="hidden" name="returnTo" value="/projects?tab=overview" />
-                      <Button type="submit" className="h-7 px-2.5 rounded-sm text-[10px] bg-primary hover:bg-primary-deep text-primary-foreground">
-                        Create Project
+                    <Badge variant="secondary" className="text-[10px] font-mono">{repo.defaultBranch}</Badge>
+                    {isCreated ? (
+                      <Button asChild variant="outline" className="h-7 px-2.5 rounded-sm text-[10px] border-hairline-strong">
+                        <a href={repo.htmlUrl} target="_blank" rel="noopener noreferrer">Go to GitHub</a>
                       </Button>
-                    </form>
+                    ) : (
+                      <form action={createProjectFromGithubRepoAction}>
+                        <input type="hidden" name="repoName" value={repo.name} />
+                        <input type="hidden" name="repoDescription" value={repo.description || ""} />
+                        <input type="hidden" name="returnTo" value="/projects?tab=overview" />
+                        <Button type="submit" className="h-7 px-2.5 rounded-sm text-[10px] bg-primary hover:bg-primary-deep text-primary-foreground">
+                          Create Project
+                        </Button>
+                      </form>
+                    )}
                   </div>
                 </div>
-              ))
+              )})
             ) : (
               <p className="text-xs text-ink-mute">No repositories found.</p>
             )}
           </div>
         </>
       )}
+      </CardContent>
     </Card>
   );
 }
@@ -134,6 +175,10 @@ export function OverviewTab({
   getCategoryIcon,
   formatRelativeTime,
 }: OverviewTabProps) {
+  const projectKeys = new Set<string>(
+    data.projects.map((project: any) => String(project.name ?? "").trim().toLowerCase())
+  );
+
   return (
     <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_320px] gap-4 items-start">
       <div>
@@ -174,12 +219,18 @@ export function OverviewTab({
                             <MoreHorizontal className="size-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-[140px] bg-canvas border border-hairline rounded-lg shadow-dark p-1 z-50">
-                          <DropdownMenuItem asChild className="cursor-pointer text-xs font-semibold py-2 rounded-md">
-                            <Link href={`/projects?dialog=edit&id=${project.id}`}><Edit3 className="size-3.5 mr-2 text-ink-mute" />{t("table.edit") || "Edit"}</Link>
+                        <DropdownMenuContent align="end" className="w-[150px] bg-canvas border border-hairline rounded-lg shadow-dark p-1 z-50">
+                          <DropdownMenuItem asChild className="cursor-pointer rounded-md p-0">
+                            <a href={`/${locale}/projects?dialog=edit&id=${project.id}`} className="flex w-full items-center px-2.5 py-2 text-xs font-semibold text-ink">
+                              <Edit3 className="size-3.5 mr-2 text-ink-mute" />
+                              <span>{t("table.edit") || "Edit"}</span>
+                            </a>
                           </DropdownMenuItem>
-                          <DropdownMenuItem asChild className="cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10 text-xs font-semibold py-2 rounded-md">
-                            <Link href={`/projects?dialog=delete&id=${project.id}`}><Trash2 className="size-3.5 mr-2 text-destructive" />{t("table.delete") || "Delete"}</Link>
+                          <DropdownMenuItem asChild className="cursor-pointer rounded-md p-0 focus:bg-destructive/10">
+                            <a href={`/${locale}/projects?dialog=delete&id=${project.id}`} className="flex w-full items-center px-2.5 py-2 text-xs font-semibold text-destructive">
+                              <Trash2 className="size-3.5 mr-2 text-destructive" />
+                              <span>{t("table.delete") || "Delete"}</span>
+                            </a>
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -241,7 +292,27 @@ export function OverviewTab({
                       <div className="flex items-center gap-1 text-[11px] text-ink-mute-2 capitalize"><CategoryIcon className="size-3" /><span>{bundle?.category || "web"}</span></div>
                       <span className="font-sans text-[11px] text-ink-mute-2">{formatRelativeTime(project.updatedAt, locale)}</span>
                     </div>
-                    <DropdownMenu><DropdownMenuTrigger asChild><Button size="icon" variant="ghost" className="size-8 text-ink-mute-2 hover:text-ink-secondary hover:bg-canvas-soft rounded-sm shrink-0 transition-colors border border-transparent hover:border-hairline"><MoreHorizontal className="size-4" /></Button></DropdownMenuTrigger><DropdownMenuContent align="end" className="w-[140px] bg-canvas border border-hairline rounded-lg shadow-dark p-1 z-50"><DropdownMenuItem asChild className="cursor-pointer text-xs font-semibold py-2 rounded-md"><Link href={`/projects?dialog=edit&id=${project.id}`}><Edit3 className="size-3.5 mr-2 text-ink-mute" />{t("table.edit") || "Edit"}</Link></DropdownMenuItem><DropdownMenuItem asChild className="cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10 text-xs font-semibold py-2 rounded-md"><Link href={`/projects?dialog=delete&id=${project.id}`}><Trash2 className="size-3.5 mr-2 text-destructive" />{t("table.delete") || "Delete"}</Link></DropdownMenuItem></DropdownMenuContent></DropdownMenu>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button size="icon" variant="ghost" className="size-8 text-ink-mute-2 hover:text-ink-secondary hover:bg-canvas-soft rounded-sm shrink-0 transition-colors border border-transparent hover:border-hairline">
+                          <MoreHorizontal className="size-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-[150px] bg-canvas border border-hairline rounded-lg shadow-dark p-1 z-50">
+                        <DropdownMenuItem asChild className="cursor-pointer rounded-md p-0">
+                          <a href={`/${locale}/projects?dialog=edit&id=${project.id}`} className="flex w-full items-center px-2.5 py-2 text-xs font-semibold text-ink">
+                            <Edit3 className="size-3.5 mr-2 text-ink-mute" />
+                            <span>{t("table.edit") || "Edit"}</span>
+                          </a>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild className="cursor-pointer rounded-md p-0 focus:bg-destructive/10">
+                          <a href={`/${locale}/projects?dialog=delete&id=${project.id}`} className="flex w-full items-center px-2.5 py-2 text-xs font-semibold text-destructive">
+                            <Trash2 className="size-3.5 mr-2 text-destructive" />
+                            <span>{t("table.delete") || "Delete"}</span>
+                          </a>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 </div>
               );
@@ -250,7 +321,7 @@ export function OverviewTab({
         )}
       </div>
 
-      <GithubAside github={github} />
+      <GithubAside github={github} projectKeys={projectKeys} />
     </div>
   );
 }

@@ -165,7 +165,7 @@ export const Navbar = ({ user }: NavbarProps) => {
       </Link>
       {/* <!-- Mobile --> */}
       <div className="flex items-center lg:hidden gap-2">
-        <ToggleTheme showLabel={false} className="w-9 h-9 p-0 justify-center" />
+        {/* <ToggleTheme showLabel={false} className="w-9 h-9 p-0 justify-center" /> */}
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild>
             <Menu

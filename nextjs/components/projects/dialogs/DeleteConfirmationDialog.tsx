@@ -2,6 +2,7 @@ import { AlertCircle } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 
 export function DeleteConfirmationDialog({
   project,
@@ -26,7 +27,8 @@ export function DeleteConfirmationDialog({
         <p className="text-sm text-ink-mute leading-relaxed">
           {t("delete_dialog.description") || "Are you sure you want to delete this project? This action cannot be undone."}
         </p>
-        <form action={action} className="flex items-center justify-end gap-3 pt-5 border-t border-hairline-cool">
+        <Separator />
+        <form action={action} className="flex items-center justify-end gap-3 pt-1">
           <input type="hidden" name="projectId" value={project.id} />
           <input type="hidden" name="returnTo" value={returnTo} />
           <Button asChild variant="outline" className="h-10 text-xs font-semibold hover:bg-canvas-soft border-hairline-strong rounded-sm text-ink">

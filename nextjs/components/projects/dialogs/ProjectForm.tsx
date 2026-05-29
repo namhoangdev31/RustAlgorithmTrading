@@ -4,7 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+
+const fieldLabelClass = "text-[11px] font-bold text-ink-mute uppercase tracking-wider";
+const fieldControlClass =
+  "h-10 bg-canvas border-hairline focus-visible:ring-1 focus-visible:ring-primary transition-all rounded-sm text-sm shadow-light";
 
 export function ProjectForm({
   action,
@@ -40,17 +46,17 @@ export function ProjectForm({
           <input type="hidden" name="returnTo" value={returnTo} />
 
           <div className="grid gap-2 md:col-span-2">
-            <Label className="text-[11px] font-bold text-ink-mute uppercase tracking-wider">
+            <Label className={fieldLabelClass}>
               {t("form.project_name") || "Project Name"} <span className="text-destructive">*</span>
             </Label>
-            <Input defaultValue={project?.name ?? ""} name="projectName" required placeholder="e.g. My Algorithmic Trading Platform" className="h-10 bg-canvas border-hairline focus-visible:ring-1 focus-visible:ring-primary transition-all rounded-sm text-sm shadow-light" />
+            <Input defaultValue={project?.name ?? ""} name="projectName" required placeholder="e.g. My Algorithmic Trading Platform" className={fieldControlClass} />
           </div>
 
           {!project && organizations.length > 0 ? (
             <div className="grid gap-2 md:col-span-2">
-              <Label className="text-[11px] font-bold text-ink-mute uppercase tracking-wider">{t("form.organization") || "Organization"}</Label>
+              <Label className={fieldLabelClass}>{t("form.organization") || "Organization"}</Label>
               <Select defaultValue={activeOrganizationId} name="organizationId">
-                <SelectTrigger className="h-10 bg-canvas border-hairline focus:ring-1 focus:ring-primary transition-all rounded-sm text-sm shadow-light">
+                <SelectTrigger className={fieldControlClass}>
                   <SelectValue placeholder={t("form.select_organization") || "Select an organization"} />
                 </SelectTrigger>
                 <SelectContent className="bg-canvas border border-hairline rounded-lg shadow-dark">
@@ -63,14 +69,14 @@ export function ProjectForm({
           ) : null}
 
           <div className="grid gap-2">
-            <Label className="text-[11px] font-bold text-ink-mute uppercase tracking-wider">{t("form.bundle_name") || "Bundle Name"}</Label>
-            <Input defaultValue={project?.bundle?.name ?? ""} name="bundleName" placeholder="e.g. trading-bot-bundle" className="h-10 bg-canvas border-hairline focus-visible:ring-1 focus-visible:ring-primary transition-all rounded-sm text-sm shadow-light" />
+            <Label className={fieldLabelClass}>{t("form.bundle_name") || "Bundle Name"}</Label>
+            <Input defaultValue={project?.bundle?.name ?? ""} name="bundleName" placeholder="e.g. trading-bot-bundle" className={fieldControlClass} />
           </div>
 
           <div className="grid gap-2">
-            <Label className="text-[11px] font-bold text-ink-mute uppercase tracking-wider">{t("form.project_type") || "Project Type"}</Label>
+            <Label className={fieldLabelClass}>{t("form.project_type") || "Project Type"}</Label>
             <Select defaultValue={project?.bundle?.category ?? "web"} name="category">
-              <SelectTrigger className="h-10 bg-canvas border-hairline focus:ring-1 focus:ring-primary transition-all rounded-sm text-sm shadow-light">
+              <SelectTrigger className={fieldControlClass}>
                 <SelectValue placeholder={t("form.select_project_type") || "Select type"} />
               </SelectTrigger>
               <SelectContent className="bg-canvas border border-hairline rounded-lg">
@@ -83,9 +89,9 @@ export function ProjectForm({
           </div>
 
           <div className="grid gap-2 md:col-span-2">
-            <Label className="text-[11px] font-bold text-ink-mute uppercase tracking-wider">{t("form.status") || "Status"}</Label>
+            <Label className={fieldLabelClass}>{t("form.status") || "Status"}</Label>
             <Select defaultValue={project?.bundle?.status ?? "draft"} name="status">
-              <SelectTrigger className="h-10 bg-canvas border-hairline focus:ring-1 focus:ring-primary transition-all rounded-sm text-sm shadow-light">
+              <SelectTrigger className={fieldControlClass}>
                 <SelectValue placeholder={t("form.select_status") || "Select status"} />
               </SelectTrigger>
               <SelectContent className="bg-canvas border border-hairline rounded-lg">
@@ -98,16 +104,19 @@ export function ProjectForm({
           </div>
 
           <div className="grid gap-2 md:col-span-2">
-            <Label className="text-[11px] font-bold text-ink-mute uppercase tracking-wider">{t("form.project_description") || "Project Description"}</Label>
-            <textarea name="description" defaultValue={project?.description ?? ""} rows={3} placeholder="Explain what this project is about..." className="w-full rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm placeholder:text-ink-faint focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary transition-all duration-200 font-sans shadow-light" />
+            <Label className={fieldLabelClass}>{t("form.project_description") || "Project Description"}</Label>
+            <Textarea name="description" defaultValue={project?.description ?? ""} rows={3} placeholder="Explain what this project is about..." className="border-hairline bg-canvas text-sm shadow-light" />
           </div>
 
           <div className="grid gap-2 md:col-span-2">
-            <Label className="text-[11px] font-bold text-ink-mute uppercase tracking-wider">{t("form.bundle_summary") || "Bundle Summary"}</Label>
-            <Input defaultValue={project?.bundle?.shortDescription ?? ""} name="shortDescription" placeholder="Short summary of the compiled bundle" className="h-10 bg-canvas border-hairline focus-visible:ring-1 focus-visible:ring-primary transition-all rounded-sm text-sm shadow-light" />
+            <Label className={fieldLabelClass}>{t("form.bundle_summary") || "Bundle Summary"}</Label>
+            <Input defaultValue={project?.bundle?.shortDescription ?? ""} name="shortDescription" placeholder="Short summary of the compiled bundle" className={fieldControlClass} />
           </div>
 
-          <div className="flex items-center justify-end gap-3 md:col-span-2 pt-5 border-t border-hairline-cool mt-2">
+          <div className="md:col-span-2 mt-2">
+            <Separator />
+          </div>
+          <div className="flex items-center justify-end gap-3 md:col-span-2 pt-2">
             <Button asChild variant="outline" className="h-10 hover:bg-canvas-soft transition-colors border-hairline-strong rounded-sm text-xs font-semibold px-4 text-ink">
               <Link href={returnTo}>{t("form.cancel") || "Cancel"}</Link>
             </Button>

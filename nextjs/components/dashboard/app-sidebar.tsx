@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import {
   AudioWaveform,
   BadgeCheck,
@@ -9,21 +10,17 @@ import {
   GalleryVerticalEnd,
   HelpCircle,
   LayoutDashboard,
-  ListTodo,
   LogOut,
-  MessagesSquare,
   Monitor,
-  Package,
   Palette,
   Settings,
-  Sparkles,
   UserCog,
-  Users,
   Wrench,
   CreditCard,
   Plus,
   type LucideIcon,
   FolderGit,
+  Sparkles,
 } from "lucide-react";
 import { usePathname } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
@@ -65,6 +62,17 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import Image from "next/image";
+
+function useStablePathname() {
+  const pathname = usePathname();
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  return mounted ? pathname : "";
+}
 
 type AppSidebarProps = {
   user: {
@@ -166,7 +174,7 @@ function TeamSwitcher({
 }: Pick<AppSidebarProps, "organizations" | "activeOrganizationId">) {
   const { isMobile } = useSidebar();
   const t = useTranslations("Dashboard.shell");
-  const pathname = usePathname(); // Returns /vi/dashboard, /en/dashboard, etc.
+  const pathname = useStablePathname(); // Avoid SSR/client pathname drift during hydration.
   const teamIcons = [Command, GalleryVerticalEnd, AudioWaveform];
   const activeOrganization =
     organizations.find((organization) => organization.id === activeOrganizationId) ??
@@ -264,7 +272,7 @@ function NavGroup({
 }: {
   group: NavGroup;
 }) {
-  const pathname = usePathname();
+  const pathname = useStablePathname();
 
   return (
     <SidebarGroup>
