@@ -29,6 +29,8 @@ export type ProjectMinAggregateOutputType = {
   name: string | null
   description: string | null
   organizationId: string | null
+  vercelProjectId: string | null
+  vercelProjectName: string | null
   createdAt: Date | null
   updatedAt: Date | null
   deletedAt: Date | null
@@ -39,6 +41,8 @@ export type ProjectMaxAggregateOutputType = {
   name: string | null
   description: string | null
   organizationId: string | null
+  vercelProjectId: string | null
+  vercelProjectName: string | null
   createdAt: Date | null
   updatedAt: Date | null
   deletedAt: Date | null
@@ -49,6 +53,8 @@ export type ProjectCountAggregateOutputType = {
   name: number
   description: number
   organizationId: number
+  vercelProjectId: number
+  vercelProjectName: number
   createdAt: number
   updatedAt: number
   deletedAt: number
@@ -61,6 +67,8 @@ export type ProjectMinAggregateInputType = {
   name?: true
   description?: true
   organizationId?: true
+  vercelProjectId?: true
+  vercelProjectName?: true
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
@@ -71,6 +79,8 @@ export type ProjectMaxAggregateInputType = {
   name?: true
   description?: true
   organizationId?: true
+  vercelProjectId?: true
+  vercelProjectName?: true
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
@@ -81,6 +91,8 @@ export type ProjectCountAggregateInputType = {
   name?: true
   description?: true
   organizationId?: true
+  vercelProjectId?: true
+  vercelProjectName?: true
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
@@ -164,6 +176,8 @@ export type ProjectGroupByOutputType = {
   name: string
   description: string | null
   organizationId: string
+  vercelProjectId: string | null
+  vercelProjectName: string | null
   createdAt: Date
   updatedAt: Date
   deletedAt: Date | null
@@ -195,6 +209,8 @@ export type ProjectWhereInput = {
   name?: Prisma.StringFilter<"Project"> | string
   description?: Prisma.StringNullableFilter<"Project"> | string | null
   organizationId?: Prisma.UuidFilter<"Project"> | string
+  vercelProjectId?: Prisma.StringNullableFilter<"Project"> | string | null
+  vercelProjectName?: Prisma.StringNullableFilter<"Project"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Project"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Project"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Project"> | Date | string | null
@@ -207,6 +223,8 @@ export type ProjectOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   organizationId?: Prisma.SortOrder
+  vercelProjectId?: Prisma.SortOrderInput | Prisma.SortOrder
+  vercelProjectName?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -222,6 +240,8 @@ export type ProjectWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringFilter<"Project"> | string
   description?: Prisma.StringNullableFilter<"Project"> | string | null
   organizationId?: Prisma.UuidFilter<"Project"> | string
+  vercelProjectId?: Prisma.StringNullableFilter<"Project"> | string | null
+  vercelProjectName?: Prisma.StringNullableFilter<"Project"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Project"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Project"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Project"> | Date | string | null
@@ -234,6 +254,8 @@ export type ProjectOrderByWithAggregationInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   organizationId?: Prisma.SortOrder
+  vercelProjectId?: Prisma.SortOrderInput | Prisma.SortOrder
+  vercelProjectName?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -250,6 +272,8 @@ export type ProjectScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"Project"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"Project"> | string | null
   organizationId?: Prisma.UuidWithAggregatesFilter<"Project"> | string
+  vercelProjectId?: Prisma.StringNullableWithAggregatesFilter<"Project"> | string | null
+  vercelProjectName?: Prisma.StringNullableWithAggregatesFilter<"Project"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Project"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Project"> | Date | string
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Project"> | Date | string | null
@@ -259,6 +283,8 @@ export type ProjectCreateInput = {
   id: string
   name: string
   description?: string | null
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
@@ -271,6 +297,8 @@ export type ProjectUncheckedCreateInput = {
   name: string
   description?: string | null
   organizationId: string
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
@@ -281,6 +309,8 @@ export type ProjectUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -293,6 +323,8 @@ export type ProjectUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -304,6 +336,8 @@ export type ProjectCreateManyInput = {
   name: string
   description?: string | null
   organizationId: string
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
@@ -313,6 +347,8 @@ export type ProjectUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -323,6 +359,8 @@ export type ProjectUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -343,6 +381,8 @@ export type ProjectCountOrderByAggregateInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
+  vercelProjectId?: Prisma.SortOrder
+  vercelProjectName?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
@@ -353,6 +393,8 @@ export type ProjectMaxOrderByAggregateInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
+  vercelProjectId?: Prisma.SortOrder
+  vercelProjectName?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
@@ -363,6 +405,8 @@ export type ProjectMinOrderByAggregateInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
+  vercelProjectId?: Prisma.SortOrder
+  vercelProjectName?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
@@ -435,6 +479,8 @@ export type ProjectCreateWithoutOrganizationInput = {
   id: string
   name: string
   description?: string | null
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
@@ -445,6 +491,8 @@ export type ProjectUncheckedCreateWithoutOrganizationInput = {
   id: string
   name: string
   description?: string | null
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
@@ -485,6 +533,8 @@ export type ProjectScalarWhereInput = {
   name?: Prisma.StringFilter<"Project"> | string
   description?: Prisma.StringNullableFilter<"Project"> | string | null
   organizationId?: Prisma.UuidFilter<"Project"> | string
+  vercelProjectId?: Prisma.StringNullableFilter<"Project"> | string | null
+  vercelProjectName?: Prisma.StringNullableFilter<"Project"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Project"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Project"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Project"> | Date | string | null
@@ -494,6 +544,8 @@ export type ProjectCreateWithoutBundleInput = {
   id: string
   name: string
   description?: string | null
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
@@ -505,6 +557,8 @@ export type ProjectUncheckedCreateWithoutBundleInput = {
   name: string
   description?: string | null
   organizationId: string
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
@@ -530,6 +584,8 @@ export type ProjectUpdateWithoutBundleInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -541,6 +597,8 @@ export type ProjectUncheckedUpdateWithoutBundleInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -550,6 +608,8 @@ export type ProjectCreateManyOrganizationInput = {
   id: string
   name: string
   description?: string | null
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
@@ -559,6 +619,8 @@ export type ProjectUpdateWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -569,6 +631,8 @@ export type ProjectUncheckedUpdateWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -579,6 +643,8 @@ export type ProjectUncheckedUpdateManyWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -591,6 +657,8 @@ export type ProjectSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   name?: boolean
   description?: boolean
   organizationId?: boolean
+  vercelProjectId?: boolean
+  vercelProjectName?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
@@ -603,6 +671,8 @@ export type ProjectSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   name?: boolean
   description?: boolean
   organizationId?: boolean
+  vercelProjectId?: boolean
+  vercelProjectName?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
@@ -614,6 +684,8 @@ export type ProjectSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   name?: boolean
   description?: boolean
   organizationId?: boolean
+  vercelProjectId?: boolean
+  vercelProjectName?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
@@ -625,12 +697,14 @@ export type ProjectSelectScalar = {
   name?: boolean
   description?: boolean
   organizationId?: boolean
+  vercelProjectId?: boolean
+  vercelProjectName?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
 }
 
-export type ProjectOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "organizationId" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["project"]>
+export type ProjectOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "organizationId" | "vercelProjectId" | "vercelProjectName" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["project"]>
 export type ProjectInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   bundle?: boolean | Prisma.Project$bundleArgs<ExtArgs>
@@ -653,6 +727,8 @@ export type $ProjectPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     name: string
     description: string | null
     organizationId: string
+    vercelProjectId: string | null
+    vercelProjectName: string | null
     createdAt: Date
     updatedAt: Date
     deletedAt: Date | null
@@ -1085,6 +1161,8 @@ export interface ProjectFieldRefs {
   readonly name: Prisma.FieldRef<"Project", 'String'>
   readonly description: Prisma.FieldRef<"Project", 'String'>
   readonly organizationId: Prisma.FieldRef<"Project", 'String'>
+  readonly vercelProjectId: Prisma.FieldRef<"Project", 'String'>
+  readonly vercelProjectName: Prisma.FieldRef<"Project", 'String'>
   readonly createdAt: Prisma.FieldRef<"Project", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Project", 'DateTime'>
   readonly deletedAt: Prisma.FieldRef<"Project", 'DateTime'>

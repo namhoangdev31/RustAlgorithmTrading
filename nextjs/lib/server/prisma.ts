@@ -1,6 +1,11 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@/prisma/generated/client";
 
+// Force Next.js HMR to reload the Prisma Client schema metadata
+if (process.env.NODE_ENV !== "production") {
+  (globalThis as any).prisma = undefined;
+}
+
 const globalForPrisma = globalThis as typeof globalThis & {
   prisma?: PrismaClient;
 };

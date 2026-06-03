@@ -18,8 +18,10 @@ import {
   SlidersHorizontal,
   LayoutGrid,
   List,
+  AlertCircle,
 } from "lucide-react";
 
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   createProjectWithBundleAction,
   connectGithubAction,
@@ -81,6 +83,9 @@ type ProjectsPageProps = {
     id?: string;
     layout?: string;
     tab?: string;
+    error?: string;
+    message?: string;
+    name?: string;
   }>;
 };
 type ProjectsData = Awaited<ReturnType<typeof getProjectBundleData>>;
@@ -153,6 +158,18 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
 
   return (
     <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-300 w-full">
+      {search.error && (
+        <Alert variant="destructive" className="bg-destructive/5 border-destructive/20 text-destructive rounded-lg animate-in slide-in-from-top-2 duration-300">
+          <AlertCircle className="size-4" />
+          <AlertTitle className="font-bold text-xs uppercase tracking-wider">Error Creating Project</AlertTitle>
+          <AlertDescription className="text-xs font-semibold mt-1">
+            {search.error === "missing_vercel_key" && "Vercel deployment is enabled, but your Vercel API key is not configured. Please connect your Vercel account under Settings > Integrations."}
+            {search.error === "invalid_vercel_name" && `The Vercel project name "${search.name || ""}" is invalid. It must match Vercel subdomain requirements (only lowercase, numbers, and hyphens; start/end with alpha-numeric).`}
+            {search.error === "vercel_api_error" && `Vercel API Error: ${search.message || "An unknown error occurred during Vercel project creation."}`}
+          </AlertDescription>
+        </Alert>
+      )}
+
       {/* Vercel-like Header Section */}
       <div className="flex flex-col gap-1.5">
         <div className="flex items-center gap-2 select-none text-xs font-medium text-ink-mute">
@@ -327,7 +344,7 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
               activeOrganizationId={data.workspace.activeOrganization?.id}
               returnTo={projectsPath}
               title={t("form.create_title") || "Create Project"}
-              t={t}
+              vercelConnected={vercelConnected}
             />
           </div>
         </div>
@@ -343,7 +360,7 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
               project={selectedProject}
               returnTo={projectsPath}
               title={t("form.edit_title") || "Edit Project"}
-              t={t}
+              vercelConnected={vercelConnected}
             />
           </div>
         </div>
@@ -358,7 +375,6 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
               project={selectedProject}
               action={deleteProjectAction}
               returnTo={projectsPath}
-              t={t}
             />
           </div>
         </div>

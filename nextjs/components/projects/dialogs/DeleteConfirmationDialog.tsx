@@ -1,5 +1,8 @@
+"use client";
+
 import { AlertCircle } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -8,16 +11,17 @@ export function DeleteConfirmationDialog({
   project,
   action,
   returnTo,
-  t,
+  t: _unusedT,
 }: {
   project: any;
   action: (formData: FormData) => Promise<void>;
   returnTo: string;
-  t: any;
+  t?: any;
 }) {
+  const t = useTranslations("Dashboard");
   return (
-    <Card className="border border-hairline shadow-dark bg-canvas overflow-hidden rounded-xl max-w-md w-full mx-auto animate-in fade-in zoom-in-95 duration-200 py-0">
-      <CardHeader className="pb-4 bg-canvas-soft/60 border-b border-hairline-cool">
+    <Card className="border border-hairline shadow-dark bg-canvas overflow-hidden rounded-xl max-w-md w-full mx-auto animate-in fade-in zoom-in-95 duration-200 pb-2">
+      <CardHeader className="px-6 pt-6 pb-4 bg-canvas-soft/60 border-b border-hairline-cool">
         <CardTitle className="text-lg font-bold text-destructive flex items-center gap-2">
           <AlertCircle className="size-5 shrink-0" />
           <span className="truncate">{t("delete_dialog.title", { name: project.name }) || `Delete ${project.name}`}</span>

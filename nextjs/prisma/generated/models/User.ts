@@ -307,6 +307,7 @@ export type UserWhereInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryListRelationFilter
   reviewHistory?: Prisma.BundleReviewHistoryListRelationFilter
   reviewQueueReviewed?: Prisma.BundleReviewQueueListRelationFilter
+  userSecrets?: Prisma.UserSecretsListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -356,6 +357,7 @@ export type UserOrderByWithRelationInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryOrderByRelationAggregateInput
   reviewHistory?: Prisma.BundleReviewHistoryOrderByRelationAggregateInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueOrderByRelationAggregateInput
+  userSecrets?: Prisma.UserSecretsOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -408,6 +410,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryListRelationFilter
   reviewHistory?: Prisma.BundleReviewHistoryListRelationFilter
   reviewQueueReviewed?: Prisma.BundleReviewQueueListRelationFilter
+  userSecrets?: Prisma.UserSecretsListRelationFilter
 }, "id" | "email" | "phone">
 
 export type UserOrderByWithAggregationInput = {
@@ -502,6 +505,7 @@ export type UserCreateInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -550,6 +554,7 @@ export type UserUncheckedCreateInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -598,6 +603,7 @@ export type UserUpdateInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -646,6 +652,7 @@ export type UserUncheckedUpdateInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -1249,6 +1256,20 @@ export type UserUpdateOneWithoutReviewQueueReviewedNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutReviewQueueReviewedInput, Prisma.UserUpdateWithoutReviewQueueReviewedInput>, Prisma.UserUncheckedUpdateWithoutReviewQueueReviewedInput>
 }
 
+export type UserCreateNestedOneWithoutUserSecretsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutUserSecretsInput, Prisma.UserUncheckedCreateWithoutUserSecretsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUserSecretsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutUserSecretsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutUserSecretsInput, Prisma.UserUncheckedCreateWithoutUserSecretsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUserSecretsInput
+  upsert?: Prisma.UserUpsertWithoutUserSecretsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutUserSecretsInput, Prisma.UserUpdateWithoutUserSecretsInput>, Prisma.UserUncheckedUpdateWithoutUserSecretsInput>
+}
+
 export type UserCreateWithoutPhotoInput = {
   id: string
   email?: string | null
@@ -1294,6 +1315,7 @@ export type UserCreateWithoutPhotoInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPhotoInput = {
@@ -1341,6 +1363,7 @@ export type UserUncheckedCreateWithoutPhotoInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPhotoInput = {
@@ -1437,6 +1460,7 @@ export type UserCreateWithoutOrganizationsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutOrganizationsInput = {
@@ -1484,6 +1508,7 @@ export type UserUncheckedCreateWithoutOrganizationsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutOrganizationsInput = {
@@ -1547,6 +1572,7 @@ export type UserUpdateWithoutOrganizationsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOrganizationsInput = {
@@ -1594,6 +1620,7 @@ export type UserUncheckedUpdateWithoutOrganizationsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPayoutsInput = {
@@ -1641,6 +1668,7 @@ export type UserCreateWithoutPayoutsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPayoutsInput = {
@@ -1688,6 +1716,7 @@ export type UserUncheckedCreateWithoutPayoutsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPayoutsInput = {
@@ -1751,6 +1780,7 @@ export type UserUpdateWithoutPayoutsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPayoutsInput = {
@@ -1798,6 +1828,7 @@ export type UserUncheckedUpdateWithoutPayoutsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutNotificationsActorInput = {
@@ -1845,6 +1876,7 @@ export type UserCreateWithoutNotificationsActorInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsActorInput = {
@@ -1892,6 +1924,7 @@ export type UserUncheckedCreateWithoutNotificationsActorInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsActorInput = {
@@ -1944,6 +1977,7 @@ export type UserCreateWithoutNotificationsRecipientInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsRecipientInput = {
@@ -1991,6 +2025,7 @@ export type UserUncheckedCreateWithoutNotificationsRecipientInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsRecipientInput = {
@@ -2054,6 +2089,7 @@ export type UserUpdateWithoutNotificationsActorInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsActorInput = {
@@ -2101,6 +2137,7 @@ export type UserUncheckedUpdateWithoutNotificationsActorInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutNotificationsRecipientInput = {
@@ -2159,6 +2196,7 @@ export type UserUpdateWithoutNotificationsRecipientInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsRecipientInput = {
@@ -2206,6 +2244,7 @@ export type UserUncheckedUpdateWithoutNotificationsRecipientInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSessionsInput = {
@@ -2253,6 +2292,7 @@ export type UserCreateWithoutSessionsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -2300,6 +2340,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -2363,6 +2404,7 @@ export type UserUpdateWithoutSessionsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -2410,6 +2452,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutDeviceTokensInput = {
@@ -2457,6 +2500,7 @@ export type UserCreateWithoutDeviceTokensInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutDeviceTokensInput = {
@@ -2504,6 +2548,7 @@ export type UserUncheckedCreateWithoutDeviceTokensInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutDeviceTokensInput = {
@@ -2567,6 +2612,7 @@ export type UserUpdateWithoutDeviceTokensInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDeviceTokensInput = {
@@ -2614,6 +2660,7 @@ export type UserUncheckedUpdateWithoutDeviceTokensInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAnalyticsInput = {
@@ -2661,6 +2708,7 @@ export type UserCreateWithoutAnalyticsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAnalyticsInput = {
@@ -2708,6 +2756,7 @@ export type UserUncheckedCreateWithoutAnalyticsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAnalyticsInput = {
@@ -2771,6 +2820,7 @@ export type UserUpdateWithoutAnalyticsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAnalyticsInput = {
@@ -2818,6 +2868,7 @@ export type UserUncheckedUpdateWithoutAnalyticsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAuditLogsInput = {
@@ -2865,6 +2916,7 @@ export type UserCreateWithoutAuditLogsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAuditLogsInput = {
@@ -2912,6 +2964,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAuditLogsInput = {
@@ -2975,6 +3028,7 @@ export type UserUpdateWithoutAuditLogsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAuditLogsInput = {
@@ -3022,6 +3076,7 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutBetaTestersInput = {
@@ -3069,6 +3124,7 @@ export type UserCreateWithoutBetaTestersInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutBetaTestersInput = {
@@ -3116,6 +3172,7 @@ export type UserUncheckedCreateWithoutBetaTestersInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutBetaTestersInput = {
@@ -3179,6 +3236,7 @@ export type UserUpdateWithoutBetaTestersInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutBetaTestersInput = {
@@ -3226,6 +3284,7 @@ export type UserUncheckedUpdateWithoutBetaTestersInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutChangedLogsInput = {
@@ -3273,6 +3332,7 @@ export type UserCreateWithoutChangedLogsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutChangedLogsInput = {
@@ -3320,6 +3380,7 @@ export type UserUncheckedCreateWithoutChangedLogsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutChangedLogsInput = {
@@ -3383,6 +3444,7 @@ export type UserUpdateWithoutChangedLogsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutChangedLogsInput = {
@@ -3430,6 +3492,7 @@ export type UserUncheckedUpdateWithoutChangedLogsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutCollaboratorsInvitedInput = {
@@ -3477,6 +3540,7 @@ export type UserCreateWithoutCollaboratorsInvitedInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCollaboratorsInvitedInput = {
@@ -3524,6 +3588,7 @@ export type UserUncheckedCreateWithoutCollaboratorsInvitedInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCollaboratorsInvitedInput = {
@@ -3576,6 +3641,7 @@ export type UserCreateWithoutCollaboratorsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCollaboratorsInput = {
@@ -3623,6 +3689,7 @@ export type UserUncheckedCreateWithoutCollaboratorsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCollaboratorsInput = {
@@ -3686,6 +3753,7 @@ export type UserUpdateWithoutCollaboratorsInvitedInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCollaboratorsInvitedInput = {
@@ -3733,6 +3801,7 @@ export type UserUncheckedUpdateWithoutCollaboratorsInvitedInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutCollaboratorsInput = {
@@ -3791,6 +3860,7 @@ export type UserUpdateWithoutCollaboratorsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCollaboratorsInput = {
@@ -3838,6 +3908,7 @@ export type UserUncheckedUpdateWithoutCollaboratorsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutDeveloperStrikesInput = {
@@ -3885,6 +3956,7 @@ export type UserCreateWithoutDeveloperStrikesInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutDeveloperStrikesInput = {
@@ -3932,6 +4004,7 @@ export type UserUncheckedCreateWithoutDeveloperStrikesInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutDeveloperStrikesInput = {
@@ -3984,6 +4057,7 @@ export type UserCreateWithoutDeveloperStrikesIssuedInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutDeveloperStrikesIssuedInput = {
@@ -4031,6 +4105,7 @@ export type UserUncheckedCreateWithoutDeveloperStrikesIssuedInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutDeveloperStrikesIssuedInput = {
@@ -4094,6 +4169,7 @@ export type UserUpdateWithoutDeveloperStrikesInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDeveloperStrikesInput = {
@@ -4141,6 +4217,7 @@ export type UserUncheckedUpdateWithoutDeveloperStrikesInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutDeveloperStrikesIssuedInput = {
@@ -4199,6 +4276,7 @@ export type UserUpdateWithoutDeveloperStrikesIssuedInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDeveloperStrikesIssuedInput = {
@@ -4246,6 +4324,7 @@ export type UserUncheckedUpdateWithoutDeveloperStrikesIssuedInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutInstallEventsInput = {
@@ -4293,6 +4372,7 @@ export type UserCreateWithoutInstallEventsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutInstallEventsInput = {
@@ -4340,6 +4420,7 @@ export type UserUncheckedCreateWithoutInstallEventsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutInstallEventsInput = {
@@ -4403,6 +4484,7 @@ export type UserUpdateWithoutInstallEventsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutInstallEventsInput = {
@@ -4450,6 +4532,7 @@ export type UserUncheckedUpdateWithoutInstallEventsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutOrdersInput = {
@@ -4497,6 +4580,7 @@ export type UserCreateWithoutOrdersInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutOrdersInput = {
@@ -4544,6 +4628,7 @@ export type UserUncheckedCreateWithoutOrdersInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutOrdersInput = {
@@ -4607,6 +4692,7 @@ export type UserUpdateWithoutOrdersInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOrdersInput = {
@@ -4654,6 +4740,7 @@ export type UserUncheckedUpdateWithoutOrdersInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutReviewsInput = {
@@ -4701,6 +4788,7 @@ export type UserCreateWithoutReviewsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutReviewsInput = {
@@ -4748,6 +4836,7 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutReviewsInput = {
@@ -4811,6 +4900,7 @@ export type UserUpdateWithoutReviewsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReviewsInput = {
@@ -4858,6 +4948,7 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutStateTransitionsInput = {
@@ -4905,6 +4996,7 @@ export type UserCreateWithoutStateTransitionsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutStateTransitionsInput = {
@@ -4952,6 +5044,7 @@ export type UserUncheckedCreateWithoutStateTransitionsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutStateTransitionsInput = {
@@ -5015,6 +5108,7 @@ export type UserUpdateWithoutStateTransitionsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutStateTransitionsInput = {
@@ -5062,6 +5156,7 @@ export type UserUncheckedUpdateWithoutStateTransitionsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutUserReportsReportedInput = {
@@ -5109,6 +5204,7 @@ export type UserCreateWithoutUserReportsReportedInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutUserReportsReportedInput = {
@@ -5156,6 +5252,7 @@ export type UserUncheckedCreateWithoutUserReportsReportedInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutUserReportsReportedInput = {
@@ -5208,6 +5305,7 @@ export type UserCreateWithoutUserReportsReviewedInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutUserReportsReviewedInput = {
@@ -5255,6 +5353,7 @@ export type UserUncheckedCreateWithoutUserReportsReviewedInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutUserReportsReviewedInput = {
@@ -5318,6 +5417,7 @@ export type UserUpdateWithoutUserReportsReportedInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutUserReportsReportedInput = {
@@ -5365,6 +5465,7 @@ export type UserUncheckedUpdateWithoutUserReportsReportedInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutUserReportsReviewedInput = {
@@ -5423,6 +5524,7 @@ export type UserUpdateWithoutUserReportsReviewedInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutUserReportsReviewedInput = {
@@ -5470,6 +5572,7 @@ export type UserUncheckedUpdateWithoutUserReportsReviewedInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutRefundRequestsReviewedInput = {
@@ -5517,6 +5620,7 @@ export type UserCreateWithoutRefundRequestsReviewedInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutRefundRequestsReviewedInput = {
@@ -5564,6 +5668,7 @@ export type UserUncheckedCreateWithoutRefundRequestsReviewedInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutRefundRequestsReviewedInput = {
@@ -5616,6 +5721,7 @@ export type UserCreateWithoutRefundRequestsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutRefundRequestsInput = {
@@ -5663,6 +5769,7 @@ export type UserUncheckedCreateWithoutRefundRequestsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutRefundRequestsInput = {
@@ -5726,6 +5833,7 @@ export type UserUpdateWithoutRefundRequestsReviewedInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRefundRequestsReviewedInput = {
@@ -5773,6 +5881,7 @@ export type UserUncheckedUpdateWithoutRefundRequestsReviewedInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutRefundRequestsInput = {
@@ -5831,6 +5940,7 @@ export type UserUpdateWithoutRefundRequestsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRefundRequestsInput = {
@@ -5878,6 +5988,7 @@ export type UserUncheckedUpdateWithoutRefundRequestsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutUserEntitlementsInput = {
@@ -5925,6 +6036,7 @@ export type UserCreateWithoutUserEntitlementsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutUserEntitlementsInput = {
@@ -5972,6 +6084,7 @@ export type UserUncheckedCreateWithoutUserEntitlementsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutUserEntitlementsInput = {
@@ -6035,6 +6148,7 @@ export type UserUpdateWithoutUserEntitlementsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutUserEntitlementsInput = {
@@ -6082,6 +6196,7 @@ export type UserUncheckedUpdateWithoutUserEntitlementsInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutReviewReportsReportedInput = {
@@ -6129,6 +6244,7 @@ export type UserCreateWithoutReviewReportsReportedInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutReviewReportsReportedInput = {
@@ -6176,6 +6292,7 @@ export type UserUncheckedCreateWithoutReviewReportsReportedInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutReviewReportsReportedInput = {
@@ -6228,6 +6345,7 @@ export type UserCreateWithoutReviewReportsReviewedInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutReviewReportsReviewedInput = {
@@ -6275,6 +6393,7 @@ export type UserUncheckedCreateWithoutReviewReportsReviewedInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutReviewReportsReviewedInput = {
@@ -6338,6 +6457,7 @@ export type UserUpdateWithoutReviewReportsReportedInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReviewReportsReportedInput = {
@@ -6385,6 +6505,7 @@ export type UserUncheckedUpdateWithoutReviewReportsReportedInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutReviewReportsReviewedInput = {
@@ -6443,6 +6564,7 @@ export type UserUpdateWithoutReviewReportsReviewedInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReviewReportsReviewedInput = {
@@ -6490,6 +6612,7 @@ export type UserUncheckedUpdateWithoutReviewReportsReviewedInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSubscriptionHistoryInput = {
@@ -6537,6 +6660,7 @@ export type UserCreateWithoutSubscriptionHistoryInput = {
   reviewReportsReviewed?: Prisma.BundleReviewReportsCreateNestedManyWithoutReviewerInput
   reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSubscriptionHistoryInput = {
@@ -6584,6 +6708,7 @@ export type UserUncheckedCreateWithoutSubscriptionHistoryInput = {
   reviewReportsReviewed?: Prisma.BundleReviewReportsUncheckedCreateNestedManyWithoutReviewerInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutActorInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSubscriptionHistoryInput = {
@@ -6647,6 +6772,7 @@ export type UserUpdateWithoutSubscriptionHistoryInput = {
   reviewReportsReviewed?: Prisma.BundleReviewReportsUpdateManyWithoutReviewerNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSubscriptionHistoryInput = {
@@ -6694,6 +6820,7 @@ export type UserUncheckedUpdateWithoutSubscriptionHistoryInput = {
   reviewReportsReviewed?: Prisma.BundleReviewReportsUncheckedUpdateManyWithoutReviewerNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutReviewHistoryInput = {
@@ -6741,6 +6868,7 @@ export type UserCreateWithoutReviewHistoryInput = {
   reviewReportsReviewed?: Prisma.BundleReviewReportsCreateNestedManyWithoutReviewerInput
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryCreateNestedManyWithoutUserInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutReviewHistoryInput = {
@@ -6788,6 +6916,7 @@ export type UserUncheckedCreateWithoutReviewHistoryInput = {
   reviewReportsReviewed?: Prisma.BundleReviewReportsUncheckedCreateNestedManyWithoutReviewerInput
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedCreateNestedManyWithoutUserInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutReviewHistoryInput = {
@@ -6851,6 +6980,7 @@ export type UserUpdateWithoutReviewHistoryInput = {
   reviewReportsReviewed?: Prisma.BundleReviewReportsUpdateManyWithoutReviewerNestedInput
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUpdateManyWithoutUserNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReviewHistoryInput = {
@@ -6898,6 +7028,7 @@ export type UserUncheckedUpdateWithoutReviewHistoryInput = {
   reviewReportsReviewed?: Prisma.BundleReviewReportsUncheckedUpdateManyWithoutReviewerNestedInput
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedUpdateManyWithoutUserNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutReviewQueueReviewedInput = {
@@ -6945,6 +7076,7 @@ export type UserCreateWithoutReviewQueueReviewedInput = {
   reviewReportsReviewed?: Prisma.BundleReviewReportsCreateNestedManyWithoutReviewerInput
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutActorInput
+  userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutReviewQueueReviewedInput = {
@@ -6992,6 +7124,7 @@ export type UserUncheckedCreateWithoutReviewQueueReviewedInput = {
   reviewReportsReviewed?: Prisma.BundleReviewReportsUncheckedCreateNestedManyWithoutReviewerInput
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedCreateNestedManyWithoutUserInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutActorInput
+  userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutReviewQueueReviewedInput = {
@@ -7055,6 +7188,7 @@ export type UserUpdateWithoutReviewQueueReviewedInput = {
   reviewReportsReviewed?: Prisma.BundleReviewReportsUpdateManyWithoutReviewerNestedInput
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutActorNestedInput
+  userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReviewQueueReviewedInput = {
@@ -7102,6 +7236,215 @@ export type UserUncheckedUpdateWithoutReviewQueueReviewedInput = {
   reviewReportsReviewed?: Prisma.BundleReviewReportsUncheckedUpdateManyWithoutReviewerNestedInput
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutActorNestedInput
+  userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutUserSecretsInput = {
+  id: string
+  email?: string | null
+  password?: string | null
+  provider?: string
+  socialId?: string | null
+  firstName?: string | null
+  lastName?: string | null
+  fullName?: string | null
+  phone?: string | null
+  dateOfBirth?: Date | string | null
+  gender?: string | null
+  userType?: string
+  registerType?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  photo?: Prisma.FileCreateNestedOneWithoutUsersWithPhotoInput
+  payouts?: Prisma.BundlePayoutsCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationCreateNestedManyWithoutUserInput
+  notificationsActor?: Prisma.NotificationsCreateNestedManyWithoutActorInput
+  notificationsRecipient?: Prisma.NotificationsCreateNestedManyWithoutRecipientInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.UserDeviceTokenCreateNestedManyWithoutUserInput
+  analytics?: Prisma.BundleAnalyticsEventsCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.BundleAuditLogCreateNestedManyWithoutUserInput
+  betaTesters?: Prisma.BundleBetaTestersCreateNestedManyWithoutUserInput
+  changedLogs?: Prisma.BundleChangeLogsCreateNestedManyWithoutUserInput
+  collaboratorsInvited?: Prisma.BundleCollaboratorsCreateNestedManyWithoutInvitedUserInput
+  collaborators?: Prisma.BundleCollaboratorsCreateNestedManyWithoutUserInput
+  developerStrikes?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutDeveloperInput
+  developerStrikesIssued?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutIssuerInput
+  installEvents?: Prisma.BundleInstallEventsCreateNestedManyWithoutUserInput
+  orders?: Prisma.BundleOrdersCreateNestedManyWithoutUserInput
+  reviews?: Prisma.BundleReviewsCreateNestedManyWithoutUserInput
+  stateTransitions?: Prisma.BundleStateTransitionsCreateNestedManyWithoutUserInput
+  userReportsReported?: Prisma.BundleUserReportsCreateNestedManyWithoutReporterInput
+  userReportsReviewed?: Prisma.BundleUserReportsCreateNestedManyWithoutReviewerInput
+  refundRequestsReviewed?: Prisma.BundleRefundRequestsCreateNestedManyWithoutReviewerInput
+  refundRequests?: Prisma.BundleRefundRequestsCreateNestedManyWithoutUserInput
+  userEntitlements?: Prisma.BundleUserEntitlementsCreateNestedManyWithoutUserInput
+  reviewReportsReported?: Prisma.BundleReviewReportsCreateNestedManyWithoutReporterInput
+  reviewReportsReviewed?: Prisma.BundleReviewReportsCreateNestedManyWithoutReviewerInput
+  subscriptionHistory?: Prisma.BundleSubscriptionHistoryCreateNestedManyWithoutUserInput
+  reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutActorInput
+  reviewQueueReviewed?: Prisma.BundleReviewQueueCreateNestedManyWithoutReviewerInput
+}
+
+export type UserUncheckedCreateWithoutUserSecretsInput = {
+  id: string
+  email?: string | null
+  password?: string | null
+  provider?: string
+  socialId?: string | null
+  firstName?: string | null
+  lastName?: string | null
+  fullName?: string | null
+  phone?: string | null
+  dateOfBirth?: Date | string | null
+  gender?: string | null
+  userType?: string
+  photoId?: string | null
+  registerType?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  payouts?: Prisma.BundlePayoutsUncheckedCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationUncheckedCreateNestedManyWithoutUserInput
+  notificationsActor?: Prisma.NotificationsUncheckedCreateNestedManyWithoutActorInput
+  notificationsRecipient?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRecipientInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.UserDeviceTokenUncheckedCreateNestedManyWithoutUserInput
+  analytics?: Prisma.BundleAnalyticsEventsUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.BundleAuditLogUncheckedCreateNestedManyWithoutUserInput
+  betaTesters?: Prisma.BundleBetaTestersUncheckedCreateNestedManyWithoutUserInput
+  changedLogs?: Prisma.BundleChangeLogsUncheckedCreateNestedManyWithoutUserInput
+  collaboratorsInvited?: Prisma.BundleCollaboratorsUncheckedCreateNestedManyWithoutInvitedUserInput
+  collaborators?: Prisma.BundleCollaboratorsUncheckedCreateNestedManyWithoutUserInput
+  developerStrikes?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutDeveloperInput
+  developerStrikesIssued?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutIssuerInput
+  installEvents?: Prisma.BundleInstallEventsUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.BundleOrdersUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.BundleReviewsUncheckedCreateNestedManyWithoutUserInput
+  stateTransitions?: Prisma.BundleStateTransitionsUncheckedCreateNestedManyWithoutUserInput
+  userReportsReported?: Prisma.BundleUserReportsUncheckedCreateNestedManyWithoutReporterInput
+  userReportsReviewed?: Prisma.BundleUserReportsUncheckedCreateNestedManyWithoutReviewerInput
+  refundRequestsReviewed?: Prisma.BundleRefundRequestsUncheckedCreateNestedManyWithoutReviewerInput
+  refundRequests?: Prisma.BundleRefundRequestsUncheckedCreateNestedManyWithoutUserInput
+  userEntitlements?: Prisma.BundleUserEntitlementsUncheckedCreateNestedManyWithoutUserInput
+  reviewReportsReported?: Prisma.BundleReviewReportsUncheckedCreateNestedManyWithoutReporterInput
+  reviewReportsReviewed?: Prisma.BundleReviewReportsUncheckedCreateNestedManyWithoutReviewerInput
+  subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedCreateNestedManyWithoutUserInput
+  reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutActorInput
+  reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReviewerInput
+}
+
+export type UserCreateOrConnectWithoutUserSecretsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutUserSecretsInput, Prisma.UserUncheckedCreateWithoutUserSecretsInput>
+}
+
+export type UserUpsertWithoutUserSecretsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutUserSecretsInput, Prisma.UserUncheckedUpdateWithoutUserSecretsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutUserSecretsInput, Prisma.UserUncheckedCreateWithoutUserSecretsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutUserSecretsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutUserSecretsInput, Prisma.UserUncheckedUpdateWithoutUserSecretsInput>
+}
+
+export type UserUpdateWithoutUserSecretsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  provider?: Prisma.StringFieldUpdateOperationsInput | string
+  socialId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userType?: Prisma.StringFieldUpdateOperationsInput | string
+  registerType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  photo?: Prisma.FileUpdateOneWithoutUsersWithPhotoNestedInput
+  payouts?: Prisma.BundlePayoutsUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUpdateManyWithoutUserNestedInput
+  notificationsActor?: Prisma.NotificationsUpdateManyWithoutActorNestedInput
+  notificationsRecipient?: Prisma.NotificationsUpdateManyWithoutRecipientNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.UserDeviceTokenUpdateManyWithoutUserNestedInput
+  analytics?: Prisma.BundleAnalyticsEventsUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.BundleAuditLogUpdateManyWithoutUserNestedInput
+  betaTesters?: Prisma.BundleBetaTestersUpdateManyWithoutUserNestedInput
+  changedLogs?: Prisma.BundleChangeLogsUpdateManyWithoutUserNestedInput
+  collaboratorsInvited?: Prisma.BundleCollaboratorsUpdateManyWithoutInvitedUserNestedInput
+  collaborators?: Prisma.BundleCollaboratorsUpdateManyWithoutUserNestedInput
+  developerStrikes?: Prisma.BundleDeveloperStrikesUpdateManyWithoutDeveloperNestedInput
+  developerStrikesIssued?: Prisma.BundleDeveloperStrikesUpdateManyWithoutIssuerNestedInput
+  installEvents?: Prisma.BundleInstallEventsUpdateManyWithoutUserNestedInput
+  orders?: Prisma.BundleOrdersUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.BundleReviewsUpdateManyWithoutUserNestedInput
+  stateTransitions?: Prisma.BundleStateTransitionsUpdateManyWithoutUserNestedInput
+  userReportsReported?: Prisma.BundleUserReportsUpdateManyWithoutReporterNestedInput
+  userReportsReviewed?: Prisma.BundleUserReportsUpdateManyWithoutReviewerNestedInput
+  refundRequestsReviewed?: Prisma.BundleRefundRequestsUpdateManyWithoutReviewerNestedInput
+  refundRequests?: Prisma.BundleRefundRequestsUpdateManyWithoutUserNestedInput
+  userEntitlements?: Prisma.BundleUserEntitlementsUpdateManyWithoutUserNestedInput
+  reviewReportsReported?: Prisma.BundleReviewReportsUpdateManyWithoutReporterNestedInput
+  reviewReportsReviewed?: Prisma.BundleReviewReportsUpdateManyWithoutReviewerNestedInput
+  subscriptionHistory?: Prisma.BundleSubscriptionHistoryUpdateManyWithoutUserNestedInput
+  reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutActorNestedInput
+  reviewQueueReviewed?: Prisma.BundleReviewQueueUpdateManyWithoutReviewerNestedInput
+}
+
+export type UserUncheckedUpdateWithoutUserSecretsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  provider?: Prisma.StringFieldUpdateOperationsInput | string
+  socialId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userType?: Prisma.StringFieldUpdateOperationsInput | string
+  photoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registerType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  payouts?: Prisma.BundlePayoutsUncheckedUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUncheckedUpdateManyWithoutUserNestedInput
+  notificationsActor?: Prisma.NotificationsUncheckedUpdateManyWithoutActorNestedInput
+  notificationsRecipient?: Prisma.NotificationsUncheckedUpdateManyWithoutRecipientNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.UserDeviceTokenUncheckedUpdateManyWithoutUserNestedInput
+  analytics?: Prisma.BundleAnalyticsEventsUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.BundleAuditLogUncheckedUpdateManyWithoutUserNestedInput
+  betaTesters?: Prisma.BundleBetaTestersUncheckedUpdateManyWithoutUserNestedInput
+  changedLogs?: Prisma.BundleChangeLogsUncheckedUpdateManyWithoutUserNestedInput
+  collaboratorsInvited?: Prisma.BundleCollaboratorsUncheckedUpdateManyWithoutInvitedUserNestedInput
+  collaborators?: Prisma.BundleCollaboratorsUncheckedUpdateManyWithoutUserNestedInput
+  developerStrikes?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutDeveloperNestedInput
+  developerStrikesIssued?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutIssuerNestedInput
+  installEvents?: Prisma.BundleInstallEventsUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.BundleOrdersUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.BundleReviewsUncheckedUpdateManyWithoutUserNestedInput
+  stateTransitions?: Prisma.BundleStateTransitionsUncheckedUpdateManyWithoutUserNestedInput
+  userReportsReported?: Prisma.BundleUserReportsUncheckedUpdateManyWithoutReporterNestedInput
+  userReportsReviewed?: Prisma.BundleUserReportsUncheckedUpdateManyWithoutReviewerNestedInput
+  refundRequestsReviewed?: Prisma.BundleRefundRequestsUncheckedUpdateManyWithoutReviewerNestedInput
+  refundRequests?: Prisma.BundleRefundRequestsUncheckedUpdateManyWithoutUserNestedInput
+  userEntitlements?: Prisma.BundleUserEntitlementsUncheckedUpdateManyWithoutUserNestedInput
+  reviewReportsReported?: Prisma.BundleReviewReportsUncheckedUpdateManyWithoutReporterNestedInput
+  reviewReportsReviewed?: Prisma.BundleReviewReportsUncheckedUpdateManyWithoutReviewerNestedInput
+  subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedUpdateManyWithoutUserNestedInput
+  reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutActorNestedInput
+  reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReviewerNestedInput
 }
 
 export type UserCreateManyPhotoInput = {
@@ -7168,6 +7511,7 @@ export type UserUpdateWithoutPhotoInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPhotoInput = {
@@ -7215,6 +7559,7 @@ export type UserUncheckedUpdateWithoutPhotoInput = {
   subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedUpdateManyWithoutUserNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutActorNestedInput
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateManyWithoutPhotoInput = {
@@ -7270,6 +7615,7 @@ export type UserCountOutputType = {
   subscriptionHistory: number
   reviewHistory: number
   reviewQueueReviewed: number
+  userSecrets: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -7301,6 +7647,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   subscriptionHistory?: boolean | UserCountOutputTypeCountSubscriptionHistoryArgs
   reviewHistory?: boolean | UserCountOutputTypeCountReviewHistoryArgs
   reviewQueueReviewed?: boolean | UserCountOutputTypeCountReviewQueueReviewedArgs
+  userSecrets?: boolean | UserCountOutputTypeCountUserSecretsArgs
 }
 
 /**
@@ -7509,6 +7856,13 @@ export type UserCountOutputTypeCountReviewQueueReviewedArgs<ExtArgs extends runt
   where?: Prisma.BundleReviewQueueWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountUserSecretsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.UserSecretsWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -7557,6 +7911,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   subscriptionHistory?: boolean | Prisma.User$subscriptionHistoryArgs<ExtArgs>
   reviewHistory?: boolean | Prisma.User$reviewHistoryArgs<ExtArgs>
   reviewQueueReviewed?: boolean | Prisma.User$reviewQueueReviewedArgs<ExtArgs>
+  userSecrets?: boolean | Prisma.User$userSecretsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -7653,6 +8008,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   subscriptionHistory?: boolean | Prisma.User$subscriptionHistoryArgs<ExtArgs>
   reviewHistory?: boolean | Prisma.User$reviewHistoryArgs<ExtArgs>
   reviewQueueReviewed?: boolean | Prisma.User$reviewQueueReviewedArgs<ExtArgs>
+  userSecrets?: boolean | Prisma.User$userSecretsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -7694,6 +8050,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     subscriptionHistory: Prisma.$BundleSubscriptionHistoryPayload<ExtArgs>[]
     reviewHistory: Prisma.$BundleReviewHistoryPayload<ExtArgs>[]
     reviewQueueReviewed: Prisma.$BundleReviewQueuePayload<ExtArgs>[]
+    userSecrets: Prisma.$UserSecretsPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -8136,6 +8493,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   subscriptionHistory<T extends Prisma.User$subscriptionHistoryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$subscriptionHistoryArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BundleSubscriptionHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reviewHistory<T extends Prisma.User$reviewHistoryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reviewHistoryArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BundleReviewHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reviewQueueReviewed<T extends Prisma.User$reviewQueueReviewedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reviewQueueReviewedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BundleReviewQueuePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  userSecrets<T extends Prisma.User$userSecretsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$userSecretsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserSecretsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -9271,6 +9629,30 @@ export type User$reviewQueueReviewedArgs<ExtArgs extends runtime.Types.Extension
   take?: number
   skip?: number
   distinct?: Prisma.BundleReviewQueueScalarFieldEnum | Prisma.BundleReviewQueueScalarFieldEnum[]
+}
+
+/**
+ * User.userSecrets
+ */
+export type User$userSecretsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UserSecrets
+   */
+  select?: Prisma.UserSecretsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UserSecrets
+   */
+  omit?: Prisma.UserSecretsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserSecretsInclude<ExtArgs> | null
+  where?: Prisma.UserSecretsWhereInput
+  orderBy?: Prisma.UserSecretsOrderByWithRelationInput | Prisma.UserSecretsOrderByWithRelationInput[]
+  cursor?: Prisma.UserSecretsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.UserSecretsScalarFieldEnum | Prisma.UserSecretsScalarFieldEnum[]
 }
 
 /**

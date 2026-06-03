@@ -115,7 +115,8 @@ export const ModelName = {
   BundleReviewHistory: 'BundleReviewHistory',
   BundleReviewQueue: 'BundleReviewQueue',
   BundleSecurityScanResults: 'BundleSecurityScanResults',
-  BundleUpdatePhases: 'BundleUpdatePhases'
+  BundleUpdatePhases: 'BundleUpdatePhases',
+  UserSecrets: 'UserSecrets'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -215,6 +216,8 @@ export const ProjectScalarFieldEnum = {
   name: 'name',
   description: 'description',
   organizationId: 'organizationId',
+  vercelProjectId: 'vercelProjectId',
+  vercelProjectName: 'vercelProjectName',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   deletedAt: 'deletedAt'
@@ -280,7 +283,9 @@ export const BundlesScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   deletedAt: 'deletedAt',
-  projectId: 'projectId'
+  projectId: 'projectId',
+  vercelDeploymentId: 'vercelDeploymentId',
+  vercelDeploymentUrl: 'vercelDeploymentUrl'
 } as const
 
 export type BundlesScalarFieldEnum = (typeof BundlesScalarFieldEnum)[keyof typeof BundlesScalarFieldEnum]
@@ -1150,6 +1155,18 @@ export const BundleUpdatePhasesScalarFieldEnum = {
 } as const
 
 export type BundleUpdatePhasesScalarFieldEnum = (typeof BundleUpdatePhasesScalarFieldEnum)[keyof typeof BundleUpdatePhasesScalarFieldEnum]
+
+
+export const UserSecretsScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  provider: 'provider',
+  encryptedValue: 'encryptedValue',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type UserSecretsScalarFieldEnum = (typeof UserSecretsScalarFieldEnum)[keyof typeof UserSecretsScalarFieldEnum]
 
 
 export const SortOrder = {

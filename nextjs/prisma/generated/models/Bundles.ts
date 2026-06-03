@@ -79,6 +79,8 @@ export type BundlesMinAggregateOutputType = {
   updatedAt: Date | null
   deletedAt: Date | null
   projectId: string | null
+  vercelDeploymentId: string | null
+  vercelDeploymentUrl: string | null
 }
 
 export type BundlesMaxAggregateOutputType = {
@@ -122,6 +124,8 @@ export type BundlesMaxAggregateOutputType = {
   updatedAt: Date | null
   deletedAt: Date | null
   projectId: string | null
+  vercelDeploymentId: string | null
+  vercelDeploymentUrl: string | null
 }
 
 export type BundlesCountAggregateOutputType = {
@@ -165,6 +169,8 @@ export type BundlesCountAggregateOutputType = {
   updatedAt: number
   deletedAt: number
   projectId: number
+  vercelDeploymentId: number
+  vercelDeploymentUrl: number
   _all: number
 }
 
@@ -222,6 +228,8 @@ export type BundlesMinAggregateInputType = {
   updatedAt?: true
   deletedAt?: true
   projectId?: true
+  vercelDeploymentId?: true
+  vercelDeploymentUrl?: true
 }
 
 export type BundlesMaxAggregateInputType = {
@@ -265,6 +273,8 @@ export type BundlesMaxAggregateInputType = {
   updatedAt?: true
   deletedAt?: true
   projectId?: true
+  vercelDeploymentId?: true
+  vercelDeploymentUrl?: true
 }
 
 export type BundlesCountAggregateInputType = {
@@ -308,6 +318,8 @@ export type BundlesCountAggregateInputType = {
   updatedAt?: true
   deletedAt?: true
   projectId?: true
+  vercelDeploymentId?: true
+  vercelDeploymentUrl?: true
   _all?: true
 }
 
@@ -438,6 +450,8 @@ export type BundlesGroupByOutputType = {
   updatedAt: Date
   deletedAt: Date | null
   projectId: string | null
+  vercelDeploymentId: string | null
+  vercelDeploymentUrl: string | null
   _count: BundlesCountAggregateOutputType | null
   _avg: BundlesAvgAggregateOutputType | null
   _sum: BundlesSumAggregateOutputType | null
@@ -504,6 +518,8 @@ export type BundlesWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Bundles"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Bundles"> | Date | string | null
   projectId?: Prisma.UuidNullableFilter<"Bundles"> | string | null
+  vercelDeploymentId?: Prisma.StringNullableFilter<"Bundles"> | string | null
+  vercelDeploymentUrl?: Prisma.StringNullableFilter<"Bundles"> | string | null
   project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
   abTests?: Prisma.BundleAbTestsListRelationFilter
   abuseSignals?: Prisma.XOR<Prisma.BundleAbuseSignalsNullableScalarRelationFilter, Prisma.BundleAbuseSignalsWhereInput> | null
@@ -599,6 +615,8 @@ export type BundlesOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   projectId?: Prisma.SortOrderInput | Prisma.SortOrder
+  vercelDeploymentId?: Prisma.SortOrderInput | Prisma.SortOrder
+  vercelDeploymentUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   project?: Prisma.ProjectOrderByWithRelationInput
   abTests?: Prisma.BundleAbTestsOrderByRelationAggregateInput
   abuseSignals?: Prisma.BundleAbuseSignalsOrderByWithRelationInput
@@ -697,6 +715,8 @@ export type BundlesWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Bundles"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Bundles"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Bundles"> | Date | string | null
+  vercelDeploymentId?: Prisma.StringNullableFilter<"Bundles"> | string | null
+  vercelDeploymentUrl?: Prisma.StringNullableFilter<"Bundles"> | string | null
   project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
   abTests?: Prisma.BundleAbTestsListRelationFilter
   abuseSignals?: Prisma.XOR<Prisma.BundleAbuseSignalsNullableScalarRelationFilter, Prisma.BundleAbuseSignalsWhereInput> | null
@@ -792,6 +812,8 @@ export type BundlesOrderByWithAggregationInput = {
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   projectId?: Prisma.SortOrderInput | Prisma.SortOrder
+  vercelDeploymentId?: Prisma.SortOrderInput | Prisma.SortOrder
+  vercelDeploymentUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.BundlesCountOrderByAggregateInput
   _avg?: Prisma.BundlesAvgOrderByAggregateInput
   _max?: Prisma.BundlesMaxOrderByAggregateInput
@@ -843,6 +865,8 @@ export type BundlesScalarWhereWithAggregatesInput = {
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Bundles"> | Date | string
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Bundles"> | Date | string | null
   projectId?: Prisma.UuidNullableWithAggregatesFilter<"Bundles"> | string | null
+  vercelDeploymentId?: Prisma.StringNullableWithAggregatesFilter<"Bundles"> | string | null
+  vercelDeploymentUrl?: Prisma.StringNullableWithAggregatesFilter<"Bundles"> | string | null
 }
 
 export type BundlesCreateInput = {
@@ -885,6 +909,8 @@ export type BundlesCreateInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -980,6 +1006,8 @@ export type BundlesUncheckedCreateInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -1073,6 +1101,8 @@ export type BundlesUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -1168,6 +1198,8 @@ export type BundlesUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -1262,6 +1294,8 @@ export type BundlesCreateManyInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
 }
 
 export type BundlesUpdateManyMutationInput = {
@@ -1304,6 +1338,8 @@ export type BundlesUpdateManyMutationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type BundlesUncheckedUpdateManyInput = {
@@ -1347,6 +1383,8 @@ export type BundlesUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type BundlesNullableScalarRelationFilter = {
@@ -1395,6 +1433,8 @@ export type BundlesCountOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   projectId?: Prisma.SortOrder
+  vercelDeploymentId?: Prisma.SortOrder
+  vercelDeploymentUrl?: Prisma.SortOrder
 }
 
 export type BundlesAvgOrderByAggregateInput = {
@@ -1444,6 +1484,8 @@ export type BundlesMaxOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   projectId?: Prisma.SortOrder
+  vercelDeploymentId?: Prisma.SortOrder
+  vercelDeploymentUrl?: Prisma.SortOrder
 }
 
 export type BundlesMinOrderByAggregateInput = {
@@ -1487,6 +1529,8 @@ export type BundlesMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   projectId?: Prisma.SortOrder
+  vercelDeploymentId?: Prisma.SortOrder
+  vercelDeploymentUrl?: Prisma.SortOrder
 }
 
 export type BundlesSumOrderByAggregateInput = {
@@ -2292,6 +2336,8 @@ export type BundlesCreateWithoutProjectInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -2385,6 +2431,8 @@ export type BundlesUncheckedCreateWithoutProjectInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -2494,6 +2542,8 @@ export type BundlesUpdateWithoutProjectInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -2587,6 +2637,8 @@ export type BundlesUncheckedUpdateWithoutProjectInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -2680,6 +2732,8 @@ export type BundlesCreateWithoutAbTestsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -2774,6 +2828,8 @@ export type BundlesUncheckedCreateWithoutAbTestsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
   analyticsEvents?: Prisma.BundleAnalyticsEventsUncheckedCreateNestedManyWithoutBundleInput
@@ -2882,6 +2938,8 @@ export type BundlesUpdateWithoutAbTestsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -2976,6 +3034,8 @@ export type BundlesUncheckedUpdateWithoutAbTestsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
   analyticsEvents?: Prisma.BundleAnalyticsEventsUncheckedUpdateManyWithoutBundleNestedInput
@@ -3068,6 +3128,8 @@ export type BundlesCreateWithoutAbuseSignalsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
@@ -3162,6 +3224,8 @@ export type BundlesUncheckedCreateWithoutAbuseSignalsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
   analyticsEvents?: Prisma.BundleAnalyticsEventsUncheckedCreateNestedManyWithoutBundleInput
@@ -3270,6 +3334,8 @@ export type BundlesUpdateWithoutAbuseSignalsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
@@ -3364,6 +3430,8 @@ export type BundlesUncheckedUpdateWithoutAbuseSignalsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
   analyticsEvents?: Prisma.BundleAnalyticsEventsUncheckedUpdateManyWithoutBundleNestedInput
@@ -3456,6 +3524,8 @@ export type BundlesCreateWithoutAdConfigurationsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -3550,6 +3620,8 @@ export type BundlesUncheckedCreateWithoutAdConfigurationsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   analyticsEvents?: Prisma.BundleAnalyticsEventsUncheckedCreateNestedManyWithoutBundleInput
@@ -3658,6 +3730,8 @@ export type BundlesUpdateWithoutAdConfigurationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -3752,6 +3826,8 @@ export type BundlesUncheckedUpdateWithoutAdConfigurationsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   analyticsEvents?: Prisma.BundleAnalyticsEventsUncheckedUpdateManyWithoutBundleNestedInput
@@ -3844,6 +3920,8 @@ export type BundlesCreateWithoutAnalyticsEventsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -3938,6 +4016,8 @@ export type BundlesUncheckedCreateWithoutAnalyticsEventsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -4046,6 +4126,8 @@ export type BundlesUpdateWithoutAnalyticsEventsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -4140,6 +4222,8 @@ export type BundlesUncheckedUpdateWithoutAnalyticsEventsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -4232,6 +4316,8 @@ export type BundlesCreateWithoutApiUsageStatsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -4326,6 +4412,8 @@ export type BundlesUncheckedCreateWithoutApiUsageStatsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -4434,6 +4522,8 @@ export type BundlesUpdateWithoutApiUsageStatsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -4528,6 +4618,8 @@ export type BundlesUncheckedUpdateWithoutApiUsageStatsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -4620,6 +4712,8 @@ export type BundlesCreateWithoutAuditLogsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -4714,6 +4808,8 @@ export type BundlesUncheckedCreateWithoutAuditLogsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -4822,6 +4918,8 @@ export type BundlesUpdateWithoutAuditLogsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -4916,6 +5014,8 @@ export type BundlesUncheckedUpdateWithoutAuditLogsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -5008,6 +5108,8 @@ export type BundlesCreateWithoutBetaTestersInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -5102,6 +5204,8 @@ export type BundlesUncheckedCreateWithoutBetaTestersInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -5210,6 +5314,8 @@ export type BundlesUpdateWithoutBetaTestersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -5304,6 +5410,8 @@ export type BundlesUncheckedUpdateWithoutBetaTestersInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -5396,6 +5504,8 @@ export type BundlesCreateWithoutChangeLogsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -5490,6 +5600,8 @@ export type BundlesUncheckedCreateWithoutChangeLogsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -5598,6 +5710,8 @@ export type BundlesUpdateWithoutChangeLogsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -5692,6 +5806,8 @@ export type BundlesUncheckedUpdateWithoutChangeLogsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -5784,6 +5900,8 @@ export type BundlesCreateWithoutCollaboratorsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -5878,6 +5996,8 @@ export type BundlesUncheckedCreateWithoutCollaboratorsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -5986,6 +6106,8 @@ export type BundlesUpdateWithoutCollaboratorsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -6080,6 +6202,8 @@ export type BundlesUncheckedUpdateWithoutCollaboratorsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -6172,6 +6296,8 @@ export type BundlesCreateWithoutContentRatingsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -6266,6 +6392,8 @@ export type BundlesUncheckedCreateWithoutContentRatingsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -6374,6 +6502,8 @@ export type BundlesUpdateWithoutContentRatingsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -6468,6 +6598,8 @@ export type BundlesUncheckedUpdateWithoutContentRatingsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -6560,6 +6692,8 @@ export type BundlesCreateWithoutCountriesInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -6654,6 +6788,8 @@ export type BundlesUncheckedCreateWithoutCountriesInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -6762,6 +6898,8 @@ export type BundlesUpdateWithoutCountriesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -6856,6 +6994,8 @@ export type BundlesUncheckedUpdateWithoutCountriesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -6948,6 +7088,8 @@ export type BundlesCreateWithoutDependenciesInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -7042,6 +7184,8 @@ export type BundlesUncheckedCreateWithoutDependenciesInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -7139,6 +7283,8 @@ export type BundlesCreateWithoutDependentBundlesInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -7233,6 +7379,8 @@ export type BundlesUncheckedCreateWithoutDependentBundlesInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -7341,6 +7489,8 @@ export type BundlesUpdateWithoutDependenciesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -7435,6 +7585,8 @@ export type BundlesUncheckedUpdateWithoutDependenciesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -7538,6 +7690,8 @@ export type BundlesUpdateWithoutDependentBundlesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -7632,6 +7786,8 @@ export type BundlesUncheckedUpdateWithoutDependentBundlesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -7724,6 +7880,8 @@ export type BundlesCreateWithoutDeveloperStrikesInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -7818,6 +7976,8 @@ export type BundlesUncheckedCreateWithoutDeveloperStrikesInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -7926,6 +8086,8 @@ export type BundlesUpdateWithoutDeveloperStrikesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -8020,6 +8182,8 @@ export type BundlesUncheckedUpdateWithoutDeveloperStrikesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -8112,6 +8276,8 @@ export type BundlesCreateWithoutDeviceSupportsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -8206,6 +8372,8 @@ export type BundlesUncheckedCreateWithoutDeviceSupportsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -8314,6 +8482,8 @@ export type BundlesUpdateWithoutDeviceSupportsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -8408,6 +8578,8 @@ export type BundlesUncheckedUpdateWithoutDeviceSupportsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -8500,6 +8672,8 @@ export type BundlesCreateWithoutExternalIntegrationsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -8594,6 +8768,8 @@ export type BundlesUncheckedCreateWithoutExternalIntegrationsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -8702,6 +8878,8 @@ export type BundlesUpdateWithoutExternalIntegrationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -8796,6 +8974,8 @@ export type BundlesUncheckedUpdateWithoutExternalIntegrationsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -8888,6 +9068,8 @@ export type BundlesCreateWithoutFeaturedSlotsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -8982,6 +9164,8 @@ export type BundlesUncheckedCreateWithoutFeaturedSlotsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -9090,6 +9274,8 @@ export type BundlesUpdateWithoutFeaturedSlotsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -9184,6 +9370,8 @@ export type BundlesUncheckedUpdateWithoutFeaturedSlotsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -9276,6 +9464,8 @@ export type BundlesCreateWithoutInAppPurchasesInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -9370,6 +9560,8 @@ export type BundlesUncheckedCreateWithoutInAppPurchasesInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -9478,6 +9670,8 @@ export type BundlesUpdateWithoutInAppPurchasesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -9572,6 +9766,8 @@ export type BundlesUncheckedUpdateWithoutInAppPurchasesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -9664,6 +9860,8 @@ export type BundlesCreateWithoutInstallEventsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -9758,6 +9956,8 @@ export type BundlesUncheckedCreateWithoutInstallEventsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -9866,6 +10066,8 @@ export type BundlesUpdateWithoutInstallEventsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -9960,6 +10162,8 @@ export type BundlesUncheckedUpdateWithoutInstallEventsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -10052,6 +10256,8 @@ export type BundlesCreateWithoutLanguagesInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -10146,6 +10352,8 @@ export type BundlesUncheckedCreateWithoutLanguagesInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -10254,6 +10462,8 @@ export type BundlesUpdateWithoutLanguagesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -10348,6 +10558,8 @@ export type BundlesUncheckedUpdateWithoutLanguagesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -10440,6 +10652,8 @@ export type BundlesCreateWithoutLocalizationsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -10534,6 +10748,8 @@ export type BundlesUncheckedCreateWithoutLocalizationsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -10642,6 +10858,8 @@ export type BundlesUpdateWithoutLocalizationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -10736,6 +10954,8 @@ export type BundlesUncheckedUpdateWithoutLocalizationsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -10828,6 +11048,8 @@ export type BundlesCreateWithoutMonetizationConfigsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -10922,6 +11144,8 @@ export type BundlesUncheckedCreateWithoutMonetizationConfigsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -11030,6 +11254,8 @@ export type BundlesUpdateWithoutMonetizationConfigsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -11124,6 +11350,8 @@ export type BundlesUncheckedUpdateWithoutMonetizationConfigsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -11216,6 +11444,8 @@ export type BundlesCreateWithoutOrdersInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -11310,6 +11540,8 @@ export type BundlesUncheckedCreateWithoutOrdersInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -11418,6 +11650,8 @@ export type BundlesUpdateWithoutOrdersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -11512,6 +11746,8 @@ export type BundlesUncheckedUpdateWithoutOrdersInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -11604,6 +11840,8 @@ export type BundlesCreateWithoutPermissionsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -11698,6 +11936,8 @@ export type BundlesUncheckedCreateWithoutPermissionsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -11806,6 +12046,8 @@ export type BundlesUpdateWithoutPermissionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -11900,6 +12142,8 @@ export type BundlesUncheckedUpdateWithoutPermissionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -11992,6 +12236,8 @@ export type BundlesCreateWithoutPrivacyDeclarationsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -12086,6 +12332,8 @@ export type BundlesUncheckedCreateWithoutPrivacyDeclarationsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -12194,6 +12442,8 @@ export type BundlesUpdateWithoutPrivacyDeclarationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -12288,6 +12538,8 @@ export type BundlesUncheckedUpdateWithoutPrivacyDeclarationsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -12380,6 +12632,8 @@ export type BundlesCreateWithoutPromotionsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -12474,6 +12728,8 @@ export type BundlesUncheckedCreateWithoutPromotionsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -12582,6 +12838,8 @@ export type BundlesUpdateWithoutPromotionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -12676,6 +12934,8 @@ export type BundlesUncheckedUpdateWithoutPromotionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -12768,6 +13028,8 @@ export type BundlesCreateWithoutRankingScoresInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -12862,6 +13124,8 @@ export type BundlesUncheckedCreateWithoutRankingScoresInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -12970,6 +13234,8 @@ export type BundlesUpdateWithoutRankingScoresInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -13064,6 +13330,8 @@ export type BundlesUncheckedUpdateWithoutRankingScoresInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -13156,6 +13424,8 @@ export type BundlesCreateWithoutReleaseTracksInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -13250,6 +13520,8 @@ export type BundlesUncheckedCreateWithoutReleaseTracksInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -13358,6 +13630,8 @@ export type BundlesUpdateWithoutReleaseTracksInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -13452,6 +13726,8 @@ export type BundlesUncheckedUpdateWithoutReleaseTracksInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -13544,6 +13820,8 @@ export type BundlesCreateWithoutRetentionStatsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -13638,6 +13916,8 @@ export type BundlesUncheckedCreateWithoutRetentionStatsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -13746,6 +14026,8 @@ export type BundlesUpdateWithoutRetentionStatsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -13840,6 +14122,8 @@ export type BundlesUncheckedUpdateWithoutRetentionStatsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -13932,6 +14216,8 @@ export type BundlesCreateWithoutReviewsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -14026,6 +14312,8 @@ export type BundlesUncheckedCreateWithoutReviewsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -14134,6 +14422,8 @@ export type BundlesUpdateWithoutReviewsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -14228,6 +14518,8 @@ export type BundlesUncheckedUpdateWithoutReviewsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -14320,6 +14612,8 @@ export type BundlesCreateWithoutRuntimeConfigInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -14414,6 +14708,8 @@ export type BundlesUncheckedCreateWithoutRuntimeConfigInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -14522,6 +14818,8 @@ export type BundlesUpdateWithoutRuntimeConfigInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -14616,6 +14914,8 @@ export type BundlesUncheckedUpdateWithoutRuntimeConfigInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -14708,6 +15008,8 @@ export type BundlesCreateWithoutScreenshotsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -14802,6 +15104,8 @@ export type BundlesUncheckedCreateWithoutScreenshotsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -14910,6 +15214,8 @@ export type BundlesUpdateWithoutScreenshotsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -15004,6 +15310,8 @@ export type BundlesUncheckedUpdateWithoutScreenshotsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -15096,6 +15404,8 @@ export type BundlesCreateWithoutSearchKeywordsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -15190,6 +15500,8 @@ export type BundlesUncheckedCreateWithoutSearchKeywordsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -15298,6 +15610,8 @@ export type BundlesUpdateWithoutSearchKeywordsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -15392,6 +15706,8 @@ export type BundlesUncheckedUpdateWithoutSearchKeywordsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -15484,6 +15800,8 @@ export type BundlesCreateWithoutStateTransitionsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -15578,6 +15896,8 @@ export type BundlesUncheckedCreateWithoutStateTransitionsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -15686,6 +16006,8 @@ export type BundlesUpdateWithoutStateTransitionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -15780,6 +16102,8 @@ export type BundlesUncheckedUpdateWithoutStateTransitionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -15872,6 +16196,8 @@ export type BundlesCreateWithoutStatsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -15966,6 +16292,8 @@ export type BundlesUncheckedCreateWithoutStatsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -16074,6 +16402,8 @@ export type BundlesUpdateWithoutStatsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -16168,6 +16498,8 @@ export type BundlesUncheckedUpdateWithoutStatsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -16260,6 +16592,8 @@ export type BundlesCreateWithoutStoreFlagsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -16354,6 +16688,8 @@ export type BundlesUncheckedCreateWithoutStoreFlagsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -16462,6 +16798,8 @@ export type BundlesUpdateWithoutStoreFlagsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -16556,6 +16894,8 @@ export type BundlesUncheckedUpdateWithoutStoreFlagsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -16648,6 +16988,8 @@ export type BundlesCreateWithoutStoreListingsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -16742,6 +17084,8 @@ export type BundlesUncheckedCreateWithoutStoreListingsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -16850,6 +17194,8 @@ export type BundlesUpdateWithoutStoreListingsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -16944,6 +17290,8 @@ export type BundlesUncheckedUpdateWithoutStoreListingsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -17036,6 +17384,8 @@ export type BundlesCreateWithoutSubscriptionPlansInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -17130,6 +17480,8 @@ export type BundlesUncheckedCreateWithoutSubscriptionPlansInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -17238,6 +17590,8 @@ export type BundlesUpdateWithoutSubscriptionPlansInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -17332,6 +17686,8 @@ export type BundlesUncheckedUpdateWithoutSubscriptionPlansInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -17424,6 +17780,8 @@ export type BundlesCreateWithoutTagsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -17518,6 +17876,8 @@ export type BundlesUncheckedCreateWithoutTagsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -17626,6 +17986,8 @@ export type BundlesUpdateWithoutTagsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -17720,6 +18082,8 @@ export type BundlesUncheckedUpdateWithoutTagsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -17812,6 +18176,8 @@ export type BundlesCreateWithoutTrendingSnapshotsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -17906,6 +18272,8 @@ export type BundlesUncheckedCreateWithoutTrendingSnapshotsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -18014,6 +18382,8 @@ export type BundlesUpdateWithoutTrendingSnapshotsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -18108,6 +18478,8 @@ export type BundlesUncheckedUpdateWithoutTrendingSnapshotsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -18200,6 +18572,8 @@ export type BundlesCreateWithoutUserReportsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -18294,6 +18668,8 @@ export type BundlesUncheckedCreateWithoutUserReportsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -18402,6 +18778,8 @@ export type BundlesUpdateWithoutUserReportsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -18496,6 +18874,8 @@ export type BundlesUncheckedUpdateWithoutUserReportsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -18588,6 +18968,8 @@ export type BundlesCreateWithoutVersionHistoriesInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -18682,6 +19064,8 @@ export type BundlesUncheckedCreateWithoutVersionHistoriesInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -18790,6 +19174,8 @@ export type BundlesUpdateWithoutVersionHistoriesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -18884,6 +19270,8 @@ export type BundlesUncheckedUpdateWithoutVersionHistoriesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -18976,6 +19364,8 @@ export type BundlesCreateWithoutWebhooksInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -19070,6 +19460,8 @@ export type BundlesUncheckedCreateWithoutWebhooksInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -19178,6 +19570,8 @@ export type BundlesUpdateWithoutWebhooksInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -19272,6 +19666,8 @@ export type BundlesUncheckedUpdateWithoutWebhooksInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -19364,6 +19760,8 @@ export type BundlesCreateWithoutUserEntitlementsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -19458,6 +19856,8 @@ export type BundlesUncheckedCreateWithoutUserEntitlementsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -19566,6 +19966,8 @@ export type BundlesUpdateWithoutUserEntitlementsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -19660,6 +20062,8 @@ export type BundlesUncheckedUpdateWithoutUserEntitlementsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -19752,6 +20156,8 @@ export type BundlesCreateWithoutRolloutsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -19846,6 +20252,8 @@ export type BundlesUncheckedCreateWithoutRolloutsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -19954,6 +20362,8 @@ export type BundlesUpdateWithoutRolloutsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -20048,6 +20458,8 @@ export type BundlesUncheckedUpdateWithoutRolloutsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -20140,6 +20552,8 @@ export type BundlesCreateWithoutSubscriptionHistoryInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -20234,6 +20648,8 @@ export type BundlesUncheckedCreateWithoutSubscriptionHistoryInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -20342,6 +20758,8 @@ export type BundlesUpdateWithoutSubscriptionHistoryInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -20436,6 +20854,8 @@ export type BundlesUncheckedUpdateWithoutSubscriptionHistoryInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -20528,6 +20948,8 @@ export type BundlesCreateWithoutCrashReportsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -20622,6 +21044,8 @@ export type BundlesUncheckedCreateWithoutCrashReportsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -20730,6 +21154,8 @@ export type BundlesUpdateWithoutCrashReportsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -20824,6 +21250,8 @@ export type BundlesUncheckedUpdateWithoutCrashReportsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -20916,6 +21344,8 @@ export type BundlesCreateWithoutReviewHistoryInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -21010,6 +21440,8 @@ export type BundlesUncheckedCreateWithoutReviewHistoryInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -21118,6 +21550,8 @@ export type BundlesUpdateWithoutReviewHistoryInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -21212,6 +21646,8 @@ export type BundlesUncheckedUpdateWithoutReviewHistoryInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -21304,6 +21740,8 @@ export type BundlesCreateWithoutReviewQueueInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -21398,6 +21836,8 @@ export type BundlesUncheckedCreateWithoutReviewQueueInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -21506,6 +21946,8 @@ export type BundlesUpdateWithoutReviewQueueInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -21600,6 +22042,8 @@ export type BundlesUncheckedUpdateWithoutReviewQueueInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -21692,6 +22136,8 @@ export type BundlesCreateWithoutSecurityScanResultsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -21786,6 +22232,8 @@ export type BundlesUncheckedCreateWithoutSecurityScanResultsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -21894,6 +22342,8 @@ export type BundlesUpdateWithoutSecurityScanResultsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -21988,6 +22438,8 @@ export type BundlesUncheckedUpdateWithoutSecurityScanResultsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -22080,6 +22532,8 @@ export type BundlesCreateWithoutUpdatePhasesInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
   abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
@@ -22174,6 +22628,8 @@ export type BundlesUncheckedCreateWithoutUpdatePhasesInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
   abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
@@ -22282,6 +22738,8 @@ export type BundlesUpdateWithoutUpdatePhasesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
   abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
@@ -22376,6 +22834,8 @@ export type BundlesUncheckedUpdateWithoutUpdatePhasesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
   abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
   adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
@@ -22878,6 +23338,8 @@ export type BundlesSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   updatedAt?: boolean
   deletedAt?: boolean
   projectId?: boolean
+  vercelDeploymentId?: boolean
+  vercelDeploymentUrl?: boolean
   project?: boolean | Prisma.Bundles$projectArgs<ExtArgs>
   abTests?: boolean | Prisma.Bundles$abTestsArgs<ExtArgs>
   abuseSignals?: boolean | Prisma.Bundles$abuseSignalsArgs<ExtArgs>
@@ -22974,6 +23436,8 @@ export type BundlesSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   updatedAt?: boolean
   deletedAt?: boolean
   projectId?: boolean
+  vercelDeploymentId?: boolean
+  vercelDeploymentUrl?: boolean
   project?: boolean | Prisma.Bundles$projectArgs<ExtArgs>
 }, ExtArgs["result"]["bundles"]>
 
@@ -23018,6 +23482,8 @@ export type BundlesSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   updatedAt?: boolean
   deletedAt?: boolean
   projectId?: boolean
+  vercelDeploymentId?: boolean
+  vercelDeploymentUrl?: boolean
   project?: boolean | Prisma.Bundles$projectArgs<ExtArgs>
 }, ExtArgs["result"]["bundles"]>
 
@@ -23062,9 +23528,11 @@ export type BundlesSelectScalar = {
   updatedAt?: boolean
   deletedAt?: boolean
   projectId?: boolean
+  vercelDeploymentId?: boolean
+  vercelDeploymentUrl?: boolean
 }
 
-export type BundlesOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bundleKey" | "name" | "slug" | "version" | "buildNumber" | "iconUrl" | "bannerUrl" | "shortDescription" | "description" | "privacyPolicyUrl" | "supportUrl" | "websiteUrl" | "developerName" | "developerId" | "developerEmail" | "category" | "subCategory" | "storagePath" | "bucket" | "fileSize" | "checksum" | "price" | "currency" | "isFree" | "isOneTimePayment" | "hasInAppPurchases" | "hasSubscription" | "status" | "rejectionReason" | "publishedAt" | "expiresAt" | "changelog" | "releaseNotes" | "ageRating" | "contentAdvisory" | "createdAt" | "updatedAt" | "deletedAt" | "projectId", ExtArgs["result"]["bundles"]>
+export type BundlesOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bundleKey" | "name" | "slug" | "version" | "buildNumber" | "iconUrl" | "bannerUrl" | "shortDescription" | "description" | "privacyPolicyUrl" | "supportUrl" | "websiteUrl" | "developerName" | "developerId" | "developerEmail" | "category" | "subCategory" | "storagePath" | "bucket" | "fileSize" | "checksum" | "price" | "currency" | "isFree" | "isOneTimePayment" | "hasInAppPurchases" | "hasSubscription" | "status" | "rejectionReason" | "publishedAt" | "expiresAt" | "changelog" | "releaseNotes" | "ageRating" | "contentAdvisory" | "createdAt" | "updatedAt" | "deletedAt" | "projectId" | "vercelDeploymentId" | "vercelDeploymentUrl", ExtArgs["result"]["bundles"]>
 export type BundlesInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   project?: boolean | Prisma.Bundles$projectArgs<ExtArgs>
   abTests?: boolean | Prisma.Bundles$abTestsArgs<ExtArgs>
@@ -23224,6 +23692,8 @@ export type $BundlesPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     updatedAt: Date
     deletedAt: Date | null
     projectId: string | null
+    vercelDeploymentId: string | null
+    vercelDeploymentUrl: string | null
   }, ExtArgs["result"]["bundles"]>
   composites: {}
 }
@@ -23739,6 +24209,8 @@ export interface BundlesFieldRefs {
   readonly updatedAt: Prisma.FieldRef<"Bundles", 'DateTime'>
   readonly deletedAt: Prisma.FieldRef<"Bundles", 'DateTime'>
   readonly projectId: Prisma.FieldRef<"Bundles", 'String'>
+  readonly vercelDeploymentId: Prisma.FieldRef<"Bundles", 'String'>
+  readonly vercelDeploymentUrl: Prisma.FieldRef<"Bundles", 'String'>
 }
     
 

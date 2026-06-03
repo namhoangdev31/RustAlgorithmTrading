@@ -9,8 +9,10 @@ import {
   PackageOpen,
   ShieldCheck,
   Users,
+  AlertCircle,
 } from "lucide-react";
 
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   createOrganizationOnboardingAction,
   createProjectWithBundleAction,
@@ -67,21 +69,27 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { getTranslations } from "next-intl/server";
+import { ProjectForm } from "@/components/projects/dialogs/ProjectForm";
+import { hasVercelApiKey } from "@/lib/server/vercel";
 
 type DashboardPageProps = {
   searchParams: Promise<{
     q?: string;
     dialog?: string;
     id?: string;
+    error?: string;
+    message?: string;
+    name?: string;
   }>;
 };
 
 export default async function DashboardPage({ searchParams }: DashboardPageProps) {
   const params = await searchParams;
   const user = await requireCurrentUser();
-  const [overview, projectData] = await Promise.all([
+  const [overview, projectData, vercelConnected] = await Promise.all([
     getDashboardOverview(user.id),
     getProjectBundleData(user.id, params),
+    hasVercelApiKey(user.id),
   ]);
   const dialog = params.dialog;
   const selectedProject = projectData.projects.find((project) => project.id === params.id);
@@ -104,6 +112,18 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
   return (
     <>
+      {params.error && (
+        <Alert variant="destructive" className="mb-4 bg-destructive/5 border-destructive/20 text-destructive rounded-lg animate-in slide-in-from-top-2 duration-300">
+          <AlertCircle className="size-4" />
+          <AlertTitle className="font-bold text-xs uppercase tracking-wider">Error Creating Project</AlertTitle>
+          <AlertDescription className="text-xs font-semibold mt-1">
+            {params.error === "missing_vercel_key" && "Vercel deployment is enabled, but your Vercel API key is not configured. Please connect your Vercel account under Settings > Integrations."}
+            {params.error === "invalid_vercel_name" && `The Vercel project name "${params.name || ""}" is invalid. It must match Vercel subdomain requirements (only lowercase, numbers, and hyphens; start/end with alpha-numeric).`}
+            {params.error === "vercel_api_error" && `Vercel API Error: ${params.message || "An unknown error occurred during Vercel project creation."}`}
+          </AlertDescription>
+        </Alert>
+      )}
+
       <div className="mb-2 flex items-center justify-between gap-2">
         <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
       </div>
@@ -280,7 +300,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
       </Card>
 
       <Dialog defaultOpen={dialog === "create" || !hasProjects}>
-        <DialogContent className="max-h-[90svh] overflow-y-auto sm:max-w-2xl">
+        <DialogContent className="max-h-[90svh] overflow-y-auto sm:max-w-2xl bg-canvas border border-hairline shadow-dark">
           <DialogHeader>
             <DialogTitle>{t("form.create_title")}</DialogTitle>
             <DialogDescription>{t("form.description")}</DialogDescription>
@@ -289,20 +309,25 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             action={createProjectWithBundleAction}
             organizations={overview.workspace.organizations}
             returnTo="/dashboard"
-            t={t}
+            vercelConnected={vercelConnected}
           />
         </DialogContent>
       </Dialog>
 
       {dialog === "edit" && selectedProject ? (
-        <ProjectForm
-          action={updateProjectBundleAction}
-          organizations={overview.workspace.organizations}
-          project={selectedProject}
-          returnTo="/dashboard"
-          t={t}
-          title={t("form.edit_title")}
-        />
+        <div className="fixed inset-x-0 -top-20 h-[calc(100vh+5rem)] z-[120] flex items-center justify-center p-4 bg-canvas-night/70 backdrop-blur-md transition-all duration-300 animate-in fade-in">
+          <Link href="/dashboard" className="absolute inset-0 cursor-default" aria-hidden="true" />
+          <div className="w-full max-w-2xl animate-in fade-in zoom-in-95 duration-200 relative z-10">
+            <ProjectForm
+              action={updateProjectBundleAction}
+              project={selectedProject}
+              organizations={overview.workspace.organizations}
+              returnTo="/dashboard"
+              title={t("form.edit_title")}
+              vercelConnected={vercelConnected}
+            />
+          </div>
+        </div>
       ) : null}
 
       {dialog === "delete" && selectedProject ? (
@@ -326,133 +351,6 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
         </Card>
       ) : null}
     </>
-  );
-}
-
-function ProjectForm({
-  action,
-  organizations,
-  project,
-  returnTo,
-  title,
-  t,
-}: {
-  action: (formData: FormData) => Promise<void>;
-  organizations: { id: string; name: string }[];
-  project?: {
-    id: string;
-    name: string;
-    description: string | null;
-    organizationId: string;
-    bundle: {
-      name: string;
-      status: string;
-      category: string | null;
-      shortDescription: string | null;
-    } | null;
-  };
-  returnTo: string;
-  title?: string;
-  t: any;
-}) {
-  const form = (
-    <form action={action} className="grid gap-4 md:grid-cols-2">
-      {project ? <Input type="hidden" name="projectId" value={project.id} /> : null}
-      <Input type="hidden" name="returnTo" value={returnTo} />
-      <Label className="grid gap-2 text-sm">
-        {t("form.project_name")}
-        <Input name="projectName" defaultValue={project?.name} required />
-      </Label>
-      <Label className="grid gap-2 text-sm">
-        {t("form.organization")}
-        <Select
-          defaultValue={project?.organizationId ?? organizations[0]?.id}
-          name="organizationId"
-        >
-          <SelectTrigger className="h-10">
-            <SelectValue placeholder={t("form.select_organization")} />
-          </SelectTrigger>
-          <SelectContent>
-            {organizations.map((organization) => (
-              <SelectItem key={organization.id} value={organization.id}>
-                {organization.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </Label>
-      <Label className="grid gap-2 text-sm">
-        {t("form.bundle_name")}
-        <Input name="bundleName" defaultValue={project?.bundle?.name ?? project?.name} />
-      </Label>
-      <Label className="grid gap-2 text-sm">
-        {t("form.status")}
-        <Select
-          defaultValue={project?.bundle?.status ?? "draft"}
-          name="status"
-        >
-          <SelectTrigger className="h-10">
-            <SelectValue placeholder={t("form.select_status")} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="draft">{t("form.status_options.draft")}</SelectItem>
-            <SelectItem value="review">{t("form.status_options.review")}</SelectItem>
-            <SelectItem value="published">{t("form.status_options.published")}</SelectItem>
-            <SelectItem value="archived">{t("form.status_options.archived")}</SelectItem>
-          </SelectContent>
-        </Select>
-      </Label>
-      <Label className="grid gap-2 text-sm">
-        {t("form.project_type")}
-        <Select
-          defaultValue={project?.bundle?.category ?? "web"}
-          name="category"
-        >
-          <SelectTrigger className="h-10">
-            <SelectValue placeholder={t("form.select_project_type")} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="web">{t("form.project_type_options.web")}</SelectItem>
-            <SelectItem value="mobile">{t("form.project_type_options.mobile")}</SelectItem>
-            <SelectItem value="desktop">{t("form.project_type_options.desktop")}</SelectItem>
-            <SelectItem value="api">{t("form.project_type_options.api")}</SelectItem>
-          </SelectContent>
-        </Select>
-      </Label>
-      <Label className="grid gap-2 text-sm">
-        {t("form.project_description")}
-        <Input name="description" defaultValue={project?.description ?? ""} />
-      </Label>
-      <Label className="grid gap-2 text-sm md:col-span-2">
-        {t("form.bundle_summary")}
-        <Input
-          name="shortDescription"
-          defaultValue={project?.bundle?.shortDescription ?? ""}
-        />
-      </Label>
-      <div className="flex gap-2 md:col-span-2">
-        <Button type="submit">{project ? t("form.save_changes") : t("form.create_project")}</Button>
-        <Button asChild variant="outline">
-          <Link href={returnTo}>{t("form.cancel")}</Link>
-        </Button>
-      </div>
-    </form>
-  );
-
-  if (!title) {
-    return form;
-  }
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{t("form.description")}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        {form}
-      </CardContent>
-    </Card>
   );
 }
 

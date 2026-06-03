@@ -105,6 +105,7 @@ model User {
   subscriptionHistory    BundleSubscriptionHistory[]
   reviewHistory          BundleReviewHistory[]
   reviewQueueReviewed    BundleReviewQueue[]         @relation("ReviewQueueReviewer")
+  userSecrets            UserSecrets[]
 
   @@map("users")
 }
@@ -131,13 +132,15 @@ model Organization {
 }
 
 model Project {
-  id             String    @id @db.Uuid
-  name           String    @db.VarChar(255)
-  description    String?
-  organizationId String    @map("organization_id") @db.Uuid
-  createdAt      DateTime  @map("created_at") @db.Timestamp(6)
-  updatedAt      DateTime  @map("updated_at") @db.Timestamp(6)
-  deletedAt      DateTime? @map("deleted_at") @db.Timestamp(6)
+  id                String    @id @db.Uuid
+  name              String    @db.VarChar(255)
+  description       String?
+  organizationId    String    @map("organization_id") @db.Uuid
+  vercelProjectId   String?   @map("vercel_project_id") @db.VarChar(255)
+  vercelProjectName String?   @map("vercel_project_name") @db.VarChar(255)
+  createdAt         DateTime  @map("created_at") @db.Timestamp(6)
+  updatedAt         DateTime  @map("updated_at") @db.Timestamp(6)
+  deletedAt         DateTime? @map("deleted_at") @db.Timestamp(6)
 
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   bundle       Bundles?
@@ -206,8 +209,10 @@ model Bundles {
   updatedAt         DateTime  @map("updated_at") @db.Timestamp(6)
   deletedAt         DateTime? @map("deleted_at") @db.Timestamp(6)
 
-  projectId String?  @unique @map("project_id") @db.Uuid
-  project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId           String?   @unique @map("project_id") @db.Uuid
+  project             Project?  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  vercelDeploymentId  String?   @map("vercel_deployment_id") @db.VarChar(255)
+  vercelDeploymentUrl String?   @map("vercel_deployment_url") @db.VarChar(255)
 
   abTests              BundleAbTests[]
   abuseSignals         BundleAbuseSignals?
@@ -1349,4 +1354,19 @@ model BundleUpdatePhases {
 
   @@index([bundleId], map: "bundle_update_phases_bundle_id")
   @@map("bundle_update_phases")
+}
+
+model UserSecrets {
+  id             String   @id @db.Uuid
+  userId         String   @map("user_id") @db.Uuid
+  provider       String   @db.VarChar(64)
+  encryptedValue String   @map("encrypted_value")
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt      DateTime @default(now()) @map("updated_at") @db.Timestamp(6)
+
+  // Relation to User
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, provider])
+  @@map("user_secrets")
 }

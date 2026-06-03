@@ -366,3 +366,8 @@ export type BundleSecurityScanResults = Prisma.BundleSecurityScanResultsModel
  * 
  */
 export type BundleUpdatePhases = Prisma.BundleUpdatePhasesModel
+/**
+ * Model UserSecrets
+ * 
+ */
+export type UserSecrets = Prisma.UserSecretsModel

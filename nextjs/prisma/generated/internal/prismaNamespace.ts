@@ -448,7 +448,8 @@ export const ModelName = {
   BundleReviewHistory: 'BundleReviewHistory',
   BundleReviewQueue: 'BundleReviewQueue',
   BundleSecurityScanResults: 'BundleSecurityScanResults',
-  BundleUpdatePhases: 'BundleUpdatePhases'
+  BundleUpdatePhases: 'BundleUpdatePhases',
+  UserSecrets: 'UserSecrets'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -464,7 +465,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "order" | "riskEvent" | "file" | "user" | "organization" | "project" | "bundlePayouts" | "bundles" | "notifications" | "session" | "userDeviceToken" | "bundleAbTests" | "bundleAbuseSignals" | "bundleAdConfigurations" | "bundleAnalyticsEvents" | "bundleApiUsageStats" | "bundleAuditLog" | "bundleBetaTesters" | "bundleChangeLogs" | "bundleCollaborators" | "bundleContentRatings" | "bundleCountries" | "bundleDependencies" | "bundleDeveloperStrikes" | "bundleDeviceSupport" | "bundleExternalIntegrations" | "bundleFeaturedSlots" | "bundleInAppPurchases" | "bundleInstallEvents" | "bundleLanguages" | "bundleLocalizations" | "bundleMonetizationConfigs" | "bundleOrders" | "bundlePermissions" | "bundlePrivacyDeclarations" | "bundlePromotions" | "bundleRankingScores" | "bundleReleaseTracks" | "bundleRetentionStats" | "bundleReviews" | "bundleRuntimeConfig" | "bundleScreenshots" | "bundleSearchKeywords" | "bundleStateTransitions" | "bundleStats" | "bundleStoreFlags" | "bundleStoreListings" | "bundleSubscriptionPlans" | "bundleTags" | "bundleTrendingSnapshots" | "bundleUserReports" | "bundleVersionHistory" | "bundleWebhooks" | "bundleOrderItems" | "bundlePaymentLogs" | "bundleRefundRequests" | "bundleUserEntitlements" | "bundleRollouts" | "bundleReviewReports" | "bundleSubscriptionHistory" | "bundleCrashReports" | "bundleReviewHistory" | "bundleReviewQueue" | "bundleSecurityScanResults" | "bundleUpdatePhases"
+    modelProps: "order" | "riskEvent" | "file" | "user" | "organization" | "project" | "bundlePayouts" | "bundles" | "notifications" | "session" | "userDeviceToken" | "bundleAbTests" | "bundleAbuseSignals" | "bundleAdConfigurations" | "bundleAnalyticsEvents" | "bundleApiUsageStats" | "bundleAuditLog" | "bundleBetaTesters" | "bundleChangeLogs" | "bundleCollaborators" | "bundleContentRatings" | "bundleCountries" | "bundleDependencies" | "bundleDeveloperStrikes" | "bundleDeviceSupport" | "bundleExternalIntegrations" | "bundleFeaturedSlots" | "bundleInAppPurchases" | "bundleInstallEvents" | "bundleLanguages" | "bundleLocalizations" | "bundleMonetizationConfigs" | "bundleOrders" | "bundlePermissions" | "bundlePrivacyDeclarations" | "bundlePromotions" | "bundleRankingScores" | "bundleReleaseTracks" | "bundleRetentionStats" | "bundleReviews" | "bundleRuntimeConfig" | "bundleScreenshots" | "bundleSearchKeywords" | "bundleStateTransitions" | "bundleStats" | "bundleStoreFlags" | "bundleStoreListings" | "bundleSubscriptionPlans" | "bundleTags" | "bundleTrendingSnapshots" | "bundleUserReports" | "bundleVersionHistory" | "bundleWebhooks" | "bundleOrderItems" | "bundlePaymentLogs" | "bundleRefundRequests" | "bundleUserEntitlements" | "bundleRollouts" | "bundleReviewReports" | "bundleSubscriptionHistory" | "bundleCrashReports" | "bundleReviewHistory" | "bundleReviewQueue" | "bundleSecurityScanResults" | "bundleUpdatePhases" | "userSecrets"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -5278,6 +5279,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    UserSecrets: {
+      payload: Prisma.$UserSecretsPayload<ExtArgs>
+      fields: Prisma.UserSecretsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.UserSecretsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserSecretsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.UserSecretsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserSecretsPayload>
+        }
+        findFirst: {
+          args: Prisma.UserSecretsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserSecretsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.UserSecretsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserSecretsPayload>
+        }
+        findMany: {
+          args: Prisma.UserSecretsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserSecretsPayload>[]
+        }
+        create: {
+          args: Prisma.UserSecretsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserSecretsPayload>
+        }
+        createMany: {
+          args: Prisma.UserSecretsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.UserSecretsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserSecretsPayload>[]
+        }
+        delete: {
+          args: Prisma.UserSecretsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserSecretsPayload>
+        }
+        update: {
+          args: Prisma.UserSecretsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserSecretsPayload>
+        }
+        deleteMany: {
+          args: Prisma.UserSecretsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.UserSecretsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.UserSecretsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserSecretsPayload>[]
+        }
+        upsert: {
+          args: Prisma.UserSecretsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserSecretsPayload>
+        }
+        aggregate: {
+          args: Prisma.UserSecretsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateUserSecrets>
+        }
+        groupBy: {
+          args: Prisma.UserSecretsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserSecretsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.UserSecretsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserSecretsCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -5398,6 +5473,8 @@ export const ProjectScalarFieldEnum = {
   name: 'name',
   description: 'description',
   organizationId: 'organizationId',
+  vercelProjectId: 'vercelProjectId',
+  vercelProjectName: 'vercelProjectName',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   deletedAt: 'deletedAt'
@@ -5463,7 +5540,9 @@ export const BundlesScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   deletedAt: 'deletedAt',
-  projectId: 'projectId'
+  projectId: 'projectId',
+  vercelDeploymentId: 'vercelDeploymentId',
+  vercelDeploymentUrl: 'vercelDeploymentUrl'
 } as const
 
 export type BundlesScalarFieldEnum = (typeof BundlesScalarFieldEnum)[keyof typeof BundlesScalarFieldEnum]
@@ -6335,6 +6414,18 @@ export const BundleUpdatePhasesScalarFieldEnum = {
 export type BundleUpdatePhasesScalarFieldEnum = (typeof BundleUpdatePhasesScalarFieldEnum)[keyof typeof BundleUpdatePhasesScalarFieldEnum]
 
 
+export const UserSecretsScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  provider: 'provider',
+  encryptedValue: 'encryptedValue',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type UserSecretsScalarFieldEnum = (typeof UserSecretsScalarFieldEnum)[keyof typeof UserSecretsScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -6646,6 +6737,7 @@ export type GlobalOmitConfig = {
   bundleReviewQueue?: Prisma.BundleReviewQueueOmit
   bundleSecurityScanResults?: Prisma.BundleSecurityScanResultsOmit
   bundleUpdatePhases?: Prisma.BundleUpdatePhasesOmit
+  userSecrets?: Prisma.UserSecretsOmit
 }
 
 /* Types for Logging */

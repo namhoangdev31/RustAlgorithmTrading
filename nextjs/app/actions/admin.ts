@@ -17,6 +17,7 @@ import {
   getWorkspaceContext,
   setActiveOrganizationCookie,
 } from "@/lib/server/workspace";
+import { hasVercelApiKey, getVercelClient } from "@/lib/server/vercel";
 
 function readFormValue(formData: FormData, key: string) {
   const value = formData.get(key);
@@ -196,6 +197,45 @@ export async function createProjectWithBundleAction(formData: FormData) {
     redirect(returnTo);
   }
 
+  const deployToVercel = readFormValue(formData, "deployToVercel") === "on" || readFormValue(formData, "deployToVercel") === "true";
+  let vercelProjectId: string | null = null;
+  let vercelProjectName: string | null = null;
+
+  if (deployToVercel) {
+    const vercelConnected = await hasVercelApiKey(user.id);
+    if (!vercelConnected) {
+      redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}error=missing_vercel_key`);
+    }
+
+    let inputVercelName = readFormValue(formData, "vercelProjectName");
+    if (!inputVercelName) {
+      // Auto-slugify projectName
+      inputVercelName = projectName
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+    }
+
+    if (inputVercelName.length < 1 || inputVercelName.length > 100 || !/^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/.test(inputVercelName)) {
+      redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}error=invalid_vercel_name&name=${encodeURIComponent(inputVercelName)}`);
+    }
+
+    try {
+      const vercel = await getVercelClient(user.id);
+      const result = await vercel.projects.createProject({
+        requestBody: {
+          name: inputVercelName,
+        },
+      });
+      vercelProjectId = result.id;
+      vercelProjectName = result.name;
+    } catch (err: any) {
+      console.error("Vercel project creation failed:", err);
+      const errorMsg = err?.message || "Vercel API error";
+      redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}error=vercel_api_error&message=${encodeURIComponent(errorMsg)}`);
+    }
+  }
+
   const now = new Date();
   const bundleDefaults = buildBundleDefaults(
     projectName,
@@ -209,6 +249,8 @@ export async function createProjectWithBundleAction(formData: FormData) {
         name: projectName,
         description: readFormValue(formData, "description") || null,
         organizationId,
+        vercelProjectId,
+        vercelProjectName,
         createdAt: now,
         updatedAt: now,
       },
