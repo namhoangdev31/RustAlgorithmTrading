@@ -1,46 +1,106 @@
 package com.lepos.lepos.data.repository
 
-import com.lepos.lepos.data.network.MockApiService
+import com.lepos.lepos.data.mapper.paymentRequestDto
+import com.lepos.lepos.data.mapper.toDomain
+import com.lepos.lepos.data.mapper.toWireValue
+import com.lepos.lepos.data.remote.WalletRemoteDataSource
+import com.lepos.lepos.domain.model.payment.PaymentMethod
 import com.lepos.lepos.domain.model.payment.Transaction
+import com.lepos.lepos.domain.model.payment.TransactionStatus
+import com.lepos.lepos.domain.model.payment.TransactionType
 import com.lepos.lepos.domain.model.payment.WalletBalance
-import com.lepos.lepos.domain.model.payment.WalletTransactionRequest
-import com.lepos.lepos.domain.model.payment.WalletTransactionResponse
 import com.lepos.lepos.domain.repository.WalletRepository
-import com.lepos.lepos.domain.usecase.WalletUseCase
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
 
-/**
- * Repository implementation for Wallet using Mock API Service
- * For production, replace MockApiService với real API service
- */
-class WalletRepositoryImpl : WalletRepository {
-    
-    private val apiService: MockApiService = MockApiService()
-    private val ktorClient: io.ktor.client.HttpClient? = 
-        (javaClass.classLoader?.loadClass("KtorClientFactory")?.newInstance() as KtorClientFactory?)?.client
-    
-    override suspend fun getWalletBalance(userId: String): WalletBalance = 
-        apiService.getWalletBalance(userId)
-    
-    override suspend fun getPaymentMethods(userId: String): List<PaymentMethod> = 
-        apiService.getPaymentMethods(userId)
-    
-    override suspend fun addTransaction(userId: String, request: WalletTransactionRequest): WalletTransactionResponse {
-        return apiService.addTransaction(userId, request)
+class WalletRepositoryImpl(
+    private val remoteDataSource: WalletRemoteDataSource
+) : WalletRepository {
+    override fun getBalance(): Flow<WalletBalance> {
+        return flow {
+            emit(remoteDataSource.getBalance().toDomain())
+        }.catch { error ->
+            emit(WalletBalance.Error(error.message ?: "Failed to load wallet balance", error as? Exception))
+        }
     }
 
-    override suspend fun getTransactions(
-        userId: String,
-        limit: Int = 50,
-        offset: Int = 0
-    ): Flow<List<Transaction>> = 
-        apiService.getTransactions(userId, limit, offset)
+    override fun getTransactionHistory(
+        limit: Int,
+        offset: Int,
+        type: TransactionType?,
+        status: TransactionStatus?
+    ): Flow<List<Transaction>> {
+        return flow {
+            emit(
+                remoteDataSource.getTransactionHistory(
+                    limit = limit,
+                    offset = offset,
+                    type = type?.toWireValue(),
+                    status = status?.toWireValue()
+                ).map { it.toDomain() }
+            )
+        }.catch {
+            emit(emptyList())
+        }
+    }
+
+    override fun getAllTransactions(): Flow<List<Transaction>> = getTransactionHistory(limit = Int.MAX_VALUE)
+
+    override fun getRecentTransactions(limit: Int): Flow<List<Transaction>> {
+        return getTransactionHistory(limit = limit)
+    }
+
+    override fun getTransactionById(id: String): Flow<Transaction?> {
+        return flow<Transaction?> {
+            emit(remoteDataSource.getTransactionById(id).toDomain())
+        }.catch {
+            emit(null)
+        }
+    }
+
+    override fun getPaymentMethods(): Flow<List<PaymentMethod>> {
+        return flow {
+            emit(remoteDataSource.getPaymentMethods().map { it.toDomain() })
+        }.catch {
+            emit(emptyList())
+        }
+    }
+
+    override suspend fun deposit(amount: Double): WalletBalance {
+        if (amount <= 0.0) return WalletBalance.Error("Deposit amount must be positive")
+        return runCatching { remoteDataSource.deposit(amount).toDomain() }
+            .getOrElse { WalletBalance.Error(it.message ?: "Deposit failed", it as? Exception) }
+    }
+
+    override suspend fun withdraw(amount: Double): WalletBalance {
+        if (amount <= 0.0) return WalletBalance.Error("Withdraw amount must be positive")
+        return runCatching { remoteDataSource.withdraw(amount).toDomain() }
+            .getOrElse { WalletBalance.Error(it.message ?: "Withdraw failed", it as? Exception) }
+    }
+
+    override suspend fun processPayment(
+        transactionType: TransactionType,
+        amount: Double,
+        paymentMethod: PaymentMethod,
+        callbackId: String,
+        metadata: Map<String, String>
+    ): WalletBalance {
+        if (amount <= 0.0) return WalletBalance.Error("Payment amount must be positive")
+        val request = paymentRequestDto(
+            transactionType = transactionType,
+            amount = amount,
+            paymentMethod = paymentMethod,
+            callbackId = callbackId,
+            metadata = metadata
+        )
+        return runCatching { remoteDataSource.processPayment(request).toDomain() }
+            .getOrElse { WalletBalance.Error(it.message ?: "Payment failed", it as? Exception) }
+    }
 }
 
-/**
- * DI Wrapper for WalletRepository - Manual DI for shared module
- */
 object WalletRepositoryWrapper {
-    fun getRepository(): WalletRepository {
-        return WalletRepositoryImpl()
+    fun getRepository(remoteDataSource: WalletRemoteDataSource): WalletRepository {
+        return WalletRepositoryImpl(remoteDataSource)
     }
 }

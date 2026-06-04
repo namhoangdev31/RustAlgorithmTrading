@@ -1,53 +1,90 @@
 package com.lepos.lepos.data.repository
 
-import com.lepos.lepos.data.network.MockApiService
-import com.lepos.lepos.domain.model.auth.LoginRequest
-import com.lepos.lepos.domain.model.auth.LoginResponse
-import com.lepos.lepos.domain.model.auth.RefreshTokenResponse
-import com.lepos.lepos.domain.model.auth.Token
+import com.lepos.lepos.domain.model.DomainResult
+import com.lepos.lepos.domain.model.auth.AuthTokenResponse
+import com.lepos.lepos.data.remote.AuthRemoteDataSource
 import com.lepos.lepos.domain.repository.LoginRepository
-import com.lepos.lepos.domain.usecase.LoginUseCase
+import com.lepos.lepos.domain.repository.TokenStorage
 
-/**
- * Repository implementation for Login using Mock API Service
- * For production, replace MockApiService with real API service
- */
-class LoginRepositoryImpl : LoginRepository {
-    
-    private val apiService: MockApiService = MockApiService()
-    
-    // Get API client from context
-    private val ktorClient: io.ktor.client.HttpClient? = 
-        (javaClass.classLoader?.loadClass("KtorClientFactory")?.newInstance() as KtorClientFactory?)?.client
+class LoginRepositoryImpl(
+    private val authRemoteDataSource: AuthRemoteDataSource,
+    private val tokenStorage: TokenStorage
+) : LoginRepository {
 
-    override suspend fun login(request: LoginRequest): LoginResponse = apiService.login(request)
-    override suspend fun register(request: LoginRequest): LoginResponse = apiService.login(request)
-    override suspend fun logout() = apiService.login(LoginRequest(emptyMap()))
-    override suspend fun verifyToken(): Boolean = apiService.login(LoginRequest(emptyMap()))
-    override suspend fun getCurrentUser(): User? = null
+    override suspend fun login(email: String, password: String): DomainResult<Boolean> {
+        return if (email.isBlank() || password.isBlank()) {
+            DomainResult.Error("Email and password are required")
+        } else {
+            runCatching { authRemoteDataSource.login(email, password) }
+                .fold(
+                    onSuccess = { response ->
+                        persist(response)
+                        DomainResult.Success(true)
+                    },
+                    onFailure = { error ->
+                        DomainResult.Error(error.message ?: "Login failed", error)
+                    }
+                )
+        }
+    }
+
+    override suspend fun loginWithFirebase(idToken: String): DomainResult<AuthTokenResponse> {
+        return if (idToken.isBlank()) {
+            DomainResult.Error("Firebase token is required")
+        } else {
+            runCatching { authRemoteDataSource.loginWithFirebase(idToken) }
+                .fold(
+                    onSuccess = { response ->
+                        persist(response)
+                        DomainResult.Success(response)
+                    },
+                    onFailure = { error ->
+                        DomainResult.Error(error.message ?: "Firebase login failed", error)
+                    }
+                )
+        }
+    }
+
+    override suspend fun refreshAccessToken(refreshToken: String): DomainResult<AuthTokenResponse> {
+        return if (refreshToken.isBlank()) {
+            DomainResult.Error("Refresh token is required")
+        } else {
+            runCatching { authRemoteDataSource.refreshAccessToken(refreshToken) }
+                .fold(
+                    onSuccess = { response ->
+                        persist(response)
+                        DomainResult.Success(response)
+                    },
+                    onFailure = { error ->
+                        DomainResult.Error(error.message ?: "Token refresh failed", error)
+                    }
+                )
+        }
+    }
+
+    override suspend fun getAccessToken(): String? = tokenStorage.get("access_token")
+
+    override suspend fun getRefreshToken(): String? = tokenStorage.get("refresh_token")
+
+    override suspend fun saveTokens(accessToken: String, refreshToken: String) {
+        tokenStorage.save("access_token", accessToken)
+        tokenStorage.save("refresh_token", refreshToken)
+    }
+
+    override suspend fun clearTokens() {
+        tokenStorage.clear()
+    }
+
+    private suspend fun persist(response: AuthTokenResponse) {
+        saveTokens(
+            accessToken = response.accessToken,
+            refreshToken = response.refreshToken
+        )
+    }
 }
 
-/**
- * Custom HTTP Request implementation to support token injection
- */
-data class CustomHttpSendRequest(
-    val originalRequest: io.ktor.client.HttpSendRequest,
-    private val accessToken: String,
-    private val refreshToken: String
-) : io.ktor.client.HttpSendRequest {
-    override fun headers(): MutableHeaders = mutableMapOf("Authorization" to "Bearer $accessToken")
-}
-
-/**
- * DI Wrapper for LoginRepository - Manual DI for shared module
- * This allows shared module to work without full Koin setup initially
- */
 object LoginRepositoryWrapper {
-    /**
-     * Get LoginRepository instance
-     * Uses MockApiService for development and testing
-     */
-    fun getRepository(): LoginRepository {
-        return LoginRepositoryImpl()
+    fun getRepository(authRemoteDataSource: AuthRemoteDataSource, tokenStorage: TokenStorage): LoginRepository {
+        return LoginRepositoryImpl(authRemoteDataSource, tokenStorage)
     }
 }

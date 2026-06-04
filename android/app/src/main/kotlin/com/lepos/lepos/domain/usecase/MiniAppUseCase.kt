@@ -1,12 +1,17 @@
 package com.lepos.lepos.domain.usecase
 
-import com.lepos.lepos.domain.repository.MiniAppRepository
 import com.lepos.lepos.domain.model.today.MiniApp
-import kotlinx.coroutines.flow.*
+import com.lepos.lepos.domain.repository.MiniAppRepository
+import com.lepos.lepos.domain.repository.MiniAppStats
+import com.lepos.lepos.domain.repository.MiniAppWithDetails
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.stateIn
 
 class MiniAppUseCase(private val repository: MiniAppRepository) {
-
-    // Get all mini apps with filtering and pagination
     fun getAllMiniApps(
         category: String? = null,
         search: String? = null,
@@ -21,135 +26,93 @@ class MiniAppUseCase(private val repository: MiniAppRepository) {
         .catch { emit(emptyList()) }
         .stateIn(
             scope = CoroutineScope(Dispatchers.Main),
-            initialValue = emptyList(),
-            transformations = flowing(),
-            start = Start.Eagerly
+            started = SharingStarted.Eagerly,
+            initialValue = emptyList()
         )
 
-    // Get mini app by ID
     fun getMiniAppById(id: String): StateFlow<MiniApp?> = repository.getMiniAppById(id)
         .catch { emit(null) }
         .stateIn(
             scope = CoroutineScope(Dispatchers.Main),
-            initialValue = null,
-            transformations = flowing(),
-            start = Start.Eagerly
+            started = SharingStarted.Eagerly,
+            initialValue = null
         )
 
-    // Get mini apps by category
-    fun getMiniAppsByCategory(category: String): StateFlow<List<MiniApp>> = repository.getMiniAppsByCategory(
-        category = category
-    )
+    fun getMiniAppsByCategory(category: String): StateFlow<List<MiniApp>> = repository.getMiniAppsByCategory(category)
         .catch { emit(emptyList()) }
         .stateIn(
             scope = CoroutineScope(Dispatchers.Main),
-            initialValue = emptyList(),
-            transformations = flowing(),
-            start = Start.Eagerly
+            started = SharingStarted.Eagerly,
+            initialValue = emptyList()
         )
 
-    // Get featured mini apps
     fun getFeaturedMiniApps(): StateFlow<List<MiniApp>> = repository.getFeaturedMiniApps()
         .catch { emit(emptyList()) }
         .stateIn(
             scope = CoroutineScope(Dispatchers.Main),
-            initialValue = emptyList(),
-            transformations = flowing(),
-            start = Start.Eagerly
+            started = SharingStarted.Eagerly,
+            initialValue = emptyList()
         )
 
-    // Get mini apps by developer
-    fun getMiniAppsByDeveloper(developer: String): StateFlow<List<MiniApp>> = repository.getMiniAppsByDeveloper(
-        developer = developer
-    )
+    fun getMiniAppsByDeveloper(developer: String): StateFlow<List<MiniApp>> = repository.getMiniAppsByDeveloper(developer)
         .catch { emit(emptyList()) }
         .stateIn(
             scope = CoroutineScope(Dispatchers.Main),
-            initialValue = emptyList(),
-            transformations = flowing(),
-            start = Start.Eagerly
+            started = SharingStarted.Eagerly,
+            initialValue = emptyList()
         )
 
-    // Search mini apps
-    fun searchMiniApps(query: String): StateFlow<List<MiniApp>> = repository.searchMiniApps(
-        query = query
-    )
+    fun searchMiniApps(query: String): StateFlow<List<MiniApp>> = repository.searchMiniApps(query)
         .catch { emit(emptyList()) }
         .stateIn(
             scope = CoroutineScope(Dispatchers.Main),
-            initialValue = emptyList(),
-            transformations = flowing(),
-            start = Start.Eagerly
+            started = SharingStarted.Eagerly,
+            initialValue = emptyList()
         )
 
-    // Get mini app details
     fun getMiniAppDetails(id: String): StateFlow<MiniAppWithDetails> = repository.getMiniAppDetails(id)
-        .catch { emit(MiniAppWithDetails(
-            app = MiniApp(
-                id = "",
-                name = "",
-                description = "",
-                iconUrl = "",
-                packageName = "",
-                developer = "",
-                category = "",
-                version = "",
-                size = 0,
-                rating = 0.0,
-                downloadCount = 0,
-                isInstalled = false
-            ),
-            installedCount = 0,
-            sessionCount = 0L,
-            avgSessionDuration = 0L,
-            dailyActiveUsers = 0,
-            activeUsers7Days = 0,
-            activeUsers30Days = 0,
-            retentionRate = 0.0,
-            crs = 0.0
-        )) }
+        .catch { emit(MiniAppWithDetails(app = emptyMiniApp(id))) }
         .stateIn(
             scope = CoroutineScope(Dispatchers.Main),
-            initialValue = MiniAppWithDetails(
-                app = MiniApp(
-                    id = "",
-                    name = "",
-                    description = "",
-                    iconUrl = "",
-                    packageName = "",
-                    developer = "",
-                    category = "",
-                    version = "",
-                    size = 0,
-                    rating = 0.0,
-                    downloadCount = 0,
-                    isInstalled = false
-                ),
-                installedCount = 0,
-                sessionCount = 0L,
-                avgSessionDuration = 0L,
-                dailyActiveUsers = 0,
-                activeUsers7Days = 0,
-                activeUsers30Days = 0,
-                retentionRate = 0.0,
-                crs = 0.0
-            ),
-            transformations = flowing(),
-            start = Start.Eagerly
+            started = SharingStarted.Eagerly,
+            initialValue = MiniAppWithDetails(app = emptyMiniApp(id))
         )
 
-    // Create new mini app
     suspend fun createMiniApp(miniApp: MiniApp): MiniApp = repository.createMiniApp(miniApp)
 
-    // Update mini app
     suspend fun updateMiniApp(id: String, miniApp: MiniApp): MiniApp = repository.updateMiniApp(id, miniApp)
 
-    // Delete mini app
     suspend fun deleteMiniApp(id: String): Boolean = repository.deleteMiniApp(id)
 
-    // Get stats for a mini app
     fun getMiniAppStats(id: String): StateFlow<MiniAppStats> = repository.getMiniAppStats(id)
-        .catch { emit(MiniAppStats(
+        .catch { emit(emptyStats(id)) }
+        .stateIn(
+            scope = CoroutineScope(Dispatchers.Main),
+            started = SharingStarted.Eagerly,
+            initialValue = emptyStats(id)
+        )
+
+    fun getAllMiniAppStats(): StateFlow<List<MiniAppStats>> = repository.getAllMiniAppStats()
+        .catch { emit(emptyList()) }
+        .stateIn(
+            scope = CoroutineScope(Dispatchers.Main),
+            started = SharingStarted.Eagerly,
+            initialValue = emptyList()
+        )
+
+    private fun emptyMiniApp(id: String): MiniApp {
+        return MiniApp(
+            id = id,
+            name = "",
+            iconUrl = "",
+            category = "",
+            rating = 0.0,
+            developer = ""
+        )
+    }
+
+    private fun emptyStats(id: String): MiniAppStats {
+        return MiniAppStats(
             id = id,
             installedCount = 0,
             sessionCount = 0L,
@@ -161,33 +124,6 @@ class MiniAppUseCase(private val repository: MiniAppRepository) {
             crs = 0.0,
             downloadsLast24Hours = 0,
             downloadsLast7Days = 0
-        )) }
-        .stateIn(
-            scope = CoroutineScope(Dispatchers.Main),
-            initialValue = MiniAppStats(
-                id = id,
-                installedCount = 0,
-                sessionCount = 0L,
-                avgSessionDuration = 0L,
-                dailyActiveUsers = 0,
-                activeUsers7Days = 0,
-                activeUsers30Days = 0,
-                retentionRate = 0.0,
-                crs = 0.0,
-                downloadsLast24Hours = 0,
-                downloadsLast7Days = 0
-            ),
-            transformations = flowing(),
-            start = Start.Eagerly
         )
-
-    // Get all mini app stats
-    fun getAllMiniAppStats(): StateFlow<List<MiniAppStats>> = repository.getAllMiniAppStats()
-        .catch { emit(emptyList()) }
-        .stateIn(
-            scope = CoroutineScope(Dispatchers.Main),
-            initialValue = emptyList(),
-            transformations = flowing(),
-            start = Start.Eagerly
-        )
+    }
 }

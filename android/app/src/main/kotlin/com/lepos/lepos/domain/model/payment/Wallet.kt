@@ -1,8 +1,8 @@
 package com.lepos.lepos.domain.model.payment
 
-import com.lepos.lepos.core.Result
+import java.util.Locale
 
-sealed class WalletBalance : Result<Any> {
+sealed class WalletBalance {
     data class Success(val amount: WalletAmount) : WalletBalance()
     data class Error(val message: String, val cause: Exception? = null) : WalletBalance()
     data class Pending(val transactionId: String) : WalletBalance()
@@ -15,8 +15,7 @@ data class WalletAmount(
 )
 
 fun formatCurrency(amount: Double, currency: String): String {
-    val locale = Locale.getDefault().copy(displayWidth = Locale.DisplayWidth.TWONY)
-    return String.format("%,.0f %s", amount, currency)
+    return String.format(Locale.getDefault(), "%,.0f %s", amount, currency)
 }
 
 sealed class TransactionType {
@@ -24,7 +23,7 @@ sealed class TransactionType {
     object Withdrawal : TransactionType()
     data class Purchase(val productId: String) : TransactionType()
     data class Refund(val transactionId: String) : TransactionType()
-    object TopUp(val amount: Double) : TransactionType()
+    data class TopUp(val amount: Double) : TransactionType()
 }
 
 sealed class TransactionStatus {
@@ -52,7 +51,7 @@ data class Transaction(
         get() = this.status == TransactionStatus.Completed
     
     val totalPrice: Double
-        get() = amount * if (type == TransactionType.Refund) -1 else 1
+        get() = amount * if (type is TransactionType.Refund) -1 else 1
 }
 
 sealed class PaymentMethod {

@@ -3,54 +3,48 @@ package com.lepos.lepos.di
 import com.lepos.lepos.core.DefaultDispatcherProvider
 import com.lepos.lepos.core.DispatcherProvider
 
+import com.lepos.lepos.data.network.KtorClientFactory
 import com.lepos.lepos.data.remote.ApiService
+import com.lepos.lepos.data.remote.AuthRemoteDataSource
 import com.lepos.lepos.data.remote.BundleApiService
+import com.lepos.lepos.data.remote.MiniAppRemoteDataSource
+import com.lepos.lepos.data.remote.WalletRemoteDataSource
 import com.lepos.lepos.data.repository.BundleRepositoryImpl
+import com.lepos.lepos.data.repository.MiniAppRepositoryImpl
 import com.lepos.lepos.data.repository.TodayRepositoryImpl
 import com.lepos.lepos.data.repository.UserRepositoryImpl
+import com.lepos.lepos.data.repository.WalletRepositoryImpl
 import com.lepos.lepos.domain.port.BundleDownloader
 import com.lepos.lepos.domain.repository.BundleRepository
+import com.lepos.lepos.domain.repository.MiniAppRepository
 import com.lepos.lepos.domain.repository.TodayRepository
 import com.lepos.lepos.domain.repository.UserRepository
+import com.lepos.lepos.domain.repository.WalletRepository
 import com.lepos.lepos.domain.usecase.today.GetTopCollectionsUseCase
 import com.lepos.lepos.domain.usecase.today.GetPersonalizedAppsUseCase
 import com.lepos.lepos.domain.usecase.today.GetFeaturedAppUseCase
 import com.lepos.lepos.domain.usecase.today.GetAppsWeLoveUseCase
 import com.lepos.lepos.domain.usecase.*
 import io.ktor.client.HttpClient
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.defaultRequest
-import io.ktor.http.headers
-import io.ktor.serialization.kotlinx.json.json
-import kotlinx.serialization.json.Json
 import org.koin.dsl.module
 
 object SharedProvider {
     fun provideDispatcherProvider(): DispatcherProvider = DefaultDispatcherProvider()
 
     fun provideHttpClient(baseUrl: String): HttpClient {
-        val normalizedBaseUrl = if (baseUrl.endsWith("/")) baseUrl else "$baseUrl/"
-        return HttpClient {
-            install(ContentNegotiation) {
-                json(Json {
-                    prettyPrint = true
-                    isLenient = true
-                    ignoreUnknownKeys = true
-                })
-            }
-            defaultRequest {
-                url(normalizedBaseUrl)
-            }
-            expectSuccess = true
-            headers { append("Accept", "application/json") }
-        }
+        return KtorClientFactory.create(baseUrl)
     }
 
     fun provideApiService(client: HttpClient): ApiService = ApiService(client)
     fun provideBundleApiService(client: HttpClient): BundleApiService = BundleApiService(client)
+    fun provideAuthRemoteDataSource(client: HttpClient): AuthRemoteDataSource = AuthRemoteDataSource(client)
+    fun provideWalletRemoteDataSource(client: HttpClient): WalletRemoteDataSource = WalletRemoteDataSource(client)
+    fun provideMiniAppRemoteDataSource(client: HttpClient): MiniAppRemoteDataSource = MiniAppRemoteDataSource(client)
 
     fun provideUserRepository(apiService: ApiService): UserRepository = UserRepositoryImpl(apiService)
     fun provideBundleRepository(apiService: BundleApiService): BundleRepository = BundleRepositoryImpl(apiService)
+    fun provideWalletRepository(remoteDataSource: WalletRemoteDataSource): WalletRepository = WalletRepositoryImpl(remoteDataSource)
+    fun provideMiniAppRepository(remoteDataSource: MiniAppRemoteDataSource): MiniAppRepository = MiniAppRepositoryImpl(remoteDataSource)
     
     fun provideGetUsersUseCase(repo: UserRepository): GetUsersUseCase = GetUsersUseCase(repo)
     fun provideGetBundlesUseCase(repo: BundleRepository): GetBundlesUseCase = GetBundlesUseCase(repo)
@@ -65,6 +59,8 @@ object SharedProvider {
     fun provideGetAppsWeLoveUseCase(repo: TodayRepository): GetAppsWeLoveUseCase = GetAppsWeLoveUseCase(repo)
     fun provideGetTopCollectionsUseCase(repo: TodayRepository): GetTopCollectionsUseCase = GetTopCollectionsUseCase(repo)
     fun provideGetPersonalizedAppsUseCase(repo: TodayRepository): GetPersonalizedAppsUseCase = GetPersonalizedAppsUseCase(repo)
+    fun provideWalletUseCase(repo: WalletRepository): WalletUseCase = WalletUseCase(repo)
+    fun provideMiniAppUseCase(repo: MiniAppRepository): MiniAppUseCase = MiniAppUseCase(repo)
 }
 
 fun sharedModule(baseUrl: String) = module {
@@ -79,11 +75,16 @@ fun sharedModule(baseUrl: String) = module {
 
     single { SharedProvider.provideApiService(get()) }
     single { SharedProvider.provideBundleApiService(get()) }
+    single { SharedProvider.provideAuthRemoteDataSource(get()) }
+    single { SharedProvider.provideWalletRemoteDataSource(get()) }
+    single { SharedProvider.provideMiniAppRemoteDataSource(get()) }
 
     // Repository
     single<UserRepository> { SharedProvider.provideUserRepository(get()) }
     single<BundleRepository> { SharedProvider.provideBundleRepository(get()) }
     single<TodayRepository> { SharedProvider.provideTodayRepository(get()) }
+    single<WalletRepository> { SharedProvider.provideWalletRepository(get()) }
+    single<MiniAppRepository> { SharedProvider.provideMiniAppRepository(get()) }
 
     // UseCase
     factory { SharedProvider.provideGetUsersUseCase(get()) }
@@ -97,4 +98,6 @@ fun sharedModule(baseUrl: String) = module {
     factory { SharedProvider.provideGetAppsWeLoveUseCase(get()) }
     factory { SharedProvider.provideGetTopCollectionsUseCase(get()) }
     factory { SharedProvider.provideGetPersonalizedAppsUseCase(get()) }
+    factory { SharedProvider.provideWalletUseCase(get()) }
+    factory { SharedProvider.provideMiniAppUseCase(get()) }
 }
