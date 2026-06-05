@@ -44,6 +44,7 @@ Before contributing, ensure you have:
 ### Required Tools
 
 #### Rust Tools
+
 - **Rust**: 1.70+ (latest stable)
 - **rustfmt**: For code formatting
 - **clippy**: For linting
@@ -52,6 +53,7 @@ Before contributing, ensure you have:
 - **maturin**: For building PyO3 bindings
 
 #### Python Tools
+
 - **Python**: 3.11+ (recommended 3.12)
 - **uv**: Fast Python package manager (preferred)
 - **black**: Code formatting
@@ -158,24 +160,28 @@ Zero clippy warnings are required for PR approval.
 #### 3. Naming Conventions
 
 **Types**: PascalCase
+
 ```rust
 struct OrderBook { }
 enum OrderStatus { }
 ```
 
 **Functions and Variables**: snake_case
+
 ```rust
 fn calculate_position_size() -> f64 { }
 let max_order_size = 1000.0;
 ```
 
 **Constants**: SCREAMING_SNAKE_CASE
+
 ```rust
 const MAX_RECONNECT_ATTEMPTS: u32 = 10;
 const DEFAULT_TIMEOUT_SECS: u64 = 30;
 ```
 
 **Modules**: snake_case
+
 ```rust
 mod market_data;
 mod risk_manager;
@@ -396,6 +402,7 @@ pre-commit run --all-files
 ```
 
 **Configuration** (pyproject.toml):
+
 ```toml
 [tool.black]
 line-length = 100
@@ -512,6 +519,7 @@ class Order(BaseModel):
 #### 5. Naming Conventions
 
 **Classes**: PascalCase
+
 ```python
 class OrderBook:
     pass
@@ -521,6 +529,7 @@ class MarketDataService:
 ```
 
 **Functions and Variables**: snake_case
+
 ```python
 def calculate_position_size() -> Decimal:
     pass
@@ -529,6 +538,7 @@ max_order_size = Decimal("1000.0")
 ```
 
 **Constants**: SCREAMING_SNAKE_CASE
+
 ```python
 MAX_RECONNECT_ATTEMPTS: int = 10
 DEFAULT_TIMEOUT_SECONDS: int = 30
@@ -536,6 +546,7 @@ API_BASE_URL: str = "https://api.alpaca.markets"
 ```
 
 **Modules**: snake_case
+
 ```python
 # market_data.py
 # risk_manager.py
@@ -979,6 +990,7 @@ def test_rust_python_binding():
 ### When to Use Python vs Rust
 
 **Use Python for:**
+
 - Strategy development and backtesting
 - Data analysis and research
 - API integration and high-level orchestration
@@ -986,6 +998,7 @@ def test_rust_python_binding():
 - Rapid prototyping
 
 **Use Rust for:**
+
 - Performance-critical components (order book, matching)
 - Low-latency execution paths
 - Market data processing
@@ -993,6 +1006,7 @@ def test_rust_python_binding():
 - Memory-intensive operations
 
 **Use PyO3 Bindings for:**
+
 - Exposing Rust performance to Python strategies
 - Sharing data structures between languages
 - Gradual migration from Python to Rust
@@ -1202,16 +1216,19 @@ def test_python_orderbook_performance(benchmark):
 ### Documentation Requirements
 
 **For Rust code:**
+
 - Rustdoc comments with examples
 - Type signatures
 - Error documentation
 
 **For Python code:**
+
 - Google-style docstrings
 - Type hints
 - Usage examples
 
 **For PyO3 bindings:**
+
 - Document both Rust and Python interfaces
 - Performance characteristics
 - Type conversion details
@@ -1269,6 +1286,7 @@ git checkout -b fix/websocket-reconnection
 2. Add tests for new functionality (90%+ coverage required)
 3. Update documentation if needed
 4. Format and lint code:
+
    ```bash
    # Rust
    cargo fmt --all
@@ -1280,7 +1298,9 @@ git checkout -b fix/websocket-reconnection
    ruff check --fix src/ tests/
    mypy src/
    ```
+
 5. Ensure all tests pass:
+
    ```bash
    # Rust tests
    cargo test --workspace
@@ -1291,7 +1311,9 @@ git checkout -b fix/websocket-reconnection
    # Integration tests
    pytest tests/integration/
    ```
+
 6. Build PyO3 bindings if modified:
+
    ```bash
    cd rust/bindings
    maturin develop --release
@@ -1408,6 +1430,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/):
 ### Scopes
 
 **Rust Components:**
+
 - `market-data`: Market data service
 - `signal-bridge`: Signal bridge component
 - `risk-manager`: Risk manager
@@ -1415,16 +1438,19 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/):
 - `common`: Common/shared code
 
 **Python Components:**
+
 - `py-strategy`: Python strategy framework
 - `py-analysis`: Analysis and research tools
 - `py-config`: Configuration management
 - `py-api`: API integration layer
 
 **Cross-Language:**
+
 - `bindings`: PyO3 bindings
 - `integration`: Integration layer
 
 **General:**
+
 - `docs`: Documentation
 - `ci`: CI/CD configuration
 - `tests`: Testing infrastructure
@@ -1495,7 +1521,9 @@ What actually happened.
 
 **Logs**
 ```
+
 Paste relevant logs here
+
 ```
 
 **Additional context**
@@ -1535,6 +1563,7 @@ Any other relevant information.
 Review checklist:
 
 **General:**
+
 - [ ] Code follows style guidelines (Rust/Python)
 - [ ] Tests are comprehensive and pass (90%+ coverage)
 - [ ] Documentation is updated
@@ -1542,24 +1571,28 @@ Review checklist:
 - [ ] Commit messages follow conventions
 
 **Rust Specific:**
+
 - [ ] `rustfmt` and `clippy` checks pass
 - [ ] Error handling uses `thiserror` or `anyhow` appropriately
 - [ ] Async code doesn't block executor
 - [ ] No unsafe code without justification
 
 **Python Specific:**
+
 - [ ] Type hints are complete and accurate
 - [ ] Pydantic models used for validation
 - [ ] `black`, `isort`, `ruff`, and `mypy` pass
 - [ ] Async/await used correctly
 
 **PyO3 Bindings:**
+
 - [ ] Bindings are safe and well-documented
 - [ ] Type conversions are correct
 - [ ] Python interface is Pythonic
 - [ ] Performance benefits are clear
 
 **All Code:**
+
 - [ ] Performance considerations addressed
 - [ ] Error handling is appropriate
 - [ ] No memory leaks or resource leaks
