@@ -7,13 +7,17 @@
 | Path | Purpose |
 |---|---|
 | `src/api/` | Alpaca clients, API adapters, rate-limit |
-| `src/data/` | Historical data loading, preprocessing, indicators, features |
-| `src/strategies/` | Strategy contracts, signal logic, strategy router |
+| `src/data/` | Historical data, preprocessing, indicators, features |
+| `src/strategies/` | Strategy contracts, signal logic, router |
 | `src/backtesting/` | Backtest orchestration, metrics, portfolio, risk parity |
 | `src/bridge/` | Python↔Rust ZMQ handoff |
 | `tests/` | Unit, integration, e2e, benchmark tests |
-| `pyproject.toml` | Dependencies and build config |
-| `.ruff.toml` | Linter config |
+
+## Read First
+
+- `pyproject.toml` for dependencies and build config
+- `.ruff.toml` for linter config
+- `src/<module>/__init__.py` for module exports
 
 ## Validate
 
@@ -22,29 +26,22 @@ cd python && python -m pytest tests -q
 ```
 
 Targeted: `pytest tests/unit/test_<module>.py -q`
-
-## Style
-
-- Formatter: `black` (line-length 100)
-- Linter: `ruff`
-- Types: `mypy` — all functions must have type hints
-- Models: Pydantic `BaseModel` for data validation
-- Async: `async/await` for I/O, `asyncio.gather` for concurrent
+Style: `black` (line-length 100) · Lint: `ruff` · Types: `mypy`
 
 ## Common Tasks
 
-| Task | Do this | Don't do this |
+| Task | Do this | Don't |
 |---|---|---|
-| Add API endpoint | Read `src/api/` → find similar client → follow pattern | Read all of `src/` |
-| Add indicator | Read `src/data/` → grep for similar indicator | Read `src/strategies/` |
-| Fix test | Read the failing test file only | Run full test suite first |
-| Add strategy | Read `src/strategies/base.py` → follow interface | Scan entire `src/` |
-| Bridge change | Read `src/bridge/` + coordinate with `rust/AGENTS.md` | Guess ZMQ protocol |
+| Add API endpoint | Grep `src/api/` for similar client | Read all of `src/` |
+| Add indicator | Grep `src/data/` for similar | Read `src/strategies/` |
+| Fix test | Read failing test file only | Run full suite first |
+| Add strategy | Read `src/strategies/base.py` interface | Scan entire `src/` |
+| Bridge change | Read `src/bridge/` + `rust/AGENTS.md` | Guess ZMQ protocol |
 
-## Forbidden Paths (NEVER read)
+## Forbidden Reads
 
 ```
-uv.lock              # 507KB — zero useful context
+uv.lock              # 507KB
 __pycache__/          # Python cache
 .venv/                # Virtual environment
 *.egg-info/           # Build artifacts
@@ -52,56 +49,46 @@ __pycache__/          # Python cache
 .ruff_cache/          # Linter cache
 ```
 
-## Cross-Domain (only when task requires)
+## Forbidden Writes
 
-- **Python↔Rust ZMQ**: Changing `src/bridge/` → also read `rust/AGENTS.md`
-- **Python↔Go telemetry**: Changing observability code → also read `go/AGENTS.md`
+Lock files · Build artifacts · Generated files · `.venv/` · Coverage data
 
-## Anti-Patterns
+## Cross-Domain Triggers
 
-- ❌ Do NOT scan sibling directories (`rust/`, `go/`, `nextjs/`, etc.)
-- ❌ Do NOT read `PLAYBOOK.md` or root `AGENTS.md` for single-domain tasks
-- ❌ Do NOT `ls -R python/` — navigate to the specific subfolder
-- ❌ Do NOT read `uv.lock` or `requirements.txt` to understand dependencies — read `pyproject.toml`
-- ❌ Do NOT read `CONTRIBUTING.md` (36KB) unless user explicitly asks
+- Changing `src/bridge/` → also read `rust/AGENTS.md`
+- Changing observability code → also read `go/AGENTS.md`
 
-## Standalone Rules (when root AGENTS.md is not available)
+## Standalone Rules
 
-### Risk Classification
+### Risk
 
-| Level | Examples | Action |
-|---|---|---|
-| Low | Docs, comments, style fix | Execute directly |
-| Medium | Logic change, bug fix | Plan if ≥3 files |
-| High | API contracts, auth, shared config | Plan + impacted files + rollback note |
-| Critical | Secrets, migrations, permissions | Plan + user approval required |
+| Level | Action |
+|---|---|
+| Low (docs, comments) | Execute directly |
+| Medium (logic, bug fix) | Plan if ≥3 files |
+| High (API, auth, config) | Plan + rollback note |
+| Critical (secrets, migrations) | Plan + user approval |
 
 ### Planning (≥3 files)
 
-1. **Grep first** to verify files exist before planning
-2. Each step: `Step N: [ACTION] [EXACT_PATH]` with What + Why
-3. Max 5 steps (single domain) · Max 8 steps (new feature)
-4. ❌ No "explore/read/review" steps · ❌ No scope creep · ❌ No unrequested tests/docs
-5. Order: Schema → Logic → Interface → Wiring
-6. Execute immediately after plan (unless destructive)
+1. Grep first · Step format: `Step N: [ACTION] [PATH]` — What + Why
+2. Max 3 steps (medium) · 5 (high) · 8 (critical)
+3. ❌ No explore/review steps · ❌ No scope creep · ❌ No unrequested tests/docs
+4. Order: Schema → Logic → Interface → Wiring · Execute immediately
 
-### Token Discipline
+### Grep-Before-Read
 
-#### Reading Rules
+Files >120 lines: grep first → read 50-200 lines around match.
+Files <120 lines: may read full file.
+Never open files "to explore." Use `pyproject.toml` for deps, not `uv.lock`.
 
-1. **Grep before read** — find exact file+line first, never explore
-2. **Max 200 lines per read** — use StartLine/EndLine for large files
-3. **Never read**: lock files, build artifacts, binaries, generated files, `.idea/`
-4. **No assumptions** — verify package manager, versions, API shapes in source
+### Output
 
-#### Writing / Coding Rules
+1. Diff only — no full rewrites, no unchanged code
+2. Keep files <500 lines — split when larger
+3. Reuse helpers — check existing utils before writing new
+4. No pre-summaries — just execute
 
-1. **Respond concisely**: Do not restate unchanged code. Show only the diff or modified parts.
-2. **Keep files small**: Limit modules to ~500 lines. Split logic early to minimize future read tokens.
-3. **Targeted edits only**: Modify only the lines needed for the fix. Avoid formatting unrelated code.
-4. **No full-file overwrites**: Use precise block replacements instead of rewriting entire files.
-5. **Reuse existing helpers**: Check if utility functions exist before implementing new ones.
+### Response
 
-### Response Format
-
-- **Changed**: files list · **Why**: 1-line purpose · **Validated**: command + result · **Risk**: level + rollback if High/Critical
+- **Changed**: files · **Why**: 1-line · **Validated**: cmd + result · **Risk**: level

@@ -8,7 +8,12 @@
 |---|---|
 | `config/` | Runtime config, risk limits, env settings |
 | `scripts/` | Service lifecycle, data download, validation |
-| `deployment/` | Docker image definitions only |
+| `deployment/` | Docker image definitions |
+
+## Read First
+
+- Specific config file for the task
+- Specific script for the task
 
 ## Validate
 
@@ -16,58 +21,57 @@
 
 ## Common Tasks
 
-| Task | Do this | Don't do this |
+| Task | Do this | Don't |
 |---|---|---|
-| Edit config | Read specific config file | Read all config files |
+| Edit config | Read specific config file | Read all configs |
 | Edit script | Read specific script | Scan all scripts |
-| Docker change | Read specific Dockerfile | Read docker docs |
+| Docker change | Read specific Dockerfile | Read Docker docs |
+
+## Forbidden Reads
+
+Secrets (`.env*`, `*.pem`, `*.key`) · IDE config (`.idea/`) · Sibling domain source code
+
+## Forbidden Writes
+
+Secrets · Lock files · Sibling domain files · Production infra without approval
 
 ## Banned Unless Requested
 
 ❌ Docker Compose · ❌ Grafana · ❌ Prometheus · ❌ Alertmanager
 
-## Cross-Domain
+## Cross-Domain Triggers
 
-Config changes → coordinate with affected domain's `AGENTS.md`.
+Config changes → read affected domain's `AGENTS.md` to verify impact.
 
-## Anti-Patterns
+## Standalone Rules
 
-- ❌ Do NOT scan sibling directories
-- ❌ Do NOT read root `AGENTS.md` for single-domain tasks
+### Risk
 
-## Standalone Rules (when root AGENTS.md is not available)
-
-### Risk Classification
-
-| Level | Examples | Action |
-|---|---|---|
-| Low | Script comment, config formatting | Execute directly |
-| Medium | Script logic, config value change | Plan if ≥3 files |
-| High | Docker config, deploy scripts, shared config | Plan + impacted domains + rollback note |
-| Critical | Secrets, production deploy, infra changes | Plan + user approval required |
+| Level | Action |
+|---|---|
+| Low (script comment, config formatting) | Execute directly |
+| Medium (script logic, config value) | Plan if ≥3 files |
+| High (Docker, deploy, shared config) | Plan + impacted domains + rollback |
+| Critical (secrets, production deploy, infra) | Plan + user approval |
 
 ### Planning (≥3 files)
 
-1. **Grep first** to verify files exist before planning
-2. Each step: `Step N: [ACTION] [EXACT_PATH]` with What + Why
-3. Max 5 steps (single domain) · Max 8 steps (new feature)
-4. ❌ No "explore/read/review" steps · ❌ No scope creep
-5. Execute immediately after plan (unless destructive)
+1. Grep first · Step format: `Step N: [ACTION] [PATH]` — What + Why
+2. Max 3 steps (medium) · 5 (high) · 8 (critical)
+3. ❌ No explore/review steps · ❌ No scope creep
+4. Execute immediately (unless destructive)
 
-### Token Discipline
+### Grep-Before-Read
 
-#### Reading Rules
-1. **Grep before read** — find exact file+line first, never explore
-2. **Max 200 lines per read** — use StartLine/EndLine for large files
-3. **No assumptions** — verify config keys, env vars, script deps in source
+Files >120 lines: grep first → read 50-200 lines around match.
+Files <120 lines: may read full file.
 
-#### Writing / Coding Rules
-1. **Respond concisely**: Do not restate unchanged code. Show only the diff or modified parts.
-2. **Keep files small**: Limit modules/scripts to ~500 lines. Split logic early to minimize future read tokens.
-3. **Targeted edits only**: Modify only the lines needed for the fix. Avoid formatting unrelated code.
-4. **No full-file overwrites**: Use precise block replacements instead of rewriting entire files.
-5. **Reuse existing helpers**: Check if utility functions exist before implementing new ones.
+### Output
 
-### Response Format
+1. Diff only — no full rewrites, no unchanged code
+2. Keep scripts <500 lines — split when larger
+3. No pre-summaries — just execute
 
-- **Changed**: files list · **Why**: 1-line purpose · **Validated**: command + result · **Risk**: level + rollback if High/Critical
+### Response
+
+- **Changed**: files · **Why**: 1-line · **Validated**: cmd + result · **Risk**: level

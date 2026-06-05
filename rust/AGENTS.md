@@ -2,7 +2,7 @@
 
 > **Scope**: `rust/` only. Do NOT read files outside this directory.
 
-## Crates
+## Ownership
 
 | Crate | Purpose |
 |---|---|
@@ -14,91 +14,80 @@
 | `database` | Storage models, schema, migrations, queries |
 | `tests` | Integration, unit, property, benchmark tests |
 
+## Read First
+
+- Crate's `Cargo.toml` for dependencies
+- Crate's `src/lib.rs` or `src/main.rs` for entry point
+- `common/src/` for shared types
+
 ## Validate
 
 ```bash
 cd rust && cargo test --workspace
 ```
 
-Targeted: `cargo test -p <crate-name>` or `cargo test <test_function_name>`
-
-## Style
-
-- Format: `cargo fmt --all`
-- Lint: `cargo clippy --workspace --all-targets -- -D warnings` (zero warnings)
-- Errors: `thiserror` for library errors, `anyhow` for application errors
-- Async: `tokio` runtime, never block in async context
-- Docs: All public items must have `///` doc comments
-- Modules: Keep under 500 lines, split when larger
+Targeted: `cargo test -p <crate>` or `cargo test <test_fn>`
+Style: `cargo fmt --all` · Lint: `cargo clippy --workspace -- -D warnings`
 
 ## Common Tasks
 
-| Task | Do this | Don't do this |
+| Task | Do this | Don't |
 |---|---|---|
-| Add type/struct | Check `common/src/` first → grep for similar types | Read all crates |
-| Fix crate bug | Read the specific crate's `src/lib.rs` → grep error | Scan full workspace |
-| Add test | Read `tests/` or the crate's `#[cfg(test)]` module | Run full `cargo test` first |
-| PyO3 binding | Read `signal-bridge/src/` → follow `#[pyclass]` pattern | Guess Python API |
-| Config change | Read `common/src/config.rs` → coordinate with `ops/AGENTS.md` | Read ops/ directly |
+| Add type/struct | Grep `common/src/` for similar | Read all crates |
+| Fix crate bug | Grep error → read specific crate | Scan workspace |
+| Add test | Read crate's `#[cfg(test)]` | Run full suite first |
+| PyO3 binding | Read `signal-bridge/src/` `#[pyclass]` | Guess Python API |
+| Config change | Read `common/src/config.rs` | Read ops/ directly |
 
-## Forbidden Paths (NEVER read)
+## Forbidden Reads
 
 ```
-Cargo.lock            # 142KB — never useful for AI context
-target/               # Build artifacts (can be gigabytes)
-.idea/                # IDE config
-docs/                 # Rust docs — use `cargo doc` if needed
-config                # Runtime config file (9 bytes placeholder)
+Cargo.lock       # 142KB
+target/          # Build artifacts (3.2GB)
+.idea/           # IDE config
+docs/            # Generated docs
 ```
 
-## Cross-Domain (only when task requires)
+## Forbidden Writes
 
-- **Rust↔Python ZMQ**: Changing `signal-bridge` → also read `python/AGENTS.md`
-- **Rust↔Go metrics**: Changing `common` health/metrics → also read `go/AGENTS.md`
+Lock files · Build artifacts · Generated docs · Binary files
 
-## Anti-Patterns
+## Cross-Domain Triggers
 
-- ❌ Do NOT scan sibling directories (`python/`, `go/`, `nextjs/`, etc.)
-- ❌ Do NOT read `PLAYBOOK.md` or root `AGENTS.md` for single-domain tasks
-- ❌ Do NOT read `Cargo.lock` (142KB) — use `Cargo.toml` for dependency info
-- ❌ Do NOT list `target/` — it contains build artifacts only
-- ❌ Do NOT read entire crate source — grep for the function/type first
+- Changing `signal-bridge` ZMQ → also read `python/AGENTS.md`
+- Changing `common` health/metrics → also read `go/AGENTS.md`
 
-## Standalone Rules (when root AGENTS.md is not available)
+## Standalone Rules
 
-### Risk Classification
+### Risk
 
-| Level | Examples | Action |
-|---|---|---|
-| Low | Docs, comments, style fix | Execute directly |
-| Medium | Logic change, bug fix | Plan if ≥3 files |
-| High | API contracts, DB schema, shared types | Plan + impacted files + rollback note |
-| Critical | Secrets, migrations, permissions | Plan + user approval required |
+| Level | Action |
+|---|---|
+| Low (docs, comments) | Execute directly |
+| Medium (logic, bug fix) | Plan if ≥3 files |
+| High (API, DB, shared types) | Plan + rollback note |
+| Critical (secrets, migrations) | Plan + user approval |
 
 ### Planning (≥3 files)
 
-1. **Grep first** to verify files exist before planning
-2. Each step: `Step N: [ACTION] [EXACT_PATH]` with What + Why
-3. Max 5 steps (single domain) · Max 8 steps (new feature)
-4. ❌ No "explore/read/review" steps · ❌ No scope creep · ❌ No unrequested tests/docs
-5. Order: Schema → Logic → Interface → Wiring
-6. Execute immediately after plan (unless destructive)
+1. Grep first · Step format: `Step N: [ACTION] [PATH]` — What + Why
+2. Max 3 steps (medium) · 5 (high) · 8 (critical)
+3. ❌ No explore/review steps · ❌ No scope creep · ❌ No unrequested tests/docs
+4. Order: Schema → Logic → Interface → Wiring · Execute immediately
 
-### Token Discipline
+### Grep-Before-Read
 
-#### Reading Rules
-1. **Grep before read** — find exact file+line first, never explore
-2. **Max 200 lines per read** — use StartLine/EndLine for large files
-3. **Never read**: `Cargo.lock`, `target/`, binaries, generated files, `.idea/`
-4. **No assumptions** — verify crate names, types, API shapes in `Cargo.toml` and source
+Files >120 lines: grep first → read 50-200 lines around match.
+Files <120 lines: may read full file.
+Never open files "to explore."
 
-#### Writing / Coding Rules
-1. **Respond concisely**: Do not restate unchanged code. Show only the diff or modified parts.
-2. **Keep files small**: Limit modules to ~500 lines. Split logic early to minimize future read tokens.
-3. **Targeted edits only**: Modify only the lines needed for the fix. Avoid formatting unrelated code.
-4. **No full-file overwrites**: Use precise block replacements instead of rewriting entire files.
-5. **Reuse existing helpers**: Check if utility functions exist before implementing new ones.
+### Output
 
-### Response Format
+1. Diff only — no full rewrites, no unchanged code
+2. Keep files <500 lines — split when larger
+3. Reuse helpers — check `common/` before writing new utils
+4. No pre-summaries — just execute
 
-- **Changed**: files list · **Why**: 1-line purpose · **Validated**: command + result · **Risk**: level + rollback if High/Critical
+### Response
+
+- **Changed**: files · **Why**: 1-line · **Validated**: cmd + result · **Risk**: level

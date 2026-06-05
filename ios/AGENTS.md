@@ -6,85 +6,80 @@
 
 | Path | Purpose |
 |---|---|
-| `iosApp/` | Main SwiftUI application (views, services, models, navigation) |
+| `iosApp/` | Main SwiftUI app (views, services, models, navigation) |
 | `Configuration/` | Build configuration and settings |
-| `iosApp.xcodeproj/` | Xcode project (read only `project.pbxproj` when needed) |
+| `iosApp.xcodeproj/` | Xcode project (read `project.pbxproj` only when fixing build) |
 
-## Tech Stack
+## Read First
 
-SwiftUI · Swift Package Manager · iOS 17+
+- `iosApp/` structure for views and services
+- `Package.swift` or SPM config for dependencies
 
 ## Validate
 
-Build and test via the nearest Xcode scheme or `swift test` for package targets.
+Build and test via Xcode scheme or `swift test` for package targets.
+Tech: SwiftUI · Swift Package Manager · iOS 17+
 
 ## Common Tasks
 
-| Task | Do this | Don't do this |
+| Task | Do this | Don't |
 |---|---|---|
-| Add view | Read `iosApp/` → grep for similar view | Read entire app |
-| Add service | Read `iosApp/` → grep `Service\|Manager` | Scan all files |
+| Add view | Grep `iosApp/` for similar view | Read entire app |
+| Add service | Grep `Service\|Manager` in `iosApp/` | Scan all files |
 | Fix build | Read Xcode error → open specific file | Open project.pbxproj |
 
-## Forbidden Paths (NEVER read)
+## Forbidden Reads
 
 ```
-iosApp.xcodeproj/     # Xcode project — binary-ish, rarely useful to read fully
-ruvector.db           # 1.5MB database file
-agentdb.rvf           # Agent DB file
+iosApp.xcodeproj/     # Binary-ish project file
+ruvector.db           # 1.5MB database
+agentdb.rvf           # Agent DB
 agentdb.rvf.lock      # Lock file
-.DS_Store             # macOS metadata
-.idea/                # IDE config
 DerivedData/          # Xcode build artifacts
+.idea/                # IDE config
+.DS_Store             # macOS
 ```
 
-## Cross-Domain (only when task requires)
+## Forbidden Writes
 
-- **iOS↔Android manifest**: Changing runtime capabilities → also read `android/AGENTS.md`
-- **iOS↔Go API**: Changing API consumption → also read `go/AGENTS.md`
+Database files · Lock files · Xcode project (unless fixing build config) · IDE config
 
-## Anti-Patterns
+## Cross-Domain Triggers
 
-- ❌ Do NOT scan sibling directories (`android/`, `nextjs/`, `python/`, etc.)
-- ❌ Do NOT read `PLAYBOOK.md` or root `AGENTS.md` for single-domain tasks
-- ❌ Do NOT read `.db` or `.rvf` files
-- ❌ Do NOT read `xcodeproj` contents unless fixing build configuration
+- Changing runtime capabilities → also read `android/AGENTS.md`
+- Changing API consumption → also read `go/AGENTS.md`
 
-## Standalone Rules (when root AGENTS.md is not available)
+## Standalone Rules
 
-### Risk Classification
+### Risk
 
-| Level | Examples | Action |
-|---|---|---|
-| Low | Docs, comments, UI text, style fix | Execute directly |
-| Medium | View logic, service change, navigation | Plan if ≥3 files |
-| High | API contracts, auth, build config, capabilities | Plan + impacted files + rollback note |
-| Critical | Secrets, keychain, entitlements, permissions | Plan + user approval required |
+| Level | Action |
+|---|---|
+| Low (docs, UI text) | Execute directly |
+| Medium (view logic, service, navigation) | Plan if ≥3 files |
+| High (API, auth, build config, capabilities) | Plan + rollback note |
+| Critical (secrets, keychain, entitlements) | Plan + user approval |
 
 ### Planning (≥3 files)
 
-1. **Grep first** to verify files exist before planning
-2. Each step: `Step N: [ACTION] [EXACT_PATH]` with What + Why
-3. Max 5 steps (single domain) · Max 8 steps (new feature)
-4. ❌ No "explore/read/review" steps · ❌ No scope creep · ❌ No unrequested tests/docs
-5. Order: Model → Service → View → Navigation
-6. Execute immediately after plan (unless destructive)
+1. Grep first · Step format: `Step N: [ACTION] [PATH]` — What + Why
+2. Max 3 steps (medium) · 5 (high) · 8 (critical)
+3. ❌ No explore/review steps · ❌ No scope creep · ❌ No unrequested tests/docs
+4. Order: Model → Service → View → Navigation · Execute immediately
 
-### Token Discipline
+### Grep-Before-Read
 
-#### Reading Rules
-1. **Grep before read** — find exact file+line first, never explore
-2. **Max 200 lines per read** — use StartLine/EndLine for large files
-3. **Never read**: `.db`, `.wal`, `.rvf`, `xcodeproj/`, `DerivedData/`, `.idea/`
-4. **No assumptions** — verify Swift package deps, API shapes, build settings in source
+Files >120 lines: grep first → read 50-200 lines around match.
+Files <120 lines: may read full file.
+Never open files "to explore."
 
-#### Writing / Coding Rules
-1. **Respond concisely**: Do not restate unchanged code. Show only the diff or modified parts.
-2. **Keep files small**: Limit modules to ~500 lines. Split logic early to minimize future read tokens.
-3. **Targeted edits only**: Modify only the lines needed for the fix. Avoid formatting unrelated code.
-4. **No full-file overwrites**: Use precise block replacements instead of rewriting entire files.
-5. **Reuse existing helpers**: Check if utility functions exist before implementing new ones.
+### Output
 
-### Response Format
+1. Diff only — no full rewrites, no unchanged code
+2. Keep files <500 lines — split when larger
+3. Reuse helpers — check existing services before writing new
+4. No pre-summaries — just execute
 
-- **Changed**: files list · **Why**: 1-line purpose · **Validated**: build/test result · **Risk**: level + rollback if High/Critical
+### Response
+
+- **Changed**: files · **Why**: 1-line · **Validated**: build/test result · **Risk**: level
