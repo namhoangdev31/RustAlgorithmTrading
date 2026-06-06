@@ -125,14 +125,11 @@ function GithubAside({
                         <a href={repo.htmlUrl} target="_blank" rel="noopener noreferrer">Go to GitHub</a>
                       </Button>
                     ) : (
-                      <form action={createProjectFromGithubRepoAction}>
-                        <input type="hidden" name="repoName" value={repo.name} />
-                        <input type="hidden" name="repoDescription" value={repo.description || ""} />
-                        <input type="hidden" name="returnTo" value="/projects?tab=overview" />
-                        <Button type="submit" className="h-7 px-2.5 rounded-sm text-[10px] bg-primary hover:bg-primary-deep text-primary-foreground">
+                      <Button asChild className="h-7 px-2.5 rounded-sm text-[10px] bg-primary hover:bg-primary-deep text-primary-foreground cursor-pointer">
+                        <Link href={`/projects?dialog=create&repoName=${encodeURIComponent(repo.name)}&repoDescription=${encodeURIComponent(repo.description || "")}`}>
                           Create Project
-                        </Button>
-                      </form>
+                        </Link>
+                      </Button>
                     )}
                   </div>
                 </div>

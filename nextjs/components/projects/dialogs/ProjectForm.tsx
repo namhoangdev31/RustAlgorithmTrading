@@ -25,6 +25,8 @@ export function ProjectForm({
   title,
   t: _unusedT,
   vercelConnected = false,
+  initialName = "",
+  initialDescription = "",
 }: {
   action: (formData: FormData) => Promise<void>;
   project?: any;
@@ -34,9 +36,12 @@ export function ProjectForm({
   title?: string;
   t?: any;
   vercelConnected?: boolean;
+  initialName?: string;
+  initialDescription?: string;
 }) {
   const t = useTranslations("Dashboard");
-  const [projectNameState, setProjectNameState] = useState(project?.name ?? "");
+  const [projectNameState, setProjectNameState] = useState(project?.name ?? initialName);
+  const [category, setCategory] = useState(project?.bundle?.category ?? "web");
   const [deployToVercel, setDeployToVercel] = useState(false);
   const [isCustomVercelName, setIsCustomVercelName] = useState(false);
   const [vercelProjectName, setVercelProjectName] = useState("");
@@ -96,7 +101,7 @@ export function ProjectForm({
 
       <div className="grid gap-2">
         <Label className={fieldLabelClass}>{t("form.project_type") || "Project Type"}</Label>
-        <Select defaultValue={project?.bundle?.category ?? "web"} name="category">
+        <Select value={category} onValueChange={setCategory} name="category">
           <SelectTrigger className={fieldControlClass}>
             <SelectValue placeholder={t("form.select_project_type") || "Select type"} />
           </SelectTrigger>
@@ -126,7 +131,7 @@ export function ProjectForm({
 
       <div className="grid gap-2 md:col-span-2">
         <Label className={fieldLabelClass}>{t("form.project_description") || "Project Description"}</Label>
-        <Textarea name="description" defaultValue={project?.description ?? ""} rows={3} placeholder="Explain what this project is about..." className="border-hairline bg-canvas text-sm shadow-light text-ink" />
+        <Textarea name="description" defaultValue={project?.description ?? initialDescription} rows={3} placeholder="Explain what this project is about..." className="border-hairline bg-canvas text-sm shadow-light text-ink" />
       </div>
 
       <div className="grid gap-2 md:col-span-2">
@@ -135,108 +140,110 @@ export function ProjectForm({
       </div>
 
       {/* Vercel Integration Section */}
-      <div className="md:col-span-2 mt-2 pt-2 border-t border-hairline-cool">
-        <Label className="text-[11px] font-bold text-primary uppercase tracking-wider block mb-3">Vercel Deployment</Label>
-        
-        {!project ? (
-          <div className="space-y-4">
-            <div className="flex items-center space-x-3">
-              <input
-                type="checkbox"
-                name="deployToVercel"
-                id="deployToVercel"
-                checked={deployToVercel}
-                onChange={(e) => setDeployToVercel(e.target.checked)}
-                disabled={!vercelConnected}
-                className="size-4.5 rounded border-hairline text-primary focus:ring-primary bg-canvas cursor-pointer disabled:cursor-not-allowed"
-              />
-              <Label htmlFor="deployToVercel" className="text-sm font-semibold text-ink cursor-pointer select-none">
-                Link & Deploy with Vercel
-              </Label>
-              {!vercelConnected && (
-                <span className="text-[9px] bg-canvas-soft border border-hairline text-ink-mute px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
-                  Not Connected
-                </span>
-              )}
-            </div>
-
-            {!vercelConnected ? (
-              <p className="text-xs text-ink-mute-2 pl-7 leading-relaxed">
-                You need to connect your Vercel Account under{" "}
-                <Link href="/projects?tab=settings" className="underline text-primary hover:text-primary-deep font-medium">
-                  Settings &gt; Integrations
-                </Link>{" "}
-                to enable automatic deployments.
-              </p>
-            ) : (
-              <p className="text-xs text-ink-mute-2 pl-7 leading-relaxed">
-                Create a web-hosting project on Vercel linked to this project instantly.
-              </p>
-            )}
-
-            {vercelConnected && deployToVercel && (
-              <div className="pl-7 space-y-3 pt-1 border-l-2 border-primary/20 animate-in slide-in-from-top-1 duration-200">
-                <div className="grid gap-2">
-                  <Label className={fieldLabelClass}>
-                    Vercel Project Name <span className="text-destructive">*</span>
-                  </Label>
-                  <Input
-                    name="vercelProjectName"
-                    value={vercelProjectName}
-                    onChange={(e) => {
-                      setVercelProjectName(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""));
-                      setIsCustomVercelName(true);
-                    }}
-                    required={deployToVercel}
-                    placeholder="e.g. my-awesome-web-view"
-                    className={fieldControlClass}
-                    pattern="^[a-z0-9]([a-z0-9-]*[a-z0-9])?$"
-                    maxLength={100}
-                  />
-                  <p className="text-[10px] text-ink-mute-2 leading-relaxed">
-                    Only lowercase letters, numbers, and hyphens. Must start/end with an alphanumeric character. Max 100 characters.
-                  </p>
-                </div>
-                {vercelProjectName && (
-                  <div className="flex items-center gap-1.5 text-xs text-primary font-medium bg-primary/5 border border-primary/10 rounded px-2.5 py-1.5 w-fit">
-                    <Sparkles className="size-3.5" />
-                    <span>Project URL preview: <strong>{vercelProjectName}.vercel.app</strong></span>
-                  </div>
+      {category === "web" && (
+        <div className="md:col-span-2 mt-2 pt-2 border-t border-hairline-cool animate-in fade-in duration-200">
+          <Label className="text-[11px] font-bold text-primary uppercase tracking-wider block mb-3">Vercel Deployment</Label>
+          
+          {!project ? (
+            <div className="space-y-4">
+              <div className="flex items-center space-x-3">
+                <input
+                  type="checkbox"
+                  name="deployToVercel"
+                  id="deployToVercel"
+                  checked={deployToVercel}
+                  onChange={(e) => setDeployToVercel(e.target.checked)}
+                  disabled={!vercelConnected}
+                  className="size-4.5 rounded border-hairline text-primary focus:ring-primary bg-canvas cursor-pointer disabled:cursor-not-allowed"
+                />
+                <Label htmlFor="deployToVercel" className="text-sm font-semibold text-ink cursor-pointer select-none">
+                  Link & Deploy with Vercel
+                </Label>
+                {!vercelConnected && (
+                  <span className="text-[9px] bg-canvas-soft border border-hairline text-ink-mute px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
+                    Not Connected
+                  </span>
                 )}
               </div>
-            )}
-          </div>
-        ) : (
-          <div className="space-y-2">
-            {project.vercelProjectName ? (
-              <div className="p-4 bg-canvas-soft border border-hairline rounded-lg flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                <div className="flex items-start gap-3">
-                  <div className="size-8 rounded bg-canvas flex items-center justify-center font-bold text-ink shrink-0 border border-hairline text-sm">
-                    ▲
+
+              {!vercelConnected ? (
+                <p className="text-xs text-ink-mute-2 pl-7 leading-relaxed">
+                  You need to connect your Vercel Account under{" "}
+                  <Link href="/projects?tab=settings" className="underline text-primary hover:text-primary-deep font-medium">
+                    Settings &gt; Integrations
+                  </Link>{" "}
+                  to enable automatic deployments.
+                </p>
+              ) : (
+                <p className="text-xs text-ink-mute-2 pl-7 leading-relaxed">
+                  Create a web-hosting project on Vercel linked to this project instantly.
+                </p>
+              )}
+
+              {vercelConnected && deployToVercel && (
+                <div className="pl-7 space-y-3 pt-1 border-l-2 border-primary/20 animate-in slide-in-from-top-1 duration-200">
+                  <div className="grid gap-2">
+                    <Label className={fieldLabelClass}>
+                      Vercel Project Name <span className="text-destructive">*</span>
+                    </Label>
+                    <Input
+                      name="vercelProjectName"
+                      value={vercelProjectName}
+                      onChange={(e) => {
+                        setVercelProjectName(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""));
+                        setIsCustomVercelName(true);
+                      }}
+                      required={deployToVercel}
+                      placeholder="e.g. my-awesome-web-view"
+                      className={fieldControlClass}
+                      pattern="^[a-z0-9]([a-z0-9-]*[a-z0-9])?$"
+                      maxLength={100}
+                    />
+                    <p className="text-[10px] text-ink-mute-2 leading-relaxed">
+                      Only lowercase letters, numbers, and hyphens. Must start/end with an alphanumeric character. Max 100 characters.
+                    </p>
                   </div>
-                  <div>
-                    <div className="text-xs font-bold text-ink">Linked Vercel Project</div>
-                    <div className="text-xs text-ink-mute mt-0.5 font-mono">{project.vercelProjectName}</div>
-                  </div>
+                  {vercelProjectName && (
+                    <div className="flex items-center gap-1.5 text-xs text-primary font-medium bg-primary/5 border border-primary/10 rounded px-2.5 py-1.5 w-fit">
+                      <Sparkles className="size-3.5" />
+                      <span>Project URL preview: <strong>{vercelProjectName}.vercel.app</strong></span>
+                    </div>
+                  )}
                 </div>
-                <Button asChild size="sm" variant="outline" className="h-8 text-xs font-semibold border-hairline-strong hover:bg-canvas bg-canvas shrink-0">
-                  <a
-                    href={`https://vercel.com/new`} // Vercel dashboard projects url helper
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Vercel Dashboard
-                  </a>
-                </Button>
-              </div>
-            ) : (
-              <p className="text-xs text-ink-mute-2 leading-relaxed">
-                This project is not linked to Vercel. You can deploy it using the upload buttons in the overview tab.
-              </p>
-            )}
-          </div>
-        )}
-      </div>
+              )}
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {project.vercelProjectName ? (
+                <div className="p-4 bg-canvas-soft border border-hairline rounded-lg flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                  <div className="flex items-start gap-3">
+                    <div className="size-8 rounded bg-canvas flex items-center justify-center font-bold text-ink shrink-0 border border-hairline text-sm">
+                      ▲
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-ink">Linked Vercel Project</div>
+                      <div className="text-xs text-ink-mute mt-0.5 font-mono">{project.vercelProjectName}</div>
+                    </div>
+                  </div>
+                  <Button asChild size="sm" variant="outline" className="h-8 text-xs font-semibold border-hairline-strong hover:bg-canvas bg-canvas shrink-0">
+                    <a
+                      href={`https://vercel.com/new`} // Vercel dashboard projects url helper
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Vercel Dashboard
+                    </a>
+                  </Button>
+                </div>
+              ) : (
+                <p className="text-xs text-ink-mute-2 leading-relaxed">
+                  This project is not linked to Vercel. You can deploy it using the upload buttons in the overview tab.
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="md:col-span-2 mt-2">
         <Separator />

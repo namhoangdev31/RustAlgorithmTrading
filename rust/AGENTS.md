@@ -4,15 +4,15 @@
 
 ## Ownership
 
-| Crate | Purpose |
-|---|---|
-| `common` | Shared types, config, errors, messaging, health |
-| `market-data` | Alpaca websocket ingest, orderbook, aggregation |
-| `signal-bridge` | Low-latency indicators, features, PyO3 bridge, backtest runtime |
-| `risk-manager` | Limits, stops, PnL, circuit breaker |
-| `execution-engine` | Routing, retry, slippage, stop-loss execution |
-| `database` | Storage models, schema, migrations, queries |
-| `tests` | Integration, unit, property, benchmark tests |
+| Crate              | Purpose                                                         |
+|--------------------|-----------------------------------------------------------------|
+| `common`           | Shared types, config, errors, messaging, health                 |
+| `market-data`      | Alpaca websocket ingest, orderbook, aggregation                 |
+| `signal-bridge`    | Low-latency indicators, features, PyO3 bridge, backtest runtime |
+| `risk-manager`     | Limits, stops, PnL, circuit breaker                             |
+| `execution-engine` | Routing, retry, slippage, stop-loss execution                   |
+| `database`         | Storage models, schema, migrations, queries                     |
+| `tests`            | Integration, unit, property, benchmark tests                    |
 
 ## Read First
 
@@ -31,13 +31,13 @@ Style: `cargo fmt --all` · Lint: `cargo clippy --workspace -- -D warnings`
 
 ## Common Tasks
 
-| Task | Do this | Don't |
-|---|---|---|
-| Add type/struct | Grep `common/src/` for similar | Read all crates |
-| Fix crate bug | Grep error → read specific crate | Scan workspace |
-| Add test | Read crate's `#[cfg(test)]` | Run full suite first |
-| PyO3 binding | Read `signal-bridge/src/` `#[pyclass]` | Guess Python API |
-| Config change | Read `common/src/config.rs` | Read ops/ directly |
+| Task            | Do this                                | Don't                |
+|-----------------|----------------------------------------|----------------------|
+| Add type/struct | Grep `common/src/` for similar         | Read all crates      |
+| Fix crate bug   | Grep error → read specific crate       | Scan workspace       |
+| Add test        | Read crate's `#[cfg(test)]`            | Run full suite first |
+| PyO3 binding    | Read `signal-bridge/src/` `#[pyclass]` | Guess Python API     |
+| Config change   | Read `common/src/config.rs`            | Read ops/ directly   |
 
 ## Forbidden Reads
 
@@ -61,11 +61,11 @@ Lock files · Build artifacts · Generated docs · Binary files
 
 ### Risk
 
-| Level | Action |
-|---|---|
-| Low (docs, comments) | Execute directly |
-| Medium (logic, bug fix) | Plan if ≥3 files |
-| High (API, DB, shared types) | Plan + rollback note |
+| Level                          | Action               |
+|--------------------------------|----------------------|
+| Low (docs, comments)           | Execute directly     |
+| Medium (logic, bug fix)        | Plan if ≥3 files     |
+| High (API, DB, shared types)   | Plan + rollback note |
 | Critical (secrets, migrations) | Plan + user approval |
 
 ### Planning (≥3 files)
@@ -77,8 +77,8 @@ Lock files · Build artifacts · Generated docs · Binary files
 
 ### Grep-Before-Read
 
-Files >120 lines: grep first → read 50-200 lines around match.
-Files <120 lines: may read full file.
+Files >120 lines: grep first → read 50–200 lines around the match.
+Files <120 lines: may read a full file.
 Never open files "to explore."
 
 ### Output

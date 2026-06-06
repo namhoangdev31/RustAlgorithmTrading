@@ -13,7 +13,6 @@ generator pothos {
 
 datasource db {
   provider = "postgresql"
-  // url      = env("DATABASE_URL")
 }
 
 model Order {
@@ -209,10 +208,10 @@ model Bundles {
   updatedAt         DateTime  @map("updated_at") @db.Timestamp(6)
   deletedAt         DateTime? @map("deleted_at") @db.Timestamp(6)
 
-  projectId           String?   @unique @map("project_id") @db.Uuid
-  project             Project?  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  vercelDeploymentId  String?   @map("vercel_deployment_id") @db.VarChar(255)
-  vercelDeploymentUrl String?   @map("vercel_deployment_url") @db.VarChar(255)
+  projectId           String?  @unique @map("project_id") @db.Uuid
+  project             Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  vercelDeploymentId  String?  @map("vercel_deployment_id") @db.VarChar(255)
+  vercelDeploymentUrl String?  @map("vercel_deployment_url") @db.VarChar(255)
 
   abTests              BundleAbTests[]
   abuseSignals         BundleAbuseSignals?

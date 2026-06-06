@@ -86,6 +86,8 @@ type ProjectsPageProps = {
     error?: string;
     message?: string;
     name?: string;
+    repoName?: string;
+    repoDescription?: string;
   }>;
 };
 type ProjectsData = Awaited<ReturnType<typeof getProjectBundleData>>;
@@ -238,8 +240,8 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
       </div>
 
       {/* Filter and Search Section */}
-      <div className="w-full">
-        <form action={localizedProjectsPath} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full" method="get">
+      <div className="w-full flex flex-row items-center gap-3">
+        <form action={localizedProjectsPath} className="flex flex-1 flex-row items-center gap-3" method="get">
           {search.layout && <input type="hidden" name="layout" value={search.layout} />}
           {search.tab && <input type="hidden" name="tab" value={search.tab} />}
           <div className="relative flex-1">
@@ -252,48 +254,48 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
             />
           </div>
 
-          <div className="flex items-center gap-2">
-            <Button
-              className="h-10 text-xs font-semibold px-4 rounded-sm border border-hairline-strong hover:bg-canvas-soft transition-colors shadow-light bg-canvas text-ink-secondary"
-              type="submit"
-              variant="outline"
-            >
-              <SlidersHorizontal className="size-3.5 mr-2 text-ink-mute-2" />
-              {t("projects_and_bundles.filter") || "Filter"}
-            </Button>
-
-            {search.q ? (
-              <Button className="h-10 text-xs font-semibold text-ink-mute hover:text-ink" asChild variant="ghost">
-                <Link href={projectsPath}>{tProjects("reset") || "Reset"}</Link>
-              </Button>
-            ) : null}
-
-            {github.connected ? (
-              <Button asChild className="h-10 text-xs font-semibold bg-primary hover:bg-primary-deep text-primary-foreground transition-colors rounded-sm px-3.5 shadow-light cursor-pointer shrink-0">
-                <a
-                  href={github.profileUrl || `https://github.com/${github.login}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2"
-                >
-                  <Avatar className="size-5">
-                    <AvatarImage src={github.avatarUrl} alt={github.login || "GitHub"} />
-                    <AvatarFallback>{(github.login || "GH").slice(0, 2).toUpperCase()}</AvatarFallback>
-                  </Avatar>
-                  <span>@{github.login || "github-user"}</span>
-                </a>
-              </Button>
-            ) : (
-              <form action={connectGithubAction}>
-                <input type="hidden" name="returnTo" value={`${projectsPath}?tab=overview`} />
-                <Button type="submit" className="h-10 text-xs font-semibold bg-primary hover:bg-primary-deep text-primary-foreground transition-colors rounded-sm px-5 shadow-light cursor-pointer shrink-0">
-                  <GithubIcon className="size-4 mr-1.5" />
-                  Connect GitHub
-                </Button>
-              </form>
-            )}
-          </div>
+          <Button
+            className="h-10 text-xs font-semibold px-4 rounded-sm border border-hairline-strong hover:bg-canvas-soft transition-colors shadow-light bg-canvas text-ink-secondary"
+            type="submit"
+            variant="outline"
+          >
+            <SlidersHorizontal className="size-3.5 mr-2 text-ink-mute-2" />
+            {t("projects_and_bundles.filter") || "Filter"}
+          </Button>
         </form>
+
+        <div className="flex items-center gap-2">
+          {search.q ? (
+            <Button className="h-10 text-xs font-semibold text-ink-mute hover:text-ink" asChild variant="ghost">
+              <Link href={projectsPath}>{tProjects("reset") || "Reset"}</Link>
+            </Button>
+          ) : null}
+
+          {github.connected ? (
+            <Button asChild className="h-10 text-xs font-semibold bg-primary hover:bg-primary-deep text-primary-foreground transition-colors rounded-sm px-3.5 shadow-light cursor-pointer shrink-0">
+              <a
+                href={github.profileUrl || `https://github.com/${github.login}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2"
+              >
+                <Avatar className="size-5">
+                  <AvatarImage src={github.avatarUrl} alt={github.login || "GitHub"} />
+                  <AvatarFallback>{(github.login || "GH").slice(0, 2).toUpperCase()}</AvatarFallback>
+                </Avatar>
+                <span>@{github.login || "github-user"}</span>
+              </a>
+            </Button>
+          ) : (
+            <form action={connectGithubAction}>
+              <input type="hidden" name="returnTo" value={`${projectsPath}?tab=overview`} />
+              <Button type="submit" className="h-10 text-xs font-semibold bg-primary hover:bg-primary-deep text-primary-foreground transition-colors rounded-sm px-5 shadow-light cursor-pointer shrink-0">
+                <GithubIcon className="size-4 mr-1.5" />
+                Connect GitHub
+              </Button>
+            </form>
+          )}
+        </div>
       </div>
 
       {/* Projects Grid/List Section */}
@@ -345,6 +347,8 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
               returnTo={projectsPath}
               title={t("form.create_title") || "Create Project"}
               vercelConnected={vercelConnected}
+              initialName={search.repoName}
+              initialDescription={search.repoDescription}
             />
           </div>
         </div>
