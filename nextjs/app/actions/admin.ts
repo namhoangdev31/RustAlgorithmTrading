@@ -242,6 +242,8 @@ export async function createProjectWithBundleAction(formData: FormData) {
     readFormValue(formData, "bundleName")
   );
 
+  const repoFullName = readFormValue(formData, "repoFullName");
+
   await prisma.$transaction(async (tx) => {
     const project = await tx.project.create({
       data: {
@@ -256,7 +258,7 @@ export async function createProjectWithBundleAction(formData: FormData) {
       },
     });
 
-    await tx.bundles.create({
+    const bundle = await tx.bundles.create({
       data: {
         id: crypto.randomUUID(),
         name: bundleDefaults.name,
@@ -274,6 +276,34 @@ export async function createProjectWithBundleAction(formData: FormData) {
         updatedAt: now,
       },
     });
+
+    if (repoFullName) {
+      const cookieStore = await cookies();
+      const token = cookieStore.get("github_access_token")?.value;
+      if (token) {
+        const webhookSecret = "whsec_" + crypto.randomUUID().replace(/-/g, "");
+        const encryptedToken = encryptSecret(token);
+        const config = JSON.stringify({
+          repoFullName,
+          webhookSecret,
+          githubAccessToken: encryptedToken,
+          logs: [],
+        });
+
+        await tx.bundleExternalIntegrations.create({
+          data: {
+            id: crypto.randomUUID(),
+            bundleId: bundle.id,
+            integrationType: "github",
+            displayName: repoFullName,
+            config,
+            isActive: true,
+            createdAt: now,
+            updatedAt: now,
+          },
+        });
+      }
+    }
   });
 
   revalidatePath("/dashboard");
@@ -962,5 +992,94 @@ export async function markNotificationReadAction(formData: FormData) {
   });
 
   revalidatePath("/dashboard/settings/notifications");
+  redirect(returnTo);
+}
+
+export async function linkProjectRepositoryAction(formData: FormData) {
+  const user = await requireCurrentUser();
+  const projectId = readFormValue(formData, "projectId");
+  const repoFullName = readFormValue(formData, "repoFullName");
+  const returnTo = await readReturnTo(formData, "/projects");
+
+  if (!projectId || !repoFullName) {
+    redirect(returnTo);
+  }
+
+  const project = await requireOwnedProject(user.id, projectId);
+  if (!project || !project.bundle) {
+    redirect(returnTo);
+  }
+
+  const cookieStore = await cookies();
+  const token = cookieStore.get("github_access_token")?.value;
+  if (!token) {
+    redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}error=github_not_connected`);
+  }
+
+  const webhookSecret = "whsec_" + crypto.randomUUID().replace(/-/g, "");
+  const encryptedToken = encryptSecret(token);
+
+  const config = JSON.stringify({
+    repoFullName,
+    webhookSecret,
+    githubAccessToken: encryptedToken,
+    logs: [],
+  });
+
+  const now = new Date();
+
+  await prisma.bundleExternalIntegrations.upsert({
+    where: {
+      bundleId_integrationType: {
+        bundleId: project.bundle.id,
+        integrationType: "github",
+      },
+    },
+    update: {
+      displayName: repoFullName,
+      config,
+      isActive: true,
+      updatedAt: now,
+    },
+    create: {
+      id: crypto.randomUUID(),
+      bundleId: project.bundle.id,
+      integrationType: "github",
+      displayName: repoFullName,
+      config,
+      isActive: true,
+      createdAt: now,
+      updatedAt: now,
+    },
+  });
+
+  revalidatePath("/projects");
+  revalidatePath("/dashboard");
+  redirect(returnTo);
+}
+
+export async function unlinkProjectRepositoryAction(formData: FormData) {
+  const user = await requireCurrentUser();
+  const projectId = readFormValue(formData, "projectId");
+  const returnTo = await readReturnTo(formData, "/projects");
+
+  if (!projectId) {
+    redirect(returnTo);
+  }
+
+  const project = await requireOwnedProject(user.id, projectId);
+  if (!project || !project.bundle) {
+    redirect(returnTo);
+  }
+
+  await prisma.bundleExternalIntegrations.deleteMany({
+    where: {
+      bundleId: project.bundle.id,
+      integrationType: "github",
+    },
+  });
+
+  revalidatePath("/projects");
+  revalidatePath("/dashboard");
   redirect(returnTo);
 }

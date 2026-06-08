@@ -18,9 +18,11 @@ import {
   Wrench,
   CreditCard,
   Plus,
+  Key,
   type LucideIcon,
   FolderGit,
   Sparkles,
+  Milestone,
 } from "lucide-react";
 import { usePathname } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
@@ -63,16 +65,6 @@ import {
 } from "@/components/ui/sidebar";
 import Image from "next/image";
 
-function useStablePathname() {
-  const pathname = usePathname();
-  const [mounted, setMounted] = React.useState(false);
-
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  return mounted ? pathname : "";
-}
 
 type AppSidebarProps = {
   user: {
@@ -125,7 +117,15 @@ export function AppSidebar({
       title: t("nav.general"),
       items: [
         { title: t("nav.dashboard"), url: "/dashboard", icon: LayoutDashboard },
-        { title: t("nav.projects"), url: "/projects", icon: FolderGit },
+        {
+          title: t("nav.projects"),
+          icon: FolderGit,
+          items: [
+            { title: t("nav.vercel_projects"), url: "/projects", icon: FolderGit },
+            { title: t("nav.lepoship_projects"), url: "/lepoship", icon: FolderGit },
+          ],
+        },
+        { title: t("nav.vercel_roadmap"), url: "/dashboard/vercel-roadmap", icon: Milestone },
       ],
     },
     {
@@ -140,6 +140,7 @@ export function AppSidebar({
             { title: t("nav.appearance"), url: "/dashboard/settings/appearance", icon: Palette },
             { title: t("nav.notifications"), url: "/dashboard/settings/notifications", icon: Bell },
             { title: t("nav.display"), url: "/dashboard/settings/display", icon: Monitor },
+            { title: t("nav.vercel"), url: "/dashboard/settings?vercel=configure", icon: Key },
           ],
         },
         { title: t("nav.help_center"), url: "/dashboard/help-center", icon: HelpCircle },
@@ -174,7 +175,7 @@ function TeamSwitcher({
 }: Pick<AppSidebarProps, "organizations" | "activeOrganizationId">) {
   const { isMobile } = useSidebar();
   const t = useTranslations("Dashboard.shell");
-  const pathname = useStablePathname(); // Avoid SSR/client pathname drift during hydration.
+  const pathname = usePathname();
   const teamIcons = [Command, GalleryVerticalEnd, AudioWaveform];
   const activeOrganization =
     organizations.find((organization) => organization.id === activeOrganizationId) ??
@@ -272,7 +273,7 @@ function NavGroup({
 }: {
   group: NavGroup;
 }) {
-  const pathname = useStablePathname();
+  const pathname = usePathname();
 
   return (
     <SidebarGroup>

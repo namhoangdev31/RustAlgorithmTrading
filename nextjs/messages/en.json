@@ -434,7 +434,20 @@
         "review": "Review",
         "published": "Published",
         "archived": "Archived"
-      }
+      },
+      "github_integration": "GitHub Repository Integration",
+      "linked_repository": "Linked Repository",
+      "disconnect_repository": "Disconnect Repository",
+      "webhook_url": "Webhook URL",
+      "webhook_secret": "Webhook Secret",
+      "delivery_logs": "Recent Package Delivery Logs (Webhook runs)",
+      "no_events_received": "No events received yet. Push a tag/release to trigger a package bundle build.",
+      "no_linked_repo": "No Linked Git Repository",
+      "github_desc": "Connecting a GitHub repository automatically compiles and ingests mobile/web bundle updates when you release tags.",
+      "select_repo": "Select a repository",
+      "link_repository": "Link Repository",
+      "connect_first": "Connect your GitHub account first in workspace settings to link.",
+      "go_to_settings": "Go to settings"
     },
     "delete_dialog": {
       "title": "Delete {name}",
@@ -477,6 +490,8 @@
         "other": "Other",
         "dashboard": "Dashboard",
         "projects": "Projects",
+        "vercel_projects": "Vercel Projects",
+        "lepoship_projects": "LepoShip Projects",
         "apps": "Apps",
         "chats": "Chats",
         "users": "Users",
@@ -486,7 +501,9 @@
         "account": "Account",
         "appearance": "Appearance",
         "notifications": "Notifications",
-        "display": "Display"
+        "display": "Display",
+        "vercel": "Vercel API Key",
+        "vercel_roadmap": "Vercel SDK Roadmap"
       },
       "header": {
         "overview": "Overview",
@@ -684,6 +701,7 @@
       "appearance": "Appearance",
       "notifications": "Notifications",
       "display": "Display",
+      "vercel": "Vercel API Key",
       "select_tab": "Select tab..."
     },
     "profile": {
@@ -960,8 +978,220 @@
       "back_to_home": "Back to Home"
     }
   },
+  "Deployments": {
+    "toast": {
+      "select_project": "Please select a project.",
+      "select_bundle": "Please select or drop a bundle file.",
+      "upload_success": "Bundle uploaded and deployed successfully!",
+      "upload_failed": "Upload failed.",
+      "network_error": "Network error during upload."
+    },
+    "status": {
+      "ready": "Ready",
+      "building": "Building",
+      "error": "Error",
+      "canceled": "Canceled",
+      "unknown": "Unknown"
+    },
+    "registry_title": "Lepos Bundle Registry",
+    "vercel_tab": "Vercel Pipeline",
+    "deploy_new_bundle": "Deploy New Bundle",
+    "deploy_new_bundle_desc": "Upload your application bundle to register a new version release.",
+    "form": {
+      "no_projects": "No projects available.",
+      "target_project": "Target Project",
+      "bundle_file": "Bundle File (.zip, .bundle)",
+      "dropzone_active": "Drop the bundle file here...",
+      "dropzone_desc": "Drag & drop bundle file (.zip, .bundle) here, or click to select",
+      "dropzone_support": "Supports .zip, .bundle up to 100MB",
+      "selected_file": "Selected file:",
+      "version": "Version",
+      "version_desc": "Leave blank to auto-bump patch version (e.g. 1.0.1)",
+      "track": "Track",
+      "release_notes": "Release Notes",
+      "release_notes_placeholder": "Describe the changes in this release...",
+      "uploading": "Uploading bundle...",
+      "processing": "Processing...",
+      "publish_release": "Publish Release"
+    },
+    "history": {
+      "title": "Release History",
+      "desc": "List of registered and distributed releases.",
+      "empty": "No Releases Uploaded Yet",
+      "empty_desc": "Upload your first bundle to start distributing your app.",
+      "col_version": "Version",
+      "col_track": "Track",
+      "col_size": "Size",
+      "col_released": "Released",
+      "col_bundle": "Bundle"
+    },
+    "vercel": {
+      "connect": "Connect Vercel Integration",
+      "connect_desc": "Connect your project with Vercel to enable automated web deployments and CI/CD.",
+      "connect_desc_dashboard": "Unlock deployment history and pipeline configuration. Connect your Vercel API key to view, inspect, and cancel deployments directly from your dashboard.",
+      "configure": "Configure Vercel API Key",
+      "title": "Deployments (Vercel Pipeline)",
+      "subtitle": "Track status of web builds on Vercel environment.",
+      "no_deployments": "No Deployments Found",
+      "no_deployments_desc": "No deployments have been created on Vercel for this project yet.",
+      "no_deployments_desc_dashboard": "Deploy your project to Vercel to see deployment records here.",
+      "col_deployment": "Deployment",
+      "col_status": "Status",
+      "col_age": "Age",
+      "col_creator": "Creator",
+      "deploying": "Deploying...",
+      "cancel": "Cancel",
+      "inactive": "Inactive"
+    }
+  },
+  "VercelTab": {
+    "title": "Vercel Integrations",
+    "desc": "Manage advanced features, redirects, SSL certificates, observability, access groups, and API tokens.",
+    "not_connected": "Vercel integration is not configured or linked for this project.",
+    "api_error": "An error occurred while connecting to the Vercel API.",
+    "observability": {
+      "title": "API Observability",
+      "desc": "Monitor and log HTTP requests and serverless function invocations.",
+      "status_enabled": "Enabled",
+      "status_disabled": "Disabled",
+      "toggle_enable": "Enable Observability",
+      "toggle_disable": "Disable Observability"
+    },
+    "redirects": {
+      "title": "Redirect Rules",
+      "desc": "Stage and apply bulk redirect rules (e.g. pattern matched paths) for your project.",
+      "source_label": "Source Path",
+      "source_placeholder": "/old-blog/:slug",
+      "dest_label": "Destination URL",
+      "dest_placeholder": "/blog/:slug",
+      "stage_btn": "Stage Redirect",
+      "stage_success": "Redirect staged successfully."
+    },
+    "certs": {
+      "title": "SSL Certificates",
+      "desc": "Issue new SSL certificates or upload custom TLS/SSL certificates.",
+      "domain_label": "Domains (comma-separated)",
+      "domain_placeholder": "example.com, www.example.com",
+      "issue_btn": "Issue Certificate",
+      "upload_btn": "Upload Custom Certificate",
+      "cert_label": "Certificate (PEM)",
+      "key_label": "Private Key (PEM)",
+      "ca_label": "CA Certificate (PEM)",
+      "remove_btn": "Remove Cert",
+      "cert_id_label": "Certificate ID",
+      "cert_id_placeholder": "cert_..."
+    },
+    "access_groups": {
+      "title": "Access Groups",
+      "desc": "Create and manage Vercel Team Access Groups to organize users and access permissions.",
+      "name_label": "Group Name",
+      "name_placeholder": "Engineering Team",
+      "create_btn": "Create Access Group",
+      "empty": "No access groups found or not supported by your plan.",
+      "col_id": "Group ID",
+      "col_name": "Name",
+      "col_created": "Created At",
+      "delete_btn": "Delete"
+    },
+    "tokens": {
+      "title": "Authentication Tokens",
+      "desc": "Create API tokens to authenticate external tools with Vercel services.",
+      "name_label": "Token Name",
+      "name_placeholder": "CI/CD Token",
+      "create_btn": "Create Token",
+      "empty": "No API tokens found.",
+      "col_id": "Token ID",
+      "col_name": "Name",
+      "col_created": "Created At",
+      "delete_btn": "Revoke"
+    },
+    "credits": {
+      "title": "Billing Credits",
+      "desc": "Add prepaid credits to your account for serverless, database, or proxy services.",
+      "amount_label": "Amount (USD)",
+      "amount_placeholder": "50",
+      "type_label": "Credit Type",
+      "buy_btn": "Purchase Credits",
+      "buy_success": "Credits purchased successfully."
+    },
+    "matrix": {
+      "title": "Vercel SDK Feature Matrix",
+      "desc": "Programmatic status of Vercel SDK integrations mapped to the current system modules.",
+      "col_category": "Category / Namespace",
+      "col_methods": "SDK Methods",
+      "col_status": "Current Status",
+      "col_notes": "Integration Scope / Notes",
+      "status_full": "Fully Integrated (UI + Action)",
+      "status_partial": "Partially Integrated (Action Only)",
+      "status_none": "Not Implemented Yet"
+    }
+  },
   "Metadata": {
     "title": "Lepos — App Distribution & Cloud Hosting Platform",
     "description": "Deploy Mini Apps, host websites, and run algorithmic trading — all from one unified platform."
+  },
+  "VercelRoadmap": {
+    "title": "Vercel SDK Roadmap",
+    "description": "Visual tracking mirror comparing Vercel SDK programmatic specifications with our platform integration progress.",
+    "metrics": {
+      "integrated_count": "{count} of {total} namespaces integrated",
+      "progress_label": "Global SDK Alignment Progress"
+    },
+    "filters": {
+      "all": "All Namespaces",
+      "integrated": "Integrated",
+      "planned": "Planned",
+      "search_placeholder": "Search namespaces or methods..."
+    },
+    "table": {
+      "col_category": "Namespace / Domain",
+      "col_methods": "SDK Methods & Signatures",
+      "col_status": "Status",
+      "col_notes": "Implementation Scope / Mirror Mapping",
+      "col_my_progress": "My Checkpoint"
+    },
+    "status": {
+      "full": "Fully Integrated",
+      "partial": "Partially Integrated",
+      "none": "Planned"
+    },
+    "notes": {
+      "aliases": "Custom domains and vercel.app subdomains can be configured and managed directly in the Domains tab.",
+      "deployments": "Real-time build logs, status badges, cancelation actions, and deployment URL links are inside the Deployments tab.",
+      "projects": "Linking and disconnecting Vercel Project IDs or names is configured in Project Settings.",
+      "secrets": "The Vercel Bearer token is saved encrypted in the user_secrets DB table, managed under user settings.",
+      "accessGroups": "Access Group creations and revocations are supported directly in the sidebar menu. Requires Enterprise Vercel plan.",
+      "authentication": "List current active keys, create new API credentials, or revoke tokens in the Auth Tokens section.",
+      "apiObservability": "Easily toggle API observability metrics compilation for web bundles in the Observability tab.",
+      "certs": "Manage custom certificates manually by entering domain CNs, uploading PEM files (cert/key/ca), or removing certificate records under the SSL Certificates view.",
+      "bulkRedirects": "Stage path redirection rules (source to destination routing) inside the Redirect Rules section.",
+      "billing": "Buy prepaid billing credits (v0, gateway, agent credit types) in the Billing Credits sub-tab.",
+      "edgeConfig": "Not implemented. Plan is to utilize Edge Config to cache configuration flags for the trading signals engine.",
+      "env": "Not implemented. Currently configured statically in .env.local. Planned for dynamic project-wide configurations management.",
+      "webhooks": "Not implemented. Plan is to notify execution engines when a production build is successfully deployed.",
+      "integrations": "Not implemented. Log stream pipelines are currently ingested locally on the database instead.",
+      "teams": "Not implemented. Multitenancy scoping is managed locally via the project workspace organization database model.",
+      "domains": "Not implemented. Domains are resolved and managed via domain Aliases integration instead.",
+      "artifacts": "Not implemented. Planned for managing build artifacts.",
+      "checks": "Not implemented. Planned for integration with CI/CD checks.",
+      "checksV2": "Not implemented. Planned for advanced deployment check runs.",
+      "dns": "Not implemented. Planned for DNS record management.",
+      "domainsRegistrar": "Not implemented. Planned for domain purchases and registration.",
+      "drains": "Not implemented. Planned for forwarding platform events.",
+      "edgeCache": "Not implemented. Planned for manual cache invalidation.",
+      "environment": "Not implemented. Planned for managing shared environment configurations.",
+      "featureFlags": "Not implemented. Planned for dynamic feature flagging integration.",
+      "logDrains": "Not implemented. Planned for configurable log streaming.",
+      "logs": "Not implemented. Planned for fetching runtime logs.",
+      "marketplace": "Not implemented. Planned for Vercel integration marketplace.",
+      "microfrontends": "Not implemented. Planned for microfrontends configurations.",
+      "networking": "Not implemented. Planned for network policy and IP management.",
+      "projectMembers": "Not implemented. Planned for managing project-level access.",
+      "projectRoutes": "Not implemented. Planned for dynamic route routing generation.",
+      "rollingRelease": "Not implemented. Planned for gradual rollout configuration.",
+      "sandboxes": "Not implemented. Planned for secure code execution sandboxing.",
+      "security": "Not implemented. Planned for WAF firewall and attack mitigation.",
+      "user": "Not implemented. Planned for managing user authentication state."
+    }
   }
 }

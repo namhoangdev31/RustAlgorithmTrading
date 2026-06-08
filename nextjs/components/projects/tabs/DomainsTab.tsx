@@ -29,6 +29,7 @@ interface DomainsTabProps {
   vercelAliases: any[];
   vercelConnectionError?: boolean;
   locale: string;
+  returnTo?: string;
 }
 
 export function DomainsTab({
@@ -36,6 +37,7 @@ export function DomainsTab({
   vercelAliases,
   vercelConnectionError,
   locale,
+  returnTo,
 }: DomainsTabProps) {
   const [isAssignOpen, setIsAssignOpen] = useState(false);
 
@@ -130,6 +132,7 @@ export function DomainsTab({
                         <div className="flex items-center justify-end">
                           <form action={deleteAliasAction}>
                             <input type="hidden" name="aliasId" value={alias.uid} />
+                            {returnTo && <input type="hidden" name="returnTo" value={returnTo} />}
                             <Button 
                               type="submit" 
                               variant="ghost" 
@@ -163,6 +166,7 @@ export function DomainsTab({
             </CardHeader>
             <CardContent className="pt-6">
               <form action={assignAliasAction} onSubmit={() => setIsAssignOpen(false)} className="space-y-4">
+                {returnTo && <input type="hidden" name="returnTo" value={returnTo} />}
                 <div className="space-y-2">
                   <Label className="text-[11px] font-bold text-ink-mute uppercase tracking-wider">Deployment ID</Label>
                   <Input 

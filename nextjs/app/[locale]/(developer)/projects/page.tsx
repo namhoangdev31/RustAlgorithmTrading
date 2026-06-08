@@ -331,6 +331,7 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
             vercelDeployments={vercelDeployments}
             vercelConnectionError={vercelConnectionError}
             locale={locale}
+            projects={data.projects}
           />
         ) : activeTab === "settings" ? (
           <SettingsTab github={github} />

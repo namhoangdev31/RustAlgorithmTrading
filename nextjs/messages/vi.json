@@ -434,7 +434,20 @@
         "review": "Chờ duyệt",
         "published": "Đã xuất bản",
         "archived": "Lưu trữ"
-      }
+      },
+      "github_integration": "Tích hợp Kho lưu trữ GitHub",
+      "linked_repository": "Kho lưu trữ đã liên kết",
+      "disconnect_repository": "Hủy kết nối Kho lưu trữ",
+      "webhook_url": "URL Webhook",
+      "webhook_secret": "Mã bảo mật Webhook",
+      "delivery_logs": "Nhật ký phân phối gói gần đây (Webhook chạy)",
+      "no_events_received": "Chưa nhận được sự kiện nào. Hãy đẩy một tag/release để kích hoạt xây dựng gói ứng dụng.",
+      "no_linked_repo": "Chưa liên kết Kho lưu trữ Git",
+      "github_desc": "Kết nối kho lưu trữ GitHub sẽ tự động biên dịch và nạp các bản cập nhật gói web/di động khi bạn phát hành thẻ (tags).",
+      "select_repo": "Chọn kho lưu trữ",
+      "link_repository": "Liên kết Kho lưu trữ",
+      "connect_first": "Kết nối tài khoản GitHub của bạn trước trong cài đặt không gian làm việc để liên kết.",
+      "go_to_settings": "Đi tới cài đặt"
     },
     "delete_dialog": {
       "title": "Xóa {name}",
@@ -477,6 +490,8 @@
         "other": "Khác",
         "dashboard": "Bảng điều khiển",
         "projects": "Dự Án",
+        "vercel_projects": "Dự án Vercel",
+        "lepoship_projects": "Dự án LepoShip",
         "apps": "Ứng dụng",
         "chats": "Trò chuyện",
         "users": "Người dùng",
@@ -486,7 +501,9 @@
         "account": "Tài khoản",
         "appearance": "Giao diện",
         "notifications": "Thông báo",
-        "display": "Hiển thị"
+        "display": "Hiển thị",
+        "vercel": "Mã API Vercel",
+        "vercel_roadmap": "Lộ trình Vercel SDK"
       },
       "header": {
         "overview": "Tổng quan",
@@ -684,6 +701,7 @@
       "appearance": "Giao diện",
       "notifications": "Thông báo",
       "display": "Hiển thị",
+      "vercel": "Mã API Vercel",
       "select_tab": "Chọn tab..."
     },
     "profile": {
@@ -960,8 +978,220 @@
       "back_to_home": "Quay lại trang chủ"
     }
   },
+  "Deployments": {
+    "toast": {
+      "select_project": "Vui lòng chọn một dự án.",
+      "select_bundle": "Vui lòng chọn hoặc kéo thả tệp bundle.",
+      "upload_success": "Tải lên bundle và phát hành thành công!",
+      "upload_failed": "Tải lên thất bại.",
+      "network_error": "Lỗi kết nối mạng trong quá trình tải lên."
+    },
+    "status": {
+      "ready": "Sẵn sàng",
+      "building": "Đang dựng",
+      "error": "Lỗi",
+      "canceled": "Đã huỷ",
+      "unknown": "Không xác định"
+    },
+    "registry_title": "Lepos Bundle Registry",
+    "vercel_tab": "Tích hợp Vercel",
+    "deploy_new_bundle": "Phát hành Bundle Mới",
+    "deploy_new_bundle_desc": "Tải lên tệp bundle ứng dụng của bạn để đăng ký bản phát hành mới.",
+    "form": {
+      "no_projects": "Chưa có dự án nào.",
+      "target_project": "Dự án",
+      "bundle_file": "Tệp Bundle (.zip, .bundle)",
+      "dropzone_active": "Thả tệp bundle vào đây...",
+      "dropzone_desc": "Kéo thả tệp bundle (.zip, .bundle) vào đây, hoặc click để chọn tệp",
+      "dropzone_support": "Hỗ trợ .zip, .bundle lên tới 100MB",
+      "selected_file": "Đã chọn tệp:",
+      "version": "Phiên bản",
+      "version_desc": "Để trống để tự động tăng phiên bản (ví dụ: 1.0.1)",
+      "track": "Phân Kênh",
+      "release_notes": "Mô tả phát hành",
+      "release_notes_placeholder": "Mô tả các thay đổi trong bản phát hành này...",
+      "uploading": "Đang tải lên...",
+      "processing": "Đang xử lý...",
+      "publish_release": "Đăng Ký & Phát Hành"
+    },
+    "history": {
+      "title": "Lịch Sử Phát Hành",
+      "desc": "Danh sách các bản phát hành đã đăng ký và phân phối.",
+      "empty": "Chưa có bản phát hành nào",
+      "empty_desc": "Tải lên bản phát hành đầu tiên để bắt đầu phân phối ứng dụng của bạn.",
+      "col_version": "Phiên bản",
+      "col_track": "Kênh",
+      "col_size": "Dung Lượng",
+      "col_released": "Ngày Phát Hành",
+      "col_bundle": "Tải Về"
+    },
+    "vercel": {
+      "connect": "Kết Nối Tích Hợp Vercel",
+      "connect_desc": "Kết nối dự án của bạn với Vercel để bật tính năng triển khai web tự động và CI/CD.",
+      "connect_desc_dashboard": "Mở khoá lịch sử triển khai và cấu hình đường dẫn dự án. Kết nối mã API Vercel của bạn để theo dõi trực tiếp trạng thái dựng bản web.",
+      "configure": "Cấu Hình API Key Vercel",
+      "title": "Triển Khai Web (Vercel Pipeline)",
+      "subtitle": "Theo dõi trạng thái các bản build web trên môi trường Vercel.",
+      "no_deployments": "Không Tìm Thấy Bản Dựng Nào",
+      "no_deployments_desc": "Chưa có bản dựng nào được tạo trên Vercel cho dự án này.",
+      "no_deployments_desc_dashboard": "Triển khai dự án của bạn lên Vercel để theo dõi tiến trình hiển thị tại đây.",
+      "col_deployment": "Bản Dựng",
+      "col_status": "Trạng Thái",
+      "col_age": "Thời gian",
+      "col_creator": "Người tạo",
+      "deploying": "Đang chuẩn bị dựng...",
+      "cancel": "Huỷ",
+      "inactive": "Không hoạt động"
+    }
+  },
+  "VercelTab": {
+    "title": "Tích hợp Vercel",
+    "desc": "Quản lý các tính năng nâng cao, định tuyến redirects, chứng chỉ SSL, giám sát observability, nhóm truy cập và mã API token.",
+    "not_connected": "Tích hợp Vercel chưa được cấu hình hoặc liên kết cho dự án này.",
+    "api_error": "Đã xảy ra lỗi khi kết nối với API Vercel.",
+    "observability": {
+      "title": "Giám sát API Observability",
+      "desc": "Giám sát và ghi nhận nhật ký các yêu cầu HTTP và lệnh gọi serverless function.",
+      "status_enabled": "Đang hoạt động",
+      "status_disabled": "Đã tắt",
+      "toggle_enable": "Bật Giám Sát",
+      "toggle_disable": "Tắt Giám Sát"
+    },
+    "redirects": {
+      "title": "Quy tắc định hướng Redirect",
+      "desc": "Thiết lập các quy tắc chuyển hướng đường dẫn (ví dụ: pattern matched path) cho dự án của bạn.",
+      "source_label": "Đường dẫn nguồn",
+      "source_placeholder": "/old-blog/:slug",
+      "dest_label": "Đường dẫn đích (URL)",
+      "dest_placeholder": "/blog/:slug",
+      "stage_btn": "Đăng ký Chuyển hướng",
+      "stage_success": "Đã đăng ký quy tắc chuyển hướng thành công."
+    },
+    "certs": {
+      "title": "Chứng chỉ bảo mật SSL",
+      "desc": "Yêu cầu cấp chứng chỉ SSL mới hoặc tải lên chứng chỉ TLS/SSL tùy chỉnh.",
+      "domain_label": "Các tên miền (cách nhau bởi dấu phẩy)",
+      "domain_placeholder": "example.com, www.example.com",
+      "issue_btn": "Cấp Chứng Chỉ",
+      "upload_btn": "Tải Lên Chứng Chỉ Tùy Chỉnh",
+      "cert_label": "Tệp Certificate (PEM)",
+      "key_label": "Mã khóa Private Key (PEM)",
+      "ca_label": "Tệp CA Certificate (PEM)",
+      "remove_btn": "Xóa Chứng Chỉ",
+      "cert_id_label": "ID Chứng Chỉ",
+      "cert_id_placeholder": "cert_..."
+    },
+    "access_groups": {
+      "title": "Nhóm truy cập (Access Groups)",
+      "desc": "Tạo và quản lý các Nhóm truy cập của Team Vercel để phân quyền cho người dùng.",
+      "name_label": "Tên Nhóm",
+      "name_placeholder": "Nhóm Kỹ Thuật",
+      "create_btn": "Tạo Nhóm Truy Cập",
+      "empty": "Không tìm thấy nhóm truy cập nào hoặc không được hỗ trợ bởi gói của bạn.",
+      "col_id": "ID Nhóm",
+      "col_name": "Tên",
+      "col_created": "Ngày tạo",
+      "delete_btn": "Xóa"
+    },
+    "tokens": {
+      "title": "Mã xác thực API Tokens",
+      "desc": "Tạo mã API token để xác thực các công cụ bên ngoài với dịch vụ của Vercel.",
+      "name_label": "Tên Token",
+      "name_placeholder": "CI/CD Token",
+      "create_btn": "Tạo Token Mới",
+      "empty": "Không tìm thấy API token nào.",
+      "col_id": "ID Token",
+      "col_name": "Tên",
+      "col_created": "Ngày tạo",
+      "delete_btn": "Thu hồi"
+    },
+    "credits": {
+      "title": "Nạp tiền tài khoản Credits",
+      "desc": "Nạp thêm tín dụng credits trả trước vào tài khoản cho dịch vụ serverless, database hoặc proxy.",
+      "amount_label": "Số tiền (USD)",
+      "amount_placeholder": "50",
+      "type_label": "Loại Tín Dụng",
+      "buy_btn": "Mua Tín Dụng",
+      "buy_success": "Đã mua tín dụng thành công."
+    },
+    "matrix": {
+      "title": "Ma trận Tính năng Vercel SDK",
+      "desc": "Trạng thái tích hợp lập trình của các danh mục Vercel SDK đối với các mô-đun hệ thống hiện tại.",
+      "col_category": "Danh mục / Namespace",
+      "col_methods": "Phương thức SDK",
+      "col_status": "Trạng thái Hiện tại",
+      "col_notes": "Phạm vi Tích hợp / Ghi chú",
+      "status_full": "Tích hợp Đầy đủ (UI + Server Action)",
+      "status_partial": "Tích hợp Một phần (Chỉ Server Action)",
+      "status_none": "Chưa được triển khai"
+    }
+  },
   "Metadata": {
     "title": "Lepos — Nền tảng Phân phối Ứng dụng & Lưu trữ Đám mây",
     "description": "Triển khai Mini App, lưu trữ trang web và vận hành giao dịch thuật toán — tất cả trên một nền tảng thống nhất."
+  },
+  "VercelRoadmap": {
+    "title": "Lộ trình Vercel SDK",
+    "description": "Bảng theo dõi trực quan so sánh thông số lập trình Vercel SDK với tiến độ tích hợp nền tảng hiện tại.",
+    "metrics": {
+      "integrated_count": "Đã tích hợp {count}/{total} namespace",
+      "progress_label": "Tiến độ Đồng bộ SDK Toàn cầu"
+    },
+    "filters": {
+      "all": "Tất cả Namespace",
+      "integrated": "Đã tích hợp",
+      "planned": "Đang lên kế hoạch",
+      "search_placeholder": "Tìm kiếm namespace hoặc hàm SDK..."
+    },
+    "table": {
+      "col_category": "Namespace / Tên miền",
+      "col_methods": "Hàm SDK & Cú pháp",
+      "col_status": "Trạng thái",
+      "col_notes": "Phạm vi Tích hợp / Ghi chú",
+      "col_my_progress": "Kiểm tra cá nhân"
+    },
+    "status": {
+      "full": "Tích hợp Đầy đủ",
+      "partial": "Tích hợp Một phần",
+      "none": "Đang lên kế hoạch"
+    },
+    "notes": {
+      "aliases": "Quản lý tên miền tuỳ chỉnh và vercel.app được cấu hình trực tiếp tại tab Domains.",
+      "deployments": "Nhật ký build, huy hiệu trạng thái, thao tác huỷ bỏ, và URL deploy nằm tại tab Deployments.",
+      "projects": "Liên kết hoặc ngắt kết nối Vercel Project IDs / Names được cấu hình trong Project Settings.",
+      "secrets": "Token Bearer Vercel được lưu mã hóa trong bảng user_secrets, quản lý tại Settings người dùng.",
+      "accessGroups": "Tạo và thu hồi Access Group được hỗ trợ trực tiếp từ menu Access Groups. Yêu cầu Vercel Enterprise.",
+      "authentication": "Liệt kê key đang hoạt động, tạo hoặc thu hồi token API tại mục Auth Tokens.",
+      "apiObservability": "Bật tắt tính năng đo lường hiệu suất Observability cho web bundle dễ dàng tại tab Observability.",
+      "certs": "Quản lý thủ công certificate, nhập CN, tải lên PEM files (cert/key/ca), hoặc xoá cert tại SSL Certificates.",
+      "bulkRedirects": "Tạo rules định tuyến chuyển hướng đường dẫn tại mục Redirect Rules.",
+      "billing": "Mua tín dụng trả trước (v0, gateway, agent) trong mục Billing Credits.",
+      "edgeConfig": "Chưa tích hợp. Kế hoạch sử dụng Edge Config để lưu tạm cờ cấu hình cho hệ thống trading signals.",
+      "env": "Chưa tích hợp. Hiện tại đang đặt tĩnh trong .env.local. Sẽ cập nhật quản lý động biến môi trường cho dự án.",
+      "webhooks": "Chưa tích hợp. Sẽ gửi thông báo cho engine xử lý khi deploy production hoàn tất.",
+      "integrations": "Chưa tích hợp. Luồng stream logs hiện đang được xử lý cục bộ trên database.",
+      "teams": "Chưa tích hợp. Phân vùng multitenancy đang được quản lý cục bộ qua tổ chức dự án thay vì Vercel.",
+      "domains": "Chưa tích hợp. Đã xử lý phân giải domain thông qua Aliases namespace thay thế.",
+      "artifacts": "Chưa tích hợp. Lên kế hoạch quản lý các tệp cấu trúc bản dựng build artifact.",
+      "checks": "Chưa tích hợp. Lên kế hoạch tích hợp kiểm tra CI/CD tự động.",
+      "checksV2": "Chưa tích hợp. Dành cho các luồng kiểm tra bản dựng nâng cao.",
+      "dns": "Chưa tích hợp. Kế hoạch quản lý chi tiết bản ghi DNS.",
+      "domainsRegistrar": "Chưa tích hợp. Lên kế hoạch hỗ trợ mua và đăng ký tên miền.",
+      "drains": "Chưa tích hợp. Dành cho việc chuyển tiếp sự kiện nền tảng.",
+      "edgeCache": "Chưa tích hợp. Kế hoạch hỗ trợ xoá cache thủ công.",
+      "environment": "Chưa tích hợp. Lên kế hoạch quản lý cấu hình môi trường dùng chung.",
+      "featureFlags": "Chưa tích hợp. Kế hoạch hỗ trợ cờ tính năng động (Feature Flags).",
+      "logDrains": "Chưa tích hợp. Lên kế hoạch hỗ trợ stream log cấu hình.",
+      "logs": "Chưa tích hợp. Kế hoạch lấy nhật ký hoạt động thời gian thực.",
+      "marketplace": "Chưa tích hợp. Lên kế hoạch chợ ứng dụng tích hợp Vercel.",
+      "microfrontends": "Chưa tích hợp. Lên kế hoạch hỗ trợ kiến trúc microfrontends.",
+      "networking": "Chưa tích hợp. Kế hoạch thiết lập IP và chính sách mạng.",
+      "projectMembers": "Chưa tích hợp. Lên kế hoạch quản lý quyền truy cập thành viên dự án.",
+      "projectRoutes": "Chưa tích hợp. Kế hoạch thiết lập định tuyến động (dynamic routes).",
+      "rollingRelease": "Chưa tích hợp. Lên kế hoạch hỗ trợ triển khai cấu hình phát hành dần (rolling release).",
+      "sandboxes": "Chưa tích hợp. Dành cho môi trường thực thi code an toàn (sandboxing).",
+      "security": "Chưa tích hợp. Kế hoạch hỗ trợ WAF firewall và ngăn chặn tấn công.",
+      "user": "Chưa tích hợp. Kế hoạch đồng bộ trạng thái xác thực người dùng."
+    }
   }
 }

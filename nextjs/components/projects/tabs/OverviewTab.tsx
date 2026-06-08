@@ -126,7 +126,7 @@ function GithubAside({
                       </Button>
                     ) : (
                       <Button asChild className="h-7 px-2.5 rounded-sm text-[10px] bg-primary hover:bg-primary-deep text-primary-foreground cursor-pointer">
-                        <Link href={`/projects?dialog=create&repoName=${encodeURIComponent(repo.name)}&repoDescription=${encodeURIComponent(repo.description || "")}`}>
+                        <Link href={`/projects?dialog=create&repoFullName=${encodeURIComponent(repo.fullName)}&repoName=${encodeURIComponent(repo.name)}&repoDescription=${encodeURIComponent(repo.description || "")}`}>
                           Create Project
                         </Link>
                       </Button>
