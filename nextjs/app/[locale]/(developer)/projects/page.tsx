@@ -42,6 +42,8 @@ import {
 import { getProjectBundleData } from "@/lib/server/admin-data";
 import { requireCurrentUser } from "@/lib/server/current-user";
 import { getTranslations } from "next-intl/server";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { getGithubOverviewData } from "@/lib/server/github";
 import { IntegrationsTab } from "@/components/projects/tabs/IntegrationsTab";
 import { ActivityTab } from "@/components/projects/tabs/ActivityTab";
@@ -88,6 +90,7 @@ type ProjectsPageProps = {
     name?: string;
     repoName?: string;
     repoDescription?: string;
+    github?: string;
   }>;
 };
 type ProjectsData = Awaited<ReturnType<typeof getProjectBundleData>>;
@@ -112,6 +115,17 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
   const user = await requireCurrentUser();
   const data = await getProjectBundleData(user.id, search);
   const github = await getGithubOverviewData();
+
+  // Auto-connect to GitHub if disconnected and not explicitly opted out
+  if (!github.connected) {
+    const cookieStore = await cookies();
+    const isDisconnected = cookieStore.get("github_disconnected")?.value === "true";
+    const hasGithubParam = search.github; // If github param is present (e.g. error, callback redirect)
+
+    if (!isDisconnected && !hasGithubParam) {
+      redirect(`/api/github/connect?returnTo=${encodeURIComponent("/projects?tab=overview")}`);
+    }
+  }
 
   // Check Vercel key connection
   const vercelConnected = await hasVercelApiKey(user.id);
@@ -319,7 +333,7 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
             locale={locale}
           />
         ) : activeTab === "settings" ? (
-          <SettingsTab />
+          <SettingsTab github={github} />
         ) : (
           <OverviewTab
             data={data}

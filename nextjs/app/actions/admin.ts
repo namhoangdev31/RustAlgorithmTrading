@@ -341,6 +341,8 @@ export async function createProjectFromGithubRepoAction(formData: FormData) {
 export async function connectGithubAction(formData: FormData) {
   await requireCurrentUser();
   const returnTo = await readReturnTo(formData, "/projects?tab=overview");
+  const cookieStore = await cookies();
+  cookieStore.delete("github_disconnected");
   redirect(`/api/github/connect?returnTo=${encodeURIComponent(returnTo)}`);
 }
 
@@ -349,6 +351,13 @@ export async function disconnectGithubAction(formData: FormData) {
   const returnTo = await readReturnTo(formData, "/projects?tab=overview");
   const cookieStore = await cookies();
   cookieStore.delete("github_access_token");
+  cookieStore.set("github_disconnected", "true", {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: 60 * 60 * 24 * 365, // 1 year
+  });
   revalidatePath("/projects");
   redirect(returnTo);
 }
