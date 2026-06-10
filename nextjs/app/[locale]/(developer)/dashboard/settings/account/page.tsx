@@ -12,6 +12,7 @@ import { getSettingsData } from "@/lib/server/admin-data";
 import { requireCurrentUser } from "@/lib/server/current-user";
 import { OrganizationForm } from "@/components/dashboard/organization-form";
 import { AccountForm } from "@/components/dashboard/account-form";
+import { WorkspaceGovernanceCard } from "@/components/dashboard/workspace-governance-card";
 
 export default async function AccountSettingsPage() {
   const currentUser = await requireCurrentUser();
@@ -40,6 +41,7 @@ export default async function AccountSettingsPage() {
             const orgTypeLocalized = organization.type === "personal" 
               ? t("account.org_personal") 
               : t("account.org_corporate");
+            const canDelete = data.workspace.organizations.length > 1 && organization.type === "corporate";
             return (
               <Card key={organization.id}>
                 <CardHeader>
@@ -51,14 +53,20 @@ export default async function AccountSettingsPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <OrganizationForm organization={organization} />
+                  <OrganizationForm organization={organization} canDelete={canDelete} />
                 </CardContent>
               </Card>
             );
           })}
+          {data.workspace.activeOrganization ? (
+            <WorkspaceGovernanceCard
+              organizationId={data.workspace.activeOrganization.id}
+              members={data.workspaceMembers}
+              usage={data.workspaceUsage}
+            />
+          ) : null}
         </div>
       </div>
     </>
   );
 }
-

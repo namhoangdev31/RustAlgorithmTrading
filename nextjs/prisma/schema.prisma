@@ -105,6 +105,8 @@ model User {
   reviewHistory          BundleReviewHistory[]
   reviewQueueReviewed    BundleReviewQueue[]         @relation("ReviewQueueReviewer")
   userSecrets            UserSecrets[]
+  personalAccessTokens   PersonalAccessToken[]
+  previewComments        PreviewComment[]
 
   @@map("users")
 }
@@ -125,6 +127,7 @@ model Organization {
 
   user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   projects Project[]
+  ssoConfig SsoConfig?
 
   @@unique([userId, type])
   @@map("organizations")
@@ -143,6 +146,12 @@ model Project {
 
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   bundle       Bundles?
+  deployHooks         DeployHook[]
+  firewallRules       FirewallRule[]
+  cronJobs            CronJob[]
+  forms               Form[]
+  previewComments     PreviewComment[]
+  lepoShipLocalConfig LepoShipLocalConfig?
 
   @@map("projects")
 }
@@ -1369,3 +1378,130 @@ model UserSecrets {
   @@unique([userId, provider])
   @@map("user_secrets")
 }
+
+// ----------------------------------------------------
+// New Models for Phase 9-18
+// ----------------------------------------------------
+
+model PersonalAccessToken {
+  id          String    @id @default(cuid())
+  name        String
+  tokenHash   String    @unique
+  scopes      String[]  // e.g., ["project:read", "project:write", "deployment:trigger"]
+  userId      String    @db.Uuid
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  expiresAt   DateTime?
+  lastUsedAt  DateTime?
+
+  @@map("personal_access_tokens")
+}
+
+model SsoConfig {
+  id             String       @id @default(cuid())
+  domain         String       @unique // e.g., "company.com"
+  provider       String       // "saml" hoặc "oidc"
+  clientId       String
+  clientSecret   String?      // Mã hóa
+  entryPoint     String       // SAML SSO URL
+  issuer         String       // Identity Provider Entity ID
+  cert           String       // Public Certificate PEM
+  organizationId String       @unique @db.Uuid
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+
+  @@map("sso_configs")
+}
+
+model DeployHook {
+  id          String    @id @default(cuid())
+  name        String
+  token       String    @unique // Random secure string
+  branch      String    // Branch để build (e.g., "main")
+  projectId   String    @db.Uuid
+  project     Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  lastUsedAt  DateTime?
+
+  @@map("deploy_hooks")
+}
+
+model FirewallRule {
+  id          String    @id @default(cuid())
+  name        String
+  action      String    // "block" (chặn), "allow" (cho phép), "challenge" (JS challenge)
+  type        String    // "ip", "country", "path", "header"
+  value       String    // e.g., "192.168.1.1", "CN", "/admin/*", "User-Agent:BadBot"
+  active      Boolean   @default(true)
+  projectId   String    @db.Uuid
+  project     Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+
+  @@map("firewall_rules")
+}
+
+model CronJob {
+  id          String    @id @default(cuid())
+  name        String
+  schedule    String    // Standard cron expression (e.g., "*/5 * * * *")
+  path        String    // Endpoint để gọi (e.g., "/api/cron/sync")
+  projectId   String    @db.Uuid
+  project     Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  lastRun     DateTime?
+  lastStatus  String?   // "success" hoặc "failed"
+
+  @@map("cron_jobs")
+}
+
+model Form {
+  id          String           @id @default(cuid())
+  name        String           // Tên form
+  projectId   String           @db.Uuid
+  project     Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  submissions FormSubmission[]
+  createdAt   DateTime         @default(now())
+
+  @@map("forms")
+}
+
+model FormSubmission {
+  id          String    @id @default(cuid())
+  data        Json      // Lưu payload gửi lên dưới dạng key-value JSON
+  ipAddress   String?
+  userAgent   String?
+  formId      String
+  form        Form      @relation(fields: [formId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+
+  @@map("form_submissions")
+}
+
+model PreviewComment {
+  id           String     @id @default(cuid())
+  content      String
+  x            Float      // Tọa độ phần trăm ngang trên màn hình
+  y            Float      // Tọa độ phần trăm dọc trên màn hình
+  pathname     String     // Route lúc bình luận (e.g., "/about")
+  resolved     Boolean    @default(false)
+  projectId    String     @db.Uuid
+  project      Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  userId       String     @db.Uuid
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+
+  @@map("preview_comments")
+}
+
+model LepoShipLocalConfig {
+  id                  String          @id @default(cuid())
+  localPort           Int             @default(8080)  // Port chạy GCDWebServer / Android server
+  basePath            String          @default("/")   // Đường dẫn cơ sở phục vụ file tĩnh
+  fallbackPath        String          @default("/index.html") // File fallback khi gặp 404 (Single Page App routing)
+  projectId           String          @unique @db.Uuid
+  project             Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt           DateTime        @default(now())
+
+  @@map("lepoship_local_configs")
+}
+

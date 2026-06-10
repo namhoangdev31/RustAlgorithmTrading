@@ -79,3 +79,59 @@ export async function clearActiveOrganizationCookie() {
   const cookieStore = await cookies();
   cookieStore.delete(ACTIVE_ORG_COOKIE);
 }
+
+export async function getWorkspaceUsageSnapshot(organizationId: string) {
+  const [projectCount, bundleCount, collaboratorCount, releaseCount] =
+    await Promise.all([
+      prisma.project.count({
+        where: { organizationId, deletedAt: null },
+      }),
+      prisma.bundles.count({
+        where: {
+          project: {
+            organizationId,
+            deletedAt: null,
+          },
+          deletedAt: null,
+        },
+      }),
+      prisma.bundleCollaborators.count({
+        where: {
+          bundle: {
+            project: {
+              organizationId,
+              deletedAt: null,
+            },
+          },
+        },
+      }),
+      prisma.bundleReleaseTracks.count({
+        where: {
+          bundle: {
+            project: {
+              organizationId,
+              deletedAt: null,
+            },
+          },
+        },
+      }),
+    ]);
+
+  const plan = "starter";
+  const limits = {
+    projects: 10,
+    members: 10,
+    releases: 50,
+  };
+
+  return {
+    plan,
+    limits,
+    usage: {
+      projects: projectCount,
+      bundles: bundleCount,
+      members: collaboratorCount + 1,
+      releases: releaseCount,
+    },
+  };
+}

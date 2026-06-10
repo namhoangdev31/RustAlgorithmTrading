@@ -200,6 +200,7 @@ export type OrganizationWhereInput = {
   deletedAt?: Prisma.DateTimeNullableFilter<"Organization"> | Date | string | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   projects?: Prisma.ProjectListRelationFilter
+  ssoConfig?: Prisma.XOR<Prisma.SsoConfigNullableScalarRelationFilter, Prisma.SsoConfigWhereInput> | null
 }
 
 export type OrganizationOrderByWithRelationInput = {
@@ -212,6 +213,7 @@ export type OrganizationOrderByWithRelationInput = {
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   projects?: Prisma.ProjectOrderByRelationAggregateInput
+  ssoConfig?: Prisma.SsoConfigOrderByWithRelationInput
 }
 
 export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
@@ -228,6 +230,7 @@ export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
   deletedAt?: Prisma.DateTimeNullableFilter<"Organization"> | Date | string | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   projects?: Prisma.ProjectListRelationFilter
+  ssoConfig?: Prisma.XOR<Prisma.SsoConfigNullableScalarRelationFilter, Prisma.SsoConfigWhereInput> | null
 }, "id" | "userId_type">
 
 export type OrganizationOrderByWithAggregationInput = {
@@ -265,6 +268,7 @@ export type OrganizationCreateInput = {
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutOrganizationsInput
   projects?: Prisma.ProjectCreateNestedManyWithoutOrganizationInput
+  ssoConfig?: Prisma.SsoConfigCreateNestedOneWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateInput = {
@@ -276,6 +280,7 @@ export type OrganizationUncheckedCreateInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOrganizationInput
+  ssoConfig?: Prisma.SsoConfigUncheckedCreateNestedOneWithoutOrganizationInput
 }
 
 export type OrganizationUpdateInput = {
@@ -287,6 +292,7 @@ export type OrganizationUpdateInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutOrganizationsNestedInput
   projects?: Prisma.ProjectUpdateManyWithoutOrganizationNestedInput
+  ssoConfig?: Prisma.SsoConfigUpdateOneWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateInput = {
@@ -298,6 +304,7 @@ export type OrganizationUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutOrganizationNestedInput
+  ssoConfig?: Prisma.SsoConfigUncheckedUpdateOneWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateManyInput = {
@@ -439,6 +446,20 @@ export type OrganizationUpdateOneRequiredWithoutProjectsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutProjectsInput, Prisma.OrganizationUpdateWithoutProjectsInput>, Prisma.OrganizationUncheckedUpdateWithoutProjectsInput>
 }
 
+export type OrganizationCreateNestedOneWithoutSsoConfigInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutSsoConfigInput, Prisma.OrganizationUncheckedCreateWithoutSsoConfigInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutSsoConfigInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+}
+
+export type OrganizationUpdateOneRequiredWithoutSsoConfigNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutSsoConfigInput, Prisma.OrganizationUncheckedCreateWithoutSsoConfigInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutSsoConfigInput
+  upsert?: Prisma.OrganizationUpsertWithoutSsoConfigInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutSsoConfigInput, Prisma.OrganizationUpdateWithoutSsoConfigInput>, Prisma.OrganizationUncheckedUpdateWithoutSsoConfigInput>
+}
+
 export type OrganizationCreateWithoutUserInput = {
   id: string
   name: string
@@ -447,6 +468,7 @@ export type OrganizationCreateWithoutUserInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projects?: Prisma.ProjectCreateNestedManyWithoutOrganizationInput
+  ssoConfig?: Prisma.SsoConfigCreateNestedOneWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutUserInput = {
@@ -457,6 +479,7 @@ export type OrganizationUncheckedCreateWithoutUserInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOrganizationInput
+  ssoConfig?: Prisma.SsoConfigUncheckedCreateNestedOneWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutUserInput = {
@@ -506,6 +529,7 @@ export type OrganizationCreateWithoutProjectsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutOrganizationsInput
+  ssoConfig?: Prisma.SsoConfigCreateNestedOneWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutProjectsInput = {
@@ -516,6 +540,7 @@ export type OrganizationUncheckedCreateWithoutProjectsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  ssoConfig?: Prisma.SsoConfigUncheckedCreateNestedOneWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutProjectsInput = {
@@ -542,6 +567,7 @@ export type OrganizationUpdateWithoutProjectsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutOrganizationsNestedInput
+  ssoConfig?: Prisma.SsoConfigUpdateOneWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutProjectsInput = {
@@ -552,6 +578,67 @@ export type OrganizationUncheckedUpdateWithoutProjectsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  ssoConfig?: Prisma.SsoConfigUncheckedUpdateOneWithoutOrganizationNestedInput
+}
+
+export type OrganizationCreateWithoutSsoConfigInput = {
+  id: string
+  name: string
+  type: $Enums.OrganizationType
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  user: Prisma.UserCreateNestedOneWithoutOrganizationsInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationUncheckedCreateWithoutSsoConfigInput = {
+  id: string
+  name: string
+  type: $Enums.OrganizationType
+  userId: string
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationCreateOrConnectWithoutSsoConfigInput = {
+  where: Prisma.OrganizationWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutSsoConfigInput, Prisma.OrganizationUncheckedCreateWithoutSsoConfigInput>
+}
+
+export type OrganizationUpsertWithoutSsoConfigInput = {
+  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutSsoConfigInput, Prisma.OrganizationUncheckedUpdateWithoutSsoConfigInput>
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutSsoConfigInput, Prisma.OrganizationUncheckedCreateWithoutSsoConfigInput>
+  where?: Prisma.OrganizationWhereInput
+}
+
+export type OrganizationUpdateToOneWithWhereWithoutSsoConfigInput = {
+  where?: Prisma.OrganizationWhereInput
+  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutSsoConfigInput, Prisma.OrganizationUncheckedUpdateWithoutSsoConfigInput>
+}
+
+export type OrganizationUpdateWithoutSsoConfigInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumOrganizationTypeFieldUpdateOperationsInput | $Enums.OrganizationType
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  user?: Prisma.UserUpdateOneRequiredWithoutOrganizationsNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationUncheckedUpdateWithoutSsoConfigInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumOrganizationTypeFieldUpdateOperationsInput | $Enums.OrganizationType
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateManyUserInput = {
@@ -571,6 +658,7 @@ export type OrganizationUpdateWithoutUserInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projects?: Prisma.ProjectUpdateManyWithoutOrganizationNestedInput
+  ssoConfig?: Prisma.SsoConfigUpdateOneWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutUserInput = {
@@ -581,6 +669,7 @@ export type OrganizationUncheckedUpdateWithoutUserInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutOrganizationNestedInput
+  ssoConfig?: Prisma.SsoConfigUncheckedUpdateOneWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateManyWithoutUserInput = {
@@ -633,6 +722,7 @@ export type OrganizationSelect<ExtArgs extends runtime.Types.Extensions.Internal
   deletedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   projects?: boolean | Prisma.Organization$projectsArgs<ExtArgs>
+  ssoConfig?: boolean | Prisma.Organization$ssoConfigArgs<ExtArgs>
   _count?: boolean | Prisma.OrganizationCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["organization"]>
 
@@ -672,6 +762,7 @@ export type OrganizationOmit<ExtArgs extends runtime.Types.Extensions.InternalAr
 export type OrganizationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   projects?: boolean | Prisma.Organization$projectsArgs<ExtArgs>
+  ssoConfig?: boolean | Prisma.Organization$ssoConfigArgs<ExtArgs>
   _count?: boolean | Prisma.OrganizationCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type OrganizationIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -686,6 +777,7 @@ export type $OrganizationPayload<ExtArgs extends runtime.Types.Extensions.Intern
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
     projects: Prisma.$ProjectPayload<ExtArgs>[]
+    ssoConfig: Prisma.$SsoConfigPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1091,6 +1183,7 @@ export interface Prisma__OrganizationClient<T, Null = never, ExtArgs extends run
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   projects<T extends Prisma.Organization$projectsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$projectsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  ssoConfig<T extends Prisma.Organization$ssoConfigArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$ssoConfigArgs<ExtArgs>>): Prisma.Prisma__SsoConfigClient<runtime.Types.Result.GetResult<Prisma.$SsoConfigPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1549,6 +1642,25 @@ export type Organization$projectsArgs<ExtArgs extends runtime.Types.Extensions.I
   take?: number
   skip?: number
   distinct?: Prisma.ProjectScalarFieldEnum | Prisma.ProjectScalarFieldEnum[]
+}
+
+/**
+ * Organization.ssoConfig
+ */
+export type Organization$ssoConfigArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SsoConfig
+   */
+  select?: Prisma.SsoConfigSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SsoConfig
+   */
+  omit?: Prisma.SsoConfigOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SsoConfigInclude<ExtArgs> | null
+  where?: Prisma.SsoConfigWhereInput
 }
 
 /**

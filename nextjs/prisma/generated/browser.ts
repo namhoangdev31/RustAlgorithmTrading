@@ -347,3 +347,48 @@ export type BundleUpdatePhases = Prisma.BundleUpdatePhasesModel
  * 
  */
 export type UserSecrets = Prisma.UserSecretsModel
+/**
+ * Model PersonalAccessToken
+ * 
+ */
+export type PersonalAccessToken = Prisma.PersonalAccessTokenModel
+/**
+ * Model SsoConfig
+ * 
+ */
+export type SsoConfig = Prisma.SsoConfigModel
+/**
+ * Model DeployHook
+ * 
+ */
+export type DeployHook = Prisma.DeployHookModel
+/**
+ * Model FirewallRule
+ * 
+ */
+export type FirewallRule = Prisma.FirewallRuleModel
+/**
+ * Model CronJob
+ * 
+ */
+export type CronJob = Prisma.CronJobModel
+/**
+ * Model Form
+ * 
+ */
+export type Form = Prisma.FormModel
+/**
+ * Model FormSubmission
+ * 
+ */
+export type FormSubmission = Prisma.FormSubmissionModel
+/**
+ * Model PreviewComment
+ * 
+ */
+export type PreviewComment = Prisma.PreviewCommentModel
+/**
+ * Model LepoShipLocalConfig
+ * 
+ */
+export type LepoShipLocalConfig = Prisma.LepoShipLocalConfigModel

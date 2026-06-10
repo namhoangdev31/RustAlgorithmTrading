@@ -7,7 +7,7 @@ import { OrganizationType } from "@/prisma/generated/enums";
 
 import { requireCurrentUser } from "@/lib/server/current-user";
 import { prisma } from "@/lib/server/prisma";
-import { decryptSecret, encryptSecret } from "@/lib/server/secret-crypto";
+import { encryptSecret } from "@/lib/server/secret-crypto";
 import {
   buildBundleDefaults,
   type SearchParamsInput,
@@ -18,6 +18,10 @@ import {
   setActiveOrganizationCookie,
 } from "@/lib/server/workspace";
 import { hasVercelApiKey, getVercelClient } from "@/lib/server/vercel";
+import { buildIntegrationConfig } from "@/lib/server/platform-guardrails";
+import { Octokit } from "octokit";
+import { runLepoShipBuild } from "@/lib/server/lepoship-builder";
+
 
 function readFormValue(formData: FormData, key: string) {
   const value = formData.get(key);
@@ -74,6 +78,8 @@ async function requireOwnedProject(userId: string, projectId: string) {
       bundle: {
         select: {
           id: true,
+          version: true,
+          buildNumber: true,
         },
       },
     },
@@ -103,6 +109,76 @@ async function requireOwnedBundle(userId: string, bundleId: string) {
     select: { id: true },
   });
 
+  return project ? bundle : null;
+}
+
+async function requireProjectRole(
+  userId: string,
+  projectId: string,
+  minRole: "admin" | "editor" | "viewer"
+) {
+  const project = await prisma.project.findFirst({
+    where: { id: projectId, deletedAt: null },
+    include: {
+      organization: {
+        select: {
+          userId: true,
+        },
+      },
+      bundle: {
+        select: {
+          id: true,
+          collaborators: {
+            where: { userId },
+          },
+        },
+      },
+    },
+  });
+
+  if (!project) {
+    return null;
+  }
+
+  const ownerId = project.organization.userId;
+  if (userId === ownerId) {
+    return project;
+  }
+
+  const collaborator = project.bundle?.collaborators[0];
+  if (!collaborator) {
+    return null;
+  }
+
+  const role = collaborator.role;
+  if (minRole === "admin" && role !== "admin") {
+    return null;
+  }
+  if (minRole === "editor" && role !== "admin" && role !== "editor") {
+    return null;
+  }
+
+  return project;
+}
+
+async function requireBundleRole(
+  userId: string,
+  bundleId: string,
+  minRole: "admin" | "editor" | "viewer"
+) {
+  const bundle = await prisma.bundles.findUnique({
+    where: { id: bundleId },
+    select: {
+      id: true,
+      projectId: true,
+    },
+  });
+
+  if (!bundle?.projectId) {
+    return null;
+  }
+
+  const project = await requireProjectRole(userId, bundle.projectId, minRole);
   return project ? bundle : null;
 }
 
@@ -465,19 +541,17 @@ export async function testVercelApiKeyAction(formData: FormData) {
   let status: "ok" | "invalid_key" | "test_failed" = "ok";
 
   try {
-    const apiKey = decryptSecret(rows[0].encrypted_value);
-    const res = await fetch("https://api.vercel.com/v2/user", {
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-      },
-      cache: "no-store",
-    });
-
-    if (!res.ok) {
-      status = res.status === 401 || res.status === 403 ? "invalid_key" : "test_failed";
-    }
-  } catch {
-    status = "test_failed";
+    const vercel = await getVercelClient(user.id);
+    await vercel.user.getAuthUser();
+  } catch (error: any) {
+    const message = String(error?.message ?? "").toLowerCase();
+    status =
+      message.includes("401") ||
+      message.includes("403") ||
+      message.includes("unauthorized") ||
+      message.includes("forbidden")
+        ? "invalid_key"
+        : "test_failed";
   }
 
   redirect(buildStatusUrl(status));
@@ -487,7 +561,7 @@ export async function updateProjectBundleAction(formData: FormData) {
   const user = await requireCurrentUser();
   const projectId = readFormValue(formData, "projectId");
   const returnTo = await readReturnTo(formData, "/dashboard");
-  const project = await requireOwnedProject(user.id, projectId);
+  const project = await requireProjectRole(user.id, projectId, "editor");
   const projectName = readFormValue(formData, "projectName");
 
   if (!project || !projectName) {
@@ -553,7 +627,7 @@ export async function deleteProjectAction(formData: FormData) {
   const user = await requireCurrentUser();
   const projectId = readFormValue(formData, "projectId");
   const returnTo = await readReturnTo(formData, "/dashboard");
-  const project = await requireOwnedProject(user.id, projectId);
+  const project = await requireProjectRole(user.id, projectId, "admin");
 
   if (project) {
     await prisma.project.delete({
@@ -656,34 +730,32 @@ export async function upsertIntegrationAction(formData: FormData) {
     redirect(returnTo);
   }
 
+  const integration = buildIntegrationConfig(integrationType, {
+    endpoint: readFormValue(formData, "endpoint"),
+    notes: readFormValue(formData, "notes"),
+  });
   const now = new Date();
   await prisma.bundleExternalIntegrations.upsert({
     where: {
       bundleId_integrationType: {
         bundleId: bundle.id,
-        integrationType,
+        integrationType: integration.integrationType,
       },
     },
     create: {
       id: crypto.randomUUID(),
       bundleId: bundle.id,
-      integrationType,
-      displayName: readFormValue(formData, "displayName") || integrationType,
-      config: JSON.stringify({
-        endpoint: readFormValue(formData, "endpoint"),
-        notes: readFormValue(formData, "notes"),
-      }),
+      integrationType: integration.integrationType,
+      displayName: readFormValue(formData, "displayName") || integration.integrationType,
+      config: JSON.stringify(integration.config),
       isActive: true,
       lastSyncAt: now,
       createdAt: now,
       updatedAt: now,
     },
     update: {
-      displayName: readFormValue(formData, "displayName") || integrationType,
-      config: JSON.stringify({
-        endpoint: readFormValue(formData, "endpoint"),
-        notes: readFormValue(formData, "notes"),
-      }),
+      displayName: readFormValue(formData, "displayName") || integration.integrationType,
+      config: JSON.stringify(integration.config),
       isActive: readFormValue(formData, "isActive") !== "false",
       lastSyncAt: now,
       updatedAt: now,
@@ -828,7 +900,7 @@ export async function inviteCollaboratorAction(formData: FormData) {
   const email = readFormValue(formData, "email").toLowerCase();
   const role = readFormValue(formData, "role") || "editor";
   const returnTo = await readReturnTo(formData, "/dashboard/users");
-  const bundle = await requireOwnedBundle(user.id, bundleId);
+  const bundle = await requireBundleRole(user.id, bundleId, "admin");
   const invitedUser = email
     ? await prisma.user.findUnique({
       where: { email },
@@ -876,7 +948,7 @@ export async function updateCollaboratorRoleAction(formData: FormData) {
     select: { id: true, bundleId: true },
   });
 
-  if (collaborator && (await requireOwnedBundle(user.id, collaborator.bundleId))) {
+  if (collaborator && (await requireBundleRole(user.id, collaborator.bundleId, "admin"))) {
     await prisma.bundleCollaborators.update({
       where: { id: collaborator.id },
       data: {
@@ -898,7 +970,7 @@ export async function removeCollaboratorAction(formData: FormData) {
     select: { id: true, bundleId: true },
   });
 
-  if (collaborator && (await requireOwnedBundle(user.id, collaborator.bundleId))) {
+  if (collaborator && (await requireBundleRole(user.id, collaborator.bundleId, "admin"))) {
     await prisma.bundleCollaborators.delete({
       where: { id: collaborator.id },
     });
@@ -952,6 +1024,73 @@ export async function updateOrganizationAction(formData: FormData) {
     });
   }
 
+  revalidatePath("/dashboard/settings/account");
+  redirect(returnTo);
+}
+
+export async function deleteOrganizationAction(formData: FormData) {
+  const user = await requireCurrentUser();
+  const organizationId = readFormValue(formData, "organizationId");
+  const returnTo = await readReturnTo(formData, "/dashboard/settings/account");
+
+  const organization = await prisma.organization.findUnique({
+    where: { id: organizationId },
+    select: { id: true, userId: true, type: true },
+  });
+
+  if (!organization || organization.userId !== user.id) {
+    redirect(returnTo);
+  }
+
+  // Count active organizations for this user
+  const activeOrgsCount = await prisma.organization.count({
+    where: {
+      userId: user.id,
+      deletedAt: null,
+    },
+  });
+
+  if (activeOrgsCount <= 1) {
+    redirect(`${returnTo}?error=cannot_delete_last_workspace`);
+  }
+
+  // Soft delete the organization and all its projects
+  await prisma.$transaction([
+    prisma.organization.update({
+      where: { id: organizationId },
+      data: {
+        deletedAt: new Date(),
+        updatedAt: new Date(),
+      },
+    }),
+    prisma.project.updateMany({
+      where: { organizationId },
+      data: {
+        deletedAt: new Date(),
+        updatedAt: new Date(),
+      },
+    }),
+  ]);
+
+  // If the deleted organization is the one stored in the cookie, switch active organization
+  const cookieStore = await cookies();
+  const activeOrgId = cookieStore.get("active_organization_id")?.value;
+  if (activeOrgId === organizationId) {
+    const remainingOrg = await prisma.organization.findFirst({
+      where: {
+        userId: user.id,
+        deletedAt: null,
+      },
+      select: { id: true },
+    });
+    if (remainingOrg) {
+      await setActiveOrganizationCookie(remainingOrg.id);
+    } else {
+      cookieStore.delete("active_organization_id");
+    }
+  }
+
+  revalidatePath("/dashboard");
   revalidatePath("/dashboard/settings/account");
   redirect(returnTo);
 }
@@ -1081,5 +1220,512 @@ export async function unlinkProjectRepositoryAction(formData: FormData) {
 
   revalidatePath("/projects");
   revalidatePath("/dashboard");
+  redirect(returnTo);
+}
+
+export async function deployTemplateAction(formData: FormData) {
+  const user = await requireCurrentUser();
+  const workspace = await getWorkspaceContext(user.id);
+  const organizationId = workspace.activeOrganization?.id;
+  const returnTo = await readReturnTo(formData, "/projects");
+
+  const templateName = readFormValue(formData, "templateName"); // nextjs, remix, vite
+  const repoName = readFormValue(formData, "repoName");
+  const vercelProjectName = readFormValue(formData, "vercelProjectName") || repoName;
+
+  if (!organizationId || !templateName || !repoName) {
+    redirect(returnTo);
+  }
+
+  // 1. Get tokens
+  const cookieStore = await cookies();
+  const githubToken = cookieStore.get("github_access_token")?.value;
+  if (!githubToken) {
+    redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}error=github_not_connected`);
+  }
+
+  let vercel;
+  try {
+    vercel = await getVercelClient(user.id);
+  } catch (err: any) {
+    console.error("Vercel token missing:", err);
+    redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}error=vercel_not_connected`);
+  }
+
+  try {
+    // 2. Initialize Octokit
+    const octokit = new Octokit({ auth: githubToken });
+    const { data: ghUser } = await octokit.rest.users.getAuthenticated();
+    const username = ghUser.login;
+    const repoFullName = `${username}/${repoName}`;
+
+    // 3. Create Github Repository
+    await octokit.rest.repos.createForAuthenticatedUser({
+      name: repoName,
+      private: false,
+      auto_init: false,
+    });
+
+    // 4. Generate Starter Template Files
+    const files: Record<string, string> = {};
+    if (templateName === "nextjs") {
+      files["package.json"] = JSON.stringify({
+        name: repoName,
+        version: "0.1.0",
+        private: true,
+        scripts: {
+          dev: "next dev",
+          build: "next build",
+          start: "next start"
+        },
+        dependencies: {
+          "next": "14.2.3",
+          "react": "18.3.1",
+          "react-dom": "18.3.1",
+          "tailwindcss": "^3.4.1"
+        }
+      }, null, 2);
+
+      files["app/layout.tsx"] = `import "./globals.css";
+export const metadata = {
+  title: "Supabaze Next.js Starter",
+  description: "Next.js template deploy",
+};
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" className="dark">
+      <body className="bg-slate-950 text-slate-100">{children}</body>
+    </html>
+  );
+}`;
+
+      files["app/page.tsx"] = `export default function Page() {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen p-6 font-sans">
+      <div className="max-w-md w-full border border-slate-800 bg-slate-900/40 backdrop-blur-md p-8 rounded-lg shadow-xl text-center">
+        <h1 className="text-2xl font-bold text-white mb-2">Supabaze Starter</h1>
+        <p className="text-slate-400 text-sm mb-6">
+          Your Next.js project has been deployed successfully with Vercel Edge Config connection.
+        </p>
+      </div>
+    </div>
+  );
+}`;
+
+      files["app/globals.css"] = `@tailwind base;
+@tailwind components;
+@tailwind utilities;`;
+
+      files["tsconfig.json"] = JSON.stringify({
+        compilerOptions: {
+          target: "es5",
+          lib: ["dom", "dom.iterable", "esnext"],
+          allowJs: true,
+          skipLibCheck: true,
+          strict: true,
+          noEmit: true,
+          esModuleInterop: true,
+          module: "esnext",
+          moduleResolution: "bundler",
+          resolveJsonModule: true,
+          isolatedModules: true,
+          jsx: "preserve",
+          incremental: true,
+          plugins: [{ name: "next" }],
+          paths: { "@/*": ["./*"] }
+        },
+        include: ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+        exclude: ["node_modules"]
+      }, null, 2);
+    } else if (templateName === "remix") {
+      files["package.json"] = JSON.stringify({
+        name: repoName,
+        private: true,
+        sideEffects: false,
+        type: "module",
+        scripts: {
+          build: "remix vite:build",
+          dev: "remix vite:dev",
+          start: "remix-serve ./build/server/index.js"
+        },
+        dependencies: {
+          "@remix-run/node": "^2.9.2",
+          "@remix-run/react": "^2.9.2",
+          "@remix-run/serve": "^2.9.2",
+          "isbot": "^4.1.0",
+          "react": "^18.2.0",
+          "react-dom": "^18.2.0"
+        },
+        devDependencies: {
+          "@remix-run/dev": "^2.9.2",
+          "vite": "^5.1.0"
+        }
+      }, null, 2);
+
+      files["app/root.tsx"] = `import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "@remix-run/react";
+export default function App() {
+  return (
+    <html lang="en">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <Meta />
+        <Links />
+      </head>
+      <body style={{ fontFamily: "system-ui, sans-serif", background: "#0f172a", color: "#f8fafc", margin: 0, padding: 0 }}>
+        <Outlet />
+        <ScrollRestoration />
+        <Scripts />
+      </body>
+    </html>
+  );
+}`;
+
+      files["app/routes/_index.tsx"] = `export default function Index() {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh", padding: "2rem", textAlign: "center" }}>
+      <h1>Supabaze Remix Starter</h1>
+      <p>Deployed from one-click deploy.</p>
+    </div>
+  );
+}`;
+
+      files["vite.config.ts"] = `import { vitePlugin as remix } from "@remix-run/dev";
+import { defineConfig } from "vite";
+export default defineConfig({
+  plugins: [remix()],
+});`;
+    } else {
+      // vite React SPA
+      files["package.json"] = JSON.stringify({
+        name: repoName,
+        private: true,
+        version: "0.0.0",
+        type: "module",
+        scripts: {
+          dev: "vite",
+          build: "tsc && vite build",
+          preview: "vite preview"
+        },
+        dependencies: {
+          "react": "^18.2.0",
+          "react-dom": "^18.2.0"
+        },
+        devDependencies: {
+          "@types/react": "^18.2.56",
+          "@types/react-dom": "^18.2.19",
+          "@vitejs/plugin-react": "^4.2.1",
+          "typescript": "^5.2.2",
+          "vite": "^5.1.4"
+        }
+      }, null, 2);
+
+      files["index.html"] = `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Supabaze Vite Starter</title>
+    <style>body { background: #0f172a; color: #f8fafc; margin: 0; font-family: sans-serif; }</style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>`;
+
+      files["src/main.tsx"] = `import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App.tsx'
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+)`;
+
+      files["src/App.tsx"] = `import React from 'react'
+export default function App() {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+      <h1>Supabaze Vite + React</h1>
+      <p>Deployed from one-click deploy.</p>
+    </div>
+  )
+}`;
+
+      files["vite.config.ts"] = `import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+export default defineConfig({
+  plugins: [react()],
+})`;
+
+      files["tsconfig.json"] = JSON.stringify({
+        compilerOptions: {
+          target: "ES2020",
+          useDefineForClassFields: true,
+          lib: ["DOM", "DOM.Iterable", "ES2020"],
+          module: "ESNext",
+          skipLibCheck: true,
+          moduleResolution: "bundler",
+          allowImportingTsExtensions: true,
+          resolveJsonModule: true,
+          isolatedModules: true,
+          noEmit: true,
+          jsx: "react-jsx",
+          strict: true,
+          noUnusedLocals: true,
+          noUnusedParameters: true,
+          noFallthroughCasesInSwitch: true
+        },
+        include: ["src"]
+      }, null, 2);
+    }
+
+    // 5. Commit Files to GitHub
+    for (const [filePath, content] of Object.entries(files)) {
+      await octokit.rest.repos.createOrUpdateFileContents({
+        owner: username,
+        repo: repoName,
+        path: filePath,
+        message: `Add ${filePath} (Template Starter)`,
+        content: Buffer.from(content).toString("base64"),
+        branch: "main",
+      });
+    }
+
+    // 6. Create Vercel Project and link Github Repo
+    const vercelResult = await vercel.projects.createProject({
+      requestBody: {
+        name: vercelProjectName,
+        framework: templateName === "nextjs" ? "nextjs" : templateName === "remix" ? "remix" : undefined,
+        gitRepository: {
+          type: "github",
+          repo: repoFullName,
+        },
+      },
+    });
+
+    // 7. Save to local DB Project & Bundle & Integration
+    const now = new Date();
+    const bundleDefaults = buildBundleDefaults(repoName, repoName);
+    const projectId = crypto.randomUUID();
+    const bundleId = crypto.randomUUID();
+
+    await prisma.$transaction(async (tx) => {
+      await tx.project.create({
+        data: {
+          id: projectId,
+          name: repoName,
+          description: `Created from ${templateName} template starter.`,
+          organizationId,
+          vercelProjectId: vercelResult.id,
+          vercelProjectName: vercelResult.name,
+          createdAt: now,
+          updatedAt: now,
+        },
+      });
+
+      await tx.bundles.create({
+        data: {
+          id: bundleId,
+          name: trimToMax(bundleDefaults.name, 255),
+          slug: bundleDefaults.slug,
+          shortDescription: `Created from ${templateName} template starter.`,
+          category: "web",
+          status: "published",
+          storagePath: bundleDefaults.storagePath,
+          bucket: bundleDefaults.bucket,
+          projectId,
+          developerId: user.id,
+          developerName: user.fullName ?? user.email,
+          developerEmail: user.email,
+          createdAt: now,
+          updatedAt: now,
+        },
+      });
+
+      const webhookSecret = "whsec_" + crypto.randomUUID().replace(/-/g, "");
+      const encryptedToken = encryptSecret(githubToken);
+      const config = JSON.stringify({
+        repoFullName,
+        webhookSecret,
+        githubAccessToken: encryptedToken,
+        logs: [],
+      });
+
+      await tx.bundleExternalIntegrations.create({
+        data: {
+          id: crypto.randomUUID(),
+          bundleId,
+          integrationType: "github",
+          displayName: repoFullName,
+          config,
+          isActive: true,
+          createdAt: now,
+          updatedAt: now,
+        },
+      });
+    });
+
+  } catch (error: any) {
+    console.error("Template deploy action failed:", error);
+    redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}error=deploy_failed&message=${encodeURIComponent(error?.message || "")}`);
+  }
+
+  revalidatePath("/projects");
+  revalidatePath("/dashboard");
+  redirect(returnTo);
+}
+
+export async function saveLepoShipConfigAction(formData: FormData) {
+  const user = await requireCurrentUser();
+  const projectId = readFormValue(formData, "projectId");
+  const returnTo = await readReturnTo(formData, `/lepoship/${projectId}`);
+
+  const project = await requireOwnedProject(user.id, projectId);
+  if (!project || !project.bundle) {
+    redirect(returnTo);
+  }
+
+  const platform = readFormValue(formData, "platform"); // expo, flutter
+  const gitRepoUrl = readFormValue(formData, "gitRepoUrl");
+  const gitBranch = readFormValue(formData, "gitBranch") || "main";
+  
+  // Expo specific
+  const expoSdkVersion = readFormValue(formData, "expoSdkVersion") || "";
+  const expoBuildProfile = readFormValue(formData, "expoBuildProfile") || "";
+  
+  // Flutter specific
+  const flutterTargetPlatform = readFormValue(formData, "flutterTargetPlatform") || "web";
+  const flutterFlavor = readFormValue(formData, "flutterFlavor") || "";
+  const flutterBuildMode = readFormValue(formData, "flutterBuildMode") || "release";
+
+  const config = JSON.stringify({
+    platform,
+    gitRepoUrl,
+    gitBranch,
+    expoSdkVersion,
+    expoBuildProfile,
+    flutterTargetPlatform,
+    flutterFlavor,
+    flutterBuildMode,
+    updatedAt: new Date().toISOString(),
+  });
+
+  const now = new Date();
+
+  await prisma.bundleExternalIntegrations.upsert({
+    where: {
+      bundleId_integrationType: {
+        bundleId: project.bundle.id,
+        integrationType: "lepoship",
+      },
+    },
+    update: {
+      displayName: `${platform.toUpperCase()} Config`,
+      config,
+      isActive: true,
+      updatedAt: now,
+    },
+    create: {
+      id: crypto.randomUUID(),
+      bundleId: project.bundle.id,
+      integrationType: "lepoship",
+      displayName: `${platform.toUpperCase()} Config`,
+      config,
+      isActive: true,
+      createdAt: now,
+      updatedAt: now,
+    },
+  });
+
+  revalidatePath(`/lepoship/${projectId}`);
+  redirect(returnTo);
+}
+
+export async function triggerMobileBuildAction(formData: FormData) {
+  const user = await requireCurrentUser();
+  const projectId = readFormValue(formData, "projectId");
+  const returnTo = await readReturnTo(formData, `/lepoship/${projectId}`);
+
+  const project = await requireOwnedProject(user.id, projectId);
+  if (!project || !project.bundle) {
+    redirect(returnTo);
+  }
+
+  const currentBundle = project.bundle;
+  const newBuildNumber = currentBundle.buildNumber + 1;
+  
+  // Auto bump patch version
+  let newVersion = "1.0.0";
+  const parts = currentBundle.version.split(".");
+  if (parts.length === 3) {
+    const patch = parseInt(parts[2], 10);
+    if (!isNaN(patch)) {
+      parts[2] = String(patch + 1);
+      newVersion = parts.join(".");
+    }
+  } else {
+    newVersion = currentBundle.version;
+  }
+
+  // Load configuration
+  const integration = await prisma.bundleExternalIntegrations.findFirst({
+    where: {
+      bundleId: currentBundle.id,
+      integrationType: "lepoship",
+      isActive: true,
+    },
+    select: { config: true },
+  });
+
+  let configData = { platform: "expo", gitRepoUrl: "", gitBranch: "main" };
+  if (integration?.config) {
+    try {
+      configData = JSON.parse(integration.config);
+    } catch (_) {}
+  }
+
+  const trackId = crypto.randomUUID();
+  const now = new Date();
+
+  // Update bundle details & Create release track
+  await prisma.$transaction(async (tx) => {
+    // Increment buildNumber immediately to reserve it
+    await tx.bundles.update({
+      where: { id: currentBundle.id },
+      data: {
+        buildNumber: newBuildNumber,
+        updatedAt: now,
+      },
+    });
+
+    // Create a release track entry in "building" state
+    await tx.bundleReleaseTracks.create({
+      data: {
+        id: trackId,
+        bundleId: currentBundle.id,
+        track: "production",
+        version: newVersion,
+        buildNumber: newBuildNumber,
+        storagePath: "", // Will be filled upon completion
+        releaseNotes: `Automated build #${newBuildNumber} triggered by ${user.fullName || user.email}`,
+        status: "building",
+        createdAt: now,
+      },
+    });
+  });
+
+  // Trigger background build compilation process
+  await runLepoShipBuild(
+    projectId,
+    currentBundle.id,
+    newBuildNumber,
+    newVersion,
+    configData,
+    trackId
+  );
+
+  revalidatePath(`/lepoship/${projectId}`);
   redirect(returnTo);
 }

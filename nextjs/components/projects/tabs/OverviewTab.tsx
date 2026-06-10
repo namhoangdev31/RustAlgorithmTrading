@@ -160,6 +160,79 @@ function EmptyOverview({ t }: { t: any }) {
   );
 }
 
+function renderSparkline(projectId: string) {
+  // Simple hash function to seed mock traffic data for 7 days
+  let hash = 0;
+  for (let i = 0; i < projectId.length; i++) {
+    hash = projectId.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const points: number[] = [];
+  for (let i = 0; i < 7; i++) {
+    // Generate values between 30 and 100
+    const value = 30 + (Math.abs(hash + i * 37) % 71);
+    points.push(value);
+  }
+  
+  const max = Math.max(...points);
+  const min = Math.min(...points);
+  const range = max - min || 1;
+  const width = 80;
+  const height = 24;
+  const padding = 2;
+
+  // Map points to SVG coordinates
+  const coords = points.map((val, idx) => {
+    const x = (idx / 6) * (width - 2 * padding) + padding;
+    const y = height - padding - ((val - min) / range) * (height - 2 * padding);
+    return `${x},${y}`;
+  });
+
+  const polylinePoints = coords.join(" ");
+
+  // Create path data for the gradient fill under the line
+  const pathPoints = [
+    `M ${coords[0]}`,
+    ...coords.slice(1).map(c => `L ${c}`),
+    `L ${width - padding} ${height}`,
+    `L ${padding} ${height}`,
+    "Z"
+  ].join(" ");
+
+  const gradId = `sparkline-grad-${projectId.replace(/[^a-zA-Z0-9]/g, "")}`;
+  const lastX = (6 / 6) * (width - 2 * padding) + padding;
+  const lastY = height - padding - ((points[6] - min) / range) * (height - 2 * padding);
+
+  return (
+    <svg width={width} height={height} className="overflow-visible" viewBox={`0 0 ${width} ${height}`}>
+      <defs>
+        <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#3ecf8e" stopOpacity="0.25" />
+          <stop offset="100%" stopColor="#3ecf8e" stopOpacity="0.0" />
+        </linearGradient>
+      </defs>
+      <path
+        d={pathPoints}
+        fill={`url(#${gradId})`}
+      />
+      <polyline
+        fill="none"
+        stroke="#3ecf8e"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        points={polylinePoints}
+      />
+      <circle
+        cx={lastX}
+        cy={lastY}
+        r="2"
+        fill="#3ecf8e"
+        className="animate-pulse"
+      />
+    </svg>
+  );
+}
+
 export function OverviewTab({
   data,
   github,
@@ -188,9 +261,13 @@ export function OverviewTab({
               const CategoryIcon = getCategoryIcon(bundle?.category);
               const projectSlug = bundle?.slug || project.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
               const avatarStyles = getProjectAvatarStyles(project.name);
+              
+              const isGithubLinked = bundle?.externalIntegrations?.some((i: any) => i.integrationType === "github" && i.isActive);
+              const isVercelConnected = !!project.vercelProjectId;
+              const currentVersion = bundle?.version || "1.0.0";
 
               return (
-                <Card key={project.id} className="group flex flex-col justify-between bg-canvas border border-hairline hover:border-hairline-strong hover:shadow-dark transition-all duration-300 rounded-lg p-5 min-h-[220px] relative overflow-hidden">
+                <Card key={project.id} className="group flex flex-col justify-between bg-canvas border border-hairline hover:border-hairline-strong hover:shadow-dark transition-all duration-300 rounded-lg p-5 min-h-[240px] relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-primary/10 to-transparent rounded-bl-full pointer-events-none" />
                   <div>
                     <div className="flex items-start justify-between gap-4">
@@ -232,7 +309,45 @@ export function OverviewTab({
                       </DropdownMenu>
                     </div>
 
-                    <p className="mt-3.5 text-xs text-ink-mute line-clamp-2 leading-relaxed">{project.description || bundle?.shortDescription || "No description provided."}</p>
+                    {/* Connection Badges, Version and Mini-Analytics */}
+                    <div className="flex items-center justify-between gap-2 mt-3.5 flex-wrap">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="text-[9px] font-mono font-semibold bg-canvas-soft border border-hairline px-1.5 py-0.5 rounded text-ink-mute" title="Current version">
+                          v{currentVersion}
+                        </span>
+                        
+                        {isGithubLinked ? (
+                          <span className="flex items-center gap-1 text-[9px] font-medium bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded text-emerald-600 dark:text-emerald-400">
+                            <GithubIcon className="size-2.5 shrink-0" />
+                            <span>Linked</span>
+                          </span>
+                        ) : (
+                          <span className="flex items-center gap-1 text-[9px] font-medium bg-canvas-soft border border-hairline px-1.5 py-0.5 rounded text-ink-mute-2">
+                            <GithubIcon className="size-2.5 shrink-0 opacity-55" />
+                            <span>Unlinked</span>
+                          </span>
+                        )}
+
+                        {isVercelConnected ? (
+                          <span className="flex items-center gap-1 text-[9px] font-medium bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded text-emerald-600 dark:text-emerald-400">
+                            <svg viewBox="0 0 75 65" className="fill-current size-2.5 shrink-0"><path d="M37.59.25l36.95 64H.64z" /></svg>
+                            <span>Vercel Active</span>
+                          </span>
+                        ) : (
+                          <span className="flex items-center gap-1 text-[9px] font-medium bg-canvas-soft border border-hairline px-1.5 py-0.5 rounded text-ink-mute-2">
+                            <svg viewBox="0 0 75 65" className="fill-current size-2.5 shrink-0 opacity-55"><path d="M37.59.25l36.95 64H.64z" /></svg>
+                            <span>Vercel Inactive</span>
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-1" title="7-day traffic trend">
+                        <span className="text-[9px] font-mono text-ink-mute-2 select-none">7d:</span>
+                        {renderSparkline(project.id)}
+                      </div>
+                    </div>
+
+                    <p className="mt-3 text-xs text-ink-mute line-clamp-2 leading-relaxed">{project.description || bundle?.shortDescription || "No description provided."}</p>
 
                     <div className="flex items-center gap-2 bg-canvas-soft/80 border border-hairline-cool px-2.5 py-1.5 rounded-md mt-4 group-hover:border-hairline-strong transition-colors">
                       <span className={`size-2 rounded-full shrink-0 ${statusInfo.dotClass}`} />
@@ -266,6 +381,10 @@ export function OverviewTab({
               const projectSlug = bundle?.slug || project.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
               const avatarStyles = getProjectAvatarStyles(project.name);
 
+              const isGithubLinked = bundle?.externalIntegrations?.some((i: any) => i.integrationType === "github" && i.isActive);
+              const isVercelConnected = !!project.vercelProjectId;
+              const currentVersion = bundle?.version || "1.0.0";
+
               return (
                 <div key={project.id} className="group relative flex flex-col md:flex-row md:items-center justify-between gap-4 bg-canvas border border-hairline hover:border-hairline-strong hover:shadow-light transition-all duration-300 rounded-lg p-5">
                   <div className="flex items-center gap-4.5 min-w-0 flex-1 gap-2">
@@ -279,6 +398,44 @@ export function OverviewTab({
                         <div className="flex items-center gap-1 bg-canvas-soft px-1.5 py-0.5 rounded border border-hairline-cool"><GithubIcon className="size-3 text-ink-secondary shrink-0" /><span className="font-mono truncate max-w-[150px]">{`namhoangdev31/${projectSlug}`}</span><span className="text-hairline-strong">•</span><span className="font-mono text-[10px] text-ink-mute flex items-center gap-0.5"><GitBranch className="size-2.5" />main</span></div>
                         <span className="text-hairline-strong">•</span>
                         <span className="truncate max-w-[320px] text-ink-mute-2">{project.description || bundle?.shortDescription || "No description provided."}</span>
+                      </div>
+
+                      {/* Connection Badges, Version and Mini-Analytics */}
+                      <div className="flex items-center gap-4.5 mt-2.5 flex-wrap">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className="text-[9px] font-mono font-semibold bg-canvas-soft border border-hairline px-1.5 py-0.5 rounded text-ink-mute" title="Current version">
+                            v{currentVersion}
+                          </span>
+                          
+                          {isGithubLinked ? (
+                            <span className="flex items-center gap-1 text-[9px] font-medium bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded text-emerald-600 dark:text-emerald-400">
+                              <GithubIcon className="size-2.5 shrink-0" />
+                              <span>GitHub Linked</span>
+                            </span>
+                          ) : (
+                            <span className="flex items-center gap-1 text-[9px] font-medium bg-canvas-soft border border-hairline px-1.5 py-0.5 rounded text-ink-mute-2">
+                              <GithubIcon className="size-2.5 shrink-0 opacity-55" />
+                              <span>GitHub Unlinked</span>
+                            </span>
+                          )}
+
+                          {isVercelConnected ? (
+                            <span className="flex items-center gap-1 text-[9px] font-medium bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded text-emerald-600 dark:text-emerald-400">
+                              <svg viewBox="0 0 75 65" className="fill-current size-2.5 shrink-0"><path d="M37.59.25l36.95 64H.64z" /></svg>
+                              <span>Vercel Active</span>
+                            </span>
+                          ) : (
+                            <span className="flex items-center gap-1 text-[9px] font-medium bg-canvas-soft border border-hairline px-1.5 py-0.5 rounded text-ink-mute-2">
+                              <svg viewBox="0 0 75 65" className="fill-current size-2.5 shrink-0 opacity-55"><path d="M37.59.25l36.95 64H.64z" /></svg>
+                              <span>Vercel Inactive</span>
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="flex items-center gap-1" title="7-day traffic trend">
+                          <span className="text-[9px] font-mono text-ink-mute-2 select-none">7d Traffic:</span>
+                          {renderSparkline(project.id)}
+                        </div>
                       </div>
                     </div>
                   </div>

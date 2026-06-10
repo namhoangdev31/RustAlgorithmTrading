@@ -494,7 +494,7 @@
         "lepoship_projects": "Dự án LepoShip",
         "apps": "Ứng dụng",
         "chats": "Trò chuyện",
-        "users": "Người dùng",
+        "users": "Thành viên Workspace",
         "settings": "Cài đặt",
         "help_center": "Trung tâm trợ giúp",
         "profile": "Hồ sơ",
@@ -503,6 +503,8 @@
         "notifications": "Thông báo",
         "display": "Hiển thị",
         "vercel": "Mã API Vercel",
+        "platform": "Điều phối nền tảng",
+        "zero_plan": "Zero Plan",
         "vercel_roadmap": "Lộ trình Vercel SDK"
       },
       "header": {
@@ -746,7 +748,13 @@
         "success_msg": "Cập nhật tổ chức thành công",
         "error_msg": "Cập nhật tổ chức thất bại",
         "validation_min": "Tên tổ chức phải có ít nhất 2 ký tự.",
-        "validation_max": "Tên tổ chức chỉ được tối đa 100 ký tự."
+        "validation_max": "Tên tổ chức chỉ được tối đa 100 ký tự.",
+        "delete_org_title": "Xóa Không gian làm việc",
+        "delete_org_desc": "Hành động này không thể hoàn tác. Việc này sẽ xóa vĩnh viễn không gian làm việc và tất cả dự án trong đó.",
+        "delete_org_btn": "Xóa Không gian làm việc",
+        "delete_org_success_msg": "Đã xóa không gian làm việc thành công",
+        "delete_org_error_msg": "Xóa không gian làm việc thất bại",
+        "delete_org_last_error": "Không thể xóa không gian làm việc duy nhất còn lại."
       },
       "first_name_label": "Tên",
       "first_name_placeholder": "Tên của bạn",

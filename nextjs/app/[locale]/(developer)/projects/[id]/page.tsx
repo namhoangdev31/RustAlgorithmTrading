@@ -15,21 +15,31 @@ import {
   deleteProjectAction,
   updateProjectBundleAction,
   switchOrganizationAction,
+  linkProjectRepositoryAction,
+  unlinkProjectRepositoryAction,
 } from "@/app/actions/admin";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { GithubIcon } from "@/components/ui/icon";
 import { getProjectBundleData } from "@/lib/server/admin-data";
 import { requireCurrentUser } from "@/lib/server/current-user";
 import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { getGithubOverviewData } from "@/lib/server/github";
+import { headers } from "next/headers";
+import { WebhookPayloadModal } from "@/components/projects/dialogs/WebhookPayloadModal";
 import { IntegrationsTab } from "@/components/projects/tabs/IntegrationsTab";
+import { GithubSsrCard } from "@/components/projects/GithubSsrCard";
+import { VercelAnalyticsCard } from "@/components/projects/VercelAnalyticsCard";
 import { ActivityTab } from "@/components/projects/tabs/ActivityTab";
 import { DomainsTab } from "@/components/projects/tabs/DomainsTab";
 import { DeploymentsTab } from "@/components/projects/tabs/DeploymentsTab";
 import { VercelTab } from "@/components/projects/tabs/VercelTab";
+import { VercelEnvVarsCard } from "@/components/projects/VercelEnvVarsCard";
+import { MembersTab } from "@/components/projects/tabs/MembersTab";
 import { ProjectForm } from "@/components/projects/dialogs/ProjectForm";
 import { DeleteConfirmationDialog } from "@/components/projects/dialogs/DeleteConfirmationDialog";
 import { hasVercelApiKey, getVercelClient } from "@/lib/server/vercel";
@@ -65,6 +75,11 @@ type ProjectDetailsPageProps = {
     message?: string;
     name?: string;
     q?: string;
+    track?: string;
+    page?: string;
+    dstatus?: string;
+    dpage?: string;
+    webhook_idx?: string;
   }>;
 };
 
@@ -72,6 +87,11 @@ export default async function ProjectDetailsPage({ params, searchParams }: Proje
   const { locale, id: projectId } = await params;
   const search = await searchParams;
   const user = await requireCurrentUser();
+
+  const headersList = await headers();
+  const host = headersList.get("host") || "localhost:3000";
+  const protocol = host.startsWith("localhost") ? "http" : "https";
+  const origin = `${protocol}://${host}`;
 
   // Use getProjectBundleData to fetch all projects with organizational validation
   const data = await getProjectBundleData(user.id, {});
@@ -88,6 +108,8 @@ export default async function ProjectDetailsPage({ params, searchParams }: Proje
   let vercelDeployments: any[] = [];
   let vercelAccessGroups: any[] = [];
   let vercelTokens: any[] = [];
+  let vercelProjectEnvVars: any[] = [];
+  let vercelProjectDomains: any[] = [];
   let vercelConnectionError = false;
 
   if (vercelConnected && project.vercelProjectId) {
@@ -98,11 +120,15 @@ export default async function ProjectDetailsPage({ params, searchParams }: Proje
         deploymentsRes,
         accessGroupsRes,
         tokensRes,
+        envVarsRes,
+        domainsRes,
       ] = await Promise.allSettled([
         vercel.aliases.listAliases({ projectId: project.vercelProjectId, limit: 50 }),
         vercel.deployments.getDeployments({ projectId: project.vercelProjectId, limit: 50 }),
         vercel.accessGroups.listAccessGroups({ limit: 50 }),
         vercel.authentication.listAuthTokens(),
+        vercel.projects.filterProjectEnvs({ idOrName: project.vercelProjectId }),
+        vercel.projects.getProjectDomains({ idOrName: project.vercelProjectId }),
       ]);
 
       if (aliasesRes.status === "fulfilled") {
@@ -130,6 +156,18 @@ export default async function ProjectDetailsPage({ params, searchParams }: Proje
       } else {
         console.error("Error fetching Vercel tokens:", tokensRes.reason);
       }
+
+      if (envVarsRes.status === "fulfilled") {
+        vercelProjectEnvVars = (envVarsRes.value as any).envs || [];
+      } else {
+        console.error("Error fetching Vercel project environment variables:", envVarsRes.reason);
+      }
+
+      if (domainsRes.status === "fulfilled") {
+        vercelProjectDomains = (domainsRes.value as any).domains || [];
+      } else {
+        console.error("Error fetching Vercel project domains:", domainsRes.reason);
+      }
     } catch (err) {
       console.error("Error fetching Vercel data:", err);
       vercelConnectionError = true;
@@ -142,6 +180,19 @@ export default async function ProjectDetailsPage({ params, searchParams }: Proje
   const returnTo = `/projects/${project.id}?tab=${activeTab}`;
 
   const bundle = project.bundle;
+
+  // Filter & Paginate release tracks on server side
+  const trackFilter = (search.track || "all").toLowerCase();
+  const rawTracks = bundle?.releaseTracks || [];
+  const filteredTracks = trackFilter === "all" 
+    ? rawTracks 
+    : rawTracks.filter((t: any) => (t.track || "").toLowerCase() === trackFilter);
+
+  const tracksPageSize = 5;
+  const tracksCurrentPage = Number(search.page) || 1;
+  const totalTracks = filteredTracks.length;
+  const totalTracksPages = Math.ceil(totalTracks / tracksPageSize);
+  const paginatedTracks = filteredTracks.slice((tracksCurrentPage - 1) * tracksPageSize, tracksCurrentPage * tracksPageSize);
 
   // Find the production or latest deployment
   const productionDeployment = vercelDeployments.find((d) => d.target === "production") || vercelDeployments[0];
@@ -244,6 +295,9 @@ export default async function ProjectDetailsPage({ params, searchParams }: Proje
         </Link>
         <Link href={`/projects/${project.id}${buildDetailQueryString(search, { tab: "integrations" })}`} className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "integrations" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
           Integrations
+        </Link>
+        <Link href={`/projects/${project.id}${buildDetailQueryString(search, { tab: "members" })}`} className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "members" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
+          Members
         </Link>
         <Link href={`/projects/${project.id}${buildDetailQueryString(search, { tab: "activity" })}`} className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "activity" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
           Activity
@@ -388,6 +442,10 @@ export default async function ProjectDetailsPage({ params, searchParams }: Proje
               </Card>
             ) : null}
 
+            {vercelConnected && project.vercelProjectId && (
+              <VercelAnalyticsCard project={project} locale={locale} />
+            )}
+
             {/* Lepos Bundle metadata summary */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <Card className="border border-hairline bg-canvas">
@@ -446,14 +504,40 @@ export default async function ProjectDetailsPage({ params, searchParams }: Proje
 
             {/* Release Track History Table */}
             <Card className="border border-hairline bg-canvas py-0">
-              <CardHeader className="border-b border-hairline-cool bg-canvas-soft/60 p-5">
-                <CardTitle className="text-base font-bold text-ink">Release Track History</CardTitle>
-                <CardDescription className="text-xs text-ink-mute mt-1">
-                  Chronological record of release bundles generated for production, beta, or staging environments.
-                </CardDescription>
+              <CardHeader className="border-b border-hairline-cool bg-canvas-soft/60 p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                  <CardTitle className="text-base font-bold text-ink">Release Track History</CardTitle>
+                  <CardDescription className="text-xs text-ink-mute mt-1">
+                    Chronological record of release bundles generated for production, beta, or staging environments.
+                  </CardDescription>
+                </div>
+                
+                {/* Track Filter */}
+                <div className="flex flex-wrap items-center gap-1 bg-canvas border border-hairline rounded-md p-1 select-none w-fit shrink-0">
+                  {["ALL", "PRODUCTION", "STAGING", "BETA"].map((track) => {
+                    const isActive = (search.track || "ALL").toUpperCase() === track;
+                    const label = track === "ALL" 
+                      ? (locale === "vi" ? "Tất cả" : "All")
+                      : track;
+                    const targetTrack = track === "ALL" ? undefined : track.toLowerCase();
+                    return (
+                      <Link
+                        key={track}
+                        href={`/projects/${project.id}${buildDetailQueryString(search, { track: targetTrack, page: "1" })}`}
+                        className={`px-3 py-1 rounded text-xs font-semibold transition-all cursor-pointer ${
+                          isActive 
+                            ? "bg-canvas-soft text-ink shadow-sm border border-hairline-strong" 
+                            : "text-ink-mute hover:text-ink border border-transparent"
+                        }`}
+                      >
+                        {label}
+                      </Link>
+                    );
+                  })}
+                </div>
               </CardHeader>
               <CardContent className="p-0 overflow-x-auto">
-                {!bundle?.releaseTracks || bundle.releaseTracks.length === 0 ? (
+                {totalTracks === 0 ? (
                   <div className="flex flex-col items-center justify-center py-12 text-center">
                     <Box className="size-6 text-ink-mute mb-2" />
                     <p className="text-xs font-semibold text-ink-secondary">No releases found</p>
@@ -472,7 +556,7 @@ export default async function ProjectDetailsPage({ params, searchParams }: Proje
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {bundle.releaseTracks.map((track) => (
+                      {paginatedTracks.map((track) => (
                         <TableRow key={track.id} className="hover:bg-canvas-soft/30 transition-colors border-b border-hairline">
                           <TableCell className="px-5 py-4 font-semibold text-xs text-ink-secondary capitalize">
                             {track.track}
@@ -502,6 +586,40 @@ export default async function ProjectDetailsPage({ params, searchParams }: Proje
                     </TableBody>
                   </Table>
                 )}
+                {/* Release Tracks Pagination */}
+                {totalTracksPages > 1 && (
+                  <div className="flex items-center justify-between border-t border-hairline px-6 py-4 bg-canvas-soft/20">
+                    <p className="text-xs text-ink-mute font-medium">
+                      {locale === "vi"
+                        ? `Hiển thị ${(tracksCurrentPage - 1) * tracksPageSize + 1} - ${Math.min(tracksCurrentPage * tracksPageSize, totalTracks)} trong tổng số ${totalTracks} bản phát hành`
+                        : `Showing ${(tracksCurrentPage - 1) * tracksPageSize + 1} to ${Math.min(tracksCurrentPage * tracksPageSize, totalTracks)} of ${totalTracks} releases`}
+                    </p>
+                    <div className="flex gap-2">
+                      <Button
+                        asChild
+                        variant="outline"
+                        size="sm"
+                        disabled={tracksCurrentPage <= 1}
+                        className={`h-8 text-xs ${tracksCurrentPage <= 1 ? "pointer-events-none opacity-50" : ""}`}
+                      >
+                        <Link href={`/projects/${project.id}${buildDetailQueryString(search, { page: String(tracksCurrentPage - 1) })}`}>
+                          {locale === "vi" ? "Trang trước" : "Previous"}
+                        </Link>
+                      </Button>
+                      <Button
+                        asChild
+                        variant="outline"
+                        size="sm"
+                        disabled={tracksCurrentPage >= totalTracksPages}
+                        className={`h-8 text-xs ${tracksCurrentPage >= totalTracksPages ? "pointer-events-none opacity-50" : ""}`}
+                      >
+                        <Link href={`/projects/${project.id}${buildDetailQueryString(search, { page: String(tracksCurrentPage + 1) })}`}>
+                          {locale === "vi" ? "Trang sau" : "Next"}
+                        </Link>
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -515,6 +633,8 @@ export default async function ProjectDetailsPage({ params, searchParams }: Proje
             locale={locale}
             projects={[project]}
             returnTo={returnTo}
+            searchParams={search}
+            project={project}
           />
         )}
 
@@ -522,6 +642,8 @@ export default async function ProjectDetailsPage({ params, searchParams }: Proje
           <DomainsTab
             vercelConnected={vercelConnected}
             vercelAliases={vercelAliases}
+            vercelProjectDomains={vercelProjectDomains}
+            vercelProjectId={project.vercelProjectId || ""}
             vercelConnectionError={vercelConnectionError}
             locale={locale}
             returnTo={returnTo}
@@ -529,7 +651,17 @@ export default async function ProjectDetailsPage({ params, searchParams }: Proje
         )}
 
         {activeTab === "integrations" && (
-          <IntegrationsTab data={{ projects: [project], workspace: data.workspace }} />
+          <div className="space-y-6">
+            <GithubSsrCard project={project} locale={locale} />
+            <div className="border-t border-hairline pt-6">
+              <h3 className="text-sm font-bold text-ink mb-4">Other Integrations</h3>
+              <IntegrationsTab data={{ projects: [project], workspace: data.workspace }} />
+            </div>
+          </div>
+        )}
+
+        {activeTab === "members" && (
+          <MembersTab project={project} locale={locale} />
         )}
 
         {activeTab === "activity" && (
@@ -585,6 +717,150 @@ export default async function ProjectDetailsPage({ params, searchParams }: Proje
                   )}
                 </CardContent>
               </Card>
+
+              {/* GitHub Integration Card */}
+              {(() => {
+                const githubIntegration = project.bundle?.externalIntegrations?.find(
+                  (i: any) => i.integrationType === "github"
+                );
+                
+                let webhookLogs: any[] = [];
+                let webhookUrl = "";
+                if (githubIntegration?.config) {
+                  try {
+                    const configData = JSON.parse(githubIntegration.config);
+                    webhookLogs = configData.logs || [];
+                    webhookUrl = origin ? `${origin}/api/webhooks/github` : "";
+                  } catch {}
+                }
+                
+                return (
+                  <Card className="bg-canvas border border-hairline rounded-lg p-5">
+                    <CardHeader className="px-0 pt-0">
+                      <CardTitle className="text-base font-bold text-ink flex items-center gap-2">
+                        <GithubIcon className="size-4 text-ink-secondary" />
+                        GitHub Repository Integration
+                      </CardTitle>
+                      <CardDescription className="text-xs text-ink-mute">
+                        Link a GitHub repository to build, release, and track codebase details.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="px-0 pb-0 space-y-4">
+                      {githubIntegration ? (
+                        <div className="space-y-4">
+                          <div className="p-3 bg-canvas-soft border border-hairline rounded-md flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs">
+                            <div>
+                              <div className="font-semibold text-ink">Linked Repository</div>
+                              <div className="font-mono text-ink-secondary mt-0.5">{githubIntegration.displayName}</div>
+                            </div>
+                            <form action={unlinkProjectRepositoryAction}>
+                              <input type="hidden" name="projectId" value={project.id} />
+                              <input type="hidden" name="returnTo" value={returnTo} />
+                              <Button type="submit" variant="destructive" size="sm" className="h-8 text-[11px] font-semibold cursor-pointer">
+                                Disconnect
+                              </Button>
+                            </form>
+                          </div>
+
+                          <div className="grid gap-4 md:grid-cols-2 pt-4 border-t border-hairline">
+                            <div className="p-3 bg-canvas-soft/40 border border-hairline rounded-lg space-y-1">
+                              <div className="text-[10px] font-bold text-ink-mute uppercase tracking-wider">Webhook URL</div>
+                              <div className="text-xs font-mono text-ink-secondary truncate bg-canvas border border-hairline rounded p-2">
+                                {webhookUrl}
+                              </div>
+                            </div>
+                            <div className="p-3 bg-canvas-soft/40 border border-hairline rounded-lg space-y-1">
+                              <div className="text-[10px] font-bold text-ink-mute uppercase tracking-wider">Webhook Secret</div>
+                              <div className="text-xs font-mono text-ink-secondary truncate bg-canvas border border-hairline rounded p-2">
+                                whsec_••••••••••••••••
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <div className="text-[10px] font-bold text-ink-mute uppercase tracking-wider">
+                              Webhook Delivery Logs
+                            </div>
+                            <div className="border border-hairline bg-canvas rounded-lg overflow-hidden divide-y divide-hairline max-h-[220px] overflow-y-auto">
+                              {webhookLogs.length > 0 ? (
+                                webhookLogs.map((log: any, idx: number) => (
+                                  <Link 
+                                    key={idx} 
+                                    href={`/projects/${project.id}${buildDetailQueryString(search, { webhook_idx: String(idx) })}`}
+                                    className="p-3 flex items-center justify-between gap-2 hover:bg-canvas-soft/50 transition-colors cursor-pointer text-left w-full border-0 select-none block"
+                                  >
+                                    <div className="space-y-0.5 min-w-0 flex-1">
+                                      <div className="flex items-center gap-2">
+                                        <span className={`px-1.5 py-0.2 rounded-full text-[9px] font-bold uppercase tracking-wider ${
+                                          log.statusCode === 200 || log.status === "success"
+                                            ? "bg-primary/10 text-primary border border-primary/20"
+                                            : "bg-destructive/10 text-destructive border border-destructive/20"
+                                        }`}>
+                                          {log.statusCode || (log.status === "success" ? 200 : 500)}
+                                        </span>
+                                        <span className="font-bold text-ink-secondary font-mono text-[11px]">{log.event || "push"}</span>
+                                      </div>
+                                      <p className="text-ink-mute text-[10px] truncate mt-0.5">{log.message}</p>
+                                    </div>
+                                    <div className="text-[9px] text-ink-mute font-mono shrink-0">
+                                      {log.timestamp ? new Date(log.timestamp).toLocaleTimeString() : ""}
+                                    </div>
+                                  </Link>
+                                ))
+                              ) : (
+                                <div className="p-6 text-center text-xs text-ink-mute">
+                                  No webhook events received yet.
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="space-y-3">
+                          {github.connected ? (
+                            <form action={linkProjectRepositoryAction} className="flex gap-2">
+                              <input type="hidden" name="projectId" value={project.id} />
+                              <input type="hidden" name="returnTo" value={returnTo} />
+                              <Select name="repoFullName" required>
+                                <SelectTrigger className="h-9 bg-canvas border-hairline flex-1 text-left text-xs text-ink">
+                                  <SelectValue placeholder="Select a repository" />
+                                </SelectTrigger>
+                                <SelectContent className="bg-canvas border border-hairline rounded-lg max-h-[200px] overflow-y-auto">
+                                  {github.repos.map((repo) => (
+                                    <SelectItem key={repo.id} value={repo.fullName} className="cursor-pointer hover:bg-canvas-soft rounded-md text-xs">
+                                      {repo.fullName}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              <Button type="submit" size="sm" className="h-9 bg-primary hover:bg-primary-deep text-primary-foreground font-semibold px-4 rounded-sm text-xs shadow-light cursor-pointer">
+                                Link Repository
+                              </Button>
+                            </form>
+                          ) : (
+                            <div className="flex flex-col items-center gap-2 py-2 text-center">
+                              <p className="text-xs text-ink-mute">Connect your GitHub account in workspace settings to enable repository linking.</p>
+                              <Button asChild variant="outline" className="h-8 text-[11px] font-semibold border-hairline-strong rounded-sm bg-canvas">
+                                <Link href="/projects?tab=settings">Go to Workspace Settings</Link>
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                );
+              })()}
+
+              {project.vercelProjectId && (
+                <VercelEnvVarsCard
+                  vercelProjectEnvVars={vercelProjectEnvVars}
+                  vercelProjectId={project.vercelProjectId}
+                  projectId={project.id}
+                  locale={locale}
+                  returnTo={returnTo}
+                />
+              )}
 
               {/* Danger Zone */}
               <Card className="bg-canvas border border-destructive/20 rounded-lg p-5">
@@ -651,6 +927,29 @@ export default async function ProjectDetailsPage({ params, searchParams }: Proje
           </div>
         </div>
       ) : null}
+
+      {search.webhook_idx !== undefined && (() => {
+        const githubIntegration = project.bundle?.externalIntegrations?.find(
+          (i: any) => i.integrationType === "github"
+        );
+        if (githubIntegration?.config) {
+          try {
+            const configData = JSON.parse(githubIntegration.config);
+            const logs = configData.logs || [];
+            const selectedLog = logs[Number(search.webhook_idx)];
+            if (selectedLog) {
+              return (
+                <WebhookPayloadModal
+                  log={selectedLog}
+                  returnTo={`/projects/${project.id}?tab=${activeTab}`}
+                  locale={locale}
+                />
+              );
+            }
+          } catch {}
+        }
+        return null;
+      })()}
     </div>
   );
 }

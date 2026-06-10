@@ -1,0 +1,7 @@
+{
+  "name": "@lepoship/webview-sdk",
+  "version": "0.1.0",
+  "description": "LepoShip WebView JS SDK to communicate with iOS (GCDWebServer) and Android local app hosts",
+  "main": "index.js",
+  "type": "module"
+}

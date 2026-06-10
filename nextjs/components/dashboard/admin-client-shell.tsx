@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import { SearchProvider } from "@/components/dashboard/search-provider";
 import { AdminHeader } from "@/components/dashboard/admin-header";
 import { AppSidebar } from "@/components/dashboard/app-sidebar";
@@ -43,6 +44,16 @@ export function AdminClientShell({
   defaultOpen,
   children,
 }: AdminClientShellProps) {
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
+
   return (
     <LayoutPreferencesProvider>
       <SearchProvider>

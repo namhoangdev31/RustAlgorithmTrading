@@ -216,6 +216,12 @@ export type ProjectWhereInput = {
   deletedAt?: Prisma.DateTimeNullableFilter<"Project"> | Date | string | null
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
   bundle?: Prisma.XOR<Prisma.BundlesNullableScalarRelationFilter, Prisma.BundlesWhereInput> | null
+  deployHooks?: Prisma.DeployHookListRelationFilter
+  firewallRules?: Prisma.FirewallRuleListRelationFilter
+  cronJobs?: Prisma.CronJobListRelationFilter
+  forms?: Prisma.FormListRelationFilter
+  previewComments?: Prisma.PreviewCommentListRelationFilter
+  lepoShipLocalConfig?: Prisma.XOR<Prisma.LepoShipLocalConfigNullableScalarRelationFilter, Prisma.LepoShipLocalConfigWhereInput> | null
 }
 
 export type ProjectOrderByWithRelationInput = {
@@ -230,6 +236,12 @@ export type ProjectOrderByWithRelationInput = {
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   organization?: Prisma.OrganizationOrderByWithRelationInput
   bundle?: Prisma.BundlesOrderByWithRelationInput
+  deployHooks?: Prisma.DeployHookOrderByRelationAggregateInput
+  firewallRules?: Prisma.FirewallRuleOrderByRelationAggregateInput
+  cronJobs?: Prisma.CronJobOrderByRelationAggregateInput
+  forms?: Prisma.FormOrderByRelationAggregateInput
+  previewComments?: Prisma.PreviewCommentOrderByRelationAggregateInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigOrderByWithRelationInput
 }
 
 export type ProjectWhereUniqueInput = Prisma.AtLeast<{
@@ -247,6 +259,12 @@ export type ProjectWhereUniqueInput = Prisma.AtLeast<{
   deletedAt?: Prisma.DateTimeNullableFilter<"Project"> | Date | string | null
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
   bundle?: Prisma.XOR<Prisma.BundlesNullableScalarRelationFilter, Prisma.BundlesWhereInput> | null
+  deployHooks?: Prisma.DeployHookListRelationFilter
+  firewallRules?: Prisma.FirewallRuleListRelationFilter
+  cronJobs?: Prisma.CronJobListRelationFilter
+  forms?: Prisma.FormListRelationFilter
+  previewComments?: Prisma.PreviewCommentListRelationFilter
+  lepoShipLocalConfig?: Prisma.XOR<Prisma.LepoShipLocalConfigNullableScalarRelationFilter, Prisma.LepoShipLocalConfigWhereInput> | null
 }, "id">
 
 export type ProjectOrderByWithAggregationInput = {
@@ -290,6 +308,12 @@ export type ProjectCreateInput = {
   deletedAt?: Date | string | null
   organization: Prisma.OrganizationCreateNestedOneWithoutProjectsInput
   bundle?: Prisma.BundlesCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigCreateNestedOneWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateInput = {
@@ -303,6 +327,12 @@ export type ProjectUncheckedCreateInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   bundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookUncheckedCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleUncheckedCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobUncheckedCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormUncheckedCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedCreateNestedOneWithoutProjectInput
 }
 
 export type ProjectUpdateInput = {
@@ -316,6 +346,12 @@ export type ProjectUpdateInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutProjectsNestedInput
   bundle?: Prisma.BundlesUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUpdateOneWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateInput = {
@@ -329,6 +365,12 @@ export type ProjectUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   bundle?: Prisma.BundlesUncheckedUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUncheckedUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUncheckedUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUncheckedUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUncheckedUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedUpdateOneWithoutProjectNestedInput
 }
 
 export type ProjectCreateManyInput = {
@@ -417,6 +459,11 @@ export type ProjectNullableScalarRelationFilter = {
   isNot?: Prisma.ProjectWhereInput | null
 }
 
+export type ProjectScalarRelationFilter = {
+  is?: Prisma.ProjectWhereInput
+  isNot?: Prisma.ProjectWhereInput
+}
+
 export type ProjectCreateNestedManyWithoutOrganizationInput = {
   create?: Prisma.XOR<Prisma.ProjectCreateWithoutOrganizationInput, Prisma.ProjectUncheckedCreateWithoutOrganizationInput> | Prisma.ProjectCreateWithoutOrganizationInput[] | Prisma.ProjectUncheckedCreateWithoutOrganizationInput[]
   connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutOrganizationInput | Prisma.ProjectCreateOrConnectWithoutOrganizationInput[]
@@ -475,6 +522,90 @@ export type ProjectUpdateOneWithoutBundleNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutBundleInput, Prisma.ProjectUpdateWithoutBundleInput>, Prisma.ProjectUncheckedUpdateWithoutBundleInput>
 }
 
+export type ProjectCreateNestedOneWithoutDeployHooksInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutDeployHooksInput, Prisma.ProjectUncheckedCreateWithoutDeployHooksInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutDeployHooksInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneRequiredWithoutDeployHooksNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutDeployHooksInput, Prisma.ProjectUncheckedCreateWithoutDeployHooksInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutDeployHooksInput
+  upsert?: Prisma.ProjectUpsertWithoutDeployHooksInput
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutDeployHooksInput, Prisma.ProjectUpdateWithoutDeployHooksInput>, Prisma.ProjectUncheckedUpdateWithoutDeployHooksInput>
+}
+
+export type ProjectCreateNestedOneWithoutFirewallRulesInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutFirewallRulesInput, Prisma.ProjectUncheckedCreateWithoutFirewallRulesInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutFirewallRulesInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneRequiredWithoutFirewallRulesNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutFirewallRulesInput, Prisma.ProjectUncheckedCreateWithoutFirewallRulesInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutFirewallRulesInput
+  upsert?: Prisma.ProjectUpsertWithoutFirewallRulesInput
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutFirewallRulesInput, Prisma.ProjectUpdateWithoutFirewallRulesInput>, Prisma.ProjectUncheckedUpdateWithoutFirewallRulesInput>
+}
+
+export type ProjectCreateNestedOneWithoutCronJobsInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutCronJobsInput, Prisma.ProjectUncheckedCreateWithoutCronJobsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutCronJobsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneRequiredWithoutCronJobsNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutCronJobsInput, Prisma.ProjectUncheckedCreateWithoutCronJobsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutCronJobsInput
+  upsert?: Prisma.ProjectUpsertWithoutCronJobsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutCronJobsInput, Prisma.ProjectUpdateWithoutCronJobsInput>, Prisma.ProjectUncheckedUpdateWithoutCronJobsInput>
+}
+
+export type ProjectCreateNestedOneWithoutFormsInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutFormsInput, Prisma.ProjectUncheckedCreateWithoutFormsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutFormsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneRequiredWithoutFormsNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutFormsInput, Prisma.ProjectUncheckedCreateWithoutFormsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutFormsInput
+  upsert?: Prisma.ProjectUpsertWithoutFormsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutFormsInput, Prisma.ProjectUpdateWithoutFormsInput>, Prisma.ProjectUncheckedUpdateWithoutFormsInput>
+}
+
+export type ProjectCreateNestedOneWithoutPreviewCommentsInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutPreviewCommentsInput, Prisma.ProjectUncheckedCreateWithoutPreviewCommentsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutPreviewCommentsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneRequiredWithoutPreviewCommentsNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutPreviewCommentsInput, Prisma.ProjectUncheckedCreateWithoutPreviewCommentsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutPreviewCommentsInput
+  upsert?: Prisma.ProjectUpsertWithoutPreviewCommentsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutPreviewCommentsInput, Prisma.ProjectUpdateWithoutPreviewCommentsInput>, Prisma.ProjectUncheckedUpdateWithoutPreviewCommentsInput>
+}
+
+export type ProjectCreateNestedOneWithoutLepoShipLocalConfigInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutLepoShipLocalConfigInput, Prisma.ProjectUncheckedCreateWithoutLepoShipLocalConfigInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutLepoShipLocalConfigInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneRequiredWithoutLepoShipLocalConfigNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutLepoShipLocalConfigInput, Prisma.ProjectUncheckedCreateWithoutLepoShipLocalConfigInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutLepoShipLocalConfigInput
+  upsert?: Prisma.ProjectUpsertWithoutLepoShipLocalConfigInput
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutLepoShipLocalConfigInput, Prisma.ProjectUpdateWithoutLepoShipLocalConfigInput>, Prisma.ProjectUncheckedUpdateWithoutLepoShipLocalConfigInput>
+}
+
 export type ProjectCreateWithoutOrganizationInput = {
   id: string
   name: string
@@ -485,6 +616,12 @@ export type ProjectCreateWithoutOrganizationInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   bundle?: Prisma.BundlesCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigCreateNestedOneWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutOrganizationInput = {
@@ -497,6 +634,12 @@ export type ProjectUncheckedCreateWithoutOrganizationInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   bundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookUncheckedCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleUncheckedCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobUncheckedCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormUncheckedCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedCreateNestedOneWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutOrganizationInput = {
@@ -550,6 +693,12 @@ export type ProjectCreateWithoutBundleInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   organization: Prisma.OrganizationCreateNestedOneWithoutProjectsInput
+  deployHooks?: Prisma.DeployHookCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigCreateNestedOneWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutBundleInput = {
@@ -562,6 +711,12 @@ export type ProjectUncheckedCreateWithoutBundleInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  deployHooks?: Prisma.DeployHookUncheckedCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleUncheckedCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobUncheckedCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormUncheckedCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedCreateNestedOneWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutBundleInput = {
@@ -590,6 +745,12 @@ export type ProjectUpdateWithoutBundleInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutProjectsNestedInput
+  deployHooks?: Prisma.DeployHookUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUpdateOneWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutBundleInput = {
@@ -602,6 +763,540 @@ export type ProjectUncheckedUpdateWithoutBundleInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deployHooks?: Prisma.DeployHookUncheckedUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUncheckedUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUncheckedUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUncheckedUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedUpdateOneWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutDeployHooksInput = {
+  id: string
+  name: string
+  description?: string | null
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  organization: Prisma.OrganizationCreateNestedOneWithoutProjectsInput
+  bundle?: Prisma.BundlesCreateNestedOneWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigCreateNestedOneWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutDeployHooksInput = {
+  id: string
+  name: string
+  description?: string | null
+  organizationId: string
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  bundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleUncheckedCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobUncheckedCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormUncheckedCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedCreateNestedOneWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutDeployHooksInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutDeployHooksInput, Prisma.ProjectUncheckedCreateWithoutDeployHooksInput>
+}
+
+export type ProjectUpsertWithoutDeployHooksInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutDeployHooksInput, Prisma.ProjectUncheckedUpdateWithoutDeployHooksInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutDeployHooksInput, Prisma.ProjectUncheckedCreateWithoutDeployHooksInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutDeployHooksInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutDeployHooksInput, Prisma.ProjectUncheckedUpdateWithoutDeployHooksInput>
+}
+
+export type ProjectUpdateWithoutDeployHooksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutProjectsNestedInput
+  bundle?: Prisma.BundlesUpdateOneWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUpdateOneWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutDeployHooksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bundle?: Prisma.BundlesUncheckedUpdateOneWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUncheckedUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUncheckedUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUncheckedUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedUpdateOneWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutFirewallRulesInput = {
+  id: string
+  name: string
+  description?: string | null
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  organization: Prisma.OrganizationCreateNestedOneWithoutProjectsInput
+  bundle?: Prisma.BundlesCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigCreateNestedOneWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutFirewallRulesInput = {
+  id: string
+  name: string
+  description?: string | null
+  organizationId: string
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  bundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookUncheckedCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobUncheckedCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormUncheckedCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedCreateNestedOneWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutFirewallRulesInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutFirewallRulesInput, Prisma.ProjectUncheckedCreateWithoutFirewallRulesInput>
+}
+
+export type ProjectUpsertWithoutFirewallRulesInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutFirewallRulesInput, Prisma.ProjectUncheckedUpdateWithoutFirewallRulesInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutFirewallRulesInput, Prisma.ProjectUncheckedCreateWithoutFirewallRulesInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutFirewallRulesInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutFirewallRulesInput, Prisma.ProjectUncheckedUpdateWithoutFirewallRulesInput>
+}
+
+export type ProjectUpdateWithoutFirewallRulesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutProjectsNestedInput
+  bundle?: Prisma.BundlesUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUpdateOneWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutFirewallRulesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bundle?: Prisma.BundlesUncheckedUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUncheckedUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUncheckedUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUncheckedUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedUpdateOneWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutCronJobsInput = {
+  id: string
+  name: string
+  description?: string | null
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  organization: Prisma.OrganizationCreateNestedOneWithoutProjectsInput
+  bundle?: Prisma.BundlesCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigCreateNestedOneWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutCronJobsInput = {
+  id: string
+  name: string
+  description?: string | null
+  organizationId: string
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  bundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookUncheckedCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleUncheckedCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormUncheckedCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedCreateNestedOneWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutCronJobsInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutCronJobsInput, Prisma.ProjectUncheckedCreateWithoutCronJobsInput>
+}
+
+export type ProjectUpsertWithoutCronJobsInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutCronJobsInput, Prisma.ProjectUncheckedUpdateWithoutCronJobsInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutCronJobsInput, Prisma.ProjectUncheckedCreateWithoutCronJobsInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutCronJobsInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutCronJobsInput, Prisma.ProjectUncheckedUpdateWithoutCronJobsInput>
+}
+
+export type ProjectUpdateWithoutCronJobsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutProjectsNestedInput
+  bundle?: Prisma.BundlesUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUpdateOneWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutCronJobsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bundle?: Prisma.BundlesUncheckedUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUncheckedUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUncheckedUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUncheckedUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedUpdateOneWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutFormsInput = {
+  id: string
+  name: string
+  description?: string | null
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  organization: Prisma.OrganizationCreateNestedOneWithoutProjectsInput
+  bundle?: Prisma.BundlesCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigCreateNestedOneWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutFormsInput = {
+  id: string
+  name: string
+  description?: string | null
+  organizationId: string
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  bundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookUncheckedCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleUncheckedCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobUncheckedCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedCreateNestedOneWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutFormsInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutFormsInput, Prisma.ProjectUncheckedCreateWithoutFormsInput>
+}
+
+export type ProjectUpsertWithoutFormsInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutFormsInput, Prisma.ProjectUncheckedUpdateWithoutFormsInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutFormsInput, Prisma.ProjectUncheckedCreateWithoutFormsInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutFormsInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutFormsInput, Prisma.ProjectUncheckedUpdateWithoutFormsInput>
+}
+
+export type ProjectUpdateWithoutFormsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutProjectsNestedInput
+  bundle?: Prisma.BundlesUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUpdateOneWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutFormsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bundle?: Prisma.BundlesUncheckedUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUncheckedUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUncheckedUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUncheckedUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedUpdateOneWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutPreviewCommentsInput = {
+  id: string
+  name: string
+  description?: string | null
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  organization: Prisma.OrganizationCreateNestedOneWithoutProjectsInput
+  bundle?: Prisma.BundlesCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigCreateNestedOneWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutPreviewCommentsInput = {
+  id: string
+  name: string
+  description?: string | null
+  organizationId: string
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  bundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookUncheckedCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleUncheckedCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobUncheckedCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormUncheckedCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedCreateNestedOneWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutPreviewCommentsInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutPreviewCommentsInput, Prisma.ProjectUncheckedCreateWithoutPreviewCommentsInput>
+}
+
+export type ProjectUpsertWithoutPreviewCommentsInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutPreviewCommentsInput, Prisma.ProjectUncheckedUpdateWithoutPreviewCommentsInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutPreviewCommentsInput, Prisma.ProjectUncheckedCreateWithoutPreviewCommentsInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutPreviewCommentsInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutPreviewCommentsInput, Prisma.ProjectUncheckedUpdateWithoutPreviewCommentsInput>
+}
+
+export type ProjectUpdateWithoutPreviewCommentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutProjectsNestedInput
+  bundle?: Prisma.BundlesUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUpdateOneWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutPreviewCommentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bundle?: Prisma.BundlesUncheckedUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUncheckedUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUncheckedUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUncheckedUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUncheckedUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedUpdateOneWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutLepoShipLocalConfigInput = {
+  id: string
+  name: string
+  description?: string | null
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  organization: Prisma.OrganizationCreateNestedOneWithoutProjectsInput
+  bundle?: Prisma.BundlesCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutLepoShipLocalConfigInput = {
+  id: string
+  name: string
+  description?: string | null
+  organizationId: string
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  bundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookUncheckedCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleUncheckedCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobUncheckedCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormUncheckedCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutLepoShipLocalConfigInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutLepoShipLocalConfigInput, Prisma.ProjectUncheckedCreateWithoutLepoShipLocalConfigInput>
+}
+
+export type ProjectUpsertWithoutLepoShipLocalConfigInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutLepoShipLocalConfigInput, Prisma.ProjectUncheckedUpdateWithoutLepoShipLocalConfigInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutLepoShipLocalConfigInput, Prisma.ProjectUncheckedCreateWithoutLepoShipLocalConfigInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutLepoShipLocalConfigInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutLepoShipLocalConfigInput, Prisma.ProjectUncheckedUpdateWithoutLepoShipLocalConfigInput>
+}
+
+export type ProjectUpdateWithoutLepoShipLocalConfigInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutProjectsNestedInput
+  bundle?: Prisma.BundlesUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutLepoShipLocalConfigInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bundle?: Prisma.BundlesUncheckedUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUncheckedUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUncheckedUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUncheckedUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUncheckedUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateManyOrganizationInput = {
@@ -625,6 +1320,12 @@ export type ProjectUpdateWithoutOrganizationInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   bundle?: Prisma.BundlesUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUpdateOneWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutOrganizationInput = {
@@ -637,6 +1338,12 @@ export type ProjectUncheckedUpdateWithoutOrganizationInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   bundle?: Prisma.BundlesUncheckedUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUncheckedUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUncheckedUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUncheckedUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUncheckedUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedUpdateOneWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateManyWithoutOrganizationInput = {
@@ -651,6 +1358,71 @@ export type ProjectUncheckedUpdateManyWithoutOrganizationInput = {
 }
 
 
+/**
+ * Count Type ProjectCountOutputType
+ */
+
+export type ProjectCountOutputType = {
+  deployHooks: number
+  firewallRules: number
+  cronJobs: number
+  forms: number
+  previewComments: number
+}
+
+export type ProjectCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  deployHooks?: boolean | ProjectCountOutputTypeCountDeployHooksArgs
+  firewallRules?: boolean | ProjectCountOutputTypeCountFirewallRulesArgs
+  cronJobs?: boolean | ProjectCountOutputTypeCountCronJobsArgs
+  forms?: boolean | ProjectCountOutputTypeCountFormsArgs
+  previewComments?: boolean | ProjectCountOutputTypeCountPreviewCommentsArgs
+}
+
+/**
+ * ProjectCountOutputType without action
+ */
+export type ProjectCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ProjectCountOutputType
+   */
+  select?: Prisma.ProjectCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * ProjectCountOutputType without action
+ */
+export type ProjectCountOutputTypeCountDeployHooksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DeployHookWhereInput
+}
+
+/**
+ * ProjectCountOutputType without action
+ */
+export type ProjectCountOutputTypeCountFirewallRulesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.FirewallRuleWhereInput
+}
+
+/**
+ * ProjectCountOutputType without action
+ */
+export type ProjectCountOutputTypeCountCronJobsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CronJobWhereInput
+}
+
+/**
+ * ProjectCountOutputType without action
+ */
+export type ProjectCountOutputTypeCountFormsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.FormWhereInput
+}
+
+/**
+ * ProjectCountOutputType without action
+ */
+export type ProjectCountOutputTypeCountPreviewCommentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PreviewCommentWhereInput
+}
+
 
 export type ProjectSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -664,6 +1436,13 @@ export type ProjectSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   deletedAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   bundle?: boolean | Prisma.Project$bundleArgs<ExtArgs>
+  deployHooks?: boolean | Prisma.Project$deployHooksArgs<ExtArgs>
+  firewallRules?: boolean | Prisma.Project$firewallRulesArgs<ExtArgs>
+  cronJobs?: boolean | Prisma.Project$cronJobsArgs<ExtArgs>
+  forms?: boolean | Prisma.Project$formsArgs<ExtArgs>
+  previewComments?: boolean | Prisma.Project$previewCommentsArgs<ExtArgs>
+  lepoShipLocalConfig?: boolean | Prisma.Project$lepoShipLocalConfigArgs<ExtArgs>
+  _count?: boolean | Prisma.ProjectCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["project"]>
 
 export type ProjectSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -708,6 +1487,13 @@ export type ProjectOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
 export type ProjectInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   bundle?: boolean | Prisma.Project$bundleArgs<ExtArgs>
+  deployHooks?: boolean | Prisma.Project$deployHooksArgs<ExtArgs>
+  firewallRules?: boolean | Prisma.Project$firewallRulesArgs<ExtArgs>
+  cronJobs?: boolean | Prisma.Project$cronJobsArgs<ExtArgs>
+  forms?: boolean | Prisma.Project$formsArgs<ExtArgs>
+  previewComments?: boolean | Prisma.Project$previewCommentsArgs<ExtArgs>
+  lepoShipLocalConfig?: boolean | Prisma.Project$lepoShipLocalConfigArgs<ExtArgs>
+  _count?: boolean | Prisma.ProjectCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ProjectIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
@@ -721,6 +1507,12 @@ export type $ProjectPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   objects: {
     organization: Prisma.$OrganizationPayload<ExtArgs>
     bundle: Prisma.$BundlesPayload<ExtArgs> | null
+    deployHooks: Prisma.$DeployHookPayload<ExtArgs>[]
+    firewallRules: Prisma.$FirewallRulePayload<ExtArgs>[]
+    cronJobs: Prisma.$CronJobPayload<ExtArgs>[]
+    forms: Prisma.$FormPayload<ExtArgs>[]
+    previewComments: Prisma.$PreviewCommentPayload<ExtArgs>[]
+    lepoShipLocalConfig: Prisma.$LepoShipLocalConfigPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1128,6 +1920,12 @@ export interface Prisma__ProjectClient<T, Null = never, ExtArgs extends runtime.
   readonly [Symbol.toStringTag]: "PrismaPromise"
   organization<T extends Prisma.OrganizationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationDefaultArgs<ExtArgs>>): Prisma.Prisma__OrganizationClient<runtime.Types.Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   bundle<T extends Prisma.Project$bundleArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$bundleArgs<ExtArgs>>): Prisma.Prisma__BundlesClient<runtime.Types.Result.GetResult<Prisma.$BundlesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  deployHooks<T extends Prisma.Project$deployHooksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$deployHooksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DeployHookPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  firewallRules<T extends Prisma.Project$firewallRulesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$firewallRulesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FirewallRulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  cronJobs<T extends Prisma.Project$cronJobsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$cronJobsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CronJobPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  forms<T extends Prisma.Project$formsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$formsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FormPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  previewComments<T extends Prisma.Project$previewCommentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$previewCommentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PreviewCommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  lepoShipLocalConfig<T extends Prisma.Project$lepoShipLocalConfigArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$lepoShipLocalConfigArgs<ExtArgs>>): Prisma.Prisma__LepoShipLocalConfigClient<runtime.Types.Result.GetResult<Prisma.$LepoShipLocalConfigPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1583,6 +2381,145 @@ export type Project$bundleArgs<ExtArgs extends runtime.Types.Extensions.Internal
    */
   include?: Prisma.BundlesInclude<ExtArgs> | null
   where?: Prisma.BundlesWhereInput
+}
+
+/**
+ * Project.deployHooks
+ */
+export type Project$deployHooksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DeployHook
+   */
+  select?: Prisma.DeployHookSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DeployHook
+   */
+  omit?: Prisma.DeployHookOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DeployHookInclude<ExtArgs> | null
+  where?: Prisma.DeployHookWhereInput
+  orderBy?: Prisma.DeployHookOrderByWithRelationInput | Prisma.DeployHookOrderByWithRelationInput[]
+  cursor?: Prisma.DeployHookWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DeployHookScalarFieldEnum | Prisma.DeployHookScalarFieldEnum[]
+}
+
+/**
+ * Project.firewallRules
+ */
+export type Project$firewallRulesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the FirewallRule
+   */
+  select?: Prisma.FirewallRuleSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the FirewallRule
+   */
+  omit?: Prisma.FirewallRuleOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FirewallRuleInclude<ExtArgs> | null
+  where?: Prisma.FirewallRuleWhereInput
+  orderBy?: Prisma.FirewallRuleOrderByWithRelationInput | Prisma.FirewallRuleOrderByWithRelationInput[]
+  cursor?: Prisma.FirewallRuleWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.FirewallRuleScalarFieldEnum | Prisma.FirewallRuleScalarFieldEnum[]
+}
+
+/**
+ * Project.cronJobs
+ */
+export type Project$cronJobsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CronJob
+   */
+  select?: Prisma.CronJobSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CronJob
+   */
+  omit?: Prisma.CronJobOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CronJobInclude<ExtArgs> | null
+  where?: Prisma.CronJobWhereInput
+  orderBy?: Prisma.CronJobOrderByWithRelationInput | Prisma.CronJobOrderByWithRelationInput[]
+  cursor?: Prisma.CronJobWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CronJobScalarFieldEnum | Prisma.CronJobScalarFieldEnum[]
+}
+
+/**
+ * Project.forms
+ */
+export type Project$formsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Form
+   */
+  select?: Prisma.FormSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Form
+   */
+  omit?: Prisma.FormOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FormInclude<ExtArgs> | null
+  where?: Prisma.FormWhereInput
+  orderBy?: Prisma.FormOrderByWithRelationInput | Prisma.FormOrderByWithRelationInput[]
+  cursor?: Prisma.FormWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.FormScalarFieldEnum | Prisma.FormScalarFieldEnum[]
+}
+
+/**
+ * Project.previewComments
+ */
+export type Project$previewCommentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PreviewComment
+   */
+  select?: Prisma.PreviewCommentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PreviewComment
+   */
+  omit?: Prisma.PreviewCommentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PreviewCommentInclude<ExtArgs> | null
+  where?: Prisma.PreviewCommentWhereInput
+  orderBy?: Prisma.PreviewCommentOrderByWithRelationInput | Prisma.PreviewCommentOrderByWithRelationInput[]
+  cursor?: Prisma.PreviewCommentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PreviewCommentScalarFieldEnum | Prisma.PreviewCommentScalarFieldEnum[]
+}
+
+/**
+ * Project.lepoShipLocalConfig
+ */
+export type Project$lepoShipLocalConfigArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the LepoShipLocalConfig
+   */
+  select?: Prisma.LepoShipLocalConfigSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the LepoShipLocalConfig
+   */
+  omit?: Prisma.LepoShipLocalConfigOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LepoShipLocalConfigInclude<ExtArgs> | null
+  where?: Prisma.LepoShipLocalConfigWhereInput
 }
 
 /**

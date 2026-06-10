@@ -133,6 +133,86 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, message: "pong" });
   }
 
+  // Handle Pull Request Event for Previews
+  if (event === "pull_request") {
+    const action = payload.action;
+    if (action !== "opened" && action !== "synchronize") {
+      return NextResponse.json({ success: true, message: `Ignored: PR action ${action} is not handled.` });
+    }
+
+    const prNumber = payload.number;
+    const sha = payload.pull_request?.head?.sha;
+    const branch = payload.pull_request?.head?.ref;
+    
+    try {
+      const githubAccessTokenEncrypted = configObj.githubAccessToken;
+      if (!githubAccessTokenEncrypted) {
+        throw new Error("GitHub Access Token is missing or not configured");
+      }
+      const decryptedToken = decryptSecret(githubAccessTokenEncrypted);
+      
+      const previewUrl = `https://pr-${prNumber}-${bundle.slug}.preview.lepos.dev`;
+
+      // 1. Post a comment on the PR
+      const commentUrl = `https://api.github.com/repos/${repoFullName}/issues/${prNumber}/comments`;
+      await fetch(commentUrl, {
+        method: "POST",
+        headers: {
+          Accept: "application/vnd.github+json",
+          Authorization: `Bearer ${decryptedToken}`,
+          "User-Agent": "Lepos-BDS",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          body: `🚀 **LepoS Preview Deployment Ready!**\n\n- **Branch**: \`${branch}\`\n- **Commit**: \`${sha?.substring(0, 7) || "unknown"}\`\n- **Preview Link**: [Visit Preview](${previewUrl})`
+        })
+      });
+
+      // 2. Post a status check
+      if (sha) {
+        const statusUrl = `https://api.github.com/repos/${repoFullName}/statuses/${sha}`;
+        await fetch(statusUrl, {
+          method: "POST",
+          headers: {
+            Accept: "application/vnd.github+json",
+            Authorization: `Bearer ${decryptedToken}`,
+            "User-Agent": "Lepos-BDS",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            state: "success",
+            target_url: previewUrl,
+            description: "Preview deployment successfully deployed!",
+            context: "lepos/preview"
+          })
+        });
+      }
+
+      await appendIntegrationLog(integration.id, integration.config, {
+        event,
+        status: "success",
+        statusCode: 200,
+        message: `Successfully generated preview deployment for PR #${prNumber} at ${previewUrl}`,
+      });
+
+      return NextResponse.json({
+        success: true,
+        previewUrl,
+        prNumber,
+        sha,
+      });
+    } catch (error: any) {
+      const errorMsg = error?.message || "Internal server error during PR handling";
+      await appendIntegrationLog(integration.id, integration.config, {
+        event,
+        status: "error",
+        statusCode: 500,
+        message: `Failed preview build for PR #${prNumber}: ${errorMsg}`,
+      });
+      return NextResponse.json({ error: errorMsg }, { status: 500 });
+    }
+  }
+
   // Handle Push Event (filter branch vs tag)
   if (event === "push") {
     const ref = payload.ref || "";

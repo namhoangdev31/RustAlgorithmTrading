@@ -494,7 +494,7 @@
         "lepoship_projects": "LepoShip Projects",
         "apps": "Apps",
         "chats": "Chats",
-        "users": "Users",
+        "users": "Workspace Members",
         "settings": "Settings",
         "help_center": "Help Center",
         "profile": "Profile",
@@ -503,6 +503,8 @@
         "notifications": "Notifications",
         "display": "Display",
         "vercel": "Vercel API Key",
+        "platform": "Platform Control",
+        "zero_plan": "Zero Plan",
         "vercel_roadmap": "Vercel SDK Roadmap"
       },
       "header": {
@@ -746,7 +748,13 @@
         "success_msg": "Organization updated successfully",
         "error_msg": "Failed to update organization",
         "validation_min": "Organization name must be at least 2 characters.",
-        "validation_max": "Organization name must be at most 100 characters."
+        "validation_max": "Organization name must be at most 100 characters.",
+        "delete_org_title": "Delete Workspace",
+        "delete_org_desc": "This action cannot be undone. This will permanently delete the workspace and all projects in it.",
+        "delete_org_btn": "Delete Workspace",
+        "delete_org_success_msg": "Workspace deleted successfully",
+        "delete_org_error_msg": "Failed to delete workspace",
+        "delete_org_last_error": "Cannot delete the last remaining workspace."
       },
       "first_name_label": "First Name",
       "first_name_placeholder": "Your first name",

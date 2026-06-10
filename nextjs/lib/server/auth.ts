@@ -3,6 +3,7 @@ import Apple from "next-auth/providers/apple";
 import Credentials from "next-auth/providers/credentials";
 import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
+import { authConfig } from "./auth.config";
 
 import {
   lookupFirebaseUser,
@@ -163,17 +164,7 @@ export const {
   signIn,
   signOut,
 } = NextAuth({
-  pages: {
-    signIn: "/login",
-  },
-  session: {
-    strategy: "jwt",
-  },
-  secret:
-    process.env.AUTH_SECRET ??
-    process.env.NEXTAUTH_SECRET ??
-    (process.env.NODE_ENV === "production" ? undefined : "development-only-auth-secret"),
-  trustHost: true,
+  ...authConfig,
   providers: [
     Credentials({
       name: "Firebase",

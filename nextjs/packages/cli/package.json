@@ -1,0 +1,9 @@
+{
+  "name": "lepos-cli",
+  "version": "0.1.0",
+  "description": "LepoS Command Line Interface",
+  "bin": {
+    "lepos": "./bin/index.js"
+  },
+  "type": "module"
+}

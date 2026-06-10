@@ -1,5 +1,9 @@
 import { prisma } from "@/lib/server/prisma";
-import { getWorkspaceContext } from "@/lib/server/workspace";
+import {
+  getWorkspaceContext,
+  getWorkspaceUsageSnapshot,
+} from "@/lib/server/workspace";
+import { getWorkspaceMembers } from "@/lib/server/permissions";
 import { lookupFirebaseUserByLocalId } from "@/lib/server/firebase-auth";
 
 export type SearchParamsInput = {
@@ -97,6 +101,24 @@ async function getWorkspaceProjects(userId: string) {
               releaseNotes: true,
               status: true,
               createdAt: true,
+            },
+          },
+          collaborators: {
+            orderBy: { createdAt: "desc" },
+            select: {
+              id: true,
+              role: true,
+              acceptedAt: true,
+              createdAt: true,
+              user: {
+                select: {
+                  id: true,
+                  email: true,
+                  firstName: true,
+                  lastName: true,
+                  fullName: true,
+                },
+              },
             },
           },
         },
@@ -646,7 +668,7 @@ export async function getSettingsData(userId: string) {
   }
 
   const workspace = await getWorkspaceContext(userId);
-  const [user, notifications] = await Promise.all([
+  const [user, notifications, workspaceMembers, workspaceUsage] = await Promise.all([
     prisma.user.findUnique({
       where: { id: userId },
       select: {
@@ -682,10 +704,18 @@ export async function getSettingsData(userId: string) {
         createdAt: true,
       },
     }),
+    workspace.activeOrganization
+      ? getWorkspaceMembers(workspace.activeOrganization.id)
+      : Promise.resolve([]),
+    workspace.activeOrganization
+      ? getWorkspaceUsageSnapshot(workspace.activeOrganization.id)
+      : Promise.resolve(null),
   ]);
 
   return {
     workspace,
+    workspaceMembers,
+    workspaceUsage,
     user,
     notifications,
   };
@@ -704,5 +734,153 @@ export function buildBundleDefaults(projectName: string, bundleName?: string) {
     slug: slug ? `${slug}-${crypto.randomUUID().slice(0, 8)}` : null,
     storagePath: `bundles/${crypto.randomUUID()}`,
     bucket: "bundles",
+  };
+}
+
+export async function getLepoShipData(userId: string) {
+  const workspace = await getWorkspaceContext(userId);
+
+  if (!workspace.activeOrganization) {
+    return {
+      workspace,
+      projects: [],
+    };
+  }
+
+  const projects = await prisma.project.findMany({
+    where: {
+      organizationId: workspace.activeOrganization.id,
+      deletedAt: null,
+      bundle: {
+        category: "mobile",
+      },
+    },
+    orderBy: { updatedAt: "desc" },
+    select: {
+      id: true,
+      name: true,
+      description: true,
+      createdAt: true,
+      updatedAt: true,
+      bundle: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          version: true,
+          buildNumber: true,
+          status: true,
+          externalIntegrations: {
+            where: { integrationType: "lepoship" },
+            select: { config: true },
+          },
+          releaseTracks: {
+            orderBy: { createdAt: "desc" },
+            take: 5,
+            select: {
+              id: true,
+              version: true,
+              buildNumber: true,
+              createdAt: true,
+              status: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return {
+    workspace,
+    projects,
+  };
+}
+
+export async function getLepoShipProjectDetail(userId: string, projectId: string) {
+  const workspace = await getWorkspaceContext(userId);
+  const orgIds = workspace.organizations.map((org) => org.id);
+
+  const project = await prisma.project.findFirst({
+    where: {
+      id: projectId,
+      organizationId: { in: orgIds },
+      deletedAt: null,
+    },
+    select: {
+      id: true,
+      name: true,
+      description: true,
+      createdAt: true,
+      updatedAt: true,
+      bundle: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          version: true,
+          buildNumber: true,
+          status: true,
+          storagePath: true,
+          runtimeConfig: {
+            select: {
+              minOsVersion: true,
+              runtimeType: true,
+              targetPlatforms: true,
+              sdkVersion: true,
+              offlineSupported: true,
+            },
+          },
+          externalIntegrations: {
+            where: { integrationType: "lepoship" },
+            select: { config: true },
+          },
+          releaseTracks: {
+            orderBy: { createdAt: "desc" },
+            select: {
+              id: true,
+              version: true,
+              buildNumber: true,
+              storagePath: true,
+              releaseNotes: true,
+              status: true,
+              createdAt: true,
+              rollouts: {
+                orderBy: { createdAt: "desc" },
+                select: {
+                  id: true,
+                  rolloutPercent: true,
+                  targetCountry: true,
+                  startedAt: true,
+                  completedAt: true,
+                },
+              },
+            },
+          },
+          updatePhases: {
+            orderBy: [{ createdAt: "desc" }],
+            take: 10,
+            select: {
+              id: true,
+              phaseOrder: true,
+              percentage: true,
+              targetCountry: true,
+              status: true,
+              createdAt: true,
+              version: {
+                select: {
+                  version: true,
+                  buildNumber: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return {
+    workspace,
+    project,
   };
 }

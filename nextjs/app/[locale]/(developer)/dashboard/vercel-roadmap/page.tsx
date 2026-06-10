@@ -9,7 +9,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
 
 type Status = "full" | "partial" | "none";
 
@@ -29,60 +28,40 @@ const namespaces: Namespace[] = [
   { id: "billing", name: "Billing & Credits", methods: ["vercel.billing.buyCredits()"], status: "full" },
   { id: "bulkRedirects", name: "Bulk Redirects", methods: ["vercel.bulkRedirects.stageRedirects()"], status: "full" },
   { id: "certs", name: "Certificates", methods: ["vercel.certs.issueCert()", "vercel.certs.uploadCert()", "vercel.certs.removeCert()", "vercel.certs.getCertById()"], status: "full" },
-  { id: "checks", name: "Checks", methods: ["vercel.checks.createCheck()", "vercel.checks.getAllChecks()", "vercel.checks.getCheck()", "vercel.checks.rerequestCheck()", "vercel.checks.updateCheck()"], status: "none" },
+  { id: "checks", name: "Checks", methods: ["vercel.checks.createCheck()", "vercel.checks.getAllChecks()", "vercel.checks.getCheck()", "vercel.checks.rerequestCheck()", "vercel.checks.updateCheck()"], status: "partial" },
   { id: "checksV2", name: "Checks V2", methods: ["vercel.checksV2.createDeploymentCheckRun()", "vercel.checksV2.createProjectCheck()", "vercel.checksV2.deleteProjectCheck()", "vercel.checksV2.getDeploymentCheckRun()", "vercel.checksV2.getProjectCheck()", "vercel.checksV2.listCheckRuns()", "vercel.checksV2.listDeploymentCheckRuns()", "vercel.checksV2.listProjectChecks()", "vercel.checksV2.updateDeploymentCheckRun()", "vercel.checksV2.updateProjectCheck()"], status: "none" },
   { id: "deployments", name: "Deployments", methods: ["vercel.deployments.getDeployments()", "vercel.deployments.cancelDeployment()", "vercel.deployments.getDeployment()"], status: "full" },
-  { id: "dns", name: "DNS", methods: ["vercel.dns.createRecord()", "vercel.dns.getRecords()", "vercel.dns.removeRecord()", "vercel.dns.updateRecord()"], status: "none" },
+  { id: "dns", name: "DNS", methods: ["vercel.dns.createRecord()", "vercel.dns.getRecords()", "vercel.dns.removeRecord()", "vercel.dns.updateRecord()"], status: "partial" },
   { id: "domains", name: "Domain Management", methods: ["vercel.domains.createOrReplaceDomain()", "vercel.domains.getDomain()", "vercel.domains.checkDomainStatus()"], status: "none" },
   { id: "domainsRegistrar", name: "Domains Registrar", methods: ["vercel.domainsRegistrar.buyDomains()", "vercel.domainsRegistrar.buySingleDomain()", "vercel.domainsRegistrar.getBulkAvailability()", "vercel.domainsRegistrar.getDomainAuthCode()", "vercel.domainsRegistrar.getDomainAvailability()", "vercel.domainsRegistrar.getDomainPrice()", "vercel.domainsRegistrar.getTldPrice()", "vercel.domainsRegistrar.renewDomain()", "vercel.domainsRegistrar.transferInDomain()"], status: "none" },
   { id: "drains", name: "Drains", methods: ["vercel.drains.createDrain()", "vercel.drains.deleteDrain()", "vercel.drains.getDrain()", "vercel.drains.getDrains()", "vercel.drains.testDrain()", "vercel.drains.updateDrain()"], status: "none" },
   { id: "edgeCache", name: "Edge Cache", methods: ["vercel.edgeCache.dangerouslyDeleteBySrcImages()", "vercel.edgeCache.dangerouslyDeleteByTags()", "vercel.edgeCache.invalidateBySrcImages()", "vercel.edgeCache.invalidateByTags()"], status: "none" },
-  { id: "edgeConfig", name: "Edge Config", methods: ["vercel.edgeConfig.createEdgeConfig()", "vercel.edgeConfig.getEdgeConfigs()", "vercel.edgeConfig.getEdgeConfig()", "vercel.edgeConfig.updateEdgeConfig()"], status: "none" },
-  { id: "environment", name: "Environment", methods: ["vercel.environment.createCustomEnvironment()", "vercel.environment.createSharedEnvVariable()", "vercel.environment.deleteSharedEnvVariable()", "vercel.environment.getCustomEnvironment()", "vercel.environment.getSharedEnvVar()", "vercel.environment.listSharedEnvVariable()", "vercel.environment.removeCustomEnvironment()", "vercel.environment.updateCustomEnvironment()", "vercel.environment.updateSharedEnvVariable()"], status: "none" },
-  { id: "env", name: "Environment Variables", methods: ["vercel.env.filterProjectEnvs()", "vercel.env.createProjectEnv()", "vercel.env.patchProjectEnv()", "vercel.env.removeProjectEnv()"], status: "none" },
-  { id: "featureFlags", name: "Feature Flags", methods: ["vercel.featureFlags.createFlag()", "vercel.featureFlags.createFlagSegment()", "vercel.featureFlags.createSDKKey()", "vercel.featureFlags.deleteFlag()", "vercel.featureFlags.deleteFlagSegment()", "vercel.featureFlags.deleteSDKKey()", "vercel.featureFlags.getFlag()", "vercel.featureFlags.listFlags()", "vercel.featureFlags.updateFlag()"], status: "none" },
-  { id: "integrations", name: "Integrations & Log Drains", methods: ["vercel.integrations.getConfigurations()", "vercel.integrations.createLogDrain()", "vercel.integrations.deleteLogDrain()"], status: "none" },
-  { id: "logDrains", name: "Log Drains", methods: ["vercel.logDrains.createConfigurableLogDrain()", "vercel.logDrains.createLogDrain()", "vercel.logDrains.deleteConfigurableLogDrain()", "vercel.logDrains.deleteIntegrationLogDrain()", "vercel.logDrains.getAllLogDrains()", "vercel.logDrains.getConfigurableLogDrain()", "vercel.logDrains.getIntegrationLogDrains()"], status: "none" },
-  { id: "logs", name: "Logs", methods: ["vercel.logs.getRuntimeLogs()"], status: "none" },
-  { id: "marketplace", name: "Marketplace", methods: ["vercel.marketplace.createEvent()", "vercel.marketplace.getAccountInfo()", "vercel.marketplace.getIntegrationResource()", "vercel.marketplace.getInvoice()", "vercel.marketplace.submitBillingData()", "vercel.marketplace.submitInvoice()", "vercel.marketplace.updateResource()"], status: "none" },
+  { id: "edgeConfig", name: "Edge Config", methods: ["vercel.edgeConfig.createEdgeConfig()", "vercel.edgeConfig.getEdgeConfigs()", "vercel.edgeConfig.getEdgeConfig()", "vercel.edgeConfig.updateEdgeConfig()"], status: "partial" },
+  { id: "environment", name: "Environment", methods: ["vercel.environment.createCustomEnvironment()", "vercel.environment.createSharedEnvVariable()", "vercel.environment.deleteSharedEnvVariable()", "vercel.environment.getCustomEnvironment()", "vercel.environment.getSharedEnvVar()", "vercel.environment.listSharedEnvVariable()", "vercel.environment.removeCustomEnvironment()", "vercel.environment.updateCustomEnvironment()", "vercel.environment.updateSharedEnvVariable()"], status: "partial" },
+  { id: "env", name: "Environment Variables", methods: ["vercel.env.filterProjectEnvs()", "vercel.env.createProjectEnv()", "vercel.env.patchProjectEnv()", "vercel.env.removeProjectEnv()"], status: "full" },
+  { id: "featureFlags", name: "Feature Flags", methods: ["vercel.featureFlags.createFlag()", "vercel.featureFlags.createFlagSegment()", "vercel.featureFlags.createSDKKey()", "vercel.featureFlags.deleteFlag()", "vercel.featureFlags.deleteFlagSegment()", "vercel.featureFlags.deleteSDKKey()", "vercel.featureFlags.getFlag()", "vercel.featureFlags.listFlags()", "vercel.featureFlags.updateFlag()"], status: "partial" },
+  { id: "integrations", name: "Integrations & Log Drains", methods: ["vercel.integrations.getConfigurations()", "vercel.integrations.createLogDrain()", "vercel.integrations.deleteLogDrain()"], status: "partial" },
+  { id: "logDrains", name: "Log Drains", methods: ["vercel.logDrains.createConfigurableLogDrain()", "vercel.logDrains.createLogDrain()", "vercel.logDrains.deleteConfigurableLogDrain()", "vercel.logDrains.deleteIntegrationLogDrain()", "vercel.logDrains.getAllLogDrains()", "vercel.logDrains.getConfigurableLogDrain()", "vercel.logDrains.getIntegrationLogDrains()"], status: "partial" },
+  { id: "logs", name: "Logs", methods: ["vercel.logs.getRuntimeLogs()"], status: "partial" },
+  { id: "marketplace", name: "Marketplace", methods: ["vercel.marketplace.createEvent()", "vercel.marketplace.getAccountInfo()", "vercel.marketplace.getIntegrationResource()", "vercel.marketplace.getInvoice()", "vercel.marketplace.submitBillingData()", "vercel.marketplace.submitInvoice()", "vercel.marketplace.updateResource()"], status: "partial" },
   { id: "microfrontends", name: "Microfrontends", methods: ["vercel.microfrontends.createMicrofrontendsGroupWithApplications()", "vercel.microfrontends.getMicrofrontendsConfig()", "vercel.microfrontends.getMicrofrontendsGroups()"], status: "none" },
   { id: "networking", name: "Networking", methods: ["vercel.networking.createNetwork()", "vercel.networking.deleteNetwork()", "vercel.networking.listNetworks()", "vercel.networking.readNetwork()", "vercel.networking.updateNetwork()", "vercel.networking.updateStaticIps()"], status: "none" },
-  { id: "projectMembers", name: "Project Members", methods: ["vercel.projectMembers.addProjectMember()", "vercel.projectMembers.getProjectMembers()", "vercel.projectMembers.removeProjectMember()"], status: "none" },
+  { id: "projectMembers", name: "Project Members", methods: ["vercel.projectMembers.addProjectMember()", "vercel.projectMembers.getProjectMembers()", "vercel.projectMembers.removeProjectMember()"], status: "partial" },
   { id: "projectRoutes", name: "Project Routes", methods: ["vercel.projectRoutes.addRoute()", "vercel.projectRoutes.deleteRoutes()", "vercel.projectRoutes.editRoute()", "vercel.projectRoutes.generateRoute()", "vercel.projectRoutes.getRoutes()", "vercel.projectRoutes.stageRoutes()"], status: "none" },
   { id: "projects", name: "Projects", methods: ["vercel.projects.createProject()", "vercel.projects.getProject()", "vercel.projects.updateProject()", "vercel.projects.deleteProject()"], status: "full" },
   { id: "rollingRelease", name: "Rolling Release", methods: ["vercel.rollingRelease.approveRollingReleaseStage()", "vercel.rollingRelease.completeRollingRelease()", "vercel.rollingRelease.deleteRollingReleaseConfig()", "vercel.rollingRelease.getRollingRelease()", "vercel.rollingRelease.getRollingReleaseConfig()", "vercel.rollingRelease.updateRollingReleaseConfig()"], status: "none" },
   { id: "sandboxes", name: "Sandboxes", methods: ["vercel.sandboxes.createSessionDirectory()", "vercel.sandboxes.createSessionSnapshot()", "vercel.sandboxes.deleteSandbox()", "vercel.sandboxes.deleteSessionSnapshot()", "vercel.sandboxes.extendSessionTimeout()", "vercel.sandboxes.getNamedSandbox()", "vercel.sandboxes.getSession()", "vercel.sandboxes.listSandboxes()", "vercel.sandboxes.listSessions()", "vercel.sandboxes.stopSession()"], status: "none" },
   { id: "secrets", name: "Secrets & API Keys", methods: ["vercel.secrets.createSecret()", "vercel.secrets.deleteSecret()", "vercel.secrets.listSecrets()"], status: "full" },
-  { id: "security", name: "Security", methods: ["vercel.security.addBypassIp()", "vercel.security.getActiveAttackStatus()", "vercel.security.getBypassIp()", "vercel.security.getFirewallConfig()", "vercel.security.getSecurityFirewallEvents()", "vercel.security.putFirewallConfig()", "vercel.security.removeBypassIp()", "vercel.security.updateAttackChallengeMode()", "vercel.security.updateFirewallConfig()"], status: "none" },
+  { id: "security", name: "Security", methods: ["vercel.security.addBypassIp()", "vercel.security.getActiveAttackStatus()", "vercel.security.getBypassIp()", "vercel.security.getFirewallConfig()", "vercel.security.getSecurityFirewallEvents()", "vercel.security.putFirewallConfig()", "vercel.security.removeBypassIp()", "vercel.security.updateAttackChallengeMode()", "vercel.security.updateFirewallConfig()"], status: "partial" },
   { id: "teams", name: "Teams", methods: ["vercel.teams.createTeam()", "vercel.teams.getTeam()", "vercel.teams.getTeamMembers()"], status: "none" },
   { id: "user", name: "User", methods: ["vercel.user.getAuthUser()", "vercel.user.listEventTypes()", "vercel.user.listUserEvents()", "vercel.user.requestDelete()"], status: "none" },
-  { id: "webhooks", name: "Webhooks", methods: ["vercel.webhooks.createWebhook()", "vercel.webhooks.getWebhooks()", "vercel.webhooks.deleteWebhook()"], status: "none" }
+  { id: "webhooks", name: "Webhooks", methods: ["vercel.webhooks.createWebhook()", "vercel.webhooks.getWebhooks()", "vercel.webhooks.deleteWebhook()"], status: "partial" }
 ];
 
 export default function VercelRoadmapPage() {
   const t = useTranslations("VercelRoadmap");
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState<"all" | "integrated" | "planned">("all");
-  const [checkpoints, setCheckpoints] = useState<Record<string, boolean>>({});
-
-  useEffect(() => {
-    const saved = localStorage.getItem("vercel-roadmap-checkpoints");
-    if (saved) {
-      try {
-        setCheckpoints(JSON.parse(saved));
-      } catch (e) {
-        // ignore
-      }
-    }
-  }, []);
-
-  const toggleCheckpoint = (id: string, checked: boolean) => {
-    setCheckpoints(prev => {
-      const next = { ...prev, [id]: checked };
-      localStorage.setItem("vercel-roadmap-checkpoints", JSON.stringify(next));
-      return next;
-    });
-  };
 
   const integratedCount = namespaces.filter(n => n.status === "full" || n.status === "partial").length;
   const progressPercent = Math.round((integratedCount / namespaces.length) * 100);
@@ -166,7 +145,6 @@ export default function VercelRoadmapPage() {
               <Table className="min-w-[900px]">
                 <TableHeader>
                   <TableRow className="bg-canvas-soft/40 border-b border-hairline hover:bg-canvas-soft/40">
-                    <TableHead className="px-5 py-3 text-[10px] uppercase font-bold text-ink-mute w-16 text-center">{t("table.col_my_progress")}</TableHead>
                     <TableHead className="px-5 py-3 text-[10px] uppercase font-bold text-ink-mute w-1/4">{t("table.col_category")}</TableHead>
                     <TableHead className="px-5 py-3 text-[10px] uppercase font-bold text-ink-mute w-1/4">{t("table.col_methods")}</TableHead>
                     <TableHead className="px-5 py-3 text-[10px] uppercase font-bold text-ink-mute w-32">{t("table.col_status")}</TableHead>
@@ -176,13 +154,6 @@ export default function VercelRoadmapPage() {
                 <TableBody>
                   {filteredNamespaces.map((ns) => (
                     <TableRow key={ns.id} className="border-b border-hairline hover:bg-canvas-soft/10 transition-colors">
-                      <TableCell className="px-5 py-4 text-center align-top pt-5">
-                        <Checkbox 
-                          checked={!!checkpoints[ns.id]}
-                          onCheckedChange={(c) => toggleCheckpoint(ns.id, c === true)}
-                          className="data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-                        />
-                      </TableCell>
                       <TableCell className="px-5 py-4 align-top">
                         <div className="font-semibold text-xs text-ink">{t(`notes.${ns.id}`)} {/* We will use the english name temporarily if no localized name. Actually, we didn't add names to the localization, so we'll just use ns.name directly as it's a developer name. */}
                           {ns.name}
@@ -223,7 +194,7 @@ export default function VercelRoadmapPage() {
                   
                   {filteredNamespaces.length === 0 && (
                     <TableRow>
-                      <TableCell colSpan={5} className="py-12 text-center text-ink-mute text-sm">
+                      <TableCell colSpan={4} className="py-12 text-center text-ink-mute text-sm">
                         No namespaces found matching your search.
                       </TableCell>
                     </TableRow>

@@ -116,7 +116,16 @@ export const ModelName = {
   BundleReviewQueue: 'BundleReviewQueue',
   BundleSecurityScanResults: 'BundleSecurityScanResults',
   BundleUpdatePhases: 'BundleUpdatePhases',
-  UserSecrets: 'UserSecrets'
+  UserSecrets: 'UserSecrets',
+  PersonalAccessToken: 'PersonalAccessToken',
+  SsoConfig: 'SsoConfig',
+  DeployHook: 'DeployHook',
+  FirewallRule: 'FirewallRule',
+  CronJob: 'CronJob',
+  Form: 'Form',
+  FormSubmission: 'FormSubmission',
+  PreviewComment: 'PreviewComment',
+  LepoShipLocalConfig: 'LepoShipLocalConfig'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1169,6 +1178,126 @@ export const UserSecretsScalarFieldEnum = {
 export type UserSecretsScalarFieldEnum = (typeof UserSecretsScalarFieldEnum)[keyof typeof UserSecretsScalarFieldEnum]
 
 
+export const PersonalAccessTokenScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  tokenHash: 'tokenHash',
+  scopes: 'scopes',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  expiresAt: 'expiresAt',
+  lastUsedAt: 'lastUsedAt'
+} as const
+
+export type PersonalAccessTokenScalarFieldEnum = (typeof PersonalAccessTokenScalarFieldEnum)[keyof typeof PersonalAccessTokenScalarFieldEnum]
+
+
+export const SsoConfigScalarFieldEnum = {
+  id: 'id',
+  domain: 'domain',
+  provider: 'provider',
+  clientId: 'clientId',
+  clientSecret: 'clientSecret',
+  entryPoint: 'entryPoint',
+  issuer: 'issuer',
+  cert: 'cert',
+  organizationId: 'organizationId',
+  createdAt: 'createdAt'
+} as const
+
+export type SsoConfigScalarFieldEnum = (typeof SsoConfigScalarFieldEnum)[keyof typeof SsoConfigScalarFieldEnum]
+
+
+export const DeployHookScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  token: 'token',
+  branch: 'branch',
+  projectId: 'projectId',
+  createdAt: 'createdAt',
+  lastUsedAt: 'lastUsedAt'
+} as const
+
+export type DeployHookScalarFieldEnum = (typeof DeployHookScalarFieldEnum)[keyof typeof DeployHookScalarFieldEnum]
+
+
+export const FirewallRuleScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  action: 'action',
+  type: 'type',
+  value: 'value',
+  active: 'active',
+  projectId: 'projectId',
+  createdAt: 'createdAt'
+} as const
+
+export type FirewallRuleScalarFieldEnum = (typeof FirewallRuleScalarFieldEnum)[keyof typeof FirewallRuleScalarFieldEnum]
+
+
+export const CronJobScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  schedule: 'schedule',
+  path: 'path',
+  projectId: 'projectId',
+  createdAt: 'createdAt',
+  lastRun: 'lastRun',
+  lastStatus: 'lastStatus'
+} as const
+
+export type CronJobScalarFieldEnum = (typeof CronJobScalarFieldEnum)[keyof typeof CronJobScalarFieldEnum]
+
+
+export const FormScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  projectId: 'projectId',
+  createdAt: 'createdAt'
+} as const
+
+export type FormScalarFieldEnum = (typeof FormScalarFieldEnum)[keyof typeof FormScalarFieldEnum]
+
+
+export const FormSubmissionScalarFieldEnum = {
+  id: 'id',
+  data: 'data',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent',
+  formId: 'formId',
+  createdAt: 'createdAt'
+} as const
+
+export type FormSubmissionScalarFieldEnum = (typeof FormSubmissionScalarFieldEnum)[keyof typeof FormSubmissionScalarFieldEnum]
+
+
+export const PreviewCommentScalarFieldEnum = {
+  id: 'id',
+  content: 'content',
+  x: 'x',
+  y: 'y',
+  pathname: 'pathname',
+  resolved: 'resolved',
+  projectId: 'projectId',
+  userId: 'userId',
+  createdAt: 'createdAt'
+} as const
+
+export type PreviewCommentScalarFieldEnum = (typeof PreviewCommentScalarFieldEnum)[keyof typeof PreviewCommentScalarFieldEnum]
+
+
+export const LepoShipLocalConfigScalarFieldEnum = {
+  id: 'id',
+  localPort: 'localPort',
+  basePath: 'basePath',
+  fallbackPath: 'fallbackPath',
+  projectId: 'projectId',
+  createdAt: 'createdAt'
+} as const
+
+export type LepoShipLocalConfigScalarFieldEnum = (typeof LepoShipLocalConfigScalarFieldEnum)[keyof typeof LepoShipLocalConfigScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -1183,6 +1312,13 @@ export const NullableJsonNullValueInput = {
 } as const
 
 export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const QueryMode = {
