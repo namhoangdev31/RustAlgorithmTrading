@@ -353,7 +353,7 @@ export async function createProjectWithBundleAction(formData: FormData) {
       },
     });
 
-    if (repoFullName) {
+    if (repoFullName && repoFullName !== "none") {
       const cookieStore = await cookies();
       const token = cookieStore.get("github_access_token")?.value;
       if (token) {

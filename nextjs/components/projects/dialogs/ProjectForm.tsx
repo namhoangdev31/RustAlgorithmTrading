@@ -180,12 +180,12 @@ export function ProjectForm({
         {!project && github.connected && (
           <div className="grid gap-2 md:col-span-2 border-t border-hairline pt-4 mt-2">
             <Label className={fieldLabelClass}>Link GitHub Repository (Optional)</Label>
-            <Select name="repoFullName" defaultValue={initialRepoFullName || ""}>
+            <Select name="repoFullName" defaultValue={initialRepoFullName || "none"}>
               <SelectTrigger className={fieldControlClass}>
                 <SelectValue placeholder="Select a GitHub repository to link" />
               </SelectTrigger>
               <SelectContent className="bg-canvas border border-hairline rounded-lg">
-                <SelectItem value="" className="cursor-pointer hover:bg-canvas-soft rounded-md">None (Do not link)</SelectItem>
+                <SelectItem value="none" className="cursor-pointer hover:bg-canvas-soft rounded-md">None (Do not link)</SelectItem>
                 {github.repos.map((repo) => (
                   <SelectItem key={repo.id} value={repo.fullName} className="cursor-pointer hover:bg-canvas-soft rounded-md">
                     {repo.fullName}
