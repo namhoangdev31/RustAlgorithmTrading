@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import type { WorkspaceContext } from "@/lib/server/workspace";
+import { LeposCommandPalette } from "./lepos-command-palette";
 
 type AdminShellProps = {
   user: {
@@ -189,6 +190,7 @@ export async function AdminShell({ user, workspace, children }: AdminShellProps)
           {children}
         </main>
       </div>
+      <LeposCommandPalette />
     </div>
   );
 }

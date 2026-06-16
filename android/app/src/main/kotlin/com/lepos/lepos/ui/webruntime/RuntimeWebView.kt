@@ -46,7 +46,9 @@ class RuntimeWebView(context: Context) : WebView(context) {
         overScrollMode = OVER_SCROLL_NEVER
         
         // 4. Bridge Injection
-        addJavascriptInterface(AndroidRuntimeBridge(context), "LeposBridge")
+        val bridge = AndroidRuntimeBridge(context, this)
+        addJavascriptInterface(bridge, "LeposBridge")
+        addJavascriptInterface(bridge, "LepoShipBridge")
 
         // 5. WebChromeClient for Console
         webChromeClient = object : android.webkit.WebChromeClient() {

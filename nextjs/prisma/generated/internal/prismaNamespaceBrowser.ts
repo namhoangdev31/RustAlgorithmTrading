@@ -121,11 +121,30 @@ export const ModelName = {
   SsoConfig: 'SsoConfig',
   DeployHook: 'DeployHook',
   FirewallRule: 'FirewallRule',
+  NativeDeployment: 'NativeDeployment',
+  NativeDomainConfig: 'NativeDomainConfig',
+  NativeEdgeFunction: 'NativeEdgeFunction',
+  NativeCacheEntry: 'NativeCacheEntry',
+  NativeAnalyticsReplay: 'NativeAnalyticsReplay',
+  NativeCrashReport: 'NativeCrashReport',
+  NativeSourceMap: 'NativeSourceMap',
+  NativePlugin: 'NativePlugin',
+  NativePluginInstallation: 'NativePluginInstallation',
+  NativeDebugSession: 'NativeDebugSession',
+  NativeCloudTarget: 'NativeCloudTarget',
+  NativeWafEvent: 'NativeWafEvent',
+  NativeWafRule: 'NativeWafRule',
+  NativeScimMapping: 'NativeScimMapping',
+  NativeAiDiagnostic: 'NativeAiDiagnostic',
   CronJob: 'CronJob',
   Form: 'Form',
   FormSubmission: 'FormSubmission',
+  FormWebhookDelivery: 'FormWebhookDelivery',
   PreviewComment: 'PreviewComment',
-  LepoShipLocalConfig: 'LepoShipLocalConfig'
+  LepoShipLocalConfig: 'LepoShipLocalConfig',
+  MarketplacePartnerAccount: 'MarketplacePartnerAccount',
+  MarketplaceTransaction: 'MarketplaceTransaction',
+  MarketplaceInstallEvent: 'MarketplaceInstallEvent'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -227,6 +246,7 @@ export const ProjectScalarFieldEnum = {
   organizationId: 'organizationId',
   vercelProjectId: 'vercelProjectId',
   vercelProjectName: 'vercelProjectName',
+  activeNativeDeploymentId: 'activeNativeDeploymentId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   deletedAt: 'deletedAt'
@@ -1235,6 +1255,255 @@ export const FirewallRuleScalarFieldEnum = {
 export type FirewallRuleScalarFieldEnum = (typeof FirewallRuleScalarFieldEnum)[keyof typeof FirewallRuleScalarFieldEnum]
 
 
+export const NativeDeploymentScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  target: 'target',
+  status: 'status',
+  version: 'version',
+  buildNumber: 'buildNumber',
+  bundleUrl: 'bundleUrl',
+  storageProvider: 'storageProvider',
+  storagePath: 'storagePath',
+  sourceCommit: 'sourceCommit',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  activatedAt: 'activatedAt'
+} as const
+
+export type NativeDeploymentScalarFieldEnum = (typeof NativeDeploymentScalarFieldEnum)[keyof typeof NativeDeploymentScalarFieldEnum]
+
+
+export const NativeDomainConfigScalarFieldEnum = {
+  id: 'id',
+  domain: 'domain',
+  projectId: 'projectId',
+  dnsVerified: 'dnsVerified',
+  sslStatus: 'sslStatus',
+  certIssuedAt: 'certIssuedAt',
+  certExpiresAt: 'certExpiresAt',
+  lastDnsCheckAt: 'lastDnsCheckAt',
+  txtRecordToken: 'txtRecordToken',
+  certPemRef: 'certPemRef',
+  keyPemRef: 'keyPemRef',
+  dnsProvider: 'dnsProvider',
+  dnsCredentials: 'dnsCredentials',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NativeDomainConfigScalarFieldEnum = (typeof NativeDomainConfigScalarFieldEnum)[keyof typeof NativeDomainConfigScalarFieldEnum]
+
+
+export const NativeEdgeFunctionScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  routePath: 'routePath',
+  codeUrl: 'codeUrl',
+  memoryLimit: 'memoryLimit',
+  timeoutMs: 'timeoutMs',
+  status: 'status',
+  projectId: 'projectId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NativeEdgeFunctionScalarFieldEnum = (typeof NativeEdgeFunctionScalarFieldEnum)[keyof typeof NativeEdgeFunctionScalarFieldEnum]
+
+
+export const NativeCacheEntryScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  path: 'path',
+  cacheKey: 'cacheKey',
+  contentType: 'contentType',
+  bodyRef: 'bodyRef',
+  etag: 'etag',
+  tags: 'tags',
+  surrogateKeys: 'surrogateKeys',
+  compressionType: 'compressionType',
+  compressedSize: 'compressedSize',
+  rawSize: 'rawSize',
+  status: 'status',
+  hitCount: 'hitCount',
+  lastAccessedAt: 'lastAccessedAt',
+  staleAt: 'staleAt',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NativeCacheEntryScalarFieldEnum = (typeof NativeCacheEntryScalarFieldEnum)[keyof typeof NativeCacheEntryScalarFieldEnum]
+
+
+export const NativeAnalyticsReplayScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  sessionId: 'sessionId',
+  userId: 'userId',
+  url: 'url',
+  userAgent: 'userAgent',
+  ipAddress: 'ipAddress',
+  events: 'events',
+  createdAt: 'createdAt'
+} as const
+
+export type NativeAnalyticsReplayScalarFieldEnum = (typeof NativeAnalyticsReplayScalarFieldEnum)[keyof typeof NativeAnalyticsReplayScalarFieldEnum]
+
+
+export const NativeCrashReportScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  environment: 'environment',
+  errorMessage: 'errorMessage',
+  errorStack: 'errorStack',
+  parsedStack: 'parsedStack',
+  fingerprint: 'fingerprint',
+  platform: 'platform',
+  releaseVersion: 'releaseVersion',
+  userAgent: 'userAgent',
+  ipAddress: 'ipAddress',
+  isResolved: 'isResolved',
+  createdAt: 'createdAt'
+} as const
+
+export type NativeCrashReportScalarFieldEnum = (typeof NativeCrashReportScalarFieldEnum)[keyof typeof NativeCrashReportScalarFieldEnum]
+
+
+export const NativeSourceMapScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  deploymentId: 'deploymentId',
+  releaseVersion: 'releaseVersion',
+  fileName: 'fileName',
+  storagePath: 'storagePath',
+  mapJson: 'mapJson',
+  uploadedAt: 'uploadedAt'
+} as const
+
+export type NativeSourceMapScalarFieldEnum = (typeof NativeSourceMapScalarFieldEnum)[keyof typeof NativeSourceMapScalarFieldEnum]
+
+
+export const NativePluginScalarFieldEnum = {
+  id: 'id',
+  slug: 'slug',
+  name: 'name',
+  version: 'version',
+  description: 'description',
+  bundleUrl: 'bundleUrl',
+  permissions: 'permissions',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NativePluginScalarFieldEnum = (typeof NativePluginScalarFieldEnum)[keyof typeof NativePluginScalarFieldEnum]
+
+
+export const NativePluginInstallationScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  pluginId: 'pluginId',
+  enabled: 'enabled',
+  config: 'config',
+  createdAt: 'createdAt'
+} as const
+
+export type NativePluginInstallationScalarFieldEnum = (typeof NativePluginInstallationScalarFieldEnum)[keyof typeof NativePluginInstallationScalarFieldEnum]
+
+
+export const NativeDebugSessionScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  sessionId: 'sessionId',
+  device: 'device',
+  status: 'status',
+  lastLogAt: 'lastLogAt',
+  createdAt: 'createdAt'
+} as const
+
+export type NativeDebugSessionScalarFieldEnum = (typeof NativeDebugSessionScalarFieldEnum)[keyof typeof NativeDebugSessionScalarFieldEnum]
+
+
+export const NativeCloudTargetScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  provider: 'provider',
+  region: 'region',
+  bucket: 'bucket',
+  endpoint: 'endpoint',
+  priority: 'priority',
+  healthStatus: 'healthStatus',
+  lastCheckAt: 'lastCheckAt',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+} as const
+
+export type NativeCloudTargetScalarFieldEnum = (typeof NativeCloudTargetScalarFieldEnum)[keyof typeof NativeCloudTargetScalarFieldEnum]
+
+
+export const NativeWafEventScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  fingerprint: 'fingerprint',
+  ipAddress: 'ipAddress',
+  action: 'action',
+  reason: 'reason',
+  userAgent: 'userAgent',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+} as const
+
+export type NativeWafEventScalarFieldEnum = (typeof NativeWafEventScalarFieldEnum)[keyof typeof NativeWafEventScalarFieldEnum]
+
+
+export const NativeWafRuleScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  name: 'name',
+  action: 'action',
+  type: 'type',
+  pattern: 'pattern',
+  description: 'description',
+  enabled: 'enabled',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NativeWafRuleScalarFieldEnum = (typeof NativeWafRuleScalarFieldEnum)[keyof typeof NativeWafRuleScalarFieldEnum]
+
+
+export const NativeScimMappingScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  provider: 'provider',
+  resourceType: 'resourceType',
+  externalId: 'externalId',
+  localUserId: 'localUserId',
+  localRole: 'localRole',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NativeScimMappingScalarFieldEnum = (typeof NativeScimMappingScalarFieldEnum)[keyof typeof NativeScimMappingScalarFieldEnum]
+
+
+export const NativeAiDiagnosticScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  crashReportId: 'crashReportId',
+  status: 'status',
+  summary: 'summary',
+  suggestedDiff: 'suggestedDiff',
+  model: 'model',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+} as const
+
+export type NativeAiDiagnosticScalarFieldEnum = (typeof NativeAiDiagnosticScalarFieldEnum)[keyof typeof NativeAiDiagnosticScalarFieldEnum]
+
+
 export const CronJobScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -1253,6 +1522,10 @@ export const FormScalarFieldEnum = {
   id: 'id',
   name: 'name',
   projectId: 'projectId',
+  googleSheetsSync: 'googleSheetsSync',
+  salesforceSync: 'salesforceSync',
+  webhookUrl: 'webhookUrl',
+  webhookSecret: 'webhookSecret',
   createdAt: 'createdAt'
 } as const
 
@@ -1269,6 +1542,22 @@ export const FormSubmissionScalarFieldEnum = {
 } as const
 
 export type FormSubmissionScalarFieldEnum = (typeof FormSubmissionScalarFieldEnum)[keyof typeof FormSubmissionScalarFieldEnum]
+
+
+export const FormWebhookDeliveryScalarFieldEnum = {
+  id: 'id',
+  formId: 'formId',
+  submissionId: 'submissionId',
+  url: 'url',
+  status: 'status',
+  attempts: 'attempts',
+  lastError: 'lastError',
+  nextRetryAt: 'nextRetryAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type FormWebhookDeliveryScalarFieldEnum = (typeof FormWebhookDeliveryScalarFieldEnum)[keyof typeof FormWebhookDeliveryScalarFieldEnum]
 
 
 export const PreviewCommentScalarFieldEnum = {
@@ -1296,6 +1585,49 @@ export const LepoShipLocalConfigScalarFieldEnum = {
 } as const
 
 export type LepoShipLocalConfigScalarFieldEnum = (typeof LepoShipLocalConfigScalarFieldEnum)[keyof typeof LepoShipLocalConfigScalarFieldEnum]
+
+
+export const MarketplacePartnerAccountScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  stripeAccountId: 'stripeAccountId',
+  status: 'status',
+  revenueSharePercent: 'revenueSharePercent',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MarketplacePartnerAccountScalarFieldEnum = (typeof MarketplacePartnerAccountScalarFieldEnum)[keyof typeof MarketplacePartnerAccountScalarFieldEnum]
+
+
+export const MarketplaceTransactionScalarFieldEnum = {
+  id: 'id',
+  stripePaymentIntentId: 'stripePaymentIntentId',
+  bundleId: 'bundleId',
+  buyerUserId: 'buyerUserId',
+  amount: 'amount',
+  currency: 'currency',
+  platformFee: 'platformFee',
+  partnerPayout: 'partnerPayout',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MarketplaceTransactionScalarFieldEnum = (typeof MarketplaceTransactionScalarFieldEnum)[keyof typeof MarketplaceTransactionScalarFieldEnum]
+
+
+export const MarketplaceInstallEventScalarFieldEnum = {
+  id: 'id',
+  bundleId: 'bundleId',
+  userId: 'userId',
+  eventType: 'eventType',
+  errorMessage: 'errorMessage',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+} as const
+
+export type MarketplaceInstallEventScalarFieldEnum = (typeof MarketplaceInstallEventScalarFieldEnum)[keyof typeof MarketplaceInstallEventScalarFieldEnum]
 
 
 export const SortOrder = {

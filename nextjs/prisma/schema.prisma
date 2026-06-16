@@ -128,6 +128,7 @@ model Organization {
   user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   projects Project[]
   ssoConfig SsoConfig?
+  nativeScimMappings NativeScimMapping[]
 
   @@unique([userId, type])
   @@map("organizations")
@@ -140,11 +141,13 @@ model Project {
   organizationId    String    @map("organization_id") @db.Uuid
   vercelProjectId   String?   @map("vercel_project_id") @db.VarChar(255)
   vercelProjectName String?   @map("vercel_project_name") @db.VarChar(255)
+  activeNativeDeploymentId String? @map("active_native_deployment_id")
   createdAt         DateTime  @map("created_at") @db.Timestamp(6)
   updatedAt         DateTime  @map("updated_at") @db.Timestamp(6)
   deletedAt         DateTime? @map("deleted_at") @db.Timestamp(6)
 
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  activeNativeDeployment NativeDeployment? @relation("ProjectActiveNativeDeployment", fields: [activeNativeDeploymentId], references: [id], onDelete: SetNull)
   bundle       Bundles?
   deployHooks         DeployHook[]
   firewallRules       FirewallRule[]
@@ -152,6 +155,19 @@ model Project {
   forms               Form[]
   previewComments     PreviewComment[]
   lepoShipLocalConfig LepoShipLocalConfig?
+  nativeDeployments   NativeDeployment[] @relation("ProjectNativeDeployments")
+  nativeDomainConfigs NativeDomainConfig[]
+  nativeEdgeFunctions NativeEdgeFunction[]
+  nativeCacheEntries  NativeCacheEntry[]
+  nativeReplaySessions NativeAnalyticsReplay[]
+  nativeCrashReports  NativeCrashReport[]
+  nativeSourceMaps    NativeSourceMap[]
+  nativePluginInstalls NativePluginInstallation[]
+  nativeDebugSessions NativeDebugSession[]
+  nativeCloudTargets  NativeCloudTarget[]
+  nativeWafEvents     NativeWafEvent[]
+  nativeWafRules      NativeWafRule[]
+  nativeAiDiagnostics NativeAiDiagnostic[]
 
   @@map("projects")
 }
@@ -1440,6 +1456,292 @@ model FirewallRule {
   @@map("firewall_rules")
 }
 
+model NativeDeployment {
+  id              String    @id @default(cuid())
+  projectId       String    @db.Uuid
+  project         Project   @relation("ProjectNativeDeployments", fields: [projectId], references: [id], onDelete: Cascade)
+  activeProjects  Project[] @relation("ProjectActiveNativeDeployment")
+  target          String    @default("production") @db.VarChar(30)
+  status          String    @default("queued") @db.VarChar(30)
+  version         String    @db.VarChar(80)
+  buildNumber     Int?      @map("build_number")
+  bundleUrl       String?   @map("bundle_url") @db.VarChar(500)
+  storageProvider String    @default("local") @map("storage_provider") @db.VarChar(40)
+  storagePath     String    @map("storage_path") @db.VarChar(500)
+  sourceCommit    String?   @map("source_commit") @db.VarChar(80)
+  metadata        Json?
+  createdAt       DateTime  @default(now()) @map("created_at")
+  activatedAt     DateTime? @map("activated_at")
+
+  sourceMaps NativeSourceMap[]
+
+  @@index([projectId, status], map: "native_deployments_project_status")
+  @@index([projectId, target], map: "native_deployments_project_target")
+  @@map("native_deployments")
+}
+
+model NativeDomainConfig {
+  id             String    @id @default(cuid())
+  domain         String    @unique @db.VarChar(255)
+  projectId      String    @db.Uuid
+  project        Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  dnsVerified    Boolean   @default(false) @map("dns_verified")
+  sslStatus      String    @default("PENDING") @map("ssl_status") @db.VarChar(30)
+  certIssuedAt   DateTime? @map("cert_issued_at")
+  certExpiresAt  DateTime? @map("cert_expires_at")
+  lastDnsCheckAt DateTime? @map("last_dns_check_at")
+  txtRecordToken String    @unique @map("txt_record_token") @db.VarChar(255)
+  certPemRef     String?   @map("cert_pem_ref") @db.VarChar(500)
+  keyPemRef      String?   @map("key_pem_ref") @db.VarChar(500)
+  dnsProvider    String?   @map("dns_provider") @db.VarChar(50)
+  dnsCredentials Json?     @map("dns_credentials")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  @@index([projectId], map: "native_domain_configs_project_id")
+  @@index([sslStatus], map: "native_domain_configs_ssl_status")
+  @@map("native_domain_configs")
+}
+
+model NativeEdgeFunction {
+  id          String   @id @default(cuid())
+  name        String   @db.VarChar(120)
+  routePath   String   @map("route_path") @db.VarChar(255)
+  codeUrl     String   @map("code_url") @db.VarChar(500)
+  memoryLimit Int      @default(128) @map("memory_limit")
+  timeoutMs   Int      @default(50) @map("timeout_ms")
+  status      String   @default("active") @db.VarChar(30)
+  projectId   String   @db.Uuid
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@unique([projectId, routePath])
+  @@index([projectId], map: "native_edge_functions_project_id")
+  @@map("native_edge_functions")
+}
+
+model NativeCacheEntry {
+  id              String    @id @default(cuid())
+  projectId       String    @db.Uuid
+  project         Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  path            String    @db.VarChar(500)
+  cacheKey        String    @unique @map("cache_key") @db.VarChar(700)
+  contentType     String?   @map("content_type") @db.VarChar(120)
+  bodyRef         String?   @map("body_ref") @db.VarChar(500)
+  etag            String?   @db.VarChar(120)
+  tags            String[]  @default([])
+  surrogateKeys   String[]  @default([]) @map("surrogate_keys")
+  compressionType String    @default("none") @map("compression_type") @db.VarChar(20)
+  compressedSize  Int?      @map("compressed_size")
+  rawSize         Int?      @map("raw_size")
+  status          String    @default("fresh") @db.VarChar(30)
+  hitCount        Int       @default(0) @map("hit_count")
+  lastAccessedAt  DateTime? @map("last_accessed_at")
+  staleAt         DateTime? @map("stale_at")
+  expiresAt       DateTime? @map("expires_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  @@index([projectId, path], map: "native_cache_entries_project_path")
+  @@index([projectId, status], map: "native_cache_entries_project_status")
+  @@index([expiresAt], map: "native_cache_entries_expires_at")
+  @@map("native_cache_entries")
+}
+
+model NativeAnalyticsReplay {
+  id          String   @id @default(cuid())
+  projectId   String   @db.Uuid
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  sessionId   String   @map("session_id") @db.VarChar(120)
+  userId      String?  @map("user_id") @db.Uuid
+  url         String?  @db.VarChar(500)
+  userAgent   String?  @map("user_agent")
+  ipAddress   String?  @map("ip_address") @db.VarChar(45)
+  events      Json
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@unique([projectId, sessionId])
+  @@index([projectId, createdAt], map: "native_analytics_replay_project_created")
+  @@map("native_analytics_replays")
+}
+
+model NativeCrashReport {
+  id             String   @id @default(cuid())
+  projectId      String   @db.Uuid
+  project        Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  environment    String   @default("production") @db.VarChar(40)
+  errorMessage   String   @map("error_message")
+  errorStack     String   @map("error_stack")
+  parsedStack    Json?    @map("parsed_stack")
+  fingerprint    String   @db.VarChar(128)
+  platform       String   @db.VarChar(30)
+  releaseVersion String   @map("release_version") @db.VarChar(80)
+  userAgent      String?  @map("user_agent")
+  ipAddress      String?  @map("ip_address") @db.VarChar(45)
+  isResolved     Boolean  @default(false) @map("is_resolved")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  diagnostics NativeAiDiagnostic[]
+
+  @@index([projectId, fingerprint], map: "native_crash_reports_project_fingerprint")
+  @@index([projectId, createdAt], map: "native_crash_reports_project_created")
+  @@map("native_crash_reports")
+}
+
+model NativeSourceMap {
+  id             String            @id @default(cuid())
+  projectId      String            @db.Uuid
+  project        Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  deploymentId   String?
+  deployment     NativeDeployment? @relation(fields: [deploymentId], references: [id], onDelete: SetNull)
+  releaseVersion String            @map("release_version") @db.VarChar(80)
+  fileName       String            @map("file_name") @db.VarChar(255)
+  storagePath    String            @map("storage_path") @db.VarChar(500)
+  mapJson        Json?             @map("map_json")
+  uploadedAt     DateTime          @default(now()) @map("uploaded_at")
+
+  @@unique([projectId, releaseVersion, fileName])
+  @@index([deploymentId], map: "native_source_maps_deployment_id")
+  @@map("native_source_maps")
+}
+
+model NativePlugin {
+  id          String   @id @default(cuid())
+  slug        String   @unique @db.VarChar(120)
+  name        String   @db.VarChar(180)
+  version     String   @db.VarChar(60)
+  description String?
+  bundleUrl   String   @map("bundle_url") @db.VarChar(500)
+  permissions String[]
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  installations NativePluginInstallation[]
+
+  @@map("native_plugins")
+}
+
+model NativePluginInstallation {
+  id        String       @id @default(cuid())
+  projectId String       @db.Uuid
+  project   Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  pluginId  String
+  plugin    NativePlugin @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+  enabled   Boolean      @default(true)
+  config    Json?
+  createdAt DateTime     @default(now()) @map("created_at")
+
+  @@unique([projectId, pluginId])
+  @@index([projectId], map: "native_plugin_installations_project_id")
+  @@map("native_plugin_installations")
+}
+
+model NativeDebugSession {
+  id        String    @id @default(cuid())
+  projectId String    @db.Uuid
+  project   Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  sessionId String    @unique @map("session_id") @db.VarChar(120)
+  device    String?   @db.VarChar(120)
+  status    String    @default("open") @db.VarChar(30)
+  lastLogAt DateTime? @map("last_log_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  @@index([projectId, status], map: "native_debug_sessions_project_status")
+  @@map("native_debug_sessions")
+}
+
+model NativeCloudTarget {
+  id           String    @id @default(cuid())
+  projectId    String    @db.Uuid
+  project      Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  provider     String    @db.VarChar(40)
+  region       String    @db.VarChar(80)
+  bucket       String?   @db.VarChar(255)
+  endpoint     String?   @db.VarChar(500)
+  priority     Int       @default(100)
+  healthStatus String    @default("unknown") @map("health_status") @db.VarChar(30)
+  lastCheckAt  DateTime? @map("last_check_at")
+  metadata     Json?
+  createdAt    DateTime  @default(now()) @map("created_at")
+
+  @@unique([projectId, provider, region])
+  @@index([projectId, healthStatus], map: "native_cloud_targets_project_health")
+  @@map("native_cloud_targets")
+}
+
+model NativeWafEvent {
+  id          String   @id @default(cuid())
+  projectId   String   @db.Uuid
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  fingerprint String   @db.VarChar(255)
+  ipAddress   String?  @map("ip_address") @db.VarChar(45)
+  action      String   @default("challenge") @db.VarChar(30)
+  reason      String?
+  userAgent   String?  @map("user_agent")
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([projectId, fingerprint], map: "native_waf_events_project_fingerprint")
+  @@index([createdAt], map: "native_waf_events_created_at")
+  @@map("native_waf_events")
+}
+
+model NativeWafRule {
+  id          String   @id @default(cuid())
+  projectId   String   @db.Uuid
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  name        String   @db.VarChar(100)
+  action      String   @default("challenge") @db.VarChar(30) // block, challenge, allow
+  type        String   @db.VarChar(30) // ip, header, path, ja3, rate-limit
+  pattern     String   @db.VarChar(500)
+  description String?
+  enabled     Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([projectId], map: "native_waf_rules_project_idx")
+  @@map("native_waf_rules")
+}
+
+
+model NativeScimMapping {
+  id             String       @id @default(cuid())
+  organizationId String       @map("organization_id") @db.Uuid
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  provider       String       @default("scim") @db.VarChar(40)
+  resourceType   String       @map("resource_type") @db.VarChar(30)
+  externalId     String       @map("external_id") @db.VarChar(255)
+  localUserId    String?      @map("local_user_id") @db.Uuid
+  localRole      String?      @map("local_role") @db.VarChar(30)
+  metadata       Json?
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
+
+  @@unique([organizationId, provider, resourceType, externalId])
+  @@index([localUserId], map: "native_scim_mappings_local_user_id")
+  @@map("native_scim_mappings")
+}
+
+model NativeAiDiagnostic {
+  id            String             @id @default(cuid())
+  projectId     String             @db.Uuid
+  project       Project            @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  crashReportId String?            @map("crash_report_id")
+  crashReport   NativeCrashReport? @relation(fields: [crashReportId], references: [id], onDelete: SetNull)
+  status        String             @default("completed") @db.VarChar(30)
+  summary       String
+  suggestedDiff String?            @map("suggested_diff")
+  model         String?            @db.VarChar(120)
+  metadata      Json?
+  createdAt     DateTime           @default(now()) @map("created_at")
+
+  @@index([projectId, createdAt], map: "native_ai_diagnostics_project_created")
+  @@index([crashReportId], map: "native_ai_diagnostics_crash_report")
+  @@map("native_ai_diagnostics")
+}
+
 model CronJob {
   id          String    @id @default(cuid())
   name        String
@@ -1455,26 +1757,51 @@ model CronJob {
 }
 
 model Form {
-  id          String           @id @default(cuid())
-  name        String           // Tên form
-  projectId   String           @db.Uuid
-  project     Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  submissions FormSubmission[]
-  createdAt   DateTime         @default(now())
+  id               String                 @id @default(cuid())
+  name             String                 // Tên form
+  projectId        String                 @db.Uuid
+  project          Project                @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  submissions      FormSubmission[]
+  googleSheetsSync Boolean                @default(true) @map("google_sheets_sync")
+  salesforceSync   Boolean                @default(false) @map("salesforce_sync")
+  webhookUrl       String?                @map("webhook_url")
+  webhookSecret    String?                @map("webhook_secret")
+  webhookDeliveries FormWebhookDelivery[]
+  createdAt        DateTime               @default(now())
 
   @@map("forms")
 }
 
 model FormSubmission {
-  id          String    @id @default(cuid())
-  data        Json      // Lưu payload gửi lên dưới dạng key-value JSON
-  ipAddress   String?
-  userAgent   String?
-  formId      String
-  form        Form      @relation(fields: [formId], references: [id], onDelete: Cascade)
-  createdAt   DateTime  @default(now())
+  id                String                 @id @default(cuid())
+  data              Json                   // Lưu payload gửi lên dưới dạng key-value JSON
+  ipAddress         String?
+  userAgent         String?
+  formId            String
+  form              Form                   @relation(fields: [formId], references: [id], onDelete: Cascade)
+  webhookDeliveries FormWebhookDelivery[]
+  createdAt         DateTime               @default(now())
 
   @@map("form_submissions")
+}
+
+model FormWebhookDelivery {
+  id           String         @id @default(cuid())
+  formId       String         @map("form_id")
+  form         Form           @relation(fields: [formId], references: [id], onDelete: Cascade)
+  submissionId String         @map("submission_id")
+  submission   FormSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  url          String
+  status       String         // "SUCCESS" | "FAILED" | "PENDING"
+  attempts     Int            @default(0)
+  lastError    String?        @map("last_error")
+  nextRetryAt  DateTime?      @map("next_retry_at")
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+
+  @@index([status])
+  @@index([nextRetryAt])
+  @@map("form_webhook_deliveries")
 }
 
 model PreviewComment {
@@ -1505,3 +1832,42 @@ model LepoShipLocalConfig {
   @@map("lepoship_local_configs")
 }
 
+model MarketplacePartnerAccount {
+  id                  String   @id @default(cuid())
+  workspaceId         String   @map("workspace_id")
+  stripeAccountId     String   @map("stripe_account_id")
+  status              String   @default("pending") // pending, active, rejected
+  revenueSharePercent Float    @default(70.0) @map("revenue_share_percent") // Partner gets 70%
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  @@map("marketplace_partner_accounts")
+}
+
+model MarketplaceTransaction {
+  id                    String   @id @default(cuid())
+  stripePaymentIntentId String   @map("stripe_payment_intent_id")
+  bundleId              String   @map("bundle_id")
+  buyerUserId           String   @map("buyer_user_id")
+  amount                Float
+  currency              String   @default("VND")
+  platformFee           Float    @map("platform_fee")
+  partnerPayout         Float    @map("partner_payout")
+  status                String   @default("pending") // pending, completed, failed, refunded
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+
+  @@map("marketplace_transactions")
+}
+
+model MarketplaceInstallEvent {
+  id           String   @id @default(cuid())
+  bundleId     String   @map("bundle_id")
+  userId       String   @map("user_id")
+  eventType    String   @map("event_type") // install, uninstall, error
+  errorMessage String?  @map("error_message")
+  metadata     Json?
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@map("marketplace_install_events")
+}

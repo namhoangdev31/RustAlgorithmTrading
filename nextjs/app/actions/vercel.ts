@@ -3,7 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "@/i18n/navigation";
 import { requireCurrentUser } from "@/lib/server/current-user";
-import { getVercelClient, getAuthorizedVercelClient } from "@/lib/server/vercel";
+import { getVercelClient, getAuthorizedVercelClient, syncCentralEdgeConfig, MultiProviderConfig } from "@/lib/server/vercel";
+import { prisma } from "@/lib/server/prisma";
+import { encryptSecret } from "@/lib/server/secret-crypto";
+import crypto from "crypto";
 
 function readFormValue(formData: FormData, key: string): string {
   const value = formData.get(key);
@@ -758,6 +761,12 @@ export async function patchEdgeConfigItemAction(formData: FormData) {
       edgeConfigId,
       requestBody: { items }
     });
+
+    // Replicate changes to all linked multi-providers (Vercel & Cloudflare KV) in parallel
+    const projectProvidersRes = await getProjectProvidersAction(projectId);
+    if (projectProvidersRes.success && projectProvidersRes.providers && projectProvidersRes.providers.length > 0) {
+      await syncCentralEdgeConfig(user.id, projectProvidersRes.providers, items);
+    }
   } catch (error: any) {
     console.error("Failed to patch Edge Config item:", error);
     redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}error=patch_failed&message=${encodeURIComponent(error?.message || "")}`);
@@ -894,6 +903,195 @@ export async function getAdvancedVercelSdkResource(
       success: false,
       error: error?.message || "Failed to fetch advanced Vercel SDK resource.",
     };
+  }
+}
+
+export async function saveProviderApiKeyAction(formData: FormData) {
+  const user = await requireCurrentUser();
+  const provider = readFormValue(formData, "provider"); // "vercel" | "cloudflare"
+  const accountId = readFormValue(formData, "accountId");
+  const apiKey = readFormValue(formData, "apiKey");
+  const returnTo = readFormValue(formData, "returnTo") || "/projects";
+
+  if (!provider || !accountId || !apiKey) {
+    redirect(returnTo);
+  }
+
+  const providerKey = `${provider}_${accountId}`;
+  const encrypted = encryptSecret(apiKey);
+
+  await prisma.$executeRawUnsafe(`
+    INSERT INTO user_secrets (id, user_id, provider, encrypted_value, created_at, updated_at)
+    VALUES ($1, $2, $3, $4, NOW(), NOW())
+    ON CONFLICT (user_id, provider)
+    DO UPDATE SET encrypted_value = EXCLUDED.encrypted_value, updated_at = NOW()
+  `,
+    crypto.randomUUID(),
+    user.id,
+    providerKey,
+    encrypted
+  );
+
+  revalidatePath(returnTo);
+  redirect(returnTo);
+}
+
+export async function linkProjectProviderAction(formData: FormData) {
+  const user = await requireCurrentUser();
+  const projectId = readFormValue(formData, "projectId");
+  const provider = readFormValue(formData, "provider");
+  const accountId = readFormValue(formData, "accountId");
+  const targetProjectId = readFormValue(formData, "targetProjectId");
+  const edgeConfigId = readFormValue(formData, "edgeConfigId");
+  const displayName = readFormValue(formData, "displayName") || `${provider} (${accountId})`;
+  const returnTo = readFormValue(formData, "returnTo") || "/projects";
+
+  if (!projectId || !provider || !accountId || !targetProjectId) {
+    redirect(returnTo);
+  }
+
+  // Find project bundle
+  const project = await prisma.project.findFirst({
+    where: { id: projectId, deletedAt: null },
+    include: { bundle: true }
+  });
+
+  if (!project || !project.bundle) {
+    redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}error=project_bundle_missing`);
+  }
+
+  const bundleId = project.bundle.id;
+
+  // Retrieve current config from BundleExternalIntegrations (if exists)
+  const existingIntegration = await prisma.bundleExternalIntegrations.findFirst({
+    where: { bundleId, integrationType: "multi_provider" }
+  });
+
+  let providersList: MultiProviderConfig[] = [];
+  if (existingIntegration) {
+    try {
+      providersList = JSON.parse(existingIntegration.config);
+    } catch {}
+  }
+
+  // Add new config
+  const newProvider: MultiProviderConfig & { displayName: string } = {
+    provider: provider as any,
+    accountId,
+    projectId: targetProjectId,
+    edgeConfigId: edgeConfigId || undefined,
+    displayName
+  };
+
+  // Filter out existing duplicates based on provider, accountId, and targetProjectId
+  providersList = providersList.filter(
+    (p) => !(p.provider === provider && p.accountId === accountId && p.projectId === targetProjectId)
+  );
+  providersList.push(newProvider);
+
+  // Save back to DB
+  await prisma.bundleExternalIntegrations.upsert({
+    where: {
+      bundleId_integrationType: {
+        bundleId,
+        integrationType: "multi_provider"
+      }
+    },
+    update: {
+      config: JSON.stringify(providersList),
+      displayName: "Multi Provider Links",
+      updatedAt: new Date()
+    },
+    create: {
+      id: crypto.randomUUID(),
+      bundleId,
+      integrationType: "multi_provider",
+      displayName: "Multi Provider Links",
+      config: JSON.stringify(providersList),
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }
+  });
+
+  revalidatePath(returnTo);
+  redirect(returnTo);
+}
+
+export async function unlinkProjectProviderAction(formData: FormData) {
+  const user = await requireCurrentUser();
+  const projectId = readFormValue(formData, "projectId");
+  const provider = readFormValue(formData, "provider");
+  const accountId = readFormValue(formData, "accountId");
+  const targetProjectId = readFormValue(formData, "targetProjectId");
+  const returnTo = readFormValue(formData, "returnTo") || "/projects";
+
+  if (!projectId || !provider || !accountId || !targetProjectId) {
+    redirect(returnTo);
+  }
+
+  // Find project bundle
+  const project = await prisma.project.findFirst({
+    where: { id: projectId, deletedAt: null },
+    include: { bundle: true }
+  });
+
+  if (!project || !project.bundle) {
+    redirect(returnTo);
+  }
+
+  const bundleId = project.bundle.id;
+
+  const existingIntegration = await prisma.bundleExternalIntegrations.findFirst({
+    where: { bundleId, integrationType: "multi_provider" }
+  });
+
+  if (existingIntegration) {
+    let providersList: MultiProviderConfig[] = [];
+    try {
+      providersList = JSON.parse(existingIntegration.config);
+    } catch {}
+
+    providersList = providersList.filter(
+      (p) => !(p.provider === provider && p.accountId === accountId && p.projectId === targetProjectId)
+    );
+
+    await prisma.bundleExternalIntegrations.update({
+      where: { id: existingIntegration.id },
+      data: {
+        config: JSON.stringify(providersList),
+        updatedAt: new Date()
+      }
+    });
+  }
+
+  revalidatePath(returnTo);
+  redirect(returnTo);
+}
+
+export async function getProjectProvidersAction(projectId: string) {
+  try {
+    const project = await prisma.project.findFirst({
+      where: { id: projectId, deletedAt: null },
+      include: { bundle: true }
+    });
+
+    if (!project || !project.bundle) {
+      return { success: true, providers: [] };
+    }
+
+    const integration = await prisma.bundleExternalIntegrations.findFirst({
+      where: { bundleId: project.bundle.id, integrationType: "multi_provider" }
+    });
+
+    if (!integration) {
+      return { success: true, providers: [] };
+    }
+
+    const providers = JSON.parse(integration.config);
+    return { success: true, providers: Array.isArray(providers) ? providers : [] };
+  } catch (error: any) {
+    console.error("Failed to fetch project providers:", error);
+    return { success: false, error: error?.message || "Failed to fetch project providers" };
   }
 }
 

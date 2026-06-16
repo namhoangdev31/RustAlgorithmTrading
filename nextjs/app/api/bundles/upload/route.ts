@@ -4,6 +4,7 @@ import { prisma } from "@/lib/server/prisma";
 import { promises as fs } from "fs";
 import path from "path";
 import crypto from "crypto";
+import { replicateBlobToRegions, getCdnUrl, encryptBufferIfNeeded } from "@/lib/server/blob-caching";
 
 export async function POST(request: NextRequest) {
   try {
@@ -73,7 +74,12 @@ export async function POST(request: NextRequest) {
     const timestamp = Date.now();
     const safeFileName = `${timestamp}-${file.name.replace(/[^a-zA-Z0-9.-]/g, "_")}`;
     const filePath = path.join(uploadDir, safeFileName);
-    await fs.writeFile(filePath, buffer);
+    const processedBuffer = await encryptBufferIfNeeded(safeFileName, buffer);
+    await fs.writeFile(filePath, processedBuffer);
+
+    // Replicate upload dynamically to APAC, EU, and AMER PoPs
+    const replicatedRegions = await replicateBlobToRegions(projectId, safeFileName, filePath);
+    const cdnUrl = getCdnUrl(projectId, safeFileName);
 
     const relativeStoragePath = `/bundles/${projectId}/${safeFileName}`;
 
@@ -110,7 +116,7 @@ export async function POST(request: NextRequest) {
             version: newVersion,
             buildNumber: newBuildNumber,
             storagePath: relativeStoragePath,
-            bucket: "local",
+            bucket: "replicated:" + replicatedRegions.join(","),
             fileSize: fileSize,
             checksum: checksum,
             status: "published",
@@ -134,7 +140,7 @@ export async function POST(request: NextRequest) {
             version: newVersion,
             buildNumber: newBuildNumber,
             storagePath: relativeStoragePath,
-            bucket: "local",
+            bucket: "replicated:" + replicatedRegions.join(","),
             fileSize: fileSize,
             checksum: checksum,
             status: "published",
@@ -173,7 +179,9 @@ export async function POST(request: NextRequest) {
         storagePath: relativeStoragePath,
         checksum: checksum,
         fileSize: String(fileSize)
-      }
+      },
+      cdnUrl,
+      replicatedRegions
     });
 
   } catch (error: any) {

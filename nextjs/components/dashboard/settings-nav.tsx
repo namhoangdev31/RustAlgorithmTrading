@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, Key, Monitor, Palette, UserCog, Wrench } from "lucide-react";
+import { Bell, Key, Monitor, Palette, UserCog, Wrench, Shield } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { Link, useRouter, usePathname } from "@/i18n/navigation";
@@ -26,6 +26,7 @@ export function SettingsNav() {
     { label: t("notifications"), href: "/dashboard/settings/notifications", Icon: Bell },
     { label: t("display"), href: "/dashboard/settings/display", Icon: Monitor },
     { label: t("vercel"), href: "/dashboard/settings?vercel=configure", Icon: Key },
+    { label: "Directory Sync (SCIM)", href: "/dashboard/settings/directory", Icon: Shield },
   ] as const;
 
   return (

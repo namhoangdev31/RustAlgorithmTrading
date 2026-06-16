@@ -21,6 +21,7 @@ check_process "market-data"
 check_process "risk-manager"
 check_process "execution-engine"
 check_process "signal-bridge"
+check_process "edge-gateway"
 
 echo ""
 echo "Config:"
@@ -52,7 +53,7 @@ fi
 
 echo ""
 echo "Recent logs:"
-for service in market-data risk-manager execution-engine signal-bridge; do
+for service in market-data risk-manager execution-engine signal-bridge edge-gateway; do
     log_file="$PROJECT_ROOT/logs/${service}.log"
     if [ -f "$log_file" ]; then
         echo "  ${service}:"

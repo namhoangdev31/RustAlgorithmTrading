@@ -40,7 +40,9 @@ import {
   removeProjectDomainAction,
   verifyProjectDomainAction
 } from "@/app/actions/vercel";
+import { createNativeDomainAction, renewNativeDomainSslAction } from "@/app/actions/native-platform";
 import { formatRelativeTime } from "@/lib/shared/time";
+import { toast } from "sonner";
 
 interface DomainsTabProps {
   vercelConnected: boolean;
@@ -50,6 +52,8 @@ interface DomainsTabProps {
   vercelConnectionError?: boolean;
   locale: string;
   returnTo?: string;
+  projectId?: string;
+  nativeDomains?: any[];
 }
 
 export function DomainsTab({
@@ -60,12 +64,16 @@ export function DomainsTab({
   vercelConnectionError,
   locale,
   returnTo,
+  projectId,
+  nativeDomains = [],
 }: DomainsTabProps) {
   const [isAssignOpen, setIsAssignOpen] = useState(false);
   const [isAddDomainOpen, setIsAddDomainOpen] = useState(false);
   const [expandedVerification, setExpandedVerification] = useState<Record<string, boolean>>({});
   const [copiedText, setCopiedText] = useState<Record<string, boolean>>({});
   const [isPending, startTransition] = useTransition();
+  const [verificationMethod, setVerificationMethod] = useState<"manual" | "dns_api">("manual");
+  const [selectedProvider, setSelectedProvider] = useState<"CLOUDFLARE" | "ROUTE53" | "GODADDY">("CLOUDFLARE");
 
   const handleCopy = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
@@ -75,32 +83,242 @@ export function DomainsTab({
     }, 2000);
   };
 
+  const nativeDomainsPanel = projectId ? (
+    <Card className="overflow-hidden border border-hairline bg-canvas py-0">
+      <CardHeader className="border-b border-hairline-cool bg-canvas-soft/60 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-5">
+        <div>
+          <CardTitle className="text-base font-bold text-ink">Native Domains & SSL</CardTitle>
+          <CardDescription className="text-xs text-ink-mute mt-1">
+            Register domains for the LepoS Edge Gateway and prepare ACME TXT validation.
+          </CardDescription>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-5 p-5">
+        <form action={createNativeDomainAction} className="flex flex-col gap-4 p-4 rounded-lg bg-canvas-soft border border-hairline mb-5">
+          <input type="hidden" name="projectId" value={projectId} />
+          {returnTo && <input type="hidden" name="returnTo" value={returnTo} />}
+          
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="domain-input" className="text-xs font-semibold text-ink">Domain Name</Label>
+              <Input
+                id="domain-input"
+                name="domain"
+                required
+                placeholder="edge.example.com or *.example.com"
+                className="h-10 bg-canvas border-hairline focus-visible:ring-1 focus-visible:ring-primary transition-all rounded-sm text-sm"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="method-select" className="text-xs font-semibold text-ink">Verification Method</Label>
+              <select
+                id="method-select"
+                value={verificationMethod}
+                onChange={(e) => setVerificationMethod(e.target.value as any)}
+                className="h-10 px-3 bg-canvas border border-hairline text-ink text-sm rounded-sm focus:outline-none focus:ring-1 focus:ring-primary"
+              >
+                <option value="manual">Manual DNS TXT Record</option>
+                <option value="dns_api">DNS Provider API (Auto DNS-01 Challenge)</option>
+              </select>
+            </div>
+          </div>
+
+          {verificationMethod === "dns_api" && (
+            <div className="flex flex-col gap-4 p-3.5 rounded bg-canvas/60 border border-hairline">
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="provider-select" className="text-xs font-semibold text-ink-secondary">DNS API Provider</Label>
+                <select
+                  id="provider-select"
+                  name="dnsProvider"
+                  value={selectedProvider}
+                  onChange={(e) => setSelectedProvider(e.target.value as any)}
+                  className="h-9 px-3 bg-canvas border border-hairline text-ink text-xs rounded-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                >
+                  <option value="CLOUDFLARE">Cloudflare</option>
+                  <option value="ROUTE53">AWS Route 53</option>
+                  <option value="GODADDY">GoDaddy</option>
+                </select>
+              </div>
+
+              {selectedProvider === "CLOUDFLARE" && (
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="cf-token" className="text-[10px] text-ink-mute">Cloudflare API Token</Label>
+                  <Input
+                    id="cf-token"
+                    name="cloudflareToken"
+                    type="password"
+                    placeholder="Enter Cloudflare API token..."
+                    className="h-8 bg-canvas border-hairline text-xs text-ink shadow-light"
+                  />
+                </div>
+              )}
+
+              {selectedProvider === "ROUTE53" && (
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <div className="flex flex-col gap-1.5">
+                    <Label htmlFor="aws-key" className="text-[10px] text-ink-mute">AWS Access Key ID</Label>
+                    <Input
+                      id="aws-key"
+                      name="awsAccessKeyId"
+                      placeholder="AKIA..."
+                      className="h-8 bg-canvas border-hairline text-xs text-ink shadow-light"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <Label htmlFor="aws-secret" className="text-[10px] text-ink-mute">AWS Secret Access Key</Label>
+                    <Input
+                      id="aws-secret"
+                      name="awsSecretAccessKey"
+                      type="password"
+                      placeholder="Enter secret key..."
+                      className="h-8 bg-canvas border-hairline text-xs text-ink shadow-light"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {selectedProvider === "GODADDY" && (
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <div className="flex flex-col gap-1.5">
+                    <Label htmlFor="gd-key" className="text-[10px] text-ink-mute">GoDaddy API Key</Label>
+                    <Input
+                      id="gd-key"
+                      name="godaddyApiKey"
+                      placeholder="GoDaddy API Key..."
+                      className="h-8 bg-canvas border-hairline text-xs text-ink shadow-light"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <Label htmlFor="gd-secret" className="text-[10px] text-ink-mute">GoDaddy API Secret</Label>
+                    <Input
+                      id="gd-secret"
+                      name="godaddyApiSecret"
+                      type="password"
+                      placeholder="GoDaddy API Secret..."
+                      className="h-8 bg-canvas border-hairline text-xs text-ink shadow-light"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          <div className="flex justify-end">
+            <Button type="submit" className="h-10 bg-primary hover:bg-primary-deep text-primary-foreground font-semibold px-5 rounded-sm shadow-light text-xs gap-1.5">
+              <Plus className="size-4" />
+              Add Native Domain
+            </Button>
+          </div>
+        </form>
+
+        {nativeDomains.length === 0 ? (
+          <div className="rounded-md border border-dashed border-hairline bg-canvas-soft/40 px-4 py-8 text-center">
+            <p className="text-sm font-semibold text-ink">No native domains configured</p>
+            <p className="text-xs text-ink-mute mt-1">Add a domain to generate an ACME TXT token and Redis route entry.</p>
+          </div>
+        ) : (
+          <Table className="min-w-[760px]">
+            <TableHeader>
+              <TableRow className="bg-canvas-soft/40 border-b border-hairline">
+                <TableHead className="px-5 py-3 text-[11px] uppercase tracking-wider text-ink-mute font-semibold">Domain</TableHead>
+                <TableHead className="px-5 py-3 text-[11px] uppercase tracking-wider text-ink-mute font-semibold">DNS Provider</TableHead>
+                <TableHead className="px-5 py-3 text-[11px] uppercase tracking-wider text-ink-mute font-semibold">DNS</TableHead>
+                <TableHead className="px-5 py-3 text-[11px] uppercase tracking-wider text-ink-mute font-semibold">SSL</TableHead>
+                <TableHead className="px-5 py-3 text-[11px] uppercase tracking-wider text-ink-mute font-semibold">TXT Token</TableHead>
+                <TableHead className="px-5 py-3 text-right text-[11px] uppercase tracking-wider text-ink-mute font-semibold">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {nativeDomains.map((domain) => (
+                <TableRow key={domain.id} className="hover:bg-canvas-soft/30 transition-colors border-b border-hairline">
+                  <TableCell className="px-5 py-4 text-sm font-medium text-ink">{domain.domain}</TableCell>
+                  <TableCell className="px-5 py-4 text-xs text-ink-secondary">
+                    {domain.dnsProvider ? (
+                      <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-500/10 text-indigo-500 border border-indigo-500/20">
+                        {domain.dnsProvider}
+                      </span>
+                    ) : (
+                      <span className="text-slate-400 italic text-[11px]">Manual TXT</span>
+                    )}
+                  </TableCell>
+                  <TableCell className="px-5 py-4 text-xs text-ink-secondary">{domain.dnsVerified ? "Verified" : "Pending"}</TableCell>
+                  <TableCell className="px-5 py-4 text-xs text-ink-secondary">{domain.sslStatus}</TableCell>
+                  <TableCell className="px-5 py-4">
+                    <code className="text-[11px] text-ink-mute">{domain.txtRecordToken}</code>
+                  </TableCell>
+                  <TableCell className="px-5 py-4 text-right">
+                    <form
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        const formData = new FormData();
+                        formData.append("projectId", projectId || "");
+                        formData.append("domainId", domain.id);
+                        if (returnTo) formData.append("returnTo", returnTo);
+                        
+                        const startTime = performance.now();
+                        startTransition(async () => {
+                          try {
+                            await renewNativeDomainSslAction(formData);
+                            const duration = Math.round(performance.now() - startTime);
+                            toast.success(`SSL renewed successfully in ${duration}ms! Proxy certificate reloaded.`);
+                          } catch (error) {
+                            toast.error("Failed to renew SSL. Please try again.");
+                          }
+                        });
+                      }}
+                    >
+                      <Button
+                        type="submit"
+                        variant="ghost"
+                        size="sm"
+                        disabled={isPending}
+                        className="h-7 text-xs font-semibold px-2 py-1 text-primary hover:bg-primary/10 rounded-sm"
+                      >
+                        <RefreshCw className={`size-3 mr-1 ${isPending ? "animate-spin" : ""}`} />
+                        Renew SSL
+                      </Button>
+                    </form>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
+      </CardContent>
+    </Card>
+  ) : null;
+
   if (!vercelConnected) {
     return (
-      <div className="flex flex-col items-center justify-center p-8 text-center bg-canvas-soft border border-hairline rounded-xl max-w-2xl mx-auto my-8 relative overflow-hidden shadow-dark group">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl pointer-events-none group-hover:bg-primary/10 transition-all duration-500" />
-        <div className="absolute bottom-0 left-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl pointer-events-none group-hover:bg-primary/10 transition-all duration-500" />
-        
-        <div className="size-14 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary mb-6 animate-pulse">
-          <Key className="size-6 text-primary" />
-        </div>
-        
-        <h3 className="text-lg font-bold text-ink mb-2">Connect Vercel Integration</h3>
-        <p className="text-sm text-ink-mute max-w-md mb-8 leading-relaxed">
-          Unlock domain configuration and alias deployment. Connect your Vercel API key to manage groups, projects, and permissions directly from your dashboard.
-        </p>
+      <div className="space-y-6">
+        {nativeDomainsPanel}
+        <div className="flex flex-col items-center justify-center p-8 text-center bg-canvas-soft border border-hairline rounded-xl max-w-2xl mx-auto my-8 relative overflow-hidden shadow-dark group">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl pointer-events-none group-hover:bg-primary/10 transition-all duration-500" />
+          <div className="absolute bottom-0 left-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl pointer-events-none group-hover:bg-primary/10 transition-all duration-500" />
+          
+          <div className="size-14 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary mb-6 animate-pulse">
+            <Key className="size-6 text-primary" />
+          </div>
+          
+          <h3 className="text-lg font-bold text-ink mb-2">Connect Vercel Integration</h3>
+          <p className="text-sm text-ink-mute max-w-md mb-8 leading-relaxed">
+            Unlock Vercel domain configuration and alias deployment. Native Edge Gateway domains can be managed above without a Vercel token.
+          </p>
 
-        <Button asChild className="h-10 bg-primary hover:bg-primary-deep text-primary-foreground font-semibold px-6 rounded-sm shadow-light transition-all text-xs">
-          <Link href="/dashboard/settings">
-            Configure Vercel API Key
-          </Link>
-        </Button>
+          <Button asChild className="h-10 bg-primary hover:bg-primary-deep text-primary-foreground font-semibold px-6 rounded-sm shadow-light transition-all text-xs">
+            <Link href="/dashboard/settings">
+              Configure Vercel API Key
+            </Link>
+          </Button>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
+      {nativeDomainsPanel}
       {/* Project Domains Card */}
       {vercelProjectDomains && vercelProjectId && (
         <Card className="overflow-hidden border border-hairline bg-canvas py-0">

@@ -392,6 +392,81 @@ export type DeployHook = Prisma.DeployHookModel
  */
 export type FirewallRule = Prisma.FirewallRuleModel
 /**
+ * Model NativeDeployment
+ * 
+ */
+export type NativeDeployment = Prisma.NativeDeploymentModel
+/**
+ * Model NativeDomainConfig
+ * 
+ */
+export type NativeDomainConfig = Prisma.NativeDomainConfigModel
+/**
+ * Model NativeEdgeFunction
+ * 
+ */
+export type NativeEdgeFunction = Prisma.NativeEdgeFunctionModel
+/**
+ * Model NativeCacheEntry
+ * 
+ */
+export type NativeCacheEntry = Prisma.NativeCacheEntryModel
+/**
+ * Model NativeAnalyticsReplay
+ * 
+ */
+export type NativeAnalyticsReplay = Prisma.NativeAnalyticsReplayModel
+/**
+ * Model NativeCrashReport
+ * 
+ */
+export type NativeCrashReport = Prisma.NativeCrashReportModel
+/**
+ * Model NativeSourceMap
+ * 
+ */
+export type NativeSourceMap = Prisma.NativeSourceMapModel
+/**
+ * Model NativePlugin
+ * 
+ */
+export type NativePlugin = Prisma.NativePluginModel
+/**
+ * Model NativePluginInstallation
+ * 
+ */
+export type NativePluginInstallation = Prisma.NativePluginInstallationModel
+/**
+ * Model NativeDebugSession
+ * 
+ */
+export type NativeDebugSession = Prisma.NativeDebugSessionModel
+/**
+ * Model NativeCloudTarget
+ * 
+ */
+export type NativeCloudTarget = Prisma.NativeCloudTargetModel
+/**
+ * Model NativeWafEvent
+ * 
+ */
+export type NativeWafEvent = Prisma.NativeWafEventModel
+/**
+ * Model NativeWafRule
+ * 
+ */
+export type NativeWafRule = Prisma.NativeWafRuleModel
+/**
+ * Model NativeScimMapping
+ * 
+ */
+export type NativeScimMapping = Prisma.NativeScimMappingModel
+/**
+ * Model NativeAiDiagnostic
+ * 
+ */
+export type NativeAiDiagnostic = Prisma.NativeAiDiagnosticModel
+/**
  * Model CronJob
  * 
  */
@@ -407,6 +482,11 @@ export type Form = Prisma.FormModel
  */
 export type FormSubmission = Prisma.FormSubmissionModel
 /**
+ * Model FormWebhookDelivery
+ * 
+ */
+export type FormWebhookDelivery = Prisma.FormWebhookDeliveryModel
+/**
  * Model PreviewComment
  * 
  */
@@ -416,3 +496,18 @@ export type PreviewComment = Prisma.PreviewCommentModel
  * 
  */
 export type LepoShipLocalConfig = Prisma.LepoShipLocalConfigModel
+/**
+ * Model MarketplacePartnerAccount
+ * 
+ */
+export type MarketplacePartnerAccount = Prisma.MarketplacePartnerAccountModel
+/**
+ * Model MarketplaceTransaction
+ * 
+ */
+export type MarketplaceTransaction = Prisma.MarketplaceTransactionModel
+/**
+ * Model MarketplaceInstallEvent
+ * 
+ */
+export type MarketplaceInstallEvent = Prisma.MarketplaceInstallEventModel

@@ -24,6 +24,24 @@ docker build -f ops/deployment/Dockerfile --build-arg BIN=signal-bridge -t tradi
 docker build -f ops/deployment/go.Dockerfile -t trading/go-control-plane:local .
 ```
 
+## Go Edge Gateway Build
+
+```bash
+docker build -f ops/deployment/edge-gateway.Dockerfile -t trading/edge-gateway:local .
+```
+
+## Environment Variables Configuration (No Secrets Committed)
+
+Configure the following environment keys in your production `.env` file or orchestrator:
+
+- `REDIS_URL`: Redis connection URL for gateway routing and cache coordination (e.g., `redis://localhost:6379`).
+- `LEPOS_INTERNAL_API_KEY`: API key for secure edge-to-control-plane internal endpoints.
+- `LEPOS_CONTROL_PLANE_URL`: URL of the Next.js control plane (default: `http://localhost:3000`).
+- `LEPOS_STORAGE_ROOT`: Absolute directory for local static bundle storage and server isolates.
+- `GEMINI_API_KEY`: Google Gemini SDK API key for AI diagnostic endpoints.
+- `ACME_DIRECTORY`: ACME staging or production directory endpoint for SSL/domain certificate provisioning.
+- `LEPOS_FAILOVER_TARGETS`: Failover server/gateway routing coordinates (comma-separated).
+
 ## Policy
 
 - Do not add Compose orchestration back into this folder unless the project explicitly reintroduces it.

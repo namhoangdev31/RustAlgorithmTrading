@@ -8,6 +8,7 @@ pkill -f "market-data" && echo "Stopped Market Data Service" || true
 pkill -f "risk-manager" && echo "Stopped Risk Manager" || true
 pkill -f "execution-engine" && echo "Stopped Execution Engine" || true
 pkill -f "signal-bridge" && echo "Stopped Signal Bridge" || true
+pkill -f "edge-gateway" && echo "Stopped Go Edge Gateway" || true
 
 echo ""
 echo "All services stopped."

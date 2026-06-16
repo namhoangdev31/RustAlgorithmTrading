@@ -9,6 +9,8 @@ import { requireCurrentUser } from "@/lib/server/current-user";
 import { requireProjectRole } from "@/lib/server/permissions";
 import { buildIntegrationConfig } from "@/lib/server/platform-guardrails";
 import { prisma } from "@/lib/server/prisma";
+import { streamAuditLog } from "@/lib/server/audit-stream";
+import { syncProjectFeatureFlags, flagEvents } from "@/lib/server/feature-flags";
 
 const CAPABILITY_TYPES = new Set([
   "pat_cli_contract",
@@ -84,16 +86,22 @@ async function getEditableBundle(userId: string, projectId: string) {
 }
 
 async function writeAudit(bundleId: string, userId: string, action: string, value: string) {
+  const logData = {
+    id: crypto.randomUUID(),
+    bundleId,
+    userId,
+    action,
+    fieldName: "zero_plan",
+    oldValue: value,
+    createdAt: new Date(),
+  };
+
   await prisma.bundleAuditLog.create({
-    data: {
-      id: crypto.randomUUID(),
-      bundleId,
-      userId,
-      action,
-      fieldName: "zero_plan",
-      oldValue: value,
-      createdAt: new Date(),
-    },
+    data: logData,
+  });
+
+  streamAuditLog(bundleId, logData).catch((err) => {
+    console.error("[AuditStream] Background stream failed:", err);
   });
 }
 
@@ -319,6 +327,10 @@ export async function createZeroPlanExperimentAction(formData: FormData) {
         createdAt: new Date(),
       },
     });
+
+    // Replicate configurations to providers and stream SSE updates
+    await syncProjectFeatureFlags(projectId);
+    flagEvents.emit("change", { projectId });
 
     await writeAudit(bundle.id, user.id, "zero_experiment", "created");
     revalidatePath("/dashboard/zero-plan");

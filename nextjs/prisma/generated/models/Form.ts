@@ -28,6 +28,10 @@ export type FormMinAggregateOutputType = {
   id: string | null
   name: string | null
   projectId: string | null
+  googleSheetsSync: boolean | null
+  salesforceSync: boolean | null
+  webhookUrl: string | null
+  webhookSecret: string | null
   createdAt: Date | null
 }
 
@@ -35,6 +39,10 @@ export type FormMaxAggregateOutputType = {
   id: string | null
   name: string | null
   projectId: string | null
+  googleSheetsSync: boolean | null
+  salesforceSync: boolean | null
+  webhookUrl: string | null
+  webhookSecret: string | null
   createdAt: Date | null
 }
 
@@ -42,6 +50,10 @@ export type FormCountAggregateOutputType = {
   id: number
   name: number
   projectId: number
+  googleSheetsSync: number
+  salesforceSync: number
+  webhookUrl: number
+  webhookSecret: number
   createdAt: number
   _all: number
 }
@@ -51,6 +63,10 @@ export type FormMinAggregateInputType = {
   id?: true
   name?: true
   projectId?: true
+  googleSheetsSync?: true
+  salesforceSync?: true
+  webhookUrl?: true
+  webhookSecret?: true
   createdAt?: true
 }
 
@@ -58,6 +74,10 @@ export type FormMaxAggregateInputType = {
   id?: true
   name?: true
   projectId?: true
+  googleSheetsSync?: true
+  salesforceSync?: true
+  webhookUrl?: true
+  webhookSecret?: true
   createdAt?: true
 }
 
@@ -65,6 +85,10 @@ export type FormCountAggregateInputType = {
   id?: true
   name?: true
   projectId?: true
+  googleSheetsSync?: true
+  salesforceSync?: true
+  webhookUrl?: true
+  webhookSecret?: true
   createdAt?: true
   _all?: true
 }
@@ -145,6 +169,10 @@ export type FormGroupByOutputType = {
   id: string
   name: string
   projectId: string
+  googleSheetsSync: boolean
+  salesforceSync: boolean
+  webhookUrl: string | null
+  webhookSecret: string | null
   createdAt: Date
   _count: FormCountAggregateOutputType | null
   _min: FormMinAggregateOutputType | null
@@ -173,18 +201,28 @@ export type FormWhereInput = {
   id?: Prisma.StringFilter<"Form"> | string
   name?: Prisma.StringFilter<"Form"> | string
   projectId?: Prisma.UuidFilter<"Form"> | string
+  googleSheetsSync?: Prisma.BoolFilter<"Form"> | boolean
+  salesforceSync?: Prisma.BoolFilter<"Form"> | boolean
+  webhookUrl?: Prisma.StringNullableFilter<"Form"> | string | null
+  webhookSecret?: Prisma.StringNullableFilter<"Form"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Form"> | Date | string
   project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
   submissions?: Prisma.FormSubmissionListRelationFilter
+  webhookDeliveries?: Prisma.FormWebhookDeliveryListRelationFilter
 }
 
 export type FormOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   projectId?: Prisma.SortOrder
+  googleSheetsSync?: Prisma.SortOrder
+  salesforceSync?: Prisma.SortOrder
+  webhookUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  webhookSecret?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   project?: Prisma.ProjectOrderByWithRelationInput
   submissions?: Prisma.FormSubmissionOrderByRelationAggregateInput
+  webhookDeliveries?: Prisma.FormWebhookDeliveryOrderByRelationAggregateInput
 }
 
 export type FormWhereUniqueInput = Prisma.AtLeast<{
@@ -194,15 +232,24 @@ export type FormWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.FormWhereInput | Prisma.FormWhereInput[]
   name?: Prisma.StringFilter<"Form"> | string
   projectId?: Prisma.UuidFilter<"Form"> | string
+  googleSheetsSync?: Prisma.BoolFilter<"Form"> | boolean
+  salesforceSync?: Prisma.BoolFilter<"Form"> | boolean
+  webhookUrl?: Prisma.StringNullableFilter<"Form"> | string | null
+  webhookSecret?: Prisma.StringNullableFilter<"Form"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Form"> | Date | string
   project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
   submissions?: Prisma.FormSubmissionListRelationFilter
+  webhookDeliveries?: Prisma.FormWebhookDeliveryListRelationFilter
 }, "id">
 
 export type FormOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   projectId?: Prisma.SortOrder
+  googleSheetsSync?: Prisma.SortOrder
+  salesforceSync?: Prisma.SortOrder
+  webhookUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  webhookSecret?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.FormCountOrderByAggregateInput
   _max?: Prisma.FormMaxOrderByAggregateInput
@@ -216,51 +263,83 @@ export type FormScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Form"> | string
   name?: Prisma.StringWithAggregatesFilter<"Form"> | string
   projectId?: Prisma.UuidWithAggregatesFilter<"Form"> | string
+  googleSheetsSync?: Prisma.BoolWithAggregatesFilter<"Form"> | boolean
+  salesforceSync?: Prisma.BoolWithAggregatesFilter<"Form"> | boolean
+  webhookUrl?: Prisma.StringNullableWithAggregatesFilter<"Form"> | string | null
+  webhookSecret?: Prisma.StringNullableWithAggregatesFilter<"Form"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Form"> | Date | string
 }
 
 export type FormCreateInput = {
   id?: string
   name: string
+  googleSheetsSync?: boolean
+  salesforceSync?: boolean
+  webhookUrl?: string | null
+  webhookSecret?: string | null
   createdAt?: Date | string
   project: Prisma.ProjectCreateNestedOneWithoutFormsInput
   submissions?: Prisma.FormSubmissionCreateNestedManyWithoutFormInput
+  webhookDeliveries?: Prisma.FormWebhookDeliveryCreateNestedManyWithoutFormInput
 }
 
 export type FormUncheckedCreateInput = {
   id?: string
   name: string
   projectId: string
+  googleSheetsSync?: boolean
+  salesforceSync?: boolean
+  webhookUrl?: string | null
+  webhookSecret?: string | null
   createdAt?: Date | string
   submissions?: Prisma.FormSubmissionUncheckedCreateNestedManyWithoutFormInput
+  webhookDeliveries?: Prisma.FormWebhookDeliveryUncheckedCreateNestedManyWithoutFormInput
 }
 
 export type FormUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  googleSheetsSync?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  salesforceSync?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  webhookUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  webhookSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   project?: Prisma.ProjectUpdateOneRequiredWithoutFormsNestedInput
   submissions?: Prisma.FormSubmissionUpdateManyWithoutFormNestedInput
+  webhookDeliveries?: Prisma.FormWebhookDeliveryUpdateManyWithoutFormNestedInput
 }
 
 export type FormUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   projectId?: Prisma.StringFieldUpdateOperationsInput | string
+  googleSheetsSync?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  salesforceSync?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  webhookUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  webhookSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   submissions?: Prisma.FormSubmissionUncheckedUpdateManyWithoutFormNestedInput
+  webhookDeliveries?: Prisma.FormWebhookDeliveryUncheckedUpdateManyWithoutFormNestedInput
 }
 
 export type FormCreateManyInput = {
   id?: string
   name: string
   projectId: string
+  googleSheetsSync?: boolean
+  salesforceSync?: boolean
+  webhookUrl?: string | null
+  webhookSecret?: string | null
   createdAt?: Date | string
 }
 
 export type FormUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  googleSheetsSync?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  salesforceSync?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  webhookUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  webhookSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -268,6 +347,10 @@ export type FormUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   projectId?: Prisma.StringFieldUpdateOperationsInput | string
+  googleSheetsSync?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  salesforceSync?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  webhookUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  webhookSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -285,6 +368,10 @@ export type FormCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   projectId?: Prisma.SortOrder
+  googleSheetsSync?: Prisma.SortOrder
+  salesforceSync?: Prisma.SortOrder
+  webhookUrl?: Prisma.SortOrder
+  webhookSecret?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -292,6 +379,10 @@ export type FormMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   projectId?: Prisma.SortOrder
+  googleSheetsSync?: Prisma.SortOrder
+  salesforceSync?: Prisma.SortOrder
+  webhookUrl?: Prisma.SortOrder
+  webhookSecret?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -299,6 +390,10 @@ export type FormMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   projectId?: Prisma.SortOrder
+  googleSheetsSync?: Prisma.SortOrder
+  salesforceSync?: Prisma.SortOrder
+  webhookUrl?: Prisma.SortOrder
+  webhookSecret?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -363,18 +458,42 @@ export type FormUpdateOneRequiredWithoutSubmissionsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.FormUpdateToOneWithWhereWithoutSubmissionsInput, Prisma.FormUpdateWithoutSubmissionsInput>, Prisma.FormUncheckedUpdateWithoutSubmissionsInput>
 }
 
+export type FormCreateNestedOneWithoutWebhookDeliveriesInput = {
+  create?: Prisma.XOR<Prisma.FormCreateWithoutWebhookDeliveriesInput, Prisma.FormUncheckedCreateWithoutWebhookDeliveriesInput>
+  connectOrCreate?: Prisma.FormCreateOrConnectWithoutWebhookDeliveriesInput
+  connect?: Prisma.FormWhereUniqueInput
+}
+
+export type FormUpdateOneRequiredWithoutWebhookDeliveriesNestedInput = {
+  create?: Prisma.XOR<Prisma.FormCreateWithoutWebhookDeliveriesInput, Prisma.FormUncheckedCreateWithoutWebhookDeliveriesInput>
+  connectOrCreate?: Prisma.FormCreateOrConnectWithoutWebhookDeliveriesInput
+  upsert?: Prisma.FormUpsertWithoutWebhookDeliveriesInput
+  connect?: Prisma.FormWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.FormUpdateToOneWithWhereWithoutWebhookDeliveriesInput, Prisma.FormUpdateWithoutWebhookDeliveriesInput>, Prisma.FormUncheckedUpdateWithoutWebhookDeliveriesInput>
+}
+
 export type FormCreateWithoutProjectInput = {
   id?: string
   name: string
+  googleSheetsSync?: boolean
+  salesforceSync?: boolean
+  webhookUrl?: string | null
+  webhookSecret?: string | null
   createdAt?: Date | string
   submissions?: Prisma.FormSubmissionCreateNestedManyWithoutFormInput
+  webhookDeliveries?: Prisma.FormWebhookDeliveryCreateNestedManyWithoutFormInput
 }
 
 export type FormUncheckedCreateWithoutProjectInput = {
   id?: string
   name: string
+  googleSheetsSync?: boolean
+  salesforceSync?: boolean
+  webhookUrl?: string | null
+  webhookSecret?: string | null
   createdAt?: Date | string
   submissions?: Prisma.FormSubmissionUncheckedCreateNestedManyWithoutFormInput
+  webhookDeliveries?: Prisma.FormWebhookDeliveryUncheckedCreateNestedManyWithoutFormInput
 }
 
 export type FormCreateOrConnectWithoutProjectInput = {
@@ -410,21 +529,35 @@ export type FormScalarWhereInput = {
   id?: Prisma.StringFilter<"Form"> | string
   name?: Prisma.StringFilter<"Form"> | string
   projectId?: Prisma.UuidFilter<"Form"> | string
+  googleSheetsSync?: Prisma.BoolFilter<"Form"> | boolean
+  salesforceSync?: Prisma.BoolFilter<"Form"> | boolean
+  webhookUrl?: Prisma.StringNullableFilter<"Form"> | string | null
+  webhookSecret?: Prisma.StringNullableFilter<"Form"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Form"> | Date | string
 }
 
 export type FormCreateWithoutSubmissionsInput = {
   id?: string
   name: string
+  googleSheetsSync?: boolean
+  salesforceSync?: boolean
+  webhookUrl?: string | null
+  webhookSecret?: string | null
   createdAt?: Date | string
   project: Prisma.ProjectCreateNestedOneWithoutFormsInput
+  webhookDeliveries?: Prisma.FormWebhookDeliveryCreateNestedManyWithoutFormInput
 }
 
 export type FormUncheckedCreateWithoutSubmissionsInput = {
   id?: string
   name: string
   projectId: string
+  googleSheetsSync?: boolean
+  salesforceSync?: boolean
+  webhookUrl?: string | null
+  webhookSecret?: string | null
   createdAt?: Date | string
+  webhookDeliveries?: Prisma.FormWebhookDeliveryUncheckedCreateNestedManyWithoutFormInput
 }
 
 export type FormCreateOrConnectWithoutSubmissionsInput = {
@@ -446,40 +579,132 @@ export type FormUpdateToOneWithWhereWithoutSubmissionsInput = {
 export type FormUpdateWithoutSubmissionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  googleSheetsSync?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  salesforceSync?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  webhookUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  webhookSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   project?: Prisma.ProjectUpdateOneRequiredWithoutFormsNestedInput
+  webhookDeliveries?: Prisma.FormWebhookDeliveryUpdateManyWithoutFormNestedInput
 }
 
 export type FormUncheckedUpdateWithoutSubmissionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   projectId?: Prisma.StringFieldUpdateOperationsInput | string
+  googleSheetsSync?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  salesforceSync?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  webhookUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  webhookSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  webhookDeliveries?: Prisma.FormWebhookDeliveryUncheckedUpdateManyWithoutFormNestedInput
+}
+
+export type FormCreateWithoutWebhookDeliveriesInput = {
+  id?: string
+  name: string
+  googleSheetsSync?: boolean
+  salesforceSync?: boolean
+  webhookUrl?: string | null
+  webhookSecret?: string | null
+  createdAt?: Date | string
+  project: Prisma.ProjectCreateNestedOneWithoutFormsInput
+  submissions?: Prisma.FormSubmissionCreateNestedManyWithoutFormInput
+}
+
+export type FormUncheckedCreateWithoutWebhookDeliveriesInput = {
+  id?: string
+  name: string
+  projectId: string
+  googleSheetsSync?: boolean
+  salesforceSync?: boolean
+  webhookUrl?: string | null
+  webhookSecret?: string | null
+  createdAt?: Date | string
+  submissions?: Prisma.FormSubmissionUncheckedCreateNestedManyWithoutFormInput
+}
+
+export type FormCreateOrConnectWithoutWebhookDeliveriesInput = {
+  where: Prisma.FormWhereUniqueInput
+  create: Prisma.XOR<Prisma.FormCreateWithoutWebhookDeliveriesInput, Prisma.FormUncheckedCreateWithoutWebhookDeliveriesInput>
+}
+
+export type FormUpsertWithoutWebhookDeliveriesInput = {
+  update: Prisma.XOR<Prisma.FormUpdateWithoutWebhookDeliveriesInput, Prisma.FormUncheckedUpdateWithoutWebhookDeliveriesInput>
+  create: Prisma.XOR<Prisma.FormCreateWithoutWebhookDeliveriesInput, Prisma.FormUncheckedCreateWithoutWebhookDeliveriesInput>
+  where?: Prisma.FormWhereInput
+}
+
+export type FormUpdateToOneWithWhereWithoutWebhookDeliveriesInput = {
+  where?: Prisma.FormWhereInput
+  data: Prisma.XOR<Prisma.FormUpdateWithoutWebhookDeliveriesInput, Prisma.FormUncheckedUpdateWithoutWebhookDeliveriesInput>
+}
+
+export type FormUpdateWithoutWebhookDeliveriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  googleSheetsSync?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  salesforceSync?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  webhookUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  webhookSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  project?: Prisma.ProjectUpdateOneRequiredWithoutFormsNestedInput
+  submissions?: Prisma.FormSubmissionUpdateManyWithoutFormNestedInput
+}
+
+export type FormUncheckedUpdateWithoutWebhookDeliveriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
+  googleSheetsSync?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  salesforceSync?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  webhookUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  webhookSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  submissions?: Prisma.FormSubmissionUncheckedUpdateManyWithoutFormNestedInput
 }
 
 export type FormCreateManyProjectInput = {
   id?: string
   name: string
+  googleSheetsSync?: boolean
+  salesforceSync?: boolean
+  webhookUrl?: string | null
+  webhookSecret?: string | null
   createdAt?: Date | string
 }
 
 export type FormUpdateWithoutProjectInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  googleSheetsSync?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  salesforceSync?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  webhookUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  webhookSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   submissions?: Prisma.FormSubmissionUpdateManyWithoutFormNestedInput
+  webhookDeliveries?: Prisma.FormWebhookDeliveryUpdateManyWithoutFormNestedInput
 }
 
 export type FormUncheckedUpdateWithoutProjectInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  googleSheetsSync?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  salesforceSync?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  webhookUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  webhookSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   submissions?: Prisma.FormSubmissionUncheckedUpdateManyWithoutFormNestedInput
+  webhookDeliveries?: Prisma.FormWebhookDeliveryUncheckedUpdateManyWithoutFormNestedInput
 }
 
 export type FormUncheckedUpdateManyWithoutProjectInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  googleSheetsSync?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  salesforceSync?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  webhookUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  webhookSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -490,10 +715,12 @@ export type FormUncheckedUpdateManyWithoutProjectInput = {
 
 export type FormCountOutputType = {
   submissions: number
+  webhookDeliveries: number
 }
 
 export type FormCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   submissions?: boolean | FormCountOutputTypeCountSubmissionsArgs
+  webhookDeliveries?: boolean | FormCountOutputTypeCountWebhookDeliveriesArgs
 }
 
 /**
@@ -513,14 +740,26 @@ export type FormCountOutputTypeCountSubmissionsArgs<ExtArgs extends runtime.Type
   where?: Prisma.FormSubmissionWhereInput
 }
 
+/**
+ * FormCountOutputType without action
+ */
+export type FormCountOutputTypeCountWebhookDeliveriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.FormWebhookDeliveryWhereInput
+}
+
 
 export type FormSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
   projectId?: boolean
+  googleSheetsSync?: boolean
+  salesforceSync?: boolean
+  webhookUrl?: boolean
+  webhookSecret?: boolean
   createdAt?: boolean
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   submissions?: boolean | Prisma.Form$submissionsArgs<ExtArgs>
+  webhookDeliveries?: boolean | Prisma.Form$webhookDeliveriesArgs<ExtArgs>
   _count?: boolean | Prisma.FormCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["form"]>
 
@@ -528,6 +767,10 @@ export type FormSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   id?: boolean
   name?: boolean
   projectId?: boolean
+  googleSheetsSync?: boolean
+  salesforceSync?: boolean
+  webhookUrl?: boolean
+  webhookSecret?: boolean
   createdAt?: boolean
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["form"]>
@@ -536,6 +779,10 @@ export type FormSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   id?: boolean
   name?: boolean
   projectId?: boolean
+  googleSheetsSync?: boolean
+  salesforceSync?: boolean
+  webhookUrl?: boolean
+  webhookSecret?: boolean
   createdAt?: boolean
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["form"]>
@@ -544,13 +791,18 @@ export type FormSelectScalar = {
   id?: boolean
   name?: boolean
   projectId?: boolean
+  googleSheetsSync?: boolean
+  salesforceSync?: boolean
+  webhookUrl?: boolean
+  webhookSecret?: boolean
   createdAt?: boolean
 }
 
-export type FormOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "projectId" | "createdAt", ExtArgs["result"]["form"]>
+export type FormOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "projectId" | "googleSheetsSync" | "salesforceSync" | "webhookUrl" | "webhookSecret" | "createdAt", ExtArgs["result"]["form"]>
 export type FormInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   submissions?: boolean | Prisma.Form$submissionsArgs<ExtArgs>
+  webhookDeliveries?: boolean | Prisma.Form$webhookDeliveriesArgs<ExtArgs>
   _count?: boolean | Prisma.FormCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type FormIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -565,11 +817,16 @@ export type $FormPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   objects: {
     project: Prisma.$ProjectPayload<ExtArgs>
     submissions: Prisma.$FormSubmissionPayload<ExtArgs>[]
+    webhookDeliveries: Prisma.$FormWebhookDeliveryPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     name: string
     projectId: string
+    googleSheetsSync: boolean
+    salesforceSync: boolean
+    webhookUrl: string | null
+    webhookSecret: string | null
     createdAt: Date
   }, ExtArgs["result"]["form"]>
   composites: {}
@@ -967,6 +1224,7 @@ export interface Prisma__FormClient<T, Null = never, ExtArgs extends runtime.Typ
   readonly [Symbol.toStringTag]: "PrismaPromise"
   project<T extends Prisma.ProjectDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProjectDefaultArgs<ExtArgs>>): Prisma.Prisma__ProjectClient<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   submissions<T extends Prisma.Form$submissionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Form$submissionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FormSubmissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  webhookDeliveries<T extends Prisma.Form$webhookDeliveriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Form$webhookDeliveriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FormWebhookDeliveryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -999,6 +1257,10 @@ export interface FormFieldRefs {
   readonly id: Prisma.FieldRef<"Form", 'String'>
   readonly name: Prisma.FieldRef<"Form", 'String'>
   readonly projectId: Prisma.FieldRef<"Form", 'String'>
+  readonly googleSheetsSync: Prisma.FieldRef<"Form", 'Boolean'>
+  readonly salesforceSync: Prisma.FieldRef<"Form", 'Boolean'>
+  readonly webhookUrl: Prisma.FieldRef<"Form", 'String'>
+  readonly webhookSecret: Prisma.FieldRef<"Form", 'String'>
   readonly createdAt: Prisma.FieldRef<"Form", 'DateTime'>
 }
     
@@ -1422,6 +1684,30 @@ export type Form$submissionsArgs<ExtArgs extends runtime.Types.Extensions.Intern
   take?: number
   skip?: number
   distinct?: Prisma.FormSubmissionScalarFieldEnum | Prisma.FormSubmissionScalarFieldEnum[]
+}
+
+/**
+ * Form.webhookDeliveries
+ */
+export type Form$webhookDeliveriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the FormWebhookDelivery
+   */
+  select?: Prisma.FormWebhookDeliverySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the FormWebhookDelivery
+   */
+  omit?: Prisma.FormWebhookDeliveryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FormWebhookDeliveryInclude<ExtArgs> | null
+  where?: Prisma.FormWebhookDeliveryWhereInput
+  orderBy?: Prisma.FormWebhookDeliveryOrderByWithRelationInput | Prisma.FormWebhookDeliveryOrderByWithRelationInput[]
+  cursor?: Prisma.FormWebhookDeliveryWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.FormWebhookDeliveryScalarFieldEnum | Prisma.FormWebhookDeliveryScalarFieldEnum[]
 }
 
 /**

@@ -31,6 +31,7 @@ export type ProjectMinAggregateOutputType = {
   organizationId: string | null
   vercelProjectId: string | null
   vercelProjectName: string | null
+  activeNativeDeploymentId: string | null
   createdAt: Date | null
   updatedAt: Date | null
   deletedAt: Date | null
@@ -43,6 +44,7 @@ export type ProjectMaxAggregateOutputType = {
   organizationId: string | null
   vercelProjectId: string | null
   vercelProjectName: string | null
+  activeNativeDeploymentId: string | null
   createdAt: Date | null
   updatedAt: Date | null
   deletedAt: Date | null
@@ -55,6 +57,7 @@ export type ProjectCountAggregateOutputType = {
   organizationId: number
   vercelProjectId: number
   vercelProjectName: number
+  activeNativeDeploymentId: number
   createdAt: number
   updatedAt: number
   deletedAt: number
@@ -69,6 +72,7 @@ export type ProjectMinAggregateInputType = {
   organizationId?: true
   vercelProjectId?: true
   vercelProjectName?: true
+  activeNativeDeploymentId?: true
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
@@ -81,6 +85,7 @@ export type ProjectMaxAggregateInputType = {
   organizationId?: true
   vercelProjectId?: true
   vercelProjectName?: true
+  activeNativeDeploymentId?: true
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
@@ -93,6 +98,7 @@ export type ProjectCountAggregateInputType = {
   organizationId?: true
   vercelProjectId?: true
   vercelProjectName?: true
+  activeNativeDeploymentId?: true
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
@@ -178,6 +184,7 @@ export type ProjectGroupByOutputType = {
   organizationId: string
   vercelProjectId: string | null
   vercelProjectName: string | null
+  activeNativeDeploymentId: string | null
   createdAt: Date
   updatedAt: Date
   deletedAt: Date | null
@@ -211,10 +218,12 @@ export type ProjectWhereInput = {
   organizationId?: Prisma.UuidFilter<"Project"> | string
   vercelProjectId?: Prisma.StringNullableFilter<"Project"> | string | null
   vercelProjectName?: Prisma.StringNullableFilter<"Project"> | string | null
+  activeNativeDeploymentId?: Prisma.StringNullableFilter<"Project"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Project"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Project"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Project"> | Date | string | null
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
+  activeNativeDeployment?: Prisma.XOR<Prisma.NativeDeploymentNullableScalarRelationFilter, Prisma.NativeDeploymentWhereInput> | null
   bundle?: Prisma.XOR<Prisma.BundlesNullableScalarRelationFilter, Prisma.BundlesWhereInput> | null
   deployHooks?: Prisma.DeployHookListRelationFilter
   firewallRules?: Prisma.FirewallRuleListRelationFilter
@@ -222,6 +231,19 @@ export type ProjectWhereInput = {
   forms?: Prisma.FormListRelationFilter
   previewComments?: Prisma.PreviewCommentListRelationFilter
   lepoShipLocalConfig?: Prisma.XOR<Prisma.LepoShipLocalConfigNullableScalarRelationFilter, Prisma.LepoShipLocalConfigWhereInput> | null
+  nativeDeployments?: Prisma.NativeDeploymentListRelationFilter
+  nativeDomainConfigs?: Prisma.NativeDomainConfigListRelationFilter
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionListRelationFilter
+  nativeCacheEntries?: Prisma.NativeCacheEntryListRelationFilter
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayListRelationFilter
+  nativeCrashReports?: Prisma.NativeCrashReportListRelationFilter
+  nativeSourceMaps?: Prisma.NativeSourceMapListRelationFilter
+  nativePluginInstalls?: Prisma.NativePluginInstallationListRelationFilter
+  nativeDebugSessions?: Prisma.NativeDebugSessionListRelationFilter
+  nativeCloudTargets?: Prisma.NativeCloudTargetListRelationFilter
+  nativeWafEvents?: Prisma.NativeWafEventListRelationFilter
+  nativeWafRules?: Prisma.NativeWafRuleListRelationFilter
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticListRelationFilter
 }
 
 export type ProjectOrderByWithRelationInput = {
@@ -231,10 +253,12 @@ export type ProjectOrderByWithRelationInput = {
   organizationId?: Prisma.SortOrder
   vercelProjectId?: Prisma.SortOrderInput | Prisma.SortOrder
   vercelProjectName?: Prisma.SortOrderInput | Prisma.SortOrder
+  activeNativeDeploymentId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   organization?: Prisma.OrganizationOrderByWithRelationInput
+  activeNativeDeployment?: Prisma.NativeDeploymentOrderByWithRelationInput
   bundle?: Prisma.BundlesOrderByWithRelationInput
   deployHooks?: Prisma.DeployHookOrderByRelationAggregateInput
   firewallRules?: Prisma.FirewallRuleOrderByRelationAggregateInput
@@ -242,6 +266,19 @@ export type ProjectOrderByWithRelationInput = {
   forms?: Prisma.FormOrderByRelationAggregateInput
   previewComments?: Prisma.PreviewCommentOrderByRelationAggregateInput
   lepoShipLocalConfig?: Prisma.LepoShipLocalConfigOrderByWithRelationInput
+  nativeDeployments?: Prisma.NativeDeploymentOrderByRelationAggregateInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigOrderByRelationAggregateInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionOrderByRelationAggregateInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryOrderByRelationAggregateInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayOrderByRelationAggregateInput
+  nativeCrashReports?: Prisma.NativeCrashReportOrderByRelationAggregateInput
+  nativeSourceMaps?: Prisma.NativeSourceMapOrderByRelationAggregateInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationOrderByRelationAggregateInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionOrderByRelationAggregateInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetOrderByRelationAggregateInput
+  nativeWafEvents?: Prisma.NativeWafEventOrderByRelationAggregateInput
+  nativeWafRules?: Prisma.NativeWafRuleOrderByRelationAggregateInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticOrderByRelationAggregateInput
 }
 
 export type ProjectWhereUniqueInput = Prisma.AtLeast<{
@@ -254,10 +291,12 @@ export type ProjectWhereUniqueInput = Prisma.AtLeast<{
   organizationId?: Prisma.UuidFilter<"Project"> | string
   vercelProjectId?: Prisma.StringNullableFilter<"Project"> | string | null
   vercelProjectName?: Prisma.StringNullableFilter<"Project"> | string | null
+  activeNativeDeploymentId?: Prisma.StringNullableFilter<"Project"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Project"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Project"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Project"> | Date | string | null
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
+  activeNativeDeployment?: Prisma.XOR<Prisma.NativeDeploymentNullableScalarRelationFilter, Prisma.NativeDeploymentWhereInput> | null
   bundle?: Prisma.XOR<Prisma.BundlesNullableScalarRelationFilter, Prisma.BundlesWhereInput> | null
   deployHooks?: Prisma.DeployHookListRelationFilter
   firewallRules?: Prisma.FirewallRuleListRelationFilter
@@ -265,6 +304,19 @@ export type ProjectWhereUniqueInput = Prisma.AtLeast<{
   forms?: Prisma.FormListRelationFilter
   previewComments?: Prisma.PreviewCommentListRelationFilter
   lepoShipLocalConfig?: Prisma.XOR<Prisma.LepoShipLocalConfigNullableScalarRelationFilter, Prisma.LepoShipLocalConfigWhereInput> | null
+  nativeDeployments?: Prisma.NativeDeploymentListRelationFilter
+  nativeDomainConfigs?: Prisma.NativeDomainConfigListRelationFilter
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionListRelationFilter
+  nativeCacheEntries?: Prisma.NativeCacheEntryListRelationFilter
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayListRelationFilter
+  nativeCrashReports?: Prisma.NativeCrashReportListRelationFilter
+  nativeSourceMaps?: Prisma.NativeSourceMapListRelationFilter
+  nativePluginInstalls?: Prisma.NativePluginInstallationListRelationFilter
+  nativeDebugSessions?: Prisma.NativeDebugSessionListRelationFilter
+  nativeCloudTargets?: Prisma.NativeCloudTargetListRelationFilter
+  nativeWafEvents?: Prisma.NativeWafEventListRelationFilter
+  nativeWafRules?: Prisma.NativeWafRuleListRelationFilter
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticListRelationFilter
 }, "id">
 
 export type ProjectOrderByWithAggregationInput = {
@@ -274,6 +326,7 @@ export type ProjectOrderByWithAggregationInput = {
   organizationId?: Prisma.SortOrder
   vercelProjectId?: Prisma.SortOrderInput | Prisma.SortOrder
   vercelProjectName?: Prisma.SortOrderInput | Prisma.SortOrder
+  activeNativeDeploymentId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -292,6 +345,7 @@ export type ProjectScalarWhereWithAggregatesInput = {
   organizationId?: Prisma.UuidWithAggregatesFilter<"Project"> | string
   vercelProjectId?: Prisma.StringNullableWithAggregatesFilter<"Project"> | string | null
   vercelProjectName?: Prisma.StringNullableWithAggregatesFilter<"Project"> | string | null
+  activeNativeDeploymentId?: Prisma.StringNullableWithAggregatesFilter<"Project"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Project"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Project"> | Date | string
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Project"> | Date | string | null
@@ -307,6 +361,7 @@ export type ProjectCreateInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   organization: Prisma.OrganizationCreateNestedOneWithoutProjectsInput
+  activeNativeDeployment?: Prisma.NativeDeploymentCreateNestedOneWithoutActiveProjectsInput
   bundle?: Prisma.BundlesCreateNestedOneWithoutProjectInput
   deployHooks?: Prisma.DeployHookCreateNestedManyWithoutProjectInput
   firewallRules?: Prisma.FirewallRuleCreateNestedManyWithoutProjectInput
@@ -314,6 +369,19 @@ export type ProjectCreateInput = {
   forms?: Prisma.FormCreateNestedManyWithoutProjectInput
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutProjectInput
   lepoShipLocalConfig?: Prisma.LepoShipLocalConfigCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateInput = {
@@ -323,6 +391,7 @@ export type ProjectUncheckedCreateInput = {
   organizationId: string
   vercelProjectId?: string | null
   vercelProjectName?: string | null
+  activeNativeDeploymentId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
@@ -333,6 +402,19 @@ export type ProjectUncheckedCreateInput = {
   forms?: Prisma.FormUncheckedCreateNestedManyWithoutProjectInput
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutProjectInput
   lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUpdateInput = {
@@ -345,6 +427,7 @@ export type ProjectUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutProjectsNestedInput
+  activeNativeDeployment?: Prisma.NativeDeploymentUpdateOneWithoutActiveProjectsNestedInput
   bundle?: Prisma.BundlesUpdateOneWithoutProjectNestedInput
   deployHooks?: Prisma.DeployHookUpdateManyWithoutProjectNestedInput
   firewallRules?: Prisma.FirewallRuleUpdateManyWithoutProjectNestedInput
@@ -352,6 +435,19 @@ export type ProjectUpdateInput = {
   forms?: Prisma.FormUpdateManyWithoutProjectNestedInput
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutProjectNestedInput
   lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateInput = {
@@ -361,6 +457,7 @@ export type ProjectUncheckedUpdateInput = {
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activeNativeDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -371,6 +468,19 @@ export type ProjectUncheckedUpdateInput = {
   forms?: Prisma.FormUncheckedUpdateManyWithoutProjectNestedInput
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutProjectNestedInput
   lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateManyInput = {
@@ -380,6 +490,7 @@ export type ProjectCreateManyInput = {
   organizationId: string
   vercelProjectId?: string | null
   vercelProjectName?: string | null
+  activeNativeDeploymentId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
@@ -403,6 +514,7 @@ export type ProjectUncheckedUpdateManyInput = {
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activeNativeDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -425,6 +537,7 @@ export type ProjectCountOrderByAggregateInput = {
   organizationId?: Prisma.SortOrder
   vercelProjectId?: Prisma.SortOrder
   vercelProjectName?: Prisma.SortOrder
+  activeNativeDeploymentId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
@@ -437,6 +550,7 @@ export type ProjectMaxOrderByAggregateInput = {
   organizationId?: Prisma.SortOrder
   vercelProjectId?: Prisma.SortOrder
   vercelProjectName?: Prisma.SortOrder
+  activeNativeDeploymentId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
@@ -449,6 +563,7 @@ export type ProjectMinOrderByAggregateInput = {
   organizationId?: Prisma.SortOrder
   vercelProjectId?: Prisma.SortOrder
   vercelProjectName?: Prisma.SortOrder
+  activeNativeDeploymentId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
@@ -550,6 +665,230 @@ export type ProjectUpdateOneRequiredWithoutFirewallRulesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutFirewallRulesInput, Prisma.ProjectUpdateWithoutFirewallRulesInput>, Prisma.ProjectUncheckedUpdateWithoutFirewallRulesInput>
 }
 
+export type ProjectCreateNestedOneWithoutNativeDeploymentsInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutNativeDeploymentsInput, Prisma.ProjectUncheckedCreateWithoutNativeDeploymentsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutNativeDeploymentsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectCreateNestedManyWithoutActiveNativeDeploymentInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutActiveNativeDeploymentInput, Prisma.ProjectUncheckedCreateWithoutActiveNativeDeploymentInput> | Prisma.ProjectCreateWithoutActiveNativeDeploymentInput[] | Prisma.ProjectUncheckedCreateWithoutActiveNativeDeploymentInput[]
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutActiveNativeDeploymentInput | Prisma.ProjectCreateOrConnectWithoutActiveNativeDeploymentInput[]
+  createMany?: Prisma.ProjectCreateManyActiveNativeDeploymentInputEnvelope
+  connect?: Prisma.ProjectWhereUniqueInput | Prisma.ProjectWhereUniqueInput[]
+}
+
+export type ProjectUncheckedCreateNestedManyWithoutActiveNativeDeploymentInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutActiveNativeDeploymentInput, Prisma.ProjectUncheckedCreateWithoutActiveNativeDeploymentInput> | Prisma.ProjectCreateWithoutActiveNativeDeploymentInput[] | Prisma.ProjectUncheckedCreateWithoutActiveNativeDeploymentInput[]
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutActiveNativeDeploymentInput | Prisma.ProjectCreateOrConnectWithoutActiveNativeDeploymentInput[]
+  createMany?: Prisma.ProjectCreateManyActiveNativeDeploymentInputEnvelope
+  connect?: Prisma.ProjectWhereUniqueInput | Prisma.ProjectWhereUniqueInput[]
+}
+
+export type ProjectUpdateOneRequiredWithoutNativeDeploymentsNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutNativeDeploymentsInput, Prisma.ProjectUncheckedCreateWithoutNativeDeploymentsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutNativeDeploymentsInput
+  upsert?: Prisma.ProjectUpsertWithoutNativeDeploymentsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutNativeDeploymentsInput, Prisma.ProjectUpdateWithoutNativeDeploymentsInput>, Prisma.ProjectUncheckedUpdateWithoutNativeDeploymentsInput>
+}
+
+export type ProjectUpdateManyWithoutActiveNativeDeploymentNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutActiveNativeDeploymentInput, Prisma.ProjectUncheckedCreateWithoutActiveNativeDeploymentInput> | Prisma.ProjectCreateWithoutActiveNativeDeploymentInput[] | Prisma.ProjectUncheckedCreateWithoutActiveNativeDeploymentInput[]
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutActiveNativeDeploymentInput | Prisma.ProjectCreateOrConnectWithoutActiveNativeDeploymentInput[]
+  upsert?: Prisma.ProjectUpsertWithWhereUniqueWithoutActiveNativeDeploymentInput | Prisma.ProjectUpsertWithWhereUniqueWithoutActiveNativeDeploymentInput[]
+  createMany?: Prisma.ProjectCreateManyActiveNativeDeploymentInputEnvelope
+  set?: Prisma.ProjectWhereUniqueInput | Prisma.ProjectWhereUniqueInput[]
+  disconnect?: Prisma.ProjectWhereUniqueInput | Prisma.ProjectWhereUniqueInput[]
+  delete?: Prisma.ProjectWhereUniqueInput | Prisma.ProjectWhereUniqueInput[]
+  connect?: Prisma.ProjectWhereUniqueInput | Prisma.ProjectWhereUniqueInput[]
+  update?: Prisma.ProjectUpdateWithWhereUniqueWithoutActiveNativeDeploymentInput | Prisma.ProjectUpdateWithWhereUniqueWithoutActiveNativeDeploymentInput[]
+  updateMany?: Prisma.ProjectUpdateManyWithWhereWithoutActiveNativeDeploymentInput | Prisma.ProjectUpdateManyWithWhereWithoutActiveNativeDeploymentInput[]
+  deleteMany?: Prisma.ProjectScalarWhereInput | Prisma.ProjectScalarWhereInput[]
+}
+
+export type ProjectUncheckedUpdateManyWithoutActiveNativeDeploymentNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutActiveNativeDeploymentInput, Prisma.ProjectUncheckedCreateWithoutActiveNativeDeploymentInput> | Prisma.ProjectCreateWithoutActiveNativeDeploymentInput[] | Prisma.ProjectUncheckedCreateWithoutActiveNativeDeploymentInput[]
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutActiveNativeDeploymentInput | Prisma.ProjectCreateOrConnectWithoutActiveNativeDeploymentInput[]
+  upsert?: Prisma.ProjectUpsertWithWhereUniqueWithoutActiveNativeDeploymentInput | Prisma.ProjectUpsertWithWhereUniqueWithoutActiveNativeDeploymentInput[]
+  createMany?: Prisma.ProjectCreateManyActiveNativeDeploymentInputEnvelope
+  set?: Prisma.ProjectWhereUniqueInput | Prisma.ProjectWhereUniqueInput[]
+  disconnect?: Prisma.ProjectWhereUniqueInput | Prisma.ProjectWhereUniqueInput[]
+  delete?: Prisma.ProjectWhereUniqueInput | Prisma.ProjectWhereUniqueInput[]
+  connect?: Prisma.ProjectWhereUniqueInput | Prisma.ProjectWhereUniqueInput[]
+  update?: Prisma.ProjectUpdateWithWhereUniqueWithoutActiveNativeDeploymentInput | Prisma.ProjectUpdateWithWhereUniqueWithoutActiveNativeDeploymentInput[]
+  updateMany?: Prisma.ProjectUpdateManyWithWhereWithoutActiveNativeDeploymentInput | Prisma.ProjectUpdateManyWithWhereWithoutActiveNativeDeploymentInput[]
+  deleteMany?: Prisma.ProjectScalarWhereInput | Prisma.ProjectScalarWhereInput[]
+}
+
+export type ProjectCreateNestedOneWithoutNativeDomainConfigsInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutNativeDomainConfigsInput, Prisma.ProjectUncheckedCreateWithoutNativeDomainConfigsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutNativeDomainConfigsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneRequiredWithoutNativeDomainConfigsNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutNativeDomainConfigsInput, Prisma.ProjectUncheckedCreateWithoutNativeDomainConfigsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutNativeDomainConfigsInput
+  upsert?: Prisma.ProjectUpsertWithoutNativeDomainConfigsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutNativeDomainConfigsInput, Prisma.ProjectUpdateWithoutNativeDomainConfigsInput>, Prisma.ProjectUncheckedUpdateWithoutNativeDomainConfigsInput>
+}
+
+export type ProjectCreateNestedOneWithoutNativeEdgeFunctionsInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutNativeEdgeFunctionsInput, Prisma.ProjectUncheckedCreateWithoutNativeEdgeFunctionsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutNativeEdgeFunctionsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneRequiredWithoutNativeEdgeFunctionsNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutNativeEdgeFunctionsInput, Prisma.ProjectUncheckedCreateWithoutNativeEdgeFunctionsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutNativeEdgeFunctionsInput
+  upsert?: Prisma.ProjectUpsertWithoutNativeEdgeFunctionsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutNativeEdgeFunctionsInput, Prisma.ProjectUpdateWithoutNativeEdgeFunctionsInput>, Prisma.ProjectUncheckedUpdateWithoutNativeEdgeFunctionsInput>
+}
+
+export type ProjectCreateNestedOneWithoutNativeCacheEntriesInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutNativeCacheEntriesInput, Prisma.ProjectUncheckedCreateWithoutNativeCacheEntriesInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutNativeCacheEntriesInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneRequiredWithoutNativeCacheEntriesNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutNativeCacheEntriesInput, Prisma.ProjectUncheckedCreateWithoutNativeCacheEntriesInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutNativeCacheEntriesInput
+  upsert?: Prisma.ProjectUpsertWithoutNativeCacheEntriesInput
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutNativeCacheEntriesInput, Prisma.ProjectUpdateWithoutNativeCacheEntriesInput>, Prisma.ProjectUncheckedUpdateWithoutNativeCacheEntriesInput>
+}
+
+export type ProjectCreateNestedOneWithoutNativeReplaySessionsInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutNativeReplaySessionsInput, Prisma.ProjectUncheckedCreateWithoutNativeReplaySessionsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutNativeReplaySessionsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneRequiredWithoutNativeReplaySessionsNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutNativeReplaySessionsInput, Prisma.ProjectUncheckedCreateWithoutNativeReplaySessionsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutNativeReplaySessionsInput
+  upsert?: Prisma.ProjectUpsertWithoutNativeReplaySessionsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutNativeReplaySessionsInput, Prisma.ProjectUpdateWithoutNativeReplaySessionsInput>, Prisma.ProjectUncheckedUpdateWithoutNativeReplaySessionsInput>
+}
+
+export type ProjectCreateNestedOneWithoutNativeCrashReportsInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutNativeCrashReportsInput, Prisma.ProjectUncheckedCreateWithoutNativeCrashReportsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutNativeCrashReportsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneRequiredWithoutNativeCrashReportsNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutNativeCrashReportsInput, Prisma.ProjectUncheckedCreateWithoutNativeCrashReportsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutNativeCrashReportsInput
+  upsert?: Prisma.ProjectUpsertWithoutNativeCrashReportsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutNativeCrashReportsInput, Prisma.ProjectUpdateWithoutNativeCrashReportsInput>, Prisma.ProjectUncheckedUpdateWithoutNativeCrashReportsInput>
+}
+
+export type ProjectCreateNestedOneWithoutNativeSourceMapsInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutNativeSourceMapsInput, Prisma.ProjectUncheckedCreateWithoutNativeSourceMapsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutNativeSourceMapsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneRequiredWithoutNativeSourceMapsNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutNativeSourceMapsInput, Prisma.ProjectUncheckedCreateWithoutNativeSourceMapsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutNativeSourceMapsInput
+  upsert?: Prisma.ProjectUpsertWithoutNativeSourceMapsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutNativeSourceMapsInput, Prisma.ProjectUpdateWithoutNativeSourceMapsInput>, Prisma.ProjectUncheckedUpdateWithoutNativeSourceMapsInput>
+}
+
+export type ProjectCreateNestedOneWithoutNativePluginInstallsInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutNativePluginInstallsInput, Prisma.ProjectUncheckedCreateWithoutNativePluginInstallsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutNativePluginInstallsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneRequiredWithoutNativePluginInstallsNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutNativePluginInstallsInput, Prisma.ProjectUncheckedCreateWithoutNativePluginInstallsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutNativePluginInstallsInput
+  upsert?: Prisma.ProjectUpsertWithoutNativePluginInstallsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutNativePluginInstallsInput, Prisma.ProjectUpdateWithoutNativePluginInstallsInput>, Prisma.ProjectUncheckedUpdateWithoutNativePluginInstallsInput>
+}
+
+export type ProjectCreateNestedOneWithoutNativeDebugSessionsInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutNativeDebugSessionsInput, Prisma.ProjectUncheckedCreateWithoutNativeDebugSessionsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutNativeDebugSessionsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneRequiredWithoutNativeDebugSessionsNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutNativeDebugSessionsInput, Prisma.ProjectUncheckedCreateWithoutNativeDebugSessionsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutNativeDebugSessionsInput
+  upsert?: Prisma.ProjectUpsertWithoutNativeDebugSessionsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutNativeDebugSessionsInput, Prisma.ProjectUpdateWithoutNativeDebugSessionsInput>, Prisma.ProjectUncheckedUpdateWithoutNativeDebugSessionsInput>
+}
+
+export type ProjectCreateNestedOneWithoutNativeCloudTargetsInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutNativeCloudTargetsInput, Prisma.ProjectUncheckedCreateWithoutNativeCloudTargetsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutNativeCloudTargetsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneRequiredWithoutNativeCloudTargetsNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutNativeCloudTargetsInput, Prisma.ProjectUncheckedCreateWithoutNativeCloudTargetsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutNativeCloudTargetsInput
+  upsert?: Prisma.ProjectUpsertWithoutNativeCloudTargetsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutNativeCloudTargetsInput, Prisma.ProjectUpdateWithoutNativeCloudTargetsInput>, Prisma.ProjectUncheckedUpdateWithoutNativeCloudTargetsInput>
+}
+
+export type ProjectCreateNestedOneWithoutNativeWafEventsInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutNativeWafEventsInput, Prisma.ProjectUncheckedCreateWithoutNativeWafEventsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutNativeWafEventsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneRequiredWithoutNativeWafEventsNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutNativeWafEventsInput, Prisma.ProjectUncheckedCreateWithoutNativeWafEventsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutNativeWafEventsInput
+  upsert?: Prisma.ProjectUpsertWithoutNativeWafEventsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutNativeWafEventsInput, Prisma.ProjectUpdateWithoutNativeWafEventsInput>, Prisma.ProjectUncheckedUpdateWithoutNativeWafEventsInput>
+}
+
+export type ProjectCreateNestedOneWithoutNativeWafRulesInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutNativeWafRulesInput, Prisma.ProjectUncheckedCreateWithoutNativeWafRulesInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutNativeWafRulesInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneRequiredWithoutNativeWafRulesNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutNativeWafRulesInput, Prisma.ProjectUncheckedCreateWithoutNativeWafRulesInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutNativeWafRulesInput
+  upsert?: Prisma.ProjectUpsertWithoutNativeWafRulesInput
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutNativeWafRulesInput, Prisma.ProjectUpdateWithoutNativeWafRulesInput>, Prisma.ProjectUncheckedUpdateWithoutNativeWafRulesInput>
+}
+
+export type ProjectCreateNestedOneWithoutNativeAiDiagnosticsInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutNativeAiDiagnosticsInput, Prisma.ProjectUncheckedCreateWithoutNativeAiDiagnosticsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutNativeAiDiagnosticsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneRequiredWithoutNativeAiDiagnosticsNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutNativeAiDiagnosticsInput, Prisma.ProjectUncheckedCreateWithoutNativeAiDiagnosticsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutNativeAiDiagnosticsInput
+  upsert?: Prisma.ProjectUpsertWithoutNativeAiDiagnosticsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutNativeAiDiagnosticsInput, Prisma.ProjectUpdateWithoutNativeAiDiagnosticsInput>, Prisma.ProjectUncheckedUpdateWithoutNativeAiDiagnosticsInput>
+}
+
 export type ProjectCreateNestedOneWithoutCronJobsInput = {
   create?: Prisma.XOR<Prisma.ProjectCreateWithoutCronJobsInput, Prisma.ProjectUncheckedCreateWithoutCronJobsInput>
   connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutCronJobsInput
@@ -615,6 +954,7 @@ export type ProjectCreateWithoutOrganizationInput = {
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
+  activeNativeDeployment?: Prisma.NativeDeploymentCreateNestedOneWithoutActiveProjectsInput
   bundle?: Prisma.BundlesCreateNestedOneWithoutProjectInput
   deployHooks?: Prisma.DeployHookCreateNestedManyWithoutProjectInput
   firewallRules?: Prisma.FirewallRuleCreateNestedManyWithoutProjectInput
@@ -622,6 +962,19 @@ export type ProjectCreateWithoutOrganizationInput = {
   forms?: Prisma.FormCreateNestedManyWithoutProjectInput
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutProjectInput
   lepoShipLocalConfig?: Prisma.LepoShipLocalConfigCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutOrganizationInput = {
@@ -630,6 +983,7 @@ export type ProjectUncheckedCreateWithoutOrganizationInput = {
   description?: string | null
   vercelProjectId?: string | null
   vercelProjectName?: string | null
+  activeNativeDeploymentId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
@@ -640,6 +994,19 @@ export type ProjectUncheckedCreateWithoutOrganizationInput = {
   forms?: Prisma.FormUncheckedCreateNestedManyWithoutProjectInput
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutProjectInput
   lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutOrganizationInput = {
@@ -678,6 +1045,7 @@ export type ProjectScalarWhereInput = {
   organizationId?: Prisma.UuidFilter<"Project"> | string
   vercelProjectId?: Prisma.StringNullableFilter<"Project"> | string | null
   vercelProjectName?: Prisma.StringNullableFilter<"Project"> | string | null
+  activeNativeDeploymentId?: Prisma.StringNullableFilter<"Project"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Project"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Project"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Project"> | Date | string | null
@@ -693,12 +1061,26 @@ export type ProjectCreateWithoutBundleInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   organization: Prisma.OrganizationCreateNestedOneWithoutProjectsInput
+  activeNativeDeployment?: Prisma.NativeDeploymentCreateNestedOneWithoutActiveProjectsInput
   deployHooks?: Prisma.DeployHookCreateNestedManyWithoutProjectInput
   firewallRules?: Prisma.FirewallRuleCreateNestedManyWithoutProjectInput
   cronJobs?: Prisma.CronJobCreateNestedManyWithoutProjectInput
   forms?: Prisma.FormCreateNestedManyWithoutProjectInput
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutProjectInput
   lepoShipLocalConfig?: Prisma.LepoShipLocalConfigCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutBundleInput = {
@@ -708,6 +1090,7 @@ export type ProjectUncheckedCreateWithoutBundleInput = {
   organizationId: string
   vercelProjectId?: string | null
   vercelProjectName?: string | null
+  activeNativeDeploymentId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
@@ -717,6 +1100,19 @@ export type ProjectUncheckedCreateWithoutBundleInput = {
   forms?: Prisma.FormUncheckedCreateNestedManyWithoutProjectInput
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutProjectInput
   lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutBundleInput = {
@@ -745,12 +1141,26 @@ export type ProjectUpdateWithoutBundleInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutProjectsNestedInput
+  activeNativeDeployment?: Prisma.NativeDeploymentUpdateOneWithoutActiveProjectsNestedInput
   deployHooks?: Prisma.DeployHookUpdateManyWithoutProjectNestedInput
   firewallRules?: Prisma.FirewallRuleUpdateManyWithoutProjectNestedInput
   cronJobs?: Prisma.CronJobUpdateManyWithoutProjectNestedInput
   forms?: Prisma.FormUpdateManyWithoutProjectNestedInput
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutProjectNestedInput
   lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutBundleInput = {
@@ -760,6 +1170,7 @@ export type ProjectUncheckedUpdateWithoutBundleInput = {
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activeNativeDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -769,6 +1180,19 @@ export type ProjectUncheckedUpdateWithoutBundleInput = {
   forms?: Prisma.FormUncheckedUpdateManyWithoutProjectNestedInput
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutProjectNestedInput
   lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutDeployHooksInput = {
@@ -781,12 +1205,26 @@ export type ProjectCreateWithoutDeployHooksInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   organization: Prisma.OrganizationCreateNestedOneWithoutProjectsInput
+  activeNativeDeployment?: Prisma.NativeDeploymentCreateNestedOneWithoutActiveProjectsInput
   bundle?: Prisma.BundlesCreateNestedOneWithoutProjectInput
   firewallRules?: Prisma.FirewallRuleCreateNestedManyWithoutProjectInput
   cronJobs?: Prisma.CronJobCreateNestedManyWithoutProjectInput
   forms?: Prisma.FormCreateNestedManyWithoutProjectInput
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutProjectInput
   lepoShipLocalConfig?: Prisma.LepoShipLocalConfigCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutDeployHooksInput = {
@@ -796,6 +1234,7 @@ export type ProjectUncheckedCreateWithoutDeployHooksInput = {
   organizationId: string
   vercelProjectId?: string | null
   vercelProjectName?: string | null
+  activeNativeDeploymentId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
@@ -805,6 +1244,19 @@ export type ProjectUncheckedCreateWithoutDeployHooksInput = {
   forms?: Prisma.FormUncheckedCreateNestedManyWithoutProjectInput
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutProjectInput
   lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutDeployHooksInput = {
@@ -833,12 +1285,26 @@ export type ProjectUpdateWithoutDeployHooksInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutProjectsNestedInput
+  activeNativeDeployment?: Prisma.NativeDeploymentUpdateOneWithoutActiveProjectsNestedInput
   bundle?: Prisma.BundlesUpdateOneWithoutProjectNestedInput
   firewallRules?: Prisma.FirewallRuleUpdateManyWithoutProjectNestedInput
   cronJobs?: Prisma.CronJobUpdateManyWithoutProjectNestedInput
   forms?: Prisma.FormUpdateManyWithoutProjectNestedInput
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutProjectNestedInput
   lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutDeployHooksInput = {
@@ -848,6 +1314,7 @@ export type ProjectUncheckedUpdateWithoutDeployHooksInput = {
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activeNativeDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -857,6 +1324,19 @@ export type ProjectUncheckedUpdateWithoutDeployHooksInput = {
   forms?: Prisma.FormUncheckedUpdateManyWithoutProjectNestedInput
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutProjectNestedInput
   lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutFirewallRulesInput = {
@@ -869,12 +1349,26 @@ export type ProjectCreateWithoutFirewallRulesInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   organization: Prisma.OrganizationCreateNestedOneWithoutProjectsInput
+  activeNativeDeployment?: Prisma.NativeDeploymentCreateNestedOneWithoutActiveProjectsInput
   bundle?: Prisma.BundlesCreateNestedOneWithoutProjectInput
   deployHooks?: Prisma.DeployHookCreateNestedManyWithoutProjectInput
   cronJobs?: Prisma.CronJobCreateNestedManyWithoutProjectInput
   forms?: Prisma.FormCreateNestedManyWithoutProjectInput
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutProjectInput
   lepoShipLocalConfig?: Prisma.LepoShipLocalConfigCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutFirewallRulesInput = {
@@ -884,6 +1378,7 @@ export type ProjectUncheckedCreateWithoutFirewallRulesInput = {
   organizationId: string
   vercelProjectId?: string | null
   vercelProjectName?: string | null
+  activeNativeDeploymentId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
@@ -893,6 +1388,19 @@ export type ProjectUncheckedCreateWithoutFirewallRulesInput = {
   forms?: Prisma.FormUncheckedCreateNestedManyWithoutProjectInput
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutProjectInput
   lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutFirewallRulesInput = {
@@ -921,12 +1429,26 @@ export type ProjectUpdateWithoutFirewallRulesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutProjectsNestedInput
+  activeNativeDeployment?: Prisma.NativeDeploymentUpdateOneWithoutActiveProjectsNestedInput
   bundle?: Prisma.BundlesUpdateOneWithoutProjectNestedInput
   deployHooks?: Prisma.DeployHookUpdateManyWithoutProjectNestedInput
   cronJobs?: Prisma.CronJobUpdateManyWithoutProjectNestedInput
   forms?: Prisma.FormUpdateManyWithoutProjectNestedInput
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutProjectNestedInput
   lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutFirewallRulesInput = {
@@ -936,6 +1458,7 @@ export type ProjectUncheckedUpdateWithoutFirewallRulesInput = {
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activeNativeDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -945,9 +1468,91 @@ export type ProjectUncheckedUpdateWithoutFirewallRulesInput = {
   forms?: Prisma.FormUncheckedUpdateManyWithoutProjectNestedInput
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutProjectNestedInput
   lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedUpdateManyWithoutProjectNestedInput
 }
 
-export type ProjectCreateWithoutCronJobsInput = {
+export type ProjectCreateWithoutNativeDeploymentsInput = {
+  id: string
+  name: string
+  description?: string | null
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  organization: Prisma.OrganizationCreateNestedOneWithoutProjectsInput
+  activeNativeDeployment?: Prisma.NativeDeploymentCreateNestedOneWithoutActiveProjectsInput
+  bundle?: Prisma.BundlesCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigCreateNestedOneWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutNativeDeploymentsInput = {
+  id: string
+  name: string
+  description?: string | null
+  organizationId: string
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  activeNativeDeploymentId?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  bundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookUncheckedCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleUncheckedCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobUncheckedCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormUncheckedCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedCreateNestedOneWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutNativeDeploymentsInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutNativeDeploymentsInput, Prisma.ProjectUncheckedCreateWithoutNativeDeploymentsInput>
+}
+
+export type ProjectCreateWithoutActiveNativeDeploymentInput = {
   id: string
   name: string
   description?: string | null
@@ -960,12 +1565,26 @@ export type ProjectCreateWithoutCronJobsInput = {
   bundle?: Prisma.BundlesCreateNestedOneWithoutProjectInput
   deployHooks?: Prisma.DeployHookCreateNestedManyWithoutProjectInput
   firewallRules?: Prisma.FirewallRuleCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobCreateNestedManyWithoutProjectInput
   forms?: Prisma.FormCreateNestedManyWithoutProjectInput
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutProjectInput
   lepoShipLocalConfig?: Prisma.LepoShipLocalConfigCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticCreateNestedManyWithoutProjectInput
 }
 
-export type ProjectUncheckedCreateWithoutCronJobsInput = {
+export type ProjectUncheckedCreateWithoutActiveNativeDeploymentInput = {
   id: string
   name: string
   description?: string | null
@@ -978,9 +1597,1916 @@ export type ProjectUncheckedCreateWithoutCronJobsInput = {
   bundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutProjectInput
   deployHooks?: Prisma.DeployHookUncheckedCreateNestedManyWithoutProjectInput
   firewallRules?: Prisma.FirewallRuleUncheckedCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobUncheckedCreateNestedManyWithoutProjectInput
   forms?: Prisma.FormUncheckedCreateNestedManyWithoutProjectInput
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutProjectInput
   lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutActiveNativeDeploymentInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutActiveNativeDeploymentInput, Prisma.ProjectUncheckedCreateWithoutActiveNativeDeploymentInput>
+}
+
+export type ProjectCreateManyActiveNativeDeploymentInputEnvelope = {
+  data: Prisma.ProjectCreateManyActiveNativeDeploymentInput | Prisma.ProjectCreateManyActiveNativeDeploymentInput[]
+  skipDuplicates?: boolean
+}
+
+export type ProjectUpsertWithoutNativeDeploymentsInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutNativeDeploymentsInput, Prisma.ProjectUncheckedUpdateWithoutNativeDeploymentsInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutNativeDeploymentsInput, Prisma.ProjectUncheckedCreateWithoutNativeDeploymentsInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutNativeDeploymentsInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutNativeDeploymentsInput, Prisma.ProjectUncheckedUpdateWithoutNativeDeploymentsInput>
+}
+
+export type ProjectUpdateWithoutNativeDeploymentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutProjectsNestedInput
+  activeNativeDeployment?: Prisma.NativeDeploymentUpdateOneWithoutActiveProjectsNestedInput
+  bundle?: Prisma.BundlesUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUpdateOneWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutNativeDeploymentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activeNativeDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bundle?: Prisma.BundlesUncheckedUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUncheckedUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUncheckedUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUncheckedUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUncheckedUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedUpdateOneWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUpsertWithWhereUniqueWithoutActiveNativeDeploymentInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutActiveNativeDeploymentInput, Prisma.ProjectUncheckedUpdateWithoutActiveNativeDeploymentInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutActiveNativeDeploymentInput, Prisma.ProjectUncheckedCreateWithoutActiveNativeDeploymentInput>
+}
+
+export type ProjectUpdateWithWhereUniqueWithoutActiveNativeDeploymentInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutActiveNativeDeploymentInput, Prisma.ProjectUncheckedUpdateWithoutActiveNativeDeploymentInput>
+}
+
+export type ProjectUpdateManyWithWhereWithoutActiveNativeDeploymentInput = {
+  where: Prisma.ProjectScalarWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateManyMutationInput, Prisma.ProjectUncheckedUpdateManyWithoutActiveNativeDeploymentInput>
+}
+
+export type ProjectCreateWithoutNativeDomainConfigsInput = {
+  id: string
+  name: string
+  description?: string | null
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  organization: Prisma.OrganizationCreateNestedOneWithoutProjectsInput
+  activeNativeDeployment?: Prisma.NativeDeploymentCreateNestedOneWithoutActiveProjectsInput
+  bundle?: Prisma.BundlesCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutNativeDomainConfigsInput = {
+  id: string
+  name: string
+  description?: string | null
+  organizationId: string
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  activeNativeDeploymentId?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  bundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookUncheckedCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleUncheckedCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobUncheckedCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormUncheckedCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutNativeDomainConfigsInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutNativeDomainConfigsInput, Prisma.ProjectUncheckedCreateWithoutNativeDomainConfigsInput>
+}
+
+export type ProjectUpsertWithoutNativeDomainConfigsInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutNativeDomainConfigsInput, Prisma.ProjectUncheckedUpdateWithoutNativeDomainConfigsInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutNativeDomainConfigsInput, Prisma.ProjectUncheckedCreateWithoutNativeDomainConfigsInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutNativeDomainConfigsInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutNativeDomainConfigsInput, Prisma.ProjectUncheckedUpdateWithoutNativeDomainConfigsInput>
+}
+
+export type ProjectUpdateWithoutNativeDomainConfigsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutProjectsNestedInput
+  activeNativeDeployment?: Prisma.NativeDeploymentUpdateOneWithoutActiveProjectsNestedInput
+  bundle?: Prisma.BundlesUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutNativeDomainConfigsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activeNativeDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bundle?: Prisma.BundlesUncheckedUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUncheckedUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUncheckedUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUncheckedUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUncheckedUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutNativeEdgeFunctionsInput = {
+  id: string
+  name: string
+  description?: string | null
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  organization: Prisma.OrganizationCreateNestedOneWithoutProjectsInput
+  activeNativeDeployment?: Prisma.NativeDeploymentCreateNestedOneWithoutActiveProjectsInput
+  bundle?: Prisma.BundlesCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutNativeEdgeFunctionsInput = {
+  id: string
+  name: string
+  description?: string | null
+  organizationId: string
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  activeNativeDeploymentId?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  bundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookUncheckedCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleUncheckedCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobUncheckedCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormUncheckedCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutNativeEdgeFunctionsInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutNativeEdgeFunctionsInput, Prisma.ProjectUncheckedCreateWithoutNativeEdgeFunctionsInput>
+}
+
+export type ProjectUpsertWithoutNativeEdgeFunctionsInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutNativeEdgeFunctionsInput, Prisma.ProjectUncheckedUpdateWithoutNativeEdgeFunctionsInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutNativeEdgeFunctionsInput, Prisma.ProjectUncheckedCreateWithoutNativeEdgeFunctionsInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutNativeEdgeFunctionsInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutNativeEdgeFunctionsInput, Prisma.ProjectUncheckedUpdateWithoutNativeEdgeFunctionsInput>
+}
+
+export type ProjectUpdateWithoutNativeEdgeFunctionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutProjectsNestedInput
+  activeNativeDeployment?: Prisma.NativeDeploymentUpdateOneWithoutActiveProjectsNestedInput
+  bundle?: Prisma.BundlesUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutNativeEdgeFunctionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activeNativeDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bundle?: Prisma.BundlesUncheckedUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUncheckedUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUncheckedUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUncheckedUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUncheckedUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutNativeCacheEntriesInput = {
+  id: string
+  name: string
+  description?: string | null
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  organization: Prisma.OrganizationCreateNestedOneWithoutProjectsInput
+  activeNativeDeployment?: Prisma.NativeDeploymentCreateNestedOneWithoutActiveProjectsInput
+  bundle?: Prisma.BundlesCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutNativeCacheEntriesInput = {
+  id: string
+  name: string
+  description?: string | null
+  organizationId: string
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  activeNativeDeploymentId?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  bundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookUncheckedCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleUncheckedCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobUncheckedCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormUncheckedCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutNativeCacheEntriesInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutNativeCacheEntriesInput, Prisma.ProjectUncheckedCreateWithoutNativeCacheEntriesInput>
+}
+
+export type ProjectUpsertWithoutNativeCacheEntriesInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutNativeCacheEntriesInput, Prisma.ProjectUncheckedUpdateWithoutNativeCacheEntriesInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutNativeCacheEntriesInput, Prisma.ProjectUncheckedCreateWithoutNativeCacheEntriesInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutNativeCacheEntriesInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutNativeCacheEntriesInput, Prisma.ProjectUncheckedUpdateWithoutNativeCacheEntriesInput>
+}
+
+export type ProjectUpdateWithoutNativeCacheEntriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutProjectsNestedInput
+  activeNativeDeployment?: Prisma.NativeDeploymentUpdateOneWithoutActiveProjectsNestedInput
+  bundle?: Prisma.BundlesUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutNativeCacheEntriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activeNativeDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bundle?: Prisma.BundlesUncheckedUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUncheckedUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUncheckedUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUncheckedUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUncheckedUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutNativeReplaySessionsInput = {
+  id: string
+  name: string
+  description?: string | null
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  organization: Prisma.OrganizationCreateNestedOneWithoutProjectsInput
+  activeNativeDeployment?: Prisma.NativeDeploymentCreateNestedOneWithoutActiveProjectsInput
+  bundle?: Prisma.BundlesCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutNativeReplaySessionsInput = {
+  id: string
+  name: string
+  description?: string | null
+  organizationId: string
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  activeNativeDeploymentId?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  bundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookUncheckedCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleUncheckedCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobUncheckedCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormUncheckedCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutNativeReplaySessionsInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutNativeReplaySessionsInput, Prisma.ProjectUncheckedCreateWithoutNativeReplaySessionsInput>
+}
+
+export type ProjectUpsertWithoutNativeReplaySessionsInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutNativeReplaySessionsInput, Prisma.ProjectUncheckedUpdateWithoutNativeReplaySessionsInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutNativeReplaySessionsInput, Prisma.ProjectUncheckedCreateWithoutNativeReplaySessionsInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutNativeReplaySessionsInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutNativeReplaySessionsInput, Prisma.ProjectUncheckedUpdateWithoutNativeReplaySessionsInput>
+}
+
+export type ProjectUpdateWithoutNativeReplaySessionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutProjectsNestedInput
+  activeNativeDeployment?: Prisma.NativeDeploymentUpdateOneWithoutActiveProjectsNestedInput
+  bundle?: Prisma.BundlesUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutNativeReplaySessionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activeNativeDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bundle?: Prisma.BundlesUncheckedUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUncheckedUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUncheckedUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUncheckedUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUncheckedUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutNativeCrashReportsInput = {
+  id: string
+  name: string
+  description?: string | null
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  organization: Prisma.OrganizationCreateNestedOneWithoutProjectsInput
+  activeNativeDeployment?: Prisma.NativeDeploymentCreateNestedOneWithoutActiveProjectsInput
+  bundle?: Prisma.BundlesCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutNativeCrashReportsInput = {
+  id: string
+  name: string
+  description?: string | null
+  organizationId: string
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  activeNativeDeploymentId?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  bundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookUncheckedCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleUncheckedCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobUncheckedCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormUncheckedCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutNativeCrashReportsInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutNativeCrashReportsInput, Prisma.ProjectUncheckedCreateWithoutNativeCrashReportsInput>
+}
+
+export type ProjectUpsertWithoutNativeCrashReportsInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutNativeCrashReportsInput, Prisma.ProjectUncheckedUpdateWithoutNativeCrashReportsInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutNativeCrashReportsInput, Prisma.ProjectUncheckedCreateWithoutNativeCrashReportsInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutNativeCrashReportsInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutNativeCrashReportsInput, Prisma.ProjectUncheckedUpdateWithoutNativeCrashReportsInput>
+}
+
+export type ProjectUpdateWithoutNativeCrashReportsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutProjectsNestedInput
+  activeNativeDeployment?: Prisma.NativeDeploymentUpdateOneWithoutActiveProjectsNestedInput
+  bundle?: Prisma.BundlesUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutNativeCrashReportsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activeNativeDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bundle?: Prisma.BundlesUncheckedUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUncheckedUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUncheckedUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUncheckedUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUncheckedUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutNativeSourceMapsInput = {
+  id: string
+  name: string
+  description?: string | null
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  organization: Prisma.OrganizationCreateNestedOneWithoutProjectsInput
+  activeNativeDeployment?: Prisma.NativeDeploymentCreateNestedOneWithoutActiveProjectsInput
+  bundle?: Prisma.BundlesCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutNativeSourceMapsInput = {
+  id: string
+  name: string
+  description?: string | null
+  organizationId: string
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  activeNativeDeploymentId?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  bundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookUncheckedCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleUncheckedCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobUncheckedCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormUncheckedCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutNativeSourceMapsInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutNativeSourceMapsInput, Prisma.ProjectUncheckedCreateWithoutNativeSourceMapsInput>
+}
+
+export type ProjectUpsertWithoutNativeSourceMapsInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutNativeSourceMapsInput, Prisma.ProjectUncheckedUpdateWithoutNativeSourceMapsInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutNativeSourceMapsInput, Prisma.ProjectUncheckedCreateWithoutNativeSourceMapsInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutNativeSourceMapsInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutNativeSourceMapsInput, Prisma.ProjectUncheckedUpdateWithoutNativeSourceMapsInput>
+}
+
+export type ProjectUpdateWithoutNativeSourceMapsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutProjectsNestedInput
+  activeNativeDeployment?: Prisma.NativeDeploymentUpdateOneWithoutActiveProjectsNestedInput
+  bundle?: Prisma.BundlesUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutNativeSourceMapsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activeNativeDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bundle?: Prisma.BundlesUncheckedUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUncheckedUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUncheckedUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUncheckedUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUncheckedUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutNativePluginInstallsInput = {
+  id: string
+  name: string
+  description?: string | null
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  organization: Prisma.OrganizationCreateNestedOneWithoutProjectsInput
+  activeNativeDeployment?: Prisma.NativeDeploymentCreateNestedOneWithoutActiveProjectsInput
+  bundle?: Prisma.BundlesCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutNativePluginInstallsInput = {
+  id: string
+  name: string
+  description?: string | null
+  organizationId: string
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  activeNativeDeploymentId?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  bundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookUncheckedCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleUncheckedCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobUncheckedCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormUncheckedCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutNativePluginInstallsInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutNativePluginInstallsInput, Prisma.ProjectUncheckedCreateWithoutNativePluginInstallsInput>
+}
+
+export type ProjectUpsertWithoutNativePluginInstallsInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutNativePluginInstallsInput, Prisma.ProjectUncheckedUpdateWithoutNativePluginInstallsInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutNativePluginInstallsInput, Prisma.ProjectUncheckedCreateWithoutNativePluginInstallsInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutNativePluginInstallsInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutNativePluginInstallsInput, Prisma.ProjectUncheckedUpdateWithoutNativePluginInstallsInput>
+}
+
+export type ProjectUpdateWithoutNativePluginInstallsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutProjectsNestedInput
+  activeNativeDeployment?: Prisma.NativeDeploymentUpdateOneWithoutActiveProjectsNestedInput
+  bundle?: Prisma.BundlesUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutNativePluginInstallsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activeNativeDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bundle?: Prisma.BundlesUncheckedUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUncheckedUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUncheckedUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUncheckedUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUncheckedUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutNativeDebugSessionsInput = {
+  id: string
+  name: string
+  description?: string | null
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  organization: Prisma.OrganizationCreateNestedOneWithoutProjectsInput
+  activeNativeDeployment?: Prisma.NativeDeploymentCreateNestedOneWithoutActiveProjectsInput
+  bundle?: Prisma.BundlesCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutNativeDebugSessionsInput = {
+  id: string
+  name: string
+  description?: string | null
+  organizationId: string
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  activeNativeDeploymentId?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  bundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookUncheckedCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleUncheckedCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobUncheckedCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormUncheckedCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutNativeDebugSessionsInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutNativeDebugSessionsInput, Prisma.ProjectUncheckedCreateWithoutNativeDebugSessionsInput>
+}
+
+export type ProjectUpsertWithoutNativeDebugSessionsInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutNativeDebugSessionsInput, Prisma.ProjectUncheckedUpdateWithoutNativeDebugSessionsInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutNativeDebugSessionsInput, Prisma.ProjectUncheckedCreateWithoutNativeDebugSessionsInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutNativeDebugSessionsInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutNativeDebugSessionsInput, Prisma.ProjectUncheckedUpdateWithoutNativeDebugSessionsInput>
+}
+
+export type ProjectUpdateWithoutNativeDebugSessionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutProjectsNestedInput
+  activeNativeDeployment?: Prisma.NativeDeploymentUpdateOneWithoutActiveProjectsNestedInput
+  bundle?: Prisma.BundlesUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutNativeDebugSessionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activeNativeDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bundle?: Prisma.BundlesUncheckedUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUncheckedUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUncheckedUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUncheckedUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUncheckedUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutNativeCloudTargetsInput = {
+  id: string
+  name: string
+  description?: string | null
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  organization: Prisma.OrganizationCreateNestedOneWithoutProjectsInput
+  activeNativeDeployment?: Prisma.NativeDeploymentCreateNestedOneWithoutActiveProjectsInput
+  bundle?: Prisma.BundlesCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutNativeCloudTargetsInput = {
+  id: string
+  name: string
+  description?: string | null
+  organizationId: string
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  activeNativeDeploymentId?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  bundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookUncheckedCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleUncheckedCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobUncheckedCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormUncheckedCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutNativeCloudTargetsInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutNativeCloudTargetsInput, Prisma.ProjectUncheckedCreateWithoutNativeCloudTargetsInput>
+}
+
+export type ProjectUpsertWithoutNativeCloudTargetsInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutNativeCloudTargetsInput, Prisma.ProjectUncheckedUpdateWithoutNativeCloudTargetsInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutNativeCloudTargetsInput, Prisma.ProjectUncheckedCreateWithoutNativeCloudTargetsInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutNativeCloudTargetsInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutNativeCloudTargetsInput, Prisma.ProjectUncheckedUpdateWithoutNativeCloudTargetsInput>
+}
+
+export type ProjectUpdateWithoutNativeCloudTargetsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutProjectsNestedInput
+  activeNativeDeployment?: Prisma.NativeDeploymentUpdateOneWithoutActiveProjectsNestedInput
+  bundle?: Prisma.BundlesUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutNativeCloudTargetsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activeNativeDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bundle?: Prisma.BundlesUncheckedUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUncheckedUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUncheckedUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUncheckedUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUncheckedUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutNativeWafEventsInput = {
+  id: string
+  name: string
+  description?: string | null
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  organization: Prisma.OrganizationCreateNestedOneWithoutProjectsInput
+  activeNativeDeployment?: Prisma.NativeDeploymentCreateNestedOneWithoutActiveProjectsInput
+  bundle?: Prisma.BundlesCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutNativeWafEventsInput = {
+  id: string
+  name: string
+  description?: string | null
+  organizationId: string
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  activeNativeDeploymentId?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  bundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookUncheckedCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleUncheckedCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobUncheckedCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormUncheckedCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutNativeWafEventsInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutNativeWafEventsInput, Prisma.ProjectUncheckedCreateWithoutNativeWafEventsInput>
+}
+
+export type ProjectUpsertWithoutNativeWafEventsInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutNativeWafEventsInput, Prisma.ProjectUncheckedUpdateWithoutNativeWafEventsInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutNativeWafEventsInput, Prisma.ProjectUncheckedCreateWithoutNativeWafEventsInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutNativeWafEventsInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutNativeWafEventsInput, Prisma.ProjectUncheckedUpdateWithoutNativeWafEventsInput>
+}
+
+export type ProjectUpdateWithoutNativeWafEventsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutProjectsNestedInput
+  activeNativeDeployment?: Prisma.NativeDeploymentUpdateOneWithoutActiveProjectsNestedInput
+  bundle?: Prisma.BundlesUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutNativeWafEventsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activeNativeDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bundle?: Prisma.BundlesUncheckedUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUncheckedUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUncheckedUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUncheckedUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUncheckedUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutNativeWafRulesInput = {
+  id: string
+  name: string
+  description?: string | null
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  organization: Prisma.OrganizationCreateNestedOneWithoutProjectsInput
+  activeNativeDeployment?: Prisma.NativeDeploymentCreateNestedOneWithoutActiveProjectsInput
+  bundle?: Prisma.BundlesCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutNativeWafRulesInput = {
+  id: string
+  name: string
+  description?: string | null
+  organizationId: string
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  activeNativeDeploymentId?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  bundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookUncheckedCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleUncheckedCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobUncheckedCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormUncheckedCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutNativeWafRulesInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutNativeWafRulesInput, Prisma.ProjectUncheckedCreateWithoutNativeWafRulesInput>
+}
+
+export type ProjectUpsertWithoutNativeWafRulesInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutNativeWafRulesInput, Prisma.ProjectUncheckedUpdateWithoutNativeWafRulesInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutNativeWafRulesInput, Prisma.ProjectUncheckedCreateWithoutNativeWafRulesInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutNativeWafRulesInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutNativeWafRulesInput, Prisma.ProjectUncheckedUpdateWithoutNativeWafRulesInput>
+}
+
+export type ProjectUpdateWithoutNativeWafRulesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutProjectsNestedInput
+  activeNativeDeployment?: Prisma.NativeDeploymentUpdateOneWithoutActiveProjectsNestedInput
+  bundle?: Prisma.BundlesUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutNativeWafRulesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activeNativeDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bundle?: Prisma.BundlesUncheckedUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUncheckedUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUncheckedUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUncheckedUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUncheckedUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutNativeAiDiagnosticsInput = {
+  id: string
+  name: string
+  description?: string | null
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  organization: Prisma.OrganizationCreateNestedOneWithoutProjectsInput
+  activeNativeDeployment?: Prisma.NativeDeploymentCreateNestedOneWithoutActiveProjectsInput
+  bundle?: Prisma.BundlesCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutNativeAiDiagnosticsInput = {
+  id: string
+  name: string
+  description?: string | null
+  organizationId: string
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  activeNativeDeploymentId?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  bundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookUncheckedCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleUncheckedCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobUncheckedCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormUncheckedCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutNativeAiDiagnosticsInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutNativeAiDiagnosticsInput, Prisma.ProjectUncheckedCreateWithoutNativeAiDiagnosticsInput>
+}
+
+export type ProjectUpsertWithoutNativeAiDiagnosticsInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutNativeAiDiagnosticsInput, Prisma.ProjectUncheckedUpdateWithoutNativeAiDiagnosticsInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutNativeAiDiagnosticsInput, Prisma.ProjectUncheckedCreateWithoutNativeAiDiagnosticsInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutNativeAiDiagnosticsInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutNativeAiDiagnosticsInput, Prisma.ProjectUncheckedUpdateWithoutNativeAiDiagnosticsInput>
+}
+
+export type ProjectUpdateWithoutNativeAiDiagnosticsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutProjectsNestedInput
+  activeNativeDeployment?: Prisma.NativeDeploymentUpdateOneWithoutActiveProjectsNestedInput
+  bundle?: Prisma.BundlesUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutNativeAiDiagnosticsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activeNativeDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bundle?: Prisma.BundlesUncheckedUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUncheckedUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUncheckedUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUncheckedUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUncheckedUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutCronJobsInput = {
+  id: string
+  name: string
+  description?: string | null
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  organization: Prisma.OrganizationCreateNestedOneWithoutProjectsInput
+  activeNativeDeployment?: Prisma.NativeDeploymentCreateNestedOneWithoutActiveProjectsInput
+  bundle?: Prisma.BundlesCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutCronJobsInput = {
+  id: string
+  name: string
+  description?: string | null
+  organizationId: string
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  activeNativeDeploymentId?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  bundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookUncheckedCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleUncheckedCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormUncheckedCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutCronJobsInput = {
@@ -1009,12 +3535,26 @@ export type ProjectUpdateWithoutCronJobsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutProjectsNestedInput
+  activeNativeDeployment?: Prisma.NativeDeploymentUpdateOneWithoutActiveProjectsNestedInput
   bundle?: Prisma.BundlesUpdateOneWithoutProjectNestedInput
   deployHooks?: Prisma.DeployHookUpdateManyWithoutProjectNestedInput
   firewallRules?: Prisma.FirewallRuleUpdateManyWithoutProjectNestedInput
   forms?: Prisma.FormUpdateManyWithoutProjectNestedInput
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutProjectNestedInput
   lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutCronJobsInput = {
@@ -1024,6 +3564,7 @@ export type ProjectUncheckedUpdateWithoutCronJobsInput = {
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activeNativeDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1033,6 +3574,19 @@ export type ProjectUncheckedUpdateWithoutCronJobsInput = {
   forms?: Prisma.FormUncheckedUpdateManyWithoutProjectNestedInput
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutProjectNestedInput
   lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutFormsInput = {
@@ -1045,12 +3599,26 @@ export type ProjectCreateWithoutFormsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   organization: Prisma.OrganizationCreateNestedOneWithoutProjectsInput
+  activeNativeDeployment?: Prisma.NativeDeploymentCreateNestedOneWithoutActiveProjectsInput
   bundle?: Prisma.BundlesCreateNestedOneWithoutProjectInput
   deployHooks?: Prisma.DeployHookCreateNestedManyWithoutProjectInput
   firewallRules?: Prisma.FirewallRuleCreateNestedManyWithoutProjectInput
   cronJobs?: Prisma.CronJobCreateNestedManyWithoutProjectInput
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutProjectInput
   lepoShipLocalConfig?: Prisma.LepoShipLocalConfigCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutFormsInput = {
@@ -1060,6 +3628,7 @@ export type ProjectUncheckedCreateWithoutFormsInput = {
   organizationId: string
   vercelProjectId?: string | null
   vercelProjectName?: string | null
+  activeNativeDeploymentId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
@@ -1069,6 +3638,19 @@ export type ProjectUncheckedCreateWithoutFormsInput = {
   cronJobs?: Prisma.CronJobUncheckedCreateNestedManyWithoutProjectInput
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutProjectInput
   lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutFormsInput = {
@@ -1097,12 +3679,26 @@ export type ProjectUpdateWithoutFormsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutProjectsNestedInput
+  activeNativeDeployment?: Prisma.NativeDeploymentUpdateOneWithoutActiveProjectsNestedInput
   bundle?: Prisma.BundlesUpdateOneWithoutProjectNestedInput
   deployHooks?: Prisma.DeployHookUpdateManyWithoutProjectNestedInput
   firewallRules?: Prisma.FirewallRuleUpdateManyWithoutProjectNestedInput
   cronJobs?: Prisma.CronJobUpdateManyWithoutProjectNestedInput
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutProjectNestedInput
   lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutFormsInput = {
@@ -1112,6 +3708,7 @@ export type ProjectUncheckedUpdateWithoutFormsInput = {
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activeNativeDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1121,6 +3718,19 @@ export type ProjectUncheckedUpdateWithoutFormsInput = {
   cronJobs?: Prisma.CronJobUncheckedUpdateManyWithoutProjectNestedInput
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutProjectNestedInput
   lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutPreviewCommentsInput = {
@@ -1133,12 +3743,26 @@ export type ProjectCreateWithoutPreviewCommentsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   organization: Prisma.OrganizationCreateNestedOneWithoutProjectsInput
+  activeNativeDeployment?: Prisma.NativeDeploymentCreateNestedOneWithoutActiveProjectsInput
   bundle?: Prisma.BundlesCreateNestedOneWithoutProjectInput
   deployHooks?: Prisma.DeployHookCreateNestedManyWithoutProjectInput
   firewallRules?: Prisma.FirewallRuleCreateNestedManyWithoutProjectInput
   cronJobs?: Prisma.CronJobCreateNestedManyWithoutProjectInput
   forms?: Prisma.FormCreateNestedManyWithoutProjectInput
   lepoShipLocalConfig?: Prisma.LepoShipLocalConfigCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutPreviewCommentsInput = {
@@ -1148,6 +3772,7 @@ export type ProjectUncheckedCreateWithoutPreviewCommentsInput = {
   organizationId: string
   vercelProjectId?: string | null
   vercelProjectName?: string | null
+  activeNativeDeploymentId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
@@ -1157,6 +3782,19 @@ export type ProjectUncheckedCreateWithoutPreviewCommentsInput = {
   cronJobs?: Prisma.CronJobUncheckedCreateNestedManyWithoutProjectInput
   forms?: Prisma.FormUncheckedCreateNestedManyWithoutProjectInput
   lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutPreviewCommentsInput = {
@@ -1185,12 +3823,26 @@ export type ProjectUpdateWithoutPreviewCommentsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutProjectsNestedInput
+  activeNativeDeployment?: Prisma.NativeDeploymentUpdateOneWithoutActiveProjectsNestedInput
   bundle?: Prisma.BundlesUpdateOneWithoutProjectNestedInput
   deployHooks?: Prisma.DeployHookUpdateManyWithoutProjectNestedInput
   firewallRules?: Prisma.FirewallRuleUpdateManyWithoutProjectNestedInput
   cronJobs?: Prisma.CronJobUpdateManyWithoutProjectNestedInput
   forms?: Prisma.FormUpdateManyWithoutProjectNestedInput
   lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutPreviewCommentsInput = {
@@ -1200,6 +3852,7 @@ export type ProjectUncheckedUpdateWithoutPreviewCommentsInput = {
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activeNativeDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1209,6 +3862,19 @@ export type ProjectUncheckedUpdateWithoutPreviewCommentsInput = {
   cronJobs?: Prisma.CronJobUncheckedUpdateManyWithoutProjectNestedInput
   forms?: Prisma.FormUncheckedUpdateManyWithoutProjectNestedInput
   lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutLepoShipLocalConfigInput = {
@@ -1221,12 +3887,26 @@ export type ProjectCreateWithoutLepoShipLocalConfigInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   organization: Prisma.OrganizationCreateNestedOneWithoutProjectsInput
+  activeNativeDeployment?: Prisma.NativeDeploymentCreateNestedOneWithoutActiveProjectsInput
   bundle?: Prisma.BundlesCreateNestedOneWithoutProjectInput
   deployHooks?: Prisma.DeployHookCreateNestedManyWithoutProjectInput
   firewallRules?: Prisma.FirewallRuleCreateNestedManyWithoutProjectInput
   cronJobs?: Prisma.CronJobCreateNestedManyWithoutProjectInput
   forms?: Prisma.FormCreateNestedManyWithoutProjectInput
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutLepoShipLocalConfigInput = {
@@ -1236,6 +3916,7 @@ export type ProjectUncheckedCreateWithoutLepoShipLocalConfigInput = {
   organizationId: string
   vercelProjectId?: string | null
   vercelProjectName?: string | null
+  activeNativeDeploymentId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   deletedAt?: Date | string | null
@@ -1245,6 +3926,19 @@ export type ProjectUncheckedCreateWithoutLepoShipLocalConfigInput = {
   cronJobs?: Prisma.CronJobUncheckedCreateNestedManyWithoutProjectInput
   forms?: Prisma.FormUncheckedCreateNestedManyWithoutProjectInput
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutLepoShipLocalConfigInput = {
@@ -1273,15 +3967,193 @@ export type ProjectUpdateWithoutLepoShipLocalConfigInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutProjectsNestedInput
+  activeNativeDeployment?: Prisma.NativeDeploymentUpdateOneWithoutActiveProjectsNestedInput
   bundle?: Prisma.BundlesUpdateOneWithoutProjectNestedInput
   deployHooks?: Prisma.DeployHookUpdateManyWithoutProjectNestedInput
   firewallRules?: Prisma.FirewallRuleUpdateManyWithoutProjectNestedInput
   cronJobs?: Prisma.CronJobUpdateManyWithoutProjectNestedInput
   forms?: Prisma.FormUpdateManyWithoutProjectNestedInput
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutLepoShipLocalConfigInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activeNativeDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bundle?: Prisma.BundlesUncheckedUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUncheckedUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUncheckedUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUncheckedUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUncheckedUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectCreateManyOrganizationInput = {
+  id: string
+  name: string
+  description?: string | null
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  activeNativeDeploymentId?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+}
+
+export type ProjectUpdateWithoutOrganizationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  activeNativeDeployment?: Prisma.NativeDeploymentUpdateOneWithoutActiveProjectsNestedInput
+  bundle?: Prisma.BundlesUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutOrganizationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activeNativeDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bundle?: Prisma.BundlesUncheckedUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUncheckedUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUncheckedUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUncheckedUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUncheckedUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateManyWithoutOrganizationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activeNativeDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
+export type ProjectCreateManyActiveNativeDeploymentInput = {
+  id: string
+  name: string
+  description?: string | null
+  organizationId: string
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+}
+
+export type ProjectUpdateWithoutActiveNativeDeploymentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutProjectsNestedInput
+  bundle?: Prisma.BundlesUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutActiveNativeDeploymentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1297,59 +4169,27 @@ export type ProjectUncheckedUpdateWithoutLepoShipLocalConfigInput = {
   cronJobs?: Prisma.CronJobUncheckedUpdateManyWithoutProjectNestedInput
   forms?: Prisma.FormUncheckedUpdateManyWithoutProjectNestedInput
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutProjectNestedInput
-}
-
-export type ProjectCreateManyOrganizationInput = {
-  id: string
-  name: string
-  description?: string | null
-  vercelProjectId?: string | null
-  vercelProjectName?: string | null
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-}
-
-export type ProjectUpdateWithoutOrganizationInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  bundle?: Prisma.BundlesUpdateOneWithoutProjectNestedInput
-  deployHooks?: Prisma.DeployHookUpdateManyWithoutProjectNestedInput
-  firewallRules?: Prisma.FirewallRuleUpdateManyWithoutProjectNestedInput
-  cronJobs?: Prisma.CronJobUpdateManyWithoutProjectNestedInput
-  forms?: Prisma.FormUpdateManyWithoutProjectNestedInput
-  previewComments?: Prisma.PreviewCommentUpdateManyWithoutProjectNestedInput
-  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUpdateOneWithoutProjectNestedInput
-}
-
-export type ProjectUncheckedUpdateWithoutOrganizationInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  bundle?: Prisma.BundlesUncheckedUpdateOneWithoutProjectNestedInput
-  deployHooks?: Prisma.DeployHookUncheckedUpdateManyWithoutProjectNestedInput
-  firewallRules?: Prisma.FirewallRuleUncheckedUpdateManyWithoutProjectNestedInput
-  cronJobs?: Prisma.CronJobUncheckedUpdateManyWithoutProjectNestedInput
-  forms?: Prisma.FormUncheckedUpdateManyWithoutProjectNestedInput
-  previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutProjectNestedInput
   lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedUpdateManyWithoutProjectNestedInput
 }
 
-export type ProjectUncheckedUpdateManyWithoutOrganizationInput = {
+export type ProjectUncheckedUpdateManyWithoutActiveNativeDeploymentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1368,6 +4208,19 @@ export type ProjectCountOutputType = {
   cronJobs: number
   forms: number
   previewComments: number
+  nativeDeployments: number
+  nativeDomainConfigs: number
+  nativeEdgeFunctions: number
+  nativeCacheEntries: number
+  nativeReplaySessions: number
+  nativeCrashReports: number
+  nativeSourceMaps: number
+  nativePluginInstalls: number
+  nativeDebugSessions: number
+  nativeCloudTargets: number
+  nativeWafEvents: number
+  nativeWafRules: number
+  nativeAiDiagnostics: number
 }
 
 export type ProjectCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1376,6 +4229,19 @@ export type ProjectCountOutputTypeSelect<ExtArgs extends runtime.Types.Extension
   cronJobs?: boolean | ProjectCountOutputTypeCountCronJobsArgs
   forms?: boolean | ProjectCountOutputTypeCountFormsArgs
   previewComments?: boolean | ProjectCountOutputTypeCountPreviewCommentsArgs
+  nativeDeployments?: boolean | ProjectCountOutputTypeCountNativeDeploymentsArgs
+  nativeDomainConfigs?: boolean | ProjectCountOutputTypeCountNativeDomainConfigsArgs
+  nativeEdgeFunctions?: boolean | ProjectCountOutputTypeCountNativeEdgeFunctionsArgs
+  nativeCacheEntries?: boolean | ProjectCountOutputTypeCountNativeCacheEntriesArgs
+  nativeReplaySessions?: boolean | ProjectCountOutputTypeCountNativeReplaySessionsArgs
+  nativeCrashReports?: boolean | ProjectCountOutputTypeCountNativeCrashReportsArgs
+  nativeSourceMaps?: boolean | ProjectCountOutputTypeCountNativeSourceMapsArgs
+  nativePluginInstalls?: boolean | ProjectCountOutputTypeCountNativePluginInstallsArgs
+  nativeDebugSessions?: boolean | ProjectCountOutputTypeCountNativeDebugSessionsArgs
+  nativeCloudTargets?: boolean | ProjectCountOutputTypeCountNativeCloudTargetsArgs
+  nativeWafEvents?: boolean | ProjectCountOutputTypeCountNativeWafEventsArgs
+  nativeWafRules?: boolean | ProjectCountOutputTypeCountNativeWafRulesArgs
+  nativeAiDiagnostics?: boolean | ProjectCountOutputTypeCountNativeAiDiagnosticsArgs
 }
 
 /**
@@ -1423,6 +4289,97 @@ export type ProjectCountOutputTypeCountPreviewCommentsArgs<ExtArgs extends runti
   where?: Prisma.PreviewCommentWhereInput
 }
 
+/**
+ * ProjectCountOutputType without action
+ */
+export type ProjectCountOutputTypeCountNativeDeploymentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NativeDeploymentWhereInput
+}
+
+/**
+ * ProjectCountOutputType without action
+ */
+export type ProjectCountOutputTypeCountNativeDomainConfigsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NativeDomainConfigWhereInput
+}
+
+/**
+ * ProjectCountOutputType without action
+ */
+export type ProjectCountOutputTypeCountNativeEdgeFunctionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NativeEdgeFunctionWhereInput
+}
+
+/**
+ * ProjectCountOutputType without action
+ */
+export type ProjectCountOutputTypeCountNativeCacheEntriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NativeCacheEntryWhereInput
+}
+
+/**
+ * ProjectCountOutputType without action
+ */
+export type ProjectCountOutputTypeCountNativeReplaySessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NativeAnalyticsReplayWhereInput
+}
+
+/**
+ * ProjectCountOutputType without action
+ */
+export type ProjectCountOutputTypeCountNativeCrashReportsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NativeCrashReportWhereInput
+}
+
+/**
+ * ProjectCountOutputType without action
+ */
+export type ProjectCountOutputTypeCountNativeSourceMapsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NativeSourceMapWhereInput
+}
+
+/**
+ * ProjectCountOutputType without action
+ */
+export type ProjectCountOutputTypeCountNativePluginInstallsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NativePluginInstallationWhereInput
+}
+
+/**
+ * ProjectCountOutputType without action
+ */
+export type ProjectCountOutputTypeCountNativeDebugSessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NativeDebugSessionWhereInput
+}
+
+/**
+ * ProjectCountOutputType without action
+ */
+export type ProjectCountOutputTypeCountNativeCloudTargetsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NativeCloudTargetWhereInput
+}
+
+/**
+ * ProjectCountOutputType without action
+ */
+export type ProjectCountOutputTypeCountNativeWafEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NativeWafEventWhereInput
+}
+
+/**
+ * ProjectCountOutputType without action
+ */
+export type ProjectCountOutputTypeCountNativeWafRulesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NativeWafRuleWhereInput
+}
+
+/**
+ * ProjectCountOutputType without action
+ */
+export type ProjectCountOutputTypeCountNativeAiDiagnosticsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NativeAiDiagnosticWhereInput
+}
+
 
 export type ProjectSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1431,10 +4388,12 @@ export type ProjectSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   organizationId?: boolean
   vercelProjectId?: boolean
   vercelProjectName?: boolean
+  activeNativeDeploymentId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  activeNativeDeployment?: boolean | Prisma.Project$activeNativeDeploymentArgs<ExtArgs>
   bundle?: boolean | Prisma.Project$bundleArgs<ExtArgs>
   deployHooks?: boolean | Prisma.Project$deployHooksArgs<ExtArgs>
   firewallRules?: boolean | Prisma.Project$firewallRulesArgs<ExtArgs>
@@ -1442,6 +4401,19 @@ export type ProjectSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   forms?: boolean | Prisma.Project$formsArgs<ExtArgs>
   previewComments?: boolean | Prisma.Project$previewCommentsArgs<ExtArgs>
   lepoShipLocalConfig?: boolean | Prisma.Project$lepoShipLocalConfigArgs<ExtArgs>
+  nativeDeployments?: boolean | Prisma.Project$nativeDeploymentsArgs<ExtArgs>
+  nativeDomainConfigs?: boolean | Prisma.Project$nativeDomainConfigsArgs<ExtArgs>
+  nativeEdgeFunctions?: boolean | Prisma.Project$nativeEdgeFunctionsArgs<ExtArgs>
+  nativeCacheEntries?: boolean | Prisma.Project$nativeCacheEntriesArgs<ExtArgs>
+  nativeReplaySessions?: boolean | Prisma.Project$nativeReplaySessionsArgs<ExtArgs>
+  nativeCrashReports?: boolean | Prisma.Project$nativeCrashReportsArgs<ExtArgs>
+  nativeSourceMaps?: boolean | Prisma.Project$nativeSourceMapsArgs<ExtArgs>
+  nativePluginInstalls?: boolean | Prisma.Project$nativePluginInstallsArgs<ExtArgs>
+  nativeDebugSessions?: boolean | Prisma.Project$nativeDebugSessionsArgs<ExtArgs>
+  nativeCloudTargets?: boolean | Prisma.Project$nativeCloudTargetsArgs<ExtArgs>
+  nativeWafEvents?: boolean | Prisma.Project$nativeWafEventsArgs<ExtArgs>
+  nativeWafRules?: boolean | Prisma.Project$nativeWafRulesArgs<ExtArgs>
+  nativeAiDiagnostics?: boolean | Prisma.Project$nativeAiDiagnosticsArgs<ExtArgs>
   _count?: boolean | Prisma.ProjectCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["project"]>
 
@@ -1452,10 +4424,12 @@ export type ProjectSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   organizationId?: boolean
   vercelProjectId?: boolean
   vercelProjectName?: boolean
+  activeNativeDeploymentId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  activeNativeDeployment?: boolean | Prisma.Project$activeNativeDeploymentArgs<ExtArgs>
 }, ExtArgs["result"]["project"]>
 
 export type ProjectSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1465,10 +4439,12 @@ export type ProjectSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   organizationId?: boolean
   vercelProjectId?: boolean
   vercelProjectName?: boolean
+  activeNativeDeploymentId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  activeNativeDeployment?: boolean | Prisma.Project$activeNativeDeploymentArgs<ExtArgs>
 }, ExtArgs["result"]["project"]>
 
 export type ProjectSelectScalar = {
@@ -1478,14 +4454,16 @@ export type ProjectSelectScalar = {
   organizationId?: boolean
   vercelProjectId?: boolean
   vercelProjectName?: boolean
+  activeNativeDeploymentId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
 }
 
-export type ProjectOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "organizationId" | "vercelProjectId" | "vercelProjectName" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["project"]>
+export type ProjectOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "organizationId" | "vercelProjectId" | "vercelProjectName" | "activeNativeDeploymentId" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["project"]>
 export type ProjectInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  activeNativeDeployment?: boolean | Prisma.Project$activeNativeDeploymentArgs<ExtArgs>
   bundle?: boolean | Prisma.Project$bundleArgs<ExtArgs>
   deployHooks?: boolean | Prisma.Project$deployHooksArgs<ExtArgs>
   firewallRules?: boolean | Prisma.Project$firewallRulesArgs<ExtArgs>
@@ -1493,19 +4471,35 @@ export type ProjectInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   forms?: boolean | Prisma.Project$formsArgs<ExtArgs>
   previewComments?: boolean | Prisma.Project$previewCommentsArgs<ExtArgs>
   lepoShipLocalConfig?: boolean | Prisma.Project$lepoShipLocalConfigArgs<ExtArgs>
+  nativeDeployments?: boolean | Prisma.Project$nativeDeploymentsArgs<ExtArgs>
+  nativeDomainConfigs?: boolean | Prisma.Project$nativeDomainConfigsArgs<ExtArgs>
+  nativeEdgeFunctions?: boolean | Prisma.Project$nativeEdgeFunctionsArgs<ExtArgs>
+  nativeCacheEntries?: boolean | Prisma.Project$nativeCacheEntriesArgs<ExtArgs>
+  nativeReplaySessions?: boolean | Prisma.Project$nativeReplaySessionsArgs<ExtArgs>
+  nativeCrashReports?: boolean | Prisma.Project$nativeCrashReportsArgs<ExtArgs>
+  nativeSourceMaps?: boolean | Prisma.Project$nativeSourceMapsArgs<ExtArgs>
+  nativePluginInstalls?: boolean | Prisma.Project$nativePluginInstallsArgs<ExtArgs>
+  nativeDebugSessions?: boolean | Prisma.Project$nativeDebugSessionsArgs<ExtArgs>
+  nativeCloudTargets?: boolean | Prisma.Project$nativeCloudTargetsArgs<ExtArgs>
+  nativeWafEvents?: boolean | Prisma.Project$nativeWafEventsArgs<ExtArgs>
+  nativeWafRules?: boolean | Prisma.Project$nativeWafRulesArgs<ExtArgs>
+  nativeAiDiagnostics?: boolean | Prisma.Project$nativeAiDiagnosticsArgs<ExtArgs>
   _count?: boolean | Prisma.ProjectCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ProjectIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  activeNativeDeployment?: boolean | Prisma.Project$activeNativeDeploymentArgs<ExtArgs>
 }
 export type ProjectIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  activeNativeDeployment?: boolean | Prisma.Project$activeNativeDeploymentArgs<ExtArgs>
 }
 
 export type $ProjectPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Project"
   objects: {
     organization: Prisma.$OrganizationPayload<ExtArgs>
+    activeNativeDeployment: Prisma.$NativeDeploymentPayload<ExtArgs> | null
     bundle: Prisma.$BundlesPayload<ExtArgs> | null
     deployHooks: Prisma.$DeployHookPayload<ExtArgs>[]
     firewallRules: Prisma.$FirewallRulePayload<ExtArgs>[]
@@ -1513,6 +4507,19 @@ export type $ProjectPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     forms: Prisma.$FormPayload<ExtArgs>[]
     previewComments: Prisma.$PreviewCommentPayload<ExtArgs>[]
     lepoShipLocalConfig: Prisma.$LepoShipLocalConfigPayload<ExtArgs> | null
+    nativeDeployments: Prisma.$NativeDeploymentPayload<ExtArgs>[]
+    nativeDomainConfigs: Prisma.$NativeDomainConfigPayload<ExtArgs>[]
+    nativeEdgeFunctions: Prisma.$NativeEdgeFunctionPayload<ExtArgs>[]
+    nativeCacheEntries: Prisma.$NativeCacheEntryPayload<ExtArgs>[]
+    nativeReplaySessions: Prisma.$NativeAnalyticsReplayPayload<ExtArgs>[]
+    nativeCrashReports: Prisma.$NativeCrashReportPayload<ExtArgs>[]
+    nativeSourceMaps: Prisma.$NativeSourceMapPayload<ExtArgs>[]
+    nativePluginInstalls: Prisma.$NativePluginInstallationPayload<ExtArgs>[]
+    nativeDebugSessions: Prisma.$NativeDebugSessionPayload<ExtArgs>[]
+    nativeCloudTargets: Prisma.$NativeCloudTargetPayload<ExtArgs>[]
+    nativeWafEvents: Prisma.$NativeWafEventPayload<ExtArgs>[]
+    nativeWafRules: Prisma.$NativeWafRulePayload<ExtArgs>[]
+    nativeAiDiagnostics: Prisma.$NativeAiDiagnosticPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1521,6 +4528,7 @@ export type $ProjectPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     organizationId: string
     vercelProjectId: string | null
     vercelProjectName: string | null
+    activeNativeDeploymentId: string | null
     createdAt: Date
     updatedAt: Date
     deletedAt: Date | null
@@ -1919,6 +4927,7 @@ readonly fields: ProjectFieldRefs;
 export interface Prisma__ProjectClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   organization<T extends Prisma.OrganizationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationDefaultArgs<ExtArgs>>): Prisma.Prisma__OrganizationClient<runtime.Types.Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  activeNativeDeployment<T extends Prisma.Project$activeNativeDeploymentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$activeNativeDeploymentArgs<ExtArgs>>): Prisma.Prisma__NativeDeploymentClient<runtime.Types.Result.GetResult<Prisma.$NativeDeploymentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   bundle<T extends Prisma.Project$bundleArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$bundleArgs<ExtArgs>>): Prisma.Prisma__BundlesClient<runtime.Types.Result.GetResult<Prisma.$BundlesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   deployHooks<T extends Prisma.Project$deployHooksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$deployHooksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DeployHookPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   firewallRules<T extends Prisma.Project$firewallRulesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$firewallRulesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FirewallRulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -1926,6 +4935,19 @@ export interface Prisma__ProjectClient<T, Null = never, ExtArgs extends runtime.
   forms<T extends Prisma.Project$formsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$formsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FormPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   previewComments<T extends Prisma.Project$previewCommentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$previewCommentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PreviewCommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   lepoShipLocalConfig<T extends Prisma.Project$lepoShipLocalConfigArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$lepoShipLocalConfigArgs<ExtArgs>>): Prisma.Prisma__LepoShipLocalConfigClient<runtime.Types.Result.GetResult<Prisma.$LepoShipLocalConfigPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  nativeDeployments<T extends Prisma.Project$nativeDeploymentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$nativeDeploymentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NativeDeploymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  nativeDomainConfigs<T extends Prisma.Project$nativeDomainConfigsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$nativeDomainConfigsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NativeDomainConfigPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  nativeEdgeFunctions<T extends Prisma.Project$nativeEdgeFunctionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$nativeEdgeFunctionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NativeEdgeFunctionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  nativeCacheEntries<T extends Prisma.Project$nativeCacheEntriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$nativeCacheEntriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NativeCacheEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  nativeReplaySessions<T extends Prisma.Project$nativeReplaySessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$nativeReplaySessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NativeAnalyticsReplayPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  nativeCrashReports<T extends Prisma.Project$nativeCrashReportsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$nativeCrashReportsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NativeCrashReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  nativeSourceMaps<T extends Prisma.Project$nativeSourceMapsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$nativeSourceMapsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NativeSourceMapPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  nativePluginInstalls<T extends Prisma.Project$nativePluginInstallsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$nativePluginInstallsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NativePluginInstallationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  nativeDebugSessions<T extends Prisma.Project$nativeDebugSessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$nativeDebugSessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NativeDebugSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  nativeCloudTargets<T extends Prisma.Project$nativeCloudTargetsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$nativeCloudTargetsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NativeCloudTargetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  nativeWafEvents<T extends Prisma.Project$nativeWafEventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$nativeWafEventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NativeWafEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  nativeWafRules<T extends Prisma.Project$nativeWafRulesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$nativeWafRulesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NativeWafRulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  nativeAiDiagnostics<T extends Prisma.Project$nativeAiDiagnosticsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$nativeAiDiagnosticsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NativeAiDiagnosticPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1961,6 +4983,7 @@ export interface ProjectFieldRefs {
   readonly organizationId: Prisma.FieldRef<"Project", 'String'>
   readonly vercelProjectId: Prisma.FieldRef<"Project", 'String'>
   readonly vercelProjectName: Prisma.FieldRef<"Project", 'String'>
+  readonly activeNativeDeploymentId: Prisma.FieldRef<"Project", 'String'>
   readonly createdAt: Prisma.FieldRef<"Project", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Project", 'DateTime'>
   readonly deletedAt: Prisma.FieldRef<"Project", 'DateTime'>
@@ -2365,6 +5388,25 @@ export type ProjectDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
 }
 
 /**
+ * Project.activeNativeDeployment
+ */
+export type Project$activeNativeDeploymentArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the NativeDeployment
+   */
+  select?: Prisma.NativeDeploymentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the NativeDeployment
+   */
+  omit?: Prisma.NativeDeploymentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NativeDeploymentInclude<ExtArgs> | null
+  where?: Prisma.NativeDeploymentWhereInput
+}
+
+/**
  * Project.bundle
  */
 export type Project$bundleArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2520,6 +5562,318 @@ export type Project$lepoShipLocalConfigArgs<ExtArgs extends runtime.Types.Extens
    */
   include?: Prisma.LepoShipLocalConfigInclude<ExtArgs> | null
   where?: Prisma.LepoShipLocalConfigWhereInput
+}
+
+/**
+ * Project.nativeDeployments
+ */
+export type Project$nativeDeploymentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the NativeDeployment
+   */
+  select?: Prisma.NativeDeploymentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the NativeDeployment
+   */
+  omit?: Prisma.NativeDeploymentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NativeDeploymentInclude<ExtArgs> | null
+  where?: Prisma.NativeDeploymentWhereInput
+  orderBy?: Prisma.NativeDeploymentOrderByWithRelationInput | Prisma.NativeDeploymentOrderByWithRelationInput[]
+  cursor?: Prisma.NativeDeploymentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NativeDeploymentScalarFieldEnum | Prisma.NativeDeploymentScalarFieldEnum[]
+}
+
+/**
+ * Project.nativeDomainConfigs
+ */
+export type Project$nativeDomainConfigsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the NativeDomainConfig
+   */
+  select?: Prisma.NativeDomainConfigSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the NativeDomainConfig
+   */
+  omit?: Prisma.NativeDomainConfigOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NativeDomainConfigInclude<ExtArgs> | null
+  where?: Prisma.NativeDomainConfigWhereInput
+  orderBy?: Prisma.NativeDomainConfigOrderByWithRelationInput | Prisma.NativeDomainConfigOrderByWithRelationInput[]
+  cursor?: Prisma.NativeDomainConfigWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NativeDomainConfigScalarFieldEnum | Prisma.NativeDomainConfigScalarFieldEnum[]
+}
+
+/**
+ * Project.nativeEdgeFunctions
+ */
+export type Project$nativeEdgeFunctionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the NativeEdgeFunction
+   */
+  select?: Prisma.NativeEdgeFunctionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the NativeEdgeFunction
+   */
+  omit?: Prisma.NativeEdgeFunctionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NativeEdgeFunctionInclude<ExtArgs> | null
+  where?: Prisma.NativeEdgeFunctionWhereInput
+  orderBy?: Prisma.NativeEdgeFunctionOrderByWithRelationInput | Prisma.NativeEdgeFunctionOrderByWithRelationInput[]
+  cursor?: Prisma.NativeEdgeFunctionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NativeEdgeFunctionScalarFieldEnum | Prisma.NativeEdgeFunctionScalarFieldEnum[]
+}
+
+/**
+ * Project.nativeCacheEntries
+ */
+export type Project$nativeCacheEntriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the NativeCacheEntry
+   */
+  select?: Prisma.NativeCacheEntrySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the NativeCacheEntry
+   */
+  omit?: Prisma.NativeCacheEntryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NativeCacheEntryInclude<ExtArgs> | null
+  where?: Prisma.NativeCacheEntryWhereInput
+  orderBy?: Prisma.NativeCacheEntryOrderByWithRelationInput | Prisma.NativeCacheEntryOrderByWithRelationInput[]
+  cursor?: Prisma.NativeCacheEntryWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NativeCacheEntryScalarFieldEnum | Prisma.NativeCacheEntryScalarFieldEnum[]
+}
+
+/**
+ * Project.nativeReplaySessions
+ */
+export type Project$nativeReplaySessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the NativeAnalyticsReplay
+   */
+  select?: Prisma.NativeAnalyticsReplaySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the NativeAnalyticsReplay
+   */
+  omit?: Prisma.NativeAnalyticsReplayOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NativeAnalyticsReplayInclude<ExtArgs> | null
+  where?: Prisma.NativeAnalyticsReplayWhereInput
+  orderBy?: Prisma.NativeAnalyticsReplayOrderByWithRelationInput | Prisma.NativeAnalyticsReplayOrderByWithRelationInput[]
+  cursor?: Prisma.NativeAnalyticsReplayWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NativeAnalyticsReplayScalarFieldEnum | Prisma.NativeAnalyticsReplayScalarFieldEnum[]
+}
+
+/**
+ * Project.nativeCrashReports
+ */
+export type Project$nativeCrashReportsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the NativeCrashReport
+   */
+  select?: Prisma.NativeCrashReportSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the NativeCrashReport
+   */
+  omit?: Prisma.NativeCrashReportOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NativeCrashReportInclude<ExtArgs> | null
+  where?: Prisma.NativeCrashReportWhereInput
+  orderBy?: Prisma.NativeCrashReportOrderByWithRelationInput | Prisma.NativeCrashReportOrderByWithRelationInput[]
+  cursor?: Prisma.NativeCrashReportWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NativeCrashReportScalarFieldEnum | Prisma.NativeCrashReportScalarFieldEnum[]
+}
+
+/**
+ * Project.nativeSourceMaps
+ */
+export type Project$nativeSourceMapsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the NativeSourceMap
+   */
+  select?: Prisma.NativeSourceMapSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the NativeSourceMap
+   */
+  omit?: Prisma.NativeSourceMapOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NativeSourceMapInclude<ExtArgs> | null
+  where?: Prisma.NativeSourceMapWhereInput
+  orderBy?: Prisma.NativeSourceMapOrderByWithRelationInput | Prisma.NativeSourceMapOrderByWithRelationInput[]
+  cursor?: Prisma.NativeSourceMapWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NativeSourceMapScalarFieldEnum | Prisma.NativeSourceMapScalarFieldEnum[]
+}
+
+/**
+ * Project.nativePluginInstalls
+ */
+export type Project$nativePluginInstallsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the NativePluginInstallation
+   */
+  select?: Prisma.NativePluginInstallationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the NativePluginInstallation
+   */
+  omit?: Prisma.NativePluginInstallationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NativePluginInstallationInclude<ExtArgs> | null
+  where?: Prisma.NativePluginInstallationWhereInput
+  orderBy?: Prisma.NativePluginInstallationOrderByWithRelationInput | Prisma.NativePluginInstallationOrderByWithRelationInput[]
+  cursor?: Prisma.NativePluginInstallationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NativePluginInstallationScalarFieldEnum | Prisma.NativePluginInstallationScalarFieldEnum[]
+}
+
+/**
+ * Project.nativeDebugSessions
+ */
+export type Project$nativeDebugSessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the NativeDebugSession
+   */
+  select?: Prisma.NativeDebugSessionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the NativeDebugSession
+   */
+  omit?: Prisma.NativeDebugSessionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NativeDebugSessionInclude<ExtArgs> | null
+  where?: Prisma.NativeDebugSessionWhereInput
+  orderBy?: Prisma.NativeDebugSessionOrderByWithRelationInput | Prisma.NativeDebugSessionOrderByWithRelationInput[]
+  cursor?: Prisma.NativeDebugSessionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NativeDebugSessionScalarFieldEnum | Prisma.NativeDebugSessionScalarFieldEnum[]
+}
+
+/**
+ * Project.nativeCloudTargets
+ */
+export type Project$nativeCloudTargetsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the NativeCloudTarget
+   */
+  select?: Prisma.NativeCloudTargetSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the NativeCloudTarget
+   */
+  omit?: Prisma.NativeCloudTargetOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NativeCloudTargetInclude<ExtArgs> | null
+  where?: Prisma.NativeCloudTargetWhereInput
+  orderBy?: Prisma.NativeCloudTargetOrderByWithRelationInput | Prisma.NativeCloudTargetOrderByWithRelationInput[]
+  cursor?: Prisma.NativeCloudTargetWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NativeCloudTargetScalarFieldEnum | Prisma.NativeCloudTargetScalarFieldEnum[]
+}
+
+/**
+ * Project.nativeWafEvents
+ */
+export type Project$nativeWafEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the NativeWafEvent
+   */
+  select?: Prisma.NativeWafEventSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the NativeWafEvent
+   */
+  omit?: Prisma.NativeWafEventOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NativeWafEventInclude<ExtArgs> | null
+  where?: Prisma.NativeWafEventWhereInput
+  orderBy?: Prisma.NativeWafEventOrderByWithRelationInput | Prisma.NativeWafEventOrderByWithRelationInput[]
+  cursor?: Prisma.NativeWafEventWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NativeWafEventScalarFieldEnum | Prisma.NativeWafEventScalarFieldEnum[]
+}
+
+/**
+ * Project.nativeWafRules
+ */
+export type Project$nativeWafRulesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the NativeWafRule
+   */
+  select?: Prisma.NativeWafRuleSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the NativeWafRule
+   */
+  omit?: Prisma.NativeWafRuleOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NativeWafRuleInclude<ExtArgs> | null
+  where?: Prisma.NativeWafRuleWhereInput
+  orderBy?: Prisma.NativeWafRuleOrderByWithRelationInput | Prisma.NativeWafRuleOrderByWithRelationInput[]
+  cursor?: Prisma.NativeWafRuleWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NativeWafRuleScalarFieldEnum | Prisma.NativeWafRuleScalarFieldEnum[]
+}
+
+/**
+ * Project.nativeAiDiagnostics
+ */
+export type Project$nativeAiDiagnosticsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the NativeAiDiagnostic
+   */
+  select?: Prisma.NativeAiDiagnosticSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the NativeAiDiagnostic
+   */
+  omit?: Prisma.NativeAiDiagnosticOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NativeAiDiagnosticInclude<ExtArgs> | null
+  where?: Prisma.NativeAiDiagnosticWhereInput
+  orderBy?: Prisma.NativeAiDiagnosticOrderByWithRelationInput | Prisma.NativeAiDiagnosticOrderByWithRelationInput[]
+  cursor?: Prisma.NativeAiDiagnosticWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NativeAiDiagnosticScalarFieldEnum | Prisma.NativeAiDiagnosticScalarFieldEnum[]
 }
 
 /**

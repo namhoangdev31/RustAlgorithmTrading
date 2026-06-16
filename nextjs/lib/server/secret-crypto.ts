@@ -1,6 +1,6 @@
 import { createCipheriv, createDecipheriv, createHash, randomBytes } from "crypto";
 
-function resolveMasterKey() {
+export function resolveMasterKey() {
   const source =
     process.env.APP_SECRETS_MASTER_KEY ||
     process.env.AUTH_SECRET ||

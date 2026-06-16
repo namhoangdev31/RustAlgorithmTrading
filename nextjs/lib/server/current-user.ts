@@ -24,6 +24,7 @@ export const getCurrentUser = cache(async () => {
       provider: true,
       socialId: true,
       userType: true,
+      registerType: true,
       createdAt: true,
       photo: {
         select: {

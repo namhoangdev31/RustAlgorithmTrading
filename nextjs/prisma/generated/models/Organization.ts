@@ -201,6 +201,7 @@ export type OrganizationWhereInput = {
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   projects?: Prisma.ProjectListRelationFilter
   ssoConfig?: Prisma.XOR<Prisma.SsoConfigNullableScalarRelationFilter, Prisma.SsoConfigWhereInput> | null
+  nativeScimMappings?: Prisma.NativeScimMappingListRelationFilter
 }
 
 export type OrganizationOrderByWithRelationInput = {
@@ -214,6 +215,7 @@ export type OrganizationOrderByWithRelationInput = {
   user?: Prisma.UserOrderByWithRelationInput
   projects?: Prisma.ProjectOrderByRelationAggregateInput
   ssoConfig?: Prisma.SsoConfigOrderByWithRelationInput
+  nativeScimMappings?: Prisma.NativeScimMappingOrderByRelationAggregateInput
 }
 
 export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
@@ -231,6 +233,7 @@ export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   projects?: Prisma.ProjectListRelationFilter
   ssoConfig?: Prisma.XOR<Prisma.SsoConfigNullableScalarRelationFilter, Prisma.SsoConfigWhereInput> | null
+  nativeScimMappings?: Prisma.NativeScimMappingListRelationFilter
 }, "id" | "userId_type">
 
 export type OrganizationOrderByWithAggregationInput = {
@@ -269,6 +272,7 @@ export type OrganizationCreateInput = {
   user: Prisma.UserCreateNestedOneWithoutOrganizationsInput
   projects?: Prisma.ProjectCreateNestedManyWithoutOrganizationInput
   ssoConfig?: Prisma.SsoConfigCreateNestedOneWithoutOrganizationInput
+  nativeScimMappings?: Prisma.NativeScimMappingCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateInput = {
@@ -281,6 +285,7 @@ export type OrganizationUncheckedCreateInput = {
   deletedAt?: Date | string | null
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOrganizationInput
   ssoConfig?: Prisma.SsoConfigUncheckedCreateNestedOneWithoutOrganizationInput
+  nativeScimMappings?: Prisma.NativeScimMappingUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUpdateInput = {
@@ -293,6 +298,7 @@ export type OrganizationUpdateInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutOrganizationsNestedInput
   projects?: Prisma.ProjectUpdateManyWithoutOrganizationNestedInput
   ssoConfig?: Prisma.SsoConfigUpdateOneWithoutOrganizationNestedInput
+  nativeScimMappings?: Prisma.NativeScimMappingUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateInput = {
@@ -305,6 +311,7 @@ export type OrganizationUncheckedUpdateInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutOrganizationNestedInput
   ssoConfig?: Prisma.SsoConfigUncheckedUpdateOneWithoutOrganizationNestedInput
+  nativeScimMappings?: Prisma.NativeScimMappingUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateManyInput = {
@@ -460,6 +467,20 @@ export type OrganizationUpdateOneRequiredWithoutSsoConfigNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutSsoConfigInput, Prisma.OrganizationUpdateWithoutSsoConfigInput>, Prisma.OrganizationUncheckedUpdateWithoutSsoConfigInput>
 }
 
+export type OrganizationCreateNestedOneWithoutNativeScimMappingsInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutNativeScimMappingsInput, Prisma.OrganizationUncheckedCreateWithoutNativeScimMappingsInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutNativeScimMappingsInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+}
+
+export type OrganizationUpdateOneRequiredWithoutNativeScimMappingsNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutNativeScimMappingsInput, Prisma.OrganizationUncheckedCreateWithoutNativeScimMappingsInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutNativeScimMappingsInput
+  upsert?: Prisma.OrganizationUpsertWithoutNativeScimMappingsInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutNativeScimMappingsInput, Prisma.OrganizationUpdateWithoutNativeScimMappingsInput>, Prisma.OrganizationUncheckedUpdateWithoutNativeScimMappingsInput>
+}
+
 export type OrganizationCreateWithoutUserInput = {
   id: string
   name: string
@@ -469,6 +490,7 @@ export type OrganizationCreateWithoutUserInput = {
   deletedAt?: Date | string | null
   projects?: Prisma.ProjectCreateNestedManyWithoutOrganizationInput
   ssoConfig?: Prisma.SsoConfigCreateNestedOneWithoutOrganizationInput
+  nativeScimMappings?: Prisma.NativeScimMappingCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutUserInput = {
@@ -480,6 +502,7 @@ export type OrganizationUncheckedCreateWithoutUserInput = {
   deletedAt?: Date | string | null
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOrganizationInput
   ssoConfig?: Prisma.SsoConfigUncheckedCreateNestedOneWithoutOrganizationInput
+  nativeScimMappings?: Prisma.NativeScimMappingUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutUserInput = {
@@ -530,6 +553,7 @@ export type OrganizationCreateWithoutProjectsInput = {
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutOrganizationsInput
   ssoConfig?: Prisma.SsoConfigCreateNestedOneWithoutOrganizationInput
+  nativeScimMappings?: Prisma.NativeScimMappingCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutProjectsInput = {
@@ -541,6 +565,7 @@ export type OrganizationUncheckedCreateWithoutProjectsInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   ssoConfig?: Prisma.SsoConfigUncheckedCreateNestedOneWithoutOrganizationInput
+  nativeScimMappings?: Prisma.NativeScimMappingUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutProjectsInput = {
@@ -568,6 +593,7 @@ export type OrganizationUpdateWithoutProjectsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutOrganizationsNestedInput
   ssoConfig?: Prisma.SsoConfigUpdateOneWithoutOrganizationNestedInput
+  nativeScimMappings?: Prisma.NativeScimMappingUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutProjectsInput = {
@@ -579,6 +605,7 @@ export type OrganizationUncheckedUpdateWithoutProjectsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   ssoConfig?: Prisma.SsoConfigUncheckedUpdateOneWithoutOrganizationNestedInput
+  nativeScimMappings?: Prisma.NativeScimMappingUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutSsoConfigInput = {
@@ -590,6 +617,7 @@ export type OrganizationCreateWithoutSsoConfigInput = {
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutOrganizationsInput
   projects?: Prisma.ProjectCreateNestedManyWithoutOrganizationInput
+  nativeScimMappings?: Prisma.NativeScimMappingCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutSsoConfigInput = {
@@ -601,6 +629,7 @@ export type OrganizationUncheckedCreateWithoutSsoConfigInput = {
   updatedAt: Date | string
   deletedAt?: Date | string | null
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOrganizationInput
+  nativeScimMappings?: Prisma.NativeScimMappingUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutSsoConfigInput = {
@@ -628,6 +657,7 @@ export type OrganizationUpdateWithoutSsoConfigInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutOrganizationsNestedInput
   projects?: Prisma.ProjectUpdateManyWithoutOrganizationNestedInput
+  nativeScimMappings?: Prisma.NativeScimMappingUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutSsoConfigInput = {
@@ -639,6 +669,71 @@ export type OrganizationUncheckedUpdateWithoutSsoConfigInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutOrganizationNestedInput
+  nativeScimMappings?: Prisma.NativeScimMappingUncheckedUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationCreateWithoutNativeScimMappingsInput = {
+  id: string
+  name: string
+  type: $Enums.OrganizationType
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  user: Prisma.UserCreateNestedOneWithoutOrganizationsInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutOrganizationInput
+  ssoConfig?: Prisma.SsoConfigCreateNestedOneWithoutOrganizationInput
+}
+
+export type OrganizationUncheckedCreateWithoutNativeScimMappingsInput = {
+  id: string
+  name: string
+  type: $Enums.OrganizationType
+  userId: string
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOrganizationInput
+  ssoConfig?: Prisma.SsoConfigUncheckedCreateNestedOneWithoutOrganizationInput
+}
+
+export type OrganizationCreateOrConnectWithoutNativeScimMappingsInput = {
+  where: Prisma.OrganizationWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutNativeScimMappingsInput, Prisma.OrganizationUncheckedCreateWithoutNativeScimMappingsInput>
+}
+
+export type OrganizationUpsertWithoutNativeScimMappingsInput = {
+  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutNativeScimMappingsInput, Prisma.OrganizationUncheckedUpdateWithoutNativeScimMappingsInput>
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutNativeScimMappingsInput, Prisma.OrganizationUncheckedCreateWithoutNativeScimMappingsInput>
+  where?: Prisma.OrganizationWhereInput
+}
+
+export type OrganizationUpdateToOneWithWhereWithoutNativeScimMappingsInput = {
+  where?: Prisma.OrganizationWhereInput
+  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutNativeScimMappingsInput, Prisma.OrganizationUncheckedUpdateWithoutNativeScimMappingsInput>
+}
+
+export type OrganizationUpdateWithoutNativeScimMappingsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumOrganizationTypeFieldUpdateOperationsInput | $Enums.OrganizationType
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  user?: Prisma.UserUpdateOneRequiredWithoutOrganizationsNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutOrganizationNestedInput
+  ssoConfig?: Prisma.SsoConfigUpdateOneWithoutOrganizationNestedInput
+}
+
+export type OrganizationUncheckedUpdateWithoutNativeScimMappingsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumOrganizationTypeFieldUpdateOperationsInput | $Enums.OrganizationType
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutOrganizationNestedInput
+  ssoConfig?: Prisma.SsoConfigUncheckedUpdateOneWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateManyUserInput = {
@@ -659,6 +754,7 @@ export type OrganizationUpdateWithoutUserInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projects?: Prisma.ProjectUpdateManyWithoutOrganizationNestedInput
   ssoConfig?: Prisma.SsoConfigUpdateOneWithoutOrganizationNestedInput
+  nativeScimMappings?: Prisma.NativeScimMappingUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutUserInput = {
@@ -670,6 +766,7 @@ export type OrganizationUncheckedUpdateWithoutUserInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutOrganizationNestedInput
   ssoConfig?: Prisma.SsoConfigUncheckedUpdateOneWithoutOrganizationNestedInput
+  nativeScimMappings?: Prisma.NativeScimMappingUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateManyWithoutUserInput = {
@@ -688,10 +785,12 @@ export type OrganizationUncheckedUpdateManyWithoutUserInput = {
 
 export type OrganizationCountOutputType = {
   projects: number
+  nativeScimMappings: number
 }
 
 export type OrganizationCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   projects?: boolean | OrganizationCountOutputTypeCountProjectsArgs
+  nativeScimMappings?: boolean | OrganizationCountOutputTypeCountNativeScimMappingsArgs
 }
 
 /**
@@ -711,6 +810,13 @@ export type OrganizationCountOutputTypeCountProjectsArgs<ExtArgs extends runtime
   where?: Prisma.ProjectWhereInput
 }
 
+/**
+ * OrganizationCountOutputType without action
+ */
+export type OrganizationCountOutputTypeCountNativeScimMappingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NativeScimMappingWhereInput
+}
+
 
 export type OrganizationSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -723,6 +829,7 @@ export type OrganizationSelect<ExtArgs extends runtime.Types.Extensions.Internal
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   projects?: boolean | Prisma.Organization$projectsArgs<ExtArgs>
   ssoConfig?: boolean | Prisma.Organization$ssoConfigArgs<ExtArgs>
+  nativeScimMappings?: boolean | Prisma.Organization$nativeScimMappingsArgs<ExtArgs>
   _count?: boolean | Prisma.OrganizationCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["organization"]>
 
@@ -763,6 +870,7 @@ export type OrganizationInclude<ExtArgs extends runtime.Types.Extensions.Interna
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   projects?: boolean | Prisma.Organization$projectsArgs<ExtArgs>
   ssoConfig?: boolean | Prisma.Organization$ssoConfigArgs<ExtArgs>
+  nativeScimMappings?: boolean | Prisma.Organization$nativeScimMappingsArgs<ExtArgs>
   _count?: boolean | Prisma.OrganizationCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type OrganizationIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -778,6 +886,7 @@ export type $OrganizationPayload<ExtArgs extends runtime.Types.Extensions.Intern
     user: Prisma.$UserPayload<ExtArgs>
     projects: Prisma.$ProjectPayload<ExtArgs>[]
     ssoConfig: Prisma.$SsoConfigPayload<ExtArgs> | null
+    nativeScimMappings: Prisma.$NativeScimMappingPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1184,6 +1293,7 @@ export interface Prisma__OrganizationClient<T, Null = never, ExtArgs extends run
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   projects<T extends Prisma.Organization$projectsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$projectsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   ssoConfig<T extends Prisma.Organization$ssoConfigArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$ssoConfigArgs<ExtArgs>>): Prisma.Prisma__SsoConfigClient<runtime.Types.Result.GetResult<Prisma.$SsoConfigPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  nativeScimMappings<T extends Prisma.Organization$nativeScimMappingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$nativeScimMappingsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NativeScimMappingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1661,6 +1771,30 @@ export type Organization$ssoConfigArgs<ExtArgs extends runtime.Types.Extensions.
    */
   include?: Prisma.SsoConfigInclude<ExtArgs> | null
   where?: Prisma.SsoConfigWhereInput
+}
+
+/**
+ * Organization.nativeScimMappings
+ */
+export type Organization$nativeScimMappingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the NativeScimMapping
+   */
+  select?: Prisma.NativeScimMappingSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the NativeScimMapping
+   */
+  omit?: Prisma.NativeScimMappingOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NativeScimMappingInclude<ExtArgs> | null
+  where?: Prisma.NativeScimMappingWhereInput
+  orderBy?: Prisma.NativeScimMappingOrderByWithRelationInput | Prisma.NativeScimMappingOrderByWithRelationInput[]
+  cursor?: Prisma.NativeScimMappingWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NativeScimMappingScalarFieldEnum | Prisma.NativeScimMappingScalarFieldEnum[]
 }
 
 /**

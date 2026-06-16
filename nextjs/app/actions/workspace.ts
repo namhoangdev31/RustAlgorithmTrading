@@ -6,6 +6,7 @@ import { localizedHref, redirect } from "@/i18n/navigation";
 import { requireCurrentUser } from "@/lib/server/current-user";
 import { requireWorkspaceRole } from "@/lib/server/permissions";
 import { prisma } from "@/lib/server/prisma";
+import { streamWorkspaceAudit } from "@/lib/server/audit-stream";
 
 function readFormValue(formData: FormData, key: string) {
   const value = formData.get(key);
@@ -47,10 +48,11 @@ async function recordWorkspaceAudit(input: {
   metadata?: Record<string, string>;
 }) {
   const now = new Date();
+  const notificationId = crypto.randomUUID();
 
   await prisma.notifications.create({
     data: {
-      id: crypto.randomUUID(),
+      id: notificationId,
       title: input.title,
       body: input.body,
       type: "workspace_audit",
@@ -62,6 +64,18 @@ async function recordWorkspaceAudit(input: {
       createdAt: now,
       updatedAt: now,
     },
+  });
+
+  streamWorkspaceAudit(input.organizationId, {
+    id: notificationId,
+    title: input.title,
+    body: input.body,
+    actorId: input.actorId,
+    recipientId: input.recipientId,
+    metadata: input.metadata,
+    createdAt: now,
+  }).catch((err) => {
+    console.error("[AuditStream] Workspace background stream failed:", err);
   });
 }
 

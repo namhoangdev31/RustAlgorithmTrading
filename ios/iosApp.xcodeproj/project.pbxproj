@@ -342,7 +342,7 @@
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "";
 				INFOPLIST_KEY_NSBluetoothWhileInUseUsageDescription = "";
 				INFOPLIST_KEY_NSCalendarsWriteOnlyAccessUsageDescription = "";
-				INFOPLIST_KEY_NSCameraUsageDescription = "";
+				INFOPLIST_KEY_NSCameraUsageDescription = "This app requires access to the camera to take photos inside Mini-Apps.";
 				INFOPLIST_KEY_NSContactsUsageDescription = "";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "This app needs to access the local network to download Mini-App bundles and communicate with the embedded web server.";
@@ -399,7 +399,7 @@
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "";
 				INFOPLIST_KEY_NSBluetoothWhileInUseUsageDescription = "";
 				INFOPLIST_KEY_NSCalendarsWriteOnlyAccessUsageDescription = "";
-				INFOPLIST_KEY_NSCameraUsageDescription = "";
+				INFOPLIST_KEY_NSCameraUsageDescription = "This app requires access to the camera to take photos inside Mini-Apps.";
 				INFOPLIST_KEY_NSContactsUsageDescription = "";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "This app needs to access the local network to download Mini-App bundles and communicate with the embedded web server.";

@@ -25,7 +25,24 @@ export function FeatureFlagProvider({
   initialFlags?: FeatureFlags;
   projectId?: string;
 }) {
-  const [flags, setFlags] = useState<FeatureFlags>(initialFlags);
+  // Helper to read browser cookies
+  const getCookie = (name: string): string | null => {
+    if (typeof document === "undefined") return null;
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return decodeURIComponent(parts.pop()?.split(";").shift() || "");
+    return null;
+  };
+
+  const [flags, setFlags] = useState<FeatureFlags>(() => {
+    const cookieFlags = getCookie("lepos_flags");
+    if (cookieFlags) {
+      try {
+        return JSON.parse(cookieFlags);
+      } catch {}
+    }
+    return initialFlags;
+  });
   const [loading, setLoading] = useState<boolean>(!projectId);
 
   const refreshFlags = async () => {

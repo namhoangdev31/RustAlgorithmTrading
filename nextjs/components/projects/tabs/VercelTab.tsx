@@ -17,8 +17,10 @@ import {
   ChevronRight,
   ShieldCheck,
   PlusCircle,
-  HelpCircle
+  HelpCircle,
+  Sliders
 } from "lucide-react";
+import { EdgeConfigVarsCard } from "@/components/projects/EdgeConfigVarsCard";
 
 import {
   Card,
@@ -65,6 +67,7 @@ interface VercelTabProps {
   vercelConnectionError?: boolean;
   locale: string;
   returnTo: string;
+  vercelProjectEnvVars?: any[];
 }
 
 export function VercelTab({
@@ -75,9 +78,10 @@ export function VercelTab({
   vercelConnectionError,
   locale,
   returnTo,
+  vercelProjectEnvVars = [],
 }: VercelTabProps) {
   const t = useTranslations("VercelTab");
-  const [activeSection, setActiveSection] = useState<"observability" | "redirects" | "certs" | "access-groups" | "tokens" | "credits" | "matrix">("observability");
+  const [activeSection, setActiveSection] = useState<"observability" | "redirects" | "certs" | "access-groups" | "tokens" | "credits" | "matrix" | "edge-config">("observability");
 
   if (!vercelConnected) {
     return (
@@ -171,6 +175,17 @@ export function VercelTab({
         >
           <CreditCard className="size-4 shrink-0" />
           {t("credits.title")}
+        </button>
+        <button
+          onClick={() => setActiveSection("edge-config")}
+          className={`flex items-center gap-2.5 px-3 py-2 text-xs font-semibold rounded-md transition-all text-left whitespace-nowrap ${
+            activeSection === "edge-config"
+              ? "bg-canvas-soft border border-hairline text-ink font-bold shadow-sm"
+              : "text-ink-mute hover:text-ink hover:bg-canvas-soft/40 border border-transparent"
+          }`}
+        >
+          <Sliders className="size-4 shrink-0" />
+          Edge Config Sync
         </button>
         <button
           onClick={() => setActiveSection("matrix")}
@@ -604,6 +619,17 @@ export function VercelTab({
               </form>
             </CardContent>
           </Card>
+        )}
+
+        {/* Edge Config Centralized Sync Dashboard */}
+        {activeSection === "edge-config" && (
+          <EdgeConfigVarsCard
+            vercelProjectEnvVars={vercelProjectEnvVars}
+            vercelProjectId={project.vercelProjectId || ""}
+            projectId={project.id}
+            locale={locale}
+            returnTo={returnTo}
+          />
         )}
 
         {/* 7. Vercel SDK Feature Matrix */}

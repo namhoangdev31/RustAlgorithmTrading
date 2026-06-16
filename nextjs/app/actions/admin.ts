@@ -20,7 +20,7 @@ import {
 import { hasVercelApiKey, getVercelClient } from "@/lib/server/vercel";
 import { buildIntegrationConfig } from "@/lib/server/platform-guardrails";
 import { Octokit } from "octokit";
-import { runLepoShipBuild } from "@/lib/server/lepoship-builder";
+import { enqueueBuild } from "@/lib/server/build-queue";
 
 
 function readFormValue(formData: FormData, key: string) {
@@ -1717,14 +1717,14 @@ export async function triggerMobileBuildAction(formData: FormData) {
   });
 
   // Trigger background build compilation process
-  await runLepoShipBuild(
+  await enqueueBuild({
     projectId,
-    currentBundle.id,
-    newBuildNumber,
-    newVersion,
-    configData,
+    bundleId: currentBundle.id,
+    buildNumber: newBuildNumber,
+    version: newVersion,
+    config: configData,
     trackId
-  );
+  });
 
   revalidatePath(`/lepoship/${projectId}`);
   redirect(returnTo);

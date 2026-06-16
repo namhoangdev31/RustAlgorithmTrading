@@ -21,6 +21,7 @@ class RuntimeWebView: WKWebView, WKScriptMessageHandler {
 
         // Register Bridge Handler after super.init
         self.configuration.userContentController.add(self, name: "LeposBridge")
+        self.configuration.userContentController.add(self, name: "lepoShipBridge")
 
         // 2.a Inject Console Bridge
         let consoleBridgeJS = """
@@ -57,28 +58,80 @@ class RuntimeWebView: WKWebView, WKScriptMessageHandler {
 
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
+    func sendResponse(requestId: String, data: [String: Any]?, error: String? = nil) {
+        var responseDict: [String: Any] = [:]
+        if let data = data {
+            responseDict["data"] = data
+        }
+        if let error = error {
+            responseDict["error"] = error
+        }
+        if let jsonObj = try? JSONSerialization.data(withJSONObject: responseDict, options: []),
+           let jsonString = String(data: jsonObj, encoding: .utf8) {
+            DispatchQueue.main.async {
+                self.evaluateJavaScript("window.__lepoShipReceiveMessage('\(requestId)', \(jsonString))", completionHandler: nil)
+            }
+        }
+    }
+
     // Process JS Messages
     func userContentController(
         _ userContentController: WKUserContentController, didReceive message: WKScriptMessage
     ) {
-        guard message.name == "LeposBridge", let body = message.body as? [String: Any] else {
+        guard (message.name == "LeposBridge" || message.name == "lepoShipBridge"), let body = message.body as? [String: Any] else {
             return
         }
 
+        let requestId = body["requestId"] as? String ?? ""
+        let payload = body["payload"] as? [String: Any] ?? [:]
+
         if let action = body["action"] as? String {
             switch action {
-            case "log":
-                let level = body["level"] as? String ?? "info"
-                let msg = body["message"] as? String ?? ""
+            case "log", "debug.log":
+                let level = payload["level"] as? String ?? body["level"] as? String ?? "info"
+                let msg = payload["message"] as? String ?? body["message"] as? String ?? ""
                 print("[WebConsole][\(level)] \(msg)")
+                if !requestId.isEmpty {
+                    sendResponse(requestId: requestId, data: ["success": true])
+                }
             case "vibrate":
                 let generator = UIImpactFeedbackGenerator(style: .medium)
                 generator.impactOccurred()
+                if !requestId.isEmpty {
+                    sendResponse(requestId: requestId, data: ["success": true])
+                }
             case "close":
                 // Notify ViewController to dismiss
                 NotificationCenter.default.post(
                     name: NSNotification.Name("CloseMiniApp"), object: nil)
-            default: break
+                if !requestId.isEmpty {
+                    sendResponse(requestId: requestId, data: ["success": true])
+                }
+            case "camera.takePhoto", "getCameraPhoto":
+                if !requestId.isEmpty {
+                    sendResponse(requestId: requestId, data: ["uri": "https://via.placeholder.com/600x400.png?text=NativeCameraPhoto"])
+                }
+            case "plugin.invoke":
+                let plugin = payload["plugin"] as? String ?? ""
+                let method = payload["method"] as? String ?? ""
+                let args = payload["args"] as? [String: Any] ?? [:]
+                if !requestId.isEmpty {
+                    sendResponse(requestId: requestId, data: [
+                        "success": true,
+                        "plugin": plugin,
+                        "method": method,
+                        "result": args
+                    ])
+                }
+            case "hotReload":
+                print("[WebRuntime] Hot reload message received: \(payload)")
+                if !requestId.isEmpty {
+                    sendResponse(requestId: requestId, data: ["success": true])
+                }
+            default:
+                if !requestId.isEmpty {
+                    sendResponse(requestId: requestId, data: ["success": true])
+                }
             }
         }
     }

@@ -45,6 +45,11 @@ echo "Building services..."
 cd "$PROJECT_ROOT/rust"
 cargo build --release
 
+echo "Building Go edge-gateway..."
+cd "$PROJECT_ROOT/go"
+mkdir -p target
+go build -o ./target/edge-gateway ./cmd/edge-gateway/main.go
+
 # Start services in background
 echo ""
 echo "Starting Market Data Service..."
@@ -73,6 +78,12 @@ RUST_LOG=info ./target/release/signal-bridge > "$LOG_DIR/signal-bridge.log" 2>&1
 SIGNAL_BRIDGE_PID=$!
 echo "  PID: $SIGNAL_BRIDGE_PID"
 
+echo "Starting Go Edge Gateway..."
+cd "$PROJECT_ROOT/go"
+REDIS_URL=${REDIS_URL:-redis://127.0.0.1:6379} LEPOS_STORAGE_ROOT=${LEPOS_STORAGE_ROOT:-.} LEPOS_CONTROL_PLANE_URL=${LEPOS_CONTROL_PLANE_URL:-http://127.0.0.1:3000} LEPOS_INTERNAL_API_KEY=${LEPOS_INTERNAL_API_KEY:-lepos_dev_internal_key} ./target/edge-gateway > "$LOG_DIR/edge-gateway.log" 2>&1 &
+EDGE_GATEWAY_PID=$!
+echo "  PID: $EDGE_GATEWAY_PID"
+
 echo ""
 echo "All services started."
 echo ""
@@ -81,6 +92,7 @@ echo "  Market Data: $MARKET_DATA_PID"
 echo "  Risk Manager: $RISK_MANAGER_PID"
 echo "  Execution Engine: $EXECUTION_PID"
 echo "  Signal Bridge: $SIGNAL_BRIDGE_PID"
+echo "  Edge Gateway: $EDGE_GATEWAY_PID"
 echo ""
 echo "Logs available in logs/"
 echo ""

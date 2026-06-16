@@ -187,6 +187,7 @@ export type FormSubmissionWhereInput = {
   formId?: Prisma.StringFilter<"FormSubmission"> | string
   createdAt?: Prisma.DateTimeFilter<"FormSubmission"> | Date | string
   form?: Prisma.XOR<Prisma.FormScalarRelationFilter, Prisma.FormWhereInput>
+  webhookDeliveries?: Prisma.FormWebhookDeliveryListRelationFilter
 }
 
 export type FormSubmissionOrderByWithRelationInput = {
@@ -197,6 +198,7 @@ export type FormSubmissionOrderByWithRelationInput = {
   formId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   form?: Prisma.FormOrderByWithRelationInput
+  webhookDeliveries?: Prisma.FormWebhookDeliveryOrderByRelationAggregateInput
 }
 
 export type FormSubmissionWhereUniqueInput = Prisma.AtLeast<{
@@ -210,6 +212,7 @@ export type FormSubmissionWhereUniqueInput = Prisma.AtLeast<{
   formId?: Prisma.StringFilter<"FormSubmission"> | string
   createdAt?: Prisma.DateTimeFilter<"FormSubmission"> | Date | string
   form?: Prisma.XOR<Prisma.FormScalarRelationFilter, Prisma.FormWhereInput>
+  webhookDeliveries?: Prisma.FormWebhookDeliveryListRelationFilter
 }, "id">
 
 export type FormSubmissionOrderByWithAggregationInput = {
@@ -243,6 +246,7 @@ export type FormSubmissionCreateInput = {
   userAgent?: string | null
   createdAt?: Date | string
   form: Prisma.FormCreateNestedOneWithoutSubmissionsInput
+  webhookDeliveries?: Prisma.FormWebhookDeliveryCreateNestedManyWithoutSubmissionInput
 }
 
 export type FormSubmissionUncheckedCreateInput = {
@@ -252,6 +256,7 @@ export type FormSubmissionUncheckedCreateInput = {
   userAgent?: string | null
   formId: string
   createdAt?: Date | string
+  webhookDeliveries?: Prisma.FormWebhookDeliveryUncheckedCreateNestedManyWithoutSubmissionInput
 }
 
 export type FormSubmissionUpdateInput = {
@@ -261,6 +266,7 @@ export type FormSubmissionUpdateInput = {
   userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   form?: Prisma.FormUpdateOneRequiredWithoutSubmissionsNestedInput
+  webhookDeliveries?: Prisma.FormWebhookDeliveryUpdateManyWithoutSubmissionNestedInput
 }
 
 export type FormSubmissionUncheckedUpdateInput = {
@@ -270,6 +276,7 @@ export type FormSubmissionUncheckedUpdateInput = {
   userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   formId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  webhookDeliveries?: Prisma.FormWebhookDeliveryUncheckedUpdateManyWithoutSubmissionNestedInput
 }
 
 export type FormSubmissionCreateManyInput = {
@@ -333,6 +340,11 @@ export type FormSubmissionMinOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
 }
 
+export type FormSubmissionScalarRelationFilter = {
+  is?: Prisma.FormSubmissionWhereInput
+  isNot?: Prisma.FormSubmissionWhereInput
+}
+
 export type FormSubmissionCreateNestedManyWithoutFormInput = {
   create?: Prisma.XOR<Prisma.FormSubmissionCreateWithoutFormInput, Prisma.FormSubmissionUncheckedCreateWithoutFormInput> | Prisma.FormSubmissionCreateWithoutFormInput[] | Prisma.FormSubmissionUncheckedCreateWithoutFormInput[]
   connectOrCreate?: Prisma.FormSubmissionCreateOrConnectWithoutFormInput | Prisma.FormSubmissionCreateOrConnectWithoutFormInput[]
@@ -375,12 +387,27 @@ export type FormSubmissionUncheckedUpdateManyWithoutFormNestedInput = {
   deleteMany?: Prisma.FormSubmissionScalarWhereInput | Prisma.FormSubmissionScalarWhereInput[]
 }
 
+export type FormSubmissionCreateNestedOneWithoutWebhookDeliveriesInput = {
+  create?: Prisma.XOR<Prisma.FormSubmissionCreateWithoutWebhookDeliveriesInput, Prisma.FormSubmissionUncheckedCreateWithoutWebhookDeliveriesInput>
+  connectOrCreate?: Prisma.FormSubmissionCreateOrConnectWithoutWebhookDeliveriesInput
+  connect?: Prisma.FormSubmissionWhereUniqueInput
+}
+
+export type FormSubmissionUpdateOneRequiredWithoutWebhookDeliveriesNestedInput = {
+  create?: Prisma.XOR<Prisma.FormSubmissionCreateWithoutWebhookDeliveriesInput, Prisma.FormSubmissionUncheckedCreateWithoutWebhookDeliveriesInput>
+  connectOrCreate?: Prisma.FormSubmissionCreateOrConnectWithoutWebhookDeliveriesInput
+  upsert?: Prisma.FormSubmissionUpsertWithoutWebhookDeliveriesInput
+  connect?: Prisma.FormSubmissionWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.FormSubmissionUpdateToOneWithWhereWithoutWebhookDeliveriesInput, Prisma.FormSubmissionUpdateWithoutWebhookDeliveriesInput>, Prisma.FormSubmissionUncheckedUpdateWithoutWebhookDeliveriesInput>
+}
+
 export type FormSubmissionCreateWithoutFormInput = {
   id?: string
   data: Prisma.JsonNullValueInput | runtime.InputJsonValue
   ipAddress?: string | null
   userAgent?: string | null
   createdAt?: Date | string
+  webhookDeliveries?: Prisma.FormWebhookDeliveryCreateNestedManyWithoutSubmissionInput
 }
 
 export type FormSubmissionUncheckedCreateWithoutFormInput = {
@@ -389,6 +416,7 @@ export type FormSubmissionUncheckedCreateWithoutFormInput = {
   ipAddress?: string | null
   userAgent?: string | null
   createdAt?: Date | string
+  webhookDeliveries?: Prisma.FormWebhookDeliveryUncheckedCreateNestedManyWithoutSubmissionInput
 }
 
 export type FormSubmissionCreateOrConnectWithoutFormInput = {
@@ -429,6 +457,58 @@ export type FormSubmissionScalarWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"FormSubmission"> | Date | string
 }
 
+export type FormSubmissionCreateWithoutWebhookDeliveriesInput = {
+  id?: string
+  data: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  ipAddress?: string | null
+  userAgent?: string | null
+  createdAt?: Date | string
+  form: Prisma.FormCreateNestedOneWithoutSubmissionsInput
+}
+
+export type FormSubmissionUncheckedCreateWithoutWebhookDeliveriesInput = {
+  id?: string
+  data: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  ipAddress?: string | null
+  userAgent?: string | null
+  formId: string
+  createdAt?: Date | string
+}
+
+export type FormSubmissionCreateOrConnectWithoutWebhookDeliveriesInput = {
+  where: Prisma.FormSubmissionWhereUniqueInput
+  create: Prisma.XOR<Prisma.FormSubmissionCreateWithoutWebhookDeliveriesInput, Prisma.FormSubmissionUncheckedCreateWithoutWebhookDeliveriesInput>
+}
+
+export type FormSubmissionUpsertWithoutWebhookDeliveriesInput = {
+  update: Prisma.XOR<Prisma.FormSubmissionUpdateWithoutWebhookDeliveriesInput, Prisma.FormSubmissionUncheckedUpdateWithoutWebhookDeliveriesInput>
+  create: Prisma.XOR<Prisma.FormSubmissionCreateWithoutWebhookDeliveriesInput, Prisma.FormSubmissionUncheckedCreateWithoutWebhookDeliveriesInput>
+  where?: Prisma.FormSubmissionWhereInput
+}
+
+export type FormSubmissionUpdateToOneWithWhereWithoutWebhookDeliveriesInput = {
+  where?: Prisma.FormSubmissionWhereInput
+  data: Prisma.XOR<Prisma.FormSubmissionUpdateWithoutWebhookDeliveriesInput, Prisma.FormSubmissionUncheckedUpdateWithoutWebhookDeliveriesInput>
+}
+
+export type FormSubmissionUpdateWithoutWebhookDeliveriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  data?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  form?: Prisma.FormUpdateOneRequiredWithoutSubmissionsNestedInput
+}
+
+export type FormSubmissionUncheckedUpdateWithoutWebhookDeliveriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  data?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  formId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 export type FormSubmissionCreateManyFormInput = {
   id?: string
   data: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -443,6 +523,7 @@ export type FormSubmissionUpdateWithoutFormInput = {
   ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  webhookDeliveries?: Prisma.FormWebhookDeliveryUpdateManyWithoutSubmissionNestedInput
 }
 
 export type FormSubmissionUncheckedUpdateWithoutFormInput = {
@@ -451,6 +532,7 @@ export type FormSubmissionUncheckedUpdateWithoutFormInput = {
   ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  webhookDeliveries?: Prisma.FormWebhookDeliveryUncheckedUpdateManyWithoutSubmissionNestedInput
 }
 
 export type FormSubmissionUncheckedUpdateManyWithoutFormInput = {
@@ -462,6 +544,35 @@ export type FormSubmissionUncheckedUpdateManyWithoutFormInput = {
 }
 
 
+/**
+ * Count Type FormSubmissionCountOutputType
+ */
+
+export type FormSubmissionCountOutputType = {
+  webhookDeliveries: number
+}
+
+export type FormSubmissionCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  webhookDeliveries?: boolean | FormSubmissionCountOutputTypeCountWebhookDeliveriesArgs
+}
+
+/**
+ * FormSubmissionCountOutputType without action
+ */
+export type FormSubmissionCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the FormSubmissionCountOutputType
+   */
+  select?: Prisma.FormSubmissionCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * FormSubmissionCountOutputType without action
+ */
+export type FormSubmissionCountOutputTypeCountWebhookDeliveriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.FormWebhookDeliveryWhereInput
+}
+
 
 export type FormSubmissionSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -471,6 +582,8 @@ export type FormSubmissionSelect<ExtArgs extends runtime.Types.Extensions.Intern
   formId?: boolean
   createdAt?: boolean
   form?: boolean | Prisma.FormDefaultArgs<ExtArgs>
+  webhookDeliveries?: boolean | Prisma.FormSubmission$webhookDeliveriesArgs<ExtArgs>
+  _count?: boolean | Prisma.FormSubmissionCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["formSubmission"]>
 
 export type FormSubmissionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -505,6 +618,8 @@ export type FormSubmissionSelectScalar = {
 export type FormSubmissionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "data" | "ipAddress" | "userAgent" | "formId" | "createdAt", ExtArgs["result"]["formSubmission"]>
 export type FormSubmissionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   form?: boolean | Prisma.FormDefaultArgs<ExtArgs>
+  webhookDeliveries?: boolean | Prisma.FormSubmission$webhookDeliveriesArgs<ExtArgs>
+  _count?: boolean | Prisma.FormSubmissionCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type FormSubmissionIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   form?: boolean | Prisma.FormDefaultArgs<ExtArgs>
@@ -517,6 +632,7 @@ export type $FormSubmissionPayload<ExtArgs extends runtime.Types.Extensions.Inte
   name: "FormSubmission"
   objects: {
     form: Prisma.$FormPayload<ExtArgs>
+    webhookDeliveries: Prisma.$FormWebhookDeliveryPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -920,6 +1036,7 @@ readonly fields: FormSubmissionFieldRefs;
 export interface Prisma__FormSubmissionClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   form<T extends Prisma.FormDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.FormDefaultArgs<ExtArgs>>): Prisma.Prisma__FormClient<runtime.Types.Result.GetResult<Prisma.$FormPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  webhookDeliveries<T extends Prisma.FormSubmission$webhookDeliveriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.FormSubmission$webhookDeliveriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FormWebhookDeliveryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1353,6 +1470,30 @@ export type FormSubmissionDeleteManyArgs<ExtArgs extends runtime.Types.Extension
    * Limit how many FormSubmissions to delete.
    */
   limit?: number
+}
+
+/**
+ * FormSubmission.webhookDeliveries
+ */
+export type FormSubmission$webhookDeliveriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the FormWebhookDelivery
+   */
+  select?: Prisma.FormWebhookDeliverySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the FormWebhookDelivery
+   */
+  omit?: Prisma.FormWebhookDeliveryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FormWebhookDeliveryInclude<ExtArgs> | null
+  where?: Prisma.FormWebhookDeliveryWhereInput
+  orderBy?: Prisma.FormWebhookDeliveryOrderByWithRelationInput | Prisma.FormWebhookDeliveryOrderByWithRelationInput[]
+  cursor?: Prisma.FormWebhookDeliveryWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.FormWebhookDeliveryScalarFieldEnum | Prisma.FormWebhookDeliveryScalarFieldEnum[]
 }
 
 /**

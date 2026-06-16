@@ -26,7 +26,11 @@ import {
   getEdgeConfigItemsAction, 
   linkProjectEdgeConfigAction, 
   createAndLinkEdgeConfigAction, 
-  patchEdgeConfigItemAction 
+  patchEdgeConfigItemAction,
+  getProjectProvidersAction,
+  linkProjectProviderAction,
+  unlinkProjectProviderAction,
+  saveProviderApiKeyAction
 } from "@/app/actions/vercel";
 
 interface EdgeConfigVarsCardProps {
@@ -65,6 +69,32 @@ export function EdgeConfigVarsCard({
   const [key, setKey] = useState("");
   const [value, setValue] = useState("");
   const [flagType, setFlagType] = useState<"boolean" | "string" | "number" | "json">("boolean");
+
+  // Multi-Provider States
+  const [linkedProviders, setLinkedProviders] = useState<any[]>([]);
+  const [loadingProviders, setLoadingProviders] = useState(false);
+  
+  // Link Provider Form State
+  const [isLinkingFormOpen, setIsLinkingFormOpen] = useState(false);
+  const [linkProvider, setLinkProvider] = useState<"vercel" | "cloudflare">("vercel");
+  const [linkAccountId, setLinkAccountId] = useState("");
+  const [linkTargetProjectId, setLinkTargetProjectId] = useState("");
+  const [linkEdgeConfigId, setLinkEdgeConfigId] = useState("");
+  const [linkDisplayName, setLinkDisplayName] = useState("");
+  const [linkApiKey, setLinkApiKey] = useState("");
+
+  const fetchProviders = async () => {
+    setLoadingProviders(true);
+    const res = await getProjectProvidersAction(projectId);
+    setLoadingProviders(false);
+    if (res.success) {
+      setLinkedProviders(res.providers || []);
+    }
+  };
+
+  useEffect(() => {
+    fetchProviders();
+  }, [projectId]);
 
   // Determine connection status based on EDGE_CONFIG env var
   useEffect(() => {
@@ -522,6 +552,259 @@ export function EdgeConfigVarsCard({
             <div className="flex items-center gap-1 text-[10px] text-ink-mute">
               <span className="font-semibold text-emerald-400">● Live Synchronization:</span>
               <span>Updates apply immediately on Vercel's Global Edge Network.</span>
+            </div>
+
+            <Separator className="bg-hairline my-6" />
+
+            {/* Centralized Edge Config Sync & Providers Dashboard */}
+            <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                  <h4 className="text-sm font-bold text-ink flex items-center gap-2">
+                    <Link2 className="size-4 text-primary" />
+                    Centralized Sync Targets
+                  </h4>
+                  <p className="text-xs text-ink-mute">
+                    Automatically replicate Edge Config changes in parallel to these providers.
+                  </p>
+                </div>
+                {!isLinkingFormOpen && (
+                  <Button
+                    onClick={() => {
+                      setIsLinkingFormOpen(true);
+                      setLinkProvider("vercel");
+                      setLinkAccountId("");
+                      setLinkTargetProjectId("");
+                      setLinkEdgeConfigId("");
+                      setLinkDisplayName("");
+                      setLinkApiKey("");
+                    }}
+                    className="bg-canvas-soft hover:bg-canvas-soft/80 border border-hairline text-ink text-xs font-semibold h-8 rounded px-3 flex items-center gap-1.5 cursor-pointer shadow-light"
+                  >
+                    <Plus className="size-3.5" />
+                    Link Sync Provider
+                  </Button>
+                )}
+              </div>
+
+              {/* Form to link provider */}
+              {isLinkingFormOpen && (
+                <form
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    if (!linkAccountId || !linkTargetProjectId) return;
+
+                    startTransition(async () => {
+                      // 1. If API Key is provided, save it first
+                      if (linkApiKey) {
+                        const credentialsFormData = new FormData();
+                        credentialsFormData.append("provider", linkProvider);
+                        credentialsFormData.append("accountId", linkAccountId);
+                        credentialsFormData.append("apiKey", linkApiKey);
+                        credentialsFormData.append("returnTo", returnTo);
+                        await saveProviderApiKeyAction(credentialsFormData);
+                      }
+
+                      // 2. Link provider to project
+                      const linkFormData = new FormData();
+                      linkFormData.append("projectId", projectId);
+                      linkFormData.append("provider", linkProvider);
+                      linkFormData.append("accountId", linkAccountId);
+                      linkFormData.append("targetProjectId", linkTargetProjectId);
+                      if (linkEdgeConfigId) {
+                        linkFormData.append("edgeConfigId", linkEdgeConfigId);
+                      }
+                      linkFormData.append("displayName", linkDisplayName || `${linkProvider} (${linkAccountId})`);
+                      linkFormData.append("returnTo", returnTo);
+
+                      await linkProjectProviderAction(linkFormData);
+                      setIsLinkingFormOpen(false);
+                      fetchProviders();
+                    });
+                  }}
+                  className="bg-canvas-soft/40 p-4 border border-hairline rounded-md space-y-4 animate-in slide-in-from-top-2 duration-200"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-ink uppercase">
+                      Link External Sync Provider
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setIsLinkingFormOpen(false)}
+                      className="text-ink-mute hover:text-ink cursor-pointer"
+                    >
+                      <X className="size-4" />
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="linkProvider" className="text-xs font-semibold text-ink-mute">Provider Type</Label>
+                      <select
+                        id="linkProvider"
+                        value={linkProvider}
+                        onChange={(e) => setLinkProvider(e.target.value as any)}
+                        className="w-full h-8 px-2 bg-canvas border border-hairline rounded text-xs text-ink focus:outline-none focus:border-primary"
+                      >
+                        <option value="vercel">Vercel Account/Org</option>
+                        <option value="cloudflare">Cloudflare Workers KV</option>
+                      </select>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <Label htmlFor="linkAccountId" className="text-xs font-semibold text-ink-mute">
+                        {linkProvider === "vercel" ? "Vercel Team/User ID" : "Cloudflare Account ID"}
+                      </Label>
+                      <Input
+                        id="linkAccountId"
+                        placeholder={linkProvider === "vercel" ? "team_xxxxxxxx" : "cf_xxxxxxxx"}
+                        value={linkAccountId}
+                        onChange={(e) => setLinkAccountId(e.target.value)}
+                        className="h-8 text-xs bg-canvas"
+                        required
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <Label htmlFor="linkTargetProjectId" className="text-xs font-semibold text-ink-mute">
+                        {linkProvider === "vercel" ? "Vercel Project ID" : "Cloudflare KV Namespace ID"}
+                      </Label>
+                      <Input
+                        id="linkTargetProjectId"
+                        placeholder={linkProvider === "vercel" ? "prj_xxxxxxxx" : "kv_namespace_xxxxxxxx"}
+                        value={linkTargetProjectId}
+                        onChange={(e) => setLinkTargetProjectId(e.target.value)}
+                        className="h-8 text-xs bg-canvas"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="linkDisplayName" className="text-xs font-semibold text-ink-mute">Display Name</Label>
+                      <Input
+                        id="linkDisplayName"
+                        placeholder="e.g. Vercel Staging or CF Prod KV"
+                        value={linkDisplayName}
+                        onChange={(e) => setLinkDisplayName(e.target.value)}
+                        className="h-8 text-xs bg-canvas"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <Label htmlFor="linkEdgeConfigId" className="text-xs font-semibold text-ink-mute">
+                        {linkProvider === "vercel" ? "Edge Config ID (Optional)" : "N/A (Disabled)"}
+                      </Label>
+                      <Input
+                        id="linkEdgeConfigId"
+                        placeholder="ecfg_xxxxxxxx"
+                        value={linkEdgeConfigId}
+                        onChange={(e) => setLinkEdgeConfigId(e.target.value)}
+                        disabled={linkProvider !== "vercel"}
+                        className="h-8 text-xs bg-canvas"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <Label htmlFor="linkApiKey" className="text-xs font-semibold text-ink-mute">
+                        API Token / Token Key (Optional)
+                      </Label>
+                      <Input
+                        id="linkApiKey"
+                        placeholder="••••••••••••••••"
+                        type="password"
+                        value={linkApiKey}
+                        onChange={(e) => setLinkApiKey(e.target.value)}
+                        className="h-8 text-xs bg-canvas"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end gap-2 pt-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setIsLinkingFormOpen(false)}
+                      className="h-8 text-xs px-3"
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      type="submit"
+                      className="bg-primary hover:bg-primary-deep text-primary-foreground text-xs font-semibold h-8 rounded px-4"
+                      disabled={isPending}
+                    >
+                      {isPending ? "Linking..." : "Link Provider"}
+                    </Button>
+                  </div>
+                </form>
+              )}
+
+              {/* Linked Providers Table */}
+              {loadingProviders ? (
+                <div className="text-center py-4 text-xs text-ink-mute">
+                  Loading sync targets...
+                </div>
+              ) : linkedProviders.length === 0 ? (
+                <div className="p-4 bg-canvas-soft/20 border border-hairline border-dashed rounded text-center text-xs text-ink-mute">
+                  No additional sync targets linked. Configuration changes are only pushed to the primary Edge Config store.
+                </div>
+              ) : (
+                <div className="border border-hairline rounded-md overflow-hidden">
+                  <Table>
+                    <TableHeader className="bg-canvas-soft/35 select-none">
+                      <TableRow className="border-b border-hairline">
+                        <TableHead className="text-xs font-bold text-ink-mute h-9">Provider</TableHead>
+                        <TableHead className="text-xs font-bold text-ink-mute h-9">Account/Team</TableHead>
+                        <TableHead className="text-xs font-bold text-ink-mute h-9">Project/Namespace ID</TableHead>
+                        <TableHead className="text-xs font-bold text-ink-mute h-9">Sync Status</TableHead>
+                        <TableHead className="text-xs font-bold text-ink-mute h-9 w-[60px] text-right"></TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {linkedProviders.map((p, index) => (
+                        <TableRow key={index} className="border-b border-hairline last:border-0 hover:bg-canvas-soft/10">
+                          <TableCell className="text-xs h-10 font-bold text-ink-secondary">
+                            <span className="capitalize">{p.provider}</span>
+                            <span className="text-[10px] text-ink-mute block font-normal mt-0.5">{p.displayName}</span>
+                          </TableCell>
+                          <TableCell className="text-xs font-mono text-ink-mute h-10">{p.accountId}</TableCell>
+                          <TableCell className="text-xs font-mono text-ink-mute h-10">{p.projectId}</TableCell>
+                          <TableCell className="text-xs text-ink-secondary h-10">
+                            <span className="flex items-center gap-1.5 text-xs font-semibold text-emerald-400">
+                              <span className="size-2 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.4)]" />
+                              Synced
+                            </span>
+                          </TableCell>
+                          <TableCell className="text-right h-10">
+                            <button
+                              onClick={() => {
+                                if (!window.confirm(`Are you sure you want to unlink provider "${p.displayName}"?`)) return;
+                                const unlinkFormData = new FormData();
+                                unlinkFormData.append("projectId", projectId);
+                                unlinkFormData.append("provider", p.provider);
+                                unlinkFormData.append("accountId", p.accountId || "");
+                                unlinkFormData.append("targetProjectId", p.projectId || "");
+                                unlinkFormData.append("returnTo", returnTo);
+
+                                startTransition(async () => {
+                                  await unlinkProjectProviderAction(unlinkFormData);
+                                  fetchProviders();
+                                });
+                              }}
+                              className="text-ink-mute hover:text-destructive cursor-pointer p-1"
+                              title="Unlink provider"
+                            >
+                              <Trash2 className="size-3.5" />
+                            </button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
             </div>
           </div>
         )}

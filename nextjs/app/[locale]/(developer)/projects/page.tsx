@@ -352,8 +352,8 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
 
       {/* Modal Dialog Form for Create */}
       {search.dialog === "create" ? (
-        <div className="fixed inset-x-0 -top-20 h-[calc(100vh+5rem)] z-[120] flex items-center justify-center p-4 bg-canvas-night/70 backdrop-blur-md transition-all duration-300 animate-in fade-in">
-          <Link href={projectsPath} className="absolute inset-0 cursor-default" aria-hidden="true" />
+        <div className="fixed inset-0 z-[120] overflow-y-auto bg-canvas-night/70 backdrop-blur-md transition-all duration-300 animate-in fade-in flex justify-center items-start p-4 md:py-12">
+          <Link href={projectsPath} className="fixed inset-0 cursor-default" aria-hidden="true" />
           <div className="w-full max-w-2xl animate-in fade-in zoom-in-95 duration-200 relative z-10">
             <ProjectForm
               action={createProjectWithBundleAction}
@@ -371,8 +371,8 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
 
       {/* Modal Dialog Form for Edit */}
       {search.dialog === "edit" && selectedProject ? (
-        <div className="fixed inset-x-0 -top-20 h-[calc(100vh+5rem)] z-[120] flex items-center justify-center p-4 bg-canvas-night/70 backdrop-blur-md transition-all duration-300 animate-in fade-in">
-          <Link href={projectsPath} className="absolute inset-0 cursor-default" aria-hidden="true" />
+        <div className="fixed inset-0 z-[120] overflow-y-auto bg-canvas-night/70 backdrop-blur-md transition-all duration-300 animate-in fade-in flex justify-center items-start p-4 md:py-12">
+          <Link href={projectsPath} className="fixed inset-0 cursor-default" aria-hidden="true" />
           <div className="w-full max-w-2xl animate-in fade-in zoom-in-95 duration-200 relative z-10">
             <ProjectForm
               action={updateProjectBundleAction}
@@ -387,8 +387,8 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
 
       {/* Modal Dialog for Delete Confirmation */}
       {search.dialog === "delete" && selectedProject ? (
-        <div className="fixed inset-x-0 -top-20 h-[calc(100vh+5rem)] z-[120] flex items-center justify-center p-4 bg-canvas-night/70 backdrop-blur-md transition-all duration-300 animate-in fade-in">
-          <Link href={projectsPath} className="absolute inset-0 cursor-default" aria-hidden="true" />
+        <div className="fixed inset-0 z-[120] overflow-y-auto bg-canvas-night/70 backdrop-blur-md transition-all duration-300 animate-in fade-in flex justify-center items-start p-4 md:py-12">
+          <Link href={projectsPath} className="fixed inset-0 cursor-default" aria-hidden="true" />
           <div className="w-full max-w-md animate-in fade-in zoom-in-95 duration-200 relative z-10">
             <DeleteConfirmationDialog
               project={selectedProject}

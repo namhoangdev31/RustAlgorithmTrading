@@ -7,6 +7,9 @@ import { requireCurrentUser } from "@/lib/server/current-user";
 import { requireProjectRole } from "@/lib/server/permissions";
 import { buildIntegrationConfig } from "@/lib/server/platform-guardrails";
 import { prisma } from "@/lib/server/prisma";
+import { streamAuditLog } from "@/lib/server/audit-stream";
+import { analyzeMetricsForAnomalies } from "@/lib/server/alert-notifier";
+import { syncProjectFeatureFlags, flagEvents } from "@/lib/server/feature-flags";
 
 const PLATFORM_CONFIG_TYPES = new Set([
   "deployment_pipeline",
@@ -70,16 +73,22 @@ async function getEditableBundle(userId: string, projectId: string) {
 }
 
 async function writeAudit(bundleId: string, userId: string, action: string, value: string) {
+  const logData = {
+    id: crypto.randomUUID(),
+    bundleId,
+    userId,
+    action,
+    fieldName: "platform_control_plane",
+    oldValue: value,
+    createdAt: new Date(),
+  };
+
   await prisma.bundleAuditLog.create({
-    data: {
-      id: crypto.randomUUID(),
-      bundleId,
-      userId,
-      action,
-      fieldName: "platform_control_plane",
-      oldValue: value,
-      createdAt: new Date(),
-    },
+    data: logData,
+  });
+
+  streamAuditLog(bundleId, logData).catch((err) => {
+    console.error("[AuditStream] Background stream failed:", err);
   });
 }
 
@@ -227,6 +236,10 @@ export async function createFeatureFlagAction(formData: FormData) {
       },
     });
 
+    // Replicate configurations to providers and stream SSE updates
+    await syncProjectFeatureFlags(projectId);
+    flagEvents.emit("change", { projectId });
+
     await writeAudit(bundle.id, user.id, "feature_flag_created", readFormValue(formData, "testName"));
     revalidatePath("/dashboard/platform");
     redirect(withQueryParam(returnTo, "platform", "feature_created"));
@@ -338,6 +351,9 @@ export async function recordMonitoringSnapshotAction(formData: FormData) {
     const { bundle } = await getEditableBundle(user.id, projectId);
     const now = new Date();
     const errorCount = BigInt(Number(readFormValue(formData, "errorCount")) || 0);
+    const endpoint = readFormValue(formData, "endpoint") || "/";
+    const method = readFormValue(formData, "method") || "GET";
+    const avgLatencyMs = Number(readFormValue(formData, "avgLatencyMs")) || 0;
 
     await prisma.$transaction([
       prisma.bundleApiUsageStats.create({
@@ -345,11 +361,11 @@ export async function recordMonitoringSnapshotAction(formData: FormData) {
           id: crypto.randomUUID(),
           bundleId: bundle.id,
           statsDate: now.toISOString().slice(0, 10),
-          endpoint: readFormValue(formData, "endpoint") || "/",
-          method: readFormValue(formData, "method") || "GET",
+          endpoint,
+          method,
           callCount: BigInt(Number(readFormValue(formData, "callCount")) || 1),
           errorCount,
-          avgLatencyMs: Number(readFormValue(formData, "avgLatencyMs")) || 0,
+          avgLatencyMs,
           p99LatencyMs: Number(readFormValue(formData, "p99LatencyMs")) || 0,
           createdAt: now,
         },
@@ -368,7 +384,17 @@ export async function recordMonitoringSnapshotAction(formData: FormData) {
       }),
     ]);
 
-    await writeAudit(bundle.id, user.id, "monitoring_snapshot_recorded", readFormValue(formData, "endpoint"));
+    analyzeMetricsForAnomalies(
+      bundle.id,
+      endpoint,
+      method,
+      avgLatencyMs,
+      Number(errorCount)
+    ).catch((err) => {
+      console.error("[AnomalyEngine] Background evaluation failed:", err);
+    });
+
+    await writeAudit(bundle.id, user.id, "monitoring_snapshot_recorded", endpoint);
     revalidatePath("/dashboard/platform");
     redirect(withQueryParam(returnTo, "platform", "monitoring_recorded"));
   } catch (error: any) {

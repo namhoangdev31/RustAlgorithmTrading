@@ -37,12 +37,14 @@ import { VercelAnalyticsCard } from "@/components/projects/VercelAnalyticsCard";
 import { ActivityTab } from "@/components/projects/tabs/ActivityTab";
 import { DomainsTab } from "@/components/projects/tabs/DomainsTab";
 import { DeploymentsTab } from "@/components/projects/tabs/DeploymentsTab";
+import { NativePlatformTab } from "@/components/projects/tabs/NativePlatformTab";
 import { VercelTab } from "@/components/projects/tabs/VercelTab";
 import { VercelEnvVarsCard } from "@/components/projects/VercelEnvVarsCard";
 import { MembersTab } from "@/components/projects/tabs/MembersTab";
 import { ProjectForm } from "@/components/projects/dialogs/ProjectForm";
 import { DeleteConfirmationDialog } from "@/components/projects/dialogs/DeleteConfirmationDialog";
 import { hasVercelApiKey, getVercelClient } from "@/lib/server/vercel";
+import { getNativePlatformData } from "@/lib/server/native-platform/data";
 import { formatRelativeTime } from "@/lib/shared/time";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
@@ -196,6 +198,7 @@ export default async function ProjectDetailsPage({ params, searchParams }: Proje
 
   // Find the production or latest deployment
   const productionDeployment = vercelDeployments.find((d) => d.target === "production") || vercelDeployments[0];
+  const nativePlatformData = await getNativePlatformData(project.id);
 
   return (
     <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-300 w-full">
@@ -292,6 +295,9 @@ export default async function ProjectDetailsPage({ params, searchParams }: Proje
         </Link>
         <Link href={`/projects/${project.id}${buildDetailQueryString(search, { tab: "domains" })}`} className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "domains" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
           Domains
+        </Link>
+        <Link href={`/projects/${project.id}${buildDetailQueryString(search, { tab: "native" })}`} className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "native" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
+          Native Platform
         </Link>
         <Link href={`/projects/${project.id}${buildDetailQueryString(search, { tab: "integrations" })}`} className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "integrations" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
           Integrations
@@ -635,6 +641,7 @@ export default async function ProjectDetailsPage({ params, searchParams }: Proje
             returnTo={returnTo}
             searchParams={search}
             project={project}
+            nativeDeployments={nativePlatformData.deployments}
           />
         )}
 
@@ -645,6 +652,17 @@ export default async function ProjectDetailsPage({ params, searchParams }: Proje
             vercelProjectDomains={vercelProjectDomains}
             vercelProjectId={project.vercelProjectId || ""}
             vercelConnectionError={vercelConnectionError}
+            locale={locale}
+            returnTo={returnTo}
+            projectId={project.id}
+            nativeDomains={nativePlatformData.domains}
+          />
+        )}
+
+        {activeTab === "native" && (
+          <NativePlatformTab
+            project={project}
+            data={nativePlatformData}
             locale={locale}
             returnTo={returnTo}
           />
@@ -894,14 +912,15 @@ export default async function ProjectDetailsPage({ params, searchParams }: Proje
             vercelConnectionError={vercelConnectionError}
             locale={locale}
             returnTo={returnTo}
+            vercelProjectEnvVars={vercelProjectEnvVars}
           />
         )}
       </div>
 
       {/* Modal Dialog Form for Edit */}
       {search.dialog === "edit" ? (
-        <div className="fixed inset-x-0 -top-20 h-[calc(100vh+5rem)] z-[120] flex items-center justify-center p-4 bg-canvas-night/70 backdrop-blur-md transition-all duration-300 animate-in fade-in">
-          <Link href={`/projects/${project.id}?tab=${activeTab}`} className="absolute inset-0 cursor-default" aria-hidden="true" />
+        <div className="fixed inset-0 z-[120] overflow-y-auto bg-canvas-night/70 backdrop-blur-md transition-all duration-300 animate-in fade-in flex justify-center items-start p-4 md:py-12">
+          <Link href={`/projects/${project.id}?tab=${activeTab}`} className="fixed inset-0 cursor-default" aria-hidden="true" />
           <div className="w-full max-w-2xl animate-in fade-in zoom-in-95 duration-200 relative z-10">
             <ProjectForm
               action={updateProjectBundleAction}
@@ -916,8 +935,8 @@ export default async function ProjectDetailsPage({ params, searchParams }: Proje
 
       {/* Modal Dialog for Delete Confirmation */}
       {search.dialog === "delete" ? (
-        <div className="fixed inset-x-0 -top-20 h-[calc(100vh+5rem)] z-[120] flex items-center justify-center p-4 bg-canvas-night/70 backdrop-blur-md transition-all duration-300 animate-in fade-in">
-          <Link href={`/projects/${project.id}?tab=${activeTab}`} className="absolute inset-0 cursor-default" aria-hidden="true" />
+        <div className="fixed inset-0 z-[120] overflow-y-auto bg-canvas-night/70 backdrop-blur-md transition-all duration-300 animate-in fade-in flex justify-center items-start p-4 md:py-12">
+          <Link href={`/projects/${project.id}?tab=${activeTab}`} className="fixed inset-0 cursor-default" aria-hidden="true" />
           <div className="w-full max-w-md animate-in fade-in zoom-in-95 duration-200 relative z-10">
             <DeleteConfirmationDialog
               project={project}
