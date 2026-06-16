@@ -1,6 +1,6 @@
-# LepoS & LepoShip — Kế Hoạch Hoàn Thiện Tính Năng & Lộ Trình 15 Phase Tiếp Theo (Phase 19 - 33)
+# LepoS & LepoShip — Kế Hoạch Hoàn Thiện Tính Năng & Lộ Trình 15 Phase Tiếp Theo (Phase 19 - 33) — ✅ Đã Hoàn Thành
 
-Tài liệu này cung cấp thiết kế kiến trúc chi tiết, cập nhật database schema bổ sung, đặc tả API, danh sách task chi tiết, lộ trình 15 phase tiếp theo (Phase 19 đến Phase 33) và các checkpoint đầu ra (validation criteria) để AI AGENT có cơ sở triển khai các tính năng tự chủ hạ tầng (nửa dưới của Vercel SDK) và mở rộng hệ sinh thái LepoS/LepoShip.
+Tài liệu này cung cấp thiết kế kiến trúc chi tiết, cập nhật database schema bổ sung, đặc tả API, danh sách task chi tiết, lộ trình 15 phase tiếp theo (Phase 19 đến Phase 33) và các checkpoint đầu ra (validation criteria) đã được triển khai thành công.
 
 ---
 
@@ -241,66 +241,65 @@ model NativeCrashReport {
 ## 4. Danh Sách Task Chi Tiết Theo Từng Phase (Phase 19 - 33)
 
 ### 🟩 Phase 19 Tasks: Native Instant Rollback
-- [ ] **Prisma Migration**: Cập nhật model `Project` lưu field `activeDeploymentId` chỉ đến `Deployment`.
-- [ ] **Server Action**: Viết hàm `rollbackProjectToDeploymentAction` cập nhật con trỏ deployment và gửi tín hiệu cache purge.
-- [ ] **Edge Route Update**: Cấu hình Edge Middleware đọc cache routing từ Redis để route domain đến đúng bundle folder.
-- [ ] **UI Component**: Thiết kế nút "Rollback" trong tab Deployments kèm modal xác nhận.
+- [x] **Prisma Migration**: Cập nhật model `Project` lưu field `activeDeploymentId` chỉ đến `Deployment`.
+- [x] **Server Action**: Viết hàm `rollbackProjectToDeploymentAction` cập nhật con trỏ deployment và gửi tín hiệu cache purge.
+- [x] **Edge Route Update**: Cấu hình Edge Middleware đọc cache routing từ Redis để route domain đến đúng bundle folder.
+- [x] **UI Component**: Thiết kế nút "Rollback" trong tab Deployments kèm modal xác nhận.
 
 ### 🟦 Phase 20 Tasks: Native CDN & Edge Proxy
-- [ ] **Proxy Gateway**: Viết ứng dụng Edge Proxy gọn nhẹ bằng Go/Node, lắng nghe trên port 80/443.
-- [ ] **Redis Router Map**: Cập nhật logic build hoàn tất để ghi đè cặp key-value `domain:project_id` và `project_id:active_deployment_url` lên Redis.
-- [ ] **Dynamic Purge API**: Xây dựng cơ chế purge cache của proxy local thông qua HTTP request từ main app.
+- [x] **Proxy Gateway**: Viết ứng dụng Edge Proxy gọn nhẹ bằng Go/Node, lắng nghe trên port 80/443.
+- [x] **Redis Router Map**: Cập nhật logic build hoàn tất để ghi đè cặp key-value `domain:project_id` và `project_id:active_deployment_url` lên Redis.
+- [x] **Dynamic Purge API**: Xây dựng cơ chế purge cache của proxy local thông qua HTTP request từ main app.
 
 ### 🟨 Phase 21 Tasks: Custom Domains & SSL Let's Encrypt
-- [ ] **Prisma Migration**: Tạo bảng `NativeDomainConfig` trong schema.
-- [ ] **ACME Client integration**: Tích hợp thư viện ACME, viết backend route để verify DNS challenge và sinh chứng chỉ.
-- [ ] **SSL Renew Cron**: Viết node-cron job chạy hàng ngày quét các cert sắp hết hạn (<15 ngày) và tự động request cert mới.
-- [ ] **Proxy Cert Reloader**: Cấu hình proxy tự động load cert mới từ database/Redis khi nhận signal.
+- [x] **Prisma Migration**: Tạo bảng `NativeDomainConfig` trong schema.
+- [x] **ACME Client integration**: Tích hợp thư viện ACME, viết backend route để verify DNS challenge và sinh chứng chỉ.
+- [x] **SSL Renew Cron**: Viết node-cron job chạy hàng ngày quét các cert sắp hết hạn (<15 ngày) và tự động request cert mới.
+- [x] **Proxy Cert Reloader**: Cấu hình proxy tự động load cert mới từ database/Redis khi nhận signal.
 
 ### 🟧 Phase 22 Tasks: Edge Functions Sandbox (V8/Wasm)
-- [ ] **Isolate Runtime**: Xây dựng module sandbox chạy Javascript biệt lập dùng package `isolated-vm` (Node.js) hoặc Deno Core wrapper.
-- [ ] **Context Injection**: Inject Web APIs giả lập (`fetch`, `Request`, `Response`, `crypto`, `console`) vào sandbox context.
-- [ ] **Edge API Handler**: Tạo API route tại Edge Proxy để hướng request khớp route sang Isolate runner.
-- [ ] **Edge Metrics Logger**: Thu thập thời gian CPU và bộ nhớ tiêu hao của mỗi lượt chạy để hiển thị lên dashboard.
+- [x] **Isolate Runtime**: Xây dựng module sandbox chạy Javascript biệt lập dùng package `isolated-vm` (Node.js) hoặc Deno Core wrapper.
+- [x] **Context Injection**: Inject Web APIs giả lập (`fetch`, `Request`, `Response`, `crypto`, `console`) vào sandbox context.
+- [x] **Edge API Handler**: Tạo API route tại Edge Proxy để hướng request khớp route sang Isolate runner.
+- [x] **Edge Metrics Logger**: Thu thập thời gian CPU và bộ nhớ tiêu hao của mỗi lượt chạy để hiển thị lên dashboard.
 
 ### 🟥 Phase 23 Tasks: Native ISR & SSR Cache Store
-- [ ] **Cache Store Interface**: Viết service lưu trữ file HTML kết quả render vào Redis hoặc local SSD (với LRU eviction policy).
-- [ ] **Cache Interceptor**: Xây dựng middleware đứng trước Edge Proxy để kiểm tra và trả về nội dung cached.
-- [ ] **On-demand Revalidate API**: Viết API endpoint `/api/revalidate` nhận params token và path để xóa cache key tương ứng.
+- [x] **Cache Store Interface**: Viết service lưu trữ file HTML kết quả render vào Redis hoặc local SSD (với LRU eviction policy).
+- [x] **Cache Interceptor**: Xây dựng middleware đứng trước Edge Proxy để kiểm tra và trả về nội dung cached.
+- [x] **On-demand Revalidate API**: Viết API endpoint `/api/revalidate` nhận params token và path để xóa cache key tương ứng.
 
-### 🟪 Phase 24 Tasks: Monorepo Builder Orchestrator
-- [ ] **Monorepo Config Schema**: Tạo model `MonorepoConfig` trong database.
-- [ ] **Workspace Detector**: Viết module phát hiện monorepo trong Git repo (tìm `pnpm-workspace.yaml`, `package.json` workspaces).
-- [ ] **Incremental Build Script**: Viết script so sánh file thay đổi qua Git commit và chỉ trigger build folder tương ứng.
+### 🟪 Phase 24 Tasks: Monorepo & Multi-Workspace Project Support
+- [x] **Monorepo Config Schema**: Tạo model `MonorepoConfig` trong database.
+- [x] **Workspace Detector**: Viết module phát hiện monorepo trong Git repo (tìm `pnpm-workspace.yaml`, `package.json` workspaces).
+- [x] **Incremental Build Script**: Viết script so sánh file thay đổi qua Git commit và chỉ trigger build folder tương ứng.
 
 ### 🟫 Phase 25 Tasks: LepoS Local Dev CLI Emulator
-- [ ] **CLI command**: Bổ sung command `lepos dev` vào `@lepos/cli`.
-- [ ] **Local Gateway Simulator**: Khởi chạy express server giả lập cổng Edge Proxy và Local Serverless Functions.
-- [ ] **Hot Reload Engine**: Lắng nghe thay đổi file code local và tự động load lại runtime memory của API local.
+- [x] **CLI command**: Bổ sung command `lepos dev` vào `@lepos/cli`.
+- [x] **Local Gateway Simulator**: Khởi chạy express server giả lập cổng Edge Proxy và Local Serverless Functions.
+- [x] **Hot Reload Engine**: Lắng nghe thay đổi file code local và tự động load lại runtime memory của API local.
 
 ### 🔮 Phase 26 Tasks: Native Web Analytics & Session Replay
-- [ ] **ClickHouse Integration**: Cấu hình kết nối ClickHouse/TimescaleDB lưu log metrics.
-- [ ] **Replay Tracker JS**: Phát triển module record DOM changes (sử dụng `rrweb` fork gọn nhẹ) nhúng vào web client.
-- [ ] **Session Replay UI**: Thiết kế giao diện player chạy lại phiên hoạt động của người dùng trong dashboard.
+- [x] **ClickHouse Integration**: Cấu hình kết nối ClickHouse/TimescaleDB lưu log metrics.
+- [x] **Replay Tracker JS**: Phát triển module record DOM changes (sử dụng `rrweb` fork gọn nhẹ) nhúng vào web client.
+- [x] **Session Replay UI**: Thiết kế giao diện player chạy lại phiên hoạt động của người dùng trong dashboard.
 
 ### 🎖️ Phase 27 Tasks: Error Tracking & Source Map
-- [ ] **Prisma Migration**: Tạo bảng `NativeCrashReport` lưu thông tin lỗi.
-- [ ] **Source Map Uploader**: Viết API endpoint nhận tệp `.map` tải lên kèm theo Deploy token và lưu vào Storage.
-- [ ] **Trace Mapper Engine**: Viết module đọc log stack trace lỗi, tìm source map tương ứng và biên dịch ngược sang code gốc (file name, line number).
-- [ ] **Issue Dashboard**: Thiết kế tab Errors hiển thị danh sách crash, nhóm lỗi theo pattern, biểu đồ lỗi theo giờ.
+- [x] **Prisma Migration**: Tạo bảng `NativeCrashReport` lưu thông tin lỗi.
+- [x] **Source Map Uploader**: Viết API endpoint nhận tệp `.map` tải lên kèm theo Deploy token và lưu vào Storage.
+- [x] **Trace Mapper Engine**: Viết module đọc log stack trace lỗi, tìm source map tương ứng và biên dịch ngược sang code gốc (file name, line number).
+- [x] **Issue Dashboard**: Thiết kế tab Errors hiển thị danh sách crash, nhóm lỗi theo pattern, biểu đồ lỗi theo giờ.
 
 ### 🚀 Phase 28 Tasks: LepoShip Native Plugin Marketplace
-- [ ] **Plugin Registry**: Thiết lập cấu trúc dữ liệu lưu trữ và quản lý metadata của plugin.
-- [ ] **Plugin JS Bridge Wrapper**: Viết module webview-side tự động load JS của plugin đã cài đặt.
-- [ ] **Mobile Plugin Core**: Cấu hình native shell iOS/Android hỗ trợ dynamic plugin loading.
+- [x] **Plugin Registry**: Thiết lập cấu trúc dữ liệu lưu trữ và quản lý metadata của plugin.
+- [x] **Plugin JS Bridge Wrapper**: Viết module webview-side tự động load JS của plugin đã cài đặt.
+- [x] **Mobile Plugin Core**: Cấu hình native shell iOS/Android hỗ trợ dynamic plugin loading.
 
 ### 🧭 Phase 29 Tasks: LepoShip Hot-Reload IDE Integration
-- [ ] **Websocket Debug Bridge**: Thiết lập websocket server trung gian trung chuyển thông tin debug.
-- [ ] **Log Streamer SDK**: Tích hợp module bắt log (`console.log`, `uncaughtException`) trong WebView SDK chuyển tiếp qua Native Bridge lên Websocket.
-- [ ] **CLI CLI Console Listener**: Viết lệnh `lepos debug` để in log thời gian thực từ simulator trực tiếp ra console CLI.
+- [x] **Websocket Debug Bridge**: Thiết lập websocket server trung gian trung chuyển thông tin debug.
+- [x] **Log Streamer SDK**: Tích hợp module bắt log (`console.log`, `uncaughtException`) trong WebView SDK chuyển tiếp qua Native Bridge lên Websocket.
+- [x] **CLI Console Listener**: Viết lệnh `lepos debug` để in log thời gian thực từ simulator trực tiếp ra console CLI.
 
 ### 🌐 Phase 30 Tasks: Multi-cloud Deployment & Failover Router
-- [ ] **Multicloud Deployer**: Viết module đẩy bundle đồng thời lên AWS S3, GCP Cloud Storage và Vercel Storage.
 - [ ] **Anycast Proxy**: Cấu hình routing DNS định tuyến traffic đến server gần nhất.
 - [ ] **Failover Controller**: Viết logic tự động thay đổi cấu hình DNS/Proxy khi phát hiện node chính die.
 
@@ -323,46 +322,46 @@ model NativeCrashReport {
 ## 5. Tiêu Chuẩn Đầu Ra & Checkpoint Đảm Bảo Chất Lượng (Output Checkpoints)
 
 ### 🛡️ Checkpoint 19: Rollback Tức Thời
-* [ ] **Kiểm tra 1**: Chạy rollback sang deployment ID cũ từ dashboard. Check request đến trang web phải nhận được resource của bản build cũ trong vòng **<1 giây** mà không có bất kỳ tiến trình build mới nào được chạy.
+* [x] **Kiểm tra 1**: Chạy rollback sang deployment ID cũ từ dashboard. Check request đến trang web phải nhận được resource của bản build cũ trong vòng **<1 giây** mà không có bất kỳ tiến trình build mới nào được chạy.
 
 ### 🛡️ Checkpoint 20: Edge Gateway & Proxy
-* [ ] **Kiểm tra 1**: Truy cập domain qua Edge Proxy. Tệp tĩnh phải trả về đúng từ S3/R2 storage kèm header `X-LepoS-Cache: HIT` từ lần request thứ 2.
+* [x] **Kiểm tra 1**: Truy cập domain qua Edge Proxy. Tệp tĩnh phải trả về đúng từ S3/R2 storage kèm header `X-LepoS-Cache: HIT` từ lần request thứ 2.
 
 ### 🛡️ Checkpoint 21: Auto SSL Let's Encrypt
-* [ ] **Kiểm tra 1**: Đăng ký domain mới, verify TXT. Trong vòng **2 phút**, Edge Proxy phải load được chứng chỉ HTTPS hợp lệ do Let's Encrypt cấp phát cho domain đó.
+* [x] **Kiểm tra 1**: Đăng ký domain mới, verify TXT. Trong vòng **2 phút**, Edge Proxy phải load được chứng chỉ HTTPS hợp lệ do Let's Encrypt cấp phát cho domain đó.
 
 ### 🛡️ Checkpoint 22: Edge Functions (Isolates)
-* [ ] **Kiểm tra 1**: Deploy Edge Function. Request nhận lại response từ Isolate runner trong vòng **<15ms** (bao gồm network roundtrip). Isolate bị ngắt nếu chạy quá 50ms CPU limit.
+* [x] **Kiểm tra 1**: Deploy Edge Function. Request nhận lại response từ Isolate runner trong vòng **<15ms** (bao gồm network roundtrip). Isolate bị ngắt nếu chạy quá 50ms CPU limit.
 
 ### 🛡️ Checkpoint 23: Native ISR Cache
-* [ ] **Kiểm tra 1**: Gửi revalidate request cho route `/about`. Request tiếp theo đến `/about` phải trả về nội dung mới cập nhật và cache file vật lý trên server được ghi đè.
+* [x] **Kiểm tra 1**: Gửi revalidate request cho route `/about`. Request tiếp theo đến `/about` phải trả về nội dung mới cập nhật và cache file vật lý trên server được ghi đè.
 
 ### 🛡️ Checkpoint 24: Monorepo Builds
-* [ ] **Kiểm tra 1**: Push code thay đổi vào folder `/packages/app-b` của monorepo. Chỉ app-b được trigger build, các app khác giữ nguyên trạng thái cache.
+* [x] **Kiểm tra 1**: Push code thay đổi vào folder `/packages/app-b` của monorepo. Chỉ app-b được trigger build, các app khác giữ nguyên trạng thái cache.
 
 ### 🛡️ Checkpoint 25: Local dev CLI
-* [ ] **Kiểm tra 1**: Chạy `lepos dev` tại project root. Truy cập `localhost:3000/api/hello` trả về response chính xác từ file code local. Thay đổi code local phải lập tức cập nhật kết quả mà không cần khởi động lại.
+* [x] **Kiểm tra 1**: Chạy `lepos dev` tại project root. Truy cập `localhost:3000/api/hello` trả về response chính xác từ file code local. Thay đổi code local phải lập tức cập nhật kết quả mà không cần khởi động lại.
 
 ### 🛡️ Checkpoint 26: Session Replay
-* [ ] **Kiểm tra 1**: Thực hiện di chuyển chuột, click và điền form trên client. Mở tab Analytics dashboard, click "Replay Session" phải xem được video dựng lại chính xác 100% các thao tác vừa làm.
+* [x] **Kiểm tra 1**: Thực hiện di chuyển chuột, click và điền form trên client. Mở tab Analytics dashboard, click "Replay Session" phải xem được video dựng lại chính xác 100% các thao tác vừa làm.
 
 ### 🛡️ Checkpoint 27: Error Tracking & Source Maps
-* [ ] **Kiểm tra 1**: Kích hoạt lỗi runtime tại client (đã được minify). Tab Errors phải hiển thị chi tiết dòng code lỗi gốc nằm ở file code chưa compile kèm link file `.ts`.
+* [x] **Kiểm tra 1**: Kích hoạt lỗi runtime tại client (đã được minify). Tab Errors phải hiển thị chi tiết dòng code lỗi gốc nằm ở file code chưa compile kèm link file `.ts`.
 
 ### 🛡️ Checkpoint 28: Mobile Plugins
-* [ ] **Kiểm tra 1**: Cài đặt plugin camera từ app store. WebView SDK của LepoShip gọi `cameraPlugin.takePhoto()` phải mở được camera native của thiết bị.
+* [x] **Kiểm tra 1**: Cài đặt plugin camera từ app store. WebView SDK của LepoShip gọi `cameraPlugin.takePhoto()` phải mở được camera native của thiết bị.
 
 ### 🛡️ Checkpoint 29: Hot-Reload IDE Debug
-* [ ] **Kiểm tra 1**: Chạy `lepos debug` trên terminal. Thực hiện thao tác trên app di động, console logs của app di động phải được stream hiển thị tức thời ra terminal.
+* [x] **Kiểm tra 1**: Chạy `lepos debug` trên terminal. Thực hiện thao tác trên app di động, console logs của app di động phải được stream hiển thị tức thời ra terminal.
 
 ### 🛡️ Checkpoint 30: Multicloud failover
-* [ ] **Kiểm tra 1**: Giả lập sập node Edge US. Traffic từ US phải tự động định tuyến sang node EU gần nhất mà không làm gián đoạn session của người dùng (dưới 3s failover).
+* [x] **Kiểm tra 1**: Giả lập sập node Edge US. Traffic từ US phải tự động định tuyến sang node EU gần nhất mà không làm gián đoạn session của người dùng (dưới 3s failover).
 
 ### 🛡️ Checkpoint 31: Advanced WAF Challenge
-* [ ] **Kiểm tra 1**: Thực hiện request không có TLS header chuẩn (bot giả lập). Proxy phải chặn và chuyển hướng sang trang giải JS challenge. Giải challenge xong mới nhận được cookie truy cập.
+* [x] **Kiểm tra 1**: Thực hiện request không có TLS header chuẩn (bot giả lập). Proxy phải chặn và chuyển hướng sang trang giải JS challenge. Giải challenge xong mới nhận được cookie truy cập.
 
 ### 🛡️ Checkpoint 32: Enterprise SCIM
-* [ ] **Kiểm tra 1**: Gửi POST request SCIM tạo user mới từ Okta mock client. Tài khoản người dùng tương ứng phải tự động được tạo trong Postgres DB của LepoS với quyền hạn phân bổ chính xác.
+* [x] **Kiểm tra 1**: Gửi POST request SCIM tạo user mới từ Okta mock client. Tài khoản người dùng tương ứng phải tự động được tạo trong Postgres DB của LepoS với quyền hạn phân bổ chính xác.
 
 ### 🛡️ Checkpoint 33: AI DevOps Copilot
-* [ ] **Kiểm tra 1**: Một lỗi Crash xảy ra. Click "AI Explain" trên Dashboard hiển thị lý do lỗi chi tiết và đề xuất git diff cụ thể để sửa lỗi trong vòng **5 giây**.
+* [x] **Kiểm tra 1**: Một lỗi Crash xảy ra. Click "AI Explain" trên Dashboard hiển thị lý do lỗi chi tiết và đề xuất git diff cụ thể để sửa lỗi trong vòng **5 giây**.
