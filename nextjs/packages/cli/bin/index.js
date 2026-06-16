@@ -226,31 +226,157 @@ async function handleDeploy() {
     process.exit(1);
   }
 
-  try {
-    if (!isJson) console.log("Triggering deployment on LepoS...");
-    const res = await fetch(`${API_HOST}/api/v1/deployments`, {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        projectId: localConfig.projectId,
-        version: "1.0.0",
-        changelog: "Deploy via LepoS CLI"
-      })
-    });
+  // CLI Arguments
+  const versionIdx = process.argv.indexOf("--release-version");
+  const cmdLineVersion = versionIdx !== -1 ? process.argv[versionIdx + 1] : null;
 
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.error || "Failed to trigger deployment");
+  const notesIdx = process.argv.indexOf("--notes");
+  const cmdLineNotes = notesIdx !== -1 ? process.argv[notesIdx + 1] : "Deploy via LepoS CLI";
+
+  const trackIdx = process.argv.indexOf("--track");
+  const cmdLineTrack = trackIdx !== -1 ? process.argv[trackIdx + 1] : "production";
+
+  try {
+    const { execSync } = await import("child_process");
+
+    // 1. Detect project type and compile
+    let projectType = "Web";
+    let buildDir = "public";
+    let detectedVersion = "1.0.0";
+
+    if (fs.existsSync(path.join(process.cwd(), "pubspec.yaml"))) {
+      projectType = "Flutter";
+      buildDir = path.join("build", "web");
+      console.log("📦 Detected Flutter project. Running 'flutter build web --release'...");
+      execSync("flutter build web --release", { stdio: "inherit" });
+      
+      // Auto-parse version from pubspec.yaml
+      try {
+        const pubspec = fs.readFileSync(path.join(process.cwd(), "pubspec.yaml"), "utf8");
+        const versionMatch = pubspec.match(/^version:\s*([^\s+]+)/m);
+        if (versionMatch) {
+          detectedVersion = versionMatch[1];
+        }
+      } catch (err) {}
+    } else if (fs.existsSync(path.join(process.cwd(), "app.json")) && fs.existsSync(path.join(process.cwd(), "package.json"))) {
+      projectType = "Expo";
+      buildDir = fs.existsSync(path.join(process.cwd(), "dist")) ? "dist" : "web-build";
+      console.log("📦 Detected Expo project. Running 'npx expo export'...");
+      execSync("npx expo export", { stdio: "inherit" });
+
+      try {
+        const pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), "package.json"), "utf8"));
+        detectedVersion = pkg.version || "1.0.0";
+      } catch (err) {}
+    } else {
+      // Standard Web
+      try {
+        const pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), "package.json"), "utf8"));
+        detectedVersion = pkg.version || "1.0.0";
+        if (pkg.scripts && pkg.scripts.build) {
+          console.log("📦 Detected Web project. Running 'npm run build'...");
+          execSync("npm run build", { stdio: "inherit" });
+        }
+      } catch (err) {}
+
+      if (fs.existsSync(path.join(process.cwd(), "dist"))) {
+        buildDir = "dist";
+      } else if (fs.existsSync(path.join(process.cwd(), "out"))) {
+        buildDir = "out";
+      }
     }
 
-    const { deployment } = await res.json();
-    printOutput(
-      { deployment },
-      `🚀 Deployment triggered successfully!\nBuild Number: ${deployment.buildNumber}\nStatus: ${deployment.status}`
+    const finalVersion = cmdLineVersion || detectedVersion;
+
+    // 2. Validate build output directory exists
+    const buildPath = path.resolve(process.cwd(), buildDir);
+    if (!fs.existsSync(buildPath)) {
+      throw new Error(`Build directory not found at: ${buildPath}. Please compile your project first.`);
+    }
+
+    // 3. Compress build directory to zip
+    console.log(`🤐 Packaging build folder '${buildDir}' into bundle.zip...`);
+    const zipFile = path.resolve(process.cwd(), "bundle.zip");
+    if (fs.existsSync(zipFile)) {
+      fs.unlinkSync(zipFile); // Delete old zip if exists
+    }
+
+    // Execute system zip command
+    if (process.platform === "win32") {
+      execSync(`powershell Compress-Archive -Path "${buildPath}\\*" -DestinationPath "${zipFile}" -Force`);
+    } else {
+      // On macOS/Linux: cd to build dir and zip everything inside it to prevent nesting root folder in zip
+      execSync(`cd "${buildPath}" && zip -r "${zipFile}" .`, { stdio: "ignore" });
+    }
+
+    if (!fs.existsSync(zipFile)) {
+      throw new Error("Failed to generate bundle.zip packaging file.");
+    }
+
+    const zipSize = fs.statSync(zipFile).size;
+    console.log(`📦 Created bundle.zip (${(zipSize / 1024 / 1024).toFixed(2)} MB). Uploading to LepoS...`);
+
+    // 4. Send bundle.zip to /api/bundles/upload endpoint
+    const fileBuffer = fs.readFileSync(zipFile);
+    
+    // Construct multipart/form-data payload manually to avoid heavy external dependency
+    const boundary = `----LepoSBound${Math.random().toString(36).substring(2)}`;
+    const headers = {
+      "Authorization": `Bearer ${token}`,
+      "Content-Type": `multipart/form-data; boundary=${boundary}`
+    };
+
+    const payloadParts = [];
+
+    // Fields
+    const fields = {
+      projectId: localConfig.projectId,
+      version: finalVersion,
+      track: cmdLineTrack,
+      releaseNotes: cmdLineNotes
+    };
+
+    for (const [key, val] of Object.entries(fields)) {
+      payloadParts.push(
+        Buffer.from(
+          `--${boundary}\r\nContent-Disposition: form-data; name="${key}"\r\n\r\n${val}\r\n`
+        )
+      );
+    }
+
+    // File field
+    payloadParts.push(
+      Buffer.from(
+        `--${boundary}\r\nContent-Disposition: form-data; name="file"; filename="bundle.zip"\r\nContent-Type: application/zip\r\n\r\n`
+      )
     );
+    payloadParts.push(fileBuffer);
+    payloadParts.push(Buffer.from(`\r\n--${boundary}--\r\n`));
+
+    const requestBody = Buffer.concat(payloadParts);
+
+    const uploadRes = await fetch(`${API_HOST}/api/bundles/upload`, {
+      method: "POST",
+      headers,
+      body: requestBody
+    });
+
+    // Clean up bundle.zip immediately
+    try {
+      fs.unlinkSync(zipFile);
+    } catch (_) {}
+
+    if (!uploadRes.ok) {
+      const err = await uploadRes.json().catch(() => ({ error: `HTTP status ${uploadRes.status}` }));
+      throw new Error(err.error || "Failed to upload deployment bundle");
+    }
+
+    const resJson = await uploadRes.json();
+    printOutput(
+      { bundle: resJson.bundle },
+      `🚀 Deployment upload completed successfully!\nVersion: ${resJson.bundle.version}\nBuild Number: ${resJson.bundle.buildNumber}\nCDN URL: ${resJson.cdnUrl || "N/A"}`
+    );
+
   } catch (e) {
     printError(e.message);
   }
@@ -336,7 +462,24 @@ async function loadLocalHandler(filePath) {
 async function handleDev() {
   const port = Number(process.env.LEPOS_DEV_PORT || 3410);
   const apiDir = path.join(process.cwd(), "api");
-  const publicDir = path.join(process.cwd(), "public");
+  
+  // Dynamic publicDir detection for Flutter, Expo, or Web
+  let publicDir = path.join(process.cwd(), "public");
+  let projectType = "Web";
+  if (fs.existsSync(path.join(process.cwd(), "pubspec.yaml"))) {
+    publicDir = path.join(process.cwd(), "build", "web");
+    projectType = "Flutter";
+  } else if (fs.existsSync(path.join(process.cwd(), "app.json")) && fs.existsSync(path.join(process.cwd(), "package.json"))) {
+    publicDir = fs.existsSync(path.join(process.cwd(), "dist")) 
+      ? path.join(process.cwd(), "dist") 
+      : path.join(process.cwd(), "web-build");
+    projectType = "Expo (React Native)";
+  } else if (fs.existsSync(path.join(process.cwd(), "dist"))) {
+    publicDir = path.join(process.cwd(), "dist");
+  } else if (fs.existsSync(path.join(process.cwd(), "out"))) {
+    publicDir = path.join(process.cwd(), "out");
+  }
+
   const localDbDir = path.join(process.cwd(), ".lepos");
   const localDbPath = path.join(localDbDir, "local-db.json");
 
@@ -373,6 +516,8 @@ async function handleDev() {
     // Also send to websocket debug clients
     broadcastDebugWs({ level, message });
   }
+
+  logToTerminal(`Detected project type [${projectType}]. Serving assets from: ${publicDir}`);
 
   function broadcastDebugWs(payload) {
     const dataStr = JSON.stringify({
@@ -805,9 +950,13 @@ function printHelp() {
   console.log("  login <token>    Login with your Personal Access Token");
   console.log("  link <projectId> Link current directory to a project");
   console.log("  env pull         Pull environment variables to .env.local");
-  console.log("  deploy           Trigger project deployment");
+  console.log("  deploy           Trigger compilation, zip-packaging, and deploy static bundle to LepoS");
+  console.log("                   Options:");
+  console.log("                     --release-version <version>  Override deployment version");
+  console.log("                     --notes <changelog>          Add custom deployment notes");
+  console.log("                     --track <track>              Target track: production (default) or staging");
   console.log("  logs             Stream project runtime logs");
-  console.log("  dev              Run local Edge/API emulator");
+  console.log("  dev              Run local Edge/API emulator (detects Flutter/Expo projects)");
   console.log("  debug            Stream mobile WebView debug logs");
   console.log("  diagnostics      Run AI diagnostics for project errors");
   console.log("  partner register <company> [web] Register partner profile");

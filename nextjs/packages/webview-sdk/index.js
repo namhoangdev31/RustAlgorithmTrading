@@ -31,11 +31,35 @@ class LepoShipBridge {
     this.isAndroid = typeof window !== "undefined" && 
       (window.LepoShipBridge || window.LeposBridge);
 
+    this.isFlutter = typeof window !== "undefined" && 
+      (!!window.flutter_inappwebview || !!window.LepoShipBridgeFlutter);
+
+    this.isExpo = typeof window !== "undefined" && 
+      !!window.ReactNativeWebView;
+
+    this.isWebIframe = typeof window !== "undefined" && 
+      window.parent !== window;
+
     this.plugins = new Map();
     this.grantedPermissions = new Set();
 
     // Auto-initialize crash tracker and load plugins in browser environment
     if (typeof window !== "undefined") {
+      // Register global message listener for PostMessage events (Expo & Web Iframe)
+      window.addEventListener("message", (event) => {
+        let data = event.data;
+        if (typeof data === "string") {
+          try {
+            data = JSON.parse(data);
+          } catch (e) {
+            return;
+          }
+        }
+        if (data && data.type === "lepoShipResponse" && data.requestId) {
+          window.__lepoShipReceiveMessage(data.requestId, data.response || data);
+        }
+      });
+
       const urlParams = new URLSearchParams(window.location.search);
       const currentVersion = urlParams.get("appVersion") || urlParams.get("version") || "1.0.0";
       this.initCrashTracker(currentVersion);
@@ -198,9 +222,28 @@ class LepoShipBridge {
       if (this.isIOS) {
         const handler = window.webkit.messageHandlers.lepoShipBridge || window.webkit.messageHandlers.LeposBridge;
         handler.postMessage(message);
-      } else if (this.isAndroid) {
+      } else if (this.isAndroid && !this.isFlutter) {
         const bridge = window.LepoShipBridge || window.LeposBridge;
         bridge.postMessage(JSON.stringify(message));
+      } else if (this.isFlutter) {
+        if (window.flutter_inappwebview) {
+          window.flutter_inappwebview.callHandler('lepoShipBridge', JSON.stringify(message))
+            .then((res) => {
+              const parsed = typeof res === "string" ? JSON.parse(res) : res;
+              window.__lepoShipReceiveMessage(requestId, parsed || { data: res });
+            })
+            .catch((err) => {
+              window.__lepoShipReceiveMessage(requestId, { error: err.message || err });
+            });
+        } else if (window.LepoShipBridgeFlutter) {
+          window.LepoShipBridgeFlutter.postMessage(JSON.stringify(message));
+        } else {
+          window.postMessage(JSON.stringify(message), "*");
+        }
+      } else if (this.isExpo) {
+        window.ReactNativeWebView.postMessage(JSON.stringify(message));
+      } else if (this.isWebIframe) {
+        window.parent.postMessage({ type: "lepoShipRequest", ...message }, "*");
       } else {
         // Fallback for development browser testing
         console.warn(`[LepoShip WebBridge] Native environment not detected. Action '${action}' simulated.`);

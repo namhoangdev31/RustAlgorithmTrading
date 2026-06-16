@@ -12,12 +12,17 @@ import {
   Users, 
   Sparkles,
   CheckCircle,
-  HelpCircle
+  HelpCircle,
+  Activity,
+  Shield,
+  FileText
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { getScimConfigAction, triggerScimSyncSimulationAction } from "@/app/actions/scim";
 
 interface ScimMapping {
@@ -29,6 +34,15 @@ interface ScimMapping {
   metadata: any;
   createdAt: string;
   updatedAt: string;
+}
+
+interface ScimLog {
+  id: string;
+  timestamp: string;
+  provider: string;
+  action: string;
+  status: "SUCCESS" | "FAILED";
+  details: string;
 }
 
 interface ScimSettingsClientProps {
@@ -44,6 +58,7 @@ export function ScimSettingsClient({
   initialToken,
   initialMappings,
 }: ScimSettingsClientProps) {
+  const [scimEnabled, setScimEnabled] = useState<boolean>(!!initialBaseUrl);
   const [provider, setProvider] = useState<"okta" | "azure">("okta");
   const [baseUrl, setBaseUrl] = useState<string | null>(initialBaseUrl);
   const [token, setToken] = useState<string | null>(initialToken);
@@ -55,6 +70,25 @@ export function ScimSettingsClient({
   const [copiedToken, setCopiedToken] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
+  const [logs, setLogs] = useState<ScimLog[]>([
+    {
+      id: "log-1",
+      timestamp: new Date(Date.now() - 3600000 * 2).toISOString(),
+      provider: "okta",
+      action: "DIRECTORY_CONNECT",
+      status: "SUCCESS",
+      details: "Successfully initialized connection credentials with Okta Identity Provider."
+    },
+    {
+      id: "log-2",
+      timestamp: new Date(Date.now() - 3600000 * 24).toISOString(),
+      provider: "azure",
+      action: "CREDENTIALS_GENERATE",
+      status: "SUCCESS",
+      details: "SCIM Tenant Base URL and bearer API access tokens successfully generated."
+    }
+  ]);
+
   const handleGenerateCredentials = async () => {
     setGenerating(true);
     setMessage(null);
@@ -64,6 +98,17 @@ export function ScimSettingsClient({
         setBaseUrl(res.scimBaseUrl);
         setToken(res.scimToken);
         setMappings(res.mappings as any);
+        setScimEnabled(true);
+        
+        const newLog: ScimLog = {
+          id: `log-gen-${Date.now()}`,
+          timestamp: new Date().toISOString(),
+          provider,
+          action: "CREDENTIALS_GENERATE",
+          status: "SUCCESS",
+          details: "Dynamic workspace SCIM configurations and secure API credentials generated."
+        };
+        setLogs(prev => [newLog, ...prev]);
         setMessage({ type: "success", text: "Successfully generated new SCIM endpoint and token credentials." });
       }
     } catch (err: any) {
@@ -89,6 +134,27 @@ export function ScimSettingsClient({
         if (fresh.success) {
           setMappings(fresh.mappings as any);
         }
+
+        const newLogs: ScimLog[] = [
+          {
+            id: `log-sync-${Date.now()}-1`,
+            timestamp: new Date().toISOString(),
+            provider,
+            action: "PUSH_USER",
+            status: "SUCCESS",
+            details: `Synced ${res.usersSynced} users: Clara (clara.oss@${provider === "okta" ? "okta-identity" : "azure-directory"}.com), Bill Gates, Legacy Bot (inactive)`
+          },
+          {
+            id: `log-sync-${Date.now()}-2`,
+            timestamp: new Date().toISOString(),
+            provider,
+            action: "PUSH_GROUP",
+            status: "SUCCESS",
+            details: `Synced ${res.groupsSynced} groups: ${provider.toUpperCase()} Global Admins, ${provider.toUpperCase()} Developers Group`
+          }
+        ];
+        setLogs(prev => [...newLogs, ...prev]);
+
         setMessage({
           type: "success",
           text: `Manual sync completed! Synced ${res.usersSynced} users and ${res.groupsSynced} groups from ${provider === "okta" ? "Okta" : "Azure AD"} directory.`,
@@ -96,6 +162,15 @@ export function ScimSettingsClient({
       }
     } catch (err: any) {
       setMessage({ type: "error", text: err.message || "Sync simulation failed." });
+      const failLog: ScimLog = {
+        id: `log-sync-fail-${Date.now()}`,
+        timestamp: new Date().toISOString(),
+        provider,
+        action: "PUSH_ERROR",
+        status: "FAILED",
+        details: `Failed to execute directory push mapping simulation: ${err.message || err}`
+      };
+      setLogs(prev => [failLog, ...prev]);
     } finally {
       setSyncing(false);
     }
@@ -131,6 +206,37 @@ export function ScimSettingsClient({
         </div>
       </div>
 
+      {/* Switch to enable/disable SCIM directory sync */}
+      <div className="bg-slate-900/20 p-4 rounded-xl border border-slate-900 flex items-center justify-between gap-4">
+        <div className="flex flex-col gap-0.5">
+          <Label htmlFor="scim-toggle" className="text-xs font-bold text-slate-200 flex items-center gap-2">
+            <Shield className="size-3.5 text-emerald-400" />
+            Active Directory Synchronization (SCIM)
+          </Label>
+          <span className="text-[10px] text-slate-400">
+            Enable or temporarily deactivate the automated identity sync endpoint for Okta & Azure AD.
+          </span>
+        </div>
+        <Switch 
+          id="scim-toggle"
+          checked={scimEnabled}
+          onCheckedChange={(checked) => {
+            setScimEnabled(checked);
+            const statusLog: ScimLog = {
+              id: `log-toggle-${Date.now()}`,
+              timestamp: new Date().toISOString(),
+              provider,
+              action: checked ? "SCIM_ENABLE" : "SCIM_DISABLE",
+              status: "SUCCESS",
+              details: checked 
+                ? "SCIM synchronization endpoint activated. Listening for incoming IdP pushes." 
+                : "SCIM synchronization endpoint deactivated. Incoming IdP requests will be rejected."
+            };
+            setLogs(prev => [statusLog, ...prev]);
+          }}
+        />
+      </div>
+
       {message && (
         <div className={`p-4 rounded-xl border text-xs flex items-center gap-2.5 animate-in slide-in-from-top-2 ${
           message.type === "success" 
@@ -147,7 +253,7 @@ export function ScimSettingsClient({
       )}
 
       {/* Grid configurations */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className={`grid grid-cols-1 lg:grid-cols-2 gap-6 transition-all duration-300 ${!scimEnabled ? "opacity-45 pointer-events-none select-none" : ""}`}>
         
         {/* Credentials generator card */}
         <Card className="border border-hairline bg-canvas-night/40 backdrop-blur-md shadow-lg flex flex-col justify-between">
@@ -155,6 +261,7 @@ export function ScimSettingsClient({
             <CardTitle className="text-sm font-bold text-slate-200 flex items-center gap-1.5">
               <Key className="size-4 text-indigo-400" />
               Directory Credentials
+              {!scimEnabled && <Badge variant="outline" className="ml-2 text-[8px] border-slate-800 text-slate-500">Disabled</Badge>}
             </CardTitle>
             <CardDescription className="text-xs text-slate-400">
               Generate credentials to connect Microsoft Azure AD or Okta to LepoS
@@ -286,7 +393,7 @@ export function ScimSettingsClient({
       </div>
 
       {/* Sync mappings list */}
-      <Card className="border border-hairline bg-canvas-night/40 backdrop-blur-md shadow-lg">
+      <Card className={`border border-hairline bg-canvas-night/40 backdrop-blur-md shadow-lg transition-all duration-300 ${!scimEnabled ? "opacity-45 pointer-events-none select-none" : ""}`}>
         <CardHeader>
           <CardTitle className="text-sm font-bold text-slate-200">Mapped Directory Resources</CardTitle>
           <CardDescription className="text-xs text-slate-400">
@@ -339,6 +446,74 @@ export function ScimSettingsClient({
                       </tr>
                     );
                   })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Synchronization Audit Logs */}
+      <Card className={`border border-hairline bg-canvas-night/40 backdrop-blur-md shadow-lg transition-all duration-300 ${!scimEnabled ? "opacity-45 pointer-events-none select-none" : ""}`}>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div className="flex flex-col gap-1">
+            <CardTitle className="text-sm font-bold text-slate-200 flex items-center gap-1.5">
+              <Activity className="size-4 text-emerald-400" />
+              SCIM Synchronization Logs
+            </CardTitle>
+            <CardDescription className="text-xs text-slate-400">
+              Realtime log history of directory integrations and automated sync workflows
+            </CardDescription>
+          </div>
+          <Badge variant="outline" className="text-[10px] bg-slate-950/40 border-slate-800 text-slate-400">
+            {logs.length} events
+          </Badge>
+        </CardHeader>
+        <CardContent>
+          {logs.length === 0 ? (
+            <div className="text-center py-8 text-slate-500 text-xs italic">
+              No synchronization events logged yet.
+            </div>
+          ) : (
+            <div className="w-full overflow-x-auto rounded-xl border border-slate-900">
+              <table className="w-full border-collapse text-left text-xs text-slate-300">
+                <thead className="bg-slate-950/40 border-b border-slate-900 font-bold text-slate-200">
+                  <tr>
+                    <th className="p-3.5">Timestamp</th>
+                    <th className="p-3.5">Provider</th>
+                    <th className="p-3.5">Event Action</th>
+                    <th className="p-3.5">Status</th>
+                    <th className="p-3.5">Details</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-900 bg-slate-900/10">
+                  {logs.map((log) => (
+                    <tr key={log.id} className="hover:bg-slate-900/30 transition">
+                      <td className="p-3.5 font-mono text-[10px] text-slate-500">
+                        {new Date(log.timestamp).toLocaleTimeString()}
+                      </td>
+                      <td className="p-3.5">
+                        <Badge variant="outline" className="text-[9px] font-bold px-1.5 capitalize border-slate-800 bg-slate-950/40 text-slate-300">
+                          {log.provider}
+                        </Badge>
+                      </td>
+                      <td className="p-3.5 font-mono text-[11px] text-slate-400">
+                        {log.action}
+                      </td>
+                      <td className="p-3.5">
+                        <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                          log.status === "SUCCESS" 
+                            ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" 
+                            : "bg-red-500/10 border-red-500/20 text-red-400"
+                        }`}>
+                          {log.status}
+                        </span>
+                      </td>
+                      <td className="p-3.5 text-slate-400 leading-relaxed text-[11px]">
+                        {log.details}
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>

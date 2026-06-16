@@ -64,30 +64,63 @@ interface CodeSnippetVisualizerProps {
 }
 
 export function CodeSnippetVisualizer({ fileName, line, functionName }: CodeSnippetVisualizerProps) {
+  const [isExpanded, setIsExpanded] = useState(true);
+  
   const snippet = useMemo(() => {
     const cleanedName = functionName || "anonymous";
     return [
+      { num: line - 4, content: `// Bootstrapping handler scope for function: ${cleanedName}`, isCrash: false },
+      { num: line - 3, content: `import { invokeServiceHandler, transformClientData } from "@/lib/engine/native";`, isCrash: false },
       { num: line - 2, content: `// Helper module logic: executing ${cleanedName}`, isCrash: false },
       { num: line - 1, content: `export function ${cleanedName}Context(payload) {`, isCrash: false },
       { num: line, content: `  const response = invokeServiceHandler(payload); // 🚨 Crash: Unhandled exception at ${cleanedName}`, isCrash: true },
-      { num: line + 1, content: `  return transformClientData(response);`, isCrash: false },
-      { num: line + 2, content: `}`, isCrash: false }
+      { num: line + 1, content: `  if (!response || response.status === "error") {`, isCrash: false },
+      { num: line + 2, content: `    throw new Error("Execution failure during native context mapping");`, isCrash: false },
+      { num: line + 3, content: `  }`, isCrash: false },
+      { num: line + 4, content: `  return transformClientData(response);`, isCrash: false },
+      { num: line + 5, content: `}`, isCrash: false }
     ];
   }, [line, functionName]);
+
+  const handleCopy = () => {
+    const textToCopy = snippet.map(row => `${row.num}: ${row.content}`).join("\n");
+    navigator.clipboard.writeText(textToCopy);
+    toast.success("Code snippet copied to clipboard");
+  };
+
+  const displayedSnippet = isExpanded ? snippet : snippet.filter(row => row.isCrash);
 
   return (
     <div className="bg-slate-950 border border-slate-900 rounded-lg p-3.5 mt-3 font-mono text-[10px] leading-relaxed select-text flex flex-col gap-2">
       <div className="flex items-center justify-between text-slate-500 border-b border-slate-900 pb-1.5">
-        <span className="flex items-center gap-1.5">
+        <span className="flex items-center gap-1.5 animate-pulse">
           <FileCode className="size-3.5 text-indigo-400" />
           {fileName}:{line}
         </span>
-        <Badge className="bg-red-500/10 border-red-500/20 text-red-400 text-[8px] font-bold">
-          EXCEPTION POINT
-        </Badge>
+        <div className="flex items-center gap-2">
+          <Button 
+            onClick={() => setIsExpanded(!isExpanded)} 
+            variant="ghost" 
+            size="sm" 
+            className="h-5 text-[8px] font-bold px-1.5 text-slate-400 hover:text-slate-255 hover:bg-slate-900"
+          >
+            {isExpanded ? "Collapse" : "Expand"}
+          </Button>
+          <Button 
+            onClick={handleCopy} 
+            variant="ghost" 
+            size="sm" 
+            className="h-5 text-[8px] font-bold px-1.5 text-indigo-400 hover:text-indigo-300 hover:bg-slate-900"
+          >
+            Copy
+          </Button>
+          <Badge className="bg-red-500/10 border-red-500/20 text-red-400 text-[8px] font-bold">
+            EXCEPTION POINT
+          </Badge>
+        </div>
       </div>
       <div className="space-y-1">
-        {snippet.map((row, idx) => (
+        {displayedSnippet.map((row, idx) => (
           <div 
             key={idx} 
             className={`flex items-start gap-3 px-2 py-0.5 rounded transition ${
