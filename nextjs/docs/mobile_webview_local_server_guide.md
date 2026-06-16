@@ -1,10 +1,17 @@
-# Hướng Dẫn Tích Hợp Local Web Server Cho LepoShip Mobile (iOS & Android) — ✅ Đã Xác Minh & Tích Hợp Thành Công
+# LepoS & LepoShip: Cẩm Nang Tích Hợp Dành Cho User Developer
 
-Tài liệu này hướng dẫn cách cấu hình máy chủ HTTP cục bộ chạy ngầm (Local Web Server) bên trong ứng dụng native iOS và Android để phục vụ (serve) gói giao diện tĩnh WebView (HTML, JS, CSS) giải nén từ OTA Server. Phương pháp này giải quyết các hạn chế bảo mật của giao thức `file://` (như CORS, absolute routing) trên các WebView hiện đại.
+Tài liệu này hướng dẫn các nhà phát triển (User Developer) cách tích hợp ứng dụng di động Hybrid sử dụng hệ sinh thái LepoS & LepoShip, cấu hình máy chủ HTTP cục bộ chạy ngầm (Local Web Server), viết Edge Functions và sử dụng công cụ CLI để phát triển dự án.
 
 ---
 
-## 1. Kiến Trúc Hoạt Động (Architecture Flow)
+## 1. Tổng Quan Về LepoShip Mobile & Local Web Server
+
+Khi phát triển ứng dụng di động Hybrid sử dụng WebView hiển thị giao diện HTML5 tĩnh từ OTA updates, việc sử dụng giao thức `file://` truyền thống gặp các rào cản bảo mật nghiêm trọng:
+*   **CORS (Cross-Origin Resource Sharing)**: Các trình duyệt hiện đại ngăn chặn request AJAX/Fetch từ trang `file://` tới các API endpoint bên ngoài.
+*   **Absolute Path Routing**: Các đường dẫn tài nguyên dạng absolute `/static/bundle.js` sẽ tìm kiếm tại thư mục gốc của hệ thống tệp thiết bị thay vì thư mục của ứng dụng.
+*   **Web APIs**: Các API hiện đại (Service Workers, Web Crypto, WebGL) yêu cầu môi trường bảo mật (`http://localhost` hoặc `https://`).
+
+**Giải pháp**: Tích hợp một HTTP server siêu nhẹ chạy ngầm ngay trong app native (iOS/Android), trỏ document root vào thư mục chứa bundle web tĩnh đã giải nén từ OTA Server.
 
 ```mermaid
 sequenceDiagram
@@ -13,30 +20,29 @@ sequenceDiagram
     participant WV as WKWebView / WebView
     participant OTA as LepoS OTA Server
 
-    OS->>OTA: 1. Request check OTA (/api/bundles/check)
+    OS->>OTA: 1. Gửi request check update (/api/bundles/check)
     OTA-->>OS: Trả về link download zip bundle mới nhất
-    OS->>OTA: 2. Tải bundle .zip về thư mục Local Documents
-    OS->>OS: 3. Giải nén (Unzip) ghi đè vào thư mục www/
+    OS->>OTA: 2. Tải bundle .zip về bộ nhớ Local Documents
+    OS->>OS: 3. Giải nén (Unzip) vào thư mục www/ của ứng dụng
     OS->>Server: 4. Khởi chạy Local Server (Cổng 8080) trỏ root vào www/
     OS->>WV: 5. Load URL: http://localhost:8080/index.html
-    WV->>Server: 6. Request assets (JS/CSS/Images)
-    Server-->>WV: Trả về files cục bộ
+    WV->>Server: 6. Yêu cầu tải CSS/JS/Hình ảnh
+    Server-->>WV: Trả về tệp tin tương ứng từ bộ nhớ cục bộ
 ```
 
 ---
 
-## 2. iOS Integration (sử dụng GCDWebServer)
+## 2. Tích Hợp Local Web Server Trên iOS (Swift + GCDWebServer)
 
 **GCDWebServer** là một thư viện HTTP server nhẹ viết bằng Objective-C phù hợp tuyệt đối cho các dự án iOS (Swift/ObjC).
 
-### Bước 2.1: Cài đặt qua CocoaPods hoặc Swift Package Manager (SPM)
-Thêm dependency vào Podfile:
+### Bước 2.1: Cài đặt dependency
+Thêm dòng sau vào `Podfile` của bạn và chạy `pod install`:
 ```ruby
 pod 'GCDWebServer', '~> 3.0'
 ```
 
-### Bước 2.2: Khởi tạo và Run Server trong Swift (`AppDelegate.swift`)
-
+### Bước 2.2: Khởi chạy Server trong `AppDelegate.swift`
 ```swift
 import Foundation
 import GCDWebServer
@@ -55,176 +61,188 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func startLocalWebServer() {
         webServer = GCDWebServer()
         
-        // Đường dẫn thư mục giải nén bundle static trong app documents
         let fileManager = FileManager.default
-        let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
-        let wwwDirectory = documentsURL.appendingPathComponent("www").path
+        let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+        let webFolder = (documentsPath as NSString).appendingPathComponent("www")
         
-        // Tạo thư mục www nếu chưa có (lần đầu khởi chạy)
-        if !fileManager.fileExists(atPath: wwwDirectory) {
-            try? fileManager.createDirectory(atPath: wwwDirectory, withIntermediateDirectories: true, attributes: nil)
-            // Copy bundle mặc định trong Main Bundle ra Documents thư mục
-            if let defaultBundlePath = Bundle.main.path(forResource: "default-bundle", ofType: "zip") {
-                // Giải nén bundle mặc định vào wwwDirectory...
+        // Tạo thư mục www nếu chưa có
+        if !fileManager.fileExists(atPath: webFolder) {
+            try? fileManager.createDirectory(atPath: webFolder, withIntermediateDirectories: true, attributes: nil)
+            // Copy bộ assets mặc định đi kèm Xcode Bundle vào lần chạy đầu tiên
+            if let defaultPath = Bundle.main.path(forResource: "default_web", ofType: nil) {
+                try? fileManager.copyItem(atPath: defaultPath, toPath: webFolder)
             }
         }
+
+        // Serve nội dung tĩnh từ thư mục www/
+        webServer?.addGETHandler(forBasePath: "/", directoryPath: webFolder, indexFilename: "index.html", cacheAge: 0, allowRangeRequests: true)
         
-        // Cấu hình server serve tĩnh từ thư mục wwwDirectory
-        webServer?.addGETHandler(forBasePath: "/", directoryPath: wwwDirectory, indexFilename: "index.html", cacheAge: 3600, allowRangeRequests: true)
-        
-        // Chạy server trên cổng 8080 (hoặc cổng cấu hình từ API)
+        // Khởi chạy server trên cổng 8080 localhost
         let options: [String: Any] = [
             GCDWebServerOption_Port: 8080,
-            GCDWebServerOption_BindToLocalhost: true // Bảo mật: chỉ cho phép localhost kết nối
+            GCDWebServerOption_BindToLocalhost: true // Bảo mật: Chỉ lắng nghe yêu cầu nội bộ
         ]
         
         do {
             try webServer?.start(options: options)
-            print("[GCDWebServer] Server started at: \(webServer?.serverURL?.absoluteString ?? "")")
+            print("Local Web Server running at: \(webServer?.serverURL?.absoluteString ?? "unknown")")
         } catch {
-            print("[GCDWebServer] Failed to start server: \(error)")
+            print("Failed to start local web server: \(error)")
         }
     }
 }
 ```
 
-### Bước 2.3: WKWebView load trang local
-Trong UIViewController chứa WKWebView:
+### Bước 2.3: Load WebView
 ```swift
-override func viewDidLoad() {
-    super.viewDidLoad()
-    let webView = WKWebView(frame: self.view.bounds)
-    self.view.addSubview(webView)
-    
-    // Load localhost serve bởi GCDWebServer
-    if let url = URL(string: "http://localhost:8080/") {
-        let request = URLRequest(url: url)
-        webView.load(request)
+import UIKit
+import WebKit
+
+class WebViewController: UIViewController, WKNavigationDelegate {
+    var webView: WKWebView!
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        let config = WKWebViewConfiguration()
+        config.preferences.setValue(true, forKey: "allowFileAccessFromFileURLs")
+        
+        webView = WKWebView(frame: self.view.bounds, configuration: config)
+        webView.navigationDelegate = self
+        self.view.addSubview(webView)
+        
+        // Load nội dung qua Local Web Server
+        if let url = URL(string: "http://localhost:8080/index.html") {
+            webView.load(URLRequest(url: url))
+        }
     }
 }
 ```
 
 ---
 
-## 3. Android Integration (sử dụng AndroidAsync hoặc NanoHTTPD)
+## 3. Tích Hợp Local Web Server Trên Android (Kotlin + AndroidAsync)
 
-On Android, we can use **AndroidAsync** (or **NanoHTTPD** / **Ktor-server** for Kotlin) to serve WebView bundles.
-
-### Bước 3.1: Thêm dependency vào Gradle (`app/build.gradle`)
+### Bước 3.1: Cài đặt dependency
+Thêm dòng sau vào `build.gradle` (Module: app):
 ```groovy
 dependencies {
     implementation 'com.koushikdutta.async:androidasync:3.1.0'
 }
 ```
 
-### Bước 3.2: Viết Local Server Class (`LocalWebServer.java`)
+### Bước 3.2: Tạo Service chạy HTTP Server cục bộ (`LocalWebServerService.kt`)
+```kotlin
+package com.lepoship.app
 
-```java
-package com.lepoship.app;
+import android.app.Service
+import android.content.Intent
+import android.os.IBinder
+import android.util.Log
+import com.koushikdutta.async.http.server.AsyncHttpServer
+import java.io.File
 
-import android.content.Context;
-import android.util.Log;
-import com.koushikdutta.async.http.server.AsyncHttpServer;
-import com.koushikdutta.async.http.server.AsyncHttpServerRequest;
-import com.koushikdutta.async.http.server.AsyncHttpServerResponse;
-import com.koushikdutta.async.http.server.HttpServerRequestCallback;
-import java.io.File;
-import java.io.FileInputStream;
+class LocalWebServerService : Service() {
+    private val server = AsyncHttpServer()
+    private val PORT = 8080
 
-public class LocalWebServer {
-    private AsyncHttpServer server = new AsyncHttpServer();
-    private Context context;
-    private static final String TAG = "LocalWebServer";
-
-    public LocalWebServer(Context context) {
-        this.context = context;
+    override fun onCreate() {
+        super.onCreate()
+        startServer()
     }
 
-    public void start(int port) {
-        final File wwwDir = new File(context.getFilesDir(), "www");
+    private fun startServer() {
+        val wwwDir = File(filesDir, "www")
         if (!wwwDir.exists()) {
-            wwwDir.mkdirs();
+            wwwDir.mkdirs()
         }
 
-        // Serve static GET requests
-        server.get(".*", new HttpServerRequestCallback() {
-            @Override
-            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
-                String path = request.getPath();
-                if (path.equals("/")) {
-                    path = "/index.html";
-                }
-
-                File file = new File(wwwDir, path);
-                if (file.exists() && file.isFile()) {
-                    try {
-                        String mimeType = getMimeType(path);
-                        response.setContentType(mimeType);
-                        response.sendStream(new FileInputStream(file), file.length());
-                    } catch (Exception e) {
-                        response.code(500);
-                        response.send("Internal Server Error");
-                    }
-                } else {
-                    // SPA Fallback to index.html if not found (for Routing)
-                    File indexFile = new File(wwwDir, "index.html");
-                    if (indexFile.exists()) {
-                        try {
-                            response.setContentType("text/html");
-                            response.sendStream(new FileInputStream(indexFile), indexFile.length());
-                        } catch (Exception e) {
-                            response.code(404);
-                            response.send("File Not Found");
-                        }
-                    } else {
-                        response.code(404);
-                        response.send("Not Found");
-                    }
-                }
+        server.get("/.*") { request, response ->
+            var path = request.path
+            if (path == "/") {
+                path = "/index.html"
             }
-        });
+            
+            val file = File(wwwDir, path)
+            if (file.exists() && file.isFile) {
+                val mimeType = getMimeType(file.name)
+                response.setContentType(mimeType)
+                response.sendFile(file)
+            } else {
+                response.code(404)
+                response.send("404 Not Found")
+            }
+        }
 
-        // Listen local
-        server.listen(port);
-        Log.i(TAG, "Server running locally on port " + port);
+        // Lắng nghe trên localhost
+        server.listen(PORT)
+        Log.i("LocalWebServer", "Android Local Server running on port $PORT")
     }
 
-    private String getMimeType(String path) {
-        if (path.endsWith(".html")) return "text/html";
-        if (path.endsWith(".js")) return "application/javascript";
-        if (path.endsWith(".css")) return "text/css";
-        if (path.endsWith(".png")) return "image/png";
-        if (path.endsWith(".jpg") || path.endsWith(".jpeg")) return "image/jpeg";
-        if (path.endsWith(".svg")) return "image/svg+xml";
-        return "application/octet-stream";
+    private fun getMimeType(fileName: String): String {
+        return when {
+            fileName.endsWith(".html") -> "text/html"
+            fileName.endsWith(".js") -> "application/javascript"
+            fileName.endsWith(".css") -> "text/css"
+            fileName.endsWith(".png") -> "image/png"
+            fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") -> "image/jpeg"
+            fileName.endsWith(".svg") -> "image/svg+xml"
+            else -> "application/octet-stream"
+        }
     }
 
-    public void stop() {
-        server.stop();
+    override fun onDestroy() {
+        server.stop()
+        super.onDestroy()
     }
+
+    override fun onBind(intent: Intent?): IBinder? = null
 }
 ```
 
-### Bước 3.3: Load localhost in Android WebView
-```java
-WebView webView = findViewById(R.id.webview);
-webView.getSettings().setJavaScriptEnabled(true);
-webView.getSettings().setDomStorageEnabled(true);
+### Bước 3.3: Khởi tạo WebView trong MainActivity
+```kotlin
+package com.lepoship.app
 
-// Start local server on port 8080
-LocalWebServer server = new LocalWebServer(this);
-server.start(8080);
+import android.content.Intent
+import android.os.Bundle
+import android.webkit.WebSettings
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import androidx.appcompat.app.AppCompatActivity
 
-webView.loadUrl("http://localhost:8080/");
+class MainActivity : AppCompatActivity() {
+    private lateinit var webView: WebView
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        
+        // Khởi chạy ngầm Local Web Server Service
+        startService(Intent(this, LocalWebServerService::class.java))
+        
+        webView = WebView(this)
+        setContentView(webView)
+        
+        webView.settings.apply {
+            javaScriptEnabled = true
+            domStorageEnabled = true
+            allowFileAccess = true
+            mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
+        }
+        
+        webView.webViewClient = WebViewClient()
+        webView.loadUrl("http://localhost:8080/index.html")
+    }
+}
 ```
 
 ---
 
 ## 4. WebView JavaScript Bridge (Native Bridge)
 
-To allow the WebView to call native device APIs (like Camera, GPS), configure Web Message Handlers:
+Để cho phép mã nguồn JS chạy bên trong WebView gọi đến các tính năng Native của hệ điều hành (như Camera, GPS), sử dụng cơ chế Native Bridge:
 
-### iOS (WKScriptMessageHandler)
+### 4.1 iOS (WKScriptMessageHandler)
 ```swift
 class BridgeHandler: NSObject, WKScriptMessageHandler {
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
@@ -233,9 +251,8 @@ class BridgeHandler: NSObject, WKScriptMessageHandler {
               let action = body["action"] as? String,
               let requestId = body["requestId"] as? String else { return }
               
-        // Handle actions
         if action == "getCameraPhoto" {
-            // Open camera, capture photo, return local URI
+            // Logic mở Camera native và chụp ảnh
             let responseData: [String: Any] = ["uri": "file://path/to/captured.jpg"]
             sendResponseToWebView(requestId: requestId, data: responseData, webView: message.webView!)
         }
@@ -251,7 +268,7 @@ class BridgeHandler: NSObject, WKScriptMessageHandler {
 }
 ```
 
-### Android (@JavascriptInterface)
+### 4.2 Android (@JavascriptInterface)
 ```java
 public class WebAppInterface {
     private Context context;
@@ -269,27 +286,88 @@ public class WebAppInterface {
             String requestId = message.getString("requestId");
             String action = message.getString("action");
 
-            if (action.equals("getCameraPhoto")) {
-                // Handle camera capture
-                JSONObject response = new JSONObject();
-                JSONObject data = new JSONObject();
-                data.put("uri", "file://path/to/captured.jpg");
-                response.put("data", data);
-
-                final String script = "javascript:window.__lepoShipReceiveMessage('" + requestId + "', " + response.toString() + ");";
-                webView.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        webView.evaluateJavascript(script, null);
-                    }
-                });
+            if ("getCameraPhoto".equals(action)) {
+                // Mở Camera và trả kết quả về WebView
+                JSONObject responseData = new JSONObject();
+                responseData.put("uri", "file://path/to/captured.jpg");
+                sendResponseToWebView(requestId, responseData);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-}
 
-// Bind interface
-webView.addJavascriptInterface(new WebAppInterface(this, webView), "LepoShipBridge");
+    private void sendResponseToWebView(String requestId, JSONObject data) {
+        final String script = "javascript:window.__lepoShipReceiveMessage('" + requestId + "', " + data.toString() + ");";
+        webView.post(() -> webView.evaluateJavascript(script, null));
+    }
+}
 ```
+
+---
+
+## 5. Quy Trình Vận Hành Cập Nhật OTA (Over-The-Air)
+
+Ứng dụng native sẽ check cập nhật định kỳ qua API:
+`GET http://<your-lepos-server>/api/bundles/check?platform=ios&version=1.2.0&buildNumber=5`
+
+Nếu có bản cập nhật, server trả về:
+```json
+{
+  "updateAvailable": true,
+  "version": "1.2.1",
+  "buildNumber": 6,
+  "bundleUrl": "https://storage.lepos.dev/bundles/build-6.zip"
+}
+```
+Ứng dụng sẽ tải tệp tin zip này, giải nén ghi đè lên thư mục `www/` rồi thực hiện reload WebView.
+
+---
+
+## 6. Hướng Dẫn Viết Edge Functions
+
+Edge Functions chạy trên môi trường V8 Isolates siêu nhẹ.
+
+### 6.1 Định dạng code mẫu (`edge/hello.js`)
+```javascript
+export default async function handler(request) {
+  const url = new URL(request.url);
+  const name = url.searchParams.get("name") || "Developer";
+
+  return new Response(JSON.stringify({
+    message: `Hello ${name} from LepoS Edge!`,
+    timestamp: new Date().toISOString()
+  }), {
+    status: 200,
+    headers: { "Content-Type": "application/json" }
+  });
+}
+```
+
+### 6.2 Các giới hạn kỹ thuật
+*   **Memory Limit**: Tối đa **128MB RAM** cho mỗi Isolate.
+*   **Timeout**: CPU execution time tối đa **50ms**.
+*   **APIs hỗ trợ**: Các Web APIs tiêu chuẩn như `fetch`, `Request`, `Response`, `crypto`, `console`. Không hỗ trợ Node.js built-ins (`fs`, `child_process`).
+
+---
+
+## 7. Sử Dụng LepoS CLI & Giả Lập Local
+
+### 7.1 Cài đặt CLI
+```bash
+npm install -g @lepos/cli
+```
+
+### 7.2 Giả lập Local (`lepos dev`)
+Chạy lệnh sau tại thư mục gốc của dự án để giả lập môi trường Serverless & Edge local:
+```bash
+lepos dev
+```
+Express Server giả lập sẽ lắng nghe trên cổng `3000` phục vụ test API cục bộ.
+
+### 7.3 Debug Console (`lepos debug`)
+Kết nối và xem stream logs thời gian thực từ simulator di động hoặc device:
+```bash
+lepos debug
+```
+Log được thu thập từ WebView SDK sẽ hiển thị trực tiếp lên cửa sổ terminal này.
