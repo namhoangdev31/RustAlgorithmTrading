@@ -82,19 +82,6 @@ export function CardLogin({
 
                 <SocialLoginButtons action={socialLoginAction} showApple={showApple} />
 
-                <div className="w-full flex items-center gap-2">
-                    <div className="flex-grow h-px bg-gray-300"></div>
-                    <span className="text-gray-400 text-xs font-medium px-2">{t("account_help")}</span>
-                    <div className="flex-grow h-px bg-gray-300"></div>
-                </div>
-
-                <form action={resetAction} className="grid w-full gap-2">
-                    <Input name="resetEmail" type="email" placeholder={t("reset_email_placeholder")} required />
-                    <Button variant="outline" className="w-full" type="submit">
-                        {t("send_reset_email")}
-                    </Button>
-                </form>
-
                 <p className="text-sm text-center text-gray-600">
                     {t("no_account")}{' '}
                     <Link

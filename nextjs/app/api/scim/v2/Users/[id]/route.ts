@@ -25,8 +25,9 @@ function scimError(detail: string, status = 400) {
   }, { status });
 }
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
     const auth = await authenticateScim(request, "scim:read");
     const organizationId = auth.organizationId || getOrganizationId(request);
 
@@ -37,11 +38,11 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         organizationId,
         provider: "scim",
         resourceType: "User",
-        externalId: params.id,
+        externalId: id,
       },
     });
 
-    if (!mapping) return scimError(`User not found: ${params.id}`, 404);
+    if (!mapping) return scimError(`User not found: ${id}`, 404);
 
     return NextResponse.json({
       schemas: ["urn:ietf:params:scim:schemas:core:2.0:User"],
@@ -55,8 +56,9 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
     const auth = await authenticateScim(request, "scim:write");
     const body = await request.json();
     const organizationId = auth.organizationId || getOrganizationId(request) || body.organizationId;
@@ -65,8 +67,8 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 
     const user = await upsertScimUser({
       organizationId,
-      externalId: params.id,
-      userName: body.userName || params.id,
+      externalId: id,
+      userName: body.userName || id,
       active: body.active ?? true,
       role: body.role,
     });
@@ -77,8 +79,9 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
     const auth = await authenticateScim(request, "scim:write");
     const body = await request.json();
     const organizationId = auth.organizationId || getOrganizationId(request) || body.organizationId;
@@ -97,8 +100,8 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 
     const user = await upsertScimUser({
       organizationId,
-      externalId: params.id,
-      userName: body.userName || params.id,
+      externalId: id,
+      userName: body.userName || id,
       active,
       role: body.role,
     });
@@ -109,14 +112,15 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
     const auth = await authenticateScim(request, "scim:write");
     const organizationId = auth.organizationId || getOrganizationId(request);
 
     if (!organizationId) return scimError("organizationId is required.", 400);
 
-    await deleteScimUser(organizationId, params.id);
+    await deleteScimUser(organizationId, id);
     return new NextResponse(null, { status: 204 });
   } catch (error) {
     return nativeErrorResponse(error);

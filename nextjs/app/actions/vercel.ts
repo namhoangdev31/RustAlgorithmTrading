@@ -777,38 +777,247 @@ export async function patchEdgeConfigItemAction(formData: FormData) {
 }
 
 const ADVANCED_VERCEL_METHODS = {
-  deploymentProtection: {
-    path: ["projects", "updateProjectProtection"],
-    role: "admin",
-  },
-  firewallConfig: {
-    path: ["security", "updateFirewallConfig"],
-    role: "admin",
-  },
-  logDrain: {
-    path: ["logDrains", "createLogDrain"],
-    role: "admin",
-  },
-  deploymentCheck: {
-    path: ["checks", "createCheck"],
-    role: "editor",
-  },
-  projectMember: {
-    path: ["projectMembers", "addProjectMember"],
-    role: "admin",
-  },
-  dnsRecord: {
-    path: ["dns", "createRecord"],
-    role: "admin",
-  },
-  featureFlag: {
-    path: ["featureFlags", "createFlag"],
-    role: "editor",
-  },
-  gitSettings: {
-    path: ["projects", "updateProject"],
-    role: "admin",
-  },
+  // accessGroups
+  "accessGroups.createAccessGroup": { path: ["accessGroups", "createAccessGroup"], role: "admin" },
+  "accessGroups.deleteAccessGroup": { path: ["accessGroups", "deleteAccessGroup"], role: "admin" },
+  "accessGroups.listAccessGroups": { path: ["accessGroups", "listAccessGroups"], role: "viewer" },
+
+  // aliases
+  "aliases.assignAlias": { path: ["aliases", "assignAlias"], role: "editor" },
+  "aliases.listAliases": { path: ["aliases", "listAliases"], role: "viewer" },
+  "aliases.deleteAlias": { path: ["aliases", "deleteAlias"], role: "editor" },
+
+  // apiObservability
+  "apiObservability.updateObservabilityConfigurationProject": { path: ["apiObservability", "updateObservabilityConfigurationProject"], role: "admin" },
+
+  // artifacts
+  "artifacts.artifactExists": { path: ["artifacts", "artifactExists"], role: "viewer" },
+  "artifacts.artifactQuery": { path: ["artifacts", "artifactQuery"], role: "viewer" },
+  "artifacts.downloadArtifact": { path: ["artifacts", "downloadArtifact"], role: "viewer" },
+  "artifacts.recordEvents": { path: ["artifacts", "recordEvents"], role: "editor" },
+  "artifacts.status": { path: ["artifacts", "status"], role: "viewer" },
+  "artifacts.uploadArtifact": { path: ["artifacts", "uploadArtifact"], role: "editor" },
+
+  // authentication (auth tokens)
+  "authentication.createAuthToken": { path: ["authentication", "createAuthToken"], role: "admin" },
+  "authentication.deleteAuthToken": { path: ["authentication", "deleteAuthToken"], role: "admin" },
+  "authentication.listAuthTokens": { path: ["authentication", "listAuthTokens"], role: "viewer" },
+
+  // billing
+  "billing.buyCredits": { path: ["billing", "buyCredits"], role: "admin" },
+
+  // bulkRedirects
+  "bulkRedirects.stageRedirects": { path: ["bulkRedirects", "stageRedirects"], role: "editor" },
+
+  // certs
+  "certs.issueCert": { path: ["certs", "issueCert"], role: "editor" },
+  "certs.uploadCert": { path: ["certs", "uploadCert"], role: "editor" },
+  "certs.removeCert": { path: ["certs", "removeCert"], role: "editor" },
+  "certs.getCertById": { path: ["certs", "getCertById"], role: "viewer" },
+
+  // checks
+  "checks.createCheck": { path: ["checks", "createCheck"], role: "editor" },
+  "checks.getAllChecks": { path: ["checks", "getAllChecks"], role: "viewer" },
+  "checks.getCheck": { path: ["checks", "getCheck"], role: "viewer" },
+  "checks.rerequestCheck": { path: ["checks", "rerequestCheck"], role: "editor" },
+  "checks.updateCheck": { path: ["checks", "updateCheck"], role: "editor" },
+
+  // checksV2
+  "checksV2.createDeploymentCheckRun": { path: ["checksV2", "createDeploymentCheckRun"], role: "editor" },
+  "checksV2.createProjectCheck": { path: ["checksV2", "createProjectCheck"], role: "admin" },
+  "checksV2.deleteProjectCheck": { path: ["checksV2", "deleteProjectCheck"], role: "admin" },
+  "checksV2.getDeploymentCheckRun": { path: ["checksV2", "getDeploymentCheckRun"], role: "viewer" },
+  "checksV2.getProjectCheck": { path: ["checksV2", "getProjectCheck"], role: "viewer" },
+  "checksV2.listCheckRuns": { path: ["checksV2", "listCheckRuns"], role: "viewer" },
+  "checksV2.listDeploymentCheckRuns": { path: ["checksV2", "listDeploymentCheckRuns"], role: "viewer" },
+  "checksV2.listProjectChecks": { path: ["checksV2", "listProjectChecks"], role: "viewer" },
+  "checksV2.updateDeploymentCheckRun": { path: ["checksV2", "updateDeploymentCheckRun"], role: "editor" },
+  "checksV2.updateProjectCheck": { path: ["checksV2", "updateProjectCheck"], role: "admin" },
+
+  // deployments
+  "deployments.getDeployments": { path: ["deployments", "getDeployments"], role: "viewer" },
+  "deployments.cancelDeployment": { path: ["deployments", "cancelDeployment"], role: "editor" },
+  "deployments.getDeployment": { path: ["deployments", "getDeployment"], role: "viewer" },
+
+  // dns
+  "dns.createRecord": { path: ["dns", "createRecord"], role: "editor" },
+  "dns.getRecords": { path: ["dns", "getRecords"], role: "viewer" },
+  "dns.removeRecord": { path: ["dns", "removeRecord"], role: "editor" },
+  "dns.updateRecord": { path: ["dns", "updateRecord"], role: "editor" },
+
+  // domains
+  "domains.createOrReplaceDomain": { path: ["domains", "createOrReplaceDomain"], role: "editor" },
+  "domains.getDomain": { path: ["domains", "getDomain"], role: "viewer" },
+  "domains.checkDomainStatus": { path: ["domains", "checkDomainStatus"], role: "viewer" },
+
+  // domainsRegistrar
+  "domainsRegistrar.buyDomains": { path: ["domainsRegistrar", "buyDomains"], role: "admin" },
+  "domainsRegistrar.buySingleDomain": { path: ["domainsRegistrar", "buySingleDomain"], role: "admin" },
+  "domainsRegistrar.getBulkAvailability": { path: ["domainsRegistrar", "getBulkAvailability"], role: "viewer" },
+  "domainsRegistrar.getDomainAuthCode": { path: ["domainsRegistrar", "getDomainAuthCode"], role: "admin" },
+  "domainsRegistrar.getDomainAvailability": { path: ["domainsRegistrar", "getDomainAvailability"], role: "viewer" },
+  "domainsRegistrar.getDomainPrice": { path: ["domainsRegistrar", "getDomainPrice"], role: "viewer" },
+  "domainsRegistrar.getTldPrice": { path: ["domainsRegistrar", "getTldPrice"], role: "viewer" },
+  "domainsRegistrar.renewDomain": { path: ["domainsRegistrar", "renewDomain"], role: "admin" },
+  "domainsRegistrar.transferInDomain": { path: ["domainsRegistrar", "transferInDomain"], role: "admin" },
+
+  // drains
+  "drains.createDrain": { path: ["drains", "createDrain"], role: "admin" },
+  "drains.deleteDrain": { path: ["drains", "deleteDrain"], role: "admin" },
+  "drains.getDrain": { path: ["drains", "getDrain"], role: "viewer" },
+  "drains.getDrains": { path: ["drains", "getDrains"], role: "viewer" },
+  "drains.testDrain": { path: ["drains", "testDrain"], role: "editor" },
+  "drains.updateDrain": { path: ["drains", "updateDrain"], role: "admin" },
+
+  // edgeCache
+  "edgeCache.dangerouslyDeleteBySrcImages": { path: ["edgeCache", "dangerouslyDeleteBySrcImages"], role: "admin" },
+  "edgeCache.dangerouslyDeleteByTags": { path: ["edgeCache", "dangerouslyDeleteByTags"], role: "admin" },
+  "edgeCache.invalidateBySrcImages": { path: ["edgeCache", "invalidateBySrcImages"], role: "editor" },
+  "edgeCache.invalidateByTags": { path: ["edgeCache", "invalidateByTags"], role: "editor" },
+
+  // edgeConfig
+  "edgeConfig.createEdgeConfig": { path: ["edgeConfig", "createEdgeConfig"], role: "editor" },
+  "edgeConfig.getEdgeConfigs": { path: ["edgeConfig", "getEdgeConfigs"], role: "viewer" },
+  "edgeConfig.getEdgeConfig": { path: ["edgeConfig", "getEdgeConfig"], role: "viewer" },
+  "edgeConfig.updateEdgeConfig": { path: ["edgeConfig", "updateEdgeConfig"], role: "editor" },
+
+  // environment
+  "environment.createCustomEnvironment": { path: ["environment", "createCustomEnvironment"], role: "admin" },
+  "environment.createSharedEnvVariable": { path: ["environment", "createSharedEnvVariable"], role: "editor" },
+  "environment.deleteSharedEnvVariable": { path: ["environment", "deleteSharedEnvVariable"], role: "editor" },
+  "environment.getCustomEnvironment": { path: ["environment", "getCustomEnvironment"], role: "viewer" },
+  "environment.getSharedEnvVar": { path: ["environment", "getSharedEnvVar"], role: "viewer" },
+  "environment.listSharedEnvVariable": { path: ["environment", "listSharedEnvVariable"], role: "viewer" },
+  "environment.removeCustomEnvironment": { path: ["environment", "removeCustomEnvironment"], role: "admin" },
+  "environment.updateCustomEnvironment": { path: ["environment", "updateCustomEnvironment"], role: "admin" },
+  "environment.updateSharedEnvVariable": { path: ["environment", "updateSharedEnvVariable"], role: "editor" },
+
+  // env
+  "env.filterProjectEnvs": { path: ["env", "filterProjectEnvs"], role: "viewer" },
+  "env.createProjectEnv": { path: ["env", "createProjectEnv"], role: "editor" },
+  "env.patchProjectEnv": { path: ["env", "patchProjectEnv"], role: "editor" },
+  "env.removeProjectEnv": { path: ["env", "removeProjectEnv"], role: "editor" },
+
+  // featureFlags
+  "featureFlags.createFlag": { path: ["featureFlags", "createFlag"], role: "editor" },
+  "featureFlags.createFlagSegment": { path: ["featureFlags", "createFlagSegment"], role: "editor" },
+  "featureFlags.createSDKKey": { path: ["featureFlags", "createSDKKey"], role: "admin" },
+  "featureFlags.deleteFlag": { path: ["featureFlags", "deleteFlag"], role: "editor" },
+  "featureFlags.deleteFlagSegment": { path: ["featureFlags", "deleteFlagSegment"], role: "editor" },
+  "featureFlags.deleteSDKKey": { path: ["featureFlags", "deleteSDKKey"], role: "admin" },
+  "featureFlags.getFlag": { path: ["featureFlags", "getFlag"], role: "viewer" },
+  "featureFlags.listFlags": { path: ["featureFlags", "listFlags"], role: "viewer" },
+  "featureFlags.updateFlag": { path: ["featureFlags", "updateFlag"], role: "editor" },
+
+  // integrations
+  "integrations.getConfigurations": { path: ["integrations", "getConfigurations"], role: "viewer" },
+  "integrations.createLogDrain": { path: ["integrations", "createLogDrain"], role: "admin" },
+  "integrations.deleteLogDrain": { path: ["integrations", "deleteLogDrain"], role: "admin" },
+
+  // logDrains
+  "logDrains.createConfigurableLogDrain": { path: ["logDrains", "createConfigurableLogDrain"], role: "admin" },
+  "logDrains.createLogDrain": { path: ["logDrains", "createLogDrain"], role: "admin" },
+  "logDrains.deleteConfigurableLogDrain": { path: ["logDrains", "deleteConfigurableLogDrain"], role: "admin" },
+  "logDrains.deleteIntegrationLogDrain": { path: ["logDrains", "deleteIntegrationLogDrain"], role: "admin" },
+  "logDrains.getAllLogDrains": { path: ["logDrains", "getAllLogDrains"], role: "viewer" },
+  "logDrains.getConfigurableLogDrain": { path: ["logDrains", "getConfigurableLogDrain"], role: "viewer" },
+  "logDrains.getIntegrationLogDrains": { path: ["logDrains", "getIntegrationLogDrains"], role: "viewer" },
+
+  // logs
+  "logs.getRuntimeLogs": { path: ["logs", "getRuntimeLogs"], role: "viewer" },
+
+  // marketplace
+  "marketplace.createEvent": { path: ["marketplace", "createEvent"], role: "editor" },
+  "marketplace.getAccountInfo": { path: ["marketplace", "getAccountInfo"], role: "viewer" },
+  "marketplace.getIntegrationResource": { path: ["marketplace", "getIntegrationResource"], role: "viewer" },
+  "marketplace.getInvoice": { path: ["marketplace", "getInvoice"], role: "viewer" },
+  "marketplace.submitBillingData": { path: ["marketplace", "submitBillingData"], role: "editor" },
+  "marketplace.submitInvoice": { path: ["marketplace", "submitInvoice"], role: "editor" },
+  "marketplace.updateResource": { path: ["marketplace", "updateResource"], role: "editor" },
+
+  // microfrontends
+  "microfrontends.createMicrofrontendsGroupWithApplications": { path: ["microfrontends", "createMicrofrontendsGroupWithApplications"], role: "admin" },
+  "microfrontends.getMicrofrontendsConfig": { path: ["microfrontends", "getMicrofrontendsConfig"], role: "viewer" },
+  "microfrontends.getMicrofrontendsGroups": { path: ["microfrontends", "getMicrofrontendsGroups"], role: "viewer" },
+
+  // networking
+  "networking.createNetwork": { path: ["networking", "createNetwork"], role: "admin" },
+  "networking.deleteNetwork": { path: ["networking", "deleteNetwork"], role: "admin" },
+  "networking.listNetworks": { path: ["networking", "listNetworks"], role: "viewer" },
+  "networking.readNetwork": { path: ["networking", "readNetwork"], role: "viewer" },
+  "networking.updateNetwork": { path: ["networking", "updateNetwork"], role: "admin" },
+  "networking.updateStaticIps": { path: ["networking", "updateStaticIps"], role: "admin" },
+
+  // projectMembers
+  "projectMembers.addProjectMember": { path: ["projectMembers", "addProjectMember"], role: "admin" },
+  "projectMembers.getProjectMembers": { path: ["projectMembers", "getProjectMembers"], role: "viewer" },
+  "projectMembers.removeProjectMember": { path: ["projectMembers", "removeProjectMember"], role: "admin" },
+
+  // projectRoutes
+  "projectRoutes.addRoute": { path: ["projectRoutes", "addRoute"], role: "editor" },
+  "projectRoutes.deleteRoutes": { path: ["projectRoutes", "deleteRoutes"], role: "editor" },
+  "projectRoutes.editRoute": { path: ["projectRoutes", "editRoute"], role: "editor" },
+  "projectRoutes.generateRoute": { path: ["projectRoutes", "generateRoute"], role: "editor" },
+  "projectRoutes.getRoutes": { path: ["projectRoutes", "getRoutes"], role: "viewer" },
+  "projectRoutes.stageRoutes": { path: ["projectRoutes", "stageRoutes"], role: "editor" },
+
+  // projects
+  "projects.createProject": { path: ["projects", "createProject"], role: "admin" },
+  "projects.getProject": { path: ["projects", "getProject"], role: "viewer" },
+  "projects.updateProject": { path: ["projects", "updateProject"], role: "admin" },
+  "projects.deleteProject": { path: ["projects", "deleteProject"], role: "admin" },
+
+  // rollingRelease
+  "rollingRelease.approveRollingReleaseStage": { path: ["rollingRelease", "approveRollingReleaseStage"], role: "admin" },
+  "rollingRelease.completeRollingRelease": { path: ["rollingRelease", "completeRollingRelease"], role: "admin" },
+  "rollingRelease.deleteRollingReleaseConfig": { path: ["rollingRelease", "deleteRollingReleaseConfig"], role: "admin" },
+  "rollingRelease.getRollingRelease": { path: ["rollingRelease", "getRollingRelease"], role: "viewer" },
+  "rollingRelease.getRollingReleaseConfig": { path: ["rollingRelease", "getRollingReleaseConfig"], role: "viewer" },
+  "rollingRelease.updateRollingReleaseConfig": { path: ["rollingRelease", "updateRollingReleaseConfig"], role: "admin" },
+
+  // sandboxes
+  "sandboxes.createSessionDirectory": { path: ["sandboxes", "createSessionDirectory"], role: "editor" },
+  "sandboxes.createSessionSnapshot": { path: ["sandboxes", "createSessionSnapshot"], role: "editor" },
+  "sandboxes.deleteSandbox": { path: ["sandboxes", "deleteSandbox"], role: "editor" },
+  "sandboxes.deleteSessionSnapshot": { path: ["sandboxes", "deleteSessionSnapshot"], role: "editor" },
+  "sandboxes.extendSessionTimeout": { path: ["sandboxes", "extendSessionTimeout"], role: "editor" },
+  "sandboxes.getNamedSandbox": { path: ["sandboxes", "getNamedSandbox"], role: "viewer" },
+  "sandboxes.getSession": { path: ["sandboxes", "getSession"], role: "viewer" },
+  "sandboxes.listSandboxes": { path: ["sandboxes", "listSandboxes"], role: "viewer" },
+  "sandboxes.listSessions": { path: ["sandboxes", "listSessions"], role: "viewer" },
+  "sandboxes.stopSession": { path: ["sandboxes", "stopSession"], role: "editor" },
+
+  // secrets
+  "secrets.createSecret": { path: ["secrets", "createSecret"], role: "editor" },
+  "secrets.deleteSecret": { path: ["secrets", "deleteSecret"], role: "editor" },
+  "secrets.listSecrets": { path: ["secrets", "listSecrets"], role: "viewer" },
+
+  // security
+  "security.addBypassIp": { path: ["security", "addBypassIp"], role: "admin" },
+  "security.getActiveAttackStatus": { path: ["security", "getActiveAttackStatus"], role: "viewer" },
+  "security.getBypassIp": { path: ["security", "getBypassIp"], role: "viewer" },
+  "security.getFirewallConfig": { path: ["security", "getFirewallConfig"], role: "viewer" },
+  "security.getSecurityFirewallEvents": { path: ["security", "getSecurityFirewallEvents"], role: "viewer" },
+  "security.putFirewallConfig": { path: ["security", "putFirewallConfig"], role: "admin" },
+  "security.removeBypassIp": { path: ["security", "removeBypassIp"], role: "admin" },
+  "security.updateAttackChallengeMode": { path: ["security", "updateAttackChallengeMode"], role: "admin" },
+  "security.updateFirewallConfig": { path: ["security", "updateFirewallConfig"], role: "admin" },
+
+  // teams
+  "teams.createTeam": { path: ["teams", "createTeam"], role: "admin" },
+  "teams.getTeam": { path: ["teams", "getTeam"], role: "viewer" },
+  "teams.getTeamMembers": { path: ["teams", "getTeamMembers"], role: "viewer" },
+
+  // user
+  "user.getAuthUser": { path: ["user", "getAuthUser"], role: "viewer" },
+  "user.listEventTypes": { path: ["user", "listEventTypes"], role: "viewer" },
+  "user.listUserEvents": { path: ["user", "listUserEvents"], role: "viewer" },
+  "user.requestDelete": { path: ["user", "requestDelete"], role: "admin" },
+
+  // webhooks
+  "webhooks.createWebhook": { path: ["webhooks", "createWebhook"], role: "editor" },
+  "webhooks.getWebhooks": { path: ["webhooks", "getWebhooks"], role: "viewer" },
+  "webhooks.deleteWebhook": { path: ["webhooks", "deleteWebhook"], role: "editor" },
 } as const;
 
 type AdvancedVercelMethod = keyof typeof ADVANCED_VERCEL_METHODS;
@@ -1094,6 +1303,34 @@ export async function getProjectProvidersAction(projectId: string) {
     return { success: false, error: error?.message || "Failed to fetch project providers" };
   }
 }
+
+export async function getVercelProjectsAction() {
+  const user = await requireCurrentUser();
+  const { getWorkspaceContext } = await import("@/lib/server/workspace");
+  try {
+    const workspace = await getWorkspaceContext(user.id);
+    const orgId = workspace.activeOrganization?.id;
+    if (!orgId) return { success: true, projects: [] };
+
+    const projects = await prisma.project.findMany({
+      where: {
+        organizationId: orgId,
+        vercelProjectId: { not: null },
+        deletedAt: null,
+      },
+      select: {
+        id: true,
+        name: true,
+        vercelProjectId: true,
+      },
+    });
+    return { success: true, projects };
+  } catch (error: any) {
+    console.error("Failed to fetch Vercel projects:", error);
+    return { success: false, error: error?.message || "Failed to fetch projects" };
+  }
+}
+
 
 
 

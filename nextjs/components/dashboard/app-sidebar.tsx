@@ -24,7 +24,6 @@ import {
   Sparkles,
   Milestone,
   Users,
-  Workflow,
 } from "lucide-react";
 import { usePathname } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
@@ -129,7 +128,6 @@ export function AppSidebar({
         },
         { title: t("nav.users"), url: "/dashboard/users", icon: Users },
         { title: t("nav.platform"), url: "/dashboard/platform", icon: Sparkles },
-        { title: t("nav.zero_plan"), url: "/dashboard/zero-plan", icon: Workflow },
         { title: t("nav.vercel_roadmap"), url: "/dashboard/vercel-roadmap", icon: Milestone },
       ],
     },
