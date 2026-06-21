@@ -41,6 +41,11 @@ Configure the following environment keys in your production `.env` file or orche
 - `GEMINI_API_KEY`: Google Gemini SDK API key for AI diagnostic endpoints.
 - `ACME_DIRECTORY`: ACME staging or production directory endpoint for SSL/domain certificate provisioning.
 - `LEPOS_FAILOVER_TARGETS`: Failover server/gateway routing coordinates (comma-separated).
+- `LEPOS_SERVICE_ID`: Service identity used by the Go edge gateway when calling control-plane APIs.
+- `LEPOS_SERVICE_SECRET`: Shared secret bound to the registered service identity for phased zero-trust rollout.
+- `LEPOS_IPFS_GATEWAY_URL`: Preferred gateway base URL for `ipfs://` artifact mirror resolution.
+- `LEPOS_ARWEAVE_GATEWAY_URL`: Preferred gateway base URL for `ar://` artifact mirror resolution.
+- `LEPOS_CONTROL_PLANE_TLS_CERT`, `LEPOS_CONTROL_PLANE_TLS_KEY`, `LEPOS_CONTROL_PLANE_TLS_CA`: Optional client certificate, private key, and trust bundle used for mTLS between gateway and control-plane.
 
 ## Policy
 

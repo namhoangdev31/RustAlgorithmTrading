@@ -259,3 +259,57 @@ export async function publishMarketplaceIntegrationAction(formData: FormData) {
     redirect(withQueryParam(await localizedHref(returnTo), "dev_portal", error.message || "publish_failed"));
   }
 }
+
+export async function updateIntegrationReleaseAction(formData: FormData) {
+  await requireCurrentUser();
+  const integrationId = readFormValue(formData, "integrationId");
+  const version = readFormValue(formData, "version") || "0.1.0";
+  const releaseNotes = readFormValue(formData, "releaseNotes");
+  const returnTo = readFormValue(formData, "returnTo") || "/dashboard/marketplace/developer";
+
+  try {
+    if (!integrationId) {
+      throw new Error("Integration ID is required.");
+    }
+
+    const integration = await prisma.bundleExternalIntegrations.findUnique({
+      where: { id: integrationId },
+    });
+
+    if (!integration) {
+      throw new Error("Integration not found.");
+    }
+
+    let config: Record<string, any> = {};
+    try {
+      config = JSON.parse(integration.config);
+    } catch {
+      config = {};
+    }
+
+    const history = Array.isArray(config.releaseHistory) ? config.releaseHistory : [];
+    history.unshift({
+      version,
+      releaseNotes,
+      updatedAt: new Date().toISOString(),
+    });
+
+    await prisma.bundleExternalIntegrations.update({
+      where: { id: integrationId },
+      data: {
+        config: JSON.stringify({
+          ...config,
+          version,
+          releaseNotes,
+          releaseHistory: history.slice(0, 10),
+        }),
+        updatedAt: new Date(),
+      },
+    });
+
+    revalidatePath(returnTo);
+    redirect(withQueryParam(await localizedHref(returnTo), "dev_portal", "release_updated"));
+  } catch (error: any) {
+    redirect(withQueryParam(await localizedHref(returnTo), "dev_portal", error.message || "release_update_failed"));
+  }
+}

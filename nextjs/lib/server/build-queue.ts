@@ -1,5 +1,6 @@
 import { Queue, Worker } from "bullmq";
 import { getNativeRedis } from "./native-platform/redis";
+import { getSchedulingRecommendation } from "./native-platform/finops";
 import { runLepoShipBuild } from "./lepoship-builder";
 import { promises as fs } from "fs";
 import path from "path";
@@ -110,6 +111,9 @@ export async function enqueueBuild(job: BuildJob) {
   let priority = 5; // Default: Free tier priority (Lowest)
   let plan: "free" | "pro" | "enterprise" = "free";
   let orgName = "";
+  let ownerUserId = "";
+  let schedulingDelayMs = 0;
+  let schedulingReason = "default";
 
   try {
     const project = await prisma.project.findUnique({
@@ -119,6 +123,7 @@ export async function enqueueBuild(job: BuildJob) {
 
     if (project?.organization) {
       orgName = project.organization.name;
+      ownerUserId = project.organization.userId;
       const orgType = project.organization.type;
       const nameLower = orgName.toLowerCase();
       
@@ -135,6 +140,35 @@ export async function enqueueBuild(job: BuildJob) {
     }
   } catch (err) {
     console.warn("Failed to determine build priority, falling back to default:", err);
+  }
+
+  try {
+    const recommendation = await getSchedulingRecommendation(job.projectId, "deferrable");
+    schedulingDelayMs = recommendation.delayMs;
+    schedulingReason = recommendation.reason;
+    priority = Math.max(priority, recommendation.priority);
+
+    if (schedulingDelayMs > 0) {
+      if (ownerUserId) {
+        await prisma.bundleAuditLog.create({
+          data: {
+            id: crypto.randomUUID(),
+            bundleId: job.bundleId,
+            userId: ownerUserId,
+            action: "finops_reschedule",
+            fieldName: "native_finops_scheduler",
+            oldValue: JSON.stringify({
+              reason: schedulingReason,
+              delayMs: schedulingDelayMs,
+              workloadClass: "deferrable",
+            }),
+            createdAt: new Date(),
+          },
+        }).catch(() => null);
+      }
+    }
+  } catch (err) {
+    console.warn("Failed to compute FinOps scheduling recommendation:", err);
   }
 
   // Enforce rate limiting for Free tier (max 5 builds per hour)
@@ -181,5 +215,8 @@ export async function enqueueBuild(job: BuildJob) {
 
   startBuildWorker();
 
-  await queue.add(`build-${job.projectId}-${job.buildNumber}`, job, { priority });
+  await queue.add(`build-${job.projectId}-${job.buildNumber}`, job, {
+    priority,
+    delay: schedulingDelayMs,
+  });
 }

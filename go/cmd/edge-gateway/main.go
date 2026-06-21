@@ -17,12 +17,19 @@ func main() {
 	slog.SetDefault(logger)
 
 	cfg := edge.Config{
-		Host:            getenvOrDefault("HOST", "0.0.0.0"),
-		Port:            getenvOrDefault("PORT", "8088"),
-		RedisURL:        os.Getenv("REDIS_URL"),
-		StorageRoot:     getenvOrDefault("LEPOS_STORAGE_ROOT", "."),
-		ControlPlaneURL: getenvOrDefault("LEPOS_CONTROL_PLANE_URL", "http://127.0.0.1:3000"),
-		InternalAPIKey:  os.Getenv("LEPOS_INTERNAL_API_KEY"),
+		Host:                    getenvOrDefault("HOST", "0.0.0.0"),
+		Port:                    getenvOrDefault("PORT", "8088"),
+		RedisURL:                os.Getenv("REDIS_URL"),
+		StorageRoot:             getenvOrDefault("LEPOS_STORAGE_ROOT", "."),
+		ControlPlaneURL:         getenvOrDefault("LEPOS_CONTROL_PLANE_URL", "http://127.0.0.1:3000"),
+		InternalAPIKey:          os.Getenv("LEPOS_INTERNAL_API_KEY"),
+		ControlPlaneTLSCertPath: os.Getenv("LEPOS_CONTROL_PLANE_TLS_CERT"),
+		ControlPlaneTLSKeyPath:  os.Getenv("LEPOS_CONTROL_PLANE_TLS_KEY"),
+		ControlPlaneTLSCAPath:   os.Getenv("LEPOS_CONTROL_PLANE_TLS_CA"),
+		ServiceID:               getenvOrDefault("LEPOS_SERVICE_ID", "edge-gateway"),
+		ServiceSecret:           os.Getenv("LEPOS_SERVICE_SECRET"),
+		IPFSGatewayURL:          getenvOrDefault("LEPOS_IPFS_GATEWAY_URL", "https://ipfs.io/ipfs"),
+		ArweaveGatewayURL:       getenvOrDefault("LEPOS_ARWEAVE_GATEWAY_URL", "https://arweave.net"),
 	}
 
 	gateway, err := edge.NewGateway(cfg)
@@ -69,7 +76,7 @@ func main() {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	
+
 	_ = server.Shutdown(ctx)
 	if err := tlsServer.Shutdown(ctx); err != nil {
 		slog.Error("edge_gateway_shutdown_error", "error", err)

@@ -13,7 +13,11 @@ import {
 } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { purgeNativeCacheAction, runNativeDiagnosticAction } from "@/app/actions/native-platform";
+import { purgeNativeCacheAction } from "@/app/actions/native-platform";
+import { ConnectedDevicesPanel } from "@/components/dashboard/connected-devices-panel";
+import { ArtifactMirrorManager } from "@/components/dashboard/artifact-mirror-manager";
+import { FederatedRoutingPanel } from "@/components/dashboard/federated-routing-panel";
+import { FinopsSchedulerPanel } from "@/components/dashboard/finops-scheduler-panel";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,6 +27,10 @@ import { formatRelativeTime } from "@/lib/shared/time";
 import { ErrorTrackerClient } from "@/components/dashboard/error-tracker-client";
 import { PluginHubClient } from "@/components/dashboard/plugin-hub-client";
 import { CloudFailoverClient } from "@/components/dashboard/cloud-failover-client";
+import { RemediationControlPanel } from "@/components/dashboard/remediation-control-panel";
+import { SourceMapsManager } from "@/components/dashboard/source-maps-manager";
+import { WafThreatMap } from "@/components/dashboard/waf-threat-map";
+import { ZeroTrustTelemetryPanel } from "@/components/dashboard/zero-trust-telemetry-panel";
 
 type NativePlatformTabProps = {
   project: any;
@@ -86,6 +94,13 @@ export function NativePlatformTab({ project, data, locale, returnTo }: NativePla
                 <code key="storage" className="text-[11px] text-ink-mute">{deployment.storagePath}</code>,
               ]}
             />
+            <FederatedRoutingPanel
+              projectId={project.id}
+              policy={data.routingPolicy}
+              replicas={data.regionReplicas || []}
+              deployments={data.deployments || []}
+              returnTo={returnTo}
+            />
           </CardContent>
         </Card>
 
@@ -107,6 +122,12 @@ export function NativePlatformTab({ project, data, locale, returnTo }: NativePla
                 domain.sslStatus,
                 <code key="txt" className="text-[11px] text-ink-mute">{domain.txtRecordToken}</code>,
               ]}
+            />
+            <ArtifactMirrorManager
+              projectId={project.id}
+              deployments={data.deployments || []}
+              mirrors={data.artifactMirrors || []}
+              returnTo={returnTo}
             />
             <MiniTable
               empty="No edge functions deployed."
@@ -140,6 +161,11 @@ export function NativePlatformTab({ project, data, locale, returnTo }: NativePla
               projectId={project.id}
               returnTo={returnTo}
             />
+            <SourceMapsManager
+              projectId={project.id}
+              sourceMaps={data.sourceMaps || []}
+              returnTo={returnTo}
+            />
           </CardContent>
         </Card>
 
@@ -157,11 +183,21 @@ export function NativePlatformTab({ project, data, locale, returnTo }: NativePla
               allPlugins={data.allPlugins || []}
               returnTo={returnTo}
             />
+            <WafThreatMap
+              projectId={project.id}
+              events={data.wafEvents || []}
+              rules={data.wafRules || []}
+              returnTo={returnTo}
+            />
             <MiniTable
               empty="No WAF events."
               rows={data.wafEvents}
               columns={["Fingerprint", "Action", "Reason"]}
               render={(event) => [event.fingerprint, event.action, event.reason || "-"]}
+            />
+            <ConnectedDevicesPanel
+              devices={data.connectedDevices || []}
+              locale={locale}
             />
             <CloudFailoverClient
               projectId={project.id}
@@ -173,6 +209,28 @@ export function NativePlatformTab({ project, data, locale, returnTo }: NativePla
               rows={data.diagnostics}
               columns={["Status", "Model", "Summary"]}
               render={(diagnostic) => [diagnostic.status, diagnostic.model || "-", diagnostic.summary]}
+            />
+            <RemediationControlPanel
+              projectId={project.id}
+              locale={locale}
+              runs={data.remediationRuns || []}
+              deployments={data.deployments || []}
+              returnTo={returnTo}
+            />
+            <FinopsSchedulerPanel
+              projectId={project.id}
+              locale={locale}
+              policy={data.schedulingPolicy}
+              signals={data.schedulingSignals || []}
+              returnTo={returnTo}
+            />
+            <ZeroTrustTelemetryPanel
+              projectId={project.id}
+              identities={data.serviceIdentities || []}
+              trustPolicies={data.serviceTrustPolicies || []}
+              telemetryEnvelopes={data.telemetryEnvelopes || []}
+              telemetrySummary={data.telemetrySummary || { total: 0, byKind: [] }}
+              returnTo={returnTo}
             />
           </CardContent>
         </Card>

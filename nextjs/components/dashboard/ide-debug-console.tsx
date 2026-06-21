@@ -11,7 +11,21 @@ interface LogEntry {
   metadata?: Record<string, any>;
 }
 
-export default function IdeDebugConsole({ projectId }: { projectId: string }) {
+type ConnectedDeviceFeed = {
+  deviceId: string;
+  platform: string;
+  deviceModel?: string | null;
+  status: string;
+  pingMs?: number | null;
+};
+
+export default function IdeDebugConsole({
+  projectId,
+  connectedDevices = [],
+}: {
+  projectId: string;
+  connectedDevices?: ConnectedDeviceFeed[];
+}) {
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [filter, setFilter] = useState<string>("all");
   const [searchText, setSearchText] = useState<string>("");
@@ -21,51 +35,67 @@ export default function IdeDebugConsole({ projectId }: { projectId: string }) {
 
   const consoleEndRef = useRef<HTMLDivElement | null>(null);
 
-  // Generate mock logs on mount for preview
+  // Prefer real connected device feed when available; otherwise fall back to preview logs.
   useEffect(() => {
     const mockSessionId = `sess_${Math.random().toString(36).substring(2, 11)}`;
     setSessionId(mockSessionId);
 
-    const initialLogs: LogEntry[] = [
-      {
-        id: "1",
-        level: "info",
-        message: `Debug session initiated. Session ID: ${mockSessionId}`,
-        timestamp: Date.now() - 5000,
-        source: "system",
-      },
-      {
-        id: "2",
-        level: "log",
-        message: "Initializing LepoS native environment bridge...",
-        timestamp: Date.now() - 4000,
-        source: "bridge",
-      },
-      {
-        id: "3",
-        level: "debug",
-        message: "Configured API gateway route: /api/v1/auth",
-        timestamp: Date.now() - 3500,
-        source: "gateway",
-      },
-      {
-        id: "4",
-        level: "warn",
-        message: "Stale cache detected for path: /dashboard/settings",
-        timestamp: Date.now() - 2000,
-        source: "cache",
-      },
-      {
-        id: "5",
-        level: "error",
-        message: "Database connection failed. Retrying in 2s...",
-        timestamp: Date.now() - 500,
-        source: "database",
-      },
-    ];
+    const initialLogs: LogEntry[] = connectedDevices.length
+      ? connectedDevices.map((device, index) => ({
+          id: `device-${device.deviceId}-${index}`,
+          level: device.status === "online" ? "info" : device.status === "stale" ? "warn" : "error",
+          message: `${device.deviceModel || device.deviceId} reported ${device.status} heartbeat on ${device.platform}${device.pingMs ? ` (${device.pingMs}ms)` : ""}.`,
+          timestamp: Date.now() - (connectedDevices.length - index) * 1000,
+          source: "device-feed",
+          metadata: {
+            deviceId: device.deviceId,
+            status: device.status,
+          },
+        }))
+      : [
+          {
+            id: "1",
+            level: "info",
+            message: `Debug session initiated. Session ID: ${mockSessionId}`,
+            timestamp: Date.now() - 5000,
+            source: "system",
+          },
+          {
+            id: "2",
+            level: "log",
+            message: "Initializing LepoS native environment bridge...",
+            timestamp: Date.now() - 4000,
+            source: "bridge",
+          },
+          {
+            id: "3",
+            level: "debug",
+            message: "Configured API gateway route: /api/v1/auth",
+            timestamp: Date.now() - 3500,
+            source: "gateway",
+          },
+          {
+            id: "4",
+            level: "warn",
+            message: "Stale cache detected for path: /dashboard/settings",
+            timestamp: Date.now() - 2000,
+            source: "cache",
+          },
+          {
+            id: "5",
+            level: "error",
+            message: "Database connection failed. Retrying in 2s...",
+            timestamp: Date.now() - 500,
+            source: "database",
+          },
+        ];
     setLogs(initialLogs);
 
-    // Set up timer to periodically append logs for live simulator feel
+    if (connectedDevices.length) {
+      return;
+    }
+
+    // Retain preview streaming only when no external device feed is supplied.
     const interval = setInterval(() => {
       const sources = ["webview", "auth", "payment", "cli", "worker"];
       const levels: LogEntry["level"][] = ["log", "info", "warn", "error", "debug"];
@@ -95,7 +125,7 @@ export default function IdeDebugConsole({ projectId }: { projectId: string }) {
     }, 4000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [connectedDevices, projectId]);
 
   // Auto scroll logic
   useEffect(() => {

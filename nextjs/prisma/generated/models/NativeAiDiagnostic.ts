@@ -212,6 +212,7 @@ export type NativeAiDiagnosticWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"NativeAiDiagnostic"> | Date | string
   project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
   crashReport?: Prisma.XOR<Prisma.NativeCrashReportNullableScalarRelationFilter, Prisma.NativeCrashReportWhereInput> | null
+  remediationRuns?: Prisma.NativeRemediationRunListRelationFilter
 }
 
 export type NativeAiDiagnosticOrderByWithRelationInput = {
@@ -226,6 +227,7 @@ export type NativeAiDiagnosticOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   project?: Prisma.ProjectOrderByWithRelationInput
   crashReport?: Prisma.NativeCrashReportOrderByWithRelationInput
+  remediationRuns?: Prisma.NativeRemediationRunOrderByRelationAggregateInput
 }
 
 export type NativeAiDiagnosticWhereUniqueInput = Prisma.AtLeast<{
@@ -243,6 +245,7 @@ export type NativeAiDiagnosticWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"NativeAiDiagnostic"> | Date | string
   project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
   crashReport?: Prisma.XOR<Prisma.NativeCrashReportNullableScalarRelationFilter, Prisma.NativeCrashReportWhereInput> | null
+  remediationRuns?: Prisma.NativeRemediationRunListRelationFilter
 }, "id">
 
 export type NativeAiDiagnosticOrderByWithAggregationInput = {
@@ -285,6 +288,7 @@ export type NativeAiDiagnosticCreateInput = {
   createdAt?: Date | string
   project: Prisma.ProjectCreateNestedOneWithoutNativeAiDiagnosticsInput
   crashReport?: Prisma.NativeCrashReportCreateNestedOneWithoutDiagnosticsInput
+  remediationRuns?: Prisma.NativeRemediationRunCreateNestedManyWithoutDiagnosticInput
 }
 
 export type NativeAiDiagnosticUncheckedCreateInput = {
@@ -297,6 +301,7 @@ export type NativeAiDiagnosticUncheckedCreateInput = {
   model?: string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
+  remediationRuns?: Prisma.NativeRemediationRunUncheckedCreateNestedManyWithoutDiagnosticInput
 }
 
 export type NativeAiDiagnosticUpdateInput = {
@@ -309,6 +314,7 @@ export type NativeAiDiagnosticUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   project?: Prisma.ProjectUpdateOneRequiredWithoutNativeAiDiagnosticsNestedInput
   crashReport?: Prisma.NativeCrashReportUpdateOneWithoutDiagnosticsNestedInput
+  remediationRuns?: Prisma.NativeRemediationRunUpdateManyWithoutDiagnosticNestedInput
 }
 
 export type NativeAiDiagnosticUncheckedUpdateInput = {
@@ -321,6 +327,7 @@ export type NativeAiDiagnosticUncheckedUpdateInput = {
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  remediationRuns?: Prisma.NativeRemediationRunUncheckedUpdateManyWithoutDiagnosticNestedInput
 }
 
 export type NativeAiDiagnosticCreateManyInput = {
@@ -399,6 +406,11 @@ export type NativeAiDiagnosticMinOrderByAggregateInput = {
   suggestedDiff?: Prisma.SortOrder
   model?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+}
+
+export type NativeAiDiagnosticNullableScalarRelationFilter = {
+  is?: Prisma.NativeAiDiagnosticWhereInput | null
+  isNot?: Prisma.NativeAiDiagnosticWhereInput | null
 }
 
 export type NativeAiDiagnosticCreateNestedManyWithoutProjectInput = {
@@ -485,6 +497,22 @@ export type NativeAiDiagnosticUncheckedUpdateManyWithoutCrashReportNestedInput =
   deleteMany?: Prisma.NativeAiDiagnosticScalarWhereInput | Prisma.NativeAiDiagnosticScalarWhereInput[]
 }
 
+export type NativeAiDiagnosticCreateNestedOneWithoutRemediationRunsInput = {
+  create?: Prisma.XOR<Prisma.NativeAiDiagnosticCreateWithoutRemediationRunsInput, Prisma.NativeAiDiagnosticUncheckedCreateWithoutRemediationRunsInput>
+  connectOrCreate?: Prisma.NativeAiDiagnosticCreateOrConnectWithoutRemediationRunsInput
+  connect?: Prisma.NativeAiDiagnosticWhereUniqueInput
+}
+
+export type NativeAiDiagnosticUpdateOneWithoutRemediationRunsNestedInput = {
+  create?: Prisma.XOR<Prisma.NativeAiDiagnosticCreateWithoutRemediationRunsInput, Prisma.NativeAiDiagnosticUncheckedCreateWithoutRemediationRunsInput>
+  connectOrCreate?: Prisma.NativeAiDiagnosticCreateOrConnectWithoutRemediationRunsInput
+  upsert?: Prisma.NativeAiDiagnosticUpsertWithoutRemediationRunsInput
+  disconnect?: Prisma.NativeAiDiagnosticWhereInput | boolean
+  delete?: Prisma.NativeAiDiagnosticWhereInput | boolean
+  connect?: Prisma.NativeAiDiagnosticWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.NativeAiDiagnosticUpdateToOneWithWhereWithoutRemediationRunsInput, Prisma.NativeAiDiagnosticUpdateWithoutRemediationRunsInput>, Prisma.NativeAiDiagnosticUncheckedUpdateWithoutRemediationRunsInput>
+}
+
 export type NativeAiDiagnosticCreateWithoutProjectInput = {
   id?: string
   status?: string
@@ -494,6 +522,7 @@ export type NativeAiDiagnosticCreateWithoutProjectInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   crashReport?: Prisma.NativeCrashReportCreateNestedOneWithoutDiagnosticsInput
+  remediationRuns?: Prisma.NativeRemediationRunCreateNestedManyWithoutDiagnosticInput
 }
 
 export type NativeAiDiagnosticUncheckedCreateWithoutProjectInput = {
@@ -505,6 +534,7 @@ export type NativeAiDiagnosticUncheckedCreateWithoutProjectInput = {
   model?: string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
+  remediationRuns?: Prisma.NativeRemediationRunUncheckedCreateNestedManyWithoutDiagnosticInput
 }
 
 export type NativeAiDiagnosticCreateOrConnectWithoutProjectInput = {
@@ -557,6 +587,7 @@ export type NativeAiDiagnosticCreateWithoutCrashReportInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   project: Prisma.ProjectCreateNestedOneWithoutNativeAiDiagnosticsInput
+  remediationRuns?: Prisma.NativeRemediationRunCreateNestedManyWithoutDiagnosticInput
 }
 
 export type NativeAiDiagnosticUncheckedCreateWithoutCrashReportInput = {
@@ -568,6 +599,7 @@ export type NativeAiDiagnosticUncheckedCreateWithoutCrashReportInput = {
   model?: string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
+  remediationRuns?: Prisma.NativeRemediationRunUncheckedCreateNestedManyWithoutDiagnosticInput
 }
 
 export type NativeAiDiagnosticCreateOrConnectWithoutCrashReportInput = {
@@ -596,6 +628,70 @@ export type NativeAiDiagnosticUpdateManyWithWhereWithoutCrashReportInput = {
   data: Prisma.XOR<Prisma.NativeAiDiagnosticUpdateManyMutationInput, Prisma.NativeAiDiagnosticUncheckedUpdateManyWithoutCrashReportInput>
 }
 
+export type NativeAiDiagnosticCreateWithoutRemediationRunsInput = {
+  id?: string
+  status?: string
+  summary: string
+  suggestedDiff?: string | null
+  model?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  project: Prisma.ProjectCreateNestedOneWithoutNativeAiDiagnosticsInput
+  crashReport?: Prisma.NativeCrashReportCreateNestedOneWithoutDiagnosticsInput
+}
+
+export type NativeAiDiagnosticUncheckedCreateWithoutRemediationRunsInput = {
+  id?: string
+  projectId: string
+  crashReportId?: string | null
+  status?: string
+  summary: string
+  suggestedDiff?: string | null
+  model?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+}
+
+export type NativeAiDiagnosticCreateOrConnectWithoutRemediationRunsInput = {
+  where: Prisma.NativeAiDiagnosticWhereUniqueInput
+  create: Prisma.XOR<Prisma.NativeAiDiagnosticCreateWithoutRemediationRunsInput, Prisma.NativeAiDiagnosticUncheckedCreateWithoutRemediationRunsInput>
+}
+
+export type NativeAiDiagnosticUpsertWithoutRemediationRunsInput = {
+  update: Prisma.XOR<Prisma.NativeAiDiagnosticUpdateWithoutRemediationRunsInput, Prisma.NativeAiDiagnosticUncheckedUpdateWithoutRemediationRunsInput>
+  create: Prisma.XOR<Prisma.NativeAiDiagnosticCreateWithoutRemediationRunsInput, Prisma.NativeAiDiagnosticUncheckedCreateWithoutRemediationRunsInput>
+  where?: Prisma.NativeAiDiagnosticWhereInput
+}
+
+export type NativeAiDiagnosticUpdateToOneWithWhereWithoutRemediationRunsInput = {
+  where?: Prisma.NativeAiDiagnosticWhereInput
+  data: Prisma.XOR<Prisma.NativeAiDiagnosticUpdateWithoutRemediationRunsInput, Prisma.NativeAiDiagnosticUncheckedUpdateWithoutRemediationRunsInput>
+}
+
+export type NativeAiDiagnosticUpdateWithoutRemediationRunsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  summary?: Prisma.StringFieldUpdateOperationsInput | string
+  suggestedDiff?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  project?: Prisma.ProjectUpdateOneRequiredWithoutNativeAiDiagnosticsNestedInput
+  crashReport?: Prisma.NativeCrashReportUpdateOneWithoutDiagnosticsNestedInput
+}
+
+export type NativeAiDiagnosticUncheckedUpdateWithoutRemediationRunsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
+  crashReportId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  summary?: Prisma.StringFieldUpdateOperationsInput | string
+  suggestedDiff?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 export type NativeAiDiagnosticCreateManyProjectInput = {
   id?: string
   crashReportId?: string | null
@@ -616,6 +712,7 @@ export type NativeAiDiagnosticUpdateWithoutProjectInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   crashReport?: Prisma.NativeCrashReportUpdateOneWithoutDiagnosticsNestedInput
+  remediationRuns?: Prisma.NativeRemediationRunUpdateManyWithoutDiagnosticNestedInput
 }
 
 export type NativeAiDiagnosticUncheckedUpdateWithoutProjectInput = {
@@ -627,6 +724,7 @@ export type NativeAiDiagnosticUncheckedUpdateWithoutProjectInput = {
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  remediationRuns?: Prisma.NativeRemediationRunUncheckedUpdateManyWithoutDiagnosticNestedInput
 }
 
 export type NativeAiDiagnosticUncheckedUpdateManyWithoutProjectInput = {
@@ -660,6 +758,7 @@ export type NativeAiDiagnosticUpdateWithoutCrashReportInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   project?: Prisma.ProjectUpdateOneRequiredWithoutNativeAiDiagnosticsNestedInput
+  remediationRuns?: Prisma.NativeRemediationRunUpdateManyWithoutDiagnosticNestedInput
 }
 
 export type NativeAiDiagnosticUncheckedUpdateWithoutCrashReportInput = {
@@ -671,6 +770,7 @@ export type NativeAiDiagnosticUncheckedUpdateWithoutCrashReportInput = {
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  remediationRuns?: Prisma.NativeRemediationRunUncheckedUpdateManyWithoutDiagnosticNestedInput
 }
 
 export type NativeAiDiagnosticUncheckedUpdateManyWithoutCrashReportInput = {
@@ -685,6 +785,35 @@ export type NativeAiDiagnosticUncheckedUpdateManyWithoutCrashReportInput = {
 }
 
 
+/**
+ * Count Type NativeAiDiagnosticCountOutputType
+ */
+
+export type NativeAiDiagnosticCountOutputType = {
+  remediationRuns: number
+}
+
+export type NativeAiDiagnosticCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  remediationRuns?: boolean | NativeAiDiagnosticCountOutputTypeCountRemediationRunsArgs
+}
+
+/**
+ * NativeAiDiagnosticCountOutputType without action
+ */
+export type NativeAiDiagnosticCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the NativeAiDiagnosticCountOutputType
+   */
+  select?: Prisma.NativeAiDiagnosticCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * NativeAiDiagnosticCountOutputType without action
+ */
+export type NativeAiDiagnosticCountOutputTypeCountRemediationRunsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NativeRemediationRunWhereInput
+}
+
 
 export type NativeAiDiagnosticSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -698,6 +827,8 @@ export type NativeAiDiagnosticSelect<ExtArgs extends runtime.Types.Extensions.In
   createdAt?: boolean
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   crashReport?: boolean | Prisma.NativeAiDiagnostic$crashReportArgs<ExtArgs>
+  remediationRuns?: boolean | Prisma.NativeAiDiagnostic$remediationRunsArgs<ExtArgs>
+  _count?: boolean | Prisma.NativeAiDiagnosticCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["nativeAiDiagnostic"]>
 
 export type NativeAiDiagnosticSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -744,6 +875,8 @@ export type NativeAiDiagnosticOmit<ExtArgs extends runtime.Types.Extensions.Inte
 export type NativeAiDiagnosticInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   crashReport?: boolean | Prisma.NativeAiDiagnostic$crashReportArgs<ExtArgs>
+  remediationRuns?: boolean | Prisma.NativeAiDiagnostic$remediationRunsArgs<ExtArgs>
+  _count?: boolean | Prisma.NativeAiDiagnosticCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type NativeAiDiagnosticIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
@@ -759,6 +892,7 @@ export type $NativeAiDiagnosticPayload<ExtArgs extends runtime.Types.Extensions.
   objects: {
     project: Prisma.$ProjectPayload<ExtArgs>
     crashReport: Prisma.$NativeCrashReportPayload<ExtArgs> | null
+    remediationRuns: Prisma.$NativeRemediationRunPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1166,6 +1300,7 @@ export interface Prisma__NativeAiDiagnosticClient<T, Null = never, ExtArgs exten
   readonly [Symbol.toStringTag]: "PrismaPromise"
   project<T extends Prisma.ProjectDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProjectDefaultArgs<ExtArgs>>): Prisma.Prisma__ProjectClient<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   crashReport<T extends Prisma.NativeAiDiagnostic$crashReportArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.NativeAiDiagnostic$crashReportArgs<ExtArgs>>): Prisma.Prisma__NativeCrashReportClient<runtime.Types.Result.GetResult<Prisma.$NativeCrashReportPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  remediationRuns<T extends Prisma.NativeAiDiagnostic$remediationRunsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.NativeAiDiagnostic$remediationRunsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NativeRemediationRunPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1621,6 +1756,30 @@ export type NativeAiDiagnostic$crashReportArgs<ExtArgs extends runtime.Types.Ext
    */
   include?: Prisma.NativeCrashReportInclude<ExtArgs> | null
   where?: Prisma.NativeCrashReportWhereInput
+}
+
+/**
+ * NativeAiDiagnostic.remediationRuns
+ */
+export type NativeAiDiagnostic$remediationRunsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the NativeRemediationRun
+   */
+  select?: Prisma.NativeRemediationRunSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the NativeRemediationRun
+   */
+  omit?: Prisma.NativeRemediationRunOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NativeRemediationRunInclude<ExtArgs> | null
+  where?: Prisma.NativeRemediationRunWhereInput
+  orderBy?: Prisma.NativeRemediationRunOrderByWithRelationInput | Prisma.NativeRemediationRunOrderByWithRelationInput[]
+  cursor?: Prisma.NativeRemediationRunWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NativeRemediationRunScalarFieldEnum | Prisma.NativeRemediationRunScalarFieldEnum[]
 }
 
 /**

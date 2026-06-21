@@ -279,6 +279,8 @@ export type NativeDeploymentWhereInput = {
   project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
   activeProjects?: Prisma.ProjectListRelationFilter
   sourceMaps?: Prisma.NativeSourceMapListRelationFilter
+  regionReplicas?: Prisma.NativeRegionReplicaListRelationFilter
+  artifactMirrors?: Prisma.NativeArtifactMirrorListRelationFilter
 }
 
 export type NativeDeploymentOrderByWithRelationInput = {
@@ -298,6 +300,8 @@ export type NativeDeploymentOrderByWithRelationInput = {
   project?: Prisma.ProjectOrderByWithRelationInput
   activeProjects?: Prisma.ProjectOrderByRelationAggregateInput
   sourceMaps?: Prisma.NativeSourceMapOrderByRelationAggregateInput
+  regionReplicas?: Prisma.NativeRegionReplicaOrderByRelationAggregateInput
+  artifactMirrors?: Prisma.NativeArtifactMirrorOrderByRelationAggregateInput
 }
 
 export type NativeDeploymentWhereUniqueInput = Prisma.AtLeast<{
@@ -320,6 +324,8 @@ export type NativeDeploymentWhereUniqueInput = Prisma.AtLeast<{
   project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
   activeProjects?: Prisma.ProjectListRelationFilter
   sourceMaps?: Prisma.NativeSourceMapListRelationFilter
+  regionReplicas?: Prisma.NativeRegionReplicaListRelationFilter
+  artifactMirrors?: Prisma.NativeArtifactMirrorListRelationFilter
 }, "id">
 
 export type NativeDeploymentOrderByWithAggregationInput = {
@@ -378,6 +384,8 @@ export type NativeDeploymentCreateInput = {
   project: Prisma.ProjectCreateNestedOneWithoutNativeDeploymentsInput
   activeProjects?: Prisma.ProjectCreateNestedManyWithoutActiveNativeDeploymentInput
   sourceMaps?: Prisma.NativeSourceMapCreateNestedManyWithoutDeploymentInput
+  regionReplicas?: Prisma.NativeRegionReplicaCreateNestedManyWithoutDeploymentInput
+  artifactMirrors?: Prisma.NativeArtifactMirrorCreateNestedManyWithoutDeploymentInput
 }
 
 export type NativeDeploymentUncheckedCreateInput = {
@@ -396,6 +404,8 @@ export type NativeDeploymentUncheckedCreateInput = {
   activatedAt?: Date | string | null
   activeProjects?: Prisma.ProjectUncheckedCreateNestedManyWithoutActiveNativeDeploymentInput
   sourceMaps?: Prisma.NativeSourceMapUncheckedCreateNestedManyWithoutDeploymentInput
+  regionReplicas?: Prisma.NativeRegionReplicaUncheckedCreateNestedManyWithoutDeploymentInput
+  artifactMirrors?: Prisma.NativeArtifactMirrorUncheckedCreateNestedManyWithoutDeploymentInput
 }
 
 export type NativeDeploymentUpdateInput = {
@@ -414,6 +424,8 @@ export type NativeDeploymentUpdateInput = {
   project?: Prisma.ProjectUpdateOneRequiredWithoutNativeDeploymentsNestedInput
   activeProjects?: Prisma.ProjectUpdateManyWithoutActiveNativeDeploymentNestedInput
   sourceMaps?: Prisma.NativeSourceMapUpdateManyWithoutDeploymentNestedInput
+  regionReplicas?: Prisma.NativeRegionReplicaUpdateManyWithoutDeploymentNestedInput
+  artifactMirrors?: Prisma.NativeArtifactMirrorUpdateManyWithoutDeploymentNestedInput
 }
 
 export type NativeDeploymentUncheckedUpdateInput = {
@@ -432,6 +444,8 @@ export type NativeDeploymentUncheckedUpdateInput = {
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activeProjects?: Prisma.ProjectUncheckedUpdateManyWithoutActiveNativeDeploymentNestedInput
   sourceMaps?: Prisma.NativeSourceMapUncheckedUpdateManyWithoutDeploymentNestedInput
+  regionReplicas?: Prisma.NativeRegionReplicaUncheckedUpdateManyWithoutDeploymentNestedInput
+  artifactMirrors?: Prisma.NativeArtifactMirrorUncheckedUpdateManyWithoutDeploymentNestedInput
 }
 
 export type NativeDeploymentCreateManyInput = {
@@ -550,6 +564,11 @@ export type NativeDeploymentSumOrderByAggregateInput = {
   buildNumber?: Prisma.SortOrder
 }
 
+export type NativeDeploymentScalarRelationFilter = {
+  is?: Prisma.NativeDeploymentWhereInput
+  isNot?: Prisma.NativeDeploymentWhereInput
+}
+
 export type NativeDeploymentCreateNestedOneWithoutActiveProjectsInput = {
   create?: Prisma.XOR<Prisma.NativeDeploymentCreateWithoutActiveProjectsInput, Prisma.NativeDeploymentUncheckedCreateWithoutActiveProjectsInput>
   connectOrCreate?: Prisma.NativeDeploymentCreateOrConnectWithoutActiveProjectsInput
@@ -624,6 +643,36 @@ export type NativeDeploymentUpdateOneWithoutSourceMapsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.NativeDeploymentUpdateToOneWithWhereWithoutSourceMapsInput, Prisma.NativeDeploymentUpdateWithoutSourceMapsInput>, Prisma.NativeDeploymentUncheckedUpdateWithoutSourceMapsInput>
 }
 
+export type NativeDeploymentCreateNestedOneWithoutRegionReplicasInput = {
+  create?: Prisma.XOR<Prisma.NativeDeploymentCreateWithoutRegionReplicasInput, Prisma.NativeDeploymentUncheckedCreateWithoutRegionReplicasInput>
+  connectOrCreate?: Prisma.NativeDeploymentCreateOrConnectWithoutRegionReplicasInput
+  connect?: Prisma.NativeDeploymentWhereUniqueInput
+}
+
+export type NativeDeploymentUpdateOneWithoutRegionReplicasNestedInput = {
+  create?: Prisma.XOR<Prisma.NativeDeploymentCreateWithoutRegionReplicasInput, Prisma.NativeDeploymentUncheckedCreateWithoutRegionReplicasInput>
+  connectOrCreate?: Prisma.NativeDeploymentCreateOrConnectWithoutRegionReplicasInput
+  upsert?: Prisma.NativeDeploymentUpsertWithoutRegionReplicasInput
+  disconnect?: Prisma.NativeDeploymentWhereInput | boolean
+  delete?: Prisma.NativeDeploymentWhereInput | boolean
+  connect?: Prisma.NativeDeploymentWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.NativeDeploymentUpdateToOneWithWhereWithoutRegionReplicasInput, Prisma.NativeDeploymentUpdateWithoutRegionReplicasInput>, Prisma.NativeDeploymentUncheckedUpdateWithoutRegionReplicasInput>
+}
+
+export type NativeDeploymentCreateNestedOneWithoutArtifactMirrorsInput = {
+  create?: Prisma.XOR<Prisma.NativeDeploymentCreateWithoutArtifactMirrorsInput, Prisma.NativeDeploymentUncheckedCreateWithoutArtifactMirrorsInput>
+  connectOrCreate?: Prisma.NativeDeploymentCreateOrConnectWithoutArtifactMirrorsInput
+  connect?: Prisma.NativeDeploymentWhereUniqueInput
+}
+
+export type NativeDeploymentUpdateOneRequiredWithoutArtifactMirrorsNestedInput = {
+  create?: Prisma.XOR<Prisma.NativeDeploymentCreateWithoutArtifactMirrorsInput, Prisma.NativeDeploymentUncheckedCreateWithoutArtifactMirrorsInput>
+  connectOrCreate?: Prisma.NativeDeploymentCreateOrConnectWithoutArtifactMirrorsInput
+  upsert?: Prisma.NativeDeploymentUpsertWithoutArtifactMirrorsInput
+  connect?: Prisma.NativeDeploymentWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.NativeDeploymentUpdateToOneWithWhereWithoutArtifactMirrorsInput, Prisma.NativeDeploymentUpdateWithoutArtifactMirrorsInput>, Prisma.NativeDeploymentUncheckedUpdateWithoutArtifactMirrorsInput>
+}
+
 export type NativeDeploymentCreateWithoutActiveProjectsInput = {
   id?: string
   target?: string
@@ -639,6 +688,8 @@ export type NativeDeploymentCreateWithoutActiveProjectsInput = {
   activatedAt?: Date | string | null
   project: Prisma.ProjectCreateNestedOneWithoutNativeDeploymentsInput
   sourceMaps?: Prisma.NativeSourceMapCreateNestedManyWithoutDeploymentInput
+  regionReplicas?: Prisma.NativeRegionReplicaCreateNestedManyWithoutDeploymentInput
+  artifactMirrors?: Prisma.NativeArtifactMirrorCreateNestedManyWithoutDeploymentInput
 }
 
 export type NativeDeploymentUncheckedCreateWithoutActiveProjectsInput = {
@@ -656,6 +707,8 @@ export type NativeDeploymentUncheckedCreateWithoutActiveProjectsInput = {
   createdAt?: Date | string
   activatedAt?: Date | string | null
   sourceMaps?: Prisma.NativeSourceMapUncheckedCreateNestedManyWithoutDeploymentInput
+  regionReplicas?: Prisma.NativeRegionReplicaUncheckedCreateNestedManyWithoutDeploymentInput
+  artifactMirrors?: Prisma.NativeArtifactMirrorUncheckedCreateNestedManyWithoutDeploymentInput
 }
 
 export type NativeDeploymentCreateOrConnectWithoutActiveProjectsInput = {
@@ -678,6 +731,8 @@ export type NativeDeploymentCreateWithoutProjectInput = {
   activatedAt?: Date | string | null
   activeProjects?: Prisma.ProjectCreateNestedManyWithoutActiveNativeDeploymentInput
   sourceMaps?: Prisma.NativeSourceMapCreateNestedManyWithoutDeploymentInput
+  regionReplicas?: Prisma.NativeRegionReplicaCreateNestedManyWithoutDeploymentInput
+  artifactMirrors?: Prisma.NativeArtifactMirrorCreateNestedManyWithoutDeploymentInput
 }
 
 export type NativeDeploymentUncheckedCreateWithoutProjectInput = {
@@ -695,6 +750,8 @@ export type NativeDeploymentUncheckedCreateWithoutProjectInput = {
   activatedAt?: Date | string | null
   activeProjects?: Prisma.ProjectUncheckedCreateNestedManyWithoutActiveNativeDeploymentInput
   sourceMaps?: Prisma.NativeSourceMapUncheckedCreateNestedManyWithoutDeploymentInput
+  regionReplicas?: Prisma.NativeRegionReplicaUncheckedCreateNestedManyWithoutDeploymentInput
+  artifactMirrors?: Prisma.NativeArtifactMirrorUncheckedCreateNestedManyWithoutDeploymentInput
 }
 
 export type NativeDeploymentCreateOrConnectWithoutProjectInput = {
@@ -733,6 +790,8 @@ export type NativeDeploymentUpdateWithoutActiveProjectsInput = {
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   project?: Prisma.ProjectUpdateOneRequiredWithoutNativeDeploymentsNestedInput
   sourceMaps?: Prisma.NativeSourceMapUpdateManyWithoutDeploymentNestedInput
+  regionReplicas?: Prisma.NativeRegionReplicaUpdateManyWithoutDeploymentNestedInput
+  artifactMirrors?: Prisma.NativeArtifactMirrorUpdateManyWithoutDeploymentNestedInput
 }
 
 export type NativeDeploymentUncheckedUpdateWithoutActiveProjectsInput = {
@@ -750,6 +809,8 @@ export type NativeDeploymentUncheckedUpdateWithoutActiveProjectsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sourceMaps?: Prisma.NativeSourceMapUncheckedUpdateManyWithoutDeploymentNestedInput
+  regionReplicas?: Prisma.NativeRegionReplicaUncheckedUpdateManyWithoutDeploymentNestedInput
+  artifactMirrors?: Prisma.NativeArtifactMirrorUncheckedUpdateManyWithoutDeploymentNestedInput
 }
 
 export type NativeDeploymentUpsertWithWhereUniqueWithoutProjectInput = {
@@ -802,6 +863,8 @@ export type NativeDeploymentCreateWithoutSourceMapsInput = {
   activatedAt?: Date | string | null
   project: Prisma.ProjectCreateNestedOneWithoutNativeDeploymentsInput
   activeProjects?: Prisma.ProjectCreateNestedManyWithoutActiveNativeDeploymentInput
+  regionReplicas?: Prisma.NativeRegionReplicaCreateNestedManyWithoutDeploymentInput
+  artifactMirrors?: Prisma.NativeArtifactMirrorCreateNestedManyWithoutDeploymentInput
 }
 
 export type NativeDeploymentUncheckedCreateWithoutSourceMapsInput = {
@@ -819,6 +882,8 @@ export type NativeDeploymentUncheckedCreateWithoutSourceMapsInput = {
   createdAt?: Date | string
   activatedAt?: Date | string | null
   activeProjects?: Prisma.ProjectUncheckedCreateNestedManyWithoutActiveNativeDeploymentInput
+  regionReplicas?: Prisma.NativeRegionReplicaUncheckedCreateNestedManyWithoutDeploymentInput
+  artifactMirrors?: Prisma.NativeArtifactMirrorUncheckedCreateNestedManyWithoutDeploymentInput
 }
 
 export type NativeDeploymentCreateOrConnectWithoutSourceMapsInput = {
@@ -852,6 +917,8 @@ export type NativeDeploymentUpdateWithoutSourceMapsInput = {
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   project?: Prisma.ProjectUpdateOneRequiredWithoutNativeDeploymentsNestedInput
   activeProjects?: Prisma.ProjectUpdateManyWithoutActiveNativeDeploymentNestedInput
+  regionReplicas?: Prisma.NativeRegionReplicaUpdateManyWithoutDeploymentNestedInput
+  artifactMirrors?: Prisma.NativeArtifactMirrorUpdateManyWithoutDeploymentNestedInput
 }
 
 export type NativeDeploymentUncheckedUpdateWithoutSourceMapsInput = {
@@ -869,6 +936,192 @@ export type NativeDeploymentUncheckedUpdateWithoutSourceMapsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activeProjects?: Prisma.ProjectUncheckedUpdateManyWithoutActiveNativeDeploymentNestedInput
+  regionReplicas?: Prisma.NativeRegionReplicaUncheckedUpdateManyWithoutDeploymentNestedInput
+  artifactMirrors?: Prisma.NativeArtifactMirrorUncheckedUpdateManyWithoutDeploymentNestedInput
+}
+
+export type NativeDeploymentCreateWithoutRegionReplicasInput = {
+  id?: string
+  target?: string
+  status?: string
+  version: string
+  buildNumber?: number | null
+  bundleUrl?: string | null
+  storageProvider?: string
+  storagePath: string
+  sourceCommit?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  activatedAt?: Date | string | null
+  project: Prisma.ProjectCreateNestedOneWithoutNativeDeploymentsInput
+  activeProjects?: Prisma.ProjectCreateNestedManyWithoutActiveNativeDeploymentInput
+  sourceMaps?: Prisma.NativeSourceMapCreateNestedManyWithoutDeploymentInput
+  artifactMirrors?: Prisma.NativeArtifactMirrorCreateNestedManyWithoutDeploymentInput
+}
+
+export type NativeDeploymentUncheckedCreateWithoutRegionReplicasInput = {
+  id?: string
+  projectId: string
+  target?: string
+  status?: string
+  version: string
+  buildNumber?: number | null
+  bundleUrl?: string | null
+  storageProvider?: string
+  storagePath: string
+  sourceCommit?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  activatedAt?: Date | string | null
+  activeProjects?: Prisma.ProjectUncheckedCreateNestedManyWithoutActiveNativeDeploymentInput
+  sourceMaps?: Prisma.NativeSourceMapUncheckedCreateNestedManyWithoutDeploymentInput
+  artifactMirrors?: Prisma.NativeArtifactMirrorUncheckedCreateNestedManyWithoutDeploymentInput
+}
+
+export type NativeDeploymentCreateOrConnectWithoutRegionReplicasInput = {
+  where: Prisma.NativeDeploymentWhereUniqueInput
+  create: Prisma.XOR<Prisma.NativeDeploymentCreateWithoutRegionReplicasInput, Prisma.NativeDeploymentUncheckedCreateWithoutRegionReplicasInput>
+}
+
+export type NativeDeploymentUpsertWithoutRegionReplicasInput = {
+  update: Prisma.XOR<Prisma.NativeDeploymentUpdateWithoutRegionReplicasInput, Prisma.NativeDeploymentUncheckedUpdateWithoutRegionReplicasInput>
+  create: Prisma.XOR<Prisma.NativeDeploymentCreateWithoutRegionReplicasInput, Prisma.NativeDeploymentUncheckedCreateWithoutRegionReplicasInput>
+  where?: Prisma.NativeDeploymentWhereInput
+}
+
+export type NativeDeploymentUpdateToOneWithWhereWithoutRegionReplicasInput = {
+  where?: Prisma.NativeDeploymentWhereInput
+  data: Prisma.XOR<Prisma.NativeDeploymentUpdateWithoutRegionReplicasInput, Prisma.NativeDeploymentUncheckedUpdateWithoutRegionReplicasInput>
+}
+
+export type NativeDeploymentUpdateWithoutRegionReplicasInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  target?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  version?: Prisma.StringFieldUpdateOperationsInput | string
+  buildNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  bundleUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  storageProvider?: Prisma.StringFieldUpdateOperationsInput | string
+  storagePath?: Prisma.StringFieldUpdateOperationsInput | string
+  sourceCommit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  project?: Prisma.ProjectUpdateOneRequiredWithoutNativeDeploymentsNestedInput
+  activeProjects?: Prisma.ProjectUpdateManyWithoutActiveNativeDeploymentNestedInput
+  sourceMaps?: Prisma.NativeSourceMapUpdateManyWithoutDeploymentNestedInput
+  artifactMirrors?: Prisma.NativeArtifactMirrorUpdateManyWithoutDeploymentNestedInput
+}
+
+export type NativeDeploymentUncheckedUpdateWithoutRegionReplicasInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
+  target?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  version?: Prisma.StringFieldUpdateOperationsInput | string
+  buildNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  bundleUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  storageProvider?: Prisma.StringFieldUpdateOperationsInput | string
+  storagePath?: Prisma.StringFieldUpdateOperationsInput | string
+  sourceCommit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  activeProjects?: Prisma.ProjectUncheckedUpdateManyWithoutActiveNativeDeploymentNestedInput
+  sourceMaps?: Prisma.NativeSourceMapUncheckedUpdateManyWithoutDeploymentNestedInput
+  artifactMirrors?: Prisma.NativeArtifactMirrorUncheckedUpdateManyWithoutDeploymentNestedInput
+}
+
+export type NativeDeploymentCreateWithoutArtifactMirrorsInput = {
+  id?: string
+  target?: string
+  status?: string
+  version: string
+  buildNumber?: number | null
+  bundleUrl?: string | null
+  storageProvider?: string
+  storagePath: string
+  sourceCommit?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  activatedAt?: Date | string | null
+  project: Prisma.ProjectCreateNestedOneWithoutNativeDeploymentsInput
+  activeProjects?: Prisma.ProjectCreateNestedManyWithoutActiveNativeDeploymentInput
+  sourceMaps?: Prisma.NativeSourceMapCreateNestedManyWithoutDeploymentInput
+  regionReplicas?: Prisma.NativeRegionReplicaCreateNestedManyWithoutDeploymentInput
+}
+
+export type NativeDeploymentUncheckedCreateWithoutArtifactMirrorsInput = {
+  id?: string
+  projectId: string
+  target?: string
+  status?: string
+  version: string
+  buildNumber?: number | null
+  bundleUrl?: string | null
+  storageProvider?: string
+  storagePath: string
+  sourceCommit?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  activatedAt?: Date | string | null
+  activeProjects?: Prisma.ProjectUncheckedCreateNestedManyWithoutActiveNativeDeploymentInput
+  sourceMaps?: Prisma.NativeSourceMapUncheckedCreateNestedManyWithoutDeploymentInput
+  regionReplicas?: Prisma.NativeRegionReplicaUncheckedCreateNestedManyWithoutDeploymentInput
+}
+
+export type NativeDeploymentCreateOrConnectWithoutArtifactMirrorsInput = {
+  where: Prisma.NativeDeploymentWhereUniqueInput
+  create: Prisma.XOR<Prisma.NativeDeploymentCreateWithoutArtifactMirrorsInput, Prisma.NativeDeploymentUncheckedCreateWithoutArtifactMirrorsInput>
+}
+
+export type NativeDeploymentUpsertWithoutArtifactMirrorsInput = {
+  update: Prisma.XOR<Prisma.NativeDeploymentUpdateWithoutArtifactMirrorsInput, Prisma.NativeDeploymentUncheckedUpdateWithoutArtifactMirrorsInput>
+  create: Prisma.XOR<Prisma.NativeDeploymentCreateWithoutArtifactMirrorsInput, Prisma.NativeDeploymentUncheckedCreateWithoutArtifactMirrorsInput>
+  where?: Prisma.NativeDeploymentWhereInput
+}
+
+export type NativeDeploymentUpdateToOneWithWhereWithoutArtifactMirrorsInput = {
+  where?: Prisma.NativeDeploymentWhereInput
+  data: Prisma.XOR<Prisma.NativeDeploymentUpdateWithoutArtifactMirrorsInput, Prisma.NativeDeploymentUncheckedUpdateWithoutArtifactMirrorsInput>
+}
+
+export type NativeDeploymentUpdateWithoutArtifactMirrorsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  target?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  version?: Prisma.StringFieldUpdateOperationsInput | string
+  buildNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  bundleUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  storageProvider?: Prisma.StringFieldUpdateOperationsInput | string
+  storagePath?: Prisma.StringFieldUpdateOperationsInput | string
+  sourceCommit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  project?: Prisma.ProjectUpdateOneRequiredWithoutNativeDeploymentsNestedInput
+  activeProjects?: Prisma.ProjectUpdateManyWithoutActiveNativeDeploymentNestedInput
+  sourceMaps?: Prisma.NativeSourceMapUpdateManyWithoutDeploymentNestedInput
+  regionReplicas?: Prisma.NativeRegionReplicaUpdateManyWithoutDeploymentNestedInput
+}
+
+export type NativeDeploymentUncheckedUpdateWithoutArtifactMirrorsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
+  target?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  version?: Prisma.StringFieldUpdateOperationsInput | string
+  buildNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  bundleUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  storageProvider?: Prisma.StringFieldUpdateOperationsInput | string
+  storagePath?: Prisma.StringFieldUpdateOperationsInput | string
+  sourceCommit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  activeProjects?: Prisma.ProjectUncheckedUpdateManyWithoutActiveNativeDeploymentNestedInput
+  sourceMaps?: Prisma.NativeSourceMapUncheckedUpdateManyWithoutDeploymentNestedInput
+  regionReplicas?: Prisma.NativeRegionReplicaUncheckedUpdateManyWithoutDeploymentNestedInput
 }
 
 export type NativeDeploymentCreateManyProjectInput = {
@@ -901,6 +1154,8 @@ export type NativeDeploymentUpdateWithoutProjectInput = {
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activeProjects?: Prisma.ProjectUpdateManyWithoutActiveNativeDeploymentNestedInput
   sourceMaps?: Prisma.NativeSourceMapUpdateManyWithoutDeploymentNestedInput
+  regionReplicas?: Prisma.NativeRegionReplicaUpdateManyWithoutDeploymentNestedInput
+  artifactMirrors?: Prisma.NativeArtifactMirrorUpdateManyWithoutDeploymentNestedInput
 }
 
 export type NativeDeploymentUncheckedUpdateWithoutProjectInput = {
@@ -918,6 +1173,8 @@ export type NativeDeploymentUncheckedUpdateWithoutProjectInput = {
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activeProjects?: Prisma.ProjectUncheckedUpdateManyWithoutActiveNativeDeploymentNestedInput
   sourceMaps?: Prisma.NativeSourceMapUncheckedUpdateManyWithoutDeploymentNestedInput
+  regionReplicas?: Prisma.NativeRegionReplicaUncheckedUpdateManyWithoutDeploymentNestedInput
+  artifactMirrors?: Prisma.NativeArtifactMirrorUncheckedUpdateManyWithoutDeploymentNestedInput
 }
 
 export type NativeDeploymentUncheckedUpdateManyWithoutProjectInput = {
@@ -943,11 +1200,15 @@ export type NativeDeploymentUncheckedUpdateManyWithoutProjectInput = {
 export type NativeDeploymentCountOutputType = {
   activeProjects: number
   sourceMaps: number
+  regionReplicas: number
+  artifactMirrors: number
 }
 
 export type NativeDeploymentCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   activeProjects?: boolean | NativeDeploymentCountOutputTypeCountActiveProjectsArgs
   sourceMaps?: boolean | NativeDeploymentCountOutputTypeCountSourceMapsArgs
+  regionReplicas?: boolean | NativeDeploymentCountOutputTypeCountRegionReplicasArgs
+  artifactMirrors?: boolean | NativeDeploymentCountOutputTypeCountArtifactMirrorsArgs
 }
 
 /**
@@ -974,6 +1235,20 @@ export type NativeDeploymentCountOutputTypeCountSourceMapsArgs<ExtArgs extends r
   where?: Prisma.NativeSourceMapWhereInput
 }
 
+/**
+ * NativeDeploymentCountOutputType without action
+ */
+export type NativeDeploymentCountOutputTypeCountRegionReplicasArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NativeRegionReplicaWhereInput
+}
+
+/**
+ * NativeDeploymentCountOutputType without action
+ */
+export type NativeDeploymentCountOutputTypeCountArtifactMirrorsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NativeArtifactMirrorWhereInput
+}
+
 
 export type NativeDeploymentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -992,6 +1267,8 @@ export type NativeDeploymentSelect<ExtArgs extends runtime.Types.Extensions.Inte
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   activeProjects?: boolean | Prisma.NativeDeployment$activeProjectsArgs<ExtArgs>
   sourceMaps?: boolean | Prisma.NativeDeployment$sourceMapsArgs<ExtArgs>
+  regionReplicas?: boolean | Prisma.NativeDeployment$regionReplicasArgs<ExtArgs>
+  artifactMirrors?: boolean | Prisma.NativeDeployment$artifactMirrorsArgs<ExtArgs>
   _count?: boolean | Prisma.NativeDeploymentCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["nativeDeployment"]>
 
@@ -1050,6 +1327,8 @@ export type NativeDeploymentInclude<ExtArgs extends runtime.Types.Extensions.Int
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   activeProjects?: boolean | Prisma.NativeDeployment$activeProjectsArgs<ExtArgs>
   sourceMaps?: boolean | Prisma.NativeDeployment$sourceMapsArgs<ExtArgs>
+  regionReplicas?: boolean | Prisma.NativeDeployment$regionReplicasArgs<ExtArgs>
+  artifactMirrors?: boolean | Prisma.NativeDeployment$artifactMirrorsArgs<ExtArgs>
   _count?: boolean | Prisma.NativeDeploymentCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type NativeDeploymentIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1065,6 +1344,8 @@ export type $NativeDeploymentPayload<ExtArgs extends runtime.Types.Extensions.In
     project: Prisma.$ProjectPayload<ExtArgs>
     activeProjects: Prisma.$ProjectPayload<ExtArgs>[]
     sourceMaps: Prisma.$NativeSourceMapPayload<ExtArgs>[]
+    regionReplicas: Prisma.$NativeRegionReplicaPayload<ExtArgs>[]
+    artifactMirrors: Prisma.$NativeArtifactMirrorPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1477,6 +1758,8 @@ export interface Prisma__NativeDeploymentClient<T, Null = never, ExtArgs extends
   project<T extends Prisma.ProjectDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProjectDefaultArgs<ExtArgs>>): Prisma.Prisma__ProjectClient<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   activeProjects<T extends Prisma.NativeDeployment$activeProjectsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.NativeDeployment$activeProjectsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   sourceMaps<T extends Prisma.NativeDeployment$sourceMapsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.NativeDeployment$sourceMapsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NativeSourceMapPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  regionReplicas<T extends Prisma.NativeDeployment$regionReplicasArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.NativeDeployment$regionReplicasArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NativeRegionReplicaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  artifactMirrors<T extends Prisma.NativeDeployment$artifactMirrorsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.NativeDeployment$artifactMirrorsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NativeArtifactMirrorPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1965,6 +2248,54 @@ export type NativeDeployment$sourceMapsArgs<ExtArgs extends runtime.Types.Extens
   take?: number
   skip?: number
   distinct?: Prisma.NativeSourceMapScalarFieldEnum | Prisma.NativeSourceMapScalarFieldEnum[]
+}
+
+/**
+ * NativeDeployment.regionReplicas
+ */
+export type NativeDeployment$regionReplicasArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the NativeRegionReplica
+   */
+  select?: Prisma.NativeRegionReplicaSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the NativeRegionReplica
+   */
+  omit?: Prisma.NativeRegionReplicaOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NativeRegionReplicaInclude<ExtArgs> | null
+  where?: Prisma.NativeRegionReplicaWhereInput
+  orderBy?: Prisma.NativeRegionReplicaOrderByWithRelationInput | Prisma.NativeRegionReplicaOrderByWithRelationInput[]
+  cursor?: Prisma.NativeRegionReplicaWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NativeRegionReplicaScalarFieldEnum | Prisma.NativeRegionReplicaScalarFieldEnum[]
+}
+
+/**
+ * NativeDeployment.artifactMirrors
+ */
+export type NativeDeployment$artifactMirrorsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the NativeArtifactMirror
+   */
+  select?: Prisma.NativeArtifactMirrorSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the NativeArtifactMirror
+   */
+  omit?: Prisma.NativeArtifactMirrorOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NativeArtifactMirrorInclude<ExtArgs> | null
+  where?: Prisma.NativeArtifactMirrorWhereInput
+  orderBy?: Prisma.NativeArtifactMirrorOrderByWithRelationInput | Prisma.NativeArtifactMirrorOrderByWithRelationInput[]
+  cursor?: Prisma.NativeArtifactMirrorWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NativeArtifactMirrorScalarFieldEnum | Prisma.NativeArtifactMirrorScalarFieldEnum[]
 }
 
 /**

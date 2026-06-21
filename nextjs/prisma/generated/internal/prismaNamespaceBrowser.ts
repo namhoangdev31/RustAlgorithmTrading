@@ -131,11 +131,21 @@ export const ModelName = {
   NativePlugin: 'NativePlugin',
   NativePluginInstallation: 'NativePluginInstallation',
   NativeDebugSession: 'NativeDebugSession',
+  NativeConnectedDevice: 'NativeConnectedDevice',
   NativeCloudTarget: 'NativeCloudTarget',
+  NativeRoutingPolicy: 'NativeRoutingPolicy',
+  NativeRegionReplica: 'NativeRegionReplica',
+  NativeArtifactMirror: 'NativeArtifactMirror',
   NativeWafEvent: 'NativeWafEvent',
   NativeWafRule: 'NativeWafRule',
   NativeScimMapping: 'NativeScimMapping',
   NativeAiDiagnostic: 'NativeAiDiagnostic',
+  NativeRemediationRun: 'NativeRemediationRun',
+  NativeSchedulingPolicy: 'NativeSchedulingPolicy',
+  NativeSchedulingSignal: 'NativeSchedulingSignal',
+  NativeServiceIdentity: 'NativeServiceIdentity',
+  NativeServiceTrustPolicy: 'NativeServiceTrustPolicy',
+  NativeTelemetryEnvelope: 'NativeTelemetryEnvelope',
   CronJob: 'CronJob',
   Form: 'Form',
   FormSubmission: 'FormSubmission',
@@ -1425,6 +1435,25 @@ export const NativeDebugSessionScalarFieldEnum = {
 export type NativeDebugSessionScalarFieldEnum = (typeof NativeDebugSessionScalarFieldEnum)[keyof typeof NativeDebugSessionScalarFieldEnum]
 
 
+export const NativeConnectedDeviceScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  deviceId: 'deviceId',
+  platform: 'platform',
+  deviceModel: 'deviceModel',
+  osVersion: 'osVersion',
+  ramMb: 'ramMb',
+  pingMs: 'pingMs',
+  status: 'status',
+  metadata: 'metadata',
+  lastSeenAt: 'lastSeenAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NativeConnectedDeviceScalarFieldEnum = (typeof NativeConnectedDeviceScalarFieldEnum)[keyof typeof NativeConnectedDeviceScalarFieldEnum]
+
+
 export const NativeCloudTargetScalarFieldEnum = {
   id: 'id',
   projectId: 'projectId',
@@ -1440,6 +1469,72 @@ export const NativeCloudTargetScalarFieldEnum = {
 } as const
 
 export type NativeCloudTargetScalarFieldEnum = (typeof NativeCloudTargetScalarFieldEnum)[keyof typeof NativeCloudTargetScalarFieldEnum]
+
+
+export const NativeRoutingPolicyScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  strategy: 'strategy',
+  consistency: 'consistency',
+  stickySessions: 'stickySessions',
+  manualFailback: 'manualFailback',
+  snapshotTtlSeconds: 'snapshotTtlSeconds',
+  failoverThresholdMs: 'failoverThresholdMs',
+  latencyProbeIntervalSeconds: 'latencyProbeIntervalSeconds',
+  preferredRegions: 'preferredRegions',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NativeRoutingPolicyScalarFieldEnum = (typeof NativeRoutingPolicyScalarFieldEnum)[keyof typeof NativeRoutingPolicyScalarFieldEnum]
+
+
+export const NativeRegionReplicaScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  deploymentId: 'deploymentId',
+  provider: 'provider',
+  region: 'region',
+  endpoint: 'endpoint',
+  bundleUrl: 'bundleUrl',
+  storagePath: 'storagePath',
+  healthStatus: 'healthStatus',
+  drainState: 'drainState',
+  latencyMs: 'latencyMs',
+  trafficPercent: 'trafficPercent',
+  isPrimary: 'isPrimary',
+  replicationVersion: 'replicationVersion',
+  vectorClock: 'vectorClock',
+  metadata: 'metadata',
+  lastHeartbeatAt: 'lastHeartbeatAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NativeRegionReplicaScalarFieldEnum = (typeof NativeRegionReplicaScalarFieldEnum)[keyof typeof NativeRegionReplicaScalarFieldEnum]
+
+
+export const NativeArtifactMirrorScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  deploymentId: 'deploymentId',
+  provider: 'provider',
+  policy: 'policy',
+  status: 'status',
+  locator: 'locator',
+  cid: 'cid',
+  txId: 'txId',
+  retryCount: 'retryCount',
+  lastError: 'lastError',
+  proofManifest: 'proofManifest',
+  metadata: 'metadata',
+  publishedAt: 'publishedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NativeArtifactMirrorScalarFieldEnum = (typeof NativeArtifactMirrorScalarFieldEnum)[keyof typeof NativeArtifactMirrorScalarFieldEnum]
 
 
 export const NativeWafEventScalarFieldEnum = {
@@ -1502,6 +1597,119 @@ export const NativeAiDiagnosticScalarFieldEnum = {
 } as const
 
 export type NativeAiDiagnosticScalarFieldEnum = (typeof NativeAiDiagnosticScalarFieldEnum)[keyof typeof NativeAiDiagnosticScalarFieldEnum]
+
+
+export const NativeRemediationRunScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  diagnosticId: 'diagnosticId',
+  mode: 'mode',
+  actionType: 'actionType',
+  status: 'status',
+  summary: 'summary',
+  dryRun: 'dryRun',
+  requestedByUserId: 'requestedByUserId',
+  approvedByUserId: 'approvedByUserId',
+  payload: 'payload',
+  evidence: 'evidence',
+  postCheck: 'postCheck',
+  approvedAt: 'approvedAt',
+  executedAt: 'executedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NativeRemediationRunScalarFieldEnum = (typeof NativeRemediationRunScalarFieldEnum)[keyof typeof NativeRemediationRunScalarFieldEnum]
+
+
+export const NativeSchedulingPolicyScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  enabled: 'enabled',
+  mode: 'mode',
+  costProvider: 'costProvider',
+  carbonProvider: 'carbonProvider',
+  defaultWorkloadClass: 'defaultWorkloadClass',
+  deferrableWindowStart: 'deferrableWindowStart',
+  deferrableWindowEnd: 'deferrableWindowEnd',
+  maxCarbonIntensity: 'maxCarbonIntensity',
+  maxCostScore: 'maxCostScore',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NativeSchedulingPolicyScalarFieldEnum = (typeof NativeSchedulingPolicyScalarFieldEnum)[keyof typeof NativeSchedulingPolicyScalarFieldEnum]
+
+
+export const NativeSchedulingSignalScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  signalType: 'signalType',
+  source: 'source',
+  region: 'region',
+  value: 'value',
+  unit: 'unit',
+  metadata: 'metadata',
+  sampledAt: 'sampledAt'
+} as const
+
+export type NativeSchedulingSignalScalarFieldEnum = (typeof NativeSchedulingSignalScalarFieldEnum)[keyof typeof NativeSchedulingSignalScalarFieldEnum]
+
+
+export const NativeServiceIdentityScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  serviceName: 'serviceName',
+  role: 'role',
+  scopes: 'scopes',
+  status: 'status',
+  mtlsMode: 'mtlsMode',
+  sharedSecretHash: 'sharedSecretHash',
+  certificateFingerprint: 'certificateFingerprint',
+  metadata: 'metadata',
+  lastUsedAt: 'lastUsedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NativeServiceIdentityScalarFieldEnum = (typeof NativeServiceIdentityScalarFieldEnum)[keyof typeof NativeServiceIdentityScalarFieldEnum]
+
+
+export const NativeServiceTrustPolicyScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  sourceService: 'sourceService',
+  targetService: 'targetService',
+  allowedScopes: 'allowedScopes',
+  enforceMtls: 'enforceMtls',
+  allowSharedKeyFallback: 'allowSharedKeyFallback',
+  status: 'status',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NativeServiceTrustPolicyScalarFieldEnum = (typeof NativeServiceTrustPolicyScalarFieldEnum)[keyof typeof NativeServiceTrustPolicyScalarFieldEnum]
+
+
+export const NativeTelemetryEnvelopeScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  serviceName: 'serviceName',
+  kind: 'kind',
+  encryptionMode: 'encryptionMode',
+  payloadDigest: 'payloadDigest',
+  aggregateKey: 'aggregateKey',
+  ciphertext: 'ciphertext',
+  nonce: 'nonce',
+  keyVersion: 'keyVersion',
+  redactedSummary: 'redactedSummary',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+} as const
+
+export type NativeTelemetryEnvelopeScalarFieldEnum = (typeof NativeTelemetryEnvelopeScalarFieldEnum)[keyof typeof NativeTelemetryEnvelopeScalarFieldEnum]
 
 
 export const CronJobScalarFieldEnum = {

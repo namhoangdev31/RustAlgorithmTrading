@@ -125,11 +125,22 @@ export async function getPartnerBillingDashboardData(organizationId: string) {
     take: 20,
   });
 
+  const installEvents = await prisma.marketplaceInstallEvent.findMany({
+    where: { bundleId: { in: bundleIds } },
+    orderBy: { createdAt: "desc" },
+    take: 50,
+  });
+
   return {
     connected: partnerAccount.status === "active",
     partnerAccount,
     balance,
     payouts,
     transactions,
+    installMetrics: {
+      installs: installEvents.filter((event) => event.eventType === "install").length,
+      uninstalls: installEvents.filter((event) => event.eventType === "uninstall").length,
+      errors: installEvents.filter((event) => event.eventType === "error").length,
+    },
   };
 }

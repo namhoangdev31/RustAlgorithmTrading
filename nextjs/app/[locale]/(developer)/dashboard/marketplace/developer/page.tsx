@@ -10,6 +10,10 @@ import {
   Send,
   Plus,
   HelpCircle,
+  DollarSign,
+  Package2,
+  ArrowUpRight,
+  Star,
 } from "lucide-react";
 
 import {
@@ -17,6 +21,7 @@ import {
   registerIntegrationAction,
   runCompatibilityTestAction,
   publishMarketplaceIntegrationAction,
+  updateIntegrationReleaseAction,
 } from "@/app/actions/developer-portal";
 import { PageHeader } from "@/components/dashboard/page-header";
 import { Button } from "@/components/ui/button";
@@ -81,6 +86,9 @@ export default async function DeveloperPortalPage({ searchParams }: DeveloperPor
       complianceScore: 0,
       status: "sandbox",
       lastTestRun: null as any,
+      version: "0.1.0",
+      releaseNotes: "",
+      releaseHistory: [] as Array<{ version: string; releaseNotes?: string; updatedAt?: string }>,
     };
     try {
       configObj = JSON.parse(integration.config);
@@ -90,6 +98,33 @@ export default async function DeveloperPortalPage({ searchParams }: DeveloperPor
       configObj,
     };
   });
+
+  const [installEvents, transactions, reviewSummary] = collaborator
+    ? await Promise.all([
+        prisma.marketplaceInstallEvent.findMany({
+          where: { bundleId: collaborator.bundleId },
+          orderBy: { createdAt: "desc" },
+          take: 20,
+        }),
+        prisma.marketplaceTransaction.findMany({
+          where: { bundleId: collaborator.bundleId },
+          orderBy: { createdAt: "desc" },
+          take: 20,
+        }),
+        prisma.bundleReviews.aggregate({
+          where: { bundleId: collaborator.bundleId },
+          _avg: { rating: true },
+          _count: { id: true },
+        }),
+      ])
+    : [[], [], { _avg: { rating: null }, _count: { id: 0 } }];
+
+  const installCount = installEvents.filter((event) => event.eventType === "install").length;
+  const uninstallCount = installEvents.filter((event) => event.eventType === "uninstall").length;
+  const installErrorCount = installEvents.filter((event) => event.eventType === "error").length;
+  const totalGrossRevenue = transactions
+    .filter((transaction) => transaction.status === "completed")
+    .reduce((sum, transaction) => sum + transaction.amount, 0);
 
   return (
     <>
@@ -324,6 +359,72 @@ export default async function DeveloperPortalPage({ searchParams }: DeveloperPor
 
         <Separator />
 
+        <div className="grid gap-6 md:grid-cols-5">
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Package2 className="size-4 text-primary" />
+                Install activity
+              </CardTitle>
+              <CardDescription>Total marketplace install signals for your current bundle.</CardDescription>
+            </CardHeader>
+            <CardContent className="text-2xl font-bold">
+              {installCount}
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base flex items-center gap-2">
+                <ArrowUpRight className="size-4 text-primary" />
+                Uninstalls
+              </CardTitle>
+              <CardDescription>Observed uninstall events from the marketplace telemetry feed.</CardDescription>
+            </CardHeader>
+            <CardContent className="text-2xl font-bold">
+              {uninstallCount}
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base flex items-center gap-2">
+                <HelpCircle className="size-4 text-primary" />
+                Install errors
+              </CardTitle>
+              <CardDescription>Error events reported back from install attempts.</CardDescription>
+            </CardHeader>
+            <CardContent className="text-2xl font-bold">
+              {installErrorCount}
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base flex items-center gap-2">
+                <DollarSign className="size-4 text-primary" />
+                Gross revenue
+              </CardTitle>
+              <CardDescription>Completed marketplace revenue attached to this bundle.</CardDescription>
+            </CardHeader>
+            <CardContent className="text-2xl font-bold">
+              {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(totalGrossRevenue)}
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Star className="size-4 text-primary" />
+                Listing quality
+              </CardTitle>
+              <CardDescription>Average marketplace rating and current review volume.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-1">
+              <div className="text-2xl font-bold">
+                {reviewSummary._avg.rating ? reviewSummary._avg.rating.toFixed(1) : "—"}
+              </div>
+              <p className="text-xs text-muted-foreground">{reviewSummary._count.id} review entries tracked</p>
+            </CardContent>
+          </Card>
+        </div>
+
         {/* Integration candidate List */}
         <Card>
           <CardHeader>
@@ -345,6 +446,7 @@ export default async function DeveloperPortalPage({ searchParams }: DeveloperPor
                       <th className="py-2 font-medium">Integration</th>
                       <th className="py-2 font-medium">Key</th>
                       <th className="py-2 font-medium">Mode</th>
+                      <th className="py-2 font-medium">Version</th>
                       <th className="py-2 font-medium">Test score</th>
                       <th className="py-2 font-medium">Status</th>
                       <th className="py-2 font-medium text-right">Action</th>
@@ -356,6 +458,7 @@ export default async function DeveloperPortalPage({ searchParams }: DeveloperPor
                         <td className="py-3 font-semibold">{i.displayName}</td>
                         <td className="py-3 font-mono text-xs">{i.integrationType}</td>
                         <td className="py-3 capitalize">{i.configObj.mode}</td>
+                        <td className="py-3 font-mono text-xs">{i.configObj.version || "0.1.0"}</td>
                         <td className="py-3">
                           <span className={i.configObj.complianceScore === 100 ? "text-emerald-600 font-bold" : "text-amber-600"}>
                             {i.configObj.complianceScore}%
@@ -390,6 +493,68 @@ export default async function DeveloperPortalPage({ searchParams }: DeveloperPor
             )}
           </CardContent>
         </Card>
+
+        {parsedIntegrations.length ? (
+          <div className="grid gap-6 lg:grid-cols-2">
+            {parsedIntegrations.map((integration) => (
+              <Card key={`${integration.id}-release`}>
+                <CardHeader>
+                  <CardTitle className="text-base">{integration.displayName}</CardTitle>
+                  <CardDescription>
+                    Manage release notes, version metadata, and history for this marketplace listing.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <form action={updateIntegrationReleaseAction} className="space-y-4">
+                    <input type="hidden" name="integrationId" value={integration.id} />
+                    <FieldGroup>
+                      <Field>
+                        <FieldLabel>Current version</FieldLabel>
+                        <Input name="version" defaultValue={integration.configObj.version || "0.1.0"} />
+                      </Field>
+                      <Field>
+                        <FieldLabel>Release notes</FieldLabel>
+                        <Textarea
+                          name="releaseNotes"
+                          defaultValue={integration.configObj.releaseNotes || ""}
+                          placeholder="Document the latest changes for this listing..."
+                        />
+                      </Field>
+                      <Button type="submit" variant="outline">
+                        Save release metadata
+                      </Button>
+                    </FieldGroup>
+                  </form>
+
+                  <div className="rounded-lg border border-hairline">
+                    <div className="border-b border-hairline bg-muted/40 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      Recent release history
+                    </div>
+                    <div className="space-y-3 p-4">
+                      {(integration.configObj.releaseHistory || []).length ? (
+                        integration.configObj.releaseHistory.slice(0, 3).map((entry: any, index: number) => (
+                          <div key={`${integration.id}-history-${index}`} className="rounded-md border border-hairline bg-muted/20 p-3">
+                            <div className="flex items-center justify-between gap-3">
+                              <span className="font-mono text-xs font-semibold">v{entry.version}</span>
+                              <span className="text-[11px] text-muted-foreground">
+                                {entry.updatedAt ? new Date(entry.updatedAt).toLocaleString() : "Pending timestamp"}
+                              </span>
+                            </div>
+                            <p className="mt-2 text-xs text-muted-foreground">
+                              {entry.releaseNotes || "No release notes recorded."}
+                            </p>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-xs text-muted-foreground">No release history recorded yet.</p>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : null}
       </div>
     </>
   );

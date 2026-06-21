@@ -6,6 +6,7 @@ import {
   CheckCircle,
   AlertCircle,
   Building,
+  Package2,
 } from "lucide-react";
 import { PageHeader } from "@/components/dashboard/page-header";
 import { Button } from "@/components/ui/button";
@@ -65,6 +66,7 @@ export default async function BillingPage() {
 
   // Load Stripe Connect and billing statistics
   const data = await getPartnerBillingDashboardData(organization.id);
+  const installMetrics = data.installMetrics || { installs: 0, uninstalls: 0, errors: 0 };
 
   // Calculate stats
   const totalGross = data.transactions.reduce((acc, t) => acc + (t.status === "completed" ? t.amount : 0), 0);
@@ -121,7 +123,7 @@ export default async function BillingPage() {
           </div>
 
           {/* Revenue Overview Stats Cards */}
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
             <Card className="bg-gradient-to-br from-emerald-500/10 to-teal-500/5 border-emerald-500/20">
               <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
                 <CardTitle className="text-sm font-medium">Available Balance</CardTitle>
@@ -167,6 +169,19 @@ export default async function BillingPage() {
               <CardContent>
                 <div className="text-2xl font-bold text-red-500">{formatVnd(platformFee)}</div>
                 <p className="text-xs text-muted-foreground mt-1">Total platform commission share</p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                <CardTitle className="text-sm font-medium">Installs</CardTitle>
+                <Package2 className="h-4 w-4 text-indigo-500" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{installMetrics.installs}</div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {installMetrics.uninstalls} uninstall events, {installMetrics.errors} error events
+                </p>
               </CardContent>
             </Card>
           </div>

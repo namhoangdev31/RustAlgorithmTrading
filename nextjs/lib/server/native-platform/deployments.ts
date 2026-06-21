@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/server/prisma";
 
 import { nativeRedisKeys, redisPublish, redisSetJson } from "./redis";
+import { buildRoutingSnapshot } from "./routing";
 
 export type CreateNativeDeploymentInput = {
   projectId: string;
@@ -90,52 +91,25 @@ export async function activateNativeDeployment(projectId: string, deploymentId: 
 }
 
 export async function syncProjectRouting(projectId: string) {
-  const project = await prisma.project.findUnique({
-    where: { id: projectId },
-    include: {
-      activeNativeDeployment: true,
-      nativeDomainConfigs: true,
-    },
-  });
-
-  if (!project?.activeNativeDeployment) {
+  const snapshot = await buildRoutingSnapshot(projectId);
+  if (!snapshot) {
     return false;
   }
 
-  const healthyTargets = await prisma.nativeCloudTarget.findMany({
-    where: { projectId, healthStatus: { in: ["healthy", "overloaded"] } },
-    orderBy: { priority: "asc" },
-  });
+  const ttlSeconds = snapshot.routingPolicy?.snapshotTtlSeconds || undefined;
 
-  const snapshot = {
-    projectId: project.id,
-    deploymentId: project.activeNativeDeployment.id,
-    target: project.activeNativeDeployment.target,
-    storagePath: project.activeNativeDeployment.storagePath,
-    bundleUrl: project.activeNativeDeployment.bundleUrl,
-    healthyTargets: healthyTargets.map((t) => ({
-      id: t.id,
-      provider: t.provider,
-      region: t.region,
-      endpoint: t.endpoint,
-      priority: t.priority,
-      healthStatus: t.healthStatus,
-    })),
-    updatedAt: new Date().toISOString(),
-  };
-
-  await redisSetJson(nativeRedisKeys.activeDeployment(project.id), snapshot);
-  await redisSetJson(`rc:backup:deployment:${project.id}`, snapshot);
+  await redisSetJson(nativeRedisKeys.activeDeployment(projectId), snapshot, ttlSeconds);
+  await redisSetJson(`rc:backup:deployment:${projectId}`, snapshot, ttlSeconds);
   
   await Promise.all(
-    project.nativeDomainConfigs.map(async (domain) => {
+    snapshot.domains.map(async (domain) => {
       const payload = {
         ...snapshot,
         domain: domain.domain,
         sslStatus: domain.sslStatus,
       };
-      await redisSetJson(nativeRedisKeys.domain(domain.domain), payload);
-      await redisSetJson(`rc:backup:domain:${domain.domain}`, payload);
+      await redisSetJson(nativeRedisKeys.domain(domain.domain), payload, ttlSeconds);
+      await redisSetJson(`rc:backup:domain:${domain.domain}`, payload, ttlSeconds);
     })
   );
 

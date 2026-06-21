@@ -164,10 +164,20 @@ model Project {
   nativeSourceMaps    NativeSourceMap[]
   nativePluginInstalls NativePluginInstallation[]
   nativeDebugSessions NativeDebugSession[]
+  nativeConnectedDevices NativeConnectedDevice[]
   nativeCloudTargets  NativeCloudTarget[]
+  nativeRoutingPolicy NativeRoutingPolicy?
+  nativeRegionReplicas NativeRegionReplica[]
+  nativeArtifactMirrors NativeArtifactMirror[]
   nativeWafEvents     NativeWafEvent[]
   nativeWafRules      NativeWafRule[]
   nativeAiDiagnostics NativeAiDiagnostic[]
+  nativeRemediationRuns NativeRemediationRun[]
+  nativeSchedulingPolicy NativeSchedulingPolicy?
+  nativeSchedulingSignals NativeSchedulingSignal[]
+  nativeServiceIdentities NativeServiceIdentity[]
+  nativeServiceTrustPolicies NativeServiceTrustPolicy[]
+  nativeTelemetryEnvelopes NativeTelemetryEnvelope[]
 
   @@map("projects")
 }
@@ -1474,6 +1484,8 @@ model NativeDeployment {
   activatedAt     DateTime? @map("activated_at")
 
   sourceMaps NativeSourceMap[]
+  regionReplicas NativeRegionReplica[]
+  artifactMirrors NativeArtifactMirror[]
 
   @@index([projectId, status], map: "native_deployments_project_status")
   @@index([projectId, target], map: "native_deployments_project_target")
@@ -1652,6 +1664,28 @@ model NativeDebugSession {
   @@map("native_debug_sessions")
 }
 
+model NativeConnectedDevice {
+  id          String   @id @default(cuid())
+  projectId   String   @db.Uuid
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  deviceId    String   @map("device_id") @db.VarChar(120)
+  platform    String   @db.VarChar(30)
+  deviceModel String?  @map("device_model") @db.VarChar(120)
+  osVersion   String?  @map("os_version") @db.VarChar(80)
+  ramMb       Int?     @map("ram_mb")
+  pingMs      Int?     @map("ping_ms")
+  status      String   @default("online") @db.VarChar(20)
+  metadata    Json?
+  lastSeenAt  DateTime @default(now()) @map("last_seen_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@unique([projectId, deviceId])
+  @@index([projectId, status], map: "native_connected_devices_project_status")
+  @@index([projectId, lastSeenAt], map: "native_connected_devices_project_last_seen")
+  @@map("native_connected_devices")
+}
+
 model NativeCloudTarget {
   id           String    @id @default(cuid())
   projectId    String    @db.Uuid
@@ -1669,6 +1703,79 @@ model NativeCloudTarget {
   @@unique([projectId, provider, region])
   @@index([projectId, healthStatus], map: "native_cloud_targets_project_health")
   @@map("native_cloud_targets")
+}
+
+model NativeRoutingPolicy {
+  id                           String   @id @default(cuid())
+  projectId                    String   @unique @db.Uuid
+  project                      Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  strategy                     String   @default("latency") @db.VarChar(30)
+  consistency                  String   @default("eventual") @db.VarChar(30)
+  stickySessions               Boolean  @default(true) @map("sticky_sessions")
+  manualFailback               Boolean  @default(false) @map("manual_failback")
+  snapshotTtlSeconds           Int      @default(30) @map("snapshot_ttl_seconds")
+  failoverThresholdMs          Int      @default(250) @map("failover_threshold_ms")
+  latencyProbeIntervalSeconds  Int      @default(30) @map("latency_probe_interval_seconds")
+  preferredRegions             String[] @default([]) @map("preferred_regions")
+  metadata                     Json?
+  createdAt                    DateTime @default(now()) @map("created_at")
+  updatedAt                    DateTime @updatedAt @map("updated_at")
+
+  @@map("native_routing_policies")
+}
+
+model NativeRegionReplica {
+  id                 String            @id @default(cuid())
+  projectId          String            @db.Uuid
+  project            Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  deploymentId       String?
+  deployment         NativeDeployment? @relation(fields: [deploymentId], references: [id], onDelete: SetNull)
+  provider           String            @db.VarChar(40)
+  region             String            @db.VarChar(80)
+  endpoint           String?           @db.VarChar(500)
+  bundleUrl          String?           @map("bundle_url") @db.VarChar(500)
+  storagePath        String?           @map("storage_path") @db.VarChar(500)
+  healthStatus       String            @default("healthy") @map("health_status") @db.VarChar(30)
+  drainState         String            @default("accepting") @map("drain_state") @db.VarChar(30)
+  latencyMs          Int?              @map("latency_ms")
+  trafficPercent     Int               @default(0) @map("traffic_percent")
+  isPrimary          Boolean           @default(false) @map("is_primary")
+  replicationVersion String?           @map("replication_version") @db.VarChar(80)
+  vectorClock        Json?             @map("vector_clock")
+  metadata           Json?
+  lastHeartbeatAt    DateTime?         @map("last_heartbeat_at")
+  createdAt          DateTime          @default(now()) @map("created_at")
+  updatedAt          DateTime          @updatedAt @map("updated_at")
+
+  @@unique([projectId, region])
+  @@index([deploymentId], map: "native_region_replicas_deployment_id")
+  @@index([projectId, healthStatus], map: "native_region_replicas_project_health")
+  @@map("native_region_replicas")
+}
+
+model NativeArtifactMirror {
+  id            String           @id @default(cuid())
+  projectId     String           @db.Uuid
+  project       Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  deploymentId  String
+  deployment    NativeDeployment @relation(fields: [deploymentId], references: [id], onDelete: Cascade)
+  provider      String           @db.VarChar(40)
+  policy        String           @default("hybrid") @db.VarChar(40)
+  status        String           @default("published") @db.VarChar(30)
+  locator       String           @db.VarChar(500)
+  cid           String?          @db.VarChar(255)
+  txId          String?          @map("tx_id") @db.VarChar(255)
+  retryCount    Int              @default(0) @map("retry_count")
+  lastError     String?          @map("last_error")
+  proofManifest Json?            @map("proof_manifest")
+  metadata      Json?
+  publishedAt   DateTime?        @map("published_at")
+  createdAt     DateTime         @default(now()) @map("created_at")
+  updatedAt     DateTime         @updatedAt @map("updated_at")
+
+  @@unique([deploymentId, provider])
+  @@index([projectId, provider], map: "native_artifact_mirrors_project_provider")
+  @@map("native_artifact_mirrors")
 }
 
 model NativeWafEvent {
@@ -1737,9 +1844,135 @@ model NativeAiDiagnostic {
   metadata      Json?
   createdAt     DateTime           @default(now()) @map("created_at")
 
+  remediationRuns NativeRemediationRun[]
+
   @@index([projectId, createdAt], map: "native_ai_diagnostics_project_created")
   @@index([crashReportId], map: "native_ai_diagnostics_crash_report")
   @@map("native_ai_diagnostics")
+}
+
+model NativeRemediationRun {
+  id                String              @id @default(cuid())
+  projectId         String              @db.Uuid
+  project           Project             @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  diagnosticId      String?             @map("diagnostic_id")
+  diagnostic        NativeAiDiagnostic? @relation(fields: [diagnosticId], references: [id], onDelete: SetNull)
+  mode              String              @default("observe") @db.VarChar(30)
+  actionType        String              @map("action_type") @db.VarChar(40)
+  status            String              @default("suggested") @db.VarChar(30)
+  summary           String
+  dryRun            Boolean             @default(true) @map("dry_run")
+  requestedByUserId String?             @map("requested_by_user_id") @db.Uuid
+  approvedByUserId  String?             @map("approved_by_user_id") @db.Uuid
+  payload           Json?
+  evidence          Json?
+  postCheck         Json?               @map("post_check")
+  approvedAt        DateTime?           @map("approved_at")
+  executedAt        DateTime?           @map("executed_at")
+  createdAt         DateTime            @default(now()) @map("created_at")
+  updatedAt         DateTime            @updatedAt @map("updated_at")
+
+  @@index([projectId, status], map: "native_remediation_runs_project_status")
+  @@index([diagnosticId], map: "native_remediation_runs_diagnostic_id")
+  @@map("native_remediation_runs")
+}
+
+model NativeSchedulingPolicy {
+  id                    String   @id @default(cuid())
+  projectId             String   @unique @db.Uuid
+  project               Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  enabled               Boolean  @default(false)
+  mode                  String   @default("observe") @db.VarChar(30)
+  costProvider          String?  @map("cost_provider") @db.VarChar(80)
+  carbonProvider        String?  @map("carbon_provider") @db.VarChar(80)
+  defaultWorkloadClass  String   @default("interactive") @map("default_workload_class") @db.VarChar(40)
+  deferrableWindowStart String?  @map("deferrable_window_start") @db.VarChar(5)
+  deferrableWindowEnd   String?  @map("deferrable_window_end") @db.VarChar(5)
+  maxCarbonIntensity    Float?   @map("max_carbon_intensity")
+  maxCostScore          Float?   @map("max_cost_score")
+  metadata              Json?
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+
+  @@map("native_scheduling_policies")
+}
+
+model NativeSchedulingSignal {
+  id         String   @id @default(cuid())
+  projectId  String   @db.Uuid
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  signalType String   @map("signal_type") @db.VarChar(40)
+  source     String   @db.VarChar(80)
+  region     String?  @db.VarChar(80)
+  value      Float
+  unit       String?  @db.VarChar(40)
+  metadata   Json?
+  sampledAt  DateTime @default(now()) @map("sampled_at")
+
+  @@index([projectId, signalType], map: "native_scheduling_signals_project_type")
+  @@index([projectId, sampledAt], map: "native_scheduling_signals_project_sampled")
+  @@map("native_scheduling_signals")
+}
+
+model NativeServiceIdentity {
+  id                     String   @id @default(cuid())
+  projectId              String   @db.Uuid
+  project                Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  serviceName            String   @map("service_name") @db.VarChar(120)
+  role                   String   @default("internal") @db.VarChar(40)
+  scopes                 String[] @default([])
+  status                 String   @default("active") @db.VarChar(30)
+  mtlsMode               String   @default("optional") @map("mtls_mode") @db.VarChar(30)
+  sharedSecretHash       String?  @map("shared_secret_hash") @db.VarChar(255)
+  certificateFingerprint String?  @map("certificate_fingerprint") @db.VarChar(255)
+  metadata               Json?
+  lastUsedAt             DateTime? @map("last_used_at")
+  createdAt              DateTime @default(now()) @map("created_at")
+  updatedAt              DateTime @updatedAt @map("updated_at")
+
+  @@unique([projectId, serviceName])
+  @@index([projectId, status], map: "native_service_identities_project_status")
+  @@map("native_service_identities")
+}
+
+model NativeServiceTrustPolicy {
+  id                     String   @id @default(cuid())
+  projectId              String   @db.Uuid
+  project                Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  sourceService          String   @map("source_service") @db.VarChar(120)
+  targetService          String   @map("target_service") @db.VarChar(120)
+  allowedScopes          String[] @default([]) @map("allowed_scopes")
+  enforceMtls            Boolean  @default(false) @map("enforce_mtls")
+  allowSharedKeyFallback Boolean  @default(true) @map("allow_shared_key_fallback")
+  status                 String   @default("active") @db.VarChar(30)
+  metadata               Json?
+  createdAt              DateTime @default(now()) @map("created_at")
+  updatedAt              DateTime @updatedAt @map("updated_at")
+
+  @@unique([projectId, sourceService, targetService])
+  @@index([projectId, status], map: "native_service_trust_project_status")
+  @@map("native_service_trust_policies")
+}
+
+model NativeTelemetryEnvelope {
+  id               String    @id @default(cuid())
+  projectId        String    @db.Uuid
+  project          Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  serviceName      String?   @map("service_name") @db.VarChar(120)
+  kind             String    @db.VarChar(60)
+  encryptionMode   String    @default("aggregate") @map("encryption_mode") @db.VarChar(40)
+  payloadDigest    String?   @map("payload_digest") @db.VarChar(255)
+  aggregateKey     String?   @map("aggregate_key") @db.VarChar(255)
+  ciphertext       String?
+  nonce            String?   @db.VarChar(120)
+  keyVersion       String?   @map("key_version") @db.VarChar(80)
+  redactedSummary  Json?     @map("redacted_summary")
+  metadata         Json?
+  createdAt        DateTime  @default(now()) @map("created_at")
+
+  @@index([projectId, kind], map: "native_telemetry_envelopes_project_kind")
+  @@index([projectId, createdAt], map: "native_telemetry_envelopes_project_created")
+  @@map("native_telemetry_envelopes")
 }
 
 model CronJob {

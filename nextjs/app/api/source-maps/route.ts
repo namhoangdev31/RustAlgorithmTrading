@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/server/prisma";
 import { nativeErrorResponse, requireNativeProjectAccess } from "@/lib/server/native-platform/auth";
 import { uploadSourceMap } from "@/lib/server/native-platform/telemetry";
+import { listProjectSourceMaps } from "@/lib/server/native-platform/source-maps";
 
 export async function POST(request: NextRequest) {
   try {
@@ -39,24 +40,13 @@ export async function GET(request: NextRequest) {
     
     const releaseVersion = sp.get("releaseVersion") || undefined;
     
-    const sourceMaps = await prisma.nativeSourceMap.findMany({
-      where: {
-        projectId,
-        ...(releaseVersion ? { releaseVersion } : {}),
-      },
-      select: {
-        id: true,
-        projectId: true,
-        deploymentId: true,
-        releaseVersion: true,
-        fileName: true,
-        storagePath: true,
-        uploadedAt: true,
-      },
-      orderBy: { uploadedAt: "desc" },
-    });
+    const sourceMaps = await listProjectSourceMaps(projectId);
 
-    return NextResponse.json({ sourceMaps });
+    return NextResponse.json({
+      sourceMaps: releaseVersion
+        ? sourceMaps.filter((sourceMap) => sourceMap.releaseVersion === releaseVersion)
+        : sourceMaps,
+    });
   } catch (error) {
     return nativeErrorResponse(error);
   }

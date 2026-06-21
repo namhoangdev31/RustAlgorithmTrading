@@ -13,7 +13,6 @@ import {
   History,
   FileCode,
   Sparkles,
-  Layers
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -49,6 +48,19 @@ interface CrashReport {
   platform: string;
   releaseVersion: string;
   createdAt: string;
+  sourcePreview?: {
+    status: "available" | "unavailable";
+    fileName: string;
+    line: number;
+    column?: number | null;
+    functionName?: string;
+    reason?: "missing_map" | "missing_source" | "missing_content";
+    excerpt?: Array<{
+      number: number;
+      content: string;
+      isCrash: boolean;
+    }>;
+  } | null;
 }
 
 interface ErrorTrackerClientProps {
@@ -58,32 +70,27 @@ interface ErrorTrackerClientProps {
 }
 
 interface CodeSnippetVisualizerProps {
-  fileName: string;
-  line: number;
-  functionName: string;
+  preview: NonNullable<CrashReport["sourcePreview"]>;
 }
 
-export function CodeSnippetVisualizer({ fileName, line, functionName }: CodeSnippetVisualizerProps) {
+function getPreviewFallbackLabel(reason?: CrashReport["sourcePreview"] extends { reason?: infer R } ? R : string) {
+  switch (reason) {
+    case "missing_content":
+      return "Source content was not embedded in the uploaded .map file.";
+    case "missing_source":
+      return "The mapped source file is not present in the uploaded .map file.";
+    case "missing_map":
+    default:
+      return "No compatible source map is currently available for this frame.";
+  }
+}
+
+export function CodeSnippetVisualizer({ preview }: CodeSnippetVisualizerProps) {
   const [isExpanded, setIsExpanded] = useState(true);
-  
-  const snippet = useMemo(() => {
-    const cleanedName = functionName || "anonymous";
-    return [
-      { num: line - 4, content: `// Bootstrapping handler scope for function: ${cleanedName}`, isCrash: false },
-      { num: line - 3, content: `import { invokeServiceHandler, transformClientData } from "@/lib/engine/native";`, isCrash: false },
-      { num: line - 2, content: `// Helper module logic: executing ${cleanedName}`, isCrash: false },
-      { num: line - 1, content: `export function ${cleanedName}Context(payload) {`, isCrash: false },
-      { num: line, content: `  const response = invokeServiceHandler(payload); // 🚨 Crash: Unhandled exception at ${cleanedName}`, isCrash: true },
-      { num: line + 1, content: `  if (!response || response.status === "error") {`, isCrash: false },
-      { num: line + 2, content: `    throw new Error("Execution failure during native context mapping");`, isCrash: false },
-      { num: line + 3, content: `  }`, isCrash: false },
-      { num: line + 4, content: `  return transformClientData(response);`, isCrash: false },
-      { num: line + 5, content: `}`, isCrash: false }
-    ];
-  }, [line, functionName]);
+  const snippet = useMemo(() => preview.excerpt || [], [preview.excerpt]);
 
   const handleCopy = () => {
-    const textToCopy = snippet.map(row => `${row.num}: ${row.content}`).join("\n");
+    const textToCopy = snippet.map(row => `${row.number}: ${row.content}`).join("\n");
     navigator.clipboard.writeText(textToCopy);
     toast.success("Code snippet copied to clipboard");
   };
@@ -95,43 +102,61 @@ export function CodeSnippetVisualizer({ fileName, line, functionName }: CodeSnip
       <div className="flex items-center justify-between text-slate-500 border-b border-slate-900 pb-1.5">
         <span className="flex items-center gap-1.5 animate-pulse">
           <FileCode className="size-3.5 text-indigo-400" />
-          {fileName}:{line}
+          {preview.fileName}:{preview.line}
+          {typeof preview.column === "number" ? `:${preview.column}` : ""}
         </span>
         <div className="flex items-center gap-2">
-          <Button 
-            onClick={() => setIsExpanded(!isExpanded)} 
-            variant="ghost" 
-            size="sm" 
-            className="h-5 text-[8px] font-bold px-1.5 text-slate-400 hover:text-slate-255 hover:bg-slate-900"
-          >
-            {isExpanded ? "Collapse" : "Expand"}
-          </Button>
-          <Button 
-            onClick={handleCopy} 
-            variant="ghost" 
-            size="sm" 
-            className="h-5 text-[8px] font-bold px-1.5 text-indigo-400 hover:text-indigo-300 hover:bg-slate-900"
-          >
-            Copy
-          </Button>
-          <Badge className="bg-red-500/10 border-red-500/20 text-red-400 text-[8px] font-bold">
-            EXCEPTION POINT
-          </Badge>
+          {preview.status === "available" ? (
+            <>
+              <Button
+                onClick={() => setIsExpanded(!isExpanded)}
+                variant="ghost"
+                size="sm"
+                className="h-5 text-[8px] font-bold px-1.5 text-slate-400 hover:text-slate-255 hover:bg-slate-900"
+              >
+                {isExpanded ? "Collapse" : "Expand"}
+              </Button>
+              <Button
+                onClick={handleCopy}
+                variant="ghost"
+                size="sm"
+                className="h-5 text-[8px] font-bold px-1.5 text-indigo-400 hover:text-indigo-300 hover:bg-slate-900"
+              >
+                Copy
+              </Button>
+              <Badge className="bg-red-500/10 border-red-500/20 text-red-400 text-[8px] font-bold">
+                EXCEPTION POINT
+              </Badge>
+            </>
+          ) : (
+            <Badge className="bg-amber-500/10 border-amber-500/20 text-amber-300 text-[8px] font-bold">
+              SOURCE UNAVAILABLE
+            </Badge>
+          )}
         </div>
       </div>
-      <div className="space-y-1">
-        {displayedSnippet.map((row, idx) => (
-          <div 
-            key={idx} 
-            className={`flex items-start gap-3 px-2 py-0.5 rounded transition ${
-              row.isCrash ? "bg-red-950/40 text-red-200 border-l-2 border-red-500" : "text-slate-400"
-            }`}
-          >
-            <span className="w-5 text-right text-slate-600 select-none shrink-0">{row.num}</span>
-            <span className="whitespace-pre-wrap">{row.content}</span>
-          </div>
-        ))}
-      </div>
+      {preview.status === "available" ? (
+        <div className="space-y-1">
+          {displayedSnippet.map((row, idx) => (
+            <div
+              key={idx}
+              className={`flex items-start gap-3 px-2 py-0.5 rounded transition ${
+                row.isCrash ? "bg-red-950/40 text-red-200 border-l-2 border-red-500" : "text-slate-400"
+              }`}
+            >
+              <span className="w-8 text-right text-slate-600 select-none shrink-0">{row.number}</span>
+              <span className="whitespace-pre-wrap">{row.content || " "}</span>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="rounded-lg border border-dashed border-amber-500/20 bg-amber-500/5 px-3 py-3 text-[11px] leading-relaxed text-amber-100">
+          <p className="font-semibold text-amber-300">
+            {preview.functionName || "Mapped frame"} resolved successfully, but source preview cannot be rendered yet.
+          </p>
+          <p className="mt-1 text-amber-100/80">{getPreviewFallbackLabel(preview.reason)}</p>
+        </div>
+      )}
     </div>
   );
 }
@@ -346,7 +371,6 @@ export function ErrorTrackerClient({ crashes = [], projectId, returnTo }: ErrorT
                   const latestCrash = group.latestCrash;
                   const isMapped = latestCrash.parsedStack?.mapped || false;
                   const frames = latestCrash.parsedStack?.frames || [];
-                  const topMappedFrame = frames.find(f => f.original && f.original.source);
 
                   return (
                     <React.Fragment key={group.fingerprint}>
@@ -445,11 +469,9 @@ export function ErrorTrackerClient({ crashes = [], projectId, returnTo }: ErrorT
                               </div>
 
                               {/* Code Snippet Visualizer */}
-                              {isMapped && topMappedFrame && topMappedFrame.original?.source && topMappedFrame.original?.line && (
-                                <CodeSnippetVisualizer 
-                                  fileName={topMappedFrame.original.source} 
-                                  line={topMappedFrame.original.line} 
-                                  functionName={topMappedFrame.original.name || ""} 
+                              {isMapped && latestCrash.sourcePreview && (
+                                <CodeSnippetVisualizer
+                                  preview={latestCrash.sourcePreview}
                                 />
                               )}
                             </div>
@@ -488,7 +510,6 @@ export function ErrorTrackerClient({ crashes = [], projectId, returnTo }: ErrorT
                   const isSelected = selectedCrashId === crash.id;
                   const isMapped = crash.parsedStack?.mapped || false;
                   const frames = crash.parsedStack?.frames || [];
-                  const topMappedFrame = frames.find(f => f.original && f.original.source);
 
                   return (
                     <React.Fragment key={crash.id}>
@@ -588,11 +609,9 @@ export function ErrorTrackerClient({ crashes = [], projectId, returnTo }: ErrorT
                               </div>
 
                               {/* Code Snippet Visualizer */}
-                              {isMapped && topMappedFrame && topMappedFrame.original?.source && topMappedFrame.original?.line && (
-                                <CodeSnippetVisualizer 
-                                  fileName={topMappedFrame.original.source} 
-                                  line={topMappedFrame.original.line} 
-                                  functionName={topMappedFrame.original.name || ""} 
+                              {isMapped && crash.sourcePreview && (
+                                <CodeSnippetVisualizer
+                                  preview={crash.sourcePreview}
                                 />
                               )}
                             </div>

@@ -418,10 +418,30 @@ export type NativePluginInstallation = Prisma.NativePluginInstallationModel
  */
 export type NativeDebugSession = Prisma.NativeDebugSessionModel
 /**
+ * Model NativeConnectedDevice
+ * 
+ */
+export type NativeConnectedDevice = Prisma.NativeConnectedDeviceModel
+/**
  * Model NativeCloudTarget
  * 
  */
 export type NativeCloudTarget = Prisma.NativeCloudTargetModel
+/**
+ * Model NativeRoutingPolicy
+ * 
+ */
+export type NativeRoutingPolicy = Prisma.NativeRoutingPolicyModel
+/**
+ * Model NativeRegionReplica
+ * 
+ */
+export type NativeRegionReplica = Prisma.NativeRegionReplicaModel
+/**
+ * Model NativeArtifactMirror
+ * 
+ */
+export type NativeArtifactMirror = Prisma.NativeArtifactMirrorModel
 /**
  * Model NativeWafEvent
  * 
@@ -442,6 +462,36 @@ export type NativeScimMapping = Prisma.NativeScimMappingModel
  * 
  */
 export type NativeAiDiagnostic = Prisma.NativeAiDiagnosticModel
+/**
+ * Model NativeRemediationRun
+ * 
+ */
+export type NativeRemediationRun = Prisma.NativeRemediationRunModel
+/**
+ * Model NativeSchedulingPolicy
+ * 
+ */
+export type NativeSchedulingPolicy = Prisma.NativeSchedulingPolicyModel
+/**
+ * Model NativeSchedulingSignal
+ * 
+ */
+export type NativeSchedulingSignal = Prisma.NativeSchedulingSignalModel
+/**
+ * Model NativeServiceIdentity
+ * 
+ */
+export type NativeServiceIdentity = Prisma.NativeServiceIdentityModel
+/**
+ * Model NativeServiceTrustPolicy
+ * 
+ */
+export type NativeServiceTrustPolicy = Prisma.NativeServiceTrustPolicyModel
+/**
+ * Model NativeTelemetryEnvelope
+ * 
+ */
+export type NativeTelemetryEnvelope = Prisma.NativeTelemetryEnvelopeModel
 /**
  * Model CronJob
  * 

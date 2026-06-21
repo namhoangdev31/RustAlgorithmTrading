@@ -27,6 +27,7 @@ export function SettingsNav() {
     { label: t("display"), href: "/dashboard/settings/display", Icon: Monitor },
     { label: t("vercel"), href: "/dashboard/settings?vercel=configure", Icon: Key },
     { label: "Directory Sync (SCIM)", href: "/dashboard/settings/directory", Icon: Shield },
+    { label: "Workspace Audit", href: "/dashboard/settings/audit", Icon: Shield },
   ] as const;
 
   return (
@@ -63,4 +64,3 @@ export function SettingsNav() {
     </>
   );
 }
-
