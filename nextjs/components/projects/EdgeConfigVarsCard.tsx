@@ -18,6 +18,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -30,7 +31,10 @@ import {
   getProjectProvidersAction,
   linkProjectProviderAction,
   unlinkProjectProviderAction,
-  saveProviderApiKeyAction
+  saveProviderApiKeyAction,
+  getEdgeConfigSchemaAction,
+  patchEdgeConfigSchemaAction,
+  getEdgeConfigBackupsAction
 } from "@/app/actions/vercel";
 
 interface EdgeConfigVarsCardProps {
@@ -82,6 +86,62 @@ export function EdgeConfigVarsCard({
   const [linkEdgeConfigId, setLinkEdgeConfigId] = useState("");
   const [linkDisplayName, setLinkDisplayName] = useState("");
   const [linkApiKey, setLinkApiKey] = useState("");
+
+  // New States for Schema Validation and Backup History
+  const [activeTab, setActiveTab] = useState<"flags" | "schema" | "backups">("flags");
+  const [schemaText, setSchemaText] = useState("");
+  const [loadingSchema, setLoadingSchema] = useState(false);
+  const [schemaError, setSchemaError] = useState("");
+  const [schemaSuccess, setSchemaSuccess] = useState("");
+
+  const [backupsList, setBackupsList] = useState<any[]>([]);
+  const [loadingBackups, setLoadingBackups] = useState(false);
+  const [backupsError, setBackupsError] = useState("");
+
+  const fetchSchema = async () => {
+    if (!edgeConfigId) return;
+    setLoadingSchema(true);
+    setSchemaError("");
+    setSchemaSuccess("");
+    try {
+      const res = await getEdgeConfigSchemaAction(projectId, edgeConfigId);
+      if (res.success && res.schema) {
+        setSchemaText(JSON.stringify(res.schema, null, 2));
+      } else {
+        setSchemaError(res.error || "Failed to load schema");
+      }
+    } catch (err: any) {
+      setSchemaError(err?.message || "Failed to load schema");
+    } finally {
+      setLoadingSchema(false);
+    }
+  };
+
+  const fetchBackups = async () => {
+    if (!edgeConfigId) return;
+    setLoadingBackups(true);
+    setBackupsError("");
+    try {
+      const res = await getEdgeConfigBackupsAction(projectId, edgeConfigId);
+      if (res.success && res.backups) {
+        setBackupsList((res.backups as any).backups || []);
+      } else {
+        setBackupsError(res.error || "Failed to load backups");
+      }
+    } catch (err: any) {
+      setBackupsError(err?.message || "Failed to load backups");
+    } finally {
+      setLoadingBackups(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === "schema" && edgeConfigId) {
+      fetchSchema();
+    } else if (activeTab === "backups" && edgeConfigId) {
+      fetchBackups();
+    }
+  }, [activeTab, edgeConfigId]);
 
   const fetchProviders = async () => {
     setLoadingProviders(true);
@@ -372,8 +432,46 @@ export function EdgeConfigVarsCard({
             </div>
           </div>
         ) : (
-          /* 2. Flag CRUD Area */
-          <div className="space-y-4">
+          <div className="space-y-6">
+            {/* Edge Config Sub-Tabs */}
+            <div className="flex border-b border-hairline mb-4 select-none">
+              <button
+                type="button"
+                onClick={() => setActiveTab("flags")}
+                className={`px-4 py-2 text-xs font-semibold border-b-2 transition-all ${
+                  activeTab === "flags"
+                    ? "border-primary text-ink font-bold"
+                    : "border-transparent text-ink-mute hover:text-ink"
+                }`}
+              >
+                Feature Flags
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("schema")}
+                className={`px-4 py-2 text-xs font-semibold border-b-2 transition-all ${
+                  activeTab === "schema"
+                    ? "border-primary text-ink font-bold"
+                    : "border-transparent text-ink-mute hover:text-ink"
+                }`}
+              >
+                JSON Schema
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("backups")}
+                className={`px-4 py-2 text-xs font-semibold border-b-2 transition-all ${
+                  activeTab === "backups"
+                    ? "border-primary text-ink font-bold"
+                    : "border-transparent text-ink-mute hover:text-ink"
+                }`}
+              >
+                Backup History
+              </button>
+            </div>
+
+            {activeTab === "flags" && (
+              <div className="space-y-4">
             {/* Form */}
             {isFormOpen && (
               <form onSubmit={handleSubmitFlag} className="bg-canvas-soft/40 p-4 border border-hairline rounded-md space-y-4 animate-in slide-in-from-top-2 duration-200">
@@ -806,6 +904,109 @@ export function EdgeConfigVarsCard({
                 </div>
               )}
             </div>
+          </div>
+        )}
+
+            {/* JSON Schema Validation Tab */}
+            {activeTab === "schema" && (
+              <div className="space-y-4 animate-in fade-in">
+                {schemaError && (
+                  <Alert variant="destructive" className="bg-destructive/5 border-destructive/20 text-destructive rounded-lg">
+                    <AlertCircle className="size-4 shrink-0" />
+                    <AlertDescription className="text-xs font-semibold">{schemaError}</AlertDescription>
+                  </Alert>
+                )}
+                {schemaSuccess && (
+                  <Alert className="bg-emerald-500/10 border-emerald-500/20 text-emerald-400 rounded-lg">
+                    <CheckCircle2 className="size-4 shrink-0" />
+                    <AlertDescription className="text-xs font-semibold">{schemaSuccess}</AlertDescription>
+                  </Alert>
+                )}
+
+                <form action={patchEdgeConfigSchemaAction} className="space-y-4">
+                  <input type="hidden" name="projectId" value={vercelProjectId} />
+                  <input type="hidden" name="edgeConfigId" value={edgeConfigId || ""} />
+                  <input type="hidden" name="returnTo" value={returnTo} />
+
+                  <div className="space-y-1.5">
+                    <Label htmlFor="schemaDefinition" className="text-xs font-bold text-ink-secondary">JSON Schema Definition</Label>
+                    <textarea
+                      id="schemaDefinition"
+                      name="definition"
+                      rows={12}
+                      value={schemaText}
+                      onChange={(e) => setSchemaText(e.target.value)}
+                      placeholder='e.g. { "type": "object", "properties": { ... } }'
+                      className="w-full p-3 bg-[#0c0c0d] border border-hairline rounded text-xs text-emerald-400 font-mono focus:outline-none focus:border-primary resize-y"
+                    />
+                  </div>
+
+                  <div className="flex justify-between items-center">
+                    <Button 
+                      type="button" 
+                      onClick={fetchSchema}
+                      disabled={loadingSchema}
+                      variant="outline"
+                      className="text-xs h-9 cursor-pointer"
+                    >
+                      Reset Schema
+                    </Button>
+                    <Button 
+                      type="submit"
+                      disabled={loadingSchema || !schemaText}
+                      className="bg-primary hover:bg-primary-deep text-primary-foreground text-xs font-bold h-9 px-4 rounded-sm cursor-pointer"
+                    >
+                      {loadingSchema ? "Saving..." : "Save & Validate Schema"}
+                    </Button>
+                  </div>
+                </form>
+              </div>
+            )}
+
+            {/* Backup History Tab */}
+            {activeTab === "backups" && (
+              <div className="space-y-4 animate-in fade-in">
+                {backupsError && (
+                  <Alert variant="destructive" className="bg-destructive/5 border-destructive/20 text-destructive rounded-lg">
+                    <AlertCircle className="size-4 shrink-0" />
+                    <AlertDescription className="text-xs font-semibold">{backupsError}</AlertDescription>
+                  </Alert>
+                )}
+
+                {loadingBackups ? (
+                  <div className="p-6 text-center text-xs text-ink-mute">Loading backup history...</div>
+                ) : backupsList.length === 0 ? (
+                  <div className="p-6 text-center text-xs text-ink-mute border border-dashed border-hairline rounded-md">
+                    No backups found for this Edge Config store.
+                  </div>
+                ) : (
+                  <div className="rounded-md border border-hairline overflow-hidden">
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="bg-canvas-soft/20 border-b border-hairline">
+                          <TableHead className="px-5 py-2 text-[10px] uppercase font-bold text-ink-mute">Backup ID</TableHead>
+                          <TableHead className="px-5 py-2 text-[10px] uppercase font-bold text-ink-mute">Last Modified</TableHead>
+                          <TableHead className="px-5 py-2 text-[10px] uppercase font-bold text-ink-mute">Size</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {backupsList.map((backup) => (
+                          <TableRow key={backup.id} className="border-b border-hairline hover:bg-canvas-soft/10 last:border-none">
+                            <TableCell className="px-5 py-3 text-xs font-mono text-ink font-bold">{backup.id}</TableCell>
+                            <TableCell className="px-5 py-3 text-xs text-ink-secondary">
+                              {backup.updatedAt ? new Date(backup.updatedAt).toLocaleString() : "N/A"}
+                            </TableCell>
+                            <TableCell className="px-5 py-3 text-xs text-ink-mute">
+                              {backup.size ? `${backup.size} bytes` : "N/A"}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
       </CardContent>

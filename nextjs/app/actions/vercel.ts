@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "@/i18n/navigation";
 import { requireCurrentUser } from "@/lib/server/current-user";
-import { getVercelClient, getAuthorizedVercelClient, syncCentralEdgeConfig, MultiProviderConfig } from "@/lib/server/vercel";
+import { getVercelClient, getAuthorizedVercelClient, syncCentralEdgeConfig, MultiProviderConfig, testVercelToken, VERCEL_RETRY_CONFIG } from "@/lib/server/vercel";
 import { prisma } from "@/lib/server/prisma";
 import { encryptSecret } from "@/lib/server/secret-crypto";
 import crypto from "crypto";
@@ -1126,6 +1126,15 @@ export async function saveProviderApiKeyAction(formData: FormData) {
     redirect(returnTo);
   }
 
+  if (provider === "vercel") {
+    try {
+      await testVercelToken(apiKey);
+    } catch (error: any) {
+      console.error("Vercel token validation failed:", error);
+      redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}error=invalid_vercel_token&message=${encodeURIComponent(error?.message || "")}`);
+    }
+  }
+
   const providerKey = `${provider}_${accountId}`;
   const encrypted = encryptSecret(apiKey);
 
@@ -1331,8 +1340,845 @@ export async function getVercelProjectsAction() {
   }
 }
 
+// --- Phase 2: Edge Config Schema & Backups Actions ---
+export async function getEdgeConfigSchemaAction(projectId: string, edgeConfigId: string) {
+  const user = await requireCurrentUser();
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "viewer");
+    const schema = await vercel.edgeConfig.getEdgeConfigSchema({ edgeConfigId }, VERCEL_RETRY_CONFIG);
+    return { success: true, schema };
+  } catch (error: any) {
+    console.error("Failed to fetch Edge Config Schema:", error);
+    return { success: false, error: error?.message || "Failed to fetch Edge Config Schema" };
+  }
+}
+
+export async function patchEdgeConfigSchemaAction(formData: FormData) {
+  const user = await requireCurrentUser();
+  const projectId = readFormValue(formData, "projectId");
+  const edgeConfigId = readFormValue(formData, "edgeConfigId");
+  const definitionStr = readFormValue(formData, "definition");
+  const returnTo = readFormValue(formData, "returnTo") || "/projects";
+
+  if (!projectId || !edgeConfigId || !definitionStr) {
+    redirect(returnTo);
+  }
+
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "editor");
+    const definition = JSON.parse(definitionStr);
+    await vercel.edgeConfig.patchEdgeConfigSchema({
+      edgeConfigId,
+      requestBody: { definition }
+    }, VERCEL_RETRY_CONFIG);
+  } catch (error: any) {
+    console.error("Failed to patch Edge Config Schema:", error);
+    redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}error=patch_schema_failed&message=${encodeURIComponent(error?.message || "")}`);
+  }
+
+  revalidatePath(returnTo);
+  redirect(returnTo);
+}
+
+export async function getEdgeConfigBackupsAction(projectId: string, edgeConfigId: string) {
+  const user = await requireCurrentUser();
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "viewer");
+    const backups = await vercel.edgeConfig.getEdgeConfigBackups({ edgeConfigId }, VERCEL_RETRY_CONFIG);
+    return { success: true, backups };
+  } catch (error: any) {
+    console.error("Failed to fetch Edge Config Backups:", error);
+    return { success: false, error: error?.message || "Failed to fetch Edge Config Backups" };
+  }
+}
+
+// --- Phase 3: Live Observability (Log Drains Actions) ---
+export async function createConfigurableLogDrainAction(formData: FormData) {
+  const user = await requireCurrentUser();
+  const projectId = readFormValue(formData, "projectId");
+  const name = readFormValue(formData, "name");
+  const url = readFormValue(formData, "url");
+  const deliveryFormat = readFormValue(formData, "deliveryFormat") || "json";
+  const returnTo = readFormValue(formData, "returnTo") || "/projects";
+
+  if (!projectId || !name || !url) {
+    redirect(returnTo);
+  }
+
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "admin");
+    await vercel.logDrains.createConfigurableLogDrain({
+      requestBody: {
+        name,
+        url,
+        deliveryFormat: deliveryFormat as any,
+        sources: ["lambda", "edge", "static", "external"]
+      }
+    }, VERCEL_RETRY_CONFIG);
+  } catch (error: any) {
+    console.error("Failed to create Log Drain:", error);
+    redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}error=create_drain_failed&message=${encodeURIComponent(error?.message || "")}`);
+  }
+
+  revalidatePath(returnTo);
+  redirect(returnTo);
+}
+
+export async function deleteConfigurableLogDrainAction(formData: FormData) {
+  const user = await requireCurrentUser();
+  const projectId = readFormValue(formData, "projectId");
+  const id = readFormValue(formData, "logDrainId");
+  const returnTo = readFormValue(formData, "returnTo") || "/projects";
+
+  if (!projectId || !id) {
+    redirect(returnTo);
+  }
+
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "admin");
+    await vercel.logDrains.deleteConfigurableLogDrain({ id }, VERCEL_RETRY_CONFIG);
+  } catch (error: any) {
+    console.error("Failed to delete Log Drain:", error);
+    redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}error=delete_drain_failed&message=${encodeURIComponent(error?.message || "")}`);
+  }
+
+  revalidatePath(returnTo);
+  redirect(returnTo);
+}
+
+export async function listConfigurableLogDrainsAction(projectId: string) {
+  const user = await requireCurrentUser();
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "viewer");
+    const drains = await vercel.logDrains.getAllLogDrains({}, VERCEL_RETRY_CONFIG);
+    return { success: true, drains };
+  } catch (error: any) {
+    console.error("Failed to list Log Drains:", error);
+    return { success: false, error: error?.message || "Failed to list Log Drains" };
+  }
+}
+
+// --- Phase 4: Event-Driven Webhooks Actions ---
+export async function createWebhookAction(formData: FormData) {
+  const user = await requireCurrentUser();
+  const projectId = readFormValue(formData, "projectId");
+  const url = readFormValue(formData, "url");
+  const eventsStr = readFormValue(formData, "events");
+  const returnTo = readFormValue(formData, "returnTo") || "/projects";
+
+  if (!projectId || !url || !eventsStr) {
+    redirect(returnTo);
+  }
+
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "admin");
+    const events = eventsStr.split(",").map(e => e.trim()).filter(Boolean);
+    await vercel.webhooks.createWebhook({
+      requestBody: {
+        url,
+        events: events as any
+      }
+    }, VERCEL_RETRY_CONFIG);
+  } catch (error: any) {
+    console.error("Failed to create Webhook:", error);
+    redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}error=create_webhook_failed&message=${encodeURIComponent(error?.message || "")}`);
+  }
+
+  revalidatePath(returnTo);
+  redirect(returnTo);
+}
+
+export async function deleteWebhookAction(formData: FormData) {
+  const user = await requireCurrentUser();
+  const projectId = readFormValue(formData, "projectId");
+  const webhookId = readFormValue(formData, "webhookId");
+  const returnTo = readFormValue(formData, "returnTo") || "/projects";
+
+  if (!projectId || !webhookId) {
+    redirect(returnTo);
+  }
+
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "admin");
+    await vercel.webhooks.deleteWebhook({ id: webhookId }, VERCEL_RETRY_CONFIG);
+  } catch (error: any) {
+    console.error("Failed to delete Webhook:", error);
+    redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}error=delete_webhook_failed&message=${encodeURIComponent(error?.message || "")}`);
+  }
+
+  revalidatePath(returnTo);
+  redirect(returnTo);
+}
+
+export async function getWebhooksAction(projectId: string) {
+  const user = await requireCurrentUser();
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "viewer");
+    const webhooks = await vercel.webhooks.getWebhooks({}, VERCEL_RETRY_CONFIG);
+    return { success: true, webhooks };
+  } catch (error: any) {
+    console.error("Failed to fetch Webhooks:", error);
+    return { success: false, error: error?.message || "Failed to fetch Webhooks" };
+  }
+}
+
+// --- Phase 5: Security / WAF Actions ---
+export async function getFirewallConfigAction(projectId: string) {
+  const user = await requireCurrentUser();
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "viewer");
+    const config = await vercel.security.getFirewallConfig({ projectId, configVersion: "active" }, VERCEL_RETRY_CONFIG);
+    return { success: true, config };
+  } catch (error: any) {
+    console.error("Failed to fetch Firewall Config:", error);
+    return { success: false, error: error?.message || "Failed to fetch Firewall Config" };
+  }
+}
+
+export async function updateFirewallConfigAction(formData: FormData) {
+  const user = await requireCurrentUser();
+  const projectId = readFormValue(formData, "projectId");
+  const firewallEnabledStr = readFormValue(formData, "firewallEnabled");
+  const returnTo = readFormValue(formData, "returnTo") || "/projects";
+
+  if (!projectId || !firewallEnabledStr) {
+    redirect(returnTo);
+  }
+
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "admin");
+    await vercel.security.putFirewallConfig({
+      projectId,
+      requestBody: {
+        firewallEnabled: firewallEnabledStr === "true"
+      }
+    }, VERCEL_RETRY_CONFIG);
+  } catch (error: any) {
+    console.error("Failed to update Firewall Config:", error);
+    redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}error=update_firewall_failed&message=${encodeURIComponent(error?.message || "")}`);
+  }
+
+  revalidatePath(returnTo);
+  redirect(returnTo);
+}
+
+export async function addBypassIpAction(formData: FormData) {
+  const user = await requireCurrentUser();
+  const projectId = readFormValue(formData, "projectId");
+  const ip = readFormValue(formData, "ip");
+  const returnTo = readFormValue(formData, "returnTo") || "/projects";
+
+  if (!projectId || !ip) {
+    redirect(returnTo);
+  }
+
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "admin");
+    await vercel.security.addBypassIp({
+      projectId,
+      requestBody: {
+        domain: ip
+      }
+    }, VERCEL_RETRY_CONFIG);
+  } catch (error: any) {
+    console.error("Failed to add Bypass IP:", error);
+    redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}error=add_bypass_failed&message=${encodeURIComponent(error?.message || "")}`);
+  }
+
+  revalidatePath(returnTo);
+  redirect(returnTo);
+}
+
+// --- Additional Actions for the First 10 SDK Modules ---
+
+// 1. accessgroups (Remaining Actions)
+export async function listAccessGroupsAction(projectId: string) {
+  const user = await requireCurrentUser();
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "viewer");
+    const res = await vercel.accessGroups.listAccessGroups({}, VERCEL_RETRY_CONFIG);
+    return { success: true, accessGroups: res };
+  } catch (error: any) {
+    console.error("Failed to list access groups:", error);
+    return { success: false, error: error?.message || "Failed to list access groups" };
+  }
+}
+
+export async function updateAccessGroupAction(formData: FormData) {
+  const user = await requireCurrentUser();
+  const projectId = readFormValue(formData, "projectId");
+  const idOrName = readFormValue(formData, "idOrName");
+  const name = readFormValue(formData, "name");
+  const returnTo = readFormValue(formData, "returnTo") || "/projects";
+
+  if (!projectId || !idOrName || !name) {
+    redirect(returnTo);
+  }
+
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "editor");
+    await vercel.accessGroups.updateAccessGroup({
+      idOrName,
+      requestBody: { name }
+    }, VERCEL_RETRY_CONFIG);
+  } catch (error: any) {
+    console.error("Failed to update access group:", error);
+    redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}error=update_failed&message=${encodeURIComponent(error?.message || "")}`);
+  }
+
+  revalidatePath(returnTo);
+  redirect(returnTo);
+}
+
+export async function listAccessGroupMembersAction(projectId: string, idOrName: string) {
+  const user = await requireCurrentUser();
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "viewer");
+    const res = await vercel.accessGroups.listAccessGroupMembers({ idOrName }, VERCEL_RETRY_CONFIG);
+    return { success: true, members: res.members };
+  } catch (error: any) {
+    console.error("Failed to list access group members:", error);
+    return { success: false, error: error?.message || "Failed to list access group members" };
+  }
+}
+
+export async function listAccessGroupProjectsAction(projectId: string, idOrName: string) {
+  const user = await requireCurrentUser();
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "viewer");
+    const res = await vercel.accessGroups.listAccessGroupProjects({ idOrName }, VERCEL_RETRY_CONFIG);
+    return { success: true, projects: res.projects };
+  } catch (error: any) {
+    console.error("Failed to list access group projects:", error);
+    return { success: false, error: error?.message || "Failed to list access group projects" };
+  }
+}
+
+export async function createAccessGroupProjectAction(formData: FormData) {
+  const user = await requireCurrentUser();
+  const projectId = readFormValue(formData, "projectId");
+  const idOrName = readFormValue(formData, "idOrName");
+  const accessGroupId = readFormValue(formData, "accessGroupId");
+  const role = readFormValue(formData, "role") || "DEVELOPER";
+  const returnTo = readFormValue(formData, "returnTo") || "/projects";
+
+  if (!projectId || !idOrName || !accessGroupId) {
+    redirect(returnTo);
+  }
+
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "editor");
+    await vercel.accessGroups.createAccessGroupProject({
+      accessGroupIdOrName: accessGroupId,
+      requestBody: {
+        projectId: idOrName,
+        role: role as any
+      }
+    }, VERCEL_RETRY_CONFIG);
+  } catch (error: any) {
+    console.error("Failed to add project to access group:", error);
+    redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}error=add_project_failed&message=${encodeURIComponent(error?.message || "")}`);
+  }
+
+  revalidatePath(returnTo);
+  redirect(returnTo);
+}
+
+export async function deleteAccessGroupProjectAction(formData: FormData) {
+  const user = await requireCurrentUser();
+  const projectId = readFormValue(formData, "projectId");
+  const accessGroupId = readFormValue(formData, "accessGroupId");
+  const projectToRemoveId = readFormValue(formData, "projectToRemoveId");
+  const returnTo = readFormValue(formData, "returnTo") || "/projects";
+
+  if (!projectId || !accessGroupId || !projectToRemoveId) {
+    redirect(returnTo);
+  }
+
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "editor");
+    await vercel.accessGroups.deleteAccessGroupProject({
+      accessGroupIdOrName: accessGroupId,
+      projectId: projectToRemoveId
+    }, VERCEL_RETRY_CONFIG);
+  } catch (error: any) {
+    console.error("Failed to remove project from access group:", error);
+    redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}error=remove_project_failed&message=${encodeURIComponent(error?.message || "")}`);
+  }
+
+  revalidatePath(returnTo);
+  redirect(returnTo);
+}
+
+// 2. aliases (Remaining Actions)
+export async function listAliasesAction(projectId: string) {
+  const user = await requireCurrentUser();
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "viewer");
+    const res = await vercel.aliases.listAliases({}, VERCEL_RETRY_CONFIG);
+    return { success: true, aliases: res };
+  } catch (error: any) {
+    console.error("Failed to list aliases:", error);
+    return { success: false, error: error?.message || "Failed to list aliases" };
+  }
+}
+
+// 4. artifacts (All Actions)
+export async function artifactExistsAction(projectId: string, hash: string) {
+  const user = await requireCurrentUser();
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "viewer");
+    await vercel.artifacts.artifactExists({ hash }, VERCEL_RETRY_CONFIG);
+    return { success: true, exists: true };
+  } catch (error: any) {
+    if (error?.status === 404) {
+      return { success: true, exists: false };
+    }
+    return { success: false, error: error?.message || "Failed to check artifact existence" };
+  }
+}
+
+export async function downloadArtifactAction(projectId: string, hash: string) {
+  const user = await requireCurrentUser();
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "viewer");
+    const stream = await vercel.artifacts.downloadArtifact({ hash }, VERCEL_RETRY_CONFIG);
+    return { success: true, stream };
+  } catch (error: any) {
+    console.error("Failed to download artifact:", error);
+    return { success: false, error: error?.message || "Failed to download artifact" };
+  }
+}
+
+export async function getArtifactStatusAction(projectId: string) {
+  const user = await requireCurrentUser();
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "viewer");
+    const status = await vercel.artifacts.status({}, VERCEL_RETRY_CONFIG);
+    return { success: true, status };
+  } catch (error: any) {
+    console.error("Failed to fetch artifact status:", error);
+    return { success: false, error: error?.message || "Failed to fetch artifact status" };
+  }
+}
+
+// 5. authentication (Remaining Actions)
+export async function getAuthTokensAction(projectId: string) {
+  const user = await requireCurrentUser();
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "viewer");
+    const res = await vercel.authentication.listAuthTokens(VERCEL_RETRY_CONFIG);
+    return { success: true, tokens: res };
+  } catch (error: any) {
+    console.error("Failed to list Auth Tokens:", error);
+    return { success: false, error: error?.message || "Failed to list Auth Tokens" };
+  }
+}
+
+// 7. bulkredirects (Remaining Actions)
+export async function getRedirectsAction(projectId: string) {
+  const user = await requireCurrentUser();
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "viewer");
+    const redirects = await vercel.bulkRedirects.getRedirects({ projectId }, VERCEL_RETRY_CONFIG);
+    return { success: true, redirects };
+  } catch (error: any) {
+    console.error("Failed to fetch redirects:", error);
+    return { success: false, error: error?.message || "Failed to fetch redirects" };
+  }
+}
+
+export async function deleteRedirectsAction(formData: FormData) {
+  const user = await requireCurrentUser();
+  const projectId = readFormValue(formData, "projectId");
+  const returnTo = readFormValue(formData, "returnTo") || "/projects";
+
+  if (!projectId) {
+    redirect(returnTo);
+  }
+
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "editor");
+    await vercel.bulkRedirects.deleteRedirects({ projectId }, VERCEL_RETRY_CONFIG);
+  } catch (error: any) {
+    console.error("Failed to delete redirects:", error);
+    redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}error=delete_redirects_failed&message=${encodeURIComponent(error?.message || "")}`);
+  }
+
+  revalidatePath(returnTo);
+  redirect(returnTo);
+}
+
+export async function getVersionsAction(projectId: string) {
+  const user = await requireCurrentUser();
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "viewer");
+    const versions = await vercel.bulkRedirects.getVersions({ projectId }, VERCEL_RETRY_CONFIG);
+    return { success: true, versions };
+  } catch (error: any) {
+    console.error("Failed to fetch redirect versions:", error);
+    return { success: false, error: error?.message || "Failed to fetch redirect versions" };
+  }
+}
+
+// 8. certs (Remaining Actions)
+export async function getCertByIdAction(projectId: string, certId: string) {
+  const user = await requireCurrentUser();
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "viewer");
+    const cert = await vercel.certs.getCertById({ id: certId }, VERCEL_RETRY_CONFIG);
+    return { success: true, cert };
+  } catch (error: any) {
+    console.error("Failed to fetch certificate:", error);
+    return { success: false, error: error?.message || "Failed to fetch certificate" };
+  }
+}
+
+// 9. checks / checksv2 (All Actions)
+export async function getCheckAction(projectId: string, deploymentId: string, checkId: string) {
+  const user = await requireCurrentUser();
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "viewer");
+    const check = await vercel.checks.getCheck({ deploymentId, checkId }, VERCEL_RETRY_CONFIG);
+    return { success: true, check };
+  } catch (error: any) {
+    console.error("Failed to fetch deployment check:", error);
+    return { success: false, error: error?.message || "Failed to fetch deployment check" };
+  }
+}
+
+// 10. deployments (Remaining Actions)
+export async function getDeploymentAction(projectId: string, deploymentId: string) {
+  const user = await requireCurrentUser();
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "viewer");
+    const deployment = await vercel.deployments.getDeployment({ idOrUrl: deploymentId }, VERCEL_RETRY_CONFIG);
+    return { success: true, deployment };
+  } catch (error: any) {
+    console.error("Failed to fetch deployment:", error);
+    return { success: false, error: error?.message || "Failed to fetch deployment" };
+  }
+}
+
+export async function listDeploymentsAction(projectId: string) {
+  const user = await requireCurrentUser();
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "viewer");
+    const res = await vercel.deployments.getDeployments({ projectId }, VERCEL_RETRY_CONFIG);
+    return { success: true, deployments: res };
+  } catch (error: any) {
+    console.error("Failed to list deployments:", error);
+    return { success: false, error: error?.message || "Failed to list deployments" };
+  }
+}
+
+export async function createDeploymentAction(formData: FormData) {
+  const user = await requireCurrentUser();
+  const projectId = readFormValue(formData, "projectId");
+  const name = readFormValue(formData, "name");
+  const target = readFormValue(formData, "target") || "preview";
+  const deploymentId = readFormValue(formData, "deploymentId");
+  const returnTo = readFormValue(formData, "returnTo") || `/projects/${projectId}?tab=deployments`;
+
+  if (!projectId || !name) {
+    redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}error=missing_params`);
+  }
+
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "editor");
+    await vercel.deployments.createDeployment({
+      requestBody: {
+        name,
+        target,
+        ...(deploymentId ? { deploymentId } : {}),
+      }
+    }, VERCEL_RETRY_CONFIG);
+
+    redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}success=deployment_created`);
+  } catch (error: any) {
+    console.error("Failed to create deployment:", error);
+    redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}error=create_deployment_failed&message=${encodeURIComponent(error?.message || "")}`);
+  }
+}
+
+export async function listDeploymentCheckRunsAction(projectId: string, deploymentId: string) {
+  const user = await requireCurrentUser();
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "viewer");
+    const res = await vercel.checksV2.listDeploymentCheckRuns({ deploymentId }, VERCEL_RETRY_CONFIG);
+    return { success: true, checkRuns: res.runs || [] };
+  } catch (error: any) {
+    console.error("Failed to list deployment check runs:", error);
+    return { success: false, error: error?.message || "Failed to list deployment check runs" };
+  }
+}
 
 
+// --- Phase 6: DNS Records Actions ---
+export async function getDnsRecordsAction(projectId: string, domain: string) {
+  const user = await requireCurrentUser();
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "viewer");
+    const res = await vercel.dns.getRecords({ domain }, VERCEL_RETRY_CONFIG);
+    if (typeof res === "string") {
+      return { success: true, records: [] };
+    }
+    return { success: true, records: res.records || [] };
+  } catch (error: any) {
+    console.error("Failed to fetch DNS records:", error);
+    return { success: false, error: error?.message || "Failed to fetch DNS records" };
+  }
+}
 
+export async function createDnsRecordAction(formData: FormData) {
+  const user = await requireCurrentUser();
+  const projectId = readFormValue(formData, "projectId");
+  const domain = readFormValue(formData, "domain");
+  const type = readFormValue(formData, "type") || "A";
+  const name = readFormValue(formData, "name") || "";
+  const value = readFormValue(formData, "value");
+  const ttlStr = readFormValue(formData, "ttl");
+  const comment = readFormValue(formData, "comment") || "";
+  const returnTo = readFormValue(formData, "returnTo") || "/projects";
 
+  if (!projectId || !domain || !value) {
+    redirect(returnTo);
+  }
 
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "editor");
+    await vercel.dns.createRecord({
+      domain,
+      requestBody: {
+        type: type as any,
+        name,
+        value,
+        ttl: ttlStr ? parseInt(ttlStr, 10) : undefined,
+        comment
+      }
+    }, VERCEL_RETRY_CONFIG);
+  } catch (error: any) {
+    console.error("Failed to create DNS record:", error);
+    redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}error=create_dns_failed&message=${encodeURIComponent(error?.message || "")}`);
+  }
+
+  revalidatePath(returnTo);
+  redirect(returnTo);
+}
+
+export async function deleteDnsRecordAction(formData: FormData) {
+  const user = await requireCurrentUser();
+  const projectId = readFormValue(formData, "projectId");
+  const domain = readFormValue(formData, "domain");
+  const recordId = readFormValue(formData, "recordId");
+  const returnTo = readFormValue(formData, "returnTo") || "/projects";
+
+  if (!projectId || !domain || !recordId) {
+    redirect(returnTo);
+  }
+
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "editor");
+    await vercel.dns.removeRecord({ domain, recordId }, VERCEL_RETRY_CONFIG);
+  } catch (error: any) {
+    console.error("Failed to delete DNS record:", error);
+    redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}error=delete_dns_failed&message=${encodeURIComponent(error?.message || "")}`);
+  }
+
+  revalidatePath(returnTo);
+  redirect(returnTo);
+}
+
+// --- Phase 7: Domains Registrar Actions ---
+export async function getDomainAvailabilityAction(projectId: string, domain: string) {
+  const user = await requireCurrentUser();
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "viewer");
+    const res = await vercel.domainsRegistrar.getDomainAvailability({ domain }, VERCEL_RETRY_CONFIG);
+    return { success: true, available: res.available };
+  } catch (error: any) {
+    console.error("Failed to check domain availability:", error);
+    return { success: false, error: error?.message || "Failed to check domain availability" };
+  }
+}
+
+export async function getDomainPriceAction(projectId: string, domain: string) {
+  const user = await requireCurrentUser();
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "viewer");
+    const res = await vercel.domainsRegistrar.getDomainPrice({ domain }, VERCEL_RETRY_CONFIG);
+    return { success: true, priceData: res };
+  } catch (error: any) {
+    console.error("Failed to fetch domain price:", error);
+    return { success: false, error: error?.message || "Failed to fetch domain price" };
+  }
+}
+
+export async function buyDomainAction(formData: FormData) {
+  const user = await requireCurrentUser();
+  const projectId = readFormValue(formData, "projectId");
+  const name = readFormValue(formData, "name");
+  const priceStr = readFormValue(formData, "expectedPrice");
+  const returnTo = readFormValue(formData, "returnTo") || "/projects";
+
+  if (!projectId || !name || !priceStr) {
+    redirect(returnTo);
+  }
+
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "editor");
+    await vercel.domainsRegistrar.buySingleDomain({
+      domain: name,
+      requestBody: {
+        autoRenew: true,
+        years: 1,
+        expectedPrice: parseFloat(priceStr),
+        contactInformation: {
+          firstName: "Admin",
+          lastName: "Lepos",
+          email: user.email || "admin@lepos.io",
+          phone: "+1.5555555555",
+          address1: "123 Main St",
+          city: "San Francisco",
+          state: "CA",
+          zip: "94105",
+          country: "US"
+        }
+      }
+    }, VERCEL_RETRY_CONFIG);
+  } catch (error: any) {
+    console.error("Failed to register domain:", error);
+    redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}error=buy_domain_failed&message=${encodeURIComponent(error?.message || "")}`);
+  }
+
+  revalidatePath(returnTo);
+  redirect(returnTo);
+}
+
+// --- Phase 8: Edge Cache Invalidation ---
+export async function purgeEdgeCacheAction(formData: FormData) {
+  const user = await requireCurrentUser();
+  const projectId = readFormValue(formData, "projectId");
+  const projectIdOrName = readFormValue(formData, "projectIdOrName");
+  const returnTo = readFormValue(formData, "returnTo") || "/projects";
+
+  if (!projectId || !projectIdOrName) {
+    redirect(returnTo);
+  }
+
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "editor");
+    await vercel.edgeCache.invalidateByTags({ projectIdOrName }, VERCEL_RETRY_CONFIG);
+  } catch (error: any) {
+    console.error("Failed to purge Edge Cache:", error);
+    redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}error=purge_cache_failed&message=${encodeURIComponent(error?.message || "")}`);
+  }
+
+  revalidatePath(returnTo);
+  redirect(returnTo);
+}
+
+// --- Phase 9: Runtime Logs & Integrations ---
+export async function getRuntimeLogsAction(projectId: string, deploymentId: string) {
+  const user = await requireCurrentUser();
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "viewer");
+    const res = await vercel.logs.getRuntimeLogs({ projectId, deploymentId }, VERCEL_RETRY_CONFIG);
+    return { success: true, logs: Array.isArray(res) ? res : [res] };
+  } catch (error: any) {
+    console.error("Failed to fetch runtime logs:", error);
+    return { success: false, error: error?.message || "Failed to fetch runtime logs" };
+  }
+}
+
+export async function getIntegrationsAction(projectId: string) {
+  const user = await requireCurrentUser();
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "viewer");
+    const res = await vercel.integrations.getConfigurations({ view: "account" }, VERCEL_RETRY_CONFIG);
+    return { success: true, configurations: res };
+  } catch (error: any) {
+    console.error("Failed to fetch integrations:", error);
+    return { success: false, error: error?.message || "Failed to fetch integrations" };
+  }
+}
+
+// --- Phase 10: Auth User & Project Members Actions ---
+export async function getAuthUserAction(projectId: string) {
+  const user = await requireCurrentUser();
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "viewer");
+    const res = await vercel.user.getAuthUser(VERCEL_RETRY_CONFIG);
+    return { success: true, user: res?.user };
+  } catch (error: any) {
+    console.error("Failed to get auth user:", error);
+    return { success: false, error: error?.message || "Failed to get auth user" };
+  }
+}
+
+export async function getProjectMembersAction(projectId: string) {
+  const user = await requireCurrentUser();
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "viewer");
+    const res = await vercel.projectMembers.getProjectMembers({ idOrName: projectId }, VERCEL_RETRY_CONFIG);
+    const members = (res && 'members' in res) ? res.members : [];
+    return { success: true, members };
+  } catch (error: any) {
+    console.error("Failed to fetch project members:", error);
+    return { success: false, error: error?.message || "Failed to fetch project members" };
+  }
+}
+
+export async function addProjectMemberAction(formData: FormData) {
+  const user = await requireCurrentUser();
+  const projectId = readFormValue(formData, "projectId");
+  const email = readFormValue(formData, "email");
+  const role = readFormValue(formData, "role") || "MEMBER";
+  const returnTo = readFormValue(formData, "returnTo") || "/projects";
+
+  if (!projectId || !email) {
+    redirect(returnTo);
+  }
+
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "admin");
+    await vercel.projectMembers.addProjectMember({
+      idOrName: projectId,
+      requestBody: {
+        email,
+        role: role as any,
+      }
+    }, VERCEL_RETRY_CONFIG);
+  } catch (error: any) {
+    console.error("Failed to add project member:", error);
+    redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}error=add_member_failed&message=${encodeURIComponent(error?.message || "")}`);
+  }
+
+  revalidatePath(returnTo);
+  redirect(returnTo);
+}
+
+export async function removeProjectMemberAction(formData: FormData) {
+  const user = await requireCurrentUser();
+  const projectId = readFormValue(formData, "projectId");
+  const uid = readFormValue(formData, "uid");
+  const returnTo = readFormValue(formData, "returnTo") || "/projects";
+
+  if (!projectId || !uid) {
+    redirect(returnTo);
+  }
+
+  try {
+    const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "admin");
+    await vercel.projectMembers.removeProjectMember({
+      idOrName: projectId,
+      uid,
+    }, VERCEL_RETRY_CONFIG);
+  } catch (error: any) {
+    console.error("Failed to remove project member:", error);
+    redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}error=remove_member_failed&message=${encodeURIComponent(error?.message || "")}`);
+  }
+
+  revalidatePath(returnTo);
+  redirect(returnTo);
+}

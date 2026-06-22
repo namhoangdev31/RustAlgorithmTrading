@@ -2,6 +2,19 @@ import { Vercel } from "@vercel/sdk";
 import { prisma } from "@/lib/server/prisma";
 import { decryptSecret } from "@/lib/server/secret-crypto";
 
+export const VERCEL_RETRY_CONFIG = {
+  retries: {
+    strategy: "backoff" as const,
+    backoff: {
+      initialInterval: 500,
+      maxInterval: 10000,
+      exponent: 1.5,
+      maxElapsedTime: 30000,
+    },
+    retryConnectionErrors: true,
+  },
+};
+
 export async function getVercelClient(userId: string): Promise<Vercel> {
   const rows = await prisma.$queryRawUnsafe<Array<{ encrypted_value: string }>>(
     "SELECT encrypted_value FROM user_secrets WHERE user_id = $1 AND provider = $2 LIMIT 1",
@@ -238,7 +251,7 @@ export async function syncCentralEdgeConfig(
           await client.edgeConfig.patchEdgeConfigItems({
             edgeConfigId: p.edgeConfigId,
             requestBody: { items }
-          });
+          }, VERCEL_RETRY_CONFIG);
         } else {
           console.log(`[Vercel SDK] Missing edgeConfigId for project ${p.projectId}, skipped.`);
         }
