@@ -4,10 +4,9 @@
 
 ## Files
 
-- `system.json` - Active local config symlink, currently pointing at development.
-- `system.development.json` - Local development profile.
-- `system.staging.json` - Paper-trading staging profile.
-- `system.production.json` - Production baseline profile.
+- `system.json` - Active config profile (defaults to staging/sandbox).
+- `system.staging.json` - Paper-trading staging (online sandbox) profile.
+- `system.production.json` - Production live trading profile.
 - `risk_limits.toml` - Shared risk limits and circuit-breaker settings.
 - `data_download.json` - Default historical data download request.
 
