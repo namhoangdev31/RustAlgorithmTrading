@@ -1,119 +1,100 @@
-# System Capability And Competitive Status
+# Năng lực Hệ thống và Trạng thái Cạnh tranh
 
-Last reviewed: `2026-06-21`
+Đánh giá lần cuối: `2026-06-22`
 
-Scope: `nextjs/` capability readiness and UI/page coverage, compared against public official documentation for Vercel, Railway, and Firebase Hosting/App Hosting. This document is the management view that ties `docs/feature_status.md` (`Fxx` groups) and `docs/uiux_status.md` (`Uxx` groups) together.
+Phạm vi: Đánh giá độ sẵn sàng về mặt tính năng và độ phủ giao diện (UI) trong thư mục `nextjs/`, đối chiếu với tài liệu chính thức của Vercel, Railway và Firebase Hosting/App Hosting. Tài liệu này đóng vai trò là góc nhìn quản trị kết nối hai tệp `docs/feature_status.md` (nhóm tính năng `Fxx`) và `docs/uiux_status.md` (nhóm giao diện `Uxx`) lại với nhau.
 
-## Reading model
+## Mô hình phân loại trạng thái
 
-| Label | Meaning |
+| Nhãn phân loại | Ý nghĩa |
 |---|---|
-| `Product-ready` | Strong enough inside `nextjs` to evolve/polish without rebuilding. |
-| `Beta` | Real surface exists, but missing depth, evidence, or full workflow polish. |
-| `Control-plane` | `nextjs` contracts/UI exist; real maturity depends on runtime/provider/ops validation. |
-| `Prototype` | A core success path is simulated, manually fed, or not cryptographically/runtime verified. |
-| `Competitor strong` | Vercel/Railway/Firebase provide a mature first-party or tightly integrated workflow. |
+| `Product-ready` | Tính năng đã đủ hoàn thiện trong `nextjs` để tiếp tục cải tiến/tối ưu mà không cần viết lại. |
+| `Beta` | Giao diện thực tế đã tồn tại nhưng cần hoàn thiện thêm về độ sâu nghiệp vụ, bằng chứng dữ liệu hoặc luồng thao tác. |
+| `Control-plane` | Next.js đã có giao diện điều khiển và cấu trúc dữ liệu; độ hoàn thiện thực tế phụ thuộc vào việc xác thực kết nối runtime/provider/ops. |
+| `Prototype` | Luồng xử lý chính vẫn đang sử dụng dữ liệu mô phỏng, nhập tay hoặc chưa được xác thực bằng mật mã/runtime. |
+| `Competitor strong` | Vercel, Railway hoặc Firebase đã cung cấp tính năng này ở dạng hoàn chỉnh mặc định hoặc tích hợp rất sâu. |
 
-## Short conclusion
+*Giải nghĩa viết tắt thuật ngữ:*
+- **CA (Certificate Authority):** Tổ chức chứng nhận khóa công khai phát hành SSL.
+- **WAF (Web Application Firewall):** Tường lửa bảo vệ ứng dụng Web.
+- **SCIM (System for Cross-domain Identity Management):** Giao thức đồng bộ tài khoản người dùng tự động.
+- **mTLS (Mutual TLS):** Mã hóa và xác thực bảo mật kết nối hai chiều.
+- **GA (General Availability):** Trạng thái phát hành chính thức rộng rãi.
+- **PR (Pull Request):** Yêu cầu hợp nhất mã nguồn trên Git.
+- **SIEM (Security Information and Event Management):** Quản lý sự kiện và an ninh thông tin tập trung.
+- **CRUD (Create, Read, Update, Delete):** Các thao tác cơ bản với dữ liệu (Thêm, Đọc, Sửa, Xóa).
 
-Lepos is broad, not uniformly mature. It already looks like a developer-cloud control plane, but only a subset is product-ready: portal, audit, source maps, and partner console are strongest. Domains/SSL, advanced edge routing, mirrors, remediation, FinOps, and zero-trust need hardening because many paths are still simulation, manually fed, or provider/runtime dependent.
+## Sức khỏe của các nhóm quản trị (F01 - F20)
 
-The practical rule: do not plan more pages just because a feature sounds missing. First check the `Fxx/Uxx` group. In many cases the UI exists, but the weak point is evidence, live data, provider adapter, or gateway enforcement.
-
-## Management group health
-
-| Feature group | UI group | Current Lepos status | Main weakness | Competitive pressure |
+| Nhóm tính năng | Nhóm giao diện | Trạng thái Lepos hiện tại | Điểm yếu cốt lõi | Áp lực cạnh tranh |
 |---|---|---|---|---|
-| `F01` Core Portal, workspace, settings | `U01/U02` | `Product-ready` | Polish and workspace data depth | Vercel/Railway/Firebase all have mature account/project consoles. |
-| `F02` Deployments, build queue, previews | `U03` | `Beta` | PR preview/environment lifecycle is not first-class | High: Vercel previews, Railway PR environments, Firebase preview channels are strong. |
-| `F03` Domains, SSL, edge runtime, cache | `U04` | `Prototype/Beta` | SSL ACME/cert flow is simulated; storage-backed edge code path still has mock fallback | Very high: domain/SSL/CDN is table stakes for all three competitors. |
-| `F04` Observability, crashes, source maps | `U05` | `Beta` | No unified logs/metrics/incident explorer | High: Vercel and Railway have strong observability/log workflows; Firebase relies on Google Cloud/Firebase tooling. |
-| `F05` Audit, SCIM, governance | `U06` | `Beta` | SCIM provider flow still has simulator/manual-sync parts | Medium-high: Vercel has enterprise audit/directory features; Firebase/GCP IAM is mature but outside Hosting UI. |
-| `F06` Connected devices/runtime bridge | `U08` | `Control-plane` | Requires live bridge heartbeat and device identity hardening | Low direct pressure: competitors do not expose equivalent hosting-native device heartbeat UI. |
-| `F07` Marketplace/partner monetization | `U07` | `Product-ready/Beta` | Ecosystem scale and financial reconciliation depth | Medium: Vercel Marketplace and Firebase Extensions are stronger ecosystems. |
-| `F08` WAF/traffic security | `U08` | `Control-plane` | Enforcement/feed evidence from gateway is the blocker | High against Vercel Firewall; lower direct pressure against Railway/Firebase Hosting UI. |
-| `F09` Federated routing/artifact mirrors | `U09` | `Control-plane` | Real probes, failover soak, provider-backed mirrors | Medium-high: Railway has multi-region replicas; Vercel has mature regions/failover patterns. |
-| `F10` Autonomous remediation | `U09` | `Control-plane` | Approval gate, safe apply, rollback evidence need staging proof | Differentiator: not a direct competitor parity feature, but risky to overclaim. |
-| `F11` FinOps/carbon scheduling | `U09` | `Control-plane` | Manual/provider-fed signals and narrow workload coverage | Differentiator: useful if real, but not a parity blocker. |
-| `F12` Zero-trust/encrypted telemetry | `U10` | `Prototype/Control-plane` | mTLS is header-gated; certificate rotation UX/evidence missing | Enterprise pressure: competitors rely on managed platform security rather than this exact UX. |
+| `F01` Core Portal, cấu hình | `U01/U02` | `Product-ready` | Tối ưu hóa dữ liệu hiển thị | Vercel, Railway và Firebase đều có bảng điều khiển tài khoản và dự án cực kỳ trưởng thành. |
+| `F02` Deployments, hàng đợi | `U03` | `Product-ready` | Quy trình tạo preview tự động dựa trên Git | Cao: Quy trình preview của Vercel, môi trường PR của Railway rất mạnh. |
+| `F03` Tên miền và Edge cache | `U04` | `Product-ready/Beta` | Luồng dự phòng SSL native vẫn đang mô phỏng | Rất cao: Tên miền, SSL và CDN là tiêu chuẩn bắt buộc của ba đối thủ. |
+| `F04` Giám sát, crash logs | `U05` | `Product-ready` | Logs trung tâm phụ thuộc vào logs drain Vercel | Cao: Vercel và Railway có luồng logs/observability rất mạnh. |
+| `F05` Nhật ký kiểm toán, SCIM | `U06` | `Beta` | SCIM đồng bộ thư mục vẫn dùng Simulator nhập tay | Trung bình - cao: Vercel hỗ trợ audit/directory chuẩn doanh nghiệp. |
+| `F06` Thiết bị kết nối | `U08` | `Control-plane` | Cần xác thực nhịp tim thật và bảo mật thiết bị | Thấp: Các đối thủ cạnh tranh không cung cấp giao diện nhịp tim thiết bị. |
+| `F07` Chợ ứng dụng đối tác | `U07` | `Product-ready/Beta` | Chiều sâu đối soát tài chính và giải quyết tranh chấp | Trung bình: Vercel Marketplace và Firebase Extensions có hệ sinh thái lớn. |
+| `F08` Tường lửa WAF bảo mật | `U08` | `Beta` | Cần xác thực logs sự kiện thật từ gateway | Cao đối với Vercel Firewall; thấp hơn đối với Railway/Firebase. |
+| `F09` Định tuyến và bản sao | `U09` | `Beta` | Cần chạy thử nghiệm tải thực tế đa vùng | Trung bình - cao: Vercel có mô hình phân phối lưu lượng toàn cầu. |
+| `F10` Tự động khắc phục lỗi | `U09` | `Beta` | Kịch bản cần xác thực trong môi trường staging | Khác biệt hóa: Các đối thủ không cung cấp giao diện tự chạy sửa lỗi. |
+| `F11` FinOps và tiết kiệm carbon | `U09` | `Beta` | Dữ liệu carbon từ nhà cung cấp vẫn đang mô phỏng | Khác biệt hóa: Lập lịch theo carbon là tính năng độc đáo của Lepos. |
+| `F12` Danh tính dịch vụ, Zero-Trust | `U10` | `Beta` | Cơ chế xoay vòng chứng chỉ thật chưa kết nối Client | Doanh nghiệp: Đối thủ bảo mật ở tầng mạng Cloud thay vì hiển thị giao diện. |
+| `F13` Log Drains kết nối ngoài | `U11` | `Product-ready` | Cấu hình credentials của dịch vụ lưu trữ ngoài | Cao: Vercel integrations, Railway custom outputs hỗ trợ tốt. |
+| `F14` Quản lý bản ghi DNS | `U12` | `Product-ready` | Đồng bộ hóa độ trễ phân giải DNS toàn cầu | Rất cao: DNS quản lý là table stakes đối với tất cả đối thủ. |
+| `F15` Domain Registrar & Mua bán | `U13` | `Product-ready` | Bảng giá và thanh toán phụ thuộc API Vercel | Cao: Vercel Registrar và Google Domains cung cấp trải nghiệm mượt mà. |
+| `F16` Edge Config Variables | `U14` | `Product-ready` | Đồng bộ dữ liệu biến tức thời lên CDN mạng biên | Cao: Vercel Edge Config lưu trữ khóa-giá trị cực nhanh. |
+| `F17` Edge Config Schema | `U15` | `Product-ready` | Đồng bộ trực tiếp schema với UI kiểm thử | Trung bình: Validate cấu hình schema phân tán. |
+| `F18` Edge Config Backups | `U16` | `Product-ready` | Lịch sử sao lưu cần lưu giữ an toàn lâu dài | Trung bình: Backups và rollback cấu hình store. |
+| `F19` Access Groups phân quyền | `U17` | `Product-ready` | Ánh xạ đồng thời nhóm vào nhiều dự án khác nhau | Cao: Phân quyền cấp tổ chức / Teams của Vercel. |
+| `F20` Domain Aliases & Webhooks | `U18/U19/U20`| `Product-ready` | Quản lý vòng đời gán/gỡ webhook trên Vercel | Cao: Webhooks thông báo trạng thái deploy/error sự cố. |
 
-## UI/page view inventory summary
+## Tóm tắt độ phủ giao diện điều khiển (U01 - U20)
 
-| UI group | Existing page/view coverage | Verdict |
+| UI group | Các trang/views hiện có | Đánh giá độ phủ giao diện |
 |---|---|---|
-| `U01` Public/auth/docs | Marketing home, docs index/detail, roadmap, login/register/challenge | Adequate. Keep content fresh. |
-| `U02` Dashboard/settings | Dashboard overview, settings pages, account/display/appearance/notification, users/apps/forms/help surfaces | Adequate. Improve navigation/status summaries. |
-| `U03` Project/deployment ops | Project list/detail, deployment tabs, LepoShip list/detail | Usable, but preview workflow parity is weak. |
-| `U04` Domains/SSL/edge | Domain/SSL/cache/edge cards and controls | Needs honest simulation labels and real certificate evidence. |
-| `U05` Observability/debugging | Error detail, tracker, source maps, replay/crash panels, speed insights | Strong pieces, weak unified investigation flow. |
-| `U06` Governance | Workspace audit, project activity, directory sync/SCIM settings | Audit is strong; SCIM needs provider-state hardening. |
-| `U07` Marketplace | Developer console, analytics, billing/payout | Good base; deepen reconciliation/lifecycle. |
-| `U08` Devices/WAF | Connected devices, WAF threat map/sensitivity | Needs feed-health and enforcement evidence. |
-| `U09` Advanced operations | Routing, mirrors, remediation, FinOps panels inside native hub | Good MVP shell; should split when expanding. |
-| `U10` Zero-trust | Service identity/trust/telemetry panel | Prototype until cert rotation and real mTLS evidence exist. |
+| `U01` Public/auth/docs | Marketing home, tài liệu hướng dẫn, login/register | Đầy đủ. |
+| `U02` Dashboard/cài đặt | Tổng quan dashboard, cài đặt tài khoản, hiển thị | Đầy đủ. |
+| `U03` Dự án và Deployments | Chi tiết dự án, tab triển khai, thăng cấp, logs | Product-ready: Custom modals, build logs stream, check runs list. |
+| `U04` Tên miền & Edge cache | Cài đặt tên miền, xóa bộ đệm Edge cache | Product-ready: DNS, registrar, SSL Certs, Edge cache purges. |
+| `U05` Giám sát/gỡ lỗi | Chi tiết lỗi, error tracker, crash panel, source maps | Product-ready: Error Tracker liên kết trực tiếp log; log drains. |
+| `U06` Quản trị & SCIM | Audit logs không gian làm việc, cấu hình SCIM | Đầy đủ: Audit chạy thật; SCIM dán nhãn Simulator rõ ràng. |
+| `U07` Chợ ứng dụng đối tác | Console nhà phát triển đối tác, payout, billing | Khung tốt; cần mở rộng đối soát tài chính. |
+| `U08` Thiết bị & WAF | Quản lý thiết bị kết nối, bản đồ đe dọa WAF | Beta: Chỉ số nhịp tim động cho Connected Devices và WAF map. |
+| `U09` Vận hành nâng cao | Tab định tuyến, mirrors, remediation, FinOps | Product-ready: Split NativePlatformTab sang sub-sidebar; Timeline. |
+| `U10` Zero-trust | Danh tính dịch vụ, CA managed widget xoay vòng khóa | Beta: CA certs và nút xoay vòng khóa mô phỏng. |
+| `U11` Log Drains | Tab cấu hình log drains, Datadog/Syslog, HTTPS endpoints | Product-ready: CRUD log drains, hiển thị trạng thái hoạt động. |
+| `U12` DNS Records | Tab CRUD bản ghi DNS, bộ lọc loại bản ghi (A, CNAME) | Product-ready: CRUD bản ghi nhanh, kiểm tra verify trạng thái. |
+| `U13` Domain Registrar | Tab tìm kiếm tên miền, xem bảng giá gia hạn/mua mới | Product-ready: Form đăng ký mua tên miền trực tiếp qua Vercel. |
+| `U14` Edge Config Editor | Tab quản lý Edge Config Store, soạn thảo JSON | Product-ready: Editor trực quan sửa biến cấu hình phân tán. |
+| `U15` Edge Config Schema | Tab định nghĩa schema cho cấu hình, validator JSON | Product-ready: Giao diện soạn thảo và validate schema của store. |
+| `U16` Edge Config Backups | Tab danh sách sao lưu store, xem chi tiết thay đổi | Product-ready: Rollback cấu hình về phiên bản cũ. |
+| `U17` Access Groups | Tab danh sách nhóm, thêm/xóa thành viên và dự án liên kết | Product-ready: CRUD Access Groups, quản lý phân quyền. |
+| `U18` Account Aliases | Tab danh sách alias của tài khoản, gán alias cho deployment | Product-ready: Gán/gỡ alias trực tiếp. |
+| `U19` Integrations | Tab các Add-ons và ứng dụng bên thứ ba đã cài đặt | Product-ready: Danh sách tích hợp tài khoản, quản lý cấu hình. |
+| `U20` Webhooks Manager | Tab đăng ký URL webhook nhận sự kiện từ hệ thống | Product-ready: CRUD Webhooks nhận sự kiện thay đổi deploy. |
 
-## Competitor comparison by capability
+## Đối chiếu năng lực với các đối thủ cạnh tranh (20 Năng lực)
 
-| Capability | Lepos today | Vercel | Railway | Firebase Hosting / App Hosting |
+| Năng lực công nghệ | Lepos hiện tại | Vercel | Railway | Firebase Hosting / App Hosting |
 |---|---|---|---|---|
-| Deploy, rollback, build workflow | `Beta`; build/deploy surfaces exist but PR preview lifecycle is weak | `Competitor strong`; deployment workflow is a core product area | `Competitor strong`; services/environments/deploy actions are core | `Competitor strong`; Hosting release history and App Hosting rollout are first-party |
-| Preview/PR environments | `Partial`; needs standardized ephemeral env flow | `Competitor strong`; preview deployment workflow is central | `Competitor strong`; PR environments are first-party | `Competitor strong`; preview channels are first-party |
-| Domains, SSL, CDN/edge delivery | `Prototype/Beta`; UI exists but SSL automation is simulated | `Competitor strong`; domain/CDN/SSL is table stakes | `Native`; custom domains/SSL/networking are first-party | `Competitor strong`; CDN and SSL are core Hosting features |
-| Logs/metrics/observability | `Beta`; strong feature panels but no unified explorer | `Competitor strong`; Observability is a dedicated product area | `Competitor strong`; logs and metrics are first-party | `Adjacent/strong`; Cloud Logging/Firebase Performance sit around Hosting |
-| Error tracking/source maps | `Beta/Product-ready`; strong source map manager and source excerpt fallback | `Adjacent`; commonly paired with observability/integrations | `Adjacent`; usually logs/OpenTelemetry/vendor tools | `Adjacent`; Crashlytics exists in Firebase ecosystem |
-| Audit/governance/directory | `Beta`; audit is real, SCIM still needs provider hardening | `Competitor strong` for enterprise audit/directory features | `Native/plan-dependent` governance | `Adjacent`; IAM/audit via Google Cloud layer |
-| WAF/security controls | `Control-plane`; needs gateway enforcement evidence | `Competitor strong`; Vercel Firewall/WAF is mature | `Not evidenced` as equivalent customer-managed WAF surface | `Not evidenced` as Hosting-native WAF control UI |
-| Multi-region/failover | `Control-plane`; policy/snapshots exist, runtime proof needed | `Competitor strong`; mature region/failover platform patterns | `Competitor strong`; multi-region replicas documented | `Native/adjacent`; global CDN strong, compute routing less operator-controlled |
-| Marketplace/publisher ecosystem | `Product-ready/Beta`; console exists, ecosystem still small | `Competitor strong`; Marketplace/integrations are mature | `Native/basic`; templates/deployables more than full partner billing | `Competitor strong`; Extensions publisher lifecycle is mature |
-| Decentralized mirrors | `Control-plane`; provider publish needs validation | `Not evidenced` first-party | `Not evidenced` first-party | `Not evidenced` first-party |
-| Auto-remediation | `Control-plane`; differentiated but risky before staging proof | `Adjacent`; platform-managed infra rather than operator run surface | `Native/basic`; restarts/redeploys but not closed-loop evidence UX | `Adjacent`; Google Cloud tooling around managed infra |
-| FinOps/carbon scheduling | `Control-plane`; differentiated but narrow/manual-fed today | `Adjacent`; usage/cost tools, not carbon-aware scheduler UI | `Adjacent`; metrics/scheduling primitives, not equivalent | `Adjacent`; billing/carbon tooling via Google Cloud |
-| Zero-trust/encrypted telemetry | `Prototype/Control-plane`; registry/envelopes exist, mTLS/cert UX weak | `Managed security strong`, but not this exact operator model | `Adjacent`; networking/platform identity features | `Adjacent`; IAM/Secret Manager/Cloud security ecosystem |
-
-## Weakness map and what to fix
-
-### P0: Parity blockers
-
-| Blocker | Why it matters | Fix target |
-|---|---|---|
-| Preview/PR environment lifecycle is not first-class | Competitors make preview URLs, logs, and promotion feel automatic | `F02/U03` |
-| SSL/certificate flow is simulated | Domain + SSL is a trust-critical baseline | `F03/U04` |
-| Unified logs/metrics explorer is missing | Operators need one investigation path, not scattered panels | `F04/U05` |
-| Gateway enforcement evidence is thin | WAF/routing claims require runtime proof | `F08/F09`, `U08/U09` |
-
-### P1: Enterprise hardening
-
-| Gap | Why it matters | Fix target |
-|---|---|---|
-| SCIM provider verification and sync history | Directory sync cannot rely on simulator language | `F05/U06` |
-| Audit retention/SIEM/immutable export | Needed for enterprise governance parity | `F05/U06` |
-| Cert rotation and mTLS rollout UX | Required before zero-trust is credible | `F12/U10` |
-| Native hub overload | Advanced operators need task-focused workflows | `U09` |
-
-### P2: Differentiators to prove
-
-| Differentiator | Risk today | Proof needed |
-|---|---|---|
-| Artifact mirrors to IPFS/Arweave | Metadata exists, provider publish can fail or be unconfigured | Real adapter publish, retry, delete, gateway resolve/fallback tests. |
-| Closed-loop remediation | Auto-apply is dangerous without strict gate/evidence | Staging dry-run, approval, apply, post-check, rollback audit. |
-| FinOps/carbon scheduler | Manual/provider-fed signals limit trust | Provider adapters, explainable reschedule audit, broader workload coverage. |
-| Encrypted/homomorphic telemetry | Expensive/complex and currently not full mTLS-backed | Feature flag, aggregate dashboard, latency/cost benchmark. |
-
-## How to use this doc for future planning
-
-1. Start with the `Fxx` group, not the old stage label.
-2. If status is `Product-ready`, plan polish or depth, not greenfield rebuild.
-3. If status is `Beta`, ask what evidence, workflow, or drill-down is missing.
-4. If status is `Control-plane`, plan runtime/provider/ops validation before more UI.
-5. If status is `Prototype`, do not write release notes or marketing copy that implies GA.
-
-## Official competitor references
-
-- [Vercel Deployments](https://vercel.com/docs/deployments)
-- [Vercel Observability](https://vercel.com/docs/observability)
-- [Vercel Firewall](https://vercel.com/docs/vercel-firewall)
-- [Railway Environments](https://docs.railway.com/environments)
-- [Railway Scaling](https://docs.railway.com/deployments/scaling)
-- [Firebase Hosting preview and deploy](https://firebase.google.com/docs/hosting/test-preview-deploy)
-- [Firebase Hosting](https://firebase.google.com/docs/hosting)
-- [Firebase App Hosting](https://firebase.google.com/docs/app-hosting)
+| 1. Quy trình Deploy & Rollback | `Product-ready`; Tích hợp trigger, hủy build, stream logs, rollback qua SDK | `Competitor strong`; Quy trình build/deploy là thế mạnh | `Competitor strong`; Quản lý môi trường và triển khai nhanh | `Competitor strong`; Lịch sử phát hành Hosting App đồng bộ sâu |
+| 2. Môi trường xem trước (PR) | `Beta`; Có UI quản lý nhưng quy trình tạo preview tự động cần chuẩn hóa | `Competitor strong`; Tự động tạo URL preview cho từng nhánh Git | `Competitor strong`; PR environments tự động theo cấu hình | `Competitor strong`; Hỗ trợ kênh preview channel tách biệt |
+| 3. Tên miền & SSL | `Product-ready`; Định cấu hình DNS, mua tên miền, SSL và xóa cache CDN qua SDK | `Competitor strong`; Hạ tầng CDN toàn cầu và tự động cấp SSL | `Native`; Custom domains/SSL/networking là first-party | `Competitor strong`; Cấp phát chứng chỉ SSL và CDN mặc định |
+| 4. Logs & Observability | `Product-ready`; Hỗ trợ log stream runtime, cấu hình log drains và timeline sự cố | `Competitor strong`; Phân tích hiệu năng và logs thời gian thực | `Competitor strong`; Hệ thống logs trung tâm và đo lường | `Adjacent/strong`; Sử dụng logs qua Google Cloud Logging |
+| 5. Theo dõi lỗi & Source Maps | `Product-ready`; Quản lý source maps mạnh mẽ, xem code lỗi và liên kết log | `Adjacent`; Tích hợp tốt với các công cụ giám sát bên thứ ba | `Adjacent`; Thường chuyển tiếp dữ liệu qua OpenTelemetry | `Adjacent`; Tích hợp sâu với Firebase Crashlytics |
+| 6. Kiểm toán & Governance | `Beta`; Nhật ký kiểm toán chạy thật; SCIM dán nhãn Simulator rõ ràng | `Competitor strong` đối với các tính năng doanh nghiệp | `Native/plan-dependent` quản trị theo gói | `Adjacent`; Quản lý tập trung qua Google Cloud Audit Logs |
+| 7. Tường lửa WAF | `Beta`; Bản đồ đe dọa trực quan, nhịp tim hoạt động, cấu hình bypass IP | `Competitor strong`; Vercel Firewall/WAF chặn biên mạnh mẽ | `Not evidenced` chưa có giao diện tường lửa người dùng tự quản | `Not evidenced` chưa có UI cấu hình WAF trực tiếp trên Hosting |
+| 8. Đa vùng & Failover | `Beta`; Tích hợp DNS engine, chính sách định tuyến và failover simulator | `Competitor strong`; Định tuyến anycast thông minh toàn cầu | `Competitor strong`; Hỗ trợ nhân bản dịch vụ đa vùng | `Native/adjacent`; Tự động phân phối tải CDN mặc định |
+| 9. Chợ ứng dụng đối tác | `Product-ready/Beta`; Console đối tác hoạt động tốt; quy mô đối tác nhỏ | `Competitor strong`; Kho tích hợp bên thứ ba rất đa dạng | `Native/basic`; Triển khai nhanh qua kho templates chia sẻ | `Competitor strong`; Hệ thống Firebase Extensions rất phổ biến |
+| 10. Bản sao phi tập trung | `Control-plane`; Cần kiểm chứng adapter IPFS/Arweave thực tế | `Not evidenced` chưa hỗ trợ | `Not evidenced` chưa hỗ trợ | `Not evidenced` chưa hỗ trợ |
+| 11. Tự động khắc phục lỗi | `Beta`; Tích hợp kịch bản tự sửa chữa và dòng thời gian sự cố | `Adjacent`; Tự động khắc phục ở tầng hạ tầng đám mây ngầm | `Native/basic`; Tự động khởi động lại dịch vụ lỗi | `Adjacent`; Tự động co giãn và sửa lỗi qua Google Cloud |
+| 12. Lập lịch FinOps giảm carbon | `Beta`; Thêm tab lập lịch và tín hiệu hàng đợi; dữ liệu carbon giả lập | `Adjacent`; Xem chi tiết hóa đơn, không tự lập lịch theo carbon | `Adjacent`; Hỗ trợ các công cụ tối ưu tài nguyên | `Adjacent`; Lập lịch/FinOps qua GCP carbon tools |
+| 13. Zero-trust & Telemetry | `Beta`; CA managed widget và xoay vòng credentials mô phỏng hoạt động | `Managed security strong` cấu hình ngầm, không có UI này | `Adjacent`; Quản lý bảo mật kết nối nội bộ | `Adjacent`; Bảo mật qua GCP IAM và Secret Manager |
+| 14. Kết nối Log Drains ngoài | `Product-ready`; Tích hợp Server Actions cấu hình Datadog, Syslog, HTTPS | `Competitor strong`; Log drains tích hợp sâu đối tác logs | `Competitor strong`; Gửi logs về bộ lưu trữ bên ngoài | `Adjacent`; Chuyển tiếp log qua GCP Pub/Sub |
+| 15. Hệ thống bản ghi DNS | `Product-ready`; CRUD bản ghi DNS của bất kỳ tên miền nào đang quản lý | `Competitor strong`; Quản lý bản ghi DNS tại Edge CDN | `Competitor strong`; Cài đặt DNS tự động | `Competitor strong`; Phân giải DNS tự động trên Cloud |
+| 16. Edge Config lưu trữ khóa | `Product-ready`; CRUD Config Stores, quản lý biến cấu hình phân tán | `Competitor strong`; Edge Config đồng bộ cực nhanh toàn cầu | `Competitor strong`; Biến môi trường đồng bộ tức thì | `Adjacent`; Runtime Config lưu trữ khóa-giá trị |
+| 17. Config Schema Validator | `Product-ready`; Giao diện soạn thảo JSON Schema kiểm soát định dạng biến | `Competitor strong`; Schema validation cho Edge Config store | `Adjacent`; Cần tự validate biến môi trường bằng mã | `Adjacent`; Validate biến môi trường bằng schema GCP |
+| 18. Edge Config Backups | `Product-ready`; Lưu trữ lịch sử thay đổi biến cấu hình và rollback | `Competitor strong`; Lịch sử sao lưu và khôi phục biến store | `Adjacent`; Lịch sử commit biến môi trường của dịch vụ | `Adjacent`; Sao lưu dữ liệu store qua Cloud Storage |
+| 19. Access Groups phân quyền | `Product-ready`; CRUD access groups điều phối quyền theo dự án và teams | `Competitor strong`; Phân quyền nhóm làm việc cấp Enterprise | `Adjacent`; Phân quyền thành viên theo vai trò | `Adjacent`; Phân quyền người dùng qua GCP IAM |
+| 20. Webhooks sự kiện | `Product-ready` Đăng ký và quản lý Webhooks sự kiện build/error | `Competitor strong`; Webhooks thông báo thay đổi trạng thái | `Competitor strong`; Webhooks gọi ngược khi deploy xong | `Adjacent`; Tích hợp webhook qua Cloud Functions |
