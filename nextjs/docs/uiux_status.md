@@ -72,27 +72,141 @@ Phạm vi: Thư mục `nextjs/` duy nhất. Đây là tài liệu chuẩn hóa v
 | `U19` | Danh sách tích hợp Add-ons bên thứ ba đã kết nối | `Product-ready`. Quản lý các dịch vụ add-on bổ sung. |
 | `U20` | CRUD Webhooks nhận sự kiện thay đổi deploy của Vercel | `Product-ready`. Liên kết URL gọi lại khi hoàn thành deploy. |
 
+## Kế hoạch nâng cấp giao diện 5 giai đoạn
+
+Dưới đây là kế hoạch phân chia lộ trình nâng cấp giao diện người dùng Lepos thành 5 giai đoạn rõ ràng, tập trung giải quyết triệt để các khoảng cách tính năng và việc cần làm tiếp theo được chỉ ra trong ma trận U01 - U20:
+
+### Giai đoạn 1: Chuẩn hóa & Ổn định Nền tảng cốt lõi (Core Portal & Workspace)
+*Tập trung vào các nhóm: `U01`, `U02`, `U17`, `U18`*
+- **Mục tiêu**: Đảm bảo trải nghiệm quản lý không gian làm việc cơ bản luôn mượt mà và dễ điều hướng.
+- **Nhiệm vụ cụ thể**:
+  - Tối ưu hóa hiệu năng tải trang và render của trang chủ marketing (`U01`).
+  - Xây dựng cấu trúc tài liệu hướng dẫn sử dụng trực tuyến với phân loại rõ ràng (`U01`).
+  - Làm mượt quy trình Login/Register và xử lý lỗi xác thực (`U01`).
+  - Tối ưu hóa hiệu năng tải của trang tổng quan dashboard (`U02`).
+  - Tinh chỉnh giao diện cài đặt tài khoản cá nhân và thông báo (`U02`).
+  - Tích hợp thanh breadcrumbs giúp điều hướng nhanh giữa các dự án (`U02`).
+  - Xây dựng trạng thái tải (Loading skeleton/spinners) đồng bộ trên toàn portal (`U02`).
+  - Thiết lập hộp thoại xác nhận an toàn (Dialog overlay) khi xóa hoặc chuyển giao dự án (`U02`).
+  - Đồng bộ quyền hạn thành viên trực quan trong quản lý Nhóm truy cập (Access Groups - `U17`).
+  - Tích hợp tính năng gán alias nhanh từ chi tiết deployment vào Danh sách alias tài khoản (`U18`).
+
+### Giai đoạn 2: Tích hợp sâu & Làm mịn Luồng Vercel SDK
+*Tập trung vào các nhóm: `U03`, `U04`, `U11`, `U12`, `U13`, `U19`, `U20`*
+- **Mục tiêu**: Kết nối hoàn toàn các tác vụ quản lý domain, DNS, logs và webhook của Vercel SDK để loại bỏ các trạng thái giả lập.
+- **Nhiệm vụ cụ thể**:
+  - Thiết kế quy trình kéo-thả trực quan cấu hình deployment (`U03`).
+  - Tích hợp giao diện quản lý và hiển thị môi trường xem trước (Git/PR preview environments) hoàn chỉnh (`U03`).
+  - Loại bỏ hoàn toàn các simulator dự phòng trong cài đặt domain/SSL, kết nối trực tiếp với Vercel SDK DNS/Certs (`U04`).
+  - Xây dựng giao diện cấu hình và quản lý Log Drains ngoài (Datadog, Syslog, HTTPS endpoints) (`U11`).
+  - Mở rộng hỗ trợ cấu hình log drains cho các nhà cung cấp cloud lớn (`U11`).
+  - Thiết lập bảng quản lý bản ghi DNS trực quan, hỗ trợ CRUD bản ghi (`U12`).
+  - Hỗ trợ validate định dạng IP đầu vào cho các loại bản ghi DNS (`U12`).
+  - Bổ sung tiến trình (spinner/indicator) đồng bộ DNS động khi cập nhật bản ghi (`U12`).
+  - Xây dựng biểu mẫu tìm kiếm, báo giá và mua tên miền trực tiếp qua Vercel registrar (`U13`).
+  - Tích hợp giỏ hàng thanh toán mua tên miền liên kết tài khoản (`U13`).
+  - Quản lý vòng đời gỡ cài đặt Add-ons/Integrations bên thứ ba (`U19`).
+  - Bổ sung tính năng kiểm thử gửi thử payload (test ping) trong Webhooks Manager (`U20`).
+
+### Giai đoạn 3: Tối ưu trải nghiệm DX & Trình soạn thảo Edge Config
+*Tập trung vào các nhóm: `U05`, `U14`, `U15`, `U16`*
+- **Mục tiêu**: Nâng cấp công cụ cấu hình động và hệ thống giám sát để mang lại trải nghiệm phát triển (DX) đẳng cấp cao.
+- **Nhiệm vụ cụ thể**:
+  - Phát triển trình xem logs trung tâm tổng hợp, liên kết chéo từ Error Tracker để người dùng gỡ lỗi nhanh chóng (`U05`).
+  - Tích hợp cấu phần dòng thời gian sự cố (Incident Timeline) hiển thị chặn WAF, failover, đồng bộ gương (`U05`).
+  - Cải tiến trình soạn thảo JSON cho Edge Config Editor tích hợp tính năng kiểm tra lỗi cú pháp thời gian thực (`U14`).
+  - Hiển thị định dạng JSON đẹp (pretty-print) mặc định cho dữ liệu cấu hình thô (`U14`).
+  - Hiển thị cảnh báo dữ liệu chưa lưu khi người dùng chuyển tab trong khi sửa Edge Config (`U14`).
+  - Thiết lập luồng validate tự động cấu hình đối chiếu với JSON schema trước khi lưu store (`U15`).
+  - Thêm tính năng tự động hoàn thành (autocomplete) cho các key cấu hình đã được định nghĩa trong schema (`U15`).
+  - Bổ sung giao diện so sánh trực quan (diff visualizer) giữa các bản sao lưu Edge Config (`U16`).
+  - Tích hợp tính năng rollback nhanh về bản sao lưu Edge Config trước đó (`U16`).
+  - Xây dựng các gợi ý sửa lỗi trực tiếp trên giao diện khi schema cấu hình bị sai lệch (`U15`).
+
+### Giai đoạn 4: Quản trị Doanh nghiệp & Vận hành Native nâng cao
+*Tập trung vào các nhóm: `U06`, `U08`, `U09`*
+- **Mục tiêu**: Đưa các tính năng quản trị quy mô lớn và WAF/Routing thoát khỏi trạng thái mô phỏng hoặc quá tải.
+- **Nhiệm vụ cụ thể**:
+  - Hoàn thiện giao diện đồng bộ SCIM, tích hợp hiển thị trạng thái của các nhà cung cấp SCIM thực tế (Okta, Azure AD,...) (`U06`).
+  - Xây dựng bộ lọc tìm kiếm và phân loại nhật ký kiểm toán (audit logs) quy mô lớn (`U06`).
+  - Nâng cấp bảng điều khiển Connected Devices, kết nối trực tiếp với nhịp tim (heartbeat) thật (`U08`).
+  - Nâng cấp giao diện bản đồ đe dọa WAF, hiển thị dữ liệu sự kiện thật từ gateway (`U08`).
+  - Quản lý phiên bản quy tắc WAF (WAF rules versioning) và điều chỉnh mức độ nhạy (`U08`).
+  - Hiển thị biểu đồ thống kê tấn công WAF thời gian thực theo khu vực địa lý (`U08`).
+  - Chia nhỏ NativePlatformTab quá tải thành các tab quy trình chuyên biệt (Routing, Mirrors, Remediation, FinOps) sử dụng thanh điều hướng bên (`U09`).
+  - Hoàn thiện giao diện cấu hình định tuyến đa vùng, trạng thái drain và failover (`U09`).
+  - Thiết lập bảng cấu hình lập lịch FinOps và thuật toán khuyến nghị tối ưu hóa chi phí/carbon (`U09`).
+  - Tối ưu hóa các trạng thái trống/lỗi/đang tải của các panels Native Platform (`U09`).
+
+### Giai đoạn 5: An ninh Zero-Trust & Chợ ứng dụng Marketplace
+*Tập trung vào các nhóm: `U07`, `U10`*
+- **Mục tiêu**: Thiết lập an ninh cấp cao và hoàn chỉnh hệ thống đối soát thương mại của Lepos.
+- **Nhiệm vụ cụ thể**:
+  - Hoàn thiện giao diện đối soát doanh thu thực tế, lịch sử thanh toán chợ ứng dụng (`U07`).
+  - Xây dựng quy trình đăng ký, xét duyệt và kiểm duyệt (QA) đối tác phát triển chợ ứng dụng (`U07`).
+  - Xây dựng trang thống kê doanh thu đối tác với các bộ lọc thời gian và xuất báo cáo CSV/PDF (`U07`).
+  - Tích hợp biểu mẫu phản hồi và đánh giá ứng dụng trực tiếp trên Marketplace (`U07`).
+  - Nâng cấp giao diện Zero-Trust Telemetry, tích hợp hệ thống cảnh báo tự động khi chứng chỉ Client mTLS thật sắp hết hạn (`U10`).
+  - Thêm màn hình quản lý chứng chỉ CA cục bộ, cho phép tải lên và xem thông tin CA bundle (`U10`).
+  - Hiển thị lịch sử hoạt động xoay vòng khóa (key rotation logs) trong tab CA Manager (`U10`).
+  - Thiết lập các hướng dẫn cài đặt từng bước (setup wizards) cho luồng SCIM (`U06`).
+  - Thiết lập các hướng dẫn cài đặt từng bước (setup wizards) cho luồng mua tên miền và thiết lập DNS (`U13/U12`).
+  - Thiết lập các hướng dẫn cài đặt từng bước (setup wizards) cho luồng đăng ký chứng chỉ CA và mTLS (`U10`).
+
 ## Nhật ký giao diện ưu tiên (UI Backlog)
 
-### P0: Tránh gây hiểu lầm cho người dùng (Prevent misleading UX)
+### Giai đoạn 1: Chuẩn hóa & Ổn định Nền tảng cốt lõi
+- `[x]` Tối ưu hóa hiệu năng tải của trang chủ, trang quản lý và thanh điều hướng bên.
+- `[x]` Tối ưu hóa điều hướng giữa các trang dự án chính thông qua breadcrumbs (`U02`).
+- `[x]` Thêm trạng thái tải (Loading state) thống nhất cho toàn bộ các trang cấu hình cài đặt (`U02`).
+- `[ ]` Đồng bộ quyền hạn thành viên trực quan trong quản lý Nhóm truy cập (`U17`).
+- `[ ]` Tích hợp tính năng gán alias nhanh từ chi tiết deployment vào Danh sách alias tài khoản (`U18`).
+- `[ ]` Hiển thị cảnh báo xác nhận khi xóa hoặc rời khỏi một không gian làm việc (`U02`).
+- `[ ]` Tích hợp bộ lọc tìm kiếm nhanh dự án theo tên hoặc môi trường trên trang tổng quan (`U02`).
+- `[ ]` Thêm phân quyền vai trò (Owner, Member, Viewer) hiển thị trực quan trong giao diện Access Groups (`U17`).
 
-- `[x]` Thêm trạng thái `simulated` hoặc `sandbox` rõ ràng cho SSL Certs (`CertsTab.tsx`) và SCIM settings (`scim-settings-client.tsx`).
-- `[x]` Thêm trạng thái mô phỏng rõ ràng cho zero-trust mTLS/CA flows (`zero-trust-telemetry-panel.tsx`).
-- `[x]` Bổ sung nhịp tim động (pulsing green active heartbeats) chứng tỏ độ tin cậy kết nối cho WAF, Connected Devices và Federated Routing.
-- `[ ]` Thêm bằng chứng dữ liệu cho các bảng định tuyến.
-- `[x]` Cập nhật các tiêu đề/mô tả để các bảng điều khiển Simulator không viết như thể tính năng chạy thực tế (GA).
+### Giai đoạn 2: Tích hợp sâu & Làm mịn Luồng Vercel SDK
+- `[ ]` Xây dựng quy trình kéo-thả và hiển thị môi trường xem trước (Git/PR preview environments) hoàn chỉnh (`U03`).
+- `[x]` Thêm trạng thái `simulated` hoặc `sandbox` rõ ràng cho SSL Certs (`CertsTab.tsx`) (`U04`).
+- `[ ]` Loại bỏ hoàn toàn các simulator dự phòng trong cài đặt domain/SSL, kết nối trực tiếp với Vercel SDK DNS/Certs (`U04`).
+- `[ ]` Hỗ trợ validate định dạng IP đầu vào cho bản ghi DNS (`U12`).
+- `[ ]` Đồng bộ thanh toán giỏ hàng khi mua tên miền trực tiếp qua Vercel (`U13`).
+- `[ ]` Hỗ trợ thêm các nhà cung cấp log drains ngoài (Datadog/Syslog) (`U11`).
+- `[ ]` Quản lý vòng đời gỡ cài đặt Add-ons/Integrations (`U19`).
+- `[ ]` Bổ sung tính năng kiểm thử gửi thử payload (test ping) trong Webhooks Manager (`U20`).
+- `[ ]` Hiển thị tiến trình đồng bộ DNS động khi cập nhật bản ghi DNS mới qua SDK (`U12`).
 
-### P1: Làm cho quy trình vận hành dễ sử dụng hơn
+### Giai đoạn 3: Tối ưu trải nghiệm DX & Trình soạn thảo Edge Config
+- `[x]` Tạo liên kết chéo từ Error Tracker tới nhật trình log của Vercel/native để gỡ lỗi nhanh (`error-tracker-client.tsx`) (`U05`).
+- `[x]` Tích hợp cấu phần dòng thời gian sự cố thống nhất (Incident Timeline) hiển thị chéo sự cố (`U05`).
+- `[x]` Hiển thị định dạng JSON đẹp (pretty-print) mặc định cho dữ liệu cấu hình thô (`U14`).
+- `[ ]` Phát triển trình xem logs trung tâm tổng hợp kết nối chéo các bảng vận hành (`U05`).
+- `[ ]` Cải tiến trình soạn thảo JSON cho Edge Config Editor có kiểm tra lỗi cú pháp (`U14`).
+- `[ ]` Thiết lập luồng validate tự động cấu hình đối chiếu với JSON schema trước khi lưu store (`U15`).
+- `[ ]` Bổ sung giao diện so sánh trực quan (diff) giữa các bản sao lưu Edge Config và rollback nhanh (`U16`).
+- `[ ]` Thêm tính năng tự động hoàn thành (autocomplete) cho các key cấu hình đã được định nghĩa trong schema (`U15`).
+- `[ ]` Hiển thị cảnh báo dữ liệu chưa lưu khi người dùng chuyển tab trong khi sửa Edge Config (`U14`).
 
-- `[x]` Chia nhỏ NativePlatformTab quá tải thành các tab quy trình chuyên biệt (Routing, Mirrors, Remediation, FinOps) sử dụng thanh điều hướng bên.
-- `[x]` Tạo liên kết chéo giữa Error Tracker với nhật trình logs của Vercel/native để người dùng dễ gỡ lỗi nhanh (`error-tracker-client.tsx`).
-- `[x]` Tích hợp cấu phần dòng thời gian sự cố thống nhất (Incident Timeline) hiển thị chặn WAF, failover, đồng bộ gương, và tự động sửa lỗi.
+### Giai đoạn 4: Quản trị Doanh nghiệp & Vận hành Native nâng cao
+- `[x]` Thêm trạng thái `simulated` hoặc `sandbox` rõ ràng cho SCIM settings (`scim-settings-client.tsx`) (`U06`).
+- `[ ]` Hoàn thiện giao diện đồng bộ SCIM, kết nối hiển thị trạng thái nhà cung cấp thực tế (`U06`).
+- `[x]` Bổ sung nhịp tim động (pulsing green active heartbeats) cho Connected Devices, WAF và Federated Routing (`U08`).
+- `[ ]` Thêm bằng chứng dữ liệu thực thi cho các bảng định tuyến tải (`U08`/`U09`).
+- `[ ]` Nâng cấp bảng điều khiển WAF và Connected Devices, giám sát logs gateway thật và quản lý version quy tắc (`U08`).
+- `[x]` Chia nhỏ NativePlatformTab quá tải thành các tab quy trình chuyên biệt (Routing, Mirrors, Remediation, FinOps) sử dụng thanh điều hướng bên (`U09`).
+- `[ ]` Hoàn thiện các bảng con sidebar trong tab vận hành nâng cao (`U09`).
+- `[ ]` Tối ưu hóa các trạng thái trống/lỗi/đang tải của các panels Native Platform.
+- `[ ]` Hiển thị biểu đồ thống kê tấn công WAF thời gian thực theo khu vực địa lý (`U08`).
 
-### P2: Đánh bóng sản phẩm hoàn thiện
-
-- Tối ưu hóa các trạng thái trống/lỗi/đang tải của các panels Native Platform.
-- Bổ sung hướng dẫn cài đặt từng bước (setup wizards) cho các tính năng kết nối bên thứ ba: SCIM, ACME/DNS, IPFS/Arweave, chứng chỉ CA.
-- Điều chỉnh nội dung văn bản (copy) phù hợp cho từng phân quyền tài khoản (operator vs developer vs partner).
+### Giai đoạn 5: An ninh Zero-Trust & Chợ ứng dụng Marketplace
+- `[x]` Thêm trạng thái mô phỏng rõ ràng cho zero-trust mTLS/CA flows (`zero-trust-telemetry-panel.tsx`) (`U10`).
+- `[ ]` Nâng cấp giao diện Zero-Trust Telemetry, tích hợp hệ thống cảnh báo khi chứng chỉ Client mTLS thật sắp hết hạn (`U10`).
+- `[ ]` Hoàn thiện đối soát doanh thu thực tế, thanh toán và quy trình kiểm duyệt (QA) đối tác phát triển chợ ứng dụng (`U07`).
+- `[ ]` Thiết lập các hướng dẫn cài đặt từng bước (setup wizards) cho các luồng tích hợp phức tạp (SCIM, ACME/DNS, IPFS/Arweave, CA certificates).
+- `[ ]` Thêm màn hình quản lý chứng chỉ CA cục bộ, cho phép tải lên và xem thông tin CA bundle (`U10`).
+- `[ ]` Hiển thị lịch sử hoạt động xoay vòng khóa (key rotation logs) trong tab CA Manager (`U10`).
+- `[ ]` Xây dựng trang thống kê doanh thu đối tác với các bộ lọc thời gian và xuất file báo cáo CSV/PDF (`U07`).
+- `[ ]` Tích hợp biểu mẫu phản hồi và đánh giá ứng dụng trực tiếp trên Marketplace (`U07`).
 
 ## Quy tắc duy trì tài liệu
 
