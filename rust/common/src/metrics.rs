@@ -41,6 +41,14 @@ impl MetricsConfig {
             host: metrics_host("RISK_MANAGER_METRICS_HOST"),
         }
     }
+
+    /// Create default metrics config for signal-bridge service
+    pub fn signal_bridge() -> Self {
+        Self {
+            port: metrics_port("SIGNAL_BRIDGE_METRICS_PORT", 9094),
+            host: metrics_host("SIGNAL_BRIDGE_METRICS_HOST"),
+        }
+    }
 }
 
 fn metrics_host(service_env_key: &str) -> String {

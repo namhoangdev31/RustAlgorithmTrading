@@ -20,6 +20,9 @@ Thumbs.db
 # Build & Tooling (General)
 target/
 node_modules/
+**/node_modules/
+**/.next/
+**/*.tsbuildinfo
 coverage/
 .nyc_output/
 .cache/
@@ -54,6 +57,7 @@ rust/target/
 # Go
 go/bin/
 go/vendor/
+go/observability-api
 **/*.out
 **/*.test
 
@@ -77,10 +81,16 @@ yarn-error.log*
 .env
 .env.local
 .env.*.local
+**/.env
+**/.env.*
 *.pem
 *.key
 *.cert
+**/*.pem
+**/*.key
+**/*.cert
 secrets/
+**/secrets/
 
 # Documentation (Optional, exclude if not needed for runtime)
 docs/

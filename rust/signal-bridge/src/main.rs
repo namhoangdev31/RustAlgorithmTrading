@@ -1,5 +1,6 @@
 use common::config::SystemConfig;
 use common::health::HealthCheck;
+use common::metrics::{start_metrics_server, MetricsConfig};
 use signal_bridge::SignalBridgeService;
 use std::sync::Arc;
 use tokio::sync::RwLock;
@@ -50,6 +51,20 @@ async fn main() -> anyhow::Result<()> {
     // Create health status tracker
     let health = Arc::new(RwLock::new(HealthCheck::healthy("signal-bridge")));
 
+    let metrics_handle = match start_metrics_server(MetricsConfig::signal_bridge()) {
+        Ok(handle) => {
+            tracing::info!("[cid:INIT] Metrics server started on port 9094");
+            Some(handle)
+        }
+        Err(e) => {
+            tracing::warn!(
+                "[cid:INIT] Failed to start metrics server: {}. Continuing without metrics.",
+                e
+            );
+            None
+        }
+    };
+
     // Store values before move
     let features_count = config.signal.features.len();
 
@@ -81,6 +96,10 @@ async fn main() -> anyhow::Result<()> {
     // Keep service running
     tokio::signal::ctrl_c().await?;
     tracing::info!("[cid:INIT] Shutdown signal received, stopping Signal Bridge...");
+
+    if let Some(handle) = metrics_handle {
+        handle.abort();
+    }
 
     Ok(())
 }

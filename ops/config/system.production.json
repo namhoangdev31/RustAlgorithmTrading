@@ -7,7 +7,7 @@
       "GOOGL",
       "AMZN"
     ],
-    "websocket_url": "wss://stream.data.alpaca.markets/v2/iex",
+    "websocket_url": "wss://stream.data.alpaca.markets/v2/sip",
     "reconnect_delay_ms": 2000,
     "zmq_publish_address": "tcp://0.0.0.0:5555"
   },
@@ -64,7 +64,7 @@
     "audiences": "developer,trader,regular",
     "billing_model": "subscription_and_usage",
     "public_entrypoints": "nextjs-frontend,edge-gateway",
-    "private_services": "market-data,signal-bridge,risk-manager,execution-engine,go-control-plane,redis",
+    "private_services": "market-data,signal-bridge,risk-manager,execution-engine,go-control-plane,managed-redis",
     "config_owner": "platform"
   }
 }

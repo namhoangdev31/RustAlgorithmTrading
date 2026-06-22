@@ -27,8 +27,15 @@ The config metadata declares the managed SaaS posture, multi-tenant mode, suppor
 
 - ZMQ publishers bind on `0.0.0.0` inside their containers.
 - ZMQ subscribers use Compose service DNS such as `market-data:5555`.
+- Redis is an external managed dependency supplied through `REDIS_URL`; no single-instance Redis container is part of the production stack.
 - Trading credentials are loaded from environment variables, not JSON.
 - User-editable settings should be managed through the Go/Next.js control plane, then projected into runtime config by deployment automation.
+
+## Production Gates
+
+- `system.production.json` uses Alpaca SIP (`v2/sip`); the production account must have SIP data entitlement.
+- The fields mapped by `rust/risk-manager/src/reload.rs` must match between `system*.json` and `risk_limits.toml`.
+- `risk_limits.toml` is the reload source of truth, while `system.json` is the startup source of truth. A release is blocked if their mapped values diverge.
 
 ## Policy
 

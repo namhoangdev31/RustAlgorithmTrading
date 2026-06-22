@@ -23,20 +23,22 @@ RUN cargo build --release --bin ${BIN}
 
 FROM debian:bookworm-slim AS runtime
 
+ARG BIN=market-data
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
+    curl \
     libssl3 \
     libzmq5 \
-    python3 \
-    python3-pip \
-    python3-dev \
+    && if [ "$BIN" = "signal-bridge" ]; then \
+        apt-get install -y --no-install-recommends python3 python3-pip python3-dev; \
+    fi \
     && rm -rf /var/lib/apt/lists/*
 
-ARG BIN=market-data
 ENV SERVICE_BIN=${BIN}
 ENV SERVICE_MODE=managed_saas
 ENV TRADING_ENV=production
 ENV RUST_LOG=info
+ENV HEALTHCHECK_URL=
 WORKDIR /workspace
 
 COPY --from=builder /workspace/rust/target/release/${BIN} /usr/local/bin/${BIN}
@@ -51,7 +53,7 @@ RUN if [ "$BIN" = "signal-bridge" ]; then \
 
 USER appuser
 
-EXPOSE 5555 5556 9091 9092 9093
-HEALTHCHECK --interval=30s --timeout=5s --retries=5 CMD ["sh", "-c", "kill -0 1"]
+EXPOSE 5555 5556 9091 9092 9093 9094
+HEALTHCHECK --interval=30s --timeout=5s --retries=5 --start-period=20s CMD ["sh", "-c", "if [ -n \"$HEALTHCHECK_URL\" ]; then curl -fsS \"$HEALTHCHECK_URL\" >/dev/null; else kill -0 1; fi"]
 
 ENTRYPOINT ["sh", "-c", "exec /usr/local/bin/${SERVICE_BIN}"]

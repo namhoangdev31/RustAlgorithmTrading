@@ -1,12 +1,11 @@
 FROM golang:1.25-alpine AS builder
 
-RUN apk add --no-cache gcc g++ musl-dev
-
 WORKDIR /workspace/go
 COPY go/go.mod go/go.sum* ./
 RUN go mod download
 COPY go ./
-RUN CGO_ENABLED=1 GOOS=linux go build -o /out/edge-gateway ./cmd/edge-gateway/main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w" \
+    -o /out/edge-gateway ./cmd/edge-gateway/main.go
 
 FROM alpine:3.20
 

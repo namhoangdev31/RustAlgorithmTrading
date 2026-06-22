@@ -16,13 +16,13 @@
     "zmq_publish_address": "tcp://0.0.0.0:5555"
   },
   "risk": {
-    "max_position_size": 500.0,
-    "max_notional_exposure": 25000.0,
-    "max_open_positions": 3,
-    "stop_loss_percent": 1.5,
-    "trailing_stop_percent": 1.0,
+    "max_position_size": 250.0,
+    "max_notional_exposure": 10000.0,
+    "max_open_positions": 2,
+    "stop_loss_percent": 1.0,
+    "trailing_stop_percent": 0.75,
     "enable_circuit_breaker": true,
-    "max_loss_threshold": 2500.0,
+    "max_loss_threshold": 1000.0,
     "sizing_amount": 0.0
   },
   "execution": {
@@ -66,7 +66,7 @@
     "audiences": "developer,trader,regular",
     "billing_model": "subscription_and_usage",
     "public_entrypoints": "nextjs-frontend,edge-gateway",
-    "private_services": "market-data,signal-bridge,risk-manager,execution-engine,go-control-plane,redis",
+    "private_services": "market-data,signal-bridge,risk-manager,execution-engine,go-control-plane,managed-redis",
     "config_owner": "platform"
   }
 }

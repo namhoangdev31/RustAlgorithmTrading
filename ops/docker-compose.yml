@@ -29,31 +29,9 @@ x-rust-service: &rust-service
       source: ./config/risk_limits.toml
       target: /workspace/ops/config/risk_limits.toml
       read_only: true
-  healthcheck:
-    test: ["CMD-SHELL", "kill -0 1"]
-    interval: 30s
-    timeout: 5s
-    retries: 5
-    start_period: 20s
   stop_grace_period: 30s
 
 services:
-  redis:
-    image: redis:7-alpine
-    restart: unless-stopped
-    command: ["redis-server", "--appendonly", "yes", "--save", "60", "1"]
-    networks:
-      - private
-    volumes:
-      - redis-data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 3s
-      retries: 5
-    labels:
-      com.rustalgorithmtrading.role: private-cache
-
   market-data:
     <<: *rust-service
     profiles: ["trading"]
@@ -67,12 +45,10 @@ services:
       <<: *rust-env
       SERVICE_NAME: market-data
       MARKET_DATA_METRICS_HOST: 0.0.0.0
+      HEALTHCHECK_URL: http://127.0.0.1:9091/metrics
     expose:
       - "5555"
       - "9091"
-    depends_on:
-      redis:
-        condition: service_healthy
     labels:
       com.rustalgorithmtrading.role: private-market-data
       com.rustalgorithmtrading.audience: trader
@@ -89,8 +65,11 @@ services:
     environment:
       <<: *rust-env
       SERVICE_NAME: signal-bridge
+      SIGNAL_BRIDGE_METRICS_HOST: 0.0.0.0
+      HEALTHCHECK_URL: http://127.0.0.1:9094/metrics
     expose:
       - "5556"
+      - "9094"
     depends_on:
       market-data:
         condition: service_healthy
@@ -111,11 +90,9 @@ services:
       <<: *rust-env
       SERVICE_NAME: risk-manager
       RISK_MANAGER_METRICS_HOST: 0.0.0.0
+      HEALTHCHECK_URL: http://127.0.0.1:9093/metrics
     expose:
       - "9093"
-    depends_on:
-      redis:
-        condition: service_healthy
     labels:
       com.rustalgorithmtrading.role: private-risk-control
       com.rustalgorithmtrading.audience: trader
@@ -133,6 +110,7 @@ services:
       <<: *rust-env
       SERVICE_NAME: execution-engine
       EXECUTION_ENGINE_METRICS_HOST: 0.0.0.0
+      HEALTHCHECK_URL: http://127.0.0.1:9092/metrics
     expose:
       - "9092"
     depends_on:
@@ -162,15 +140,12 @@ services:
       HOST: 0.0.0.0
       DATABASE_URL: ${DATABASE_URL:?Set managed PostgreSQL DATABASE_URL}
       DUCKDB_PATH: /data/observability.duckdb
-      REDIS_URL: redis://redis:6379
+      REDIS_URL: ${REDIS_URL:?Set a TLS-enabled managed Redis URL}
       MARKET_DATA_METRICS_URL: http://market-data:9091/metrics
       EXECUTION_METRICS_URL: http://execution-engine:9092/metrics
       RISK_METRICS_URL: http://risk-manager:9093/metrics
     expose:
       - "8081"
-    depends_on:
-      redis:
-        condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8081/health/ready >/dev/null || exit 1"]
       interval: 30s
@@ -180,6 +155,20 @@ services:
     labels:
       com.rustalgorithmtrading.role: private-observability-api
       com.rustalgorithmtrading.audience: developer,trader
+
+  database-migrate:
+    image: ${TRADING_IMAGE_REGISTRY:-trading}/nextjs-migrate:${IMAGE_TAG:-production}
+    build:
+      context: ..
+      dockerfile: ops/deployment/nextjs.Dockerfile
+      target: migrate
+    restart: "no"
+    networks:
+      - private
+    environment:
+      DATABASE_URL: ${DATABASE_URL:?Set managed PostgreSQL DATABASE_URL}
+    labels:
+      com.rustalgorithmtrading.role: database-migration-job
 
   nextjs-frontend:
     image: ${TRADING_IMAGE_REGISTRY:-trading}/nextjs-frontend:${IMAGE_TAG:-production}
@@ -197,7 +186,7 @@ services:
       NODE_ENV: production
       PORT: 3000
       DATABASE_URL: ${DATABASE_URL:?Set managed PostgreSQL DATABASE_URL}
-      REDIS_URL: redis://redis:6379
+      REDIS_URL: ${REDIS_URL:?Set a TLS-enabled managed Redis URL}
       NEXTAUTH_URL: ${NEXTAUTH_URL:?Set public application URL}
       AUTH_URL: ${NEXTAUTH_URL:?Set public application URL}
       AUTH_SECRET: ${AUTH_SECRET:?Set AUTH_SECRET in the orchestrator secret store}
@@ -222,11 +211,11 @@ services:
       LEPOS_CACHE_BUCKET: ${LEPOS_CACHE_BUCKET:-}
       LEPOS_CACHE_ENDPOINT: ${LEPOS_CACHE_ENDPOINT:-}
       LEPOS_CACHE_REGION: ${LEPOS_CACHE_REGION:-us-east-1}
-    ports:
-      - "${WEB_PORT:-3000}:3000"
+    expose:
+      - "3000"
     depends_on:
-      redis:
-        condition: service_healthy
+      database-migrate:
+        condition: service_completed_successfully
     healthcheck:
       test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:' + (process.env.PORT || 3000)).then(r => process.exit(r.status < 500 ? 0 : 1)).catch(() => process.exit(1))\""]
       interval: 30s
@@ -255,7 +244,7 @@ services:
       PORT: 8088
       TLS_PORT: 8443
       HOST: 0.0.0.0
-      REDIS_URL: redis://redis:6379
+      REDIS_URL: ${REDIS_URL:?Set a TLS-enabled managed Redis URL}
       LEPOS_STORAGE_ROOT: /var/lib/lepos/artifacts
       LEPOS_CONTROL_PLANE_URL: http://nextjs-frontend:3000
       LEPOS_INTERNAL_API_KEY: ${LEPOS_INTERNAL_API_KEY:?Set LEPOS_INTERNAL_API_KEY}
@@ -270,8 +259,6 @@ services:
       - "${EDGE_HTTP_PORT:-8088}:8088"
       - "${EDGE_TLS_PORT:-8443}:8443"
     depends_on:
-      redis:
-        condition: service_healthy
       nextjs-frontend:
         condition: service_healthy
     healthcheck:
@@ -289,6 +276,5 @@ networks:
   private:
 
 volumes:
-  redis-data:
   go-observability-data:
   edge-artifact-data:
