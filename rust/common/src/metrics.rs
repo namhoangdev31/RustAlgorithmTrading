@@ -21,26 +21,39 @@ impl MetricsConfig {
     /// Create default metrics config for market-data service
     pub fn market_data() -> Self {
         Self {
-            port: 9091,
-            host: "127.0.0.1".to_string(),
+            port: metrics_port("MARKET_DATA_METRICS_PORT", 9091),
+            host: metrics_host("MARKET_DATA_METRICS_HOST"),
         }
     }
 
     /// Create default metrics config for execution-engine service
     pub fn execution_engine() -> Self {
         Self {
-            port: 9092,
-            host: "127.0.0.1".to_string(),
+            port: metrics_port("EXECUTION_ENGINE_METRICS_PORT", 9092),
+            host: metrics_host("EXECUTION_ENGINE_METRICS_HOST"),
         }
     }
 
     /// Create default metrics config for risk-manager service
     pub fn risk_manager() -> Self {
         Self {
-            port: 9093,
-            host: "127.0.0.1".to_string(),
+            port: metrics_port("RISK_MANAGER_METRICS_PORT", 9093),
+            host: metrics_host("RISK_MANAGER_METRICS_HOST"),
         }
     }
+}
+
+fn metrics_host(service_env_key: &str) -> String {
+    std::env::var(service_env_key)
+        .or_else(|_| std::env::var("METRICS_HOST"))
+        .unwrap_or_else(|_| "127.0.0.1".to_string())
+}
+
+fn metrics_port(service_env_key: &str, fallback: u16) -> u16 {
+    std::env::var(service_env_key)
+        .ok()
+        .and_then(|value| value.parse::<u16>().ok())
+        .unwrap_or(fallback)
 }
 
 /// Start metrics HTTP server

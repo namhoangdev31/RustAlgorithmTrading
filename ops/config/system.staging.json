@@ -13,7 +13,7 @@
     ],
     "websocket_url": "wss://stream.data.alpaca.markets/v2/iex",
     "reconnect_delay_ms": 3000,
-    "zmq_publish_address": "tcp://127.0.0.1:5555"
+    "zmq_publish_address": "tcp://0.0.0.0:5555"
   },
   "risk": {
     "max_position_size": 500.0,
@@ -22,7 +22,8 @@
     "stop_loss_percent": 1.5,
     "trailing_stop_percent": 1.0,
     "enable_circuit_breaker": true,
-    "max_loss_threshold": 2500.0
+    "max_loss_threshold": 2500.0,
+    "sizing_amount": 0.0
   },
   "execution": {
     "exchange_api_url": "https://paper-api.alpaca.markets/v2",
@@ -31,7 +32,8 @@
     "rate_limit_per_second": 200,
     "retry_attempts": 5,
     "retry_delay_ms": 500,
-    "paper_trading": true
+    "paper_trading": true,
+    "max_slippage_bps": 50.0
   },
   "signal": {
     "model_path": "models/trading_model.pkl",
@@ -52,12 +54,19 @@
       "obv"
     ],
     "update_interval_ms": 500,
-    "zmq_subscribe_address": "tcp://127.0.0.1:5555",
-    "zmq_publish_address": "tcp://127.0.0.1:5556"
+    "zmq_subscribe_address": "tcp://market-data:5555",
+    "zmq_publish_address": "tcp://0.0.0.0:5556"
   },
   "metadata": {
     "environment": "staging",
     "version": "1.0.0",
-    "description": "Staging configuration with tighter risk controls"
+    "description": "Managed SaaS staging profile with paper trading and production-like service boundaries",
+    "service_mode": "managed_saas",
+    "tenancy_mode": "multi_tenant",
+    "audiences": "developer,trader,regular",
+    "billing_model": "subscription_and_usage",
+    "public_entrypoints": "nextjs-frontend,edge-gateway",
+    "private_services": "market-data,signal-bridge,risk-manager,execution-engine,go-control-plane,redis",
+    "config_owner": "platform"
   }
 }

@@ -1,54 +1,69 @@
-# Docker Images
+# Service Deployment
 
-`ops/deployment/` now stores Docker image definitions only. Docker Compose, Grafana, Prometheus, Alertmanager, and staging monitoring bundles were removed to keep operations focused and easy to read.
+`ops/deployment/` stores production image definitions for the managed trading platform. The stack is intended to run as a hosted service for developers, traders, and regular users, not as a customer-run local project.
+
+## Service Roles
+
+- `nextjs-frontend` - Public SaaS portal, auth, billing, developer dashboard, trader dashboard, regular user experience.
+- `edge-gateway` - Public edge ingress, route cache, WAF challenge, artifact routing, telemetry forwarding.
+- `go-control-plane` - Private observability and control API for metrics, trades, health, and platform telemetry.
+- `market-data` - Private Rust market data ingest and ZMQ publisher.
+- `signal-bridge` - Private Rust/Python signal and feature bridge.
+- `risk-manager` - Private Rust risk controls and circuit breakers.
+- `execution-engine` - Private Rust order routing and execution.
+- `redis` - Private route/cache backbone.
+
+Only `nextjs-frontend` and `edge-gateway` publish ports. Everything else stays on the private Compose network and should be exposed only through the web/control-plane layer.
 
 ## Images
 
-- `Dockerfile` - Generic Rust service image builder. Use `BIN` to choose a Rust binary.
-- `go.Dockerfile` - Go control-plane image builder.
+- `Dockerfile` - Generic Rust service image builder. Use `BIN` to choose `market-data`, `risk-manager`, `execution-engine`, or `signal-bridge`.
+- `go.Dockerfile` - Go observability/control-plane image.
+- `edge-gateway.Dockerfile` - Go edge gateway image.
+- `nextjs.Dockerfile` - Next.js SaaS portal image.
 
-## Rust Service Build
+## Required Runtime Secrets
 
-From the repository root:
+Set these core secrets in the orchestrator secret store before rendering `ops/docker-compose.yml`:
+
+- `DATABASE_URL` - Managed PostgreSQL for the SaaS portal and Go control plane.
+- `AUTH_SECRET` - Auth.js/NextAuth signing secret.
+- `NEXTAUTH_URL` - Public application URL.
+- `APP_SECRETS_MASTER_KEY` - Application secret encryption key.
+- `LEPOS_INTERNAL_API_KEY` - Internal API key shared by edge/control-plane calls.
+- `LEPOS_SERVICE_SECRET` - Edge gateway service identity secret.
+- `LEPOS_NATIVE_TELEMETRY_KEY` - Native telemetry signing key.
+- `STRIPE_SECRET_KEY` and `STRIPE_CONNECT_WEBHOOK_SECRET` - Paid plans and billing webhooks.
+
+Trader services run behind the `trading` profile. Set `ALPACA_API_KEY` and `ALPACA_SECRET_KEY` before enabling that profile for managed trader accounts.
+
+Optional integrations include GitHub OAuth/app keys, Firebase public keys, Gemini diagnostics, object storage cache keys, and artifact mirror endpoints.
+
+## Compose Deployment
+
+Render the production stack from the repository root:
 
 ```bash
-docker build -f ops/deployment/Dockerfile --build-arg BIN=market-data -t trading/market-data:local .
-docker build -f ops/deployment/Dockerfile --build-arg BIN=risk-manager -t trading/risk-manager:local .
-docker build -f ops/deployment/Dockerfile --build-arg BIN=execution-engine -t trading/execution-engine:local .
-docker build -f ops/deployment/Dockerfile --build-arg BIN=signal-bridge -t trading/signal-bridge:local .
+docker-compose -f ops/docker-compose.yml config
+docker-compose -f ops/docker-compose.yml build
+docker-compose -f ops/docker-compose.yml up -d
 ```
 
-## Go Control Plane Build
+Use `TRADING_CONFIG_PROFILE=system.staging.json` for staging paper trading. Production defaults to `system.production.json`.
+
+Enable trader services only when broker credentials, billing, and risk controls are ready:
 
 ```bash
-docker build -f ops/deployment/go.Dockerfile -t trading/go-control-plane:local .
+COMPOSE_PROFILES=trading docker-compose -f ops/docker-compose.yml up -d
 ```
 
-## Go Edge Gateway Build
+## Validation
 
-```bash
-docker build -f ops/deployment/edge-gateway.Dockerfile -t trading/edge-gateway:local .
-```
+- Docker syntax: `docker-compose -f ops/docker-compose.yml config`
+- Rust metrics binding: `cd rust && cargo test -p common`
+- Go image/runtime contract: `cd go && go test ./...`
+- Next.js image/runtime contract: `cd nextjs && yarn typecheck`
 
-## Environment Variables Configuration (No Secrets Committed)
+## Rollback
 
-Configure the following environment keys in your production `.env` file or orchestrator:
-
-- `REDIS_URL`: Redis connection URL for gateway routing and cache coordination (e.g., `redis://localhost:6379`).
-- `LEPOS_INTERNAL_API_KEY`: API key for secure edge-to-control-plane internal endpoints.
-- `LEPOS_CONTROL_PLANE_URL`: URL of the Next.js control plane (default: `http://localhost:3000`).
-- `LEPOS_STORAGE_ROOT`: Absolute directory for local static bundle storage and server isolates.
-- `GEMINI_API_KEY`: Google Gemini SDK API key for AI diagnostic endpoints.
-- `ACME_DIRECTORY`: ACME staging or production directory endpoint for SSL/domain certificate provisioning.
-- `LEPOS_FAILOVER_TARGETS`: Failover server/gateway routing coordinates (comma-separated).
-- `LEPOS_SERVICE_ID`: Service identity used by the Go edge gateway when calling control-plane APIs.
-- `LEPOS_SERVICE_SECRET`: Shared secret bound to the registered service identity for phased zero-trust rollout.
-- `LEPOS_IPFS_GATEWAY_URL`: Preferred gateway base URL for `ipfs://` artifact mirror resolution.
-- `LEPOS_ARWEAVE_GATEWAY_URL`: Preferred gateway base URL for `ar://` artifact mirror resolution.
-- `LEPOS_CONTROL_PLANE_TLS_CERT`, `LEPOS_CONTROL_PLANE_TLS_KEY`, `LEPOS_CONTROL_PLANE_TLS_CA`: Optional client certificate, private key, and trust bundle used for mTLS between gateway and control-plane.
-
-## Policy
-
-- Do not add Compose orchestration back into this folder unless the project explicitly reintroduces it.
-- Do not add Grafana/Prometheus config here. User-facing monitoring and configuration should be handled by the web/control-plane layer.
-- Runtime config remains in `ops/config/`.
+Rollback is file-level: restore the previous `ops/docker-compose.yml`, deployment Dockerfiles, and config profile JSON from git, then redeploy the prior image tag with `IMAGE_TAG=<previous-tag>`.

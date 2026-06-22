@@ -9,7 +9,7 @@
     ],
     "websocket_url": "wss://stream.data.alpaca.markets/v2/iex",
     "reconnect_delay_ms": 2000,
-    "zmq_publish_address": "tcp://127.0.0.1:5555"
+    "zmq_publish_address": "tcp://0.0.0.0:5555"
   },
   "risk": {
     "max_position_size": 250.0,
@@ -18,7 +18,8 @@
     "stop_loss_percent": 1.0,
     "trailing_stop_percent": 0.75,
     "enable_circuit_breaker": true,
-    "max_loss_threshold": 1000.0
+    "max_loss_threshold": 1000.0,
+    "sizing_amount": 0.0
   },
   "execution": {
     "exchange_api_url": "https://api.alpaca.markets/v2",
@@ -27,7 +28,8 @@
     "rate_limit_per_second": 200,
     "retry_attempts": 5,
     "retry_delay_ms": 500,
-    "paper_trading": false
+    "paper_trading": false,
+    "max_slippage_bps": 25.0
   },
   "signal": {
     "model_path": "models/trading_model_prod.pkl",
@@ -50,12 +52,19 @@
       "stochastic_d"
     ],
     "update_interval_ms": 250,
-    "zmq_subscribe_address": "tcp://127.0.0.1:5555",
-    "zmq_publish_address": "tcp://127.0.0.1:5556"
+    "zmq_subscribe_address": "tcp://market-data:5555",
+    "zmq_publish_address": "tcp://0.0.0.0:5556"
   },
   "metadata": {
     "environment": "production",
     "version": "1.0.0",
-    "description": "Production configuration with strict risk controls and live trading"
+    "description": "Managed SaaS production profile with strict risk controls and live trading",
+    "service_mode": "managed_saas",
+    "tenancy_mode": "multi_tenant",
+    "audiences": "developer,trader,regular",
+    "billing_model": "subscription_and_usage",
+    "public_entrypoints": "nextjs-frontend,edge-gateway",
+    "private_services": "market-data,signal-bridge,risk-manager,execution-engine,go-control-plane,redis",
+    "config_owner": "platform"
   }
 }

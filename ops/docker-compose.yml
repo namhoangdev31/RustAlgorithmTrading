@@ -1,125 +1,294 @@
+x-saas-env: &saas-env
+  APP_ENV: ${APP_ENV:-production}
+  SERVICE_MODE: managed_saas
+  TENANCY_MODE: multi_tenant
+  USER_SEGMENTS: developer,trader,regular
+  LOG_FORMAT: json
+
+x-rust-env: &rust-env
+  <<: *saas-env
+  RUST_LOG: ${RUST_LOG:-info}
+  TRADING_ENV: ${TRADING_ENV:-production}
+  METRICS_HOST: 0.0.0.0
+  ALPACA_API_KEY: ${ALPACA_API_KEY:-}
+  ALPACA_SECRET_KEY: ${ALPACA_SECRET_KEY:-}
+  APCA_API_KEY_ID: ${ALPACA_API_KEY:-}
+  APCA_API_SECRET_KEY: ${ALPACA_SECRET_KEY:-}
+
+x-rust-service: &rust-service
+  restart: unless-stopped
+  init: true
+  networks:
+    - private
+  volumes:
+    - type: bind
+      source: ./config/${TRADING_CONFIG_PROFILE:-system.production.json}
+      target: /workspace/ops/config/system.json
+      read_only: true
+    - type: bind
+      source: ./config/risk_limits.toml
+      target: /workspace/ops/config/risk_limits.toml
+      read_only: true
+  healthcheck:
+    test: ["CMD-SHELL", "kill -0 1"]
+    interval: 30s
+    timeout: 5s
+    retries: 5
+    start_period: 20s
+  stop_grace_period: 30s
+
 services:
   redis:
     image: redis:7-alpine
-    container_name: trading-redis
-    network_mode: host
     restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes", "--save", "60", "1"]
+    networks:
+      - private
+    volumes:
+      - redis-data:/data
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
+      interval: 10s
       timeout: 3s
-      retries: 3
+      retries: 5
+    labels:
+      com.rustalgorithmtrading.role: private-cache
 
   market-data:
+    <<: *rust-service
+    profiles: ["trading"]
+    image: ${TRADING_IMAGE_REGISTRY:-trading}/market-data:${IMAGE_TAG:-production}
     build:
       context: ..
       dockerfile: ops/deployment/Dockerfile
       args:
         BIN: market-data
-    container_name: trading-market-data
-    network_mode: host
-    restart: unless-stopped
     environment:
-      - RUST_LOG=info
-      - TRADING_ENV=production
-      - ALPACA_API_KEY=${ALPACA_API_KEY}
-      - ALPACA_API_SECRET=${ALPACA_API_SECRET}
-      - APCA_API_KEY_ID=${ALPACA_API_KEY}
-      - APCA_API_SECRET_KEY=${ALPACA_API_SECRET}
+      <<: *rust-env
+      SERVICE_NAME: market-data
+      MARKET_DATA_METRICS_HOST: 0.0.0.0
+    expose:
+      - "5555"
+      - "9091"
     depends_on:
-      - redis
-
-  risk-manager:
-    build:
-      context: ..
-      dockerfile: ops/deployment/Dockerfile
-      args:
-        BIN: risk-manager
-    container_name: trading-risk-manager
-    network_mode: host
-    restart: unless-stopped
-    environment:
-      - RUST_LOG=info
-      - TRADING_ENV=production
-    depends_on:
-      - redis
-
-  execution-engine:
-    build:
-      context: ..
-      dockerfile: ops/deployment/Dockerfile
-      args:
-        BIN: execution-engine
-    container_name: trading-execution-engine
-    network_mode: host
-    restart: unless-stopped
-    environment:
-      - RUST_LOG=info
-      - TRADING_ENV=production
-      - ALPACA_API_KEY=${ALPACA_API_KEY}
-      - ALPACA_API_SECRET=${ALPACA_API_SECRET}
-      - APCA_API_KEY_ID=${ALPACA_API_KEY}
-      - APCA_API_SECRET_KEY=${ALPACA_API_SECRET}
-    depends_on:
-      - redis
+      redis:
+        condition: service_healthy
+    labels:
+      com.rustalgorithmtrading.role: private-market-data
+      com.rustalgorithmtrading.audience: trader
 
   signal-bridge:
+    <<: *rust-service
+    profiles: ["trading"]
+    image: ${TRADING_IMAGE_REGISTRY:-trading}/signal-bridge:${IMAGE_TAG:-production}
     build:
       context: ..
       dockerfile: ops/deployment/Dockerfile
       args:
         BIN: signal-bridge
-    container_name: trading-signal-bridge
-    network_mode: host
-    restart: unless-stopped
     environment:
-      - RUST_LOG=info
-      - TRADING_ENV=production
-      - PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1
-      - ALPACA_API_KEY=${ALPACA_API_KEY}
-      - ALPACA_API_SECRET=${ALPACA_API_SECRET}
-      - APCA_API_KEY_ID=${ALPACA_API_KEY}
-      - APCA_API_SECRET_KEY=${ALPACA_API_SECRET}
+      <<: *rust-env
+      SERVICE_NAME: signal-bridge
+    expose:
+      - "5556"
     depends_on:
-      - redis
+      market-data:
+        condition: service_healthy
+    labels:
+      com.rustalgorithmtrading.role: private-signal-engine
+      com.rustalgorithmtrading.audience: trader
+
+  risk-manager:
+    <<: *rust-service
+    profiles: ["trading"]
+    image: ${TRADING_IMAGE_REGISTRY:-trading}/risk-manager:${IMAGE_TAG:-production}
+    build:
+      context: ..
+      dockerfile: ops/deployment/Dockerfile
+      args:
+        BIN: risk-manager
+    environment:
+      <<: *rust-env
+      SERVICE_NAME: risk-manager
+      RISK_MANAGER_METRICS_HOST: 0.0.0.0
+    expose:
+      - "9093"
+    depends_on:
+      redis:
+        condition: service_healthy
+    labels:
+      com.rustalgorithmtrading.role: private-risk-control
+      com.rustalgorithmtrading.audience: trader
+
+  execution-engine:
+    <<: *rust-service
+    profiles: ["trading"]
+    image: ${TRADING_IMAGE_REGISTRY:-trading}/execution-engine:${IMAGE_TAG:-production}
+    build:
+      context: ..
+      dockerfile: ops/deployment/Dockerfile
+      args:
+        BIN: execution-engine
+    environment:
+      <<: *rust-env
+      SERVICE_NAME: execution-engine
+      EXECUTION_ENGINE_METRICS_HOST: 0.0.0.0
+    expose:
+      - "9092"
+    depends_on:
+      risk-manager:
+        condition: service_healthy
+      signal-bridge:
+        condition: service_healthy
+    labels:
+      com.rustalgorithmtrading.role: private-order-routing
+      com.rustalgorithmtrading.audience: trader
 
   go-control-plane:
+    image: ${TRADING_IMAGE_REGISTRY:-trading}/go-control-plane:${IMAGE_TAG:-production}
     build:
       context: ..
       dockerfile: ops/deployment/go.Dockerfile
-    container_name: trading-go-control-plane
-    network_mode: host
     restart: unless-stopped
+    init: true
+    networks:
+      - private
     volumes:
-      - trading-db-data:/data
+      - go-observability-data:/data
     environment:
-      - PORT=8081
-      - HOST=0.0.0.0
-      - DUCKDB_PATH=/data/observability.duckdb
+      <<: *saas-env
+      SERVICE_NAME: go-control-plane
+      PORT: 8081
+      HOST: 0.0.0.0
+      DATABASE_URL: ${DATABASE_URL:?Set managed PostgreSQL DATABASE_URL}
+      DUCKDB_PATH: /data/observability.duckdb
+      REDIS_URL: redis://redis:6379
+      MARKET_DATA_METRICS_URL: http://market-data:9091/metrics
+      EXECUTION_METRICS_URL: http://execution-engine:9092/metrics
+      RISK_METRICS_URL: http://risk-manager:9093/metrics
+    expose:
+      - "8081"
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8081/health/ready >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    labels:
+      com.rustalgorithmtrading.role: private-observability-api
+      com.rustalgorithmtrading.audience: developer,trader
+
+  nextjs-frontend:
+    image: ${TRADING_IMAGE_REGISTRY:-trading}/nextjs-frontend:${IMAGE_TAG:-production}
+    build:
+      context: ..
+      dockerfile: ops/deployment/nextjs.Dockerfile
+    restart: unless-stopped
+    init: true
+    networks:
+      - public
+      - private
+    environment:
+      <<: *saas-env
+      SERVICE_NAME: nextjs-frontend
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: ${DATABASE_URL:?Set managed PostgreSQL DATABASE_URL}
+      REDIS_URL: redis://redis:6379
+      NEXTAUTH_URL: ${NEXTAUTH_URL:?Set public application URL}
+      AUTH_URL: ${NEXTAUTH_URL:?Set public application URL}
+      AUTH_SECRET: ${AUTH_SECRET:?Set AUTH_SECRET in the orchestrator secret store}
+      NEXTAUTH_SECRET: ${AUTH_SECRET:?Set AUTH_SECRET in the orchestrator secret store}
+      APP_SECRETS_MASTER_KEY: ${APP_SECRETS_MASTER_KEY:?Set APP_SECRETS_MASTER_KEY}
+      LEPOS_INTERNAL_API_KEY: ${LEPOS_INTERNAL_API_KEY:?Set LEPOS_INTERNAL_API_KEY}
+      LEPOS_NATIVE_TELEMETRY_KEY: ${LEPOS_NATIVE_TELEMETRY_KEY:?Set LEPOS_NATIVE_TELEMETRY_KEY}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:?Set STRIPE_SECRET_KEY for paid plans}
+      STRIPE_CONNECT_WEBHOOK_SECRET: ${STRIPE_CONNECT_WEBHOOK_SECRET:?Set Stripe webhook secret}
+      AUTH_GITHUB_ID: ${AUTH_GITHUB_ID:-}
+      AUTH_GITHUB_SECRET: ${AUTH_GITHUB_SECRET:-}
+      GITHUB_OAUTH_CALLBACK_URL: ${GITHUB_OAUTH_CALLBACK_URL:-}
+      GITHUB_APP_CLIENT_ID: ${GITHUB_APP_CLIENT_ID:-}
+      GITHUB_APP_CLIENT_SECRET: ${GITHUB_APP_CLIENT_SECRET:-}
+      GITHUB_APP_CALLBACK_URL: ${GITHUB_APP_CALLBACK_URL:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-1.5-flash}
+      FIREBASE_API_KEY: ${FIREBASE_API_KEY:-}
+      NEXT_PUBLIC_FIREBASE_API_KEY: ${NEXT_PUBLIC_FIREBASE_API_KEY:-}
+      LEPOS_CACHE_ACCESS_KEY_ID: ${LEPOS_CACHE_ACCESS_KEY_ID:-}
+      LEPOS_CACHE_SECRET_ACCESS_KEY: ${LEPOS_CACHE_SECRET_ACCESS_KEY:-}
+      LEPOS_CACHE_BUCKET: ${LEPOS_CACHE_BUCKET:-}
+      LEPOS_CACHE_ENDPOINT: ${LEPOS_CACHE_ENDPOINT:-}
+      LEPOS_CACHE_REGION: ${LEPOS_CACHE_REGION:-us-east-1}
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:' + (process.env.PORT || 3000)).then(r => process.exit(r.status < 500 ? 0 : 1)).catch(() => process.exit(1))\""]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+    labels:
+      com.rustalgorithmtrading.role: public-saas-portal
+      com.rustalgorithmtrading.audience: developer,trader,regular
 
   edge-gateway:
+    image: ${TRADING_IMAGE_REGISTRY:-trading}/edge-gateway:${IMAGE_TAG:-production}
     build:
       context: ..
       dockerfile: ops/deployment/edge-gateway.Dockerfile
-    container_name: trading-edge-gateway
-    network_mode: host
     restart: unless-stopped
+    init: true
+    networks:
+      - public
+      - private
+    volumes:
+      - edge-artifact-data:/var/lib/lepos
     environment:
-      - PORT=8088
-      - HOST=0.0.0.0
-      - REDIS_URL=redis://127.0.0.1:6379
-      - LEPOS_STORAGE_ROOT=/workspace
-      - LEPOS_CONTROL_PLANE_URL=http://127.0.0.1:8081
-      - LEPOS_INTERNAL_API_KEY=lepos_dev_internal_key
-      - LEPOS_SERVICE_ID=edge-gateway
-      - LEPOS_SERVICE_SECRET=${LEPOS_SERVICE_SECRET:-}
-      - LEPOS_IPFS_GATEWAY_URL=https://ipfs.io/ipfs
-      - LEPOS_ARWEAVE_GATEWAY_URL=https://arweave.net
+      <<: *saas-env
+      SERVICE_NAME: edge-gateway
+      PORT: 8088
+      TLS_PORT: 8443
+      HOST: 0.0.0.0
+      REDIS_URL: redis://redis:6379
+      LEPOS_STORAGE_ROOT: /var/lib/lepos/artifacts
+      LEPOS_CONTROL_PLANE_URL: http://nextjs-frontend:3000
+      LEPOS_INTERNAL_API_KEY: ${LEPOS_INTERNAL_API_KEY:?Set LEPOS_INTERNAL_API_KEY}
+      LEPOS_SERVICE_ID: ${LEPOS_SERVICE_ID:-edge-gateway}
+      LEPOS_SERVICE_SECRET: ${LEPOS_SERVICE_SECRET:?Set LEPOS_SERVICE_SECRET}
+      LEPOS_IPFS_GATEWAY_URL: ${LEPOS_IPFS_GATEWAY_URL:-https://ipfs.io/ipfs}
+      LEPOS_ARWEAVE_GATEWAY_URL: ${LEPOS_ARWEAVE_GATEWAY_URL:-https://arweave.net}
+      LEPOS_CONTROL_PLANE_TLS_CERT: ${LEPOS_CONTROL_PLANE_TLS_CERT:-}
+      LEPOS_CONTROL_PLANE_TLS_KEY: ${LEPOS_CONTROL_PLANE_TLS_KEY:-}
+      LEPOS_CONTROL_PLANE_TLS_CA: ${LEPOS_CONTROL_PLANE_TLS_CA:-}
+    ports:
+      - "${EDGE_HTTP_PORT:-8088}:8088"
+      - "${EDGE_TLS_PORT:-8443}:8443"
     depends_on:
-      - redis
-      - go-control-plane
+      redis:
+        condition: service_healthy
+      nextjs-frontend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8088/health >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    labels:
+      com.rustalgorithmtrading.role: public-edge-gateway
+      com.rustalgorithmtrading.audience: developer,trader,regular
+
+networks:
+  public:
+  private:
 
 volumes:
-  trading-db-data:
+  redis-data:
+  go-observability-data:
+  edge-artifact-data:
