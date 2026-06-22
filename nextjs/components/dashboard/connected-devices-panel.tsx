@@ -37,11 +37,19 @@ export function ConnectedDevicesPanel({
 }) {
   return (
     <Card className="border border-hairline bg-canvas py-0">
-      <CardHeader className="border-b border-hairline-cool bg-canvas-soft/60 p-5">
-        <CardTitle className="text-base font-bold text-ink">Connected Devices</CardTitle>
-        <CardDescription className="text-xs text-ink-mute">
-          Live bridge heartbeat status for simulators and physical devices connected to LepoS.
-        </CardDescription>
+      <CardHeader className="border-b border-hairline-cool bg-canvas-soft/60 p-5 flex flex-row items-center justify-between gap-4">
+        <div>
+          <CardTitle className="text-base font-bold text-ink">Connected Devices</CardTitle>
+          <CardDescription className="text-xs text-ink-mute">
+            Live bridge heartbeat status for simulators and physical devices connected to LepoS.
+          </CardDescription>
+        </div>
+        {devices.some(d => d.status === "online") && (
+          <div className="flex items-center gap-1.5 shrink-0 bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[10px] font-bold px-2 py-0.5 rounded-full select-none">
+            <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            Bridge heartbeat active
+          </div>
+        )}
       </CardHeader>
       <CardContent className="p-5">
         {devices.length ? (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { ShieldAlert, AlertCircle } from "lucide-react";
@@ -47,6 +47,7 @@ interface VercelTabProps {
   locale: string;
   returnTo: string;
   vercelProjectEnvVars?: any[];
+  searchParams?: any;
 }
 
 export function VercelTab({
@@ -58,9 +59,16 @@ export function VercelTab({
   locale,
   returnTo,
   vercelProjectEnvVars = [],
+  searchParams,
 }: VercelTabProps) {
   const t = useTranslations("VercelTab");
   const [activeSection, setActiveSection] = useState<VercelTabSection>("observability");
+
+  useEffect(() => {
+    if (searchParams?.section) {
+      setActiveSection(searchParams.section as VercelTabSection);
+    }
+  }, [searchParams?.section]);
 
   if (!vercelConnected) {
     return (

@@ -198,6 +198,11 @@ export function VercelDeploymentsTab({
   const totalPages = Math.ceil(totalDeployments / pageSize);
   const paginatedDeployments = filteredDeployments.slice((dpage - 1) * pageSize, dpage * pageSize);
 
+  // Custom dialogs states
+  const [confirmCancelDplId, setConfirmCancelDplId] = useState<string | null>(null);
+  const [promptPromoteDpl, setPromptPromoteDpl] = useState<{ id: string; name: string } | null>(null);
+  const [promoteReason, setPromoteReason] = useState("");
+
   const getStatusDetails = (state: string) => {
     switch (state) {
       case "READY":
@@ -483,61 +488,32 @@ export function VercelDeploymentsTab({
                                   </Button>
 
                                   {dpl.state === "READY" && dpl.target !== "production" && vercelProjectId && (
-                                    <form 
-                                      onSubmit={(e) => {
-                                        e.preventDefault();
-                                        const reason = prompt(
-                                          locale === "vi" 
-                                            ? "Nhập lý do rollback/promote (tùy chọn):" 
-                                            : "Enter rollback/promote reason (optional):"
-                                        );
-                                        if (reason !== null) {
-                                          const formData = new FormData();
-                                          formData.append("projectId", vercelProjectId);
-                                          formData.append("deploymentId", dpl.uid);
-                                          if (reason) formData.append("description", reason);
-                                          if (returnTo) formData.append("returnTo", returnTo);
-                                          startTransition(async () => {
-                                            await rollbackDeploymentAction(formData);
-                                          });
-                                        }
+                                    <Button
+                                      onClick={() => {
+                                        setPromptPromoteDpl({ id: dpl.uid, name: dpl.name });
+                                        setPromoteReason("");
                                       }}
+                                      variant="ghost"
+                                      size="sm"
+                                      disabled={isPending}
+                                      className="h-8 text-xs text-amber-500 hover:text-amber-600 hover:bg-amber-500/10 rounded-sm font-semibold flex items-center gap-1 cursor-pointer mr-2"
                                     >
-                                      <Button
-                                        type="submit"
-                                        variant="ghost"
-                                        size="sm"
-                                        disabled={isPending}
-                                        className="h-8 text-xs text-amber-500 hover:text-amber-600 hover:bg-amber-500/10 rounded-sm font-semibold flex items-center gap-1 cursor-pointer"
-                                      >
-                                        <RotateCcw className="size-3.5" />
-                                        {locale === "vi" ? "Chuyển đổi" : "Promote"}
-                                      </Button>
-                                    </form>
+                                      <RotateCcw className="size-3.5" />
+                                      {locale === "vi" ? "Chuyển đổi" : "Promote"}
+                                    </Button>
                                   )}
 
                                   {["BUILDING", "INITIALIZING", "QUEUED"].includes(dpl.state || dpl.readyState) && (
-                                    <form 
-                                      action={cancelDeploymentAction}
-                                      onSubmit={(e) => {
-                                        if (!confirm(locale === "vi" ? "Bạn có chắc chắn muốn hủy bản dựng này?" : "Are you sure you want to cancel this build?")) {
-                                          e.preventDefault();
-                                        }
-                                      }}
+                                    <Button
+                                      onClick={() => setConfirmCancelDplId(dpl.uid)}
+                                      variant="ghost"
+                                      size="sm"
+                                      disabled={isPending}
+                                      className="h-8 text-xs text-destructive hover:text-destructive hover:bg-destructive/10 rounded-sm font-semibold flex items-center gap-1 cursor-pointer"
                                     >
-                                      <input type="hidden" name="deploymentId" value={dpl.uid} />
-                                      {returnTo && <input type="hidden" name="returnTo" value={returnTo} />}
-                                      <Button
-                                        type="submit"
-                                        variant="ghost"
-                                        size="sm"
-                                        disabled={isPending}
-                                        className="h-8 text-xs text-destructive hover:text-destructive hover:bg-destructive/10 rounded-sm font-semibold flex items-center gap-1 cursor-pointer"
-                                      >
-                                        <XCircle className="size-3.5" />
-                                        {locale === "vi" ? "Hủy" : "Cancel"}
-                                      </Button>
-                                    </form>
+                                      <XCircle className="size-3.5" />
+                                      {locale === "vi" ? "Hủy" : "Cancel"}
+                                    </Button>
                                   )}
                                 </div>
                               </TableCell>
@@ -765,6 +741,115 @@ export function VercelDeploymentsTab({
                   ))}
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Custom Alert Dialog for canceling builds */}
+      {confirmCancelDplId && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-canvas-night/70 backdrop-blur-md transition-all duration-300 animate-in fade-in">
+          {/* Backdrop click to close */}
+          <div className="absolute inset-0 cursor-default" onClick={() => setConfirmCancelDplId(null)} />
+          
+          <div className="w-full max-w-md bg-canvas border border-hairline rounded-lg shadow-dark relative z-10 overflow-hidden p-5 space-y-4 animate-in zoom-in-95 duration-200">
+            <div className="flex items-center gap-3 text-destructive">
+              <AlertCircle className="size-5 animate-bounce" />
+              <h3 className="text-sm font-bold text-ink">
+                {locale === "vi" ? "Xác nhận hủy bản dựng" : "Cancel Build"}
+              </h3>
+            </div>
+            <p className="text-xs text-ink-secondary leading-relaxed">
+              {locale === "vi"
+                ? "Bạn có chắc chắn muốn hủy bản dựng này không? Hành động này sẽ dừng ngay lập tức mọi tài nguyên biên dịch đang chạy trên Vercel."
+                : "Are you sure you want to cancel this build? This deployment pipeline build process will be stopped immediately."}
+            </p>
+            <div className="flex justify-end gap-2 pt-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 text-xs text-ink-mute hover:text-ink hover:bg-canvas-soft"
+                onClick={() => setConfirmCancelDplId(null)}
+              >
+                {locale === "vi" ? "Đóng" : "Close"}
+              </Button>
+              <form
+                action={cancelDeploymentAction}
+                onSubmit={() => setConfirmCancelDplId(null)}
+              >
+                <input type="hidden" name="deploymentId" value={confirmCancelDplId} />
+                {returnTo && <input type="hidden" name="returnTo" value={returnTo} />}
+                <Button
+                  type="submit"
+                  size="sm"
+                  disabled={isPending}
+                  className="h-8 text-xs bg-destructive hover:bg-destructive-deep text-white font-semibold rounded-sm cursor-pointer"
+                >
+                  {locale === "vi" ? "Hủy bản dựng" : "Cancel Build"}
+                </Button>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Custom Prompt Dialog for promoting/rolling back deployments */}
+      {promptPromoteDpl && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-canvas-night/70 backdrop-blur-md transition-all duration-300 animate-in fade-in">
+          {/* Backdrop click to close */}
+          <div className="absolute inset-0 cursor-default" onClick={() => setPromptPromoteDpl(null)} />
+          
+          <div className="w-full max-w-md bg-canvas border border-hairline rounded-lg shadow-dark relative z-10 overflow-hidden p-5 space-y-4 animate-in zoom-in-95 duration-200">
+            <div className="flex items-center gap-3 text-amber-500">
+              <RotateCcw className="size-5" />
+              <h3 className="text-sm font-bold text-ink">
+                {locale === "vi" ? `Xác nhận Promote — ${promptPromoteDpl.name}` : `Promote Deployment — ${promptPromoteDpl.name}`}
+              </h3>
+            </div>
+            <p className="text-xs text-ink-secondary leading-relaxed">
+              {locale === "vi"
+                ? "Nhập lý do rollback/promote của bạn (tùy chọn):"
+                : "Provide a reason or description for this promotion/rollback (optional):"}
+            </p>
+            <Input
+              value={promoteReason}
+              onChange={(e) => setPromoteReason(e.target.value)}
+              placeholder={locale === "vi" ? "Nhập lý do tại đây..." : "e.g. Rollback to stable release"}
+              className="bg-canvas border-hairline focus:border-primary focus:ring-0 text-xs h-9 rounded-sm font-medium"
+            />
+            <div className="flex justify-end gap-2 pt-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 text-xs text-ink-mute hover:text-ink hover:bg-canvas-soft"
+                onClick={() => setPromptPromoteDpl(null)}
+              >
+                {locale === "vi" ? "Hủy" : "Cancel"}
+              </Button>
+              <Button
+                size="sm"
+                disabled={isPending}
+                className="h-8 text-xs bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-sm cursor-pointer"
+                onClick={async () => {
+                  if (vercelProjectId) {
+                    const formData = new FormData();
+                    formData.append("projectId", vercelProjectId);
+                    formData.append("deploymentId", promptPromoteDpl.id);
+                    if (promoteReason.trim()) {
+                      formData.append("description", promoteReason.trim());
+                    }
+                    if (returnTo) {
+                      formData.append("returnTo", returnTo);
+                    }
+                    setPromptPromoteDpl(null);
+                    startTransition(async () => {
+                      await rollbackDeploymentAction(formData);
+                    });
+                  }
+                }}
+              >
+                {locale === "vi" ? "Xác nhận" : "Confirm Promote"}
+              </Button>
             </div>
           </div>
         </div>

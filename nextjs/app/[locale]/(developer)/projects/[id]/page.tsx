@@ -913,6 +913,7 @@ export default async function ProjectDetailsPage({ params, searchParams }: Proje
             locale={locale}
             returnTo={returnTo}
             vercelProjectEnvVars={vercelProjectEnvVars}
+            searchParams={search}
           />
         )}
       </div>

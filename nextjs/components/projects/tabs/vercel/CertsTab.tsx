@@ -22,7 +22,12 @@ export function CertsTab({ returnTo }: CertsTabProps) {
       {/* Issue Certificate */}
       <Card className="bg-canvas border border-hairline rounded-lg p-5">
         <CardHeader className="px-0 pt-0">
-          <CardTitle className="text-base font-bold text-ink">{t("certs.title")} — Issue SSL</CardTitle>
+          <div className="flex items-center gap-2">
+            <CardTitle className="text-base font-bold text-ink">{t("certs.title")} — Issue SSL</CardTitle>
+            <span className="bg-amber-500/10 text-amber-500 border border-amber-500/20 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider select-none">
+              Simulator
+            </span>
+          </div>
           <CardDescription className="text-xs text-ink-mute">{t("certs.desc")}</CardDescription>
         </CardHeader>
         <Separator className="bg-hairline my-4" />

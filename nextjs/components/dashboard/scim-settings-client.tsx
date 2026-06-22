@@ -258,11 +258,16 @@ export function ScimSettingsClient({
         {/* Credentials generator card */}
         <Card className="border border-hairline bg-canvas-night/40 backdrop-blur-md shadow-lg flex flex-col justify-between">
           <CardHeader>
-            <CardTitle className="text-sm font-bold text-slate-200 flex items-center gap-1.5">
-              <Key className="size-4 text-indigo-400" />
-              Directory Credentials
-              {!scimEnabled && <Badge variant="outline" className="ml-2 text-[8px] border-slate-800 text-slate-500">Disabled</Badge>}
-            </CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-bold text-slate-200 flex items-center gap-1.5">
+                <Key className="size-4 text-indigo-400" />
+                Directory Credentials
+                {!scimEnabled && <Badge variant="outline" className="ml-2 text-[8px] border-slate-800 text-slate-500">Disabled</Badge>}
+              </CardTitle>
+              <span className="bg-amber-500/10 text-amber-500 border border-amber-500/20 text-[8px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider select-none">
+                Simulator
+              </span>
+            </div>
             <CardDescription className="text-xs text-slate-400">
               Generate credentials to connect Microsoft Azure AD or Okta to LepoS
             </CardDescription>
@@ -356,10 +361,15 @@ export function ScimSettingsClient({
         {/* Sync Simulator Card */}
         <Card className="border border-hairline bg-canvas-night/40 backdrop-blur-md shadow-lg flex flex-col justify-between">
           <CardHeader>
-            <CardTitle className="text-sm font-bold text-slate-200 flex items-center gap-1.5">
-              <Sparkles className="size-4.5 text-indigo-400 animate-pulse" />
-              Manual Sync Simulator
-            </CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-bold text-slate-200 flex items-center gap-1.5">
+                <Sparkles className="size-4.5 text-indigo-400 animate-pulse" />
+                Manual Sync Simulator
+              </CardTitle>
+              <span className="bg-amber-500/10 text-amber-500 border border-amber-500/20 text-[8px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider select-none">
+                Simulator
+              </span>
+            </div>
             <CardDescription className="text-xs text-slate-400">
               Trigger simulated Okta or Azure AD push payloads to populate users in LepoS
             </CardDescription>
@@ -370,7 +380,7 @@ export function ScimSettingsClient({
               <span className="font-bold text-slate-300">Simulate Directory Push Payload</span>
               <p className="text-[11px] text-slate-400 leading-relaxed">
                 Clicking the sync button below will mimic standard directory pushes (POST /Users, PUT /Groups) from 
-                <strong> {provider === "okta" ? "Okta push worker" : "Azure AD provisioning scheduler"}</strong>.
+                <strong> {provider === "okta" ? "Okta push worker" : "Azure AD provisioning scheduler"}</strong>. Credentials must be verified by the provider's server before running in a real environment.
               </p>
             </div>
 

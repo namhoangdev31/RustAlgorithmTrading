@@ -1,8 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { RotateCcw, RefreshCw } from "lucide-react";
+import { RotateCcw, RefreshCw, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -38,6 +39,8 @@ export function NativeSubTab({
   isPending,
   startTransition,
 }: NativeSubTabProps) {
+  const [confirmRollbackDpl, setConfirmRollbackDpl] = useState<any | null>(null);
+
   return (
     <Card className="overflow-hidden border border-hairline bg-canvas py-0 animate-in fade-in">
       <CardHeader className="border-b border-hairline-cool bg-canvas-soft/60 flex flex-col md:flex-row md:items-center md:justify-between gap-4 p-5">
@@ -96,24 +99,7 @@ export function NativeSubTab({
                     <div className="flex justify-end">
                       <Button
                         onClick={() => {
-                          const startTime = performance.now();
-                          const formData = new FormData();
-                          formData.append("projectId", project?.id || deployment.projectId);
-                          formData.append("deploymentId", deployment.id);
-                          
-                          startTransition(async () => {
-                            try {
-                              await rollbackNativeDeploymentAction(formData);
-                              const duration = Math.round(performance.now() - startTime);
-                              toast.success(
-                                locale === "vi"
-                                  ? `Kích hoạt rollback tức thì thành công trong ${duration}ms! Cấu hình proxy đã được đồng bộ.`
-                                  : `Instant rollback activated successfully in ${duration}ms! Proxy routing synchronized.`
-                              );
-                            } catch (err: any) {
-                              toast.error(err.message || "Rollback failed");
-                            }
-                          });
+                          setConfirmRollbackDpl(deployment);
                         }}
                         variant="ghost"
                         size="sm"
@@ -135,6 +121,65 @@ export function NativeSubTab({
           </Table>
         )}
       </CardContent>
+
+      {/* Custom Rollback Confirmation Modal Dialog */}
+      {confirmRollbackDpl && (
+        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-canvas-night/70 backdrop-blur-md transition-all duration-300 animate-in fade-in animate-out fade-out">
+          <div className="absolute inset-0 cursor-default" onClick={() => setConfirmRollbackDpl(null)} />
+          <div className="w-full max-w-md bg-canvas border border-hairline rounded-lg shadow-dark relative z-10 overflow-hidden p-5 space-y-4 animate-in zoom-in-95 duration-200">
+            <div className="flex items-center gap-3 text-amber-500">
+              <AlertCircle className="size-5 animate-pulse" />
+              <h3 className="text-sm font-bold text-ink">
+                {locale === "vi" ? "Xác nhận Rollback bản địa" : "Confirm Native Rollback"}
+              </h3>
+            </div>
+            <p className="text-xs text-ink-secondary leading-relaxed">
+              {locale === "vi"
+                ? `Bạn có chắc chắn muốn thực hiện rollback tức thì về phiên bản v${confirmRollbackDpl.version} (Build ${confirmRollbackDpl.buildNumber}) không? Cấu hình định tuyến proxy của bạn sẽ được thay đổi tương ứng.`
+                : `Are you sure you want to perform an instant rollback to version v${confirmRollbackDpl.version} (Build ${confirmRollbackDpl.buildNumber})? Your proxy routing rules will be updated immediately.`}
+            </p>
+            <div className="flex justify-end gap-2 pt-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 text-xs text-ink-mute hover:text-ink hover:bg-canvas-soft"
+                onClick={() => setConfirmRollbackDpl(null)}
+              >
+                {locale === "vi" ? "Hủy" : "Cancel"}
+              </Button>
+              <Button
+                size="sm"
+                disabled={isPending}
+                className="h-8 text-xs bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-sm cursor-pointer"
+                onClick={() => {
+                  const deployment = confirmRollbackDpl;
+                  setConfirmRollbackDpl(null);
+                  const startTime = performance.now();
+                  const formData = new FormData();
+                  formData.append("projectId", project?.id || deployment.projectId);
+                  formData.append("deploymentId", deployment.id);
+                  
+                  startTransition(async () => {
+                    try {
+                      await rollbackNativeDeploymentAction(formData);
+                      const duration = Math.round(performance.now() - startTime);
+                      toast.success(
+                        locale === "vi"
+                          ? `Kích hoạt rollback tức thì thành công trong ${duration}ms! Cấu hình proxy đã được đồng bộ.`
+                          : `Instant rollback activated successfully in ${duration}ms! Proxy routing synchronized.`
+                      );
+                    } catch (err: any) {
+                      toast.error(err.message || "Rollback failed");
+                    }
+                  });
+                }}
+              >
+                {locale === "vi" ? "Xác nhận" : "Confirm Rollback"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </Card>
   );
 }

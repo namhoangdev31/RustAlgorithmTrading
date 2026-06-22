@@ -71,11 +71,17 @@ export function WafThreatMap({
 
   return (
     <Card className="border border-hairline bg-canvas py-0">
-      <CardHeader className="border-b border-hairline-cool bg-canvas-soft/60 p-5">
-        <CardTitle className="text-base font-bold text-ink">Threat Map & WAF Sensitivity</CardTitle>
-        <CardDescription className="text-xs text-ink-mute">
-          Visualize recent blocked sources and tune the security posture without editing raw rules.
-        </CardDescription>
+      <CardHeader className="border-b border-hairline-cool bg-canvas-soft/60 p-5 flex flex-row items-center justify-between gap-4">
+        <div>
+          <CardTitle className="text-base font-bold text-ink">Threat Map & WAF Sensitivity</CardTitle>
+          <CardDescription className="text-xs text-ink-mute">
+            Visualize recent blocked sources and tune the security posture without editing raw rules.
+          </CardDescription>
+        </div>
+        <div className="flex items-center gap-1.5 shrink-0 bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[10px] font-bold px-2 py-0.5 rounded-full select-none">
+          <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          Live feed active
+        </div>
       </CardHeader>
       <CardContent className="space-y-5 p-5">
         <div className="flex flex-wrap items-center gap-2">

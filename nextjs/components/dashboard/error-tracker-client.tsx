@@ -19,6 +19,8 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { runNativeDiagnosticAction } from "@/app/actions/native-platform";
 import { toast } from "sonner";
+import { useLocale } from "next-intl";
+import { Link } from "@/i18n/navigation";
 
 interface StackFrame {
   raw: string;
@@ -162,6 +164,7 @@ export function CodeSnippetVisualizer({ preview }: CodeSnippetVisualizerProps) {
 }
 
 export function ErrorTrackerClient({ crashes = [], projectId, returnTo }: ErrorTrackerClientProps) {
+  const locale = useLocale();
   const [selectedCrashId, setSelectedCrashId] = useState<string | null>(null);
   const [selectedGroupKey, setSelectedGroupKey] = useState<string | null>(null);
   const [platformFilter, setPlatformFilter] = useState<string>("all");
@@ -433,7 +436,15 @@ export function ErrorTrackerClient({ crashes = [], projectId, returnTo }: ErrorT
                             <div className="bg-slate-950 text-slate-300 border border-slate-900 rounded-lg p-4 font-mono text-[11px] leading-relaxed shadow-inner">
                               <div className="flex items-center justify-between border-b border-slate-900 pb-2.5 mb-2.5 text-slate-500 text-[10px]">
                                 <span>LATEST DIAGNOSTICS & TRACE FOR THIS GROUP</span>
-                                {isMapped && <span className="text-emerald-500 font-bold flex items-center gap-1"><Sparkles className="size-3" /> Map-resolved from production build .map</span>}
+                                <div className="flex items-center gap-3">
+                                  {isMapped && <span className="text-emerald-500 font-bold flex items-center gap-1"><Sparkles className="size-3" /> Map-resolved from production build .map</span>}
+                                  <Button asChild size="sm" variant="outline" className="h-6 text-[9px] border-indigo-500/20 text-indigo-400 hover:text-indigo-300 hover:bg-slate-900 font-bold px-2 py-0.5 rounded">
+                                    <Link href={`/projects/${projectId}?tab=vercel&section=logs`}>
+                                      <History className="size-3 mr-1" />
+                                      {locale === "vi" ? "Xem Nhật Ký" : "View Logs"}
+                                    </Link>
+                                  </Button>
+                                </div>
                               </div>
                               
                               <div className="space-y-1.5 overflow-x-auto max-h-[200px] border-b border-slate-900 pb-3">
@@ -573,7 +584,15 @@ export function ErrorTrackerClient({ crashes = [], projectId, returnTo }: ErrorT
                             <div className="bg-slate-950 text-slate-300 border border-slate-900 rounded-lg p-4 font-mono text-[11px] leading-relaxed shadow-inner">
                               <div className="flex items-center justify-between border-b border-slate-900 pb-2.5 mb-2.5 text-slate-500 text-[10px]">
                                 <span>CRASH STACK TRACE DIAGNOSTICS</span>
-                                {isMapped && <span className="text-emerald-500 font-bold flex items-center gap-1"><Sparkles className="size-3" /> Map-resolved from production build .map</span>}
+                                <div className="flex items-center gap-3">
+                                  {isMapped && <span className="text-emerald-500 font-bold flex items-center gap-1"><Sparkles className="size-3" /> Map-resolved from production build .map</span>}
+                                  <Button asChild size="sm" variant="outline" className="h-6 text-[9px] border-indigo-500/20 text-indigo-400 hover:text-indigo-300 hover:bg-slate-900 font-bold px-2 py-0.5 rounded">
+                                    <Link href={`/projects/${projectId}?tab=vercel&section=logs`}>
+                                      <History className="size-3 mr-1" />
+                                      {locale === "vi" ? "Xem Nhật Ký" : "View Logs"}
+                                    </Link>
+                                  </Button>
+                                </div>
                               </div>
                               
                               <div className="space-y-1.5 overflow-x-auto max-h-[200px] border-b border-slate-900 pb-3">
