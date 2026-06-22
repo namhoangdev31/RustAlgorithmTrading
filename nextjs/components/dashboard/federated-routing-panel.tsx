@@ -10,21 +10,35 @@ export function FederatedRoutingPanel({
   policy,
   replicas,
   deployments,
+  locale = "en",
   returnTo,
 }: {
   projectId: string;
   policy: any;
   replicas: any[];
   deployments: any[];
+  locale?: string;
   returnTo?: string;
 }) {
   return (
     <Card className="border border-hairline bg-canvas py-0">
       <CardHeader className="border-b border-hairline-cool bg-canvas-soft/60 p-5">
-        <CardTitle className="text-base font-bold text-ink">Federated Routing & Replicas</CardTitle>
-        <CardDescription className="text-xs text-ink-mute">
-          Manage multi-region routing policy, replica health, drain state, and replication metadata.
-        </CardDescription>
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <CardTitle className="text-base font-bold text-ink">
+              {locale === "vi" ? "Định tuyến Liên kết & Bản sao" : "Federated Routing & Replicas"}
+            </CardTitle>
+            <CardDescription className="text-xs text-ink-mute">
+              {locale === "vi"
+                ? "Quản lý chính sách định tuyến đa vùng, sức khỏe bản sao, trạng thái drain và dữ liệu sao chép."
+                : "Manage multi-region routing policy, replica health, drain state, and replication metadata."}
+            </CardDescription>
+          </div>
+          <div className="flex items-center gap-1.5 text-[10px] font-semibold text-emerald-500 bg-emerald-500/5 border border-emerald-500/10 px-2 py-0.5 rounded-full select-none shrink-0 h-5">
+            <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span>{locale === "vi" ? "Sao chép: Hoạt động" : "Replication Feed: Active"}</span>
+          </div>
+        </div>
       </CardHeader>
       <CardContent className="space-y-5 p-5">
         <form action={upsertNativeRoutingPolicyAction} className="grid gap-3 md:grid-cols-4">

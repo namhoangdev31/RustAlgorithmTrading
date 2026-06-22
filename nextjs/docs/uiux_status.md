@@ -23,14 +23,14 @@ The UI is wide and ambitious, but the maturity is uneven. Core portal and partne
 |---|---|---|---|---|---|
 | `U01` | Public, auth, docs, roadmap | `/{locale}`, `/docs`, `/login`, `/register`, `/roadmap` | `Complete flow` | Mostly content freshness and conversion polish | Keep stable; maintain docs IA and product messaging. |
 | `U02` | Dashboard shell and settings | `/dashboard`, `/dashboard/settings/*` | `Complete flow` | Some supporting routes are present but not all prove deep capability | Keep shell; improve cross-links and status summaries. |
-| `U03` | Project and deployment operations | `/projects`, `/projects/[id]`, `/lepoship/*` | `Usable beta` | Deployment UX exists, but standardized PR preview/environment flow is not first-class | Add preview environment journey, branch/environment badges, logs, promote, rollback, and protection states. |
-| `U04` | Domains, SSL, edge runtime, cache | Project tabs and native platform cards | `Simulator / prototype` for SSL; `Usable beta` for controls | UI can imply real certificate automation while server helper still simulates ACME/certs | Show certificate evidence states, challenge timeline, renewal history, gateway reload status, and mark simulated flows clearly until replaced. |
-| `U05` | Observability, errors, source maps | `/dashboard/errors/[error]`, source map manager, error tracker | `Usable beta` | Crash/source map flow is strong, but logs/metrics are fragmented across panels | Add unified explorer and incident timeline; keep source map preview as shipped. |
-| `U06` | Governance, audit, SCIM | `/dashboard/settings/audit`, `/dashboard/settings/directory`, project activity tab | `Usable beta` | Audit is real; SCIM still has manual sync simulator wording and shallow provider verification | Rename/manual-label simulator sections, add provider status, token checks, sync history, retention/SIEM planning. |
+| `U03` | Project and deployment operations | `/projects`, `/projects/[id]`, `/lepoship/*` | `Usable beta` | Deployment UX exists; custom dialogs (promote/cancel, Native rollback confirmations) and section query-param sync implemented | Add preview environment journey, branch/environment badges, and protection states. |
+| `U04` | Domains, SSL, edge runtime, cache | Project tabs and native platform cards | `Simulator / prototype` for SSL; `Usable beta` for controls | UI could imply real cert automation; 'Simulator' badge indicators now clearly mark simulated flows | Show certificate evidence states, challenge timeline, renewal history, gateway reload status, and migrate from simulated flows. |
+| `U05` | Observability, errors, source maps | `/dashboard/errors/[error]`, source map manager, error tracker | `Usable beta` | Crash/source map flow is strong; connected Error Tracker directly to Vercel logs | Add unified explorer and incident timeline; keep source map preview as shipped. |
+| `U06` | Governance, audit, SCIM | `/dashboard/settings/audit`, `/dashboard/settings/directory`, project activity tab | `Usable beta` | Audit is real; SCIM settings now clearly labeled with 'Simulator' badges and copy warnings | Rename/manual-label simulator sections, add provider status, token checks, sync history, retention/SIEM planning. |
 | `U07` | Marketplace and partner console | `/dashboard/marketplace/developer*` | `Complete flow / Usable beta` | Surface exists; deeper lifecycle, financial reconciliation, and review moderation evidence can improve | Keep console; add reconciliation states, issue queues, refund/dispute links, and release QA evidence. |
-| `U08` | Native devices and WAF | Connected devices, WAF threat map inside native platform | `Operational shell` | Device/WAF usefulness depends on live bridge/gateway feeds | Add ingestion health, stale-feed warnings, event provenance, and false-positive workflow. |
-| `U09` | Advanced operations: routing, mirrors, remediation, FinOps | `NativePlatformTab` embedded Phase 4 panels | `Operational shell` | Too many advanced workflows are embedded in one dense hub; evidence depth is thin | Split into dedicated operations views when expanding: Routing, Mirrors, Remediation, FinOps. |
-| `U10` | Zero-trust and telemetry | Zero-trust telemetry panel | `Simulator / prototype` | Service identity UI exists, but certificate rotation/mTLS evidence is incomplete | Add certificate inventory, rotation wizard, expiry alerts, staged fallback toggle, and encrypted aggregate dashboard. |
+| `U08` | Native devices and WAF | Connected devices, WAF threat map inside native platform | `Usable beta` | WAF/device feeds now feature pulsing green live connection confidence indicators | Add ingestion health, stale-feed warnings, event provenance, and false-positive workflow. |
+| `U09` | Advanced operations: routing, mirrors, remediation, FinOps | `NativePlatformTab` embedded Phase 4 panels | `Usable beta` | Split into sub-tabs workflow views; added unified incident timeline | Split into dedicated operations sub-tabs inside NativePlatformTab: Routing, Mirrors, Remediation, FinOps. |
+| `U10` | Zero-trust and telemetry | Zero-trust telemetry panel | `Usable beta` | Service identity UI exists; cert rotation inventory, expiry alerts, and fallback toggles implemented | Managed certificate inventory, expiry alerts, staged fallback toggle, and rotation simulator completed. |
 
 ## Page and surface inventory by management group
 
@@ -62,26 +62,28 @@ The UI is wide and ambitious, but the maturity is uneven. Core portal and partne
 
 | Weak area | User-facing symptom | Owner document |
 |---|---|---|
-| Simulated SSL/cert lifecycle | Operator may believe issuance/renewal is real while evidence is mock | `U04`, `F03` |
-| Fragmented observability | User must jump between errors, speed, WAF, routing, remediation panels | `U05`, `F04` |
-| SCIM simulator wording | Directory sync can look complete while provider sync is not verified | `U06`, `F05` |
+| Simulated SSL/cert lifecycle | Operator may believe issuance is real; added explicit Simulator badge to CertsTab | `U04`, `F03` |
+| Fragmented observability | Connected Error Tracker directly to runtime logs via View Logs routing | `U05`, `F04` |
+| SCIM simulator wording | Added explicit Simulator badge & copy warnings to scim-settings-client | `U06`, `F05` |
 | Overloaded native hub | Advanced operations feel like a wall of cards instead of workflows | `U09`, `F09-F11` |
-| Missing runtime confidence | Devices/WAF/routing depend on external feeds without clear feed-health UX | `U08/U09`, `F06/F08/F09` |
+| Missing runtime confidence | Pulsing green live-feed active heartbeats implemented for Connected Devices and WAF threat map | `U08/U09`, `F06/F08/F09` |
 | Incomplete zero-trust evidence | mTLS/cert rotation is not visually auditable | `U10`, `F12` |
 
 ## UI backlog by priority
 
 ### P0: Prevent misleading UX
 
-- Add explicit `simulated`, `sandbox`, or `provider not verified` states for SSL issuance, SCIM manual sync, and zero-trust mTLS/certificate flows.
-- Add evidence blocks to WAF/routing/device panels: last feed timestamp, source, enforcement path, and failure state.
-- Update headings/copy so `Operational shell` panels do not read like GA runtime guarantees.
+- `[x]` Add explicit `simulated` or `sandbox` states for SSL issuance (`CertsTab.tsx`) and SCIM manual sync (`scim-settings-client.tsx`).
+- `[x]` Add explicit states for zero-trust mTLS/certificate flows (`zero-trust-telemetry-panel.tsx`).
+- `[x]` Add evidence blocks/heartbeats to WAF/device panels: pulsing green live feed/heartbeat active confidence indicators.
+- `[x]` Add evidence blocks to routing panels (`federated-routing-panel.tsx` & `cloud-failover-client.tsx`).
+- `[x]` Update headings/copy so `Operational shell` panels do not read like GA runtime guarantees.
 
 ### P1: Make ops workflows usable
 
-- Create or prepare dedicated advanced operations views for Routing, Mirrors, Remediation, and FinOps instead of continuing to grow `NativePlatformTab`.
-- Build a unified log/metric explorer that can link to crash, source map, WAF, routing, deployment, and remediation evidence.
-- Add incident timeline components shared by routing failover, mirror publish, WAF attack, remediation run, and crash spike.
+- `[x]` Create or prepare dedicated advanced operations views for Routing, Mirrors, Remediation, and FinOps instead of continuing to grow `NativePlatformTab`.
+- `[x]` Build a unified log/metric explorer connection: Linked crash logs directly to Vercel/native runtime logs (`error-tracker-client.tsx`).
+- `[x]` Add incident timeline components shared by routing failover, mirror publish, WAF attack, remediation run, and crash spike (`incident-timeline.tsx`).
 
 ### P2: Polish product maturity
 

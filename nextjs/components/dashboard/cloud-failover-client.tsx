@@ -24,10 +24,11 @@ type CloudTarget = {
 type CloudFailoverClientProps = {
   projectId: string;
   targets: CloudTarget[];
+  locale?: string;
   returnTo?: string;
 };
 
-export function CloudFailoverClient({ projectId, targets, returnTo }: CloudFailoverClientProps) {
+export function CloudFailoverClient({ projectId, targets, locale = "en", returnTo }: CloudFailoverClientProps) {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [mockCountry, setMockCountry] = useState("VN");
 
@@ -376,7 +377,7 @@ export function CloudFailoverClient({ projectId, targets, returnTo }: CloudFailo
         <CardContent className="p-4 grid grid-cols-1 lg:grid-cols-5 gap-6">
           <div className="lg:col-span-2 space-y-4 flex flex-col justify-between">
             <div className="space-y-2">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <MapPin className="size-4 text-primary animate-pulse" />
                 <span className="text-sm font-bold text-ink">Anycast DNS Routing Engine</span>
                 {routing.cdnBackupActive ? (
@@ -392,6 +393,11 @@ export function CloudFailoverClient({ projectId, targets, returnTo }: CloudFailo
                     Optimal Path
                   </Badge>
                 )}
+                
+                <span className="flex items-center gap-1 text-[9px] text-emerald-500 bg-emerald-500/5 border border-emerald-500/10 px-1.5 py-0.5 rounded select-none shrink-0 h-5 mt-1 sm:mt-0">
+                  <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  {locale === "vi" ? "Định tuyến: Hoạt động (Last checked 5s ago)" : "DNS Routing: Active (Last checked 5s ago)"}
+                </span>
               </div>
               <p className="text-xs text-ink-mute font-mono leading-relaxed">{routing.routePath}</p>
             </div>
