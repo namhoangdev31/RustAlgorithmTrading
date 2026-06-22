@@ -2,7 +2,7 @@
 # Example:
 # docker build -f ops/deployment/Dockerfile --build-arg BIN=market-data -t trading/market-data:local .
 
-FROM rust:1-slim-bookworm AS builder
+FROM rust:1-slim-trixie AS builder
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
@@ -21,16 +21,16 @@ WORKDIR /workspace/rust
 ARG BIN=market-data
 RUN cargo build --release --bin ${BIN}
 
-FROM debian:bookworm-slim AS runtime
+FROM debian:trixie-slim AS runtime
 
 ARG BIN=market-data
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     curl \
-    libssl3 \
+    libssl3t64 \
     libzmq5 \
     && if [ "$BIN" = "signal-bridge" ]; then \
-        apt-get install -y --no-install-recommends python3 python3-pip python3-dev; \
+        apt-get install -y --no-install-recommends python3 libpython3.13; \
     fi \
     && rm -rf /var/lib/apt/lists/*
 
@@ -43,12 +43,8 @@ WORKDIR /workspace
 
 COPY --from=builder /workspace/rust/target/release/${BIN} /usr/local/bin/${BIN}
 COPY ops/config ./ops/config
-COPY python/requirements.txt ./python/requirements.txt
 
-RUN if [ "$BIN" = "signal-bridge" ]; then \
-        pip3 install --no-cache-dir --break-system-packages -r ./python/requirements.txt; \
-    fi \
-    && useradd --system --uid 10001 --gid nogroup appuser \
+RUN useradd --system --uid 10001 --gid nogroup appuser \
     && chown -R appuser:nogroup /workspace
 
 USER appuser
