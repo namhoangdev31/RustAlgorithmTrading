@@ -1,5 +1,5 @@
 x-saas-env: &saas-env
-  APP_ENV: ${APP_ENV:-production}
+  APP_ENV: ${APP_ENV:-development}
   SERVICE_MODE: managed_saas
   TENANCY_MODE: multi_tenant
   USER_SEGMENTS: developer,trader,regular
@@ -7,8 +7,8 @@ x-saas-env: &saas-env
 
 x-rust-env: &rust-env
   <<: *saas-env
-  RUST_LOG: ${RUST_LOG:-info}
-  TRADING_ENV: ${TRADING_ENV:-production}
+  RUST_LOG: ${RUST_LOG:-debug}
+  TRADING_ENV: ${TRADING_ENV:-sandbox}
   METRICS_HOST: 0.0.0.0
   ALPACA_API_KEY: ${ALPACA_API_KEY:-}
   ALPACA_SECRET_KEY: ${ALPACA_SECRET_KEY:-}
@@ -22,7 +22,7 @@ x-rust-service: &rust-service
     - private
   volumes:
     - type: bind
-      source: ./config/${TRADING_CONFIG_PROFILE:-system.production.json}
+      source: ./config/${TRADING_CONFIG_PROFILE:-system.json}
       target: /workspace/ops/config/system.json
       read_only: true
     - type: bind
@@ -180,7 +180,7 @@ services:
       redis:
         condition: service_healthy
     healthcheck:
-      test: [ "CMD-SHELL", "wget -qO- http://127.0.0.1:8081/health/ready >/dev/null || exit 1" ]
+      test: [ "CMD-SHELL", "curl -fsS http://127.0.0.1:8081/health/ready >/dev/null || exit 1" ]
       interval: 30s
       timeout: 5s
       retries: 5
@@ -199,10 +199,16 @@ services:
 
 
   nextjs-frontend:
-    image: ${TRADING_IMAGE_REGISTRY:-trading}/nextjs-frontend:${IMAGE_TAG:-production}
+    image: ${TRADING_IMAGE_REGISTRY:-trading}/nextjs-frontend:development
     build:
       context: ..
       dockerfile: ops/deployment/nextjs.Dockerfile
+      target: builder
+    command: yarn dev
+    volumes:
+      - ../nextjs:/workspace/nextjs
+      - /workspace/nextjs/node_modules
+      - /workspace/nextjs/.next
     restart: unless-stopped
     init: true
     networks:
