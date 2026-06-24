@@ -30,11 +30,41 @@ x-rust-service: &rust-service
       target: /workspace/ops/config/risk_limits.toml
       read_only: true
   stop_grace_period: 30s
+  deploy:
+    resources:
+      limits:
+        cpus: '0.25'
+        memory: 256M
+      reservations:
+        cpus: '0.05'
+        memory: 64M
 
 services:
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - private
+    healthcheck:
+      test: [ "CMD-SHELL", "redis-cli ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 128M
+        reservations:
+          cpus: '0.05'
+          memory: 32M
+
   market-data:
     <<: *rust-service
-    profiles: ["trading"]
+    profiles: [ "trading" ]
     image: ${TRADING_IMAGE_REGISTRY:-trading}/market-data:${IMAGE_TAG:-production}
     build:
       context: ..
@@ -46,16 +76,16 @@ services:
       SERVICE_NAME: market-data
       MARKET_DATA_METRICS_HOST: 0.0.0.0
       HEALTHCHECK_URL: http://127.0.0.1:9091/metrics
-    expose:
-      - "5555"
-      - "9091"
+    ports:
+      - "${MARKET_DATA_PORT:-5555}:5555"
+      - "${MARKET_DATA_METRICS_PORT:-9091}:9091"
     labels:
       com.rustalgorithmtrading.role: private-market-data
       com.rustalgorithmtrading.audience: trader
 
   signal-bridge:
     <<: *rust-service
-    profiles: ["trading"]
+    profiles: [ "trading" ]
     image: ${TRADING_IMAGE_REGISTRY:-trading}/signal-bridge:${IMAGE_TAG:-production}
     build:
       context: ..
@@ -67,9 +97,9 @@ services:
       SERVICE_NAME: signal-bridge
       SIGNAL_BRIDGE_METRICS_HOST: 0.0.0.0
       HEALTHCHECK_URL: http://127.0.0.1:9094/metrics
-    expose:
-      - "5556"
-      - "9094"
+    ports:
+      - "${SIGNAL_BRIDGE_PORT:-5556}:5556"
+      - "${SIGNAL_BRIDGE_METRICS_PORT:-9094}:9094"
     depends_on:
       market-data:
         condition: service_healthy
@@ -79,7 +109,7 @@ services:
 
   risk-manager:
     <<: *rust-service
-    profiles: ["trading"]
+    profiles: [ "trading" ]
     image: ${TRADING_IMAGE_REGISTRY:-trading}/risk-manager:${IMAGE_TAG:-production}
     build:
       context: ..
@@ -91,15 +121,15 @@ services:
       SERVICE_NAME: risk-manager
       RISK_MANAGER_METRICS_HOST: 0.0.0.0
       HEALTHCHECK_URL: http://127.0.0.1:9093/metrics
-    expose:
-      - "9093"
+    ports:
+      - "${RISK_MANAGER_METRICS_PORT:-9093}:9093"
     labels:
       com.rustalgorithmtrading.role: private-risk-control
       com.rustalgorithmtrading.audience: trader
 
   execution-engine:
     <<: *rust-service
-    profiles: ["trading"]
+    profiles: [ "trading" ]
     image: ${TRADING_IMAGE_REGISTRY:-trading}/execution-engine:${IMAGE_TAG:-production}
     build:
       context: ..
@@ -111,8 +141,8 @@ services:
       SERVICE_NAME: execution-engine
       EXECUTION_ENGINE_METRICS_HOST: 0.0.0.0
       HEALTHCHECK_URL: http://127.0.0.1:9092/metrics
-    expose:
-      - "9092"
+    ports:
+      - "${EXECUTION_ENGINE_METRICS_PORT:-9092}:9092"
     depends_on:
       risk-manager:
         condition: service_healthy
@@ -138,37 +168,35 @@ services:
       SERVICE_NAME: go-control-plane
       PORT: 8081
       HOST: 0.0.0.0
-      DATABASE_URL: ${DATABASE_URL:?Set managed PostgreSQL DATABASE_URL}
+      DATABASE_URL: postgresql://noah_admin:noah_master@103.82.36.67:8048/noah_db
       DUCKDB_PATH: /data/observability.duckdb
-      REDIS_URL: ${REDIS_URL:?Set a TLS-enabled managed Redis URL}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
       MARKET_DATA_METRICS_URL: http://market-data:9091/metrics
       EXECUTION_METRICS_URL: http://execution-engine:9092/metrics
       RISK_METRICS_URL: http://risk-manager:9093/metrics
     expose:
       - "8081"
+    depends_on:
+      redis:
+        condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8081/health/ready >/dev/null || exit 1"]
+      test: [ "CMD-SHELL", "wget -qO- http://127.0.0.1:8081/health/ready >/dev/null || exit 1" ]
       interval: 30s
       timeout: 5s
       retries: 5
       start_period: 20s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
     labels:
       com.rustalgorithmtrading.role: private-observability-api
       com.rustalgorithmtrading.audience: developer,trader
 
-  database-migrate:
-    image: ${TRADING_IMAGE_REGISTRY:-trading}/nextjs-migrate:${IMAGE_TAG:-production}
-    build:
-      context: ..
-      dockerfile: ops/deployment/nextjs.Dockerfile
-      target: migrate
-    restart: "no"
-    networks:
-      - private
-    environment:
-      DATABASE_URL: ${DATABASE_URL:?Set managed PostgreSQL DATABASE_URL}
-    labels:
-      com.rustalgorithmtrading.role: database-migration-job
 
   nextjs-frontend:
     image: ${TRADING_IMAGE_REGISTRY:-trading}/nextjs-frontend:${IMAGE_TAG:-production}
@@ -185,17 +213,18 @@ services:
       SERVICE_NAME: nextjs-frontend
       NODE_ENV: production
       PORT: 3000
-      DATABASE_URL: ${DATABASE_URL:?Set managed PostgreSQL DATABASE_URL}
-      REDIS_URL: ${REDIS_URL:?Set a TLS-enabled managed Redis URL}
-      NEXTAUTH_URL: ${NEXTAUTH_URL:?Set public application URL}
-      AUTH_URL: ${NEXTAUTH_URL:?Set public application URL}
-      AUTH_SECRET: ${AUTH_SECRET:?Set AUTH_SECRET in the orchestrator secret store}
-      NEXTAUTH_SECRET: ${AUTH_SECRET:?Set AUTH_SECRET in the orchestrator secret store}
-      APP_SECRETS_MASTER_KEY: ${APP_SECRETS_MASTER_KEY:?Set APP_SECRETS_MASTER_KEY}
-      LEPOS_INTERNAL_API_KEY: ${LEPOS_INTERNAL_API_KEY:?Set LEPOS_INTERNAL_API_KEY}
-      LEPOS_NATIVE_TELEMETRY_KEY: ${LEPOS_NATIVE_TELEMETRY_KEY:?Set LEPOS_NATIVE_TELEMETRY_KEY}
-      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:?Set STRIPE_SECRET_KEY for paid plans}
-      STRIPE_CONNECT_WEBHOOK_SECRET: ${STRIPE_CONNECT_WEBHOOK_SECRET:?Set Stripe webhook secret}
+      NODE_OPTIONS: --max-old-space-size=1536
+      DATABASE_URL: postgresql://noah_admin:noah_master@103.82.36.67:8048/noah_db
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
+      AUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
+      AUTH_SECRET: ${AUTH_SECRET:-supersecretsecretsecretsecretsecretsecretsecret}
+      NEXTAUTH_SECRET: ${AUTH_SECRET:-supersecretsecretsecretsecretsecretsecretsecret}
+      APP_SECRETS_MASTER_KEY: ${APP_SECRETS_MASTER_KEY:-masterkeymasterkeymasterkeymasterkey}
+      LEPOS_INTERNAL_API_KEY: ${LEPOS_INTERNAL_API_KEY:-internalapikey}
+      LEPOS_NATIVE_TELEMETRY_KEY: ${LEPOS_NATIVE_TELEMETRY_KEY:-telemetrykey}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+      STRIPE_CONNECT_WEBHOOK_SECRET: ${STRIPE_CONNECT_WEBHOOK_SECRET:-}
       AUTH_GITHUB_ID: ${AUTH_GITHUB_ID:-}
       AUTH_GITHUB_SECRET: ${AUTH_GITHUB_SECRET:-}
       GITHUB_OAUTH_CALLBACK_URL: ${GITHUB_OAUTH_CALLBACK_URL:-}
@@ -214,14 +243,22 @@ services:
     expose:
       - "3000"
     depends_on:
-      database-migrate:
-        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:' + (process.env.PORT || 3000)).then(r => process.exit(r.status < 500 ? 0 : 1)).catch(() => process.exit(1))\""]
+      test: [ "CMD-SHELL", "node -e \"fetch('http://127.0.0.1:' + (process.env.PORT || 3000)).then(r => process.exit(r.status < 500 ? 0 : 1)).catch(() => process.exit(1))\"" ]
       interval: 30s
       timeout: 5s
       retries: 5
       start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2048M
+        reservations:
+          cpus: '0.5'
+          memory: 512M
     labels:
       com.rustalgorithmtrading.role: public-saas-portal
       com.rustalgorithmtrading.audience: developer,trader,regular
@@ -244,12 +281,12 @@ services:
       PORT: 8088
       TLS_PORT: 8443
       HOST: 0.0.0.0
-      REDIS_URL: ${REDIS_URL:?Set a TLS-enabled managed Redis URL}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
       LEPOS_STORAGE_ROOT: /var/lib/lepos/artifacts
       LEPOS_CONTROL_PLANE_URL: http://nextjs-frontend:3000
-      LEPOS_INTERNAL_API_KEY: ${LEPOS_INTERNAL_API_KEY:?Set LEPOS_INTERNAL_API_KEY}
+      LEPOS_INTERNAL_API_KEY: ${LEPOS_INTERNAL_API_KEY:-internalapikey}
       LEPOS_SERVICE_ID: ${LEPOS_SERVICE_ID:-edge-gateway}
-      LEPOS_SERVICE_SECRET: ${LEPOS_SERVICE_SECRET:?Set LEPOS_SERVICE_SECRET}
+      LEPOS_SERVICE_SECRET: ${LEPOS_SERVICE_SECRET:-servicesecret}
       LEPOS_IPFS_GATEWAY_URL: ${LEPOS_IPFS_GATEWAY_URL:-https://ipfs.io/ipfs}
       LEPOS_ARWEAVE_GATEWAY_URL: ${LEPOS_ARWEAVE_GATEWAY_URL:-https://arweave.net}
       LEPOS_CONTROL_PLANE_TLS_CERT: ${LEPOS_CONTROL_PLANE_TLS_CERT:-}
@@ -259,14 +296,24 @@ services:
       - "${EDGE_HTTP_PORT:-8088}:8088"
       - "${EDGE_TLS_PORT:-8443}:8443"
     depends_on:
+      redis:
+        condition: service_healthy
       nextjs-frontend:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8088/health >/dev/null || exit 1"]
+      test: [ "CMD-SHELL", "wget -qO- http://127.0.0.1:8088/health >/dev/null || exit 1" ]
       interval: 30s
       timeout: 5s
       retries: 5
       start_period: 20s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
     labels:
       com.rustalgorithmtrading.role: public-edge-gateway
       com.rustalgorithmtrading.audience: developer,trader,regular

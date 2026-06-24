@@ -3,6 +3,8 @@ package storage
 import (
 	"database/sql"
 	"fmt"
+	"os"
+	"path/filepath"
 	"strings"
 
 	_ "github.com/marcboeker/go-duckdb"
@@ -17,6 +19,13 @@ type DuckDB struct {
 type DuckDBReader = DuckDB
 
 func NewDuckDBReader(dbPath string) (*DuckDB, error) {
+	dir := filepath.Dir(dbPath)
+	if dir != "" && dir != "." {
+		if err := os.MkdirAll(dir, 0755); err != nil {
+			return nil, fmt.Errorf("failed to create directory for duckdb: %w", err)
+		}
+	}
+
 	// Open in read-write mode (default) as Go is now the primary controller.
 	db, err := sql.Open("duckdb", dbPath)
 	if err != nil {
@@ -25,7 +34,7 @@ func NewDuckDBReader(dbPath string) (*DuckDB, error) {
 	if err := db.Ping(); err != nil {
 		return nil, fmt.Errorf("failed to ping duckdb: %w", err)
 	}
-	
+
 	s := &DuckDB{db: db}
 	if err := s.Initialize(); err != nil {
 		return nil, fmt.Errorf("failed to initialize duckdb schema: %w", err)
