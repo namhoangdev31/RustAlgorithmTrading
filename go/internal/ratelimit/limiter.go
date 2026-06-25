@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"sync"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 type visitor struct {
@@ -36,14 +38,14 @@ func NewLimiter(maxTokens int, window time.Duration) *Limiter {
 	return l
 }
 
-func (l *Limiter) Middleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		key := r.Header.Get("X-API-Key")
+func (l *Limiter) Middleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		key := c.GetHeader("X-API-Key")
 		if key == "" {
-			key = r.Header.Get("X-Real-IP")
+			key = c.GetHeader("X-Real-IP")
 		}
 		if key == "" {
-			key = r.RemoteAddr
+			key = c.ClientIP()
 		}
 
 		l.mu.Lock()
@@ -54,7 +56,7 @@ func (l *Limiter) Middleware(next http.Handler) http.Handler {
 				tokens:   l.maxTokens - 1,
 			}
 			l.mu.Unlock()
-			next.ServeHTTP(w, r)
+			c.Next()
 			return
 		}
 
@@ -64,17 +66,16 @@ func (l *Limiter) Middleware(next http.Handler) http.Handler {
 		if v.tokens <= 0 {
 			v.lastSeen = time.Now()
 			l.mu.Unlock()
-			w.Header().Set("Content-Type", "application/json")
-			w.WriteHeader(http.StatusTooManyRequests)
-			_, _ = w.Write([]byte(`{"detail":"Rate limit exceeded"}`))
+			c.JSON(http.StatusTooManyRequests, gin.H{"detail": "Rate limit exceeded"})
+			c.Abort()
 			return
 		}
 		v.tokens--
 		v.lastSeen = time.Now()
 		l.mu.Unlock()
 
-		next.ServeHTTP(w, r)
-	})
+		c.Next()
+	}
 }
 
 func (l *Limiter) cleanupLoop() {

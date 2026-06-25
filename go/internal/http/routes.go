@@ -1,15 +1,14 @@
 package http
 
 import (
-	"encoding/json"
 	"net/http"
 	"os"
 	"strconv"
 	"time"
 
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
-	httpSwagger "github.com/swaggo/http-swagger/v2"
+	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 
 	_ "trading/observability-api/docs"
 	"trading/observability-api/internal/alerts"
@@ -23,8 +22,8 @@ import (
 	"trading/observability-api/internal/ws"
 )
 
-func SetupRoutes(store *storage.Store, wsManager *ws.Manager, healthAggregator *health.Aggregator) *chi.Mux {
-	r := chi.NewRouter()
+func SetupRoutes(store *storage.Store, wsManager *ws.Manager, healthAggregator *health.Aggregator) *gin.Engine {
+	r := gin.New()
 	incidentManager := alerts.NewManager()
 	var alpacaClient *alpaca.Client
 	if c, err := alpaca.NewClient(alpaca.Config{
@@ -35,23 +34,21 @@ func SetupRoutes(store *storage.Store, wsManager *ws.Manager, healthAggregator *
 		alpacaClient = c
 	}
 
-	r.Use(middleware.RequestID)
-	r.Use(CorrelationID)
-	r.Use(middleware.RealIP)
-	r.Use(Logger)
-	r.Use(middleware.Recoverer)
+	r.Use(gin.Recovery())
+	r.Use(CorrelationID())
+	r.Use(Logger())
 	r.Use(SetupCors())
 
 	limiter := ratelimit.NewLimiter(10000, time.Minute)
-	r.Use(limiter.Middleware)
+	r.Use(limiter.Middleware())
 
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		writeJSON(w, http.StatusOK, map[string]interface{}{
+	r.GET("/", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
 			"service":   "Trading Observability API",
 			"version":   "1.0.0",
 			"docs":      "/docs",
 			"websocket": "/ws/metrics",
-			"endpoints": map[string]string{
+			"endpoints": gin.H{
 				"metrics": "/api/metrics",
 				"trades":  "/api/trades",
 				"system":  "/api/system",
@@ -59,30 +56,29 @@ func SetupRoutes(store *storage.Store, wsManager *ws.Manager, healthAggregator *
 		})
 	})
 
-	r.Get("/health", healthAggregator.HealthCheckHandler)
-	r.Get("/health/ready", healthAggregator.ReadinessCheckHandler)
-	r.Get("/health/live", healthAggregator.LivenessCheckHandler)
-	r.Get("/ws/metrics", wsManager.ServeWS)
+	r.GET("/health", gin.WrapH(http.HandlerFunc(healthAggregator.HealthCheckHandler)))
+	r.GET("/health/ready", gin.WrapH(http.HandlerFunc(healthAggregator.ReadinessCheckHandler)))
+	r.GET("/health/live", gin.WrapH(http.HandlerFunc(healthAggregator.LivenessCheckHandler)))
+	r.GET("/ws/metrics", gin.WrapH(http.HandlerFunc(wsManager.ServeWS)))
 
-	r.Get("/docs", func(w http.ResponseWriter, r *http.Request) {
-		http.Redirect(w, r, "/docs/index.html", http.StatusMovedPermanently)
+	r.GET("/docs", func(c *gin.Context) {
+		c.Redirect(http.StatusMovedPermanently, "/docs/index.html")
 	})
-	r.Get("/docs/*", httpSwagger.Handler(
-		httpSwagger.URL("/docs/doc.json"),
-	))
+	r.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	r.Route("/api", func(r chi.Router) {
-		r.Use(auth.APIKeyAuth)
-
-		r.Route("/metrics", func(r chi.Router) {
-			r.Get("/current", func(w http.ResponseWriter, r *http.Request) {
+	api := r.Group("/api")
+	api.Use(auth.APIKeyAuth)
+	{
+		metrics := api.Group("/metrics")
+		{
+			metrics.GET("/current", func(c *gin.Context) {
 				now := time.Now().UTC().Format(time.RFC3339)
-				payload := map[string]interface{}{
+				payload := gin.H{
 					"timestamp":   now,
-					"market_data": map[string]interface{}{},
-					"strategy":    map[string]interface{}{},
-					"execution":   map[string]interface{}{},
-					"system":      map[string]interface{}{},
+					"market_data": gin.H{},
+					"strategy":    gin.H{},
+					"execution":   gin.H{},
+					"system":      gin.H{},
 				}
 				if store != nil && store.DuckDB() != nil {
 					summary, err := store.DuckDB().QueryPerformanceSummary()
@@ -90,12 +86,15 @@ func SetupRoutes(store *storage.Store, wsManager *ws.Manager, healthAggregator *
 						payload["strategy"] = summary
 					}
 				}
-				writeJSON(w, http.StatusOK, payload)
+				c.JSON(http.StatusOK, payload)
 			})
 
-			r.Post("/history", func(w http.ResponseWriter, r *http.Request) {
-				req := models.MetricsHistoryRequest{}
-				_ = json.NewDecoder(r.Body).Decode(&req)
+			metrics.POST("/history", func(c *gin.Context) {
+				var req models.MetricsHistoryRequest
+				if err := c.ShouldBindJSON(&req); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{"detail": "invalid request body"})
+					return
+				}
 				start := req.StartTime
 				end := req.EndTime
 
@@ -123,7 +122,7 @@ func SetupRoutes(store *storage.Store, wsManager *ws.Manager, healthAggregator *
 						data = h
 					}
 				}
-				writeJSON(w, http.StatusOK, map[string]interface{}{
+				c.JSON(http.StatusOK, gin.H{
 					"start_time": start,
 					"end_time":   end,
 					"interval":   req.Interval,
@@ -132,48 +131,49 @@ func SetupRoutes(store *storage.Store, wsManager *ws.Manager, healthAggregator *
 				})
 			})
 
-			r.Get("/symbols", func(w http.ResponseWriter, r *http.Request) {
-				writeJSON(w, http.StatusOK, map[string]interface{}{
+			metrics.GET("/symbols", func(c *gin.Context) {
+				c.JSON(http.StatusOK, gin.H{
 					"symbols": []string{},
 					"count":   0,
 				})
 			})
 
-			r.Get("/summary", func(w http.ResponseWriter, r *http.Request) {
-				summary := map[string]interface{}{}
+			metrics.GET("/summary", func(c *gin.Context) {
+				summary := gin.H{}
 				if store != nil && store.DuckDB() != nil {
 					s, err := store.DuckDB().QueryPerformanceSummary()
 					if err == nil {
 						summary = s
 					}
 				}
-				writeJSON(w, http.StatusOK, summary)
+				c.JSON(http.StatusOK, summary)
 			})
-		})
+		}
 
-		r.Route("/trades", func(r chi.Router) {
-			r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-				limit := parseIntWithDefault(r.URL.Query().Get("limit"), 100)
-				offset := parseIntWithDefault(r.URL.Query().Get("offset"), 0)
-				symbol := r.URL.Query().Get("symbol")
-				side := r.URL.Query().Get("side")
+		trades := api.Group("/trades")
+		{
+			trades.GET("", func(c *gin.Context) {
+				limit := parseIntWithDefault(c.Query("limit"), 100)
+				offset := parseIntWithDefault(c.Query("offset"), 0)
+				symbol := c.Query("symbol")
+				side := c.Query("side")
 
-				trades := []map[string]interface{}{}
+				tList := []map[string]interface{}{}
 				if store != nil && store.Postgres() != nil {
 					if t, err := store.Postgres().QueryTrades(limit, offset, symbol, side); err == nil {
-						trades = t
+						tList = t
 					}
 				}
-				writeJSON(w, http.StatusOK, map[string]interface{}{
-					"trades": trades,
-					"total":  len(trades),
+				c.JSON(http.StatusOK, gin.H{
+					"trades": tList,
+					"total":  len(tList),
 					"limit":  limit,
 					"offset": offset,
 				})
 			})
 
-			r.Get("/{trade_id}", func(w http.ResponseWriter, r *http.Request) {
-				tradeID := chi.URLParam(r, "trade_id")
+			trades.GET("/:trade_id", func(c *gin.Context) {
+				tradeID := c.Param("trade_id")
 				var trade map[string]interface{}
 				var ok bool
 				var err error
@@ -183,61 +183,64 @@ func SetupRoutes(store *storage.Store, wsManager *ws.Manager, healthAggregator *
 				}
 
 				if err != nil || !ok {
-					writeJSON(w, http.StatusNotFound, map[string]interface{}{"detail": "Trade not found"})
+					c.JSON(http.StatusNotFound, gin.H{"detail": "Trade not found"})
 					return
 				}
-				writeJSON(w, http.StatusOK, trade)
+				c.JSON(http.StatusOK, trade)
 			})
 
-			r.Get("/stats/summary", func(w http.ResponseWriter, r *http.Request) {
-				timeRange := r.URL.Query().Get("time_range")
+			trades.GET("/stats/summary", func(c *gin.Context) {
+				timeRange := c.Query("time_range")
 				if timeRange == "" {
 					timeRange = "24h"
 				}
-				symbol := r.URL.Query().Get("symbol")
-				payload := map[string]interface{}{}
+				symbol := c.Query("symbol")
+				payload := gin.H{}
 				if store != nil && store.Postgres() != nil {
 					if s, err := store.Postgres().QueryTradeStatsSummary(symbol, timeRange); err == nil {
 						payload = s
 					}
 				}
-				writeJSON(w, http.StatusOK, payload)
+				c.JSON(http.StatusOK, payload)
 			})
 
-			r.Get("/execution/quality", func(w http.ResponseWriter, r *http.Request) {
-				payload := map[string]interface{}{}
+			trades.GET("/execution/quality", func(c *gin.Context) {
+				payload := gin.H{}
 				if store != nil && store.Postgres() != nil {
 					if s, err := store.Postgres().QueryExecutionQuality(); err == nil {
 						payload = s
 					}
 				}
-				writeJSON(w, http.StatusOK, payload)
+				c.JSON(http.StatusOK, payload)
 			})
-		})
+		}
 
-		r.Route("/system", func(r chi.Router) {
-			r.Get("/health", healthAggregator.SystemHealthHandler)
-			r.Get("/performance", func(w http.ResponseWriter, r *http.Request) {
+		system := api.Group("/system")
+		{
+			system.GET("/health", gin.WrapH(http.HandlerFunc(healthAggregator.SystemHealthHandler)))
+			system.GET("/performance", func(c *gin.Context) {
 				var history []map[string]interface{}
 				if store != nil && store.DuckDB() != nil {
 					if h, err := store.DuckDB().QueryPerformanceHistory(50); err == nil {
 						history = h
 					}
 				}
-				writeJSON(w, http.StatusOK, map[string]interface{}{
+				c.JSON(http.StatusOK, gin.H{
 					"history": history,
 					"count":   len(history),
 				})
 			})
-			r.Get("/components", func(w http.ResponseWriter, r *http.Request) {
-				writeJSON(w, http.StatusOK, healthAggregator.ComponentsSnapshot())
+
+			system.GET("/components", func(c *gin.Context) {
+				c.JSON(http.StatusOK, healthAggregator.ComponentsSnapshot())
 			})
-			r.Get("/logs/recent", func(w http.ResponseWriter, r *http.Request) {
-				level := r.URL.Query().Get("level")
+
+			system.GET("/logs/recent", func(c *gin.Context) {
+				level := c.Query("level")
 				if level == "" {
 					level = "INFO"
 				}
-				limit := parseIntWithDefault(r.URL.Query().Get("limit"), 100)
+				limit := parseIntWithDefault(c.Query("limit"), 100)
 				var logs []map[string]interface{}
 				if store != nil {
 					if store.Postgres() != nil {
@@ -250,45 +253,48 @@ func SetupRoutes(store *storage.Store, wsManager *ws.Manager, healthAggregator *
 						}
 					}
 				}
-				writeJSON(w, http.StatusOK, map[string]interface{}{
+				c.JSON(http.StatusOK, gin.H{
 					"logs":  logs,
 					"count": len(logs),
 					"level": level,
 				})
 			})
-			r.Post("/alerts/acknowledge/{alert_id}", func(w http.ResponseWriter, r *http.Request) {
-				alertID := chi.URLParam(r, "alert_id")
-				writeJSON(w, http.StatusOK, map[string]interface{}{
+
+			system.POST("/alerts/acknowledge/:alert_id", func(c *gin.Context) {
+				alertID := c.Param("alert_id")
+				c.JSON(http.StatusOK, gin.H{
 					"status":   "acknowledged",
 					"alert_id": alertID,
 				})
 			})
-			r.Get("/stats", func(w http.ResponseWriter, r *http.Request) {
-				resp := map[string]interface{}{
-					"api": map[string]interface{}{
+
+			system.GET("/stats", func(c *gin.Context) {
+				c.JSON(http.StatusOK, gin.H{
+					"api": gin.H{
 						"running":               true,
 						"websocket_connections": wsManager.ConnectionCount(),
 						"total_messages_sent":   wsManager.Stats()["total_messages_sent"],
 					},
-					"collectors": map[string]interface{}{},
-				}
-				writeJSON(w, http.StatusOK, resp)
+					"collectors": gin.H{},
+				})
 			})
-			r.Get("/incidents", func(w http.ResponseWriter, r *http.Request) {
-				payload := map[string]interface{}{}
+
+			system.GET("/incidents", func(c *gin.Context) {
+				payload := gin.H{}
 				for k, v := range incidentManager.List() {
 					payload[k] = v
 				}
-				writeJSON(w, http.StatusOK, payload)
+				c.JSON(http.StatusOK, payload)
 			})
-			r.Post("/incidents", func(w http.ResponseWriter, r *http.Request) {
-				req := map[string]interface{}{}
-				if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-					writeJSON(w, http.StatusBadRequest, map[string]interface{}{"detail": "invalid request body"})
+
+			system.POST("/incidents", func(c *gin.Context) {
+				var req map[string]interface{}
+				if err := c.ShouldBindJSON(&req); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{"detail": "invalid request body"})
 					return
 				}
 				inc := incidentManager.Create(req)
-				writeJSON(w, http.StatusCreated, map[string]interface{}{
+				c.JSON(http.StatusCreated, gin.H{
 					"incident_id":    inc.ID,
 					"severity":       inc.Severity,
 					"component":      inc.Component,
@@ -301,64 +307,68 @@ func SetupRoutes(store *storage.Store, wsManager *ws.Manager, healthAggregator *
 					"updated_at":     inc.UpdatedAt,
 				})
 			})
-			r.Post("/incidents/{incident_id}/acknowledge", func(w http.ResponseWriter, r *http.Request) {
-				id := chi.URLParam(r, "incident_id")
-				owner := r.URL.Query().Get("owner")
+
+			system.POST("/incidents/:incident_id/acknowledge", func(c *gin.Context) {
+				id := c.Param("incident_id")
+				owner := c.Query("owner")
 				if owner == "" {
 					owner = "ops"
 				}
 				inc, err := incidentManager.Acknowledge(id, owner)
 				if err != nil {
-					writeJSON(w, http.StatusNotFound, map[string]interface{}{"detail": err.Error()})
+					c.JSON(http.StatusNotFound, gin.H{"detail": err.Error()})
 					return
 				}
-				writeJSON(w, http.StatusOK, map[string]interface{}{
+				c.JSON(http.StatusOK, gin.H{
 					"incident_id": inc.ID, "status": inc.Status, "owner": inc.Owner, "updated_at": inc.UpdatedAt,
 				})
 			})
-			r.Post("/incidents/{incident_id}/resolve", func(w http.ResponseWriter, r *http.Request) {
-				id := chi.URLParam(r, "incident_id")
-				evidence := r.URL.Query().Get("evidence")
+
+			system.POST("/incidents/:incident_id/resolve", func(c *gin.Context) {
+				id := c.Param("incident_id")
+				evidence := c.Query("evidence")
 				inc, err := incidentManager.Resolve(id, evidence)
 				if err != nil {
 					code := http.StatusBadRequest
 					if err.Error() == "incident not found" {
 						code = http.StatusNotFound
 					}
-					writeJSON(w, code, map[string]interface{}{"detail": err.Error()})
+					c.JSON(code, gin.H{"detail": err.Error()})
 					return
 				}
-				writeJSON(w, http.StatusOK, map[string]interface{}{
+				c.JSON(http.StatusOK, gin.H{
 					"incident_id": inc.ID, "status": inc.Status, "evidence": inc.Evidence, "updated_at": inc.UpdatedAt,
 				})
 			})
-			r.Post("/integrity/validate", func(w http.ResponseWriter, r *http.Request) {
+
+			system.POST("/integrity/validate", func(c *gin.Context) {
 				var metrics models.Metrics
-				if err := json.NewDecoder(r.Body).Decode(&metrics); err != nil {
-					writeJSON(w, http.StatusBadRequest, map[string]interface{}{"detail": "invalid metrics payload"})
+				if err := c.ShouldBindJSON(&metrics); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{"detail": "invalid metrics payload"})
 					return
 				}
 				report := integrity.ValidateRunIntegrity(metrics, integrity.DefaultThresholds())
-				writeJSON(w, http.StatusOK, map[string]interface{}{
+				c.JSON(http.StatusOK, gin.H{
 					"is_valid": report.IsValid,
 					"reasons":  report.Reasons,
 					"metrics":  report.Metrics,
 				})
 			})
-		})
+		}
 
-		r.Route("/alpaca", func(r chi.Router) {
-			r.Get("/account", func(w http.ResponseWriter, r *http.Request) {
+		alpacaRoute := api.Group("/alpaca")
+		{
+			alpacaRoute.GET("/account", func(c *gin.Context) {
 				if alpacaClient == nil {
-					writeJSON(w, http.StatusServiceUnavailable, map[string]interface{}{"detail": "alpaca client unavailable"})
+					c.JSON(http.StatusServiceUnavailable, gin.H{"detail": "alpaca client unavailable"})
 					return
 				}
-				acc, err := alpacaClient.GetAccount(r.Context())
+				acc, err := alpacaClient.GetAccount(c.Request.Context())
 				if err != nil {
-					writeJSON(w, http.StatusBadGateway, map[string]interface{}{"detail": err.Error()})
+					c.JSON(http.StatusBadGateway, gin.H{"detail": err.Error()})
 					return
 				}
-				writeJSON(w, http.StatusOK, map[string]interface{}{
+				c.JSON(http.StatusOK, gin.H{
 					"cash":            acc.Cash,
 					"portfolio_value": acc.PortfolioValue,
 					"buying_power":    acc.BuyingPower,
@@ -366,14 +376,15 @@ func SetupRoutes(store *storage.Store, wsManager *ws.Manager, healthAggregator *
 					"status":          acc.Status,
 				})
 			})
-			r.Get("/positions", func(w http.ResponseWriter, r *http.Request) {
+
+			alpacaRoute.GET("/positions", func(c *gin.Context) {
 				if alpacaClient == nil {
-					writeJSON(w, http.StatusServiceUnavailable, map[string]interface{}{"detail": "alpaca client unavailable"})
+					c.JSON(http.StatusServiceUnavailable, gin.H{"detail": "alpaca client unavailable"})
 					return
 				}
-				positions, err := alpacaClient.GetPositions(r.Context())
+				positions, err := alpacaClient.GetPositions(c.Request.Context())
 				if err != nil {
-					writeJSON(w, http.StatusBadGateway, map[string]interface{}{"detail": err.Error()})
+					c.JSON(http.StatusBadGateway, gin.H{"detail": err.Error()})
 					return
 				}
 				resp := make([]map[string]interface{}, 0, len(positions))
@@ -387,11 +398,12 @@ func SetupRoutes(store *storage.Store, wsManager *ws.Manager, healthAggregator *
 						"unrealized_pl":   p.UnrealizedPL,
 					})
 				}
-				writeJSON(w, http.StatusOK, map[string]interface{}{"positions": resp})
+				c.JSON(http.StatusOK, gin.H{"positions": resp})
 			})
-			r.Post("/orders/market", func(w http.ResponseWriter, r *http.Request) {
+
+			alpacaRoute.POST("/orders/market", func(c *gin.Context) {
 				if alpacaClient == nil {
-					writeJSON(w, http.StatusServiceUnavailable, map[string]interface{}{"detail": "alpaca client unavailable"})
+					c.JSON(http.StatusServiceUnavailable, gin.H{"detail": "alpaca client unavailable"})
 					return
 				}
 				var req struct {
@@ -400,25 +412,26 @@ func SetupRoutes(store *storage.Store, wsManager *ws.Manager, healthAggregator *
 					Side        string  `json:"side"`
 					TimeInForce string  `json:"time_in_force"`
 				}
-				if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-					writeJSON(w, http.StatusBadRequest, map[string]interface{}{"detail": "invalid request body"})
+				if err := c.ShouldBindJSON(&req); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{"detail": "invalid request body"})
 					return
 				}
-				order, err := alpacaClient.PlaceMarketOrder(r.Context(), req.Symbol, req.Qty, req.Side, req.TimeInForce)
+				order, err := alpacaClient.PlaceMarketOrder(c.Request.Context(), req.Symbol, req.Qty, req.Side, req.TimeInForce)
 				if err != nil {
-					writeJSON(w, http.StatusBadGateway, map[string]interface{}{"detail": err.Error()})
+					c.JSON(http.StatusBadGateway, gin.H{"detail": err.Error()})
 					return
 				}
-				writeJSON(w, http.StatusOK, map[string]interface{}{
+				c.JSON(http.StatusOK, gin.H{
 					"id":         order.ID,
 					"status":     order.Status,
 					"symbol":     order.Symbol,
 					"created_at": order.CreatedAt,
 				})
 			})
-			r.Post("/orders/limit", func(w http.ResponseWriter, r *http.Request) {
+
+			alpacaRoute.POST("/orders/limit", func(c *gin.Context) {
 				if alpacaClient == nil {
-					writeJSON(w, http.StatusServiceUnavailable, map[string]interface{}{"detail": "alpaca client unavailable"})
+					c.JSON(http.StatusServiceUnavailable, gin.H{"detail": "alpaca client unavailable"})
 					return
 				}
 				var req struct {
@@ -428,92 +441,97 @@ func SetupRoutes(store *storage.Store, wsManager *ws.Manager, healthAggregator *
 					LimitPrice  float64 `json:"limit_price"`
 					TimeInForce string  `json:"time_in_force"`
 				}
-				if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-					writeJSON(w, http.StatusBadRequest, map[string]interface{}{"detail": "invalid request body"})
+				if err := c.ShouldBindJSON(&req); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{"detail": "invalid request body"})
 					return
 				}
-				order, err := alpacaClient.PlaceLimitOrder(r.Context(), req.Symbol, req.Qty, req.Side, req.LimitPrice, req.TimeInForce)
+				order, err := alpacaClient.PlaceLimitOrder(c.Request.Context(), req.Symbol, req.Qty, req.Side, req.LimitPrice, req.TimeInForce)
 				if err != nil {
-					writeJSON(w, http.StatusBadGateway, map[string]interface{}{"detail": err.Error()})
+					c.JSON(http.StatusBadGateway, gin.H{"detail": err.Error()})
 					return
 				}
-				writeJSON(w, http.StatusOK, map[string]interface{}{
+				c.JSON(http.StatusOK, gin.H{
 					"id":         order.ID,
 					"status":     order.Status,
 					"symbol":     order.Symbol,
 					"created_at": order.CreatedAt,
 				})
 			})
-			r.Get("/orders", func(w http.ResponseWriter, r *http.Request) {
+
+			alpacaRoute.GET("/orders", func(c *gin.Context) {
 				if alpacaClient == nil {
-					writeJSON(w, http.StatusServiceUnavailable, map[string]interface{}{"detail": "alpaca client unavailable"})
+					c.JSON(http.StatusServiceUnavailable, gin.H{"detail": "alpaca client unavailable"})
 					return
 				}
-				status := r.URL.Query().Get("status")
-				orders, err := alpacaClient.GetOrders(r.Context(), status)
+				status := c.Query("status")
+				orders, err := alpacaClient.GetOrders(c.Request.Context(), status)
 				if err != nil {
-					writeJSON(w, http.StatusBadGateway, map[string]interface{}{"detail": err.Error()})
+					c.JSON(http.StatusBadGateway, gin.H{"detail": err.Error()})
 					return
 				}
-				writeJSON(w, http.StatusOK, map[string]interface{}{"orders": orders})
+				c.JSON(http.StatusOK, gin.H{"orders": orders})
 			})
-			r.Delete("/orders", func(w http.ResponseWriter, r *http.Request) {
+
+			alpacaRoute.DELETE("/orders", func(c *gin.Context) {
 				if alpacaClient == nil {
-					writeJSON(w, http.StatusServiceUnavailable, map[string]interface{}{"detail": "alpaca client unavailable"})
+					c.JSON(http.StatusServiceUnavailable, gin.H{"detail": "alpaca client unavailable"})
 					return
 				}
-				if err := alpacaClient.CancelAllOrders(r.Context()); err != nil {
-					writeJSON(w, http.StatusBadGateway, map[string]interface{}{"detail": err.Error()})
+				if err := alpacaClient.CancelAllOrders(c.Request.Context()); err != nil {
+					c.JSON(http.StatusBadGateway, gin.H{"detail": err.Error()})
 					return
 				}
-				writeJSON(w, http.StatusOK, map[string]interface{}{"status": "ok"})
+				c.JSON(http.StatusOK, gin.H{"status": "ok"})
 			})
-			r.Delete("/orders/{order_id}", func(w http.ResponseWriter, r *http.Request) {
+
+			alpacaRoute.DELETE("/orders/:order_id", func(c *gin.Context) {
 				if alpacaClient == nil {
-					writeJSON(w, http.StatusServiceUnavailable, map[string]interface{}{"detail": "alpaca client unavailable"})
+					c.JSON(http.StatusServiceUnavailable, gin.H{"detail": "alpaca client unavailable"})
 					return
 				}
-				orderID := chi.URLParam(r, "order_id")
-				if err := alpacaClient.CancelOrder(r.Context(), orderID); err != nil {
-					writeJSON(w, http.StatusBadGateway, map[string]interface{}{"detail": err.Error()})
+				orderID := c.Param("order_id")
+				if err := alpacaClient.CancelOrder(c.Request.Context(), orderID); err != nil {
+					c.JSON(http.StatusBadGateway, gin.H{"detail": err.Error()})
 					return
 				}
-				writeJSON(w, http.StatusOK, map[string]interface{}{"status": "ok"})
+				c.JSON(http.StatusOK, gin.H{"status": "ok"})
 			})
-			r.Delete("/positions", func(w http.ResponseWriter, r *http.Request) {
+
+			alpacaRoute.DELETE("/positions", func(c *gin.Context) {
 				if alpacaClient == nil {
-					writeJSON(w, http.StatusServiceUnavailable, map[string]interface{}{"detail": "alpaca client unavailable"})
+					c.JSON(http.StatusServiceUnavailable, gin.H{"detail": "alpaca client unavailable"})
 					return
 				}
-				positions, err := alpacaClient.CloseAllPositions(r.Context())
+				positions, err := alpacaClient.CloseAllPositions(c.Request.Context())
 				if err != nil {
-					writeJSON(w, http.StatusBadGateway, map[string]interface{}{"detail": err.Error()})
+					c.JSON(http.StatusBadGateway, gin.H{"detail": err.Error()})
 					return
 				}
-				writeJSON(w, http.StatusOK, map[string]interface{}{"orders": positions})
+				c.JSON(http.StatusOK, gin.H{"orders": positions})
 			})
-			r.Get("/bars", func(w http.ResponseWriter, r *http.Request) {
+
+			alpacaRoute.GET("/bars", func(c *gin.Context) {
 				if alpacaClient == nil {
-					writeJSON(w, http.StatusServiceUnavailable, map[string]interface{}{"detail": "alpaca client unavailable"})
+					c.JSON(http.StatusServiceUnavailable, gin.H{"detail": "alpaca client unavailable"})
 					return
 				}
-				symbol := r.URL.Query().Get("symbol")
-				start := r.URL.Query().Get("start")
-				end := r.URL.Query().Get("end")
-				timeframe := r.URL.Query().Get("timeframe")
+				symbol := c.Query("symbol")
+				start := c.Query("start")
+				end := c.Query("end")
+				timeframe := c.Query("timeframe")
 				if symbol == "" || start == "" || end == "" {
-					writeJSON(w, http.StatusBadRequest, map[string]interface{}{"detail": "symbol/start/end are required"})
+					c.JSON(http.StatusBadRequest, gin.H{"detail": "symbol/start/end are required"})
 					return
 				}
-				payload, err := alpacaClient.GetHistoricalBars(r.Context(), symbol, start, end, timeframe)
+				payload, err := alpacaClient.GetHistoricalBars(c.Request.Context(), symbol, start, end, timeframe)
 				if err != nil {
-					writeJSON(w, http.StatusBadGateway, map[string]interface{}{"detail": err.Error()})
+					c.JSON(http.StatusBadGateway, gin.H{"detail": err.Error()})
 					return
 				}
-				writeJSON(w, http.StatusOK, payload)
+				c.JSON(http.StatusOK, payload)
 			})
-		})
-	})
+		}
+	}
 
 	return r
 }
@@ -527,10 +545,4 @@ func parseIntWithDefault(raw string, def int) int {
 		return def
 	}
 	return v
-}
-
-func writeJSON(w http.ResponseWriter, code int, payload map[string]interface{}) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(code)
-	_ = json.NewEncoder(w).Encode(payload)
 }

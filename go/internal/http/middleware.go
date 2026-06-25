@@ -2,55 +2,62 @@ package http
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
-	"net/http"
 	"time"
 
-	"github.com/go-chi/chi/v5/middleware"
-	"github.com/go-chi/cors"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 )
 
 type ctxKey string
 
 const correlationIDKey ctxKey = "CorrelationID"
 
-func SetupCors() func(http.Handler) http.Handler {
-	return cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3000", "http://localhost:5173"},
-		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-API-Key", "X-Correlation-ID"},
-		ExposedHeaders:   []string{"Link", "X-Correlation-ID"},
+func SetupCors() gin.HandlerFunc {
+	return cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:3000", "http://localhost:5173"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Accept", "Authorization", "Content-Type", "X-API-Key", "X-Correlation-ID"},
+		ExposeHeaders:    []string{"Link", "X-Correlation-ID"},
 		AllowCredentials: true,
-		MaxAge:           300,
+		MaxAge:           300 * time.Second,
 	})
 }
 
-func CorrelationID(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := r.Context()
-		cid := r.Header.Get("X-Correlation-ID")
+func CorrelationID() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		cid := c.GetHeader("X-Correlation-ID")
 		if cid == "" {
-			cid = middleware.GetReqID(ctx)
+			cid = fmt.Sprintf("req-%d-%d", time.Now().UnixNano(), time.Now().Nanosecond())
 		}
-		ctx = context.WithValue(ctx, correlationIDKey, cid)
-		w.Header().Set("X-Correlation-ID", cid)
-		next.ServeHTTP(w, r.WithContext(ctx))
-	})
+		// Also store in Go's standard http.Request context so standard library components can read it if needed
+		ctx := context.WithValue(c.Request.Context(), correlationIDKey, cid)
+		c.Request = c.Request.WithContext(ctx)
+
+		c.Set(string(correlationIDKey), cid)
+		c.Header("X-Correlation-ID", cid)
+		c.Next()
+	}
 }
 
-func Logger(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func Logger() gin.HandlerFunc {
+	return func(c *gin.Context) {
 		start := time.Now()
-		ww := middleware.NewWrapResponseWriter(w, r.ProtoMajor)
-		next.ServeHTTP(ww, r)
+		path := c.Request.URL.Path
+		query := c.Request.URL.RawQuery
 
+		c.Next()
+
+		cid, _ := c.Get(string(correlationIDKey))
 		slog.Info("request_handled",
-			"method", r.Method,
-			"path", r.URL.Path,
-			"status", ww.Status(),
-			"bytes", ww.BytesWritten(),
+			"method", c.Request.Method,
+			"path", path,
+			"query", query,
+			"status", c.Writer.Status(),
+			"bytes", c.Writer.Size(),
 			"duration_ms", float64(time.Since(start).Milliseconds()),
-			"correlation_id", r.Context().Value(correlationIDKey),
+			"correlation_id", cid,
 		)
-	})
+	}
 }
