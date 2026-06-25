@@ -12,6 +12,8 @@ import (
 	"os"
 	"strings"
 	"time"
+
+	"trading/observability-api/internal/models"
 )
 
 type Config struct {
@@ -32,38 +34,6 @@ type Client struct {
 	httpClient  *http.Client
 	maxRetries  int
 	retryDelay  time.Duration
-}
-
-type Account struct {
-	Cash           float64 `json:"cash,string"`
-	PortfolioValue float64 `json:"portfolio_value,string"`
-	BuyingPower    float64 `json:"buying_power,string"`
-	Equity         float64 `json:"equity,string"`
-	Status         string  `json:"status"`
-}
-
-type Position struct {
-	Symbol       string  `json:"symbol"`
-	Qty          float64 `json:"qty,string"`
-	AvgEntry     float64 `json:"avg_entry_price,string"`
-	CurrentPrice float64 `json:"current_price,string"`
-	MarketValue  float64 `json:"market_value,string"`
-	UnrealizedPL float64 `json:"unrealized_pl,string"`
-}
-
-type OrderRequest struct {
-	Symbol      string `json:"symbol"`
-	Qty         string `json:"qty"`
-	Side        string `json:"side"`
-	Type        string `json:"type"`
-	TimeInForce string `json:"time_in_force"`
-}
-
-type OrderResponse struct {
-	ID        string `json:"id"`
-	Status    string `json:"status"`
-	Symbol    string `json:"symbol"`
-	CreatedAt string `json:"created_at"`
 }
 
 func NewClient(cfg Config) (*Client, error) {
@@ -97,14 +67,14 @@ func NewClient(cfg Config) (*Client, error) {
 	}, nil
 }
 
-func (c *Client) GetAccount(ctx context.Context) (Account, error) {
-	var out Account
+func (c *Client) GetAccount(ctx context.Context) (models.Account, error) {
+	var out models.Account
 	err := c.doTradingJSON(ctx, http.MethodGet, "/v2/account", nil, &out)
 	return out, err
 }
 
-func (c *Client) GetPositions(ctx context.Context) ([]Position, error) {
-	var out []Position
+func (c *Client) GetPositions(ctx context.Context) ([]models.Position, error) {
+	var out []models.Position
 	err := c.doTradingJSON(ctx, http.MethodGet, "/v2/positions", nil, &out)
 	return out, err
 }
@@ -123,23 +93,23 @@ func (c *Client) GetHistoricalBars(ctx context.Context, symbol, startISO, endISO
 	return out, err
 }
 
-func (c *Client) PlaceMarketOrder(ctx context.Context, symbol string, qty float64, side string, tif string) (OrderResponse, error) {
+func (c *Client) PlaceMarketOrder(ctx context.Context, symbol string, qty float64, side string, tif string) (models.OrderResponse, error) {
 	if tif == "" {
 		tif = "day"
 	}
-	req := OrderRequest{
+	req := models.OrderRequest{
 		Symbol:      symbol,
 		Qty:         fmt.Sprintf("%.8f", qty),
 		Side:        strings.ToLower(side),
 		Type:        "market",
 		TimeInForce: strings.ToLower(tif),
 	}
-	var out OrderResponse
+	var out models.OrderResponse
 	err := c.doTradingJSON(ctx, http.MethodPost, "/v2/orders", req, &out)
 	return out, err
 }
 
-func (c *Client) PlaceLimitOrder(ctx context.Context, symbol string, qty float64, side string, limitPrice float64, tif string) (OrderResponse, error) {
+func (c *Client) PlaceLimitOrder(ctx context.Context, symbol string, qty float64, side string, limitPrice float64, tif string) (models.OrderResponse, error) {
 	if tif == "" {
 		tif = "day"
 	}
@@ -151,7 +121,7 @@ func (c *Client) PlaceLimitOrder(ctx context.Context, symbol string, qty float64
 		"limit_price":   fmt.Sprintf("%.8f", limitPrice),
 		"time_in_force": strings.ToLower(tif),
 	}
-	var out OrderResponse
+	var out models.OrderResponse
 	err := c.doTradingJSON(ctx, http.MethodPost, "/v2/orders", req, &out)
 	return out, err
 }

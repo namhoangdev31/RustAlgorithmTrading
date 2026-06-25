@@ -1,25 +1,29 @@
 package alerts
 
-import "testing"
+import (
+	"testing"
+
+	"trading/observability-api/internal/models"
+)
 
 func TestIncidentLifecycle(t *testing.T) {
 	m := NewManager()
 	inc := m.Create(map[string]interface{}{"severity": "P0", "component": "risk", "reason_code": "RISK_BLOCK", "correlation_id": "cid-1"})
-	if inc.Status != StatusNew {
+	if inc.Status != models.StatusNew {
 		t.Fatalf("expected NEW got %s", inc.Status)
 	}
 	ack, err := m.Acknowledge(inc.ID, "ops")
 	if err != nil {
 		t.Fatal(err)
 	}
-	if ack.Status != StatusAcknowledged {
+	if ack.Status != models.StatusAcknowledged {
 		t.Fatalf("expected ACKNOWLEDGED got %s", ack.Status)
 	}
 	res, err := m.Resolve(inc.ID, "verified")
 	if err != nil {
 		t.Fatal(err)
 	}
-	if res.Status != StatusResolved {
+	if res.Status != models.StatusResolved {
 		t.Fatalf("expected RESOLVED got %s", res.Status)
 	}
 }

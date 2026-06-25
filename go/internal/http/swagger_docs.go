@@ -1,10 +1,10 @@
 package http
 
 import (
-	"trading/observability-api/internal/integrity"
+	"trading/observability-api/internal/models"
 )
 
-var _ = integrity.Metrics{}
+var _ = models.Metrics{}
 
 // AlpacaMarketOrderRequest represents the request payload for a market order.
 type AlpacaMarketOrderRequest struct {
@@ -87,7 +87,7 @@ func _currentMetricsDocs() {}
 // @Accept json
 // @Produce json
 // @Param X-API-Key header string true "API Key for authorization"
-// @Param request body metricsHistoryRequest true "Query filters"
+// @Param request body models.MetricsHistoryRequest true "Query filters"
 // @Success 200 {object} map[string]interface{}
 // @Failure 400 {object} map[string]interface{}
 // @Failure 401 {object} map[string]interface{}
@@ -261,7 +261,7 @@ func _resolveIncidentDocs() {}
 // @Accept json
 // @Produce json
 // @Param X-API-Key header string true "API Key for authorization"
-// @Param request body integrity.Metrics true "Metrics to validate"
+// @Param request body models.Metrics true "Metrics to validate"
 // @Success 200 {object} map[string]interface{}
 // @Router /api/system/integrity/validate [post]
 func _integrityValidateDocs() {}

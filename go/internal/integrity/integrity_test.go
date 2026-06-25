@@ -1,16 +1,20 @@
 package integrity
 
-import "testing"
+import (
+	"testing"
+
+	"trading/observability-api/internal/models"
+)
 
 func TestValidateRunIntegrityPass(t *testing.T) {
-	r := ValidateRunIntegrity(Metrics{}, DefaultThresholds())
+	r := ValidateRunIntegrity(models.Metrics{}, DefaultThresholds())
 	if !r.IsValid {
 		t.Fatalf("expected valid report, reasons=%v", r.Reasons)
 	}
 }
 
 func TestValidateRunIntegrityFail(t *testing.T) {
-	m := Metrics{PnlDriftPct: 0.2, FalseAllowDelta: 1, TimeoutCount: 2}
+	m := models.Metrics{PnlDriftPct: 0.2, FalseAllowDelta: 1, TimeoutCount: 2}
 	r := ValidateRunIntegrity(m, DefaultThresholds())
 	if r.IsValid {
 		t.Fatal("expected invalid report")

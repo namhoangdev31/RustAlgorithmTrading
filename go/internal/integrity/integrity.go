@@ -1,36 +1,13 @@
 package integrity
 
-import "fmt"
+import (
+	"fmt"
 
-type Metrics struct {
-	PnlDriftPct                float64
-	ExposureDriftBps           float64
-	FalseAllowDelta            int
-	FalseRejectDelta           int
-	BlockedDelta               int
-	TimeoutCount               int
-	CrashCount                 int
-	FallbackCount              int
-	ReconciliationFailureCount int
-	LatencyRegressionRatio     float64
-}
+	"trading/observability-api/internal/models"
+)
 
-type Thresholds struct {
-	MaxPnlDriftPct              float64
-	MaxExposureDriftBps         float64
-	MaxLatencyRegressionRatio   float64
-	AllowFallbacks              bool
-	AllowReconciliationFailures bool
-}
-
-type Report struct {
-	IsValid bool
-	Reasons []string
-	Metrics Metrics
-}
-
-func DefaultThresholds() Thresholds {
-	return Thresholds{
+func DefaultThresholds() models.Thresholds {
+	return models.Thresholds{
 		MaxPnlDriftPct:              0.10,
 		MaxExposureDriftBps:         5.0,
 		MaxLatencyRegressionRatio:   1.50,
@@ -39,7 +16,7 @@ func DefaultThresholds() Thresholds {
 	}
 }
 
-func ValidateRunIntegrity(m Metrics, t Thresholds) Report {
+func ValidateRunIntegrity(m models.Metrics, t models.Thresholds) models.Report {
 	reasons := make([]string, 0)
 	if m.PnlDriftPct > t.MaxPnlDriftPct {
 		reasons = append(reasons, fmt.Sprintf("PnL drift breach: %.4f%% > %.4f%%", m.PnlDriftPct, t.MaxPnlDriftPct))
@@ -71,5 +48,5 @@ func ValidateRunIntegrity(m Metrics, t Thresholds) Report {
 	if m.LatencyRegressionRatio > t.MaxLatencyRegressionRatio {
 		reasons = append(reasons, fmt.Sprintf("Latency regression: %.2fx > %.2fx", m.LatencyRegressionRatio, t.MaxLatencyRegressionRatio))
 	}
-	return Report{IsValid: len(reasons) == 0, Reasons: reasons, Metrics: m}
+	return models.Report{IsValid: len(reasons) == 0, Reasons: reasons, Metrics: m}
 }

@@ -17,19 +17,11 @@ import (
 	"trading/observability-api/internal/auth"
 	"trading/observability-api/internal/health"
 	"trading/observability-api/internal/integrity"
+	"trading/observability-api/internal/models"
 	"trading/observability-api/internal/ratelimit"
 	"trading/observability-api/internal/storage"
 	"trading/observability-api/internal/ws"
 )
-
-type metricsHistoryRequest struct {
-	TimeRange   string   `json:"time_range"`
-	StartTime   string   `json:"start_time"`
-	EndTime     string   `json:"end_time"`
-	MetricTypes []string `json:"metric_types"`
-	Symbols     []string `json:"symbols"`
-	Interval    string   `json:"interval"`
-}
 
 func SetupRoutes(store *storage.Store, wsManager *ws.Manager, healthAggregator *health.Aggregator) *chi.Mux {
 	r := chi.NewRouter()
@@ -102,7 +94,7 @@ func SetupRoutes(store *storage.Store, wsManager *ws.Manager, healthAggregator *
 			})
 
 			r.Post("/history", func(w http.ResponseWriter, r *http.Request) {
-				req := metricsHistoryRequest{}
+				req := models.MetricsHistoryRequest{}
 				_ = json.NewDecoder(r.Body).Decode(&req)
 				start := req.StartTime
 				end := req.EndTime
@@ -341,7 +333,7 @@ func SetupRoutes(store *storage.Store, wsManager *ws.Manager, healthAggregator *
 				})
 			})
 			r.Post("/integrity/validate", func(w http.ResponseWriter, r *http.Request) {
-				var metrics integrity.Metrics
+				var metrics models.Metrics
 				if err := json.NewDecoder(r.Body).Decode(&metrics); err != nil {
 					writeJSON(w, http.StatusBadRequest, map[string]interface{}{"detail": "invalid metrics payload"})
 					return

@@ -20,6 +20,8 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/redis/go-redis/v9"
+
+	"trading/observability-api/internal/models"
 )
 
 type Config struct {
@@ -38,61 +40,8 @@ type Config struct {
 	ArweaveGatewayURL       string
 }
 
-type RegionRoute struct {
-	ID                 string         `json:"id"`
-	Provider           string         `json:"provider"`
-	Region             string         `json:"region"`
-	Endpoint           string         `json:"endpoint"`
-	BundleURL          string         `json:"bundleUrl"`
-	StoragePath        string         `json:"storagePath"`
-	HealthStatus       string         `json:"healthStatus"`
-	DrainState         string         `json:"drainState"`
-	LatencyMs          *int           `json:"latencyMs"`
-	TrafficPercent     int            `json:"trafficPercent"`
-	IsPrimary          bool           `json:"isPrimary"`
-	ReplicationVersion string         `json:"replicationVersion"`
-	VectorClock        map[string]int `json:"vectorClock"`
-	LastHeartbeatAt    string         `json:"lastHeartbeatAt"`
-}
-
-type ArtifactMirror struct {
-	ID       string `json:"id"`
-	Provider string `json:"provider"`
-	Policy   string `json:"policy"`
-	Status   string `json:"status"`
-	Locator  string `json:"locator"`
-	CID      string `json:"cid"`
-	TxID     string `json:"txId"`
-}
-
-type RoutingPolicy struct {
-	Strategy                   string   `json:"strategy"`
-	StickySessions             bool     `json:"stickySessions"`
-	ManualFailback             bool     `json:"manualFailback"`
-	FailoverThresholdMs        int      `json:"failoverThresholdMs"`
-	SnapshotTTLSeconds         int      `json:"snapshotTtlSeconds"`
-	LatencyProbeIntervalSecond int      `json:"latencyProbeIntervalSeconds"`
-	PreferredRegions           []string `json:"preferredRegions"`
-}
-
-type RouteSnapshot struct {
-	ProjectID       string           `json:"projectId"`
-	DeploymentID    string           `json:"deploymentId"`
-	Target          string           `json:"target"`
-	StoragePath     string           `json:"storagePath"`
-	BundleURL       string           `json:"bundleUrl"`
-	Domain          string           `json:"domain"`
-	SSLStatus       string           `json:"sslStatus"`
-	PrimaryRegion   string           `json:"primaryRegion"`
-	Consistency     string           `json:"consistency"`
-	DrainState      string           `json:"drainState"`
-	RoutingPolicy   RoutingPolicy    `json:"routingPolicy"`
-	Regions         []RegionRoute    `json:"regions"`
-	ArtifactMirrors []ArtifactMirror `json:"artifactMirrors"`
-}
-
 type cachedRoute struct {
-	snapshot  *RouteSnapshot
+	snapshot  *models.RouteSnapshot
 	expiresAt time.Time
 }
 
@@ -379,7 +328,7 @@ func (g *Gateway) subscribeToCacheInvalidation() {
 	}
 }
 
-func (g *Gateway) lookupRoute(r *http.Request) (*RouteSnapshot, error) {
+func (g *Gateway) lookupRoute(r *http.Request) (*models.RouteSnapshot, error) {
 	host := strings.Split(r.Host, ":")[0]
 
 	g.cacheMu.RLock()
@@ -402,7 +351,7 @@ func (g *Gateway) lookupRoute(r *http.Request) (*RouteSnapshot, error) {
 		return nil, fmt.Errorf("redis get %s: %w", key, err)
 	}
 
-	var snapshot RouteSnapshot
+	var snapshot models.RouteSnapshot
 	if err := json.Unmarshal([]byte(payload), &snapshot); err != nil {
 		return nil, fmt.Errorf("decode route snapshot: %w", err)
 	}
@@ -423,7 +372,7 @@ func (g *Gateway) lookupRoute(r *http.Request) (*RouteSnapshot, error) {
 	return &snapshot, nil
 }
 
-func chooseBestRegion(snapshot *RouteSnapshot, stickyRegion string) *RegionRoute {
+func chooseBestRegion(snapshot *models.RouteSnapshot, stickyRegion string) *models.RegionRoute {
 	if len(snapshot.Regions) == 0 {
 		return nil
 	}
@@ -437,7 +386,7 @@ func chooseBestRegion(snapshot *RouteSnapshot, stickyRegion string) *RegionRoute
 		}
 	}
 
-	var selected *RegionRoute
+	var selected *models.RegionRoute
 	bestScore := 1 << 30
 	for i := range snapshot.Regions {
 		region := &snapshot.Regions[i]
@@ -479,11 +428,11 @@ func chooseBestRegion(snapshot *RouteSnapshot, stickyRegion string) *RegionRoute
 	return &snapshot.Regions[0]
 }
 
-func isRegionEligible(region *RegionRoute) bool {
+func isRegionEligible(region *models.RegionRoute) bool {
 	return region != nil && region.DrainState != "drained" && region.HealthStatus != "unhealthy"
 }
 
-func findRegion(snapshot *RouteSnapshot, regionName string) *RegionRoute {
+func findRegion(snapshot *models.RouteSnapshot, regionName string) *models.RegionRoute {
 	for i := range snapshot.Regions {
 		if snapshot.Regions[i].Region == regionName {
 			return &snapshot.Regions[i]
@@ -500,7 +449,7 @@ func readStickyRegion(r *http.Request) string {
 	return cookie.Value
 }
 
-func writeStickyRegion(w http.ResponseWriter, snapshot *RouteSnapshot, region string) {
+func writeStickyRegion(w http.ResponseWriter, snapshot *models.RouteSnapshot, region string) {
 	if !snapshot.RoutingPolicy.StickySessions || region == "" {
 		return
 	}
@@ -520,7 +469,7 @@ func writeStickyRegion(w http.ResponseWriter, snapshot *RouteSnapshot, region st
 	})
 }
 
-func bundleURLForSnapshot(snapshot *RouteSnapshot, selectedRegion *RegionRoute) string {
+func bundleURLForSnapshot(snapshot *models.RouteSnapshot, selectedRegion *models.RegionRoute) string {
 	if selectedRegion != nil && selectedRegion.BundleURL != "" {
 		return selectedRegion.BundleURL
 	}
@@ -545,7 +494,7 @@ func (g *Gateway) resolveMirrorURL(locator string) string {
 	return ""
 }
 
-func (g *Gateway) preferredArtifactURL(snapshot *RouteSnapshot) string {
+func (g *Gateway) preferredArtifactURL(snapshot *models.RouteSnapshot) string {
 	for _, mirror := range snapshot.ArtifactMirrors {
 		if mirror.Status != "published" && mirror.Status != "active" {
 			continue
@@ -593,7 +542,7 @@ func (g *Gateway) emitControlPlaneEvent(projectID string, kind string, summary m
 	}
 }
 
-func (g *Gateway) serveStatic(w http.ResponseWriter, r *http.Request, snapshot *RouteSnapshot, selectedRegion *RegionRoute) bool {
+func (g *Gateway) serveStatic(w http.ResponseWriter, r *http.Request, snapshot *models.RouteSnapshot, selectedRegion *models.RegionRoute) bool {
 	storagePath := snapshot.StoragePath
 	if selectedRegion != nil && selectedRegion.StoragePath != "" {
 		storagePath = selectedRegion.StoragePath

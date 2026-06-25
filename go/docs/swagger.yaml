@@ -54,26 +54,7 @@ definitions:
         example: critical
         type: string
     type: object
-  http.metricsHistoryRequest:
-    properties:
-      end_time:
-        type: string
-      interval:
-        type: string
-      metric_types:
-        items:
-          type: string
-        type: array
-      start_time:
-        type: string
-      symbols:
-        items:
-          type: string
-        type: array
-      time_range:
-        type: string
-    type: object
-  integrity.Metrics:
+  models.Metrics:
     properties:
       blockedDelta:
         type: integer
@@ -98,6 +79,25 @@ definitions:
         type: integer
       timeoutCount:
         type: integer
+    type: object
+  models.MetricsHistoryRequest:
+    properties:
+      end_time:
+        type: string
+      interval:
+        type: string
+      metric_types:
+        items:
+          type: string
+        type: array
+      start_time:
+        type: string
+      symbols:
+        items:
+          type: string
+        type: array
+      time_range:
+        type: string
     type: object
 host: localhost:8081
 info:
@@ -385,7 +385,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/http.metricsHistoryRequest'
+          $ref: '#/definitions/models.MetricsHistoryRequest'
       produces:
       - application/json
       responses:
@@ -640,7 +640,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/integrity.Metrics'
+          $ref: '#/definitions/models.Metrics'
       produces:
       - application/json
       responses:

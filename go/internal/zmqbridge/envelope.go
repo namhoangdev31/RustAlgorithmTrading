@@ -6,27 +6,21 @@ import (
 	"fmt"
 	"strings"
 	"time"
+
+	"trading/observability-api/internal/models"
 )
 
 const SchemaVersion = "v1.0.0"
-
-type Envelope struct {
-	SchemaVersion string         `json:"schema_version"`
-	CorrelationID string         `json:"correlation_id"`
-	EventType     string         `json:"event_type"`
-	Timestamp     string         `json:"timestamp"`
-	Payload       map[string]any `json:"payload"`
-}
 
 type Validator struct {
 	Strict bool
 }
 
-func BuildEnvelope(correlationID, eventType string, payload map[string]any) Envelope {
+func BuildEnvelope(correlationID, eventType string, payload map[string]any) models.Envelope {
 	if payload == nil {
 		payload = map[string]any{}
 	}
-	return Envelope{
+	return models.Envelope{
 		SchemaVersion: SchemaVersion,
 		CorrelationID: correlationID,
 		EventType:     eventType,
@@ -35,7 +29,7 @@ func BuildEnvelope(correlationID, eventType string, payload map[string]any) Enve
 	}
 }
 
-func (v Validator) Validate(e Envelope) error {
+func (v Validator) Validate(e models.Envelope) error {
 	if strings.TrimSpace(e.SchemaVersion) == "" {
 		return errors.New("missing schema_version")
 	}
@@ -60,17 +54,17 @@ func (v Validator) Validate(e Envelope) error {
 	return nil
 }
 
-func Decode(raw []byte, strict bool) (Envelope, error) {
-	var e Envelope
+func Decode(raw []byte, strict bool) (models.Envelope, error) {
+	var e models.Envelope
 	if err := json.Unmarshal(raw, &e); err != nil {
-		return Envelope{}, err
+		return models.Envelope{}, err
 	}
 	if err := (Validator{Strict: strict}).Validate(e); err != nil {
-		return Envelope{}, err
+		return models.Envelope{}, err
 	}
 	return e, nil
 }
 
-func Encode(e Envelope) ([]byte, error) {
+func Encode(e models.Envelope) ([]byte, error) {
 	return json.Marshal(e)
 }

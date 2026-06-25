@@ -427,7 +427,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/http.metricsHistoryRequest"
+                            "$ref": "#/definitions/models.MetricsHistoryRequest"
                         }
                     }
                 ],
@@ -804,7 +804,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/integrity.Metrics"
+                            "$ref": "#/definitions/models.Metrics"
                         }
                     }
                 ],
@@ -1239,36 +1239,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.metricsHistoryRequest": {
-            "type": "object",
-            "properties": {
-                "end_time": {
-                    "type": "string"
-                },
-                "interval": {
-                    "type": "string"
-                },
-                "metric_types": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "start_time": {
-                    "type": "string"
-                },
-                "symbols": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "time_range": {
-                    "type": "string"
-                }
-            }
-        },
-        "integrity.Metrics": {
+        "models.Metrics": {
             "type": "object",
             "properties": {
                 "blockedDelta": {
@@ -1303,6 +1274,35 @@ const docTemplate = `{
                 },
                 "timeoutCount": {
                     "type": "integer"
+                }
+            }
+        },
+        "models.MetricsHistoryRequest": {
+            "type": "object",
+            "properties": {
+                "end_time": {
+                    "type": "string"
+                },
+                "interval": {
+                    "type": "string"
+                },
+                "metric_types": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "start_time": {
+                    "type": "string"
+                },
+                "symbols": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "time_range": {
+                    "type": "string"
                 }
             }
         }
