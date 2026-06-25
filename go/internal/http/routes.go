@@ -9,7 +9,9 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	httpSwagger "github.com/swaggo/http-swagger/v2"
 
+	_ "trading/observability-api/docs"
 	"trading/observability-api/internal/alerts"
 	"trading/observability-api/internal/alpaca"
 	"trading/observability-api/internal/auth"
@@ -69,6 +71,13 @@ func SetupRoutes(store *storage.Store, wsManager *ws.Manager, healthAggregator *
 	r.Get("/health/ready", healthAggregator.ReadinessCheckHandler)
 	r.Get("/health/live", healthAggregator.LivenessCheckHandler)
 	r.Get("/ws/metrics", wsManager.ServeWS)
+
+	r.Get("/docs", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/docs/index.html", http.StatusMovedPermanently)
+	})
+	r.Get("/docs/*", httpSwagger.Handler(
+		httpSwagger.URL("/docs/doc.json"),
+	))
 
 	r.Route("/api", func(r chi.Router) {
 		r.Use(auth.APIKeyAuth)

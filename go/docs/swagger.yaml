@@ -1,0 +1,888 @@
+basePath: /
+definitions:
+  http.AlpacaLimitOrderRequest:
+    properties:
+      limit_price:
+        example: 150.25
+        type: number
+      qty:
+        example: 10
+        type: number
+      side:
+        example: buy
+        type: string
+      symbol:
+        example: AAPL
+        type: string
+      time_in_force:
+        example: day
+        type: string
+    type: object
+  http.AlpacaMarketOrderRequest:
+    properties:
+      qty:
+        example: 10
+        type: number
+      side:
+        example: buy
+        type: string
+      symbol:
+        example: AAPL
+        type: string
+      time_in_force:
+        example: day
+        type: string
+    type: object
+  http.TriggerIncidentRequest:
+    properties:
+      component:
+        example: execution
+        type: string
+      correlation_id:
+        example: err-98274
+        type: string
+      evidence:
+        additionalProperties: true
+        type: object
+      owner:
+        example: oncall_engineer
+        type: string
+      reason_code:
+        example: high_slippage
+        type: string
+      severity:
+        example: critical
+        type: string
+    type: object
+  http.metricsHistoryRequest:
+    properties:
+      end_time:
+        type: string
+      interval:
+        type: string
+      metric_types:
+        items:
+          type: string
+        type: array
+      start_time:
+        type: string
+      symbols:
+        items:
+          type: string
+        type: array
+      time_range:
+        type: string
+    type: object
+  integrity.Metrics:
+    properties:
+      blockedDelta:
+        type: integer
+      crashCount:
+        type: integer
+      exposureDriftBps:
+        format: float64
+        type: number
+      fallbackCount:
+        type: integer
+      falseAllowDelta:
+        type: integer
+      falseRejectDelta:
+        type: integer
+      latencyRegressionRatio:
+        format: float64
+        type: number
+      pnlDriftPct:
+        format: float64
+        type: number
+      reconciliationFailureCount:
+        type: integer
+      timeoutCount:
+        type: integer
+    type: object
+host: localhost:8081
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: High-Performance Go Control Plane & Observability API for Algorithmic
+    Trading.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Trading Observability API
+  version: "1.0"
+paths:
+  /:
+    get:
+      description: Retrieve basic service information and sub-endpoints
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get Root API Info
+      tags:
+      - root
+  /api/alpaca/account:
+    get:
+      description: Retrieve broker account info (balance, buying power, equity)
+      parameters:
+      - description: API Key for authorization
+        in: header
+        name: X-API-Key
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get Alpaca Account Info
+      tags:
+      - alpaca
+  /api/alpaca/bars:
+    get:
+      description: Query historical market candlestick bars from Alpaca
+      parameters:
+      - description: API Key for authorization
+        in: header
+        name: X-API-Key
+        required: true
+        type: string
+      - description: Stock symbol
+        in: query
+        name: symbol
+        required: true
+        type: string
+      - default: 100
+        description: Number of bars to return
+        in: query
+        name: limit
+        type: integer
+      - default: '"1Min"'
+        description: Bar size (1Min/5Min/1Hour/1Day)
+        in: query
+        name: time_frame
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get Market Bars
+      tags:
+      - alpaca
+  /api/alpaca/orders:
+    delete:
+      description: Cancel all pending/active orders
+      parameters:
+      - description: API Key for authorization
+        in: header
+        name: X-API-Key
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Cancel All Alpaca Orders
+      tags:
+      - alpaca
+    get:
+      description: List recent orders with current fulfillment status
+      parameters:
+      - description: API Key for authorization
+        in: header
+        name: X-API-Key
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: List Alpaca Orders
+      tags:
+      - alpaca
+  /api/alpaca/orders/{order_id}:
+    delete:
+      description: Cancel a specific pending order by ID
+      parameters:
+      - description: API Key for authorization
+        in: header
+        name: X-API-Key
+        required: true
+        type: string
+      - description: Order UUID
+        in: path
+        name: order_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Cancel Alpaca Order
+      tags:
+      - alpaca
+  /api/alpaca/orders/limit:
+    post:
+      consumes:
+      - application/json
+      description: Submit a new limit order to buy/sell assets at a specified price
+      parameters:
+      - description: API Key for authorization
+        in: header
+        name: X-API-Key
+        required: true
+        type: string
+      - description: Limit order parameters
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/http.AlpacaLimitOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Place Alpaca Limit Order
+      tags:
+      - alpaca
+  /api/alpaca/orders/market:
+    post:
+      consumes:
+      - application/json
+      description: Submit a new market order to buy/sell assets immediately
+      parameters:
+      - description: API Key for authorization
+        in: header
+        name: X-API-Key
+        required: true
+        type: string
+      - description: Market order parameters
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/http.AlpacaMarketOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Place Alpaca Market Order
+      tags:
+      - alpaca
+  /api/alpaca/positions:
+    delete:
+      description: Liquidate all open positions (market order sells for all holds)
+      parameters:
+      - description: API Key for authorization
+        in: header
+        name: X-API-Key
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Close All Positions
+      tags:
+      - alpaca
+    get:
+      description: List all open investment positions
+      parameters:
+      - description: API Key for authorization
+        in: header
+        name: X-API-Key
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get Alpaca Positions
+      tags:
+      - alpaca
+  /api/metrics/current:
+    get:
+      description: Retrieve the latest consolidated trading and system performance
+        metrics
+      parameters:
+      - description: API Key for authorization
+        in: header
+        name: X-API-Key
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get Current Metrics
+      tags:
+      - metrics
+  /api/metrics/history:
+    post:
+      consumes:
+      - application/json
+      description: Query historical metrics matching filters (time range, symbols,
+        metric types)
+      parameters:
+      - description: API Key for authorization
+        in: header
+        name: X-API-Key
+        required: true
+        type: string
+      - description: Query filters
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/http.metricsHistoryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get Metrics History
+      tags:
+      - metrics
+  /api/metrics/summary:
+    get:
+      description: Query high-level portfolio and performance statistics summary
+      parameters:
+      - description: API Key for authorization
+        in: header
+        name: X-API-Key
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get Performance Summary
+      tags:
+      - metrics
+  /api/metrics/symbols:
+    get:
+      description: List all symbols with stored metrics
+      parameters:
+      - description: API Key for authorization
+        in: header
+        name: X-API-Key
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get Metrics Symbols
+      tags:
+      - metrics
+  /api/system/alerts/acknowledge/{alert_id}:
+    post:
+      description: Acknowledge a specific alert notification by ID
+      parameters:
+      - description: API Key for authorization
+        in: header
+        name: X-API-Key
+        required: true
+        type: string
+      - description: Alert identifier
+        in: path
+        name: alert_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Acknowledge Alert
+      tags:
+      - system
+  /api/system/components:
+    get:
+      description: Check detailed status of subsystem components
+      parameters:
+      - description: API Key for authorization
+        in: header
+        name: X-API-Key
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get System Components
+      tags:
+      - system
+  /api/system/health:
+    get:
+      description: Retrieve detailed system health details of components
+      parameters:
+      - description: API Key for authorization
+        in: header
+        name: X-API-Key
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get System Health
+      tags:
+      - system
+  /api/system/incidents:
+    get:
+      description: Retrieve list of all tracked system incidents
+      parameters:
+      - description: API Key for authorization
+        in: header
+        name: X-API-Key
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get Incidents
+      tags:
+      - system
+    post:
+      consumes:
+      - application/json
+      description: Explicitly record/trigger a new system incident manually or programmatically
+      parameters:
+      - description: API Key for authorization
+        in: header
+        name: X-API-Key
+        required: true
+        type: string
+      - description: Incident information
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/http.TriggerIncidentRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Trigger Incident
+      tags:
+      - system
+  /api/system/incidents/{incident_id}/acknowledge:
+    post:
+      description: Mark an incident as acknowledged and assign an owner
+      parameters:
+      - description: API Key for authorization
+        in: header
+        name: X-API-Key
+        required: true
+        type: string
+      - description: Incident UUID
+        in: path
+        name: incident_id
+        required: true
+        type: string
+      - description: Name of the owner resolving the incident
+        in: query
+        name: owner
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Acknowledge Incident
+      tags:
+      - system
+  /api/system/incidents/{incident_id}/resolve:
+    post:
+      description: Mark an active incident as resolved
+      parameters:
+      - description: API Key for authorization
+        in: header
+        name: X-API-Key
+        required: true
+        type: string
+      - description: Incident UUID
+        in: path
+        name: incident_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Resolve Incident
+      tags:
+      - system
+  /api/system/integrity/validate:
+    post:
+      consumes:
+      - application/json
+      description: Check database and performance integrity of metrics against defined
+        thresholds
+      parameters:
+      - description: API Key for authorization
+        in: header
+        name: X-API-Key
+        required: true
+        type: string
+      - description: Metrics to validate
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/integrity.Metrics'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Validate Run Integrity
+      tags:
+      - system
+  /api/system/logs/recent:
+    get:
+      description: Retrieve latest logged lines for diagnostic purposes
+      parameters:
+      - description: API Key for authorization
+        in: header
+        name: X-API-Key
+        required: true
+        type: string
+      - default: 100
+        description: Maximum logs to return
+        in: query
+        name: limit
+        type: integer
+      - description: Filter by severity level (info/warn/error)
+        in: query
+        name: level
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get Recent Logs
+      tags:
+      - system
+  /api/system/performance:
+    get:
+      description: Retrieve system performance metrics (CPU, Memory, uptime)
+      parameters:
+      - description: API Key for authorization
+        in: header
+        name: X-API-Key
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get System Performance
+      tags:
+      - system
+  /api/system/stats:
+    get:
+      description: Retrieve key operational stats of the Go Control Plane
+      parameters:
+      - description: API Key for authorization
+        in: header
+        name: X-API-Key
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get Core System Stats
+      tags:
+      - system
+  /api/trades:
+    get:
+      description: Query trades history with support for pagination and filtering
+      parameters:
+      - description: API Key for authorization
+        in: header
+        name: X-API-Key
+        required: true
+        type: string
+      - default: 100
+        description: Pagination limit
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: Pagination offset
+        in: query
+        name: offset
+        type: integer
+      - description: Filter by symbol
+        in: query
+        name: symbol
+        type: string
+      - description: Filter by side (buy/sell)
+        in: query
+        name: side
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      summary: List Trades
+      tags:
+      - trades
+  /api/trades/{trade_id}:
+    get:
+      description: Retrieve comprehensive execution details for a specific trade
+      parameters:
+      - description: API Key for authorization
+        in: header
+        name: X-API-Key
+        required: true
+        type: string
+      - description: Trade UUID
+        in: path
+        name: trade_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get Trade Details
+      tags:
+      - trades
+  /api/trades/execution/quality:
+    get:
+      description: Retrieve metrics detailing trade execution quality (slippage, fill
+        latency)
+      parameters:
+      - description: API Key for authorization
+        in: header
+        name: X-API-Key
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get Execution Quality Stats
+      tags:
+      - trades
+  /api/trades/stats/summary:
+    get:
+      description: Retrieve trading stats aggregated over history (win rate, profit
+        factor, total trades)
+      parameters:
+      - description: API Key for authorization
+        in: header
+        name: X-API-Key
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get Trades Stats Summary
+      tags:
+      - trades
+  /health:
+    get:
+      description: Retrieve full health status of the application and its dependencies
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Health Check
+      tags:
+      - health
+  /health/live:
+    get:
+      description: Verify if the application is still alive and running
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Liveness Check
+      tags:
+      - health
+  /health/ready:
+    get:
+      description: Verify if the application is ready to accept traffic
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Readiness Check
+      tags:
+      - health
+  /ws/metrics:
+    get:
+      description: Establish a WebSocket connection to stream real-time trading metrics
+      responses: {}
+      summary: WebSocket Live Metrics
+      tags:
+      - websocket
+swagger: "2.0"

@@ -65,7 +65,7 @@ services:
   market-data:
     <<: *rust-service
     profiles: [ "trading" ]
-    image: ${TRADING_IMAGE_REGISTRY:-trading}/market-data:${IMAGE_TAG:-production}
+    image: ${TRADING_IMAGE_REGISTRY:-trading}/market-data:${IMAGE_TAG:-development}
     build:
       context: ..
       dockerfile: ops/deployment/Dockerfile
@@ -86,7 +86,7 @@ services:
   signal-bridge:
     <<: *rust-service
     profiles: [ "trading" ]
-    image: ${TRADING_IMAGE_REGISTRY:-trading}/signal-bridge:${IMAGE_TAG:-production}
+    image: ${TRADING_IMAGE_REGISTRY:-trading}/signal-bridge:${IMAGE_TAG:-development}
     build:
       context: ..
       dockerfile: ops/deployment/Dockerfile
@@ -110,7 +110,7 @@ services:
   risk-manager:
     <<: *rust-service
     profiles: [ "trading" ]
-    image: ${TRADING_IMAGE_REGISTRY:-trading}/risk-manager:${IMAGE_TAG:-production}
+    image: ${TRADING_IMAGE_REGISTRY:-trading}/risk-manager:${IMAGE_TAG:-development}
     build:
       context: ..
       dockerfile: ops/deployment/Dockerfile
@@ -130,7 +130,7 @@ services:
   execution-engine:
     <<: *rust-service
     profiles: [ "trading" ]
-    image: ${TRADING_IMAGE_REGISTRY:-trading}/execution-engine:${IMAGE_TAG:-production}
+    image: ${TRADING_IMAGE_REGISTRY:-trading}/execution-engine:${IMAGE_TAG:-development}
     build:
       context: ..
       dockerfile: ops/deployment/Dockerfile
@@ -153,16 +153,17 @@ services:
       com.rustalgorithmtrading.audience: trader
 
   go-control-plane:
-    image: ${TRADING_IMAGE_REGISTRY:-trading}/go-control-plane:${IMAGE_TAG:-production}
+    image: ${TRADING_IMAGE_REGISTRY:-trading}/go-control-plane:${IMAGE_TAG:-development}
     build:
       context: ..
-      dockerfile: ops/deployment/go.Dockerfile
+      dockerfile: ops/deployment/go.dev.Dockerfile
     restart: unless-stopped
     init: true
     networks:
       - private
     volumes:
       - go-observability-data:/data
+      - ../go:/workspace/go
     environment:
       <<: *saas-env
       SERVICE_NAME: go-control-plane
@@ -189,10 +190,10 @@ services:
       resources:
         limits:
           cpus: '0.5'
-          memory: 256M
+          memory: 1024M
         reservations:
           cpus: '0.1'
-          memory: 64M
+          memory: 256M
     labels:
       com.rustalgorithmtrading.role: private-observability-api
       com.rustalgorithmtrading.audience: developer,trader
@@ -217,7 +218,7 @@ services:
     environment:
       <<: *saas-env
       SERVICE_NAME: nextjs-frontend
-      NODE_ENV: production
+      NODE_ENV: development
       PORT: 3000
       NODE_OPTIONS: --max-old-space-size=1536
       DATABASE_URL: postgresql://noah_admin:noah_master@103.82.36.67:8048/noah_db
@@ -270,7 +271,7 @@ services:
       com.rustalgorithmtrading.audience: developer,trader,regular
 
   edge-gateway:
-    image: ${TRADING_IMAGE_REGISTRY:-trading}/edge-gateway:${IMAGE_TAG:-production}
+    image: ${TRADING_IMAGE_REGISTRY:-trading}/edge-gateway:${IMAGE_TAG:-development}
     build:
       context: ..
       dockerfile: ops/deployment/edge-gateway.Dockerfile
