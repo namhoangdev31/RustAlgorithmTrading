@@ -4,6 +4,9 @@
 
 FROM rust:1-slim-trixie AS builder
 
+ENV CARGO_NET_RETRY=10
+ENV CARGO_NET_GIT_FETCH_WITH_CLI=true
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     cmake \

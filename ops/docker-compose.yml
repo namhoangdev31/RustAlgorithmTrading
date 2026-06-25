@@ -174,8 +174,8 @@ services:
       MARKET_DATA_METRICS_URL: http://market-data:9091/metrics
       EXECUTION_METRICS_URL: http://execution-engine:9092/metrics
       RISK_METRICS_URL: http://risk-manager:9093/metrics
-    expose:
-      - "8081"
+    ports:
+      - "${CONTROL_PLANE_PORT:-8081}:8081"
     depends_on:
       redis:
         condition: service_healthy
@@ -246,8 +246,8 @@ services:
       LEPOS_CACHE_BUCKET: ${LEPOS_CACHE_BUCKET:-}
       LEPOS_CACHE_ENDPOINT: ${LEPOS_CACHE_ENDPOINT:-}
       LEPOS_CACHE_REGION: ${LEPOS_CACHE_REGION:-us-east-1}
-    expose:
-      - "3000"
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
     depends_on:
       redis:
         condition: service_healthy
