@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
 import { ChatMessage, StreamState } from "@/types/game";
+import React, { useEffect, useState, useRef } from "react";
 
 interface StreamOverlayProps {
     streamState: StreamState;
@@ -42,7 +42,7 @@ export const StreamOverlay: React.FC<StreamOverlayProps> = ({
     const [likes, setLikes] = useState(streamState.totalLikes);
     const [coins, setCoins] = useState(streamState.coinsEarned);
     const [donationAlert, setDonationAlert] = useState<{ username: string; amount: number; message: string } | null>(null);
-    
+
     const chatEndRef = useRef<HTMLDivElement>(null);
 
     // Auto-scroll chat
@@ -60,14 +60,14 @@ export const StreamOverlay: React.FC<StreamOverlayProps> = ({
             // Thêm chat ngẫu nhiên
             const isDonation = Math.random() < 0.15;
             const donationAmount = isDonation ? [50, 100, 200, 500][Math.floor(Math.random() * 4)] : undefined;
-            
+
             const newChat: ChatMessage = {
                 id: Math.random().toString(),
-                username: isDonation 
+                username: isDonation
                     ? DONATOR_NAMES[Math.floor(Math.random() * DONATOR_NAMES.length)]
                     : `Viewer_${Math.floor(Math.random() * 9000 + 1000)}`,
-                message: isDonation 
-                    ? `Đã donate ${donationAmount} Coins! Thách bạn KO bằng đòn counter đó!` 
+                message: isDonation
+                    ? `Đã donate ${donationAmount} Coins! Thách bạn KO bằng đòn counter đó!`
                     : SHIFT_MESSAGES[Math.floor(Math.random() * SHIFT_MESSAGES.length)],
                 isDonation,
                 donationAmount,
@@ -165,7 +165,7 @@ export const StreamOverlay: React.FC<StreamOverlayProps> = ({
                             <span>{Math.round(playerHp)} / {playerMaxHp}</span>
                         </div>
                         <div className="w-full h-3 bg-black/60 rounded-full overflow-hidden border border-red-500/20">
-                            <div 
+                            <div
                                 className="h-full bg-gradient-to-r from-red-600 to-red-400 transition-all duration-300"
                                 style={{ width: `${(playerHp / playerMaxHp) * 100}%` }}
                             />
@@ -179,7 +179,7 @@ export const StreamOverlay: React.FC<StreamOverlayProps> = ({
                             <span>{Math.round(playerStamina)} / {playerMaxStamina}</span>
                         </div>
                         <div className="w-full h-3 bg-black/60 rounded-full overflow-hidden border border-emerald-500/20">
-                            <div 
+                            <div
                                 className="h-full bg-gradient-to-r from-emerald-600 to-emerald-400 transition-all duration-300"
                                 style={{ width: `${(playerStamina / playerMaxStamina) * 100}%` }}
                             />
@@ -188,19 +188,19 @@ export const StreamOverlay: React.FC<StreamOverlayProps> = ({
 
                     {/* Quick Combat Moves Button (Hỗ trợ nhấp chuột test đòn) */}
                     <div className="grid grid-cols-3 gap-2 pt-2 border-t border-white/10">
-                        <button 
+                        <button
                             onClick={() => onExecuteAction?.("kick")}
                             className="bg-white/10 hover:bg-white/20 active:bg-white/30 text-white font-bold text-xs py-2 rounded-lg transition-colors border border-white/5"
                         >
                             Đá (Kick)
                         </button>
-                        <button 
+                        <button
                             onClick={() => onExecuteAction?.("dodge")}
                             className="bg-white/10 hover:bg-white/20 active:bg-white/30 text-white font-bold text-xs py-2 rounded-lg transition-colors border border-white/5"
                         >
                             Né (Dodge)
                         </button>
-                        <button 
+                        <button
                             onClick={() => onExecuteAction?.("counter")}
                             className="bg-gradient-to-r from-pink-600 to-red-600 hover:from-pink-500 hover:to-red-500 text-white font-black text-xs py-2 rounded-lg shadow-lg border border-pink-400/20 transition-all"
                         >
@@ -223,17 +223,15 @@ export const StreamOverlay: React.FC<StreamOverlayProps> = ({
                     {/* Chat Content */}
                     <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
                         {chats.map(chat => (
-                            <div 
-                                key={chat.id} 
-                                className={`text-xs p-2 rounded-lg transition-all duration-300 ${
-                                    chat.isDonation 
-                                        ? "bg-purple-950/80 border border-purple-500/40 text-purple-200" 
-                                        : "bg-white/5 text-gray-200"
-                                }`}
+                            <div
+                                key={chat.id}
+                                className={`text-xs p-2 rounded-lg transition-all duration-300 ${chat.isDonation
+                                    ? "bg-purple-950/80 border border-purple-500/40 text-purple-200"
+                                    : "bg-white/5 text-gray-200"
+                                    }`}
                             >
-                                <span className={`font-black mr-2 ${
-                                    chat.isDonation ? "text-pink-400" : "text-yellow-500"
-                                }`}>
+                                <span className={`font-black mr-2 ${chat.isDonation ? "text-pink-400" : "text-yellow-500"
+                                    }`}>
                                     {chat.username}
                                 </span>
                                 <span>{chat.message}</span>

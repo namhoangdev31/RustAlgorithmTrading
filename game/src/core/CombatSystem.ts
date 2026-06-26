@@ -1,5 +1,5 @@
+import { CombatMove, FighterState } from "@/types/game";
 import { Scene } from "@babylonjs/core/scene";
-import { FighterState, CombatMove } from "@/types/game";
 
 export type CombatStateType = 'IDLE' | 'ATTACKING' | 'DODGING' | 'COUNTERING' | 'STUNNED' | 'DOWN';
 
@@ -8,16 +8,16 @@ export class CombatSystem {
     private _fighter: FighterState;
     private _currentState: CombatStateType = 'IDLE';
     private _stateTimer: number | null = null;
-    
+
     // Quản lý cửa sổ phản đòn (Counter Window)
     private _counterWindowActive: boolean = false;
     private _incomingMoveId: string | null = null;
 
     // Sự kiện callback khi có thay đổi trạng thái combat hoặc gây sát thương
-    public onStateChange: (state: CombatStateType) => void = () => {};
-    public onDamageDealt: (damage: number, moveName: string) => void = () => {};
-    public onCounterSuccess: (moveName: string) => void = () => {};
-    public onHitTaken: (damage: number) => void = () => {};
+    public onStateChange: (state: CombatStateType) => void = () => { };
+    public onDamageDealt: (damage: number, moveName: string) => void = () => { };
+    public onCounterSuccess: (moveName: string) => void = () => { };
+    public onHitTaken: (damage: number) => void = () => { };
 
     constructor(fighter: FighterState, scene: Scene) {
         this._fighter = fighter;
@@ -68,7 +68,7 @@ export class CombatSystem {
 
         if (move.type === 'Strike') {
             this.changeState('ATTACKING', move.cooldownMs);
-            
+
             // Giả lập kích hoạt hitbox đánh trúng (AI thực tế sẽ gọi va chạm của Mesh)
             window.setTimeout(() => {
                 const damage = move.damage * (1 + this._fighter.stats.strength * 0.01);
@@ -83,10 +83,10 @@ export class CombatSystem {
             if (this._counterWindowActive && this._incomingMoveId && move.counterableMoveIds?.includes(this._incomingMoveId)) {
                 this.changeState('ATTACKING', move.cooldownMs);
                 this.onCounterSuccess(move.name);
-                
+
                 const counterDamage = move.damage * 1.5; // Đòn counter gây thêm 150% sát thương
                 this.onDamageDealt(counterDamage, move.name);
-                
+
                 this.deactivateCounterWindow();
             } else {
                 // Hụt counter -> Rơi vào trạng thái sơ hở, dễ bị dính đòn
@@ -107,14 +107,14 @@ export class CombatSystem {
         // Giảm sát thương dựa trên chỉ số chịu đựng (Toughness)
         const reducedDamage = Math.max(1, damage - this._fighter.stats.toughness * 0.5);
         this._fighter.currentHp = Math.max(0, this._fighter.currentHp - reducedDamage);
-        
+
         this.onHitTaken(reducedDamage);
 
         if (this._fighter.currentHp <= 0) {
             this.changeState('DOWN');
         } else {
             // Choáng nhẹ khi trúng đòn
-            this.changeState('STUNNED', 400); 
+            this.changeState('STUNNED', 400);
         }
     }
 
