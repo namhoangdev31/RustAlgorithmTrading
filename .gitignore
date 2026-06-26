@@ -97,3 +97,5 @@ nextjs/.cache/
 .vercel
 .vercelignore
 game/node_modules/
+game/.next/
+game/.cache/

@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "assets": [
+    {
+      "id": "school-alley",
+      "kind": "environment",
+      "url": "/game-assets/environments/school-alley/school-alley.real.json",
+      "license": "CC0",
+      "sourceUrl": "https://kenney.nl/assets/retro-urban-kit",
+      "tags": ["school", "alley", "street", "kenney", "low-poly", "real"],
+      "scale": 1
+    },
+    {
+      "id": "school-alley-seed",
+      "kind": "environment",
+      "url": "/game-assets/environments/school-alley/school-alley.prefab.json",
+      "license": "CC0",
+      "sourceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "tags": ["school", "alley", "street", "low-poly", "seed"],
+      "scale": 1
+    },
+    {
+      "id": "hobin-v1",
+      "kind": "character",
+      "url": "/game-assets/vendor/kenney/blocky-characters/glb/character-a.glb",
+      "license": "CC0",
+      "sourceUrl": "https://kenney.nl/assets/blocky-characters",
+      "tags": ["student", "blocky", "stylized", "fighter", "kenney", "real"],
+      "scale": 0.9,
+      "position": [1.5, 0, 2.05],
+      "rotation": [0, 3.1416, 0]
+    },
+    {
+      "id": "hobin-seed",
+      "kind": "character",
+      "url": "/game-assets/characters/hobin-v1/hobin-v1.prefab.json",
+      "license": "CC0",
+      "sourceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "tags": ["student", "anime", "stylized", "fighter", "seed"],
+      "scale": 1
+    },
+    {
+      "id": "combat-v1",
+      "kind": "animation",
+      "url": "/game-assets/animations/combat/combat-v1.prefab.json",
+      "license": "CC0",
+      "sourceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "tags": ["mixamo-slot", "combat", "idle", "run", "dodge", "counter", "seed"],
+      "scale": 1
+    },
+    {
+      "id": "impact-v1",
+      "kind": "vfx",
+      "url": "/game-assets/vfx/impact/impact-v1.prefab.json",
+      "license": "CC0",
+      "sourceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "tags": ["impact", "anime", "toon", "seed"],
+      "scale": 1
+    }
+  ]
+}

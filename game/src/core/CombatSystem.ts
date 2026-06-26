@@ -18,6 +18,7 @@ export class CombatSystem {
     public onDamageDealt: (damage: number, moveName: string) => void = () => { };
     public onCounterSuccess: (moveName: string) => void = () => { };
     public onHitTaken: (damage: number) => void = () => { };
+    public onMoveExecuted: (animationName: string, durationMs: number) => void = () => { };
 
     constructor(fighter: FighterState, scene: Scene) {
         this._fighter = fighter;
@@ -65,6 +66,7 @@ export class CombatSystem {
 
         // Tiêu hao thể lực
         this._fighter.currentStamina = Math.max(0, this._fighter.currentStamina - move.staminaCost);
+        this.onMoveExecuted(move.animationName, move.cooldownMs);
 
         if (move.type === 'Strike') {
             this.changeState('ATTACKING', move.cooldownMs);

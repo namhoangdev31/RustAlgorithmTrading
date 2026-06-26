@@ -693,6 +693,11 @@
   dependencies:
     "@types/emscripten" "^1.39.6"
 
+"@babylonjs/loaders@^9.14.0":
+  version "9.14.0"
+  resolved "https://registry.yarnpkg.com/@babylonjs/loaders/-/loaders-9.14.0.tgz#4fb6c5f71e16912a37f2d7c78053c70399ff2d20"
+  integrity sha512-tEML9oS8X4upjJi74muCIpShYvxflXSYYgAE9xNFbx93ec6fmhUB68vGWyzvr7eqk9jkYzonRp06bqmQebVgUg==
+
 "@babylonjs/materials@9.12.1":
   version "9.12.1"
   resolved "https://registry.yarnpkg.com/@babylonjs/materials/-/materials-9.12.1.tgz#f78868ead632233d78ffcd2fbdea1ebe2683a117"
