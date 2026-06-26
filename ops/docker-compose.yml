@@ -204,12 +204,12 @@ services:
     build:
       context: ..
       dockerfile: ops/deployment/nextjs.Dockerfile
-      target: builder
+      target: development
     command: yarn dev
     volumes:
       - ../nextjs:/workspace/nextjs
-      - /workspace/nextjs/node_modules
-      - /workspace/nextjs/.next
+      - nextjs_node_modules:/workspace/nextjs/node_modules
+      - nextjs_cache:/workspace/nextjs/.next
     restart: unless-stopped
     init: true
     networks:
@@ -332,3 +332,5 @@ networks:
 volumes:
   go-observability-data:
   edge-artifact-data:
+  nextjs_node_modules:
+  nextjs_cache:
