@@ -502,9 +502,7 @@
         "appearance": "Giao diện",
         "notifications": "Thông báo",
         "display": "Hiển thị",
-        "vercel": "Mã API Vercel",
-        "platform": "Điều phối nền tảng",
-        "vercel_roadmap": "Lộ trình Vercel SDK"
+        "vercel": "Mã API Vercel"
       },
       "header": {
         "overview": "Tổng quan",

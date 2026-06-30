@@ -97,7 +97,6 @@ export function LeposCommandPalette({ projectId }: { projectId?: string }) {
     { icon: Folder, name: "Go to Projects", description: "View all active deployment projects", action: () => router.push("/dashboard") },
     { icon: Shield, name: "WAF & Firewall Config", description: "Manage blocked IPs and country rules", action: () => router.push("/dashboard/settings/security") },
     { icon: Terminal, name: "LepoShip Mobile WebView Builder", description: "Open WebView bundle manager", action: () => router.push("/lepoship") },
-    { icon: ToggleLeft, name: "Feature Flags", description: "Toggle experimental features", action: () => router.push("/dashboard/platform") },
     { icon: FileText, name: "API Documentation", description: "Read API integration specs", action: () => router.push("/docs") },
     { icon: Settings, name: "Workspace Governance", description: "Manage members and billing limits", action: () => router.push("/dashboard/settings") }
   ];

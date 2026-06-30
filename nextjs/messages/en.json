@@ -502,9 +502,7 @@
         "appearance": "Appearance",
         "notifications": "Notifications",
         "display": "Display",
-        "vercel": "Vercel API Key",
-        "platform": "Platform Control",
-        "vercel_roadmap": "Vercel SDK Roadmap"
+        "vercel": "Vercel API Key"
       },
       "header": {
         "overview": "Overview",

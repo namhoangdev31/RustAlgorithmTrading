@@ -127,8 +127,6 @@ export function AppSidebar({
           ],
         },
         { title: t("nav.users"), url: "/dashboard/users", icon: Users },
-        { title: t("nav.platform"), url: "/dashboard/platform", icon: Sparkles },
-        { title: t("nav.vercel_roadmap"), url: "/dashboard/vercel-roadmap", icon: Milestone },
       ],
     },
     {
