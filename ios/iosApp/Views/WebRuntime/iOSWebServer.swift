@@ -71,11 +71,9 @@ class iOSWebServer {
                 
                 let filePath = resolvedURL.path
                 if FileManager.default.fileExists(atPath: filePath) {
-                    return GCDWebServerFileResponse(
-                        file: filePath,
-                        byteRange: request.byteRange,
-                        contentType: "application/wasm"
-                    )
+                    let response = GCDWebServerFileResponse(file: filePath, byteRange: request.byteRange)
+                    response?.contentType = "application/wasm"
+                    return response
                 }
                 return GCDWebServerResponse(statusCode: 404)
             }
