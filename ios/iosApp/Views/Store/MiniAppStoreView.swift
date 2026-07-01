@@ -88,10 +88,6 @@ struct MiniAppStoreView: View {
                         viewModel: vm
                     ).ignoresSafeArea()
                         .background(Color.black)
-                        .onAppear {
-                            vm.loadBundle(
-                                manifest: manifest, bundlePath: URL(fileURLWithPath: path))
-                        }
                 }
             }
         }

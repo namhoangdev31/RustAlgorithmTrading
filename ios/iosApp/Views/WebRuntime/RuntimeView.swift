@@ -16,26 +16,52 @@ struct RuntimeView: View {
             assistiveTouchButton
         }
         .onAppear {
-            viewModel.loadBundle(manifest: manifest, bundlePath: bundlePath)
+            viewModel.openBundle(manifest: manifest, bundlePath: bundlePath)
         }
         .onDisappear {
-            viewModel.stopServer()
+            viewModel.stopAll()
         }
         .supportedOrientations(orientationMask)
+        .onChange(of: viewModel.activeTabId) { newId in
+            if let newId = newId {
+                viewModel.activateTab(id: newId)
+            }
+        }
+        .fullScreenCover(isPresented: $viewModel.showTabSwitcher) {
+            TabSwitcher(
+                tabs: $viewModel.tabs,
+                selectedTabId: $viewModel.activeTabId,
+                isPresented: $viewModel.showTabSwitcher,
+                onAddTab: {
+                    viewModel.openBundle(manifest: manifest, bundlePath: bundlePath)
+                },
+                onCloseTab: { tabId in
+                    viewModel.closeTab(id: tabId)
+                }
+            )
+        }
     }
 
     @ViewBuilder
     private var contentView: some View {
-        switch viewModel.state {
-        case .idle:
-            EmptyView()
-        case .loading:
-            UniProgressView()
-                .uniForegroundStyle(.white)
-                .scaleEffect(1.5)
-        case .ready(let entryUrl):
-            RuntimeWebViewWrapper(manifest: manifest, httpUrl: entryUrl)
-        case .error(let message):
+        if let activeId = viewModel.activeTabId, let activeTab = viewModel.tabs.first(where: { $0.id == activeId }) {
+            ZStack {
+                if activeTab.status == .loading {
+                    UniProgressView()
+                        .uniForegroundStyle(.white)
+                        .scaleEffect(1.5)
+                } else if let webView = activeTab.webView {
+                    RuntimeWebViewWrapper(webView: webView)
+                } else {
+                    VStack {
+                        UniProgressView()
+                        Text("Recreating tab state...")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                    }
+                }
+            }
+        } else if let error = viewModel.errorMsg {
             VStack(spacing: 16) {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .font(.system(size: 60))
@@ -43,12 +69,16 @@ struct RuntimeView: View {
                 Text("Error")
                     .font(.title)
                     .uniForegroundStyle(.white)
-                Text(message)
+                Text(error)
                     .font(.body)
                     .uniForegroundStyle(.white, opacity: 0.8)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 32)
             }
+        } else {
+            UniProgressView()
+                .uniForegroundStyle(.white)
+                .scaleEffect(1.5)
         }
     }
 
@@ -69,6 +99,33 @@ struct RuntimeView: View {
                             withAnimation { isExpanded = false }
                         }) {
                             Image(systemName: "arrow.clockwise")
+                                .font(.title)
+                                .uniForegroundStyle(.primary)
+                                .frame(width: 50, height: 50)
+                                .uniGlass(cornerRadius: 25)
+                        }
+                        .uniButtonStyle(.plain)
+
+                        UniButton(action: {
+                            if let activeId = viewModel.activeTabId, 
+                               let activeTab = viewModel.tabs.first(where: { $0.id == activeId }) {
+                                Task {
+                                    if let img = await activeTab.webView?.takeSnapshot() {
+                                        activeTab.snapshot = img
+                                    }
+                                    withAnimation {
+                                        viewModel.showTabSwitcher = true
+                                        isExpanded = false
+                                    }
+                                }
+                            } else {
+                                withAnimation {
+                                    viewModel.showTabSwitcher = true
+                                    isExpanded = false
+                                }
+                            }
+                        }) {
+                            Image(systemName: "square.grid.2x2")
                                 .font(.title)
                                 .uniForegroundStyle(.primary)
                                 .frame(width: 50, height: 50)
@@ -144,13 +201,9 @@ struct RuntimeView: View {
 }
 
 private struct RuntimeWebViewWrapper: UIViewRepresentable {
-    let manifest: WebRuntimeManifest
-    let httpUrl: String
+    let webView: RuntimeWebView
 
     func makeUIView(context: Context) -> RuntimeWebView {
-        let webView = RuntimeWebView(frame: .zero, manifest: manifest)
-        webView.loadBundle(httpUrl: httpUrl)
-
         NotificationCenter.default.addObserver(
             forName: NSNotification.Name("ReloadMiniApp"),
             object: nil,

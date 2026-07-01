@@ -36,6 +36,18 @@
 		5A7804012F390214004BBDBF /* SFSafeSymbols in Frameworks */ = {isa = PBXBuildFile; productRef = 5A7804002F390214004BBDBF /* SFSafeSymbols */; };
 		5A7804042F39021A004BBDBF /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 5A7804032F39021A004BBDBF /* ZIPFoundation */; };
 		5A7804072F390220004BBDBF /* GCDWebServer in Frameworks */ = {isa = PBXBuildFile; productRef = 5A7804062F390220004BBDBF /* GCDWebServer */; };
+		5AA4921D2FF50D44006A3071 /* WASI in Frameworks */ = {isa = PBXBuildFile; productRef = 5AA4921C2FF50D44006A3071 /* WASI */; };
+		5AA4921F2FF50D44006A3071 /* WAT in Frameworks */ = {isa = PBXBuildFile; productRef = 5AA4921E2FF50D44006A3071 /* WAT */; };
+		5AA492212FF50D44006A3071 /* WIT in Frameworks */ = {isa = PBXBuildFile; productRef = 5AA492202FF50D44006A3071 /* WIT */; };
+		5AA492232FF50D44006A3071 /* WasmKit in Frameworks */ = {isa = PBXBuildFile; productRef = 5AA492222FF50D44006A3071 /* WasmKit */; };
+		5AA492252FF50D44006A3071 /* WasmKitWASI in Frameworks */ = {isa = PBXBuildFile; productRef = 5AA492242FF50D44006A3071 /* WasmKitWASI */; };
+		5AA492272FF50D44006A3071 /* WasmParser in Frameworks */ = {isa = PBXBuildFile; productRef = 5AA492262FF50D44006A3071 /* WasmParser */; };
+		5AA492292FF50D44006A3071 /* _CabiShims in Frameworks */ = {isa = PBXBuildFile; productRef = 5AA492282FF50D44006A3071 /* _CabiShims */; };
+		5AA498882FF51A3A006A3071 /* Crypto in Frameworks */ = {isa = PBXBuildFile; productRef = 5AA498872FF51A3A006A3071 /* Crypto */; };
+		5AA4988A2FF51A3A006A3071 /* CryptoExtras in Frameworks */ = {isa = PBXBuildFile; productRef = 5AA498892FF51A3A006A3071 /* CryptoExtras */; };
+		5AA4988C2FF51A3A006A3071 /* _CryptoExtras in Frameworks */ = {isa = PBXBuildFile; productRef = 5AA4988B2FF51A3A006A3071 /* _CryptoExtras */; };
+		5AA4988F2FF51B34006A3071 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 5AA4988E2FF51B34006A3071 /* GRDB */; };
+		5AA498912FF51B34006A3071 /* GRDB-dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = 5AA498902FF51B34006A3071 /* GRDB-dynamic */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -78,25 +90,35 @@
 			buildActionMask = 2147483647;
 			files = (
 				5A7804012F390214004BBDBF /* SFSafeSymbols in Frameworks */,
+				5AA492272FF50D44006A3071 /* WasmParser in Frameworks */,
 				5A7803FE2F39020E004BBDBF /* ACarousel in Frameworks */,
+				5AA4921F2FF50D44006A3071 /* WAT in Frameworks */,
 				5A17A6A62F55798B00D38C28 /* FirebasePerformance in Frameworks */,
 				5A17A6A82F55798B00D38C28 /* FirebaseRemoteConfig in Frameworks */,
 				5A40AFF42F55339500BE0503 /* FirebaseAnalytics in Frameworks */,
 				5A47BE3B2FBC4F2F000F9C0D /* ExploreSwiftUI in Frameworks */,
+				5AA498882FF51A3A006A3071 /* Crypto in Frameworks */,
 				5A17A6A02F55798B00D38C28 /* FirebaseInstallations in Frameworks */,
 				5A17A6962F55798B00D38C28 /* FirebaseFirestore in Frameworks */,
+				5AA4988F2FF51B34006A3071 /* GRDB in Frameworks */,
 				5A17A68E2F55798B00D38C28 /* FirebaseAuthCombine-Community in Frameworks */,
 				5A17A6A22F55798B00D38C28 /* FirebaseMessaging in Frameworks */,
 				5A7804072F390220004BBDBF /* GCDWebServer in Frameworks */,
+				5AA4988A2FF51A3A006A3071 /* CryptoExtras in Frameworks */,
 				5A17A6AA2F55798B00D38C28 /* FirebaseStorage in Frameworks */,
 				5A17A6942F55798B00D38C28 /* FirebaseDatabase in Frameworks */,
 				5A17A6902F55798B00D38C28 /* FirebaseCore in Frameworks */,
+				5AA492252FF50D44006A3071 /* WasmKitWASI in Frameworks */,
+				5AA492212FF50D44006A3071 /* WIT in Frameworks */,
 				5A17A6A42F55798B00D38C28 /* FirebaseMLModelDownloader in Frameworks */,
 				5A17A69C2F55798B00D38C28 /* FirebaseFunctionsCombine-Community in Frameworks */,
 				5A17A68C2F55798B00D38C28 /* FirebaseAuth in Frameworks */,
 				5A17A6882F55798B00D38C28 /* FirebaseAppCheck in Frameworks */,
 				5A40AFF62F55339500BE0503 /* FirebaseAnalyticsCore in Frameworks */,
 				5A40AFFB2F554A8C00BE0503 /* GoogleMobileAds in Frameworks */,
+				5AA4988C2FF51A3A006A3071 /* _CryptoExtras in Frameworks */,
+				5AA492292FF50D44006A3071 /* _CabiShims in Frameworks */,
+				5AA4921D2FF50D44006A3071 /* WASI in Frameworks */,
 				5A17A6982F55798B00D38C28 /* FirebaseFirestoreCombine-Community in Frameworks */,
 				5A17A6AC2F55798B00D38C28 /* FirebaseStorageCombine-Community in Frameworks */,
 				5A40AFF22F55339500BE0503 /* FirebaseAILogic in Frameworks */,
@@ -104,6 +126,7 @@
 				5A40AFF82F55339500BE0503 /* FirebaseAnalyticsIdentitySupport in Frameworks */,
 				5A17A6922F55798B00D38C28 /* FirebaseCrashlytics in Frameworks */,
 				5A3374BF2F2C6B7E00DF2DF3 /* StoreKit.framework in Frameworks */,
+				5AA492232FF50D44006A3071 /* WasmKit in Frameworks */,
 				5A7804042F39021A004BBDBF /* ZIPFoundation in Frameworks */,
 				5A40AFF02F55339500BE0503 /* FirebaseAI in Frameworks */,
 			);
@@ -186,6 +209,17 @@
 				5A17A6A92F55798B00D38C28 /* FirebaseStorage */,
 				5A17A6AB2F55798B00D38C28 /* FirebaseStorageCombine-Community */,
 				5A47BE3A2FBC4F2F000F9C0D /* ExploreSwiftUI */,
+				5AA4921C2FF50D44006A3071 /* WASI */,
+				5AA4921E2FF50D44006A3071 /* WAT */,
+				5AA492202FF50D44006A3071 /* WIT */,
+				5AA492222FF50D44006A3071 /* WasmKit */,
+				5AA492242FF50D44006A3071 /* WasmKitWASI */,
+				5AA492262FF50D44006A3071 /* WasmParser */,
+				5AA492282FF50D44006A3071 /* _CabiShims */,
+				5AA498872FF51A3A006A3071 /* Crypto */,
+				5AA498892FF51A3A006A3071 /* CryptoExtras */,
+				5AA4988B2FF51A3A006A3071 /* _CryptoExtras */,
+				5AA4988E2FF51B34006A3071 /* GRDB */,
 			);
 			productName = iosApp;
 			productReference = 623E68E1EC5434D0E8A40C73 /* Leposapp.app */;
@@ -223,6 +257,10 @@
 				5A40AFEE2F55339500BE0503 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				5A40AFF92F554A8C00BE0503 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
 				5A47BE392FBC4F2F000F9C0D /* XCRemoteSwiftPackageReference "ExploreSwiftUI" */,
+				5AA4921B2FF50D44006A3071 /* XCRemoteSwiftPackageReference "WasmKit" */,
+				5AA498862FF51A3A006A3071 /* XCRemoteSwiftPackageReference "swift-crypto" */,
+				5AA4988D2FF51B34006A3071 /* XCRemoteSwiftPackageReference "GRDB.swift" */,
+				5AA4988F2FF51B34006A3079 /* XCRemoteSwiftPackageReference "swift-system" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E7798370575A2CFBE4CE7BEB /* Products */;
@@ -572,6 +610,38 @@
 				minimumVersion = 3.5.7;
 			};
 		};
+		5AA4921B2FF50D44006A3071 /* XCRemoteSwiftPackageReference "WasmKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/swiftwasm/WasmKit.git";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 0.2.2;
+			};
+		};
+		5AA498862FF51A3A006A3071 /* XCRemoteSwiftPackageReference "swift-crypto" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-crypto.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.5.0;
+			};
+		};
+		5AA4988D2FF51B34006A3071 /* XCRemoteSwiftPackageReference "GRDB.swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/groue/GRDB.swift.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+		5AA4988F2FF51B34006A3079 /* XCRemoteSwiftPackageReference "swift-system" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-system.git";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 1.6.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -714,6 +784,66 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 5A7804052F390220004BBDBF /* XCRemoteSwiftPackageReference "GCDWebServer" */;
 			productName = GCDWebServer;
+		};
+		5AA4921C2FF50D44006A3071 /* WASI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5AA4921B2FF50D44006A3071 /* XCRemoteSwiftPackageReference "WasmKit" */;
+			productName = WASI;
+		};
+		5AA4921E2FF50D44006A3071 /* WAT */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5AA4921B2FF50D44006A3071 /* XCRemoteSwiftPackageReference "WasmKit" */;
+			productName = WAT;
+		};
+		5AA492202FF50D44006A3071 /* WIT */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5AA4921B2FF50D44006A3071 /* XCRemoteSwiftPackageReference "WasmKit" */;
+			productName = WIT;
+		};
+		5AA492222FF50D44006A3071 /* WasmKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5AA4921B2FF50D44006A3071 /* XCRemoteSwiftPackageReference "WasmKit" */;
+			productName = WasmKit;
+		};
+		5AA492242FF50D44006A3071 /* WasmKitWASI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5AA4921B2FF50D44006A3071 /* XCRemoteSwiftPackageReference "WasmKit" */;
+			productName = WasmKitWASI;
+		};
+		5AA492262FF50D44006A3071 /* WasmParser */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5AA4921B2FF50D44006A3071 /* XCRemoteSwiftPackageReference "WasmKit" */;
+			productName = WasmParser;
+		};
+		5AA492282FF50D44006A3071 /* _CabiShims */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5AA4921B2FF50D44006A3071 /* XCRemoteSwiftPackageReference "WasmKit" */;
+			productName = _CabiShims;
+		};
+		5AA498872FF51A3A006A3071 /* Crypto */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5AA498862FF51A3A006A3071 /* XCRemoteSwiftPackageReference "swift-crypto" */;
+			productName = Crypto;
+		};
+		5AA498892FF51A3A006A3071 /* CryptoExtras */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5AA498862FF51A3A006A3071 /* XCRemoteSwiftPackageReference "swift-crypto" */;
+			productName = CryptoExtras;
+		};
+		5AA4988B2FF51A3A006A3071 /* _CryptoExtras */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5AA498862FF51A3A006A3071 /* XCRemoteSwiftPackageReference "swift-crypto" */;
+			productName = _CryptoExtras;
+		};
+		5AA4988E2FF51B34006A3071 /* GRDB */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5AA4988D2FF51B34006A3071 /* XCRemoteSwiftPackageReference "GRDB.swift" */;
+			productName = GRDB;
+		};
+		5AA498902FF51B34006A3071 /* GRDB-dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5AA4988D2FF51B34006A3071 /* XCRemoteSwiftPackageReference "GRDB.swift" */;
+			productName = "GRDB-dynamic";
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
