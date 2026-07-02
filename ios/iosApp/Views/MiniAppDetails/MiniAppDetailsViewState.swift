@@ -5,7 +5,7 @@ class MiniAppDetailsViewState: ObservableObject {
     @Published var isDownloaded: Bool = false
     @Published var isLoading: Bool = false
 
-    private let appId: String
+    let appId: String
 
     init(appId: String) {
         self.appId = appId

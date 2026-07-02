@@ -69,7 +69,7 @@ struct MiniAppDetailsView: View {
             )
         }
         .sheet(isPresented: $showSettings) {
-            MiniAppSettingsView()
+            MiniAppSettingsView(appId: viewModel.appId)
         }
         .uniConfirmationDialog("Are you sure you want to remove EcoTrack Pro?", isPresented: $showUninstallConfirmation) {
             Button("Remove App", role: .destructive) {

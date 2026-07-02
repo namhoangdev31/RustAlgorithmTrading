@@ -20,8 +20,6 @@ struct DiscoveryHeaderView: View {
                     .font(.largeTitle)
                     .fontWeight(.bold)
             }
-            .offset(x: offsetY > -45 ? -(offsetY + 45) : 0)
-            .animation(.interactiveSpring, value: offsetY)
 
             Spacer()
             UniButton(action: {}) {
@@ -29,8 +27,6 @@ struct DiscoveryHeaderView: View {
                     .font(.system(size: 22))
                     .foregroundColor(.leposPrimary)
             }
-            .offset(x: offsetY > -45 ? (offsetY + 45) : 0)
-            .animation(.interactiveSpring, value: offsetY)
         }
         .padding(.horizontal)
     }

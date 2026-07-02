@@ -73,6 +73,13 @@ class MiniAppDetailsViewModel: ObservableObject {
 
     private func parseManifestAndLaunch(path: String, bundle: Bundle_) {
         let bundleUrl = URL(fileURLWithPath: path)
+        
+        // Cryptographically verify bundle before launch
+        guard BundleVerifier.verify(bundleDirectory: bundleUrl) else {
+            self.error = "Bundle cryptographic verification failed."
+            return
+        }
+        
         let manifestUrl = bundleUrl.appendingPathComponent("manifest.json")
 
         guard

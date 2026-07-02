@@ -100,15 +100,11 @@ final class WasmHelper {
             }
             
             do {
-                let startedAt = Date()
-                let results = try WasmExecutor.shared.execute(
+                let results = try await WasmExecutor.shared.execute(
                     wasmPath: localWasmURL.path,
                     functionName: functionName,
                     args: args
                 )
-                if let quotaError = ResourceGovernor().validateWasmDuration(Date().timeIntervalSince(startedAt)) {
-                    return .failure(code: quotaError.code.rawValue, message: quotaError.message)
-                }
                 return .success(["results": results])
             } catch {
                 return .failure(code: "WASM_EXECUTION_ERROR", message: error.localizedDescription)
@@ -136,15 +132,11 @@ final class WasmHelper {
                 }
                 
                 do {
-                    let startedAt = Date()
-                    let results = try WasmExecutor.shared.execute(
+                    let results = try await WasmExecutor.shared.execute(
                         wasmPath: localWasmURL.path,
                         functionName: functionName,
                         args: wasmArgs
                     )
-                    if let quotaError = ResourceGovernor().validateWasmDuration(Date().timeIntervalSince(startedAt)) {
-                        return .failure(code: quotaError.code.rawValue, message: quotaError.message)
-                    }
                     return .success(["results": results])
                 } catch {
                     return .failure(code: "WASM_EXECUTION_ERROR", message: error.localizedDescription)

@@ -4,9 +4,15 @@ import Foundation
 enum ABIPermission: String, Codable, Sendable {
     case camera
     case location
+    case notification
+    case microphone
+    case contacts
+    case biometrics
+    case bluetooth
+    case photosPicker
+    case photosAddOnly
     case filesystem
     case wasm
-    case notification
 }
 
 /// Stable ABI Security Policy Contract

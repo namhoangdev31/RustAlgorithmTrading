@@ -74,6 +74,57 @@ final class PluginRegistry {
         }
     }
     
+    // Global and per-app permission policy (Remote Config/Feature Flags mock)
+    private let policyConfig: [String: Any] = [
+        "global": [
+            "contacts": false, // contacts is globally disabled by default
+            "bluetooth": true,
+            "camera": true,
+            "microphone": true,
+            "biometrics": true,
+            "location": true,
+            "photosPicker": true,
+            "photosAddOnly": true,
+            "filesystem": true,
+            "wasm": true,
+            "notification": true
+        ],
+        "apps": [
+            "referral-mini-app": [
+                "contacts": true // contacts is allowed only for referral-mini-app
+            ]
+        ]
+    ]
+
+    /// Checks if a plugin is registered that matches a specific permission and is active for the given appId
+    func isPluginAvailable(for permission: Permission, appId: String) -> Bool {
+        lock.lock()
+        defer { lock.unlock() }
+        
+        // 1. Verify plugin is registered
+        guard plugins.values.contains(where: { $0.permission == permission }) else {
+            return false
+        }
+        
+        // 2. Enforce Feature Flag allowlists
+        let permissionName = permission.rawValue
+        
+        // Check per-app override first
+        if let appsConfig = policyConfig["apps"] as? [String: [String: Bool]],
+           let appOverrides = appsConfig[appId],
+           let allowed = appOverrides[permissionName] {
+            return allowed
+        }
+        
+        // Fallback to global config
+        if let globalConfig = policyConfig["global"] as? [String: Bool],
+           let allowed = globalConfig[permissionName] {
+            return allowed
+        }
+        
+        return true
+    }
+    
     /// Queries the permission rule for a given action and payload
     func getRule(forAction action: String, payload: [String: Any]) -> BridgePermissionRule? {
         lock.lock()
@@ -134,6 +185,10 @@ final class PluginRegistry {
         register(plugin: ClipboardGetPlugin().descriptor)
         register(plugin: WasmExecutePlugin().descriptor)
         register(plugin: PluginInvokePlugin().descriptor)
+        register(plugin: MicrophonePlugin().descriptor)
+        register(plugin: BiometricsPlugin().descriptor)
+        register(plugin: PhotosPickerPlugin().descriptor)
+        register(plugin: ContactsPlugin().descriptor)
     }
 }
 

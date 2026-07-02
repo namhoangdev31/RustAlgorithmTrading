@@ -6,6 +6,7 @@ struct RuntimeView: View {
     let bundlePath: URL
     @ObservedObject var viewModel: WebRuntimeViewModel
 
+    @ObservedObject private var recordingState = RecordingStateManager.shared
     @State private var isExpanded = false
     @State private var dragPosition: CGPoint?
     #if DEBUG
@@ -16,6 +17,42 @@ struct RuntimeView: View {
     var body: some View {
         ZStack {
             contentView
+            
+            // Native Sensor Recording Indicator Banner
+            VStack {
+                if recordingState.isMicrophoneActive || recordingState.isCameraActive {
+                    HStack(spacing: 8) {
+                        Circle()
+                            .fill(Color.red)
+                            .frame(width: 8, height: 8)
+                        Text(recordingState.isMicrophoneActive ? "Mini App [\(manifest.name)] đang sử dụng Microphone..." : "Mini App [\(manifest.name)] đang sử dụng Camera...")
+                            .font(.system(size: 12, weight: .bold))
+                            .foregroundColor(.white)
+                        Spacer()
+                        Button(action: {
+                            recordingState.stopAll()
+                        }) {
+                            Text("Dừng")
+                                .font(.system(size: 11, weight: .bold))
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(Color.red)
+                                .cornerRadius(4)
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                    .background(Color.black.opacity(0.85))
+                    .cornerRadius(8)
+                    .padding(.top, 16)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+                }
+                Spacer()
+            }
+            .padding(.horizontal, 16)
+            .animation(.spring(), value: recordingState.isMicrophoneActive || recordingState.isCameraActive)
+            
             assistiveTouchButton
         }
         .onAppear {

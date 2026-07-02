@@ -62,6 +62,7 @@ struct LibraryView: View {
                 .onCompatScrollOffsetChange { offsetY = $0 }
             }
             .coordinateSpace(name: "scroll")
+            .uniBackgroundExtension()
             .navigationBarHidden(true)
 
             SidebarView(isShowing: $isShowingSidebar)

@@ -86,23 +86,34 @@ final class BridgeRouter {
         }
 
         if let requiredPermission = pluginHost.requiredPermission(forAction: action, payload: payload) {
-            PermissionManager.shared.checkAndRequestPermission(
+            let hasGesture = payload["hasUserGesture"] as? Bool ?? false
+            let callContext = BridgeCallContext(
                 appId: context.manifest.id,
-                appName: context.manifest.name,
-                permission: requiredPermission,
-                manifest: context.manifest
-            ) { [weak self] granted in
-                guard let self else { return }
-                DispatchQueue.main.async {
-                    if granted {
+                frameOrigin: "\(message.frameInfo.securityOrigin.protocol)://\(message.frameInfo.securityOrigin.host)",
+                hasUserGesture: hasGesture,
+                method: action
+            )
+            
+            Task {
+                let result = await PermissionManager.shared.requestPermission(
+                    appId: context.manifest.id,
+                    appName: context.manifest.name,
+                    permission: requiredPermission,
+                    manifest: context.manifest,
+                    context: callContext
+                )
+                
+                await MainActor.run {
+                    if result.status == .granted {
                         self.dispatch(action: action, payload: payload, requestId: requestId, context: context, responder: responder)
                     } else {
                         context.onRuntimeError(.permissionDenied("Required permission '\(requiredPermission.rawValue)' was denied or not declared."))
+                        let errCode = result.code?.rawValue ?? "PERMISSION_DENIED"
                         self.reject(
                             requestId: requestId,
                             action: action,
                             appId: context.manifest.id,
-                            code: "PERMISSION_DENIED",
+                            code: errCode,
                             message: "Required permission '\(requiredPermission.rawValue)' was denied or not declared in manifest.",
                             responder: responder
                         )
@@ -164,7 +175,7 @@ final class BridgeRouter {
         responder: BridgeResponseSending
     ) {
         var routedPayload = payload
-        routedPayload["appId"] = routedPayload["appId"] as? String ?? context.manifest.id
+        routedPayload["appId"] = context.manifest.id
 
         pluginHost.execute(action: action, payload: routedPayload, bundlePath: context.bundlePath) { result in
             let permission = self.pluginHost.requiredPermission(forAction: action, payload: routedPayload)?.rawValue

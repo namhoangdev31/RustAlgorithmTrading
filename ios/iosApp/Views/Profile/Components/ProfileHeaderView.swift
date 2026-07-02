@@ -25,8 +25,6 @@ struct ProfileHeaderView: View {
                 }
                 .uniButtonStyle(.plain)
             }
-            .offset(x: offsetY > -45 ? (offsetY + 45) : 0)
-            .animation(.interactiveSpring, value: offsetY)
         }
         .padding(.horizontal)
     }

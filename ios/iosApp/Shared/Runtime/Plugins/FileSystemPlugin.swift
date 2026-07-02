@@ -102,8 +102,11 @@ final class FileSystemHelper {
         
         let targetURL = sandboxBase.appendingPathComponent(path).standardized.resolvingSymlinksInPath()
         
+        let canonicalSandbox = sandboxBase.standardized.resolvingSymlinksInPath().path
+        let canonicalTarget = targetURL.standardized.resolvingSymlinksInPath().path
+        
         // Ensure path does not escape sandbox container prefix
-        guard targetURL.path.hasPrefix(sandboxBase.path) else {
+        guard canonicalTarget.hasPrefix(canonicalSandbox) else {
             return .failure(code: "SANDBOX_ESCAPE_REJECTED", message: "Path escapes the App Sandbox container.")
         }
         

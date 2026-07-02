@@ -23,7 +23,7 @@ struct RuntimeCapabilityNegotiator {
         }
         
         // 2. Verify all required permissions as capability requirements
-        let requiredCaps = manifest.permissions?.map { $0.name } ?? []
+        let requiredCaps = manifest.permissions?.map { $0.key } ?? []
         let currentCaps = RuntimeCapabilities.current
         
         var missing: [String] = []

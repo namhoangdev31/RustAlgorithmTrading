@@ -74,6 +74,12 @@ class MiniAppStoreViewModel: ObservableObject {
 
     private func parseManifest(path: String, bundle: Bundle_) -> WebRuntimeManifest? {
         let bundleUrl = URL(fileURLWithPath: path)
+        
+        // Cryptographically verify bundle before parsing manifest
+        guard BundleVerifier.verify(bundleDirectory: bundleUrl) else {
+            return nil
+        }
+        
         let manifestUrl = bundleUrl.appendingPathComponent("manifest.json")
 
         guard

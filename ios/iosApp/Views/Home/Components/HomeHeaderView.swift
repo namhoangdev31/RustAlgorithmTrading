@@ -21,8 +21,6 @@ struct HomeHeaderView: View {
                     .font(.largeTitle)
                     .fontWeight(.bold)
             }
-            .offset(x: offsetY > -45 ? -(offsetY + 45) : 0)
-            .animation(.interactiveSpring, value: offsetY)
 
             Spacer()
 
@@ -32,8 +30,6 @@ struct HomeHeaderView: View {
                 .foregroundColor(.gray)
                 .background(Color(.systemGray6))
                 .clipShape(Circle())
-                .offset(x: offsetY > -45 ? (offsetY + 45) : 0)
-                .animation(.interactiveSpring, value: offsetY)
         }
         .padding(.horizontal)
     }

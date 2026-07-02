@@ -2,6 +2,7 @@ import Foundation
 import WasmKit
 import SystemPackage
 import CryptoKit
+@preconcurrency import Dispatch
 
 final class WasmExecutor: @unchecked Sendable {
     static let shared = WasmExecutor()
@@ -12,6 +13,71 @@ final class WasmExecutor: @unchecked Sendable {
     private let lock = NSLock()
     
     func execute(
+        wasmPath: String,
+        functionName: String,
+        args: [Any],
+        expectedHash: String? = nil
+    ) async throws -> [Any] {
+        // Validate WASM file size first via ResourceGovernor
+        if let err = ResourceGovernor().validateWasmFile(path: wasmPath) {
+            throw NSError(domain: "WasmExecutor", code: 403, userInfo: [NSLocalizedDescriptionKey: err.message])
+        }
+        
+        return try await withCheckedThrowingContinuation { continuation in
+            var didResume = false
+            let lock = NSLock()
+            
+            let resumeOnce: (Result<[Any], Error>) -> Void = { result in
+                lock.lock()
+                defer { lock.unlock() }
+                guard !didResume else { return }
+                didResume = true
+                switch result {
+                case .success(let data):
+                    continuation.resume(returning: data)
+                case .failure(let error):
+                    continuation.resume(throwing: error)
+                }
+            }
+            
+            let workItem = DispatchWorkItem {
+                do {
+                    let startTime = Date()
+                    let results = try self.executeSync(
+                        wasmPath: wasmPath,
+                        functionName: functionName,
+                        args: args,
+                        expectedHash: expectedHash
+                    )
+                    let elapsed = Date().timeIntervalSince(startTime)
+                    if let durationError = ResourceGovernor().validateWasmDuration(elapsed) {
+                        resumeOnce(.failure(NSError(domain: "WasmExecutor", code: 408, userInfo: [NSLocalizedDescriptionKey: durationError.message])))
+                    } else {
+                        resumeOnce(.success(results))
+                    }
+                } catch {
+                    resumeOnce(.failure(error))
+                }
+            }
+            
+            // Run on a global background queue (off main thread)
+            DispatchQueue.global(qos: .userInitiated).async(execute: workItem)
+            
+            // Enforce 3.0s timeout fallback
+            DispatchQueue.global().asyncAfter(deadline: .now() + 3.0) {
+                if !workItem.isCancelled {
+                    workItem.cancel()
+                    resumeOnce(.failure(NSError(
+                        domain: "WasmExecutor",
+                        code: 408,
+                        userInfo: [NSLocalizedDescriptionKey: "WASM execution exceeded the maximum timeout of 3.0s."]
+                    )))
+                }
+            }
+        }
+    }
+    
+    private func executeSync(
         wasmPath: String,
         functionName: String,
         args: [Any],

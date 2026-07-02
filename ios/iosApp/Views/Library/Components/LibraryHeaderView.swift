@@ -27,8 +27,6 @@ struct LibraryHeaderView: View {
             //         .font(.leposBodySmall)
             //         .foregroundColor(.gray)
             // }
-            .offset(x: offsetY > -45 ? -(offsetY + 45) : 0)
-            .animation(.interactiveSpring, value: offsetY)
 
             Spacer()
 
@@ -41,8 +39,6 @@ struct LibraryHeaderView: View {
                         .symbolRenderingMode(.multicolor)
                 }
             }
-            .offset(x: offsetY > -45 ? (offsetY + 45) : 0)
-            .animation(.interactiveSpring, value: offsetY)
         }
         .padding(.horizontal)
     }

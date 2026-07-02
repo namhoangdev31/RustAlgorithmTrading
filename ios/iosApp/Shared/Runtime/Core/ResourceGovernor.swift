@@ -31,8 +31,20 @@ final class ResourceGovernor {
 
     func validateFilesystemWrite(appId: String, additionalBytes: Int64) -> RuntimeShellError? {
         let used = directorySize(for: appDataDirectory(appId: appId))
-        guard used + additionalBytes <= limits.filesystemQuotaBytes else {
-            return .quotaExceeded("Filesystem quota exceeded for \(appId). Limit is \(limits.filesystemQuotaBytes / 1024 / 1024)MB.")
+        
+        // Dynamic Quota Tiers:
+        // Default Mini App: 50MB
+        // Trusted Mini App: 200MB
+        // First-party / System Mini App: 500MB
+        var quotaLimitBytes: Int64 = 50 * 1024 * 1024 // 50MB Default
+        if appId.hasPrefix("com.lepos.system") || appId.hasPrefix("com.lepos.firstparty") {
+            quotaLimitBytes = 500 * 1024 * 1024 // 500MB
+        } else if appId.hasSuffix(".trusted") || appId.contains(".verified") {
+            quotaLimitBytes = 200 * 1024 * 1024 // 200MB
+        }
+        
+        guard used + additionalBytes <= quotaLimitBytes else {
+            return .quotaExceeded("Filesystem quota exceeded for \(appId). Limit is \(quotaLimitBytes / 1024 / 1024)MB.")
         }
         return nil
     }

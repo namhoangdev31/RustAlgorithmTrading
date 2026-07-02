@@ -31,6 +31,19 @@ final class CameraPlugin: RuntimePlugin, @unchecked Sendable {
             return .failure(code: "AV_PERMISSION_DENIED", message: "iOS system Camera capability denied.")
         }
         
+        await MainActor.run {
+            RecordingStateManager.shared.isCameraActive = true
+        }
+        
+        defer {
+            Task { @MainActor in
+                RecordingStateManager.shared.isCameraActive = false
+            }
+        }
+        
+        // Wait 500ms to simulate capture UI and let indicator render
+        try? await Task.sleep(nanoseconds: 500_000_000)
+        
         return .success([
             "uri": "https://via.placeholder.com/600x400.png?text=NativeCameraCapture",
             "format": "jpeg",
