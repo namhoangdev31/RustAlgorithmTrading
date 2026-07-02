@@ -1,14 +1,14 @@
 import Foundation
+import UIKit
+import CoreLocation
 
-// MARK: - Runtime Capabilities (replaces KMP CapabilityDiscovery)
-
-enum CapabilitySupport: String {
+enum CapabilitySupport: String, Codable {
     case native
     case proxy
     case unsupported
 }
 
-struct RuntimeCapabilities {
+struct RuntimeCapabilities: Codable {
     let bluetooth: CapabilitySupport
     let nfc: CapabilitySupport
     let biometrics: CapabilitySupport
@@ -17,76 +17,15 @@ struct RuntimeCapabilities {
     let clipboard: CapabilitySupport
     let camera: CapabilitySupport
     let geolocation: CapabilitySupport
-    
-    func toJson() -> String {
-        return """
-        {
-            "bluetooth": "\(bluetooth.rawValue)",
-            "nfc": "\(nfc.rawValue)",
-            "biometrics": "\(biometrics.rawValue)",
-            "share": "\(share.rawValue)",
-            "vibrate": "\(vibrate.rawValue)",
-            "clipboard": "\(clipboard.rawValue)",
-            "camera": "\(camera.rawValue)",
-            "geolocation": "\(geolocation.rawValue)"
-        }
-        """
-    }
-}
+    let wasm: CapabilitySupport
+    let filesystem: CapabilitySupport
+    let ota: CapabilitySupport
+    let backgroundTask: CapabilitySupport
 
-enum PlatformCapabilities {
-    static func getCapabilities() -> RuntimeCapabilities {
-        return RuntimeCapabilities(
-            bluetooth: .unsupported,
-            nfc: .unsupported,
-            biometrics: .native,       // iOS Face ID / Touch ID
-            share: .native,            // UIActivityViewController
-            vibrate: .native,          // UIFeedbackGenerator
-            clipboard: .native,        // UIPasteboard
-            camera: .unsupported,
-            geolocation: .unsupported
-        )
-    }
-}
-
-// MARK: - Web Runtime State (replaces KMP WebRuntimeState)
-
-enum WebRuntimeState {
-    case idle
-    case loading
-    case ready(bundlePath: String)
-    case error(message: String)
-}
-
-// MARK: - Gesture Validator (replaces KMP GestureValidator)
-
-class GestureValidator {
-    private let gestureWindowMs: TimeInterval
-    private var lastGestureTimestamp: TimeInterval = 0
-    
-    init(gestureWindowMs: TimeInterval = 5.0) {
-        self.gestureWindowMs = gestureWindowMs
-    }
-    
-    func recordGesture() {
-        lastGestureTimestamp = Date().timeIntervalSince1970
-    }
-    
-    func hasValidGesture() -> Bool {
-        let elapsed = Date().timeIntervalSince1970 - lastGestureTimestamp
-        return elapsed < gestureWindowMs
-    }
-    
-    func reset() {
-        lastGestureTimestamp = 0
-    }
-}
-
-extension RuntimeCapabilities {
     static var current: RuntimeCapabilities {
-        return PlatformCapabilities.getCapabilities()
+        PlatformCapabilities.getCapabilities()
     }
-    
+
     func supports(capability: String) -> Bool {
         switch capability {
         case "camera": return camera != .unsupported
@@ -97,8 +36,65 @@ extension RuntimeCapabilities {
         case "biometrics": return biometrics != .unsupported
         case "bluetooth": return bluetooth != .unsupported
         case "nfc": return nfc != .unsupported
-        case "filesystem", "wasm", "ota", "backgroundTask": return true
+        case "wasm": return wasm != .unsupported
+        case "filesystem": return filesystem != .unsupported
+        case "ota": return ota != .unsupported
+        case "backgroundTask": return backgroundTask != .unsupported
         default: return false
         }
+    }
+
+    func toJson() -> String {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+        guard let data = try? encoder.encode(self) else { return "{}" }
+        return String(data: data, encoding: .utf8) ?? "{}"
+    }
+}
+
+enum PlatformCapabilities {
+    static func getCapabilities() -> RuntimeCapabilities {
+        RuntimeCapabilities(
+            bluetooth: .unsupported,
+            nfc: .unsupported,
+            biometrics: .native,
+            share: .native,
+            vibrate: .native,
+            clipboard: .native,
+            camera: UIImagePickerController.isSourceTypeAvailable(.camera) ? .native : .unsupported,
+            geolocation: CLLocationManager.locationServicesEnabled() ? .native : .unsupported,
+            wasm: .native,
+            filesystem: .native,
+            ota: .native,
+            backgroundTask: .native
+        )
+    }
+}
+
+enum WebRuntimeState {
+    case idle
+    case loading
+    case ready(bundlePath: String)
+    case error(message: String)
+}
+
+final class GestureValidator {
+    private let gestureWindowSeconds: TimeInterval
+    private var lastGestureTimestamp: TimeInterval = 0
+
+    init(gestureWindowSeconds: TimeInterval = 5.0) {
+        self.gestureWindowSeconds = gestureWindowSeconds
+    }
+
+    func recordGesture() {
+        lastGestureTimestamp = Date().timeIntervalSince1970
+    }
+
+    func hasValidGesture() -> Bool {
+        Date().timeIntervalSince1970 - lastGestureTimestamp < gestureWindowSeconds
+    }
+
+    func reset() {
+        lastGestureTimestamp = 0
     }
 }
