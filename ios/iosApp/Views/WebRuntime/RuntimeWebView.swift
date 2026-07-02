@@ -6,6 +6,10 @@ import WebKit
 class RuntimeWebView: WKWebView, WKScriptMessageHandler {
     private let manifest: WebRuntimeManifest
     private let bundlePath: URL
+    
+    private var isDidFinishLoaded = false
+    private var isRuntimeReady = false
+    private var isMarkedStable = false
 
     // Custom Init
     init(frame: CGRect, manifest: WebRuntimeManifest, bundlePath: URL) {
@@ -247,11 +251,28 @@ class RuntimeWebView: WKWebView, WKScriptMessageHandler {
                 if !requestId.isEmpty {
                     sendResponse(requestId: requestId, data: ["success": true])
                 }
+            case "ready", "runtime.ready":
+                print("[WebRuntime] runtime.ready received for \(self.manifest.id)")
+                self.isRuntimeReady = true
+                self.checkAndMarkStable()
+                if !requestId.isEmpty {
+                    sendResponse(requestId: requestId, data: ["success": true])
+                }
             default:
                 if !requestId.isEmpty {
                     sendResponse(requestId: requestId, data: ["success": true])
                 }
             }
+        }
+    }
+
+    private func checkAndMarkStable() {
+        guard isDidFinishLoaded && isRuntimeReady && !isMarkedStable else { return }
+        isMarkedStable = true
+        // Allow a 2.0s buffer of crash-free execution before officially resetting attempts
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+            guard let self = self else { return }
+            MiniAppManager.shared.markStable(appId: self.manifest.id, version: self.manifest.version)
         }
     }
 
@@ -276,6 +297,8 @@ extension RuntimeWebView: WKNavigationDelegate {
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         print("[WebRuntime] Page finished loading")
         webView.evaluateJavaScript("document.dispatchEvent(new Event('runtimeresume'))")
+        self.isDidFinishLoaded = true
+        self.checkAndMarkStable()
     }
 
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {

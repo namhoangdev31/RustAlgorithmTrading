@@ -150,6 +150,20 @@ class WebRuntimeViewModel: ObservableObject {
     // MARK: - Tab Operations
     
     func openBundle(manifest: WebRuntimeManifest, bundlePath: URL) {
+        MiniAppManager.shared.registerLaunch(appId: manifest.id, currentVersion: manifest.version) { [weak self] result in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let resolvedURL):
+                    self.proceedWithOpenBundle(manifest: manifest, bundlePath: resolvedURL)
+                case .failure(let error):
+                    print("[WebRuntime] Launch registration/rollback failed: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+    
+    private func proceedWithOpenBundle(manifest: WebRuntimeManifest, bundlePath: URL) {
         // Try to restore previous tabs state first if currently empty
         if tabs.isEmpty {
             if restoreTabsState(manifest: manifest, bundlePath: bundlePath) {
