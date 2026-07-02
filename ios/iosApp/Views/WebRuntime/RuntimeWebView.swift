@@ -6,15 +6,20 @@ import WebKit
 class RuntimeWebView: WKWebView, WKScriptMessageHandler {
     private let manifest: WebRuntimeManifest
     private let bundlePath: URL
+    private let serverURL: URL
+    private let tabId: UUID
     
     private var isDidFinishLoaded = false
     private var isRuntimeReady = false
     private var isMarkedStable = false
+    private var localCrashCount = 0
 
     // Custom Init
-    init(frame: CGRect, manifest: WebRuntimeManifest, bundlePath: URL) {
+    init(frame: CGRect, manifest: WebRuntimeManifest, bundlePath: URL, serverURL: URL, tabId: UUID) {
+        self.tabId = tabId
         self.manifest = manifest
         self.bundlePath = bundlePath
+        self.serverURL = serverURL
         let config = WKWebViewConfiguration()
 
         // Sandboxed Website Data Store (iOS 17+)
@@ -74,14 +79,23 @@ class RuntimeWebView: WKWebView, WKScriptMessageHandler {
 
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
-    func sendResponse(requestId: String, data: [String: Any]?, error: String? = nil) {
+    func sendResponse(requestId: String, data: [String: Any]?, errorCode: String? = nil, errorMessage: String? = nil) {
         var responseDict: [String: Any] = [:]
-        if let data = data {
-            responseDict["data"] = data
+        responseDict["requestId"] = requestId
+        
+        if let code = errorCode {
+            responseDict["success"] = false
+            responseDict["error"] = [
+                "code": code,
+                "message": errorMessage ?? "An error occurred."
+            ]
+        } else {
+            responseDict["success"] = true
+            if let data = data {
+                responseDict["data"] = data
+            }
         }
-        if let error = error {
-            responseDict["error"] = error
-        }
+        
         if let jsonObj = try? JSONSerialization.data(withJSONObject: responseDict, options: []),
            let jsonString = String(data: jsonObj, encoding: .utf8) {
             DispatchQueue.main.async {
@@ -101,167 +115,134 @@ class RuntimeWebView: WKWebView, WKScriptMessageHandler {
         let requestId = body["requestId"] as? String ?? ""
         let payload = body["payload"] as? [String: Any] ?? [:]
 
-        if let action = body["action"] as? String {
-            // Enforce declarative bridge permissions
-            if action.hasPrefix("camera") || action == "getCameraPhoto" {
-                guard hasPermission("camera") else {
-                    if !requestId.isEmpty {
-                        sendResponse(requestId: requestId, data: nil, error: "Permission 'camera' is not declared in manifest.")
-                    }
-                    return
-                }
-            } else if action == "wasm.execute" {
-                guard hasPermission("wasm.execute") else {
-                    if !requestId.isEmpty {
-                        sendResponse(requestId: requestId, data: nil, error: "Permission 'wasm.execute' is not declared in manifest.")
-                    }
-                    return
-                }
-            } else if action == "plugin.invoke" {
-                let plugin = payload["plugin"] as? String ?? ""
-                if plugin == "wasm" {
-                    guard hasPermission("wasm.execute") else {
-                        if !requestId.isEmpty {
-                            sendResponse(requestId: requestId, data: nil, error: "Permission 'wasm.execute' is not declared in manifest.")
-                        }
-                        return
-                    }
-                }
+        // 1. Origin Check: verify request initiator matches host + port + scheme of the active WebTab
+        let originHost = message.frameInfo.securityOrigin.host
+        let originPort = message.frameInfo.securityOrigin.port
+        let originScheme = message.frameInfo.securityOrigin.protocol
+        
+        guard originScheme == self.serverURL.scheme,
+              originHost == self.serverURL.host,
+              originPort == self.serverURL.port else {
+            let fullOrigin = "\(originScheme)://\(originHost):\(originPort)"
+            print("[Security] Rejecting bridge call from unauthorized origin: \(fullOrigin). Expected: \(self.serverURL.absoluteString)")
+            if !requestId.isEmpty {
+                sendResponse(
+                    requestId: requestId,
+                    data: nil,
+                    errorCode: "UNAUTHORIZED_ORIGIN",
+                    errorMessage: "Security origin '\(fullOrigin)' is not authorized."
+                )
             }
+            return
+        }
 
-            switch action {
-            case "log", "debug.log":
-                let level = payload["level"] as? String ?? body["level"] as? String ?? "info"
-                let msg = payload["message"] as? String ?? body["message"] as? String ?? ""
-                print("[WebConsole][\(level)] \(msg)")
-                if !requestId.isEmpty {
-                    sendResponse(requestId: requestId, data: ["success": true])
-                }
-            case "vibrate":
-                let generator = UIImpactFeedbackGenerator(style: .medium)
-                generator.impactOccurred()
-                if !requestId.isEmpty {
-                    sendResponse(requestId: requestId, data: ["success": true])
-                }
-            case "close":
-                // Notify ViewController to dismiss
-                NotificationCenter.default.post(
-                    name: NSNotification.Name("CloseMiniApp"), object: nil)
-                if !requestId.isEmpty {
-                    sendResponse(requestId: requestId, data: ["success": true])
-                }
-            case "camera.takePhoto", "getCameraPhoto":
-                if !requestId.isEmpty {
-                    sendResponse(requestId: requestId, data: ["uri": "https://via.placeholder.com/600x400.png?text=NativeCameraPhoto"])
-                }
-            case "wasm.execute":
-                let wasmFile = payload["wasmPath"] as? String ?? payload["wasmFile"] as? String ?? ""
-                let functionName = payload["functionName"] as? String ?? payload["method"] as? String ?? ""
-                let args = payload["args"] as? [Any] ?? []
-                
-                guard !wasmFile.isEmpty else {
-                    if !requestId.isEmpty {
-                        sendResponse(requestId: requestId, data: nil, error: "Missing 'wasmPath' or 'wasmFile' parameter.")
-                    }
-                    return
-                }
-                guard !functionName.isEmpty else {
-                    if !requestId.isEmpty {
-                        sendResponse(requestId: requestId, data: nil, error: "Missing 'functionName' or 'method' parameter.")
-                    }
-                    return
-                }
-                
-                let localWasmURL = self.bundlePath.appendingPathComponent(wasmFile)
-                guard FileManager.default.fileExists(atPath: localWasmURL.path) else {
-                    if !requestId.isEmpty {
-                        sendResponse(requestId: requestId, data: nil, error: "Wasm file not found at path: \(wasmFile)")
-                    }
-                    return
-                }
-                
-                Task {
-                    do {
-                        let results = try WasmExecutor.shared.execute(
-                            wasmPath: localWasmURL.path,
-                            functionName: functionName,
-                            args: args
-                        )
-                        if !requestId.isEmpty {
-                            sendResponse(requestId: requestId, data: ["results": results])
+        if let action = body["action"] as? String {
+            // 2. Resolve permission requirements via BridgeACL
+            if let requiredPermission = BridgeACL.requiredPermission(forAction: action, payload: payload) {
+                // 3. Request/check 3-layer authorization
+                PermissionManager.shared.checkAndRequestPermission(
+                    appId: self.manifest.id,
+                    appName: self.manifest.name,
+                    permission: requiredPermission,
+                    manifest: self.manifest
+                ) { [weak self] granted in
+                    guard let self = self else { return }
+                    if granted {
+                        DispatchQueue.main.async {
+                            self.executeAction(action: action, payload: payload, body: body, requestId: requestId)
                         }
-                    } catch {
+                    } else {
                         if !requestId.isEmpty {
-                            sendResponse(requestId: requestId, data: nil, error: error.localizedDescription)
-                        }
-                    }
-                }
-            case "plugin.invoke":
-                let plugin = payload["plugin"] as? String ?? ""
-                let method = payload["method"] as? String ?? ""
-                let args = payload["args"] as? [String: Any] ?? [:]
-                if plugin == "wasm" {
-                    let wasmFile = args["wasmPath"] as? String ?? ""
-                    let functionName = method
-                    let wasmArgs = args["args"] as? [Any] ?? []
-                    
-                    guard !wasmFile.isEmpty else {
-                        if !requestId.isEmpty {
-                            sendResponse(requestId: requestId, data: nil, error: "Missing 'wasmPath' in args.")
-                        }
-                        return
-                    }
-                    
-                    let localWasmURL = self.bundlePath.appendingPathComponent(wasmFile)
-                    guard FileManager.default.fileExists(atPath: localWasmURL.path) else {
-                        if !requestId.isEmpty {
-                            sendResponse(requestId: requestId, data: nil, error: "Wasm file not found: \(wasmFile)")
-                        }
-                        return
-                    }
-                    
-                    Task {
-                        do {
-                            let results = try WasmExecutor.shared.execute(
-                                wasmPath: localWasmURL.path,
-                                functionName: functionName,
-                                args: wasmArgs
+                            self.sendResponse(
+                                requestId: requestId,
+                                data: nil,
+                                errorCode: "PERMISSION_DENIED",
+                                errorMessage: "Required permission '\(requiredPermission.rawValue)' was denied or not declared in manifest."
                             )
-                            if !requestId.isEmpty {
-                                sendResponse(requestId: requestId, data: ["results": results])
-                            }
-                        } catch {
-                            if !requestId.isEmpty {
-                                sendResponse(requestId: requestId, data: nil, error: error.localizedDescription)
-                            }
                         }
                     }
-                } else {
-                    if !requestId.isEmpty {
-                        sendResponse(requestId: requestId, data: [
-                            "success": true,
-                            "plugin": plugin,
-                            "method": method,
-                            "result": args
-                        ])
-                    }
                 }
-            case "hotReload":
-                print("[WebRuntime] Hot reload message received: \(payload)")
+            } else {
+                // 4. Public action: execute immediately
+                self.executeAction(action: action, payload: payload, body: body, requestId: requestId)
+            }
+        }
+    }
+
+    private func executeAction(action: String, payload: [String: Any], body: [String: Any], requestId: String) {
+        // Lifecycle and runtime management actions executed inside webview scope
+        if action == "ready" || action == "runtime.ready" {
+            print("[WebRuntime] runtime.ready received for \(self.manifest.id)")
+            self.isRuntimeReady = true
+            self.checkAndMarkStable()
+            if !requestId.isEmpty {
+                sendResponse(requestId: requestId, data: ["success": true])
+            }
+            return
+        }
+        
+        if action == "hotReload" {
+            print("[WebRuntime] Hot reload message received: \(payload)")
+            if !requestId.isEmpty {
+                sendResponse(requestId: requestId, data: ["success": true])
+            }
+            return
+        }
+
+        // 1. Rate Limiting Check using appId + tabId + action
+        guard BridgeRateLimiter.shared.isAllowed(appId: self.manifest.id, tabId: self.tabId, action: action) else {
+            if !requestId.isEmpty {
+                sendResponse(
+                    requestId: requestId,
+                    data: nil,
+                    errorCode: "RATE_LIMIT_EXCEEDED",
+                    errorMessage: "Rate limit exceeded for action '\(action)' on this tab."
+                )
+            }
+            BridgeAuditLogger.shared.logCall(
+                appId: self.manifest.id,
+                action: action,
+                permission: nil,
+                success: false,
+                errorCode: "RATE_LIMIT_EXCEEDED",
+                errorMessage: "Rate limit exceeded"
+            )
+            return
+        }
+
+        // 2. Native feature actions routed dynamically via PluginRegistry
+        PluginRegistry.shared.execute(action: action, payload: payload, bundlePath: self.bundlePath) { [weak self] result in
+            guard let self = self else { return }
+            let permission = BridgeACL.requiredPermission(forAction: action, payload: payload)?.rawValue
+            
+            switch result {
+            case .success(let data):
                 if !requestId.isEmpty {
-                    sendResponse(requestId: requestId, data: ["success": true])
+                    self.sendResponse(requestId: requestId, data: data)
                 }
-            case "ready", "runtime.ready":
-                print("[WebRuntime] runtime.ready received for \(self.manifest.id)")
-                self.isRuntimeReady = true
-                self.checkAndMarkStable()
+                BridgeAuditLogger.shared.logCall(
+                    appId: self.manifest.id,
+                    action: action,
+                    permission: permission,
+                    success: true
+                )
+            case .failure(let error):
                 if !requestId.isEmpty {
-                    sendResponse(requestId: requestId, data: ["success": true])
+                    self.sendResponse(
+                        requestId: requestId,
+                        data: nil,
+                        errorCode: "EXECUTION_ERROR",
+                        errorMessage: error.localizedDescription
+                    )
                 }
-            default:
-                if !requestId.isEmpty {
-                    sendResponse(requestId: requestId, data: ["success": true])
-                }
+                BridgeAuditLogger.shared.logCall(
+                    appId: self.manifest.id,
+                    action: action,
+                    permission: permission,
+                    success: false,
+                    errorCode: "EXECUTION_ERROR",
+                    errorMessage: error.localizedDescription
+                )
             }
         }
     }
@@ -272,6 +253,7 @@ class RuntimeWebView: WKWebView, WKScriptMessageHandler {
         // Allow a 2.0s buffer of crash-free execution before officially resetting attempts
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
             guard let self = self else { return }
+            self.localCrashCount = 0
             MiniAppManager.shared.markStable(appId: self.manifest.id, version: self.manifest.version)
         }
     }
@@ -311,13 +293,25 @@ extension RuntimeWebView: WKNavigationDelegate {
     ) {
         print("[WebRuntime] Provisional navigation failed: \(error.localizedDescription)")
     }
-    
-    // MARK: - Permission Verifier Helper
-    private func hasPermission(_ permission: String) -> Bool {
-        guard let manifestPermissions = manifest.permissions else {
-            // Default to allow all for backward compatibility if permissions is undefined in manifest.
-            return true
+
+    func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
+        self.localCrashCount += 1
+        let delay: TimeInterval = self.localCrashCount == 2 ? 1.0 : 0.0
+        
+        print("[WebRuntime] Web content process terminated (crash detected). Crash count: \(self.localCrashCount). Attempting recovery with delay \(delay)s...")
+        
+        MiniAppManager.shared.registerLaunch(appId: self.manifest.id, currentVersion: self.manifest.version) { [weak self] result in
+            guard let self = self else { return }
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                switch result {
+                case .success:
+                    print("[WebRuntime] Re-loading tab after process termination...")
+                    self.reload()
+                case .failure(let error):
+                    print("[WebRuntime] Crash limit exceeded. Version rolled back: \(error.localizedDescription)")
+                    NotificationCenter.default.post(name: NSNotification.Name("CloseMiniApp"), object: nil)
+                }
+            }
         }
-        return manifestPermissions.contains(permission)
     }
 }

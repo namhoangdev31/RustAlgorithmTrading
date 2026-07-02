@@ -127,11 +127,39 @@ class WebRuntimeViewModel: ObservableObject {
     }
     
     @objc private func handleDidEnterBackground() {
-        print("[ResourceManager] App entered background. Pausing active tab and saving state.")
-        if let activeId = activeTabId, let activeTab = tabs.first(where: { $0.id == activeId }) {
-            pauseTab(activeTab)
+        print("[ResourceManager] App entered background. Initiating background task protection.")
+        
+        // 1. Capture tabs IDs on main actor before entering background thread block
+        let keepTabIds = self.tabs.map { $0.id }
+        
+        // 2. Class wrapper to avoid mutating value after capture warnings in Sendable closures
+        class TaskRef: @unchecked Sendable {
+            var id: UIBackgroundTaskIdentifier = .invalid
         }
-        saveTabsState()
+        let taskRef = TaskRef()
+        taskRef.id = UIApplication.shared.beginBackgroundTask(withName: "com.antigravity.superapp.stateflush") {
+            UIApplication.shared.endBackgroundTask(taskRef.id)
+        }
+        
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            guard let self = self else {
+                UIApplication.shared.endBackgroundTask(taskRef.id)
+                return
+            }
+            
+            DispatchQueue.main.sync {
+                if let activeId = self.activeTabId, let activeTab = self.tabs.first(where: { $0.id == activeId }) {
+                    self.pauseTab(activeTab)
+                }
+                self.saveTabsState()
+            }
+            
+            // Clean up old cached snapshots in documents/caches directory
+            TabSnapshotManager.shared.clearOrphanedSnapshots(keepTabIds: keepTabIds)
+            
+            print("[ResourceManager] State flush completed. Ending background task.")
+            UIApplication.shared.endBackgroundTask(taskRef.id)
+        }
     }
     
     @objc private func handleWillEnterForeground() {
@@ -383,7 +411,13 @@ class WebRuntimeViewModel: ObservableObject {
     }
     
     private func makeWebView(for tab: WebTab) -> RuntimeWebView {
-        let webView = RuntimeWebView(frame: .zero, manifest: tab.manifest, bundlePath: tab.bundlePath)
+        let webView = RuntimeWebView(
+            frame: .zero,
+            manifest: tab.manifest,
+            bundlePath: tab.bundlePath,
+            serverURL: tab.serverURL ?? URL(string: "http://localhost:8080")!,
+            tabId: tab.id
+        )
         return webView
     }
     

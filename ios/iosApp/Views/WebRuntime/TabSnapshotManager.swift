@@ -61,6 +61,23 @@ final class TabSnapshotManager {
         }
     }
     
+    func clearOrphanedSnapshots(keepTabIds: [UUID]) {
+        queue.async { [weak self] in
+            guard let self = self else { return }
+            let dir = self.getSnapshotDirectoryURL()
+            guard let files = try? self.fileManager.contentsOfDirectory(at: dir, includingPropertiesForKeys: nil) else { return }
+            
+            let keepNames = keepTabIds.map { "\($0.uuidString.lowercased()).png" }
+            for file in files {
+                let filename = file.lastPathComponent.lowercased()
+                if !keepNames.contains(filename) {
+                    try? self.fileManager.removeItem(at: file)
+                    print("[TabSnapshotManager] Pruned orphaned snapshot: \(filename)")
+                }
+            }
+        }
+    }
+
     func clearAll() {
         queue.async { [weak self] in
             guard let self = self else { return }

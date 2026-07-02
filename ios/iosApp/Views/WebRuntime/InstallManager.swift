@@ -32,6 +32,7 @@ final class InstallManager {
         appName: String,
         version: String,
         sha256: String,
+        isOTAUpdate: Bool = false,
         completion: @escaping (Result<URL, Error>) -> Void
     ) {
         queue.async { [weak self] in
@@ -68,26 +69,40 @@ final class InstallManager {
                 
                 // 5. Update SQLite registry via transaction
                 try MiniAppDatabase.shared.write { db in
-                    // Retrieve existing current_version to set as last_stable_version
-                    let oldAppRow = try Row.fetchOne(db, sql: "SELECT current_version FROM mini_apps WHERE id = ?", arguments: [appId])
-                    let lastStableVersion = oldAppRow?["current_version"] as String?
-                    
-                    // Upsert mini_apps table entry
-                    try db.execute(sql: """
-                        INSERT INTO mini_apps (id, name, current_version, last_stable_version, status)
-                        VALUES (?, ?, ?, ?, 'active')
-                        ON CONFLICT(id) DO UPDATE SET
-                            name = excluded.name,
-                            current_version = excluded.current_version,
-                            last_stable_version = COALESCE(excluded.last_stable_version, current_version),
-                            status = 'active'
-                    """, arguments: [appId, appName, version, lastStableVersion])
-                    
-                    // Insert into bundle_history
-                    try db.execute(sql: """
-                        INSERT INTO bundle_history (app_id, version, path, sha256, status, launch_attempts)
-                        VALUES (?, ?, ?, ?, 'active', 0)
-                    """, arguments: [appId, version, versionDirectory.path, sha256])
+                    if isOTAUpdate {
+                        // For background OTA update, do NOT change active current_version in mini_apps,
+                        // insert the app metadata if not present (status inactive or existing)
+                        try db.execute(sql: """
+                            INSERT INTO mini_apps (id, name, current_version, last_stable_version, status)
+                            VALUES (?, ?, ?, NULL, 'active')
+                            ON CONFLICT(id) DO UPDATE SET name = excluded.name
+                        """, arguments: [appId, appName, version])
+                        
+                        // Register in bundle_history as pending status
+                        try db.execute(sql: """
+                            INSERT INTO bundle_history (app_id, version, path, sha256, status, launch_attempts)
+                            VALUES (?, ?, ?, ?, 'pending', 0)
+                        """, arguments: [appId, version, versionDirectory.path, sha256])
+                    } else {
+                        // For immediate install, update mini_apps.current_version and status to active
+                        let oldAppRow = try Row.fetchOne(db, sql: "SELECT current_version FROM mini_apps WHERE id = ?", arguments: [appId])
+                        let lastStableVersion = oldAppRow?["current_version"] as String?
+                        
+                        try db.execute(sql: """
+                            INSERT INTO mini_apps (id, name, current_version, last_stable_version, status)
+                            VALUES (?, ?, ?, ?, 'active')
+                            ON CONFLICT(id) DO UPDATE SET
+                                name = excluded.name,
+                                current_version = excluded.current_version,
+                                last_stable_version = COALESCE(excluded.last_stable_version, current_version),
+                                status = 'active'
+                        """, arguments: [appId, appName, version, lastStableVersion])
+                        
+                        try db.execute(sql: """
+                            INSERT INTO bundle_history (app_id, version, path, sha256, status, launch_attempts)
+                            VALUES (?, ?, ?, ?, 'active', 0)
+                        """, arguments: [appId, version, versionDirectory.path, sha256])
+                    }
                 }
                 
                 // 6. Clean up older folders but keep the last 2-3 versions

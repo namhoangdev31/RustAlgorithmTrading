@@ -13,13 +13,44 @@ final class MiniAppManager {
     /// If launch attempts >= 3, automatically triggers a rollback to the last stable version.
     func registerLaunch(appId: String, currentVersion: String, completion: @escaping (Result<URL, Error>) -> Void) {
         do {
+            var activeVersion = currentVersion
+            
+            // 0. Check and apply pending OTA updates in SQLite transaction
+            try MiniAppDatabase.shared.write { db in
+                if let pendingRow = try Row.fetchOne(db, sql: """
+                    SELECT version FROM bundle_history WHERE app_id = ? AND status = 'pending' LIMIT 1
+                """, arguments: [appId]),
+                   let pendingVersion = pendingRow["version"] as String? {
+                    
+                    print("[MiniAppManager] Found pending OTA update for \(appId): version \(pendingVersion). Swapping current version pointer.")
+                    
+                    // Update bundle_history statuses
+                    try db.execute(sql: """
+                        UPDATE bundle_history SET status = 'inactive' WHERE app_id = ? AND status = 'active'
+                    """, arguments: [appId])
+                    
+                    try db.execute(sql: """
+                        UPDATE bundle_history SET status = 'active' WHERE app_id = ? AND version = ?
+                    """, arguments: [appId, pendingVersion])
+                    
+                    // Update active current_version in mini_apps
+                    try db.execute(sql: """
+                        UPDATE mini_apps 
+                        SET current_version = ?, last_stable_version = ?
+                        WHERE id = ?
+                    """, arguments: [pendingVersion, currentVersion, appId])
+                    
+                    activeVersion = pendingVersion
+                }
+            }
+            
             // 1. Increment launch attempts in SQLite
             try MiniAppDatabase.shared.write { db in
                 try db.execute(sql: """
                     UPDATE bundle_history
                     SET launch_attempts = launch_attempts + 1
                     WHERE app_id = ? AND version = ?
-                """, arguments: [appId, currentVersion])
+                """, arguments: [appId, activeVersion])
             }
             
             // 2. Fetch current launch attempts
@@ -28,15 +59,15 @@ final class MiniAppManager {
                 let row = try Row.fetchOne(db, sql: """
                     SELECT launch_attempts FROM bundle_history
                     WHERE app_id = ? AND version = ?
-                """, arguments: [appId, currentVersion])
+                """, arguments: [appId, activeVersion])
                 attempts = row?["launch_attempts"] ?? 0
             }
             
-            print("[MiniAppManager] App \(appId) version \(currentVersion) launch attempt: \(attempts)")
+            print("[MiniAppManager] App \(appId) version \(activeVersion) launch attempt: \(attempts)")
             
             if attempts >= 3 {
                 print("[MiniAppManager] Launch attempts threshold exceeded. Triggering rollback!")
-                rollback(appId: appId, failedVersion: currentVersion, completion: completion)
+                rollback(appId: appId, failedVersion: activeVersion, completion: completion)
             } else {
                 // Return path to current version directory
                 let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
@@ -44,7 +75,7 @@ final class MiniAppManager {
                     .appendingPathComponent("MiniApps", isDirectory: true)
                     .appendingPathComponent(appId, isDirectory: true)
                     .appendingPathComponent("versions", isDirectory: true)
-                    .appendingPathComponent(currentVersion, isDirectory: true)
+                    .appendingPathComponent(activeVersion, isDirectory: true)
                 
                 completion(.success(versionDirectory))
             }
