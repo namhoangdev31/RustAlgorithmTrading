@@ -47,7 +47,6 @@
 		5AA4988A2FF51A3A006A3071 /* CryptoExtras in Frameworks */ = {isa = PBXBuildFile; productRef = 5AA498892FF51A3A006A3071 /* CryptoExtras */; };
 		5AA4988C2FF51A3A006A3071 /* _CryptoExtras in Frameworks */ = {isa = PBXBuildFile; productRef = 5AA4988B2FF51A3A006A3071 /* _CryptoExtras */; };
 		5AA4988F2FF51B34006A3071 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 5AA4988E2FF51B34006A3071 /* GRDB */; };
-		5AA498912FF51B34006A3071 /* GRDB-dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = 5AA498902FF51B34006A3071 /* GRDB-dynamic */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -839,11 +838,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 5AA4988D2FF51B34006A3071 /* XCRemoteSwiftPackageReference "GRDB.swift" */;
 			productName = GRDB;
-		};
-		5AA498902FF51B34006A3071 /* GRDB-dynamic */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 5AA4988D2FF51B34006A3071 /* XCRemoteSwiftPackageReference "GRDB.swift" */;
-			productName = "GRDB-dynamic";
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

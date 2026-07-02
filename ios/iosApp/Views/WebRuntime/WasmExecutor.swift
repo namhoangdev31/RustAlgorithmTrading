@@ -1,6 +1,7 @@
 import Foundation
 import WasmKit
 import SystemPackage
+import CryptoKit
 
 class WasmExecutor {
     static let shared = WasmExecutor()
@@ -12,8 +13,16 @@ class WasmExecutor {
     func execute(
         wasmPath: String,
         functionName: String,
-        args: [Any]
+        args: [Any],
+        expectedHash: String? = nil
     ) throws -> [Any] {
+        // Verify SHA256 checksum if provided
+        if let expectedHash = expectedHash {
+            try verifySHA256(filePath: wasmPath, expectedHash: expectedHash)
+        } else {
+            print("[Security Warning] Running WASM file without SHA256 signature verification: \(wasmPath)")
+        }
+        
         // 1. Get or load the module
         let module: Module
         if let cached = modules[wasmPath] {
@@ -99,6 +108,19 @@ class WasmExecutor {
             return Double(bitPattern: val)
         case .ref(let val):
             return "ref(\(val))"
+        }
+    }
+    
+    private func verifySHA256(filePath: String, expectedHash: String) throws {
+        let fileURL = URL(fileURLWithPath: filePath)
+        let fileData = try Data(contentsOf: fileURL)
+        let hash = SHA256.hash(data: fileData)
+        let hashString = hash.compactMap { String(format: "%02x", $0) }.joined()
+        
+        guard hashString.lowercased() == expectedHash.lowercased() else {
+            throw NSError(domain: "WasmExecutor", code: 403, userInfo: [
+                NSLocalizedDescriptionKey: "Wasm security check failed. Checksum mismatch. Expected: \(expectedHash), got: \(hashString)"
+            ])
         }
     }
 }

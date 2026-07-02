@@ -21,13 +21,26 @@ final class WebTab: ObservableObject, Identifiable {
     @Published var serverURL: URL?
     @Published var webView: RuntimeWebView?
 
-    @Published var snapshot: UIImage?
     @Published var lastVisitedURL: URL?
     @Published var status: WebTabStatus
 
     var title: String { manifest.name }
     var url: URL? { serverURL }
     var cachedSnapshot: UIImage? { snapshot }
+    
+    var snapshot: UIImage? {
+        get {
+            TabSnapshotManager.shared.loadSnapshot(for: id)
+        }
+        set {
+            if let img = newValue {
+                TabSnapshotManager.shared.saveSnapshot(img, for: id)
+            } else {
+                TabSnapshotManager.shared.deleteSnapshot(for: id)
+            }
+            objectWillChange.send()
+        }
+    }
     
     init(
         id: UUID = UUID(),
@@ -45,8 +58,10 @@ final class WebTab: ObservableObject, Identifiable {
         self.server = server
         self.serverURL = serverURL
         self.webView = webView
-        self.snapshot = snapshot
         self.status = status
+        if let img = snapshot {
+            TabSnapshotManager.shared.saveSnapshot(img, for: id)
+        }
     }
 }
 
@@ -66,6 +81,7 @@ class WebRuntimeViewModel: ObservableObject {
     @Published var activeTabId: UUID?
     @Published var showTabSwitcher: Bool = false
     @Published var errorMsg: String?
+    @Published var lruTabIds: [UUID] = []
     
     init() {
         setupLifecycleObservers()
@@ -95,6 +111,12 @@ class WebRuntimeViewModel: ObservableObject {
             name: UIApplication.willEnterForegroundNotification,
             object: nil
         )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleWillTerminate),
+            name: UIApplication.willTerminateNotification,
+            object: nil
+        )
     }
     
     @objc private func handleMemoryWarning() {
@@ -105,10 +127,11 @@ class WebRuntimeViewModel: ObservableObject {
     }
     
     @objc private func handleDidEnterBackground() {
-        print("[ResourceManager] App entered background. Pausing active tab.")
+        print("[ResourceManager] App entered background. Pausing active tab and saving state.")
         if let activeId = activeTabId, let activeTab = tabs.first(where: { $0.id == activeId }) {
             pauseTab(activeTab)
         }
+        saveTabsState()
     }
     
     @objc private func handleWillEnterForeground() {
@@ -118,9 +141,22 @@ class WebRuntimeViewModel: ObservableObject {
         }
     }
     
+    @objc private func handleWillTerminate() {
+        print("[ResourceManager] App will terminate. Cleaning up all servers and saving state.")
+        saveTabsState()
+        stopAll()
+    }
+    
     // MARK: - Tab Operations
     
     func openBundle(manifest: WebRuntimeManifest, bundlePath: URL) {
+        // Try to restore previous tabs state first if currently empty
+        if tabs.isEmpty {
+            if restoreTabsState(manifest: manifest, bundlePath: bundlePath) {
+                return
+            }
+        }
+
         // 1. If bundle already open, select and activate it
         if let existing = tabs.first(where: { $0.manifest.id == manifest.id }) {
             activateTab(id: existing.id)
@@ -137,8 +173,10 @@ class WebRuntimeViewModel: ObservableObject {
             status: .loading
         )
         
+        ServerRegistry.shared.register(id: newTab.id, server: server)
         tabs.append(newTab)
         activateTab(id: newTab.id)
+        saveTabsState()
     }
     
     func activateTab(id: UUID) {
@@ -176,6 +214,8 @@ class WebRuntimeViewModel: ObservableObject {
             
             selected.status = .active
             activeTabId = id
+            updateLRU(id: id)
+            saveTabsState()
         } catch {
             print("[TabManager] Error activating tab: \(error.localizedDescription)")
             selected.status = .paused
@@ -226,10 +266,11 @@ class WebRuntimeViewModel: ObservableObject {
             webView.configuration.userContentController.removeScriptMessageHandler(forName: "plugin")
         }
         
-        tab.server.stop()
+        ServerRegistry.shared.stop(id: id)
         tab.webView = nil
         
         tabs.remove(at: index)
+        saveTabsState()
         
         if activeTabId == id {
             activeTabId = tabs.last?.id
@@ -246,15 +287,115 @@ class WebRuntimeViewModel: ObservableObject {
                 webView.configuration.userContentController.removeScriptMessageHandler(forName: "wasm")
                 webView.configuration.userContentController.removeScriptMessageHandler(forName: "plugin")
             }
-            tab.server.stop()
             tab.webView = nil
         }
+        ServerRegistry.shared.stopAll()
         tabs.removeAll()
         activeTabId = nil
+    }
+    
+    // MARK: - Persistence & Crash Recovery
+    struct TabStateMetadata: Codable {
+        let bundleId: String
+        let lastVisitedURL: String?
+        let status: String
+    }
+    
+    private func getTabsJSONURL() -> URL {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        return paths[0].appendingPathComponent("tabs.json")
+    }
+    
+    func saveTabsState() {
+        let metadataList = tabs.map { tab in
+            TabStateMetadata(
+                bundleId: tab.manifest.id,
+                lastVisitedURL: tab.lastVisitedURL?.absoluteString,
+                status: tab.id == activeTabId ? "active" : "paused"
+            )
+        }
+        do {
+            let data = try JSONEncoder().encode(metadataList)
+            try data.write(to: getTabsJSONURL())
+            print("[TabManager] Saved tabs state successfully.")
+        } catch {
+            print("[TabManager] Failed to save tabs state: \(error.localizedDescription)")
+        }
+    }
+    
+    func restoreTabsState(manifest: WebRuntimeManifest, bundlePath: URL) -> Bool {
+        let url = getTabsJSONURL()
+        guard FileManager.default.fileExists(atPath: url.path) else { return false }
+        
+        do {
+            let data = try Data(contentsOf: url)
+            let metadataList = try JSONDecoder().decode([TabStateMetadata].self, from: data)
+            
+            // Clean up any existing state first
+            stopAll()
+            
+            for meta in metadataList {
+                guard meta.bundleId == manifest.id else { continue }
+                
+                let server = iOSWebServer(basePath: bundlePath.path)
+                let tab = WebTab(
+                    manifest: manifest,
+                    bundlePath: bundlePath,
+                    server: server,
+                    status: .paused
+                )
+                if let lastURLString = meta.lastVisitedURL, let lastURL = URL(string: lastURLString) {
+                    tab.lastVisitedURL = lastURL
+                }
+                
+                ServerRegistry.shared.register(id: tab.id, server: server)
+                tabs.append(tab)
+                
+                if meta.status == "active" {
+                    activeTabId = tab.id
+                }
+            }
+            
+            if let activeId = activeTabId {
+                activateTab(id: activeId)
+            } else if !tabs.isEmpty {
+                activateTab(id: tabs[0].id)
+            }
+            return !tabs.isEmpty
+        } catch {
+            print("[TabManager] Failed to restore tabs state: \(error.localizedDescription)")
+            return false
+        }
     }
     
     private func makeWebView(for tab: WebTab) -> RuntimeWebView {
         let webView = RuntimeWebView(frame: .zero, manifest: tab.manifest, bundlePath: tab.bundlePath)
         return webView
+    }
+    
+    // MARK: - LRU Resource Budget
+    private func updateLRU(id: UUID) {
+        if let idx = lruTabIds.firstIndex(of: id) {
+            lruTabIds.remove(at: idx)
+        }
+        lruTabIds.append(id)
+        enforceResourceBudget()
+    }
+    
+    private func enforceResourceBudget() {
+        let maxTabsLimit = 8
+        guard tabs.count > maxTabsLimit else { return }
+        
+        for lruId in lruTabIds {
+            if lruId != activeTabId,
+               let index = tabs.firstIndex(where: { $0.id == lruId }) {
+                let tab = tabs[index]
+                if tab.status == .paused {
+                    print("[TabManager] Evicting tab due to resource limit (LRU): \(tab.manifest.name)")
+                    suspendTab(tab)
+                    break
+                }
+            }
+        }
     }
 }

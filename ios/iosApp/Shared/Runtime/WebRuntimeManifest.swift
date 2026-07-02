@@ -8,4 +8,5 @@ struct WebRuntimeManifest: Hashable, Codable {
     let type: String
     let orientation: String
     let fullScreen: Bool
+    var permissions: [String]? = nil
 }

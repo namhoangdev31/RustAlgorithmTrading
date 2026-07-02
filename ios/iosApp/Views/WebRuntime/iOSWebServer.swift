@@ -51,44 +51,78 @@ class iOSWebServer {
     }
 
     private func configure() {
-        // Intercept WASM files to serve with correct MIME type and path traversal protection
+        // Secure, catch-all static server handler
         webServer.addHandler(
             forMethod: "GET",
-            pathRegex: "^/.*\\.wasm$",
+            pathRegex: "^/.*$",
             request: GCDWebServerRequest.self,
             processBlock: { [weak self] request in
                 guard let self = self else { return GCDWebServerResponse(statusCode: 500) }
                 
+                // 1. Host Header Validation
+                if let host = request.headers["Host"] {
+                    let allowedHosts = [
+                        "127.0.0.1:\(self.port)",
+                        "localhost:\(self.port)",
+                        "127.0.0.1",
+                        "localhost"
+                    ]
+                    let cleanedHost = host.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+                    let hasValidHost = allowedHosts.contains { allowed in
+                        cleanedHost == allowed || cleanedHost.hasPrefix(allowed + ":")
+                    }
+                    if !hasValidHost {
+                        print("[Security] Blocked unauthorized Host header: \(host)")
+                        return GCDWebServerResponse(statusCode: 403)
+                    }
+                }
+                
+                // 2. Resolve requested path (SPA fallback support)
                 let requestedPath = request.path
-                let resolvedURL = URL(fileURLWithPath: self.basePath).appendingPathComponent(requestedPath).standardized
+                var resolvedPath = requestedPath
+                if resolvedPath == "/" || !resolvedPath.contains(".") {
+                    resolvedPath = "/index.html"
+                }
+                
+                let resolvedURL = URL(fileURLWithPath: self.basePath).appendingPathComponent(resolvedPath).standardized
                 let baseURL = URL(fileURLWithPath: self.basePath).standardized
                 
-                // Path Traversal Protection
+                // 3. Path Traversal Protection
                 guard resolvedURL.path.hasPrefix(baseURL.path) else {
                     print("[Security] Blocked path traversal attempt: \(requestedPath)")
                     return GCDWebServerResponse(statusCode: 403)
                 }
                 
                 let filePath = resolvedURL.path
-                if FileManager.default.fileExists(atPath: filePath) {
-                    let response = GCDWebServerFileResponse(file: filePath, byteRange: request.byteRange)
-                    response?.contentType = "application/wasm"
-                    return response
+                guard FileManager.default.fileExists(atPath: filePath) else {
+                    // Fallback to index.html for SPA router support
+                    let indexURL = URL(fileURLWithPath: self.basePath).appendingPathComponent("index.html").standardized
+                    if FileManager.default.fileExists(atPath: indexURL.path) {
+                        let response = GCDWebServerFileResponse(file: indexURL.path, byteRange: request.byteRange)
+                        response?.contentType = "text/html"
+                        return response
+                    }
+                    return GCDWebServerResponse(statusCode: 404)
                 }
-                return GCDWebServerResponse(statusCode: 404)
+                
+                // 4. Instantiate response and set proper MIME types
+                let response = GCDWebServerFileResponse(file: filePath, byteRange: request.byteRange)
+                let fileExtension = resolvedURL.pathExtension.lowercased()
+                if fileExtension == "wasm" {
+                    response?.contentType = "application/wasm"
+                } else if fileExtension == "js" {
+                    response?.contentType = "application/javascript"
+                } else if fileExtension == "css" {
+                    response?.contentType = "text/css"
+                } else if fileExtension == "html" {
+                    response?.contentType = "text/html"
+                }
+                
+                return response
             }
         )
 
-        // Serve static files from basePath with SPA support
-        webServer.addGETHandler(
-            forBasePath: "/",
-            directoryPath: basePath,
-            indexFilename: "index.html",
-            cacheAge: 0,  // No caching during development
-            allowRangeRequests: true
-        )
-
-        print("[iOSWebServer] Configured to serve: \(basePath)")
+        print("[iOSWebServer] Secure server configured for: \(basePath)")
     }
 
     func start() throws -> URL {

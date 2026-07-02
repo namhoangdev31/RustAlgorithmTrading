@@ -13,6 +13,14 @@ class RuntimeWebView: WKWebView, WKScriptMessageHandler {
         self.bundlePath = bundlePath
         let config = WKWebViewConfiguration()
 
+        // Sandboxed Website Data Store (iOS 17+)
+        if #available(iOS 17.0, *) {
+            let dataStoreId = UUID(uuidString: "e8568600-0000-0000-0000-" + String(format: "%012x", abs(manifest.id.hashValue))) ?? UUID()
+            config.websiteDataStore = WKWebsiteDataStore(forIdentifier: dataStoreId)
+        } else {
+            config.websiteDataStore = WKWebsiteDataStore.default()
+        }
+
         // 1. Setup Bridge
         let userContent = WKUserContentController()
 
@@ -90,6 +98,33 @@ class RuntimeWebView: WKWebView, WKScriptMessageHandler {
         let payload = body["payload"] as? [String: Any] ?? [:]
 
         if let action = body["action"] as? String {
+            // Enforce declarative bridge permissions
+            if action.hasPrefix("camera") || action == "getCameraPhoto" {
+                guard hasPermission("camera") else {
+                    if !requestId.isEmpty {
+                        sendResponse(requestId: requestId, data: nil, error: "Permission 'camera' is not declared in manifest.")
+                    }
+                    return
+                }
+            } else if action == "wasm.execute" {
+                guard hasPermission("wasm.execute") else {
+                    if !requestId.isEmpty {
+                        sendResponse(requestId: requestId, data: nil, error: "Permission 'wasm.execute' is not declared in manifest.")
+                    }
+                    return
+                }
+            } else if action == "plugin.invoke" {
+                let plugin = payload["plugin"] as? String ?? ""
+                if plugin == "wasm" {
+                    guard hasPermission("wasm.execute") else {
+                        if !requestId.isEmpty {
+                            sendResponse(requestId: requestId, data: nil, error: "Permission 'wasm.execute' is not declared in manifest.")
+                        }
+                        return
+                    }
+                }
+            }
+
             switch action {
             case "log", "debug.log":
                 let level = payload["level"] as? String ?? body["level"] as? String ?? "info"
@@ -251,6 +286,15 @@ extension RuntimeWebView: WKNavigationDelegate {
         _ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!,
         withError error: Error
     ) {
-        print("[WebRuntime] Provisional Navigation failed: \(error.localizedDescription)")
+        print("[WebRuntime] Provisional navigation failed: \(error.localizedDescription)")
+    }
+    
+    // MARK: - Permission Verifier Helper
+    private func hasPermission(_ permission: String) -> Bool {
+        guard let manifestPermissions = manifest.permissions else {
+            // Default to allow all for backward compatibility if permissions is undefined in manifest.
+            return true
+        }
+        return manifestPermissions.contains(permission)
     }
 }
