@@ -43,11 +43,18 @@ class iOSWebServer {
     
     private(set) var state: WebServerState = .stopped
     private(set) var serverURL: URL?
+    private var mountedDirectories: [String: String] = [:]
 
     init(port: UInt16 = 0, basePath: String) {
         self.port = port
         self.basePath = basePath
         configure()
+    }
+    
+    func mountDirectory(_ virtualPath: String, directoryPath: String) {
+        let cleanVirtual = virtualPath.hasPrefix("/") ? virtualPath : "/\(virtualPath)"
+        mountedDirectories[cleanVirtual] = directoryPath
+        print("[iOSWebServer] Mounted virtual directory '\(cleanVirtual)' to: \(directoryPath)")
     }
 
     private func configure() {
@@ -58,6 +65,35 @@ class iOSWebServer {
             request: GCDWebServerRequest.self,
             processBlock: { [weak self] request in
                 guard let self = self else { return GCDWebServerResponse(statusCode: 500) }
+                
+                let requestedPath = request.path
+                
+                // 1.a Intercept mounted virtual directories (Shared Libraries)
+                for (prefix, localDir) in self.mountedDirectories {
+                    if requestedPath.hasPrefix(prefix) {
+                        let relativePath = String(requestedPath.dropFirst(prefix.count))
+                        let resolvedURL = URL(fileURLWithPath: localDir).appendingPathComponent(relativePath).standardized
+                        let baseURL = URL(fileURLWithPath: localDir).standardized
+                        
+                        // Path Traversal Check for mounted folder
+                        guard resolvedURL.path.hasPrefix(baseURL.path) else {
+                            return GCDWebServerResponse(statusCode: 403)
+                        }
+                        
+                        if FileManager.default.fileExists(atPath: resolvedURL.path) {
+                            let response = GCDWebServerFileResponse(file: resolvedURL.path, byteRange: request.byteRange)
+                            let fileExtension = resolvedURL.pathExtension.lowercased()
+                            if fileExtension == "wasm" {
+                                response?.contentType = "application/wasm"
+                            } else if fileExtension == "js" {
+                                response?.contentType = "application/javascript"
+                            } else if fileExtension == "css" {
+                                response?.contentType = "text/css"
+                            }
+                            return response
+                        }
+                    }
+                }
                 
                 // 1. Host Header Validation
                 if let host = request.headers["Host"] {
@@ -78,7 +114,6 @@ class iOSWebServer {
                 }
                 
                 // 2. Resolve requested path (SPA fallback support)
-                let requestedPath = request.path
                 var resolvedPath = requestedPath
                 if resolvedPath == "/" || !resolvedPath.contains(".") {
                     resolvedPath = "/index.html"

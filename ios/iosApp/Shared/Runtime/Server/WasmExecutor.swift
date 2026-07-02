@@ -115,6 +115,13 @@ final class WasmExecutor: @unchecked Sendable {
         }
     }
     
+    func clearCachedModules() {
+        lock.lock()
+        defer { lock.unlock() }
+        modules.removeAll()
+        print("[WasmExecutor] Cleared all cached compiled modules.")
+    }
+    
     private func verifySHA256(filePath: String, expectedHash: String) throws {
         let fileURL = URL(fileURLWithPath: filePath)
         let fileData = try Data(contentsOf: fileURL)

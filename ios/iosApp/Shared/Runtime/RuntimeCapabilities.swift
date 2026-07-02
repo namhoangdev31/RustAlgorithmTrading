@@ -81,3 +81,24 @@ class GestureValidator {
         lastGestureTimestamp = 0
     }
 }
+
+extension RuntimeCapabilities {
+    static var current: RuntimeCapabilities {
+        return PlatformCapabilities.getCapabilities()
+    }
+    
+    func supports(capability: String) -> Bool {
+        switch capability {
+        case "camera": return camera != .unsupported
+        case "location", "geolocation": return geolocation != .unsupported
+        case "share": return share != .unsupported
+        case "vibrate": return vibrate != .unsupported
+        case "clipboard": return clipboard != .unsupported
+        case "biometrics": return biometrics != .unsupported
+        case "bluetooth": return bluetooth != .unsupported
+        case "nfc": return nfc != .unsupported
+        case "filesystem", "wasm", "ota", "backgroundTask": return true
+        default: return false
+        }
+    }
+}

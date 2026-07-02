@@ -40,4 +40,7 @@ struct WebRuntimeManifest: Hashable, Codable {
     let orientation: String
     let fullScreen: Bool
     var permissions: [ManifestPermission]? = nil
+    var minRuntimeVersion: String? = nil
+    var maxRuntimeVersion: String? = nil
+    var dependencies: [String: String]? = nil
 }
