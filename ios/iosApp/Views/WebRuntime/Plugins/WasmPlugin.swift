@@ -95,13 +95,20 @@ final class WasmHelper {
             guard FileManager.default.fileExists(atPath: localWasmURL.path) else {
                 return .failure(code: "WASM_NOT_FOUND", message: "Wasm file not found: \(wasmFile)")
             }
+            if let quotaError = ResourceGovernor().validateWasmFile(path: localWasmURL.path) {
+                return .failure(code: quotaError.code.rawValue, message: quotaError.message)
+            }
             
             do {
+                let startedAt = Date()
                 let results = try WasmExecutor.shared.execute(
                     wasmPath: localWasmURL.path,
                     functionName: functionName,
                     args: args
                 )
+                if let quotaError = ResourceGovernor().validateWasmDuration(Date().timeIntervalSince(startedAt)) {
+                    return .failure(code: quotaError.code.rawValue, message: quotaError.message)
+                }
                 return .success(["results": results])
             } catch {
                 return .failure(code: "WASM_EXECUTION_ERROR", message: error.localizedDescription)
@@ -124,24 +131,26 @@ final class WasmHelper {
                 guard FileManager.default.fileExists(atPath: localWasmURL.path) else {
                     return .failure(code: "WASM_NOT_FOUND", message: "Wasm file not found: \(wasmFile)")
                 }
+                if let quotaError = ResourceGovernor().validateWasmFile(path: localWasmURL.path) {
+                    return .failure(code: quotaError.code.rawValue, message: quotaError.message)
+                }
                 
                 do {
+                    let startedAt = Date()
                     let results = try WasmExecutor.shared.execute(
                         wasmPath: localWasmURL.path,
                         functionName: functionName,
                         args: wasmArgs
                     )
+                    if let quotaError = ResourceGovernor().validateWasmDuration(Date().timeIntervalSince(startedAt)) {
+                        return .failure(code: quotaError.code.rawValue, message: quotaError.message)
+                    }
                     return .success(["results": results])
                 } catch {
                     return .failure(code: "WASM_EXECUTION_ERROR", message: error.localizedDescription)
                 }
             } else {
-                return .success([
-                    "success": true,
-                    "plugin": plugin,
-                    "method": method,
-                    "result": args
-                ])
+                return .failure(code: "UNKNOWN_PLUGIN", message: "Plugin '\(plugin)' is not registered for plugin.invoke.")
             }
         }
         

@@ -3,23 +3,34 @@ import WebKit
 
 // import Shared — replaced by native Swift Shared module
 
-class RuntimeWebView: WKWebView, WKScriptMessageHandler {
+@MainActor
+class RuntimeWebView: WKWebView, WKScriptMessageHandler, BridgeResponseSending {
     private let manifest: WebRuntimeManifest
     private let bundlePath: URL
     private let serverURL: URL
     private let tabId: UUID
+    private let bridgeRouter: BridgeRouter
+    private let processRecoveryManager: ProcessRecoveryManager
+    private let onRuntimeError: (RuntimeShellError) -> Void
     
-    private var isDidFinishLoaded = false
-    private var isRuntimeReady = false
-    private var isMarkedStable = false
-    private var localCrashCount = 0
-
     // Custom Init
-    init(frame: CGRect, manifest: WebRuntimeManifest, bundlePath: URL, serverURL: URL, tabId: UUID) {
+    init(
+        frame: CGRect,
+        manifest: WebRuntimeManifest,
+        bundlePath: URL,
+        serverURL: URL,
+        tabId: UUID,
+        bridgeRouter: BridgeRouter? = nil,
+        processRecoveryManager: ProcessRecoveryManager? = nil,
+        onRuntimeError: @escaping (RuntimeShellError) -> Void = { _ in }
+    ) {
         self.tabId = tabId
         self.manifest = manifest
         self.bundlePath = bundlePath
         self.serverURL = serverURL
+        self.bridgeRouter = bridgeRouter ?? .shared
+        self.processRecoveryManager = processRecoveryManager ?? ProcessRecoveryManager()
+        self.onRuntimeError = onRuntimeError
         let config = WKWebViewConfiguration()
 
         // Sandboxed Website Data Store (iOS 17+)
@@ -79,6 +90,11 @@ class RuntimeWebView: WKWebView, WKScriptMessageHandler {
 
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
+    func shutdownBridge() {
+        configuration.userContentController.removeScriptMessageHandler(forName: "LeposBridge")
+        configuration.userContentController.removeScriptMessageHandler(forName: "lepoShipBridge")
+    }
+
     func sendResponse(requestId: String, data: [String: Any]?, errorCode: String? = nil, errorMessage: String? = nil) {
         var responseDict: [String: Any] = [:]
         responseDict["requestId"] = requestId
@@ -97,9 +113,11 @@ class RuntimeWebView: WKWebView, WKScriptMessageHandler {
         }
         
         if let jsonObj = try? JSONSerialization.data(withJSONObject: responseDict, options: []),
-           let jsonString = String(data: jsonObj, encoding: .utf8) {
+           let jsonString = String(data: jsonObj, encoding: .utf8),
+           let requestIdData = try? JSONSerialization.data(withJSONObject: requestId, options: []),
+           let requestIdString = String(data: requestIdData, encoding: .utf8) {
             DispatchQueue.main.async {
-                self.evaluateJavaScript("window.__lepoShipReceiveMessage('\(requestId)', \(jsonString))", completionHandler: nil)
+                self.evaluateJavaScript("window.__lepoShipReceiveMessage(\(requestIdString), \(jsonString))", completionHandler: nil)
             }
         }
     }
@@ -108,154 +126,26 @@ class RuntimeWebView: WKWebView, WKScriptMessageHandler {
     func userContentController(
         _ userContentController: WKUserContentController, didReceive message: WKScriptMessage
     ) {
-        guard (message.name == "LeposBridge" || message.name == "lepoShipBridge"), let body = message.body as? [String: Any] else {
-            return
-        }
-
-        let requestId = body["requestId"] as? String ?? ""
-        let payload = body["payload"] as? [String: Any] ?? [:]
-
-        // 1. Origin Check: verify request initiator matches host + port + scheme of the active WebTab
-        let originHost = message.frameInfo.securityOrigin.host
-        let originPort = message.frameInfo.securityOrigin.port
-        let originScheme = message.frameInfo.securityOrigin.protocol
-        
-        guard originScheme == self.serverURL.scheme,
-              originHost == self.serverURL.host,
-              originPort == self.serverURL.port else {
-            let fullOrigin = "\(originScheme)://\(originHost):\(originPort)"
-            print("[Security] Rejecting bridge call from unauthorized origin: \(fullOrigin). Expected: \(self.serverURL.absoluteString)")
-            if !requestId.isEmpty {
-                sendResponse(
-                    requestId: requestId,
-                    data: nil,
-                    errorCode: "UNAUTHORIZED_ORIGIN",
-                    errorMessage: "Security origin '\(fullOrigin)' is not authorized."
-                )
-            }
-            return
-        }
-
-        if let action = body["action"] as? String {
-            // 2. Resolve permission requirements via BridgeACL
-            if let requiredPermission = BridgeACL.requiredPermission(forAction: action, payload: payload) {
-                // 3. Request/check 3-layer authorization
-                PermissionManager.shared.checkAndRequestPermission(
+        let context = BridgeRouteContext(
+            manifest: manifest,
+            bundlePath: bundlePath,
+            serverURL: serverURL,
+            tabId: tabId,
+            onRuntimeReady: { [weak self] in
+                guard let self = self else { return }
+                print("[WebRuntime] runtime.ready received for \(self.manifest.id)")
+                self.processRecoveryManager.recordRuntimeReady(
+                    tabId: self.tabId,
                     appId: self.manifest.id,
-                    appName: self.manifest.name,
-                    permission: requiredPermission,
-                    manifest: self.manifest
-                ) { [weak self] granted in
-                    guard let self = self else { return }
-                    if granted {
-                        DispatchQueue.main.async {
-                            self.executeAction(action: action, payload: payload, body: body, requestId: requestId)
-                        }
-                    } else {
-                        if !requestId.isEmpty {
-                            self.sendResponse(
-                                requestId: requestId,
-                                data: nil,
-                                errorCode: "PERMISSION_DENIED",
-                                errorMessage: "Required permission '\(requiredPermission.rawValue)' was denied or not declared in manifest."
-                            )
-                        }
-                    }
-                }
-            } else {
-                // 4. Public action: execute immediately
-                self.executeAction(action: action, payload: payload, body: body, requestId: requestId)
-            }
-        }
-    }
-
-    private func executeAction(action: String, payload: [String: Any], body: [String: Any], requestId: String) {
-        // Lifecycle and runtime management actions executed inside webview scope
-        if action == "ready" || action == "runtime.ready" {
-            print("[WebRuntime] runtime.ready received for \(self.manifest.id)")
-            self.isRuntimeReady = true
-            self.checkAndMarkStable()
-            if !requestId.isEmpty {
-                sendResponse(requestId: requestId, data: ["success": true])
-            }
-            return
-        }
-        
-        if action == "hotReload" {
-            print("[WebRuntime] Hot reload message received: \(payload)")
-            if !requestId.isEmpty {
-                sendResponse(requestId: requestId, data: ["success": true])
-            }
-            return
-        }
-
-        // 1. Rate Limiting Check using appId + tabId + action
-        guard BridgeRateLimiter.shared.isAllowed(appId: self.manifest.id, tabId: self.tabId, action: action) else {
-            if !requestId.isEmpty {
-                sendResponse(
-                    requestId: requestId,
-                    data: nil,
-                    errorCode: "RATE_LIMIT_EXCEEDED",
-                    errorMessage: "Rate limit exceeded for action '\(action)' on this tab."
+                    version: self.manifest.version
                 )
-            }
-            BridgeAuditLogger.shared.logCall(
-                appId: self.manifest.id,
-                action: action,
-                permission: nil,
-                success: false,
-                errorCode: "RATE_LIMIT_EXCEEDED",
-                errorMessage: "Rate limit exceeded"
-            )
-            return
-        }
-
-        // 2. Native feature actions routed dynamically via PluginRegistry
-        PluginRegistry.shared.execute(action: action, payload: payload, bundlePath: self.bundlePath) { [weak self] result in
-            guard let self = self else { return }
-            let permission = BridgeACL.requiredPermission(forAction: action, payload: payload)?.rawValue
-            
-            switch result {
-            case .success(let data):
-                if !requestId.isEmpty {
-                    self.sendResponse(requestId: requestId, data: data)
-                }
-                BridgeAuditLogger.shared.logCall(
-                    appId: self.manifest.id,
-                    action: action,
-                    permission: permission,
-                    success: true
-                )
-            case .failure(let error):
-                if !requestId.isEmpty {
-                    self.sendResponse(
-                        requestId: requestId,
-                        data: nil,
-                        errorCode: "EXECUTION_ERROR",
-                        errorMessage: error.localizedDescription
-                    )
-                }
-                BridgeAuditLogger.shared.logCall(
-                    appId: self.manifest.id,
-                    action: action,
-                    permission: permission,
-                    success: false,
-                    errorCode: "EXECUTION_ERROR",
-                    errorMessage: error.localizedDescription
-                )
-            }
-        }
-    }
-
-    private func checkAndMarkStable() {
-        guard isDidFinishLoaded && isRuntimeReady && !isMarkedStable else { return }
-        isMarkedStable = true
-        // Allow a 2.0s buffer of crash-free execution before officially resetting attempts
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
-            guard let self = self else { return }
-            self.localCrashCount = 0
-            MiniAppManager.shared.markStable(appId: self.manifest.id, version: self.manifest.version)
-        }
+            },
+            onHotReload: { payload in
+                print("[WebRuntime] Hot reload message received: \(payload)")
+            },
+            onRuntimeError: onRuntimeError
+        )
+        bridgeRouter.route(message: message, context: context, responder: self)
     }
 
     func loadBundle(httpUrl: String) {
@@ -279,8 +169,11 @@ extension RuntimeWebView: WKNavigationDelegate {
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         print("[WebRuntime] Page finished loading")
         webView.evaluateJavaScript("document.dispatchEvent(new Event('runtimeresume'))")
-        self.isDidFinishLoaded = true
-        self.checkAndMarkStable()
+        processRecoveryManager.recordNavigationFinished(
+            tabId: tabId,
+            appId: manifest.id,
+            version: manifest.version
+        )
     }
 
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
@@ -295,23 +188,17 @@ extension RuntimeWebView: WKNavigationDelegate {
     }
 
     func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
-        self.localCrashCount += 1
-        let delay: TimeInterval = self.localCrashCount == 2 ? 1.0 : 0.0
-        
-        print("[WebRuntime] Web content process terminated (crash detected). Crash count: \(self.localCrashCount). Attempting recovery with delay \(delay)s...")
-        
-        MiniAppManager.shared.registerLaunch(appId: self.manifest.id, currentVersion: self.manifest.version) { [weak self] result in
-            guard let self = self else { return }
-            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                switch result {
-                case .success:
-                    print("[WebRuntime] Re-loading tab after process termination...")
-                    self.reload()
-                case .failure(let error):
-                    print("[WebRuntime] Crash limit exceeded. Version rolled back: \(error.localizedDescription)")
-                    NotificationCenter.default.post(name: NSNotification.Name("CloseMiniApp"), object: nil)
-                }
+        processRecoveryManager.handleWebContentTermination(
+            tabId: tabId,
+            manifest: manifest,
+            reload: { [weak self] in
+                print("[WebRuntime] Re-loading tab after process termination...")
+                self?.reload()
+            },
+            reportError: onRuntimeError,
+            close: { [weak self] in
+                self?.stopLoading()
             }
-        }
+        )
     }
 }

@@ -10,7 +10,7 @@ final class BridgeRateLimiter {
     private init() {}
     
     /// Validates if an action is within rate limits.
-    func isAllowed(appId: String, tabId: UUID, action: String) -> Bool {
+    func isAllowed(appId: String, tabId: UUID, action: String, policy: BridgeRateLimitPolicy? = nil) -> Bool {
         lock.lock()
         defer { lock.unlock() }
         
@@ -18,7 +18,10 @@ final class BridgeRateLimiter {
         let maxCalls: Int
         
         // Rate limit rules
-        if action == "vibrate" {
+        if let policy {
+            limitSeconds = policy.windowSeconds
+            maxCalls = policy.maxCalls
+        } else if action == "vibrate" {
             limitSeconds = 10.0
             maxCalls = 5
         } else if action == "wasm.execute" {

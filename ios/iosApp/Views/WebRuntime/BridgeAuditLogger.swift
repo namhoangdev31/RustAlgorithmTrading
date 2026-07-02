@@ -5,6 +5,14 @@ final class BridgeAuditLogger {
     static let shared = BridgeAuditLogger()
     
     private let queue = DispatchQueue(label: "com.antigravity.auditlogger", qos: .background)
+    private let lock = NSLock()
+    private var loggedCalls: Int = 0
+
+    var totalLoggedCalls: Int {
+        lock.lock()
+        defer { lock.unlock() }
+        return loggedCalls
+    }
     
     private init() {}
     
@@ -17,6 +25,10 @@ final class BridgeAuditLogger {
         errorCode: String? = nil,
         errorMessage: String? = nil
     ) {
+        lock.lock()
+        loggedCalls += 1
+        lock.unlock()
+
         queue.async {
             let timestamp = Date().timeIntervalSince1970
             let logMsg = """
@@ -30,6 +42,17 @@ final class BridgeAuditLogger {
               ErrDesc  : \(errorMessage ?? "none")
             """
             print(logMsg)
+
+            do {
+                try MiniAppDatabase.shared.write { db in
+                    try db.execute(sql: """
+                        INSERT INTO bridge_audit_logs (app_id, action, permission, success, error_code, error_message, created_at)
+                        VALUES (?, ?, ?, ?, ?, ?, ?)
+                    """, arguments: [appId, action, permission, success, errorCode, errorMessage, Date()])
+                }
+            } catch {
+                print("[BridgeAuditLogger] SQLite audit persistence failed: \(error.localizedDescription)")
+            }
         }
     }
 }

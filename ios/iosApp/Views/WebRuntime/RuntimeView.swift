@@ -8,6 +8,9 @@ struct RuntimeView: View {
 
     @State private var isExpanded = false
     @State private var dragPosition: CGPoint?
+    #if DEBUG
+    @State private var isShowingDiagnostics = false
+    #endif
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -40,11 +43,20 @@ struct RuntimeView: View {
                 }
             )
         }
+        #if DEBUG
+        .sheet(isPresented: $isShowingDiagnostics) {
+            RuntimeDiagnosticsView(snapshot: viewModel.diagnosticsSnapshot())
+        }
+        #endif
     }
 
     @ViewBuilder
     private var contentView: some View {
-        if let activeId = viewModel.activeTabId, let activeTab = viewModel.tabs.first(where: { $0.id == activeId }) {
+        if let runtimeError = viewModel.runtimeError {
+            RuntimeErrorBoundaryView(error: runtimeError) { action in
+                handleRuntimeAction(action)
+            }
+        } else if let activeId = viewModel.activeTabId, let activeTab = viewModel.tabs.first(where: { $0.id == activeId }) {
             ZStack {
                 if activeTab.status == .loading {
                     UniProgressView()
@@ -62,19 +74,10 @@ struct RuntimeView: View {
                 }
             }
         } else if let error = viewModel.errorMsg {
-            VStack(spacing: 16) {
-                Image(systemName: "exclamationmark.triangle.fill")
-                    .font(.system(size: 60))
-                    .uniForegroundStyle(.red)
-                Text("Error")
-                    .font(.title)
-                    .uniForegroundStyle(.white)
-                Text(error)
-                    .font(.body)
-                    .uniForegroundStyle(.white, opacity: 0.8)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 32)
-            }
+            RuntimeErrorBoundaryView(
+                error: .serverFailed(error),
+                onAction: handleRuntimeAction
+            )
         } else {
             UniProgressView()
                 .uniForegroundStyle(.white)
@@ -82,6 +85,22 @@ struct RuntimeView: View {
         }
     }
 
+    private func handleRuntimeAction(_ action: RuntimeShellAction) {
+        switch action {
+        case .retry:
+            viewModel.performRuntimeAction(action, manifest: manifest, bundlePath: bundlePath)
+        case .rollback:
+            viewModel.performRuntimeAction(action, manifest: manifest, bundlePath: bundlePath)
+        case .clearData:
+            viewModel.performRuntimeAction(action, manifest: manifest, bundlePath: bundlePath)
+        case .report:
+            viewModel.performRuntimeAction(action, manifest: manifest, bundlePath: bundlePath)
+        case .close:
+            dismiss()
+        }
+    }
+
+    @ViewBuilder
     private var assistiveTouchButton: some View {
         GeometryReader { geometry in
             ZStack {
@@ -107,7 +126,7 @@ struct RuntimeView: View {
                         .uniButtonStyle(.plain)
 
                         UniButton(action: {
-                            if let activeId = viewModel.activeTabId, 
+                            if let activeId = viewModel.activeTabId,
                                let activeTab = viewModel.tabs.first(where: { $0.id == activeId }) {
                                 Task {
                                     if let img = await activeTab.webView?.takeSnapshot() {
@@ -132,6 +151,20 @@ struct RuntimeView: View {
                                 .uniGlass(cornerRadius: 25)
                         }
                         .uniButtonStyle(.plain)
+
+                        #if DEBUG
+                        UniButton(action: {
+                            isShowingDiagnostics = true
+                            withAnimation { isExpanded = false }
+                        }) {
+                            Image(systemName: "stethoscope")
+                                .font(.title)
+                                .uniForegroundStyle(.primary)
+                                .frame(width: 50, height: 50)
+                                .uniGlass(cornerRadius: 25)
+                        }
+                        .uniButtonStyle(.plain)
+                        #endif
 
                         UniButton(action: {
                             dismiss()

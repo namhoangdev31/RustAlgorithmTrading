@@ -112,6 +112,11 @@ final class FileSystemHelper {
             
             if request.action == "fs.write" {
                 let content = request.payload["content"] as? String ?? ""
+                let additionalBytes = Int64(content.data(using: .utf8)?.count ?? 0)
+                if let quotaError = ResourceGovernor().validateFilesystemWrite(appId: appId, additionalBytes: additionalBytes) {
+                    return .failure(code: quotaError.code.rawValue, message: quotaError.message)
+                }
+
                 let targetDir = targetURL.deletingLastPathComponent()
                 try fileManager.createDirectory(at: targetDir, withIntermediateDirectories: true, attributes: nil)
                 try content.write(to: targetURL, atomically: true, encoding: .utf8)

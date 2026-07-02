@@ -3,12 +3,13 @@ import WasmKit
 import SystemPackage
 import CryptoKit
 
-class WasmExecutor {
+final class WasmExecutor: @unchecked Sendable {
     static let shared = WasmExecutor()
     
     private let engine = Engine()
     private lazy var store = Store(engine: engine)
     private var modules: [String: Module] = [:]
+    private let lock = NSLock()
     
     func execute(
         wasmPath: String,
@@ -16,6 +17,9 @@ class WasmExecutor {
         args: [Any],
         expectedHash: String? = nil
     ) throws -> [Any] {
+        lock.lock()
+        defer { lock.unlock() }
+
         // Verify SHA256 checksum if provided
         if let expectedHash = expectedHash {
             try verifySHA256(filePath: wasmPath, expectedHash: expectedHash)

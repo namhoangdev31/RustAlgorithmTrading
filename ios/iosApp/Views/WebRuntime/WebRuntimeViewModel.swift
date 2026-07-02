@@ -81,9 +81,12 @@ class WebRuntimeViewModel: ObservableObject {
     @Published var activeTabId: UUID?
     @Published var showTabSwitcher: Bool = false
     @Published var errorMsg: String?
+    @Published var runtimeError: RuntimeShellError?
     @Published var lruTabIds: [UUID] = []
-    
-    init() {
+    let kernel: RuntimeKernel
+
+    init(kernel: RuntimeKernel? = nil) {
+        self.kernel = kernel ?? RuntimeKernel()
         setupLifecycleObservers()
     }
     
@@ -128,38 +131,13 @@ class WebRuntimeViewModel: ObservableObject {
     
     @objc private func handleDidEnterBackground() {
         print("[ResourceManager] App entered background. Initiating background task protection.")
-        
-        // 1. Capture tabs IDs on main actor before entering background thread block
-        let keepTabIds = self.tabs.map { $0.id }
-        
-        // 2. Class wrapper to avoid mutating value after capture warnings in Sendable closures
-        class TaskRef: @unchecked Sendable {
-            var id: UIBackgroundTaskIdentifier = .invalid
-        }
-        let taskRef = TaskRef()
-        taskRef.id = UIApplication.shared.beginBackgroundTask(withName: "com.antigravity.superapp.stateflush") {
-            UIApplication.shared.endBackgroundTask(taskRef.id)
-        }
-        
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            guard let self = self else {
-                UIApplication.shared.endBackgroundTask(taskRef.id)
-                return
-            }
-            
-            DispatchQueue.main.sync {
-                if let activeId = self.activeTabId, let activeTab = self.tabs.first(where: { $0.id == activeId }) {
-                    self.pauseTab(activeTab)
-                }
-                self.saveTabsState()
-            }
-            
-            // Clean up old cached snapshots in documents/caches directory
-            TabSnapshotManager.shared.clearOrphanedSnapshots(keepTabIds: keepTabIds)
-            
-            print("[ResourceManager] State flush completed. Ending background task.")
-            UIApplication.shared.endBackgroundTask(taskRef.id)
-        }
+        let activeTab = activeTabId.flatMap { id in tabs.first(where: { $0.id == id }) }
+        kernel.lifecycleCoordinator.handleDidEnterBackground(
+            tabs: tabs,
+            activeTab: activeTab,
+            pauseActiveTab: { [weak self] tab in self?.pauseTab(tab) },
+            persistState: { [weak self] in self?.saveTabsState() }
+        )
     }
     
     @objc private func handleWillEnterForeground() {
@@ -171,14 +149,17 @@ class WebRuntimeViewModel: ObservableObject {
     
     @objc private func handleWillTerminate() {
         print("[ResourceManager] App will terminate. Cleaning up all servers and saving state.")
-        saveTabsState()
-        stopAll()
+        kernel.lifecycleCoordinator.handleWillTerminate(
+            tabs: tabs,
+            persistState: { [weak self] in self?.saveTabsState() },
+            stopAll: { [weak self] in self?.stopAll() }
+        )
     }
     
     // MARK: - Tab Operations
     
     func openBundle(manifest: WebRuntimeManifest, bundlePath: URL) {
-        MiniAppManager.shared.registerLaunch(appId: manifest.id, currentVersion: manifest.version) { [weak self] result in
+        kernel.prepareLaunch(manifest: manifest, bundlePath: bundlePath) { [weak self] result in
             guard let self = self else { return }
             DispatchQueue.main.async {
                 switch result {
@@ -186,6 +167,7 @@ class WebRuntimeViewModel: ObservableObject {
                     self.proceedWithOpenBundle(manifest: manifest, bundlePath: resolvedURL)
                 case .failure(let error):
                     print("[WebRuntime] Launch registration/rollback failed: \(error.localizedDescription)")
+                    self.setRuntimeError(.crashedVersion(error.localizedDescription))
                 }
             }
         }
@@ -206,6 +188,11 @@ class WebRuntimeViewModel: ObservableObject {
         }
         
         // 2. Initialize a new server (starts on random port due to port = 0 default)
+        guard kernel.resourceGovernor.canOpenTab(currentCount: tabs.count) else {
+            setRuntimeError(.quotaExceeded("Maximum tab count reached. Limit is \(kernel.limits.maxTabs)."))
+            return
+        }
+
         let server = iOSWebServer(basePath: bundlePath.path)
         
         let newTab = WebTab(
@@ -215,7 +202,7 @@ class WebRuntimeViewModel: ObservableObject {
             status: .loading
         )
         
-        ServerRegistry.shared.register(id: newTab.id, server: server)
+        kernel.serverRegistry.register(id: newTab.id, server: server)
         tabs.append(newTab)
         activateTab(id: newTab.id)
         saveTabsState()
@@ -261,7 +248,7 @@ class WebRuntimeViewModel: ObservableObject {
         } catch {
             print("[TabManager] Error activating tab: \(error.localizedDescription)")
             selected.status = .paused
-            errorMsg = error.localizedDescription
+            setRuntimeError(.serverFailed(error.localizedDescription))
         }
     }
     
@@ -291,7 +278,7 @@ class WebRuntimeViewModel: ObservableObject {
     
     func suspendTab(_ tab: WebTab) {
         guard tab.status == .paused else { return }
-        tab.webView = nil // destroy webview instance to save memory
+        kernel.webViewPool.destroyWebView(for: tab)
         tab.status = .suspended
     }
     
@@ -303,13 +290,9 @@ class WebRuntimeViewModel: ObservableObject {
         tab.webView?.stopLoading()
         
         // Remove script message handlers to prevent strong reference leaks
-        if let webView = tab.webView {
-            webView.configuration.userContentController.removeScriptMessageHandler(forName: "wasm")
-            webView.configuration.userContentController.removeScriptMessageHandler(forName: "plugin")
-        }
+        kernel.webViewPool.destroyWebView(for: tab)
         
-        ServerRegistry.shared.stop(id: id)
-        tab.webView = nil
+        kernel.serverRegistry.stop(id: id)
         
         tabs.remove(at: index)
         saveTabsState()
@@ -324,14 +307,9 @@ class WebRuntimeViewModel: ObservableObject {
     
     func stopAll() {
         for tab in tabs {
-            tab.webView?.stopLoading()
-            if let webView = tab.webView {
-                webView.configuration.userContentController.removeScriptMessageHandler(forName: "wasm")
-                webView.configuration.userContentController.removeScriptMessageHandler(forName: "plugin")
-            }
-            tab.webView = nil
+            kernel.webViewPool.destroyWebView(for: tab)
         }
-        ServerRegistry.shared.stopAll()
+        kernel.serverRegistry.stopAll()
         tabs.removeAll()
         activeTabId = nil
     }
@@ -359,6 +337,7 @@ class WebRuntimeViewModel: ObservableObject {
         do {
             let data = try JSONEncoder().encode(metadataList)
             try data.write(to: getTabsJSONURL())
+            kernel.stateStore.persistTabs(tabs, activeTabId: activeTabId)
             print("[TabManager] Saved tabs state successfully.")
         } catch {
             print("[TabManager] Failed to save tabs state: \(error.localizedDescription)")
@@ -390,7 +369,7 @@ class WebRuntimeViewModel: ObservableObject {
                     tab.lastVisitedURL = lastURL
                 }
                 
-                ServerRegistry.shared.register(id: tab.id, server: server)
+                kernel.serverRegistry.register(id: tab.id, server: server)
                 tabs.append(tab)
                 
                 if meta.status == "active" {
@@ -411,14 +390,9 @@ class WebRuntimeViewModel: ObservableObject {
     }
     
     private func makeWebView(for tab: WebTab) -> RuntimeWebView {
-        let webView = RuntimeWebView(
-            frame: .zero,
-            manifest: tab.manifest,
-            bundlePath: tab.bundlePath,
-            serverURL: tab.serverURL ?? URL(string: "http://localhost:8080")!,
-            tabId: tab.id
-        )
-        return webView
+        kernel.makeWebView(for: tab) { [weak self] error in
+            self?.setRuntimeError(error)
+        }
     }
     
     // MARK: - LRU Resource Budget
@@ -431,19 +405,67 @@ class WebRuntimeViewModel: ObservableObject {
     }
     
     private func enforceResourceBudget() {
-        let maxTabsLimit = 8
-        guard tabs.count > maxTabsLimit else { return }
-        
-        for lruId in lruTabIds {
-            if lruId != activeTabId,
-               let index = tabs.firstIndex(where: { $0.id == lruId }) {
-                let tab = tabs[index]
-                if tab.status == .paused {
-                    print("[TabManager] Evicting tab due to resource limit (LRU): \(tab.manifest.name)")
-                    suspendTab(tab)
-                    break
+        kernel.resourceGovernor.enforceTabBudget(
+            tabs: tabs,
+            activeTabId: activeTabId,
+            lruTabIds: lruTabIds,
+            suspendTab: { [weak self] tab in
+                print("[TabManager] Suspending tab due to resource limit (LRU): \(tab.manifest.name)")
+                self?.suspendTab(tab)
+            }
+        )
+    }
+
+    func diagnosticsSnapshot() -> RuntimeDiagnosticsSnapshot {
+        kernel.diagnosticsSnapshot(tabs: tabs, activeTabId: activeTabId, lastError: runtimeError)
+    }
+
+    func performRuntimeAction(_ action: RuntimeShellAction, manifest: WebRuntimeManifest, bundlePath: URL) {
+        switch action {
+        case .retry:
+            clearRuntimeError()
+            if let activeTabId {
+                activateTab(id: activeTabId)
+            } else {
+                openBundle(manifest: manifest, bundlePath: bundlePath)
+            }
+
+        case .rollback:
+            MiniAppManager.shared.rollback(appId: manifest.id, failedVersion: manifest.version) { [weak self] result in
+                DispatchQueue.main.async {
+                    guard let self = self else { return }
+                    switch result {
+                    case .success(let restoredURL):
+                        self.clearRuntimeError()
+                        self.stopAll()
+                        self.proceedWithOpenBundle(manifest: manifest, bundlePath: restoredURL)
+                    case .failure(let error):
+                        self.setRuntimeError(.crashedVersion(error.localizedDescription))
+                    }
                 }
             }
+
+        case .clearData:
+            TabSnapshotManager.shared.clearAll()
+            clearRuntimeError()
+
+        case .report:
+            if let runtimeError {
+                print("[RuntimeErrorReport] \(runtimeError.code.rawValue): \(runtimeError.message)")
+            }
+
+        case .close:
+            stopAll()
         }
+    }
+
+    func clearRuntimeError() {
+        runtimeError = nil
+        errorMsg = nil
+    }
+
+    private func setRuntimeError(_ error: RuntimeShellError) {
+        runtimeError = error
+        errorMsg = error.message
     }
 }

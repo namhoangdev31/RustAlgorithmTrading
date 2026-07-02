@@ -27,6 +27,11 @@ final class TabSnapshotManager {
     private func getFileURL(for tabId: UUID) -> URL {
         return getSnapshotDirectoryURL().appendingPathComponent("\(tabId.uuidString).jpg")
     }
+
+    func snapshotPath(for tabId: UUID) -> String? {
+        let fileURL = getFileURL(for: tabId)
+        return fileManager.fileExists(atPath: fileURL.path) ? fileURL.path : nil
+    }
     
     func saveSnapshot(_ image: UIImage, for tabId: UUID) {
         queue.async { [weak self] in
@@ -67,13 +72,58 @@ final class TabSnapshotManager {
             let dir = self.getSnapshotDirectoryURL()
             guard let files = try? self.fileManager.contentsOfDirectory(at: dir, includingPropertiesForKeys: nil) else { return }
             
-            let keepNames = keepTabIds.map { "\($0.uuidString.lowercased()).png" }
+            let keepNames = keepTabIds.map { "\($0.uuidString.lowercased()).jpg" }
             for file in files {
                 let filename = file.lastPathComponent.lowercased()
                 if !keepNames.contains(filename) {
                     try? self.fileManager.removeItem(at: file)
                     print("[TabSnapshotManager] Pruned orphaned snapshot: \(filename)")
                 }
+            }
+        }
+    }
+
+    func totalSnapshotBytes() -> Int64 {
+        let dir = getSnapshotDirectoryURL()
+        guard let files = try? fileManager.contentsOfDirectory(
+            at: dir,
+            includingPropertiesForKeys: [.fileSizeKey, .contentModificationDateKey]
+        ) else {
+            return 0
+        }
+
+        return files.reduce(Int64(0)) { total, file in
+            guard let values = try? file.resourceValues(forKeys: [.fileSizeKey]) else { return total }
+            return total + Int64(values.fileSize ?? 0)
+        }
+    }
+
+    func cleanupIfNeeded(maxBytes: Int64) {
+        queue.async { [weak self] in
+            guard let self = self else { return }
+            let dir = self.getSnapshotDirectoryURL()
+            guard var files = try? self.fileManager.contentsOfDirectory(
+                at: dir,
+                includingPropertiesForKeys: [.fileSizeKey, .contentModificationDateKey]
+            ) else { return }
+
+            var total = files.reduce(Int64(0)) { total, file in
+                guard let values = try? file.resourceValues(forKeys: [.fileSizeKey]) else { return total }
+                return total + Int64(values.fileSize ?? 0)
+            }
+            guard total > maxBytes else { return }
+
+            files.sort {
+                let lhs = (try? $0.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? .distantPast
+                let rhs = (try? $1.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? .distantPast
+                return lhs < rhs
+            }
+
+            for file in files where total > maxBytes {
+                let size = Int64((try? file.resourceValues(forKeys: [.fileSizeKey]).fileSize) ?? 0)
+                try? self.fileManager.removeItem(at: file)
+                total -= size
+                print("[TabSnapshotManager] LRU snapshot cleanup removed: \(file.lastPathComponent)")
             }
         }
     }

@@ -2,11 +2,56 @@ import Foundation
 import UIKit
 
 /// Descriptor defining a bridge plugin's action, permission requirements, and implementation handler
+struct BridgeRateLimitPolicy {
+    let windowSeconds: TimeInterval
+    let maxCalls: Int
+}
+
 struct PluginDescriptor {
-    let action: String
+    let id: String
+    let actions: [String]
     let permission: Permission?
     let policy: Policy
+    let requiresUserGesture: Bool
+    let rateLimit: BridgeRateLimitPolicy?
     let handler: (String, [String: Any], URL, @escaping (Result<[String: Any]?, Error>) -> Void) -> Void
+
+    var action: String { actions.first ?? id }
+
+    init(
+        action: String,
+        permission: Permission?,
+        policy: Policy,
+        requiresUserGesture: Bool = false,
+        rateLimit: BridgeRateLimitPolicy? = nil,
+        handler: @escaping (String, [String: Any], URL, @escaping (Result<[String: Any]?, Error>) -> Void) -> Void
+    ) {
+        self.id = action
+        self.actions = [action]
+        self.permission = permission
+        self.policy = policy
+        self.requiresUserGesture = requiresUserGesture
+        self.rateLimit = rateLimit
+        self.handler = handler
+    }
+
+    init(
+        id: String,
+        actions: [String],
+        permission: Permission?,
+        policy: Policy,
+        requiresUserGesture: Bool = false,
+        rateLimit: BridgeRateLimitPolicy? = nil,
+        handler: @escaping (String, [String: Any], URL, @escaping (Result<[String: Any]?, Error>) -> Void) -> Void
+    ) {
+        self.id = id
+        self.actions = actions
+        self.permission = permission
+        self.policy = policy
+        self.requiresUserGesture = requiresUserGesture
+        self.rateLimit = rateLimit
+        self.handler = handler
+    }
 }
 
 /// Dynamic Decoupled registry managing native plugin execution handlers and ACL policy mapping rules
@@ -24,7 +69,9 @@ final class PluginRegistry {
     func register(plugin: PluginDescriptor) {
         lock.lock()
         defer { lock.unlock() }
-        plugins[plugin.action] = plugin
+        for action in plugin.actions {
+            plugins[action] = plugin
+        }
     }
     
     /// Queries the permission rule for a given action and payload
@@ -43,6 +90,12 @@ final class PluginRegistry {
         
         guard let desc = plugins[action] else { return nil }
         return BridgePermissionRule(action: desc.action, permission: desc.permission, policy: desc.policy)
+    }
+
+    func getDescriptor(forAction action: String, payload: [String: Any]) -> PluginDescriptor? {
+        lock.lock()
+        defer { lock.unlock() }
+        return plugins[action]
     }
     
     /// Executes the registered plugin action handler asynchronously

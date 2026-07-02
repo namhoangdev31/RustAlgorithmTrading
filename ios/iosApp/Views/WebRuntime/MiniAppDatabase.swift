@@ -61,6 +61,58 @@ final class MiniAppDatabase {
                 t.column("updated_at", .datetime).defaults(to: Date())
             }
         }
+
+        migrator.registerMigration("phase4RuntimeState") { db in
+            try db.create(table: "runtime_sessions", ifNotExists: true) { t in
+                t.column("session_id", .text).primaryKey()
+                t.column("active_tab_id", .text)
+                t.column("updated_at", .datetime).notNull().defaults(to: Date())
+            }
+
+            try db.create(table: "webview_snapshots", ifNotExists: true) { t in
+                t.column("tab_id", .text).primaryKey()
+                t.column("app_id", .text).notNull()
+                t.column("snapshot_path", .text).notNull()
+                t.column("size_bytes", .integer).notNull().defaults(to: 0)
+                t.column("updated_at", .datetime).notNull().defaults(to: Date())
+            }
+
+            try db.create(table: "launch_attempts", ifNotExists: true) { t in
+                t.autoIncrementedPrimaryKey("id")
+                t.column("app_id", .text).notNull()
+                t.column("version", .text).notNull()
+                t.column("reason", .text)
+                t.column("created_at", .datetime).notNull().defaults(to: Date())
+            }
+
+            try db.create(table: "resource_usage", ifNotExists: true) { t in
+                t.autoIncrementedPrimaryKey("id")
+                t.column("app_id", .text).notNull()
+                t.column("metric", .text).notNull()
+                t.column("value", .integer).notNull()
+                t.column("created_at", .datetime).notNull().defaults(to: Date())
+            }
+
+            try db.create(table: "bridge_audit_logs", ifNotExists: true) { t in
+                t.autoIncrementedPrimaryKey("id")
+                t.column("app_id", .text).notNull()
+                t.column("action", .text).notNull()
+                t.column("permission", .text)
+                t.column("success", .boolean).notNull()
+                t.column("error_code", .text)
+                t.column("error_message", .text)
+                t.column("created_at", .datetime).notNull().defaults(to: Date())
+            }
+
+            try db.create(table: "pending_updates", ifNotExists: true) { t in
+                t.column("app_id", .text).notNull()
+                t.column("version", .text).notNull()
+                t.column("status", .text).notNull()
+                t.column("error_message", .text)
+                t.column("updated_at", .datetime).notNull().defaults(to: Date())
+                t.primaryKey(["app_id", "version"])
+            }
+        }
         
         return migrator
     }
