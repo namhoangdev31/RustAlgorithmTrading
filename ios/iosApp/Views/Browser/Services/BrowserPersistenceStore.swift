@@ -58,6 +58,37 @@ public final class BrowserPersistenceStore: ObservableObject {
         saveHistory()
     }
     
+    /// Vừa Xem: up to 8 most recent history items, unique by domain
+    public var recentlyViewed: [BrowserHistoryItem] {
+        var seenDomains = Set<String>()
+        var result: [BrowserHistoryItem] = []
+        for item in history {
+            guard let host = URL(string: item.url)?.host else { continue }
+            if seenDomains.insert(host).inserted {
+                result.append(item)
+            }
+            if result.count >= 8 { break }
+        }
+        return result
+    }
+    
+    /// Thường Xuyên: top 8 domains sorted by visit count
+    public var frequentlyVisited: [FrequentSite] {
+        var domainCounts: [String: (count: Int, title: String, url: String)] = [:]
+        for item in history {
+            guard let host = URL(string: item.url)?.host else { continue }
+            if let existing = domainCounts[host] {
+                domainCounts[host] = (existing.count + 1, existing.title, existing.url)
+            } else {
+                domainCounts[host] = (1, item.title, item.url)
+            }
+        }
+        return domainCounts
+            .sorted { $0.value.count > $1.value.count }
+            .prefix(8)
+            .map { FrequentSite(domain: $0.key, title: $0.value.title, url: $0.value.url, visitCount: $0.value.count) }
+    }
+    
     private func loadHistory() {
         guard fileManager.fileExists(atPath: historyFileURL.path) else { return }
         do {

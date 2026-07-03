@@ -819,6 +819,7 @@ All overloads:
 | `.uniKerning(_ amount:)` | Kerning |
 | `.uniItalic(_ active:)` | Italic toggle |
 | `.uniBold(_ active:)` | Bold toggle |
+| `.uniUnderline(_:pattern:color:)` | Underline style with pattern and color |
 
 **On `View`:**
 
@@ -830,6 +831,7 @@ All overloads:
 | `.uniItalic(_ active:)` | Italic toggle |
 | `.uniBold(_ active:)` | Bold toggle |
 | `.uniSemi(_ active:)` | Semibold weight |
+| `.uniUnderline(_:pattern:color:)` | Underline style with pattern and color |
 
 ---
 
@@ -930,6 +932,7 @@ All overloads:
 | `.uniNavigationBarBackButtonHidden(_ hidden:)` | Hide back button |
 | `.uniNavigationSubtitle(_ subtitle:)` | Navigation subtitle |
 | `.uniToolbar(removing:)` | Remove default toolbar items |
+| `.uniToolbarVisibility(_:for:)` | System toolbar visibility (navigationBar, tabBar) |
 
 ---
 

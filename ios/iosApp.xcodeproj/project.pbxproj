@@ -51,7 +51,7 @@
 
 /* Begin PBXFileReference section */
 		5A3374BE2F2C6B7E00DF2DF3 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
-		623E68E1EC5434D0E8A40C73 /* Leposapp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Leposapp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		623E68E1EC5434D0E8A40C73 /* LepoStar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LepoStar.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -155,7 +155,7 @@
 		E7798370575A2CFBE4CE7BEB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				623E68E1EC5434D0E8A40C73 /* Leposapp.app */,
+				623E68E1EC5434D0E8A40C73 /* LepoStar.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -221,7 +221,7 @@
 				5AA4988E2FF51B34006A3071 /* GRDB */,
 			);
 			productName = iosApp;
-			productReference = 623E68E1EC5434D0E8A40C73 /* Leposapp.app */;
+			productReference = 623E68E1EC5434D0E8A40C73 /* LepoStar.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */

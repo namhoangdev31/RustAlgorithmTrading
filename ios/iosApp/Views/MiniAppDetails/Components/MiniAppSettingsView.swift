@@ -307,7 +307,6 @@ private struct PermissionTwoTierRow: View {
                             Text("(Mở Cài đặt)")
                                 .font(.system(size: 10))
                                 .uniForegroundStyle(.blue)
-//                                .underline()
                         }
                         .uniButtonStyle(.plain)
                     }

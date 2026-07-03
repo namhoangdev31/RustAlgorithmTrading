@@ -81,3 +81,28 @@ public struct BrowserBookmark: Codable, Identifiable, Hashable {
         self.createdAt = createdAt
     }
 }
+
+// MARK: - Navigation Route
+
+public enum BrowserRoute: Hashable {
+    case search                    // Open with empty search bar focused
+    case url(String)               // Open and load a specific URL
+}
+
+// MARK: - Frequent Site (computed from history)
+
+public struct FrequentSite: Identifiable, Hashable {
+    public let id: String          // domain string
+    public let domain: String
+    public let title: String
+    public let url: String
+    public let visitCount: Int
+    
+    public init(domain: String, title: String, url: String, visitCount: Int) {
+        self.id = domain
+        self.domain = domain
+        self.title = title
+        self.url = url
+        self.visitCount = visitCount
+    }
+}

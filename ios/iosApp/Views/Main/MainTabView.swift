@@ -7,8 +7,8 @@ struct MainTabView: View {
 
     var body: some View {
         UniTabView(selection: $selection) {
-            UniTab("Today", systemImage: "sparkles", value: 0) {
-                HomeView()
+            UniTab("LepoStar", systemImage: "sparkles", value: 0) {
+                BrowserView(viewModel: container.makeBrowserViewModel(initialURL: nil, privateMode: false))
             }
 
             UniTab("Discovery", systemImage: "safari", value: 1) {
