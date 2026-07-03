@@ -31,7 +31,7 @@ struct RecommendedForYouView: View {
             }
             .padding(.horizontal)
 
-            ScrollView(.horizontal, showsIndicators: false) {
+            UniScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 16) {
                     ForEach(apps) { app in
                         AppRecommendationCard(app: app)
@@ -48,7 +48,7 @@ struct AppRecommendationCard: View {
 
     var body: some View {
         RoundedRectangle(cornerRadius: 20)
-            .fill(Color(.systemGray6))
+            .fill(Color.leposSurfaceContainerHigh)
             .overlay(
                 VStack(alignment: .leading) {
                     // Image Placeholder

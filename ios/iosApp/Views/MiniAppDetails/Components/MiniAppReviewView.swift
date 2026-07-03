@@ -27,7 +27,7 @@ struct MiniAppReviewView: View {
                 VStack(spacing: 0) {
                     Text("4.8")
                         .font(.system(size: 60, weight: .bold))
-                        .foregroundColor(.primary)
+                        .uniForegroundStyle(.primary)
                     Text("out of 5")
                         .font(.system(size: 15, weight: .bold))
                         .uniForegroundStyle(.secondary)
@@ -63,7 +63,7 @@ struct MiniAppReviewView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 10)
                 .background(Color.blue.opacity(0.1))
-                .cornerRadius(10)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
             }
             .uniButtonStyle(.plain)
 
@@ -81,7 +81,7 @@ struct MiniAppReviewView: View {
                 HStack(spacing: 2) {
                     ForEach(0..<5) { _ in
                         Image(systemName: "star.fill")
-                            .foregroundColor(.orange)
+                            .uniForegroundStyle(.orange)
                             .font(.system(size: 12))
                     }
                 }

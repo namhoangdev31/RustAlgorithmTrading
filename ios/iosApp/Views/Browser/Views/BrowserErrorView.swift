@@ -20,17 +20,17 @@ public struct BrowserErrorView: View {
         VStack(spacing: 20) {
             Image(systemName: errorIconName)
                 .font(.system(size: 64))
-                .foregroundColor(.red)
+                .uniForegroundStyle(.red)
                 .padding(.bottom, 10)
             
             Text("Không thể tải trang")
                 .font(.title2)
                 .fontWeight(.bold)
-                .foregroundColor(.primary)
+                .uniForegroundStyle(.primary)
             
             Text(error.localizedDescription)
                 .font(.body)
-                .foregroundColor(.secondary)
+                .uniForegroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 32)
             
@@ -41,11 +41,11 @@ public struct BrowserErrorView: View {
                         Text("Thử lại")
                     }
                     .font(.body.weight(.semibold))
-                    .foregroundColor(.white)
+                    .uniForegroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
                     .background(Color.blue)
-                    .cornerRadius(8)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
                 .uniButtonStyle(.plain)
                 .padding(.horizontal, 48)
@@ -55,11 +55,11 @@ public struct BrowserErrorView: View {
                         Image(systemName: "safari")
                         Text("Mở bằng Safari")
                     }
-                    .foregroundColor(.blue)
+                    .uniForegroundStyle(.blue)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
                     .background(Color.blue.opacity(0.1))
-                    .cornerRadius(8)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
                 .uniButtonStyle(.plain)
                 .padding(.horizontal, 48)
@@ -67,7 +67,7 @@ public struct BrowserErrorView: View {
             .padding(.top, 10)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(.systemBackground))
+        .background(Color.leposBackground)
     }
     
     private var errorIconName: String {

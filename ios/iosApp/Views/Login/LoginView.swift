@@ -13,7 +13,7 @@ struct LoginView: View {
     var body: some View {
         ZStack {
             // Background
-            Color.white.ignoresSafeArea()
+            Color.leposSurface.ignoresSafeArea()
 
             UniScrollView {
                 VStack(spacing: 30) {

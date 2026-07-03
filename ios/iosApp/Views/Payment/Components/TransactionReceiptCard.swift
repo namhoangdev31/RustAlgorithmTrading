@@ -30,7 +30,7 @@ struct TransactionReceiptCard: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
                         .background(Color.green.opacity(0.1))
-                        .cornerRadius(8)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
                 .uniButtonStyle(.plain)
             } else {
@@ -83,7 +83,7 @@ struct TransactionReceiptCard: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
                     .background(Color.red.opacity(0.05))
-                    .cornerRadius(8)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
                             .stroke(Color.red.opacity(0.1), lineWidth: 1)

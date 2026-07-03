@@ -12,7 +12,7 @@ struct CheckoutPaymentMethodView: View {
                 Text("PAYMENT METHOD")
                     .font(.caption)
                     .fontWeight(.bold)
-                    .foregroundColor(.secondary)
+                    .uniForegroundStyle(.secondary)
                 Spacer()
                 UniButton(action: {
                     navigation.navigate(to: .paymentMethods)
@@ -32,7 +32,7 @@ struct CheckoutPaymentMethodView: View {
                             Text("iOS")
                                 .font(.caption)
                                 .fontWeight(.bold)
-                                .foregroundColor(.cyan)
+                                .uniForegroundStyle(.cyan)
                             Spacer()
                             Text("Apple Pay")
                                 .font(.subheadline)
@@ -44,12 +44,12 @@ struct CheckoutPaymentMethodView: View {
                     CheckoutPaymentMethodCard(isSelected: false) {
                         VStack(alignment: .leading, spacing: 8) {
                             Image(systemName: "creditcard.fill")
-                                .foregroundColor(.gray)
+                                .uniForegroundStyle(.gray)
                             Spacer()
                             Text("VISA")
                                 .font(.caption)
                                 .fontWeight(.bold)
-                                .foregroundColor(.secondary)
+                                .uniForegroundStyle(.secondary)
                             Text("•••• 4242")
                                 .font(.caption)
                                 .fontWeight(.bold)
@@ -60,12 +60,12 @@ struct CheckoutPaymentMethodView: View {
                     CheckoutPaymentMethodCard(isSelected: false) {
                         VStack(alignment: .leading, spacing: 8) {
                             Image(systemName: "banknote.fill")
-                                .foregroundColor(.gray)
+                                .uniForegroundStyle(.gray)
                             Spacer()
                             Text("BANK")
                                 .font(.caption)
                                 .fontWeight(.bold)
-                                .foregroundColor(.secondary)
+                                .uniForegroundStyle(.secondary)
                             Text("$142.00")
                                 .font(.caption)
                                 .fontWeight(.bold)

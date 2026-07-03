@@ -51,16 +51,16 @@ struct FeaturedStoryView: View {
                             Text("GET")
                                 .font(.subheadline)
                                 .fontWeight(.bold)
-                                .foregroundColor(.black)
+                                .uniForegroundStyle(.black)
                                 .padding(.horizontal, 24)
                                 .padding(.vertical, 8)
-                                .background(Color.white)
+                                .background(Color.leposSurface)
                                 .clipShape(Capsule())
                         }
                     }
                     .padding(12)
                     .background(Color.black.opacity(0.3))
-                    .cornerRadius(16)
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
                 }
                 .padding(24)
             }

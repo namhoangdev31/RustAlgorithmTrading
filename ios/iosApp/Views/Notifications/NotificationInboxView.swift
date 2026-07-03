@@ -84,7 +84,7 @@ struct NotificationInboxView: View {
 }
 
 #Preview {
-    NavigationView {
+    UniNavigationStack {
         NotificationInboxView()
     }
 }

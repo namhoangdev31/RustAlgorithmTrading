@@ -57,9 +57,9 @@ struct DigitalWalletCardView: View {
                         }
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.white)
+                        .background(Color.leposSurface)
                         .uniForegroundStyle(.blue)
-                        .cornerRadius(15)
+                        .clipShape(RoundedRectangle(cornerRadius: 15))
                     }
                     .uniButtonStyle(.plain)
 

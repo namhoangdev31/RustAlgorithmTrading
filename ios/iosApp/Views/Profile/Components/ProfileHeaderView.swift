@@ -20,7 +20,7 @@ struct ProfileHeaderView: View {
                         .font(.title2)
                         .uniForegroundStyle(.primary)
                         .padding(8)
-                        .background(Color(.systemGray6))
+                        .background(Color.leposSurfaceContainerHigh)
                         .clipShape(Circle())
                 }
                 .uniButtonStyle(.plain)

@@ -87,8 +87,8 @@ struct SettingsGridView: View {
         }
         .padding(.horizontal)
         .uniAlert("Log Out", isPresented: $showLogoutAlert) {
-            Button("Cancel", role: .cancel) {}
-            Button("Log Out", role: .destructive) {
+            UniButton("Cancel", role: .cancel) {}
+            UniButton("Log Out", role: .destructive) {
                 // Reset login state
                 UserDefaults.standard.set(false, forKey: "isLoggedIn")
                 // Navigate to login if needed, though AppCoordinator usually handles root switch

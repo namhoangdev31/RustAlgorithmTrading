@@ -56,7 +56,7 @@ struct VersionHistoryView: View {
 }
 
 #Preview {
-    NavigationView {
+    UniNavigationStack {
         VersionHistoryView(appId: "preview")
     }
 }

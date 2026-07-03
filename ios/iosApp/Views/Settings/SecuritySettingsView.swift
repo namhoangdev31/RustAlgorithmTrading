@@ -21,7 +21,7 @@ struct SecuritySettingsView: View {
             }
 
             Section(header: Text("Activity")) {
-                Button(action: {
+                UniButton(action: {
                     navigation.navigate(to: .activity)
                 }) {
                     HStack {
@@ -55,7 +55,7 @@ struct SecuritySettingsView: View {
 }
 
 #Preview {
-    NavigationView {
+    UniNavigationStack {
         SecuritySettingsView()
     }
 }

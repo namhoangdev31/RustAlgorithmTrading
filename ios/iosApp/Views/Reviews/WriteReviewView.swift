@@ -12,7 +12,7 @@ struct WriteReviewView: View {
     @State private var isSubmitting: Bool = false
 
     var body: some View {
-        NavigationView {
+        UniNavigationStack {
             Form {
                 Section {
                     HStack {

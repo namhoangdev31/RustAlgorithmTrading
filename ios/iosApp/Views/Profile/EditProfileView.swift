@@ -20,7 +20,7 @@ struct EditProfileView: View {
                             .resizable()
                             .frame(width: 100, height: 100)
                             .uniForegroundStyle(.secondary)
-                            .background(Color(.systemGray6))
+                            .background(Color.leposSurfaceContainerHigh)
                             .clipShape(Circle())
 
                         UniButton("Change Photo") {

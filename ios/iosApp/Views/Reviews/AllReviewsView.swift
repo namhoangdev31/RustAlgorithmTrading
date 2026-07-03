@@ -50,7 +50,7 @@ struct AllReviewsView: View {
                 // Header / Summary (Optional, sticking to list for now)
 
                 // Sort control
-                Picker("Sort", selection: $sortOption) {
+                UniPicker("Sort", selection: $sortOption) {
                     Text("Most Recent").tag(0)
                     Text("Most Helpful").tag(1)
                     Text("Critical").tag(2)

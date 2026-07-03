@@ -47,7 +47,7 @@ struct SearchSuggestionsView: View {
                         .uniForegroundStyle(.secondary, opacity: 0.5)
                 }
                 .padding()
-                .background(Color(.systemBackground))
+                .background(Color.leposBackground)
 
                 UniDivider()
             }

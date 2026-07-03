@@ -27,24 +27,24 @@ struct RuntimeView: View {
                             .frame(width: 8, height: 8)
                         Text(recordingState.isMicrophoneActive ? "Mini App [\(manifest.name)] đang sử dụng Microphone..." : "Mini App [\(manifest.name)] đang sử dụng Camera...")
                             .font(.system(size: 12, weight: .bold))
-                            .foregroundColor(.white)
+                            .uniForegroundStyle(.white)
                         Spacer()
-                        Button(action: {
+                        UniButton(action: {
                             recordingState.stopAll()
                         }) {
                             Text("Dừng")
                                 .font(.system(size: 11, weight: .bold))
-                                .foregroundColor(.white)
+                                .uniForegroundStyle(.white)
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 4)
                                 .background(Color.red)
-                                .cornerRadius(4)
+                                .clipShape(RoundedRectangle(cornerRadius: 4))
                         }
                     }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
                     .background(Color.black.opacity(0.85))
-                    .cornerRadius(8)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
                     .padding(.top, 16)
                     .transition(.move(edge: .top).combined(with: .opacity))
                 }
@@ -53,7 +53,14 @@ struct RuntimeView: View {
             .padding(.horizontal, 16)
             .animation(.spring(), value: recordingState.isMicrophoneActive || recordingState.isCameraActive)
             
-            assistiveTouchButton
+            RuntimeAssistiveTouchButton(
+                isExpanded: $isExpanded,
+                dragPosition: $dragPosition,
+                onReload: reloadMiniApp,
+                onShowTabs: showTabSwitcher,
+                onShowDiagnostics: showDiagnostics,
+                onClose: closeRuntime
+            )
         }
         .onAppear {
             viewModel.openBundle(manifest: manifest, bundlePath: bundlePath)
@@ -106,7 +113,7 @@ struct RuntimeView: View {
                         UniProgressView()
                         Text("Recreating tab state...")
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .uniForegroundStyle(.gray)
                     }
                 }
             }
@@ -137,8 +144,64 @@ struct RuntimeView: View {
         }
     }
 
-    @ViewBuilder
-    private var assistiveTouchButton: some View {
+    private func reloadMiniApp() {
+        NotificationCenter.default.post(
+            name: NSNotification.Name("ReloadMiniApp"),
+            object: nil
+        )
+        withAnimation { isExpanded = false }
+    }
+
+    private func showTabSwitcher() {
+        guard let activeId = viewModel.activeTabId,
+              let activeTab = viewModel.tabs.first(where: { $0.id == activeId }) else {
+            withAnimation {
+                viewModel.showTabSwitcher = true
+                isExpanded = false
+            }
+            return
+        }
+
+        Task {
+            if let img = await activeTab.webView?.takeSnapshot() {
+                activeTab.snapshot = img
+            }
+            withAnimation {
+                viewModel.showTabSwitcher = true
+                isExpanded = false
+            }
+        }
+    }
+
+    private func showDiagnostics() {
+        isShowingDiagnostics = true
+        withAnimation { isExpanded = false }
+    }
+
+    private func closeRuntime() {
+        dismiss()
+        withAnimation { isExpanded = false }
+    }
+
+    private var orientationMask: UIInterfaceOrientationMask {
+        switch manifest.orientation.lowercased() {
+        case "landscape": return .landscape
+        case "portrait": return .portrait
+        default: return .all
+        }
+    }
+}
+
+private struct RuntimeAssistiveTouchButton: View {
+    @Binding var isExpanded: Bool
+    @Binding var dragPosition: CGPoint?
+
+    let onReload: () -> Void
+    let onShowTabs: () -> Void
+    let onShowDiagnostics: () -> Void
+    let onClose: () -> Void
+
+    var body: some View {
         GeometryReader { geometry in
             ZStack {
                 if isExpanded {
@@ -149,71 +212,27 @@ struct RuntimeView: View {
                         }
 
                     VStack(spacing: 20) {
-                        UniButton(action: {
-                            NotificationCenter.default.post(
-                                name: NSNotification.Name("ReloadMiniApp"), object: nil)
-                            withAnimation { isExpanded = false }
-                        }) {
-                            Image(systemName: "arrow.clockwise")
-                                .font(.title)
-                                .uniForegroundStyle(.primary)
-                                .frame(width: 50, height: 50)
-                                .uniGlass(cornerRadius: 25)
-                        }
-                        .uniButtonStyle(.plain)
+                        RuntimeAssistiveTouchAction(
+                            systemImage: "arrow.clockwise",
+                            action: onReload
+                        )
 
-                        UniButton(action: {
-                            if let activeId = viewModel.activeTabId,
-                               let activeTab = viewModel.tabs.first(where: { $0.id == activeId }) {
-                                Task {
-                                    if let img = await activeTab.webView?.takeSnapshot() {
-                                        activeTab.snapshot = img
-                                    }
-                                    withAnimation {
-                                        viewModel.showTabSwitcher = true
-                                        isExpanded = false
-                                    }
-                                }
-                            } else {
-                                withAnimation {
-                                    viewModel.showTabSwitcher = true
-                                    isExpanded = false
-                                }
-                            }
-                        }) {
-                            Image(systemName: "square.grid.2x2")
-                                .font(.title)
-                                .uniForegroundStyle(.primary)
-                                .frame(width: 50, height: 50)
-                                .uniGlass(cornerRadius: 25)
-                        }
-                        .uniButtonStyle(.plain)
+                        RuntimeAssistiveTouchAction(
+                            systemImage: "square.grid.2x2",
+                            action: onShowTabs
+                        )
 
                         #if DEBUG
-                        UniButton(action: {
-                            isShowingDiagnostics = true
-                            withAnimation { isExpanded = false }
-                        }) {
-                            Image(systemName: "stethoscope")
-                                .font(.title)
-                                .uniForegroundStyle(.primary)
-                                .frame(width: 50, height: 50)
-                                .uniGlass(cornerRadius: 25)
-                        }
-                        .uniButtonStyle(.plain)
+                        RuntimeAssistiveTouchAction(
+                            systemImage: "stethoscope",
+                            action: onShowDiagnostics
+                        )
                         #endif
 
-                        UniButton(action: {
-                            dismiss()
-                            withAnimation { isExpanded = false }
-                        }) {
-                            Image(systemName: "xmark")
-                                .font(.title)
-                                .uniForegroundStyle(.primary)
-                                .frame(width: 50, height: 50)
-                                .uniGlass(cornerRadius: 25)
-                        }
-                        .uniButtonStyle(.plain)
+                        RuntimeAssistiveTouchAction(
+                            systemImage: "xmark",
+                            action: onClose
+                        )
                     }
                     .padding()
                     .uniGlass(cornerRadius: 16)
@@ -260,13 +279,21 @@ struct RuntimeView: View {
             }
         }
     }
+}
 
-    private var orientationMask: UIInterfaceOrientationMask {
-        switch manifest.orientation.lowercased() {
-        case "landscape": return .landscape
-        case "portrait": return .portrait
-        default: return .all
+private struct RuntimeAssistiveTouchAction: View {
+    let systemImage: String
+    let action: () -> Void
+
+    var body: some View {
+        UniButton(action: action) {
+            Image(systemName: systemImage)
+                .font(.title)
+                .uniForegroundStyle(.primary)
+                .frame(width: 50, height: 50)
+                .uniGlass(cornerRadius: 25)
         }
+        .uniButtonStyle(.plain)
     }
 }
 

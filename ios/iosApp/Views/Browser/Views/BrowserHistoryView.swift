@@ -10,17 +10,17 @@ public struct BrowserHistoryView: View {
     }
     
     public var body: some View {
-        NavigationView {
-            List {
+        UniNavigationStack {
+            UniList {
                 if viewModel.persistenceStore.history.isEmpty {
                     VStack {
                         Spacer()
                         Image(systemName: "clock.badge.exclamationmark")
                             .font(.largeTitle)
-                            .foregroundColor(.gray)
+                            .uniForegroundStyle(.gray)
                         Text("Lịch sử trống")
                             .font(.headline)
-                            .foregroundColor(.gray)
+                            .uniForegroundStyle(.gray)
                         Spacer()
                     }
                     .frame(maxWidth: .infinity, minHeight: 200)
@@ -33,10 +33,10 @@ public struct BrowserHistoryView: View {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(item.title)
                                     .font(.headline)
-                                    .foregroundColor(.primary)
+                                    .uniForegroundStyle(.primary)
                                 Text(item.url)
                                     .font(.caption)
-                                    .foregroundColor(.secondary)
+                                    .uniForegroundStyle(.secondary)
                             }
                         }
                         .uniButtonStyle(.plain)
@@ -60,7 +60,7 @@ public struct BrowserHistoryView: View {
                             viewModel.persistenceStore.clearHistory()
                         }) {
                             Text("Xóa tất cả")
-                                .foregroundColor(.red)
+                                .uniForegroundStyle(.red)
                         }
                         .uniButtonStyle(.plain)
                     }

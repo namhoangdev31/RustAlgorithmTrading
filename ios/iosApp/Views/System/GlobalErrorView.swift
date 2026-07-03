@@ -28,14 +28,14 @@ struct GlobalErrorView: View {
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(Color.blue)
-                    .cornerRadius(12)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
             }
             .uniButtonStyle(.plain)
             .padding(.horizontal, 32)
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(UIColor.systemBackground))
+        .background(Color.leposBackground)
     }
 }
 

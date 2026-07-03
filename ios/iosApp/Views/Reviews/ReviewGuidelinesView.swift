@@ -76,7 +76,7 @@ struct GuidelineItem: View {
 }
 
 #Preview {
-    NavigationView {
+    UniNavigationStack {
         ReviewGuidelinesView()
     }
 }

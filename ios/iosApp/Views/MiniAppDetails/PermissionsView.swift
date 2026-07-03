@@ -20,10 +20,10 @@ struct PermissionsView: View {
             Section(header: Text("Optional Permissions")) {
                 HStack {
                     Image(systemName: "camera.fill")
-                        .foregroundColor(.white)
+                        .uniForegroundStyle(.white)
                         .frame(width: 28, height: 28)
                         .background(Color.gray)
-                        .cornerRadius(6)
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
 
                     Text("Camera")
                     Spacer()
@@ -33,10 +33,10 @@ struct PermissionsView: View {
 
                 HStack {
                     Image(systemName: "location.fill")
-                        .foregroundColor(.white)
+                        .uniForegroundStyle(.white)
                         .frame(width: 28, height: 28)
                         .background(Color.blue)
-                        .cornerRadius(6)
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
 
                     Text("Location")
                     Spacer()
@@ -46,10 +46,10 @@ struct PermissionsView: View {
 
                 HStack {
                     Image(systemName: "bell.fill")
-                        .foregroundColor(.white)
+                        .uniForegroundStyle(.white)
                         .frame(width: 28, height: 28)
                         .background(Color.red)
-                        .cornerRadius(6)
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
 
                     Text("Notifications")
                     Spacer()
@@ -64,7 +64,7 @@ struct PermissionsView: View {
 }
 
 #Preview {
-    NavigationView {
+    UniNavigationStack {
         PermissionsView(appId: "preview")
     }
 }

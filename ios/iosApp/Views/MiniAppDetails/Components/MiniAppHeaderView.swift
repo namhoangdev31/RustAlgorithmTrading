@@ -62,11 +62,11 @@ struct MiniAppHeaderView: View {
                                 .padding(.horizontal, 20)
                                 .padding(.vertical, 7)
                                 .background(Color.blue)
-                                .cornerRadius(50)
+                                .clipShape(RoundedRectangle(cornerRadius: 50))
                         }
                         .uniButtonStyle(.plain)
 
-                        // Uninstall Button (Action Menu Style)
+                        // Uninstall UniButton(Action Menu Style)
                         UniMenu {
                             UniButton(role: .cancel, action: onSettings) {
                                 Label("Settings", systemImage: "gear")
@@ -92,7 +92,7 @@ struct MiniAppHeaderView: View {
                                     .uniProgressTint(.white)
                                     .frame(width: 74, height: 30)
                                     .background(Color.blue)
-                                    .cornerRadius(15)
+                                    .clipShape(RoundedRectangle(cornerRadius: 15))
                             } else {
                                 HStack {
                                     Image(systemName: "icloud.and.arrow.down")  // Mock Icon
@@ -105,7 +105,7 @@ struct MiniAppHeaderView: View {
                                 }.padding(.horizontal, 20)
                                     .padding(.vertical, 7)
                                     .background(Color.blue)
-                                    .cornerRadius(50)
+                                    .clipShape(RoundedRectangle(cornerRadius: 50))
                             }
                         }
                         .uniButtonStyle(.plain)

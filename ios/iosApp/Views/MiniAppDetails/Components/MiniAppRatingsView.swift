@@ -49,27 +49,27 @@ struct InfoColumn: View {
                     ForEach(0..<4) { _ in
                         Image(systemName: "star.fill")
                             .font(.system(size: 10))
-                            .foregroundColor(.gray)
+                            .uniForegroundStyle(.gray)
                     }
                     Image(systemName: "star.leadinghalf.filled")
                         .font(.system(size: 10))
-                        .foregroundColor(.gray)
+                        .uniForegroundStyle(.gray)
                 }
 
                 Text("2.4K Ratings")
                     .font(.system(size: 11))
-                    .foregroundColor(.gray)
+                    .uniForegroundStyle(.gray)
                     .padding(.top, 2)
             } else {
                 Text(bottomText)
                     .font(.system(size: 12, weight: .bold))
-                    .foregroundColor(.gray.opacity(0.8))
+                    .uniForegroundStyle(.gray.opacity(0.8))
             }
 
             if let sub = subtitleText, sub != "RATINGS" {
                 Text(sub)
                     .font(.system(size: 11))
-                    .foregroundColor(.gray)
+                    .uniForegroundStyle(.gray)
             }
         }
         .frame(minWidth: 80)
@@ -109,13 +109,13 @@ struct MiniAppRatingsView: View {
                 VStack(spacing: 4) {
                     Text("4+")
                         .font(.system(size: 22, weight: .bold))
-                        .foregroundColor(.primary.opacity(0.6))
+                        .uniForegroundStyle(.primary.opacity(0.6))
                     Text("AGE")
                         .font(.system(size: 11, weight: .bold))
-                        .foregroundColor(.gray)
+                        .uniForegroundStyle(.gray)
                     Text("Years Old")
                         .font(.system(size: 11))
-                        .foregroundColor(.gray)
+                        .uniForegroundStyle(.gray)
                 }
                 .frame(minWidth: 100)
 
@@ -125,11 +125,11 @@ struct MiniAppRatingsView: View {
                 VStack(spacing: 4) {
                     Image(systemName: "folder.fill")  // Placeholder icon
                         .font(.system(size: 24))
-                        .foregroundColor(.primary.opacity(0.6))
+                        .uniForegroundStyle(.primary.opacity(0.6))
                         .padding(.bottom, 2)
                     Text("Productivity")
                         .font(.system(size: 11, weight: .bold))
-                        .foregroundColor(.gray)
+                        .uniForegroundStyle(.gray)
                 }
                 .frame(minWidth: 100)
 

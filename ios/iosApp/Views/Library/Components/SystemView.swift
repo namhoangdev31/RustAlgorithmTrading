@@ -7,38 +7,38 @@ struct SystemView: View {
                 Text("System")
                     .font(.headline)
                 Spacer()
-                Button("See All") { }
+                UniButton("See All") { }
                     .font(.caption)
-                    .foregroundColor(.blue)
+                    .uniForegroundStyle(.blue)
             }
             .padding(.horizontal)
             
             HStack(spacing: 16) {
-                Button(action: {}) {
+                UniButton(action: {}) {
                     HStack {
                         Image(systemName: "gearshape.fill")
                         Text("Settings")
                             .fontWeight(.bold)
                     }
-                    .foregroundColor(.black)
+                    .uniForegroundStyle(.black)
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color.white)
+                    .background(Color.leposSurface)
                     .clipShape(RoundedRectangle(cornerRadius: 20))
                     .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
                 }
                 
-                Button(action: {}) {
+                UniButton(action: {}) {
                     HStack {
                         Image(systemName: "plus.circle.fill")
-                            .foregroundColor(.gray)
+                            .uniForegroundStyle(.gray)
                         Text("Add New")
                             .fontWeight(.bold)
-                            .foregroundColor(.gray)
+                            .uniForegroundStyle(.gray)
                     }
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color.white)
+                    .background(Color.leposSurface)
                     .clipShape(RoundedRectangle(cornerRadius: 20))
                     .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
                 }

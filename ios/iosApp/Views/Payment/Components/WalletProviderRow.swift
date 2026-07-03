@@ -13,7 +13,7 @@ struct WalletProviderRow: View {
                 .font(.title2)
                 .uniForegroundStyle(iconColor)
                 .frame(width: 50, height: 50)
-                .background(Color.white)
+                .background(Color.leposSurface)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
 

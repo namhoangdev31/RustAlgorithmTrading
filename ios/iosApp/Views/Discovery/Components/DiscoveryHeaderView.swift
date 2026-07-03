@@ -25,7 +25,7 @@ struct DiscoveryHeaderView: View {
             UniButton(action: {}) {
                 Image(systemName: "ellipses.bubble")  // AI Chat Icon Placeholder
                     .font(.system(size: 22))
-                    .foregroundColor(.leposPrimary)
+                    .uniForegroundStyle(.leposPrimary)
             }
         }
         .padding(.horizontal)

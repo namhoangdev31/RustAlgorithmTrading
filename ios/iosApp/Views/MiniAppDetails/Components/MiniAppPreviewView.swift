@@ -18,7 +18,7 @@ struct MiniAppPreviewView: View {
                         ZStack {
                             RoundedRectangle(cornerRadius: 38)
                                 .stroke(Color.gray.opacity(0.3), lineWidth: 4)
-                                .background(Color.white)
+                                .background(Color.leposSurface)
                                 .clipShape(RoundedRectangle(cornerRadius: 38))
                                 .frame(width: 250, height: 500)
                                 .shadow(color: .black.opacity(0.05), radius: 10, x: 5, y: 5)

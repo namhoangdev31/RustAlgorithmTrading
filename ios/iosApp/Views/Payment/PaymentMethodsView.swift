@@ -57,8 +57,8 @@ struct PaymentMethodsView: View {
                                 Spacer()
                             }
                             .padding()
-                            .background(Color(.secondarySystemGroupedBackground))
-                            .cornerRadius(12)
+                            .background(Color.leposSurfaceContainer)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
                         }
                         .uniButtonStyle(.plain)
                     }

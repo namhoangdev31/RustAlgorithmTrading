@@ -41,7 +41,7 @@ struct MyReviewsView: View {
                                     .frame(width: 40, height: 40)
                                     .overlay(
                                         Text(String(review.appName.prefix(1)))
-                                            .foregroundColor(.white)
+                                            .uniForegroundStyle(.white)
                                             .fontWeight(.bold)
                                     )
 
@@ -73,7 +73,7 @@ struct MyReviewsView: View {
 
                             Text(review.comment)
                                 .font(.body)
-                                .foregroundColor(.primary)
+                                .uniForegroundStyle(.primary)
                                 .lineLimit(3)
                         }
                         .padding()

@@ -29,7 +29,7 @@ struct NotificationDetailView: View {
                             .frame(maxWidth: .infinity)
                             .padding()
                             .background(Color.blue)
-                            .cornerRadius(12)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
                     .uniButtonStyle(.plain)
                     .padding(.top, 24)
@@ -43,7 +43,7 @@ struct NotificationDetailView: View {
 }
 
 #Preview {
-    NavigationView {
+    UniNavigationStack {
         NotificationDetailView(
             notification: NotificationInboxView.NotificationItem(
                 title: "Test", message: "Test Message", time: "Now", isRead: false, type: "update"))

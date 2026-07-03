@@ -38,8 +38,8 @@ struct CategoryDetailView: View {
                             .padding(.leading, 92)
                     }
                 }
-                .background(Color(.secondarySystemGroupedBackground))
-                .cornerRadius(16)
+                .background(Color.leposSurfaceContainer)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
                 .padding(.horizontal)
             }
             .padding(.vertical)
@@ -58,12 +58,12 @@ struct CategoryDetailView: View {
                             .font(.title2)
                             .fontWeight(.bold)
                         Text("Handpicked for you")
-                            .foregroundColor(.secondary)
+                            .uniForegroundStyle(.secondary)
                     }
                     Spacer()
                     Image(systemName: "trophy.fill")
                         .font(.system(size: 40))
-                        .foregroundColor(.yellow)
+                        .uniForegroundStyle(.yellow)
                 }
                 .padding(24)
             )
@@ -80,7 +80,7 @@ struct CategoryDetailView: View {
                     .frame(width: 60, height: 60)
                     .overlay(
                         Text(String(app.name.prefix(1)))
-                            .foregroundColor(.white)
+                            .uniForegroundStyle(.white)
                             .font(.title2)
                             .fontWeight(.bold)
                     )
@@ -88,15 +88,15 @@ struct CategoryDetailView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(app.name)
                         .font(.headline)
-                        .foregroundColor(.primary)
+                        .uniForegroundStyle(.primary)
                     Text(app.developer)
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .uniForegroundStyle(.secondary)
                     HStack(spacing: 4) {
                         ForEach(0..<5) { index in
                             Image(systemName: "star.fill")
                                 .font(.caption2)
-                                .foregroundColor(
+                                .uniForegroundStyle(
                                     Double(index) < app.rating ? .orange : .gray.opacity(0.3))
                         }
                     }
@@ -108,10 +108,10 @@ struct CategoryDetailView: View {
                     Text("GET")
                         .font(.caption)
                         .fontWeight(.bold)
-                        .foregroundColor(.blue)
+                        .uniForegroundStyle(.blue)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 6)
-                        .background(Color(.secondarySystemBackground))
+                        .background(Color.leposSurfaceContainer)
                         .clipShape(Capsule())
                 }
             }

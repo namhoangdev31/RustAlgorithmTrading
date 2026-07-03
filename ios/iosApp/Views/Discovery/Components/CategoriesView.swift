@@ -31,7 +31,7 @@ struct CategoriesView: View {
                                 .uniForegroundStyle(.white)
                                 .padding(.horizontal, 10)
                                 .padding(.vertical, 5)
-                                .background(Color.white.opacity(0.3))
+                                .background(Color.leposSurface.opacity(0.3))
                                 .clipShape(Capsule())
                         }
                         .padding(20)

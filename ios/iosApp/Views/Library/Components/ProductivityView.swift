@@ -13,9 +13,9 @@ struct ProductivityView: View {
                 Text("Productivity")
                     .font(.headline)
                 Spacer()
-                Button("See All") { }
+                UniButton("See All") { }
                     .font(.caption)
-                    .foregroundColor(.blue)
+                    .uniForegroundStyle(.blue)
             }
             .padding(.horizontal)
             
@@ -28,7 +28,7 @@ struct ProductivityView: View {
                             .overlay(
                                 Image(systemName: app.1)
                                     .font(.title2)
-                                    .foregroundColor(app.2)
+                                    .uniForegroundStyle(app.2)
                             )
                         
                         VStack(alignment: .leading, spacing: 4) {
@@ -37,17 +37,17 @@ struct ProductivityView: View {
                                 .fontWeight(.bold)
                             Text(app.3)
                                 .font(.caption2)
-                                .foregroundColor(.gray)
+                                .uniForegroundStyle(.gray)
                         }
                         
                         Spacer()
                         
                         Image(systemName: "chevron.right")
                             .font(.caption)
-                            .foregroundColor(.gray.opacity(0.5))
+                            .uniForegroundStyle(.gray.opacity(0.5))
                     }
                     .padding()
-                    .background(Color.white) // Or appropriate background color
+                    .background(Color.leposSurface) // Or appropriate background color
                     .clipShape(RoundedRectangle(cornerRadius: 20))
                     .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
                     .padding(.horizontal)

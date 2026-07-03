@@ -38,7 +38,7 @@ struct DeveloperProfileView: View {
                         .overlay(
                             Image(systemName: "buidling.2.fill")  // Mock Logo
                                 .font(.largeTitle)
-                                .foregroundColor(.green)
+                                .uniForegroundStyle(.green)
                         )
 
                     VStack(alignment: .leading, spacing: 4) {
@@ -59,11 +59,11 @@ struct DeveloperProfileView: View {
                         Text("Follow")
                             .font(.subheadline)
                             .fontWeight(.bold)
-                            .foregroundColor(.white)
+                            .uniForegroundStyle(.white)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 8)
                             .background(Color.blue)
-                            .cornerRadius(20)
+                            .clipShape(RoundedRectangle(cornerRadius: 20))
                     }
                 }
                 .padding(.horizontal)
@@ -91,7 +91,7 @@ struct DeveloperProfileView: View {
                                 .overlay(
                                     Image(systemName: app.iconName)
                                         .font(.largeTitle)
-                                        .foregroundColor(.primary)
+                                        .uniForegroundStyle(.primary)
                                 )
 
                             Text(app.name)

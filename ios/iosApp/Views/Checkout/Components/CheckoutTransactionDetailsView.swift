@@ -12,7 +12,7 @@ struct CheckoutTransactionDetailsView: View {
             Text("TRANSACTION DETAILS")
                 .font(.caption)
                 .fontWeight(.bold)
-                .foregroundColor(.secondary)
+                .uniForegroundStyle(.secondary)
                 .padding(.bottom, 4)
 
             CheckoutDetailRow(label: "Subscription Subtotal", value: price)
@@ -20,8 +20,8 @@ struct CheckoutTransactionDetailsView: View {
             CheckoutDetailRow(label: "Estimated Tax", value: tax)
         }
         .padding(24)
-        .background(Color.white)
-        .cornerRadius(24)
+        .background(Color.leposSurface)
+        .clipShape(RoundedRectangle(cornerRadius: 24))
         .padding(.horizontal)
         .shadow(color: .black.opacity(0.03), radius: 10, x: 0, y: 5)
     }
@@ -34,7 +34,7 @@ struct CheckoutDetailRow: View {
     var body: some View {
         HStack {
             Text(label)
-                .foregroundColor(.secondary)
+                .uniForegroundStyle(.secondary)
             Spacer()
             UniText(value, format: .currency(code: "USD"))
                 .uniSemi()

@@ -50,7 +50,7 @@ struct MiniAppDetailsToolbar: ToolbarContent {
                     }
                     .uniButtonStyle(.plain)
                     .background(Color.blue)
-                    .cornerRadius(16)
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
                     .transition(.opacity.combined(with: .scale))
                 }
             }

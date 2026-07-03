@@ -23,8 +23,8 @@ struct CheckoutPayButton: View {
                     gradient: Gradient(colors: [Color.cyan, Color.blue]), startPoint: .leading,
                     endPoint: .trailing)
             )
-            .foregroundColor(.white)
-            .cornerRadius(16)
+            .uniForegroundStyle(.white)
+            .clipShape(RoundedRectangle(cornerRadius: 16))
             .shadow(color: .cyan.opacity(0.3), radius: 10, x: 0, y: 5)
         }
         .padding()

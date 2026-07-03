@@ -28,11 +28,11 @@ struct EmptyStateView: View {
                 UniButton(action: action) {
                     Text(buttonTitle)
                         .font(.headline)
-                        .foregroundColor(.white)
+                        .uniForegroundStyle(.white)
                         .padding()
                         .frame(maxWidth: .infinity)
                         .background(Color.blue)
-                        .cornerRadius(12)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
                 .padding(.top, 16)
                 .padding(.horizontal, 48)

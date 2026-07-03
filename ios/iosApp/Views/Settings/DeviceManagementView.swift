@@ -86,7 +86,7 @@ struct DeviceRow: View {
 }
 
 #Preview {
-    NavigationView {
+    UniNavigationStack {
         DeviceManagementView()
     }
 }

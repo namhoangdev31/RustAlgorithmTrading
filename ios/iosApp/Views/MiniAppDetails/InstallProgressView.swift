@@ -13,7 +13,7 @@ struct InstallProgressView: View {
             Rectangle()
                 .fill(Color.gray.opacity(0.2))
                 .frame(width: 80, height: 80)
-                .cornerRadius(16)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
                 .overlay(
                     Image(systemName: "app.dashed")
                         .font(.largeTitle)
@@ -56,7 +56,7 @@ struct InstallProgressView: View {
         }
         .padding(32)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(UIColor.systemBackground))
+        .background(Color.leposBackground)
         .onAppear {
             // Simulate progress
             withAnimation(.linear(duration: 2.0)) {

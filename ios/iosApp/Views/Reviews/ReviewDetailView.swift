@@ -63,7 +63,7 @@ struct ReviewDetailView: View {
                     .font(.body)
                     .padding()
                     .background(Color.gray.opacity(0.1))
-                    .cornerRadius(8)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
 
                 Divider()
@@ -107,7 +107,7 @@ struct ReviewDetailView: View {
 }
 
 #Preview {
-    NavigationView {
+    UniNavigationStack {
         ReviewDetailView(reviewId: "1")
     }
 }

@@ -77,10 +77,10 @@ struct SavedMethodRow: View {
         switch method {
         case .visa:
             Image(systemName: "creditcard.fill")
-                .foregroundColor(.blue)
+                .uniForegroundStyle(.blue)
         case .mastercard:
             Image(systemName: "creditcard.fill")
-                .foregroundColor(.red)
+                .uniForegroundStyle(.red)
         case .bank:
             Image(systemName: "building.columns.fill")
                 .uniForegroundStyle(.green)

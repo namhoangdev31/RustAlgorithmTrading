@@ -63,7 +63,7 @@ struct DownloadHistoryView: View {
                         .uniForegroundStyle(.blue)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
-                        .background(Color(.systemGray6))
+                        .background(Color.leposSurfaceContainerHigh)
                         .clipShape(Capsule())
                         .uniButtonStyle(.plain)
                     } else {

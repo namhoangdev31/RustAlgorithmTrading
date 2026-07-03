@@ -35,7 +35,7 @@ struct EditorChoiceDetailView: View {
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
                                     .frame(height: 24)
-                                    .foregroundColor(.orange)
+                                    .uniForegroundStyle(.orange)
                             )
 
                         VStack(alignment: .leading) {
@@ -53,11 +53,11 @@ struct EditorChoiceDetailView: View {
                             Text("NHẬN")
                                 .font(.subheadline)
                                 .fontWeight(.bold)
-                                .foregroundColor(.white)
+                                .uniForegroundStyle(.white)
                                 .padding(.horizontal, 20)
                                 .padding(.vertical, 8)
                                 .background(Color.blue)
-                                .cornerRadius(24)
+                                .clipShape(RoundedRectangle(cornerRadius: 24))
                         }
                     }
                     .padding(.vertical)

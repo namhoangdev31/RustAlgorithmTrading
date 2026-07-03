@@ -11,11 +11,11 @@ struct ReportReviewSheet: View {
     ]
 
     var body: some View {
-        NavigationView {
+        UniNavigationStack {
             UniList {
                 Section(header: Text("Why are you reporting this review?")) {
                     ForEach(reasons, id: \.self) { reason in
-                        Button(action: {
+                        UniButton(action: {
                             selectedReason = reason
                         }) {
                             HStack {
@@ -42,14 +42,14 @@ struct ReportReviewSheet: View {
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 8)
                             .background(Color.blue)
-                            .cornerRadius(8)
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
                     }
                     .uniButtonStyle(.plain)
                     .listRowBackground(Color.clear)
                     .listRowInsets(EdgeInsets())
                 }
             }
-            .listStyle(InsetGroupedListStyle())
+            .uniListStyle(.insetGrouped)
             .navigationTitle("Report Review")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

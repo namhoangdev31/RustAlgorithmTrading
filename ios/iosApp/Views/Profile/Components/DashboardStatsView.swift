@@ -21,7 +21,7 @@ struct DashboardStatsView: View {
                                 .fontWeight(.bold)
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 4)
-                                .background(Color.white.opacity(0.2))
+                                .background(Color.leposSurface.opacity(0.2))
                                 .clipShape(Capsule())
                         }
 
@@ -46,7 +46,7 @@ struct DashboardStatsView: View {
                             endPoint: .bottomTrailing
                         )
                     )
-                    .cornerRadius(24)
+                    .clipShape(RoundedRectangle(cornerRadius: 24))
                 }
                 .uniButtonStyle(.plain)
 
@@ -56,7 +56,7 @@ struct DashboardStatsView: View {
                         HStack(alignment: .top) {
                             Image(systemName: "star.fill")
                                 .padding(8)
-                                .background(Color.white.opacity(0.2))
+                                .background(Color.leposSurface.opacity(0.2))
                                 .clipShape(Circle())
                             Spacer()
                             Text("2.4k")
@@ -73,7 +73,7 @@ struct DashboardStatsView: View {
                     .padding(16)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background(Color(red: 1.0, green: 0.3, blue: 0.5))  // Pink
-                    .cornerRadius(24)
+                    .clipShape(RoundedRectangle(cornerRadius: 24))
 
                     // Membership Tier Card (Green)
                     VStack(alignment: .leading) {
@@ -96,7 +96,7 @@ struct DashboardStatsView: View {
                     .padding(16)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background(Color(red: 0.0, green: 0.7, blue: 0.5))  // Green
-                    .cornerRadius(24)
+                    .clipShape(RoundedRectangle(cornerRadius: 24))
                 }
                 .frame(minHeight: 160)
             }

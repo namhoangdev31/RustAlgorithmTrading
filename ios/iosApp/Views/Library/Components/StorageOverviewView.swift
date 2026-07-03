@@ -17,14 +17,14 @@ struct StorageOverviewView: View {
                 Spacer()
                 Text("\(String(format: "%.1f", usedStorage)) GB of \(String(format: "%.0f", totalStorage)) GB used")
                     .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .uniForegroundStyle(.secondary)
             }
             
             // Progress Bar
             GeometryReader { geometry in
                 ZStack(alignment: .leading) {
                     RoundedRectangle(cornerRadius: 6)
-                        .fill(Color(.secondarySystemBackground))
+                        .fill(Color.leposSurfaceContainer)
                         .frame(height: 12)
                     
                     HStack(spacing: 0) {
@@ -52,8 +52,8 @@ struct StorageOverviewView: View {
             }
         }
         .padding()
-        .background(Color(.systemBackground))
-        .cornerRadius(16)
+        .background(Color.leposBackground)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
         .padding(.horizontal)
     }
 }
@@ -69,7 +69,7 @@ struct LegendItem: View {
                 .frame(width: 8, height: 8)
             Text(label)
                 .font(.caption)
-                .foregroundColor(.secondary)
+                .uniForegroundStyle(.secondary)
         }
     }
 }

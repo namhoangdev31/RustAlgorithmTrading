@@ -52,7 +52,7 @@ struct ProfileView: View {
                         SettingsGridView()
                     }
                     .padding(.vertical, 32)
-                    .cornerRadius(32)
+                    .clipShape(RoundedRectangle(cornerRadius: 32))
                     .padding(.horizontal)
 
                     Text("BUILD 2.4.1 PREMIUM STABLE")

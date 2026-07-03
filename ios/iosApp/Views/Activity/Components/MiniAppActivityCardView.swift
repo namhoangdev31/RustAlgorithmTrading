@@ -17,18 +17,18 @@ struct MiniAppActivityCardView: View {
                 .frame(width: 48, height: 48)
                 .overlay(
                     Image(systemName: "cube.box.fill")  // Placeholder icon
-                        .foregroundColor(.white)
+                        .uniForegroundStyle(.white)
                 )
 
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
                     Text(appName)
                         .font(.headline)
-                        .foregroundColor(.primary)
+                        .uniForegroundStyle(.primary)
 
                     Text(timeAgo)
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .uniForegroundStyle(.gray)
 
                     Spacer()
 
@@ -41,7 +41,7 @@ struct MiniAppActivityCardView: View {
 
                 Text(description)
                     .font(.subheadline)
-                    .foregroundColor(.gray)
+                    .uniForegroundStyle(.gray)
                     .lineLimit(2)
                     .fixedSize(horizontal: false, vertical: true)
             }
@@ -56,12 +56,12 @@ struct MiniAppActivityCardView: View {
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
                     .background(Color.blue.opacity(0.1))
-                    .cornerRadius(12)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
             }
         }
         .padding()
-        .background(Color.white)
-        .cornerRadius(16)
+        .background(Color.leposSurface)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
         .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
         .padding(.horizontal)
     }

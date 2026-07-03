@@ -11,14 +11,14 @@ struct AppStorageView: View {
                     Text("App Size")
                     Spacer()
                     Text("48.5 MB")
-                        .foregroundColor(.secondary)
+                        .uniForegroundStyle(.secondary)
                 }
 
                 HStack {
                     Text("Documents & Data")
                     Spacer()
                     Text("12.4 MB")
-                        .foregroundColor(.secondary)
+                        .uniForegroundStyle(.secondary)
                 }
 
                 HStack {
@@ -58,7 +58,7 @@ struct AppStorageView: View {
 }
 
 #Preview {
-    NavigationView {
+    UniNavigationStack {
         AppStorageView(appId: "preview")
     }
 }

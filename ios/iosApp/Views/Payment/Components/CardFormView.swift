@@ -21,8 +21,8 @@ struct CardFormView: View {
                     .uniForegroundStyle(.secondary)
                 TextField("Name", text: $cardName)
                     .padding()
-                    .background(Color.white)
-                    .cornerRadius(16)
+                    .background(Color.leposSurface)
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
                     .font(.system(size: 16, weight: .medium))
             }
 
@@ -37,8 +37,8 @@ struct CardFormView: View {
                         .uniForegroundStyle(.secondary)
                 }
                 .padding()
-                .background(Color.white)
-                .cornerRadius(16)
+                .background(Color.leposSurface)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
             }
 
             HStack(spacing: 16) {
@@ -49,8 +49,8 @@ struct CardFormView: View {
                         .uniForegroundStyle(.secondary)
                     TextField("MM/YY", text: $expiryDate)
                         .padding()
-                        .background(Color.white)
-                        .cornerRadius(16)
+                        .background(Color.leposSurface)
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
                         .multilineTextAlignment(.center)
                 }
 
@@ -66,8 +66,8 @@ struct CardFormView: View {
                             .font(.caption)
                     }
                     .padding()
-                    .background(Color.white)
-                    .cornerRadius(16)
+                    .background(Color.leposSurface)
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
                 }
             }
         }

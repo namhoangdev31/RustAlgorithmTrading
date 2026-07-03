@@ -15,10 +15,10 @@ struct FilterSheetView: View {
     ]
 
     var body: some View {
-        NavigationView {
+        UniNavigationStack {
             Form {
                 Section(header: Text("Sort By")) {
-                    Picker("Sort By", selection: $selectedSort) {
+                    UniPicker("Sort By", selection: $selectedSort) {
                         ForEach(sortOptions, id: \.self) { option in
                             Text(option).tag(option)
                         }
@@ -27,7 +27,7 @@ struct FilterSheetView: View {
                 }
 
                 Section(header: Text("Price")) {
-                    Picker("Price", selection: $selectedPrice) {
+                    UniPicker("Price", selection: $selectedPrice) {
                         ForEach(priceOptions, id: \.self) { option in
                             Text(option).tag(option)
                         }
@@ -36,7 +36,7 @@ struct FilterSheetView: View {
                 }
 
                 Section(header: Text("Category")) {
-                    Picker("Category", selection: $selectedCategory) {
+                    UniPicker("Category", selection: $selectedCategory) {
                         ForEach(categoryOptions, id: \.self) { option in
                             Text(option).tag(option)
                         }

@@ -49,17 +49,17 @@ struct CategoryBrowseView: View {
                                 .overlay(
                                     Image(systemName: category.iconName)
                                         .font(.title2)
-                                        .foregroundColor(category.color)
+                                        .uniForegroundStyle(category.color)
                                 )
 
                             Text(category.name)
                                 .font(.headline)
-                                .foregroundColor(.primary)
+                                .uniForegroundStyle(.primary)
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 24)
-                        .background(Color(.secondarySystemBackground))
-                        .cornerRadius(16)
+                        .background(Color.leposSurfaceContainer)
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
                     }
                 }
             }

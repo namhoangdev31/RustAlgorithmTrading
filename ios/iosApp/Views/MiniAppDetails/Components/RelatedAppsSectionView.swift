@@ -46,7 +46,7 @@ struct RelatedAppsSectionView: View {
                                     .padding(.horizontal, 16)
                                     .padding(.vertical, 6)
                                     .background(Color.blue.opacity(0.1))
-                                    .cornerRadius(12)
+                                    .clipShape(RoundedRectangle(cornerRadius: 12))
                             }
                             .uniButtonStyle(.plain)
                         }

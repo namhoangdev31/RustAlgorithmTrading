@@ -53,10 +53,10 @@ struct LoginButtonView: View {
             .frame(maxWidth: .infinity)
             .frame(height: 50)
             .background(Color.blue)
-            .cornerRadius(12)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
-                    .stroke(Color.white.opacity(0.3), lineWidth: 1)
+                    .stroke(Color.leposSurface.opacity(0.3), lineWidth: 1)
             )
         }
         .disabled(isLoading)

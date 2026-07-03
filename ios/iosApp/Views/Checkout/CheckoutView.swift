@@ -42,7 +42,7 @@ struct CheckoutView: View {
                         "By clicking \"Pay Now\" you agree to our Terms of Service and Privacy Policy. Subscription auto-renews monthly."
                     )
                     .font(.caption2)
-                    .foregroundColor(.secondary)
+                    .uniForegroundStyle(.secondary)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 40)
                     .padding(.bottom, 100)

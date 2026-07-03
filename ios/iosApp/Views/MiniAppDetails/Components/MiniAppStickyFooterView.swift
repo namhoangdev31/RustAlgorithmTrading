@@ -13,7 +13,7 @@ struct MiniAppStickyFooterView: View {
                 .padding(8)
                 .background(Color.blue.opacity(0.1))
                 .frame(width: 40, height: 40)
-                .cornerRadius(8)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("EcoTrack Pro")
@@ -34,7 +34,7 @@ struct MiniAppStickyFooterView: View {
                         .padding(.horizontal, 20)
                         .padding(.vertical, 8)
                         .background(Color.blue)
-                        .cornerRadius(20)
+                        .clipShape(RoundedRectangle(cornerRadius: 20))
                 }
                 .uniButtonStyle(.plain)
             } else {
@@ -45,7 +45,7 @@ struct MiniAppStickyFooterView: View {
                         .padding(.horizontal, 20)
                         .padding(.vertical, 8)
                         .background(Color.blue)
-                        .cornerRadius(20)
+                        .clipShape(RoundedRectangle(cornerRadius: 20))
                 }
                 .uniButtonStyle(.plain)
             }

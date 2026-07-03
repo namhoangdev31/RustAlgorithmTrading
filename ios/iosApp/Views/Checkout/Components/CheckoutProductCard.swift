@@ -20,14 +20,14 @@ struct CheckoutProductCard: View {
                 .overlay(
                     Image(systemName: "icloud.fill")
                         .font(.system(size: 40))
-                        .foregroundColor(.white)
+                        .uniForegroundStyle(.white)
                 )
                 .shadow(color: .teal.opacity(0.3), radius: 10, x: 0, y: 5)
 
             Text("ORDER SUMMARY")
                 .font(.caption)
                 .fontWeight(.bold)
-                .foregroundColor(.cyan)
+                .uniForegroundStyle(.cyan)
                 .padding(.top, 8)
 
             Text(appName)
@@ -36,7 +36,7 @@ struct CheckoutProductCard: View {
 
             Text(appDeveloper)
                 .font(.subheadline)
-                .foregroundColor(.secondary)
+                .uniForegroundStyle(.secondary)
 
             UniText(price, format: .currency(code: "USD"))
                 .font(.system(size: 40, weight: .medium, design: .rounded))
@@ -44,8 +44,8 @@ struct CheckoutProductCard: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 32)
-        .background(Color.white)
-        .cornerRadius(24)
+        .background(Color.leposSurface)
+        .clipShape(RoundedRectangle(cornerRadius: 24))
         .padding(.horizontal)
         .shadow(color: .black.opacity(0.03), radius: 10, x: 0, y: 5)
     }

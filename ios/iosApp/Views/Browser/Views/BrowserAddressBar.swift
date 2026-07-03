@@ -13,7 +13,7 @@ public struct BrowserAddressBar: View {
         HStack(spacing: 8) {
             // Secure connection icon
             Image(systemName: isSecureURL ? "lock.fill" : "lock.slash.fill")
-                .foregroundColor(isSecureURL ? .green : .gray)
+                .uniForegroundStyle(isSecureURL ? .green : .gray)
                 .font(.system(size: 14))
                 .padding(.leading, 8)
             
@@ -34,7 +34,7 @@ public struct BrowserAddressBar: View {
                     viewModel.urlInputText = ""
                 }) {
                     Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(.gray)
+                        .uniForegroundStyle(.gray)
                         .font(.system(size: 16))
                 }
                 .uniButtonStyle(.plain)
@@ -46,7 +46,7 @@ public struct BrowserAddressBar: View {
                             activeTab.stopLoading()
                         }) {
                             Image(systemName: "xmark")
-                                .foregroundColor(.primary)
+                                .uniForegroundStyle(.primary)
                                 .font(.system(size: 15, weight: .bold))
                         }
                         .uniButtonStyle(.plain)
@@ -55,7 +55,7 @@ public struct BrowserAddressBar: View {
                             activeTab.reload()
                         }) {
                             Image(systemName: "arrow.clockwise")
-                                .foregroundColor(.primary)
+                                .uniForegroundStyle(.primary)
                                 .font(.system(size: 15, weight: .bold))
                         }
                         .uniButtonStyle(.plain)
@@ -65,8 +65,8 @@ public struct BrowserAddressBar: View {
         }
         .padding(.vertical, 8)
         .padding(.horizontal, 6)
-        .background(Color(.systemBackground).opacity(0.8))
-        .cornerRadius(10)
+        .background(Color.leposBackground.opacity(0.8))
+        .clipShape(RoundedRectangle(cornerRadius: 10))
         .overlay(
             RoundedRectangle(cornerRadius: 10)
                 .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)

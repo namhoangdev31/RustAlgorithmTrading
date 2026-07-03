@@ -34,7 +34,7 @@ struct TabSwitcher: View {
     }
     
     var body: some View {
-        NavigationView {
+        UniNavigationStack {
             ZStack {
                 // Sleek dark-mode background with ambient radial glow
                 Color(red: 0.05, green: 0.05, blue: 0.08)
@@ -55,7 +55,7 @@ struct TabSwitcher: View {
                         .padding(.top, 10)
                         
                     // Scrollable Grid of Tabs
-                    ScrollView {
+                    UniScrollView {
                         LazyVGrid(columns: columns, spacing: 20) {
                             ForEach(filteredTabs) { tab in
                                 TabCardView(
@@ -142,27 +142,27 @@ struct SearchBarView: View {
     var body: some View {
         HStack {
             Image(systemName: "magnifyingglass")
-                .foregroundColor(.secondary)
+                .uniForegroundStyle(.secondary)
             
             TextField("Search Tabs or Web Addresses", text: $text)
-                .foregroundColor(.primary)
+                .uniForegroundStyle(.primary)
                 .disableAutocorrection(true)
                 .textInputAutocapitalization(.never)
             
             if !text.isEmpty {
-                Button(action: { text = "" }) {
+                UniButton(action: { text = "" }) {
                     Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(.secondary)
+                        .uniForegroundStyle(.secondary)
                 }
             }
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 10)
-        .background(Color.white.opacity(0.08))
-        .cornerRadius(12)
+        .background(Color.leposSurface.opacity(0.08))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                .stroke(Color.leposSurface.opacity(0.1), lineWidth: 1)
         )
     }
 }
@@ -184,7 +184,7 @@ struct TabCardView: View {
                 // Favicon Placeholder
                 Image(systemName: "globe")
                     .font(.system(size: 11))
-                    .foregroundColor(.blue)
+                    .uniForegroundStyle(.blue)
                     .frame(width: 20, height: 20)
                     .background(Color.blue.opacity(0.15))
                     .clipShape(Circle())
@@ -192,24 +192,24 @@ struct TabCardView: View {
                 Text(tab.title)
                     .font(.system(size: 12, weight: .semibold))
                     .lineLimit(1)
-                    .foregroundColor(.white)
+                    .uniForegroundStyle(.white)
                 
                 Spacer()
                 
                 // Close button
-                Button(action: onClose) {
+                UniButton(action: onClose) {
                     Image(systemName: "xmark")
                         .font(.system(size: 10, weight: .bold))
-                        .foregroundColor(.white.opacity(0.6))
+                        .uniForegroundStyle(.white.opacity(0.6))
                         .frame(width: 20, height: 20)
-                        .background(Color.white.opacity(0.15))
+                        .background(Color.leposSurface.opacity(0.15))
                         .clipShape(Circle())
                 }
-                .buttonStyle(.plain)
+                .uniButtonStyle(.plain)
             }
             .padding(.horizontal, 10)
             .padding(.vertical, 8)
-            .background(Color.white.opacity(0.05))
+            .background(Color.leposSurface.opacity(0.05))
             
             // Snapshot Preview area
             ZStack {
@@ -223,11 +223,11 @@ struct TabCardView: View {
                     VStack(spacing: 8) {
                         Image(systemName: "safari")
                             .font(.system(size: 32, weight: .thin))
-                            .foregroundColor(.white.opacity(0.3))
+                            .uniForegroundStyle(.white.opacity(0.3))
                         
                         Text(tab.url?.host ?? "Local Runtime")
                             .font(.system(size: 10))
-                            .foregroundColor(.white.opacity(0.4))
+                            .uniForegroundStyle(.white.opacity(0.4))
                             .lineLimit(1)
                     }
                 }
@@ -237,14 +237,14 @@ struct TabCardView: View {
             .background(Color(red: 0.1, green: 0.1, blue: 0.13))
             .clipped()
         }
-        .cornerRadius(16)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
         // Highlighting active tab with premium gradient border
         .overlay(
             RoundedRectangle(cornerRadius: 16)
                 .stroke(
                     isSelected 
                     ? AnyShapeStyle(LinearGradient(colors: [.blue, .purple], startPoint: .topLeading, endPoint: .bottomTrailing))
-                    : AnyShapeStyle(Color.white.opacity(0.15)),
+                    : AnyShapeStyle(Color.leposSurface.opacity(0.15)),
                     lineWidth: isSelected ? 3 : 1
                 )
         )
@@ -285,36 +285,36 @@ struct BottomToolbarView: View {
     var body: some View {
         VStack(spacing: 0) {
             Divider()
-                .background(Color.white.opacity(0.15))
+                .background(Color.leposSurface.opacity(0.15))
             
             HStack {
                 // Add Tab Button
-                Button(action: onAddTab) {
+                UniButton(action: onAddTab) {
                     Image(systemName: "plus")
                         .font(.title2)
-                        .foregroundColor(.blue)
+                        .uniForegroundStyle(.blue)
                         .frame(width: 44, height: 44)
                 }
-                .buttonStyle(.plain)
+                .uniButtonStyle(.plain)
                 
                 Spacer()
                 
                 // Tab count title
                 Text(tabCount == 1 ? "1 Tab" : "\(tabCount) Tabs")
                     .font(.system(size: 13, weight: .semibold))
-                    .foregroundColor(.white.opacity(0.8))
+                    .uniForegroundStyle(.white.opacity(0.8))
                 
                 Spacer()
                 
                 // Done Button
-                Button(action: onDone) {
+                UniButton(action: onDone) {
                     Text("Done")
                         .font(.system(size: 16, weight: .bold))
-                        .foregroundColor(.blue)
+                        .uniForegroundStyle(.blue)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
                 }
-                .buttonStyle(.plain)
+                .uniButtonStyle(.plain)
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 8)

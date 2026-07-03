@@ -27,8 +27,8 @@ struct HomeHeaderView: View {
             Image(systemName: "person.crop.circle.fill")  // Avatar placeholder
                 .resizable()
                 .frame(width: 40, height: 40)
-                .foregroundColor(.gray)
-                .background(Color(.systemGray6))
+                .uniForegroundStyle(.gray)
+                .background(Color.leposSurfaceContainerHigh)
                 .clipShape(Circle())
         }
         .padding(.horizontal)

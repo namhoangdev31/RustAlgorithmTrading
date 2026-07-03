@@ -60,7 +60,7 @@ struct TopCollectionsView: View {
                                 Text("CURATED")
                                     .font(.caption2)
                                     .fontWeight(.bold)
-                                    .foregroundColor(.blue)
+                                    .uniForegroundStyle(.blue)
                                     .padding(.top, 8)
 
                                 Text(item.title)

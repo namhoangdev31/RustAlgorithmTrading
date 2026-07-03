@@ -49,7 +49,7 @@ struct CollectionDetailView: View {
                                 .frame(width: 48, height: 48)
                                 .overlay(
                                     Image(systemName: item.iconName)
-                                        .foregroundColor(.white)
+                                        .uniForegroundStyle(.white)
                                         .font(.title3)
                                 )
 
@@ -59,10 +59,10 @@ struct CollectionDetailView: View {
                                 Text("GET")
                                     .font(.caption)
                                     .fontWeight(.bold)
-                                    .foregroundColor(.blue)
+                                    .uniForegroundStyle(.blue)
                                     .padding(.horizontal, 12)
                                     .padding(.vertical, 6)
-                                    .background(Color(.systemGray6))
+                                    .background(Color.leposSurfaceContainerHigh)
                                     .clipShape(Capsule())
                             }
                             .uniButtonStyle(.plain)
@@ -81,7 +81,7 @@ struct CollectionDetailView: View {
                                 ForEach(0..<5) { index in
                                     Image(systemName: "star.fill")
                                         .font(.caption2)
-                                        .foregroundColor(
+                                        .uniForegroundStyle(
                                             Double(index) < item.rating
                                                 ? .orange : .gray.opacity(0.3))
                                 }

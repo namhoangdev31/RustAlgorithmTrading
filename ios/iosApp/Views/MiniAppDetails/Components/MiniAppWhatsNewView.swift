@@ -45,6 +45,6 @@ struct MiniAppWhatsNewView: View {
             .padding(.top, -5)
         }
         .padding()
-        .background(Color(UIColor.secondarySystemBackground).opacity(0.3))  // Subtle background if desired, or plain
+        .background(Color.leposSurfaceContainer.opacity(0.3))  // Subtle background if desired, or plain
     }
 }

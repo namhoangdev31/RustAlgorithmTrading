@@ -45,7 +45,7 @@ struct AddCardView: View {
                                 .padding()
                                 .background(Color(red: 20 / 255, green: 40 / 255, blue: 50 / 255))
                                 .uniForegroundStyle(.white)
-                                .cornerRadius(16)
+                                .clipShape(RoundedRectangle(cornerRadius: 16))
                         }
                         .uniButtonStyle(.plain)
                         .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 5)
@@ -61,7 +61,7 @@ struct AddCardView: View {
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
                         .background(Color.gray.opacity(0.1))
-                        .cornerRadius(8)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
 
                         Text(
                             "Your data is protected by bank-level 256-bit encryption.\nWe never store your full card number on our servers."
@@ -74,7 +74,7 @@ struct AddCardView: View {
                     .padding(20)
                     .background(
                         LinearGradient(
-                            gradient: Gradient(colors: [Color.clear, Color(.systemBackground)]),
+                            gradient: Gradient(colors: [Color.clear, Color.leposBackground]),
                             startPoint: .top, endPoint: .bottom
                         )
                         .padding(.top, -40)

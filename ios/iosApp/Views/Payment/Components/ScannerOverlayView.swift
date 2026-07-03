@@ -26,18 +26,18 @@ struct ScannerOverlayView: View {
                 Text("ALIGN CARD WITH FRAME")
                     .font(.caption2)
                     .fontWeight(.bold)
-                    .foregroundColor(.white.opacity(0.6))
+                    .uniForegroundStyle(.white.opacity(0.6))
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
                     .background(Color.black.opacity(0.3))
-                    .cornerRadius(12)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
                     .offset(y: 60)
             }
             .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 5)
             
             // Action Buttons
             VStack(spacing: 12) {
-                Button(action: onScan) {
+                UniButton(action: onScan) {
                     HStack {
                         Image(systemName: "camera.fill")
                         Text("Scan Card")
@@ -46,19 +46,19 @@ struct ScannerOverlayView: View {
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(Color.cyan)
-                    .foregroundColor(.white)
-                    .cornerRadius(16)
+                    .uniForegroundStyle(.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
                     .shadow(color: .cyan.opacity(0.3), radius: 10, x: 0, y: 5)
                 }
                 
-                Button(action: onEnterManually) {
+                UniButton(action: onEnterManually) {
                     Text("Enter Manually")
                         .fontWeight(.medium)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.white)
-                        .foregroundColor(.primary)
-                        .cornerRadius(16)
+                        .background(Color.leposSurface)
+                        .uniForegroundStyle(.primary)
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
                         .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
                 }
             }

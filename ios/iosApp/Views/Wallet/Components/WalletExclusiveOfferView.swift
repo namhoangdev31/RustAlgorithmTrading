@@ -28,7 +28,7 @@ struct WalletExclusiveOfferView: View {
                             .uniForegroundStyle(.black)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 8)
-                            .background(Color.white)
+                            .background(Color.leposSurface)
                             .clipShape(Capsule())
                     }
                     .uniButtonStyle(.plain)
@@ -39,7 +39,7 @@ struct WalletExclusiveOfferView: View {
 
                 Image(systemName: "banknote")
                     .font(.system(size: 60))
-                    .foregroundColor(.white.opacity(0.1))
+                    .uniForegroundStyle(.white.opacity(0.1))
                     .offset(x: 20, y: 20)
             }
             .padding(24)

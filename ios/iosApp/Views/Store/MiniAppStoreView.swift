@@ -14,7 +14,7 @@ struct MiniAppStoreView: View {
     }
 
     var body: some View {
-        NavigationView {
+        UniNavigationStack {
             ZStack {
                 if viewModel.isLoading && viewModel.bundles.isEmpty {
                     UniProgressView()
@@ -51,7 +51,7 @@ struct MiniAppStoreView: View {
                                             .padding(.horizontal, 12)
                                             .padding(.vertical, 6)
                                             .background(Color.blue.opacity(0.1))
-                                            .cornerRadius(12)
+                                            .clipShape(RoundedRectangle(cornerRadius: 12))
                                     }
                                     .uniButtonStyle(.plain)
                                 }
@@ -70,7 +70,7 @@ struct MiniAppStoreView: View {
                             .padding()
                             .background(Color.red.opacity(0.8))
                             .uniForegroundStyle(.white)
-                            .cornerRadius(8)
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
                             .padding()
                     }
                 }

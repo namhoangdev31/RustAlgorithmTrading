@@ -17,7 +17,7 @@ public struct BrowserToolbarView: View {
             }) {
                 Image(systemName: "chevron.backward")
                     .font(.title3)
-                    .foregroundColor(canGoBack ? .primary : .gray.opacity(0.4))
+                    .uniForegroundStyle(canGoBack ? .primary : .gray.opacity(0.4))
             }
             .uniButtonStyle(.plain)
             .disabled(!canGoBack)
@@ -30,7 +30,7 @@ public struct BrowserToolbarView: View {
             }) {
                 Image(systemName: "chevron.forward")
                     .font(.title3)
-                    .foregroundColor(canGoForward ? .primary : .gray.opacity(0.4))
+                    .uniForegroundStyle(canGoForward ? .primary : .gray.opacity(0.4))
             }
             .uniButtonStyle(.plain)
             .disabled(!canGoForward)
@@ -50,20 +50,20 @@ public struct BrowserToolbarView: View {
             Spacer()
             
             // Bookmark Action
-            Menu {
-                Button(action: {
+            UniMenu {
+                UniButton(action: {
                     viewModel.addCurrentToBookmarks()
                 }) {
                     Label("Thêm dấu trang", systemImage: "bookmark")
                 }
                 
-                Button(action: {
+                UniButton(action: {
                     viewModel.showBookmarksList = true
                 }) {
                     Label("Danh sách dấu trang", systemImage: "book")
                 }
                 
-                Button(action: {
+                UniButton(action: {
                     viewModel.showHistoryList = true
                 }) {
                     Label("Lịch sử duyệt web", systemImage: "clock")
@@ -92,7 +92,7 @@ public struct BrowserToolbarView: View {
         }
         .padding(.horizontal, 24)
         .padding(.vertical, 12)
-        .background(Color(.systemBackground))
+        .background(Color.leposBackground)
         .sheet(isPresented: $isShowingShareSheet) {
             if let activeTab = viewModel.activeTab, let url = activeTab.currentURL {
                 BrowserShareSheet(url: url, title: activeTab.title)

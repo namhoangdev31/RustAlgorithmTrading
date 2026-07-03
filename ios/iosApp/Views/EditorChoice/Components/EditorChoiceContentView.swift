@@ -19,7 +19,7 @@ struct EditorChoiceContentView: View {
                     .frame(width: 48, height: 48)
                     .overlay(
                         Image(systemName: "flame.fill")
-                            .foregroundColor(.orange)
+                            .uniForegroundStyle(.orange)
                     )
 
                 VStack(alignment: .leading) {
@@ -37,11 +37,11 @@ struct EditorChoiceContentView: View {
                     Text("NHẬN")
                         .font(.subheadline)
                         .fontWeight(.bold)
-                        .foregroundColor(.white)
+                        .uniForegroundStyle(.white)
                         .padding(.horizontal, 20)
                         .padding(.vertical, 8)
                         .background(Color.blue)
-                        .cornerRadius(20)
+                        .clipShape(RoundedRectangle(cornerRadius: 20))
                 }
             }
             .padding()
@@ -68,7 +68,7 @@ struct EditorChoiceContentView: View {
 
             // Screenshot / Image
             RoundedRectangle(cornerRadius: 20)
-                .fill(Color(.systemGray6))
+                .fill(Color.leposSurfaceContainerHigh)
                 .frame(height: 220)
                 .overlay(
                     Image(systemName: "gamecontroller.fill")

@@ -87,4 +87,5 @@ Never open files "to explore."
 ### UI Development
 
 1. **ExploreSwiftUI mandatory**: When creating or modifying UI views, you MUST import and use `ExploreSwiftUI` components (e.g., `UniButton`, `UniScrollView`, `.uniGlass`, `.uniButtonStyle`) instead of native SwiftUI equivalents.
+2. **DESIGN.md compliance mandatory**: When developing or updating UI, you MUST read and strictly adhere to the design system, style tokens, and layout guidelines defined in [DESIGN.md](file:///Users/hoangnam/Developer/RustAlgorithmTrading/ios/DESIGN.md).
 

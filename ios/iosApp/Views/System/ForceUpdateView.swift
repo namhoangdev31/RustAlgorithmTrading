@@ -30,7 +30,7 @@ struct ForceUpdateView: View {
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(Color.blue)
-                    .cornerRadius(12)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
             }
             .uniButtonStyle(.plain)
             .padding(.horizontal, 32)
@@ -38,7 +38,7 @@ struct ForceUpdateView: View {
         .padding()
         .uniInteractiveDismissDisabled()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(UIColor.systemBackground))
+        .background(Color.leposBackground)
     }
 }
 

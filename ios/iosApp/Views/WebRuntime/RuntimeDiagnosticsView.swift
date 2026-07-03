@@ -23,13 +23,13 @@ struct RuntimeErrorBoundaryView: View {
 
             HStack(spacing: 12) {
                 ForEach(error.actions, id: \.rawValue) { action in
-                    Button(action: { onAction(action) }) {
+                    UniButton(action: { onAction(action) }) {
                         Text(label(for: action))
                             .font(.subheadline.weight(.semibold))
                             .padding(.horizontal, 14)
                             .padding(.vertical, 10)
                     }
-                    .buttonStyle(.borderedProminent)
+                    .uniButtonStyle(.borderedProminent)
                 }
             }
         }
@@ -53,8 +53,8 @@ struct RuntimeDiagnosticsView: View {
     let snapshot: RuntimeDiagnosticsSnapshot
 
     var body: some View {
-        NavigationView {
-            List {
+        UniNavigationStack {
+            UniList {
                 Section("Runtime") {
                     row("Generated", snapshot.generatedAt.formatted())
                     row("Active Tab", snapshot.activeTabId?.uuidString ?? "none")
@@ -84,13 +84,13 @@ struct RuntimeDiagnosticsView: View {
                                 .font(.headline)
                             Text("\(tab.appId) · \(String(describing: tab.status))")
                                 .font(.caption)
-                                .foregroundStyle(.secondary)
+                                .uniForegroundStyle(.secondary)
                             Text(tab.serverURL?.absoluteString ?? "server: none")
                                 .font(.caption2)
-                                .foregroundStyle(.secondary)
+                                .uniForegroundStyle(.secondary)
                             Text(tab.hasWebView ? "webview: retained" : "webview: released")
                                 .font(.caption2)
-                                .foregroundStyle(.secondary)
+                                .uniForegroundStyle(.secondary)
                         }
                         .padding(.vertical, 4)
                     }
@@ -105,7 +105,7 @@ struct RuntimeDiagnosticsView: View {
             Text(title)
             Spacer()
             Text(value)
-                .foregroundStyle(.secondary)
+                .uniForegroundStyle(.secondary)
                 .multilineTextAlignment(.trailing)
         }
     }

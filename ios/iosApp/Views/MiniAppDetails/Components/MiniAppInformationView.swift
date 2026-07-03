@@ -53,7 +53,7 @@ struct InfoRow: View {
             } else {
                 Text(value)
                     .font(.body)
-                    .foregroundColor(.primary)
+                    .uniForegroundStyle(.primary)
             }
         }
         .padding(.vertical, 12)

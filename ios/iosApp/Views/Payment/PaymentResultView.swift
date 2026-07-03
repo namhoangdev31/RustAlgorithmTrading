@@ -56,7 +56,7 @@ struct PaymentResultView: View {
                                 .frame(maxWidth: .infinity)
                                 .padding()
                                 .background(type == .success ? Color.green : Color.black)
-                                .cornerRadius(32)
+                                .clipShape(RoundedRectangle(cornerRadius: 32))
                         }
                         .uniButtonStyle(.plain)
 
@@ -68,8 +68,8 @@ struct PaymentResultView: View {
                                 .uniForegroundStyle(.primary)
                                 .frame(maxWidth: .infinity)
                                 .padding()
-                                .background(Color.white)
-                                .cornerRadius(32)
+                                .background(Color.leposSurface)
+                                .clipShape(RoundedRectangle(cornerRadius: 32))
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 32)
                                         .stroke(Color.gray.opacity(0.2), lineWidth: 1)

@@ -6,7 +6,7 @@ struct PaymentResultAnimationView: View {
     var body: some View {
         ZStack {
             Circle()
-                .fill(Color.white)
+                .fill(Color.leposSurface)
                 .frame(width: 120, height: 120)
                 .shadow(color: type == .success ? .green.opacity(0.3) : .red.opacity(0.3), radius: 20, x: 0, y: 10)
             
@@ -16,7 +16,7 @@ struct PaymentResultAnimationView: View {
             
             Image(systemName: type == .success ? "checkmark" : "xmark")
                 .font(.system(size: 40, weight: .bold))
-                .foregroundColor(.white)
+                .uniForegroundStyle(.white)
         }
         .padding(.top, 40)
     }

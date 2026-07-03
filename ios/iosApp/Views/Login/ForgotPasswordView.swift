@@ -85,7 +85,7 @@ struct ForgotPasswordView: View {
                     .frame(maxWidth: .infinity)
                     .frame(height: 54)
                     .background(email.isEmpty ? Color.gray : Color.blue)
-                    .cornerRadius(12)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
                     .disabled(email.isEmpty || isLoading)
                 }
             }

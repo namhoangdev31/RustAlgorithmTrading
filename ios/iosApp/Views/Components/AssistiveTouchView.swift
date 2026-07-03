@@ -27,7 +27,7 @@ struct AssistiveTouchView: View {
                         }) {
                             Image(systemName: "star.fill")
                                 .font(.title)
-                                .foregroundColor(.primary)
+                                .uniForegroundStyle(.primary)
                                 .frame(width: 50, height: 50)
                                 .uniGlass(cornerRadius: 25)
                         }
@@ -40,7 +40,7 @@ struct AssistiveTouchView: View {
                         }) {
                             Image(systemName: "bell.fill")
                                 .font(.title)
-                                .foregroundColor(.primary)
+                                .uniForegroundStyle(.primary)
                                 .frame(width: 50, height: 50)
                                 .uniGlass(cornerRadius: 25)
                         }
@@ -53,7 +53,7 @@ struct AssistiveTouchView: View {
                         }) {
                             Image(systemName: "xmark")
                                 .font(.title)
-                                .foregroundColor(.primary)
+                                .uniForegroundStyle(.primary)
                                 .frame(width: 50, height: 50)
                                 .uniGlass(cornerRadius: 25)
                         }
@@ -73,7 +73,7 @@ struct AssistiveTouchView: View {
                     }) {
                         Image(systemName: "circle.grid.3x3.fill")
                             .font(.system(size: 24))
-                            .foregroundColor(.primary)
+                            .uniForegroundStyle(.primary)
                             .frame(width: 60, height: 60)
                     }
                     .uniGlass(cornerRadius: 100)

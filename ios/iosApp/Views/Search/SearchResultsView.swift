@@ -70,7 +70,7 @@ struct SearchResultsView: View {
                                     .uniForegroundStyle(.blue)
                                     .padding(.horizontal, 12)
                                     .padding(.vertical, 6)
-                                    .background(Color(.systemGray6))
+                                    .background(Color.leposSurfaceContainerHigh)
                                     .clipShape(Capsule())
                             }
                             .uniButtonStyle(.plain)
@@ -79,7 +79,7 @@ struct SearchResultsView: View {
                         VStack(alignment: .leading, spacing: 4) {
                             Text(item.name)
                                 .font(.system(size: 16, weight: .semibold))
-                                .foregroundColor(.primary)
+                                .uniForegroundStyle(.primary)
 
                             Text(item.category)
                                 .font(.caption)

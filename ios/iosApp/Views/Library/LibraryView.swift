@@ -23,14 +23,14 @@ struct LibraryView: View {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text("Updates Available")
                                     .font(.headline)
-                                    .foregroundColor(.primary)
+                                    .uniForegroundStyle(.primary)
                                 Text("4 pending updates")
                                     .font(.caption)
-                                    .foregroundColor(.red)
+                                    .uniForegroundStyle(.red)
                             }
                             Spacer()
                             Image(systemName: "chevron.right")
-                                .foregroundColor(.gray)
+                                .uniForegroundStyle(.gray)
                         }
                         .padding()
                         .uniGlass(cornerRadius: 12)

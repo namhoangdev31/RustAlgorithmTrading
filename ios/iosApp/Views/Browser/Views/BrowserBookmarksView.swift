@@ -10,17 +10,17 @@ public struct BrowserBookmarksView: View {
     }
     
     public var body: some View {
-        NavigationView {
-            List {
+        UniNavigationStack {
+            UniList {
                 if viewModel.persistenceStore.bookmarks.isEmpty {
                     VStack {
                         Spacer()
                         Image(systemName: "bookmark.slash")
                             .font(.largeTitle)
-                            .foregroundColor(.gray)
+                            .uniForegroundStyle(.gray)
                         Text("Không có dấu trang")
                             .font(.headline)
-                            .foregroundColor(.gray)
+                            .uniForegroundStyle(.gray)
                         Spacer()
                     }
                     .frame(maxWidth: .infinity, minHeight: 200)
@@ -33,10 +33,10 @@ public struct BrowserBookmarksView: View {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(bookmark.title)
                                     .font(.headline)
-                                    .foregroundColor(.primary)
+                                    .uniForegroundStyle(.primary)
                                 Text(bookmark.url)
                                     .font(.caption)
-                                    .foregroundColor(.secondary)
+                                    .uniForegroundStyle(.secondary)
                             }
                         }
                         .uniButtonStyle(.plain)
@@ -66,7 +66,7 @@ public struct BrowserBookmarksView: View {
                             viewModel.persistenceStore.clearBookmarks()
                         }) {
                             Text("Xóa tất cả")
-                                .foregroundColor(.red)
+                                .uniForegroundStyle(.red)
                         }
                         .uniButtonStyle(.plain)
                     }

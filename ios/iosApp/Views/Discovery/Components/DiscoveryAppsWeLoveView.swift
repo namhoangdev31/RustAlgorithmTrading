@@ -71,11 +71,11 @@ struct DiscoveryAppsWeLoveView: View {
                                 Text(item.tag)
                                     .font(.caption2)
                                     .fontWeight(.bold)
-                                    .foregroundColor(.blue)
+                                    .uniForegroundStyle(.blue)
                                     .padding(.horizontal, 8)
                                     .padding(.vertical, 4)
                                     .background(item.tagColor)
-                                    .cornerRadius(4)
+                                    .clipShape(RoundedRectangle(cornerRadius: 4))
 
                                 Spacer()
 
@@ -83,7 +83,7 @@ struct DiscoveryAppsWeLoveView: View {
                                     Text("GET")
                                         .font(.caption)
                                         .fontWeight(.bold)
-                                        .foregroundColor(.white)
+                                        .uniForegroundStyle(.white)
                                         .padding(.horizontal, 20)
                                         .padding(.vertical, 6)
                                         .background(Color.blue)
@@ -93,8 +93,8 @@ struct DiscoveryAppsWeLoveView: View {
                         }
                         .padding(16)
                         .frame(width: 300, height: 180)
-                        .background(Color(.systemGray6))
-                        .cornerRadius(20)
+                        .background(Color.leposSurfaceContainerHigh)
+                        .clipShape(RoundedRectangle(cornerRadius: 20))
                     }
                 }
                 .padding(.horizontal)

@@ -31,7 +31,7 @@ struct DeleteAccountView: View {
             }
             .padding()
             .background(Color.gray.opacity(0.1))
-            .cornerRadius(12)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
             .padding(.horizontal)
 
             Spacer()
@@ -45,7 +45,7 @@ struct DeleteAccountView: View {
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(Color.red)
-                    .cornerRadius(12)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
             }
             .uniButtonStyle(.plain)
             .padding(.horizontal, 32)
@@ -54,11 +54,11 @@ struct DeleteAccountView: View {
         .navigationTitle("Delete Account")
         .navigationBarTitleDisplayMode(.inline)
         .uniAlert("Final Confirmation", isPresented: $showConfirmation) {
-            Button("Delete Forever", role: .destructive) {
+            UniButton("Delete Forever", role: .destructive) {
                 // Actual delete logic here
                 presentationMode.wrappedValue.dismiss()
             }
-            Button("Cancel", role: .cancel) {}
+            UniButton("Cancel", role: .cancel) {}
         } message: {
             Text("This is strictly permanent. Are you absolutely sure?")
         }
@@ -83,7 +83,7 @@ struct BulletPoint: View {
 }
 
 #Preview {
-    NavigationView {
+    UniNavigationStack {
         DeleteAccountView()
     }
 }

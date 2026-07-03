@@ -72,10 +72,10 @@ struct MiniAppDetailsView: View {
             MiniAppSettingsView(appId: viewModel.appId)
         }
         .uniConfirmationDialog("Are you sure you want to remove EcoTrack Pro?", isPresented: $showUninstallConfirmation) {
-            Button("Remove App", role: .destructive) {
+            UniButton("Remove App", role: .destructive) {
                 viewModel.uninstallApp()
             }
-            Button("Cancel", role: .cancel) {}
+            UniButton("Cancel", role: .cancel) {}
         } message: {
             Text("Removing this app will delete all its data and settings.")
         }

@@ -36,8 +36,8 @@ struct DiscoveryView: View {
                             .uniForegroundStyle(.secondary)
                     }
                     .padding()
-                    .background(Color(.secondarySystemBackground))
-                    .cornerRadius(12)
+                    .background(Color.leposSurfaceContainer)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
                     .padding(.horizontal)
                 }
                 .uniButtonStyle(.plain)

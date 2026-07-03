@@ -25,7 +25,7 @@ struct LibraryHeaderView: View {
             //         .font(.system(size: 20))
             //     Text("32 Apps Installed")
             //         .font(.leposBodySmall)
-            //         .foregroundColor(.gray)
+            //         .uniForegroundStyle(.gray)
             // }
 
             Spacer()

@@ -56,7 +56,7 @@ struct TrendingThisWeekView: View {
                             .overlay(
                                 Image(systemName: app.iconName)
                                     .font(.title2)
-                                    .foregroundColor(.black)
+                                    .uniForegroundStyle(.black)
                             )
 
                         VStack(alignment: .leading, spacing: 4) {
@@ -73,10 +73,10 @@ struct TrendingThisWeekView: View {
                             Text("GET")
                                 .font(.caption)
                                 .fontWeight(.bold)
-                                .foregroundColor(.blue)
+                                .uniForegroundStyle(.blue)
                                 .padding(.horizontal, 20)
                                 .padding(.vertical, 8)
-                                .background(Color(.systemGray6))
+                                .background(Color.leposSurfaceContainerHigh)
                                 .clipShape(Capsule())
                         }
                         .uniButtonStyle(.plain)

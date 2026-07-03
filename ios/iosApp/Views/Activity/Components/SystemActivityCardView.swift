@@ -30,7 +30,7 @@ struct SystemActivityCardView: View {
                     Text("V2.4.1 is ready for installation.")
                         .font(.title2)
                         .fontWeight(.bold)
-                        .foregroundColor(.white)
+                        .uniForegroundStyle(.white)
                         .fixedSize(horizontal: false, vertical: true)
 
                     Spacer()
@@ -51,12 +51,12 @@ struct SystemActivityCardView: View {
                                 .fontWeight(.bold)
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 8)
-                                .background(Color.white.opacity(0.2))
-                                .foregroundColor(.white)
-                                .cornerRadius(16)
+                                .background(Color.leposSurface.opacity(0.2))
+                                .uniForegroundStyle(.white)
+                                .clipShape(RoundedRectangle(cornerRadius: 16))
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 16)
-                                        .stroke(Color.white.opacity(0.3), lineWidth: 1)
+                                        .stroke(Color.leposSurface.opacity(0.3), lineWidth: 1)
                                 )
                         }
                     }
@@ -65,7 +65,7 @@ struct SystemActivityCardView: View {
             }
         }
         .frame(height: 320)
-        .cornerRadius(20)
+        .clipShape(RoundedRectangle(cornerRadius: 20))
         .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
         .padding(.horizontal)
     }

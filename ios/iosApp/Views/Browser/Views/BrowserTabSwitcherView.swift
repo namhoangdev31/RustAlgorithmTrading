@@ -10,7 +10,7 @@ public struct BrowserTabSwitcherView: View {
     }
     
     public var body: some View {
-        NavigationView {
+        UniNavigationStack {
             VStack {
                 UniScrollView {
                     LazyVGrid(columns: [GridItem(.flexible(), spacing: 16), GridItem(.flexible(), spacing: 16)], spacing: 16) {
@@ -36,7 +36,7 @@ public struct BrowserTabSwitcherView: View {
                             Image(systemName: viewModel.isPrivateMode ? "hand.raised.fill" : "hand.raised")
                             Text(viewModel.isPrivateMode ? "Chế độ Riêng tư: Bật" : "Chế độ Riêng tư")
                         }
-                        .foregroundColor(viewModel.isPrivateMode ? .purple : .primary)
+                        .uniForegroundStyle(viewModel.isPrivateMode ? .purple : .primary)
                     }
                     .uniButtonStyle(.plain)
                     
@@ -50,13 +50,13 @@ public struct BrowserTabSwitcherView: View {
                             .font(.title2)
                             .padding(8)
                             .background(Color.blue)
-                            .foregroundColor(.white)
+                            .uniForegroundStyle(.white)
                             .clipShape(Circle())
                     }
                     .uniButtonStyle(.plain)
                 }
                 .padding()
-                .background(Color(.systemGray6))
+                .background(Color.leposSurfaceContainerHigh)
             }
             .navigationTitle("Danh sách Tab")
             .navigationBarTitleDisplayMode(.inline)
@@ -86,16 +86,16 @@ struct TabGridItem: View {
                 Text(tabVM.title)
                     .font(.caption)
                     .lineLimit(1)
-                    .foregroundColor(isActive ? .blue : .primary)
+                    .uniForegroundStyle(isActive ? .blue : .primary)
                 
                 Spacer()
                 
                 UniButton(action: onClose) {
                     Image(systemName: "xmark")
                         .font(.system(size: 10, weight: .bold))
-                        .foregroundColor(.gray)
+                        .uniForegroundStyle(.gray)
                         .padding(4)
-                        .background(Color(.systemGray5))
+                        .background(Color.leposSurfaceContainerHighest)
                         .clipShape(Circle())
                 }
                 .uniButtonStyle(.plain)
@@ -109,11 +109,11 @@ struct TabGridItem: View {
             VStack {
                 Image(systemName: tabVM.isPrivate ? "hand.raised.fill" : "globe")
                     .font(.largeTitle)
-                    .foregroundColor(.gray.opacity(0.6))
+                    .uniForegroundStyle(.gray.opacity(0.6))
                 
                 Text(tabVM.currentURL?.host ?? "Trang trống")
                     .font(.system(size: 10))
-                    .foregroundColor(.gray)
+                    .uniForegroundStyle(.gray)
                     .lineLimit(1)
                     .padding(.horizontal, 4)
             }
@@ -122,8 +122,8 @@ struct TabGridItem: View {
             Spacer()
         }
         .frame(height: 120)
-        .background(Color(.secondarySystemBackground))
-        .cornerRadius(12)
+        .background(Color.leposSurfaceContainer)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
         .overlay(
             RoundedRectangle(cornerRadius: 12)
                 .stroke(isActive ? Color.blue : Color.gray.opacity(0.3), lineWidth: isActive ? 2 : 1)

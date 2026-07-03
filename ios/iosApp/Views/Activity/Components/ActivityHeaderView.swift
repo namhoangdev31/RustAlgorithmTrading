@@ -8,7 +8,7 @@ struct ActivityHeaderView: View {
                 Text("THURSDAY, OCT 24")
                     .font(.caption)
                     .fontWeight(.semibold)
-                    .foregroundColor(.gray)
+                    .uniForegroundStyle(.gray)
 
                 Text("Activity")
                     .font(.largeTitle)
@@ -23,7 +23,7 @@ struct ActivityHeaderView: View {
             }) {
                 Image(systemName: "checkmark.circle.fill")
                     .font(.system(size: 28))
-                    .uniForegroundStyle(Color(.systemGray5))
+                    .uniForegroundStyle(Color.leposSurfaceContainerHighest)
                     .overlay(
                         Image(systemName: "checkmark")
                             .font(.system(size: 10, weight: .bold))
@@ -35,8 +35,8 @@ struct ActivityHeaderView: View {
             Image(systemName: "person.crop.circle.fill")  // Placeholder
                 .resizable()
                 .frame(width: 30, height: 30)
-                .foregroundColor(.orange.opacity(0.8))
-                .background(Color(.systemGray6))
+                .uniForegroundStyle(.orange.opacity(0.8))
+                .background(Color.leposSurfaceContainerHigh)
                 .clipShape(Circle())
         }
         .padding(.horizontal)

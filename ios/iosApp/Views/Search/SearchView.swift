@@ -10,7 +10,7 @@ struct SearchView: View {
     @State private var selectedCategory = "All Categories"
 
     var body: some View {
-        NavigationView {
+        UniNavigationStack {
             UniScrollView {
                 VStack(spacing: 16) {
                     if searchText.isEmpty {

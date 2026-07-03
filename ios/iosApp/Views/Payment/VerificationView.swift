@@ -21,7 +21,7 @@ struct VerificationView: View {
                         .font(.system(size: 16, weight: .bold))
                         .uniForegroundStyle(.primary)
                         .padding(8)
-                        .background(Color.white)
+                        .background(Color.leposSurface)
                         .clipShape(Circle())
                         .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
                 }
@@ -68,7 +68,7 @@ struct VerificationView: View {
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(Color.black)
-                        .cornerRadius(32)
+                        .clipShape(RoundedRectangle(cornerRadius: 32))
                         .padding(.horizontal)
                     }
                     .uniButtonStyle(.plain)

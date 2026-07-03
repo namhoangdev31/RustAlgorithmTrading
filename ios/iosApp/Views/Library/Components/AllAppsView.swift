@@ -48,7 +48,7 @@ struct AllAppsView: View {
                             .frame(width: 40, height: 40)
                             .overlay(
                                 Image(systemName: app.iconName)
-                                    .foregroundColor(.white)
+                                    .uniForegroundStyle(.white)
                             )
 
                         VStack(alignment: .leading, spacing: 2) {
@@ -66,7 +66,7 @@ struct AllAppsView: View {
                             .uniForegroundStyle(.secondary)
                     }
                     .padding()
-                    .background(Color(.systemBackground))
+                    .background(Color.leposBackground)
 
                     if app.id != apps.last?.id {
                         UniDivider()

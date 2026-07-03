@@ -46,7 +46,7 @@ struct AppsWeLoveView: View {
                         .overlay(
                             Image(systemName: app.iconName)
                                 .font(.title2)
-                                .foregroundColor(.white)
+                                .uniForegroundStyle(.white)
                         )
 
                     VStack(alignment: .leading, spacing: 4) {
@@ -63,10 +63,10 @@ struct AppsWeLoveView: View {
                         Text("OPEN")
                             .font(.caption)
                             .fontWeight(.bold)
-                            .foregroundColor(.blue)
+                            .uniForegroundStyle(.blue)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 8)
-                            .background(Color(.systemGray6))
+                            .background(Color.leposSurfaceContainerHigh)
                             .clipShape(Capsule())
                     }
                     .uniButtonStyle(.plain)

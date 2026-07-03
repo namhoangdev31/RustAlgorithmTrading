@@ -36,14 +36,14 @@ struct VerificationCodeInputView: View {
             HStack(spacing: 12) {
                 ForEach(0..<6, id: \.self) { index in
                     Circle()
-                        .fill(index < pin.count ? Color.primary : Color.white)
+                        .fill(index < pin.count ? Color.primary : Color.leposSurface)
                         .frame(width: 16, height: 16)
                         .overlay(
                             Circle()
                                 .stroke(Color.gray.opacity(0.3), lineWidth: 1)
                         )
                         .frame(width: 48, height: 48)
-                        .background(Color.white)
+                        .background(Color.leposSurface)
                         .clipShape(Circle())
                         .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
                 }

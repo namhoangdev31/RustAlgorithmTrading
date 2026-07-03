@@ -83,7 +83,7 @@ struct TopChartsView: View {
                                 .frame(width: 50, height: 50)
                                 .overlay(
                                     Image(systemName: app.iconName)
-                                        .foregroundColor(.white)
+                                        .uniForegroundStyle(.white)
                                         .font(.title2)
                                 )
 
@@ -101,7 +101,7 @@ struct TopChartsView: View {
                             Text(app.price)
                                 .font(.subheadline)
                                 .fontWeight(.bold)
-                                .foregroundColor(.blue)
+                                .uniForegroundStyle(.blue)
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 6)
                                 .background(Color.blue.opacity(0.1))

@@ -25,7 +25,7 @@ public struct BrowserView: View {
                 BrowserAddressBar(viewModel: viewModel)
             }
             .padding(.vertical, 8)
-            .background(Color(.systemBackground))
+            .background(Color.leposBackground)
             
             // Progress Bar
             if let progress = loadingProgress {
@@ -53,7 +53,7 @@ public struct BrowserView: View {
                     }
                 } else {
                     Text("Không có tab nào đang mở.")
-                        .foregroundColor(.gray)
+                        .uniForegroundStyle(.gray)
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -62,7 +62,7 @@ public struct BrowserView: View {
             
             // Footer: Toolbar
             BrowserToolbarView(viewModel: viewModel)
-                .background(Color(.systemBackground))
+                .background(Color.leposBackground)
         }
         .navigationBarHidden(true)
         .sheet(isPresented: $viewModel.showTabSwitcher) {

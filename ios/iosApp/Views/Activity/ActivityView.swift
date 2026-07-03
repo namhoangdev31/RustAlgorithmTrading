@@ -24,12 +24,12 @@ struct ActivityView: View {
                                     .padding(.horizontal, 16)
                                     .padding(.vertical, 8)
                                     .background(
-                                        selectedFilter == filter ? Color.blue : Color(.systemGray5)
+                                        selectedFilter == filter ? Color.blue : Color.leposSurfaceContainerHighest
                                     )
                                     .uniForegroundStyle(
                                         selectedFilter == filter ? .white : .primary
                                     )
-                                    .cornerRadius(20)
+                                    .clipShape(RoundedRectangle(cornerRadius: 20))
                             }
                         }
                     }
@@ -76,7 +76,7 @@ struct ActivityView: View {
                         Text("Review Login Attempt.")
                             .font(.title2)
                             .fontWeight(.bold)
-                            .foregroundColor(.white)
+                            .uniForegroundStyle(.white)
 
                         Spacer()
 
@@ -92,9 +92,9 @@ struct ActivityView: View {
                                     .fontWeight(.bold)
                                     .padding(.horizontal, 16)
                                     .padding(.vertical, 8)
-                                    .background(Color.white.opacity(0.2))
-                                    .foregroundColor(.white)
-                                    .cornerRadius(16)
+                                    .background(Color.leposSurface.opacity(0.2))
+                                    .uniForegroundStyle(.white)
+                                    .clipShape(RoundedRectangle(cornerRadius: 16))
                             }
                         }
                     }
@@ -102,7 +102,7 @@ struct ActivityView: View {
                 }
                 .frame(height: 280)
                 .uniGlassEffect()
-                .cornerRadius(20)
+                .clipShape(RoundedRectangle(cornerRadius: 20))
                 .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
                 .padding(.horizontal)
 

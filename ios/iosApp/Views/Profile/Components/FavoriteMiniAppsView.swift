@@ -38,7 +38,7 @@ struct FavoriteMiniAppsView: View {
                     VStack(spacing: 8) {
                         ZStack {
                             Circle()
-                                .fill(app.isAdd ? Color(.systemGray6) : app.color.opacity(0.1))
+                                .fill(app.isAdd ? Color.leposSurfaceContainerHigh : app.color.opacity(0.1))
                                 .frame(width: 60, height: 60)
 
                             Image(systemName: app.icon)

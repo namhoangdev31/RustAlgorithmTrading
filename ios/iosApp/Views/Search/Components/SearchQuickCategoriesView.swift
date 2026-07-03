@@ -77,7 +77,7 @@ struct CategoryCard: View {
                     Text(name)
                         .font(isLarge ? .title3 : .subheadline)
                         .fontWeight(.semibold)
-                        .foregroundColor(.primary)
+                        .uniForegroundStyle(.primary)
                 }
                 .padding(isLarge ? 24 : 16)
                 .frame(maxWidth: .infinity, alignment: .leading)

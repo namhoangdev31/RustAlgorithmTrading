@@ -7,9 +7,9 @@ struct LifestyleView: View {
                 Text("Lifestyle")
                     .font(.headline)
                 Spacer()
-                Button("See All") { }
+                UniButton("See All") { }
                     .font(.caption)
-                    .foregroundColor(.blue)
+                    .uniForegroundStyle(.blue)
             }
             .padding(.horizontal)
             
@@ -47,12 +47,12 @@ struct LifestyleCard: View {
             .overlay(
                 VStack(alignment: .leading) {
                     Circle()
-                        .fill(Color.white)
+                        .fill(Color.leposSurface)
                         .frame(width: 50, height: 50)
                         .overlay(
                             Image(systemName: icon)
                                 .font(.title2)
-                                .foregroundColor(color)
+                                .uniForegroundStyle(color)
                         )
                     
                     Spacer()
@@ -60,11 +60,11 @@ struct LifestyleCard: View {
                     Text(title)
                         .font(.title3)
                         .fontWeight(.bold)
-                        .foregroundColor(color)
+                        .uniForegroundStyle(color)
                     
                     Text(subtitle)
                         .font(.caption)
-                        .foregroundColor(color.opacity(0.6))
+                        .uniForegroundStyle(color.opacity(0.6))
                         .padding(.top, 2)
                 }
                 .padding(20)

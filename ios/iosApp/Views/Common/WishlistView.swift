@@ -37,9 +37,9 @@ struct WishlistView: View {
     ]
 
     var body: some View {
-        UniNavigationStack {  // Use UniNavigationStack to bridge NavigationStack and NavigationView
-            // MainTabView items often have their own NavigationStack or View.
-            // The placeholder had NavigationView.
+        UniNavigationStack {  // Use UniNavigationStack to bridge navigation stack and navigation view
+            // MainTabView items often have their own navigation stack or View.
+            // The placeholder had navigation view.
             UniScrollView {
                 if wishlistItems.isEmpty {
                     UniContentUnavailableView(
@@ -52,11 +52,11 @@ struct WishlistView: View {
                         }) {
                             Text("Explore Apps")
                                 .font(.headline)
-                                .foregroundColor(.white)
+                                .uniForegroundStyle(.white)
                                 .padding()
                                 .frame(maxWidth: .infinity)
                                 .background(Color.blue)
-                                .cornerRadius(12)
+                                .clipShape(RoundedRectangle(cornerRadius: 12))
                         }
                         .padding(.top, 16)
                         .padding(.horizontal, 48)
@@ -71,7 +71,7 @@ struct WishlistView: View {
                                         .frame(width: 48, height: 48)
                                         .overlay(
                                             Image(systemName: item.iconName)
-                                                .foregroundColor(.white)
+                                                .uniForegroundStyle(.white)
                                                 .font(.title3)
                                         )
 
@@ -85,7 +85,7 @@ struct WishlistView: View {
                                         }
                                     }) {
                                         Image(systemName: "heart.fill")
-                                            .foregroundColor(.red)
+                                            .uniForegroundStyle(.red)
                                             .padding(8)
                                             .background(Color.red.opacity(0.1))
                                             .clipShape(Circle())
@@ -98,15 +98,15 @@ struct WishlistView: View {
                                         .lineLimit(1)
                                     Text(item.category)
                                         .font(.caption)
-                                        .foregroundColor(.secondary)
+                                        .uniForegroundStyle(.secondary)
 
                                     HStack(spacing: 4) {
                                         Image(systemName: "star.fill")
                                             .font(.caption2)
-                                            .foregroundColor(.orange)
+                                            .uniForegroundStyle(.orange)
                                         Text(String(format: "%.1f", item.rating))
                                             .font(.caption2)
-                                            .foregroundColor(.gray)
+                                            .uniForegroundStyle(.gray)
                                     }
                                 }
 
@@ -117,7 +117,7 @@ struct WishlistView: View {
                                     Text("GET")
                                         .font(.caption)
                                         .fontWeight(.bold)
-                                        .foregroundColor(.blue)
+                                        .uniForegroundStyle(.blue)
                                         .frame(maxWidth: .infinity)
                                         .padding(.vertical, 6)
                                         .background(Color.blue.opacity(0.1))
@@ -125,8 +125,8 @@ struct WishlistView: View {
                                 }
                             }
                             .padding()
-                            .background(Color(.systemBackground))
-                            .cornerRadius(16)
+                            .background(Color.leposBackground)
+                            .clipShape(RoundedRectangle(cornerRadius: 16))
                             .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
                         }
                     }

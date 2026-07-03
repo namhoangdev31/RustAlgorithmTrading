@@ -14,8 +14,8 @@ struct CheckoutPaymentMethodCard<Content: View>: View {
             content
                 .padding(16)
                 .frame(width: 140, height: 100, alignment: .leading)
-                .background(isSelected ? Color.cyan.opacity(0.1) : Color.white)
-                .cornerRadius(16)
+                .background(isSelected ? Color.cyan.opacity(0.1) : Color.leposSurface)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
                 .overlay(
                     RoundedRectangle(cornerRadius: 16)
                         .stroke(isSelected ? Color.cyan : Color.clear, lineWidth: 2)
@@ -23,7 +23,7 @@ struct CheckoutPaymentMethodCard<Content: View>: View {
             
             if isSelected {
                 Image(systemName: "checkmark.circle.fill")
-                    .foregroundColor(.cyan)
+                    .uniForegroundStyle(.cyan)
                     .padding(8)
             }
         }

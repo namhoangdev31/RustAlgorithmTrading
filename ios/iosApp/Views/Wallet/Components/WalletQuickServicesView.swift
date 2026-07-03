@@ -36,7 +36,7 @@ struct QuickServiceButton: View {
                     .font(.title2)
                     .uniForegroundStyle(.primary)
                     .frame(width: 50, height: 50)
-                    .background(Color(.systemGray6))
+                    .background(Color.leposSurfaceContainerHigh)
                     .clipShape(Circle())
 
                 Text(title)

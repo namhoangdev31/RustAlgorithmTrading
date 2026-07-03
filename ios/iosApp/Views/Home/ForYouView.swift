@@ -70,7 +70,7 @@ struct ForYouView: View {
                                     HStack(spacing: 4) {
                                         Image(systemName: "star.fill")
                                             .font(.caption2)
-                                            .foregroundColor(.yellow)
+                                            .uniForegroundStyle(.yellow)
                                         Text(String(format: "%.1f", app.rating))
                                             .font(.caption2)
                                             .uniForegroundStyle(.secondary)
@@ -89,6 +89,6 @@ struct ForYouView: View {
         }
         .navigationTitle("For You")
         .navigationBarTitleDisplayMode(.large)
-        .background(Color(.systemGroupedBackground))
+        .background(Color.leposBackground)
     }
 }

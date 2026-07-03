@@ -97,7 +97,7 @@ final class MiniAppSettingsViewModel: ObservableObject {
 }
 
 struct MiniAppSettingsView: View {
-    @Environment(\.presentationMode) var presentationMode
+    @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel: MiniAppSettingsViewModel
 
     init(appId: String) {
@@ -105,119 +105,174 @@ struct MiniAppSettingsView: View {
     }
 
     var body: some View {
-        NavigationView {
+        UniNavigationStack {
             UniScrollView {
                 VStack(spacing: 24) {
-                    // Header / App Info Summary
-                    VStack(spacing: 8) {
-                        Image(systemName: "cube.box.fill")
-                            .font(.system(size: 48))
-                            .uniForegroundStyle(.blue)
-                            .padding()
-                            .background(Color.white)
-                            .cornerRadius(16)
-                            .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
+                    MiniAppSettingsHeader(
+                        appName: viewModel.appName,
+                        developerName: viewModel.developerName
+                    )
 
-                        Text(viewModel.appName)
-                            .font(.title2)
-                            .fontWeight(.bold)
+                    PermissionsSection(
+                        permissionStates: viewModel.permissionStates,
+                        onToggle: updatePermission,
+                        onOpenSettings: viewModel.openSettings
+                    )
 
-                        Text(viewModel.developerName)
-                            .font(.subheadline)
-                            .uniForegroundStyle(.secondary)
-                    }
-                    .padding(.top, 24)
+                    MiniAppInfoSection(
+                        developerName: viewModel.developerName,
+                        version: viewModel.version,
+                        appId: viewModel.appId
+                    )
 
-                    // PERMISSIONS
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("QUẢN LÝ QUYỀN TRUY CẬP")
-                            .font(.caption)
-                            .fontWeight(.semibold)
-                            .uniForegroundStyle(.secondary)
-                            .padding(.horizontal)
-
-                        VStack(spacing: 0) {
-                            if viewModel.permissionStates.isEmpty {
-                                Text("Đang tải dữ liệu quyền...")
-                                    .font(.subheadline)
-                                    .foregroundColor(.gray)
-                                    .padding()
-                            } else {
-                                ForEach(viewModel.permissionStates) { item in
-                                    PermissionTwoTierRow(item: item) { approved in
-                                        Task {
-                                            await viewModel.updateShellDecision(for: item, approved: approved)
-                                        }
-                                    } onOpenSettings: {
-                                        viewModel.openSettings()
-                                    }
-                                    if item.id != viewModel.permissionStates.last?.id {
-                                        UniDivider().padding(.leading, 56)
-                                    }
-                                }
-                            }
-                        }
-                        .uniGlass(cornerRadius: 16)
-                    }
-                    .padding(.horizontal)
-
-                    // MINI APP INFO
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("THÔNG TIN MINI APP")
-                            .font(.caption)
-                            .fontWeight(.semibold)
-                            .uniForegroundStyle(.secondary)
-                            .padding(.horizontal)
-
-                        VStack(spacing: 0) {
-                            InfoRowSettings(label: "Nhà phát triển", value: viewModel.developerName)
-                            UniDivider().padding(.leading, 16)
-                            InfoRowSettings(label: "Phiên bản", value: viewModel.version)
-                            UniDivider().padding(.leading, 16)
-                            InfoRowSettings(label: "Mã định danh (appId)", value: viewModel.appId)
-                        }
-                        .uniGlass(cornerRadius: 16)
-                    }
-                    .padding(.horizontal)
-
-                    // ACTIONS
-                    VStack(spacing: 16) {
-                        UniButton(action: {
-                            presentationMode.wrappedValue.dismiss()
-                        }) {
-                            Text("Đóng và Khởi chạy lại")
-                                .fontWeight(.semibold)
-                                .uniForegroundStyle(.blue)
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(Color.white)
-                                .cornerRadius(16)
-                        }
-                        .uniButtonStyle(.plain)
-                    }
-                    .padding(.horizontal)
-                    .padding(.bottom, 32)
+                    SettingsActionSection(onClose: close)
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    UniButton("Xong") {
-                        presentationMode.wrappedValue.dismiss()
-                    }
+                    UniButton("Xong", action: close)
                     .uniButtonStyle(.plain)
                 }
             }
-            .onAppear {
-                Task {
-                    await viewModel.loadPermissions()
-                }
-            }
+            .task(loadPermissions)
         }
+    }
+
+    private func loadPermissions() async {
+        await viewModel.loadPermissions()
+    }
+
+    private func updatePermission(_ item: MiniAppSettingsViewModel.PermissionItem, approved: Bool) {
+        Task {
+            await viewModel.updateShellDecision(for: item, approved: approved)
+        }
+    }
+
+    private func close() {
+        dismiss()
     }
 }
 
-struct PermissionTwoTierRow: View {
+private struct MiniAppSettingsHeader: View {
+    let appName: String
+    let developerName: String
+
+    var body: some View {
+        VStack(spacing: 8) {
+            Image(systemName: "cube.box.fill")
+                .font(.system(size: 48))
+                .uniForegroundStyle(.blue)
+                .padding()
+                .uniGlass(cornerRadius: 16)
+                .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
+
+            Text(appName)
+                .font(.title2)
+                .fontWeight(.bold)
+
+            Text(developerName)
+                .font(.subheadline)
+                .uniForegroundStyle(.secondary)
+        }
+        .padding(.top, 24)
+    }
+}
+
+private struct PermissionsSection: View {
+    let permissionStates: [MiniAppSettingsViewModel.PermissionItem]
+    let onToggle: (MiniAppSettingsViewModel.PermissionItem, Bool) -> Void
+    let onOpenSettings: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            SettingsSectionTitle("QUẢN LÝ QUYỀN TRUY CẬP")
+
+            VStack(spacing: 0) {
+                if permissionStates.isEmpty {
+                    Text("Đang tải dữ liệu quyền...")
+                        .font(.subheadline)
+                        .uniForegroundStyle(.secondary)
+                        .padding()
+                } else {
+                    ForEach(permissionStates) { item in
+                        PermissionTwoTierRow(item: item) { approved in
+                            onToggle(item, approved)
+                        } onOpenSettings: {
+                            onOpenSettings()
+                        }
+
+                        if item.id != permissionStates.last?.id {
+                            UniDivider().padding(.leading, 56)
+                        }
+                    }
+                }
+            }
+            .uniGlass(cornerRadius: 16)
+        }
+        .padding(.horizontal)
+    }
+}
+
+private struct MiniAppInfoSection: View {
+    let developerName: String
+    let version: String
+    let appId: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            SettingsSectionTitle("THÔNG TIN MINI APP")
+
+            VStack(spacing: 0) {
+                InfoRowSettings(label: "Nhà phát triển", value: developerName)
+                UniDivider().padding(.leading, 16)
+                InfoRowSettings(label: "Phiên bản", value: version)
+                UniDivider().padding(.leading, 16)
+                InfoRowSettings(label: "Mã định danh (appId)", value: appId)
+            }
+            .uniGlass(cornerRadius: 16)
+        }
+        .padding(.horizontal)
+    }
+}
+
+private struct SettingsActionSection: View {
+    let onClose: () -> Void
+
+    var body: some View {
+        VStack(spacing: 16) {
+            UniButton(action: onClose) {
+                Text("Đóng và Khởi chạy lại")
+                    .fontWeight(.semibold)
+                    .uniForegroundStyle(.blue)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .uniGlass(cornerRadius: 16)
+            }
+            .uniButtonStyle(.plain)
+        }
+        .padding(.horizontal)
+        .padding(.bottom, 32)
+    }
+}
+
+private struct SettingsSectionTitle: View {
+    let title: String
+
+    init(_ title: String) {
+        self.title = title
+    }
+
+    var body: some View {
+        Text(title)
+            .font(.caption)
+            .fontWeight(.semibold)
+            .uniForegroundStyle(.secondary)
+            .padding(.horizontal)
+    }
+}
+
+private struct PermissionTwoTierRow: View {
     let item: MiniAppSettingsViewModel.PermissionItem
     let onToggle: (Bool) -> Void
     let onOpenSettings: () -> Void
@@ -230,7 +285,7 @@ struct PermissionTwoTierRow: View {
                     .frame(width: 32, height: 32)
                 Image(systemName: item.icon)
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(.white)
+                    .uniForegroundStyle(.white)
             }
 
             VStack(alignment: .leading, spacing: 2) {
@@ -242,19 +297,19 @@ struct PermissionTwoTierRow: View {
                 HStack(spacing: 4) {
                     Text("Hệ thống iOS:")
                         .font(.system(size: 10))
-                        .foregroundColor(.gray)
+                        .uniForegroundStyle(.gray)
                     Text(systemStatusString(item.systemStatus))
                         .font(.system(size: 10, weight: .bold))
-                        .foregroundColor(systemStatusColor(item.systemStatus))
+                        .uniForegroundStyle(systemStatusColor(item.systemStatus))
                     
                     if item.systemStatus == .denied {
-                        Button(action: onOpenSettings) {
+                        UniButton(action: onOpenSettings) {
                             Text("(Mở Cài đặt)")
                                 .font(.system(size: 10))
-                                .foregroundColor(.blue)
+                                .uniForegroundStyle(.blue)
                                 .underline()
                         }
-                        .buttonStyle(PlainButtonStyle())
+                        .uniButtonStyle(.plain)
                     }
                 }
             }
@@ -294,7 +349,7 @@ struct PermissionTwoTierRow: View {
     }
 }
 
-struct InfoRowSettings: View {
+private struct InfoRowSettings: View {
     let label: String
     let value: String
     var hasArrow: Bool = false

@@ -83,7 +83,7 @@ struct AccountOverviewView: View {
 }
 
 #Preview {
-    NavigationView {
+    UniNavigationStack {
         AccountOverviewView()
     }
 }
