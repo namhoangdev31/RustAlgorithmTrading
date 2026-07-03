@@ -16,7 +16,7 @@ struct ForceUpdateView: View {
                     .uniBold()
 
                 Text(
-                    "A new version of LeposApp is available. Please update to continue using the app."
+                    "A new version of LepoStar is available. Please update to continue using the app."
                 )
                 .font(.body)
                 .uniForegroundStyle(.secondary)

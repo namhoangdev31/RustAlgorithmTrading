@@ -1,4 +1,5 @@
 import SwiftUI
+import ExploreSwiftUI
 
 struct ProductivityView: View {
     let apps = [

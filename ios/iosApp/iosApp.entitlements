@@ -12,9 +12,5 @@
 	<true/>
 	<key>com.apple.developer.in-app-payments</key>
 	<array/>
-	<key>com.apple.developer.networking.HotspotConfiguration</key>
-	<true/>
-	<key>com.apple.developer.usernotifications.communication</key>
-	<true/>
 </dict>
 </plist>

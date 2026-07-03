@@ -1,4 +1,5 @@
 import SwiftUI
+import ExploreSwiftUI
 
 struct LifestyleView: View {
     var body: some View {

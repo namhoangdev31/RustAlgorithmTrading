@@ -1,8 +1,8 @@
 /* InfoPlist.strings (Vietnamese) */
-NSLocationWhenInUseUsageDescription = "Leposapp cần truy cập vị trí khi bạn sử dụng tính năng yêu cầu xác định thị trường giao dịch.";
-NSCameraUsageDescription = "Leposapp cần sử dụng Camera khi bạn quét mã QR ví hoặc chụp ảnh giấy tờ xác minh danh tính.";
-NSMicrophoneUsageDescription = "Leposapp cần truy cập Microphone khi bạn sử dụng tính năng đặt lệnh nhanh bằng giọng nói.";
-NSContactsUsageDescription = "Leposapp cần truy cập danh bạ khi bạn chủ động chọn chia sẻ liên kết giới thiệu cho bạn bè.";
-NSFaceIDUsageDescription = "Leposapp sử dụng Face ID để xác thực nhanh chóng và bảo mật khi bạn thực hiện các lệnh giao dịch.";
-NSBluetoothAlwaysUsageDescription = "Leposapp cần Bluetooth để kết nối với các thiết bị ký khóa ngoại vi (Cold Wallet) khi bạn yêu cầu.";
-NSPhotoLibraryAddUsageDescription = "Leposapp cần quyền lưu hình ảnh hoặc biểu đồ khi bạn chủ động chọn lưu vào thư viện ảnh.";
+NSLocationWhenInUseUsageDescription = "LepoStar cần truy cập vị trí khi bạn sử dụng tính năng yêu cầu xác định thị trường giao dịch.";
+NSCameraUsageDescription = "LepoStar cần sử dụng Camera khi bạn quét mã QR ví hoặc chụp ảnh giấy tờ xác minh danh tính.";
+NSMicrophoneUsageDescription = "LepoStar cần truy cập Microphone khi bạn sử dụng tính năng đặt lệnh nhanh bằng giọng nói.";
+NSContactsUsageDescription = "LepoStar cần truy cập danh bạ khi bạn chủ động chọn chia sẻ liên kết giới thiệu cho bạn bè.";
+NSFaceIDUsageDescription = "LepoStar sử dụng Face ID để xác thực nhanh chóng và bảo mật khi bạn thực hiện các lệnh giao dịch.";
+NSBluetoothAlwaysUsageDescription = "LepoStar cần Bluetooth để kết nối với các thiết bị ký khóa ngoại vi (Cold Wallet) khi bạn yêu cầu.";
+NSPhotoLibraryAddUsageDescription = "LepoStar cần quyền lưu hình ảnh hoặc biểu đồ khi bạn chủ động chọn lưu vào thư viện ảnh.";

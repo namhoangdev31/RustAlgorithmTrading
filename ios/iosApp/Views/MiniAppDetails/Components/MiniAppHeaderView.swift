@@ -113,7 +113,7 @@ struct MiniAppHeaderView: View {
 
                     Spacer()
 
-                    UniShareLink(item: URL(string: "https://leposapp.com/apps/ecotrack")!) {
+                    UniShareLink(item: URL(string: "https://LepoStar.com/apps/ecotrack")!) {
                         Image(systemName: "square.and.arrow.up")
                             .font(.system(size: 20))
                             .uniForegroundStyle(.blue)

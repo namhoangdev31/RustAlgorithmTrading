@@ -15,10 +15,10 @@ struct NotificationInboxView: View {
     let notifications = [
         NotificationItem(
             title: "New Update Available",
-            message: "LeposApp v2.1 is now available with dark mode support.", time: "2h ago",
+            message: "LepoStar v2.1 is now available with dark mode support.", time: "2h ago",
             isRead: false, type: "update"),
         NotificationItem(
-            title: "Welcome to LeposApp!",
+            title: "Welcome to LepoStar!",
             message: "Thanks for joining our community. Check out our getting started guide.",
             time: "1d ago", isRead: true, type: "system"),
         NotificationItem(
