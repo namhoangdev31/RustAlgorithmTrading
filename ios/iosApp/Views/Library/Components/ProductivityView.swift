@@ -34,7 +34,7 @@ struct ProductivityView: View {
                         VStack(alignment: .leading, spacing: 4) {
                             Text(app.0)
                                 .font(.subheadline)
-                                .fontWeight(.bold)
+                                .uniBold()
                             Text(app.3)
                                 .font(.caption2)
                                 .uniForegroundStyle(.gray)

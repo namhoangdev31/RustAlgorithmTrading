@@ -25,7 +25,7 @@ struct TopCollectionsView: View {
             HStack {
                 Text("Top Collections")
                     .font(.title2)
-                    .fontWeight(.bold)
+                    .uniBold()
                 Spacer()
                 UniButton(action: {
                     navigation.navigate(
@@ -59,7 +59,7 @@ struct TopCollectionsView: View {
 
                                 Text("CURATED")
                                     .font(.caption2)
-                                    .fontWeight(.bold)
+                                    .uniBold()
                                     .uniForegroundStyle(.blue)
                                     .padding(.top, 8)
 

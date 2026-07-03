@@ -42,7 +42,7 @@ struct MyReviewsView: View {
                                     .overlay(
                                         Text(String(review.appName.prefix(1)))
                                             .uniForegroundStyle(.white)
-                                            .fontWeight(.bold)
+                                            .uniBold()
                                     )
 
                                 VStack(alignment: .leading, spacing: 2) {

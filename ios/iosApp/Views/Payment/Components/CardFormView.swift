@@ -11,7 +11,7 @@ struct CardFormView: View {
         VStack(alignment: .leading, spacing: 20) {
             Text("CARD DETAILS")
                 .font(.caption)
-                .fontWeight(.bold)
+                .uniBold()
                 .uniForegroundStyle(.secondary)
 
             // Name

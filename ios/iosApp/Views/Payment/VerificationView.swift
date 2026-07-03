@@ -77,7 +77,7 @@ struct VerificationView: View {
                     VStack(spacing: 8) {
                         Text("BANK-LEVEL SECURITY")
                             .font(.caption2)
-                            .fontWeight(.bold)
+                            .uniBold()
                             .uniForegroundStyle(.secondary)
                             .uniTracking(1)
 

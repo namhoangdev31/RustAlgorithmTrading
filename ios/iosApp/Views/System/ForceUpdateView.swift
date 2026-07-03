@@ -13,7 +13,7 @@ struct ForceUpdateView: View {
             VStack(spacing: 8) {
                 Text("Update Required")
                     .font(.title2)
-                    .fontWeight(.bold)
+                    .uniBold()
 
                 Text(
                     "A new version of LeposApp is available. Please update to continue using the app."

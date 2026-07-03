@@ -22,7 +22,7 @@ struct FavoriteMiniAppsView: View {
             HStack {
                 Text("FAVORITE MINI APPS")
                     .font(.caption)
-                    .fontWeight(.bold)
+                    .uniBold()
                     .uniForegroundStyle(.secondary)
                     .uniTracking(1)
 

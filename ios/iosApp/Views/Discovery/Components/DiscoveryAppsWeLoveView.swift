@@ -26,7 +26,7 @@ struct DiscoveryAppsWeLoveView: View {
             HStack {
                 Text("Apps We Love")
                     .font(.title2)
-                    .fontWeight(.bold)
+                    .uniBold()
                 Spacer()
                 UniButton(action: {}) {
                     Text("See All")
@@ -70,7 +70,7 @@ struct DiscoveryAppsWeLoveView: View {
                             HStack {
                                 Text(item.tag)
                                     .font(.caption2)
-                                    .fontWeight(.bold)
+                                    .uniBold()
                                     .uniForegroundStyle(.blue)
                                     .padding(.horizontal, 8)
                                     .padding(.vertical, 4)
@@ -82,7 +82,7 @@ struct DiscoveryAppsWeLoveView: View {
                                 UniButton(action: {}) {
                                     Text("GET")
                                         .font(.caption)
-                                        .fontWeight(.bold)
+                                        .uniBold()
                                         .uniForegroundStyle(.white)
                                         .padding(.horizontal, 20)
                                         .padding(.vertical, 6)

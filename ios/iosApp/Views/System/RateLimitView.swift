@@ -13,7 +13,7 @@ struct RateLimitView: View {
             VStack(spacing: 8) {
                 Text("Too Many Requests")
                     .font(.title2)
-                    .fontWeight(.bold)
+                    .uniBold()
 
                 Text("Please slow down. You've made too many requests recently.")
                     .font(.body)

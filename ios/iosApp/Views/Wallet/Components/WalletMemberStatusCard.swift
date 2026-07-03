@@ -15,7 +15,7 @@ struct WalletMemberStatusCard: View {
 
             Text("Gold")
                 .font(.title)
-                .fontWeight(.bold)
+                .uniBold()
 
             Text("Member Status")
                 .font(.subheadline)
@@ -25,7 +25,7 @@ struct WalletMemberStatusCard: View {
 
             Text("VIP BENEFITS")
                 .font(.caption2)
-                .fontWeight(.bold)
+                .uniBold()
                 .uniForegroundStyle(.orange)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)

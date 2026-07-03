@@ -33,7 +33,7 @@ struct UserInfoView: View {
 
                 Text("PREMIUM")
                     .font(.caption2)
-                    .fontWeight(.bold)
+                    .uniBold()
                     .uniForegroundStyle(.white)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
@@ -47,7 +47,7 @@ struct UserInfoView: View {
             VStack(spacing: 8) {
                 Text("Alex Johnson")
                     .font(.title2)
-                    .fontWeight(.bold)
+                    .uniBold()
 
                 Text("Digital Explorer & Mini-app Enthusiast. Managing 12 workflows daily.")
                     .font(.subheadline)
@@ -61,7 +61,7 @@ struct UserInfoView: View {
                 UniButton(action: {}) {
                     Text("Share Link")
                         .font(.subheadline)
-                        .fontWeight(.semibold)
+                        .uniSemi()
                         .uniForegroundStyle(.primary)
                         .frame(maxWidth: .infinity)
                         .padding()

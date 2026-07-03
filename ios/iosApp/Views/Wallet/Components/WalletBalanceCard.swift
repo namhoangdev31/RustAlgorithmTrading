@@ -39,7 +39,7 @@ struct WalletBalanceCard: View {
                         .uniForegroundStyle(.cyan)
                     Text("USD / United\nStates")
                         .font(.subheadline)
-                        .fontWeight(.semibold)
+                        .uniSemi()
                         .uniForegroundStyle(.primary)
                 }
 
@@ -56,7 +56,7 @@ struct WalletBalanceCard: View {
                             .frame(width: 8, height: 8)
                         Text("Verified\nAccount")
                             .font(.subheadline)
-                            .fontWeight(.semibold)
+                            .uniSemi()
                             .uniForegroundStyle(.primary)
                     }
                 }

@@ -8,7 +8,7 @@ struct EditorChoiceHeaderView: View {
 
             Text("ĐƯỢC YÊU THÍCH")  // "LOVED"
                 .font(.caption)
-                .fontWeight(.bold)
+                .uniBold()
                 .uniTracking(1.0)
                 .uniForegroundStyle(.white)
 
@@ -19,7 +19,7 @@ struct EditorChoiceHeaderView: View {
 
             Text("Crossfire Legends")
                 .font(.title3)
-                .fontWeight(.semibold)
+                .uniSemi()
                 .uniForegroundStyle(.white)
                 .padding(.top, 4)
         }

@@ -12,7 +12,7 @@ struct CheckoutPayButton: View {
             HStack {
                 Image(systemName: "lock.fill")
                 Text("Pay Now • ")
-                    .fontWeight(.bold)
+                    .uniBold()
                 UniText(total, format: .currency(code: "USD"))
                     .uniBold()
             }

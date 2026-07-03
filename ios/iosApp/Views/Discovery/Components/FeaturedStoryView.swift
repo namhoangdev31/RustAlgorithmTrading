@@ -19,7 +19,7 @@ struct FeaturedStoryView: View {
 
                     Text("FEATURED STORY")
                         .font(.caption)
-                        .fontWeight(.bold)
+                        .uniBold()
                         .uniForegroundStyle(.white, opacity: 0.8)
 
                     Text("Elevate Your\nMorning Ritual")
@@ -50,7 +50,7 @@ struct FeaturedStoryView: View {
                         UniButton(action: {}) {
                             Text("GET")
                                 .font(.subheadline)
-                                .fontWeight(.bold)
+                                .uniBold()
                                 .uniForegroundStyle(.black)
                                 .padding(.horizontal, 24)
                                 .padding(.vertical, 8)

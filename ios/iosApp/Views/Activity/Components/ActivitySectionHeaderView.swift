@@ -6,7 +6,7 @@ struct ActivitySectionHeaderView: View {
     var body: some View {
         Text(title)
             .font(.title3)
-            .fontWeight(.bold)
+            .uniBold()
             .padding(.horizontal)
             .padding(.top, 16)
             .padding(.bottom, 8)

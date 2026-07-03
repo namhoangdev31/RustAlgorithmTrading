@@ -21,7 +21,7 @@ struct TrendingSearchesView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Trending Searches")
                 .font(.headline)
-                .fontWeight(.bold)
+                .uniBold()
                 .padding(.horizontal)
 
             VStack(spacing: 12) {
@@ -29,17 +29,17 @@ struct TrendingSearchesView: View {
                     HStack(spacing: 16) {
                         Text("\(search.rank)")
                             .font(.title3)
-                            .fontWeight(.bold)
+                            .uniBold()
                             .uniForegroundStyle(.secondary, opacity: 0.3)
                             .frame(width: 30)
 
                         VStack(alignment: .leading, spacing: 4) {
                             Text(search.title)
                                 .font(.subheadline)
-                                .fontWeight(.semibold)
+                                .uniSemi()
                             Text(search.tag)
                                 .font(.caption2)
-                                .fontWeight(.bold)
+                                .uniBold()
                                 .uniForegroundStyle(search.tagColor)
                         }
 

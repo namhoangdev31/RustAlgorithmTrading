@@ -14,12 +14,12 @@ struct HomeHeaderView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text("MONDAY, MAY 22")
                     .font(.caption)
-                    .fontWeight(.semibold)
+                    .uniSemi()
                     .uniForegroundStyle(.secondary)
 
                 Text("Today")
                     .font(.largeTitle)
-                    .fontWeight(.bold)
+                    .uniBold()
             }
 
             Spacer()

@@ -8,7 +8,7 @@ struct MiniAppPreviewView: View {
         VStack(alignment: .leading) {
             Text("Preview")
                 .font(.title2)
-                .fontWeight(.bold)
+                .uniBold()
                 .padding(.horizontal)
 
             UniScrollView(.horizontal, showsIndicators: false) {

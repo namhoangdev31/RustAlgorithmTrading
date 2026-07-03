@@ -20,7 +20,7 @@ struct WalletFeatureCard: View {
 
             Text(title)
                 .font(.subheadline)
-                .fontWeight(.bold)
+                .uniBold()
 
             Text(subtitle)
                 .font(.caption)

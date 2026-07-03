@@ -52,7 +52,7 @@ struct EditorChoiceDetailView: View {
                         UniButton(action: {}) {
                             Text("NHẬN")
                                 .font(.subheadline)
-                                .fontWeight(.bold)
+                                .uniBold()
                                 .uniForegroundStyle(.white)
                                 .padding(.horizontal, 20)
                                 .padding(.vertical, 8)

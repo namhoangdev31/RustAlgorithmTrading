@@ -6,7 +6,7 @@ struct CategoriesView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Categories")
                 .font(.title2)
-                .fontWeight(.bold)
+                .uniBold()
                 .padding(.horizontal)
 
             HStack(spacing: 16) {
@@ -17,7 +17,7 @@ struct CategoriesView: View {
                         VStack(alignment: .leading) {
                             Text("Finance")
                                 .font(.title)
-                                .fontWeight(.bold)
+                                .uniBold()
                                 .uniForegroundStyle(.white)
                             Text("Tools for your future")
                                 .font(.subheadline)
@@ -27,7 +27,7 @@ struct CategoriesView: View {
 
                             Text("142 APPS")
                                 .font(.caption2)
-                                .fontWeight(.bold)
+                                .uniBold()
                                 .uniForegroundStyle(.white)
                                 .padding(.horizontal, 10)
                                 .padding(.vertical, 5)
@@ -74,7 +74,7 @@ struct CategorySmallCard: View {
 
                     Text(title)
                         .font(.caption)
-                        .fontWeight(.bold)
+                        .uniBold()
                         .uniForegroundStyle(iconColor)
                 }
                 .padding(16)

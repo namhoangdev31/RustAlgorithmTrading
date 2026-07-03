@@ -25,7 +25,7 @@ struct PaymentMethodsView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     Text("PRIMARY METHOD")
                         .font(.caption)
-                        .fontWeight(.bold)
+                        .uniBold()
                         .uniForegroundStyle(.secondary)
                         .padding(.horizontal)
 
@@ -36,7 +36,7 @@ struct PaymentMethodsView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     Text("SAVED CARDS & ACCOUNTS")
                         .font(.caption)
-                        .fontWeight(.bold)
+                        .uniBold()
                         .uniForegroundStyle(.secondary)
                         .padding(.horizontal)
 
@@ -52,7 +52,7 @@ struct PaymentMethodsView: View {
                                 Image(systemName: "plus.circle.fill")
                                     .uniForegroundStyle(.cyan)
                                 Text("Add New Card")
-                                    .fontWeight(.semibold)
+                                    .uniSemi()
                                     .uniForegroundStyle(.primary)
                                 Spacer()
                             }
@@ -70,7 +70,7 @@ struct PaymentMethodsView: View {
                         .uniForegroundStyle(.secondary)
                     Text("PCI-DSS COMPLIANT")
                         .font(.caption)
-                        .fontWeight(.bold)
+                        .uniBold()
                         .uniForegroundStyle(.secondary)
                 }
                 .padding(.top, 24)

@@ -44,7 +44,7 @@ struct DeveloperProfileView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(developerName)
                             .font(.title2)
-                            .fontWeight(.bold)
+                            .uniBold()
 
                         UniLink(website, destination: URL(string: "https://example.com")!)
                             .font(.subheadline)
@@ -58,7 +58,7 @@ struct DeveloperProfileView: View {
                     }) {
                         Text("Follow")
                             .font(.subheadline)
-                            .fontWeight(.bold)
+                            .uniBold()
                             .uniForegroundStyle(.white)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 8)

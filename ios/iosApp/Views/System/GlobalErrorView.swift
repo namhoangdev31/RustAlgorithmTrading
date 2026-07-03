@@ -13,7 +13,7 @@ struct GlobalErrorView: View {
             VStack(spacing: 8) {
                 Text("Something went wrong")
                     .font(.title2)
-                    .fontWeight(.bold)
+                    .uniBold()
 
                 Text("We encountered an unexpected error. Please try again later.")
                     .font(.body)

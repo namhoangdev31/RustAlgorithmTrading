@@ -10,7 +10,7 @@ struct MiniAppInformationView: View {
         VStack(alignment: .leading, spacing: 15) {
             Text("Information")
                 .font(.title2)
-                .fontWeight(.bold)
+                .uniBold()
 
             VStack(spacing: 0) {
                 InfoRow(label: "Developer", value: "GreenLogic Labs LLC")

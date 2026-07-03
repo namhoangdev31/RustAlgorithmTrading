@@ -11,7 +11,7 @@ struct CheckoutPaymentMethodView: View {
             HStack {
                 Text("PAYMENT METHOD")
                     .font(.caption)
-                    .fontWeight(.bold)
+                    .uniBold()
                     .uniForegroundStyle(.secondary)
                 Spacer()
                 UniButton(action: {
@@ -31,12 +31,12 @@ struct CheckoutPaymentMethodView: View {
                         VStack(alignment: .leading, spacing: 4) {
                             Text("iOS")
                                 .font(.caption)
-                                .fontWeight(.bold)
+                                .uniBold()
                                 .uniForegroundStyle(.cyan)
                             Spacer()
                             Text("Apple Pay")
                                 .font(.subheadline)
-                                .fontWeight(.semibold)
+                                .uniSemi()
                         }
                     }
 
@@ -48,11 +48,11 @@ struct CheckoutPaymentMethodView: View {
                             Spacer()
                             Text("VISA")
                                 .font(.caption)
-                                .fontWeight(.bold)
+                                .uniBold()
                                 .uniForegroundStyle(.secondary)
                             Text("•••• 4242")
                                 .font(.caption)
-                                .fontWeight(.bold)
+                                .uniBold()
                         }
                     }
 
@@ -64,11 +64,11 @@ struct CheckoutPaymentMethodView: View {
                             Spacer()
                             Text("BANK")
                                 .font(.caption)
-                                .fontWeight(.bold)
+                                .uniBold()
                                 .uniForegroundStyle(.secondary)
                             Text("$142.00")
                                 .font(.caption)
-                                .fontWeight(.bold)
+                                .uniBold()
                         }
                     }
                 }

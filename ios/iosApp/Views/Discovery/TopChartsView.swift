@@ -75,7 +75,7 @@ struct TopChartsView: View {
                         HStack(spacing: 16) {
                             Text("\(app.rank)")
                                 .font(.headline)
-                                .fontWeight(.bold)
+                                .uniBold()
                                 .frame(width: 30)  // Fixed width for alignment
 
                             RoundedRectangle(cornerRadius: 12)
@@ -100,7 +100,7 @@ struct TopChartsView: View {
 
                             Text(app.price)
                                 .font(.subheadline)
-                                .fontWeight(.bold)
+                                .uniBold()
                                 .uniForegroundStyle(.blue)
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 6)

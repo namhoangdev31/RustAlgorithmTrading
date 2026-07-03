@@ -15,7 +15,7 @@ struct WalletPointsCard: View {
 
             Text("1,250")
                 .font(.title)
-                .fontWeight(.bold)
+                .uniBold()
 
             Text("Loyalty Points")
                 .font(.subheadline)

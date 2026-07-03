@@ -37,7 +37,7 @@ struct ReviewDetailView: View {
 
                 Text("Amazing App!")
                     .font(.title3)
-                    .fontWeight(.bold)
+                    .uniBold()
 
                 Text(
                     "This app has completely changed how I organize my daily tasks. The interface is clean and intuitive. Highly recommended for anyone looking for productivity boost."

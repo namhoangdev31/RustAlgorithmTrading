@@ -6,7 +6,7 @@ struct SearchHeaderView: View {
         HStack {
             Text("Search")
                 .font(.largeTitle)
-                .fontWeight(.bold)
+                .uniBold()
 
             Spacer()
 

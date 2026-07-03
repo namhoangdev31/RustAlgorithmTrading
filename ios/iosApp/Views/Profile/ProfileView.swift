@@ -29,7 +29,7 @@ struct ProfileView: View {
                                 Spacer()
                                 Text("4")
                                     .font(.caption)
-                                    .fontWeight(.bold)
+                                    .uniBold()
                                     .padding(6)
                                     .background(Color.red)
                                     .uniForegroundStyle(.white)
@@ -57,7 +57,7 @@ struct ProfileView: View {
 
                     Text("BUILD 2.4.1 PREMIUM STABLE")
                         .font(.caption2)
-                        .fontWeight(.bold)
+                        .uniBold()
                         .uniForegroundStyle(.secondary, opacity: 0.5)
                         .uniTracking(2)
                 }

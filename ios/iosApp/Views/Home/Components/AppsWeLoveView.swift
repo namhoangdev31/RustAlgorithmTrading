@@ -26,7 +26,7 @@ struct AppsWeLoveView: View {
             HStack {
                 Text("Apps We Love")
                     .font(.title2)
-                    .fontWeight(.bold)
+                    .uniBold()
                 Spacer()
                 UniButton(action: {
                     navigation.navigate(to: .collection(id: "apps_we_love", title: "Apps We Love"))
@@ -62,7 +62,7 @@ struct AppsWeLoveView: View {
                     UniButton(action: {}) {
                         Text("OPEN")
                             .font(.caption)
-                            .fontWeight(.bold)
+                            .uniBold()
                             .uniForegroundStyle(.blue)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 8)

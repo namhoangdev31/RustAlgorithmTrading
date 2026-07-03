@@ -25,7 +25,7 @@ public struct BrowserErrorView: View {
             
             Text("Không thể tải trang")
                 .font(.title2)
-                .fontWeight(.bold)
+                .uniBold()
                 .uniForegroundStyle(.primary)
             
             Text(error.localizedDescription)

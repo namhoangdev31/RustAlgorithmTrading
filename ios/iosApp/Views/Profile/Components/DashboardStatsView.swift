@@ -18,7 +18,7 @@ struct DashboardStatsView: View {
                             Spacer()
                             Text("WALLET")
                                 .font(.caption2)
-                                .fontWeight(.bold)
+                                .uniBold()
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 4)
                                 .background(Color.leposSurface.opacity(0.2))
@@ -29,12 +29,12 @@ struct DashboardStatsView: View {
 
                         Text("BALANCE")
                             .font(.caption)
-                            .fontWeight(.semibold)
+                            .uniSemi()
                             .opacity(0.8)
 
                         Text("$1,284.50")
                             .font(.title2)
-                            .fontWeight(.bold)
+                            .uniBold()
                     }
                     .uniForegroundStyle(.white)
                     .padding(20)
@@ -61,12 +61,12 @@ struct DashboardStatsView: View {
                             Spacer()
                             Text("2.4k")
                                 .font(.title2)
-                                .fontWeight(.bold)
+                                .uniBold()
                         }
                         Spacer()
                         Text("LOYALTY POINTS")
                             .font(.caption2)
-                            .fontWeight(.bold)
+                            .uniBold()
                             .opacity(0.9)
                     }
                     .uniForegroundStyle(.white)
@@ -83,7 +83,7 @@ struct DashboardStatsView: View {
                             Spacer()
                             Text("GOLD TIER")
                                 .font(.caption2)
-                                .fontWeight(.bold)
+                                .uniBold()
                         }
 
                         Spacer()

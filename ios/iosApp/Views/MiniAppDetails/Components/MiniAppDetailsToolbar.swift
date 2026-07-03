@@ -31,7 +31,7 @@ struct MiniAppDetailsToolbar: ToolbarContent {
                         if isDownloaded {
                             Text("Open")
                                 .font(.callout)
-                                .fontWeight(.bold)
+                                .uniBold()
                                 .uniForegroundStyle(.white)
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 6)
@@ -42,7 +42,7 @@ struct MiniAppDetailsToolbar: ToolbarContent {
                         } else {
                             Text(price > 0 ? String(format: "$%.2f", price) : "Get")
                                 .font(.callout)
-                                .fontWeight(.bold)
+                                .uniBold()
                                 .uniForegroundStyle(.white)
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 6)

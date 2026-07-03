@@ -18,7 +18,7 @@ struct SystemView: View {
                     HStack {
                         Image(systemName: "gearshape.fill")
                         Text("Settings")
-                            .fontWeight(.bold)
+                            .uniBold()
                     }
                     .uniForegroundStyle(.black)
                     .frame(maxWidth: .infinity)
@@ -33,7 +33,7 @@ struct SystemView: View {
                         Image(systemName: "plus.circle.fill")
                             .uniForegroundStyle(.gray)
                         Text("Add New")
-                            .fontWeight(.bold)
+                            .uniBold()
                             .uniForegroundStyle(.gray)
                     }
                     .frame(maxWidth: .infinity)

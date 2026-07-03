@@ -37,7 +37,7 @@ struct AllAppsView: View {
         VStack(alignment: .leading, spacing: 12) {
             Text("All Apps")
                 .font(.title3)
-                .fontWeight(.bold)
+                .uniBold()
                 .padding(.horizontal)
 
             VStack(spacing: 0) {

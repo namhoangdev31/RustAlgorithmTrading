@@ -10,7 +10,7 @@ struct TransactionReceiptCard: View {
                 VStack(spacing: 8) {
                     Text("TOTAL AMOUNT")
                         .font(.caption)
-                        .fontWeight(.bold)
+                        .uniBold()
                         .uniForegroundStyle(.secondary)
                     Text("$45.00")
                         .font(.system(size: 40, weight: .bold))
@@ -25,7 +25,7 @@ struct TransactionReceiptCard: View {
                 UniButton(action: {}) {
                     Text("READY FOR LAUNCH")
                         .font(.caption)
-                        .fontWeight(.bold)
+                        .uniBold()
                         .uniForegroundStyle(.green)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
@@ -37,7 +37,7 @@ struct TransactionReceiptCard: View {
                 VStack(spacing: 8) {
                     Text("ATTEMPTED AMOUNT")
                         .font(.caption)
-                        .fontWeight(.bold)
+                        .uniBold()
                         .uniForegroundStyle(.secondary)
                     Text("$45.00")
                         .font(.system(size: 40, weight: .bold))
@@ -51,7 +51,7 @@ struct TransactionReceiptCard: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("ERROR CODE")
                             .font(.caption)
-                            .fontWeight(.bold)
+                            .uniBold()
                             .uniForegroundStyle(.secondary)
                         Text("DEC-042")
                             .font(.subheadline)
@@ -62,7 +62,7 @@ struct TransactionReceiptCard: View {
                     VStack(alignment: .trailing, spacing: 4) {
                         Text("REASON")
                             .font(.caption)
-                            .fontWeight(.bold)
+                            .uniBold()
                             .uniForegroundStyle(.secondary)
                         Text("Insuff. Funds")
                             .font(.subheadline)
@@ -77,7 +77,7 @@ struct TransactionReceiptCard: View {
                             .frame(width: 6, height: 6)
                         Text("ACTION REQUIRED")
                             .font(.caption)
-                            .fontWeight(.bold)
+                            .uniBold()
                             .uniForegroundStyle(.red)
                     }
                     .frame(maxWidth: .infinity)

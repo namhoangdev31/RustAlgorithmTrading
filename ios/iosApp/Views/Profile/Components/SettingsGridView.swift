@@ -120,7 +120,7 @@ struct SettingsCard: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.subheadline)
-                    .fontWeight(.bold)
+                    .uniBold()
                     .uniForegroundStyle(isDestructive ? .red : .primary)
 
                 Text(subtitle)

@@ -14,7 +14,7 @@ struct AboutAppView: View {
 
                     Text("Lepos App")
                         .font(.title2)
-                        .fontWeight(.bold)
+                        .uniBold()
 
                     Text("Version 1.0.0 (Build 100)")
                         .font(.subheadline)

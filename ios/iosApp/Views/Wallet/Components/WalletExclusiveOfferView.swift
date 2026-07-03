@@ -12,19 +12,19 @@ struct WalletExclusiveOfferView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("EXCLUSIVE OFFER")
                         .font(.caption)
-                        .fontWeight(.bold)
+                        .uniBold()
                         .uniForegroundStyle(.secondary)
                         .uniTracking(1)
 
                     Text("Get 5% Cashback on\nyour next transfer")
                         .font(.title3)
-                        .fontWeight(.bold)
+                        .uniBold()
                         .uniForegroundStyle(.white)
 
                     UniButton(action: {}) {
                         Text("ACTIVATE")
                             .font(.caption)
-                            .fontWeight(.bold)
+                            .uniBold()
                             .uniForegroundStyle(.black)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 8)

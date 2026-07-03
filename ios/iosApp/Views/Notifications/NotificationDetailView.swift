@@ -13,7 +13,7 @@ struct NotificationDetailView: View {
 
                 Text(notification.title)
                     .font(.title)
-                    .fontWeight(.bold)
+                    .uniBold()
 
                 Text(notification.message)
                     .font(.body)

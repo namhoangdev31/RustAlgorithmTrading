@@ -7,7 +7,7 @@ struct ReviewGuidelinesView: View {
             VStack(alignment: .leading, spacing: 20) {
                 Text("Review Guidelines")
                     .font(.largeTitle)
-                    .fontWeight(.bold)
+                    .uniBold()
 
                 Text(
                     "Help keep our community helpful and safe by following these guidelines when writing reviews."

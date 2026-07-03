@@ -47,7 +47,7 @@ struct UpdatesView: View {
                             .uniForegroundStyle(.secondary)
                         Text("\(updates.count) Apps")
                             .font(.title2)
-                            .fontWeight(.bold)
+                            .uniBold()
                     }
 
                     Spacer()
@@ -57,7 +57,7 @@ struct UpdatesView: View {
                         updates.removeAll()
                     }) {
                         Text("Update All")
-                            .fontWeight(.semibold)
+                            .uniSemi()
                             .uniForegroundStyle(.white)
                             .padding(.horizontal, 20)
                             .padding(.vertical, 10)
@@ -122,7 +122,7 @@ struct UpdatesView: View {
                                     }) {
                                         Text("UPDATE")
                                             .font(.caption)
-                                            .fontWeight(.bold)
+                                            .uniBold()
                                             .uniForegroundStyle(.blue)
                                             .padding(.horizontal, 16)
                                             .padding(.vertical, 8)

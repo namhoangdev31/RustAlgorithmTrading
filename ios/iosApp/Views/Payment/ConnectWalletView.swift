@@ -15,7 +15,7 @@ struct ConnectWalletView: View {
                 VStack(alignment: .leading, spacing: 16) {
                     Text("SELECT PROVIDER")
                         .font(.caption)
-                        .fontWeight(.bold)
+                        .uniBold()
                         .uniForegroundStyle(.secondary)
                         .padding(.horizontal)
 
@@ -70,7 +70,7 @@ struct ConnectWalletView: View {
                             .uniForegroundStyle(.green)
                         Text("BANK-GRADE ENCRYPTION")
                             .font(.caption2)
-                            .fontWeight(.bold)
+                            .uniBold()
                             .uniForegroundStyle(.secondary)
                     }
                     .padding(.horizontal, 16)

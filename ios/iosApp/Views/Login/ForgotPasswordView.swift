@@ -18,7 +18,7 @@ struct ForgotPasswordView: View {
 
             Text("Forgot Password?")
                 .font(.largeTitle)
-                .fontWeight(.bold)
+                .uniBold()
 
             Text("Enter your email address to receive a password reset link.")
                 .font(.body)
@@ -77,7 +77,7 @@ struct ForgotPasswordView: View {
                                 .uniProgressTint(.white)
                         } else {
                             Text("Send Reset Link")
-                                .fontWeight(.bold)
+                                .uniBold()
                         }
                     }
                     .uniButtonStyle(.plain)

@@ -169,7 +169,7 @@ private struct MiniAppSettingsHeader: View {
 
             Text(appName)
                 .font(.title2)
-                .fontWeight(.bold)
+                .uniBold()
 
             Text(developerName)
                 .font(.subheadline)
@@ -243,7 +243,7 @@ private struct SettingsActionSection: View {
         VStack(spacing: 16) {
             UniButton(action: onClose) {
                 Text("Đóng và Khởi chạy lại")
-                    .fontWeight(.semibold)
+                    .uniSemi()
                     .uniForegroundStyle(.blue)
                     .frame(maxWidth: .infinity)
                     .padding()
@@ -266,7 +266,7 @@ private struct SettingsSectionTitle: View {
     var body: some View {
         Text(title)
             .font(.caption)
-            .fontWeight(.semibold)
+            .uniSemi()
             .uniForegroundStyle(.secondary)
             .padding(.horizontal)
     }

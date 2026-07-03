@@ -13,12 +13,12 @@ struct DiscoveryHeaderView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text("WEDNESDAY, MAY 22")
                     .font(.caption)
-                    .fontWeight(.semibold)
+                    .uniSemi()
                     .uniForegroundStyle(.secondary)
 
                 Text("Discover")
                     .font(.largeTitle)
-                    .fontWeight(.bold)
+                    .uniBold()
             }
 
             Spacer()

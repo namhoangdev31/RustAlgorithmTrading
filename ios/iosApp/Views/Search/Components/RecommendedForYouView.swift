@@ -22,7 +22,7 @@ struct RecommendedForYouView: View {
             HStack {
                 Text("Recommended for You")
                     .font(.headline)
-                    .fontWeight(.bold)
+                    .uniBold()
                 Spacer()
                 UniButton("View all") {}
                     .font(.subheadline)
@@ -74,7 +74,7 @@ struct AppRecommendationCard: View {
                         VStack(alignment: .leading, spacing: 4) {
                             Text(app.name)
                                 .font(.subheadline)
-                                .fontWeight(.bold)
+                                .uniBold()
                             Text(app.subtitle)
                                 .font(.caption)
                                 .uniForegroundStyle(.secondary)
@@ -90,7 +90,7 @@ struct AppRecommendationCard: View {
                                 .uniForegroundStyle(.orange)
                             Text(String(format: "%.1f", app.rating))
                                 .font(.caption)
-                                .fontWeight(.semibold)
+                                .uniSemi()
                         }
 
                         Spacer()
@@ -98,7 +98,7 @@ struct AppRecommendationCard: View {
                         UniButton(action: {}) {
                             Text("GET")
                                 .font(.caption)
-                                .fontWeight(.bold)
+                                .uniBold()
                                 .uniForegroundStyle(.white)
                                 .padding(.horizontal, 20)
                                 .padding(.vertical, 6)

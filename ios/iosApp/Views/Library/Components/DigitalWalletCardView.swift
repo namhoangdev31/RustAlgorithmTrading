@@ -15,7 +15,7 @@ struct DigitalWalletCardView: View {
                 HStack {
                     Text("DIGITAL WALLET")
                         .font(.caption)
-                        .fontWeight(.bold)
+                        .uniBold()
                         .padding(.horizontal, 10)
                         .padding(.vertical, 5)
                         .uniGlass(cornerRadius: 20)
@@ -32,7 +32,7 @@ struct DigitalWalletCardView: View {
 
                 Text("Personal\nAssets")
                     .font(.title)
-                    .fontWeight(.bold)
+                    .uniBold()
                     .uniForegroundStyle(.white)
                     .padding(.top, 8)
 
@@ -40,7 +40,7 @@ struct DigitalWalletCardView: View {
 
                 Text("AVAILABLE BALANCE")
                     .font(.caption)
-                    .fontWeight(.bold)
+                    .uniBold()
                     .uniForegroundStyle(.white, opacity: 0.7)
 
                 Text("$12,480.50")

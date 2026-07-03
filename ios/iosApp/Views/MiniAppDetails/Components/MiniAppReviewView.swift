@@ -10,7 +10,7 @@ struct MiniAppReviewView: View {
             HStack {
                 Text("Ratings & Reviews")
                     .font(.title2)
-                    .fontWeight(.bold)
+                    .uniBold()
                 Spacer()
                 UniButton(action: {
                     navigation.navigate(to: .allReviews(appId: appId))

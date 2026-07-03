@@ -15,11 +15,11 @@ struct EditorChoiceView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("EDITOR'S CHOICE")
                     .font(.footnote)
-                    .fontWeight(.semibold)
+                    .uniSemi()
                     .uniForegroundStyle(.white)
                 Text("Master Your\nWorkflow")
                     .font(.title)
-                    .fontWeight(.bold)
+                    .uniBold()
                     .uniForegroundStyle(.white)
 
                 Spacer()

@@ -13,7 +13,7 @@ struct NoInternetView: View {
             VStack(spacing: 8) {
                 Text("No Internet Connection")
                     .font(.title2)
-                    .fontWeight(.bold)
+                    .uniBold()
 
                 Text("Please check your connection and try again.")
                     .font(.body)

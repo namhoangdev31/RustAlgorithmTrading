@@ -70,12 +70,12 @@ struct ActivityView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("SYSTEM SECURITY")
                             .font(.caption2)
-                            .fontWeight(.bold)
+                            .uniBold()
                             .uniForegroundStyle(.white, hierarchy: .secondary)
 
                         Text("Review Login Attempt.")
                             .font(.title2)
-                            .fontWeight(.bold)
+                            .uniBold()
                             .uniForegroundStyle(.white)
 
                         Spacer()
@@ -89,7 +89,7 @@ struct ActivityView: View {
                             UniButton(action: {}) {
                                 Text("REVIEW")
                                     .font(.caption)
-                                    .fontWeight(.bold)
+                                    .uniBold()
                                     .padding(.horizontal, 16)
                                     .padding(.vertical, 8)
                                     .background(Color.leposSurface.opacity(0.2))

@@ -21,7 +21,7 @@ struct HomePersonalizedSectionView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
                         .font(.title3)
-                        .fontWeight(.bold)
+                        .uniBold()
 
                     Text(subtitle)
                         .font(.subheadline)

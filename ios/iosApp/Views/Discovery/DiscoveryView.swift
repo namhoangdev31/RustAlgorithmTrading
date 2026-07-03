@@ -30,7 +30,7 @@ struct DiscoveryView: View {
                     HStack {
                         Text("Top Charts")
                             .font(.title2)
-                            .fontWeight(.bold)
+                            .uniBold()
                         Spacer()
                         Image(systemName: "chevron.right")
                             .uniForegroundStyle(.secondary)

@@ -1,4 +1,5 @@
 import SwiftUI
+import ExploreSwiftUI
 
 struct ScannerOverlayView: View {
     var onScan: () -> Void
@@ -25,7 +26,7 @@ struct ScannerOverlayView: View {
                 
                 Text("ALIGN CARD WITH FRAME")
                     .font(.caption2)
-                    .fontWeight(.bold)
+                    .uniBold()
                     .uniForegroundStyle(.white.opacity(0.6))
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
@@ -41,7 +42,7 @@ struct ScannerOverlayView: View {
                     HStack {
                         Image(systemName: "camera.fill")
                         Text("Scan Card")
-                            .fontWeight(.bold)
+                            .uniBold()
                     }
                     .frame(maxWidth: .infinity)
                     .padding()

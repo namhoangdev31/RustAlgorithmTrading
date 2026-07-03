@@ -59,7 +59,7 @@ struct LifestyleCard: View {
                     
                     Text(title)
                         .font(.title3)
-                        .fontWeight(.bold)
+                        .uniBold()
                         .uniForegroundStyle(color)
                     
                     Text(subtitle)

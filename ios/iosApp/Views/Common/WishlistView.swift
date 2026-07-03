@@ -116,7 +116,7 @@ struct WishlistView: View {
                                 }) {
                                     Text("GET")
                                         .font(.caption)
-                                        .fontWeight(.bold)
+                                        .uniBold()
                                         .uniForegroundStyle(.blue)
                                         .frame(maxWidth: .infinity)
                                         .padding(.vertical, 6)

@@ -14,7 +14,7 @@ struct RelatedAppsSectionView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("You Might Also Like")
                 .font(.title3)
-                .fontWeight(.bold)
+                .uniBold()
                 .padding(.horizontal)
 
             UniScrollView(.horizontal, showsIndicators: false) {
@@ -41,7 +41,7 @@ struct RelatedAppsSectionView: View {
                             UniButton(action: {}) {
                                 Text("GET")
                                     .font(.caption)
-                                    .fontWeight(.bold)
+                                    .uniBold()
                                     .uniForegroundStyle(.blue)
                                     .padding(.horizontal, 16)
                                     .padding(.vertical, 6)

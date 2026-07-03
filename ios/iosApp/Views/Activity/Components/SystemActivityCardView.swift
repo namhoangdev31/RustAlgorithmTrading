@@ -24,12 +24,12 @@ struct SystemActivityCardView: View {
                 UniGlassEffectContainer(spacing: 8) {
                     Text("SYSTEM")
                         .font(.caption2)
-                        .fontWeight(.bold)
+                        .uniBold()
                         .uniForegroundStyle(.white, hierarchy: .secondary)
 
                     Text("V2.4.1 is ready for installation.")
                         .font(.title2)
-                        .fontWeight(.bold)
+                        .uniBold()
                         .uniForegroundStyle(.white)
                         .fixedSize(horizontal: false, vertical: true)
 
@@ -48,7 +48,7 @@ struct SystemActivityCardView: View {
                         UniButton(action: {}) {
                             Text("UPDATE")
                                 .font(.caption)
-                                .fontWeight(.bold)
+                                .uniBold()
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 8)
                                 .background(Color.leposSurface.opacity(0.2))

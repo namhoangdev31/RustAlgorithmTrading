@@ -56,7 +56,7 @@ struct CategoryDetailView: View {
                     VStack(alignment: .leading) {
                         Text("Top in \(categoryTitle)")
                             .font(.title2)
-                            .fontWeight(.bold)
+                            .uniBold()
                         Text("Handpicked for you")
                             .uniForegroundStyle(.secondary)
                     }
@@ -82,7 +82,7 @@ struct CategoryDetailView: View {
                         Text(String(app.name.prefix(1)))
                             .uniForegroundStyle(.white)
                             .font(.title2)
-                            .fontWeight(.bold)
+                            .uniBold()
                     )
 
                 VStack(alignment: .leading, spacing: 4) {
@@ -107,7 +107,7 @@ struct CategoryDetailView: View {
                 UniButton(action: {}) {
                     Text("GET")
                         .font(.caption)
-                        .fontWeight(.bold)
+                        .uniBold()
                         .uniForegroundStyle(.blue)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 6)

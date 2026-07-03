@@ -28,11 +28,11 @@ struct TrendingThisWeekView: View {
             HStack {
                 Text("Trending This Week")
                     .font(.title2)
-                    .fontWeight(.bold)
+                    .uniBold()
                 Spacer()
                 Text("UPDATED TODAY")
                     .font(.caption)
-                    .fontWeight(.bold)
+                    .uniBold()
                     .uniForegroundStyle(.secondary)
             }
             .padding(.horizontal)
@@ -43,7 +43,7 @@ struct TrendingThisWeekView: View {
                         Text(app.rank)
                             .font(.largeTitle)
                             .italic()  // Approximate style
-                            .fontWeight(.bold)
+                            .uniBold()
                             .uniForegroundStyle(.secondary, opacity: 0.3)
                             .frame(width: 30)
 
@@ -72,7 +72,7 @@ struct TrendingThisWeekView: View {
                         UniButton(action: {}) {
                             Text("GET")
                                 .font(.caption)
-                                .fontWeight(.bold)
+                                .uniBold()
                                 .uniForegroundStyle(.blue)
                                 .padding(.horizontal, 20)
                                 .padding(.vertical, 8)

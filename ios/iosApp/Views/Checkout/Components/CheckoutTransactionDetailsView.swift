@@ -11,7 +11,7 @@ struct CheckoutTransactionDetailsView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("TRANSACTION DETAILS")
                 .font(.caption)
-                .fontWeight(.bold)
+                .uniBold()
                 .uniForegroundStyle(.secondary)
                 .padding(.bottom, 4)
 

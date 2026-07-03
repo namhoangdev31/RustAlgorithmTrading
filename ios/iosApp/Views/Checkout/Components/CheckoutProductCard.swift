@@ -26,13 +26,13 @@ struct CheckoutProductCard: View {
 
             Text("ORDER SUMMARY")
                 .font(.caption)
-                .fontWeight(.bold)
+                .uniBold()
                 .uniForegroundStyle(.cyan)
                 .padding(.top, 8)
 
             Text(appName)
                 .font(.title2)
-                .fontWeight(.bold)
+                .uniBold()
 
             Text(appDeveloper)
                 .font(.subheadline)

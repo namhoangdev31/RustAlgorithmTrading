@@ -7,12 +7,12 @@ struct ActivityHeaderView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text("THURSDAY, OCT 24")
                     .font(.caption)
-                    .fontWeight(.semibold)
+                    .uniSemi()
                     .uniForegroundStyle(.gray)
 
                 Text("Activity")
                     .font(.largeTitle)
-                    .fontWeight(.bold)
+                    .uniBold()
             }
 
             Spacer()

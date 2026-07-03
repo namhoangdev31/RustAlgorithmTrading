@@ -18,7 +18,7 @@ struct MiniAppStickyFooterView: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text("EcoTrack Pro")
                     .font(.subheadline)
-                    .fontWeight(.semibold)
+                    .uniSemi()
                 Text("Productivity")
                     .font(.caption)
                     .uniForegroundStyle(.secondary)

@@ -41,7 +41,7 @@ struct QuickServiceButton: View {
 
                 Text(title)
                     .font(.subheadline)
-                    .fontWeight(.semibold)
+                    .uniSemi()
                     .uniForegroundStyle(.primary)
             }
             .frame(maxWidth: .infinity)

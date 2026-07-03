@@ -11,7 +11,7 @@ struct PaymentDetailRow: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(label)
                     .font(.caption)
-                    .fontWeight(.bold)
+                    .uniBold()
                     .uniForegroundStyle(.secondary)
                 Text(value)
                     .font(.subheadline)

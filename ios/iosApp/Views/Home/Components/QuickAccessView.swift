@@ -6,7 +6,7 @@ struct QuickAccessView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Quick Access")
                 .font(.title2)
-                .fontWeight(.bold)
+                .uniBold()
                 .padding(.horizontal)
 
             HStack(spacing: 16) {

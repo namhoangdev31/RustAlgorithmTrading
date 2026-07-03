@@ -10,7 +10,7 @@ struct EditorChoiceContentView: View {
                 "After immense global success, Crossfire: Legends has arrived to redefine mobile shooting."
             )
             .font(.title2)
-            .fontWeight(.bold)
+            .uniBold()
             .uniForegroundStyle(.primary)
 
             // Inline App CTA
@@ -36,7 +36,7 @@ struct EditorChoiceContentView: View {
                 UniButton(action: {}) {
                     Text("NHẬN")
                         .font(.subheadline)
-                        .fontWeight(.bold)
+                        .uniBold()
                         .uniForegroundStyle(.white)
                         .padding(.horizontal, 20)
                         .padding(.vertical, 8)
@@ -57,7 +57,7 @@ struct EditorChoiceContentView: View {
             VStack(alignment: .leading, spacing: 12) {
                 Text("Unparalleled Mission Variety")
                     .font(.title3)
-                    .fontWeight(.bold)
+                    .uniBold()
 
                 Text(
                     "Crossfire: Legends isn't just a first-person shooter; it's a total combat experience with multiple modes. From classic team deathmatch to specialized tactical operations, every match feels like a fresh challenge."
@@ -81,7 +81,7 @@ struct EditorChoiceContentView: View {
             VStack(alignment: .leading, spacing: 12) {
                 Text("Master Your Arsenal")
                     .font(.title3)
-                    .fontWeight(.bold)
+                    .uniBold()
 
                 Text(
                     "The game features a meticulously balanced collection of weaponry. Customize your loadout to match your playstyle—whether you prefer the stealthy approach of a suppressed carbine or the raw power of a heavy machine gun."

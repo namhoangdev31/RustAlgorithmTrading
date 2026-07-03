@@ -11,7 +11,7 @@ struct MiniAppWhatsNewView: View {
             HStack {
                 Text("What's New")
                     .font(.title2)
-                    .fontWeight(.bold)
+                    .uniBold()
                 Spacer()
                 UniButton(action: {}) {
                     Text("Version History")

@@ -23,7 +23,7 @@ struct InstallProgressView: View {
             VStack(spacing: 8) {
                 Text("Installing App")
                     .font(.title3)
-                    .fontWeight(.bold)
+                    .uniBold()
 
                 Text(status)
                     .font(.body)

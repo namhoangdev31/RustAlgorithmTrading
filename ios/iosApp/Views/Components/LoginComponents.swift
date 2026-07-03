@@ -5,7 +5,7 @@ struct LoginHeaderView: View {
     var body: some View {
         Text("Welcome Back")
             .font(.largeTitle)
-            .fontWeight(.bold)
+            .uniBold()
             .uniForegroundStyle(.primary)
     }
 }
@@ -47,7 +47,7 @@ struct LoginButtonView: View {
                         .uniProgressTint(.white)
                 } else {
                     Text("Login")
-                        .fontWeight(.semibold)
+                        .uniSemi()
                 }
             }
             .frame(maxWidth: .infinity)

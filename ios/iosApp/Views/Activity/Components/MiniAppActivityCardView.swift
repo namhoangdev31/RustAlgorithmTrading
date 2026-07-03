@@ -51,7 +51,7 @@ struct MiniAppActivityCardView: View {
             UniButton(action: {}) {
                 Text(actionTitle)
                     .font(.caption)
-                    .fontWeight(.bold)
+                    .uniBold()
                     .uniForegroundStyle(.blue)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)

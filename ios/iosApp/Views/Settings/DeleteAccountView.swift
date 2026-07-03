@@ -15,7 +15,7 @@ struct DeleteAccountView: View {
             VStack(spacing: 12) {
                 Text("Delete Account")
                     .font(.title2)
-                    .fontWeight(.bold)
+                    .uniBold()
 
                 Text("Are you sure you want to delete your account? This action cannot be undone.")
                     .font(.body)
