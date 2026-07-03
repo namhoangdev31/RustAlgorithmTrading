@@ -83,3 +83,8 @@ Never open files "to explore."
 ### Response
 
 - **Changed**: files · **Why**: 1-line · **Validated**: build/test result · **Risk**: level
+
+### UI Development
+
+1. **ExploreSwiftUI mandatory**: When creating or modifying UI views, you MUST import and use `ExploreSwiftUI` components (e.g., `UniButton`, `UniScrollView`, `.uniGlass`, `.uniButtonStyle`) instead of native SwiftUI equivalents.
+

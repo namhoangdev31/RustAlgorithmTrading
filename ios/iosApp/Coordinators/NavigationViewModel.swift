@@ -24,6 +24,7 @@ enum AppRoute: Hashable, Identifiable {
     case forgotPassword
     case forYou
     case favorites
+    case browser(initialURL: String?, privateMode: Bool)
     
     // Batch 1: System & Lifecycle
     case globalError
@@ -63,6 +64,7 @@ enum AppRoute: Hashable, Identifiable {
 
     var id: String {
         switch self {
+        case .browser(let url, let privateMode): return "browser-\(url ?? "")-\(privateMode)"
         case .writeReview(let id): return "writeReview-\(id)"
         case .login: return "login"
         case .home: return "home"
@@ -170,6 +172,9 @@ enum AppRoute: Hashable, Identifiable {
         case .paymentFailed: hasher.combine(30)
         case .wallet: hasher.combine(31)
         case .favorites: hasher.combine(32)
+        case .browser(let url, let privateMode):
+            hasher.combine(url)
+            hasher.combine(privateMode)
         }
     }
 
@@ -226,6 +231,8 @@ enum AppRoute: Hashable, Identifiable {
         case (.paymentFailed, .paymentFailed): return true
         case (.wallet, .wallet): return true
         case (.favorites, .favorites): return true
+        case (.browser(let ua, let pa), .browser(let ub, let pb)):
+            return ua == ub && pa == pb
         default: return false
         }
     }

@@ -45,6 +45,11 @@ final class AppDependencyContainer: ObservableObject {
     func makeWebRuntimeViewModel() -> WebRuntimeViewModel {
         return WebRuntimeViewModel()
     }
+    
+    @MainActor
+    func makeBrowserViewModel(initialURL: String?, privateMode: Bool) -> BrowserViewModel {
+        return BrowserViewModel(initialURL: initialURL, isPrivate: privateMode)
+    }
 }
 
 // MARK: - Environment Key

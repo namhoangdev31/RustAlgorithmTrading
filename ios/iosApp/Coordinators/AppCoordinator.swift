@@ -50,6 +50,8 @@ struct AppCoordinator: View {
     @ViewBuilder
     private func destinationView(for route: AppRoute) -> some View {
         switch route {
+        case .browser(let initialURL, let privateMode):
+            BrowserView(viewModel: container.makeBrowserViewModel(initialURL: initialURL, privateMode: privateMode))
         case .login:
             LoginView(viewModel: container.makeLoginViewModel())
         case .home:

@@ -1,0 +1,231 @@
+import Foundation
+import WebKit
+import Combine
+
+@MainActor
+public final class BrowserTabViewModel: NSObject, ObservableObject, Identifiable {
+    public let id: UUID
+    public let isPrivate: Bool
+    public let webView: WKWebView
+    
+    @Published public var title: String = "Tab Mới"
+    @Published public var currentURL: URL? = nil
+    @Published public var pageState: BrowserPageState = .idle
+    @Published public var canGoBack: Bool = false
+    @Published public var canGoForward: Bool = false
+    
+    // Callbacks to bubble events to the main BrowserViewModel
+    public var onOpenNewTab: ((URL) -> Void)?
+    public var onOpenExternalURL: ((URL) -> Void)?
+    public var onUpdateHistory: ((URL, String) -> Void)?
+    
+    private var observers: Set<AnyCancellable> = []
+    private let navigationPolicy = BrowserNavigationPolicy()
+    
+    // Crash recovery tracking
+    private var lastCrashTime: Date? = nil
+    private var autoReloadCount = 0
+    
+    public init(id: UUID = UUID(), initialURL: URL? = nil, isPrivate: Bool) {
+        self.id = id
+        self.isPrivate = isPrivate
+        
+        let configuration = WKWebViewConfiguration()
+        configuration.allowsInlineMediaPlayback = true
+        configuration.mediaTypesRequiringUserActionForPlayback = []
+        configuration.defaultWebpagePreferences.allowsContentJavaScript = true
+        configuration.websiteDataStore = isPrivate ? .nonPersistent() : .default()
+        
+        self.webView = WKWebView(frame: .zero, configuration: configuration)
+        self.currentURL = initialURL
+        
+        super.init()
+        
+        self.webView.navigationDelegate = self
+        self.webView.uiDelegate = self
+        
+        setupObservers()
+        
+        if let url = initialURL {
+            load(url)
+        }
+    }
+    
+    deinit {
+        // Clean up observers and webview delegates safely on MainActor
+        let webView = self.webView
+        DispatchQueue.main.async {
+            webView.navigationDelegate = nil
+            webView.uiDelegate = nil
+            webView.stopLoading()
+        }
+    }
+    
+    private func setupObservers() {
+        // Observe KVO properties on WKWebView
+        webView.publisher(for: \.title)
+            .compactMap { $0 }
+            .assign(to: \.title, on: self)
+            .store(in: &observers)
+        
+        webView.publisher(for: \.url)
+            .assign(to: \.currentURL, on: self)
+            .store(in: &observers)
+        
+        webView.publisher(for: \.canGoBack)
+            .assign(to: \.canGoBack, on: self)
+            .store(in: &observers)
+        
+        webView.publisher(for: \.canGoForward)
+            .assign(to: \.canGoForward, on: self)
+            .store(in: &observers)
+        
+        webView.publisher(for: \.estimatedProgress)
+            .sink { [weak self] progress in
+                guard let self = self else { return }
+                if self.webView.isLoading {
+                    self.pageState = .loading(progress: progress)
+                } else if progress >= 1.0 {
+                    self.pageState = .loaded
+                }
+            }
+            .store(in: &observers)
+    }
+    
+    // MARK: - Navigation Actions
+    
+    public func load(_ url: URL) {
+        let redacted = BrowserURLNormalizer.redactURLForLogging(url)
+        print("[BrowserTabViewModel] Loading: \(redacted)")
+        
+        let decision = navigationPolicy.decidePolicy(for: url, isMainFrame: true)
+        switch decision {
+        case .allow:
+            let request = URLRequest(url: url)
+            webView.load(request)
+        case .cancel:
+            break
+        case .openExternal(let externalUrl):
+            onOpenExternalURL?(externalUrl)
+        case .openNewTab(let newTabUrl):
+            onOpenNewTab?(newTabUrl)
+        case .blocked(let reason):
+            self.pageState = .failed(.securityBlocked(reason: reason.rawValue))
+        }
+    }
+    
+    public func goBack() {
+        if webView.canGoBack {
+            webView.goBack()
+        }
+    }
+    
+    public func goForward() {
+        if webView.canGoForward {
+            webView.goForward()
+        }
+    }
+    
+    public func reload() {
+        webView.reload()
+    }
+    
+    public func stopLoading() {
+        webView.stopLoading()
+        self.pageState = .loaded
+    }
+}
+
+// MARK: - WKNavigationDelegate
+extension BrowserTabViewModel: WKNavigationDelegate {
+    public func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+        self.pageState = .loading(progress: 0.0)
+    }
+    
+    public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        self.pageState = .loaded
+        if let url = webView.url {
+            let titleStr = webView.title ?? url.host ?? "Website"
+            onUpdateHistory?(url, titleStr)
+        }
+    }
+    
+    public func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+        self.pageState = .failed(.navigationFailed(error.localizedDescription))
+    }
+    
+    public func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+        self.pageState = .failed(.navigationFailed(error.localizedDescription))
+    }
+    
+    public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+        guard let url = navigationAction.request.url else {
+            decisionHandler(.cancel)
+            return
+        }
+        
+        let isMainFrame = navigationAction.targetFrame?.isMainFrame ?? false
+        let decision = navigationPolicy.decidePolicy(for: url, isMainFrame: isMainFrame)
+        
+        switch decision {
+        case .allow:
+            decisionHandler(.allow)
+        case .cancel:
+            decisionHandler(.cancel)
+        case .openExternal(let externalUrl):
+            decisionHandler(.cancel)
+            onOpenExternalURL?(externalUrl)
+        case .openNewTab(let newTabUrl):
+            decisionHandler(.cancel)
+            onOpenNewTab?(newTabUrl)
+        case .blocked(let reason):
+            decisionHandler(.cancel)
+            self.pageState = .failed(.securityBlocked(reason: reason.rawValue))
+        }
+    }
+    
+    public func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
+        let now = Date()
+        if let lastCrash = lastCrashTime, now.timeIntervalSince(lastCrash) < 30 {
+            autoReloadCount += 1
+        } else {
+            autoReloadCount = 1
+        }
+        lastCrashTime = now
+        
+        if autoReloadCount <= 1 {
+            print("[BrowserTabViewModel] Web content process terminated. Auto-reloading...")
+            webView.reload()
+        } else {
+            print("[BrowserTabViewModel] Web content process crashed repeatedly. Halting.")
+            self.pageState = .failed(.webProcessCrashed)
+        }
+    }
+}
+
+// MARK: - WKUIDelegate
+extension BrowserTabViewModel: WKUIDelegate {
+    public func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
+        if let url = navigationAction.request.url {
+            onOpenNewTab?(url)
+        } else if navigationAction.targetFrame == nil {
+            // Case where website initiates window.open() without URL immediately
+            // We just let the main view model handle it when navigation starts
+        }
+        return nil
+    }
+    
+    // Alert dialogs
+    public func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
+        // Fallback to simple completion to avoid freezing webview
+        completionHandler()
+    }
+    
+    public func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Void) {
+        completionHandler(false)
+    }
+    
+    public func webView(_ webView: WKWebView, runJavaScriptTextInputPanelWithPrompt prompt: String, defaultText: String?, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (String?) -> Void) {
+        completionHandler(nil)
+    }
+}
