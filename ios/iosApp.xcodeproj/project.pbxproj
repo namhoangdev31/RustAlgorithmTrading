@@ -536,8 +536,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/namhoangdev31/ExploreSwiftUI";
 			requirement = {
-				branch = main;
-				kind = branch;
+				kind = revision;
+				revision = 1ce225adce0a55b57993fd5a1b2d1d708860eb6f;
 			};
 		};
 		5A7803FC2F39020E004BBDBF /* XCRemoteSwiftPackageReference "ACarousel" */ = {
