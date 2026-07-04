@@ -25,7 +25,6 @@ public struct BrowserView: View {
             bottomBar
         }
         .navigationBarHidden(true)
-        .uniToolbarBackground(.hidden, for: .tabBar)
         // MARK: Sheets
         .sheet(isPresented: $viewModel.showTabSwitcher) {
             BrowserTabSwitcherView(viewModel: viewModel)
