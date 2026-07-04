@@ -19,7 +19,7 @@ final class DatabaseContainer {
             ])
             let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
             let dbURL = documentsURL.appendingPathComponent("miniapp_registry.store")
-            let config = ModelConfiguration(url: dbURL, schema: schema)
+            let config = ModelConfiguration(schema: schema, url: dbURL)
             return try ModelContainer(for: schema, configurations: config)
         } catch {
             fatalError("Failed to initialize SwiftData ModelContainer: \(error.localizedDescription)")
@@ -37,8 +37,8 @@ actor DatabaseService: ModelActor {
     init(modelContainer: ModelContainer) {
         self.modelContainer = modelContainer
         let context = ModelContext(modelContainer)
-        context.autosavesEnabled = false
-        self.modelExecutor = DefaultModelExecutor(context: context)
+        context.autosaveEnabled = false
+        self.modelExecutor = DefaultSerialModelExecutor(modelContext: context)
     }
     
     private var context: ModelContext {
