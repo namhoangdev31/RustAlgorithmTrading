@@ -3,12 +3,20 @@ import SwiftUI
 
 struct MainTabView: View {
     @Environment(\.appContainer) private var container
+    @EnvironmentObject private var navigation: NavigationViewModel
     @State private var selection = 2
 
     var body: some View {
         UniTabView(selection: $selection) {
-            UniTab("Today", systemImage: "sparkles", value: 0) {
-                HomeView()
+            UniTab("", systemImage: "sparkles", value: 0) {
+                BrowserStartPageView(viewModel: container.makeBrowserViewModel(initialURL: nil, privateMode: false)) { route in
+                    switch route {
+                    case .search:
+                        navigation.navigate(to: .browser(initialURL: nil, privateMode: false))
+                    case .url(let url):
+                        navigation.navigate(to: .browser(initialURL: url, privateMode: false))
+                    }
+                }
             }
 
             UniTab("Discovery", systemImage: "safari", value: 1) {

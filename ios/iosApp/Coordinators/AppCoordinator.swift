@@ -11,17 +11,20 @@ struct AppCoordinator: View {
             if !hasSeenOnboarding {
                 OnboardingView(isCompleted: $hasSeenOnboarding)
             } else {
-                rootContent
-                    .sheet(item: $navigation.presentedSheet) { route in
-                        switch route {
-                        case .writeReview(let appId):
-                            WriteReviewView(appId: appId)
-                        case .reportReview:
-                            ReportReviewSheet()
-                        default:
-                            EmptyView()
-                        }
+                ZStack {
+                    rootContent
+                    AssistiveTouchView()
+                }
+                .sheet(item: $navigation.presentedSheet) { route in
+                    switch route {
+                    case .writeReview(let appId):
+                        WriteReviewView(appId: appId)
+                    case .reportReview:
+                        ReportReviewSheet()
+                    default:
+                        EmptyView()
                     }
+                }
             }
         }
         .environmentObject(navigation)
@@ -50,6 +53,8 @@ struct AppCoordinator: View {
     @ViewBuilder
     private func destinationView(for route: AppRoute) -> some View {
         switch route {
+        case .browser(let initialURL, let privateMode):
+            BrowserView(viewModel: container.makeBrowserViewModel(initialURL: initialURL, privateMode: privateMode), focusOnAppear: initialURL == nil)
         case .login:
             LoginView(viewModel: container.makeLoginViewModel())
         case .home:
@@ -97,6 +102,10 @@ struct AppCoordinator: View {
             NotificationPreferencesView()
         case .helpSupport:
             HelpSupportView()
+        case .helpDetail(let title):
+            Text("\(title) Help Details")
+                .navigationTitle(title)
+                .navigationBarTitleDisplayMode(.inline)
         case .aboutApp:
             AboutAppView()
         case .legal(let type):
@@ -129,10 +138,18 @@ struct AppCoordinator: View {
             SecuritySettingsView()
         case .deleteAccount:
             DeleteAccountView()
+        case .changePassword:
+            Text("Change Password View")
+                .navigationTitle("Change Password")
+                .navigationBarTitleDisplayMode(.inline)
         case .notifications:
             NotificationInboxView()
         case .notificationDetail(let id):
-            NotificationDetailView(notification: .init(title: "Notification", message: "Details for \(id)", time: "Now", isRead: true, type: "system"))
+            if let item = NotificationInboxView.mockNotifications.first(where: { $0.id.uuidString == id }) {
+                NotificationDetailView(notification: item)
+            } else {
+                NotificationDetailView(notification: .init(title: "Notification", message: "Details for \(id)", time: "Now", isRead: true, type: "system"))
+            }
         case .reviewDetail(let id):
             ReviewDetailView(reviewId: id)
         case .reportReview:

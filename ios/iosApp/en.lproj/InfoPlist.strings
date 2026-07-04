@@ -1,0 +1,8 @@
+/* InfoPlist.strings (English) */
+NSLocationWhenInUseUsageDescription = "LepoStar requires location access when using features that determine your trading markets.";
+NSCameraUsageDescription = "LepoStar requires camera access to scan wallet QR codes or take verification photos.";
+NSMicrophoneUsageDescription = "LepoStar requires microphone access to execute voice trading commands.";
+NSContactsUsageDescription = "LepoStar requires contacts access to share referral codes with your friends.";
+NSFaceIDUsageDescription = "LepoStar uses Face ID for secure and fast transaction authentication.";
+NSBluetoothAlwaysUsageDescription = "LepoStar requires Bluetooth to connect with external hardware wallets upon request.";
+NSPhotoLibraryAddUsageDescription = "LepoStar requires photo library access to save trade charts or images.";

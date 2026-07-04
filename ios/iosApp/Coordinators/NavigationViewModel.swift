@@ -24,6 +24,7 @@ enum AppRoute: Hashable, Identifiable {
     case forgotPassword
     case forYou
     case favorites
+    case browser(initialURL: String?, privateMode: Bool)
     
     // Batch 1: System & Lifecycle
     case globalError
@@ -40,6 +41,7 @@ enum AppRoute: Hashable, Identifiable {
     case devices
     case security
     case deleteAccount
+    case changePassword
     
     // Batch 3: Engagement
     case notifications
@@ -50,6 +52,7 @@ enum AppRoute: Hashable, Identifiable {
     
     // Tier 3: Support
     case helpSupport
+    case helpDetail(title: String)
     case aboutApp
     case legal(type: String)
     case checkout(appId: String, price: Double)
@@ -63,6 +66,7 @@ enum AppRoute: Hashable, Identifiable {
 
     var id: String {
         switch self {
+        case .browser(let url, let privateMode): return "browser-\(url ?? "")-\(privateMode)"
         case .writeReview(let id): return "writeReview-\(id)"
         case .login: return "login"
         case .home: return "home"
@@ -96,12 +100,14 @@ enum AppRoute: Hashable, Identifiable {
         case .devices: return "devices"
         case .security: return "security"
         case .deleteAccount: return "deleteAccount"
+        case .changePassword: return "changePassword"
         case .notifications: return "notifications"
         case .notificationDetail(let id): return "notificationDetail-\(id)"
         case .reviewDetail(let id): return "reviewDetail-\(id)"
         case .reportReview: return "reportReview"
         case .reviewGuidelines: return "reviewGuidelines"
         case .helpSupport: return "helpSupport"
+        case .helpDetail(let title): return "helpDetail-\(title)"
         case .aboutApp: return "aboutApp"
         case .legal(let type): return "legal-\(type)"
         case .checkout(let id, _): return "checkout-\(id)"
@@ -153,12 +159,16 @@ enum AppRoute: Hashable, Identifiable {
         case .devices: hasher.combine(17)
         case .security: hasher.combine(18)
         case .deleteAccount: hasher.combine(19)
+        case .changePassword: hasher.combine(33)
         case .notifications: hasher.combine(20)
         case .notificationDetail(let id): hasher.combine(id)
         case .reviewDetail(let id): hasher.combine(id)
         case .reportReview: hasher.combine(21)
         case .reviewGuidelines: hasher.combine(22)
         case .helpSupport: hasher.combine(23)
+        case .helpDetail(let title):
+            hasher.combine(34)
+            hasher.combine(title)
         case .aboutApp: hasher.combine(24)
         case .legal(let type): hasher.combine(type)
         case .checkout(let appId, _): hasher.combine(appId)
@@ -170,6 +180,9 @@ enum AppRoute: Hashable, Identifiable {
         case .paymentFailed: hasher.combine(30)
         case .wallet: hasher.combine(31)
         case .favorites: hasher.combine(32)
+        case .browser(let url, let privateMode):
+            hasher.combine(url)
+            hasher.combine(privateMode)
         }
     }
 
@@ -209,12 +222,14 @@ enum AppRoute: Hashable, Identifiable {
         case (.devices, .devices): return true
         case (.security, .security): return true
         case (.deleteAccount, .deleteAccount): return true
+        case (.changePassword, .changePassword): return true
         case (.notifications, .notifications): return true
         case (.notificationDetail(let a), .notificationDetail(let b)): return a == b
         case (.reviewDetail(let a), .reviewDetail(let b)): return a == b
         case (.reportReview, .reportReview): return true
         case (.reviewGuidelines, .reviewGuidelines): return true
         case (.helpSupport, .helpSupport): return true
+        case (.helpDetail(let a), .helpDetail(let b)): return a == b
         case (.aboutApp, .aboutApp): return true
         case (.legal(let a), .legal(let b)): return a == b
         case (.checkout(let a, _), .checkout(let b, _)): return a == b
@@ -226,6 +241,8 @@ enum AppRoute: Hashable, Identifiable {
         case (.paymentFailed, .paymentFailed): return true
         case (.wallet, .wallet): return true
         case (.favorites, .favorites): return true
+        case (.browser(let ua, let pa), .browser(let ub, let pb)):
+            return ua == ub && pa == pb
         default: return false
         }
     }
