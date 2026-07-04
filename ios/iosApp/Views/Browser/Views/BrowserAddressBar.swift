@@ -47,6 +47,7 @@ struct BrowserAddressBarContent: View {
                 .font(.system(size: 12.5, weight: .semibold))
                 .foregroundColor(.primary)
                 .lineLimit(1)
+                .truncationMode(.tail)
                 .padding(.horizontal, 20)
                 .padding(.vertical, 7)
                 .background(Color.clear)
@@ -91,7 +92,7 @@ struct BrowserAddressBarContent: View {
                                         .font(.system(size: 14.5, weight: .semibold))
                                         .foregroundColor(activeTab.currentURL == nil ? .secondary : .primary)
                                         .lineLimit(1)
-                                        .truncationMode(.middle)
+                                        .truncationMode(.tail)
                                     Spacer()
                                 }
                                 .contentShape(Rectangle())
@@ -189,6 +190,10 @@ struct BrowserAddressBarContent: View {
     private var displayText: String {
         guard let url = activeTab.currentURL else {
             return "Tìm hoặc nhập tên web"
+        }
+        let pageTitle = activeTab.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !pageTitle.isEmpty && pageTitle != "Tab Mới" && pageTitle != "Website" {
+            return pageTitle
         }
         return url.host ?? url.absoluteString
     }

@@ -67,6 +67,32 @@ public final class BrowserViewModel: ObservableObject {
             }
         }
     }
+
+    public func closeOtherTabs(keepingId id: UUID) {
+        let idsToClose = tabs.filter { $0.id != id }.map { $0.id }
+        for closeId in idsToClose {
+            closeTab(id: closeId)
+        }
+        switchTab(to: id)
+    }
+
+    public func closeAllTabs() {
+        let allIds = tabs.map { $0.id }
+        for id in allIds {
+            if let index = tabs.firstIndex(where: { $0.id == id }) {
+                tabs.remove(at: index)
+            }
+        }
+        createNewTab(initialURL: nil)
+    }
+
+    public func duplicateTab(_ tab: BrowserTabViewModel) {
+        guard let url = tab.currentURL else {
+            createNewTab(initialURL: nil)
+            return
+        }
+        createNewTab(initialURL: url)
+    }
     
     public func switchTab(to id: UUID) {
         guard tabs.contains(where: { $0.id == id }) else { return }

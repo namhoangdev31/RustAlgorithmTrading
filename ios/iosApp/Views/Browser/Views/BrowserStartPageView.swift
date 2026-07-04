@@ -287,16 +287,12 @@ private struct FrequentSiteTile: View {
     var body: some View {
         UniButton(action: action) {
             VStack(spacing: 9) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .fill(tileColor)
-                        .frame(width: 60, height: 60)
-                        .shadow(color: .black.opacity(0.12), radius: 5, x: 0, y: 3)
-
-                    Text(String(site.domain.prefix(1)).uppercased())
-                        .font(.system(size: 24, weight: .bold))
-                        .foregroundColor(.white)
-                }
+                FaviconView(
+                    domain: site.domain,
+                    size: 60,
+                    initial: String(site.domain.prefix(1)),
+                    bgColor: tileColor
+                )
                 .scaleEffect(isPressed ? 0.92 : 1.0)
                 .animation(.spring(response: 0.2, dampingFraction: 0.6), value: isPressed)
 
@@ -322,16 +318,15 @@ private struct HistoryRow: View {
     let action: () -> Void
 
     var body: some View {
+        let domain = URL(string: item.url)?.host ?? ""
         UniButton(action: action) {
             HStack(spacing: 12) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 8, style: .continuous)
-                        .fill(Color.blue.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                    Image(systemName: "clock.fill")
-                        .font(.system(size: 16))
-                        .foregroundColor(.blue)
-                }
+                FaviconView(
+                    domain: domain,
+                    size: 44,
+                    initial: item.title.isEmpty ? String(domain.prefix(1)) : String(item.title.prefix(1)),
+                    bgColor: Color.blue.opacity(0.8)
+                )
 
                 VStack(alignment: .leading, spacing: 3) {
                     Text(item.title.isEmpty ? item.url : item.title)
@@ -365,22 +360,15 @@ private struct BookmarkRow: View {
     let action: () -> Void
 
     var body: some View {
+        let domain = URL(string: bookmark.url)?.host ?? ""
         UniButton(action: action) {
             HStack(spacing: 12) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 8, style: .continuous)
-                        .fill(
-                            LinearGradient(
-                                colors: [Color.orange, Color.red],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .frame(width: 44, height: 44)
-                    Text(String(bookmark.title.prefix(1)).uppercased())
-                        .font(.system(size: 18, weight: .bold))
-                        .foregroundColor(.white)
-                }
+                FaviconView(
+                    domain: domain,
+                    size: 44,
+                    initial: bookmark.title.isEmpty ? String(domain.prefix(1)) : String(bookmark.title.prefix(1)),
+                    bgColor: Color.orange
+                )
 
                 VStack(alignment: .leading, spacing: 3) {
                     Text(bookmark.title.isEmpty ? bookmark.url : bookmark.title)

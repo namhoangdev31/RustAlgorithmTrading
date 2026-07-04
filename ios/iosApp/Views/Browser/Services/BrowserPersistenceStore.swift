@@ -57,6 +57,11 @@ public final class BrowserPersistenceStore: ObservableObject {
         history.removeAll()
         saveHistory()
     }
+
+    public func removeHistoryItem(id: UUID) {
+        history.removeAll(where: { $0.id == id })
+        saveHistory()
+    }
     
     /// Vừa Xem: up to 8 most recent history items, unique by domain
     public var recentlyViewed: [BrowserHistoryItem] {

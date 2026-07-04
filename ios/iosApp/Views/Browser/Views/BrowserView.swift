@@ -10,7 +10,7 @@ public struct BrowserView: View {
     @EnvironmentObject var navigation: NavigationViewModel
     @Environment(\.dismiss) private var dismiss
 
-    @State private var showMoreMenu = false
+
 
     public init(viewModel: BrowserViewModel, focusOnAppear: Bool = false) {
         self.viewModel = viewModel
@@ -35,28 +35,7 @@ public struct BrowserView: View {
         .sheet(isPresented: $viewModel.showHistoryList) {
             BrowserHistoryView(viewModel: viewModel)
         }
-        .confirmationDialog("", isPresented: $showMoreMenu, titleVisibility: .hidden) {
-            Button("Tab mới") {
-                viewModel.createNewTab()
-            }
-            Button("Tab riêng tư mới") {
-                viewModel.isPrivateMode = true
-                viewModel.createNewTab()
-            }
-            Button("Thêm dấu trang") {
-                viewModel.addCurrentToBookmarks()
-            }
-            Button("Dấu trang") {
-                viewModel.showBookmarksList = true
-            }
-            Button("Lịch sử") {
-                viewModel.showHistoryList = true
-            }
-            Button("Tất cả các tab") {
-                viewModel.showTabSwitcher = true
-            }
-            Button("Huỷ", role: .cancel) {}
-        }
+
         .onDisappear {
             // Clean up state when exiting the browser view
             if !viewModel.showTabSwitcher && !viewModel.showBookmarksList && !viewModel.showHistoryList {
@@ -132,13 +111,75 @@ public struct BrowserView: View {
                 .frame(maxWidth: viewModel.isToolbarCollapsed ? nil : .infinity)
 
             if !viewModel.isToolbarCollapsed {
-                UniButton(style: .glass, action: { showMoreMenu = true }) {
+                Menu {
+                    if let url = viewModel.activeTab?.currentURL {
+                        ShareLink(item: url) {
+                            Label("Chia sẻ", systemImage: "square.and.arrow.up")
+                        }
+                    } else {
+                        Button(action: {}) {
+                            Label("Chia sẻ", systemImage: "square.and.arrow.up")
+                        }
+                        .disabled(true)
+                    }
+
+                    Button {
+                        viewModel.addCurrentToBookmarks()
+                    } label: {
+                        Label("Thêm vào Dấu trang", systemImage: "bookmark")
+                    }
+
+                    Button {
+                        viewModel.addCurrentToBookmarks()
+                    } label: {
+                        Label("Thêm dấu trang vào...", systemImage: "folder.badge.plus")
+                    }
+
+                    Divider()
+
+                    Button {
+                        viewModel.createNewTab()
+                    } label: {
+                        Label("Tab mới", systemImage: "plus")
+                    }
+
+                    Button {
+                        viewModel.isPrivateMode = true
+                        viewModel.createNewTab()
+                    } label: {
+                        Label("Tab riêng tư mới", systemImage: "hand.raised")
+                    }
+
+                    Divider()
+
+                    ControlGroup {
+                        Button {
+                            viewModel.showBookmarksList = true
+                        } label: {
+                            Label("Dấu trang", systemImage: "book")
+                        }
+                        
+                        Button {
+                            viewModel.showHistoryList = true
+                        } label: {
+                            Label("Lịch sử", systemImage: "clock")
+                        }
+                        
+                        Button {
+                            viewModel.showTabSwitcher = true
+                        } label: {
+                            Label("Tất cả các tab", systemImage: "square.on.square")
+                        }
+                    }
+                } label: {
                     Image(systemName: "ellipsis")
                         .font(.system(size: 19, weight: .bold))
                         .foregroundColor(.primary)
                         .frame(width: 30, height: 30)
+                        .padding(10)
+                        .uniGlass(cornerRadius: 25)
                 }
-                .uniButtonBorderShape(.circle)
+                .menuStyle(.button)
                 .transition(.asymmetric(insertion: .scale.combined(with: .opacity), removal: .opacity))
             }
         }

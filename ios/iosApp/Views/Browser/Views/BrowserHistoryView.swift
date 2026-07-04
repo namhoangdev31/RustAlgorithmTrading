@@ -41,6 +41,12 @@ public struct BrowserHistoryView: View {
                         }
                         .uniButtonStyle(.plain)
                     }
+                    .onDelete { indexSet in
+                        for index in indexSet {
+                            let item = viewModel.persistenceStore.history[index]
+                            viewModel.persistenceStore.removeHistoryItem(id: item.id)
+                        }
+                    }
                 }
             }
             .navigationTitle("Lịch sử duyệt web")

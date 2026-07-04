@@ -6,7 +6,7 @@ import SwiftUI
 public struct BrowserTabSwitcherView: View {
     @ObservedObject var viewModel: BrowserViewModel
     @Environment(\.dismiss) private var dismiss
-    @State private var showPrivateGroupPicker = false
+    @State private var isSearchActive = false
 
     public init(viewModel: BrowserViewModel) {
         self.viewModel = viewModel
@@ -14,11 +14,10 @@ public struct BrowserTabSwitcherView: View {
 
     public var body: some View {
         ZStack(alignment: .bottom) {
-            // Background
+            // Background — Safari uses a dark grouped look
             Color(UIColor.systemGroupedBackground)
                 .ignoresSafeArea()
 
-            // Top bar
             VStack(spacing: 0) {
                 topBar
                     .padding(.top, safeAreaTop)
@@ -26,7 +25,10 @@ public struct BrowserTabSwitcherView: View {
                 // Tab grid
                 UniScrollView {
                     LazyVGrid(
-                        columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)],
+                        columns: [
+                            GridItem(.flexible(), spacing: 12),
+                            GridItem(.flexible(), spacing: 12)
+                        ],
                         spacing: 14
                     ) {
                         ForEach(viewModel.tabs) { tabVM in
@@ -40,6 +42,20 @@ public struct BrowserTabSwitcherView: View {
                                 withAnimation(.spring(response: 0.3)) {
                                     viewModel.closeTab(id: tabVM.id)
                                 }
+                            } onCopyLink: {
+                                if let url = tabVM.currentURL?.absoluteString {
+                                    UIPasteboard.general.string = url
+                                }
+                            } onDuplicate: {
+                                viewModel.duplicateTab(tabVM)
+                            } onBookmark: {
+                                if let url = tabVM.currentURL?.absoluteString {
+                                    viewModel.persistenceStore.addBookmark(url: url, title: tabVM.title)
+                                }
+                            } onCloseOthers: {
+                                withAnimation(.spring(response: 0.3)) {
+                                    viewModel.closeOtherTabs(keepingId: tabVM.id)
+                                }
                             }
                         }
                     }
@@ -49,7 +65,7 @@ public struct BrowserTabSwitcherView: View {
                 }
             }
 
-            // Bottom control bar (Safari-style)
+            // Bottom bar pinned at bottom
             bottomBar
         }
         .ignoresSafeArea()
@@ -59,29 +75,74 @@ public struct BrowserTabSwitcherView: View {
 
     private var topBar: some View {
         HStack {
-            // More menu (...)
-            UniMenu {
+            // Left: ellipsis menu (Safari's "..." button)
+            Menu {
+                // 1. Quản lý nhóm tab
                 Button(action: {
-                    viewModel.createNewTab()
-                    dismiss()
+                    // Tab group management — placeholder for future
                 }) {
-                    Label("Tab mới", systemImage: "plus")
+                    Label("Quản lý nhóm tab", systemImage: "list.bullet")
                 }
+
+                // 2. Chọn tab
                 Button(action: {
-                    viewModel.isPrivateMode = true
-                    viewModel.createNewTab()
-                    dismiss()
+                    // Multi-select tabs — placeholder for future
                 }) {
-                    Label("Tab riêng tư mới", systemImage: "hand.raised")
+                    Label("Chọn tab", systemImage: "checkmark.circle")
                 }
+
                 Divider()
+
+                // 3. Sắp xếp các tab theo (submenu with arrow chevron)
+                Menu {
+                    Button {
+                        withAnimation {
+                            viewModel.tabs.sort { $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending }
+                        }
+                    } label: {
+                        Label("Tiêu đề", systemImage: "textformat")
+                    }
+                    Button {
+                        withAnimation {
+                            viewModel.tabs.sort {
+                                ($0.currentURL?.host ?? "").localizedCaseInsensitiveCompare($1.currentURL?.host ?? "") == .orderedAscending
+                            }
+                        }
+                    } label: {
+                        Label("Trang web", systemImage: "globe")
+                    }
+                } label: {
+                    Label("Sắp xếp các tab theo", systemImage: "arrow.up.arrow.down")
+                }
+
+                // 4. Sao chép N liên kết
                 Button(action: {
-                    dismiss()
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        viewModel.showBookmarksList = true
+                    let urls = viewModel.tabs.compactMap { $0.currentURL?.absoluteString }
+                    UIPasteboard.general.string = urls.joined(separator: "\n")
+                }) {
+                    Label("Sao chép \(viewModel.tabs.count) liên kết", systemImage: "link")
+                }
+
+                // 5. Thêm dấu trang cho N tab
+                Button(action: {
+                    for tab in viewModel.tabs {
+                        if let url = tab.currentURL?.absoluteString {
+                            viewModel.persistenceStore.addBookmark(url: url, title: tab.title)
+                        }
                     }
                 }) {
-                    Label("Dấu trang", systemImage: "book")
+                    Label("Thêm dấu trang cho \(viewModel.tabs.count) tab", systemImage: "book.badge.plus")
+                }
+
+                Divider()
+
+                // 6. Đóng tất cả tab (destructive)
+                Button(role: .destructive, action: {
+                    withAnimation(.spring(response: 0.3)) {
+                        viewModel.closeAllTabs()
+                    }
+                }) {
+                    Label("Đóng tất cả \(viewModel.tabs.count) tab", systemImage: "xmark")
                 }
             } label: {
                 Image(systemName: "ellipsis")
@@ -93,7 +154,7 @@ public struct BrowserTabSwitcherView: View {
 
             Spacer()
 
-            // Search button
+            // Right: search icon
             UniButton(action: {
                 dismiss()
             }) {
@@ -109,14 +170,14 @@ public struct BrowserTabSwitcherView: View {
         .padding(.bottom, 8)
     }
 
-    // MARK: - Bottom Bar
+    // MARK: - Bottom Bar (Safari-style: + | Riêng tư / N tab | ✓)
 
     private var bottomBar: some View {
         VStack(spacing: 0) {
             Divider()
 
             HStack(spacing: 0) {
-                // New tab button
+                // Left: New tab button (+)
                 UniButton(action: {
                     viewModel.createNewTab()
                     dismiss()
@@ -129,19 +190,44 @@ public struct BrowserTabSwitcherView: View {
                 }
                 .uniButtonStyle(.plain)
 
-                // Private mode toggle
-                UniButton(action: {
-                    viewModel.isPrivateMode.toggle()
-                }) {
-                    Text(viewModel.isPrivateMode ? "Riêng tư" : "Riêng tư")
-                        .font(.system(size: 14, weight: .regular))
-                        .foregroundColor(viewModel.isPrivateMode ? .purple : .secondary)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 44)
-                }
-                .uniButtonStyle(.plain)
+                // Center: Private mode toggle / tab group segment
+                HStack(spacing: 8) {
+                    if viewModel.isPrivateMode {
+                        Text("Riêng tư")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 6)
+                            .background(Capsule().fill(Color.purple.opacity(0.7)))
+                    } else {
+                        Text("Riêng tư")
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundColor(.secondary)
+                            .onTapGesture {
+                                viewModel.isPrivateMode = true
+                            }
+                    }
 
-                // Tab count / Done button
+                    // Tab count pill (Safari shows "N tab")
+                    Text(tabCountText)
+                        .font(.system(size: 13, weight: viewModel.isPrivateMode ? .medium : .semibold))
+                        .foregroundColor(viewModel.isPrivateMode ? .secondary : .white)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 6)
+                        .background(
+                            Capsule()
+                                .fill(viewModel.isPrivateMode ? Color.clear : Color(UIColor.systemFill))
+                        )
+                        .onTapGesture {
+                            if viewModel.isPrivateMode {
+                                viewModel.isPrivateMode = false
+                            }
+                        }
+                }
+                .frame(maxWidth: .infinity)
+                .frame(height: 44)
+
+                // Right: Done button (blue circle with checkmark)
                 UniButton(action: { dismiss() }) {
                     ZStack {
                         Circle()
@@ -166,6 +252,13 @@ public struct BrowserTabSwitcherView: View {
         }
     }
 
+    // MARK: - Helpers
+
+    private var tabCountText: String {
+        let count = viewModel.tabs.count
+        return "\(count) tab"
+    }
+
     private var safeAreaTop: CGFloat {
         UIApplication.shared.connectedScenes
             .compactMap { $0 as? UIWindowScene }
@@ -186,8 +279,10 @@ struct SafariTabCard: View {
     let isActive: Bool
     let onTap: () -> Void
     let onClose: () -> Void
-
-    @State private var showContextMenu = false
+    let onCopyLink: () -> Void
+    let onDuplicate: () -> Void
+    let onBookmark: () -> Void
+    let onCloseOthers: () -> Void
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
@@ -216,22 +311,28 @@ struct SafariTabCard: View {
                 .frame(height: 160)
                 .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
 
-                // Title bar
                 HStack(spacing: 6) {
                     if tabVM.isPrivate {
                         Image(systemName: "hand.raised.fill")
                             .font(.system(size: 10))
                             .foregroundColor(.purple)
-                    } else if isActive {
-                        Image(systemName: "pin.fill")
-                            .font(.system(size: 10))
-                            .foregroundColor(.orange)
+                    } else if let host = tabVM.currentURL?.host {
+                        FaviconView(
+                            domain: host,
+                            size: 16,
+                            initial: String(tabVM.title.prefix(1))
+                        )
+                    } else {
+                        Image(systemName: "safari")
+                            .font(.system(size: 12))
+                            .foregroundColor(.secondary)
                     }
 
                     Text(tabVM.title)
                         .font(.caption.weight(isActive ? .semibold : .regular))
                         .foregroundColor(.primary)
                         .lineLimit(1)
+                        .truncationMode(.tail)
 
                     Spacer(minLength: 0)
                 }
@@ -248,23 +349,50 @@ struct SafariTabCard: View {
                         lineWidth: isActive ? 2.5 : 0.5
                     )
             )
+            // Safari context menu on long press
             .contextMenu {
-                Button(action: {}) {
+                // 1. Sao chép liên kết
+                Button(action: onCopyLink) {
                     Label("Sao chép liên kết", systemImage: "link")
                 }
+
+                // 2. Ghim Tab (visual only for now)
                 Button(action: {}) {
                     Label("Ghim Tab", systemImage: "pin")
                 }
-                Button(action: {}) {
+
+                // 3. Nhân bản tab
+                Button(action: onDuplicate) {
                     Label("Nhân bản tab", systemImage: "plus.square.on.square")
                 }
+
+                // 4. Thêm vào dấu trang
+                Button(action: onBookmark) {
+                    Label("Thêm vào dấu trang", systemImage: "book")
+                }
+
+                // 5. Sắp xếp tab theo (submenu)
+                Menu {
+                    Button("Tiêu đề") {}
+                    Button("Trang web") {}
+                } label: {
+                    Label("Sắp xếp tab theo", systemImage: "arrow.up.arrow.down")
+                }
+
                 Divider()
+
+                // 6. Đóng các tab khác
+                Button(action: onCloseOthers) {
+                    Label("Đóng các tab khác", systemImage: "xmark.square")
+                }
+
+                // 7. Đóng tab (destructive red)
                 Button(role: .destructive, action: onClose) {
                     Label("Đóng tab", systemImage: "xmark")
                 }
             }
 
-            // Close (X) button
+            // Close (X) button — top-right corner of the card
             UniButton(action: onClose) {
                 Image(systemName: "xmark")
                     .font(.system(size: 10, weight: .semibold))
