@@ -6,53 +6,202 @@ struct RuntimeView: View {
     let bundlePath: URL
     @ObservedObject var viewModel: WebRuntimeViewModel
 
+    @ObservedObject private var recordingState = RecordingStateManager.shared
     @State private var isExpanded = false
     @State private var dragPosition: CGPoint?
+    #if DEBUG
+    @State private var isShowingDiagnostics = false
+    #endif
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         ZStack {
             contentView
-            assistiveTouchButton
+            
+            // Native Sensor Recording Indicator Banner
+            VStack {
+                if recordingState.isMicrophoneActive || recordingState.isCameraActive {
+                    HStack(spacing: 8) {
+                        Circle()
+                            .fill(Color.red)
+                            .frame(width: 8, height: 8)
+                        Text(recordingState.isMicrophoneActive ? "Mini App [\(manifest.name)] đang sử dụng Microphone..." : "Mini App [\(manifest.name)] đang sử dụng Camera...")
+                            .font(.system(size: 12, weight: .bold))
+                            .uniForegroundStyle(.white)
+                        Spacer()
+                        UniButton(action: {
+                            recordingState.stopAll()
+                        }) {
+                            Text("Dừng")
+                                .font(.system(size: 11, weight: .bold))
+                                .uniForegroundStyle(.white)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(Color.red)
+                                .clipShape(RoundedRectangle(cornerRadius: 4))
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                    .background(Color.black.opacity(0.85))
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .padding(.top, 16)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+                }
+                Spacer()
+            }
+            .padding(.horizontal, 16)
+            .animation(.spring(), value: recordingState.isMicrophoneActive || recordingState.isCameraActive)
+            
+            RuntimeAssistiveTouchButton(
+                isExpanded: $isExpanded,
+                dragPosition: $dragPosition,
+                onReload: reloadMiniApp,
+                onShowTabs: showTabSwitcher,
+                onShowDiagnostics: showDiagnostics,
+                onClose: closeRuntime
+            )
         }
         .onAppear {
-            viewModel.loadBundle(manifest: manifest, bundlePath: bundlePath)
+            viewModel.openBundle(manifest: manifest, bundlePath: bundlePath)
         }
         .onDisappear {
-            viewModel.stopServer()
+            viewModel.stopAll()
         }
         .supportedOrientations(orientationMask)
+        .onChange(of: viewModel.activeTabId) { newId in
+            if let newId = newId {
+                viewModel.activateTab(id: newId)
+            }
+        }
+        .fullScreenCover(isPresented: $viewModel.showTabSwitcher) {
+            TabSwitcher(
+                tabs: $viewModel.tabs,
+                selectedTabId: $viewModel.activeTabId,
+                isPresented: $viewModel.showTabSwitcher,
+                onAddTab: {
+                    viewModel.openBundle(manifest: manifest, bundlePath: bundlePath)
+                },
+                onCloseTab: { tabId in
+                    viewModel.closeTab(id: tabId)
+                }
+            )
+        }
+        #if DEBUG
+        .sheet(isPresented: $isShowingDiagnostics) {
+            RuntimeDiagnosticsView(snapshot: viewModel.diagnosticsSnapshot())
+        }
+        #endif
     }
 
     @ViewBuilder
     private var contentView: some View {
-        switch viewModel.state {
-        case .idle:
-            EmptyView()
-        case .loading:
+        if let runtimeError = viewModel.runtimeError {
+            RuntimeErrorBoundaryView(error: runtimeError) { action in
+                handleRuntimeAction(action)
+            }
+        } else if let activeId = viewModel.activeTabId, let activeTab = viewModel.tabs.first(where: { $0.id == activeId }) {
+            ZStack {
+                if activeTab.status == .loading {
+                    UniProgressView()
+                        .uniForegroundStyle(.white)
+                        .scaleEffect(1.5)
+                } else if let webView = activeTab.webView {
+                    RuntimeWebViewWrapper(webView: webView)
+                } else {
+                    VStack {
+                        UniProgressView()
+                        Text("Recreating tab state...")
+                            .font(.caption)
+                            .uniForegroundStyle(.gray)
+                    }
+                }
+            }
+        } else if let error = viewModel.errorMsg {
+            RuntimeErrorBoundaryView(
+                error: .serverFailed(error),
+                onAction: handleRuntimeAction
+            )
+        } else {
             UniProgressView()
                 .uniForegroundStyle(.white)
                 .scaleEffect(1.5)
-        case .ready(let entryUrl):
-            RuntimeWebViewWrapper(manifest: manifest, httpUrl: entryUrl)
-        case .error(let message):
-            VStack(spacing: 16) {
-                Image(systemName: "exclamationmark.triangle.fill")
-                    .font(.system(size: 60))
-                    .uniForegroundStyle(.red)
-                Text("Error")
-                    .font(.title)
-                    .uniForegroundStyle(.white)
-                Text(message)
-                    .font(.body)
-                    .uniForegroundStyle(.white, opacity: 0.8)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 32)
+        }
+    }
+
+    private func handleRuntimeAction(_ action: RuntimeShellAction) {
+        switch action {
+        case .retry:
+            viewModel.performRuntimeAction(action, manifest: manifest, bundlePath: bundlePath)
+        case .rollback:
+            viewModel.performRuntimeAction(action, manifest: manifest, bundlePath: bundlePath)
+        case .clearData:
+            viewModel.performRuntimeAction(action, manifest: manifest, bundlePath: bundlePath)
+        case .report:
+            viewModel.performRuntimeAction(action, manifest: manifest, bundlePath: bundlePath)
+        case .close:
+            dismiss()
+        }
+    }
+
+    private func reloadMiniApp() {
+        NotificationCenter.default.post(
+            name: NSNotification.Name("ReloadMiniApp"),
+            object: nil
+        )
+        withAnimation { isExpanded = false }
+    }
+
+    private func showTabSwitcher() {
+        guard let activeId = viewModel.activeTabId,
+              let activeTab = viewModel.tabs.first(where: { $0.id == activeId }) else {
+            withAnimation {
+                viewModel.showTabSwitcher = true
+                isExpanded = false
+            }
+            return
+        }
+
+        Task {
+            if let img = await activeTab.webView?.takeSnapshot() {
+                activeTab.snapshot = img
+            }
+            withAnimation {
+                viewModel.showTabSwitcher = true
+                isExpanded = false
             }
         }
     }
 
-    private var assistiveTouchButton: some View {
+    private func showDiagnostics() {
+        isShowingDiagnostics = true
+        withAnimation { isExpanded = false }
+    }
+
+    private func closeRuntime() {
+        dismiss()
+        withAnimation { isExpanded = false }
+    }
+
+    private var orientationMask: UIInterfaceOrientationMask {
+        switch manifest.orientation.lowercased() {
+        case "landscape": return .landscape
+        case "portrait": return .portrait
+        default: return .all
+        }
+    }
+}
+
+private struct RuntimeAssistiveTouchButton: View {
+    @Binding var isExpanded: Bool
+    @Binding var dragPosition: CGPoint?
+
+    let onReload: () -> Void
+    let onShowTabs: () -> Void
+    let onShowDiagnostics: () -> Void
+    let onClose: () -> Void
+
+    var body: some View {
         GeometryReader { geometry in
             ZStack {
                 if isExpanded {
@@ -63,30 +212,27 @@ struct RuntimeView: View {
                         }
 
                     VStack(spacing: 20) {
-                        UniButton(action: {
-                            NotificationCenter.default.post(
-                                name: NSNotification.Name("ReloadMiniApp"), object: nil)
-                            withAnimation { isExpanded = false }
-                        }) {
-                            Image(systemName: "arrow.clockwise")
-                                .font(.title)
-                                .uniForegroundStyle(.primary)
-                                .frame(width: 50, height: 50)
-                                .uniGlass(cornerRadius: 25)
-                        }
-                        .uniButtonStyle(.plain)
+                        RuntimeAssistiveTouchAction(
+                            systemImage: "arrow.clockwise",
+                            action: onReload
+                        )
 
-                        UniButton(action: {
-                            dismiss()
-                            withAnimation { isExpanded = false }
-                        }) {
-                            Image(systemName: "xmark")
-                                .font(.title)
-                                .uniForegroundStyle(.primary)
-                                .frame(width: 50, height: 50)
-                                .uniGlass(cornerRadius: 25)
-                        }
-                        .uniButtonStyle(.plain)
+                        RuntimeAssistiveTouchAction(
+                            systemImage: "square.grid.2x2",
+                            action: onShowTabs
+                        )
+
+                        #if DEBUG
+                        RuntimeAssistiveTouchAction(
+                            systemImage: "stethoscope",
+                            action: onShowDiagnostics
+                        )
+                        #endif
+
+                        RuntimeAssistiveTouchAction(
+                            systemImage: "xmark",
+                            action: onClose
+                        )
                     }
                     .padding()
                     .uniGlass(cornerRadius: 16)
@@ -133,24 +279,28 @@ struct RuntimeView: View {
             }
         }
     }
+}
 
-    private var orientationMask: UIInterfaceOrientationMask {
-        switch manifest.orientation.lowercased() {
-        case "landscape": return .landscape
-        case "portrait": return .portrait
-        default: return .all
+private struct RuntimeAssistiveTouchAction: View {
+    let systemImage: String
+    let action: () -> Void
+
+    var body: some View {
+        UniButton(action: action) {
+            Image(systemName: systemImage)
+                .font(.title)
+                .uniForegroundStyle(.primary)
+                .frame(width: 50, height: 50)
+                .uniGlass(cornerRadius: 25)
         }
+        .uniButtonStyle(.plain)
     }
 }
 
 private struct RuntimeWebViewWrapper: UIViewRepresentable {
-    let manifest: WebRuntimeManifest
-    let httpUrl: String
+    let webView: RuntimeWebView
 
     func makeUIView(context: Context) -> RuntimeWebView {
-        let webView = RuntimeWebView(frame: .zero, manifest: manifest)
-        webView.loadBundle(httpUrl: httpUrl)
-
         NotificationCenter.default.addObserver(
             forName: NSNotification.Name("ReloadMiniApp"),
             object: nil,

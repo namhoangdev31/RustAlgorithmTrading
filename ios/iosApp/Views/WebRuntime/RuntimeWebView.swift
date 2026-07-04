@@ -3,11 +3,43 @@ import WebKit
 
 // import Shared — replaced by native Swift Shared module
 
-class RuntimeWebView: WKWebView, WKScriptMessageHandler {
-
+@MainActor
+class RuntimeWebView: WKWebView, WKScriptMessageHandler, BridgeResponseSending {
+    private let manifest: WebRuntimeManifest
+    private let bundlePath: URL
+    private let serverURL: URL
+    private let tabId: UUID
+    private let bridgeRouter: BridgeRouter
+    private let processRecoveryManager: ProcessRecoveryManager
+    private let onRuntimeError: (RuntimeShellError) -> Void
+    
     // Custom Init
-    init(frame: CGRect, manifest: WebRuntimeManifest) {
+    init(
+        frame: CGRect,
+        manifest: WebRuntimeManifest,
+        bundlePath: URL,
+        serverURL: URL,
+        tabId: UUID,
+        bridgeRouter: BridgeRouter? = nil,
+        processRecoveryManager: ProcessRecoveryManager? = nil,
+        onRuntimeError: @escaping (RuntimeShellError) -> Void = { _ in }
+    ) {
+        self.tabId = tabId
+        self.manifest = manifest
+        self.bundlePath = bundlePath
+        self.serverURL = serverURL
+        self.bridgeRouter = bridgeRouter ?? .shared
+        self.processRecoveryManager = processRecoveryManager ?? ProcessRecoveryManager()
+        self.onRuntimeError = onRuntimeError
         let config = WKWebViewConfiguration()
+
+        // Sandboxed Website Data Store (iOS 17+)
+        if #available(iOS 17.0, *) {
+            let dataStoreId = UUID(uuidString: "e8568600-0000-0000-0000-" + String(format: "%012x", abs(manifest.id.hashValue))) ?? UUID()
+            config.websiteDataStore = WKWebsiteDataStore(forIdentifier: dataStoreId)
+        } else {
+            config.websiteDataStore = WKWebsiteDataStore.default()
+        }
 
         // 1. Setup Bridge
         let userContent = WKUserContentController()
@@ -58,18 +90,34 @@ class RuntimeWebView: WKWebView, WKScriptMessageHandler {
 
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
-    func sendResponse(requestId: String, data: [String: Any]?, error: String? = nil) {
+    func shutdownBridge() {
+        configuration.userContentController.removeScriptMessageHandler(forName: "LeposBridge")
+        configuration.userContentController.removeScriptMessageHandler(forName: "lepoShipBridge")
+    }
+
+    func sendResponse(requestId: String, data: [String: Any]?, errorCode: String? = nil, errorMessage: String? = nil) {
         var responseDict: [String: Any] = [:]
-        if let data = data {
-            responseDict["data"] = data
+        responseDict["requestId"] = requestId
+        
+        if let code = errorCode {
+            responseDict["success"] = false
+            responseDict["error"] = [
+                "code": code,
+                "message": errorMessage ?? "An error occurred."
+            ]
+        } else {
+            responseDict["success"] = true
+            if let data = data {
+                responseDict["data"] = data
+            }
         }
-        if let error = error {
-            responseDict["error"] = error
-        }
+        
         if let jsonObj = try? JSONSerialization.data(withJSONObject: responseDict, options: []),
-           let jsonString = String(data: jsonObj, encoding: .utf8) {
+           let jsonString = String(data: jsonObj, encoding: .utf8),
+           let requestIdData = try? JSONSerialization.data(withJSONObject: requestId, options: []),
+           let requestIdString = String(data: requestIdData, encoding: .utf8) {
             DispatchQueue.main.async {
-                self.evaluateJavaScript("window.__lepoShipReceiveMessage('\(requestId)', \(jsonString))", completionHandler: nil)
+                self.evaluateJavaScript("window.__lepoShipReceiveMessage(\(requestIdString), \(jsonString))", completionHandler: nil)
             }
         }
     }
@@ -78,62 +126,26 @@ class RuntimeWebView: WKWebView, WKScriptMessageHandler {
     func userContentController(
         _ userContentController: WKUserContentController, didReceive message: WKScriptMessage
     ) {
-        guard (message.name == "LeposBridge" || message.name == "lepoShipBridge"), let body = message.body as? [String: Any] else {
-            return
-        }
-
-        let requestId = body["requestId"] as? String ?? ""
-        let payload = body["payload"] as? [String: Any] ?? [:]
-
-        if let action = body["action"] as? String {
-            switch action {
-            case "log", "debug.log":
-                let level = payload["level"] as? String ?? body["level"] as? String ?? "info"
-                let msg = payload["message"] as? String ?? body["message"] as? String ?? ""
-                print("[WebConsole][\(level)] \(msg)")
-                if !requestId.isEmpty {
-                    sendResponse(requestId: requestId, data: ["success": true])
-                }
-            case "vibrate":
-                let generator = UIImpactFeedbackGenerator(style: .medium)
-                generator.impactOccurred()
-                if !requestId.isEmpty {
-                    sendResponse(requestId: requestId, data: ["success": true])
-                }
-            case "close":
-                // Notify ViewController to dismiss
-                NotificationCenter.default.post(
-                    name: NSNotification.Name("CloseMiniApp"), object: nil)
-                if !requestId.isEmpty {
-                    sendResponse(requestId: requestId, data: ["success": true])
-                }
-            case "camera.takePhoto", "getCameraPhoto":
-                if !requestId.isEmpty {
-                    sendResponse(requestId: requestId, data: ["uri": "https://via.placeholder.com/600x400.png?text=NativeCameraPhoto"])
-                }
-            case "plugin.invoke":
-                let plugin = payload["plugin"] as? String ?? ""
-                let method = payload["method"] as? String ?? ""
-                let args = payload["args"] as? [String: Any] ?? [:]
-                if !requestId.isEmpty {
-                    sendResponse(requestId: requestId, data: [
-                        "success": true,
-                        "plugin": plugin,
-                        "method": method,
-                        "result": args
-                    ])
-                }
-            case "hotReload":
+        let context = BridgeRouteContext(
+            manifest: manifest,
+            bundlePath: bundlePath,
+            serverURL: serverURL,
+            tabId: tabId,
+            onRuntimeReady: { [weak self] in
+                guard let self = self else { return }
+                print("[WebRuntime] runtime.ready received for \(self.manifest.id)")
+                self.processRecoveryManager.recordRuntimeReady(
+                    tabId: self.tabId,
+                    appId: self.manifest.id,
+                    version: self.manifest.version
+                )
+            },
+            onHotReload: { payload in
                 print("[WebRuntime] Hot reload message received: \(payload)")
-                if !requestId.isEmpty {
-                    sendResponse(requestId: requestId, data: ["success": true])
-                }
-            default:
-                if !requestId.isEmpty {
-                    sendResponse(requestId: requestId, data: ["success": true])
-                }
-            }
-        }
+            },
+            onRuntimeError: onRuntimeError
+        )
+        bridgeRouter.route(message: message, context: context, responder: self)
     }
 
     func loadBundle(httpUrl: String) {
@@ -156,6 +168,12 @@ extension RuntimeWebView: WKNavigationDelegate {
 
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         print("[WebRuntime] Page finished loading")
+        webView.evaluateJavaScript("document.dispatchEvent(new Event('runtimeresume'))")
+        processRecoveryManager.recordNavigationFinished(
+            tabId: tabId,
+            appId: manifest.id,
+            version: manifest.version
+        )
     }
 
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
@@ -166,6 +184,21 @@ extension RuntimeWebView: WKNavigationDelegate {
         _ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!,
         withError error: Error
     ) {
-        print("[WebRuntime] Provisional Navigation failed: \(error.localizedDescription)")
+        print("[WebRuntime] Provisional navigation failed: \(error.localizedDescription)")
+    }
+
+    func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
+        processRecoveryManager.handleWebContentTermination(
+            tabId: tabId,
+            manifest: manifest,
+            reload: { [weak self] in
+                print("[WebRuntime] Re-loading tab after process termination...")
+                self?.reload()
+            },
+            reportError: onRuntimeError,
+            close: { [weak self] in
+                self?.stopLoading()
+            }
+        )
     }
 }

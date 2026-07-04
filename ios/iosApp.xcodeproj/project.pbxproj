@@ -36,6 +36,7 @@
 		5A7804012F390214004BBDBF /* SFSafeSymbols in Frameworks */ = {isa = PBXBuildFile; productRef = 5A7804002F390214004BBDBF /* SFSafeSymbols */; };
 		5A7804042F39021A004BBDBF /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 5A7804032F39021A004BBDBF /* ZIPFoundation */; };
 		5A7804072F390220004BBDBF /* GCDWebServer in Frameworks */ = {isa = PBXBuildFile; productRef = 5A7804062F390220004BBDBF /* GCDWebServer */; };
+		5A7A244C2FF8D61200D8DF26 /* WasmKit in Frameworks */ = {isa = PBXBuildFile; productRef = 5A7A244B2FF8D61200D8DF26 /* WasmKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -84,6 +85,7 @@
 				5A40AFF42F55339500BE0503 /* FirebaseAnalytics in Frameworks */,
 				5A47BE3B2FBC4F2F000F9C0D /* ExploreSwiftUI in Frameworks */,
 				5A17A6A02F55798B00D38C28 /* FirebaseInstallations in Frameworks */,
+				5A7A244C2FF8D61200D8DF26 /* WasmKit in Frameworks */,
 				5A17A6962F55798B00D38C28 /* FirebaseFirestore in Frameworks */,
 				5A17A68E2F55798B00D38C28 /* FirebaseAuthCombine-Community in Frameworks */,
 				5A17A6A22F55798B00D38C28 /* FirebaseMessaging in Frameworks */,
@@ -186,6 +188,7 @@
 				5A17A6A92F55798B00D38C28 /* FirebaseStorage */,
 				5A17A6AB2F55798B00D38C28 /* FirebaseStorageCombine-Community */,
 				5A47BE3A2FBC4F2F000F9C0D /* ExploreSwiftUI */,
+				5A7A244B2FF8D61200D8DF26 /* WasmKit */,
 			);
 			productName = iosApp;
 			productReference = 623E68E1EC5434D0E8A40C73 /* Leposapp.app */;
@@ -223,6 +226,7 @@
 				5A40AFEE2F55339500BE0503 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				5A40AFF92F554A8C00BE0503 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
 				5A47BE392FBC4F2F000F9C0D /* XCRemoteSwiftPackageReference "ExploreSwiftUI" */,
+				5A7A244A2FF8D61200D8DF26 /* XCRemoteSwiftPackageReference "WasmKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E7798370575A2CFBE4CE7BEB /* Products */;
@@ -572,6 +576,14 @@
 				minimumVersion = 3.5.7;
 			};
 		};
+		5A7A244A2FF8D61200D8DF26 /* XCRemoteSwiftPackageReference "WasmKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/swiftwasm/WasmKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.3.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -714,6 +726,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 5A7804052F390220004BBDBF /* XCRemoteSwiftPackageReference "GCDWebServer" */;
 			productName = GCDWebServer;
+		};
+		5A7A244B2FF8D61200D8DF26 /* WasmKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5A7A244A2FF8D61200D8DF26 /* XCRemoteSwiftPackageReference "WasmKit" */;
+			productName = WasmKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
