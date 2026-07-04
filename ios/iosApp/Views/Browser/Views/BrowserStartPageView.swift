@@ -50,10 +50,10 @@ public struct BrowserStartPageView: View {
                     }
 
                     Spacer(minLength: 80)
-                }
-                .padding(.horizontal, 20)
+                }.padding(.horizontal, 20)
             }
         }
+        .navigationBarHidden(true)
     }
 
     // MARK: - Background

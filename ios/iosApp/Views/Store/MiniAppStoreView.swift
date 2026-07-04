@@ -7,6 +7,8 @@ struct MiniAppStoreView: View {
     @StateObject private var viewModel: MiniAppStoreViewModel
     @Environment(\.appContainer) private var container
 
+    @EnvironmentObject private var navigation: NavigationViewModel
+
     // We need DI container in iOS app to provide these dependencies.
     // For now assuming we inject instances.
     init(viewModel: MiniAppStoreViewModel) {
@@ -20,41 +22,39 @@ struct MiniAppStoreView: View {
                     UniProgressView()
                 } else {
                     UniList(viewModel.bundles, id: \.id) { bundle in
-                        ZStack {
-                            NavigationLink(destination: MiniAppDetailsView()) {
-                                EmptyView()
+                        HStack {
+                            VStack(alignment: .leading) {
+                                Text(bundle.name)
+                                    .font(.headline)
+                                Text("v\(bundle.id)")
+                                    .font(.caption)
+                                    .uniForegroundStyle(.secondary)
                             }
-                            .opacity(0.0)
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                navigation.navigate(to: .detail(itemId: String(bundle.id)))
+                            }
 
-                            HStack {
-                                VStack(alignment: .leading) {
-                                    Text(bundle.name)
-                                        .font(.headline)
-                                    Text("v\(bundle.id)")
-                                        .font(.caption)
-                                        .uniForegroundStyle(.secondary)
-                                }
-                                Spacer()
+                            Spacer()
 
-                                if viewModel.downloadingId == bundle.id {
-                                    UniProgressView()
-                                } else {
-                                    UniButton(action: {
-                                        Task {
-                                            await viewModel.downloadAndLaunch(bundle: bundle)
-                                        }
-                                    }) {
-                                        Text("OPEN")
-                                            .font(.caption)
-                                            .uniBold()
-                                            .uniForegroundStyle(.blue)
-                                            .padding(.horizontal, 12)
-                                            .padding(.vertical, 6)
-                                            .background(Color.blue.opacity(0.1))
-                                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                            if viewModel.downloadingId == bundle.id {
+                                UniProgressView()
+                            } else {
+                                UniButton(action: {
+                                    Task {
+                                        await viewModel.downloadAndLaunch(bundle: bundle)
                                     }
-                                    .uniButtonStyle(.plain)
+                                }) {
+                                    Text("OPEN")
+                                        .font(.caption)
+                                        .uniBold()
+                                        .uniForegroundStyle(.blue)
+                                        .padding(.horizontal, 12)
+                                        .padding(.vertical, 6)
+                                        .background(Color.blue.opacity(0.1))
+                                        .clipShape(RoundedRectangle(cornerRadius: 12))
                                 }
+                                .uniButtonStyle(.plain)
                             }
                         }
                     }

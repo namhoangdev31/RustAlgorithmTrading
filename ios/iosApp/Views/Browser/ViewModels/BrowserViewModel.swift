@@ -11,6 +11,7 @@ public final class BrowserViewModel: ObservableObject {
     @Published public var showTabSwitcher: Bool = false
     @Published public var showBookmarksList: Bool = false
     @Published public var showHistoryList: Bool = false
+    @Published public var isToolbarCollapsed: Bool = false
     
     // Dependencies
     public let persistenceStore: BrowserPersistenceStore
@@ -115,6 +116,15 @@ public final class BrowserViewModel: ObservableObject {
                 isPrivate: self.isPrivateMode
             )
         }
+        
+        tab.onScrollDirectionChange = { [weak self] isCollapsed in
+            guard let self = self else { return }
+            if self.isToolbarCollapsed != isCollapsed {
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    self.isToolbarCollapsed = isCollapsed
+                }
+            }
+        }
     }
     
     private func setupActiveTabUrlObserver() {
@@ -153,8 +163,13 @@ public final class BrowserViewModel: ObservableObject {
             tab.webView.stopLoading()
             tab.webView.navigationDelegate = nil
             tab.webView.uiDelegate = nil
+            tab.webView.scrollView.delegate = nil
+            if let blankURL = URL(string: "about:blank") {
+                tab.webView.load(URLRequest(url: blankURL))
+            }
         }
         tabs.removeAll()
+        isToolbarCollapsed = false
         createNewTab(initialURL: nil)
     }
 }

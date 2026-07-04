@@ -2,17 +2,28 @@ import ExploreSwiftUI
 import SwiftUI
 
 struct NotificationInboxView: View {
+    @EnvironmentObject private var navigation: NavigationViewModel
+
     // Mock Data
-    struct NotificationItem: Identifiable {
-        let id = UUID()
+    struct NotificationItem: Identifiable, Hashable {
+        let id: UUID
         let title: String
         let message: String
         let time: String
         let isRead: Bool
         let type: String  // "update", "promo", "system"
+
+        init(id: UUID = UUID(), title: String, message: String, time: String, isRead: Bool, type: String) {
+            self.id = id
+            self.title = title
+            self.message = message
+            self.time = time
+            self.isRead = isRead
+            self.type = type
+        }
     }
 
-    let notifications = [
+    static let mockNotifications = [
         NotificationItem(
             title: "New Update Available",
             message: "LepoStar v2.1 is now available with dark mode support.", time: "2h ago",
@@ -31,8 +42,10 @@ struct NotificationInboxView: View {
 
     var body: some View {
         UniList {
-            ForEach(notifications) { item in
-                NavigationLink(destination: NotificationDetailView(notification: item)) {
+            ForEach(Self.mockNotifications) { item in
+                UniButton(action: {
+                    navigation.navigate(to: .notificationDetail(id: item.id.uuidString))
+                }) {
                     HStack(alignment: .top, spacing: 12) {
                         Circle()
                             .fill(iconColor(for: item.type))
@@ -44,6 +57,7 @@ struct NotificationInboxView: View {
                             Text(item.title)
                                 .font(.headline)
                                 .fontWeight(item.isRead ? .regular : .bold)
+                                .uniForegroundStyle(.primary)
 
                             Text(item.message)
                                 .font(.subheadline)
@@ -55,9 +69,17 @@ struct NotificationInboxView: View {
                                 .uniForegroundStyle(.secondary)
                                 .padding(.top, 2)
                         }
+
+                        Spacer()
+
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .uniForegroundStyle(.secondary)
+                            .padding(.top, 4)
                     }
                     .padding(.vertical, 4)
                 }
+                .uniButtonStyle(.plain)
             }
         }
         .uniListStyle(.plain)

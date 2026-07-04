@@ -88,4 +88,6 @@ Never open files "to explore."
 
 1. **ExploreSwiftUI mandatory**: When creating or modifying UI views, you MUST import and use `ExploreSwiftUI` components (e.g., `UniButton`, `UniScrollView`, `.uniGlass`, `.uniButtonStyle`) instead of native SwiftUI equivalents.
 2. **DESIGN.md compliance mandatory**: When developing or updating UI, you MUST read and strictly adhere to the design system, style tokens, and layout guidelines defined in [DESIGN.md](file:///Users/hoangnam/Developer/RustAlgorithmTrading/ios/DESIGN.md).
+3. **No direct NavigationLink(destination:)**: You MUST NOT use direct native `NavigationLink(destination: ...)` as the app uses a strongly-typed `NavigationStack(path: $navigation.path)` with `[AppRoute]`. Doing so will raise a runtime fatal error: `SwiftUI.AnyNavigationPath.Error.comparisonTypeMismatch`. All pushed navigation views must be registered in the `AppRoute` enum in `NavigationViewModel.swift`, mapped inside `AppCoordinator.swift`'s `destinationView(for:)`, and navigated to via `NavigationViewModel.navigate(to:)`.
+
 

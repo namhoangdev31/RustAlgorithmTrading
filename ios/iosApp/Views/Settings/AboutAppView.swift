@@ -2,6 +2,8 @@ import ExploreSwiftUI
 import SwiftUI
 
 struct AboutAppView: View {
+    @EnvironmentObject private var navigation: NavigationViewModel
+
     var body: some View {
         UniList {
             Section {
@@ -26,9 +28,41 @@ struct AboutAppView: View {
             .listRowBackground(Color.clear)
 
             Section(header: Text("Legal")) {
-                NavigationLink(destination: LegalView(type: "terms")) { Text("Terms of Service") }
-                NavigationLink(destination: LegalView(type: "privacy")) { Text("Privacy Policy") }
-                NavigationLink(destination: LegalView(type: "licenses")) { Text("Licenses") }
+                UniButton(action: { navigation.navigate(to: .legal(type: "terms")) }) {
+                    HStack {
+                        Text("Terms of Service")
+                            .uniForegroundStyle(.primary)
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .uniForegroundStyle(.secondary)
+                    }
+                }
+                .uniButtonStyle(.plain)
+
+                UniButton(action: { navigation.navigate(to: .legal(type: "privacy")) }) {
+                    HStack {
+                        Text("Privacy Policy")
+                            .uniForegroundStyle(.primary)
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .uniForegroundStyle(.secondary)
+                    }
+                }
+                .uniButtonStyle(.plain)
+
+                UniButton(action: { navigation.navigate(to: .legal(type: "licenses")) }) {
+                    HStack {
+                        Text("Licenses")
+                            .uniForegroundStyle(.primary)
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .uniForegroundStyle(.secondary)
+                    }
+                }
+                .uniButtonStyle(.plain)
             }
 
             Section {

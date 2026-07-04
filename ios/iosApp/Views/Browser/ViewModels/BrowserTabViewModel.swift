@@ -18,9 +18,11 @@ public final class BrowserTabViewModel: NSObject, ObservableObject, Identifiable
     public var onOpenNewTab: ((URL) -> Void)?
     public var onOpenExternalURL: ((URL) -> Void)?
     public var onUpdateHistory: ((URL, String) -> Void)?
+    public var onScrollDirectionChange: ((Bool) -> Void)?
     
     private var observers: Set<AnyCancellable> = []
     private let navigationPolicy = BrowserNavigationPolicy()
+    private var lastScrollY: CGFloat = 0
     
     // Crash recovery tracking
     private var lastCrashTime: Date? = nil
@@ -43,6 +45,7 @@ public final class BrowserTabViewModel: NSObject, ObservableObject, Identifiable
         
         self.webView.navigationDelegate = self
         self.webView.uiDelegate = self
+        self.webView.scrollView.delegate = self
         
         setupObservers()
         
@@ -57,7 +60,11 @@ public final class BrowserTabViewModel: NSObject, ObservableObject, Identifiable
         DispatchQueue.main.async {
             webView.navigationDelegate = nil
             webView.uiDelegate = nil
+            webView.scrollView.delegate = nil
             webView.stopLoading()
+            if let blankURL = URL(string: "about:blank") {
+                webView.load(URLRequest(url: blankURL))
+            }
         }
     }
     
@@ -227,5 +234,29 @@ extension BrowserTabViewModel: WKUIDelegate {
     
     public func webView(_ webView: WKWebView, runJavaScriptTextInputPanelWithPrompt prompt: String, defaultText: String?, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (String?) -> Void) {
         completionHandler(nil)
+    }
+}
+
+// MARK: - UIScrollViewDelegate
+extension BrowserTabViewModel: UIScrollViewDelegate {
+    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let currentY = scrollView.contentOffset.y
+        let delta = currentY - lastScrollY
+        
+        // Avoid collapsing during rubber-banding/bouncing at top
+        if currentY > 0 && scrollView.contentSize.height > scrollView.frame.size.height {
+            if delta > 12 {
+                // Scroll down -> collapse
+                onScrollDirectionChange?(true)
+            } else if delta < -12 {
+                // Scroll up -> expand
+                onScrollDirectionChange?(false)
+            }
+        } else if currentY <= 0 {
+            // Force expand when at the top
+            onScrollDirectionChange?(false)
+        }
+        
+        lastScrollY = currentY
     }
 }

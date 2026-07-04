@@ -8,57 +8,54 @@ struct SearchView: View {
     @State private var selectedSort = "Relevance"
     @State private var selectedPrice = "Any Price"
     @State private var selectedCategory = "All Categories"
-
+    
     var body: some View {
-        UniNavigationStack {
-            UniScrollView {
-                VStack(spacing: 16) {
-                    if searchText.isEmpty {
-                        SearchQuickCategoriesView()
-                        RecommendedForYouView()
-                        TrendingSearchesView()
-                    } else if isSearching {
-                        SearchResultsView(query: searchText)
-                    } else {
-                        SearchSuggestionsView(query: searchText)
-                    }
-
-                    Spacer(minLength: 50)
+        UniScrollView {
+            VStack(spacing: 16) {
+                if searchText.isEmpty {
+                    SearchQuickCategoriesView()
+                    RecommendedForYouView()
+                    TrendingSearchesView()
+                } else if isSearching {
+                    SearchResultsView(query: searchText)
+                } else {
+                    SearchSuggestionsView(query: searchText)
                 }
-                .padding(.bottom, 20)
+                
+                Spacer(minLength: 50)
             }
-            .navigationTitle("Search")
-
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    HStack(spacing: 16) {
-                        UniButton(action: {
-                            isFilterPresented = true
-                        }) {
-                            Image(systemName: "slider.horizontal.3")
-                                .font(.title3)
-                                .uniForegroundStyle(.blue)
-                        }
-                        .uniButtonStyle(.plain)
-
-                        Image(systemName: "barcode.viewfinder")
-                            .font(.title2)
-                            .uniForegroundStyle(.secondary)
+            .padding(.bottom, 20)
+        }
+        .navigationTitle("Search")
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                HStack(spacing: 16) {
+                    UniButton(action: {
+                        isFilterPresented = true
+                    }) {
+                        Image(systemName: "slider.horizontal.3")
+                            .font(.title3)
+                            .uniForegroundStyle(.blue)
                     }
-                }
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Image(systemName: "mic.circle")
+                    .uniButtonStyle(.plain)
+                    
+                    Image(systemName: "barcode.viewfinder")
                         .font(.title2)
                         .uniForegroundStyle(.secondary)
                 }
             }
-            .sheet(isPresented: $isFilterPresented) {
-                FilterSheetView(
-                    selectedSort: $selectedSort,
-                    selectedPrice: $selectedPrice,
-                    selectedCategory: $selectedCategory
-                )
+            ToolbarItem(placement: .navigationBarLeading) {
+                Image(systemName: "mic.circle")
+                    .font(.title2)
+                    .uniForegroundStyle(.secondary)
             }
+        }
+        .sheet(isPresented: $isFilterPresented) {
+            FilterSheetView(
+                selectedSort: $selectedSort,
+                selectedPrice: $selectedPrice,
+                selectedCategory: $selectedCategory
+            )
         }
         .searchable(
             text: $searchText, placement: .automatic, prompt: "Search mini-apps, services..."

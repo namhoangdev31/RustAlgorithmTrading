@@ -102,6 +102,10 @@ struct AppCoordinator: View {
             NotificationPreferencesView()
         case .helpSupport:
             HelpSupportView()
+        case .helpDetail(let title):
+            Text("\(title) Help Details")
+                .navigationTitle(title)
+                .navigationBarTitleDisplayMode(.inline)
         case .aboutApp:
             AboutAppView()
         case .legal(let type):
@@ -134,10 +138,18 @@ struct AppCoordinator: View {
             SecuritySettingsView()
         case .deleteAccount:
             DeleteAccountView()
+        case .changePassword:
+            Text("Change Password View")
+                .navigationTitle("Change Password")
+                .navigationBarTitleDisplayMode(.inline)
         case .notifications:
             NotificationInboxView()
         case .notificationDetail(let id):
-            NotificationDetailView(notification: .init(title: "Notification", message: "Details for \(id)", time: "Now", isRead: true, type: "system"))
+            if let item = NotificationInboxView.mockNotifications.first(where: { $0.id.uuidString == id }) {
+                NotificationDetailView(notification: item)
+            } else {
+                NotificationDetailView(notification: .init(title: "Notification", message: "Details for \(id)", time: "Now", isRead: true, type: "system"))
+            }
         case .reviewDetail(let id):
             ReviewDetailView(reviewId: id)
         case .reportReview:

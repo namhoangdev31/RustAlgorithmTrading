@@ -9,9 +9,19 @@ struct SecuritySettingsView: View {
     var body: some View {
         UniList {
             Section(header: Text("Login Security")) {
-                NavigationLink(destination: Text("Change Password View")) {
-                    Text("Change Password")
+                UniButton(action: {
+                    navigation.navigate(to: .changePassword)
+                }) {
+                    HStack {
+                        Text("Change Password")
+                            .uniForegroundStyle(.primary)
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .uniForegroundStyle(.secondary)
+                    }
                 }
+                .uniButtonStyle(.plain)
 
                 Toggle("Two-Factor Authentication", isOn: $twoFactorEnabled)
                     .tint(.blue)
