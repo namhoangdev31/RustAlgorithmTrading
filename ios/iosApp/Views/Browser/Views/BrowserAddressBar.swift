@@ -16,19 +16,27 @@ public struct BrowserAddressBar: View {
 
     public var body: some View {
         HStack(spacing: 8) {
-            // Left icon (Lock / magnifying glass)
-            Image(systemName: isSecureURL ? "lock.fill" : "magnifyingglass")
-                .font(.system(size: 13, weight: .medium))
-                .foregroundColor(.secondary)
-                .frame(width: 16, height: 16)
+            // Tab list icon on the far left
+            UniButton(action: { viewModel.showTabSwitcher = true }) {
+                Image(systemName: "square.on.square")
+                    .font(.system(size: 15, weight: .bold))
+                    .foregroundColor(.primary)
+                    .frame(width: 28, height: 28)
+            }
+            .uniButtonStyle(.plain)
 
-            // Stable TextField to prevent focus resetting on view structural transitions
+            // Search icon
+            Image(systemName: "magnifyingglass")
+                .font(.system(size: 13, weight: .bold))
+                .foregroundColor(.secondary)
+
+            // Stable TextField
             TextField("Tìm hoặc nhập tên web", text: $editingText)
                 .keyboardType(.webSearch)
                 .autocapitalization(.none)
                 .disableAutocorrection(true)
                 .focused($isTextFieldFocused)
-                .font(.system(size: 14.5))
+                .font(.system(size: 14.5, weight: .semibold))
                 .submitLabel(.go)
                 .onSubmit {
                     viewModel.loadURLString(editingText)
@@ -36,12 +44,12 @@ public struct BrowserAddressBar: View {
                 }
                 .opacity(isTextFieldFocused ? 1.0 : 0.0)
                 .overlay(
-                    // Overlay non-editable text when NOT focused to mimic Safari collapsed style
+                    // Overlay non-editable text when NOT focused
                     Group {
                         if !isTextFieldFocused {
                             HStack {
                                 Text(displayText)
-                                    .font(.system(size: 14.5))
+                                    .font(.system(size: 14.5, weight: .semibold))
                                     .foregroundColor(viewModel.activeTab?.currentURL == nil ? .secondary : .primary)
                                     .lineLimit(1)
                                     .truncationMode(.middle)
@@ -71,7 +79,7 @@ public struct BrowserAddressBar: View {
                 
                 UniButton(action: { isTextFieldFocused = false }) {
                     Text("Huỷ")
-                        .font(.system(size: 14.5, weight: .medium))
+                        .font(.system(size: 14, weight: .bold))
                         .foregroundColor(.blue)
                 }
                 .uniButtonStyle(.plain)
@@ -79,12 +87,23 @@ public struct BrowserAddressBar: View {
                 reloadOrStopButton
             }
         }
-        .padding(.horizontal, 12)
+        .padding(.leading, 8)
+        .padding(.trailing, 12)
         .padding(.vertical, 8)
-        .background(
-            Capsule()
-                .fill(Color(UIColor.secondarySystemFill))
+        
+        .overlay(
+            GeometryReader { geo in
+                VStack {
+                    Spacer()
+                    if let activeTab = viewModel.activeTab,
+                       case .loading(let progress) = activeTab.pageState {
+                        Color.blue
+                            .frame(width: geo.size.width * CGFloat(progress), height: 3)
+                    }
+                }
+            }
         )
+        .clipShape(Capsule())
         .animation(.easeInOut(duration: 0.2), value: isTextFieldFocused)
         .onAppear {
             if focusOnAppear {
@@ -110,15 +129,15 @@ public struct BrowserAddressBar: View {
             case .loading:
                 UniButton(action: { activeTab.stopLoading() }) {
                     Image(systemName: "xmark")
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundColor(.secondary)
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundColor(.primary)
                 }
                 .uniButtonStyle(.plain)
             case .loaded:
                 UniButton(action: { activeTab.reload() }) {
                     Image(systemName: "arrow.clockwise")
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundColor(.secondary)
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundColor(.primary)
                 }
                 .uniButtonStyle(.plain)
             default:

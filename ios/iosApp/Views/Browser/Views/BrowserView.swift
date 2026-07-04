@@ -18,51 +18,52 @@ public struct BrowserView: View {
     }
 
     public var body: some View {
-        contentArea
-            .safeAreaInset(edge: .bottom, spacing: 0) {
-                // Bottom address bar and control toolbar
-                bottomBar
+        ZStack(alignment: .bottom) {
+            contentArea
+                .ignoresSafeArea(edges: .bottom)
+
+            bottomBar
+        }
+        .navigationBarHidden(true)
+        .uniToolbarBackground(.hidden, for: .tabBar)
+        // MARK: Sheets
+        .sheet(isPresented: $viewModel.showTabSwitcher) {
+            BrowserTabSwitcherView(viewModel: viewModel)
+        }
+        .sheet(isPresented: $viewModel.showBookmarksList) {
+            BrowserBookmarksView(viewModel: viewModel)
+        }
+        .sheet(isPresented: $viewModel.showHistoryList) {
+            BrowserHistoryView(viewModel: viewModel)
+        }
+        .confirmationDialog("", isPresented: $showMoreMenu, titleVisibility: .hidden) {
+            Button("Tab mới") {
+                viewModel.createNewTab()
             }
-            .navigationBarHidden(true)
-            .uniToolbarBackground(.hidden, for: .tabBar)
-            // MARK: Sheets
-            .sheet(isPresented: $viewModel.showTabSwitcher) {
-                BrowserTabSwitcherView(viewModel: viewModel)
+            Button("Tab riêng tư mới") {
+                viewModel.isPrivateMode = true
+                viewModel.createNewTab()
             }
-            .sheet(isPresented: $viewModel.showBookmarksList) {
-                BrowserBookmarksView(viewModel: viewModel)
+            Button("Thêm dấu trang") {
+                viewModel.addCurrentToBookmarks()
             }
-            .sheet(isPresented: $viewModel.showHistoryList) {
-                BrowserHistoryView(viewModel: viewModel)
+            Button("Dấu trang") {
+                viewModel.showBookmarksList = true
             }
-            .confirmationDialog("", isPresented: $showMoreMenu, titleVisibility: .hidden) {
-                Button("Tab mới") {
-                    viewModel.createNewTab()
-                }
-                Button("Tab riêng tư mới") {
-                    viewModel.isPrivateMode = true
-                    viewModel.createNewTab()
-                }
-                Button("Thêm dấu trang") {
-                    viewModel.addCurrentToBookmarks()
-                }
-                Button("Dấu trang") {
-                    viewModel.showBookmarksList = true
-                }
-                Button("Lịch sử") {
-                    viewModel.showHistoryList = true
-                }
-                Button("Tất cả các tab") {
-                    viewModel.showTabSwitcher = true
-                }
-                Button("Huỷ", role: .cancel) {}
+            Button("Lịch sử") {
+                viewModel.showHistoryList = true
             }
-            .onDisappear {
-                // Clean up state when exiting the browser view
-                if !viewModel.showTabSwitcher && !viewModel.showBookmarksList && !viewModel.showHistoryList {
-                    viewModel.reset()
-                }
+            Button("Tất cả các tab") {
+                viewModel.showTabSwitcher = true
             }
+            Button("Huỷ", role: .cancel) {}
+        }
+        .onDisappear {
+            // Clean up state when exiting the browser view
+            if !viewModel.showTabSwitcher && !viewModel.showBookmarksList && !viewModel.showHistoryList {
+                viewModel.reset()
+            }
+        }
     }
 
     // MARK: - Content Area
@@ -71,7 +72,6 @@ public struct BrowserView: View {
     private var contentArea: some View {
         if let activeTab = viewModel.activeTab {
             ZStack {
-                // WebView ignores safe area top so that website background flows under the status bar (Safari-style)
                 BrowserWebView(tabViewModel: activeTab)
                     .ignoresSafeArea(edges: .top)
                     .id(activeTab.id)
@@ -87,83 +87,41 @@ public struct BrowserView: View {
                     }
                 }
 
-                // Progress bar at top, automatically pushed below notch/status bar by respecting safe area
-                VStack {
-                    if case .loading(let progress) = activeTab.pageState {
-                        ProgressView(value: progress, total: 1.0)
-                            .progressViewStyle(LinearProgressViewStyle(tint: .blue))
-                            .frame(height: 2)
-                            .transition(.opacity)
-                    }
-                    Spacer()
-                }
             }
         } else {
             Color(UIColor.systemBackground)
         }
     }
 
-    // MARK: - Bottom Bar (Safari-style)
-
     private var bottomBar: some View {
-        VStack(spacing: 0) {
-            Divider()
-            HStack(spacing: 4) {
-                // Back button: If WebView can go back, go back. Otherwise, go back to Start Page (dismiss).
-                navButton(systemImage: "chevron.backward", enabled: true) {
-                    if viewModel.activeTab?.canGoBack == true {
-                        viewModel.activeTab?.goBack()
-                    } else {
-                        dismiss()
-                    }
-                }
-
-                // Address bar pill
-                BrowserAddressBar(viewModel: viewModel, focusOnAppear: focusOnAppear)
-                    .frame(maxWidth: .infinity)
-
-                // Forward button
-                navButton(systemImage: "chevron.forward", enabled: viewModel.activeTab?.canGoForward == true) {
-                    viewModel.activeTab?.goForward()
-                }
-
-                // More (...)
-                moreButton
+        HStack(spacing: 12) {
+            UniButton(style: .glass,
+                      action: {
+                          if viewModel.activeTab?.canGoBack == true {
+                              viewModel.activeTab?.goBack()
+                          } else {
+                              dismiss()
+                          }
+                      },
+            ) {
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 19, weight: .bold))
+                    .foregroundColor(.primary)
+                    .frame(width: 20, height: 20)
             }
-            .padding(.horizontal, 10)
-            .padding(.top, 8)
-            .padding(.bottom, 8)
-        }
-        .background(
-            Color(UIColor.systemBackground)
-                .opacity(0.92)
-                .background(.regularMaterial)
-                .ignoresSafeArea(edges: .bottom)
-        )
-    }
+            .uniButtonBorderShape(.circle)
 
-    private func navButton(systemImage: String, enabled: Bool, action: @escaping () -> Void) -> some View {
-        UniButton(action: action) {
-            Image(systemName: systemImage)
-                .font(.system(size: 19, weight: .regular))
-                .foregroundColor(enabled ? .primary : Color(UIColor.tertiaryLabel))
-                .frame(width: 36, height: 36)
-        }
-        .uniButtonStyle(.plain)
-        .disabled(!enabled)
-    }
+            BrowserAddressBar(viewModel: viewModel, focusOnAppear: focusOnAppear)
+                .frame(maxWidth: .infinity)
 
-    private var moreButton: some View {
-        UniButton(action: { showMoreMenu = true }) {
-            Image(systemName: "ellipsis")
-                .font(.system(size: 16, weight: .medium))
-                .foregroundColor(.primary)
-                .frame(width: 36, height: 36)
-                .background(
-                    Circle()
-                        .fill(Color(UIColor.secondarySystemFill))
-                )
+            UniButton(style: .glass,action: { showMoreMenu = true }) {
+                Image(systemName: "ellipsis")
+                    .font(.system(size: 19, weight: .bold))
+                    .foregroundColor(.primary)
+                    .frame(width: 20, height: 20)
+            }
+            .uniButtonBorderShape(.circle)
         }
-        .uniButtonStyle(.plain)
+        .padding(.horizontal, 16)
     }
 }
