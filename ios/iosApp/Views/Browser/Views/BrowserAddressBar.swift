@@ -1,7 +1,7 @@
 import ExploreSwiftUI
 import SwiftUI
 
-// MARK: - Safari-style Address Bar (used in BrowserDetailView)
+// MARK: - Safari-style Address Bar
 
 public struct BrowserAddressBar: View {
     @ObservedObject var viewModel: BrowserViewModel
@@ -15,13 +15,77 @@ public struct BrowserAddressBar: View {
     }
 
     public var body: some View {
-        Group {
+        HStack(spacing: 8) {
+            // Left icon (Lock / magnifying glass)
+            Image(systemName: isSecureURL ? "lock.fill" : "magnifyingglass")
+                .font(.system(size: 13, weight: .medium))
+                .foregroundColor(.secondary)
+                .frame(width: 16, height: 16)
+
+            // Stable TextField to prevent focus resetting on view structural transitions
+            TextField("Tìm hoặc nhập tên web", text: $editingText)
+                .keyboardType(.webSearch)
+                .autocapitalization(.none)
+                .disableAutocorrection(true)
+                .focused($isTextFieldFocused)
+                .font(.system(size: 14.5))
+                .submitLabel(.go)
+                .onSubmit {
+                    viewModel.loadURLString(editingText)
+                    isTextFieldFocused = false
+                }
+                .opacity(isTextFieldFocused ? 1.0 : 0.0)
+                .overlay(
+                    // Overlay non-editable text when NOT focused to mimic Safari collapsed style
+                    Group {
+                        if !isTextFieldFocused {
+                            HStack {
+                                Text(displayText)
+                                    .font(.system(size: 14.5))
+                                    .foregroundColor(viewModel.activeTab?.currentURL == nil ? .secondary : .primary)
+                                    .lineLimit(1)
+                                    .truncationMode(.middle)
+                                Spacer()
+                            }
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                editingText = viewModel.activeTab?.currentURL?.absoluteString ?? ""
+                                isTextFieldFocused = true
+                            }
+                        }
+                    }
+                )
+
+            Spacer(minLength: 0)
+
+            // Right actions (Reload/Stop or Cancel)
             if isTextFieldFocused {
-                expandedSearchBar
+                if !editingText.isEmpty {
+                    UniButton(action: { editingText = "" }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(Color(UIColor.tertiaryLabel))
+                            .font(.system(size: 15))
+                    }
+                    .uniButtonStyle(.plain)
+                }
+                
+                UniButton(action: { isTextFieldFocused = false }) {
+                    Text("Huỷ")
+                        .font(.system(size: 14.5, weight: .medium))
+                        .foregroundColor(.blue)
+                }
+                .uniButtonStyle(.plain)
             } else {
-                collapsedAddressBar
+                reloadOrStopButton
             }
         }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(
+            Capsule()
+                .fill(Color(UIColor.secondarySystemFill))
+        )
+        .animation(.easeInOut(duration: 0.2), value: isTextFieldFocused)
         .onAppear {
             if focusOnAppear {
                 editingText = ""
@@ -30,87 +94,6 @@ public struct BrowserAddressBar: View {
                 }
             }
         }
-    }
-
-    // MARK: - Collapsed (pill showing domain)
-
-    private var collapsedAddressBar: some View {
-        HStack(spacing: 8) {
-            // Lock/globe icon
-            Image(systemName: isSecureURL ? "lock.fill" : "magnifyingglass")
-                .font(.system(size: 12, weight: .medium))
-                .foregroundColor(isSecureURL ? .secondary : .secondary)
-
-            Text(displayText)
-                .font(.system(size: 14))
-                .foregroundColor(viewModel.activeTab?.currentURL == nil ? .secondary : .primary)
-                .lineLimit(1)
-                .truncationMode(.middle)
-
-            Spacer(minLength: 0)
-
-            reloadOrStopButton
-        }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
-        .background(
-            Capsule()
-                .fill(Color(UIColor.secondarySystemFill))
-        )
-        .onTapGesture {
-            editingText = viewModel.activeTab?.currentURL?.absoluteString ?? ""
-            isTextFieldFocused = true
-        }
-    }
-
-    // MARK: - Expanded (editing mode)
-
-    private var expandedSearchBar: some View {
-        HStack(spacing: 8) {
-            Image(systemName: "magnifyingglass")
-                .font(.system(size: 14))
-                .foregroundColor(.secondary)
-
-            TextField("Tìm hoặc nhập tên web", text: $editingText)
-                .keyboardType(.webSearch)
-                .autocapitalization(.none)
-                .disableAutocorrection(true)
-                .focused($isTextFieldFocused)
-                .font(.system(size: 15))
-                .submitLabel(.go)
-                .onSubmit {
-                    viewModel.loadURLString(editingText)
-                    isTextFieldFocused = false
-                }
-
-            if !editingText.isEmpty {
-                UniButton(action: { editingText = "" }) {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(Color(UIColor.tertiaryLabel))
-                        .font(.system(size: 16))
-                }
-                .uniButtonStyle(.plain)
-            }
-
-            UniButton(action: { isTextFieldFocused = false }) {
-                Text("Huỷ")
-                    .font(.subheadline)
-                    .foregroundColor(.blue)
-            }
-            .uniButtonStyle(.plain)
-        }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
-        .background(
-            Capsule()
-                .fill(Color(UIColor.secondarySystemBackground))
-                .shadow(color: .black.opacity(0.08), radius: 4, x: 0, y: 1)
-        )
-        .overlay(
-            Capsule()
-                .strokeBorder(Color.accentColor.opacity(0.4), lineWidth: 1)
-        )
-        .animation(.easeInOut(duration: 0.2), value: isTextFieldFocused)
         .onChange(of: isTextFieldFocused) { focused in
             if !focused {
                 viewModel.syncAddressBar()
@@ -127,14 +110,14 @@ public struct BrowserAddressBar: View {
             case .loading:
                 UniButton(action: { activeTab.stopLoading() }) {
                     Image(systemName: "xmark")
-                        .font(.system(size: 12, weight: .medium))
+                        .font(.system(size: 12, weight: .semibold))
                         .foregroundColor(.secondary)
                 }
                 .uniButtonStyle(.plain)
             case .loaded:
                 UniButton(action: { activeTab.reload() }) {
                     Image(systemName: "arrow.clockwise")
-                        .font(.system(size: 12, weight: .medium))
+                        .font(.system(size: 12, weight: .semibold))
                         .foregroundColor(.secondary)
                 }
                 .uniButtonStyle(.plain)

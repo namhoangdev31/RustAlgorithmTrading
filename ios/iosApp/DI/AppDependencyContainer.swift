@@ -46,9 +46,19 @@ final class AppDependencyContainer: ObservableObject {
         return WebRuntimeViewModel()
     }
     
+    private static var cachedBrowserViewModel: BrowserViewModel?
+    
     @MainActor
     func makeBrowserViewModel(initialURL: String?, privateMode: Bool) -> BrowserViewModel {
-        return BrowserViewModel(initialURL: initialURL, isPrivate: privateMode)
+        if let cached = Self.cachedBrowserViewModel {
+            if let initialURL {
+                cached.loadURLString(initialURL)
+            }
+            return cached
+        }
+        let vm = BrowserViewModel(initialURL: initialURL, isPrivate: privateMode)
+        Self.cachedBrowserViewModel = vm
+        return vm
     }
 }
 

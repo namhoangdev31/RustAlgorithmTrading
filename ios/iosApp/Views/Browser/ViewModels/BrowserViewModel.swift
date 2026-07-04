@@ -118,10 +118,20 @@ public final class BrowserViewModel: ObservableObject {
     }
     
     private func setupActiveTabUrlObserver() {
-        // Sync URL text field whenever active tab updates URL
         $activeTabId
-            .sink { [weak self] _ in
-                self?.syncAddressBar()
+            .map { [weak self] id -> AnyPublisher<URL?, Never> in
+                guard let self = self,
+                      let active = self.tabs.first(where: { $0.id == id }) else {
+                    return Just<URL?>(nil).eraseToAnyPublisher()
+                }
+                return active.$currentURL.eraseToAnyPublisher()
+            }
+            .switchToLatest()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] url in
+                guard let self = self else { return }
+                self.urlInputText = url?.absoluteString ?? ""
+                self.objectWillChange.send()
             }
             .store(in: &observers)
         
@@ -136,5 +146,15 @@ public final class BrowserViewModel: ObservableObject {
         if let active = activeTab {
             urlInputText = active.currentURL?.absoluteString ?? ""
         }
+    }
+    
+    public func reset() {
+        for tab in tabs {
+            tab.webView.stopLoading()
+            tab.webView.navigationDelegate = nil
+            tab.webView.uiDelegate = nil
+        }
+        tabs.removeAll()
+        createNewTab(initialURL: nil)
     }
 }

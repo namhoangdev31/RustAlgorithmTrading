@@ -11,17 +11,20 @@ struct AppCoordinator: View {
             if !hasSeenOnboarding {
                 OnboardingView(isCompleted: $hasSeenOnboarding)
             } else {
-                rootContent
-                    .sheet(item: $navigation.presentedSheet) { route in
-                        switch route {
-                        case .writeReview(let appId):
-                            WriteReviewView(appId: appId)
-                        case .reportReview:
-                            ReportReviewSheet()
-                        default:
-                            EmptyView()
-                        }
+                ZStack {
+                    rootContent
+                    AssistiveTouchView()
+                }
+                .sheet(item: $navigation.presentedSheet) { route in
+                    switch route {
+                    case .writeReview(let appId):
+                        WriteReviewView(appId: appId)
+                    case .reportReview:
+                        ReportReviewSheet()
+                    default:
+                        EmptyView()
                     }
+                }
             }
         }
         .environmentObject(navigation)
@@ -51,7 +54,7 @@ struct AppCoordinator: View {
     private func destinationView(for route: AppRoute) -> some View {
         switch route {
         case .browser(let initialURL, let privateMode):
-            BrowserView(viewModel: container.makeBrowserViewModel(initialURL: initialURL, privateMode: privateMode))
+            BrowserView(viewModel: container.makeBrowserViewModel(initialURL: initialURL, privateMode: privateMode), focusOnAppear: initialURL == nil)
         case .login:
             LoginView(viewModel: container.makeLoginViewModel())
         case .home:
