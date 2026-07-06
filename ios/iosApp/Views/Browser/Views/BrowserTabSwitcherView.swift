@@ -168,6 +168,7 @@ public struct BrowserTabSwitcherView: View {
         HStack(spacing: 10) {
             Button {
                 navigation.createNewTabFromSwitcher(isPrivate: viewModel.isPrivateMode)
+                dismissSwitcher()
             } label: {
                 Image(systemName: "plus")
                     .font(.system(size: 18, weight: .semibold))

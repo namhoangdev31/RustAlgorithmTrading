@@ -375,6 +375,7 @@ class NavigationViewModel: ObservableObject {
             if case .browser = $0 { return true }
             return false
         }) {
+            path[browserIndex] = .browser(initialURL: nil, privateMode: privateMode)
             path = Array(path[...browserIndex])
         } else {
             if let tabSwitcherIndex = path.firstIndex(where: {
