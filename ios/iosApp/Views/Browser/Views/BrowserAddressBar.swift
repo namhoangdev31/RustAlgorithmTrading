@@ -117,6 +117,7 @@ struct BrowserAddressBarContent: View {
                 }
                 .buttonStyle(.plain)
                 .highPriorityGesture(TapGesture().onEnded { _ in startEditing() })
+                .contextMenu { addressBarContextMenu }
             } else {
                 // Expanded Full Address Bar
                 HStack(spacing: 8) {
@@ -139,6 +140,7 @@ struct BrowserAddressBarContent: View {
                     }
                     .buttonStyle(.plain)
                     .highPriorityGesture(TapGesture().onEnded { _ in startEditing() })
+                    .contextMenu { addressBarContextMenu }
 
                     BrowserPageSettingsMenuView(
                         viewModel: viewModel,
@@ -198,6 +200,68 @@ struct BrowserAddressBarContent: View {
             .uniButtonStyle(.plain)
         default:
             EmptyView()
+        }
+    }
+
+    // MARK: - Context Menu
+
+    @ViewBuilder
+    private var addressBarContextMenu: some View {
+        if let url = activeTab.currentURL {
+            ShareLink(item: url) {
+                Label("Chia sẻ", systemImage: "square.and.arrow.up")
+            }
+        } else {
+            Button(action: {}) {
+                Label("Chia sẻ", systemImage: "square.and.arrow.up")
+            }
+            .disabled(true)
+        }
+        
+        Button {
+            UIPasteboard.general.string = activeTab.title
+        } label: {
+            Label("Sao chép cụm từ tìm kiếm", systemImage: "doc.on.doc")
+        }
+        
+        Button {
+            if let urlString = activeTab.currentURL?.absoluteString {
+                UIPasteboard.general.string = urlString
+            }
+        } label: {
+            Label("Sao chép liên kết", systemImage: "link")
+        }
+        
+        Divider()
+        
+        Menu {
+            Button(action: {}) {
+                Label("Nhóm tab mới", systemImage: "plus")
+            }
+        } label: {
+            Label("Chuyển đổi nhóm tab", systemImage: "rectangle.3.group")
+        }
+        
+        Menu {
+            Button(action: {}) {
+                Label("Nhóm tab mới", systemImage: "plus")
+            }
+        } label: {
+            Label("Di chuyển đến nhóm tab", systemImage: "arrow.up.right.square")
+        }
+        
+        Divider()
+        
+        Button(role: .destructive) {
+            viewModel.closeAllTabs()
+        } label: {
+            Label("Đóng tất cả \(viewModel.tabs.count) tab", systemImage: "xmark")
+        }
+        
+        Button(role: .destructive) {
+            viewModel.closeTab(id: activeTab.id)
+        } label: {
+            Label("Đóng tab", systemImage: "xmark")
         }
     }
 
