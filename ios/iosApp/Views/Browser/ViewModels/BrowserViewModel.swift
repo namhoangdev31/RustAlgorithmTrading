@@ -238,7 +238,9 @@ public final class BrowserViewModel: ObservableObject {
         let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
         
-        persistenceStore.addSearchQuery(trimmed)
+        if !isPrivateMode {
+            persistenceStore.addSearchQuery(trimmed)
+        }
         if let normalized = urlNormalizer.normalize(trimmed), let active = activeTab {
             active.load(normalized)
         }

@@ -8,6 +8,23 @@ public struct BrowserTabSwitcherView: View {
     @State private var sortMode: BrowserTabSortMode = .currentOrder
     private let onDismiss: (() -> Void)?
 
+    private var isPrivateModeBinding: Binding<Bool> {
+        Binding<Bool>(
+            get: { viewModel.isPrivateMode },
+            set: { newValue in
+                if newValue {
+                    BiometricAuthenticator.authenticate(reason: "Xác thực để truy cập các tab riêng tư.") { success in
+                        if success {
+                            viewModel.isPrivateMode = true
+                        }
+                    }
+                } else {
+                    viewModel.isPrivateMode = false
+                }
+            }
+        )
+    }
+
     public init(viewModel: BrowserViewModel, onDismiss: (() -> Void)? = nil) {
         self.viewModel = viewModel
         self.onDismiss = onDismiss
@@ -177,7 +194,7 @@ public struct BrowserTabSwitcherView: View {
             .buttonStyle(.plain)
             .accessibilityIdentifier("browser.tabSwitcher.newTab")
 
-            Picker("Chế độ tab", selection: $viewModel.isPrivateMode) {
+            Picker("Chế độ tab", selection: isPrivateModeBinding) {
                 Text("Riêng tư").tag(true)
                 Text(normalTabCountTitle).tag(false)
             }

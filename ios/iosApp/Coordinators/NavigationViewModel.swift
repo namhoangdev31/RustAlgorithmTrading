@@ -345,15 +345,35 @@ class NavigationViewModel: ObservableObject {
     @MainActor
     func selectTab(id: UUID) {
         guard let cached = AppDependencyContainer.cachedBrowserViewModel else { return }
-        cached.switchTab(to: id)
-        navigateToBrowserFromSwitcher(privateMode: cached.isPrivateMode)
+        guard let tab = cached.tabs.first(where: { $0.id == id }) else { return }
+        
+        if tab.isPrivate {
+            BiometricAuthenticator.authenticate(reason: "Xác thực để truy cập các tab riêng tư.") { success in
+                if success {
+                    cached.switchTab(to: id)
+                    self.navigateToBrowserFromSwitcher(privateMode: cached.isPrivateMode)
+                }
+            }
+        } else {
+            cached.switchTab(to: id)
+            self.navigateToBrowserFromSwitcher(privateMode: cached.isPrivateMode)
+        }
     }
     
     @MainActor
     func createNewTabFromSwitcher(isPrivate: Bool) {
         guard let cached = AppDependencyContainer.cachedBrowserViewModel else { return }
-        cached.createNewTab(initialURL: nil, isPrivate: isPrivate)
-        navigateToBrowserFromSwitcher(privateMode: isPrivate)
+        if isPrivate {
+            BiometricAuthenticator.authenticate(reason: "Xác thực để tạo tab riêng tư mới.") { success in
+                if success {
+                    cached.createNewTab(initialURL: nil, isPrivate: isPrivate)
+                    self.navigateToBrowserFromSwitcher(privateMode: isPrivate)
+                }
+            }
+        } else {
+            cached.createNewTab(initialURL: nil, isPrivate: isPrivate)
+            self.navigateToBrowserFromSwitcher(privateMode: isPrivate)
+        }
     }
     
     @MainActor

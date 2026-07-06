@@ -199,7 +199,9 @@ public struct BrowserSearchView: View {
     }
     
     private func submitSearch(_ text: String) {
-        viewModel.persistenceStore.addSearchQuery(text)
+        if !viewModel.isPrivateMode {
+            viewModel.persistenceStore.addSearchQuery(text)
+        }
         navigation.submitSearch(query: text, isPrivate: viewModel.isPrivateMode)
     }
 }

@@ -328,7 +328,7 @@ public struct BrowserStartPageView: View {
     }
 
     private var hasOpenTabs: Bool {
-        viewModel.tabs.contains { $0.currentURL != nil }
+        viewModel.tabs.contains { !$0.isPrivate && $0.currentURL != nil }
     }
 
     private var openTabsSection: some View {
@@ -348,7 +348,7 @@ public struct BrowserStartPageView: View {
             
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 12) {
-                    let openTabsList = viewModel.tabs.filter { $0.currentURL != nil }
+                    let openTabsList = viewModel.tabs.filter { !$0.isPrivate && $0.currentURL != nil }
                     ForEach(openTabsList) { tab in
                         HStack(spacing: 10) {
                             let domain = tab.currentURL?.host ?? ""
