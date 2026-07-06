@@ -35,13 +35,14 @@ public final class BrowserViewModel: ObservableObject {
         self.isPrivateMode = isPrivate
         
         let startURL = initialURL.flatMap { urlNormalizer.normalize($0) }
-        createNewTab(initialURL: startURL)
+        createNewTab(initialURL: startURL, isPrivate: isPrivate)
         
         setupActiveTabUrlObserver()
     }
     
-    public func createNewTab(initialURL: URL? = nil) {
-        let newTab = BrowserTabViewModel(initialURL: initialURL, isPrivate: isPrivateMode)
+    public func createNewTab(initialURL: URL? = nil, isPrivate: Bool, showSearch: Bool = false) {
+        self.isPrivateMode = isPrivate
+        let newTab = BrowserTabViewModel(initialURL: initialURL, isPrivate: isPrivate)
         configureTabCallbacks(newTab)
         
         tabs.append(newTab)
@@ -51,6 +52,10 @@ public final class BrowserViewModel: ObservableObject {
             urlInputText = url.absoluteString
         } else {
             urlInputText = ""
+        }
+        
+        if showSearch {
+            showSearchOverlay = true
         }
     }
     
@@ -65,7 +70,7 @@ public final class BrowserViewModel: ObservableObject {
                 activeTabId = firstTab.id
                 urlInputText = firstTab.currentURL?.absoluteString ?? ""
             } else {
-                createNewTab(initialURL: nil)
+                createNewTab(initialURL: nil, isPrivate: isPrivateMode)
             }
         }
     }
@@ -79,21 +84,39 @@ public final class BrowserViewModel: ObservableObject {
     }
 
     public func closeAllTabs() {
-        let allIds = tabs.map { $0.id }
-        for id in allIds {
+        closeAllTabs(isPrivate: isPrivateMode)
+    }
+
+    public func closeAllTabs(isPrivate: Bool) {
+        let idsToClose = tabs.filter { $0.isPrivate == isPrivate }.map { $0.id }
+        for id in idsToClose {
             if let index = tabs.firstIndex(where: { $0.id == id }) {
                 tabs.remove(at: index)
             }
         }
-        createNewTab(initialURL: nil)
+        
+        let remaining = tabs.filter { $0.isPrivate == isPrivate }
+        if remaining.isEmpty {
+            let newTab = BrowserTabViewModel(initialURL: nil, isPrivate: isPrivate)
+            configureTabCallbacks(newTab)
+            tabs.append(newTab)
+            activeTabId = newTab.id
+            urlInputText = ""
+        } else {
+            if let active = activeTab, !tabs.contains(where: { $0.id == active.id }) {
+                if let firstRemaining = remaining.first {
+                    switchTab(to: firstRemaining.id)
+                }
+            }
+        }
     }
 
     public func duplicateTab(_ tab: BrowserTabViewModel) {
         guard let url = tab.currentURL else {
-            createNewTab(initialURL: nil)
+            createNewTab(initialURL: nil, isPrivate: tab.isPrivate)
             return
         }
-        createNewTab(initialURL: url)
+        createNewTab(initialURL: url, isPrivate: tab.isPrivate)
     }
     
     public func switchTab(to id: UUID) {
@@ -107,13 +130,33 @@ public final class BrowserViewModel: ObservableObject {
         }
     }
     
-    public func loadURLString(_ input: String) {
+    public func loadURLString(_ input: String, forceNewTab: Bool = false) {
         guard let normalized = urlNormalizer.normalize(input) else { return }
         
-        if let active = activeTab {
+        if let active = activeTab, !forceNewTab && active.currentURL == nil {
             active.load(normalized)
         } else {
-            createNewTab(initialURL: normalized)
+            createNewTab(initialURL: normalized, isPrivate: isPrivateMode)
+        }
+    }
+    
+    public func handleExternalNavigation(initialURL: String?, isPrivate: Bool) {
+        self.isPrivateMode = isPrivate
+        
+        if let initialURLString = initialURL {
+            guard let normalized = urlNormalizer.normalize(initialURLString) else { return }
+            if let active = activeTab, active.currentURL == nil && active.isPrivate == isPrivate {
+                active.load(normalized)
+            } else {
+                createNewTab(initialURL: normalized, isPrivate: isPrivate, showSearch: false)
+            }
+        } else {
+            // Tapped search with nil URL
+            if let active = activeTab, active.currentURL == nil && active.isPrivate == isPrivate {
+                showSearchOverlay = true
+            } else {
+                createNewTab(initialURL: nil, isPrivate: isPrivate, showSearch: true)
+            }
         }
     }
     
@@ -137,7 +180,7 @@ public final class BrowserViewModel: ObservableObject {
     private func configureTabCallbacks(_ tab: BrowserTabViewModel) {
         tab.onOpenNewTab = { [weak self] url in
             guard let self = self else { return }
-            self.createNewTab(initialURL: url)
+            self.createNewTab(initialURL: url, isPrivate: tab.isPrivate)
         }
         
         tab.onOpenExternalURL = { url in
@@ -180,14 +223,7 @@ public final class BrowserViewModel: ObservableObject {
                 self.objectWillChange.send()
             }
             .store(in: &observers)
-            
-        $urlInputText
-            .debounce(for: .milliseconds(300), scheduler: RunLoop.main)
-            .removeDuplicates()
-            .sink { [weak self] query in
-                self?.fetchGoogleSuggestions(query)
-            }
-            .store(in: &observers)
+
         
         NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)
             .sink { _ in
@@ -214,28 +250,58 @@ public final class BrowserViewModel: ObservableObject {
         }
         tabs.removeAll()
         isToolbarCollapsed = false
-        createNewTab(initialURL: nil)
+        createNewTab(initialURL: nil, isPrivate: false)
     }
     
     public func fetchGoogleSuggestions(_ query: String) {
-        guard !query.isEmpty else {
+        print("[BrowserViewModel] fetchGoogleSuggestions query: '\(query)'")
+        
+        let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
             DispatchQueue.main.async {
                 self.googleSuggestions = []
             }
             return
         }
         
-        guard let encoded = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
-              let url = URL(string: "https://suggestqueries.google.com/complete/search?client=chrome&q=\(encoded)") else { return }
+        let lower = trimmed.lowercased()
+        if lower.hasPrefix("http://") || lower.hasPrefix("https://") || (lower.contains(".") && !lower.contains(" ")) {
+            print("[BrowserViewModel] Skipping suggestions query because it looks like a URL: \(trimmed)")
+            DispatchQueue.main.async {
+                self.googleSuggestions = []
+            }
+            return
+        }
         
-        URLSession.shared.dataTask(with: url) { [weak self] data, _, error in
-            guard let data = data, error == nil else { return }
+        guard let encoded = trimmed.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
+              let url = URL(string: "https://suggestqueries.google.com/complete/search?client=chrome&q=\(encoded)") else {
+            print("[BrowserViewModel] Failed to encode url for query: \(query)")
+            return
+        }
+        
+        URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
+            if let error = error {
+                print("[BrowserViewModel] Suggestions network error: \(error.localizedDescription)")
+                return
+            }
+            guard let data = data else {
+                print("[BrowserViewModel] No data received for suggestions query")
+                return
+            }
+            
+            if let rawString = String(data: data, encoding: .utf8) {
+                print("[BrowserViewModel] Suggestions raw response: \(rawString)")
+            }
+            
             if let json = try? JSONSerialization.jsonObject(with: data) as? [Any],
                json.count > 1,
                let suggestions = json[1] as? [String] {
+                print("[BrowserViewModel] Parsed suggestions: \(suggestions)")
                 DispatchQueue.main.async {
                     self?.googleSuggestions = suggestions
                 }
+            } else {
+                print("[BrowserViewModel] Failed to parse JSON or suggestions array")
             }
         }.resume()
     }

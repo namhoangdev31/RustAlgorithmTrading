@@ -50,8 +50,10 @@ public struct BrowserView: View {
             }
         }
         .onChange(of: viewModel.showSearchOverlay) { show in
-            if !show && viewModel.activeTab?.currentURL == nil {
-                navigation.goBack()
+            if !show && focusOnAppear && viewModel.activeTab?.currentURL == nil && viewModel.tabs.count == 1 {
+                DispatchQueue.main.async {
+                    navigation.goBack()
+                }
             }
         }
     }
@@ -223,14 +225,13 @@ public struct BrowserView: View {
                     Divider()
 
                     Button {
-                        viewModel.isPrivateMode = true
-                        viewModel.createNewTab()
+                        viewModel.createNewTab(isPrivate: true, showSearch: true)
                     } label: {
                         Label("Tab riêng tư mới", systemImage: "hand.raised")
                     }
 
                     Button {
-                        viewModel.createNewTab()
+                        viewModel.createNewTab(isPrivate: false, showSearch: true)
                     } label: {
                         Label("Tab mới", systemImage: "plus")
                     }

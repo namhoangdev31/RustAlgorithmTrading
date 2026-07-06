@@ -24,6 +24,8 @@ public struct BrowserTabSwitcherView: View {
 
                 // Tab grid
                 UniScrollView {
+                    let filteredTabs = viewModel.tabs.filter { $0.isPrivate == viewModel.isPrivateMode }
+                    
                     LazyVGrid(
                         columns: [
                             GridItem(.flexible(), spacing: 12),
@@ -31,7 +33,7 @@ public struct BrowserTabSwitcherView: View {
                         ],
                         spacing: 14
                     ) {
-                        ForEach(viewModel.tabs) { tabVM in
+                        ForEach(filteredTabs) { tabVM in
                             SafariTabCard(
                                 tabVM: tabVM,
                                 isActive: tabVM.id == viewModel.activeTabId
@@ -79,7 +81,8 @@ public struct BrowserTabSwitcherView: View {
     // MARK: - Top Bar
 
     private var topBar: some View {
-        HStack {
+        let currentTabs = viewModel.tabs.filter { $0.isPrivate == viewModel.isPrivateMode }
+        return HStack {
             // Left: ellipsis menu (Safari's "..." button)
             Menu {
                 // 1. Quản lý nhóm tab
@@ -129,21 +132,21 @@ public struct BrowserTabSwitcherView: View {
 
                 // 4. Sao chép N liên kết
                 Button(action: {
-                    let urls = viewModel.tabs.compactMap { $0.currentURL?.absoluteString }
+                    let urls = currentTabs.compactMap { $0.currentURL?.absoluteString }
                     UIPasteboard.general.string = urls.joined(separator: "\n")
                 }) {
-                    Label("Sao chép \(viewModel.tabs.count) liên kết", systemImage: "link")
+                    Label("Sao chép \(currentTabs.count) liên kết", systemImage: "link")
                 }
 
                 // 5. Thêm dấu trang cho N tab
                 Button(action: {
-                    for tab in viewModel.tabs {
+                    for tab in currentTabs {
                         if let url = tab.currentURL?.absoluteString {
                             viewModel.persistenceStore.addBookmark(url: url, title: tab.title)
                         }
                     }
                 }) {
-                    Label("Thêm dấu trang cho \(viewModel.tabs.count) tab", systemImage: "book.badge.plus")
+                    Label("Thêm dấu trang cho \(currentTabs.count) tab", systemImage: "book.badge.plus")
                 }
 
                 Divider()
@@ -151,10 +154,10 @@ public struct BrowserTabSwitcherView: View {
                 // 6. Đóng tất cả tab (destructive)
                 Button(role: .destructive, action: {
                     withAnimation(.spring(response: 0.3)) {
-                        viewModel.closeAllTabs()
+                        viewModel.closeAllTabs(isPrivate: viewModel.isPrivateMode)
                     }
                 }) {
-                    Label("Đóng tất cả \(viewModel.tabs.count) tab", systemImage: "xmark")
+                    Label("Đóng tất cả \(currentTabs.count) tab", systemImage: "xmark")
                 }
             } label: {
                 Image(systemName: "ellipsis")
@@ -191,7 +194,7 @@ public struct BrowserTabSwitcherView: View {
             HStack(spacing: 0) {
                 // Left: New tab button (+)
                 UniButton(action: {
-                    viewModel.createNewTab()
+                    viewModel.createNewTab(isPrivate: viewModel.isPrivateMode, showSearch: true)
                     dismiss()
                 }) {
                     ZStack {
@@ -274,7 +277,7 @@ public struct BrowserTabSwitcherView: View {
     // MARK: - Helpers
 
     private var tabCountText: String {
-        let count = viewModel.tabs.count
+        let count = viewModel.tabs.filter { !$0.isPrivate }.count
         return "\(count) tab"
     }
 

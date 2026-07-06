@@ -79,26 +79,29 @@ public struct BrowserSearchView: View {
             } else {
                 VStack(spacing: 0) {
                     ForEach(viewModel.persistenceStore.searchQueries.prefix(10), id: \.self) { query in
-                        HStack {
+                        HStack(spacing: 12) {
                             Image(systemName: "magnifyingglass")
                                 .foregroundColor(.secondary)
                             
-                            Button(action: {
-                                submitSearch(query)
-                            }) {
+                            HStack {
                                 Text(query)
                                     .foregroundColor(.primary)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .lineLimit(1)
+                                Spacer()
                             }
-                            
-                            Spacer()
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                submitSearch(query)
+                            }
                             
                             Button(action: {
                                 inputText = query
                             }) {
                                 Image(systemName: "arrow.up.left")
                                     .foregroundColor(.secondary)
+                                    .padding(.leading, 8)
                             }
+                            .buttonStyle(PlainButtonStyle())
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 12)
@@ -124,25 +127,29 @@ public struct BrowserSearchView: View {
                         .padding(.bottom, 6)
                     
                     ForEach(matchedQueries, id: \.self) { query in
-                        HStack {
+                        HStack(spacing: 12) {
                             Image(systemName: "magnifyingglass")
                                 .foregroundColor(.secondary)
                             
-                            Button(action: {
-                                submitSearch(query)
-                            }) {
+                            HStack {
                                 Text(query)
                                     .foregroundColor(.primary)
                                     .lineLimit(1)
+                                Spacer()
                             }
-                            Spacer()
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                submitSearch(query)
+                            }
                             
                             Button(action: {
                                 inputText = query
                             }) {
                                 Image(systemName: "arrow.up.left")
                                     .foregroundColor(.secondary)
+                                    .padding(.leading, 8)
                             }
+                            .buttonStyle(PlainButtonStyle())
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 10)

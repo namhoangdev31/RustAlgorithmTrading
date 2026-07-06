@@ -114,6 +114,7 @@ public final class BrowserTabViewModel: NSObject, ObservableObject, Identifiable
         let decision = navigationPolicy.decidePolicy(for: url, isMainFrame: true)
         switch decision {
         case .allow:
+            self.currentURL = url
             let request = URLRequest(url: url)
             webView.load(request)
         case .cancel:
@@ -178,12 +179,19 @@ extension BrowserTabViewModel: WKNavigationDelegate {
             self?.captureSnapshot()
         }
     }
-    
     public func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+        let nsError = error as NSError
+        if nsError.code == NSURLErrorCancelled || (nsError.domain == "WebKitErrorDomain" && nsError.code == 102) {
+            return
+        }
         self.pageState = .failed(.navigationFailed(error.localizedDescription))
     }
     
     public func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+        let nsError = error as NSError
+        if nsError.code == NSURLErrorCancelled || (nsError.domain == "WebKitErrorDomain" && nsError.code == 102) {
+            return
+        }
         self.pageState = .failed(.navigationFailed(error.localizedDescription))
     }
     
