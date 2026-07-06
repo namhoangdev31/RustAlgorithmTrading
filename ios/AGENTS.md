@@ -28,6 +28,14 @@ Tech: SwiftUI · Swift Package Manager · iOS 17+
 | Add service | Grep `Service\|Manager` in `iosApp/` | Scan all files |
 | Fix build | Read Xcode error → open specific file | Open project.pbxproj |
 
+## Navigation Routing Rules
+
+When creating a new global route/screen:
+1. Define a new `case` in `AppRoute` enum in `NavigationViewModel.swift`.
+2. Implement its unique string `id`, `hash(into:)`, and equality operator `==` in `NavigationViewModel.swift`.
+3. Add the mapping to the target SwiftUI view in `AppCoordinator.swift`'s `destinationView(for:)` function.
+4. Perform the transition by calling `navigation.navigate(to: .yourNewRoute)` instead of local conditional views or full-screen overlays inside other parent views.
+
 ## Forbidden Reads
 
 ```
@@ -82,4 +90,8 @@ Never open files "to explore."
 
 ### Response
 
-- **Changed**: files · **Why**: 1-line · **Validated**: build/test result · **Risk**: level
+- **Changed**: files list · **Why**: 1-line · **Validated**: command + result (Skip automatic xcodebuild compile check after code edits to save time, unless explicitly requested or fixing a compile/runtime error) · **Risk**: level
+
+### Custom Rules
+
+- **Build policy**: Do NOT build the Xcode project automatically after every code modification. Only run verification builds when requested or when diagnosing a specific build failure.

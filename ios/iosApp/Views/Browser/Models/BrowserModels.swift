@@ -84,6 +84,24 @@ public struct BrowserBookmark: Codable, Identifiable, Hashable {
     }
 }
 
+public struct BrowserReadingListItem: Codable, Identifiable, Hashable {
+    public let id: UUID
+    public let url: String
+    public let title: String
+    public let domain: String
+    public let previewText: String
+    public let createdAt: Date
+    
+    public init(id: UUID = UUID(), url: String, title: String, domain: String, previewText: String = "", createdAt: Date = Date()) {
+        self.id = id
+        self.url = url
+        self.title = title
+        self.domain = domain
+        self.previewText = previewText
+        self.createdAt = createdAt
+    }
+}
+
 // MARK: - Navigation Route
 
 public enum BrowserRoute: Hashable {
@@ -121,13 +139,12 @@ public final class FaviconCache: ObservableObject {
     @Published private var memoryCache: [String: UIImage] = [:]
     // Set of domains that we tried to load and failed (to avoid redundant network requests)
     private var failedDomains = Set<String>()
+    // Set of domains currently downloading (to prevent concurrent duplicate downloads)
+    private var downloadingDomains = Set<String>()
     
     private init() {
         let paths = fileManager.urls(for: .cachesDirectory, in: .userDomainMask)
         self.cacheDirectory = paths[0].appendingPathComponent("BrowserFavicons")
-        
-        // Clear old blurry cache once to fetch new high-resolution icons
-        try? fileManager.removeItem(at: cacheDirectory)
         
         // Create cache directory if it doesn't exist
         if !fileManager.fileExists(atPath: cacheDirectory.path) {
@@ -135,32 +152,43 @@ public final class FaviconCache: ObservableObject {
         }
     }
     
-    public func getFavicon(for domain: String) -> UIImage? {
-        guard !domain.isEmpty else { return nil }
+    // Pure getter to be called inside SwiftUI body - no side effects!
+    public func getCachedFavicon(for domain: String) -> UIImage? {
+        return memoryCache[domain]
+    }
+    
+    // Imperative trigger to be called inside onAppear/onChange - safe!
+    public func loadFavicon(for domain: String) {
+        guard !domain.isEmpty else { return }
         
-        if let cached = memoryCache[domain] {
-            return cached
+        // 1. Check in-memory cache
+        if memoryCache[domain] != nil {
+            return
         }
         
+        // 2. Avoid duplicate requests or retrying failed ones
+        if failedDomains.contains(domain) || downloadingDomains.contains(domain) {
+            return
+        }
+        
+        // 3. Try reading from disk cache
         let fileURL = cacheDirectory.appendingPathComponent("\(domain).png")
         if fileManager.fileExists(atPath: fileURL.path) {
             if let data = try? Data(contentsOf: fileURL),
                let image = UIImage(data: data) {
+                // Save to memory cache on MainActor to trigger observed updates
                 DispatchQueue.main.async {
                     self.memoryCache[domain] = image
                 }
-                return image
+                return
             }
         }
         
-        // Trigger async download if not already failed
-        if !failedDomains.contains(domain) {
-            Task {
-                await downloadFavicon(for: domain)
-            }
+        // 4. Trigger download
+        downloadingDomains.insert(domain)
+        Task {
+            await downloadFavicon(for: domain)
         }
-        
-        return nil
     }
     
     private func downloadFavicon(for domain: String) async {
@@ -198,7 +226,7 @@ public final class FaviconCache: ObservableObject {
                 // Save to memory cache and publish updates
                 _ = await MainActor.run {
                     self.memoryCache[domain] = image
-                    self.objectWillChange.send()
+                    self.downloadingDomains.remove(domain)
                 }
                 return
             } catch {
@@ -209,6 +237,7 @@ public final class FaviconCache: ObservableObject {
         // If all downloads fail, add to failed list to avoid re-requests in this session
         _ = await MainActor.run {
             self.failedDomains.insert(domain)
+            self.downloadingDomains.remove(domain)
         }
     }
 }
@@ -240,40 +269,48 @@ public struct FaviconView: View {
     }
     
     public var body: some View {
-        if let image = cache.getFavicon(for: domain) {
-            if size >= 36 {
-                // Large tile style: center the icon inside a rounded tile background to avoid blurry scaling
-                ZStack {
-                    RoundedRectangle(cornerRadius: size * 0.25, style: .continuous)
-                        .fill(Color(UIColor.secondarySystemGroupedBackground))
-                        .frame(width: size, height: size)
-                        .shadow(color: .black.opacity(0.06), radius: 4, x: 0, y: 2)
-                    
+        Group {
+            if let image = cache.getCachedFavicon(for: domain) {
+                if size >= 36 {
+                    // Large tile style: center the icon inside a rounded tile background to avoid blurry scaling
+                    ZStack {
+                        RoundedRectangle(cornerRadius: size * 0.25, style: .continuous)
+                            .fill(Color(UIColor.secondarySystemGroupedBackground))
+                            .frame(width: size, height: size)
+                            .shadow(color: .black.opacity(0.06), radius: 4, x: 0, y: 2)
+                        
+                        Image(uiImage: image)
+                            .resizable()
+                            .interpolation(.high)
+                            .scaledToFit()
+                            .frame(width: min(size * 0.55, 32), height: min(size * 0.55, 32))
+                    }
+                } else {
+                    // Small inline style: render the image directly
                     Image(uiImage: image)
                         .resizable()
                         .interpolation(.high)
                         .scaledToFit()
-                        .frame(width: min(size * 0.55, 32), height: min(size * 0.55, 32))
+                        .frame(width: size, height: size)
+                        .clipShape(RoundedRectangle(cornerRadius: size * 0.25, style: .continuous))
                 }
             } else {
-                // Small inline style: render the image directly
-                Image(uiImage: image)
-                    .resizable()
-                    .interpolation(.high)
-                    .scaledToFit()
-                    .frame(width: size, height: size)
-                    .clipShape(RoundedRectangle(cornerRadius: size * 0.25, style: .continuous))
+                ZStack {
+                    RoundedRectangle(cornerRadius: size * 0.25, style: .continuous)
+                        .fill(defaultBgColor)
+                        .frame(width: size, height: size)
+                        
+                    Text(initial.uppercased())
+                        .font(.system(size: size * 0.4, weight: .bold))
+                        .foregroundColor(.white)
+                }
             }
-        } else {
-            ZStack {
-                RoundedRectangle(cornerRadius: size * 0.25, style: .continuous)
-                    .fill(defaultBgColor)
-                    .frame(width: size, height: size)
-                    
-                Text(initial.uppercased())
-                    .font(.system(size: size * 0.4, weight: .bold))
-                    .foregroundColor(.white)
-            }
+        }
+        .onAppear {
+            cache.loadFavicon(for: domain)
+        }
+        .onChange(of: domain) { newDomain in
+            cache.loadFavicon(for: newDomain)
         }
     }
 }

@@ -25,6 +25,7 @@ enum AppRoute: Hashable, Identifiable {
     case forYou
     case favorites
     case browser(initialURL: String?, privateMode: Bool)
+    case browserTabSwitcher
     
     // Batch 1: System & Lifecycle
     case globalError
@@ -67,6 +68,7 @@ enum AppRoute: Hashable, Identifiable {
     var id: String {
         switch self {
         case .browser(let url, let privateMode): return "browser-\(url ?? "")-\(privateMode)"
+        case .browserTabSwitcher: return "browserTabSwitcher"
         case .writeReview(let id): return "writeReview-\(id)"
         case .login: return "login"
         case .home: return "home"
@@ -183,6 +185,8 @@ enum AppRoute: Hashable, Identifiable {
         case .browser(let url, let privateMode):
             hasher.combine(url)
             hasher.combine(privateMode)
+        case .browserTabSwitcher:
+            hasher.combine(999)
         }
     }
 
@@ -243,6 +247,8 @@ enum AppRoute: Hashable, Identifiable {
         case (.favorites, .favorites): return true
         case (.browser(let ua, let pa), .browser(let ub, let pb)):
             return ua == ub && pa == pb
+        case (.browserTabSwitcher, .browserTabSwitcher):
+            return true
         default: return false
         }
     }

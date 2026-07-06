@@ -69,6 +69,11 @@ public struct BrowserTabSwitcherView: View {
             bottomBar
         }
         .ignoresSafeArea()
+        .navigationBarHidden(true)
+        .navigationBarBackButtonHidden(true)
+        .sheet(isPresented: $viewModel.showHistoryList) {
+            BrowserHistoryView(viewModel: viewModel)
+        }
     }
 
     // MARK: - Top Bar
@@ -89,6 +94,13 @@ public struct BrowserTabSwitcherView: View {
                     // Multi-select tabs — placeholder for future
                 }) {
                     Label("Chọn tab", systemImage: "checkmark.circle")
+                }
+
+                // 3. Lịch sử
+                Button(action: {
+                    viewModel.showHistoryList = true
+                }) {
+                    Label("Lịch sử", systemImage: "clock")
                 }
 
                 Divider()
@@ -182,48 +194,55 @@ public struct BrowserTabSwitcherView: View {
                     viewModel.createNewTab()
                     dismiss()
                 }) {
-                    Image(systemName: "plus")
-                        .font(.system(size: 20, weight: .regular))
-                        .foregroundColor(.primary)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 44)
+                    ZStack {
+                        Circle()
+                            .fill(Color(UIColor.secondarySystemFill))
+                            .frame(width: 32, height: 32)
+                        Image(systemName: "plus")
+                            .font(.system(size: 18, weight: .medium))
+                            .foregroundColor(.primary)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 44)
                 }
                 .uniButtonStyle(.plain)
 
                 // Center: Private mode toggle / tab group segment
-                HStack(spacing: 8) {
-                    if viewModel.isPrivateMode {
-                        Text("Riêng tư")
-                            .font(.system(size: 13, weight: .semibold))
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 6)
-                            .background(Capsule().fill(Color.purple.opacity(0.7)))
-                    } else {
-                        Text("Riêng tư")
-                            .font(.system(size: 13, weight: .medium))
-                            .foregroundColor(.secondary)
-                            .onTapGesture {
-                                viewModel.isPrivateMode = true
-                            }
-                    }
-
-                    // Tab count pill (Safari shows "N tab")
-                    Text(tabCountText)
-                        .font(.system(size: 13, weight: viewModel.isPrivateMode ? .medium : .semibold))
-                        .foregroundColor(viewModel.isPrivateMode ? .secondary : .white)
-                        .padding(.horizontal, 16)
+                HStack(spacing: 0) {
+                    Text("Riêng tư")
+                        .font(.system(size: 13, weight: viewModel.isPrivateMode ? .semibold : .regular))
+                        .foregroundColor(viewModel.isPrivateMode ? .primary : .secondary)
+                        .padding(.horizontal, 14)
                         .padding(.vertical, 6)
                         .background(
                             Capsule()
-                                .fill(viewModel.isPrivateMode ? Color.clear : Color(UIColor.systemFill))
+                                .fill(viewModel.isPrivateMode ? Color(UIColor.systemBackground) : Color.clear)
+                                .shadow(color: viewModel.isPrivateMode ? .black.opacity(0.12) : .clear, radius: 2, x: 0, y: 1)
                         )
                         .onTapGesture {
-                            if viewModel.isPrivateMode {
+                            withAnimation(.spring(response: 0.28, dampingFraction: 0.75)) {
+                                viewModel.isPrivateMode = true
+                            }
+                        }
+
+                    Text(tabCountText)
+                        .font(.system(size: 13, weight: !viewModel.isPrivateMode ? .semibold : .regular))
+                        .foregroundColor(!viewModel.isPrivateMode ? .primary : .secondary)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 6)
+                        .background(
+                            Capsule()
+                                .fill(!viewModel.isPrivateMode ? Color(UIColor.systemBackground) : Color.clear)
+                                .shadow(color: !viewModel.isPrivateMode ? .black.opacity(0.12) : .clear, radius: 2, x: 0, y: 1)
+                        )
+                        .onTapGesture {
+                            withAnimation(.spring(response: 0.28, dampingFraction: 0.75)) {
                                 viewModel.isPrivateMode = false
                             }
                         }
                 }
+                .padding(3)
+                .background(Capsule().fill(Color(UIColor.tertiarySystemFill)))
                 .frame(maxWidth: .infinity)
                 .frame(height: 44)
 
@@ -232,9 +251,9 @@ public struct BrowserTabSwitcherView: View {
                     ZStack {
                         Circle()
                             .fill(Color.blue)
-                            .frame(width: 36, height: 36)
+                            .frame(width: 32, height: 32)
                         Image(systemName: "checkmark")
-                            .font(.system(size: 16, weight: .semibold))
+                            .font(.system(size: 14, weight: .bold))
                             .foregroundColor(.white)
                     }
                     .frame(maxWidth: .infinity)
@@ -293,17 +312,26 @@ struct SafariTabCard: View {
                     RoundedRectangle(cornerRadius: 12, style: .continuous)
                         .fill(Color(UIColor.systemBackground))
 
-                    // Placeholder (no screenshot support)
-                    VStack(spacing: 8) {
-                        Image(systemName: tabVM.isPrivate ? "hand.raised.fill" : "safari")
-                            .font(.system(size: 36))
-                            .foregroundColor(Color(UIColor.quaternaryLabel))
+                    if let snapshot = tabVM.snapshot {
+                        Image(uiImage: snapshot)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 160)
+                            .clipped()
+                    } else {
+                        // Placeholder
+                        VStack(spacing: 8) {
+                            Image(systemName: tabVM.isPrivate ? "hand.raised.fill" : "safari")
+                                .font(.system(size: 36))
+                                .foregroundColor(Color(UIColor.quaternaryLabel))
 
-                        if let host = tabVM.currentURL?.host {
-                            Text(host)
-                                .font(.caption2)
-                                .foregroundColor(Color(UIColor.tertiaryLabel))
-                                .lineLimit(1)
+                            if let host = tabVM.currentURL?.host {
+                                Text(host)
+                                    .font(.caption2)
+                                    .foregroundColor(Color(UIColor.tertiaryLabel))
+                                    .lineLimit(1)
+                            }
                         }
                     }
                 }

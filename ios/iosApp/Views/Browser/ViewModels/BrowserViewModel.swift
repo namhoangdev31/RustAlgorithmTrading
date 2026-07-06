@@ -12,6 +12,8 @@ public final class BrowserViewModel: ObservableObject {
     @Published public var showBookmarksList: Bool = false
     @Published public var showHistoryList: Bool = false
     @Published public var isToolbarCollapsed: Bool = false
+    @Published public var showSearchOverlay: Bool = false
+    @Published public var googleSuggestions: [String] = []
     
     // Dependencies
     public let persistenceStore: BrowserPersistenceStore
@@ -95,6 +97,9 @@ public final class BrowserViewModel: ObservableObject {
     }
     
     public func switchTab(to id: UUID) {
+        if let active = activeTab {
+            active.captureSnapshot()
+        }
         guard tabs.contains(where: { $0.id == id }) else { return }
         activeTabId = id
         if let active = activeTab {
@@ -115,6 +120,11 @@ public final class BrowserViewModel: ObservableObject {
     public func addCurrentToBookmarks() {
         guard let active = activeTab, let url = active.currentURL else { return }
         persistenceStore.addBookmark(url: url.absoluteString, title: active.title)
+    }
+    
+    public func addCurrentToReadingList() {
+        guard let active = activeTab, let url = active.currentURL else { return }
+        persistenceStore.addReadingListItem(url: url.absoluteString, title: active.title)
     }
     
     public func clearWebsiteData() {
@@ -170,6 +180,14 @@ public final class BrowserViewModel: ObservableObject {
                 self.objectWillChange.send()
             }
             .store(in: &observers)
+            
+        $urlInputText
+            .debounce(for: .milliseconds(300), scheduler: RunLoop.main)
+            .removeDuplicates()
+            .sink { [weak self] query in
+                self?.fetchGoogleSuggestions(query)
+            }
+            .store(in: &observers)
         
         NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)
             .sink { _ in
@@ -197,5 +215,28 @@ public final class BrowserViewModel: ObservableObject {
         tabs.removeAll()
         isToolbarCollapsed = false
         createNewTab(initialURL: nil)
+    }
+    
+    public func fetchGoogleSuggestions(_ query: String) {
+        guard !query.isEmpty else {
+            DispatchQueue.main.async {
+                self.googleSuggestions = []
+            }
+            return
+        }
+        
+        guard let encoded = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
+              let url = URL(string: "https://suggestqueries.google.com/complete/search?client=chrome&q=\(encoded)") else { return }
+        
+        URLSession.shared.dataTask(with: url) { [weak self] data, _, error in
+            guard let data = data, error == nil else { return }
+            if let json = try? JSONSerialization.jsonObject(with: data) as? [Any],
+               json.count > 1,
+               let suggestions = json[1] as? [String] {
+                DispatchQueue.main.async {
+                    self?.googleSuggestions = suggestions
+                }
+            }
+        }.resume()
     }
 }

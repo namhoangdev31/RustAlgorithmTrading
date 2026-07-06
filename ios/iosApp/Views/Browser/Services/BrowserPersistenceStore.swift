@@ -3,6 +3,8 @@ import Foundation
 public final class BrowserPersistenceStore: ObservableObject {
     @Published public private(set) var history: [BrowserHistoryItem] = []
     @Published public private(set) var bookmarks: [BrowserBookmark] = []
+    @Published public private(set) var readingList: [BrowserReadingListItem] = []
+    @Published public private(set) var searchQueries: [String] = []
     
     private let fileManager = FileManager.default
     
@@ -23,9 +25,19 @@ public final class BrowserPersistenceStore: ObservableObject {
         applicationSupportDirectory.appendingPathComponent("browser_bookmarks.json")
     }
     
+    private var readingListFileURL: URL {
+        applicationSupportDirectory.appendingPathComponent("browser_reading_list.json")
+    }
+    
+    private var searchQueriesFileURL: URL {
+        applicationSupportDirectory.appendingPathComponent("browser_search_queries.json")
+    }
+    
     public init() {
         loadHistory()
         loadBookmarks()
+        loadReadingList()
+        loadSearchQueries()
     }
     
     // MARK: - History
@@ -51,6 +63,16 @@ public final class BrowserPersistenceStore: ObservableObject {
         }
         
         saveHistory()
+        
+        // Auto-extract Google search queries
+        if let nsUrl = URL(string: normalizedUrl),
+           let components = URLComponents(url: nsUrl, resolvingAgainstBaseURL: false),
+           components.host?.contains("google") == true,
+           let queryItem = components.queryItems?.first(where: { $0.name == "q" }),
+           let query = queryItem.value?.replacingOccurrences(of: "+", with: " ").trimmingCharacters(in: .whitespacesAndNewlines),
+           !query.isEmpty {
+            addSearchQuery(query)
+        }
     }
     
     public func clearHistory() {
@@ -155,6 +177,94 @@ public final class BrowserPersistenceStore: ObservableObject {
             try data.write(to: bookmarksFileURL, options: .atomic)
         } catch {
             print("[BrowserStore] Error saving bookmarks: \(error)")
+        }
+    }
+    
+    // MARK: - Reading List
+    
+    public func addReadingListItem(url: String, title: String) {
+        let normalizedUrl = url.trimmingCharacters(in: .whitespacesAndNewlines)
+        if normalizedUrl.isEmpty { return }
+        
+        // Prevent duplicates
+        if readingList.contains(where: { $0.url == normalizedUrl }) {
+            return
+        }
+        
+        let domain = URL(string: normalizedUrl)?.host ?? ""
+        let preview = "Trang web này có thể chứa thông tin về \(title). Nhấn để xem chi tiết."
+        
+        let newItem = BrowserReadingListItem(url: normalizedUrl, title: title, domain: domain, previewText: preview)
+        readingList.append(newItem)
+        saveReadingList()
+    }
+    
+    public func removeReadingListItem(id: UUID) {
+        readingList.removeAll(where: { $0.id == id })
+        saveReadingList()
+    }
+    
+    public func clearReadingList() {
+        readingList.removeAll()
+        saveReadingList()
+    }
+    
+    private func loadReadingList() {
+        guard fileManager.fileExists(atPath: readingListFileURL.path) else { return }
+        do {
+            let data = try Data(contentsOf: readingListFileURL)
+            readingList = try JSONDecoder().decode([BrowserReadingListItem].self, from: data)
+        } catch {
+            print("[BrowserStore] Error loading reading list: \(error)")
+        }
+    }
+    
+    private func saveReadingList() {
+        do {
+            let data = try JSONEncoder().encode(readingList)
+            try data.write(to: readingListFileURL, options: .atomic)
+        } catch {
+            print("[BrowserStore] Error saving reading list: \(error)")
+        }
+    }
+    
+    // MARK: - Search Queries
+    
+    public func addSearchQuery(_ query: String) {
+        let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.isEmpty { return }
+        
+        // Remove duplicate to bring it to top
+        searchQueries.removeAll(where: { $0.lowercased() == trimmed.lowercased() })
+        searchQueries.insert(trimmed, at: 0)
+        
+        if searchQueries.count > 100 {
+            searchQueries = Array(searchQueries.prefix(100))
+        }
+        saveSearchQueries()
+    }
+    
+    public func clearSearchQueries() {
+        searchQueries.removeAll()
+        saveSearchQueries()
+    }
+    
+    private func loadSearchQueries() {
+        guard fileManager.fileExists(atPath: searchQueriesFileURL.path) else { return }
+        do {
+            let data = try Data(contentsOf: searchQueriesFileURL)
+            searchQueries = try JSONDecoder().decode([String].self, from: data)
+        } catch {
+            print("[BrowserStore] Error loading search queries: \(error)")
+        }
+    }
+    
+    private func saveSearchQueries() {
+        do {
+            let data = try JSONEncoder().encode(searchQueries)
+            try data.write(to: searchQueriesFileURL, options: .atomic)
+        } catch {
+            print("[BrowserStore] Error saving search queries: \(error)")
         }
     }
 }

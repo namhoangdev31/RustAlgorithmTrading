@@ -13,6 +13,7 @@ public final class BrowserTabViewModel: NSObject, ObservableObject, Identifiable
     @Published public var pageState: BrowserPageState = .idle
     @Published public var canGoBack: Bool = false
     @Published public var canGoForward: Bool = false
+    @Published public var snapshot: UIImage? = nil
     
     // Callbacks to bubble events to the main BrowserViewModel
     public var onOpenNewTab: ((URL) -> Void)?
@@ -72,22 +73,27 @@ public final class BrowserTabViewModel: NSObject, ObservableObject, Identifiable
         // Observe KVO properties on WKWebView
         webView.publisher(for: \.title)
             .compactMap { $0 }
+            .receive(on: DispatchQueue.main)
             .assign(to: \.title, on: self)
             .store(in: &observers)
         
         webView.publisher(for: \.url)
+            .receive(on: DispatchQueue.main)
             .assign(to: \.currentURL, on: self)
             .store(in: &observers)
         
         webView.publisher(for: \.canGoBack)
+            .receive(on: DispatchQueue.main)
             .assign(to: \.canGoBack, on: self)
             .store(in: &observers)
         
         webView.publisher(for: \.canGoForward)
+            .receive(on: DispatchQueue.main)
             .assign(to: \.canGoForward, on: self)
             .store(in: &observers)
         
         webView.publisher(for: \.estimatedProgress)
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] progress in
                 guard let self = self else { return }
                 if self.webView.isLoading {
@@ -141,6 +147,17 @@ public final class BrowserTabViewModel: NSObject, ObservableObject, Identifiable
         webView.stopLoading()
         self.pageState = .loaded
     }
+    
+    public func captureSnapshot() {
+        guard webView.bounds.width > 0 && webView.bounds.height > 0 else { return }
+        let config = WKSnapshotConfiguration()
+        webView.takeSnapshot(with: config) { [weak self] image, error in
+            guard let self = self, let image = image else { return }
+            DispatchQueue.main.async {
+                self.snapshot = image
+            }
+        }
+    }
 }
 
 // MARK: - WKNavigationDelegate
@@ -154,6 +171,11 @@ extension BrowserTabViewModel: WKNavigationDelegate {
         if let url = webView.url {
             let titleStr = webView.title ?? url.host ?? "Website"
             onUpdateHistory?(url, titleStr)
+        }
+        
+        // Capture snapshot after 0.5s to let the layout settle
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            self?.captureSnapshot()
         }
     }
     

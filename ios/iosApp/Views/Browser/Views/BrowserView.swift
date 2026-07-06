@@ -25,21 +25,33 @@ public struct BrowserView: View {
             bottomBar
         }
         .navigationBarHidden(true)
-        // MARK: Sheets
-        .sheet(isPresented: $viewModel.showTabSwitcher) {
-            BrowserTabSwitcherView(viewModel: viewModel)
-        }
         .sheet(isPresented: $viewModel.showBookmarksList) {
-            BrowserBookmarksView(viewModel: viewModel)
+            BrowserBookmarksView(viewModel: viewModel, initialTab: 0)
         }
-        .sheet(isPresented: $viewModel.showHistoryList) {
-            BrowserHistoryView(viewModel: viewModel)
+        .fullScreenCover(isPresented: $viewModel.showSearchOverlay) {
+            BrowserSearchView(viewModel: viewModel, isPresented: $viewModel.showSearchOverlay)
         }
-
         .onDisappear {
-            // Clean up state when exiting the browser view
-            if !viewModel.showTabSwitcher && !viewModel.showBookmarksList && !viewModel.showHistoryList {
+            let inBrowserFlow = navigation.path.contains { route in
+                switch route {
+                case .browser, .browserTabSwitcher:
+                    return true
+                default:
+                    return false
+                }
+            }
+            if !inBrowserFlow {
                 viewModel.reset()
+            }
+        }
+        .onAppear {
+            if focusOnAppear {
+                viewModel.showSearchOverlay = true
+            }
+        }
+        .onChange(of: viewModel.showSearchOverlay) { show in
+            if !show && viewModel.activeTab?.currentURL == nil {
+                navigation.goBack()
             }
         }
     }
@@ -49,25 +61,42 @@ public struct BrowserView: View {
     @ViewBuilder
     private var contentArea: some View {
         if let activeTab = viewModel.activeTab {
-            ZStack {
-                BrowserWebView(tabViewModel: activeTab)
-                    .ignoresSafeArea(edges: .top)
-                    .id(activeTab.id)
+            if activeTab.currentURL == nil {
+                BrowserStartPageView(viewModel: viewModel) { route in
+                    switch route {
+                    case .search:
+                        viewModel.showSearchOverlay = true
+                    case .url(let url):
+                        viewModel.loadURLString(url)
+                    }
+                }
+            } else {
+                ZStack {
+                    BrowserWebView(tabViewModel: activeTab)
+                        .ignoresSafeArea(edges: .top)
+                        .id(activeTab.id)
 
-                // Error overlay
-                if case .failed(let error) = activeTab.pageState {
-                    BrowserErrorView(error: error) {
-                        activeTab.reload()
-                    } onOpenInExternalBrowser: {
-                        if let url = activeTab.currentURL {
-                            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    // Error overlay
+                    if case .failed(let error) = activeTab.pageState {
+                        BrowserErrorView(error: error) {
+                            activeTab.reload()
+                        } onOpenInExternalBrowser: {
+                            if let url = activeTab.currentURL {
+                                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                            }
                         }
                     }
                 }
-
             }
         } else {
-            Color(UIColor.systemBackground)
+            BrowserStartPageView(viewModel: viewModel) { route in
+                switch route {
+                case .search:
+                    viewModel.showSearchOverlay = true
+                case .url(let url):
+                    viewModel.loadURLString(url)
+                }
+            }
         }
     }
 
@@ -109,9 +138,7 @@ public struct BrowserView: View {
 
             BrowserAddressBar(viewModel: viewModel, focusOnAppear: focusOnAppear)
                 .frame(maxWidth: viewModel.isToolbarCollapsed ? nil : .infinity)
-
-            if !viewModel.isToolbarCollapsed {
-                Menu {
+                .contextMenu {
                     if let url = viewModel.activeTab?.currentURL {
                         ShareLink(item: url) {
                             Label("Chia sẻ", systemImage: "square.and.arrow.up")
@@ -122,36 +149,58 @@ public struct BrowserView: View {
                         }
                         .disabled(true)
                     }
-
+                    
                     Button {
-                        viewModel.addCurrentToBookmarks()
+                        if let query = viewModel.activeTab?.title {
+                            UIPasteboard.general.string = query
+                        }
                     } label: {
-                        Label("Thêm vào Dấu trang", systemImage: "bookmark")
+                        Label("Sao chép cụm từ tìm kiếm", systemImage: "doc.on.doc")
                     }
-
+                    
                     Button {
-                        viewModel.addCurrentToBookmarks()
+                        if let url = viewModel.activeTab?.currentURL?.absoluteString {
+                            UIPasteboard.general.string = url
+                        }
                     } label: {
-                        Label("Thêm dấu trang vào...", systemImage: "folder.badge.plus")
+                        Label("Sao chép liên kết", systemImage: "link")
                     }
-
+                    
                     Divider()
-
-                    Button {
-                        viewModel.createNewTab()
+                    
+                    Menu {
+                        Button(action: {}) {
+                            Label("Nhóm tab mới", systemImage: "plus")
+                        }
                     } label: {
-                        Label("Tab mới", systemImage: "plus")
+                        Label("Chuyển đổi nhóm tab", systemImage: "rectangle.3.group")
                     }
-
-                    Button {
-                        viewModel.isPrivateMode = true
-                        viewModel.createNewTab()
+                    
+                    Menu {
+                        Button(action: {}) {
+                            Label("Nhóm tab mới", systemImage: "plus")
+                        }
                     } label: {
-                        Label("Tab riêng tư mới", systemImage: "hand.raised")
+                        Label("Di chuyển đến nhóm tab", systemImage: "arrow.up.right.square")
                     }
-
+                    
                     Divider()
+                    
+                    Button(role: .destructive) {
+                        viewModel.closeAllTabs()
+                    } label: {
+                        Label("Đóng tất cả \(viewModel.tabs.count) tab", systemImage: "xmark")
+                    }
+                    
+                    Button(role: .destructive) {
+                        viewModel.closeTab(id: viewModel.activeTabId)
+                    } label: {
+                        Label("Đóng tab", systemImage: "xmark")
+                    }
+                }
 
+            if !viewModel.isToolbarCollapsed {
+                Menu {
                     ControlGroup {
                         Button {
                             viewModel.showBookmarksList = true
@@ -160,16 +209,55 @@ public struct BrowserView: View {
                         }
                         
                         Button {
-                            viewModel.showHistoryList = true
-                        } label: {
-                            Label("Lịch sử", systemImage: "clock")
-                        }
-                        
-                        Button {
-                            viewModel.showTabSwitcher = true
+                            if let active = viewModel.activeTab {
+                                active.captureSnapshot()
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                                navigation.navigate(to: .browserTabSwitcher)
+                            }
                         } label: {
                             Label("Tất cả các tab", systemImage: "square.on.square")
                         }
+                    }
+
+                    Divider()
+
+                    Button {
+                        viewModel.isPrivateMode = true
+                        viewModel.createNewTab()
+                    } label: {
+                        Label("Tab riêng tư mới", systemImage: "hand.raised")
+                    }
+
+                    Button {
+                        viewModel.createNewTab()
+                    } label: {
+                        Label("Tab mới", systemImage: "plus")
+                    }
+
+                    Divider()
+
+                    Button {
+                        viewModel.addCurrentToReadingList()
+                    } label: {
+                        Label("Thêm vào Danh sách đọc", systemImage: "eyeglasses")
+                    }
+
+                    Button {
+                        viewModel.addCurrentToBookmarks()
+                    } label: {
+                        Label("Thêm vào Dấu trang", systemImage: "bookmark")
+                    }
+
+                    if let url = viewModel.activeTab?.currentURL {
+                        ShareLink(item: url) {
+                            Label("Chia sẻ", systemImage: "square.and.arrow.up")
+                        }
+                    } else {
+                        Button(action: {}) {
+                            Label("Chia sẻ", systemImage: "square.and.arrow.up")
+                        }
+                        .disabled(true)
                     }
                 } label: {
                     Image(systemName: "ellipsis")

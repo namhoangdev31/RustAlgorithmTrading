@@ -37,12 +37,9 @@ struct BrowserAddressBarContent: View {
     @ObservedObject var activeTab: BrowserTabViewModel // Real-time observation of the tab's progress and state
     let focusOnAppear: Bool
 
-    @FocusState private var isTextFieldFocused: Bool
-    @State private var editingText: String = ""
-
     var body: some View {
         if viewModel.isToolbarCollapsed {
-            // Collapsed Compact State (Looks exactly like Safari Image 1)
+            // Collapsed Compact State
             Text(displayText)
                 .font(.system(size: 12.5, weight: .semibold))
                 .foregroundColor(.primary)
@@ -59,9 +56,7 @@ struct BrowserAddressBarContent: View {
                         .stroke(Color.primary.opacity(0.08), lineWidth: 0.5)
                 )
                 .onTapGesture {
-                    withAnimation(.easeInOut(duration: 0.25)) {
-                        viewModel.isToolbarCollapsed = false
-                    }
+                    viewModel.showSearchOverlay = true
                 }
         } else {
             // Expanded Full Address Bar
@@ -70,62 +65,15 @@ struct BrowserAddressBarContent: View {
                     .font(.system(size: 13, weight: .bold))
                     .foregroundColor(.secondary)
 
-                // Stable TextField
-                TextField("Tìm hoặc nhập tên web", text: $editingText)
-                    .keyboardType(.webSearch)
-                    .autocapitalization(.none)
-                    .disableAutocorrection(true)
-                    .focused($isTextFieldFocused)
+                Text(displayText)
                     .font(.system(size: 14.5, weight: .semibold))
-                    .submitLabel(.go)
-                    .onSubmit {
-                        viewModel.loadURLString(editingText)
-                        isTextFieldFocused = false
-                    }
-                    .opacity(isTextFieldFocused ? 1.0 : 0.0)
-                    .overlay(
-                        // Overlay non-editable text when NOT focused
-                        Group {
-                            if !isTextFieldFocused {
-                                HStack {
-                                    Text(displayText)
-                                        .font(.system(size: 14.5, weight: .semibold))
-                                        .foregroundColor(activeTab.currentURL == nil ? .secondary : .primary)
-                                        .lineLimit(1)
-                                        .truncationMode(.tail)
-                                    Spacer()
-                                }
-                                .contentShape(Rectangle())
-                                .onTapGesture {
-                                    editingText = activeTab.currentURL?.absoluteString ?? ""
-                                    isTextFieldFocused = true
-                                }
-                            }
-                        }
-                    )
+                    .foregroundColor(activeTab.currentURL == nil ? .secondary : .primary)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
 
                 Spacer(minLength: 0)
 
-                // Right actions (Reload/Stop or Cancel)
-                if isTextFieldFocused {
-                    if !editingText.isEmpty {
-                        UniButton(action: { editingText = "" }) {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundColor(Color(UIColor.tertiaryLabel))
-                                .font(.system(size: 15))
-                        }
-                        .uniButtonStyle(.plain)
-                    }
-                    
-                    UniButton(action: { isTextFieldFocused = false }) {
-                        Text("Huỷ")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(.blue)
-                    }
-                    .uniButtonStyle(.plain)
-                } else {
-                    reloadOrStopButton
-                }
+                reloadOrStopButton
             }
             .padding(.leading, 12)
             .padding(.trailing, 16)
@@ -144,19 +92,8 @@ struct BrowserAddressBarContent: View {
                 }
             )
             .clipShape(Capsule())
-            .animation(.easeInOut(duration: 0.2), value: isTextFieldFocused)
-            .onAppear {
-                if focusOnAppear {
-                    editingText = ""
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        isTextFieldFocused = true
-                    }
-                }
-            }
-            .onChange(of: isTextFieldFocused) { focused in
-                if !focused {
-                    viewModel.syncAddressBar()
-                }
+            .onTapGesture {
+                viewModel.showSearchOverlay = true
             }
         }
     }

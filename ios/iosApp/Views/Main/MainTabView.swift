@@ -4,7 +4,7 @@ import SwiftUI
 struct MainTabView: View {
     @Environment(\.appContainer) private var container
     @EnvironmentObject private var navigation: NavigationViewModel
-    @State private var selection = 2
+    @State private var selection = 0
 
     var body: some View {
         UniTabView(selection: $selection) {
