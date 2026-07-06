@@ -338,6 +338,52 @@ class NavigationViewModel: ObservableObject {
         }
     }
     
+    @MainActor
+    func selectTab(id: UUID) {
+        guard let cached = AppDependencyContainer.cachedBrowserViewModel else { return }
+        cached.switchTab(to: id)
+        navigateToBrowserFromSwitcher(privateMode: cached.isPrivateMode)
+    }
+    
+    @MainActor
+    func createNewTabFromSwitcher(isPrivate: Bool) {
+        guard let cached = AppDependencyContainer.cachedBrowserViewModel else { return }
+        cached.createNewTab(initialURL: nil, isPrivate: isPrivate)
+        navigateToBrowserFromSwitcher(privateMode: isPrivate)
+    }
+    
+    @MainActor
+    func closeTabSwitcher() {
+        guard let cached = AppDependencyContainer.cachedBrowserViewModel else {
+            goBack()
+            return
+        }
+        if !cached.tabs.isEmpty {
+            navigateToBrowserFromSwitcher(privateMode: cached.isPrivateMode)
+        } else {
+            goBack()
+        }
+    }
+    
+    @MainActor
+    private func navigateToBrowserFromSwitcher(privateMode: Bool) {
+        if let browserIndex = path.firstIndex(where: {
+            if case .browser = $0 { return true }
+            return false
+        }) {
+            path = Array(path[...browserIndex])
+        } else {
+            if let tabSwitcherIndex = path.firstIndex(where: {
+                if case .browserTabSwitcher = $0 { return true }
+                return false
+            }) {
+                path[tabSwitcherIndex] = .browser(initialURL: nil, privateMode: privateMode)
+            } else {
+                navigate(to: .browser(initialURL: nil, privateMode: privateMode))
+            }
+        }
+    }
+    
     func reset() {
         path = []
         presentedSheet = nil

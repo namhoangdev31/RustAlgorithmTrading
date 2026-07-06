@@ -39,16 +39,12 @@ public struct BrowserSearchView: View {
                 submitSearch(inputText)
             }
             .onAppear {
-                DispatchQueue.main.async {
-                    inputText = viewModel.urlInputText
-                    viewModel.fetchGoogleSuggestions(inputText)
-                }
+                inputText = viewModel.urlInputText
+                viewModel.fetchGoogleSuggestions(inputText)
             }
-            .onChange(of: inputText) { newValue in
-                DispatchQueue.main.async {
-                    viewModel.urlInputText = newValue
-                    viewModel.fetchGoogleSuggestions(newValue)
-                }
+            .onChange(of: inputText) { _, newValue in
+                viewModel.urlInputText = newValue
+                viewModel.fetchGoogleSuggestions(newValue)
             }
             .navigationBarBackButtonHidden(true)
         }

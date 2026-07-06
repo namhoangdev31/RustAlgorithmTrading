@@ -34,65 +34,86 @@ struct BrowserAddressBarContent: View {
     @ObservedObject var viewModel: BrowserViewModel
     @ObservedObject var activeTab: BrowserTabViewModel // Real-time observation of the tab's progress and state
     @EnvironmentObject var navigation: NavigationViewModel
+    @State private var showExtensionsAlert = false
 
     var body: some View {
-        if viewModel.isToolbarCollapsed {
-            // Collapsed Compact State
-            Text(displayText)
-                .font(.system(size: 12.5, weight: .semibold))
-                .foregroundColor(.primary)
-                .lineLimit(1)
-                .truncationMode(.tail)
-                .padding(.horizontal, 20)
-                .padding(.vertical, 7)
-                .background(Color.clear)
-                .uniGlass()
-                .clipShape(Capsule())
-                .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 3)
-                .overlay(
-                    Capsule()
-                        .stroke(Color.primary.opacity(0.08), lineWidth: 0.5)
-                )
-                .onTapGesture {
-                    navigation.navigate(to: .browserSearch(isPrivate: viewModel.isPrivateMode))
+        Group {
+            if viewModel.isToolbarCollapsed {
+                // Collapsed Compact State
+                Button {
+                    openSearch()
+                } label: {
+                    Text(displayText)
+                        .font(.system(size: 12.5, weight: .semibold))
+                        .foregroundColor(.primary)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+                        .padding(.horizontal, 20)
+                        .frame(minHeight: 38)
+                        .contentShape(Capsule())
+                        .uniGlass()
+                        .clipShape(Capsule())
+                        .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 3)
+                        .overlay(
+                            Capsule()
+                                .stroke(Color.primary.opacity(0.08), lineWidth: 0.5)
+                        )
                 }
-        } else {
-            // Expanded Full Address Bar
-            HStack(spacing: 6) {
-                Image(systemName: isSecureURL ? "lock.fill" : "magnifyingglass")
-                    .font(.system(size: 13, weight: .bold))
-                    .foregroundColor(.secondary)
+                .buttonStyle(.plain)
+                .highPriorityGesture(TapGesture().onEnded { _ in openSearch() })
+            } else {
+                // Expanded Full Address Bar
+                HStack(spacing: 8) {
+                    Button(action: openSearch) {
+                        HStack(spacing: 8) {
+                            Image(systemName: isSecureURL ? "lock.fill" : "exclamationmark.triangle.fill")
+                                .font(.system(size: 11, weight: .semibold))
+                                .foregroundColor(isSecureURL ? .secondary : .orange)
 
-                Text(displayText)
-                    .font(.system(size: 14.5, weight: .semibold))
-                    .foregroundColor(activeTab.currentURL == nil ? .secondary : .primary)
-                    .lineLimit(1)
-                    .truncationMode(.tail)
+                            Text(displayText)
+                                .font(.system(size: 14.5, weight: .semibold))
+                                .foregroundColor(activeTab.currentURL == nil ? .secondary : .primary)
+                                .lineLimit(1)
+                                .truncationMode(.tail)
 
-                Spacer(minLength: 0)
+                            Spacer(minLength: 0)
+                        }
+                        .padding(.leading, 14)
+                        .frame(maxWidth: .infinity, minHeight: 46, alignment: .leading)
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .highPriorityGesture(TapGesture().onEnded { _ in openSearch() })
 
-                reloadOrStopButton
-            }
-            .padding(.leading, 12)
-            .padding(.trailing, 16)
-            .padding(.vertical, 12)
-            .uniGlass()
-            .overlay(
-                // Real-time blue progress bar indicator at the bottom edge
-                GeometryReader { geo in
-                    VStack {
-                        Spacer()
-                        if case .loading(let progress) = activeTab.pageState {
-                            Color.blue
-                                .frame(width: geo.size.width * CGFloat(progress), height: 3)
+                    BrowserPageSettingsMenuView(
+                        viewModel: viewModel,
+                        activeTab: activeTab,
+                        showExtensionsAlert: $showExtensionsAlert
+                    )
+
+                    reloadOrStopButton
+                        .padding(.trailing, 14)
+                }
+                .uniGlass()
+                .frame(minHeight: 46)
+                .overlay(
+                    GeometryReader { geo in
+                        VStack {
+                            Spacer()
+                            if case .loading(let progress) = activeTab.pageState {
+                                Color.blue
+                                    .frame(width: geo.size.width * CGFloat(progress), height: 3)
+                            }
                         }
                     }
-                }
-            )
-            .clipShape(Capsule())
-            .onTapGesture {
-                navigation.navigate(to: .browserSearch(isPrivate: viewModel.isPrivateMode))
+                )
+                .clipShape(Capsule())
             }
+        }
+        .alert("Quản lý phần mở rộng", isPresented: $showExtensionsAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("iOS không cho app bên thứ ba quản lý Safari Extensions trực tiếp.")
         }
     }
 
@@ -135,5 +156,9 @@ struct BrowserAddressBarContent: View {
 
     private var isSecureURL: Bool {
         activeTab.currentURL?.scheme?.lowercased() == "https"
+    }
+
+    private func openSearch() {
+        navigation.navigate(to: .browserSearch(isPrivate: viewModel.isPrivateMode))
     }
 }

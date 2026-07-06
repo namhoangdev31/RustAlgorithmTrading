@@ -201,4 +201,34 @@ extension RuntimeWebView: WKNavigationDelegate {
             }
         )
     }
+
+    func webView(
+        _ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction,
+        decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
+    ) {
+        guard let url = navigationAction.request.url else {
+            decisionHandler(.cancel)
+            return
+        }
+        
+        guard let scheme = url.scheme?.lowercased() else {
+            decisionHandler(.cancel)
+            return
+        }
+        
+        if scheme == "http" || scheme == "https" || url.absoluteString == "about:blank" {
+            decisionHandler(.allow)
+            return
+        }
+        
+        if scheme == "file" || scheme == "javascript" || (scheme == "data" && (navigationAction.targetFrame?.isMainFrame ?? false)) {
+            decisionHandler(.cancel)
+            return
+        }
+        
+        decisionHandler(.cancel)
+        DispatchQueue.main.async {
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        }
+    }
 }

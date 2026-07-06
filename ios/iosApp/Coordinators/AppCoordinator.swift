@@ -56,9 +56,17 @@ struct AppCoordinator: View {
         case .browser(let initialURL, let privateMode):
             BrowserView(viewModel: container.makeBrowserViewModel(initialURL: initialURL, privateMode: privateMode))
         case .browserSearch(let privateMode):
-            BrowserSearchView(viewModel: container.makeBrowserViewModel(initialURL: nil, privateMode: privateMode))
+            if let cached = AppDependencyContainer.cachedBrowserViewModel {
+                BrowserSearchView(viewModel: cached)
+            } else {
+                BrowserSearchView(viewModel: container.makeBrowserViewModel(initialURL: nil, privateMode: privateMode))
+            }
         case .browserTabSwitcher:
-            BrowserTabSwitcherView(viewModel: container.makeBrowserViewModel(initialURL: nil, privateMode: false))
+            if let cached = AppDependencyContainer.cachedBrowserViewModel {
+                BrowserTabSwitcherView(viewModel: cached)
+            } else {
+                BrowserTabSwitcherView(viewModel: container.makeBrowserViewModel(initialURL: nil, privateMode: false))
+            }
         case .login:
             LoginView(viewModel: container.makeLoginViewModel())
         case .home:

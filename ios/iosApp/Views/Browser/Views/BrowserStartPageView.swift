@@ -9,10 +9,10 @@ public struct BrowserStartPageView: View {
     @Environment(\.colorScheme) private var colorScheme
 
     private let favorites: [FavoriteItem] = [
-        FavoriteItem(title: "Apple", url: "https://apple.com", initial: "🍎", bgColor: Color(UIColor.systemFill)),
+        FavoriteItem(title: "Apple", url: "https://apple.com", initial: "A", bgColor: Color(UIColor.systemFill)),
         FavoriteItem(title: "Bing", url: "https://bing.com", initial: "B", bgColor: Color(hue: 0.58, saturation: 0.82, brightness: 0.92)),
         FavoriteItem(title: "Google", url: "https://google.com", initial: "G", bgColor: Color(hue: 0.0, saturation: 0.0, brightness: 0.98)),
-        FavoriteItem(title: "Yahoo!", url: "https://yahoo.com", initial: "Y!", bgColor: Color(hue: 0.77, saturation: 0.75, brightness: 0.72)),
+        FavoriteItem(title: "Yahoo!", url: "https://yahoo.com", initial: "Y", bgColor: Color(hue: 0.77, saturation: 0.75, brightness: 0.72)),
     ]
 
     public init(viewModel: BrowserViewModel, onNavigate: @escaping (BrowserRoute) -> Void) {
@@ -243,16 +243,12 @@ private struct FavoriteTileView: View {
     var body: some View {
         UniButton(action: action) {
             VStack(spacing: 9) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .fill(item.bgColor)
-                        .frame(width: 60, height: 60)
-                        .shadow(color: .black.opacity(0.12), radius: 5, x: 0, y: 3)
-
-                    Text(item.initial)
-                        .font(.system(size: item.initial.count > 1 ? 18 : 24, weight: .bold))
-                        .foregroundColor(item.iconColor)
-                }
+                FaviconView(
+                    domain: URL(string: item.url ?? "")?.host ?? "",
+                    size: 60,
+                    initial: item.initial,
+                    bgColor: item.bgColor
+                )
                 .scaleEffect(isPressed ? 0.92 : 1.0)
                 .animation(.spring(response: 0.2, dampingFraction: 0.6), value: isPressed)
 

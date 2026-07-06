@@ -6,6 +6,7 @@ import SwiftUI
 public struct BrowserTabSwitcherView: View {
     @ObservedObject var viewModel: BrowserViewModel
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var navigation: NavigationViewModel
     @State private var isSearchActive = false
 
     public init(viewModel: BrowserViewModel) {
@@ -38,8 +39,7 @@ public struct BrowserTabSwitcherView: View {
                                 tabVM: tabVM,
                                 isActive: tabVM.id == viewModel.activeTabId
                             ) {
-                                viewModel.switchTab(to: tabVM.id)
-                                dismiss()
+                                navigation.selectTab(id: tabVM.id)
                             } onClose: {
                                 withAnimation(.spring(response: 0.3)) {
                                     viewModel.closeTab(id: tabVM.id)
@@ -85,21 +85,6 @@ public struct BrowserTabSwitcherView: View {
         return HStack {
             // Left: ellipsis menu (Safari's "..." button)
             Menu {
-                // 1. Quản lý nhóm tab
-                Button(action: {
-                    // Tab group management — placeholder for future
-                }) {
-                    Label("Quản lý nhóm tab", systemImage: "list.bullet")
-                }
-
-                // 2. Chọn tab
-                Button(action: {
-                    // Multi-select tabs — placeholder for future
-                }) {
-                    Label("Chọn tab", systemImage: "checkmark.circle")
-                }
-
-                // 3. Lịch sử
                 Button(action: {
                     viewModel.showHistoryList = true
                 }) {
@@ -108,7 +93,6 @@ public struct BrowserTabSwitcherView: View {
 
                 Divider()
 
-                // 3. Sắp xếp các tab theo (submenu with arrow chevron)
                 Menu {
                     Button {
                         withAnimation {
@@ -130,7 +114,6 @@ public struct BrowserTabSwitcherView: View {
                     Label("Sắp xếp các tab theo", systemImage: "arrow.up.arrow.down")
                 }
 
-                // 4. Sao chép N liên kết
                 Button(action: {
                     let urls = currentTabs.compactMap { $0.currentURL?.absoluteString }
                     UIPasteboard.general.string = urls.joined(separator: "\n")
@@ -138,7 +121,6 @@ public struct BrowserTabSwitcherView: View {
                     Label("Sao chép \(currentTabs.count) liên kết", systemImage: "link")
                 }
 
-                // 5. Thêm dấu trang cho N tab
                 Button(action: {
                     for tab in currentTabs {
                         if let url = tab.currentURL?.absoluteString {
@@ -151,7 +133,6 @@ public struct BrowserTabSwitcherView: View {
 
                 Divider()
 
-                // 6. Đóng tất cả tab (destructive)
                 Button(role: .destructive, action: {
                     withAnimation(.spring(response: 0.3)) {
                         viewModel.closeAllTabs(isPrivate: viewModel.isPrivateMode)
@@ -171,7 +152,7 @@ public struct BrowserTabSwitcherView: View {
 
             // Right: search icon
             UniButton(action: {
-                dismiss()
+                navigation.navigate(to: .browserSearch(isPrivate: viewModel.isPrivateMode))
             }) {
                 Image(systemName: "magnifyingglass")
                     .font(.system(size: 17))
@@ -194,8 +175,7 @@ public struct BrowserTabSwitcherView: View {
             HStack(spacing: 0) {
                 // Left: New tab button (+)
                 UniButton(action: {
-                    viewModel.createNewTab(isPrivate: viewModel.isPrivateMode, showSearch: false)
-                    dismiss()
+                    navigation.createNewTabFromSwitcher(isPrivate: viewModel.isPrivateMode)
                 }) {
                     ZStack {
                         Circle()
@@ -249,8 +229,7 @@ public struct BrowserTabSwitcherView: View {
                 .frame(maxWidth: .infinity)
                 .frame(height: 44)
 
-                // Right: Done button (blue circle with checkmark)
-                UniButton(action: { dismiss() }) {
+                UniButton(action: { navigation.closeTabSwitcher() }) {
                     ZStack {
                         Circle()
                             .fill(Color.blue)
@@ -387,37 +366,20 @@ struct SafariTabCard: View {
                     Label("Sao chép liên kết", systemImage: "link")
                 }
 
-                // 2. Ghim Tab (visual only for now)
-                Button(action: {}) {
-                    Label("Ghim Tab", systemImage: "pin")
-                }
-
-                // 3. Nhân bản tab
                 Button(action: onDuplicate) {
                     Label("Nhân bản tab", systemImage: "plus.square.on.square")
                 }
 
-                // 4. Thêm vào dấu trang
                 Button(action: onBookmark) {
                     Label("Thêm vào dấu trang", systemImage: "book")
                 }
 
-                // 5. Sắp xếp tab theo (submenu)
-                Menu {
-                    Button("Tiêu đề") {}
-                    Button("Trang web") {}
-                } label: {
-                    Label("Sắp xếp tab theo", systemImage: "arrow.up.arrow.down")
-                }
-
                 Divider()
 
-                // 6. Đóng các tab khác
                 Button(action: onCloseOthers) {
                     Label("Đóng các tab khác", systemImage: "xmark.square")
                 }
 
-                // 7. Đóng tab (destructive red)
                 Button(role: .destructive, action: onClose) {
                     Label("Đóng tab", systemImage: "xmark")
                 }

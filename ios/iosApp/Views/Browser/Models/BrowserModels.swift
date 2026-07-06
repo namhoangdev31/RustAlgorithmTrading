@@ -309,7 +309,7 @@ public struct FaviconView: View {
         .onAppear {
             cache.loadFavicon(for: domain)
         }
-        .onChange(of: domain) { newDomain in
+        .onChange(of: domain) { _, newDomain in
             cache.loadFavicon(for: newDomain)
         }
     }

@@ -8,21 +8,92 @@ public struct BrowserView: View {
     @ObservedObject var viewModel: BrowserViewModel
     @EnvironmentObject var navigation: NavigationViewModel
     @Environment(\.dismiss) private var dismiss
+    @State private var showExtensionsAlert = false
+    @FocusState private var isFindFieldFocused: Bool
 
     public init(viewModel: BrowserViewModel) {
         self.viewModel = viewModel
     }
 
     public var body: some View {
-        ZStack(alignment: .bottom) {
+        ZStack(alignment: .top) {
             contentArea
                 .ignoresSafeArea(edges: .bottom)
 
+            if viewModel.showFindInPage, let activeTab = viewModel.activeTab {
+                VStack {
+                    HStack(spacing: 8) {
+                        Image(systemName: "doc.text.magnifyingglass")
+                            .foregroundColor(.secondary)
+
+                        TextField("Tìm trong trang", text: $viewModel.findInPageQuery, onCommit: {
+                            activeTab.findInPage(viewModel.findInPageQuery)
+                        })
+                        .textFieldStyle(PlainTextFieldStyle())
+                        .font(.system(size: 14))
+                        .focused($isFindFieldFocused)
+
+                        Button(action: {
+                            activeTab.findInPage(viewModel.findInPageQuery)
+                        }) {
+                            Image(systemName: "chevron.down")
+                                .foregroundColor(.secondary)
+                        }
+
+                        Button(action: {
+                            activeTab.findInPage(viewModel.findInPageQuery, backwards: true)
+                        }) {
+                            Image(systemName: "chevron.up")
+                                .foregroundColor(.secondary)
+                        }
+
+                        Button("Xong") {
+                            isFindFieldFocused = false
+                            withAnimation {
+                                viewModel.showFindInPage = false
+                                viewModel.findInPageQuery = ""
+                            }
+                        }
+                        .font(.system(size: 14, weight: .semibold))
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 10)
+                    .background(Color(UIColor.secondarySystemGroupedBackground))
+                    .cornerRadius(12)
+                    .shadow(color: .black.opacity(0.12), radius: 6, x: 0, y: 3)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 10)
+                    Spacer()
+                }
+                .transition(.move(edge: .top).combined(with: .opacity))
+                .zIndex(11)
+                .onAppear { isFindFieldFocused = true }
+            }
+        }
+        .safeAreaInset(edge: .bottom, spacing: 0) {
             bottomBar
         }
         .navigationBarHidden(true)
         .sheet(isPresented: $viewModel.showBookmarksList) {
             BrowserBookmarksView(viewModel: viewModel, initialTab: 0)
+        }
+        .sheet(isPresented: $viewModel.showPageDetailsMenu) {
+            if let activeTab = viewModel.activeTab {
+                BrowserPageDetailsMenuView(viewModel: viewModel, activeTab: activeTab)
+            }
+        }
+        .alert("Quản lý phần mở rộng", isPresented: $showExtensionsAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("iOS không cho app bên thứ ba quản lý Safari Extensions trực tiếp. Browser sẽ ẩn các extension chưa hỗ trợ khỏi luồng chính.")
+        }
+        .alert("Browser", isPresented: Binding(
+            get: { viewModel.lastPageActionMessage != nil },
+            set: { if !$0 { viewModel.lastPageActionMessage = nil } }
+        )) {
+            Button("OK", role: .cancel) { viewModel.lastPageActionMessage = nil }
+        } message: {
+            Text(viewModel.lastPageActionMessage ?? "")
         }
         .onDisappear {
             let inBrowserFlow = navigation.path.contains { route in
@@ -121,66 +192,7 @@ public struct BrowserView: View {
 
             BrowserAddressBar(viewModel: viewModel)
                 .frame(maxWidth: viewModel.isToolbarCollapsed ? nil : .infinity)
-                .contextMenu {
-                    if let url = viewModel.activeTab?.currentURL {
-                        ShareLink(item: url) {
-                            Label("Chia sẻ", systemImage: "square.and.arrow.up")
-                        }
-                    } else {
-                        Button(action: {}) {
-                            Label("Chia sẻ", systemImage: "square.and.arrow.up")
-                        }
-                        .disabled(true)
-                    }
-                    
-                    Button {
-                        if let query = viewModel.activeTab?.title {
-                            UIPasteboard.general.string = query
-                        }
-                    } label: {
-                        Label("Sao chép cụm từ tìm kiếm", systemImage: "doc.on.doc")
-                    }
-                    
-                    Button {
-                        if let url = viewModel.activeTab?.currentURL?.absoluteString {
-                            UIPasteboard.general.string = url
-                        }
-                    } label: {
-                        Label("Sao chép liên kết", systemImage: "link")
-                    }
-                    
-                    Divider()
-                    
-                    Menu {
-                        Button(action: {}) {
-                            Label("Nhóm tab mới", systemImage: "plus")
-                        }
-                    } label: {
-                        Label("Chuyển đổi nhóm tab", systemImage: "rectangle.3.group")
-                    }
-                    
-                    Menu {
-                        Button(action: {}) {
-                            Label("Nhóm tab mới", systemImage: "plus")
-                        }
-                    } label: {
-                        Label("Di chuyển đến nhóm tab", systemImage: "arrow.up.right.square")
-                    }
-                    
-                    Divider()
-                    
-                    Button(role: .destructive) {
-                        viewModel.closeAllTabs()
-                    } label: {
-                        Label("Đóng tất cả \(viewModel.tabs.count) tab", systemImage: "xmark")
-                    }
-                    
-                    Button(role: .destructive) {
-                        viewModel.closeTab(id: viewModel.activeTabId)
-                    } label: {
-                        Label("Đóng tab", systemImage: "xmark")
-                    }
-                }
+                .frame(minHeight: viewModel.isToolbarCollapsed ? 38 : 46)
 
             if !viewModel.isToolbarCollapsed {
                 Menu {
@@ -192,12 +204,7 @@ public struct BrowserView: View {
                         }
                         
                         Button {
-                            if let active = viewModel.activeTab {
-                                active.captureSnapshot()
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-                                navigation.navigate(to: .browserTabSwitcher)
-                            }
+                            openTabSwitcher()
                         } label: {
                             Label("Tất cả các tab", systemImage: "square.on.square")
                         }
@@ -206,13 +213,13 @@ public struct BrowserView: View {
                     Divider()
 
                     Button {
-                        viewModel.createNewTab(isPrivate: true, showSearch: false)
+                        viewModel.createNewTab(isPrivate: true)
                     } label: {
                         Label("Tab riêng tư mới", systemImage: "hand.raised")
                     }
 
                     Button {
-                        viewModel.createNewTab(isPrivate: false, showSearch: false)
+                        viewModel.createNewTab(isPrivate: false)
                     } label: {
                         Label("Tab mới", systemImage: "plus")
                     }
@@ -254,7 +261,16 @@ public struct BrowserView: View {
             }
         }
         .padding(.horizontal, 16)
-        .padding(.bottom, viewModel.isToolbarCollapsed ? 12 : 24)
+        .padding(.bottom, viewModel.isToolbarCollapsed ? 8 : 12)
         .animation(.spring(response: 0.35, dampingFraction: 0.75), value: viewModel.isToolbarCollapsed)
+    }
+
+    private func openTabSwitcher() {
+        viewModel.activeTab?.captureSnapshot()
+        viewModel.isToolbarCollapsed = false
+        viewModel.showFindInPage = false
+        DispatchQueue.main.async {
+            navigation.navigate(to: .browserTabSwitcher)
+        }
     }
 }
