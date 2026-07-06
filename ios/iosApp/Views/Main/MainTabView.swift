@@ -12,7 +12,7 @@ struct MainTabView: View {
                 BrowserStartPageView(viewModel: container.makeBrowserViewModel(initialURL: nil, privateMode: false)) { route in
                     switch route {
                     case .search:
-                        navigation.navigate(to: .browser(initialURL: nil, privateMode: false))
+                        navigation.navigate(to: .browserSearch(isPrivate: false))
                     case .url(let url):
                         navigation.navigate(to: .browser(initialURL: url, privateMode: false))
                     }

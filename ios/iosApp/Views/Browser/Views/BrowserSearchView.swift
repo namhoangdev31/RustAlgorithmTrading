@@ -3,18 +3,16 @@ import ExploreSwiftUI
 
 public struct BrowserSearchView: View {
     @ObservedObject var viewModel: BrowserViewModel
-    @Binding var isPresented: Bool
+    @EnvironmentObject var navigation: NavigationViewModel
     
     @State private var inputText: String = ""
     
-    public init(viewModel: BrowserViewModel, isPresented: Binding<Bool>) {
+    public init(viewModel: BrowserViewModel) {
         self.viewModel = viewModel
-        self._isPresented = isPresented
     }
     
     public var body: some View {
-        NavigationView {
-            ScrollView {
+        ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     if inputText.isEmpty {
                         // 1. Recent Search Queries
@@ -31,7 +29,7 @@ public struct BrowserSearchView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Xong") {
-                        isPresented = false
+                        navigation.goBack()
                     }
                     .font(.system(size: 16, weight: .bold))
                 }
@@ -41,15 +39,19 @@ public struct BrowserSearchView: View {
                 submitSearch(inputText)
             }
             .onAppear {
-                inputText = viewModel.urlInputText
-                viewModel.fetchGoogleSuggestions(inputText)
+                DispatchQueue.main.async {
+                    inputText = viewModel.urlInputText
+                    viewModel.fetchGoogleSuggestions(inputText)
+                }
             }
             .onChange(of: inputText) { newValue in
-                viewModel.urlInputText = newValue
-                viewModel.fetchGoogleSuggestions(newValue)
+                DispatchQueue.main.async {
+                    viewModel.urlInputText = newValue
+                    viewModel.fetchGoogleSuggestions(newValue)
+                }
             }
+            .navigationBarBackButtonHidden(true)
         }
-    }
     
     private var recentSearchesSection: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -173,8 +175,7 @@ public struct BrowserSearchView: View {
                     
                     ForEach(matchedHistory.prefix(15)) { item in
                         Button(action: {
-                            viewModel.loadURLString(item.url)
-                            isPresented = false
+                            navigation.submitSearch(query: item.url, isPrivate: viewModel.isPrivateMode)
                         }) {
                             HStack(spacing: 12) {
                                 FaviconView(domain: URL(string: item.url)?.host ?? "", size: 24, initial: String(item.title.prefix(1)))
@@ -203,7 +204,6 @@ public struct BrowserSearchView: View {
     
     private func submitSearch(_ text: String) {
         viewModel.persistenceStore.addSearchQuery(text)
-        viewModel.loadURLString(text)
-        isPresented = false
+        navigation.submitSearch(query: text, isPrivate: viewModel.isPrivateMode)
     }
 }

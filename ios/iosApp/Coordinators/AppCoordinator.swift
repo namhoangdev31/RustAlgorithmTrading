@@ -54,7 +54,9 @@ struct AppCoordinator: View {
     private func destinationView(for route: AppRoute) -> some View {
         switch route {
         case .browser(let initialURL, let privateMode):
-            BrowserView(viewModel: container.makeBrowserViewModel(initialURL: initialURL, privateMode: privateMode), focusOnAppear: initialURL == nil)
+            BrowserView(viewModel: container.makeBrowserViewModel(initialURL: initialURL, privateMode: privateMode))
+        case .browserSearch(let privateMode):
+            BrowserSearchView(viewModel: container.makeBrowserViewModel(initialURL: nil, privateMode: privateMode))
         case .browserTabSwitcher:
             BrowserTabSwitcherView(viewModel: container.makeBrowserViewModel(initialURL: nil, privateMode: false))
         case .login:

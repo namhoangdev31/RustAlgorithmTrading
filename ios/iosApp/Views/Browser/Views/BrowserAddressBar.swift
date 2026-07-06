@@ -5,16 +5,14 @@ import SwiftUI
 
 public struct BrowserAddressBar: View {
     @ObservedObject var viewModel: BrowserViewModel
-    let focusOnAppear: Bool
-
-    public init(viewModel: BrowserViewModel, focusOnAppear: Bool = false) {
+    @EnvironmentObject var navigation: NavigationViewModel
+    public init(viewModel: BrowserViewModel) {
         self.viewModel = viewModel
-        self.focusOnAppear = focusOnAppear
     }
 
     public var body: some View {
         if let activeTab = viewModel.activeTab {
-            BrowserAddressBarContent(viewModel: viewModel, activeTab: activeTab, focusOnAppear: focusOnAppear)
+            BrowserAddressBarContent(viewModel: viewModel, activeTab: activeTab)
         } else {
             // Fallback placeholder if no tab is active
             HStack {
@@ -35,7 +33,7 @@ public struct BrowserAddressBar: View {
 struct BrowserAddressBarContent: View {
     @ObservedObject var viewModel: BrowserViewModel
     @ObservedObject var activeTab: BrowserTabViewModel // Real-time observation of the tab's progress and state
-    let focusOnAppear: Bool
+    @EnvironmentObject var navigation: NavigationViewModel
 
     var body: some View {
         if viewModel.isToolbarCollapsed {
@@ -56,7 +54,7 @@ struct BrowserAddressBarContent: View {
                         .stroke(Color.primary.opacity(0.08), lineWidth: 0.5)
                 )
                 .onTapGesture {
-                    viewModel.showSearchOverlay = true
+                    navigation.navigate(to: .browserSearch(isPrivate: viewModel.isPrivateMode))
                 }
         } else {
             // Expanded Full Address Bar
@@ -93,7 +91,7 @@ struct BrowserAddressBarContent: View {
             )
             .clipShape(Capsule())
             .onTapGesture {
-                viewModel.showSearchOverlay = true
+                navigation.navigate(to: .browserSearch(isPrivate: viewModel.isPrivateMode))
             }
         }
     }

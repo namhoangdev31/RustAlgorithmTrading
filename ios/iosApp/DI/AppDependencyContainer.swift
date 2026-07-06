@@ -41,12 +41,16 @@ final class AppDependencyContainer: ObservableObject {
         )
     }
     
+    static weak var activeWebRuntimeViewModel: WebRuntimeViewModel?
+    
     @MainActor
     func makeWebRuntimeViewModel() -> WebRuntimeViewModel {
-        return WebRuntimeViewModel()
+        let vm = WebRuntimeViewModel()
+        Self.activeWebRuntimeViewModel = vm
+        return vm
     }
     
-    private static var cachedBrowserViewModel: BrowserViewModel?
+    static var cachedBrowserViewModel: BrowserViewModel?
     
     @MainActor
     func makeBrowserViewModel(initialURL: String?, privateMode: Bool) -> BrowserViewModel {

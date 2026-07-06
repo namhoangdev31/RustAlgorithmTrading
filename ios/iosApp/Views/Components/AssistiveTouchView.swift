@@ -2,6 +2,7 @@ import ExploreSwiftUI
 import SwiftUI
 
 struct AssistiveTouchView: View {
+    @EnvironmentObject private var navigation: NavigationViewModel
     @State private var dragPosition: CGPoint?
     @State private var isExpanded: Bool = false
 
@@ -18,48 +19,57 @@ struct AssistiveTouchView: View {
                             }
                         }
 
-                    VStack(spacing: 20) {
-                        UniButton(action: {
-                            print("Menu Item 1 tapped")
-                            withAnimation {
-                                isExpanded = false
-                            }
-                        }) {
-                            Image(systemName: "star.fill")
-                                .font(.title)
-                                .foregroundColor(.primary)
-                                .frame(width: 50, height: 50)
-                                .uniGlass(cornerRadius: 25)
+                    LazyVGrid(
+                        columns: [
+                            GridItem(.flexible(), spacing: 16),
+                            GridItem(.flexible(), spacing: 16),
+                            GridItem(.flexible(), spacing: 16)
+                        ],
+                        spacing: 16
+                    ) {
+                        gridItem(title: "Home", icon: "house.fill") {
+                            withAnimation { isExpanded = false }
+                            navigation.reset()
                         }
-
-                        UniButton(action: {
-                            print("Menu Item 2 tapped")
-                            withAnimation {
-                                isExpanded = false
-                            }
-                        }) {
-                            Image(systemName: "bell.fill")
-                                .font(.title)
-                                .foregroundColor(.primary)
-                                .frame(width: 50, height: 50)
-                                .uniGlass(cornerRadius: 25)
+                        gridItem(title: "Browser", icon: "safari.fill") {
+                            withAnimation { isExpanded = false }
+                            navigation.navigate(to: .browser(initialURL: nil, privateMode: false))
                         }
-
-                        UniButton(action: {
-                            print("Close tapped")
+                        gridItem(title: "Yêu thích", icon: "heart.fill") {
+                            withAnimation { isExpanded = false }
+                            navigation.navigate(to: .favorites)
+                        }
+                        gridItem(title: "Quay Về", icon: "arrow.uturn.left.circle.fill") {
+                            withAnimation { isExpanded = false }
+                            navigation.goBackContextually()
+                        }
+                        gridItem(title: "Đóng", icon: "xmark") {
                             withAnimation {
                                 isExpanded = false
                             }
-                        }) {
-                            Image(systemName: "xmark")
-                                .font(.title)
-                                .foregroundColor(.primary)
-                                .frame(width: 50, height: 50)
-                                .uniGlass(cornerRadius: 25)
+                        }
+                        gridItem(title: "Cài đặt", icon: "gearshape.fill") {
+                            withAnimation { isExpanded = false }
+                            navigation.navigate(to: .settings)
+                        }
+                        
+                        gridItem(title: "Hoạt động", icon: "bell.fill") {
+                            withAnimation { isExpanded = false }
+                            navigation.navigate(to: .activity)
+                        }
+                        
+                        gridItem(title: "Cập nhật", icon: "arrow.clockwise.circle.fill") {
+                            withAnimation { isExpanded = false }
+                            navigation.navigate(to: .updates)
+                        }
+                        gridItem(title: "Tài khoản", icon: "person.crop.circle.fill") {
+                            withAnimation { isExpanded = false }
+                            navigation.navigate(to: .login)
                         }
                     }
-                    .padding()
-                    .uniGlass(cornerRadius: 16)
+                    .padding(20)
+                    .frame(width: 290)
+                    .uniGlass(cornerRadius: 24)
                     .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
                     .transition(.scale)
                     .zIndex(0)
@@ -71,8 +81,8 @@ struct AssistiveTouchView: View {
                             isExpanded.toggle()
                         }
                     }) {
-                        Image(systemName: "circle.grid.3x3.fill")
-                            .font(.system(size: 24))
+                        Image(systemName: "livephoto")
+                            .font(.system(size: 40))
                             .foregroundColor(.primary)
                             .frame(width: 60, height: 60)
                     }
@@ -108,5 +118,27 @@ struct AssistiveTouchView: View {
                 }
             }
         }
+    }
+
+    private func gridItem(title: String, icon: String, action: @escaping () -> Void) -> some View {
+        UniButton(action: action) {
+            VStack(spacing: 8) {
+                Image(systemName: icon)
+                    .font(.system(size: 24, weight: .semibold))
+                    .foregroundColor(.primary)
+                    .frame(width: 54, height: 54)
+                    .background(
+                        Circle()
+                            .fill(Color.primary.opacity(0.06))
+                    )
+                
+                Text(title)
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundColor(.primary)
+                    .lineLimit(1)
+            }
+            .frame(width: 72, height: 80)
+        }
+        .uniButtonStyle(.plain)
     }
 }

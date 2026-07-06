@@ -194,7 +194,7 @@ public struct BrowserTabSwitcherView: View {
             HStack(spacing: 0) {
                 // Left: New tab button (+)
                 UniButton(action: {
-                    viewModel.createNewTab(isPrivate: viewModel.isPrivateMode, showSearch: true)
+                    viewModel.createNewTab(isPrivate: viewModel.isPrivateMode, showSearch: false)
                     dismiss()
                 }) {
                     ZStack {

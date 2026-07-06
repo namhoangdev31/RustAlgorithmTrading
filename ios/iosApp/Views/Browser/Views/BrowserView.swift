@@ -6,15 +6,11 @@ import SwiftUI
 /// Displayed when pushed on the global NavigationStack.
 public struct BrowserView: View {
     @ObservedObject var viewModel: BrowserViewModel
-    let focusOnAppear: Bool
     @EnvironmentObject var navigation: NavigationViewModel
     @Environment(\.dismiss) private var dismiss
 
-
-
-    public init(viewModel: BrowserViewModel, focusOnAppear: Bool = false) {
+    public init(viewModel: BrowserViewModel) {
         self.viewModel = viewModel
-        self.focusOnAppear = focusOnAppear
     }
 
     public var body: some View {
@@ -28,9 +24,6 @@ public struct BrowserView: View {
         .sheet(isPresented: $viewModel.showBookmarksList) {
             BrowserBookmarksView(viewModel: viewModel, initialTab: 0)
         }
-        .fullScreenCover(isPresented: $viewModel.showSearchOverlay) {
-            BrowserSearchView(viewModel: viewModel, isPresented: $viewModel.showSearchOverlay)
-        }
         .onDisappear {
             let inBrowserFlow = navigation.path.contains { route in
                 switch route {
@@ -43,19 +36,7 @@ public struct BrowserView: View {
             if !inBrowserFlow {
                 viewModel.reset()
             }
-        }
-        .onAppear {
-            if focusOnAppear {
-                viewModel.showSearchOverlay = true
-            }
-        }
-        .onChange(of: viewModel.showSearchOverlay) { show in
-            if !show && focusOnAppear && viewModel.activeTab?.currentURL == nil && viewModel.tabs.count == 1 {
-                DispatchQueue.main.async {
-                    navigation.goBack()
-                }
-            }
-        }
+    }
     }
 
     // MARK: - Content Area
@@ -67,7 +48,7 @@ public struct BrowserView: View {
                 BrowserStartPageView(viewModel: viewModel) { route in
                     switch route {
                     case .search:
-                        viewModel.showSearchOverlay = true
+                        navigation.navigate(to: .browserSearch(isPrivate: viewModel.isPrivateMode))
                     case .url(let url):
                         viewModel.loadURLString(url)
                     }
@@ -94,7 +75,7 @@ public struct BrowserView: View {
             BrowserStartPageView(viewModel: viewModel) { route in
                 switch route {
                 case .search:
-                    viewModel.showSearchOverlay = true
+                    navigation.navigate(to: .browserSearch(isPrivate: viewModel.isPrivateMode))
                 case .url(let url):
                     viewModel.loadURLString(url)
                 }
@@ -138,7 +119,7 @@ public struct BrowserView: View {
                 .transition(.asymmetric(insertion: .scale.combined(with: .opacity), removal: .opacity))
             }
 
-            BrowserAddressBar(viewModel: viewModel, focusOnAppear: focusOnAppear)
+            BrowserAddressBar(viewModel: viewModel)
                 .frame(maxWidth: viewModel.isToolbarCollapsed ? nil : .infinity)
                 .contextMenu {
                     if let url = viewModel.activeTab?.currentURL {
@@ -225,13 +206,13 @@ public struct BrowserView: View {
                     Divider()
 
                     Button {
-                        viewModel.createNewTab(isPrivate: true, showSearch: true)
+                        viewModel.createNewTab(isPrivate: true, showSearch: false)
                     } label: {
                         Label("Tab riêng tư mới", systemImage: "hand.raised")
                     }
 
                     Button {
-                        viewModel.createNewTab(isPrivate: false, showSearch: true)
+                        viewModel.createNewTab(isPrivate: false, showSearch: false)
                     } label: {
                         Label("Tab mới", systemImage: "plus")
                     }

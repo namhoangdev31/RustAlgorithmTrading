@@ -25,6 +25,7 @@ enum AppRoute: Hashable, Identifiable {
     case forYou
     case favorites
     case browser(initialURL: String?, privateMode: Bool)
+    case browserSearch(isPrivate: Bool)
     case browserTabSwitcher
     
     // Batch 1: System & Lifecycle
@@ -68,6 +69,7 @@ enum AppRoute: Hashable, Identifiable {
     var id: String {
         switch self {
         case .browser(let url, let privateMode): return "browser-\(url ?? "")-\(privateMode)"
+        case .browserSearch(let privateMode): return "browserSearch-\(privateMode)"
         case .browserTabSwitcher: return "browserTabSwitcher"
         case .writeReview(let id): return "writeReview-\(id)"
         case .login: return "login"
@@ -185,6 +187,8 @@ enum AppRoute: Hashable, Identifiable {
         case .browser(let url, let privateMode):
             hasher.combine(url)
             hasher.combine(privateMode)
+        case .browserSearch(let privateMode):
+            hasher.combine(privateMode)
         case .browserTabSwitcher:
             hasher.combine(999)
         }
@@ -247,6 +251,8 @@ enum AppRoute: Hashable, Identifiable {
         case (.favorites, .favorites): return true
         case (.browser(let ua, let pa), .browser(let ub, let pb)):
             return ua == ub && pa == pb
+        case (.browserSearch(let pa), .browserSearch(let pb)):
+            return pa == pb
         case (.browserTabSwitcher, .browserTabSwitcher):
             return true
         default: return false
@@ -287,6 +293,48 @@ class NavigationViewModel: ObservableObject {
     func goBack() {
         if !path.isEmpty {
             _ = path.popLast()
+        }
+    }
+    
+    @MainActor
+    func goBackContextually() {
+        if let lastRoute = path.last {
+            if case .browser = lastRoute,
+               let browserVM = AppDependencyContainer.cachedBrowserViewModel,
+               let activeTab = browserVM.activeTab,
+               activeTab.canGoBack {
+                activeTab.goBack()
+                return
+            }
+            
+            if case .miniApp = lastRoute,
+               let runtimeVM = AppDependencyContainer.activeWebRuntimeViewModel,
+               runtimeVM.goBackActiveTab() {
+                return
+            }
+        }
+        goBack()
+    }
+    
+    @MainActor
+    func submitSearch(query: String, isPrivate: Bool) {
+        if let browserIndex = path.firstIndex(where: {
+            if case .browser = $0 { return true }
+            return false
+        }) {
+            if let cached = AppDependencyContainer.cachedBrowserViewModel {
+                cached.loadURLString(query)
+            }
+            path = Array(path[...browserIndex])
+        } else {
+            if let searchIndex = path.firstIndex(where: {
+                if case .browserSearch = $0 { return true }
+                return false
+            }) {
+                path[searchIndex] = .browser(initialURL: query, privateMode: isPrivate)
+            } else {
+                navigate(to: .browser(initialURL: query, privateMode: isPrivate))
+            }
         }
     }
     

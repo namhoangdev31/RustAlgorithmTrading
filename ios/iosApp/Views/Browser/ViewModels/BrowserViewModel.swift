@@ -151,11 +151,8 @@ public final class BrowserViewModel: ObservableObject {
                 createNewTab(initialURL: normalized, isPrivate: isPrivate, showSearch: false)
             }
         } else {
-            // Tapped search with nil URL
-            if let active = activeTab, active.currentURL == nil && active.isPrivate == isPrivate {
-                showSearchOverlay = true
-            } else {
-                createNewTab(initialURL: nil, isPrivate: isPrivate, showSearch: true)
+            if activeTab == nil {
+                createNewTab(initialURL: nil, isPrivate: isPrivate, showSearch: false)
             }
         }
     }

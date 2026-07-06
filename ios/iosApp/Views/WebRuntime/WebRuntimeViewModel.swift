@@ -468,4 +468,15 @@ class WebRuntimeViewModel: ObservableObject {
         runtimeError = error
         errorMsg = error.message
     }
+    
+    public func goBackActiveTab() -> Bool {
+        guard let activeId = activeTabId,
+              let activeTab = tabs.first(where: { $0.id == activeId }),
+              let webView = activeTab.webView,
+              webView.canGoBack else {
+            return false
+        }
+        webView.goBack()
+        return true
+    }
 }
