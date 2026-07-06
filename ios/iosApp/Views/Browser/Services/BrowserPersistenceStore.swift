@@ -7,8 +7,15 @@ public final class BrowserPersistenceStore: ObservableObject {
     @Published public private(set) var searchQueries: [String] = []
     
     private let fileManager = FileManager.default
+    private let customStorageDirectory: URL?
     
     private var applicationSupportDirectory: URL {
+        if let custom = customStorageDirectory {
+            if !fileManager.fileExists(atPath: custom.path) {
+                try? fileManager.createDirectory(at: custom, withIntermediateDirectories: true, attributes: nil)
+            }
+            return custom
+        }
         let paths = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask)
         let dir = paths[0].appendingPathComponent("Browser", isDirectory: true)
         if !fileManager.fileExists(atPath: dir.path) {
@@ -33,7 +40,8 @@ public final class BrowserPersistenceStore: ObservableObject {
         applicationSupportDirectory.appendingPathComponent("browser_search_queries.json")
     }
     
-    public init() {
+    public init(storageDirectory: URL? = nil) {
+        self.customStorageDirectory = storageDirectory
         loadHistory()
         loadBookmarks()
         loadReadingList()

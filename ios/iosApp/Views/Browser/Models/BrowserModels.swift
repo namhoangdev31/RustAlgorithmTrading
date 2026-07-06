@@ -134,6 +134,7 @@ public final class FaviconCache: ObservableObject {
     
     private let fileManager = FileManager.default
     private let cacheDirectory: URL
+    private let session: URLSession
     
     // In-memory cache of images
     @Published private var memoryCache: [String: UIImage] = [:]
@@ -142,13 +143,18 @@ public final class FaviconCache: ObservableObject {
     // Set of domains currently downloading (to prevent concurrent duplicate downloads)
     private var downloadingDomains = Set<String>()
     
-    private init() {
-        let paths = fileManager.urls(for: .cachesDirectory, in: .userDomainMask)
-        self.cacheDirectory = paths[0].appendingPathComponent("BrowserFavicons")
+    internal init(cacheDirectory: URL? = nil, session: URLSession = .shared) {
+        self.session = session
+        if let customDir = cacheDirectory {
+            self.cacheDirectory = customDir
+        } else {
+            let paths = fileManager.urls(for: .cachesDirectory, in: .userDomainMask)
+            self.cacheDirectory = paths[0].appendingPathComponent("BrowserFavicons")
+        }
         
         // Create cache directory if it doesn't exist
-        if !fileManager.fileExists(atPath: cacheDirectory.path) {
-            try? fileManager.createDirectory(at: cacheDirectory, withIntermediateDirectories: true, attributes: nil)
+        if !fileManager.fileExists(atPath: self.cacheDirectory.path) {
+            try? fileManager.createDirectory(at: self.cacheDirectory, withIntermediateDirectories: true, attributes: nil)
         }
     }
     
@@ -207,10 +213,10 @@ public final class FaviconCache: ObservableObject {
             request.timeoutInterval = 4.0 // Short timeout to avoid blocking UI/network queue
             
             do {
-                let (data, response) = try await URLSession.shared.data(for: request)
+                let (data, response) = try await session.data(for: request)
                 guard let httpResponse = response as? HTTPURLResponse,
-                      httpResponse.statusCode == 200,
-                      let image = UIImage(data: data) else {
+                       httpResponse.statusCode == 200,
+                       let image = UIImage(data: data) else {
                     continue
                 }
                 

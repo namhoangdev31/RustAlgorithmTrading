@@ -318,23 +318,27 @@ class NavigationViewModel: ObservableObject {
     
     @MainActor
     func submitSearch(query: String, isPrivate: Bool) {
-        if let browserIndex = path.firstIndex(where: {
-            if case .browser = $0 { return true }
-            return false
-        }) {
-            if let cached = AppDependencyContainer.cachedBrowserViewModel {
-                cached.loadURLString(query)
-            }
-            path = Array(path[...browserIndex])
-        } else {
-            if let searchIndex = path.firstIndex(where: {
+        // Always load in the existing browser's active tab (Safari behavior).
+        // If a cached browser VM exists, use it; otherwise fall through to create a new one.
+        if let cached = AppDependencyContainer.cachedBrowserViewModel {
+            cached.loadURLString(query)
+            // Pop back to the .browser route if it exists; otherwise replace the search route
+            if let browserIndex = path.firstIndex(where: {
+                if case .browser = $0 { return true }
+                return false
+            }) {
+                path = Array(path[...browserIndex])
+            } else if let searchIndex = path.firstIndex(where: {
                 if case .browserSearch = $0 { return true }
                 return false
             }) {
-                path[searchIndex] = .browser(initialURL: query, privateMode: isPrivate)
+                path[searchIndex] = .browser(initialURL: nil, privateMode: isPrivate)
             } else {
-                navigate(to: .browser(initialURL: query, privateMode: isPrivate))
+                navigate(to: .browser(initialURL: nil, privateMode: isPrivate))
             }
+        } else {
+            // No cached browser — create fresh with the URL
+            navigate(to: .browser(initialURL: query, privateMode: isPrivate))
         }
     }
     

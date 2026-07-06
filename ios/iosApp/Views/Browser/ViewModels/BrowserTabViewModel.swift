@@ -27,7 +27,10 @@ public final class BrowserTabViewModel: NSObject, ObservableObject, Identifiable
     private let navigationPolicy = BrowserNavigationPolicy()
     private var lastScrollY: CGFloat = 0
     private var lastCrashTime: Date? = nil
-    private var autoReloadCount = 0
+    private var lastCrashURL: URL? = nil
+    private var crashCount: Int = 0
+    private static let crashWindowSeconds: TimeInterval = 60
+    private static let maxAutoReloads: Int = 2
 
     public init(id: UUID = UUID(), initialURL: URL? = nil, isPrivate: Bool) {
         self.id = id
@@ -142,6 +145,59 @@ public final class BrowserTabViewModel: NSObject, ObservableObject, Identifiable
         webView.evaluateJavaScript("window.find(\(encodedQuery), false, \(direction), true)", completionHandler: nil)
     }
 
+    /// Count all matches of a query on the page using injected JS.
+    /// Calls completion with (currentIndex, totalCount).
+    public func countFindMatches(_ query: String, completion: @escaping (Int, Int) -> Void) {
+        guard !query.isEmpty,
+              let data = try? JSONEncoder().encode(query),
+              let encodedQuery = String(data: data, encoding: .utf8) else {
+            completion(0, 0)
+            return
+        }
+        let js = """
+        (function() {
+            var query = \(encodedQuery);
+            if (!query) return JSON.stringify({current: 0, total: 0});
+            var body = document.body.innerText || '';
+            var regex = new RegExp(query.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&'), 'gi');
+            var matches = body.match(regex);
+            var total = matches ? matches.length : 0;
+            // Estimate current index from selection position
+            var sel = window.getSelection();
+            var current = 0;
+            if (sel && sel.rangeCount > 0 && total > 0) {
+                var range = sel.getRangeAt(0);
+                var preRange = document.createRange();
+                preRange.setStart(document.body, 0);
+                preRange.setEnd(range.startContainer, range.startOffset);
+                var preText = preRange.toString();
+                var preMatches = preText.match(regex);
+                current = preMatches ? preMatches.length + 1 : 1;
+                if (current > total) current = total;
+            }
+            return JSON.stringify({current: current, total: total});
+        })()
+        """
+        webView.evaluateJavaScript(js) { result, error in
+            guard let jsonString = result as? String,
+                  let jsonData = jsonString.data(using: .utf8),
+                  let dict = try? JSONSerialization.jsonObject(with: jsonData) as? [String: Int] else {
+                completion(0, 0)
+                return
+            }
+            let current = dict["current"] ?? 0
+            let total = dict["total"] ?? 0
+            Task { @MainActor in
+                completion(current, total)
+            }
+        }
+    }
+
+    /// Clear find highlights and deselect any active selection.
+    public func clearFindHighlights() {
+        webView.evaluateJavaScript("window.getSelection().removeAllRanges()", completionHandler: nil)
+    }
+
     public func hideDistractingItems() {
         let js = """
         (function() {
@@ -253,16 +309,46 @@ extension BrowserTabViewModel: WKNavigationDelegate {
 
     public func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
         let now = Date()
-        if let last = lastCrashTime, now.timeIntervalSince(last) < 30 { autoReloadCount += 1 }
-        else { autoReloadCount = 1 }
-        lastCrashTime = now
+        let crashingURL = webView.url ?? currentURL
 
-        if autoReloadCount <= 1 {
-            print("[BrowserTabViewModel] Web process terminated — reloading.")
-            webView.reload()
+        // Reset crash counter if outside crash window or URL changed
+        if let lastTime = lastCrashTime,
+           now.timeIntervalSince(lastTime) < Self.crashWindowSeconds,
+           lastCrashURL == crashingURL {
+            crashCount += 1
         } else {
-            print("[BrowserTabViewModel] Web process crashed repeatedly — halting.")
+            crashCount = 1
+        }
+        lastCrashTime = now
+        lastCrashURL = crashingURL
+
+        let redacted = crashingURL.map { BrowserURLNormalizer.redactURLForLogging($0) } ?? "nil"
+        print("[BrowserTabViewModel] Web process terminated (crash #\(crashCount)) for \(redacted)")
+
+        if crashCount <= Self.maxAutoReloads {
+            // Exponential backoff: 1s for first, 3s for second
+            let delay = crashCount == 1 ? 1.0 : 3.0
+            pageState = .loading(progress: 0.0)
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self, weak webView] in
+                guard let self, let webView else { return }
+                print("[BrowserTabViewModel] Auto-reloading after \(delay)s backoff (attempt #\(self.crashCount))")
+                webView.reload()
+            }
+        } else {
+            print("[BrowserTabViewModel] Web process crashed \(crashCount) times — halting. User must retry manually.")
             pageState = .failed(.webProcessCrashed)
+        }
+    }
+
+    /// Manual retry after crash halt — resets crash counter.
+    public func retryAfterCrash() {
+        crashCount = 0
+        lastCrashTime = nil
+        lastCrashURL = nil
+        if let url = currentURL {
+            load(url)
+        } else {
+            webView.reload()
         }
     }
 }

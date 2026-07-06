@@ -15,6 +15,8 @@ public final class BrowserViewModel: ObservableObject {
     @Published public var showPageDetailsMenu: Bool = false
     @Published public var showFindInPage: Bool = false
     @Published public var findInPageQuery: String = ""
+    @Published public var findMatchCount: Int = 0
+    @Published public var findCurrentIndex: Int = 0
     @Published public var lastPageActionMessage: String?
 
     public let persistenceStore: BrowserPersistenceStore

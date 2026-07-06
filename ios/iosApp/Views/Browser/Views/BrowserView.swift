@@ -9,6 +9,7 @@ public struct BrowserView: View {
     @EnvironmentObject var navigation: NavigationViewModel
     @Environment(\.dismiss) private var dismiss
     @State private var showExtensionsAlert = false
+    @State private var showClearDataConfirm = false
     @FocusState private var isFindFieldFocused: Bool
 
     public init(viewModel: BrowserViewModel) {
@@ -27,32 +28,35 @@ public struct BrowserView: View {
                             .foregroundColor(.secondary)
 
                         TextField("Tìm trong trang", text: $viewModel.findInPageQuery, onCommit: {
-                            activeTab.findInPage(viewModel.findInPageQuery)
+                            performFind(activeTab: activeTab)
                         })
                         .textFieldStyle(PlainTextFieldStyle())
                         .font(.system(size: 14))
                         .focused($isFindFieldFocused)
 
+                        if viewModel.findMatchCount > 0 {
+                            Text("\(viewModel.findCurrentIndex)/\(viewModel.findMatchCount)")
+                                .font(.system(size: 12, weight: .medium))
+                                .foregroundColor(.secondary)
+                                .fixedSize()
+                        }
+
                         Button(action: {
-                            activeTab.findInPage(viewModel.findInPageQuery)
+                            performFind(activeTab: activeTab)
                         }) {
                             Image(systemName: "chevron.down")
                                 .foregroundColor(.secondary)
                         }
 
                         Button(action: {
-                            activeTab.findInPage(viewModel.findInPageQuery, backwards: true)
+                            performFind(activeTab: activeTab, backwards: true)
                         }) {
                             Image(systemName: "chevron.up")
                                 .foregroundColor(.secondary)
                         }
 
                         Button("Xong") {
-                            isFindFieldFocused = false
-                            withAnimation {
-                                viewModel.showFindInPage = false
-                                viewModel.findInPageQuery = ""
-                            }
+                            dismissFindInPage(activeTab: activeTab)
                         }
                         .font(.system(size: 14, weight: .semibold))
                     }
@@ -95,6 +99,14 @@ public struct BrowserView: View {
         } message: {
             Text(viewModel.lastPageActionMessage ?? "")
         }
+        .alert("Xóa dữ liệu duyệt web?", isPresented: $showClearDataConfirm) {
+            Button("Hủy", role: .cancel) {}
+            Button("Xóa", role: .destructive) {
+                viewModel.clearWebsiteData()
+            }
+        } message: {
+            Text("Tất cả lịch sử, bộ nhớ đệm, cookie và truy vấn tìm kiếm sẽ bị xóa. Hành động này không thể hoàn tác.")
+        }
         .onDisappear {
             let inBrowserFlow = navigation.path.contains { route in
                 switch route {
@@ -133,7 +145,11 @@ public struct BrowserView: View {
                     // Error overlay
                     if case .failed(let error) = activeTab.pageState {
                         BrowserErrorView(error: error) {
-                            activeTab.reload()
+                            if case .webProcessCrashed = error {
+                                activeTab.retryAfterCrash()
+                            } else {
+                                activeTab.reload()
+                            }
                         } onOpenInExternalBrowser: {
                             if let url = activeTab.currentURL {
                                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
@@ -248,6 +264,14 @@ public struct BrowserView: View {
                         }
                         .disabled(true)
                     }
+
+                    Divider()
+
+                    Button(role: .destructive) {
+                        showClearDataConfirm = true
+                    } label: {
+                        Label("Xóa dữ liệu duyệt web", systemImage: "trash")
+                    }
                 } label: {
                     Image(systemName: "ellipsis")
                         .font(.system(size: 19, weight: .bold))
@@ -269,8 +293,30 @@ public struct BrowserView: View {
         viewModel.activeTab?.captureSnapshot()
         viewModel.isToolbarCollapsed = false
         viewModel.showFindInPage = false
-        DispatchQueue.main.async {
+        // Delay navigation to let SwiftUI Menu dismiss animation complete (~350ms)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { [navigation] in
             navigation.navigate(to: .browserTabSwitcher)
+        }
+    }
+
+    private func performFind(activeTab: BrowserTabViewModel, backwards: Bool = false) {
+        let query = viewModel.findInPageQuery
+        guard !query.isEmpty else { return }
+        activeTab.findInPage(query, backwards: backwards)
+        activeTab.countFindMatches(query) { current, total in
+            viewModel.findCurrentIndex = current
+            viewModel.findMatchCount = total
+        }
+    }
+
+    private func dismissFindInPage(activeTab: BrowserTabViewModel) {
+        isFindFieldFocused = false
+        activeTab.clearFindHighlights()
+        withAnimation {
+            viewModel.showFindInPage = false
+            viewModel.findInPageQuery = ""
+            viewModel.findMatchCount = 0
+            viewModel.findCurrentIndex = 0
         }
     }
 }

@@ -43,21 +43,28 @@ struct BrowserAddressBarContent: View {
                 Button {
                     openSearch()
                 } label: {
-                    Text(displayText)
-                        .font(.system(size: 12.5, weight: .semibold))
-                        .foregroundColor(.primary)
-                        .lineLimit(1)
-                        .truncationMode(.tail)
-                        .padding(.horizontal, 20)
-                        .frame(minHeight: 38)
-                        .contentShape(Capsule())
-                        .uniGlass()
-                        .clipShape(Capsule())
-                        .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 3)
-                        .overlay(
-                            Capsule()
-                                .stroke(Color.primary.opacity(0.08), lineWidth: 0.5)
-                        )
+                    HStack(spacing: 4) {
+                        if !isSecureURL && activeTab.currentURL != nil {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .font(.system(size: 10, weight: .semibold))
+                                .foregroundColor(.orange)
+                        }
+                        Text(displayText)
+                            .font(.system(size: 12.5, weight: .semibold))
+                            .foregroundColor(.primary)
+                            .lineLimit(1)
+                            .truncationMode(.tail)
+                    }
+                    .padding(.horizontal, 20)
+                    .frame(minHeight: 38)
+                    .contentShape(Capsule())
+                    .uniGlass()
+                    .clipShape(Capsule())
+                    .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 3)
+                    .overlay(
+                        Capsule()
+                            .stroke(Color.primary.opacity(0.08), lineWidth: 0.5)
+                    )
                 }
                 .buttonStyle(.plain)
                 .highPriorityGesture(TapGesture().onEnded { _ in openSearch() })
@@ -69,6 +76,12 @@ struct BrowserAddressBarContent: View {
                             Image(systemName: isSecureURL ? "lock.fill" : "exclamationmark.triangle.fill")
                                 .font(.system(size: 11, weight: .semibold))
                                 .foregroundColor(isSecureURL ? .secondary : .orange)
+
+                            if !isSecureURL && activeTab.currentURL != nil {
+                                Text("Không an toàn")
+                                    .font(.system(size: 11, weight: .medium))
+                                    .foregroundColor(.orange)
+                            }
 
                             Text(displayText)
                                 .font(.system(size: 14.5, weight: .semibold))
