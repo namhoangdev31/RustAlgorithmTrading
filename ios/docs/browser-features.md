@@ -368,3 +368,4 @@ TC-8.9.1  FrequentSite.id == domain
 -   **Dependency Injection (DI)**: Refactor `BrowserPersistenceStore` để nhận vào `storageDirectoryURL` thay vì hardcode thư mục mặc định, cho phép Unit Test truyền `NSTemporaryDirectory()` để đảm bảo môi trường độc lập.
 -   **Mock Network**: Triển khai custom `URLProtocol` hoặc inject Mock Network Client vào `FaviconCache` để mock response favicon từ Google/Web.
 -   **UI Integration Testing**: Chuyển các test case liên quan đến WKWebView JS interaction và giao diện (Find in page Match Index, Address bar collapse, More Menu animations) sang target **XCUITest (UI Test)** để kiểm thử hiển thị chính xác trên DOM thực tế.
+-   **Kịch bản kiểm thử thủ công cho AI Agent (Simulator)**: Xem chi tiết hướng dẫn các bước thực tế tại [browser-manual-tests.md](file:///Users/hoangnam/Developer/RustAlgorithmTrading/ios/docs/browser-manual-tests.md).
