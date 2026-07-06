@@ -5,6 +5,7 @@ public final class BrowserPersistenceStore: ObservableObject {
     @Published public private(set) var bookmarks: [BrowserBookmark] = []
     @Published public private(set) var readingList: [BrowserReadingListItem] = []
     @Published public private(set) var searchQueries: [String] = []
+    @Published public private(set) var favorites: [BrowserFavorite] = []
     
     private let fileManager = FileManager.default
     private let customStorageDirectory: URL?
@@ -40,12 +41,17 @@ public final class BrowserPersistenceStore: ObservableObject {
         applicationSupportDirectory.appendingPathComponent("browser_search_queries.json")
     }
     
+    private var favoritesFileURL: URL {
+        applicationSupportDirectory.appendingPathComponent("browser_favorites.json")
+    }
+    
     public init(storageDirectory: URL? = nil) {
         self.customStorageDirectory = storageDirectory
         loadHistory()
         loadBookmarks()
         loadReadingList()
         loadSearchQueries()
+        loadFavorites()
     }
     
     // MARK: - History
@@ -273,6 +279,64 @@ public final class BrowserPersistenceStore: ObservableObject {
             try data.write(to: searchQueriesFileURL, options: .atomic)
         } catch {
             print("[BrowserStore] Error saving search queries: \(error)")
+        }
+    }
+    
+    // MARK: - Favorites
+    
+    public func addFavorite(title: String, url: String) {
+        let normalizedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        let normalizedUrl = url.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !normalizedUrl.isEmpty else { return }
+        
+        let newItem = BrowserFavorite(title: normalizedTitle.isEmpty ? normalizedUrl : normalizedTitle, url: normalizedUrl)
+        favorites.append(newItem)
+        saveFavorites()
+    }
+    
+    public func deleteFavorite(id: UUID) {
+        favorites.removeAll(where: { $0.id == id })
+        saveFavorites()
+    }
+    
+    public func updateFavorite(id: UUID, title: String, url: String) {
+        guard let index = favorites.firstIndex(where: { $0.id == id }) else { return }
+        let normalizedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        let normalizedUrl = url.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !normalizedUrl.isEmpty else { return }
+        
+        favorites[index].title = normalizedTitle.isEmpty ? normalizedUrl : normalizedTitle
+        favorites[index].url = normalizedUrl
+        saveFavorites()
+    }
+    
+    private func loadFavorites() {
+        if !fileManager.fileExists(atPath: favoritesFileURL.path) {
+            // Load default favorites
+            self.favorites = [
+                BrowserFavorite(title: "Apple", url: "https://apple.com"),
+                BrowserFavorite(title: "Bing", url: "https://bing.com"),
+                BrowserFavorite(title: "Google", url: "https://google.com"),
+                BrowserFavorite(title: "Yahoo!", url: "https://yahoo.com")
+            ]
+            saveFavorites()
+            return
+        }
+        
+        do {
+            let data = try Data(contentsOf: favoritesFileURL)
+            favorites = try JSONDecoder().decode([BrowserFavorite].self, from: data)
+        } catch {
+            print("[BrowserStore] Error loading favorites: \(error)")
+        }
+    }
+    
+    private func saveFavorites() {
+        do {
+            let data = try JSONEncoder().encode(favorites)
+            try data.write(to: favoritesFileURL, options: .atomic)
+        } catch {
+            print("[BrowserStore] Error saving favorites: \(error)")
         }
     }
 }

@@ -75,6 +75,18 @@ public struct BrowserBookmark: Codable, Identifiable, Hashable {
     }
 }
 
+public struct BrowserFavorite: Codable, Identifiable, Hashable {
+    public let id: UUID
+    public var title: String
+    public var url: String
+
+    public init(id: UUID = UUID(), title: String, url: String) {
+        self.id = id
+        self.title = title
+        self.url = url
+    }
+}
+
 public struct BrowserReadingListItem: Codable, Identifiable, Hashable {
     public let id: UUID
     public let url: String
@@ -103,6 +115,7 @@ public struct BrowserReadingListItem: Codable, Identifiable, Hashable {
 public enum BrowserRoute: Hashable {
     case search
     case url(String)
+    case tabSwitcher
 }
 
 public struct FrequentSite: Identifiable, Hashable {

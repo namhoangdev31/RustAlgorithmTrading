@@ -8,12 +8,16 @@ public struct BrowserStartPageView: View {
     let onNavigate: (BrowserRoute) -> Void
     @Environment(\.colorScheme) private var colorScheme
 
-    private let favorites: [FavoriteItem] = [
-        FavoriteItem(title: "Apple", url: "https://apple.com", initial: "A", bgColor: Color(UIColor.systemFill)),
-        FavoriteItem(title: "Bing", url: "https://bing.com", initial: "B", bgColor: Color(hue: 0.58, saturation: 0.82, brightness: 0.92)),
-        FavoriteItem(title: "Google", url: "https://google.com", initial: "G", bgColor: Color(hue: 0.0, saturation: 0.0, brightness: 0.98)),
-        FavoriteItem(title: "Yahoo!", url: "https://yahoo.com", initial: "Y", bgColor: Color(hue: 0.77, saturation: 0.75, brightness: 0.72)),
-    ]
+    @State private var showAddAlert = false
+    @State private var newTitle = ""
+    @State private var newURL = ""
+    
+    @State private var itemToEdit: BrowserFavorite?
+    @State private var editTitle = ""
+    @State private var editURL = ""
+    
+    @State private var itemToDelete: BrowserFavorite?
+    @State private var showDeleteConfirmation = false
 
     public init(viewModel: BrowserViewModel, onNavigate: @escaping (BrowserRoute) -> Void) {
         self.viewModel = viewModel
@@ -30,6 +34,11 @@ public struct BrowserStartPageView: View {
                     // MARK: Search Bar
                     searchBarPill
                         .padding(.top, 8)
+
+                    // MARK: Open Tabs
+                    if hasOpenTabs {
+                        openTabsSection
+                    }
 
                     // MARK: Mục Ưa Thích
                     favoritesSection
@@ -55,6 +64,54 @@ public struct BrowserStartPageView: View {
             .uniBackgroundExtension()
         }
         .navigationBarHidden(true)
+        .alert("Thêm mục ưa thích", isPresented: $showAddAlert) {
+            TextField("Tiêu đề", text: $newTitle)
+            TextField("Địa chỉ (URL)", text: $newURL)
+                .autocapitalization(.none)
+                .keyboardType(.URL)
+            Button("Thêm", action: addNewFavorite)
+            Button("Hủy", role: .cancel) {
+                newTitle = ""
+                newURL = ""
+            }
+        }
+        .alert("Sửa mục ưa thích", isPresented: Binding(
+            get: { itemToEdit != nil },
+            set: { if !$0 { itemToEdit = nil } }
+        )) {
+            TextField("Tiêu đề", text: $editTitle)
+            TextField("Địa chỉ (URL)", text: $editURL)
+                .autocapitalization(.none)
+                .keyboardType(.URL)
+            Button("Lưu") {
+                if let item = itemToEdit {
+                    var targetURLString = editURL.trimmingCharacters(in: .whitespacesAndNewlines)
+                    if !targetURLString.lowercased().hasPrefix("http://") && !targetURLString.lowercased().hasPrefix("https://") {
+                        targetURLString = "https://" + targetURLString
+                    }
+                    viewModel.persistenceStore.updateFavorite(id: item.id, title: editTitle, url: targetURLString)
+                }
+                itemToEdit = nil
+            }
+            Button("Hủy", role: .cancel) {
+                itemToEdit = nil
+            }
+        }
+        .alert("Xóa mục ưa thích", isPresented: $showDeleteConfirmation) {
+            Button("Xóa", role: .destructive) {
+                if let item = itemToDelete {
+                    viewModel.persistenceStore.deleteFavorite(id: item.id)
+                }
+                itemToDelete = nil
+            }
+            Button("Hủy", role: .cancel) {
+                itemToDelete = nil
+            }
+        } message: {
+            if let item = itemToDelete {
+                Text("Bạn có chắc chắn muốn xóa \"\(item.title)\" khỏi mục ưa thích?")
+            }
+        }
     }
 
     // MARK: - Background
@@ -122,12 +179,50 @@ public struct BrowserStartPageView: View {
                 columns: Array(repeating: GridItem(.flexible(), spacing: 18), count: 4),
                 spacing: 20
             ) {
-                ForEach(favorites) { item in
+                let list = Array(viewModel.persistenceStore.favorites.prefix(4))
+                ForEach(list) { item in
                     FavoriteTileView(item: item) {
-                        if let url = item.url {
-                            onNavigate(.url(url))
+                        onNavigate(.url(item.url))
+                    }
+                    .contextMenu {
+                        Button {
+                            editTitle = item.title
+                            editURL = item.url
+                            itemToEdit = item
+                        } label: {
+                            Label("Sửa", systemImage: "pencil")
+                        }
+                        
+                        Button(role: .destructive) {
+                            itemToDelete = item
+                            showDeleteConfirmation = true
+                        } label: {
+                            Label("Xóa", systemImage: "trash")
                         }
                     }
+                }
+                
+                if list.count < 4 {
+                    Button {
+                        newTitle = ""
+                        newURL = ""
+                        showAddAlert = true
+                    } label: {
+                        VStack(spacing: 9) {
+                            ZStack {
+                                Circle()
+                                    .fill(Color(UIColor.systemFill))
+                                    .frame(width: 60, height: 60)
+                                Image(systemName: "plus")
+                                    .font(.system(size: 22, weight: .medium))
+                                    .foregroundColor(.secondary)
+                            }
+                            Text("Thêm")
+                                .font(.system(size: 11))
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    .buttonStyle(.plain)
                 }
             }
         }
@@ -231,23 +326,131 @@ public struct BrowserStartPageView: View {
                 : Color.white.opacity(0.72))
             .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 2)
     }
+
+    private var hasOpenTabs: Bool {
+        viewModel.tabs.contains { $0.currentURL != nil }
+    }
+
+    private var openTabsSection: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack {
+                sectionHeader("Tab đang mở", icon: "square.on.square.fill")
+                Spacer()
+                UniButton(action: {
+                    onNavigate(.tabSwitcher)
+                }) {
+                    Text("Quản lý")
+                        .font(.subheadline.weight(.medium))
+                        .foregroundColor(.blue)
+                }
+                .uniButtonStyle(.plain)
+            }
+            
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 12) {
+                    let openTabsList = viewModel.tabs.filter { $0.currentURL != nil }
+                    ForEach(openTabsList) { tab in
+                        HStack(spacing: 10) {
+                            let domain = tab.currentURL?.host ?? ""
+                            FaviconView(
+                                domain: domain,
+                                size: 32,
+                                initial: tab.title.isEmpty ? String(domain.prefix(1)) : String(tab.title.prefix(1)),
+                                bgColor: Color.blue.opacity(0.15)
+                            )
+                            
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(tab.title.isEmpty ? domain : tab.title)
+                                    .font(.subheadline.weight(.semibold))
+                                    .foregroundColor(.primary)
+                                    .lineLimit(1)
+                                Text(domain)
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                                    .lineLimit(1)
+                            }
+                            .frame(width: 120, alignment: .leading)
+                            
+                            // Close Button
+                            Button {
+                                withAnimation {
+                                    viewModel.closeTab(id: tab.id)
+                                }
+                            } label: {
+                                Image(systemName: "xmark.circle.fill")
+                                    .foregroundColor(.secondary)
+                                    .font(.system(size: 16))
+                            }
+                            .buttonStyle(.plain)
+                        }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 10)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                .fill(colorScheme == .dark
+                                    ? Color(UIColor.secondarySystemGroupedBackground)
+                                    : Color.white.opacity(0.82))
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                .stroke(Color.primary.opacity(0.06), lineWidth: 0.5)
+                        )
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            viewModel.switchTab(to: tab.id)
+                            onNavigate(.url(tab.currentURL?.absoluteString ?? ""))
+                        }
+                    }
+                }
+                .padding(.horizontal, 2)
+                .padding(.vertical, 4)
+            }
+        }
+    }
+    
+    private func addNewFavorite() {
+        let title = newTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+        let urlString = newURL.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !urlString.isEmpty else { return }
+        
+        var targetURLString = urlString
+        if !targetURLString.lowercased().hasPrefix("http://") && !targetURLString.lowercased().hasPrefix("https://") {
+            targetURLString = "https://" + targetURLString
+        }
+        
+        viewModel.persistenceStore.addFavorite(
+            title: title.isEmpty ? (URL(string: targetURLString)?.host ?? targetURLString) : title,
+            url: targetURLString
+        )
+        newTitle = ""
+        newURL = ""
+    }
 }
 
 // MARK: - Favorite Tile
 
 private struct FavoriteTileView: View {
-    let item: FavoriteItem
+    let item: BrowserFavorite
     let action: () -> Void
     @State private var isPressed = false
 
+    private var tileColor: Color {
+        let hash = abs(item.title.hashValue)
+        let hue = Double(hash % 360) / 360.0
+        return Color(hue: hue, saturation: 0.55, brightness: 0.78)
+    }
+
     var body: some View {
+        let domain = URL(string: item.url)?.host ?? ""
+        let initial = item.title.isEmpty ? String(domain.prefix(1)) : String(item.title.prefix(1))
+        
         UniButton(action: action) {
             VStack(spacing: 9) {
                 FaviconView(
-                    domain: URL(string: item.url ?? "")?.host ?? "",
+                    domain: domain,
                     size: 60,
-                    initial: item.initial,
-                    bgColor: item.bgColor
+                    initial: initial.uppercased(),
+                    bgColor: tileColor
                 )
                 .scaleEffect(isPressed ? 0.92 : 1.0)
                 .animation(.spring(response: 0.2, dampingFraction: 0.6), value: isPressed)
@@ -391,13 +594,3 @@ private struct BookmarkRow: View {
     }
 }
 
-// MARK: - Data Models
-
-private struct FavoriteItem: Identifiable {
-    let id = UUID()
-    let title: String
-    let url: String?
-    let initial: String
-    let bgColor: Color
-    var iconColor: Color = .white
-}

@@ -114,7 +114,9 @@ public final class BrowserViewModel: ObservableObject {
     public func handleExternalNavigation(initialURL: String?, isPrivate: Bool) {
         self.isPrivateMode = isPrivate
         if let str = initialURL, let normalized = urlNormalizer.normalize(str) {
-            if let active = activeTab, active.currentURL == nil && active.isPrivate == isPrivate {
+            if let active = activeTab, active.currentURL == normalized {
+                // Already loaded in active tab, do nothing
+            } else if let active = activeTab, active.currentURL == nil && active.isPrivate == isPrivate {
                 active.load(normalized)
             } else {
                 createNewTab(initialURL: normalized, isPrivate: isPrivate)
@@ -224,20 +226,12 @@ public final class BrowserViewModel: ObservableObject {
     }
 
     public func reset() {
-        tabs.forEach {
-            $0.webView.stopLoading()
-            $0.webView.navigationDelegate = nil
-            $0.webView.uiDelegate = nil
-            $0.webView.scrollView.delegate = nil
-        }
-        tabs.removeAll()
         isToolbarCollapsed = false
         isAddressBarEditing = false
         showPageDetailsMenu = false
         showFindInPage = false
         findInPageQuery = ""
         lastPageActionMessage = nil
-        createNewTab(initialURL: nil, isPrivate: false)
     }
 
     public func submitSearch(_ query: String) {

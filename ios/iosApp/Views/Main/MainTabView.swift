@@ -15,6 +15,8 @@ struct MainTabView: View {
                         navigation.navigate(to: .browserSearch(isPrivate: false))
                     case .url(let url):
                         navigation.navigate(to: .browser(initialURL: url, privateMode: false))
+                    case .tabSwitcher:
+                        navigation.navigate(to: .browserTabSwitcher)
                     }
                 }
             }

@@ -147,6 +147,8 @@ public struct BrowserView: View {
                         viewModel.isAddressBarEditing = true
                     case .url(let url):
                         viewModel.loadURLString(url)
+                    case .tabSwitcher:
+                        showTabSwitcher = true
                     }
                 }
             } else {
@@ -179,6 +181,8 @@ public struct BrowserView: View {
                     viewModel.isAddressBarEditing = true
                 case .url(let url):
                     viewModel.loadURLString(url)
+                case .tabSwitcher:
+                    showTabSwitcher = true
                 }
             }
         }

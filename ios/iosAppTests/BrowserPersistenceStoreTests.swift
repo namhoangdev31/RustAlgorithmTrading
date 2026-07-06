@@ -187,4 +187,43 @@ final class BrowserPersistenceStoreTests: XCTestCase {
         }
         XCTAssertEqual(store.searchQueries.count, 100)
     }
+    
+    // MARK: - Favorites Tests
+    
+    func testInitialFavorites_containsDefaults() {
+        XCTAssertEqual(store.favorites.count, 4)
+        XCTAssertEqual(store.favorites[0].title, "Apple")
+        XCTAssertEqual(store.favorites[1].title, "Bing")
+        XCTAssertEqual(store.favorites[2].title, "Google")
+        XCTAssertEqual(store.favorites[3].title, "Yahoo!")
+    }
+    
+    func testAddFavorite_success() {
+        store.addFavorite(title: "GitLab", url: "https://gitlab.com")
+        XCTAssertEqual(store.favorites.count, 5)
+        XCTAssertEqual(store.favorites.last?.title, "GitLab")
+        XCTAssertEqual(store.favorites.last?.url, "https://gitlab.com")
+    }
+    
+    func testUpdateFavorite_success() {
+        guard let first = store.favorites.first else {
+            XCTFail("No favorites")
+            return
+        }
+        
+        store.updateFavorite(id: first.id, title: "Apple Inc.", url: "https://apple.com/vn")
+        XCTAssertEqual(store.favorites.first?.title, "Apple Inc.")
+        XCTAssertEqual(store.favorites.first?.url, "https://apple.com/vn")
+    }
+    
+    func testDeleteFavorite_success() {
+        guard let first = store.favorites.first else {
+            XCTFail("No favorites")
+            return
+        }
+        
+        store.deleteFavorite(id: first.id)
+        XCTAssertEqual(store.favorites.count, 3)
+        XCTAssertNil(store.favorites.first(where: { $0.id == first.id }))
+    }
 }
