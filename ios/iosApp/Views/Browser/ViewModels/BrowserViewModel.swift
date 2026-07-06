@@ -7,6 +7,7 @@ public final class BrowserViewModel: ObservableObject {
     @Published public var tabs: [BrowserTabViewModel] = []
     @Published public var activeTabId: UUID = UUID()
     @Published public var urlInputText: String = ""
+    @Published public var isAddressBarEditing: Bool = false
     @Published public var isPrivateMode: Bool = false
     @Published public var showBookmarksList: Bool = false
     @Published public var showHistoryList: Bool = false
@@ -93,7 +94,6 @@ public final class BrowserViewModel: ObservableObject {
     }
 
     public func switchTab(to id: UUID) {
-        activeTab?.captureSnapshot()
         guard tabs.contains(where: { $0.id == id }) else { return }
         activeTabId = id
         urlInputText = activeTab?.currentURL?.absoluteString ?? ""
@@ -232,11 +232,23 @@ public final class BrowserViewModel: ObservableObject {
         }
         tabs.removeAll()
         isToolbarCollapsed = false
+        isAddressBarEditing = false
         showPageDetailsMenu = false
         showFindInPage = false
         findInPageQuery = ""
         lastPageActionMessage = nil
         createNewTab(initialURL: nil, isPrivate: false)
+    }
+
+    public func submitSearch(_ query: String) {
+        let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        
+        persistenceStore.addSearchQuery(trimmed)
+        if let normalized = urlNormalizer.normalize(trimmed), let active = activeTab {
+            active.load(normalized)
+        }
+        isAddressBarEditing = false
     }
 
     // MARK: - Search Suggestions

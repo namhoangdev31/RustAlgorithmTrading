@@ -69,7 +69,7 @@ struct RuntimeView: View {
             viewModel.stopAll()
         }
         .supportedOrientations(orientationMask)
-        .onChange(of: viewModel.activeTabId) { newId in
+        .onChange(of: viewModel.activeTabId) { _, newId in
             if let newId = newId {
                 viewModel.activateTab(id: newId)
             }
@@ -153,23 +153,9 @@ struct RuntimeView: View {
     }
 
     private func showTabSwitcher() {
-        guard let activeId = viewModel.activeTabId,
-              let activeTab = viewModel.tabs.first(where: { $0.id == activeId }) else {
-            withAnimation {
-                viewModel.showTabSwitcher = true
-                isExpanded = false
-            }
-            return
-        }
-
-        Task {
-            if let img = await activeTab.webView?.takeSnapshot() {
-                activeTab.snapshot = img
-            }
-            withAnimation {
-                viewModel.showTabSwitcher = true
-                isExpanded = false
-            }
+        withAnimation {
+            viewModel.showTabSwitcher = true
+            isExpanded = false
         }
     }
 

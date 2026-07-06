@@ -5,7 +5,7 @@ import SwiftUI
 
 public struct BrowserAddressBar: View {
     @ObservedObject var viewModel: BrowserViewModel
-    @EnvironmentObject var navigation: NavigationViewModel
+    
     public init(viewModel: BrowserViewModel) {
         self.viewModel = viewModel
     }
@@ -34,14 +34,63 @@ struct BrowserAddressBarContent: View {
     @ObservedObject var viewModel: BrowserViewModel
     @ObservedObject var activeTab: BrowserTabViewModel // Real-time observation of the tab's progress and state
     @EnvironmentObject var navigation: NavigationViewModel
+    
     @State private var showExtensionsAlert = false
+    @FocusState private var isTextFieldFocused: Bool
 
     var body: some View {
         Group {
-            if viewModel.isToolbarCollapsed {
+            if viewModel.isAddressBarEditing {
+                // Editing State (Full Width Input)
+                HStack(spacing: 8) {
+                    Image(systemName: "magnifyingglass")
+                        .font(.system(size: 14))
+                        .foregroundColor(.secondary)
+                        .padding(.leading, 14)
+                    
+                    TextField("Tìm hoặc nhập tên web", text: $viewModel.urlInputText)
+                        .font(.system(size: 14.5, weight: .medium))
+                        .textFieldStyle(PlainTextFieldStyle())
+                        .padding(.vertical, 10)
+                        .keyboardType(.webSearch)
+                        .focused($isTextFieldFocused)
+                        .autocorrectionDisabled()
+                        .autocapitalization(.none)
+                        .onSubmit {
+                            viewModel.submitSearch(viewModel.urlInputText)
+                        }
+                        .onChange(of: viewModel.urlInputText) { _, newValue in
+                            viewModel.fetchGoogleSuggestions(newValue)
+                        }
+                    
+                    if !viewModel.urlInputText.isEmpty {
+                        Button {
+                            viewModel.urlInputText = ""
+                        } label: {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundColor(.secondary)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    
+                    Button("Hủy") {
+                        viewModel.isAddressBarEditing = false
+                        viewModel.syncAddressBar()
+                    }
+                    .font(.system(size: 14.5, weight: .medium))
+                    .foregroundColor(.blue)
+                    .padding(.trailing, 14)
+                }
+                .uniGlass()
+                .frame(minHeight: 46)
+                .clipShape(Capsule())
+                .onAppear {
+                    isTextFieldFocused = true
+                }
+            } else if viewModel.isToolbarCollapsed {
                 // Collapsed Compact State
                 Button {
-                    openSearch()
+                    startEditing()
                 } label: {
                     HStack(spacing: 4) {
                         if !isSecureURL && activeTab.currentURL != nil {
@@ -67,22 +116,15 @@ struct BrowserAddressBarContent: View {
                     )
                 }
                 .buttonStyle(.plain)
-                .highPriorityGesture(TapGesture().onEnded { _ in openSearch() })
+                .highPriorityGesture(TapGesture().onEnded { _ in startEditing() })
             } else {
                 // Expanded Full Address Bar
                 HStack(spacing: 8) {
-                    Button(action: openSearch) {
+                    Button(action: startEditing) {
                         HStack(spacing: 8) {
                             Image(systemName: isSecureURL ? "lock.fill" : "exclamationmark.triangle.fill")
                                 .font(.system(size: 11, weight: .semibold))
                                 .foregroundColor(isSecureURL ? .secondary : .orange)
-
-                            if !isSecureURL && activeTab.currentURL != nil {
-                                Text("Không an toàn")
-                                    .font(.system(size: 11, weight: .medium))
-                                    .foregroundColor(.orange)
-                            }
-
                             Text(displayText)
                                 .font(.system(size: 14.5, weight: .semibold))
                                 .foregroundColor(activeTab.currentURL == nil ? .secondary : .primary)
@@ -96,7 +138,7 @@ struct BrowserAddressBarContent: View {
                         .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
-                    .highPriorityGesture(TapGesture().onEnded { _ in openSearch() })
+                    .highPriorityGesture(TapGesture().onEnded { _ in startEditing() })
 
                     BrowserPageSettingsMenuView(
                         viewModel: viewModel,
@@ -127,6 +169,11 @@ struct BrowserAddressBarContent: View {
             Button("OK", role: .cancel) {}
         } message: {
             Text("iOS không cho app bên thứ ba quản lý Safari Extensions trực tiếp.")
+        }
+        .onChange(of: viewModel.isAddressBarEditing) { _, newValue in
+            if newValue {
+                isTextFieldFocused = true
+            }
         }
     }
 
@@ -171,7 +218,10 @@ struct BrowserAddressBarContent: View {
         activeTab.currentURL?.scheme?.lowercased() == "https"
     }
 
-    private func openSearch() {
-        navigation.navigate(to: .browserSearch(isPrivate: viewModel.isPrivateMode))
+    private func startEditing() {
+        viewModel.urlInputText = activeTab.currentURL?.absoluteString ?? ""
+        viewModel.isAddressBarEditing = true
+        viewModel.isToolbarCollapsed = false
+        isTextFieldFocused = true
     }
 }

@@ -1,176 +1,171 @@
 import UIKit
 
-/// Disk and memory cache snapshot manager for tabs.
-/// Writes snapshots to disk asynchronously to keep RAM usage low.
+/// Small, fail-safe cache for runtime tab thumbnails.
 final class TabSnapshotManager {
     static let shared = TabSnapshotManager()
-    
-    private let fileManager = FileManager.default
-    private let queue = DispatchQueue(label: "com.antigravity.tabsnapshotmanager", qos: .background)
+
+    private let fileManager: FileManager
+    private let directoryURL: URL
+    private let ioQueue = DispatchQueue(label: "com.lepos.runtime.tab-snapshots", qos: .utility)
     private let memoryCache = NSCache<NSString, UIImage>()
-    
-    private init() {
-        createSnapshotDirectoryIfNeeded()
-        // Cache limit controls
+
+    private init(fileManager: FileManager = .default) {
+        self.fileManager = fileManager
+        self.directoryURL = fileManager
+            .urls(for: .cachesDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("snapshots", isDirectory: true)
         memoryCache.countLimit = 8
-    }
-    
-    private func getSnapshotDirectoryURL() -> URL {
-        let cacheURL = fileManager.urls(for: .cachesDirectory, in: .userDomainMask)[0]
-        return cacheURL.appendingPathComponent("snapshots", isDirectory: true)
-    }
-    
-    private func createSnapshotDirectoryIfNeeded() {
-        let dir = getSnapshotDirectoryURL()
-        if !fileManager.fileExists(atPath: dir.path) {
-            try? fileManager.createDirectory(at: dir, withIntermediateDirectories: true, attributes: nil)
-        }
-    }
-    
-    private func getFileURL(for tabId: UUID) -> URL {
-        return getSnapshotDirectoryURL().appendingPathComponent("\(tabId.uuidString).jpg")
+        createDirectoryIfNeeded()
     }
 
     func snapshotPath(for tabId: UUID) -> String? {
-        let fileURL = getFileURL(for: tabId)
-        return fileManager.fileExists(atPath: fileURL.path) ? fileURL.path : nil
+        existingFileURL(for: tabId)?.path
     }
-    
-    /// Compresses and saves the tab snapshot image to disk and memory cache.
+
     func saveSnapshot(_ image: UIImage, for tabId: UUID) {
-        let key = tabId.uuidString as NSString
+        let key = cacheKey(for: tabId)
         memoryCache.setObject(image, forKey: key)
-        
-        queue.async { [weak self] in
-            guard let self = self else { return }
-            let fileURL = self.getFileURL(for: tabId)
-            
-            if let data = image.jpegData(compressionQuality: 0.8) {
-                do {
-                    try data.write(to: fileURL, options: .atomic)
-                    #if DEBUG
-                    print("[TabSnapshotManager] Saved snapshot to disk for: \(tabId.uuidString)")
-                    #endif
-                } catch {
-                    #if DEBUG
-                    print("[TabSnapshotManager] Failed to write snapshot: \(error.localizedDescription)")
-                    #endif
-                }
-            }
-        }
-    }
-    
-    /// Loads a tab snapshot checking memory cache before performing disk IO.
-    func loadSnapshot(for tabId: UUID) -> UIImage? {
-        let key = tabId.uuidString as NSString
-        if let cached = memoryCache.object(forKey: key) {
-            return cached
-        }
-        
-        let fileURL = getFileURL(for: tabId)
-        guard fileManager.fileExists(atPath: fileURL.path),
-              let image = UIImage(contentsOfFile: fileURL.path) else {
-            return nil
-        }
-        
-        memoryCache.setObject(image, forKey: key)
-        return image
-    }
-    
-    /// Deletes a tab snapshot from disk and clears it from memory cache.
-    func deleteSnapshot(for tabId: UUID) {
-        let key = tabId.uuidString as NSString
-        memoryCache.removeObject(forKey: key)
-        
-        queue.async { [weak self] in
-            guard let self = self else { return }
-            let fileURL = self.getFileURL(for: tabId)
-            if self.fileManager.fileExists(atPath: fileURL.path) {
-                try? self.fileManager.removeItem(at: fileURL)
+
+        ioQueue.async { [weak self] in
+            guard let self else { return }
+            self.createDirectoryIfNeeded()
+            guard let data = image.jpegData(compressionQuality: 0.72) else { return }
+            do {
+                try data.write(to: self.fileURL(for: tabId), options: .atomic)
+            } catch {
                 #if DEBUG
-                print("[TabSnapshotManager] Deleted snapshot from disk for: \(tabId.uuidString)")
+                print("[TabSnapshotManager] save failed: \(error.localizedDescription)")
                 #endif
             }
         }
     }
-    
-    /// Scans snapshots folder and removes files not belonging to active tabs.
+
+    func loadSnapshot(for tabId: UUID) -> UIImage? {
+        let key = cacheKey(for: tabId)
+        if let image = memoryCache.object(forKey: key) {
+            return image
+        }
+
+        guard let fileURL = existingFileURL(for: tabId),
+              let data = try? Data(contentsOf: fileURL),
+              let image = UIImage(data: data) else {
+            return nil
+        }
+
+        memoryCache.setObject(image, forKey: key)
+        return image
+    }
+
+    func deleteSnapshot(for tabId: UUID) {
+        memoryCache.removeObject(forKey: cacheKey(for: tabId))
+        ioQueue.async { [weak self] in
+            guard let self else { return }
+            self.removeIfExists(self.fileURL(for: tabId))
+            self.removeLegacyFiles(for: tabId)
+        }
+    }
+
     func clearOrphanedSnapshots(keepTabIds: [UUID]) {
-        queue.async { [weak self] in
-            guard let self = self else { return }
-            let dir = self.getSnapshotDirectoryURL()
-            guard let files = try? self.fileManager.contentsOfDirectory(at: dir, includingPropertiesForKeys: nil) else { return }
-            
-            let keepNames = keepTabIds.map { "\($0.uuidString.lowercased()).jpg" }
-            for file in files {
-                let filename = file.lastPathComponent.lowercased()
-                if !keepNames.contains(filename) {
-                    try? self.fileManager.removeItem(at: file)
-                    #if DEBUG
-                    print("[TabSnapshotManager] Pruned orphaned snapshot: \(filename)")
-                    #endif
+        let keepNames = Set(keepTabIds.map { "\($0.uuidString.lowercased()).jpg" })
+        ioQueue.async { [weak self] in
+            guard let self else { return }
+            for file in self.snapshotFiles() {
+                if !keepNames.contains(file.lastPathComponent.lowercased()) {
+                    self.removeIfExists(file)
                 }
             }
         }
     }
 
-    /// Computes total storage size occupied by cached snapshot files.
     func totalSnapshotBytes() -> Int64 {
-        let dir = getSnapshotDirectoryURL()
-        guard let files = try? fileManager.contentsOfDirectory(
-            at: dir,
-            includingPropertiesForKeys: [.fileSizeKey]
-        ) else {
-            return 0
-        }
-
-        return files.reduce(Int64(0)) { total, file in
-            guard let values = try? file.resourceValues(forKeys: [.fileSizeKey]) else { return total }
-            return total + Int64(values.fileSize ?? 0)
+        ioQueue.sync {
+            totalSnapshotBytesUnlocked()
         }
     }
 
-    /// Triggers LRU eviction on snapshots directory when size exceeds maxBytes limit.
     func cleanupIfNeeded(maxBytes: Int64) {
-        queue.async { [weak self] in
-            guard let self = self else { return }
-            let dir = self.getSnapshotDirectoryURL()
-            guard var files = try? self.fileManager.contentsOfDirectory(
-                at: dir,
-                includingPropertiesForKeys: [.fileSizeKey, .contentModificationDateKey]
-            ) else { return }
-
-            var total = files.reduce(Int64(0)) { total, file in
-                guard let values = try? file.resourceValues(forKeys: [.fileSizeKey]) else { return total }
-                return total + Int64(values.fileSize ?? 0)
-            }
+        ioQueue.async { [weak self] in
+            guard let self else { return }
+            var files = self.snapshotFiles(with: [.fileSizeKey, .contentModificationDateKey])
+            var total = self.totalSnapshotBytesUnlocked(files: files)
             guard total > maxBytes else { return }
 
-            files.sort {
-                let lhs = (try? $0.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? .distantPast
-                let rhs = (try? $1.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? .distantPast
-                return lhs < rhs
+            files.sort { lhs, rhs in
+                let lhsDate = (try? lhs.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? .distantPast
+                let rhsDate = (try? rhs.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? .distantPast
+                return lhsDate < rhsDate
             }
 
             for file in files where total > maxBytes {
                 let size = Int64((try? file.resourceValues(forKeys: [.fileSizeKey]).fileSize) ?? 0)
-                try? self.fileManager.removeItem(at: file)
+                self.removeIfExists(file)
                 total -= size
-                #if DEBUG
-                print("[TabSnapshotManager] LRU snapshot cleanup removed: \(file.lastPathComponent)")
-                #endif
             }
         }
     }
 
-    /// Removes all cached snapshots and resets folder structure.
     func clearAll() {
         memoryCache.removeAllObjects()
-        queue.async { [weak self] in
-            guard let self = self else { return }
-            let dir = self.getSnapshotDirectoryURL()
-            try? self.fileManager.removeItem(at: dir)
-            self.createSnapshotDirectoryIfNeeded()
+        ioQueue.async { [weak self] in
+            guard let self else { return }
+            self.removeIfExists(self.directoryURL)
+            self.createDirectoryIfNeeded()
         }
+    }
+
+    private func cacheKey(for tabId: UUID) -> NSString {
+        tabId.uuidString as NSString
+    }
+
+    private func fileURL(for tabId: UUID) -> URL {
+        directoryURL.appendingPathComponent("\(tabId.uuidString).jpg", isDirectory: false)
+    }
+
+    private func existingFileURL(for tabId: UUID) -> URL? {
+        let primary = fileURL(for: tabId)
+        if fileManager.fileExists(atPath: primary.path) {
+            return primary
+        }
+
+        for ext in ["jpeg", "png"] {
+            let legacy = directoryURL.appendingPathComponent("\(tabId.uuidString).\(ext)", isDirectory: false)
+            if fileManager.fileExists(atPath: legacy.path) {
+                return legacy
+            }
+        }
+        return nil
+    }
+
+    private func removeLegacyFiles(for tabId: UUID) {
+        for ext in ["jpeg", "png"] {
+            let file = directoryURL.appendingPathComponent("\(tabId.uuidString).\(ext)", isDirectory: false)
+            removeIfExists(file)
+        }
+    }
+
+    private func createDirectoryIfNeeded() {
+        guard !fileManager.fileExists(atPath: directoryURL.path) else { return }
+        try? fileManager.createDirectory(at: directoryURL, withIntermediateDirectories: true)
+    }
+
+    private func snapshotFiles(with keys: Set<URLResourceKey> = []) -> [URL] {
+        createDirectoryIfNeeded()
+        return (try? fileManager.contentsOfDirectory(
+            at: directoryURL,
+            includingPropertiesForKeys: Array(keys),
+            options: [.skipsHiddenFiles]
+        )) ?? []
+    }
+
+    private func totalSnapshotBytesUnlocked(files: [URL]? = nil) -> Int64 {
+        (files ?? snapshotFiles(with: [.fileSizeKey])).reduce(Int64(0)) { total, file in
+            let size = (try? file.resourceValues(forKeys: [.fileSizeKey]).fileSize) ?? 0
+            return total + Int64(size)
+        }
+    }
+
+    private func removeIfExists(_ url: URL) {
+        guard fileManager.fileExists(atPath: url.path) else { return }
+        try? fileManager.removeItem(at: url)
     }
 }

@@ -10,6 +10,7 @@ public struct BrowserView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var showExtensionsAlert = false
     @State private var showClearDataConfirm = false
+    @State private var showTabSwitcher = false
     @FocusState private var isFindFieldFocused: Bool
 
     public init(viewModel: BrowserViewModel) {
@@ -20,6 +21,12 @@ public struct BrowserView: View {
         ZStack(alignment: .top) {
             contentArea
                 .ignoresSafeArea(edges: .bottom)
+
+            if viewModel.isAddressBarEditing {
+                BrowserSearchSuggestionsOverlay(viewModel: viewModel)
+                    .transition(.opacity)
+                    .zIndex(10)
+            }
 
             if viewModel.showFindInPage, let activeTab = viewModel.activeTab {
                 VStack {
@@ -86,6 +93,11 @@ public struct BrowserView: View {
                 BrowserPageDetailsMenuView(viewModel: viewModel, activeTab: activeTab)
             }
         }
+        .fullScreenCover(isPresented: $showTabSwitcher) {
+            BrowserTabSwitcherView(viewModel: viewModel) {
+                showTabSwitcher = false
+            }
+        }
         .alert("Quản lý phần mở rộng", isPresented: $showExtensionsAlert) {
             Button("OK", role: .cancel) {}
         } message: {
@@ -116,7 +128,7 @@ public struct BrowserView: View {
                     return false
                 }
             }
-            if !inBrowserFlow {
+            if !showTabSwitcher && !inBrowserFlow {
                 viewModel.reset()
             }
     }
@@ -131,7 +143,8 @@ public struct BrowserView: View {
                 BrowserStartPageView(viewModel: viewModel) { route in
                     switch route {
                     case .search:
-                        navigation.navigate(to: .browserSearch(isPrivate: viewModel.isPrivateMode))
+                        viewModel.urlInputText = ""
+                        viewModel.isAddressBarEditing = true
                     case .url(let url):
                         viewModel.loadURLString(url)
                     }
@@ -162,7 +175,8 @@ public struct BrowserView: View {
             BrowserStartPageView(viewModel: viewModel) { route in
                 switch route {
                 case .search:
-                    navigation.navigate(to: .browserSearch(isPrivate: viewModel.isPrivateMode))
+                    viewModel.urlInputText = ""
+                    viewModel.isAddressBarEditing = true
                 case .url(let url):
                     viewModel.loadURLString(url)
                 }
@@ -171,8 +185,8 @@ public struct BrowserView: View {
     }
 
     private var bottomBar: some View {
-        HStack(spacing: viewModel.isToolbarCollapsed ? 0 : 8) {
-            if !viewModel.isToolbarCollapsed {
+        HStack(spacing: (viewModel.isToolbarCollapsed || viewModel.isAddressBarEditing) ? 0 : 8) {
+            if !viewModel.isToolbarCollapsed && !viewModel.isAddressBarEditing {
                 // Grouped Back/Forward block (1 capsule, 2 tap targets)
                 HStack(spacing: 8) {
                     UniButton(action: {
@@ -207,10 +221,10 @@ public struct BrowserView: View {
             }
 
             BrowserAddressBar(viewModel: viewModel)
-                .frame(maxWidth: viewModel.isToolbarCollapsed ? nil : .infinity)
-                .frame(minHeight: viewModel.isToolbarCollapsed ? 38 : 46)
+                .frame(maxWidth: (viewModel.isToolbarCollapsed || viewModel.isAddressBarEditing) ? nil : .infinity)
+                .frame(minHeight: (viewModel.isToolbarCollapsed || viewModel.isAddressBarEditing) ? 38 : 46)
 
-            if !viewModel.isToolbarCollapsed {
+            if !viewModel.isToolbarCollapsed && !viewModel.isAddressBarEditing {
                 Menu {
                     ControlGroup {
                         Button {
@@ -285,17 +299,16 @@ public struct BrowserView: View {
             }
         }
         .padding(.horizontal, 16)
-        .padding(.bottom, viewModel.isToolbarCollapsed ? 8 : 12)
-        .animation(.spring(response: 0.35, dampingFraction: 0.75), value: viewModel.isToolbarCollapsed)
+        .padding(.bottom, (viewModel.isToolbarCollapsed || viewModel.isAddressBarEditing) ? 8 : 12)
+        .animation(.spring(response: 0.35, dampingFraction: 0.75), value: viewModel.isToolbarCollapsed || viewModel.isAddressBarEditing)
     }
 
     private func openTabSwitcher() {
-        viewModel.activeTab?.captureSnapshot()
         viewModel.isToolbarCollapsed = false
         viewModel.showFindInPage = false
-        // Delay navigation to let SwiftUI Menu dismiss animation complete (~350ms)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { [navigation] in
-            navigation.navigate(to: .browserTabSwitcher)
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 600_000_000)
+            showTabSwitcher = true
         }
     }
 

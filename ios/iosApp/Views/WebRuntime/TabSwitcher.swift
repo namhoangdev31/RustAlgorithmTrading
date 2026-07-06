@@ -1,350 +1,310 @@
 import SwiftUI
 import WebKit
-import ExploreSwiftUI
 
-
-/// A Safari-inspired Web Tab Switcher for the iOS app.
 struct TabSwitcher: View {
     @Binding var tabs: [WebTab]
     @Binding var selectedTabId: UUID?
     @Binding var isPresented: Bool
-    
-    var onAddTab: (() -> Void)? = nil
-    var onCloseTab: ((UUID) -> Void)? = nil
-    
+
+    var onAddTab: (() -> Void)?
+    var onCloseTab: ((UUID) -> Void)?
+
     @State private var searchText = ""
-    @Namespace private var animationNamespace
-    
-    // Grid layout columns (2 columns like Safari on iOS)
-    private let columns = [
-        GridItem(.flexible(), spacing: 16),
-        GridItem(.flexible(), spacing: 16)
-    ]
-    
-    // Filtered tabs based on search text
-    var filteredTabs: [WebTab] {
-        if searchText.isEmpty {
-            return tabs
-        } else {
-            return tabs.filter {
-                $0.title.localizedCaseInsensitiveContains(searchText) ||
-                ($0.url?.absoluteString.localizedCaseInsensitiveContains(searchText) ?? false)
-            }
-        }
-    }
-    
+
     var body: some View {
-        UniNavigationStack {
-            ZStack {
-                // Sleek dark-mode background with ambient radial glow
-                Color(red: 0.05, green: 0.05, blue: 0.08)
-                    .ignoresSafeArea()
-                
-                RadialGradient(
-                    colors: [Color.blue.opacity(0.15), Color.clear],
-                    center: .topTrailing,
-                    startRadius: 100,
-                    endRadius: 500
-                )
-                .ignoresSafeArea()
-                
-                VStack(spacing: 0) {
-                    // Search Bar
-                    SearchBarView(text: $searchText)
-                        .padding(.horizontal)
-                        .padding(.top, 10)
-                        
-                    // Scrollable Grid of Tabs
-                    UniScrollView {
-                        LazyVGrid(columns: columns, spacing: 20) {
-                            ForEach(filteredTabs) { tab in
-                                TabCardView(
-                                    tab: tab,
-                                    isSelected: tab.id == selectedTabId,
-                                    namespace: animationNamespace
-                                ) {
-                                    // Select tab
-                                    selectedTabId = tab.id
-                                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                                        isPresented = false
-                                    }
-                                } onClose: {
-                                    closeTab(tab)
-                                }
-                            }
-                        }
-                        .padding()
-                    }
-                    
-                    // Bottom Navigation Bar
-                    BottomToolbarView(
-                        tabCount: tabs.count,
-                        onAddTab: {
-                            addNewTab()
-                        },
-                        onDone: {
-                            withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                                isPresented = false
-                            }
-                        }
-                    )
-                }
+        NavigationStack {
+            VStack(spacing: 0) {
+                header
+                searchField
+                tabGrid
+            }
+            .background(Color(red: 0.06, green: 0.06, blue: 0.08).ignoresSafeArea())
+            .safeAreaInset(edge: .bottom) {
+                bottomToolbar
             }
             .navigationBarHidden(true)
         }
         .preferredColorScheme(.dark)
     }
-    
-    // Helper to add a new tab
-    private func addNewTab() {
-        if let onAddTab = onAddTab {
-            onAddTab()
-        } else {
-            let newTab = WebTab(
-                manifest: WebRuntimeManifest(id: "new_tab", version: "1.0", name: "New Tab", entry: "index.html", type: "spa", orientation: "automatic", fullScreen: false),
-                bundlePath: URL(fileURLWithPath: ""),
-                server: iOSWebServer(basePath: "")
-            )
-            tabs.append(newTab)
-            selectedTabId = newTab.id
-        }
-        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-            isPresented = false
-        }
-    }
-    
-    // Helper to close a tab
-    private func closeTab(_ tab: WebTab) {
-        if let onCloseTab = onCloseTab {
-            onCloseTab(tab.id)
-        } else {
-            guard let index = tabs.firstIndex(where: { $0.id == tab.id }) else { return }
-            withAnimation(.spring(response: 0.35, dampingFraction: 0.7)) {
-                tabs.remove(at: index)
-                
-                // Adjust selection if the closed tab was selected
-                if selectedTabId == tab.id {
-                    if !tabs.isEmpty {
-                        selectedTabId = tabs[min(index, tabs.count - 1)].id
-                    } else {
-                        selectedTabId = nil
-                    }
-                }
-            }
-        }
-    }
-}
 
-// MARK: - Search Bar Component
-struct SearchBarView: View {
-    @Binding var text: String
-    
-    var body: some View {
+    private var header: some View {
         HStack {
+            Text("Tabs")
+                .font(.title3.weight(.semibold))
+                .foregroundStyle(.white)
+
+            Spacer()
+
+            Button {
+                dismiss()
+            } label: {
+                Image(systemName: "xmark")
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundStyle(.white)
+                    .frame(width: 34, height: 34)
+                    .background(Circle().fill(Color.white.opacity(0.12)))
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(.horizontal, 18)
+        .padding(.top, 14)
+        .padding(.bottom, 10)
+    }
+
+    private var searchField: some View {
+        HStack(spacing: 8) {
             Image(systemName: "magnifyingglass")
-                .uniForegroundStyle(.secondary)
-            
-            TextField("Search Tabs or Web Addresses", text: $text)
-                .uniForegroundStyle(.primary)
-                .disableAutocorrection(true)
+                .foregroundStyle(.white.opacity(0.55))
+
+            TextField("Search Tabs or Web Addresses", text: $searchText)
+                .foregroundStyle(.white)
                 .textInputAutocapitalization(.never)
-            
-            if !text.isEmpty {
-                UniButton(action: { text = "" }) {
+                .disableAutocorrection(true)
+
+            if !searchText.isEmpty {
+                Button {
+                    searchText = ""
+                } label: {
                     Image(systemName: "xmark.circle.fill")
-                        .uniForegroundStyle(.secondary)
+                        .foregroundStyle(.white.opacity(0.55))
                 }
+                .buttonStyle(.plain)
             }
         }
         .padding(.horizontal, 12)
-        .padding(.vertical, 10)
-        .background(Color.leposSurface.opacity(0.08))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.leposSurface.opacity(0.1), lineWidth: 1)
+        .frame(height: 42)
+        .background(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(Color.white.opacity(0.09))
         )
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(Color.white.opacity(0.08), lineWidth: 1)
+        )
+        .padding(.horizontal, 18)
+        .padding(.bottom, 12)
+    }
+
+    private var tabGrid: some View {
+        ScrollView {
+            LazyVGrid(columns: columns, spacing: 16) {
+                ForEach(filteredTabs) { tab in
+                    RuntimeTabCard(
+                        tab: tab,
+                        isSelected: tab.id == selectedTabId,
+                        onSelect: { select(tab) },
+                        onClose: { close(tab) }
+                    )
+                }
+            }
+            .padding(.horizontal, 18)
+            .padding(.bottom, 96)
+
+            if filteredTabs.isEmpty {
+                VStack(spacing: 12) {
+                    Image(systemName: "rectangle.on.rectangle.slash")
+                        .font(.system(size: 34))
+                    Text("No matching tabs")
+                        .font(.subheadline.weight(.medium))
+                }
+                .foregroundStyle(.white.opacity(0.5))
+                .frame(maxWidth: .infinity)
+                .padding(.top, 80)
+            }
+        }
+    }
+
+    private var bottomToolbar: some View {
+        HStack {
+            Button {
+                addNewTab()
+            } label: {
+                Image(systemName: "plus")
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundStyle(.blue)
+                    .frame(width: 44, height: 44)
+            }
+            .buttonStyle(.plain)
+
+            Spacer()
+
+            Text(tabs.count == 1 ? "1 Tab" : "\(tabs.count) Tabs")
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(.white.opacity(0.75))
+
+            Spacer()
+
+            Button("Done") {
+                dismiss()
+            }
+            .font(.system(size: 16, weight: .bold))
+            .foregroundStyle(.blue)
+            .frame(width: 70, height: 44)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(Color(red: 0.06, green: 0.06, blue: 0.08).opacity(0.96))
+    }
+
+    private var columns: [GridItem] {
+        [
+            GridItem(.flexible(), spacing: 14),
+            GridItem(.flexible(), spacing: 14)
+        ]
+    }
+
+    private var filteredTabs: [WebTab] {
+        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else { return tabs }
+        return tabs.filter { tab in
+            tab.title.localizedCaseInsensitiveContains(query)
+                || (tab.url?.absoluteString.localizedCaseInsensitiveContains(query) ?? false)
+                || (tab.url?.host?.localizedCaseInsensitiveContains(query) ?? false)
+        }
+    }
+
+    private func addNewTab() {
+        if let onAddTab {
+            onAddTab()
+        } else {
+            let tab = WebTab(
+                manifest: WebRuntimeManifest(
+                    id: "new_tab",
+                    version: "1.0",
+                    name: "New Tab",
+                    entry: "index.html",
+                    type: "spa",
+                    orientation: "automatic",
+                    fullScreen: false
+                ),
+                bundlePath: URL(fileURLWithPath: ""),
+                server: iOSWebServer(basePath: "")
+            )
+            tabs.append(tab)
+            selectedTabId = tab.id
+        }
+        dismiss()
+    }
+
+    private func select(_ tab: WebTab) {
+        selectedTabId = tab.id
+        dismiss()
+    }
+
+    private func close(_ tab: WebTab) {
+        if let onCloseTab {
+            onCloseTab(tab.id)
+            return
+        }
+
+        guard let index = tabs.firstIndex(where: { $0.id == tab.id }) else { return }
+        tabs.remove(at: index)
+        if selectedTabId == tab.id {
+            selectedTabId = tabs.isEmpty ? nil : tabs[min(index, tabs.count - 1)].id
+        }
+    }
+
+    private func dismiss() {
+        withAnimation(.easeInOut(duration: 0.18)) {
+            isPresented = false
+        }
     }
 }
 
-// MARK: - Tab Card View Component
-struct TabCardView: View {
-    let tab: WebTab
+private struct RuntimeTabCard: View {
+    @ObservedObject var tab: WebTab
     let isSelected: Bool
-    let namespace: Namespace.ID
     let onSelect: () -> Void
     let onClose: () -> Void
-    
-    @State private var dragOffset = CGSize.zero
-    
+
     var body: some View {
         VStack(spacing: 0) {
-            // Header Bar
-            HStack {
-                // Favicon Placeholder
+            HStack(spacing: 8) {
                 Image(systemName: "globe")
-                    .font(.system(size: 11))
-                    .uniForegroundStyle(.blue)
-                    .frame(width: 20, height: 20)
-                    .background(Color.blue.opacity(0.15))
-                    .clipShape(Circle())
-                
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(.blue)
+                    .frame(width: 22, height: 22)
+                    .background(Circle().fill(Color.blue.opacity(0.16)))
+
                 Text(tab.title)
                     .font(.system(size: 12, weight: .semibold))
                     .lineLimit(1)
-                    .uniForegroundStyle(.white)
-                
-                Spacer()
-                
-                // Close button
-                UniButton(action: onClose) {
+                    .foregroundStyle(.white)
+
+                Spacer(minLength: 0)
+
+                Button(action: onClose) {
                     Image(systemName: "xmark")
                         .font(.system(size: 10, weight: .bold))
-                        .uniForegroundStyle(.white.opacity(0.6))
-                        .frame(width: 20, height: 20)
-                        .background(Color.leposSurface.opacity(0.15))
-                        .clipShape(Circle())
+                        .foregroundStyle(.white.opacity(0.7))
+                        .frame(width: 24, height: 24)
+                        .background(Circle().fill(Color.white.opacity(0.12)))
                 }
-                .uniButtonStyle(.plain)
+                .buttonStyle(.plain)
             }
             .padding(.horizontal, 10)
-            .padding(.vertical, 8)
-            .background(Color.leposSurface.opacity(0.05))
-            
-            // Snapshot Preview area
+            .padding(.vertical, 9)
+            .background(Color.white.opacity(0.06))
+
             ZStack {
-                if let snapshot = tab.cachedSnapshot {
-                    Image(uiImage: snapshot)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else {
-                    // Modern placeholder layout
-                    VStack(spacing: 8) {
-                        Image(systemName: "safari")
-                            .font(.system(size: 32, weight: .thin))
-                            .uniForegroundStyle(.white.opacity(0.3))
-                        
-                        Text(tab.url?.host ?? "Local Runtime")
-                            .font(.system(size: 10))
-                            .uniForegroundStyle(.white.opacity(0.4))
-                            .lineLimit(1)
-                    }
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(Color.white.opacity(0.08))
+
+                VStack(spacing: 8) {
+                    Image(systemName: statusIcon)
+                        .font(.system(size: 30, weight: .regular))
+                        .foregroundStyle(.white.opacity(0.38))
+
+                    Text(tab.url?.host ?? "Local Runtime")
+                        .font(.system(size: 10, weight: .medium))
+                        .foregroundStyle(.white.opacity(0.48))
+                        .lineLimit(1)
+                        .padding(.horizontal, 8)
                 }
             }
-            .frame(height: 140)
-            .frame(maxWidth: .infinity)
-            .background(Color(red: 0.1, green: 0.1, blue: 0.13))
-            .clipped()
+            .frame(height: 136)
+            .padding(8)
         }
-        .clipShape(RoundedRectangle(cornerRadius: 16))
-        // Highlighting active tab with premium gradient border
+        .background(Color.white.opacity(0.05))
+        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(
-                    isSelected 
-                    ? AnyShapeStyle(LinearGradient(colors: [.blue, .purple], startPoint: .topLeading, endPoint: .bottomTrailing))
-                    : AnyShapeStyle(Color.leposSurface.opacity(0.15)),
-                    lineWidth: isSelected ? 3 : 1
-                )
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .stroke(isSelected ? Color.blue : Color.white.opacity(0.12), lineWidth: isSelected ? 2 : 1)
         )
-        .shadow(color: isSelected ? .blue.opacity(0.25) : .black.opacity(0.3), radius: isSelected ? 12 : 6, y: 4)
-        .offset(x: dragOffset.width, y: dragOffset.height)
-        .opacity(1.0 - Double(abs(dragOffset.width) / 200))
-        // Swipe to close gesture (similar to Safari)
-        .gesture(
-            DragGesture()
-                .onChanged { gesture in
-                    // Only horizontal swipes close the tab in this grid
-                    if gesture.translation.width < 0 {
-                        dragOffset = gesture.translation
-                    }
-                }
-                .onEnded { gesture in
-                    if gesture.translation.width < -120 {
-                        onClose()
-                    } else {
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                            dragOffset = .zero
-                        }
-                    }
-                }
-        )
-        .onTapGesture {
-            onSelect()
+        .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .onTapGesture(perform: onSelect)
+    }
+
+    private var statusIcon: String {
+        switch tab.status {
+        case .loading: return "hourglass"
+        case .active: return "play.circle"
+        case .paused: return "pause.circle"
+        case .suspended: return "moon"
+        case .closing, .closed: return "xmark.circle"
         }
     }
 }
 
-// MARK: - Bottom Toolbar Component
-struct BottomToolbarView: View {
-    let tabCount: Int
-    let onAddTab: () -> Void
-    let onDone: () -> Void
-    
-    var body: some View {
-        VStack(spacing: 0) {
-            Divider()
-                .background(Color.leposSurface.opacity(0.15))
-            
-            HStack {
-                // Add Tab Button
-                UniButton(action: onAddTab) {
-                    Image(systemName: "plus")
-                        .font(.title2)
-                        .uniForegroundStyle(.blue)
-                        .frame(width: 44, height: 44)
-                }
-                .uniButtonStyle(.plain)
-                
-                Spacer()
-                
-                // Tab count title
-                Text(tabCount == 1 ? "1 Tab" : "\(tabCount) Tabs")
-                    .font(.system(size: 13, weight: .semibold))
-                    .uniForegroundStyle(.white.opacity(0.8))
-                
-                Spacer()
-                
-                // Done Button
-                UniButton(action: onDone) {
-                    Text("Done")
-                        .font(.system(size: 16, weight: .bold))
-                        .uniForegroundStyle(.blue)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
-                }
-                .uniButtonStyle(.plain)
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 8)
-            .background(Color(red: 0.05, green: 0.05, blue: 0.08).opacity(0.95))
-        }
-    }
-}
-
-// MARK: - WKWebView Snapshot helper Extension
+@MainActor
 extension WKWebView {
-    /// Captures a UIImage snapshot of the WKWebView contents
     func takeSnapshot() async -> UIImage? {
-        let configuration = WKSnapshotConfiguration()
-        configuration.rect = self.bounds
-        
-        do {
-            return try await withCheckedThrowingContinuation { continuation in
-                self.takeSnapshot(with: configuration) { image, error in
-                    if let error = error {
-                        continuation.resume(throwing: error)
-                    } else if let image = image {
-                        continuation.resume(returning: image)
-                    } else {
-                        continuation.resume(returning: nil)
-                    }
-                }
-            }
-        } catch {
-            print("[WKWebView+Snapshot] Error: \(error.localizedDescription)")
+        guard window != nil, bounds.width >= 1, bounds.height >= 1 else {
             return nil
+        }
+
+        let configuration = WKSnapshotConfiguration()
+        configuration.rect = bounds
+
+        return await withCheckedContinuation { continuation in
+            takeSnapshot(with: configuration) { image, error in
+                #if DEBUG
+                if let error {
+                    print("[WKWebView+Snapshot] \(error.localizedDescription)")
+                }
+                #endif
+                continuation.resume(returning: image)
+            }
         }
     }
 }

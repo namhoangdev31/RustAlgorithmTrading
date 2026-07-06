@@ -1,7 +1,7 @@
-import Foundation
-import WebKit
 import Combine
+import Foundation
 import UIKit
+import WebKit
 
 @MainActor
 public final class BrowserTabViewModel: NSObject, ObservableObject, Identifiable {
@@ -9,14 +9,14 @@ public final class BrowserTabViewModel: NSObject, ObservableObject, Identifiable
     public let isPrivate: Bool
     public let webView: WKWebView
 
-    @Published public var title: String = "Tab Mới"
-    @Published public var currentURL: URL? = nil
+    @Published public var title = "Tab Mới"
+    @Published public var currentURL: URL?
     @Published public var pageState: BrowserPageState = .idle
-    @Published public var canGoBack: Bool = false
-    @Published public var canGoForward: Bool = false
-    @Published public var snapshot: UIImage? = nil
-    @Published public var textZoomLevel: Int = 100
-    @Published public var isDesktopSite: Bool = false
+    @Published public var canGoBack = false
+    @Published public var canGoForward = false
+    @Published public var snapshot: UIImage?
+    @Published public var textZoomLevel = 100
+    @Published public var isDesktopSite = false
 
     public var onOpenNewTab: ((URL) -> Void)?
     public var onOpenExternalURL: ((URL) -> Void)?
@@ -26,11 +26,15 @@ public final class BrowserTabViewModel: NSObject, ObservableObject, Identifiable
     private var observers: Set<AnyCancellable> = []
     private let navigationPolicy = BrowserNavigationPolicy()
     private var lastScrollY: CGFloat = 0
-    private var lastCrashTime: Date? = nil
-    private var lastCrashURL: URL? = nil
-    private var crashCount: Int = 0
+    private var isCapturingSnapshot = false
+    private var pendingSnapshotTask: Task<Void, Never>?
+    private var crashReloadTask: Task<Void, Never>?
+    private var lastCrashTime: Date?
+    private var lastCrashURL: URL?
+    private var crashCount = 0
+
     private static let crashWindowSeconds: TimeInterval = 60
-    private static let maxAutoReloads: Int = 2
+    private static let maxAutoReloads = 2
 
     public init(id: UUID = UUID(), initialURL: URL? = nil, isPrivate: Bool) {
         self.id = id
@@ -47,183 +51,164 @@ public final class BrowserTabViewModel: NSObject, ObservableObject, Identifiable
 
         super.init()
 
-        self.webView.navigationDelegate = self
-        self.webView.uiDelegate = self
-        self.webView.scrollView.delegate = self
-
+        webView.navigationDelegate = self
+        webView.uiDelegate = self
+        webView.scrollView.delegate = self
         setupObservers()
 
-        if let url = initialURL {
-            load(url)
+        if let initialURL {
+            load(initialURL)
         }
     }
 
     deinit {
-        let webView = self.webView
+        pendingSnapshotTask?.cancel()
+        crashReloadTask?.cancel()
+        let webView = webView
         Task { @MainActor in
+            webView.stopLoading()
             webView.navigationDelegate = nil
             webView.uiDelegate = nil
             webView.scrollView.delegate = nil
-            webView.stopLoading()
         }
     }
 
-    private func setupObservers() {
-        webView.publisher(for: \.title)
-            .compactMap { $0 }
-            .removeDuplicates()
-            .assign(to: &$title)
-
-        webView.publisher(for: \.url)
-            .removeDuplicates()
-            .assign(to: &$currentURL)
-
-        webView.publisher(for: \.canGoBack)
-            .removeDuplicates()
-            .assign(to: &$canGoBack)
-
-        webView.publisher(for: \.canGoForward)
-            .removeDuplicates()
-            .assign(to: &$canGoForward)
-
-        webView.publisher(for: \.estimatedProgress)
-            .removeDuplicates()
-            .sink { [weak self] progress in
-                guard let self else { return }
-                if self.webView.isLoading {
-                    self.pageState = .loading(progress: progress)
-                } else if progress >= 1.0 {
-                    self.pageState = .loaded
-                }
-            }
-            .store(in: &observers)
-    }
-
-    // MARK: - Navigation
-
     public func load(_ url: URL) {
-        let redacted = BrowserURLNormalizer.redactURLForLogging(url)
-        print("[BrowserTabViewModel] Loading: \(redacted)")
-
         let decision = navigationPolicy.decidePolicy(for: url, isMainFrame: true)
         switch decision {
         case .allow:
             currentURL = url
+            pageState = .loading(progress: 0)
             webView.load(URLRequest(url: url))
         case .cancel:
             break
-        case .openExternal(let externalUrl):
-            onOpenExternalURL?(externalUrl)
-        case .openNewTab(let newTabUrl):
-            onOpenNewTab?(newTabUrl)
+        case .openExternal(let externalURL):
+            onOpenExternalURL?(externalURL)
+        case .openNewTab(let newTabURL):
+            onOpenNewTab?(newTabURL)
         case .blocked(let reason):
             pageState = .failed(.securityBlocked(reason: reason.rawValue))
         }
     }
 
-    public func goBack() { if webView.canGoBack { webView.goBack() } }
-    public func goForward() { if webView.canGoForward { webView.goForward() } }
-    public func reload() { webView.reload() }
+    public func goBack() {
+        guard webView.canGoBack else { return }
+        webView.goBack()
+    }
+
+    public func goForward() {
+        guard webView.canGoForward else { return }
+        webView.goForward()
+    }
+
+    public func reload() {
+        pageState = .loading(progress: 0)
+        webView.reload()
+    }
 
     public func stopLoading() {
         webView.stopLoading()
-        pageState = .loaded
+        if case .loading = pageState {
+            pageState = .loaded
+        }
     }
 
     public func captureSnapshot() {
-        guard webView.bounds.width > 0, webView.bounds.height > 0 else { return }
-        webView.takeSnapshot(with: nil) { [weak self] image, _ in
-            if let image { self?.snapshot = image }
+        guard !isCapturingSnapshot,
+              webView.window != nil,
+              webView.bounds.width >= 1,
+              webView.bounds.height >= 1 else {
+            return
+        }
+
+        isCapturingSnapshot = true
+        let configuration = WKSnapshotConfiguration()
+        configuration.rect = webView.bounds
+        webView.takeSnapshot(with: configuration) { [weak self] image, _ in
+            Task { @MainActor in
+                guard let self else { return }
+                self.isCapturingSnapshot = false
+                if let image, image.size.width >= 1, image.size.height >= 1 {
+                    self.snapshot = self.makeTabThumbnail(from: image)
+                }
+            }
         }
     }
 
     public func findInPage(_ query: String, backwards: Bool = false) {
-        guard !query.isEmpty,
-              let data = try? JSONEncoder().encode(query),
-              let encodedQuery = String(data: data, encoding: .utf8) else { return }
-        let direction = backwards ? "true" : "false"
-        webView.evaluateJavaScript("window.find(\(encodedQuery), false, \(direction), true)", completionHandler: nil)
+        guard let encodedQuery = jsonStringLiteral(query), !query.isEmpty else { return }
+        let backwardsFlag = backwards ? "true" : "false"
+        webView.evaluateJavaScript("window.find(\(encodedQuery), false, \(backwardsFlag), true)", completionHandler: nil)
     }
 
-    /// Count all matches of a query on the page using injected JS.
-    /// Calls completion with (currentIndex, totalCount).
     public func countFindMatches(_ query: String, completion: @escaping (Int, Int) -> Void) {
-        guard !query.isEmpty,
-              let data = try? JSONEncoder().encode(query),
-              let encodedQuery = String(data: data, encoding: .utf8) else {
+        guard let encodedQuery = jsonStringLiteral(query), !query.isEmpty else {
             completion(0, 0)
             return
         }
-        let js = """
-        (function() {
-            var query = \(encodedQuery);
-            if (!query) return JSON.stringify({current: 0, total: 0});
-            var body = document.body.innerText || '';
-            var regex = new RegExp(query.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&'), 'gi');
-            var matches = body.match(regex);
-            var total = matches ? matches.length : 0;
-            // Estimate current index from selection position
-            var sel = window.getSelection();
-            var current = 0;
-            if (sel && sel.rangeCount > 0 && total > 0) {
-                var range = sel.getRangeAt(0);
-                var preRange = document.createRange();
-                preRange.setStart(document.body, 0);
-                preRange.setEnd(range.startContainer, range.startOffset);
-                var preText = preRange.toString();
-                var preMatches = preText.match(regex);
-                current = preMatches ? preMatches.length + 1 : 1;
-                if (current > total) current = total;
-            }
-            return JSON.stringify({current: current, total: total});
-        })()
+
+        let script = """
+        (() => {
+          const query = \(encodedQuery);
+          const body = document.body ? (document.body.innerText || "") : "";
+          if (!query || !body) return JSON.stringify({ current: 0, total: 0 });
+          const escaped = query.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\\\$&");
+          const matches = body.match(new RegExp(escaped, "gi"));
+          const total = matches ? matches.length : 0;
+          return JSON.stringify({ current: total > 0 ? 1 : 0, total });
+        })();
         """
-        webView.evaluateJavaScript(js) { result, error in
-            guard let jsonString = result as? String,
-                  let jsonData = jsonString.data(using: .utf8),
-                  let dict = try? JSONSerialization.jsonObject(with: jsonData) as? [String: Int] else {
-                completion(0, 0)
-                return
-            }
-            let current = dict["current"] ?? 0
-            let total = dict["total"] ?? 0
+
+        webView.evaluateJavaScript(script) { result, _ in
+            let counts = Self.decodeFindCounts(from: result)
             Task { @MainActor in
-                completion(current, total)
+                completion(counts.current, counts.total)
             }
         }
     }
 
-    /// Clear find highlights and deselect any active selection.
     public func clearFindHighlights() {
-        webView.evaluateJavaScript("window.getSelection().removeAllRanges()", completionHandler: nil)
+        webView.evaluateJavaScript("window.getSelection && window.getSelection().removeAllRanges();", completionHandler: nil)
     }
 
     public func hideDistractingItems() {
-        let js = """
-        (function() {
-            ['[class*="ad-"]','[class*="ads-"]','[id*="ad-"]','.ad','.ads','.banner','.popup','.sponsor']
-            .forEach(sel => document.querySelectorAll(sel).forEach(el => el.style.display='none'));
-        })()
+        let script = """
+        (() => {
+          const selectors = ['[class*="ad-"]','[class*="ads-"]','[id*="ad-"]','.ad','.ads','.banner','.popup','.sponsor'];
+          selectors.forEach(selector => document.querySelectorAll(selector).forEach(element => element.style.display = 'none'));
+        })();
         """
-        webView.evaluateJavaScript(js, completionHandler: nil)
+        webView.evaluateJavaScript(script, completionHandler: nil)
     }
 
     public func translatePage() {
-        guard let url = webView.url,
-              !(url.host?.contains("translate.google") == true) else { return }
-        let str = "https://translate.google.com/translate?sl=auto&tl=vi&u=\(url.absoluteString)"
-        if let translateURL = URL(string: str) { load(translateURL) }
+        guard let url = webView.url ?? currentURL,
+              url.host?.contains("translate.google") != true,
+              var components = URLComponents(string: "https://translate.google.com/translate") else {
+            return
+        }
+        components.queryItems = [
+            URLQueryItem(name: "sl", value: "auto"),
+            URLQueryItem(name: "tl", value: "vi"),
+            URLQueryItem(name: "u", value: url.absoluteString)
+        ]
+        if let translatedURL = components.url {
+            load(translatedURL)
+        }
     }
 
     public func searchChatGPT() {
-        let base = webView.url.map { "https://chatgpt.com/?q=Explain: \($0.absoluteString)" } ?? "https://chatgpt.com"
-        if let url = URL(string: base.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? base) {
-            load(url)
+        var components = URLComponents(string: "https://chatgpt.com/")
+        if let url = webView.url ?? currentURL {
+            components?.queryItems = [URLQueryItem(name: "q", value: "Explain: \(url.absoluteString)")]
+        }
+        if let chatURL = components?.url {
+            load(chatURL)
         }
     }
 
     public func adjustTextZoom(by amount: Int) {
-        textZoomLevel = max(50, min(200, textZoomLevel + amount))
+        textZoomLevel = min(200, max(50, textZoomLevel + amount))
         webView.evaluateJavaScript("document.body.style.webkitTextSizeAdjust='\(textZoomLevel)%';", completionHandler: nil)
     }
 
@@ -232,7 +217,7 @@ public final class BrowserTabViewModel: NSObject, ObservableObject, Identifiable
         webView.customUserAgent = isDesktopSite
             ? "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15"
             : nil
-        webView.reload()
+        reload()
     }
 
     public func copyPageDiagnostics() {
@@ -242,9 +227,8 @@ public final class BrowserTabViewModel: NSObject, ObservableObject, Identifiable
 
     @discardableResult
     public func printPage() -> Bool {
-        guard UIPrintInteractionController.isPrintingAvailable else {
-            return false
-        }
+        guard UIPrintInteractionController.isPrintingAvailable else { return false }
+
         let printInfo = UIPrintInfo(dictionary: nil)
         printInfo.outputType = .general
         printInfo.jobName = title.isEmpty ? (currentURL?.host ?? "Trang web") : title
@@ -252,55 +236,194 @@ public final class BrowserTabViewModel: NSObject, ObservableObject, Identifiable
         let controller = UIPrintInteractionController.shared
         controller.printInfo = printInfo
         controller.printFormatter = webView.viewPrintFormatter()
-        return controller.present(animated: true, completionHandler: nil)
+        return controller.present(animated: true)
     }
 
     public var privacySummary: String {
-        let scheme = currentURL?.scheme?.uppercased() ?? "UNKNOWN"
-        let host = currentURL?.host ?? "trang hiện tại"
+        let url = currentURL ?? webView.url
+        let scheme = url?.scheme?.uppercased() ?? "UNKNOWN"
+        let host = url?.host ?? "trang hiện tại"
         let store = isPrivate ? "phiên riêng tư, không dùng kho dữ liệu bền vững" : "phiên thường, dùng kho dữ liệu mặc định"
         return "\(host)\nKết nối: \(scheme)\nDữ liệu: \(store)"
     }
+
+    public func retryAfterCrash() {
+        crashReloadTask?.cancel()
+        crashCount = 0
+        lastCrashTime = nil
+        lastCrashURL = nil
+        pageState = .loading(progress: 0)
+
+        if let url = currentURL ?? webView.url {
+            webView.load(URLRequest(url: url))
+        } else {
+            webView.reload()
+        }
+    }
+
+    private func setupObservers() {
+        webView.publisher(for: \.title)
+            .compactMap { $0?.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+            .removeDuplicates()
+            .receive(on: RunLoop.main)
+            .assign(to: &$title)
+
+        webView.publisher(for: \.url)
+            .removeDuplicates()
+            .receive(on: RunLoop.main)
+            .sink { [weak self] url in
+                self?.currentURL = url
+            }
+            .store(in: &observers)
+
+        webView.publisher(for: \.canGoBack)
+            .removeDuplicates()
+            .receive(on: RunLoop.main)
+            .assign(to: &$canGoBack)
+
+        webView.publisher(for: \.canGoForward)
+            .removeDuplicates()
+            .receive(on: RunLoop.main)
+            .assign(to: &$canGoForward)
+
+        webView.publisher(for: \.estimatedProgress)
+            .removeDuplicates()
+            .receive(on: RunLoop.main)
+            .sink { [weak self] progress in
+                guard let self, self.webView.isLoading else { return }
+                self.pageState = .loading(progress: progress)
+            }
+            .store(in: &observers)
+    }
+
+    private func handleNavigationError(_ error: Error) {
+        let nsError = error as NSError
+        if nsError.code == NSURLErrorCancelled || (nsError.domain == "WebKitErrorDomain" && nsError.code == 102) {
+            return
+        }
+        pageState = .failed(.navigationFailed(error.localizedDescription))
+    }
+
+    private func scheduleSnapshotCapture() {
+        pendingSnapshotTask?.cancel()
+        pendingSnapshotTask = Task { [weak self] in
+            try? await Task.sleep(nanoseconds: 700_000_000)
+            guard !Task.isCancelled else { return }
+            await MainActor.run {
+                self?.captureSnapshot()
+            }
+        }
+    }
+
+    private func makeTabThumbnail(from image: UIImage) -> UIImage {
+        let maxWidth: CGFloat = 520
+        guard image.size.width > maxWidth else { return image }
+
+        let scale = maxWidth / image.size.width
+        let targetSize = CGSize(width: maxWidth, height: image.size.height * scale)
+        let renderer = UIGraphicsImageRenderer(size: targetSize)
+        return renderer.image { _ in
+            image.draw(in: CGRect(origin: .zero, size: targetSize))
+        }
+    }
+
+    private func scheduleCrashReload(for webView: WKWebView) {
+        crashReloadTask?.cancel()
+        let delay: UInt64 = crashCount == 1 ? 1_000_000_000 : 3_000_000_000
+        pageState = .loading(progress: 0)
+
+        crashReloadTask = Task { [weak self, weak webView] in
+            try? await Task.sleep(nanoseconds: delay)
+            guard !Task.isCancelled else { return }
+            await MainActor.run {
+                guard let self, let webView else { return }
+                if let url = self.currentURL ?? webView.url {
+                    webView.load(URLRequest(url: url))
+                } else {
+                    webView.reload()
+                }
+            }
+        }
+    }
+
+    private func registerWebContentCrash() {
+        let now = Date()
+        let crashingURL = webView.url ?? currentURL
+        if let lastCrashTime,
+           now.timeIntervalSince(lastCrashTime) < Self.crashWindowSeconds,
+           lastCrashURL == crashingURL {
+            crashCount += 1
+        } else {
+            crashCount = 1
+        }
+        self.lastCrashTime = now
+        lastCrashURL = crashingURL
+    }
+
+    private func jsonStringLiteral(_ value: String) -> String? {
+        guard let data = try? JSONEncoder().encode(value) else { return nil }
+        return String(data: data, encoding: .utf8)
+    }
+
+    private static func decodeFindCounts(from result: Any?) -> (current: Int, total: Int) {
+        guard let json = result as? String,
+              let data = json.data(using: .utf8),
+              let object = try? JSONSerialization.jsonObject(with: data) as? [String: Int] else {
+            return (0, 0)
+        }
+        return (object["current"] ?? 0, object["total"] ?? 0)
+    }
 }
 
-// MARK: - WKNavigationDelegate
 extension BrowserTabViewModel: WKNavigationDelegate {
     public func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
-        pageState = .loading(progress: 0.0)
+        pageState = .loading(progress: 0)
+    }
+
+    public func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
+        pageState = .loading(progress: max(0.05, webView.estimatedProgress))
     }
 
     public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         pageState = .loaded
         if let url = webView.url {
+            currentURL = url
             onUpdateHistory?(url, webView.title ?? url.host ?? "Website")
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-            self?.captureSnapshot()
-        }
+        scheduleSnapshotCapture()
     }
 
     public func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-        let e = error as NSError
-        guard e.code != NSURLErrorCancelled, !(e.domain == "WebKitErrorDomain" && e.code == 102) else { return }
-        pageState = .failed(.navigationFailed(error.localizedDescription))
+        handleNavigationError(error)
     }
 
     public func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
-        let e = error as NSError
-        guard e.code != NSURLErrorCancelled, !(e.domain == "WebKitErrorDomain" && e.code == 102) else { return }
-        pageState = .failed(.navigationFailed(error.localizedDescription))
+        handleNavigationError(error)
     }
 
-    public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+    public func webView(
+        _ webView: WKWebView,
+        decidePolicyFor navigationAction: WKNavigationAction,
+        decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
+    ) {
         guard let url = navigationAction.request.url else {
-            decisionHandler(.cancel); return
+            decisionHandler(.cancel)
+            return
         }
-        let isMainFrame = navigationAction.targetFrame?.isMainFrame ?? false
+
+        let isMainFrame = navigationAction.targetFrame?.isMainFrame ?? true
         switch navigationPolicy.decidePolicy(for: url, isMainFrame: isMainFrame) {
-        case .allow:            decisionHandler(.allow)
-        case .cancel:           decisionHandler(.cancel)
-        case .openExternal(let u): decisionHandler(.cancel); onOpenExternalURL?(u)
-        case .openNewTab(let u):   decisionHandler(.cancel); onOpenNewTab?(u)
+        case .allow:
+            decisionHandler(.allow)
+        case .cancel:
+            decisionHandler(.cancel)
+        case .openExternal(let externalURL):
+            decisionHandler(.cancel)
+            onOpenExternalURL?(externalURL)
+        case .openNewTab(let newTabURL):
+            decisionHandler(.cancel)
+            onOpenNewTab?(newTabURL)
         case .blocked(let reason):
             decisionHandler(.cancel)
             pageState = .failed(.securityBlocked(reason: reason.rawValue))
@@ -308,92 +431,88 @@ extension BrowserTabViewModel: WKNavigationDelegate {
     }
 
     public func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
-        let now = Date()
-        let crashingURL = webView.url ?? currentURL
-
-        // Reset crash counter if outside crash window or URL changed
-        if let lastTime = lastCrashTime,
-           now.timeIntervalSince(lastTime) < Self.crashWindowSeconds,
-           lastCrashURL == crashingURL {
-            crashCount += 1
-        } else {
-            crashCount = 1
-        }
-        lastCrashTime = now
-        lastCrashURL = crashingURL
-
-        let redacted = crashingURL.map { BrowserURLNormalizer.redactURLForLogging($0) } ?? "nil"
-        print("[BrowserTabViewModel] Web process terminated (crash #\(crashCount)) for \(redacted)")
-
+        pendingSnapshotTask?.cancel()
+        registerWebContentCrash()
         if crashCount <= Self.maxAutoReloads {
-            // Exponential backoff: 1s for first, 3s for second
-            let delay = crashCount == 1 ? 1.0 : 3.0
-            pageState = .loading(progress: 0.0)
-            DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self, weak webView] in
-                guard let self, let webView else { return }
-                print("[BrowserTabViewModel] Auto-reloading after \(delay)s backoff (attempt #\(self.crashCount))")
-                webView.reload()
-            }
+            scheduleCrashReload(for: webView)
         } else {
-            print("[BrowserTabViewModel] Web process crashed \(crashCount) times — halting. User must retry manually.")
+            crashReloadTask?.cancel()
             pageState = .failed(.webProcessCrashed)
-        }
-    }
-
-    /// Manual retry after crash halt — resets crash counter.
-    public func retryAfterCrash() {
-        crashCount = 0
-        lastCrashTime = nil
-        lastCrashURL = nil
-        if let url = currentURL {
-            load(url)
-        } else {
-            webView.reload()
         }
     }
 }
 
-// MARK: - WKUIDelegate
 extension BrowserTabViewModel: WKUIDelegate {
-    public func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
-        if let url = navigationAction.request.url { onOpenNewTab?(url) }
+    public func webView(
+        _ webView: WKWebView,
+        createWebViewWith configuration: WKWebViewConfiguration,
+        for navigationAction: WKNavigationAction,
+        windowFeatures: WKWindowFeatures
+    ) -> WKWebView? {
+        if let url = navigationAction.request.url {
+            onOpenNewTab?(url)
+        }
         return nil
     }
 
-    public func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
-        guard let presenter = topViewController() else {
+    public func webView(
+        _ webView: WKWebView,
+        runJavaScriptAlertPanelWithMessage message: String,
+        initiatedByFrame frame: WKFrameInfo,
+        completionHandler: @escaping () -> Void
+    ) {
+        presentJavaScriptDialog(title: frame.request.url?.host ?? "Trang web", message: message) { alert in
+            alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in completionHandler() })
+        } fallback: {
             completionHandler()
-            return
         }
-        let alert = UIAlertController(title: frame.request.url?.host ?? "Trang web", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in completionHandler() })
-        presenter.present(alert, animated: true)
     }
 
-    public func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Void) {
-        guard let presenter = topViewController() else {
+    public func webView(
+        _ webView: WKWebView,
+        runJavaScriptConfirmPanelWithMessage message: String,
+        initiatedByFrame frame: WKFrameInfo,
+        completionHandler: @escaping (Bool) -> Void
+    ) {
+        presentJavaScriptDialog(title: frame.request.url?.host ?? "Trang web", message: message) { alert in
+            alert.addAction(UIAlertAction(title: "Hủy", style: .cancel) { _ in completionHandler(false) })
+            alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in completionHandler(true) })
+        } fallback: {
             completionHandler(false)
-            return
         }
-        let alert = UIAlertController(title: frame.request.url?.host ?? "Trang web", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Hủy", style: .cancel) { _ in completionHandler(false) })
-        alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in completionHandler(true) })
-        presenter.present(alert, animated: true)
     }
 
-    public func webView(_ webView: WKWebView, runJavaScriptTextInputPanelWithPrompt prompt: String, defaultText: String?, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (String?) -> Void) {
-        guard let presenter = topViewController() else {
+    public func webView(
+        _ webView: WKWebView,
+        runJavaScriptTextInputPanelWithPrompt prompt: String,
+        defaultText: String?,
+        initiatedByFrame frame: WKFrameInfo,
+        completionHandler: @escaping (String?) -> Void
+    ) {
+        presentJavaScriptDialog(title: frame.request.url?.host ?? "Trang web", message: prompt) { alert in
+            alert.addTextField { $0.text = defaultText }
+            alert.addAction(UIAlertAction(title: "Hủy", style: .cancel) { _ in completionHandler(nil) })
+            alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
+                completionHandler(alert.textFields?.first?.text)
+            })
+        } fallback: {
             completionHandler(nil)
+        }
+    }
+
+    private func presentJavaScriptDialog(
+        title: String,
+        message: String,
+        configure: (UIAlertController) -> Void,
+        fallback: () -> Void
+    ) {
+        guard let presenter = topViewController(), presenter.presentedViewController == nil else {
+            fallback()
             return
         }
-        let alert = UIAlertController(title: frame.request.url?.host ?? "Trang web", message: prompt, preferredStyle: .alert)
-        alert.addTextField { textField in
-            textField.text = defaultText
-        }
-        alert.addAction(UIAlertAction(title: "Hủy", style: .cancel) { _ in completionHandler(nil) })
-        alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
-            completionHandler(alert.textFields?.first?.text)
-        })
+
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        configure(alert)
         presenter.present(alert, animated: true)
     }
 
@@ -409,17 +528,21 @@ extension BrowserTabViewModel: WKUIDelegate {
     }
 }
 
-// MARK: - UIScrollViewDelegate
 extension BrowserTabViewModel: UIScrollViewDelegate {
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let currentY = scrollView.contentOffset.y
         let delta = currentY - lastScrollY
-        if currentY > 0 && scrollView.contentSize.height > scrollView.frame.size.height {
-            if delta > 12 { onScrollDirectionChange?(true) }
-            else if delta < -12 { onScrollDirectionChange?(false) }
-        } else if currentY <= 0 {
+
+        if currentY <= 0 {
             onScrollDirectionChange?(false)
+        } else if scrollView.contentSize.height > scrollView.bounds.height {
+            if delta > 12 {
+                onScrollDirectionChange?(true)
+            } else if delta < -12 {
+                onScrollDirectionChange?(false)
+            }
         }
+
         lastScrollY = currentY
     }
 }

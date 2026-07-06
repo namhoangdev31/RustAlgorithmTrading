@@ -1,31 +1,22 @@
+import Combine
 import Foundation
 import SwiftUI
-import Combine
+import UIKit
 
 public enum BrowserPageState: Equatable {
     case idle
     case loading(progress: Double)
     case loaded
     case failed(BrowserError)
-    
-    public static func == (lhs: BrowserPageState, rhs: BrowserPageState) -> Bool {
-        switch (lhs, rhs) {
-        case (.idle, .idle): return true
-        case (.loaded, .loaded): return true
-        case (.loading(let lp), .loading(let rp)): return lp == rp
-        case (.failed(let le), .failed(let re)): return le.localizedDescription == re.localizedDescription
-        default: return false
-        }
-    }
 }
 
-public enum BrowserError: Error, LocalizedError {
+public enum BrowserError: Error, LocalizedError, Equatable {
     case invalidURL
     case securityBlocked(reason: String)
     case navigationFailed(String)
     case webProcessCrashed
-    case other(Error)
-    
+    case other(String)
+
     public var errorDescription: String? {
         switch self {
         case .invalidURL:
@@ -36,8 +27,8 @@ public enum BrowserError: Error, LocalizedError {
             return "Lỗi tải trang: \(message)"
         case .webProcessCrashed:
             return "Trình duyệt bị sập bộ nhớ. Vui lòng tải lại trang."
-        case .other(let error):
-            return error.localizedDescription
+        case .other(let message):
+            return message
         }
     }
 }
@@ -61,7 +52,7 @@ public struct BrowserHistoryItem: Codable, Identifiable, Hashable {
     public let url: String
     public let title: String
     public let visitedAt: Date
-    
+
     public init(id: UUID = UUID(), url: String, title: String, visitedAt: Date = Date()) {
         self.id = id
         self.url = url
@@ -75,7 +66,7 @@ public struct BrowserBookmark: Codable, Identifiable, Hashable {
     public let url: String
     public let title: String
     public let createdAt: Date
-    
+
     public init(id: UUID = UUID(), url: String, title: String, createdAt: Date = Date()) {
         self.id = id
         self.url = url
@@ -91,8 +82,15 @@ public struct BrowserReadingListItem: Codable, Identifiable, Hashable {
     public let domain: String
     public let previewText: String
     public let createdAt: Date
-    
-    public init(id: UUID = UUID(), url: String, title: String, domain: String, previewText: String = "", createdAt: Date = Date()) {
+
+    public init(
+        id: UUID = UUID(),
+        url: String,
+        title: String,
+        domain: String,
+        previewText: String = "",
+        createdAt: Date = Date()
+    ) {
         self.id = id
         self.url = url
         self.title = title
@@ -102,22 +100,18 @@ public struct BrowserReadingListItem: Codable, Identifiable, Hashable {
     }
 }
 
-// MARK: - Navigation Route
-
 public enum BrowserRoute: Hashable {
-    case search                    // Open with empty search bar focused
-    case url(String)               // Open and load a specific URL
+    case search
+    case url(String)
 }
 
-// MARK: - Frequent Site (computed from history)
-
 public struct FrequentSite: Identifiable, Hashable {
-    public let id: String          // domain string
+    public let id: String
     public let domain: String
     public let title: String
     public let url: String
     public let visitCount: Int
-    
+
     public init(domain: String, title: String, url: String, visitCount: Int) {
         self.id = domain
         self.domain = domain
@@ -127,196 +121,179 @@ public struct FrequentSite: Identifiable, Hashable {
     }
 }
 
-// MARK: - Favicon Cache Service
-
 public final class FaviconCache: ObservableObject {
     public static let shared = FaviconCache()
-    
-    private let fileManager = FileManager.default
+
+    @Published private var memoryCache: [String: UIImage] = [:]
+
+    private let fileManager: FileManager
     private let cacheDirectory: URL
     private let session: URLSession
-    
-    // In-memory cache of images
-    @Published private var memoryCache: [String: UIImage] = [:]
-    // Set of domains that we tried to load and failed (to avoid redundant network requests)
+    private let stateQueue = DispatchQueue(label: "com.lepos.browser.favicon-cache", qos: .utility)
     private var failedDomains = Set<String>()
-    // Set of domains currently downloading (to prevent concurrent duplicate downloads)
-    private var downloadingDomains = Set<String>()
-    
-    internal init(cacheDirectory: URL? = nil, session: URLSession = .shared) {
+    private var inFlightDomains = Set<String>()
+
+    internal init(
+        cacheDirectory: URL? = nil,
+        session: URLSession = .shared,
+        fileManager: FileManager = .default
+    ) {
+        self.fileManager = fileManager
         self.session = session
-        if let customDir = cacheDirectory {
-            self.cacheDirectory = customDir
-        } else {
-            let paths = fileManager.urls(for: .cachesDirectory, in: .userDomainMask)
-            self.cacheDirectory = paths[0].appendingPathComponent("BrowserFavicons")
-        }
-        
-        // Create cache directory if it doesn't exist
-        if !fileManager.fileExists(atPath: self.cacheDirectory.path) {
-            try? fileManager.createDirectory(at: self.cacheDirectory, withIntermediateDirectories: true, attributes: nil)
-        }
+        self.cacheDirectory = cacheDirectory ?? fileManager
+            .urls(for: .cachesDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("BrowserFavicons", isDirectory: true)
+        try? fileManager.createDirectory(at: self.cacheDirectory, withIntermediateDirectories: true)
     }
-    
-    // Pure getter to be called inside SwiftUI body - no side effects!
+
     public func getCachedFavicon(for domain: String) -> UIImage? {
-        return memoryCache[domain]
+        memoryCache[normalizedDomain(domain)]
     }
-    
-    // Imperative trigger to be called inside onAppear/onChange - safe!
+
     public func loadFavicon(for domain: String) {
-        guard !domain.isEmpty else { return }
-        
-        // 1. Check in-memory cache
-        if memoryCache[domain] != nil {
+        let domain = normalizedDomain(domain)
+        guard !domain.isEmpty, memoryCache[domain] == nil else { return }
+
+        if let image = UIImage(contentsOfFile: fileURL(for: domain).path) {
+            DispatchQueue.main.async { [weak self] in
+                self?.memoryCache[domain] = image
+            }
             return
         }
-        
-        // 2. Avoid duplicate requests or retrying failed ones
-        if failedDomains.contains(domain) || downloadingDomains.contains(domain) {
-            return
-        }
-        
-        // 3. Try reading from disk cache
-        let fileURL = cacheDirectory.appendingPathComponent("\(domain).png")
-        if fileManager.fileExists(atPath: fileURL.path) {
-            if let data = try? Data(contentsOf: fileURL),
-               let image = UIImage(data: data) {
-                // Save to memory cache on MainActor to trigger observed updates
-                DispatchQueue.main.async {
-                    self.memoryCache[domain] = image
-                }
+
+        stateQueue.async { [weak self] in
+            guard let self,
+                  !self.failedDomains.contains(domain),
+                  !self.inFlightDomains.contains(domain) else {
                 return
             }
-        }
-        
-        // 4. Trigger download
-        downloadingDomains.insert(domain)
-        Task {
-            await downloadFavicon(for: domain)
+            self.inFlightDomains.insert(domain)
+            Task { await self.downloadFavicon(for: domain) }
         }
     }
-    
+
     private func downloadFavicon(for domain: String) async {
-        guard !domain.isEmpty else { return }
-        
-        // Attempt list:
-        // 1. Try Google's favicon redirect service first (highly likely to find high-resolution touch icons)
-        // 2. Try directly downloading favicon.ico from the website root as fallback
-        let urls = [
-            URL(string: "https://www.google.com/s2/favicons?domain=\(domain)&sz=128"),
-            URL(string: "https://\(domain)/favicon.ico")
-        ].compactMap { $0 }
-        
-        for url in urls {
+        for url in faviconCandidates(for: domain) {
             var request = URLRequest(url: url)
-            request.timeoutInterval = 4.0 // Short timeout to avoid blocking UI/network queue
-            
+            request.timeoutInterval = 4
+
             do {
                 let (data, response) = try await session.data(for: request)
                 guard let httpResponse = response as? HTTPURLResponse,
-                       httpResponse.statusCode == 200,
-                       let image = UIImage(data: data) else {
+                      httpResponse.statusCode == 200,
+                      let image = UIImage(data: data),
+                      image.size.width > 1,
+                      image.size.height > 1 else {
                     continue
                 }
-                
-                // Confirm valid image sizes
-                guard image.size.width > 1 && image.size.height > 1 else {
-                    continue
-                }
-                
-                // Save to disk cache
-                let fileURL = cacheDirectory.appendingPathComponent("\(domain).png")
-                try? data.write(to: fileURL)
-                
-                // Save to memory cache and publish updates
-                _ = await MainActor.run {
+
+                try? data.write(to: fileURL(for: domain), options: .atomic)
+                await MainActor.run {
                     self.memoryCache[domain] = image
-                    self.downloadingDomains.remove(domain)
                 }
+                markDownloadFinished(for: domain, failed: false)
                 return
             } catch {
                 continue
             }
         }
-        
-        // If all downloads fail, add to failed list to avoid re-requests in this session
-        _ = await MainActor.run {
-            self.failedDomains.insert(domain)
-            self.downloadingDomains.remove(domain)
+
+        markDownloadFinished(for: domain, failed: true)
+    }
+
+    private func markDownloadFinished(for domain: String, failed: Bool) {
+        stateQueue.async { [weak self] in
+            self?.inFlightDomains.remove(domain)
+            if failed {
+                self?.failedDomains.insert(domain)
+            }
         }
     }
-}
 
-// MARK: - Reusable Favicon View Component
+    private func faviconCandidates(for domain: String) -> [URL] {
+        [
+            URL(string: "https://www.google.com/s2/favicons?domain=\(domain)&sz=128"),
+            URL(string: "https://\(domain)/favicon.ico")
+        ].compactMap { $0 }
+    }
+
+    private func fileURL(for domain: String) -> URL {
+        cacheDirectory.appendingPathComponent("\(safeFileName(for: domain)).png", isDirectory: false)
+    }
+
+    private func normalizedDomain(_ domain: String) -> String {
+        domain.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+    }
+
+    private func safeFileName(for domain: String) -> String {
+        domain.map { character in
+            character.isLetter || character.isNumber || character == "." || character == "-" ? character : "_"
+        }.reduce(into: "") { $0.append($1) }
+    }
+}
 
 public struct FaviconView: View {
     let domain: String
     let size: CGFloat
     let initial: String
     let bgColor: Color?
-    
+
     @ObservedObject private var cache = FaviconCache.shared
-    
+
     public init(domain: String, size: CGFloat = 60, initial: String, bgColor: Color? = nil) {
-        self.domain = domain.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+        self.domain = domain.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         self.size = size
         self.initial = initial
         self.bgColor = bgColor
     }
-    
-    private var defaultBgColor: Color {
-        if let bgColor = bgColor {
-            return bgColor
-        }
-        let hash = abs(domain.hashValue)
-        let hue = Double(hash % 360) / 360.0
-        return Color(hue: hue, saturation: 0.55, brightness: 0.78)
-    }
-    
+
     public var body: some View {
         Group {
             if let image = cache.getCachedFavicon(for: domain) {
-                if size >= 36 {
-                    // Large tile style: center the icon inside a rounded tile background to avoid blurry scaling
-                    ZStack {
-                        RoundedRectangle(cornerRadius: size * 0.25, style: .continuous)
-                            .fill(Color(UIColor.secondarySystemGroupedBackground))
-                            .frame(width: size, height: size)
-                            .shadow(color: .black.opacity(0.06), radius: 4, x: 0, y: 2)
-                        
-                        Image(uiImage: image)
-                            .resizable()
-                            .interpolation(.high)
-                            .scaledToFit()
-                            .frame(width: min(size * 0.55, 32), height: min(size * 0.55, 32))
-                    }
-                } else {
-                    // Small inline style: render the image directly
-                    Image(uiImage: image)
-                        .resizable()
-                        .interpolation(.high)
-                        .scaledToFit()
-                        .frame(width: size, height: size)
-                        .clipShape(RoundedRectangle(cornerRadius: size * 0.25, style: .continuous))
-                }
+                Image(uiImage: image)
+                    .resizable()
+                    .interpolation(.high)
+                    .scaledToFit()
+                    .frame(width: iconSize, height: iconSize)
+                    .frame(width: size, height: size)
+                    .background(tileBackground)
+                    .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
             } else {
-                ZStack {
-                    RoundedRectangle(cornerRadius: size * 0.25, style: .continuous)
-                        .fill(defaultBgColor)
-                        .frame(width: size, height: size)
-                        
-                    Text(initial.uppercased())
-                        .font(.system(size: size * 0.4, weight: .bold))
-                        .foregroundColor(.white)
-                }
+                Text(displayInitial)
+                    .font(.system(size: max(10, size * 0.38), weight: .bold))
+                    .foregroundStyle(.white)
+                    .frame(width: size, height: size)
+                    .background(defaultBackground)
+                    .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
             }
         }
-        .onAppear {
-            cache.loadFavicon(for: domain)
-        }
+        .onAppear { cache.loadFavicon(for: domain) }
         .onChange(of: domain) { _, newDomain in
             cache.loadFavicon(for: newDomain)
         }
+    }
+
+    private var iconSize: CGFloat {
+        size >= 36 ? min(size * 0.55, 32) : size
+    }
+
+    private var cornerRadius: CGFloat {
+        max(4, size * 0.24)
+    }
+
+    private var displayInitial: String {
+        let fallback = domain.first.map(String.init) ?? "?"
+        return (initial.first.map(String.init) ?? fallback).uppercased()
+    }
+
+    private var tileBackground: some View {
+        RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+            .fill(Color(UIColor.secondarySystemGroupedBackground))
+    }
+
+    private var defaultBackground: some View {
+        let hue = Double(abs(domain.hashValue % 360)) / 360
+        return RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+            .fill(bgColor ?? Color(hue: hue, saturation: 0.52, brightness: 0.72))
     }
 }
