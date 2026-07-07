@@ -46,6 +46,17 @@ public final class BrowserTabViewModel: NSObject, ObservableObject, Identifiable
         configuration.defaultWebpagePreferences.allowsContentJavaScript = true
         configuration.websiteDataStore = isPrivate ? .nonPersistent() : .default()
 
+        if isPrivate {
+            let isProxyEnabled = UserDefaults.standard.bool(forKey: "browser_proxy_enabled")
+            if isProxyEnabled,
+               let savedData = UserDefaults.standard.data(forKey: "browser_proxy_config"),
+               let config = try? JSONDecoder().decode(BrowserProxyConfig.self, from: savedData) {
+                if #available(iOS 17.0, *) {
+                    configuration.websiteDataStore.proxyConfigurations = [config.toProxyConfiguration()]
+                }
+            }
+        }
+
         self.webView = WKWebView(frame: .zero, configuration: configuration)
         self.currentURL = initialURL
 
@@ -413,6 +424,16 @@ extension BrowserTabViewModel: WKNavigationDelegate {
         }
 
         let isMainFrame = navigationAction.targetFrame?.isMainFrame ?? true
+        
+        let isAdBlockActive = UserDefaults.standard.object(forKey: "browser_adblock_enabled") as? Bool ?? true
+        if isAdBlockActive && navigationAction.targetFrame == nil {
+            if BrowserAdBlocker.shouldBlockProactively(requestURL: url, sourceURL: webView.url) {
+                decisionHandler(.cancel)
+                notifyPopupBlocked(url: url)
+                return
+            }
+        }
+        
         switch navigationPolicy.decidePolicy(for: url, isMainFrame: isMainFrame) {
         case .allow:
             decisionHandler(.allow)
@@ -449,10 +470,36 @@ extension BrowserTabViewModel: WKUIDelegate {
         for navigationAction: WKNavigationAction,
         windowFeatures: WKWindowFeatures
     ) -> WKWebView? {
+        let isAdBlockActive = UserDefaults.standard.object(forKey: "browser_adblock_enabled") as? Bool ?? true
+        
+        if isAdBlockActive {
+            // Block non-user-initiated popups (script-initiated)
+            if navigationAction.navigationType == .other {
+                notifyPopupBlocked(url: navigationAction.request.url)
+                return nil
+            }
+            
+            // Proactive cross-origin popup check (e.g. gambling/betting redirect new tabs)
+            if let url = navigationAction.request.url,
+               BrowserAdBlocker.shouldBlockProactively(requestURL: url, sourceURL: webView.url) {
+                notifyPopupBlocked(url: url)
+                return nil
+            }
+        }
+        
         if let url = navigationAction.request.url {
             onOpenNewTab?(url)
         }
         return nil
+    }
+    
+    private func notifyPopupBlocked(url: URL?) {
+        Task { @MainActor in
+            if let cachedVM = AppDependencyContainer.cachedBrowserViewModel {
+                let host = url?.host ?? "quảng cáo"
+                cachedVM.lastPageActionMessage = "Đã chặn quảng cáo tự động từ: \(host)"
+            }
+        }
     }
 
     public func webView(

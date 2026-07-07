@@ -36,6 +36,7 @@ struct BrowserAddressBarContent: View {
     @EnvironmentObject var navigation: NavigationViewModel
     
     @State private var showExtensionsAlert = false
+    @State private var showProxySettings = false
     @FocusState private var isTextFieldFocused: Bool
 
     var body: some View {
@@ -132,6 +133,40 @@ struct BrowserAddressBarContent: View {
                                 .lineLimit(1)
                                 .truncationMode(.tail)
 
+                            if viewModel.isPrivateMode {
+                                Menu {
+                                    Toggle("Kích hoạt Proxy", isOn: $viewModel.isProxyEnabled)
+                                    
+                                    if let config = viewModel.proxyConfig {
+                                        Section("Cấu hình hiện tại") {
+                                            Button("\(config.displayString)") {
+                                                showProxySettings = true
+                                            }
+                                        }
+                                    }
+                                    
+                                    Button("Cấu hình Proxy...") {
+                                        showProxySettings = true
+                                    }
+                                } label: {
+                                    Text("Proxy")
+                                        .font(.system(size: 9, weight: .black))
+                                        .foregroundColor(viewModel.isProxyEnabled ? .white : .secondary)
+                                        .padding(.horizontal, 6)
+                                        .padding(.vertical, 3)
+                                        .background(
+                                            Capsule()
+                                                .fill(viewModel.isProxyEnabled ? Color.blue : Color.clear)
+                                        )
+                                        .overlay(
+                                            Capsule()
+                                                .stroke(viewModel.isProxyEnabled ? Color.blue : Color.secondary.opacity(0.6), lineWidth: 1)
+                                        )
+                                }
+                                .buttonStyle(.plain)
+                                .highPriorityGesture(TapGesture()) // bypass text field editing trigger
+                            }
+
                             Spacer(minLength: 0)
                         }
                         .padding(.leading, 14)
@@ -171,6 +206,9 @@ struct BrowserAddressBarContent: View {
             Button("OK", role: .cancel) {}
         } message: {
             Text("iOS không cho app bên thứ ba quản lý Safari Extensions trực tiếp.")
+        }
+        .sheet(isPresented: $showProxySettings) {
+            BrowserProxySettingsView(viewModel: viewModel)
         }
         .onChange(of: viewModel.isAddressBarEditing) { _, newValue in
             if newValue {
