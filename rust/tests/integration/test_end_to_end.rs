@@ -26,6 +26,8 @@ mod integration_tests {
             average_price: None,
             created_at: Utc::now(),
             updated_at: Utc::now(),
+        account_id: None,
+        external_proof: None,
         };
 
         // Initial state
@@ -79,6 +81,8 @@ mod integration_tests {
             average_price: None,
             created_at: Utc::now(),
             updated_at: Utc::now(),
+        account_id: None,
+        external_proof: None,
         };
 
         assert_eq!(order.symbol, signal.symbol);
@@ -104,6 +108,8 @@ mod integration_tests {
             average_price: Some(Price(150.0)),
             created_at: Utc::now(),
             updated_at: Utc::now(),
+        account_id: None,
+        external_proof: None,
         };
 
         // 2. Create position from filled order
@@ -206,6 +212,8 @@ mod integration_tests {
             average_price: Some(best_ask),
             created_at: Utc::now(),
             updated_at: Utc::now(),
+        account_id: None,
+        external_proof: None,
         };
 
         assert_eq!(order.average_price.unwrap(), best_ask);
@@ -234,6 +242,8 @@ mod integration_tests {
                 average_price: None,
                 created_at: Utc::now(),
                 updated_at: Utc::now(),
+            account_id: None,
+            external_proof: None,
             };
             orders.push(order);
         }
@@ -303,6 +313,8 @@ mod integration_tests {
             average_price: None,
             created_at: Utc::now(),
             updated_at: Utc::now(),
+        account_id: None,
+        external_proof: None,
         };
 
         // Cancel order
@@ -352,6 +364,8 @@ mod integration_tests {
                 average_price: None,
                 created_at: Utc::now(),
                 updated_at: Utc::now(),
+            account_id: None,
+            external_proof: None,
             };
 
             assert_eq!(stop_order.side, Side::Ask);

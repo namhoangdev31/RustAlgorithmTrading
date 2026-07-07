@@ -52,6 +52,8 @@ fn create_order(quantity: f64) -> Order {
         average_price: None,
         created_at: Utc::now(),
         updated_at: Utc::now(),
+    account_id: None,
+    external_proof: None,
     }
 }
 

@@ -116,6 +116,25 @@ impl RiskConfig {
     }
 }
 
+/// Configuration for execution policy
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ExecutionPolicy {
+    pub live_trading_enabled: bool,
+    pub allowlist_accounts: Vec<String>,
+    #[serde(default)]
+    pub kill_switch_enabled: bool,
+}
+
+impl Default for ExecutionPolicy {
+    fn default() -> Self {
+        Self {
+            live_trading_enabled: false,
+            allowlist_accounts: Vec::new(),
+            kill_switch_enabled: false,
+        }
+    }
+}
+
 /// Configuration for execution engine
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ExecutionConfig {
@@ -125,10 +144,18 @@ pub struct ExecutionConfig {
     pub rate_limit_per_second: u32,
     pub retry_attempts: u32,
     pub retry_delay_ms: u64,
-    pub paper_trading: bool,
+    pub trading_mode: crate::types::TradingMode,
     /// Maximum allowed slippage in basis points (default: 50.0 = 0.5%)
     #[serde(default = "default_max_slippage_bps")]
     pub max_slippage_bps: f64,
+    #[serde(default)]
+    pub policy: ExecutionPolicy,
+    #[serde(default = "default_execution_zmq_publish_address")]
+    pub zmq_publish_address: String,
+}
+
+fn default_execution_zmq_publish_address() -> String {
+    "tcp://0.0.0.0:5557".to_string()
 }
 
 fn default_max_slippage_bps() -> f64 {
@@ -144,6 +171,13 @@ impl ExecutionConfig {
             return Err(TradingError::Configuration(format!(
                 "invalid API URL: {}",
                 self.exchange_api_url
+            )));
+        }
+
+        if !self.zmq_publish_address.starts_with("tcp://") {
+            return Err(TradingError::Configuration(format!(
+                "invalid ZMQ publish address: {}",
+                self.zmq_publish_address
             )));
         }
 
@@ -190,49 +224,82 @@ impl ExecutionConfig {
 
     /// Load API credentials from environment variables
     pub fn load_credentials(&mut self) -> Result<()> {
-        if self.api_key.is_none() {
-            let key = std::env::var("ALPACA_API_KEY").map_err(|_| {
-                TradingError::Configuration(
-                    "ALPACA_API_KEY environment variable not set".to_string(),
-                )
-            })?;
-
-            // Validate API key is not empty
-            if key.trim().is_empty() {
-                return Err(TradingError::Configuration(
-                    "ALPACA_API_KEY cannot be empty".to_string(),
-                ));
+        match self.trading_mode {
+            crate::types::TradingMode::Simulated => {
+                Ok(())
             }
-
-            self.api_key = Some(key);
-        }
-
-        if self.api_secret.is_none() {
-            let secret = std::env::var("ALPACA_SECRET_KEY").map_err(|_| {
-                TradingError::Configuration(
-                    "ALPACA_SECRET_KEY environment variable not set".to_string(),
-                )
-            })?;
-
-            // Validate API secret is not empty
-            if secret.trim().is_empty() {
-                return Err(TradingError::Configuration(
-                    "ALPACA_SECRET_KEY cannot be empty".to_string(),
-                ));
+            crate::types::TradingMode::Paper => {
+                if self.api_key.is_none() {
+                    let key = std::env::var("ALPACA_PAPER_API_KEY")
+                        .or_else(|_| std::env::var("ALPACA_API_KEY"))
+                        .map_err(|_| {
+                            TradingError::Configuration(
+                                "API key credentials not found: Neither ALPACA_PAPER_API_KEY nor ALPACA_API_KEY set".to_string(),
+                            )
+                        })?;
+                    if key.trim().is_empty() {
+                        return Err(TradingError::Configuration(
+                            "API key cannot be empty".to_string(),
+                        ));
+                    }
+                    self.api_key = Some(key);
+                }
+                if self.api_secret.is_none() {
+                    let secret = std::env::var("ALPACA_PAPER_SECRET_KEY")
+                        .or_else(|_| std::env::var("ALPACA_SECRET_KEY"))
+                        .map_err(|_| {
+                            TradingError::Configuration(
+                                "API secret credentials not found: Neither ALPACA_PAPER_SECRET_KEY nor ALPACA_SECRET_KEY set".to_string(),
+                            )
+                        })?;
+                    if secret.trim().is_empty() {
+                        return Err(TradingError::Configuration(
+                            "API secret cannot be empty".to_string(),
+                        ));
+                    }
+                    self.api_secret = Some(secret);
+                }
+                Ok(())
             }
-
-            self.api_secret = Some(secret);
+            crate::types::TradingMode::Live => {
+                if self.api_key.is_none() {
+                    let key = std::env::var("ALPACA_LIVE_API_KEY")
+                        .map_err(|_| {
+                            TradingError::Configuration(
+                                "API key credentials not found in ALPACA_LIVE_API_KEY".to_string(),
+                            )
+                        })?;
+                    if key.trim().is_empty() {
+                        return Err(TradingError::Configuration(
+                            "API key cannot be empty".to_string(),
+                        ));
+                    }
+                    self.api_key = Some(key);
+                }
+                if self.api_secret.is_none() {
+                    let secret = std::env::var("ALPACA_LIVE_SECRET_KEY")
+                        .map_err(|_| {
+                            TradingError::Configuration(
+                                "API secret credentials not found in ALPACA_LIVE_SECRET_KEY".to_string(),
+                            )
+                        })?;
+                    if secret.trim().is_empty() {
+                        return Err(TradingError::Configuration(
+                            "API secret cannot be empty".to_string(),
+                        ));
+                    }
+                    self.api_secret = Some(secret);
+                }
+                Ok(())
+            }
         }
-
-        Ok(())
     }
 
     /// Validate that API credentials are configured and not empty
     pub fn validate_credentials(&self) -> Result<()> {
-        if !self.paper_trading {
-            // In live trading mode, credentials are required
+        if self.trading_mode != crate::types::TradingMode::Simulated {
             let key = self.api_key.as_ref().ok_or_else(|| {
-                TradingError::Configuration("API key not configured for live trading".to_string())
+                TradingError::Configuration("API key not configured".to_string())
             })?;
 
             if key.trim().is_empty() {
@@ -243,7 +310,7 @@ impl ExecutionConfig {
 
             let secret = self.api_secret.as_ref().ok_or_else(|| {
                 TradingError::Configuration(
-                    "API secret not configured for live trading".to_string(),
+                    "API secret not configured".to_string(),
                 )
             })?;
 
@@ -253,14 +320,12 @@ impl ExecutionConfig {
                 ));
             }
         }
-
         Ok(())
     }
 
     /// Validate that the API URL uses HTTPS protocol
     pub fn validate_https(&self) -> Result<()> {
-        if !self.paper_trading {
-            // In live trading, enforce HTTPS
+        if self.trading_mode == crate::types::TradingMode::Live {
             if !self.exchange_api_url.starts_with("https://") {
                 return Err(TradingError::Configuration(format!(
                     "API URL must use HTTPS for live trading. Got: {}. \
@@ -269,7 +334,6 @@ impl ExecutionConfig {
                 )));
             }
         }
-
         Ok(())
     }
 }
@@ -378,6 +442,16 @@ impl SystemConfig {
 
     /// Check if paper trading is enabled
     pub fn is_paper_trading(&self) -> bool {
-        self.execution.paper_trading
+        self.execution.trading_mode == crate::types::TradingMode::Paper
+    }
+
+    /// Check if simulated trading is enabled
+    pub fn is_simulated_trading(&self) -> bool {
+        self.execution.trading_mode == crate::types::TradingMode::Simulated
+    }
+
+    /// Check if live trading is enabled
+    pub fn is_live_trading(&self) -> bool {
+        self.execution.trading_mode == crate::types::TradingMode::Live
     }
 }

@@ -402,6 +402,8 @@ mod order_tests {
             average_price: None,
             created_at: now,
             updated_at: now,
+        account_id: None,
+        external_proof: None,
         };
 
         assert_eq!(order.symbol, Symbol("AAPL".to_string()));
@@ -425,6 +427,8 @@ mod order_tests {
             average_price: None,
             created_at: Utc::now(),
             updated_at: Utc::now(),
+        account_id: None,
+        external_proof: None,
         };
 
         assert_eq!(order.order_type, OrderType::Market);
@@ -447,6 +451,8 @@ mod order_tests {
             average_price: None,
             created_at: Utc::now(),
             updated_at: Utc::now(),
+        account_id: None,
+        external_proof: None,
         };
 
         assert_eq!(order.order_type, OrderType::Limit);
@@ -469,6 +475,8 @@ mod order_tests {
             average_price: Some(Price(150.0)),
             created_at: Utc::now(),
             updated_at: Utc::now(),
+        account_id: None,
+        external_proof: None,
         };
 
         assert!(order.filled_quantity.0 < order.quantity.0);

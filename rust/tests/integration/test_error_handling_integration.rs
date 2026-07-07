@@ -9,7 +9,7 @@
 //! - Rate limiting
 //! - Authentication failures
 
-use common::{TradingError, Result, config::ExecutionConfig};
+use common::{TradingError, Result, config::{ExecutionConfig, ExecutionPolicy}};
 use execution_engine::router::OrderRouter;
 use common::types::*;
 use chrono::Utc;
@@ -22,15 +22,20 @@ mod error_handling_tests {
     #[tokio::test]
     async fn test_invalid_configuration_https_validation() {
         // Test: Configuration must enforce HTTPS in live trading
+        let mut policy = ExecutionPolicy::default();
+        policy.live_trading_enabled = true;
+        policy.allowlist_accounts.push("acc_test".to_string());
         let config = ExecutionConfig {
             exchange_api_url: "http://insecure-api.example.com".to_string(), // HTTP not HTTPS
             api_key: Some("key".to_string()),
             api_secret: Some("secret".to_string()),
-            paper_trading: false, // Live trading
+            trading_mode: common::types::TradingMode::Live, // Live trading
             rate_limit_per_second: 10,
             retry_attempts: 3,
             retry_delay_ms: 1000,
             max_slippage_bps: 50.0,
+            policy,
+            zmq_publish_address: "tcp://127.0.0.1:0".to_string(),
         };
 
         let result = OrderRouter::new(config);
@@ -46,15 +51,20 @@ mod error_handling_tests {
     #[tokio::test]
     async fn test_missing_credentials_error() {
         // Test: Live trading requires API credentials
+        let mut policy = ExecutionPolicy::default();
+        policy.live_trading_enabled = true;
+        policy.allowlist_accounts.push("acc_test".to_string());
         let config = ExecutionConfig {
             exchange_api_url: "https://api.alpaca.markets".to_string(),
             api_key: None, // Missing credentials
             api_secret: None,
-            paper_trading: false, // Live trading
+            trading_mode: common::types::TradingMode::Live, // Live trading
             rate_limit_per_second: 10,
             retry_attempts: 3,
             retry_delay_ms: 1000,
             max_slippage_bps: 50.0,
+            policy,
+            zmq_publish_address: "tcp://127.0.0.1:0".to_string(),
         };
 
         let result = OrderRouter::new(config);
@@ -74,11 +84,13 @@ mod error_handling_tests {
             exchange_api_url: "https://paper-api.alpaca.markets".to_string(),
             api_key: Some("key".to_string()),
             api_secret: Some("secret".to_string()),
-            paper_trading: true,
+            trading_mode: common::types::TradingMode::Paper,
             rate_limit_per_second: 0, // Invalid: zero rate limit
             retry_attempts: 3,
             retry_delay_ms: 1000,
             max_slippage_bps: 50.0,
+            policy: Default::default(),
+            zmq_publish_address: "tcp://127.0.0.1:0".to_string(),
         };
 
         let result = OrderRouter::new(config);
@@ -98,11 +110,13 @@ mod error_handling_tests {
             exchange_api_url: "https://paper-api.alpaca.markets".to_string(),
             api_key: Some("key".to_string()),
             api_secret: Some("secret".to_string()),
-            paper_trading: true,
+            trading_mode: common::types::TradingMode::Paper,
             rate_limit_per_second: 10,
             retry_attempts: 3,
             retry_delay_ms: 1000,
             max_slippage_bps: 50.0,
+            policy: Default::default(),
+            zmq_publish_address: "tcp://127.0.0.1:0".to_string(),
         };
 
         let router = OrderRouter::new(config).unwrap();
@@ -121,6 +135,8 @@ mod error_handling_tests {
             average_price: None,
             created_at: Utc::now(),
             updated_at: Utc::now(),
+            account_id: None,
+            external_proof: None,
         };
 
         let current_market_price = Some(150.0); // Market at $150, limit at $200 = 33% slippage
@@ -142,11 +158,13 @@ mod error_handling_tests {
             exchange_api_url: "http://localhost:8080".to_string(), // HTTP is OK for paper trading
             api_key: Some("test_key".to_string()),
             api_secret: Some("test_secret".to_string()),
-            paper_trading: true,
+            trading_mode: common::types::TradingMode::Paper,
             rate_limit_per_second: 10,
             retry_attempts: 3,
             retry_delay_ms: 1000,
             max_slippage_bps: 50.0,
+            policy: Default::default(),
+            zmq_publish_address: "tcp://127.0.0.1:0".to_string(),
         };
 
         let result = OrderRouter::new(config);
@@ -178,7 +196,7 @@ mod error_handling_tests {
             side: Side::Bid,
             quantity: Quantity(100.0),
             entry_price: Price(150.0),
-            current_price: Price(145.0),
+            current_price: Price(140.0),
             unrealized_pnl: -500.0,
             realized_pnl: 0.0,
             opened_at: Utc::now(),
@@ -211,6 +229,8 @@ mod error_handling_tests {
             average_price: None,
             created_at: Utc::now(),
             updated_at: Utc::now(),
+            account_id: None,
+            external_proof: None,
         };
 
         // Validation should catch missing stop_price for StopLimit orders
@@ -335,11 +355,13 @@ mod error_handling_tests {
             exchange_api_url: "https://paper-api.alpaca.markets".to_string(),
             api_key: Some("invalid_key_12345".to_string()),
             api_secret: Some("invalid_secret_67890".to_string()),
-            paper_trading: true, // Even in paper trading, we track auth
+            trading_mode: common::types::TradingMode::Paper, // Even in paper trading, we track auth
             rate_limit_per_second: 10,
             retry_attempts: 3,
             retry_delay_ms: 1000,
             max_slippage_bps: 50.0,
+            policy: Default::default(),
+            zmq_publish_address: "tcp://127.0.0.1:0".to_string(),
         };
 
         let router = OrderRouter::new(config);
@@ -355,11 +377,13 @@ mod error_handling_tests {
             exchange_api_url: "https://paper-api.alpaca.markets".to_string(),
             api_key: Some("key".to_string()),
             api_secret: Some("secret".to_string()),
-            paper_trading: true,
+            trading_mode: common::types::TradingMode::Paper,
             rate_limit_per_second: 2, // Very low limit for testing
             retry_attempts: 3,
             retry_delay_ms: 100,
             max_slippage_bps: 50.0,
+            policy: Default::default(),
+            zmq_publish_address: "tcp://127.0.0.1:0".to_string(),
         };
 
         let router = OrderRouter::new(config).unwrap();
@@ -380,6 +404,8 @@ mod error_handling_tests {
                 average_price: None,
                 created_at: Utc::now(),
                 updated_at: Utc::now(),
+                account_id: None,
+                external_proof: None,
             })
             .collect();
 
@@ -401,11 +427,13 @@ mod error_handling_tests {
             exchange_api_url: "https://paper-api.alpaca.markets".to_string(),
             api_key: Some("key".to_string()),
             api_secret: Some("secret".to_string()),
-            paper_trading: true,
+            trading_mode: common::types::TradingMode::Simulated,
             rate_limit_per_second: 10,
             retry_attempts: 3,
             retry_delay_ms: 100,
             max_slippage_bps: 50.0,
+            policy: Default::default(),
+            zmq_publish_address: "tcp://127.0.0.1:0".to_string(),
         };
 
         let router = OrderRouter::new(config).unwrap();
@@ -425,6 +453,8 @@ mod error_handling_tests {
             average_price: None,
             created_at: Utc::now(),
             updated_at: Utc::now(),
+            account_id: None,
+            external_proof: None,
         };
 
         let result = router.route(order, None).await;

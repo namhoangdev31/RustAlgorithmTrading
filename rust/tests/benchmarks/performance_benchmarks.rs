@@ -24,6 +24,8 @@ fn create_test_order(qty: f64, price: Option<f64>, order_type: OrderType) -> Ord
         average_price: None,
         created_at: Utc::now(),
         updated_at: Utc::now(),
+    account_id: None,
+    external_proof: None,
     }
 }
 

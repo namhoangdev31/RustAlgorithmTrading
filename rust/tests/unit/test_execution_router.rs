@@ -11,11 +11,13 @@ fn create_test_config() -> ExecutionConfig {
         exchange_api_url: "https://paper-api.alpaca.markets".to_string(),
         api_key: Some("test_key".to_string()),
         api_secret: Some("test_secret".to_string()),
-        paper_trading: true,
+        trading_mode: common::types::TradingMode::Paper,
         rate_limit_per_second: 10,
         retry_attempts: 3,
         retry_delay_ms: 1000,
         max_slippage_bps: 50.0,
+        policy: Default::default(),
+        zmq_publish_address: "".to_string(),
     }
 }
 
@@ -49,6 +51,8 @@ mod router_tests {
             average_price: None,
             created_at: Utc::now(),
             updated_at: Utc::now(),
+            account_id: None,
+            external_proof: None,
         };
 
         // router.route(order, None) should succeed in async context
@@ -73,6 +77,8 @@ mod router_tests {
             average_price: None,
             created_at: Utc::now(),
             updated_at: Utc::now(),
+            account_id: None,
+            external_proof: None,
         };
 
         // Test limit order routing
@@ -97,6 +103,8 @@ mod router_tests {
             average_price: None,
             created_at: Utc::now(),
             updated_at: Utc::now(),
+            account_id: None,
+            external_proof: None,
         };
 
         let _current_price = Some(Price(450.00));
@@ -123,6 +131,8 @@ mod router_tests {
             average_price: None,
             created_at: Utc::now(),
             updated_at: Utc::now(),
+            account_id: None,
+            external_proof: None,
         };
 
         // Smart router should analyze multiple venues
@@ -149,6 +159,8 @@ mod router_tests {
             average_price: None,
             created_at: Utc::now(),
             updated_at: Utc::now(),
+            account_id: None,
+            external_proof: None,
         };
 
         // Should timeout if venue is slow
@@ -173,6 +185,8 @@ mod router_tests {
             average_price: None,
             created_at: Utc::now(),
             updated_at: Utc::now(),
+            account_id: None,
+            external_proof: None,
         };
 
         // If StopLimit not supported, should return error
@@ -197,6 +211,8 @@ mod router_tests {
             average_price: None,
             created_at: Utc::now(),
             updated_at: Utc::now(),
+            account_id: None,
+            external_proof: None,
         };
 
         // Should reject empty symbol
@@ -233,6 +249,8 @@ mod venue_selection_tests {
             average_price: None,
             created_at: Utc::now(),
             updated_at: Utc::now(),
+            account_id: None,
+            external_proof: None,
         };
 
         // Test failover mechanism
@@ -258,6 +276,8 @@ mod venue_selection_tests {
             average_price: None,
             created_at: Utc::now(),
             updated_at: Utc::now(),
+            account_id: None,
+            external_proof: None,
         };
 
         // Smart routing selects optimal venue
@@ -285,6 +305,8 @@ mod order_validation_tests {
             average_price: None,
             created_at: Utc::now(),
             updated_at: Utc::now(),
+            account_id: None,
+            external_proof: None,
         };
 
         assert!(order.price.is_none());
@@ -307,6 +329,8 @@ mod order_validation_tests {
             average_price: None,
             created_at: Utc::now(),
             updated_at: Utc::now(),
+            account_id: None,
+            external_proof: None,
         };
 
         assert!(order.price.is_some());
@@ -328,6 +352,8 @@ mod order_validation_tests {
             average_price: None,
             created_at: Utc::now(),
             updated_at: Utc::now(),
+            account_id: None,
+            external_proof: None,
         };
 
         assert!(order.quantity.0 > 0.0);
@@ -357,6 +383,8 @@ mod slippage_protection_tests {
             average_price: None,
             created_at: Utc::now(),
             updated_at: Utc::now(),
+            account_id: None,
+            external_proof: None,
         };
 
         let _current_price = Some(Price(2500.00));
@@ -382,6 +410,8 @@ mod slippage_protection_tests {
             average_price: None,
             created_at: Utc::now(),
             updated_at: Utc::now(),
+            account_id: None,
+            external_proof: None,
         };
 
         // If estimated slippage > threshold, reject
@@ -413,6 +443,8 @@ mod edge_cases {
             average_price: None,
             created_at: Utc::now(),
             updated_at: Utc::now(),
+            account_id: None,
+            external_proof: None,
         };
 
         // Should reject zero quantity
@@ -437,6 +469,8 @@ mod edge_cases {
             average_price: None,
             created_at: Utc::now(),
             updated_at: Utc::now(),
+            account_id: None,
+            external_proof: None,
         };
 
         // Might need to split into smaller orders
@@ -462,6 +496,8 @@ mod edge_cases {
             average_price: None,
             created_at: Utc::now(),
             updated_at: Utc::now(),
+            account_id: None,
+            external_proof: None,
         };
 
         // Should queue or reject based on configuration

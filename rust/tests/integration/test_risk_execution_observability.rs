@@ -35,11 +35,13 @@ mod risk_execution_observability_tests {
             exchange_api_url: "https://paper-api.alpaca.markets".to_string(),
             api_key: Some("test_key".to_string()),
             api_secret: Some("test_secret".to_string()),
-            paper_trading: true,
+            trading_mode: common::types::TradingMode::Simulated,
             rate_limit_per_second: 10,
             retry_attempts: 3,
             retry_delay_ms: 1000,
             max_slippage_bps: 50.0,
+            policy: Default::default(),
+            zmq_publish_address: "tcp://127.0.0.1:0".to_string(),
         };
 
         let db_path = format!("test_integration_{}.duckdb", Uuid::new_v4());
@@ -94,6 +96,8 @@ mod risk_execution_observability_tests {
             average_price: None,
             created_at: Utc::now(),
             updated_at: Utc::now(),
+            account_id: None,
+            external_proof: None,
         };
 
         // Step 3: Risk check (position size validation)
@@ -117,11 +121,11 @@ mod risk_execution_observability_tests {
 
         // Step 6: Record trade
         let trade = TradeRecord {
-            trade_id: response.id.clone(),
+            trade_id: response.broker_order_id.clone(),
             order_id: order.order_id.clone(),
-            symbol: response.symbol.clone(),
-            side: response.side.clone(),
-            quantity: response.qty.parse().unwrap(),
+            symbol: order.symbol.0.clone(),
+            side: match order.side { Side::Bid => "buy".to_string(), Side::Ask => "sell".to_string() },
+            quantity: response.filled_qty.0,
             price: 150.0,
             timestamp: Utc::now(),
             commission: 1.0,
@@ -154,7 +158,7 @@ mod risk_execution_observability_tests {
         db.insert_metric(&workflow_metric).await.expect("Metric insert failed");
 
         // Verify all components worked together
-        assert_eq!(response.symbol, "AAPL");
+        assert_eq!(order.symbol.0, "AAPL");
         assert!(stop_manager.has_stop(&position.symbol));
         assert!(workflow_duration.as_millis() < 5000); // Complete workflow < 5s
     }
@@ -216,6 +220,8 @@ mod risk_execution_observability_tests {
             average_price: None,
             created_at: Utc::now(),
             updated_at: Utc::now(),
+            account_id: None,
+            external_proof: None,
         };
 
         let market_price = 150.0;
@@ -298,6 +304,8 @@ mod risk_execution_observability_tests {
             average_price: None,
             created_at: Utc::now(),
             updated_at: Utc::now(),
+            account_id: None,
+            external_proof: None,
         };
 
         // Execute closing order

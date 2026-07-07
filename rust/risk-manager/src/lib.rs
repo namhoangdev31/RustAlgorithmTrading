@@ -191,6 +191,38 @@ impl RiskManagerService {
     pub fn pnl_tracker(&self) -> &PnLTracker {
         &self.pnl_tracker
     }
+
+    /// Expose snapshot methods
+
+    /// Get current positions
+    pub fn current_positions(&self) -> std::collections::HashMap<String, Position> {
+        self.limit_checker.get_positions().clone()
+    }
+
+    /// Get current daily PnL
+    pub fn daily_pnl(&self) -> f64 {
+        self.limit_checker.get_daily_pnl()
+    }
+
+    /// Get risk status (circuit breaker and overall safety)
+    pub fn risk_status(&self) -> serde_json::Value {
+        let cb_state = self.circuit_breaker_state();
+        let cb_tripped = cb_state == CircuitBreakerState::Open;
+        serde_json::json!({
+            "status": if cb_tripped { "TRIPPED" } else { "ACTIVE" },
+            "circuit_breaker": {
+                "state": format!("{:?}", cb_state),
+                "tripped": cb_tripped,
+            },
+            "daily_pnl": self.daily_pnl(),
+            "open_positions_count": self.current_positions().len(),
+        })
+    }
+
+    /// Get a limits snapshot
+    pub fn limits_snapshot(&self) -> serde_json::Value {
+        serde_json::to_value(self.limit_checker.get_config()).unwrap_or_default()
+    }
 }
 
 fn reason_label(reason: Option<common::types::RiskReason>) -> String {
@@ -252,6 +284,8 @@ mod tests {
             average_price: None,
             created_at: Utc::now(),
             updated_at: Utc::now(),
+            account_id: None,
+            external_proof: None,
         }
     }
 

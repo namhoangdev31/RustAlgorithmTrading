@@ -28,7 +28,9 @@ mod performance_load_tests {
             exchange_api_url: "https://paper-api.alpaca.markets".to_string(),
             api_key: Some("test_key".to_string()),
             api_secret: Some("test_secret".to_string()),
-            paper_trading: true,
+            trading_mode: common::types::TradingMode::Simulated,
+            policy: Default::default(),
+            zmq_publish_address: "tcp://127.0.0.1:0".to_string(),
             rate_limit_per_second: 100, // High limit for throughput test
             retry_attempts: 3,
             retry_delay_ms: 1000,
@@ -58,6 +60,8 @@ mod performance_load_tests {
                     average_price: None,
                     created_at: Utc::now(),
                     updated_at: Utc::now(),
+                    account_id: None,
+                    external_proof: None,
                 };
 
                 router_clone.route(order, Some(150.0)).await
@@ -89,7 +93,9 @@ mod performance_load_tests {
             exchange_api_url: "https://paper-api.alpaca.markets".to_string(),
             api_key: Some("test_key".to_string()),
             api_secret: Some("test_secret".to_string()),
-            paper_trading: true,
+            trading_mode: common::types::TradingMode::Simulated,
+            policy: Default::default(),
+            zmq_publish_address: "tcp://127.0.0.1:0".to_string(),
             rate_limit_per_second: 50,
             retry_attempts: 3,
             retry_delay_ms: 1000,
@@ -127,6 +133,8 @@ mod performance_load_tests {
                     average_price: None,
                     created_at: Utc::now(),
                     updated_at: Utc::now(),
+                    account_id: None,
+                    external_proof: None,
                 };
 
                 router_clone.route(order, Some(150.0)).await
@@ -303,7 +311,9 @@ mod performance_load_tests {
             exchange_api_url: "https://paper-api.alpaca.markets".to_string(),
             api_key: Some("test_key".to_string()),
             api_secret: Some("test_secret".to_string()),
-            paper_trading: true,
+            trading_mode: common::types::TradingMode::Simulated,
+            policy: Default::default(),
+            zmq_publish_address: "tcp://127.0.0.1:0".to_string(),
             rate_limit_per_second: 50,
             retry_attempts: 3,
             retry_delay_ms: 1000,
@@ -329,6 +339,8 @@ mod performance_load_tests {
                 average_price: None,
                 created_at: Utc::now(),
                 updated_at: Utc::now(),
+            account_id: None,
+            external_proof: None,
             };
 
             let start = std::time::Instant::now();
@@ -358,7 +370,9 @@ mod performance_load_tests {
             exchange_api_url: "https://paper-api.alpaca.markets".to_string(),
             api_key: Some("test_key".to_string()),
             api_secret: Some("test_secret".to_string()),
-            paper_trading: true,
+            trading_mode: common::types::TradingMode::Simulated,
+            policy: Default::default(),
+            zmq_publish_address: "tcp://127.0.0.1:0".to_string(),
             rate_limit_per_second: 10,
             retry_attempts: 3,
             retry_delay_ms: 1000,
@@ -387,6 +401,8 @@ mod performance_load_tests {
                     average_price: None,
                     created_at: Utc::now(),
                     updated_at: Utc::now(),
+                    account_id: None,
+                    external_proof: None,
                 };
 
                 router_clone.route(order, Some(150.0)).await
@@ -414,7 +430,9 @@ mod performance_load_tests {
             exchange_api_url: "https://paper-api.alpaca.markets".to_string(),
             api_key: Some("test_key".to_string()),
             api_secret: Some("test_secret".to_string()),
-            paper_trading: true,
+            trading_mode: common::types::TradingMode::Simulated,
+            policy: Default::default(),
+            zmq_publish_address: "tcp://127.0.0.1:0".to_string(),
             rate_limit_per_second: 100,
             retry_attempts: 3,
             retry_delay_ms: 1000,
@@ -444,6 +462,8 @@ mod performance_load_tests {
                     average_price: None,
                     created_at: Utc::now(),
                     updated_at: Utc::now(),
+                    account_id: None,
+                    external_proof: None,
                 };
 
                 router_clone.route(order, Some(150.0)).await

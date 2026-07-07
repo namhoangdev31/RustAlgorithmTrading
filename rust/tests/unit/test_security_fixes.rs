@@ -9,12 +9,15 @@ mod security_tests {
     fn test_https_validation_live_trading() {
         let mut config = ExecutionConfig {
             exchange_api_url: "http://api.alpaca.markets".to_string(),
-            api_key: Some("test_key".to_string()),
+            api_key: Some("AK_LIVE_123".to_string()),
             api_secret: Some("test_secret".to_string()),
             rate_limit_per_second: 10,
             retry_attempts: 3,
             retry_delay_ms: 1000,
-            paper_trading: false,
+            max_slippage_bps: 50.0,
+            trading_mode: common::types::TradingMode::Live,
+            policy: Default::default(),
+            zmq_publish_address: "tcp://127.0.0.1:0".to_string(),
         };
 
         // Should fail for HTTP URL in live trading
@@ -33,12 +36,15 @@ mod security_tests {
     fn test_https_validation_paper_trading() {
         let config = ExecutionConfig {
             exchange_api_url: "http://paper-api.alpaca.markets".to_string(),
-            api_key: Some("test_key".to_string()),
+            api_key: Some("PK_PAPER_123".to_string()),
             api_secret: Some("test_secret".to_string()),
             rate_limit_per_second: 10,
             retry_attempts: 3,
             retry_delay_ms: 1000,
-            paper_trading: true,
+            max_slippage_bps: 50.0,
+            trading_mode: common::types::TradingMode::Paper,
+            policy: Default::default(),
+            zmq_publish_address: "tcp://127.0.0.1:0".to_string(),
         };
 
         // Should pass for HTTP URL in paper trading
@@ -56,7 +62,10 @@ mod security_tests {
             rate_limit_per_second: 10,
             retry_attempts: 3,
             retry_delay_ms: 1000,
-            paper_trading: false,
+            max_slippage_bps: 50.0,
+            trading_mode: common::types::TradingMode::Live,
+            policy: Default::default(),
+            zmq_publish_address: "tcp://127.0.0.1:0".to_string(),
         };
 
         let result = config.validate_credentials();
@@ -74,12 +83,15 @@ mod security_tests {
     fn test_credential_validation_missing_secret() {
         let config = ExecutionConfig {
             exchange_api_url: "https://api.alpaca.markets".to_string(),
-            api_key: Some("test_key".to_string()),
+            api_key: Some("AK_LIVE_123".to_string()),
             api_secret: None,
             rate_limit_per_second: 10,
             retry_attempts: 3,
             retry_delay_ms: 1000,
-            paper_trading: false,
+            max_slippage_bps: 50.0,
+            trading_mode: common::types::TradingMode::Live,
+            policy: Default::default(),
+            zmq_publish_address: "tcp://127.0.0.1:0".to_string(),
         };
 
         let result = config.validate_credentials();
@@ -102,7 +114,10 @@ mod security_tests {
             rate_limit_per_second: 10,
             retry_attempts: 3,
             retry_delay_ms: 1000,
-            paper_trading: false,
+            max_slippage_bps: 50.0,
+            trading_mode: common::types::TradingMode::Live,
+            policy: Default::default(),
+            zmq_publish_address: "tcp://127.0.0.1:0".to_string(),
         };
 
         let result = config.validate_credentials();
@@ -120,12 +135,15 @@ mod security_tests {
     fn test_credential_validation_empty_secret() {
         let config = ExecutionConfig {
             exchange_api_url: "https://api.alpaca.markets".to_string(),
-            api_key: Some("test_key".to_string()),
+            api_key: Some("AK_LIVE_123".to_string()),
             api_secret: Some("".to_string()),
             rate_limit_per_second: 10,
             retry_attempts: 3,
             retry_delay_ms: 1000,
-            paper_trading: false,
+            max_slippage_bps: 50.0,
+            trading_mode: common::types::TradingMode::Live,
+            policy: Default::default(),
+            zmq_publish_address: "tcp://127.0.0.1:0".to_string(),
         };
 
         let result = config.validate_credentials();
@@ -143,21 +161,24 @@ mod security_tests {
     fn test_credential_validation_valid() {
         let config = ExecutionConfig {
             exchange_api_url: "https://api.alpaca.markets".to_string(),
-            api_key: Some("PKABCDEF123456".to_string()),
+            api_key: Some("AK_LIVE_123".to_string()),
             api_secret: Some("secret123".to_string()),
             rate_limit_per_second: 10,
             retry_attempts: 3,
             retry_delay_ms: 1000,
-            paper_trading: false,
+            max_slippage_bps: 50.0,
+            trading_mode: common::types::TradingMode::Live,
+            policy: Default::default(),
+            zmq_publish_address: "tcp://127.0.0.1:0".to_string(),
         };
 
         let result = config.validate_credentials();
         assert!(result.is_ok());
     }
 
-    /// Test credential validation is skipped in paper trading
+    /// Test credential validation is skipped in simulated trading
     #[test]
-    fn test_credential_validation_paper_trading() {
+    fn test_credential_validation_simulated_trading() {
         let config = ExecutionConfig {
             exchange_api_url: "https://paper-api.alpaca.markets".to_string(),
             api_key: None,
@@ -165,10 +186,13 @@ mod security_tests {
             rate_limit_per_second: 10,
             retry_attempts: 3,
             retry_delay_ms: 1000,
-            paper_trading: true,
+            max_slippage_bps: 50.0,
+            trading_mode: common::types::TradingMode::Simulated,
+            policy: Default::default(),
+            zmq_publish_address: "tcp://127.0.0.1:0".to_string(),
         };
 
-        // Should pass even without credentials in paper trading mode
+        // Should pass even without credentials in simulated mode
         let result = config.validate_credentials();
         assert!(result.is_ok());
     }
@@ -189,7 +213,10 @@ mod security_tests {
             rate_limit_per_second: 10,
             retry_attempts: 3,
             retry_delay_ms: 1000,
-            paper_trading: false,
+            max_slippage_bps: 50.0,
+            trading_mode: common::types::TradingMode::Live,
+            policy: Default::default(),
+            zmq_publish_address: "tcp://127.0.0.1:0".to_string(),
         };
 
         let result = config.load_credentials();
@@ -212,7 +239,7 @@ mod security_tests {
         use std::env;
 
         // Set valid environment variables
-        env::set_var("ALPACA_API_KEY", "PKABCDEF123456");
+        env::set_var("ALPACA_API_KEY", "AK_LIVE_123");
         env::set_var("ALPACA_SECRET_KEY", "secret123");
 
         let mut config = ExecutionConfig {
@@ -222,14 +249,17 @@ mod security_tests {
             rate_limit_per_second: 10,
             retry_attempts: 3,
             retry_delay_ms: 1000,
-            paper_trading: false,
+            max_slippage_bps: 50.0,
+            trading_mode: common::types::TradingMode::Live,
+            policy: Default::default(),
+            zmq_publish_address: "tcp://127.0.0.1:0".to_string(),
         };
 
         let result = config.load_credentials();
         assert!(result.is_ok());
         assert!(config.api_key.is_some());
         assert!(config.api_secret.is_some());
-        assert_eq!(config.api_key.unwrap(), "PKABCDEF123456");
+        assert_eq!(config.api_key.unwrap(), "AK_LIVE_123");
         assert_eq!(config.api_secret.unwrap(), "secret123");
 
         // Clean up
@@ -247,7 +277,10 @@ mod security_tests {
             rate_limit_per_second: 10,
             retry_attempts: 3,
             retry_delay_ms: 1000,
-            paper_trading: false,
+            max_slippage_bps: 50.0,
+            trading_mode: common::types::TradingMode::Live,
+            policy: Default::default(),
+            zmq_publish_address: "tcp://127.0.0.1:0".to_string(),
         };
 
         let result = config.validate_https();
@@ -265,12 +298,15 @@ mod security_tests {
     fn test_rate_limit_validation() {
         let config = ExecutionConfig {
             exchange_api_url: "https://api.alpaca.markets".to_string(),
-            api_key: Some("test_key".to_string()),
+            api_key: Some("AK_LIVE_123".to_string()),
             api_secret: Some("test_secret".to_string()),
             rate_limit_per_second: 0,
             retry_attempts: 3,
             retry_delay_ms: 1000,
-            paper_trading: false,
+            max_slippage_bps: 50.0,
+            trading_mode: common::types::TradingMode::Live,
+            policy: Default::default(),
+            zmq_publish_address: "tcp://127.0.0.1:0".to_string(),
         };
 
         let result = config.validate();
@@ -288,12 +324,15 @@ mod security_tests {
     fn test_retry_attempts_validation() {
         let config = ExecutionConfig {
             exchange_api_url: "https://api.alpaca.markets".to_string(),
-            api_key: Some("test_key".to_string()),
+            api_key: Some("AK_LIVE_123".to_string()),
             api_secret: Some("test_secret".to_string()),
             rate_limit_per_second: 10,
             retry_attempts: 0,
             retry_delay_ms: 1000,
-            paper_trading: false,
+            max_slippage_bps: 50.0,
+            trading_mode: common::types::TradingMode::Live,
+            policy: Default::default(),
+            zmq_publish_address: "tcp://127.0.0.1:0".to_string(),
         };
 
         let result = config.validate();
@@ -311,12 +350,15 @@ mod security_tests {
     fn test_retry_delay_validation() {
         let config = ExecutionConfig {
             exchange_api_url: "https://api.alpaca.markets".to_string(),
-            api_key: Some("test_key".to_string()),
+            api_key: Some("AK_LIVE_123".to_string()),
             api_secret: Some("test_secret".to_string()),
             rate_limit_per_second: 10,
             retry_attempts: 3,
             retry_delay_ms: 50,
-            paper_trading: false,
+            max_slippage_bps: 50.0,
+            trading_mode: common::types::TradingMode::Live,
+            policy: Default::default(),
+            zmq_publish_address: "tcp://127.0.0.1:0".to_string(),
         };
 
         let result = config.validate();

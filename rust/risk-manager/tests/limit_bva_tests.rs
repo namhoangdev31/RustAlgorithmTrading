@@ -31,6 +31,8 @@ fn test_symbol_volume_limit_bva() {
         average_price: None,
         created_at: Utc::now(),
         updated_at: Utc::now(),
+        account_id: None,
+        external_proof: None,
     };
     assert_eq!(
         checker
@@ -54,6 +56,8 @@ fn test_symbol_volume_limit_bva() {
         average_price: None,
         created_at: Utc::now(),
         updated_at: Utc::now(),
+        account_id: None,
+        external_proof: None,
     };
     assert_eq!(
         checker.check_with_report(&order_at, "cid-at").decision,
@@ -75,6 +79,8 @@ fn test_symbol_volume_limit_bva() {
         average_price: None,
         created_at: Utc::now(),
         updated_at: Utc::now(),
+        account_id: None,
+        external_proof: None,
     };
     let report = checker.check_with_report(&order_over, "cid-over");
     assert_eq!(report.decision, RiskDecision::Reject);
@@ -111,6 +117,8 @@ fn test_strategy_allocation_limit_bva() {
         average_price: None,
         created_at: Utc::now(),
         updated_at: Utc::now(),
+        account_id: None,
+        external_proof: None,
     };
     assert_eq!(
         checker
@@ -134,6 +142,8 @@ fn test_strategy_allocation_limit_bva() {
         average_price: None,
         created_at: Utc::now(),
         updated_at: Utc::now(),
+        account_id: None,
+        external_proof: None,
     };
     assert_eq!(
         checker
@@ -157,6 +167,8 @@ fn test_strategy_allocation_limit_bva() {
         average_price: None,
         created_at: Utc::now(),
         updated_at: Utc::now(),
+        account_id: None,
+        external_proof: None,
     };
     let report = checker.check_with_report(&order_over, "cid-strategy-over");
     assert_eq!(report.decision, RiskDecision::Reject);
@@ -190,6 +202,8 @@ fn test_risk_lookup_overhead_within_threshold() {
         average_price: None,
         created_at: Utc::now(),
         updated_at: Utc::now(),
+        account_id: None,
+        external_proof: None,
     };
 
     let iterations: u32 = 20_000;

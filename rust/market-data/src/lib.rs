@@ -1,10 +1,6 @@
 pub mod aggregation;
 pub mod orderbook;
 pub mod publisher;
-/// Market Data Feed Component
-///
-/// Handles WebSocket connections to exchanges, order book reconstruction,
-/// and tick-to-bar aggregation. Publishes market data via ZMQ.
 pub mod websocket;
 
 pub use aggregation::{BarAggregator, TimeWindow};
@@ -12,23 +8,23 @@ pub use orderbook::OrderBookManager;
 pub use publisher::MarketDataPublisher;
 pub use websocket::WebSocketClient;
 
+use common::messaging::Message;
 use common::{Result, TradingError};
 use tracing::info;
 
 /// Main market data service
 pub struct MarketDataService {
-    #[allow(dead_code)]
     ws_client: WebSocketClient,
-    #[allow(dead_code)]
     orderbook_manager: OrderBookManager,
-    #[allow(dead_code)]
     bar_aggregator: BarAggregator,
-    #[allow(dead_code)]
     publisher: MarketDataPublisher,
 }
 
 impl MarketDataService {
-    pub async fn new(config: common::config::MarketDataConfig) -> Result<Self> {
+    pub async fn new(
+        config: common::config::MarketDataConfig,
+        trading_mode: common::types::TradingMode,
+    ) -> Result<Self> {
         info!(
             "Initializing Market Data Service for exchange: {}",
             config.exchange
@@ -58,7 +54,10 @@ impl MarketDataService {
         ];
         let bar_aggregator = BarAggregator::new(time_windows);
 
-        let publisher = MarketDataPublisher::new(&config.zmq_publish_address)?;
+        let publisher = MarketDataPublisher::new(
+            &config.zmq_publish_address,
+            &format!("{}", trading_mode),
+        )?;
 
         Ok(Self {
             ws_client,
@@ -71,15 +70,112 @@ impl MarketDataService {
     pub async fn run(&mut self) -> Result<()> {
         info!("Starting Market Data Service");
 
-        // Main processing loop
-        loop {
-            // TODO: Implement event processing
-            // - Receive WebSocket messages
-            // - Update order book
-            // - Aggregate bars
-            // - Publish updates
+        let (tx, mut rx) = tokio::sync::mpsc::unbounded_channel::<websocket::AlpacaMessage>();
+        let ws_client = self.ws_client.clone();
 
-            tokio::time::sleep(tokio::time::Duration::from_millis(1)).await;
+        tokio::spawn(async move {
+            if let Err(e) = ws_client
+                .connect(move |msg| {
+                    let _ = tx.send(msg);
+                    Ok(())
+                })
+                .await
+            {
+                tracing::error!("WebSocket client error: {:?}", e);
+            }
+        });
+
+        while let Some(msg) = rx.recv().await {
+            match msg {
+                websocket::AlpacaMessage::Trade {
+                    symbol,
+                    price,
+                    size,
+                    timestamp,
+                    id,
+                } => {
+                    let ts = timestamp
+                        .parse::<chrono::DateTime<chrono::Utc>>()
+                        .unwrap_or_else(|_| chrono::Utc::now());
+                    let trade = common::types::Trade {
+                        symbol: common::types::Symbol(symbol.clone()),
+                        price: common::types::Price(price),
+                        quantity: common::types::Quantity(size),
+                        side: common::types::Side::Bid,
+                        timestamp: ts,
+                        trade_id: id.to_string(),
+                    };
+
+                    let completed_bars = self.bar_aggregator.process_trade(&trade);
+
+                    let md_msg = Message::TradeUpdate { data: trade };
+                    if let Err(e) = self.publisher.publish("market.trade", md_msg) {
+                        tracing::error!("Failed to publish trade: {:?}", e);
+                    }
+
+                    for bar in completed_bars {
+                        let bar_msg = Message::BarUpdate { data: bar };
+                        if let Err(e) = self.publisher.publish("market.bar", bar_msg) {
+                            tracing::error!("Failed to publish aggregated bar: {:?}", e);
+                        }
+                    }
+                }
+                websocket::AlpacaMessage::Quote {
+                    symbol,
+                    bid_price,
+                    bid_size,
+                    ask_price,
+                    ask_size,
+                    timestamp,
+                } => {
+                    self.orderbook_manager.update_bid(
+                        &symbol,
+                        common::types::Price(bid_price),
+                        common::types::Quantity(bid_size),
+                    );
+                    self.orderbook_manager.update_ask(
+                        &symbol,
+                        common::types::Price(ask_price),
+                        common::types::Quantity(ask_size),
+                    );
+
+                    if let Some(snapshot) = self.orderbook_manager.get_snapshot(&symbol, 10) {
+                        let md_msg = Message::OrderBookUpdate { data: snapshot };
+                        if let Err(e) = self.publisher.publish("market.quote", md_msg) {
+                            tracing::error!("Failed to publish orderbook quote: {:?}", e);
+                        }
+                    }
+                }
+                websocket::AlpacaMessage::Bar {
+                    symbol,
+                    open,
+                    high,
+                    low,
+                    close,
+                    volume,
+                    timestamp,
+                } => {
+                    let ts = timestamp
+                        .parse::<chrono::DateTime<chrono::Utc>>()
+                        .unwrap_or_else(|_| chrono::Utc::now());
+                    let bar = common::types::Bar {
+                        symbol: common::types::Symbol(symbol.clone()),
+                        open: common::types::Price(open),
+                        high: common::types::Price(high),
+                        low: common::types::Price(low),
+                        close: common::types::Price(close),
+                        volume: common::types::Quantity(volume),
+                        timestamp: ts,
+                    };
+                    let bar_msg = Message::BarUpdate { data: bar };
+                    if let Err(e) = self.publisher.publish("market.bar", bar_msg) {
+                        tracing::error!("Failed to publish bar: {:?}", e);
+                    }
+                }
+                websocket::AlpacaMessage::Unknown => {}
+            }
         }
+
+        Ok(())
     }
 }

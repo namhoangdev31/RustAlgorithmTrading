@@ -95,6 +95,8 @@ pub fn mock_market_order(symbol: &str, side: Side, quantity: f64) -> Order {
         average_price: None,
         created_at: now,
         updated_at: now,
+    account_id: None,
+    external_proof: None,
     }
 }
 
@@ -115,6 +117,8 @@ pub fn mock_limit_order(symbol: &str, side: Side, quantity: f64, price: f64) -> 
         average_price: None,
         created_at: now,
         updated_at: now,
+    account_id: None,
+    external_proof: None,
     }
 }
 
@@ -135,6 +139,8 @@ pub fn mock_stop_order(symbol: &str, side: Side, quantity: f64, stop_price: f64)
         average_price: None,
         created_at: now,
         updated_at: now,
+    account_id: None,
+    external_proof: None,
     }
 }
 
@@ -155,6 +161,8 @@ pub fn mock_filled_order(symbol: &str, side: Side, quantity: f64, price: f64) ->
         average_price: Some(Price(price)),
         created_at: now,
         updated_at: now,
+    account_id: None,
+    external_proof: None,
     }
 }
 
@@ -181,6 +189,8 @@ pub fn mock_partially_filled_order(
         average_price: Some(Price(price)),
         created_at: now,
         updated_at: now,
+    account_id: None,
+    external_proof: None,
     }
 }
 

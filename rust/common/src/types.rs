@@ -115,6 +115,10 @@ pub struct Order {
     pub average_price: Option<Price>,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
+    #[serde(default)]
+    pub account_id: Option<String>,
+    #[serde(default)]
+    pub external_proof: Option<String>,
 }
 
 /// Position tracking
@@ -171,6 +175,8 @@ pub enum RiskReason {
     StopLossTriggered,
     MaxLossExceeded,
     InvalidOrderParameters,
+    InvalidTradingMode,
+    ExternalPreconditionFailed,
 }
 
 /// Structured outcome of a risk check (W5 canonical interface)
@@ -180,4 +186,71 @@ pub struct RiskReport {
     pub reason_code: Option<RiskReason>,
     pub limit_snapshot: Option<serde_json::Value>,
     pub correlation_id: String,
+}
+
+/// Trading modes
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum TradingMode {
+    Simulated,
+    Paper,
+    Live,
+}
+
+impl Default for TradingMode {
+    fn default() -> Self {
+        TradingMode::Simulated
+    }
+}
+
+impl fmt::Display for TradingMode {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            TradingMode::Simulated => write!(f, "SIMULATED"),
+            TradingMode::Paper => write!(f, "PAPER"),
+            TradingMode::Live => write!(f, "LIVE"),
+        }
+    }
+}
+
+/// Broker order status details
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct BrokerOrderStatus {
+    pub broker_order_id: String,
+    pub client_order_id: String,
+    pub status: OrderStatus,
+    pub filled_qty: Quantity,
+    pub avg_fill_price: Option<Price>,
+    pub error_message: Option<String>,
+}
+
+/// Structured details for order routing rejections
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ExecutionRejection {
+    pub client_order_id: String,
+    pub reason: String,
+    pub code: String,
+}
+
+/// State transition details for an order
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct OrderTransition {
+    pub order_id: String,
+    pub client_order_id: String,
+    pub previous_status: Option<OrderStatus>,
+    pub new_status: OrderStatus,
+    pub timestamp: DateTime<Utc>,
+    pub filled_qty: Quantity,
+    pub average_price: Option<Price>,
+    pub transition_type: String,
+    pub details: Option<String>,
+}
+
+/// Execution event details
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct OrderExecution {
+    pub order: Order,
+    pub mode: TradingMode,
+    pub broker_status: Option<BrokerOrderStatus>,
+    pub rejection: Option<ExecutionRejection>,
 }

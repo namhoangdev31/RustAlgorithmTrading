@@ -52,6 +52,8 @@ mod stop_loss_integration_tests {
             average_price: None,
             created_at: Utc::now(),
             updated_at: Utc::now(),
+        account_id: None,
+        external_proof: None,
         }
     }
 
@@ -123,7 +125,7 @@ mod stop_loss_integration_tests {
 
         assert_eq!(stop_order.symbol.0, "EUR/USD");
         // 50 pips loss on 100k units = $500
-        assert_eq!(position.unrealized_pnl, -500.0);
+        assert!((position.unrealized_pnl - -500.0).abs() < 1e-5, "Expected PnL to be close to -500.0, got {}", position.unrealized_pnl);
     }
 
     #[tokio::test]
@@ -300,11 +302,13 @@ mod stop_loss_integration_tests {
             exchange_api_url: "https://paper-api.alpaca.markets".to_string(),
             api_key: Some("test_key".to_string()),
             api_secret: Some("test_secret".to_string()),
-            paper_trading: true,
+            trading_mode: common::types::TradingMode::Paper,
             rate_limit_per_second: 10,
             retry_attempts: 3,
             retry_delay_ms: 1000,
             max_slippage_bps: 50.0,
+            policy: Default::default(),
+            zmq_publish_address: "tcp://127.0.0.1:0".to_string(),
         };
 
         let router = OrderRouter::new(config);

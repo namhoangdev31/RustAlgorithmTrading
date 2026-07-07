@@ -23,6 +23,8 @@ fn benchmark_order_creation(c: &mut Criterion) {
                 average_price: None,
                 created_at: Utc::now(),
                 updated_at: Utc::now(),
+            account_id: None,
+            external_proof: None,
             };
             black_box(order);
         });
@@ -44,6 +46,8 @@ fn benchmark_order_serialization(c: &mut Criterion) {
         average_price: None,
         created_at: Utc::now(),
         updated_at: Utc::now(),
+    account_id: None,
+    external_proof: None,
     };
 
     c.bench_function("order_serialization", |b| {
@@ -69,6 +73,8 @@ fn benchmark_order_deserialization(c: &mut Criterion) {
         average_price: Some(Price(450.00)),
         created_at: Utc::now(),
         updated_at: Utc::now(),
+    account_id: None,
+    external_proof: None,
     };
 
     let json = serde_json::to_string(&order).unwrap();
@@ -174,6 +180,8 @@ fn benchmark_concurrent_order_creation(c: &mut Criterion) {
                                 average_price: None,
                                 created_at: Utc::now(),
                                 updated_at: Utc::now(),
+                            account_id: None,
+                            external_proof: None,
                             };
                             black_box(order);
                         }
@@ -215,6 +223,8 @@ fn benchmark_order_validation(c: &mut Criterion) {
         average_price: None,
         created_at: Utc::now(),
         updated_at: Utc::now(),
+    account_id: None,
+    external_proof: None,
     };
 
     c.bench_function("order_validation", |b| {
@@ -247,6 +257,8 @@ fn benchmark_memory_allocation(c: &mut Criterion) {
                     average_price: None,
                     created_at: Utc::now(),
                     updated_at: Utc::now(),
+                account_id: None,
+                external_proof: None,
                 });
             }
             black_box(orders);

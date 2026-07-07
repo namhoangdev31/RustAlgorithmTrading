@@ -4,6 +4,7 @@ use common::{
     Result, TradingError,
 };
 use tracing::{info, warn};
+use crate::OrderRouter;
 
 /// Handles execution of stop-loss triggered orders
 pub struct StopLossExecutor {
@@ -72,6 +73,8 @@ impl StopLossExecutor {
             average_price: None,
             created_at: Utc::now(),
             updated_at: Utc::now(),
+            account_id: None,
+            external_proof: None,
         })
     }
 
@@ -102,8 +105,8 @@ impl StopLossExecutor {
         Ok(())
     }
 
-    /// Execute the stop-loss order (to be integrated with actual execution engine)
-    pub async fn execute_stop_order(&self, order: Order) -> Result<Order> {
+    /// Execute the stop-loss order through the execution pipeline
+    pub async fn execute_stop_order(&self, order: Order, router: &OrderRouter) -> Result<Order> {
         self.validate_stop_order(&order)?;
 
         info!(
@@ -111,15 +114,12 @@ impl StopLossExecutor {
             order.order_id, order.quantity.0, order.symbol.0
         );
 
-        // TODO: Integrate with actual order router/execution engine
-        // For now, return the order as-is (would be filled by actual execution)
-
-        warn!(
-            "[cid:INIT] Stop-loss execution stub - integrate with OrderRouter for live execution"
-        );
+        let broker_status = router.route(order.clone(), None).await?;
 
         let mut executed_order = order;
-        executed_order.status = OrderStatus::Pending;
+        executed_order.status = broker_status.status;
+        executed_order.filled_quantity = broker_status.filled_qty;
+        executed_order.average_price = broker_status.avg_fill_price;
         executed_order.updated_at = Utc::now();
 
         Ok(executed_order)

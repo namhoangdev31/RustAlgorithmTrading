@@ -184,6 +184,11 @@ impl LimitChecker {
         self.daily_pnl
     }
 
+    /// Get current config
+    pub fn get_config(&self) -> &RiskConfig {
+        &self.config
+    }
+
     fn side_sign(side: Side) -> f64 {
         match side {
             Side::Bid => 1.0,

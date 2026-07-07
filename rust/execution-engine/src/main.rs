@@ -20,9 +20,11 @@ async fn main() -> anyhow::Result<()> {
     let config = match SystemConfig::from_file("ops/config/system.json") {
         Ok(cfg) => {
             tracing::info!(
-                "[cid:INIT] Configuration loaded successfully - Environment: {}, Paper Trading: {}",
+                "[cid:INIT] Configuration loaded successfully - Environment: {}, Trading Mode: {}, Live Enabled: {}, Kill Switch: {}",
                 cfg.environment(),
-                cfg.is_paper_trading()
+                cfg.execution.trading_mode,
+                cfg.execution.policy.live_trading_enabled,
+                cfg.execution.policy.kill_switch_enabled
             );
             cfg
         }
@@ -37,7 +39,7 @@ async fn main() -> anyhow::Result<()> {
         tracing::warn!("[cid:INIT] ⚠️  Production environment with paper trading enabled!");
     }
 
-    if config.is_production() && !config.is_paper_trading() {
+    if config.is_production() && config.is_live_trading() {
         tracing::warn!("[cid:INIT] 🔴 LIVE TRADING MODE - Real money at risk!");
         tracing::warn!("[cid:INIT] API URL: {}", config.execution.exchange_api_url);
     }
@@ -62,7 +64,9 @@ async fn main() -> anyhow::Result<()> {
     };
 
     // Store values before move
-    let is_paper_trading = config.is_paper_trading();
+    let trading_mode = config.execution.trading_mode;
+    let live_enabled = config.execution.policy.live_trading_enabled;
+    let kill_switch = config.execution.policy.kill_switch_enabled;
     let environment = config.environment();
 
     // Initialize service
@@ -85,7 +89,9 @@ async fn main() -> anyhow::Result<()> {
         let mut h = health.write().await;
         *h = HealthCheck::healthy("execution-engine")
             .with_metric("status", "ready")
-            .with_metric("paper_trading", is_paper_trading.to_string())
+            .with_metric("trading_mode", trading_mode.to_string())
+            .with_metric("live_enabled", live_enabled.to_string())
+            .with_metric("kill_switch", kill_switch.to_string())
             .with_metric("environment", &environment);
     }
 

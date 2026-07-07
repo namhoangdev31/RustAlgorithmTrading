@@ -29,6 +29,9 @@ tracing.workspace = true
 metrics.workspace = true
 metrics-exporter-prometheus.workspace = true
 
+# ZMQ
+zmq.workspace = true
+
 [dev-dependencies]
 serde_test = "1.0"
 tower = { version = "0.4", features = ["util"] }

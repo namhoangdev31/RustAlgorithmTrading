@@ -62,7 +62,7 @@ async fn main() -> anyhow::Result<()> {
     let symbols_count = config.market_data.symbols.len();
 
     // Initialize service
-    let mut service = match MarketDataService::new(config.market_data).await {
+    let mut service = match MarketDataService::new(config.market_data, config.execution.trading_mode).await {
         Ok(svc) => {
             tracing::info!("✓ Market Data Service initialized successfully");
             svc

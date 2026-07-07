@@ -390,9 +390,9 @@ mod observability_integration_tests {
         let all_stats = stats.unwrap();
         let table_stats = all_stats
             .iter()
-            .find(|s| s.table_name == "metrics")
-            .expect("Metrics table not found");
-        assert_eq!(table_stats.table_name, "metrics");
+            .find(|s| s.table_name == "trading_metrics")
+            .expect("Trading metrics table not found");
+        assert_eq!(table_stats.table_name, "trading_metrics");
         assert!(table_stats.row_count >= 100);
 
         cleanup_test_db(&db).await;

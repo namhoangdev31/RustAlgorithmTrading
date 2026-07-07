@@ -436,6 +436,8 @@ impl BacktestRuntime {
                 average_price: None,
                 created_at: signal.timestamp,
                 updated_at: signal.timestamp,
+                account_id: None,
+                external_proof: None,
             },
             signal_type: signal.signal_type.to_ascii_uppercase(),
             strategy_id: signal.strategy_id.clone(),

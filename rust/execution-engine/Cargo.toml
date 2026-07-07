@@ -11,6 +11,7 @@ common = { path = "../common" }
 
 # Async runtime
 tokio.workspace = true
+async-trait = "0.1"
 
 # Serialization
 serde.workspace = true

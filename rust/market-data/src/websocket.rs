@@ -62,6 +62,7 @@ pub enum AlpacaMessage {
     Unknown,
 }
 
+#[derive(Clone)]
 pub struct WebSocketClient {
     url: Url,
     api_key: String,
