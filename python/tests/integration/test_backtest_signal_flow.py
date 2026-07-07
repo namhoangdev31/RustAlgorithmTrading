@@ -101,7 +101,7 @@ async def test_zmq_subscriber_schema_validation():
     """Phase 1 hardening: Invalid schema versions must be rejected in STRICT_MODE."""
     from bridge.zmq_bridge import SCHEMA_VERSION
     import bridge.zmq_bridge as zb
-    
+
     envelope = {
         "schema_version": "v9.9.9",  # Invalid
         "correlation_id": "cid-w5-schema-invalid",
@@ -133,7 +133,7 @@ async def test_zmq_subscriber_schema_validation():
 async def test_zmq_subscriber_missing_fields():
     """Phase 1 hardening: missing correlation_id must be rejected."""
     from bridge.zmq_bridge import SCHEMA_VERSION
-    
+
     envelope = {
         "schema_version": SCHEMA_VERSION,
         "event_type": "RiskCheckResult",

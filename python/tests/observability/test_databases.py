@@ -146,8 +146,6 @@ class TestDatabasePerformance:
 
         conn.close()
 
-
-
     @pytest.mark.integration
     def test_duckdb_data_persistence(self, duckdb_path: Path):
         """Test that DuckDB data persists after connection close."""
@@ -176,8 +174,6 @@ class TestDatabasePerformance:
         assert result[1] == "test_value"
 
         conn2.close()
-
-
 
     @pytest.mark.performance
     def test_concurrent_database_access(self, duckdb_path: Path):

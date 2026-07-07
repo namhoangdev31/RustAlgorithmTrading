@@ -126,7 +126,6 @@ def test_initialization_uses_rust_backend(data_handler, portfolio_handler):
     assert engine.events_processed == 0
 
 
-
 def test_missing_batch_strategy_interface_fails(data_handler, portfolio_handler):
     engine = BacktestEngine(
         data_handler=data_handler,
@@ -156,6 +155,3 @@ def test_run_uses_rust_batch_runtime(data_handler, portfolio_handler):
     assert engine.signals_generated == 1
     assert results["execution_stats"]["rust_fallback_count"] == 0
     assert results["risk_decision_trace"][0]["signal_id"] == "TEST:25:LONG"
-
-
-

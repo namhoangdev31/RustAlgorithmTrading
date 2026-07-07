@@ -15,15 +15,18 @@ from data.features import FeatureEngine
 
 def generate_market_data(num_bars: int) -> pd.DataFrame:
     rng = np.random.default_rng(42)
-    dates = pd.date_range('2024-01-01', periods=num_bars, freq='min')
+    dates = pd.date_range("2024-01-01", periods=num_bars, freq="min")
     close = rng.uniform(100, 200, num_bars)
-    return pd.DataFrame({
-        'open': close * rng.uniform(0.995, 1.005, num_bars),
-        'high': close * rng.uniform(1.001, 1.025, num_bars),
-        'low': close * rng.uniform(0.975, 0.999, num_bars),
-        'close': close,
-        'volume': rng.uniform(1000, 10000, num_bars),
-    }, index=dates)
+    return pd.DataFrame(
+        {
+            "open": close * rng.uniform(0.995, 1.005, num_bars),
+            "high": close * rng.uniform(1.001, 1.025, num_bars),
+            "low": close * rng.uniform(0.975, 0.999, num_bars),
+            "close": close,
+            "volume": rng.uniform(1000, 10000, num_bars),
+        },
+        index=dates,
+    )
 
 
 def rust_backend_available() -> bool:
@@ -38,20 +41,20 @@ def rust_backend_available() -> bool:
 
 def run_benchmark():
     print("=== Feature Backend Benchmark ===")
-    
+
     sizes = [1_000, 10_000, 100_000]
-    
+
     for size in sizes:
         print(f"\nDataset Size: {size:,} bars")
         data = generate_market_data(size)
-        
+
         # Python Benchmark
         py_engine = FeatureEngine(feature_backend="python")
         start_time = time.perf_counter()
         _ = py_engine.create_features(data)
         py_time = (time.perf_counter() - start_time) * 1000
         print(f"  Python Baseline: {py_time:.2f} ms")
-        
+
         # Rust Benchmark
         if not rust_backend_available():
             print("  Rust backend not available or missing Phase 1 methods.")
@@ -61,7 +64,7 @@ def run_benchmark():
         start_time = time.perf_counter()
         _ = rust_engine.create_features(data)
         rust_time = (time.perf_counter() - start_time) * 1000
-        
+
         if rust_engine.rust_feature_computer:
             wrapper_time = rust_engine.rust_feature_computer.last_batch_wrapper_time_ms
             compute_boundary_time = rust_engine.rust_feature_computer.last_batch_compute_time_ms
@@ -73,8 +76,9 @@ def run_benchmark():
             print(f"  Estimated FFI/object overhead: {boundary_overhead:.2f} ms")
         else:
             print(f"  Rust Pipeline (fallback/unknown): {rust_time:.2f} ms")
-            
+
         print(f"  Speedup: {py_time / rust_time:.2f}x")
+
 
 if __name__ == "__main__":
     run_benchmark()

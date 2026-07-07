@@ -53,7 +53,7 @@ class FeatureEngine:
         self.include_price_features = include_price_features
         self.include_volume_features = include_volume_features
         self.include_time_features = include_time_features
-        
+
         if feature_backend not in {"python", "rust"}:
             raise ValueError(f"Unsupported feature_backend: {feature_backend}")
 

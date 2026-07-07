@@ -12,6 +12,7 @@ import websockets
 
 
 import os
+
 GO_API_PORT = os.getenv("GO_API_PORT", "8081")
 GO_API_URL = f"http://localhost:{GO_API_PORT}"
 GO_WS_URL = f"ws://localhost:{GO_API_PORT}/ws/metrics"

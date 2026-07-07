@@ -91,6 +91,7 @@ class MonteCarloSimulator:
             try:
                 # Use signal_bridge directly since we need the specific Rust function
                 from signal_bridge import FeatureComputer
+
                 computer = FeatureComputer()
                 paths = computer.simulate_price_paths(
                     initial_price=initial_price,

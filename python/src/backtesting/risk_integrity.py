@@ -8,7 +8,6 @@ from dataclasses import dataclass, asdict
 from datetime import datetime, timezone
 from typing import Any, Iterable
 
-
 CANONICAL_DECISIONS = {"ALLOW", "REJECT", "BLOCKED"}
 
 

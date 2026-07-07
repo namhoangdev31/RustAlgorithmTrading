@@ -38,7 +38,7 @@ class StorageManager:
         """
         self.duckdb_path = duckdb_path
         self.postgres_dsn = postgres_dsn or "postgresql://postgres:postgres@localhost:5432/trading"
-        
+
         self._duckdb: Optional[DuckDBClient] = None
         self._postgres: Optional[PostgresClient] = None
         self._initialized = False
@@ -151,10 +151,7 @@ class StorageManager:
         """Query trades from operational storage"""
         try:
             return await self.operational.get_trades(
-                start_time=start_time,
-                end_time=end_time,
-                symbol=symbol,
-                limit=limit
+                start_time=start_time, end_time=end_time, symbol=symbol, limit=limit
             )
         except Exception as e:
             logger.error(f"[cid:INIT] Failed to get trades: {e}")
@@ -174,7 +171,7 @@ class StorageManager:
                 severity=severity,
                 message=message,
                 details=details,
-                timestamp=datetime.now(timezone.utc)
+                timestamp=datetime.now(timezone.utc),
             )
         except Exception as e:
             logger.error(f"[cid:INIT] Failed to log event: {e}")
@@ -195,7 +192,7 @@ class StorageManager:
                 end_time=end_time,
                 event_type=event_type,
                 severity=severity,
-                limit=limit
+                limit=limit,
             )
         except Exception as e:
             logger.error(f"[cid:INIT] Failed to get events: {e}")
@@ -248,4 +245,3 @@ async def get_storage() -> StorageManager:
     if not storage._initialized:
         await storage.initialize()
     return storage
-

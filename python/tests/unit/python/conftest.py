@@ -26,9 +26,6 @@ def data_handler(temp_data_dir, sample_ohlcv_data):
     return HistoricalDataHandler(symbols=["TEST"], data_dir=temp_data_dir)
 
 
-
-
-
 @pytest.fixture
 def portfolio_handler(data_handler):
     """Portfolio handler fixture"""

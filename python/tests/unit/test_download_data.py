@@ -1,6 +1,6 @@
 import pytest
 
-pytestmark = pytest.mark.skip(reason="W21-DEBT: Module API changed, test requires update")
+# Skipped mark removed to enable unit tests for data downloader
 
 """
 Unit tests for data download script.

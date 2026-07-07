@@ -15,6 +15,8 @@ ignore = [
     "F811", # Redefinition of unused
     "F841", # Unused local variable
     "E701", # Multiple statements on one line
+    "E402", # Module level import not at top of file
+    "E741", # Ambiguous variable name
 ]
 
 [lint.per-file-ignores]

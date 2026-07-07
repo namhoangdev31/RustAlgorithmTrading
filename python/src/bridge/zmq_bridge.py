@@ -368,12 +368,17 @@ class ZMQSubscriber:
                     # Validate Envelope
                     is_valid, error_msg = self._validate_envelope(envelope)
                     if not is_valid:
-                        cid = envelope.get("correlation_id", "INIT") if isinstance(envelope, dict) else "INIT"
+                        cid = (
+                            envelope.get("correlation_id", "INIT")
+                            if isinstance(envelope, dict)
+                            else "INIT"
+                        )
                         logger.error(f"[cid:{cid}] Envelope validation failed: {error_msg}")
                         continue
 
                     cid = envelope.get("correlation_id")
                     from observability.logging.correlations import set_correlation_id
+
                     set_correlation_id(cid)
 
                     # Extract payload
@@ -431,12 +436,18 @@ class ZMQSubscriber:
                 # Validate Envelope
                 is_valid, error_msg = self._validate_envelope(envelope)
                 if not is_valid:
-                    cid = envelope.get("correlation_id", "INIT") if isinstance(envelope, dict) else "INIT"
-                    logger.error(f"[cid:{cid}] Envelope validation failed (receive_one): {error_msg}")
+                    cid = (
+                        envelope.get("correlation_id", "INIT")
+                        if isinstance(envelope, dict)
+                        else "INIT"
+                    )
+                    logger.error(
+                        f"[cid:{cid}] Envelope validation failed (receive_one): {error_msg}"
+                    )
                     return None
 
                 cid = envelope.get("correlation_id")
-                
+
                 # Extract payload
                 try:
                     _, payload = self._extract_payload(envelope)

@@ -32,11 +32,14 @@ class BacktestEngine:
     def __init__(
         self,
         data_handler: HistoricalDataHandler,
-        portfolio_handler: PortfolioHandler,
-        strategy: Any,
+        *args: Any,
+        portfolio_handler: Optional[PortfolioHandler] = None,
+        strategy: Optional[Any] = None,
         start_date: Optional[datetime] = None,
         end_date: Optional[datetime] = None,
         rust_backtest_runtime: Optional[RustBacktestBridge] = None,
+        execution_handler: Optional[Any] = None,
+        **kwargs: Any,
     ):
         """
         Initialize backtesting engine.
@@ -48,6 +51,40 @@ class BacktestEngine:
             start_date: Backtest start date
             end_date: Backtest end date
         """
+        self.execution_handler = execution_handler
+
+        if len(args) >= 3:
+            self.execution_handler = args[0]
+            portfolio_handler = args[1]
+            strategy = args[2]
+            if len(args) >= 4:
+                start_date = args[3]
+            if len(args) >= 5:
+                end_date = args[4]
+            if len(args) >= 6:
+                rust_backtest_runtime = args[5]
+        elif len(args) == 2:
+            portfolio_handler = args[0]
+            strategy = args[1]
+        elif len(args) == 1:
+            portfolio_handler = args[0]
+
+        if portfolio_handler is None:
+            portfolio_handler = kwargs.get("portfolio_handler")
+        if strategy is None:
+            strategy = kwargs.get("strategy")
+        if start_date is None:
+            start_date = kwargs.get("start_date")
+        if end_date is None:
+            end_date = kwargs.get("end_date")
+        if rust_backtest_runtime is None:
+            rust_backtest_runtime = kwargs.get("rust_backtest_runtime")
+
+        if portfolio_handler is None:
+            raise ValueError("portfolio_handler is required")
+        if strategy is None:
+            raise ValueError("strategy is required")
+
         self.data_handler = data_handler
         self.portfolio_handler = portfolio_handler
         self.strategy = strategy
@@ -238,12 +275,12 @@ class BacktestEngine:
 
         # 5. Extract Stats & Metrics
         rust_stats = final_state.get("execution_stats", {})
-        
+
         self.events_processed = rust_stats.get("events_processed", 0)
         self.signals_generated = rust_stats.get("signals_processed", 0)
         self.orders_placed = rust_stats.get("orders_placed", 0)
         self.fills_executed = rust_stats.get("fills_executed", 0)
-        
+
         rust_decisions = self.rust_backtest_runtime.get_new_risk_decisions()
         self._append_risk_decisions(rust_decisions, backend="rust")
 
@@ -295,9 +332,7 @@ class BacktestEngine:
             for position in rust_state.get("positions", [])
         ]
 
-    def _append_risk_decisions(
-        self, rows: list[dict[str, Any]], backend: str
-    ) -> None:
+    def _append_risk_decisions(self, rows: list[dict[str, Any]], backend: str) -> None:
         for row in rows:
             reason_value = row.get("reason_code")
             self.risk_decision_trace.append(
@@ -309,9 +344,11 @@ class BacktestEngine:
                     "signal_id": str(row.get("signal_id", row.get("sequence_no", ""))),
                     "sequence_no": int(row["sequence_no"]),
                     "decision": str(row["decision"]).upper(),
-                    "reason_code": "NONE"
-                    if reason_value is None or str(reason_value).strip() == ""
-                    else str(reason_value).upper(),
+                    "reason_code": (
+                        "NONE"
+                        if reason_value is None or str(reason_value).strip() == ""
+                        else str(reason_value).upper()
+                    ),
                     "backend": backend,
                 }
             )

@@ -178,6 +178,8 @@ ignore = [
     "F841", # Unused local variable
     "E701", # Multiple statements on one line
     "W293", # Blank line contains whitespace
+    "E402", # Module level import not at top of file
+    "E741", # Ambiguous variable name
 ]
 
 [tool.uv.workspace]

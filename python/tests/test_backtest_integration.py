@@ -8,7 +8,9 @@ import numpy as np
 import pandas as pd
 import pytest
 
-pytest.importorskip("signal_bridge", reason="signal_bridge extension is required for rust backend gate")
+pytest.importorskip(
+    "signal_bridge", reason="signal_bridge extension is required for rust backend gate"
+)
 
 from backtesting.data_handler import HistoricalDataHandler
 from backtesting.engine import BacktestEngine, StrategyBatchInterfaceRequired

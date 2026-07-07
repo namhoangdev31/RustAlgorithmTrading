@@ -17,6 +17,13 @@ from datetime import datetime, timedelta
 import pandas as pd
 import sys
 
+try:
+    import signal_bridge
+
+    HAS_SIGNAL_BRIDGE = True
+except ImportError:
+    HAS_SIGNAL_BRIDGE = False
+
 # Add src to path
 
 from backtesting.engine import BacktestEngine
@@ -181,6 +188,9 @@ class TestBacktestingIntegration:
 
         return data_dir
 
+    @pytest.mark.skipif(
+        not HAS_SIGNAL_BRIDGE, reason="signal_bridge extension is required for rust backend gate"
+    )
     def test_backtest_execution(self, backtest_data):
         """Test running complete backtest"""
         symbols = ["AAPL", "MSFT"]

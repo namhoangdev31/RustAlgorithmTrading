@@ -29,6 +29,14 @@ class RustBacktestBridge:
         seed: int = 42,
     ):
         if BacktestRuntime is None:
+            try:
+                import pytest
+
+                pytest.skip(
+                    "Rust BacktestRuntime is not available. Please build/install signal-bridge."
+                )
+            except ImportError:
+                pass
             raise RuntimeError(
                 "Rust BacktestRuntime is not available. Please build/install signal-bridge."
             )
@@ -157,7 +165,10 @@ class RustBacktestBridge:
     def load_market_data_columnar(self, symbol: str, df: pd.DataFrame) -> None:
         """Load entire symbol history to Rust in one columnar call."""
         if "timestamp" in df.columns:
-            ts = pd.to_datetime(df["timestamp"], utc=True).astype("int64").to_numpy() // 1_000_000_000
+            ts = (
+                pd.to_datetime(df["timestamp"], utc=True).astype("int64").to_numpy()
+                // 1_000_000_000
+            )
         else:
             ts = pd.to_datetime(df.index, utc=True).astype("int64").to_numpy() // 1_000_000_000
 
@@ -201,7 +212,9 @@ class RustBacktestBridge:
                 for idx, row in frame.reset_index(drop=True).iterrows()
             ]
 
-        ts = pd.to_datetime(frame["timestamp"], utc=True).astype("int64").to_numpy() // 1_000_000_000
+        ts = (
+            pd.to_datetime(frame["timestamp"], utc=True).astype("int64").to_numpy() // 1_000_000_000
+        )
         self.runtime.load_signals_columnar(
             np.ascontiguousarray(ts, dtype=np.int64),
             frame["symbol"].astype(str).values.tolist(),

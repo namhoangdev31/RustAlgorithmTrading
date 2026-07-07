@@ -34,9 +34,7 @@ class PostgresClient:
         self.dsn = dsn
         self.pool = None
         if asyncpg is None:
-            logger.warning(
-                "asyncpg not installed. PostgreSQL storage will be unavailable."
-            )
+            logger.warning("asyncpg not installed. PostgreSQL storage will be unavailable.")
 
     async def initialize(self) -> bool:
         """Establish connection pool to PostgreSQL"""
@@ -45,11 +43,7 @@ class PostgresClient:
 
         try:
             # Using a pool for better performance in concurrent environments
-            self.pool = await asyncpg.create_pool(
-                dsn=self.dsn,
-                min_size=1,
-                max_size=10
-            )
+            self.pool = await asyncpg.create_pool(dsn=self.dsn, min_size=1, max_size=10)
             logger.info("Connected to PostgreSQL pool")
             return True
         except Exception as e:
@@ -125,7 +119,7 @@ class PostgresClient:
         try:
             if end_time is None:
                 end_time = datetime.now(timezone.utc)
-            
+
             if start_time.tzinfo is None:
                 start_time = start_time.replace(tzinfo=timezone.utc)
             if end_time.tzinfo is None:
@@ -133,11 +127,11 @@ class PostgresClient:
 
             query = "SELECT * FROM orders WHERE submitted_at >= $1 AND submitted_at <= $2"
             params: List[Any] = [start_time, end_time]
-            
+
             if symbol:
                 query += " AND symbol = $3"
                 params.append(symbol.upper())
-            
+
             query += f" ORDER BY submitted_at DESC LIMIT ${len(params) + 1}"
             params.append(limit)
 
@@ -159,7 +153,7 @@ class PostgresClient:
         try:
             if end_time is None:
                 end_time = datetime.now(timezone.utc)
-            
+
             if start_time.tzinfo is None:
                 start_time = start_time.replace(tzinfo=timezone.utc)
             if end_time.tzinfo is None:
@@ -224,7 +218,7 @@ class PostgresClient:
                 event_type,
                 severity.lower(),
                 message,
-                details, 
+                details,
                 timestamp,
             )
             return int(val) if val else 0
@@ -247,7 +241,7 @@ class PostgresClient:
         try:
             if end_time is None:
                 end_time = datetime.now(timezone.utc)
-            
+
             if start_time.tzinfo is None:
                 start_time = start_time.replace(tzinfo=timezone.utc)
             if end_time.tzinfo is None:
@@ -285,7 +279,7 @@ class PostgresClient:
         try:
             if end_time is None:
                 end_time = datetime.now(timezone.utc)
-            
+
             if start_time.tzinfo is None:
                 start_time = start_time.replace(tzinfo=timezone.utc)
             if end_time.tzinfo is None:

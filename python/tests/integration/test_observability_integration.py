@@ -24,7 +24,7 @@ from src.observability.logging.formatters import JSONFormatter
 async def test_go_metrics_collector_active():
     """Test that the Go metrics collector is active and responding via API."""
     api_url = "http://127.0.0.1:8081/health"
-    
+
     timeout = aiohttp.ClientTimeout(total=5.0)
     async with aiohttp.ClientSession(timeout=timeout) as session:
         try:
@@ -66,19 +66,16 @@ async def test_go_ingestion_parity():
     """Verify Go is successfully ingesting metrics into DuckDB."""
     # We query the Go API for historical metrics to verify ingestion
     api_url = "http://127.0.0.1:8081/api/v1/metrics/history"
-    
-    payload = {
-        "time_range": "5m",
-        "metric_types": ["market_data_ticks_received_total"]
-    }
-    
+
+    payload = {"time_range": "5m", "metric_types": ["market_data_ticks_received_total"]}
+
     timeout = aiohttp.ClientTimeout(total=5.0)
     async with aiohttp.ClientSession(timeout=timeout) as session:
         try:
             async with session.post(api_url, json=payload) as response:
                 if response.status == 404:
                     pytest.skip("Go metrics history endpoint not implemented or enabled")
-                
+
                 assert response.status == 200, f"Go API returned {response.status}"
                 data = await response.json()
                 # If Go is ingesting, we should see some data points

@@ -32,13 +32,14 @@ from backtesting.portfolio_handler import FixedAmountSizer, PortfolioHandler
 from backtesting.risk_integrity import compare_risk_decision_traces
 from strategies.base import Signal, SignalType, Strategy
 
-
 AGGRESSIVE_MIN_SPEEDUP = {"P10K": 1.20, "P100K": 1.40}
 AGGRESSIVE_P95_RATIO_LIMIT = 0.75
 AGGRESSIVE_RUST_MAX_MEMORY_BYTES = int(3.2 * 1024 * 1024 * 1024)
 AGGRESSIVE_RUST_MEMORY_MULTIPLIER = 1.10
 BASELINE_FIXTURE = REPO_ROOT / "tests" / "fixtures" / "phase2" / "python_baseline_metrics.json"
-RISK_GOLDEN_FIXTURE = REPO_ROOT / "rust" / "tests" / "fixtures" / "phase2" / "risk_decision_golden.json"
+RISK_GOLDEN_FIXTURE = (
+    REPO_ROOT / "rust" / "tests" / "fixtures" / "phase2" / "risk_decision_golden.json"
+)
 
 
 def configure_logging(level: str) -> None:
@@ -114,10 +115,10 @@ class BenchmarkSignalStrategy(Strategy):
         # Use a stateful counter instead of len(data) because data is now a sliding window
         if not hasattr(self, "_bar_counts"):
             self._bar_counts = {}
-        
+
         self._bar_counts[symbol] = self._bar_counts.get(symbol, 0) + 1
         bar_index = self._bar_counts[symbol]
-        
+
         if len(data) == 0:
             return []
 
@@ -164,44 +165,50 @@ class BenchmarkSignalStrategy(Strategy):
     ) -> float:
         return 100.0
 
-    def generate_signal_frame(self, data_by_symbol: dict[str, pd.DataFrame], context: Any = None) -> pd.DataFrame:
+    def generate_signal_frame(
+        self, data_by_symbol: dict[str, pd.DataFrame], context: Any = None
+    ) -> pd.DataFrame:
         signals = []
         for symbol, df in data_by_symbol.items():
             if symbol not in self._symbols or df.empty:
                 continue
-            
+
             n_bars = len(df)
             indices = np.arange(1, n_bars + 1)
             cycles = indices % 200
-            
-            long_mask = (cycles == 25)
-            exit_mask = (cycles == 125)
-            
+
+            long_mask = cycles == 25
+            exit_mask = cycles == 125
+
             timestamps = df["timestamp"].values if "timestamp" in df.columns else df.index.values
             close_prices = df["close"].values
-            
+
             for idx in np.where(long_mask)[0]:
-                signals.append({
-                    "timestamp": timestamps[idx],
-                    "symbol": symbol,
-                    "signal_type": "LONG",
-                    "strength": 1.0,
-                    "strategy_id": self.name,
-                    "signal_id": f"{symbol}:{idx + 1}:LONG",
-                    "price": float(close_prices[idx])
-                })
-                
+                signals.append(
+                    {
+                        "timestamp": timestamps[idx],
+                        "symbol": symbol,
+                        "signal_type": "LONG",
+                        "strength": 1.0,
+                        "strategy_id": self.name,
+                        "signal_id": f"{symbol}:{idx + 1}:LONG",
+                        "price": float(close_prices[idx]),
+                    }
+                )
+
             for idx in np.where(exit_mask)[0]:
-                signals.append({
-                    "timestamp": timestamps[idx],
-                    "symbol": symbol,
-                    "signal_type": "EXIT",
-                    "strength": 1.0,
-                    "strategy_id": self.name,
-                    "signal_id": f"{symbol}:{idx + 1}:EXIT",
-                    "price": float(close_prices[idx])
-                })
-                
+                signals.append(
+                    {
+                        "timestamp": timestamps[idx],
+                        "symbol": symbol,
+                        "signal_type": "EXIT",
+                        "strength": 1.0,
+                        "strategy_id": self.name,
+                        "signal_id": f"{symbol}:{idx + 1}:EXIT",
+                        "price": float(close_prices[idx]),
+                    }
+                )
+
         if not signals:
             return pd.DataFrame(
                 columns=[
@@ -214,7 +221,7 @@ class BenchmarkSignalStrategy(Strategy):
                     "price",
                 ]
             )
-            
+
         res = pd.DataFrame(signals)
         res["timestamp"] = pd.to_datetime(res["timestamp"], utc=True)
         res = res.sort_values(["timestamp", "symbol"]).reset_index(drop=True)
@@ -362,9 +369,7 @@ def aggregate_backend_runs(runs: list[RunTelemetry]) -> dict[str, Any]:
         "reconciliation_failures_total": sum(run.reconciliation_failures for run in runs),
         "crash_count": sum(1 for run in runs if run.crashed),
         "all_runs_passed": all(
-            (not run.crashed)
-            and run.fallback_count == 0
-            and run.reconciliation_failures == 0
+            (not run.crashed) and run.fallback_count == 0 and run.reconciliation_failures == 0
             for run in runs
         ),
     }
@@ -392,20 +397,19 @@ def evaluate_aggressive_gate(
     min_speedup = AGGRESSIVE_MIN_SPEEDUP[profile_name]
 
     if speedup < min_speedup:
-        reasons.append(
-            f"Speedup gate failed: {speedup:.4f}x < {min_speedup:.4f}x ({profile_name})"
-        )
+        reasons.append(f"Speedup gate failed: {speedup:.4f}x < {min_speedup:.4f}x ({profile_name})")
     if p95_ratio > AGGRESSIVE_P95_RATIO_LIMIT:
         reasons.append(
-            "p95 ratio gate failed: "
-            f"{p95_ratio:.4f} > {AGGRESSIVE_P95_RATIO_LIMIT:.4f}"
+            "p95 ratio gate failed: " f"{p95_ratio:.4f} > {AGGRESSIVE_P95_RATIO_LIMIT:.4f}"
         )
     if rust_peak_max > rust_peak_limit:
         reasons.append(
             f"Memory gate failed: rust_peak_max={rust_peak_max} > limit={rust_peak_limit}"
         )
     if not rust_agg["all_runs_passed"]:
-        reasons.append("Rust measured runs must pass 12/12 without crash/fallback/reconciliation failure")
+        reasons.append(
+            "Rust measured runs must pass 12/12 without crash/fallback/reconciliation failure"
+        )
     if int(rust_agg["count"]) < required_measured_runs:
         reasons.append(f"Rust measured run count must be {required_measured_runs}")
 
@@ -491,7 +495,7 @@ def run_risk_integrity_pair_check(
     seed: int,
 ) -> dict[str, Any]:
     golden_trace = expand_golden_risk_trace(profile, symbols)
-        
+
     rust_telemetry, rust_results = run_single_backtest(
         profile=profile,
         symbols=symbols,
@@ -532,13 +536,15 @@ def run_profile(
             symbol_count=profile.symbols,
             bars_per_symbol=profile.bars_per_symbol,
             seed=seed,
-            extension="csv"
+            extension="csv",
         )
 
         all_runs: list[RunTelemetry] = []
         for run_index in range(warmup_runs + measured_runs):
             warmup = run_index < warmup_runs
-            run_type = "warmup" if warmup else f"measured {run_index - warmup_runs + 1}/{measured_runs}"
+            run_type = (
+                "warmup" if warmup else f"measured {run_index - warmup_runs + 1}/{measured_runs}"
+            )
             print(f"  > Running rust {run_type}...", end="", flush=True)
 
             telemetry, _ = run_single_backtest(
@@ -550,7 +556,9 @@ def run_profile(
                 seed=seed + run_index,
             )
             all_runs.append(telemetry)
-            print(f" Done ({telemetry.duration_seconds:.2f}s, {telemetry.throughput_bars_per_second:,.0f} bars/s, events: {telemetry.total_events:,})")
+            print(
+                f" Done ({telemetry.duration_seconds:.2f}s, {telemetry.throughput_bars_per_second:,.0f} bars/s, events: {telemetry.total_events:,})"
+            )
 
         measured_by_backend = {
             "rust": [run for run in all_runs if not run.warmup],
@@ -609,7 +617,7 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
     configure_logging(args.log_level)
-    
+
     print("=" * 60)
     print("PHASE 2 PRODUCTION BACKTEST BENCHMARK")
     print(f"Started at: {pd.Timestamp.utcnow()}")
@@ -627,7 +635,9 @@ def main() -> int:
 
     overall_pass = True
     for profile in profiles:
-        print(f"\n[Benchmarking Profile: {profile.name}] ({profile.symbols} symbols, {profile.bars_per_symbol:,} bars/symbol)")
+        print(
+            f"\n[Benchmarking Profile: {profile.name}] ({profile.symbols} symbols, {profile.bars_per_symbol:,} bars/symbol)"
+        )
         profile_result = run_profile(
             profile=profile,
             warmup_runs=args.warmup_runs,
