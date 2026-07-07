@@ -260,34 +260,109 @@ flowchart LR
 
     BFF --> Auth["AuthN/AuthZ/session/scope layer"]
     BFF --> Contract["OpenAPI DTO and validation layer"]
-    BFF --> Store["Postgres OLTP + Redis cache/outbox"]
-    BFF --> Analytics["DuckDB analytics"]
+    BFF --> CommandAPI["Command API"]
+    BFF --> QueryAPI["Query API"]
     BFF --> WS["WebSocket v1 fanout"]
 
+    CommandAPI --> EventBus["Durable event bus"]
+    QueryAPI --> ReadModels["Postgres projections/read models"]
+    QueryAPI --> MarketCache["Redis market cache"]
+    ReadModels --> Analytics["DuckDB analytics"]
+
     Market["Broker market data"] --> RustMarket["Rust market-data"]
-    RustMarket --> RustRisk["Rust risk-manager"]
+    RustMarket --> Pricing["Pricing service"]
+    Pricing --> EventBus
+
+    EventBus --> StrategyRuntime["Strategy runtime"]
+    StrategyRuntime --> RustRisk["Rust risk-manager"]
     RustRisk --> RustExec["Rust execution-engine"]
     RustExec --> Broker["Alpaca / broker API"]
 
-    RustMarket --> EventBus["Trading event bus"]
+    RustMarket --> EventBus
     RustRisk --> EventBus
     RustExec --> EventBus
-    EventBus --> BFF
-    EventBus --> Store
+    RustExec --> PositionEngine["Position engine"]
+    PositionEngine --> PortfolioEngine["Portfolio engine"]
+    PortfolioEngine --> EventBus
+
+    EventBus --> Projectors["Go projectors"]
+    Projectors --> ReadModels
+    EventBus --> WS
+    EventBus --> Notifications["Notification service"]
 
     Python["Python research/backtest"] --> Fixtures["Golden fixtures and traces"]
     Fixtures --> RustRisk
-    Fixtures --> BFF
+    Fixtures --> StrategyRuntime
 ```
 
 Primary rules:
 
 - Go is the only public/mobile API surface.
-- Rust is the trading runtime and event producer.
+- Go command endpoints append commands/events through the durable event bus;
+  query endpoints read from projections and caches.
+- Rust is the trading runtime and event producer. Direct synchronous calls are
+  allowed only for narrow health or explicitly designed preview paths; trading
+  state must not depend on hidden point-to-point side effects.
 - Python is validation/research, not production request serving.
 - Broker credentials never reach mobile.
 - Live order placement is disabled until all production gates pass.
 - Every client-visible object has a stable DTO and schema version.
+- Orders, positions, portfolio valuation, and risk state are reconstructed from
+  immutable events plus projections. Mutable rows are read models, not the only
+  source of truth.
+- Redis market cache is derived and disposable. Postgres event/audit records are
+  authoritative for business state.
+
+### 4.1 Event, CQRS, and Runtime Engine Requirements
+
+To reach production grade at Robinhood/Coinbase-like scale, the architecture
+must treat trading state as evented domain state, not only CRUD rows.
+
+CQRS and event sourcing:
+
+- Command API handles writes such as preview, submit, cancel, replace, strategy
+  activation, kill switch, and config activation.
+- Query API serves mobile dashboards from read models, projections, and Redis
+  cache; it must not block on broker calls in the normal read path.
+- Order lifecycle is modeled as an aggregate stream, for example
+  `OrderReceived`, `RiskAccepted`, `BrokerAccepted`, `PartiallyFilled`,
+  `Filled`, `CancelRequested`, `Canceled`, `Rejected`, or `Expired`.
+- `orders`, `positions`, `portfolio_snapshots`, `risk_decisions`, and
+  WebSocket timelines are projections from canonical events.
+- Every projector records offset, schema version, replay status, and last error
+  so the system can rebuild read models after deploys, incidents, or broker
+  reconciliation.
+
+Durable event bus:
+
+- Prefer Kafka, Redpanda, or NATS JetStream for the production command/event
+  boundary. Redis pub/sub is not enough for lossless order/fill/risk state.
+- Event delivery may be at-least-once; consumers must be idempotent using
+  event id, aggregate id, sequence, and command id.
+- Event retention must be long enough for replay, incident investigation, and
+  compliance retention.
+- Schema evolution must be governed by a registry or compatibility tests before
+  Go, Rust, Python, and mobile clients consume a new event version.
+
+Runtime engines:
+
+- Strategy Runtime owns active paper/live strategy instances, current signal
+  state, cooldowns, open strategy context, and snapshot/checkpoint recovery.
+- Risk is split into pre-trade checks, intraday monitoring, and post-trade
+  review. These may share policy data, but their outputs and alerting differ.
+- Pricing Service normalizes quotes, mark prices, FX rates, stale marks, and
+  future Greeks/derivatives inputs before portfolio valuation consumes them.
+- Position Engine derives lots, average price, realized/unrealized P/L, and
+  broker reconciliation state from fills and broker events.
+- Portfolio Engine derives account equity, exposure, allocation, drawdown,
+  concentration, and strategy-level P/L from positions, cash, pricing, and risk.
+- Notification Service turns alerts, order events, incidents, and strategy
+  promotion/deployment changes into push/email/SMS/in-app notifications with
+  delivery audit.
+- Feature Flag Service gates paper/live trading, Strategy Lab, broker profiles,
+  regional rollout, risky order types, and mobile UI exposure.
+- Configuration Service versions risk limits, broker endpoints, trading hours,
+  strategy DSL rules, feature rollout policy, and emergency overrides.
 
 ## 5. Legacy API Removal Policy
 
@@ -341,7 +416,7 @@ Legacy retirement gates:
 
 ### 6.2 API Coverage Assessment
 
-This blueprint expands the API from the original 40 REST endpoints to 96 REST
+This blueprint expands the API from the original 40 REST endpoints to 111 REST
 endpoints for Trading Observability, Strategy Lab, and Paper Research. The goal
 is not to force one trading formula onto every client. Mobile users must be able
 to tune weights, test formulas, compare methods, discard unstable approaches,
@@ -360,7 +435,7 @@ Endpoint count by group:
 | Group | REST count | Readiness meaning |
 |---|---:|---|
 | Market data | 7 | Enough for quotes, charts, order book, trades, and market status. |
-| Account, portfolio, positions, watchlists | 10 | Enough for mobile dashboard and watchlist UX. |
+| Account, portfolio, positions, pricing, watchlists | 15 | Enough for mobile dashboard, pricing, valuation, allocation, and watchlist UX. |
 | Orders, fills, trades | 5 | Enough for read-only order/fill/trade history. |
 | Trading actions | 4 | Enough for preview, submit, cancel, and replace after safety gates. |
 | Risk, safety, admin | 9 | Adds exposure and circuit breaker visibility. |
@@ -369,6 +444,7 @@ Endpoint count by group:
 | Account snapshots and cash | 3 | Gives mobile auditable account/cash history. |
 | Order reconciliation, audit, broker diagnostics | 9 | Required for production support and order-drift investigation. |
 | Alerts | 4 | Lets users and ops configure trading/observability alerts. |
+| Notifications, feature flags, runtime config | 10 | Adds delivery, rollout, and mutable config control-plane surfaces. |
 | Strategy Lab | 10 | Lets users create, tune, validate, version, and fork custom methods. |
 | Backtests and evaluation | 6 | Lets users compare formulas before paper trading. |
 | Paper research sessions | 9 | Lets users test strategies in a realistic paper environment. |
@@ -404,6 +480,11 @@ Required DTOs:
 | `GET` | `/api/v1/portfolio/history` | Equity and P/L time series. | Powers account performance charts over daily, weekly, monthly, and custom ranges. |
 | `GET` | `/api/v1/positions` | Current open positions. | Lists current holdings with quantity, average price, market value, and P/L. |
 | `GET` | `/api/v1/positions/{symbol}` | Single position detail. | Opens a focused holding screen with lots, exposure, and available actions. |
+| `GET` | `/api/v1/positions/events` | Position event timeline derived from fills and broker corrections. | Lets support and advanced users understand why a position changed. |
+| `GET` | `/api/v1/portfolio/valuation` | Current portfolio valuation from position, cash, and pricing engines. | Shows equity, exposure, and stale-price warnings from a single projection. |
+| `GET` | `/api/v1/portfolio/allocations` | Allocation by asset, symbol, sector, strategy, and account. | Powers risk-aware portfolio views and strategy-level concentration checks. |
+| `GET` | `/api/v1/pricing/marks?symbols=AAPL,MSFT` | Normalized mark prices and freshness. | Gives mobile and order previews consistent pricing rather than raw provider quotes. |
+| `GET` | `/api/v1/pricing/fx-rates` | FX rates used for valuation. | Supports multi-currency portfolio valuation and auditability. |
 | `GET` | `/api/v1/watchlists` | Account watchlists. | Loads user watchlists and symbols for the market/home screens. |
 | `POST` | `/api/v1/watchlists` | Create watchlist. | Lets users create a custom tracked-symbol group. |
 | `PATCH` | `/api/v1/watchlists/{id}` | Rename or update watchlist metadata. | Lets users rename, reorder, or adjust watchlist settings. |
@@ -529,7 +610,26 @@ Mobile should see risk status, not mutate it.
 | `PATCH` | `/api/v1/alerts/{id}` | Update alert rule settings or enabled state. | Lets users tune thresholds without recreating alerts. |
 | `DELETE` | `/api/v1/alerts/{id}` | Delete or archive an alert rule. | Removes unwanted alert noise. |
 
-### 6.12 Strategy Lab - Custom Formulas and Weights
+### 6.12 Notifications, Feature Flags, and Runtime Config
+
+Alerts are rules; notifications are delivery and user-facing message state.
+Feature flags and runtime config are admin/control-plane surfaces, not normal
+retail trading controls.
+
+| Method | Endpoint | Purpose | Client meaning |
+|---|---|---|---|
+| `GET` | `/api/v1/notifications` | List in-app notifications for the current user. | Shows order, fill, incident, alert, strategy, and account messages. |
+| `PATCH` | `/api/v1/notifications/{notification_id}/read` | Mark notification as read. | Keeps mobile notification badges and history consistent. |
+| `GET` | `/api/v1/notification-preferences` | Read user delivery preferences. | Lets users control push/email/SMS/in-app delivery by event class. |
+| `PATCH` | `/api/v1/notification-preferences` | Update notification preferences. | Lets users reduce noise without disabling safety-critical messages. |
+| `GET` | `/api/v1/admin/feature-flags` | Admin-only list of feature flags and rollout state. | Shows whether paper, live, Strategy Lab, broker profiles, or order types are enabled. |
+| `POST` | `/api/v1/admin/feature-flags` | Admin-only create feature flag. | Adds a controlled rollout switch with owner, scope, default, and audit. |
+| `PATCH` | `/api/v1/admin/feature-flags/{flag_id}` | Admin-only update feature flag rules. | Rolls capability out by user, account, region, broker, device, or percentage. |
+| `GET` | `/api/v1/admin/config` | Admin-only effective runtime config. | Shows active risk, broker, trading-hour, strategy DSL, and notification config. |
+| `POST` | `/api/v1/admin/config/versions` | Admin-only create versioned config. | Stages config changes without immediately affecting trading runtime. |
+| `POST` | `/api/v1/admin/config/versions/{version_id}/activate` | Admin-only activate config version. | Applies config with audit, rollback reference, and cache invalidation. |
+
+### 6.13 Strategy Lab - Custom Formulas and Weights
 
 Mobile must not be limited to one universal trading method. Each trader can
 create strategy drafts with custom indicator weights, formulas, filters,
@@ -584,7 +684,7 @@ Terminology:
 - A method can be active in Paper after paper promotion. It can be active in
   Live only after explicit live approval and live trading gates.
 
-### 6.13 Backtests and Evaluation
+### 6.14 Backtests and Evaluation
 
 | Method | Endpoint | Purpose | Client meaning |
 |---|---|---|---|
@@ -595,7 +695,7 @@ Terminology:
 | `GET` | `/api/v1/backtests/{backtest_id}/signals` | Backtest signal trace. | Lets users inspect why a strategy entered, exited, or stayed flat. |
 | `GET` | `/api/v1/backtests/{backtest_id}/trades` | Backtest trade list. | Lets users diagnose losing trades, unstable periods, and overfitting. |
 
-### 6.14 Paper Research Sessions
+### 6.15 Paper Research Sessions
 
 Paper trading is the research proving ground. It should let traders test many
 methods under realistic data, order lifecycle, risk, and broker-like behavior
@@ -614,7 +714,7 @@ unstable methods should remain archived or paper-only.
 | `GET` | `/api/v1/paper/sessions/{session_id}/signals` | Paper session signal trace. | Explains the method's live-stream decisions. |
 | `GET` | `/api/v1/paper/sessions/{session_id}/orders` | Paper session order/fill history. | Shows paper order lifecycle and execution quality for the method. |
 
-### 6.15 Strategy Promotion Governance
+### 6.16 Strategy Promotion Governance
 
 | Method | Endpoint | Purpose | Client meaning |
 |---|---|---|---|
@@ -638,6 +738,9 @@ Client sends:
   "type": "subscribe",
   "schema_version": "1.0",
   "request_id": "req_123",
+  "session_id": "sess_...",
+  "resume_token": "wsrt_...",
+  "last_ack_sequence": 918272,
   "topics": ["market.ticker:AAPL", "orders", "fills", "risk.status"]
 }
 ```
@@ -649,6 +752,8 @@ Server sends:
   "type": "market.ticker",
   "schema_version": "1.0",
   "topic": "market.ticker:AAPL",
+  "connection_id": "wsc_...",
+  "session_id": "sess_...",
   "sequence": 918273,
   "timestamp": "2026-07-07T00:00:00Z",
   "correlation_id": "cid_...",
@@ -663,13 +768,17 @@ Required topics:
 - `market.ticker:{symbol}`
 - `market.order_book:{symbol}`
 - `portfolio.summary`
+- `portfolio.valuation`
 - `positions`
+- `pricing.marks:{symbol}`
 - `orders`
 - `fills`
 - `risk.status`
 - `incidents`
 - `alerts`
+- `notifications`
 - `strategy.validation:{strategy_id}`
+- `strategy.runtime:{strategy_id}`
 - `backtest.status:{backtest_id}`
 - `paper.session:{session_id}`
 - `paper.performance:{session_id}`
@@ -678,24 +787,33 @@ Required topics:
 Required behavior:
 
 - Authenticated connection.
+- Server assigns `connection_id` and binds it to authenticated `session_id`,
+  device id, scopes, and topic ACL.
 - Subscribe/unsubscribe ack.
 - Server heartbeat and client ping/pong.
 - Sequence per topic.
-- Resume from last sequence where supported.
+- Client ack for critical topics with `last_ack_sequence`.
+- Server issues short-lived `resume_token` and supports reconnect from
+  `last_ack_sequence` within a documented replay window.
+- Replay window is mandatory for order, fill, risk, incident, notification,
+  strategy runtime, and paper-session topics.
 - Backpressure policy: drop market snapshots first, never drop order/fill/risk
   state transitions silently.
 - Schema version in every message.
 - Unknown message types must be safely ignored by clients.
+- Expired resume tokens return a typed error and force a REST resync from the
+  relevant read models.
 
 ## 8. Data and Storage Plan
 
-Use three storage roles:
+Use four storage roles:
 
 | Store | Purpose |
 |---|---|
 | Postgres | OLTP source of truth for users, sessions, orders, fills, account snapshots, risk decisions, audit events, idempotency records. |
 | DuckDB | Analytics, historical metrics, backtest outputs, offline observability queries. |
 | Redis or equivalent | Short-lived cache, WebSocket fanout, distributed locks, rate limits, stream/outbox coordination. |
+| Durable event bus | Kafka, Redpanda, or NATS JetStream for ordered command/event delivery, replay, and projection rebuilds. |
 
 Minimum production logical tables:
 
@@ -720,7 +838,10 @@ Broker accounts and portfolio state:
 - `account_connections`
 - `account_snapshots`
 - `portfolio_snapshots`
+- `portfolio_events`
+- `portfolio_valuations`
 - `positions`
+- `position_events`
 - `position_lots`
 - `position_valuations`
 - `cash_balances`
@@ -736,6 +857,10 @@ Products and market data:
 - `market_quotes`
 - `market_bars`
 - `order_book_snapshots`
+- `mark_prices`
+- `fx_rates`
+- `pricing_snapshots`
+- `valuation_runs`
 - `corporate_actions`
 
 Orders, routing, execution, and fills:
@@ -756,8 +881,11 @@ Risk, controls, and safety:
 
 - `risk_limits`
 - `risk_limit_versions`
+- `pre_trade_checks`
 - `risk_decisions`
 - `risk_decision_inputs`
+- `intraday_risk_snapshots`
+- `post_trade_reviews`
 - `exposure_snapshots`
 - `margin_checks`
 - `stop_loss_triggers`
@@ -766,6 +894,16 @@ Risk, controls, and safety:
 
 Events, observability, and operations:
 
+- `event_streams`
+- `event_store`
+- `event_snapshots`
+- `event_schema_versions`
+- `command_requests`
+- `command_results`
+- `projection_offsets`
+- `projection_errors`
+- `read_model_versions`
+- `replay_jobs`
 - `idempotency_keys`
 - `audit_events`
 - `alert_rules`
@@ -777,6 +915,19 @@ Events, observability, and operations:
 - `inbox_events`
 - `websocket_sessions`
 - `websocket_subscriptions`
+- `websocket_resume_tokens`
+- `websocket_ack_offsets`
+- `websocket_replay_windows`
+- `notification_channels`
+- `notification_preferences`
+- `notification_templates`
+- `notification_events`
+- `feature_flags`
+- `feature_flag_rules`
+- `feature_flag_evaluations`
+- `config_sets`
+- `config_versions`
+- `config_change_events`
 - `incidents`
 - `incident_updates`
 - `system_components`
@@ -810,6 +961,10 @@ Research, backtest, and validation evidence:
 - `strategy_live_approvals`
 - `strategy_deployments`
 - `strategy_activation_events`
+- `strategy_runtime_instances`
+- `strategy_runtime_snapshots`
+- `strategy_runtime_checkpoints`
+- `strategy_runtime_locks`
 
 Strategy table semantics:
 
@@ -830,8 +985,12 @@ Strategy table semantics:
   assigned to Paper or Live for an account, allocation, and runtime mode.
 - `strategy_activation_events` records every activate, pause, resume, stop, and
   allocation-change decision for audit and rollback.
+- `strategy_runtime_instances`, `strategy_runtime_snapshots`, and
+  `strategy_runtime_checkpoints` let Paper/Live strategy execution recover
+  after restart without losing cooldowns, open signal context, or current
+  method state.
 
-This expands the minimum schema from 21 coarse tables to 91 logical tables. The
+This expands the minimum schema from 21 coarse tables to 128 logical tables. The
 exact first migration can ship in increments, but the domain boundaries should
 stay stable so Go DTOs, Rust events, Python fixtures, and audit records do not
 drift.
@@ -849,22 +1008,58 @@ Idempotency table must include:
 - `expires_at`
 - `locked_until`
 
+Event store table must include:
+
+- `event_id`
+- `stream_id`
+- `aggregate_type`
+- `aggregate_id`
+- `aggregate_version`
+- `event_type`
+- `event_version`
+- `schema_version`
+- `command_id`
+- `causation_id`
+- `correlation_id`
+- `producer`
+- `payload`
+- `created_at`
+
+Projection offset table must include:
+
+- `projection_name`
+- `consumer_group`
+- `stream_id`
+- `last_event_id`
+- `last_sequence`
+- `last_schema_version`
+- `last_error`
+- `rebuild_started_at`
+- `updated_at`
+
 Partitioning and sharding policy:
 
 - Partition append-only time-series tables by time: `market_data_ticks`,
   `market_quotes`, `market_bars`, `order_book_snapshots`, `metric_samples`,
   `audit_events`, `alert_events`, `provider_events`, `outbox_events`,
-  `inbox_events`, `websocket_sessions`, `service_health_checks`, `trades`,
-  `backtest_runs`, `paper_session_signals`, `paper_session_orders`,
-  `paper_session_metrics`, and `strategy_activation_events`.
+  `inbox_events`, `event_store`, `command_requests`, `command_results`,
+  `websocket_sessions`, `websocket_ack_offsets`, `websocket_replay_windows`,
+  `service_health_checks`, `trades`, `position_events`, `portfolio_events`,
+  `mark_prices`, `pricing_snapshots`, `valuation_runs`, `pre_trade_checks`,
+  `intraday_risk_snapshots`, `post_trade_reviews`, `notification_events`,
+  `feature_flag_evaluations`, `config_change_events`, `backtest_runs`,
+  `paper_session_signals`, `paper_session_orders`, `paper_session_metrics`,
+  `strategy_activation_events`, `strategy_runtime_snapshots`, and
+  `strategy_runtime_checkpoints`.
 - Use monthly partitions for audit/compliance data and daily partitions for
   high-volume market data or metrics. Keep active hot partitions in Postgres and
   archive cold analytical copies to DuckDB/object storage.
 - Hash-shard tenant/account scoped OLTP tables by `account_id` or `user_id` when
   one primary Postgres cluster is no longer enough: `orders`, `fills`,
   `positions`, `portfolio_snapshots`, `risk_decisions`, `idempotency_keys`,
-  `audit_events`, `strategies`, `strategy_versions`, `paper_sessions`,
-  `strategy_deployments`, and `alert_rules`.
+  `audit_events`, `event_streams`, `strategies`, `strategy_versions`,
+  `paper_sessions`, `strategy_deployments`, `strategy_runtime_instances`, and
+  `alert_rules`.
 - Keep global reference tables unsharded: `products`, `product_aliases`,
   `market_sessions`, `roles`, `role_permissions`, and `risk_limit_versions`.
 - Route all writes through Go using a shard resolver. Rust publishes canonical
@@ -908,8 +1103,11 @@ Authorization scopes:
 - `risk:admin`
 - `alerts:read`
 - `alerts:write`
+- `notifications:read`
+- `notifications:write`
 - `audit:read`
 - `broker:read`
+- `pricing:read`
 - `strategy:read`
 - `strategy:write`
 - `strategy:validate`
@@ -922,6 +1120,10 @@ Authorization scopes:
 - `promotion:admin`
 - `strategy:deploy:paper`
 - `strategy:deploy:live`
+- `feature_flags:read`
+- `feature_flags:admin`
+- `config:read`
+- `config:admin`
 - `system:read`
 - `system:admin`
 
@@ -948,6 +1150,12 @@ Before live order submission:
 - Market open/close and session validation.
 - Product tradability validation.
 - Tick size, lot size, min notional, and precision validation.
+- Feature flag allows the user, account, region, broker profile, order type, and
+  trading mode.
+- Active runtime config version is valid, signed/audited, and not expired.
+- Pricing marks are fresh enough for the instrument and order type.
+- Position and portfolio projections are current within the configured staleness
+  budget.
 - Buying power check.
 - Position limit check.
 - Symbol exposure check.
@@ -983,9 +1191,15 @@ These require explicit product decisions before mobile exposure.
 
 Required boundary:
 
-- Rust emits canonical trading events.
-- Go consumes events, persists normalized records, and fans out to clients.
-- Go calls Rust or consumes Rust decisions for order preview/risk checks.
+- Go validates mobile/admin commands, writes durable command records, and
+  publishes commands to the durable event bus.
+- Rust consumes approved trading commands, enforces strategy/risk/execution
+  policy, and emits canonical trading events.
+- Go consumes events, persists the event store, builds projections/read models,
+  and fans out to clients.
+- Direct Go-to-Rust calls must be explicit exceptions for health, diagnostics,
+  or a tightly bounded preview path. They must not be the hidden source of order,
+  fill, position, portfolio, or risk state.
 - Rust exposes component health and metrics consumed by Go system endpoints.
 
 Preferred event envelope:
@@ -995,7 +1209,14 @@ Preferred event envelope:
   "event_id": "evt_...",
   "event_type": "order.transition",
   "schema_version": "1.0",
+  "event_version": 1,
   "sequence": 123,
+  "stream_id": "order_ord_...",
+  "aggregate_type": "order",
+  "aggregate_id": "ord_...",
+  "aggregate_version": 7,
+  "command_id": "cmd_...",
+  "causation_id": "evt_...",
   "source": "rust.execution-engine",
   "timestamp": "2026-07-07T00:00:00Z",
   "correlation_id": "cid_...",
@@ -1011,9 +1232,14 @@ Must align:
 - order status enums
 - side enums
 - fill model
+- position event model
+- portfolio valuation model
+- pricing mark model
 - risk decision model
 - error/reason codes
 - timestamp precision
+- event compatibility rules
+- projection replay rules
 
 ### Python <-> Rust
 
@@ -1051,10 +1277,17 @@ No production/live trading until all gates pass:
 | Errors | Standard error envelope everywhere. |
 | Idempotency | Durable idempotency for all unsafe actions. |
 | Audit | Every unsafe action and privileged read is persisted. |
+| Event sourcing | Order, fill, position, portfolio, risk, and strategy runtime events are immutable, replayable, and schema-versioned. |
+| CQRS/projections | Query API serves from tested projections with offset tracking and rebuild drills. |
+| Event bus | Kafka, Redpanda, or NATS JetStream production profile is configured with retention, replay, ACLs, and consumer idempotency. |
 | Risk | Rust risk decisions are enforced and visible in Go audit trail. |
 | Kill switch | Global and account-level read-only/kill switch tested. |
 | WebSocket | Auth, topic ACL, sequence, heartbeat, reconnect/resume, and backpressure tested. |
 | Storage | Postgres source of truth; DuckDB analytics not used as OLTP authority. |
+| Pricing/position/portfolio | Mark price freshness, position derivation, portfolio valuation, and reconciliation are independently tested. |
+| Strategy runtime | Paper/live strategy runtime snapshots and checkpoints survive restart and replay. |
+| Notification | In-app/push/email/SMS delivery state is auditable and does not drop safety-critical events silently. |
+| Feature flags/config | Paper/live, broker, region, risky order type, and runtime config rollout controls are versioned and reversible. |
 | Broker | Paper/live environments separated; broker permissions checked. |
 | Strategy Lab | Custom formulas are versioned, validated, bounded, and non-executable. |
 | Paper research | Paper sessions, stability reports, and promotion checks prove methods before live review. |
@@ -1090,6 +1323,14 @@ Additional production checks to add:
 - WebSocket contract tests.
 - Broker sandbox integration tests.
 - Idempotency replay tests.
+- Event replay and projection rebuild tests.
+- Event schema compatibility tests across Go, Rust, Python fixtures, and mobile
+  DTOs.
+- WebSocket resume-token and replay-window tests.
+- Strategy runtime snapshot/restart tests.
+- Pricing, position, and portfolio projection reconciliation tests.
+- Notification delivery and safety-critical no-drop tests.
+- Feature flag and runtime config rollback tests.
 - Risk rejection matrix tests.
 - Kill switch tests.
 - Load test for REST and WebSocket.
@@ -1107,10 +1348,15 @@ Initial SLOs:
 | REST read availability | 99.9 percent monthly. |
 | REST unsafe action availability | 99.5 percent monthly while trading enabled. |
 | WebSocket critical event delivery | 99.9 percent for order/fill/risk events. |
+| WebSocket reconnect recovery | p95 less than 2 seconds within replay window. |
 | Market data freshness | p95 less than 2 seconds for watched symbols during market hours. |
+| Mark price freshness | p95 less than 2 seconds for watched equity symbols during market hours. |
 | Order preview latency | p95 less than 300 ms in paper mode. |
 | Order submit API latency | p95 less than 500 ms excluding broker latency. |
+| Projection lag | p95 less than 1 second for order/fill/risk projections. |
+| Strategy runtime checkpoint lag | p95 less than 5 seconds for active paper/live sessions. |
 | Broker reconciliation lag | p95 less than 30 seconds. |
+| Notification delivery lag | p95 less than 5 seconds for safety-critical in-app notifications. |
 | Duplicate order rate | 0 accepted duplicates from same idempotency key. |
 | Missing terminal order state | 0 after reconciliation window. |
 
@@ -1124,7 +1370,16 @@ Core metrics:
 - `ws_connections_active`
 - `ws_messages_sent_total`
 - `ws_backpressure_drops_total`
+- `ws_resume_success_total`
+- `ws_resume_failed_total`
+- `ws_replay_window_miss_total`
 - `market_data_freshness_seconds`
+- `mark_price_freshness_seconds`
+- `event_bus_publish_total`
+- `event_bus_consume_lag_seconds`
+- `event_store_append_total`
+- `projection_lag_seconds`
+- `projection_rebuild_total`
 - `order_preview_total`
 - `order_submit_total`
 - `order_rejected_total`
@@ -1135,7 +1390,14 @@ Core metrics:
 - `backtest_runs_total`
 - `paper_sessions_active`
 - `paper_session_drawdown`
+- `strategy_runtime_checkpoint_lag_seconds`
+- `strategy_runtime_restarts_total`
 - `promotion_requests_total`
+- `position_projection_lag_seconds`
+- `portfolio_valuation_lag_seconds`
+- `notification_delivery_lag_seconds`
+- `feature_flag_evaluations_total`
+- `config_version_activations_total`
 - `kill_switch_state`
 - `broker_request_duration_seconds`
 - `broker_errors_total`
