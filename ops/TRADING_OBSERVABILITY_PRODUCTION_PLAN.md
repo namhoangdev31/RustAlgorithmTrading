@@ -313,56 +313,155 @@ Primary rules:
 - Redis market cache is derived and disposable. Postgres event/audit records are
   authoritative for business state.
 
-### 4.1 Event, CQRS, and Runtime Engine Requirements
+#### 4.1 Event, CQRS, and Runtime Engine Requirements
 
-To reach production grade at Robinhood/Coinbase-like scale, the architecture
-must treat trading state as evented domain state, not only CRUD rows.
+To reach production grade at Robinhood/Coinbase-like scale, the architecture must treat trading state as evented domain state, not only CRUD rows.
 
-CQRS and event sourcing:
+#### 4.1.1 CQRS & Event Sourcing (Order Lifecycle)
 
-- Command API handles writes such as preview, submit, cancel, replace, strategy
-  activation, kill switch, and config activation.
-- Query API serves mobile dashboards from read models, projections, and Redis
-  cache; it must not block on broker calls in the normal read path.
-- Order lifecycle is modeled as an aggregate stream, for example
-  `OrderReceived`, `RiskAccepted`, `BrokerAccepted`, `PartiallyFilled`,
-  `Filled`, `CancelRequested`, `Canceled`, `Rejected`, or `Expired`.
-- `orders`, `positions`, `portfolio_snapshots`, `risk_decisions`, and
-  WebSocket timelines are projections from canonical events.
-- Every projector records offset, schema version, replay status, and last error
-  so the system can rebuild read models after deploys, incidents, or broker
-  reconciliation.
+- **Command API (Write Path)**:
+  - Processes client requests (`SubmitOrder`, `CancelOrder`, `ReplaceOrder`, `TriggerKillSwitch`).
+  - Validates request payload against OpenAPI contract and pre-trade risk policy.
+  - Appends command/events to the Event Store and returns immediately with a tracking ID (HTTP `202 Accepted`).
+  - Never performs blocking broker database writes or synchronous external HTTP calls in the request path.
+- **Query API (Read Path)**:
+  - Serves from highly optimized read models/projections stored in Postgres and Redis.
+  - Exposes trade logs, order state, account balances, positions, and analytics.
+- **Order Aggregate Event Lifecycle**:
+  Every order state transition is logged as an immutable event in the Event Store:
+  ```json
+  // Example: OrderCreated
+  {
+    "event_id": "evt_01j789abcde",
+    "event_type": "OrderCreated",
+    "timestamp": "2026-07-07T17:55:00.000Z",
+    "aggregate_id": "ord_01j78912345",
+    "version": 1,
+    "payload": {
+      "client_order_id": "cl_ord_abc123",
+      "symbol": "AAPL",
+      "side": "BUY",
+      "order_type": "LIMIT",
+      "limit_price": 185.50,
+      "quantity": 100,
+      "time_in_force": "GTC",
+      "account_id": "acc_998877"
+    }
+  }
+  ```
+  - Subsequent events: `RiskAccepted`, `BrokerSubmitted`, `BrokerAccepted`, `PartiallyFilled`, `Filled`, `CancelRequested`, `Canceled`, `Rejected`.
+- **Projector and Offset Tracking**:
+  - Projections are updated asynchronously by subscribing to event topics.
+  - Each projector maintains a state offset table (`projection_offsets`):
+    ```sql
+    CREATE TABLE projection_offsets (
+        projection_name VARCHAR(100) PRIMARY KEY,
+        last_processed_offset BIGINT NOT NULL,
+        last_updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        is_replaying BOOLEAN DEFAULT FALSE,
+        schema_version VARCHAR(20) NOT NULL
+    );
+    ```
+  - Supports zero-downtime projection rebuilds: spawn a new read model table, replay events from offset 0, catch up, then swap tables.
 
-Durable event bus:
+#### 4.1.2 Durable Event Bus Specification
 
-- Prefer Kafka, Redpanda, or NATS JetStream for the production command/event
-  boundary. Redis pub/sub is not enough for lossless order/fill/risk state.
-- Event delivery may be at-least-once; consumers must be idempotent using
-  event id, aggregate id, sequence, and command id.
-- Event retention must be long enough for replay, incident investigation, and
-  compliance retention.
-- Schema evolution must be governed by a registry or compatibility tests before
-  Go, Rust, Python, and mobile clients consume a new event version.
+- **Broker Selection**: Apache Kafka or NATS JetStream is used as the backbone. Redis Pub/Sub is restricted to volatile frontend fanouts (BFF metrics/ticks).
+- **Partitioning & Ordering**:
+  - Messages are partitioned by `account_id` or `symbol` to guarantee strict in-order processing of events for a single account/symbol.
+- **Idempotency & Deduplication**:
+  - Consumers enforce idempotency via the `Idempotency-Key` (from BFF) or `client_order_id`.
+  - Dedup records are cached in Redis with a 24-hour TTL:
+    ```
+    Key: deduplication:{client_order_id}:{event_id}
+    Value: processed
+    ```
+- **Schema Evolution & Compatibility**:
+  - Enforced using a Schema Registry (Confluent/NATS Schema Registry).
+  - All schemas must declare compatibility rules (default: `BACKWARD_TRANSITIVE`) to prevent serialization crashes during rolling deployments of Go/Rust components.
 
-Runtime engines:
+#### 4.1.3 Resilient WebSocket protocol (BFF to Client)
 
-- Strategy Runtime owns active paper/live strategy instances, current signal
-  state, cooldowns, open strategy context, and snapshot/checkpoint recovery.
-- Risk is split into pre-trade checks, intraday monitoring, and post-trade
-  review. These may share policy data, but their outputs and alerting differ.
-- Pricing Service normalizes quotes, mark prices, FX rates, stale marks, and
-  future Greeks/derivatives inputs before portfolio valuation consumes them.
-- Position Engine derives lots, average price, realized/unrealized P/L, and
-  broker reconciliation state from fills and broker events.
-- Portfolio Engine derives account equity, exposure, allocation, drawdown,
-  concentration, and strategy-level P/L from positions, cash, pricing, and risk.
-- Notification Service turns alerts, order events, incidents, and strategy
-  promotion/deployment changes into push/email/SMS/in-app notifications with
-  delivery audit.
-- Feature Flag Service gates paper/live trading, Strategy Lab, broker profiles,
-  regional rollout, risky order types, and mobile UI exposure.
-- Configuration Service versions risk limits, broker endpoints, trading hours,
-  strategy DSL rules, feature rollout policy, and emergency overrides.
+WebSocket connections are authenticated via JWT in the handshake and support connection lifecycle tokens:
+- **SessionId / ConnectionId**: Every connection gets a unique `ConnectionId` and belongs to a `SessionId`.
+- **ResumeToken**:
+  - If disconnected, clients reconnect with a `ResumeToken`:
+    ```json
+    {
+      "action": "resume",
+      "session_id": "sess_01j789xyz",
+      "resume_token": "res_tok_998877665544",
+      "last_received_sequence": 14205
+    }
+    ```
+- **Replay Window**:
+  - The server maintains a Redis stream buffer per session of the last 10 minutes of messages.
+  - If `last_received_sequence` is within the buffer window, the server replays missed messages. If the sequence is lost (buffer miss), the server forces a full state synchronization message (`state_sync`).
+
+#### 4.1.4 Position Engine & Portfolio Engine Specs
+
+- **Position Engine**:
+  - State is derived purely from transaction/fill events.
+  - Tracks specific lots using FIFO (First-In-First-Out) or weighted average cost.
+  - Real-time realized/unrealized PnL is computed per position:
+    $$\text{Unrealized P/L} = (\text{Mark Price} - \text{Average Cost}) \times \text{Quantity}$$
+  - **Reconciliation Engine**:
+    - Daily cron retrieves broker end-of-day positions.
+    - Resolves gaps between internal Position Engine state and external broker state; marks mismatches in a `reconciliation_breaks` table.
+- **Portfolio Engine**:
+  - Tracks account equity, buying power, total margin collateral, risk exposure, and drawdowns.
+  - Aggregates position values using real-time tick/pricing updates:
+    $$\text{Total Equity} = \text{Cash} + \sum (\text{Position Qty} \times \text{Mark Price})$$
+  - Real-time Greeks calculation (Delta, Gamma, Vega, Theta) for option portfolios.
+
+#### 4.1.5 Pricing Service & Market Cache
+
+- **Pricing Service**:
+  - Consumes raw L1/L2 book data from multiple feeds (Alpaca, SIP, IEX).
+  - Normalizes fields, handles stale ticks (e.g. invalidates after 5 seconds of inactivity), and outputs a consolidated **Mark Price** using volume-weighted mid-prices.
+- **Market Cache (Redis)**:
+  - High-performance, low-latency key-value store for live quotes and book state:
+    ```
+    Key: market:quote:{symbol}
+    Hash: { "bid": "185.20", "ask": "185.35", "volume": "1200", "timestamp": "1719875402" }
+    ```
+
+#### 4.1.6 Strategy Runtime Checkpointing
+
+- **Runtime Isolation**: Active strategy execution runs in a distinct sandbox (`StrategyRuntime`) isolated from core execution queues to prevent strategy crashes from blocking order execution.
+- **Checkpoints**:
+  - Every 10 seconds (or after state change), the runtime takes a snapshot of the strategy state:
+    ```json
+    {
+      "strategy_id": "strat_rsi_momentum",
+      "version": "v1.2.0",
+      "indicators_state": { "rsi_14": 42.50, "ema_50": 182.10 },
+      "open_positions": ["AAPL"],
+      "trailing_stop_levels": { "AAPL": 178.50 },
+      "sequence_no": 99823
+    }
+    ```
+  - Saved to a durable Postgres/S3 checkpoint store. Upon crash or restart, the engine restores from the latest checkpoint and replays subsequent market/execution events from the Event Bus.
+
+#### 4.1.7 Support Services (Notification, Feature Flag, Config)
+
+- **Notification Service**:
+  - De-coupled service consuming risk alerts, order fills, and system exceptions from the Event Bus.
+  - Routes message to channel templates (APNS/FCM for push, SendGrid for email, Twilio for SMS).
+- **Feature Flag Service**:
+  - Handles dynamic runtime rule evaluations without deployment:
+    ```json
+    {
+      "flag": "live_trading_enabled",
+      "rules": [
+        { "conditions": [{"attribute": "user_group", "op": "in", "values": ["beta-testers", "ops"]}], "value": true },
+        { "value": false }
+      ]
+    }
+    ```
+- **Configuration Service**:
+  - GitOps-driven store for environment configurations, broker rate-limits, risk policies, and market calendars.
+  - Generates immutable versioned configs (e.g., `config_v42`) loaded by Go and Rust systems with atomic hot-reload triggers.
 
 ## 5. Legacy API Removal Policy
 
