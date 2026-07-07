@@ -96,13 +96,16 @@ Current useful surface:
 - `rust/common` defines shared trading types, order status, order type, risk
   decisions, messaging, metrics, errors, config, and health HTTP helpers.
 - `rust/market-data` has order book structures, snapshots, aggregation, ZMQ
-  publisher integration, metrics server wiring, and an Alpaca market data
-  service scaffold.
+  publisher integration, metrics server wiring, and an Alpaca market data loop
+  that processes trades, quotes, bars, order book updates, bar aggregation, and
+  canonical market events.
 - `rust/risk-manager` has limit checks, PnL tracking, stop-loss management,
   circuit breaker states, hot-reloadable risk config, and metrics server wiring.
-- `rust/execution-engine` has an order router, Alpaca order request/response
-  conversion, slippage estimation, retry/rate-limit concepts, circuit breaker
-  checks, and an in-process idempotency lock.
+- `rust/execution-engine` has a trading mode model for `SIMULATED`, `PAPER`,
+  and `LIVE`, broker adapters, an order router, Alpaca order request/response
+  conversion, slippage estimation, retry/rate-limit handling, circuit breaker
+  checks, runtime kill-switch checks, live external-precondition checks, event
+  emission, reconciliation scaffolding, and an in-process idempotency lock.
 - `rust/database` has DuckDB persistence for metrics, trades, system events,
   query helpers, schemas, and observability integration examples.
 - `rust/signal-bridge` has feature computation, indicators, backtest runtime,
@@ -110,15 +113,22 @@ Current useful surface:
 
 Current blockers:
 
-- `rust/market-data/src/lib.rs` still has a TODO event loop for real market data
-  processing, order book updates, bar aggregation, and publishing.
-- Stop-loss execution is still marked as a stub that must integrate with the
-  order router for live execution.
+- The market-data event loop and stop-loss router integration have been
+  implemented, so they are no longer the primary Rust blockers. They still need
+  broker-backed paper soak, restart drills, and production telemetry evidence.
+- Stop-loss orders route through the execution pipeline, but live stop-loss
+  execution still needs external proof/preview wiring so live-mode guards do not
+  reject internally generated protective orders.
 - Idempotency in Rust is in-process and not yet durable across restarts or
-  multiple service instances.
-- Rust types are not yet exposed as a stable contract for Go/mobile. The API
-  must avoid drifting between Go DTOs, Rust domain structs, broker structs, and
-  Python models.
+  multiple service instances. Go/Postgres must remain the durable idempotency
+  and audit source of truth before production live trading.
+- Order lifecycle events need a stricter production contract. In particular,
+  duplicate-order handling must not emit a misleading accepted lifecycle before
+  idempotency is confirmed.
+- Rust event envelopes now include schema/version metadata, event id, source,
+  sequence, correlation id, trading mode, and payload. The remaining gap is a
+  frozen cross-language contract with conformance tests so Go DTOs, Rust domain
+  structs, broker structs, and Python fixtures cannot drift.
 - There is no complete production evidence for live market ingest to risk to
   execution to audit to client WebSocket.
 
@@ -139,21 +149,30 @@ Current useful surface:
   indicators.
 - `python/src/strategies` defines strategy, signal, and signal type concepts.
 - `python/src/backtesting` includes backtest engine, historical data handler,
-  portfolio handler, performance analyzer, and position sizing.
+  portfolio handler, performance analyzer, position sizing, risk integrity
+  comparison, and legacy-compatible simulated execution shims for tests.
 - `python/src/bridge` exposes Rust feature/backtest bridge and ZMQ messaging
   support.
+- `python/download_historical_data.py` and `python/scripts/download_historical_data.py`
+  provide a testable historical-data downloader module and CLI wrapper.
 - Python tests include e2e, strategy, unit, integration, benchmark, and
   validation coverage around backtesting, signals, portfolio behavior, and
   paper-trading style flows.
+- Python now has deterministic signal, risk decision, and backtest output
+  fixtures plus parity tests around `compare_risk_decision_traces`.
 
 Current blockers:
 
-- Python observability module is minimal and not a production request-path API.
-- Python models and Rust/Go DTOs can drift unless a contract and fixtures are
-  introduced.
+- Python observability is support/evidence code, not a production request-path
+  API. Keep it out of mobile/API serving.
+- Python fixtures and parity tests exist, but they are local deterministic
+  evidence. They are not yet a generated or enforced cross-language contract
+  across Go, Rust, broker payloads, and Python models.
 - Strategy/backtest evidence is not the same as live trading safety evidence.
-- Test suite may be broad and environment-sensitive; production gates should
-  include focused critical-path tests in addition to full pytest.
+- Full pytest is now a usable production gate in this environment, but many
+  tests still skip when `signal_bridge`, Go services, historical data, or Alpaca
+  credentials are unavailable. Keep focused critical-path gates alongside full
+  pytest.
 
 Python target role:
 
@@ -162,23 +181,75 @@ Python target role:
 - Generate or verify deterministic datasets used by Go/Rust integration tests.
 - Stay out of the synchronous mobile request path.
 
-### 3.4 Current Validation Snapshot
+### 3.4 Strategy Lab and Paper Research Impact
+
+Strategy Lab and Paper Research require changes in both Rust and Python, but
+not in the same way.
+
+Rust impact:
+
+- Rust should not accept arbitrary mobile formulas or become the public strategy
+  editor. Go owns the API, strategy version state, permissions, and promotion
+  workflow.
+- Rust must carry `strategy_id`, `strategy_version_id`, `paper_session_id`, and
+  `promotion_state` through risk reports, order preview, order routing, fills,
+  and canonical events so Go can audit every decision.
+- Rust should execute only approved immutable strategy versions or validated
+  signal streams. Draft strategies and unvalidated formulas must be rejected
+  before order routing.
+- Paper-mode execution should support strategy-scoped sessions so order, fill,
+  slippage, risk, and reconciliation events can be attributed to the tested
+  method.
+- Expected Rust effort is Medium if Rust consumes approved signals/versions from
+  Go/Python, and High if Rust must evaluate user formulas directly in the live
+  runtime.
+
+Python impact:
+
+- Python needs the larger change because it owns research, backtest, evaluation,
+  and fixture evidence.
+- Python should evaluate the constrained strategy DSL/expression schema,
+  validate formulas and weights, run deterministic backtests, compare strategy
+  versions, and generate stability reports.
+- Python must clearly label evidence as backtest, paper, or live-derived. A good
+  backtest or profitable paper run is not enough to approve live trading.
+- Python should produce golden fixtures for signals, risk decisions, backtest
+  outputs, and paper-session traces so Go/Rust contract tests can detect drift.
+- Expected Python effort is Medium to High because current backtesting exists,
+  but generic user-defined formula validation, strategy version comparison, and
+  stability scoring still need product-grade contracts.
+
+Go impact:
+
+- Go remains the source of truth for strategy drafts, immutable versions,
+  promotion requests, live approvals, audit records, idempotency, and mobile
+  APIs.
+- Go may call Python asynchronously for backtests and reports, but never in the
+  synchronous mobile request path.
+
+### 3.5 Current Validation Snapshot
 
 Observed on 2026-07-07:
 
 | Domain | Command | Result |
 |---|---|---|
 | Go | `cd go && go test ./...` | Pass. |
-| Rust | `cd rust && cargo test --workspace` | Blocked: `rustup` has no installed/default toolchain, so `cargo` cannot run. |
-| Python | `cd python && python -m pytest tests -q` | Blocked during collection: missing imports for `backtesting.execution_handler`, `risk`, and `download_historical_data`. |
+| Rust | `cd rust && cargo test --workspace` | Pass in the latest Rust hardening run. |
+| Rust | `cd rust && cargo fmt --all --check` | Pass in the latest Rust hardening run. |
+| Rust | `cd rust && cargo clippy --workspace -- -D warnings` | Pass in the latest Rust hardening run. |
+| Python | `cd python && python -m pytest tests -q` | Pass: 478 passed, 153 skipped, 1 warning in the latest Python gate run. |
+| Python | `cd python && black --check src tests download_historical_data.py scripts/download_historical_data.py` | Pass. |
+| Python | `cd python && ruff check src tests download_historical_data.py scripts/download_historical_data.py` | Pass. |
 
 Interpretation:
 
-- Go is the only domain currently verified green in this environment.
-- Rust may still be testable after installing/configuring a Rust toolchain, but
-  that was not done during this documentation pass.
-- Python has real test-suite/module drift that should be fixed or quarantined
-  before using full pytest as a production gate.
+- Go, Rust, and Python all have local green gates for their current roles.
+- Rust is now a production-candidate trading core foundation, not production
+  live trading. Durable idempotency, broker-backed paper soak, reconciliation
+  drills, event-contract conformance, and live E2E evidence remain required.
+- Python is now production-gate trustworthy for research/backtest/parity
+  support, not production request serving. Skips tied to unavailable local
+  services or extensions must not be mistaken for live trading evidence.
 
 ## 4. Target Architecture
 
@@ -268,17 +339,52 @@ Legacy retirement gates:
 - Unsafe endpoints include audit events.
 - Read endpoints include pagination, cursor, filters, and documented sort order.
 
-### 6.2 Read-Only Market Data
+### 6.2 API Coverage Assessment
 
-| Method | Endpoint | Purpose |
-|---|---|---|
-| `GET` | `/api/v1/market/products` | Tradable products and metadata. |
-| `GET` | `/api/v1/market/products/{symbol}` | Tick size, lot size, min notional, asset class, tradability. |
-| `GET` | `/api/v1/market/ticker?symbols=AAPL,MSFT` | Current best quote/last trade summary. |
-| `GET` | `/api/v1/market/order-book/{symbol}` | Current normalized order book snapshot. |
-| `GET` | `/api/v1/market/trades/{symbol}` | Recent market trades. |
-| `GET` | `/api/v1/market/candles/{symbol}` | OHLCV candles with timeframe and pagination. |
-| `GET` | `/api/v1/market/status` | Market clock, session status, data freshness, provider status. |
+This blueprint expands the API from the original 40 REST endpoints to 96 REST
+endpoints for Trading Observability, Strategy Lab, and Paper Research. The goal
+is not to force one trading formula onto every client. Mobile users must be able
+to tune weights, test formulas, compare methods, discard unstable approaches,
+and promote only proven strategies from research to paper and then to live
+trading.
+
+It is not a complete retail brokerage app surface yet. Do not add funding,
+deposits, withdrawals, tax documents, KYC, statements, referrals, social
+features, options/multi-leg trading, or copy-trading/social features until the
+observability, paper-research, and promotion gates are stable. Those can become
+later modules after the core trading runtime, durable audit, and mobile contract
+are proven.
+
+Endpoint count by group:
+
+| Group | REST count | Readiness meaning |
+|---|---:|---|
+| Market data | 7 | Enough for quotes, charts, order book, trades, and market status. |
+| Account, portfolio, positions, watchlists | 10 | Enough for mobile dashboard and watchlist UX. |
+| Orders, fills, trades | 5 | Enough for read-only order/fill/trade history. |
+| Trading actions | 4 | Enough for preview, submit, cancel, and replace after safety gates. |
+| Risk, safety, admin | 9 | Adds exposure and circuit breaker visibility. |
+| System observability | 7 | Enough for health, incidents, and metrics dashboards. |
+| Auth, sessions, devices | 5 | Required for mobile production auth and device control. |
+| Account snapshots and cash | 3 | Gives mobile auditable account/cash history. |
+| Order reconciliation, audit, broker diagnostics | 9 | Required for production support and order-drift investigation. |
+| Alerts | 4 | Lets users and ops configure trading/observability alerts. |
+| Strategy Lab | 10 | Lets users create, tune, validate, version, and fork custom methods. |
+| Backtests and evaluation | 6 | Lets users compare formulas before paper trading. |
+| Paper research sessions | 9 | Lets users test strategies in a realistic paper environment. |
+| Promotion and activation governance | 8 | Controls movement from draft to paper/live and records which method is active. |
+
+### 6.3 Read-Only Market Data
+
+| Method | Endpoint | Purpose | Client meaning |
+|---|---|---|---|
+| `GET` | `/api/v1/market/products` | Tradable products and metadata. | Lets mobile render searchable symbols and decide which assets are supported before any order flow. |
+| `GET` | `/api/v1/market/products/{symbol}` | Tick size, lot size, min notional, asset class, tradability. | Gives the client validation rules for price/quantity inputs and disabled trading states. |
+| `GET` | `/api/v1/market/ticker?symbols=AAPL,MSFT` | Current best quote/last trade summary. | Powers watchlists, portfolio marks, and compact quote rows without loading full charts. |
+| `GET` | `/api/v1/market/order-book/{symbol}` | Current normalized order book snapshot. | Shows bid/ask depth and liquidity for an instrument in a consistent broker-independent shape. |
+| `GET` | `/api/v1/market/trades/{symbol}` | Recent market trades. | Shows recent prints/time-and-sales for inspection and market context. |
+| `GET` | `/api/v1/market/candles/{symbol}` | OHLCV candles with timeframe and pagination. | Powers price charts, historical views, and technical overlays. |
+| `GET` | `/api/v1/market/status` | Market clock, session status, data freshness, provider status. | Tells the UI whether the market is open, data is stale, or a provider is degraded. |
 
 Required DTOs:
 
@@ -289,20 +395,20 @@ Required DTOs:
 - `Candle`
 - `MarketStatus`
 
-### 6.3 Account, Portfolio, Positions
+### 6.4 Account, Portfolio, Positions
 
-| Method | Endpoint | Purpose |
-|---|---|---|
-| `GET` | `/api/v1/account/status` | Account state, trading mode, restrictions, permissions. |
-| `GET` | `/api/v1/portfolio/summary` | Equity, cash, buying power, daily P/L, exposure. |
-| `GET` | `/api/v1/portfolio/history` | Equity and P/L time series. |
-| `GET` | `/api/v1/positions` | Current open positions. |
-| `GET` | `/api/v1/positions/{symbol}` | Single position detail. |
-| `GET` | `/api/v1/watchlists` | Account watchlists. |
-| `POST` | `/api/v1/watchlists` | Create watchlist. |
-| `PATCH` | `/api/v1/watchlists/{id}` | Rename or update watchlist metadata. |
-| `POST` | `/api/v1/watchlists/{id}/symbols` | Add symbols. |
-| `DELETE` | `/api/v1/watchlists/{id}/symbols/{symbol}` | Remove symbol. |
+| Method | Endpoint | Purpose | Client meaning |
+|---|---|---|---|
+| `GET` | `/api/v1/account/status` | Account state, trading mode, restrictions, permissions. | Decides whether the app should show read-only, paper, or live-capable controls. |
+| `GET` | `/api/v1/portfolio/summary` | Equity, cash, buying power, daily P/L, exposure. | Powers the portfolio dashboard header and account risk summary. |
+| `GET` | `/api/v1/portfolio/history` | Equity and P/L time series. | Powers account performance charts over daily, weekly, monthly, and custom ranges. |
+| `GET` | `/api/v1/positions` | Current open positions. | Lists current holdings with quantity, average price, market value, and P/L. |
+| `GET` | `/api/v1/positions/{symbol}` | Single position detail. | Opens a focused holding screen with lots, exposure, and available actions. |
+| `GET` | `/api/v1/watchlists` | Account watchlists. | Loads user watchlists and symbols for the market/home screens. |
+| `POST` | `/api/v1/watchlists` | Create watchlist. | Lets users create a custom tracked-symbol group. |
+| `PATCH` | `/api/v1/watchlists/{id}` | Rename or update watchlist metadata. | Lets users rename, reorder, or adjust watchlist settings. |
+| `POST` | `/api/v1/watchlists/{id}/symbols` | Add symbols. | Adds an instrument to a user watchlist after symbol validation. |
+| `DELETE` | `/api/v1/watchlists/{id}/symbols/{symbol}` | Remove symbol. | Removes a tracked instrument without affecting positions or orders. |
 
 Required DTOs:
 
@@ -312,26 +418,26 @@ Required DTOs:
 - `Position`
 - `Watchlist`
 
-### 6.4 Orders, Fills, and Trades
+### 6.5 Orders, Fills, and Trades
 
 Read-only first:
 
-| Method | Endpoint | Purpose |
-|---|---|---|
-| `GET` | `/api/v1/orders` | List orders with status, symbol, side, date filters. |
-| `GET` | `/api/v1/orders/{order_id}` | Order detail and lifecycle. |
-| `GET` | `/api/v1/fills` | List fills/executions. |
-| `GET` | `/api/v1/fills/{fill_id}` | Fill detail. |
-| `GET` | `/api/v1/trades` | Business trade history derived from orders/fills. |
+| Method | Endpoint | Purpose | Client meaning |
+|---|---|---|---|
+| `GET` | `/api/v1/orders` | List orders with status, symbol, side, date filters. | Powers order history, open orders, and status filter screens. |
+| `GET` | `/api/v1/orders/{order_id}` | Order detail and lifecycle. | Shows why an order is pending, filled, canceled, rejected, or failed. |
+| `GET` | `/api/v1/fills` | List fills/executions. | Shows execution records produced by orders, including partial fills. |
+| `GET` | `/api/v1/fills/{fill_id}` | Fill detail. | Opens a single execution with price, quantity, fees, venue/provider refs, and correlation id. |
+| `GET` | `/api/v1/trades` | Business trade history derived from orders/fills. | Shows user-friendly trade history after normalizing raw order/fill events. |
 
 Trading actions later:
 
-| Method | Endpoint | Purpose |
-|---|---|---|
-| `POST` | `/api/v1/orders/preview` | Validate estimated order before submission. |
-| `POST` | `/api/v1/orders` | Submit order. Requires `Idempotency-Key`. |
-| `POST` | `/api/v1/orders/{order_id}/cancel` | Cancel order. Requires `Idempotency-Key`. |
-| `POST` | `/api/v1/orders/{order_id}/replace` | Replace order. Requires `Idempotency-Key`. |
+| Method | Endpoint | Purpose | Client meaning |
+|---|---|---|---|
+| `POST` | `/api/v1/orders/preview` | Validate estimated order before submission. | Runs product, account, risk, buying-power, and estimated-cost checks before the user confirms. |
+| `POST` | `/api/v1/orders` | Submit order. Requires `Idempotency-Key`. | Creates a paper or live order only after preview, auth, risk, idempotency, and audit gates pass. |
+| `POST` | `/api/v1/orders/{order_id}/cancel` | Cancel order. Requires `Idempotency-Key`. | Requests cancellation and records the full broker/order lifecycle. |
+| `POST` | `/api/v1/orders/{order_id}/replace` | Replace order. Requires `Idempotency-Key`. | Replaces editable order fields through a controlled cancel/replace workflow. |
 
 Required order state machine:
 
@@ -354,31 +460,172 @@ Every transition records:
 - `reason_code`
 - `raw_provider_ref` stored internally only
 
-### 6.5 Risk, Safety, and Admin
+### 6.6 Risk, Safety, and Admin
 
-| Method | Endpoint | Purpose |
-|---|---|---|
-| `GET` | `/api/v1/risk/status` | Read-only current risk state. |
-| `GET` | `/api/v1/risk/limits` | Current effective limits. |
-| `GET` | `/api/v1/risk/decisions` | Risk decision audit trail. |
-| `POST` | `/api/v1/admin/risk/limits` | Admin-only risk limit update. |
-| `POST` | `/api/v1/admin/risk/kill-switch` | Admin-only global halt. |
-| `DELETE` | `/api/v1/admin/risk/kill-switch` | Admin-only resume. |
-| `POST` | `/api/v1/admin/trading/read-only-mode` | Admin-only force read-only mode. |
+| Method | Endpoint | Purpose | Client meaning |
+|---|---|---|---|
+| `GET` | `/api/v1/risk/status` | Read-only current risk state. | Shows whether trading is normal, restricted, halted, or degraded. |
+| `GET` | `/api/v1/risk/limits` | Current effective limits. | Shows max notional, exposure, drawdown, rate, or mode limits applied to the user/account. |
+| `GET` | `/api/v1/risk/decisions` | Risk decision audit trail. | Lets support/admin inspect why previews or orders were allowed or rejected. |
+| `GET` | `/api/v1/risk/exposure` | Current exposure by symbol, sector, strategy, and account. | Shows whether a method is concentrating risk before a trade is placed. |
+| `GET` | `/api/v1/risk/circuit-breakers` | Active and historical circuit breaker state. | Explains why trading may be paused or throttled even when the account is otherwise healthy. |
+| `POST` | `/api/v1/admin/risk/limits` | Admin-only risk limit update. | Changes effective risk limits with audit, versioning, and rollback history. |
+| `POST` | `/api/v1/admin/risk/kill-switch` | Admin-only global halt. | Immediately halts unsafe trading actions across configured scope. |
+| `DELETE` | `/api/v1/admin/risk/kill-switch` | Admin-only resume. | Resumes trading after incident review and audit approval. |
+| `POST` | `/api/v1/admin/trading/read-only-mode` | Admin-only force read-only mode. | Forces clients into portfolio/market viewing mode without order actions. |
 
 Mobile should see risk status, not mutate it.
 
-### 6.6 System Observability
+### 6.7 System Observability
 
-| Method | Endpoint | Purpose |
+| Method | Endpoint | Purpose | Client meaning |
+|---|---|---|---|
+| `GET` | `/api/v1/system/health` | Aggregated health. | Gives mobile and ops a single safe status for Go, Rust, broker, storage, and event freshness. |
+| `GET` | `/api/v1/system/components` | Component states and freshness. | Shows which subsystem is degraded: API, Rust market data, risk, execution, broker, Postgres, Redis, or DuckDB. |
+| `GET` | `/api/v1/system/incidents` | Incidents visible to the signed-in user/admin. | Powers banners, status pages, and ops incident lists. |
+| `POST` | `/api/v1/system/incidents/{id}/acknowledge` | Admin/ops only. | Records that an operator has seen and taken ownership of an incident. |
+| `POST` | `/api/v1/system/incidents/{id}/resolve` | Admin/ops only. | Closes an incident with audit trail and recovery metadata. |
+| `GET` | `/api/v1/observability/metrics/current` | Curated API/system/trading metrics. | Powers live dashboards for latency, freshness, error rates, order state, and risk state. |
+| `GET` | `/api/v1/observability/metrics/history` | Historical metrics with typed query parameters. | Powers trend charts, incident investigation, and release/regression comparisons. |
+
+### 6.8 Auth, Sessions, and Devices
+
+| Method | Endpoint | Purpose | Client meaning |
+|---|---|---|---|
+| `POST` | `/api/v1/auth/login` | Start a user session with mobile-safe credentials or provider auth. | Replaces shared API keys with user-scoped auth. |
+| `POST` | `/api/v1/auth/refresh` | Rotate access token using a refresh token. | Keeps mobile sessions alive without long-lived access tokens. |
+| `POST` | `/api/v1/auth/logout` | End the current session and revoke refresh token state. | Lets users and security tooling terminate a mobile session. |
+| `GET` | `/api/v1/devices` | List devices linked to the user. | Lets users review trusted phones/tablets and security posture. |
+| `DELETE` | `/api/v1/devices/{id}` | Revoke a device and its sessions. | Lets users remove a lost or untrusted device. |
+
+### 6.9 Account Snapshots and Cash
+
+| Method | Endpoint | Purpose | Client meaning |
+|---|---|---|---|
+| `GET` | `/api/v1/account/snapshots` | Historical account state snapshots. | Lets mobile explain balance, restriction, or permission changes over time. |
+| `GET` | `/api/v1/cash/balances` | Current cash, buying power, unsettled cash, and reserved cash. | Gives order tickets and portfolio screens precise cash availability. |
+| `GET` | `/api/v1/cash/movements` | Cash ledger derived from fills, fees, transfers, and adjustments. | Helps users reconcile why available cash changed. |
+
+### 6.10 Order Reconciliation, Audit, and Broker Diagnostics
+
+| Method | Endpoint | Purpose | Client meaning |
+|---|---|---|---|
+| `GET` | `/api/v1/orders/{order_id}/transitions` | Full normalized order state transition list. | Shows exact status history without exposing broker-specific raw payloads. |
+| `GET` | `/api/v1/orders/{order_id}/events` | Internal event timeline for an order. | Helps support trace Go, Rust, broker, and storage events for a single order. |
+| `GET` | `/api/v1/orders/{order_id}/reconciliation` | Latest order reconciliation result. | Explains whether local state matches broker state. |
+| `POST` | `/api/v1/admin/orders/{order_id}/reconcile` | Admin-only manual reconciliation trigger. | Lets ops repair or verify drift after broker/API incidents. |
+| `GET` | `/api/v1/audit/events` | Searchable audit event stream. | Lets support/compliance inspect sensitive reads and writes. |
+| `GET` | `/api/v1/audit/events/{id}` | Single audit event detail. | Shows who did what, when, from which device/session, and with which correlation id. |
+| `GET` | `/api/v1/broker/status` | Normalized broker connectivity and account-mode status. | Lets mobile and ops distinguish app issues from broker/provider issues. |
+| `GET` | `/api/v1/broker/events` | Normalized provider event stream. | Supports broker incident investigation without exposing `/api/alpaca` directly. |
+| `GET` | `/api/v1/broker/reconciliation` | Broker reconciliation summary across orders, fills, positions, and cash. | Shows whether the local source of truth is aligned with broker state. |
+
+### 6.11 Alerts
+
+| Method | Endpoint | Purpose | Client meaning |
+|---|---|---|---|
+| `GET` | `/api/v1/alerts` | List user and system alert rules. | Lets users manage price, portfolio, risk, and system alerts. |
+| `POST` | `/api/v1/alerts` | Create an alert rule. | Lets users define price, P/L, exposure, order, or incident notifications. |
+| `PATCH` | `/api/v1/alerts/{id}` | Update alert rule settings or enabled state. | Lets users tune thresholds without recreating alerts. |
+| `DELETE` | `/api/v1/alerts/{id}` | Delete or archive an alert rule. | Removes unwanted alert noise. |
+
+### 6.12 Strategy Lab - Custom Formulas and Weights
+
+Mobile must not be limited to one universal trading method. Each trader can
+create strategy drafts with custom indicator weights, formulas, filters,
+timeframes, risk constraints, and entry/exit rules. Go owns the strategy
+contract and validation workflow; Python can evaluate/backtest; Rust can later
+execute approved strategy versions. User formulas must use a constrained DSL or
+server-approved expression model, never arbitrary mobile-supplied code.
+
+| Method | Endpoint | Purpose | Client meaning |
+|---|---|---|---|
+| `GET` | `/api/v1/strategy/templates` | List built-in starter templates. | Gives users safe examples for momentum, mean reversion, breakout, trend, or risk-off styles. |
+| `GET` | `/api/v1/strategies` | List user strategy drafts and versions. | Shows saved methods, paper-tested methods, and live-eligible methods. |
+| `POST` | `/api/v1/strategies` | Create a strategy draft. | Starts a custom method with formulas, weights, universe, timeframe, and risk settings. |
+| `GET` | `/api/v1/strategies/{strategy_id}` | Read strategy definition and metadata. | Opens a strategy editor or detail screen. |
+| `PATCH` | `/api/v1/strategies/{strategy_id}` | Update draft weights, formulas, filters, or metadata. | Lets users tune their method without changing frozen versions. |
+| `DELETE` | `/api/v1/strategies/{strategy_id}` | Archive a strategy. | Removes unstable or abandoned methods from active lists. |
+| `POST` | `/api/v1/strategies/{strategy_id}/clone` | Fork a template or existing strategy. | Lets users experiment without damaging a known-good method. |
+| `POST` | `/api/v1/strategies/{strategy_id}/validate` | Validate syntax, supported indicators, data requirements, and risk bounds. | Gives immediate feedback before backtest or paper trading. |
+| `GET` | `/api/v1/strategies/{strategy_id}/versions` | List immutable strategy versions. | Shows which exact formulas were tested or promoted. |
+| `POST` | `/api/v1/strategies/{strategy_id}/versions` | Freeze a draft into an immutable version. | Creates a stable artifact that can be backtested, paper-tested, and audited. |
+
+Strategy formula guardrails:
+
+- Formulas are declarative and versioned.
+- Allowed indicators, operators, lookback windows, and data fields are
+  allowlisted server-side.
+- Weights must have min/max bounds and optional normalization rules.
+- No strategy can submit live orders unless its immutable version passes
+  validation, backtest evidence, paper-session evidence, risk review, and live
+  promotion approval.
+
+Core Strategy Lab parameters:
+
+| Parameter group | Required fields | Meaning |
 |---|---|---|
-| `GET` | `/api/v1/system/health` | Aggregated health. |
-| `GET` | `/api/v1/system/components` | Component states and freshness. |
-| `GET` | `/api/v1/system/incidents` | Incidents visible to the signed-in user/admin. |
-| `POST` | `/api/v1/system/incidents/{id}/acknowledge` | Admin/ops only. |
-| `POST` | `/api/v1/system/incidents/{id}/resolve` | Admin/ops only. |
-| `GET` | `/api/v1/observability/metrics/current` | Curated API/system/trading metrics. |
-| `GET` | `/api/v1/observability/metrics/history` | Historical metrics with typed query parameters. |
+| Identity | `strategy_id`, `owner_user_id`, `name`, `description`, `style`, `status` | The trade method itself. `strategies` is the root table for a user's method. |
+| Draft/version | `draft_id`, `strategy_version_id`, `version_no`, `is_immutable`, `created_from_version_id` | Drafts are editable; versions are frozen artifacts used for backtests, paper, and live approval. |
+| Formula | `formula_schema_version`, `entry_formula`, `exit_formula`, `risk_formula`, `allowed_indicators`, `lookback_windows` | Declarative rules for when the method enters, exits, or blocks trades. |
+| Weights | `weight_set_id`, `indicator_weights`, `signal_thresholds`, `normalization_mode`, `min_weight`, `max_weight` | User-tuned weights for indicators, factors, and signal scoring. |
+| Universe | `symbols`, `asset_classes`, `market`, `timeframe`, `session_filter`, `liquidity_filter` | Defines what instruments and time windows the method is allowed to trade. |
+| Risk | `risk_profile_id`, `max_notional`, `max_position_pct`, `max_drawdown`, `stop_loss`, `take_profit`, `cooldown` | Caps damage from a method even if its formula is valid. |
+| Evidence | `validation_run_id`, `backtest_id`, `paper_session_id`, `stability_report_id`, `evidence_type` | Links the method to proof from validation, backtest, paper, or live-derived runs. |
+| Promotion | `promotion_state`, `paper_eligible`, `live_eligible`, `approved_by`, `approved_at` | Controls whether a method may be used in paper or live. |
+| Deployment | `deployment_id`, `mode`, `account_id`, `allocation_pct`, `active`, `started_at`, `stopped_at` | Records that a specific approved version is currently active for Paper or Live. |
+
+Terminology:
+
+- `strategies` means a user's trade method or research idea.
+- `strategy_drafts` means the editable working copy of that method.
+- `strategy_versions` means immutable tested versions of the method.
+- `strategy_deployments` means a version is actively assigned to Paper or Live.
+- A method can be active in Paper after paper promotion. It can be active in
+  Live only after explicit live approval and live trading gates.
+
+### 6.13 Backtests and Evaluation
+
+| Method | Endpoint | Purpose | Client meaning |
+|---|---|---|---|
+| `POST` | `/api/v1/strategies/{strategy_id}/backtests` | Start a backtest for an immutable strategy version. | Lets users evaluate a method against historical data before paper trading. |
+| `GET` | `/api/v1/backtests` | List backtest runs. | Shows completed, running, failed, and comparable tests. |
+| `GET` | `/api/v1/backtests/{backtest_id}` | Read backtest result summary and artifacts. | Shows performance, drawdown, win rate, trade count, and stability metrics. |
+| `POST` | `/api/v1/backtests/compare` | Compare multiple backtest runs or strategy versions. | Helps users pick the best method for their style instead of guessing. |
+| `GET` | `/api/v1/backtests/{backtest_id}/signals` | Backtest signal trace. | Lets users inspect why a strategy entered, exited, or stayed flat. |
+| `GET` | `/api/v1/backtests/{backtest_id}/trades` | Backtest trade list. | Lets users diagnose losing trades, unstable periods, and overfitting. |
+
+### 6.14 Paper Research Sessions
+
+Paper trading is the research proving ground. It should let traders test many
+methods under realistic data, order lifecycle, risk, and broker-like behavior
+without risking live capital. Good methods can be retained and promoted; weak or
+unstable methods should remain archived or paper-only.
+
+| Method | Endpoint | Purpose | Client meaning |
+|---|---|---|---|
+| `GET` | `/api/v1/paper/sessions` | List paper research sessions. | Shows experiments by strategy, date, status, and performance. |
+| `POST` | `/api/v1/paper/sessions` | Start a paper session from an immutable strategy version. | Lets users test a method in paper mode with selected universe and risk settings. |
+| `GET` | `/api/v1/paper/sessions/{session_id}` | Read paper session state. | Shows whether the experiment is running, paused, stopped, or completed. |
+| `POST` | `/api/v1/paper/sessions/{session_id}/pause` | Pause a paper session. | Stops new paper orders while preserving session state. |
+| `POST` | `/api/v1/paper/sessions/{session_id}/resume` | Resume a paused paper session. | Continues the experiment after review or market reopen. |
+| `POST` | `/api/v1/paper/sessions/{session_id}/stop` | Stop a paper session. | Finalizes results and prevents more paper actions. |
+| `GET` | `/api/v1/paper/sessions/{session_id}/performance` | Paper session performance metrics. | Shows live-like P/L, drawdown, volatility, win rate, slippage, and stability. |
+| `GET` | `/api/v1/paper/sessions/{session_id}/signals` | Paper session signal trace. | Explains the method's live-stream decisions. |
+| `GET` | `/api/v1/paper/sessions/{session_id}/orders` | Paper session order/fill history. | Shows paper order lifecycle and execution quality for the method. |
+
+### 6.15 Strategy Promotion Governance
+
+| Method | Endpoint | Purpose | Client meaning |
+|---|---|---|---|
+| `GET` | `/api/v1/strategies/{strategy_id}/stability-report` | Summarize backtest and paper stability evidence. | Shows whether a method is consistent enough to keep or promote. |
+| `GET` | `/api/v1/strategies/{strategy_id}/promotion-check` | Check promotion gates for paper or live. | Explains missing evidence, risk issues, or approval blockers. |
+| `POST` | `/api/v1/strategies/{strategy_id}/promote-paper` | Mark a validated method as paper-trading eligible. | Moves a method from lab/backtest into controlled paper testing. |
+| `POST` | `/api/v1/strategies/{strategy_id}/request-live-approval` | Request live eligibility review. | Starts an auditable approval flow; it must not directly enable live trading. |
+| `GET` | `/api/v1/strategy-deployments` | List active or historical strategy deployments. | Shows which methods are currently active in Paper or Live. |
+| `POST` | `/api/v1/strategy-deployments` | Activate an approved strategy version for Paper or Live. | Starts using a method with allocation, mode, and account guardrails. |
+| `PATCH` | `/api/v1/strategy-deployments/{deployment_id}` | Pause, resume, or adjust deployment allocation within limits. | Lets users control an active method without editing the frozen formula. |
+| `DELETE` | `/api/v1/strategy-deployments/{deployment_id}` | Stop a strategy deployment. | Turns off a method for Paper or Live while preserving audit history. |
 
 ## 7. WebSocket v1 Contract
 
@@ -421,6 +668,12 @@ Required topics:
 - `fills`
 - `risk.status`
 - `incidents`
+- `alerts`
+- `strategy.validation:{strategy_id}`
+- `backtest.status:{backtest_id}`
+- `paper.session:{session_id}`
+- `paper.performance:{session_id}`
+- `promotion.status:{strategy_id}`
 
 Required behavior:
 
@@ -444,29 +697,144 @@ Use three storage roles:
 | DuckDB | Analytics, historical metrics, backtest outputs, offline observability queries. |
 | Redis or equivalent | Short-lived cache, WebSocket fanout, distributed locks, rate limits, stream/outbox coordination. |
 
-Minimum production tables:
+Minimum production logical tables:
+
+Identity, access, and client security:
 
 - `api_clients`
+- `api_client_keys`
+- `api_client_scopes`
 - `users`
+- `user_profiles`
+- `user_roles`
+- `roles`
+- `role_permissions`
 - `sessions`
 - `devices`
+- `device_sessions`
+- `refresh_tokens`
+
+Broker accounts and portfolio state:
+
 - `accounts`
+- `account_connections`
 - `account_snapshots`
 - `portfolio_snapshots`
 - `positions`
+- `position_lots`
+- `position_valuations`
+- `cash_balances`
+- `cash_movements`
+- `account_permissions`
+
+Products and market data:
+
 - `products`
+- `product_aliases`
+- `market_sessions`
+- `market_data_ticks`
+- `market_quotes`
+- `market_bars`
+- `order_book_snapshots`
+- `corporate_actions`
+
+Orders, routing, execution, and fills:
+
+- `order_intents`
+- `order_previews`
 - `orders`
 - `order_transitions`
+- `order_rejections`
+- `order_routes`
+- `broker_orders`
+- `broker_order_events`
 - `fills`
 - `trades`
+- `execution_quality`
+
+Risk, controls, and safety:
+
 - `risk_limits`
+- `risk_limit_versions`
 - `risk_decisions`
+- `risk_decision_inputs`
+- `exposure_snapshots`
+- `margin_checks`
+- `stop_loss_triggers`
+- `circuit_breaker_events`
 - `kill_switch_events`
+
+Events, observability, and operations:
+
 - `idempotency_keys`
 - `audit_events`
+- `alert_rules`
+- `alert_events`
+- `alert_deliveries`
 - `provider_events`
+- `provider_event_errors`
+- `outbox_events`
+- `inbox_events`
 - `websocket_sessions`
+- `websocket_subscriptions`
 - `incidents`
+- `incident_updates`
+- `system_components`
+- `service_health_checks`
+- `metric_samples`
+- `metric_rollups`
+
+Research, backtest, and validation evidence:
+
+- `strategy_templates`
+- `strategies`
+- `strategy_drafts`
+- `strategy_versions`
+- `strategy_formula_versions`
+- `strategy_weight_sets`
+- `strategy_universes`
+- `strategy_risk_profiles`
+- `strategy_validation_runs`
+- `backtest_runs`
+- `backtest_artifacts`
+- `backtest_comparisons`
+- `paper_sessions`
+- `paper_session_metrics`
+- `paper_session_signals`
+- `paper_session_orders`
+- `signal_traces`
+- `risk_trace_fixtures`
+- `parity_check_runs`
+- `strategy_stability_reports`
+- `strategy_promotion_requests`
+- `strategy_live_approvals`
+- `strategy_deployments`
+- `strategy_activation_events`
+
+Strategy table semantics:
+
+- `strategies` is the root trade-method table. It represents the user's saved
+  research method, not an order and not an active runtime by itself.
+- `strategy_drafts` stores the editable version of a method while the trader is
+  tuning formulas, weights, filters, timeframes, and risk settings.
+- `strategy_versions` stores immutable snapshots of a method. Backtests, paper
+  sessions, live approval, and audit records must reference immutable versions.
+- `strategy_universes` and `strategy_risk_profiles` separate tradable universe
+  and damage limits from the formula so the same method can be tested across
+  different symbol/timeframe/risk profiles without rewriting its core logic.
+- `paper_sessions` records experiments that run a strategy version in Paper
+  mode. It is evidence, not live approval.
+- `strategy_live_approvals` records permission to use a version for Live mode.
+  It is not activation by itself.
+- `strategy_deployments` records that an approved strategy version is actively
+  assigned to Paper or Live for an account, allocation, and runtime mode.
+- `strategy_activation_events` records every activate, pause, resume, stop, and
+  allocation-change decision for audit and rollback.
+
+This expands the minimum schema from 21 coarse tables to 91 logical tables. The
+exact first migration can ship in increments, but the domain boundaries should
+stay stable so Go DTOs, Rust events, Python fixtures, and audit records do not
+drift.
 
 Idempotency table must include:
 
@@ -480,6 +848,34 @@ Idempotency table must include:
 - `created_at`
 - `expires_at`
 - `locked_until`
+
+Partitioning and sharding policy:
+
+- Partition append-only time-series tables by time: `market_data_ticks`,
+  `market_quotes`, `market_bars`, `order_book_snapshots`, `metric_samples`,
+  `audit_events`, `alert_events`, `provider_events`, `outbox_events`,
+  `inbox_events`, `websocket_sessions`, `service_health_checks`, `trades`,
+  `backtest_runs`, `paper_session_signals`, `paper_session_orders`,
+  `paper_session_metrics`, and `strategy_activation_events`.
+- Use monthly partitions for audit/compliance data and daily partitions for
+  high-volume market data or metrics. Keep active hot partitions in Postgres and
+  archive cold analytical copies to DuckDB/object storage.
+- Hash-shard tenant/account scoped OLTP tables by `account_id` or `user_id` when
+  one primary Postgres cluster is no longer enough: `orders`, `fills`,
+  `positions`, `portfolio_snapshots`, `risk_decisions`, `idempotency_keys`,
+  `audit_events`, `strategies`, `strategy_versions`, `paper_sessions`,
+  `strategy_deployments`, and `alert_rules`.
+- Keep global reference tables unsharded: `products`, `product_aliases`,
+  `market_sessions`, `roles`, `role_permissions`, and `risk_limit_versions`.
+- Route all writes through Go using a shard resolver. Rust publishes canonical
+  events only; Python reads fixtures/analytics and must not write production
+  order state.
+- Every partitioned table must include `created_at` or `event_time`, and every
+  sharded table must include the shard key explicitly in the primary or unique
+  key.
+- `idempotency_keys` must be uniquely constrained by `(shard_key, key)` and
+  should expire by `expires_at`, while completed order/audit records remain
+  immutable for compliance retention.
 
 ## 9. Security and Compliance Requirements
 
@@ -495,15 +891,37 @@ Mobile auth:
 
 Authorization scopes:
 
+- `auth:session`
+- `devices:read`
+- `devices:manage`
 - `market:read`
+- `account:read`
+- `cash:read`
 - `portfolio:read`
 - `orders:read`
 - `orders:preview`
 - `orders:submit:paper`
 - `orders:submit:live`
 - `orders:cancel`
+- `orders:reconcile`
 - `risk:read`
 - `risk:admin`
+- `alerts:read`
+- `alerts:write`
+- `audit:read`
+- `broker:read`
+- `strategy:read`
+- `strategy:write`
+- `strategy:validate`
+- `backtest:read`
+- `backtest:run`
+- `paper:read`
+- `paper:run`
+- `paper:control`
+- `promotion:request`
+- `promotion:admin`
+- `strategy:deploy:paper`
+- `strategy:deploy:live`
 - `system:read`
 - `system:admin`
 
@@ -516,6 +934,12 @@ API protection:
 - Strict request size and pagination limits.
 - Correlation id propagated through Go, Rust, broker, storage, and logs.
 - Secrets only from managed secret storage or deployment environment.
+- Strategy formulas use a constrained DSL/expression schema only. Mobile cannot
+  upload arbitrary executable code.
+- Strategy drafts can be edited freely, but immutable versions are the only
+  artifacts allowed into backtest, paper, or live promotion workflows.
+- Live promotion requires separate approval and must never be implied by
+  strategy validation, a good backtest, or a profitable paper session alone.
 
 ## 10. Trading Safety Requirements
 
@@ -536,6 +960,11 @@ Before live order submission:
 - Account read-only mode check.
 - Paper/live environment check.
 - Preview result must match submitted payload within a short TTL.
+- Strategy-driven live orders must reference an immutable strategy version with
+  successful validation, backtest evidence, paper-session evidence, stability
+  report, and explicit live approval.
+- Strategy drafts, unvalidated formulas, and paper-only methods must be blocked
+  from live order submission.
 
 High-risk operations:
 
@@ -592,6 +1021,8 @@ Required boundary:
 
 - Python produces backtest fixtures, signal traces, feature datasets, and
   expected risk-decision traces.
+- Python evaluates strategy formulas and backtests asynchronously; it does not
+  serve mobile requests or approve live trading.
 - Rust validates live/backtest risk decisions against canonical fixtures.
 - Python benchmark outputs stay clearly labeled as simulation evidence, not live
   production proof.
@@ -602,229 +1033,12 @@ Required boundary:
 
 - Go does not call Python in the mobile request path.
 - Python may produce analytics/backtest artifacts consumed asynchronously.
+- Go owns strategy version state, promotion workflow, audit trail, and mobile
+  API contract even when Python generated the research evidence.
 - Observability tests should verify that Go can expose Python/Rust-derived
   telemetry without blocking or schema drift.
 
-## 12. Roadmap to Production Grade
-
-### Phase 0 - Contract Freeze and Legacy Decision
-
-Goal: make the future API explicit before mobile work depends on unstable
-routes.
-
-Work:
-
-- Create `go/internal/contracts` for API DTOs and error envelope.
-- Generate or publish OpenAPI 3.1 for `/api/v1`.
-- Add correlation id to every response and log.
-- Define stable enum sets for orders, fills, risk decisions, incidents, and
-  component health.
-- Mark legacy routes as internal or deprecated.
-- Remove public Alpaca-shaped endpoints from the mobile plan.
-
-Validation:
-
-- `cd go && go test ./...`
-- OpenAPI generation check.
-- OpenAPI lint.
-- Contract snapshot test for core DTOs.
-
-Exit gate:
-
-- iOS and Android can generate typed clients from `/api/v1`.
-
-Rollback:
-
-- Keep existing `/api/*` routes enabled internally until `/api/v1` read-only
-  parity is complete.
-
-### Phase 1 - Read-Only Mobile API
-
-Goal: ship useful mobile dashboards without live trading risk.
-
-Work:
-
-- Implement `/api/v1/system/*`.
-- Implement `/api/v1/observability/*`.
-- Implement `/api/v1/market/*` backed by Rust market data or safe fallback.
-- Implement `/api/v1/account/status`.
-- Implement `/api/v1/portfolio/*`.
-- Implement `/api/v1/positions`.
-- Implement `/api/v1/orders` and `/api/v1/fills` read-only.
-- Add mock/fixture mode so mobile UI is never empty in local/dev.
-
-Validation:
-
-- `cd go && go test ./...`
-- API contract integration tests.
-- Mobile client decode tests with fixture responses.
-
-Exit gate:
-
-- Mobile can render System, Metrics, Market, Portfolio, Positions, Orders, and
-  Fills from typed read-only API.
-
-Rollback:
-
-- Disable `/api/v1` route group via config flag; leave legacy internal routes
-  available for ops.
-
-### Phase 2 - Rust Market, Risk, and Event Integration
-
-Goal: make Go read from real trading-domain events instead of loose broker or
-metrics surfaces.
-
-Work:
-
-- Complete Rust market-data event loop.
-- Normalize order book, trades, candles, and ticker events.
-- Publish trading events through a durable boundary.
-- Persist market data freshness and component status.
-- Wire Rust risk-manager decisions into preview/read-only risk endpoints.
-- Make Rust idempotency and execution correlation durable through Go/Postgres.
-
-Validation:
-
-- `cd rust && cargo test --workspace`
-- Python/Rust bridge test for signal and risk traces.
-- Go consumer integration test using recorded Rust events.
-
-Exit gate:
-
-- Go can reconstruct market status, positions, orders, fills, and risk status
-  from durable events after restart.
-
-Rollback:
-
-- Fall back to read-only broker polling and fixtures. Keep trading actions off.
-
-### Phase 3 - WebSocket v1
-
-Goal: provide stable real-time mobile data.
-
-Work:
-
-- Add `/ws/v1` with auth.
-- Implement typed envelope, schema version, sequence, topic, subscribe,
-  unsubscribe, heartbeat, and backpressure.
-- Add Redis/outbox based fanout.
-- Add reconnect/resume behavior for critical topics.
-- Separate lossy market snapshots from lossless order/fill/risk state events.
-
-Validation:
-
-- `cd go && go test ./...`
-- WebSocket contract tests.
-- Reconnect/resume tests.
-- Load test with expected mobile connection count.
-
-Exit gate:
-
-- Mobile can stay synchronized across disconnect/reconnect without missing
-  order/fill/risk state transitions.
-
-Rollback:
-
-- Disable `/ws/v1`; mobile falls back to REST polling.
-
-### Phase 4 - Paper Trading Preview and Submission
-
-Goal: support end-to-end trading safely in paper mode.
-
-Work:
-
-- Implement `/api/v1/orders/preview`.
-- Implement paper-only `/api/v1/orders`.
-- Implement idempotency table and request hash checks.
-- Add audit events for preview, submit, cancel, replace.
-- Enforce risk gates and account/trading mode gates.
-- Require step-up confirmation for paper order submission if product requires.
-- Keep live mode disabled at config level.
-
-Validation:
-
-- `cd go && go test ./...`
-- `cd rust && cargo test --workspace`
-- Paper broker sandbox integration tests.
-- Duplicate idempotency tests.
-- Risk rejection tests.
-- Order lifecycle tests.
-
-Exit gate:
-
-- 7 day paper-trading soak with zero duplicate orders, zero missing terminal
-  statuses, and audited risk decisions.
-
-Rollback:
-
-- Force read-only mode through config and kill switch.
-
-### Phase 5 - Live Trading Controlled Rollout
-
-Goal: enable live trading only after paper evidence is strong.
-
-Work:
-
-- Add live trading feature flag per user/account/device.
-- Require broker permission check and account restrictions check.
-- Add live order preview TTL and payload binding.
-- Add cancel/replace live gates.
-- Add manual kill switch runbook and automated halt triggers.
-- Add production SLO alerts.
-- Add emergency broker disconnect handling.
-
-Validation:
-
-- Full Go/Rust/Python test matrix.
-- Security review against OWASP API Top 10.
-- Load and chaos tests.
-- Broker sandbox plus limited live canary.
-- Audit log review.
-
-Exit gate:
-
-- Live trading enabled only for explicit allowlisted accounts with a rollback
-  owner on call.
-
-Rollback:
-
-- Disable live feature flag.
-- Enable global read-only mode.
-- Trigger kill switch.
-- Reconcile open orders and positions with broker.
-
-### Phase 6 - Production Operations
-
-Goal: make the system operable after launch.
-
-Work:
-
-- Add dashboards for API, WebSocket, broker, Rust services, risk, order
-  lifecycle, and storage.
-- Add SLOs and burn-rate alerts.
-- Add incident templates and runbooks.
-- Add backup/recovery and broker reconciliation jobs.
-- Add periodic OpenAPI compatibility check.
-- Add mobile forced-upgrade policy when contract changes require it.
-
-Validation:
-
-- Incident drill.
-- Restore drill.
-- Broker reconciliation drill.
-- Kill switch drill.
-
-Exit gate:
-
-- Ops can detect, mitigate, and recover from failed broker, failed Redis,
-  failed Postgres, delayed market data, duplicate order attempt, and partial
-  WebSocket outage.
-
-Rollback:
-
-- Read-only mode plus broker reconciliation is the default safe state.
-
-## 13. Production Release Gates
+## 12. Production Release Gates
 
 No production/live trading until all gates pass:
 
@@ -842,11 +1056,13 @@ No production/live trading until all gates pass:
 | WebSocket | Auth, topic ACL, sequence, heartbeat, reconnect/resume, and backpressure tested. |
 | Storage | Postgres source of truth; DuckDB analytics not used as OLTP authority. |
 | Broker | Paper/live environments separated; broker permissions checked. |
+| Strategy Lab | Custom formulas are versioned, validated, bounded, and non-executable. |
+| Paper research | Paper sessions, stability reports, and promotion checks prove methods before live review. |
 | Tests | Go, Rust, Python, cross-domain contract, security, load, and chaos tests pass. |
 | Soak | Paper trading soak passes with reconciliation. |
 | Ops | SLOs, alerts, runbooks, dashboards, and rollback drills complete. |
 
-## 14. Validation Matrix
+## 13. Validation Matrix
 
 Required local/domain checks:
 
@@ -882,7 +1098,7 @@ Additional production checks to add:
 - Security tests for BOLA, broken auth, function-level auth, excessive payloads,
   and rate limit bypass.
 
-## 15. SLO and Observability Targets
+## 14. SLO and Observability Targets
 
 Initial SLOs:
 
@@ -914,12 +1130,18 @@ Core metrics:
 - `order_rejected_total`
 - `order_duplicate_idempotency_total`
 - `risk_decisions_total`
+- `strategy_validation_total`
+- `strategy_validation_failed_total`
+- `backtest_runs_total`
+- `paper_sessions_active`
+- `paper_session_drawdown`
+- `promotion_requests_total`
 - `kill_switch_state`
 - `broker_request_duration_seconds`
 - `broker_errors_total`
 - `broker_reconciliation_mismatches_total`
 
-## 16. Risk Register
+## 15. Risk Register
 
 | Risk | Severity | Current state | Mitigation |
 |---|---:|---|---|
@@ -930,26 +1152,34 @@ Core metrics:
 | WebSocket message loss | High | Current WS is metrics-oriented. | Add topic sequence, resume, outbox, and critical-topic policy. |
 | Empty or stale data | Medium | Exporters/Postgres/broker can be absent. | Add freshness fields, fallback fixtures, and component health. |
 | Risk manager not enforced in API | Critical | Risk exists in Rust but not fully wired into Go actions. | All order preview/submit paths must call risk and persist decision. |
-| Market data runtime incomplete | High | Rust market-data loop has TODO. | Complete event loop and prove ingest to API path. |
-| Stop-loss execution incomplete | High | Stop-loss executor has stub note. | Integrate with order router before live exposure. |
+| Market data runtime not production-proven | High | Rust market-data loop exists, but broker-backed soak and restart/replay evidence are still missing. | Prove ingest to API path with freshness, replay, and failure drills. |
+| Stop-loss live proof missing | High | Stop-loss routes through the order router, but live protective-order proof/preview wiring is not proven. | Require external proof, preview binding, and broker-backed paper/live drills before exposure. |
+| Arbitrary mobile formula execution | Critical | Strategy Lab allows user-defined formulas by product intent. | Use constrained DSL/expression schema, allowlisted indicators, bounded weights, validation, and no arbitrary executable code. |
+| Backtest or paper overfit promoted to live | Critical | Paper trading is a research gate, not proof of live safety. | Require stability report, out-of-sample evidence, paper soak, risk review, and explicit live approval. |
 | Ops cannot rollback fast | High | Kill switch/read-only mode not mobile-gated yet. | Add global read-only mode, account-level kill switch, and drill. |
 | Simulation mistaken for live proof | Medium | Python backtest is strong but not live evidence. | Label evidence type and require paper/live soak. |
 
-## 17. Recommended Implementation Order
+## 16. One-Pass Production Build Scope
 
-1. Create `/api/v1` contracts and error envelope in Go.
-2. Deprecate public use of legacy routes and hide broker-shaped endpoints.
-3. Build read-only REST API for mobile dashboards.
-4. Build contract fixtures and generated mobile client tests.
-5. Complete Rust market-data event loop and event publication.
-6. Wire Rust risk decisions into Go read-only risk and later order preview.
-7. Build WebSocket v1 with sequence/resume semantics.
-8. Add durable Postgres idempotency and audit.
-9. Enable paper order preview and submission.
-10. Run paper soak and reconciliation.
-11. Add live trading behind allowlist, feature flag, step-up, and kill switch.
+The implementation plan should be written once as a complete build plan, not as
+separate roadmap phases. That plan should cover these workstreams together:
 
-## 18. Definition of Production Grade
+- Go `/api/v1` contract, DTOs, error envelope, OpenAPI, auth, scopes, durable
+  idempotency, audit, storage writes, and mobile-safe API behavior.
+- Rust event core, market ingest proof, risk decisions, strategy metadata on
+  trading events, paper/live mode separation, order routing, reconciliation, and
+  broker-backed drills.
+- Python strategy formula validation, backtest evaluation, parity fixtures,
+  stability reports, and asynchronous research artifacts.
+- Mobile generated client contracts, Strategy Lab UI, Paper Research UI,
+  read-only dashboards, and safe promotion workflows.
+- Ops gates for WebSocket sequencing, SLOs, alerting, runbooks, chaos tests,
+  paper soak, kill switch drills, and live allowlist controls.
+
+Live trading remains disabled until every release gate in this document is
+green.
+
+## 17. Definition of Production Grade
 
 This API can be called production grade when:
 
