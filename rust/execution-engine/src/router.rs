@@ -1,14 +1,15 @@
 use crate::retry::RetryPolicy;
 use common::{config::ExecutionConfig, types::Order, Result, TradingError};
+use dashmap::DashMap;
 use governor::{
     clock::DefaultClock,
     state::{InMemoryState, NotKeyed},
     Quota, RateLimiter,
 };
-use std::collections::HashSet;
 use std::num::NonZeroU32;
 use std::sync::atomic::{AtomicBool, Ordering};
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
+use std::time::{Duration, Instant};
 use tokio::sync::mpsc;
 
 type RiskCheckHook = Arc<dyn Fn(&Order, &str) -> common::types::RiskReport + Send + Sync>;
@@ -17,7 +18,7 @@ pub struct OrderRouter {
     config: ExecutionConfig,
     retry_policy: RetryPolicy,
     rate_limiter: Arc<RateLimiter<NotKeyed, InMemoryState, DefaultClock>>,
-    pub idempotency_locks: Arc<Mutex<HashSet<String>>>,
+    processed_orders: Arc<DashMap<String, Instant>>,
     telemetry_tx: mpsc::Sender<String>,
     circuit_breaker_open: Arc<AtomicBool>,
     broker_client: Arc<dyn crate::broker::BrokerClient>,
@@ -25,18 +26,7 @@ pub struct OrderRouter {
     runtime_kill_switch: Arc<AtomicBool>,
 }
 
-struct IdempotencyGuard<'a> {
-    locks: &'a Mutex<HashSet<String>>,
-    key: String,
-}
 
-impl<'a> Drop for IdempotencyGuard<'a> {
-    fn drop(&mut self) {
-        if let Ok(mut g) = self.locks.lock() {
-            g.remove(&self.key);
-        }
-    }
-}
 
 impl OrderRouter {
     pub fn new(mut config: ExecutionConfig) -> Result<Self> {
@@ -138,11 +128,24 @@ impl OrderRouter {
             });
         }
 
+        let processed_orders = Arc::new(DashMap::new());
+
+        // Async TTL reaper — cleans expired idempotency keys every 10s
+        let reaper_map = processed_orders.clone();
+        tokio::spawn(async move {
+            let mut ticker = tokio::time::interval(Duration::from_secs(10));
+            loop {
+                ticker.tick().await;
+                let cutoff = Instant::now() - Duration::from_secs(60);
+                reaper_map.retain(|_, v| *v > cutoff);
+            }
+        });
+
         Ok(Self {
             config,
             retry_policy,
             rate_limiter,
-            idempotency_locks: Arc::new(Mutex::new(HashSet::new())),
+            processed_orders,
             telemetry_tx: tx,
             circuit_breaker_open: Arc::new(AtomicBool::new(false)),
             broker_client,
@@ -150,6 +153,38 @@ impl OrderRouter {
             runtime_kill_switch: Arc::new(AtomicBool::new(false)),
         })
     }
+
+    /// Test-only constructor to inject a custom/mock broker client
+    pub fn new_test(
+        config: ExecutionConfig,
+        broker_client: Arc<dyn crate::broker::BrokerClient>,
+    ) -> Result<Self> {
+        let quota = Quota::per_second(NonZeroU32::new(config.rate_limit_per_second).ok_or_else(
+            || {
+                TradingError::Configuration(
+                    "rate_limit_per_second must be greater than 0".to_string(),
+                )
+            },
+        )?);
+        let rate_limiter = Arc::new(RateLimiter::direct(quota));
+        let retry_policy = RetryPolicy::new(config.retry_attempts, config.retry_delay_ms);
+        let zmq_publisher = common::messaging::ZmqPublisher::new(&config.zmq_publish_address)?;
+        let (tx, _rx) = mpsc::channel(1024);
+        let processed_orders = Arc::new(DashMap::new());
+
+        Ok(Self {
+            config,
+            retry_policy,
+            rate_limiter,
+            processed_orders,
+            telemetry_tx: tx,
+            circuit_breaker_open: Arc::new(AtomicBool::new(false)),
+            broker_client,
+            zmq_publisher,
+            runtime_kill_switch: Arc::new(AtomicBool::new(false)),
+        })
+    }
+
 
     /// Exposes the current broker client for downstream reconciliation
     pub fn broker_client(&self) -> Arc<dyn crate::broker::BrokerClient> {
@@ -402,26 +437,21 @@ impl OrderRouter {
         });
         self.publish_event("order.accepted", &cid, accept_payload);
 
-        // 9. Idempotency Lock Guard
+        // 9. Idempotency — atomic entry check with TTL window
         let lock_key = order.client_order_id.clone();
-        {
-            let mut lock_set = self.idempotency_locks.lock().map_err(|_| {
-                TradingError::Execution(format!("[cid:{}] Idempotency lock poisoned", lock_key))
-            })?;
-            if !lock_set.insert(lock_key.clone()) {
+        match self.processed_orders.entry(lock_key.clone()) {
+            dashmap::mapref::entry::Entry::Occupied(_) => {
                 let msg = format!(
-                    "[cid:{}] Duplicate order submission rejected (Idempotency Lock)",
+                    "[cid:{}] Duplicate order rejected (processed within TTL window)",
                     lock_key
                 );
                 let _ = self.telemetry_tx.try_send(msg.clone());
                 return Err(TradingError::RiskCheck(msg));
             }
+            dashmap::mapref::entry::Entry::Vacant(v) => {
+                v.insert(Instant::now());
+            }
         }
-
-        let _guard = IdempotencyGuard {
-            locks: &self.idempotency_locks,
-            key: lock_key.clone(),
-        };
 
         // 10. Emit order.routed event
         let route_payload = serde_json::json!({
@@ -539,16 +569,17 @@ mod tests {
         let order = get_dummy_order();
         let order_clone = order.clone();
 
-        let _test_lock_guard = router
-            .idempotency_locks
-            .lock()
-            .unwrap()
-            .insert(order.client_order_id.clone());
+        // Pre-insert key to simulate already-processed order
+        router
+            .processed_orders
+            .insert(order.client_order_id.clone(), Instant::now());
 
         let result2 = router.route(order_clone, None).await;
         assert!(result2.is_err());
         match result2 {
-            Err(TradingError::RiskCheck(msg)) => assert!(msg.contains("Idempotency Lock")),
+            Err(TradingError::RiskCheck(msg)) => {
+                assert!(msg.contains("Duplicate order rejected"))
+            }
             _ => panic!("Expected RiskCheck Idempotency error"),
         }
     }

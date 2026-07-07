@@ -68,9 +68,10 @@ async fn main() -> anyhow::Result<()> {
     let live_enabled = config.execution.policy.live_trading_enabled;
     let kill_switch = config.execution.policy.kill_switch_enabled;
     let environment = config.environment();
+    let risk_config = config.risk.clone();
 
     // Initialize service
-    let _service = match ExecutionEngineService::new(config.execution).await {
+    let _service = match ExecutionEngineService::new(config.execution, risk_config).await {
         Ok(svc) => {
             tracing::info!("[cid:INIT] ✓ Execution Engine initialized successfully");
             svc

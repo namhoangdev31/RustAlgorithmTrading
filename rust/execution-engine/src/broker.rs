@@ -1,5 +1,8 @@
 use common::{
-    types::{BrokerOrderStatus, Order, OrderStatus, Price, Quantity},
+    types::{
+        BrokerAccountSnapshot, BrokerFill, BrokerOrderStatus, BrokerPosition, Order, OrderStatus,
+        Price, Quantity, Symbol,
+    },
     Result, TradingError,
 };
 use serde::{Deserialize, Serialize};
@@ -10,6 +13,9 @@ pub trait BrokerClient: Send + Sync {
     async fn cancel_order(&self, order_id: &str) -> Result<BrokerOrderStatus>;
     async fn get_order_status(&self, order_id: &str) -> Result<BrokerOrderStatus>;
     async fn list_open_orders(&self) -> Result<Vec<BrokerOrderStatus>>;
+    async fn list_positions(&self) -> Result<Vec<BrokerPosition>>;
+    async fn get_account_snapshot(&self) -> Result<BrokerAccountSnapshot>;
+    async fn list_fills(&self, since: chrono::DateTime<chrono::Utc>) -> Result<Vec<BrokerFill>>;
 }
 
 /// Local simulated broker for testing and simulation mode
@@ -90,6 +96,23 @@ impl BrokerClient for SimulatedBrokerClient {
             .collect();
         Ok(open_orders)
     }
+
+    async fn list_positions(&self) -> Result<Vec<BrokerPosition>> {
+        Ok(Vec::new())
+    }
+
+    async fn get_account_snapshot(&self) -> Result<BrokerAccountSnapshot> {
+        Ok(BrokerAccountSnapshot {
+            equity: 100000.0,
+            cash: 100000.0,
+            buying_power: 400000.0,
+            timestamp: chrono::Utc::now(),
+        })
+    }
+
+    async fn list_fills(&self, _since: chrono::DateTime<chrono::Utc>) -> Result<Vec<BrokerFill>> {
+        Ok(Vec::new())
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -136,6 +159,32 @@ impl AlpacaOrderResponse {
             error_message: None,
         }
     }
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct AlpacaPositionResponse {
+    pub symbol: String,
+    pub qty: String,
+    pub avg_entry_price: String,
+    pub market_value: String,
+    pub unrealized_pl: String,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct AlpacaAccountResponse {
+    pub equity: String,
+    pub cash: String,
+    pub buying_power: String,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct AlpacaFillResponse {
+    pub order_id: String,
+    pub symbol: String,
+    pub side: String,
+    pub qty: String,
+    pub price: String,
+    pub transaction_time: String,
 }
 
 pub struct AlpacaBrokerClient {
@@ -302,6 +351,136 @@ impl BrokerClient for AlpacaBrokerClient {
         Ok(alpaca_resps
             .into_iter()
             .map(|r| r.to_broker_order_status())
+            .collect())
+    }
+
+    async fn list_positions(&self) -> Result<Vec<BrokerPosition>> {
+        let url = format!("{}/v2/positions", self.api_url);
+        let response = self
+            .http_client
+            .get(&url)
+            .header("APCA-API-KEY-ID", &self.api_key)
+            .header("APCA-API-SECRET-KEY", &self.api_secret)
+            .send()
+            .await
+            .map_err(|e| TradingError::Network(format!("Request failed: {}", e)))?;
+
+        if !response.status().is_success() {
+            let status = response.status();
+            let text = response.text().await.unwrap_or_default();
+            return Err(TradingError::Exchange(format!(
+                "List positions failed: {} - {}",
+                status, text
+            )));
+        }
+
+        let alpaca_resps = response
+            .json::<Vec<AlpacaPositionResponse>>()
+            .await
+            .map_err(|e| TradingError::Parse(format!("Response parse error: {}", e)))?;
+
+        Ok(alpaca_resps
+            .into_iter()
+            .map(|r| {
+                let symbol = Symbol(r.symbol);
+                let qty = Quantity(r.qty.parse::<f64>().unwrap_or(0.0));
+                let avg_price = Price(r.avg_entry_price.parse::<f64>().unwrap_or(0.0));
+                let market_value = r.market_value.parse::<f64>().unwrap_or(0.0);
+                let unrealized_pnl = r.unrealized_pl.parse::<f64>().unwrap_or(0.0);
+
+                BrokerPosition {
+                    symbol,
+                    quantity: qty,
+                    average_entry_price: avg_price,
+                    market_value,
+                    unrealized_pnl,
+                }
+            })
+            .collect())
+    }
+
+    async fn get_account_snapshot(&self) -> Result<BrokerAccountSnapshot> {
+        let url = format!("{}/v2/account", self.api_url);
+        let response = self
+            .http_client
+            .get(&url)
+            .header("APCA-API-KEY-ID", &self.api_key)
+            .header("APCA-API-SECRET-KEY", &self.api_secret)
+            .send()
+            .await
+            .map_err(|e| TradingError::Network(format!("Request failed: {}", e)))?;
+
+        if !response.status().is_success() {
+            let status = response.status();
+            let text = response.text().await.unwrap_or_default();
+            return Err(TradingError::Exchange(format!(
+                "Get account failed: {} - {}",
+                status, text
+            )));
+        }
+
+        let r = response
+            .json::<AlpacaAccountResponse>()
+            .await
+            .map_err(|e| TradingError::Parse(format!("Response parse error: {}", e)))?;
+
+        Ok(BrokerAccountSnapshot {
+            equity: r.equity.parse::<f64>().unwrap_or(0.0),
+            cash: r.cash.parse::<f64>().unwrap_or(0.0),
+            buying_power: r.buying_power.parse::<f64>().unwrap_or(0.0),
+            timestamp: chrono::Utc::now(),
+        })
+    }
+
+    async fn list_fills(&self, since: chrono::DateTime<chrono::Utc>) -> Result<Vec<BrokerFill>> {
+        let since_str = since.to_rfc3339();
+        let url = format!(
+            "{}/v2/account/activities?activity_types=FILL&after={}",
+            self.api_url, since_str
+        );
+        let response = self
+            .http_client
+            .get(&url)
+            .header("APCA-API-KEY-ID", &self.api_key)
+            .header("APCA-API-SECRET-KEY", &self.api_secret)
+            .send()
+            .await
+            .map_err(|e| TradingError::Network(format!("Request failed: {}", e)))?;
+
+        if !response.status().is_success() {
+            let status = response.status();
+            let text = response.text().await.unwrap_or_default();
+            return Err(TradingError::Exchange(format!(
+                "List fills failed: {} - {}",
+                status, text
+            )));
+        }
+
+        let alpaca_resps = response
+            .json::<Vec<AlpacaFillResponse>>()
+            .await
+            .map_err(|e| TradingError::Parse(format!("Response parse error: {}", e)))?;
+
+        Ok(alpaca_resps
+            .into_iter()
+            .map(|r| {
+                let side = if r.side.to_lowercase() == "buy" {
+                    common::types::Side::Bid
+                } else {
+                    common::types::Side::Ask
+                };
+
+                BrokerFill {
+                    order_id: r.order_id,
+                    symbol: Symbol(r.symbol),
+                    side,
+                    quantity: Quantity(r.qty.parse::<f64>().unwrap_or(0.0)),
+                    price: Price(r.price.parse::<f64>().unwrap_or(0.0)),
+                    timestamp: chrono::DateTime::parse_from_rfc3339(&r.transaction_time)
+                        .map(|dt| dt.with_timezone(&chrono::Utc))
+                        .unwrap_or_else(|_| chrono::Utc::now()),
+                }
+            })
             .collect())
     }
 }

@@ -86,6 +86,50 @@ impl RiskManagerService {
         allow_report
     }
 
+    /// Read-only pre-trade validation — safe for concurrent callers under RwLock.
+    /// Circuit breaker and limit checks are read-only queries on &self.
+    /// Does NOT mutate state (no cooldown transitions, no counter updates).
+    pub fn validate_order_read(
+        &self,
+        order: &Order,
+        correlation_id: &str,
+    ) -> common::types::RiskReport {
+        // Level 1: Circuit Breaker (read-only query)
+        if self.circuit_breaker.is_tripped() {
+            let report = common::types::RiskReport {
+                decision: common::types::RiskDecision::Reject,
+                reason_code: Some(common::types::RiskReason::CircuitBreakerTripped),
+                limit_snapshot: None,
+                correlation_id: correlation_id.to_string(),
+            };
+            common::metrics::risk::record_risk_check_result(
+                "REJECT",
+                &reason_label(report.reason_code),
+            );
+            return report;
+        }
+
+        // Level 2: Limit Checker (read-only query)
+        let report = self.limit_checker.check_with_report(order, correlation_id);
+        if report.decision == common::types::RiskDecision::Reject {
+            common::metrics::risk::record_risk_check_result(
+                "REJECT",
+                &reason_label(report.reason_code),
+            );
+            return report;
+        }
+
+        // Default: Allow
+        let allow_report = common::types::RiskReport {
+            decision: common::types::RiskDecision::Allow,
+            reason_code: None,
+            limit_snapshot: None,
+            correlation_id: correlation_id.to_string(),
+        };
+        common::metrics::risk::record_risk_check_result("ALLOW", "NONE");
+        allow_report
+    }
+
     // Circuit Breaker Management Methods (W07)
 
     pub fn trip_circuit_breaker(&mut self, reason: TripReason, correlation_id: &str) {

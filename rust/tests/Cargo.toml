@@ -31,6 +31,7 @@ reqwest = { version = "0.12", features = ["json", "rustls-tls"] }
 wiremock = "0.6"
 fake = { version = "2.9", features = ["derive", "chrono"] }
 futures = "0.3"
+async-trait = "0.1"
 
 # Unit tests
 [[test]]
@@ -109,6 +110,10 @@ path = "integration/test_performance_load.rs"
 [[test]]
 name = "alpaca_api_integration"
 path = "integration/test_alpaca_api.rs"
+
+[[test]]
+name = "reconciliation_workflow"
+path = "integration/test_reconciliation_workflow.rs"
 
 # Property-based tests
 [[test]]

@@ -249,3 +249,42 @@ pub struct OrderExecution {
     pub broker_status: Option<BrokerOrderStatus>,
     pub rejection: Option<ExecutionRejection>,
 }
+
+/// Broker-reported position for reconciliation
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct BrokerPosition {
+    pub symbol: Symbol,
+    pub quantity: Quantity,
+    pub average_entry_price: Price,
+    pub market_value: f64,
+    pub unrealized_pnl: f64,
+}
+
+/// Broker-reported account snapshot for reconciliation
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct BrokerAccountSnapshot {
+    pub equity: f64,
+    pub cash: f64,
+    pub buying_power: f64,
+    pub timestamp: DateTime<Utc>,
+}
+
+/// Broker-reported fill for replay and audit
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct BrokerFill {
+    pub order_id: String,
+    pub symbol: Symbol,
+    pub side: Side,
+    pub quantity: Quantity,
+    pub price: Price,
+    pub timestamp: DateTime<Utc>,
+}
+
+/// Severity of a reconciliation break
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum ReconciliationSeverity {
+    Info,
+    Warning,
+    Critical,
+}

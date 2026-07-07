@@ -118,6 +118,12 @@ impl CircuitBreaker {
         }
     }
 
+    /// Read-only query: is the circuit breaker in a risk-off state?
+    /// Safe to call under RwLock read guard.
+    pub fn is_tripped(&self) -> bool {
+        self.state.is_risk_off()
+    }
+
     pub fn trip(&mut self, reason: TripReason, correlation_id: &str) {
         if self.state == CircuitBreakerState::Disabled {
             return;
