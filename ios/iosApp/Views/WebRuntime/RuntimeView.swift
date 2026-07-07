@@ -75,14 +75,17 @@ struct RuntimeView: View {
             }
         }
         .fullScreenCover(isPresented: $viewModel.showTabSwitcher) {
-            TabSwitcher(
-                tabs: $viewModel.tabs,
-                selectedTabId: $viewModel.activeTabId,
+            RuntimeAppSwitcherView(
+                tabs: viewModel.tabs,
+                activeTabId: viewModel.activeTabId,
                 isPresented: $viewModel.showTabSwitcher,
-                onAddTab: {
+                onSelect: { tabId in
+                    viewModel.activateTab(id: tabId)
+                },
+                onAdd: {
                     viewModel.openBundle(manifest: manifest, bundlePath: bundlePath)
                 },
-                onCloseTab: { tabId in
+                onClose: { tabId in
                     viewModel.closeTab(id: tabId)
                 }
             )
@@ -153,9 +156,23 @@ struct RuntimeView: View {
     }
 
     private func showTabSwitcher() {
+        captureActiveTabSnapshotIfPossible()
         withAnimation {
             viewModel.showTabSwitcher = true
             isExpanded = false
+        }
+    }
+
+    private func captureActiveTabSnapshotIfPossible() {
+        guard let activeId = viewModel.activeTabId,
+              let activeTab = viewModel.tabs.first(where: { $0.id == activeId }),
+              let webView = activeTab.webView else {
+            return
+        }
+        Task { @MainActor in
+            if let image = await webView.takeSnapshot() {
+                activeTab.snapshot = image
+            }
         }
     }
 

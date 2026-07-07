@@ -1,207 +1,292 @@
 import SwiftUI
 import WebKit
 
-struct TabSwitcher: View {
-    @Binding var tabs: [WebTab]
-    @Binding var selectedTabId: UUID?
+struct RuntimeAppSwitcherView: View {
+    let tabs: [WebTab]
+    let activeTabId: UUID?
     @Binding var isPresented: Bool
-
-    var onAddTab: (() -> Void)?
-    var onCloseTab: ((UUID) -> Void)?
-
-    @State private var searchText = ""
+    let onSelect: (UUID) -> Void
+    let onAdd: () -> Void
+    let onClose: (UUID) -> Void
+    @State private var focusedIndex: Int = 0
+    @State private var dragX: CGFloat = 0
+    @GestureState private var isDragging: Bool = false
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                header
-                searchField
-                tabGrid
+        GeometryReader { geometry in
+            let metrics = DeckMetrics.make(
+                size: geometry.size,
+                safeAreaInsets: geometry.safeAreaInsets,
+                horizontalSizeClass: horizontalSizeClass
+            )
+
+            ZStack {
+                background
+
+                if tabs.isEmpty {
+                    emptyStateView
+                } else {
+                    VStack(spacing: 0) {
+                        headerView
+                        deckView(metrics: metrics)
+                        bottomBarView
+                    }
+                }
             }
-            .background(Color(red: 0.06, green: 0.06, blue: 0.08).ignoresSafeArea())
-            .safeAreaInset(edge: .bottom) {
-                bottomToolbar
-            }
-            .navigationBarHidden(true)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .preferredColorScheme(.dark)
+        .onAppear {
+            syncFocusedIndex(preferActiveTab: true)
+        }
+        .onChange(of: tabs.map(\.id)) { _, _ in
+            syncFocusedIndex(preferActiveTab: false)
+        }
+        .onChange(of: activeTabId) { _, _ in
+            syncFocusedIndex(preferActiveTab: true)
+        }
     }
 
-    private var header: some View {
-        HStack {
-            Text("Tabs")
-                .font(.title3.weight(.semibold))
-                .foregroundStyle(.white)
+    private var background: some View {
+        Color(red: 0.05, green: 0.05, blue: 0.07).ignoresSafeArea()
+    }
 
+    private var emptyStateView: some View {
+        VStack(spacing: 24) {
             Spacer()
+            Image(systemName: "rectangle.on.rectangle.slash.fill")
+                .font(.system(size: 60))
+                .foregroundStyle(.secondary)
+            Text("Không có tab runtime nào")
+                .font(.headline)
+                .foregroundStyle(.secondary)
+            Spacer()
+            HStack(spacing: 16) {
+                Button(action: onAdd) {
+                    Label("Mở tab runtime mới", systemImage: "plus")
+                        .font(.headline)
+                        .frame(minWidth: 132, minHeight: 44)
+                }
+                .buttonStyle(.borderedProminent)
+                .accessibilityLabel("Mở tab runtime mới")
 
-            Button {
-                dismiss()
-            } label: {
-                Image(systemName: "xmark")
-                    .font(.system(size: 14, weight: .bold))
-                    .foregroundStyle(.white)
-                    .frame(width: 34, height: 34)
-                    .background(Circle().fill(Color.white.opacity(0.12)))
+                Button(action: dismiss) {
+                    Text("Xong")
+                        .font(.headline)
+                        .frame(minWidth: 76, minHeight: 44)
+                }
+                .buttonStyle(.bordered)
+                .accessibilityLabel("Đóng trình chuyển tab")
             }
-            .buttonStyle(.plain)
+            .padding(.bottom, 40)
         }
-        .padding(.horizontal, 18)
-        .padding(.top, 14)
-        .padding(.bottom, 10)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    private var searchField: some View {
-        HStack(spacing: 8) {
-            Image(systemName: "magnifyingglass")
-                .foregroundStyle(.white.opacity(0.55))
-
-            TextField("Search Tabs or Web Addresses", text: $searchText)
-                .foregroundStyle(.white)
-                .textInputAutocapitalization(.never)
-                .disableAutocorrection(true)
-
-            if !searchText.isEmpty {
-                Button {
-                    searchText = ""
-                } label: {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundStyle(.white.opacity(0.55))
-                }
-                .buttonStyle(.plain)
-            }
-        }
-        .padding(.horizontal, 12)
-        .frame(height: 42)
-        .background(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(Color.white.opacity(0.09))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(Color.white.opacity(0.08), lineWidth: 1)
-        )
-        .padding(.horizontal, 18)
-        .padding(.bottom, 12)
-    }
-
-    private var tabGrid: some View {
-        ScrollView {
-            LazyVGrid(columns: columns, spacing: 16) {
-                ForEach(filteredTabs) { tab in
-                    RuntimeTabCard(
-                        tab: tab,
-                        isSelected: tab.id == selectedTabId,
-                        onSelect: { select(tab) },
-                        onClose: { close(tab) }
-                    )
-                }
-            }
-            .padding(.horizontal, 18)
-            .padding(.bottom, 96)
-
-            if filteredTabs.isEmpty {
-                VStack(spacing: 12) {
-                    Image(systemName: "rectangle.on.rectangle.slash")
-                        .font(.system(size: 34))
-                    Text("No matching tabs")
-                        .font(.subheadline.weight(.medium))
-                }
-                .foregroundStyle(.white.opacity(0.5))
-                .frame(maxWidth: .infinity)
-                .padding(.top, 80)
-            }
-        }
-    }
-
-    private var bottomToolbar: some View {
+    private var headerView: some View {
         HStack {
-            Button {
-                addNewTab()
-            } label: {
-                Image(systemName: "plus")
-                    .font(.system(size: 20, weight: .semibold))
-                    .foregroundStyle(.blue)
+            Text("WebRuntime Switcher")
+                .font(.title2.weight(.bold))
+                .foregroundStyle(.white)
+            Spacer()
+            Button(action: dismiss) {
+                Image(systemName: "xmark.circle.fill")
+                    .font(.system(size: 28))
+                    .foregroundStyle(.secondary)
                     .frame(width: 44, height: 44)
             }
             .buttonStyle(.plain)
+            .accessibilityLabel("Đóng trình chuyển tab")
+        }
+        .padding(.horizontal, 20)
+        .padding(.top, 20)
+    }
+
+    private func deckView(metrics: DeckMetrics) -> some View {
+        ZStack {
+            ZStack {
+                ForEach(visibleIndices(metrics: metrics).reversed(), id: \.self) { index in
+                    let tab = tabs[index]
+                    let transform = transform(for: index, metrics: metrics)
+
+                    RuntimeSwitcherCard(
+                        tab: tab,
+                        isFocused: index == focusedIndex,
+                        onSelect: {
+                            onSelect(tab.id)
+                            dismiss()
+                        },
+                        onClose: {
+                            closeTab(at: index)
+                        }
+                    )
+                    .frame(width: metrics.cardWidth, height: metrics.cardHeight)
+                    .offset(x: transform.x, y: transform.y)
+                    .scaleEffect(transform.scale)
+                    .rotation3DEffect(
+                        .degrees(transform.rotation),
+                        axis: (x: 0, y: 1, z: 0),
+                        perspective: 0.7
+                    )
+                    .opacity(transform.opacity)
+                    .zIndex(transform.zIndex)
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .gesture(
+                DragGesture(minimumDistance: 8)
+                    .updating($isDragging) { _, state, _ in
+                        state = true
+                    }
+                    .onChanged { value in
+                        dragX = value.translation.width
+                    }
+                    .onEnded { value in
+                        endDrag(value, metrics: metrics)
+                    }
+            )
+            .animation(
+                .interactiveSpring(response: 0.34, dampingFraction: 0.82),
+                value: focusedIndex
+            )
+            .animation(
+                .interactiveSpring(response: 0.28, dampingFraction: 0.9),
+                value: dragX
+            )
+        }
+        .contentShape(Rectangle())
+        .padding(.vertical, 8)
+    }
+
+    private var bottomBarView: some View {
+        HStack {
+            Button(action: onAdd) {
+                Image(systemName: "plus")
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(.blue)
+                    .frame(width: 44, height: 44)
+                    .background(Circle().fill(Color.white.opacity(0.11)))
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Mở tab runtime mới")
 
             Spacer()
-
             Text(tabs.count == 1 ? "1 Tab" : "\(tabs.count) Tabs")
                 .font(.system(size: 13, weight: .semibold))
-                .foregroundStyle(.white.opacity(0.75))
-
+                .foregroundStyle(.white.opacity(0.8))
             Spacer()
-
-            Button("Done") {
-                dismiss()
+            Button(action: dismiss) {
+                Image(systemName: "checkmark")
+                    .font(.system(size: 15, weight: .bold))
+                    .foregroundStyle(.blue)
+                    .frame(width: 44, height: 44)
+                    .background(Circle().fill(Color.white.opacity(0.11)))
             }
-            .font(.system(size: 16, weight: .bold))
-            .foregroundStyle(.blue)
-            .frame(width: 70, height: 44)
+            .buttonStyle(.plain)
+            .accessibilityLabel("Đóng trình chuyển tab")
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
-        .background(Color(red: 0.06, green: 0.06, blue: 0.08).opacity(0.96))
+        .padding(.horizontal, 20)
+        .padding(.bottom, 24)
+        .padding(.top, 12)
     }
 
-    private var columns: [GridItem] {
-        [
-            GridItem(.flexible(), spacing: 14),
-            GridItem(.flexible(), spacing: 14)
-        ]
+    private var safeFocusedIndex: Int? {
+        guard !tabs.isEmpty else { return nil }
+        return min(max(focusedIndex, 0), tabs.count - 1)
     }
 
-    private var filteredTabs: [WebTab] {
-        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !query.isEmpty else { return tabs }
-        return tabs.filter { tab in
-            tab.title.localizedCaseInsensitiveContains(query)
-                || (tab.url?.absoluteString.localizedCaseInsensitiveContains(query) ?? false)
-                || (tab.url?.host?.localizedCaseInsensitiveContains(query) ?? false)
-        }
-    }
-
-    private func addNewTab() {
-        if let onAddTab {
-            onAddTab()
-        } else {
-            let tab = WebTab(
-                manifest: WebRuntimeManifest(
-                    id: "new_tab",
-                    version: "1.0",
-                    name: "New Tab",
-                    entry: "index.html",
-                    type: "spa",
-                    orientation: "automatic",
-                    fullScreen: false
-                ),
-                bundlePath: URL(fileURLWithPath: ""),
-                server: iOSWebServer(basePath: "")
-            )
-            tabs.append(tab)
-            selectedTabId = tab.id
-        }
-        dismiss()
-    }
-
-    private func select(_ tab: WebTab) {
-        selectedTabId = tab.id
-        dismiss()
-    }
-
-    private func close(_ tab: WebTab) {
-        if let onCloseTab {
-            onCloseTab(tab.id)
+    private func syncFocusedIndex(preferActiveTab: Bool) {
+        guard !tabs.isEmpty else {
+            focusedIndex = 0
+            dragX = 0
             return
         }
 
-        guard let index = tabs.firstIndex(where: { $0.id == tab.id }) else { return }
-        tabs.remove(at: index)
-        if selectedTabId == tab.id {
-            selectedTabId = tabs.isEmpty ? nil : tabs[min(index, tabs.count - 1)].id
+        if preferActiveTab,
+           let activeTabId,
+           let activeIndex = tabs.firstIndex(where: { $0.id == activeTabId }) {
+            focusedIndex = activeIndex
+        } else {
+            focusedIndex = min(max(focusedIndex, 0), tabs.count - 1)
         }
+        dragX = 0
+    }
+
+    private func visibleIndices(metrics: DeckMetrics) -> [Int] {
+        guard let safeIndex = safeFocusedIndex else { return [] }
+        let lower = max(0, safeIndex - metrics.visibleRadius)
+        let upper = min(tabs.count - 1, safeIndex + metrics.visibleRadius)
+        guard lower <= upper else { return [] }
+        return Array(lower...upper)
+    }
+
+    private func transform(for index: Int, metrics: DeckMetrics) -> CardTransform {
+        let safeIndex = safeFocusedIndex ?? 0
+        let relative = CGFloat(index - safeIndex)
+        let dragProgress = dragX / metrics.cardSpacing
+        let effectiveRelative = relative - dragProgress
+        let distance = abs(effectiveRelative)
+        let curvedOffset = effectiveRelative * metrics.cardSpacing
+        let compressedOffset = CGFloat(tanh(Double(effectiveRelative / 3.0))) * metrics.maxSideOffset
+        let x = curvedOffset * 0.35 + compressedOffset * 0.65
+        let scale = max(metrics.minScale, 1.0 - distance * metrics.scaleStep)
+        let y = distance * metrics.verticalStep
+        let rotation = max(
+            -metrics.maxRotation,
+            min(metrics.maxRotation, effectiveRelative * metrics.rotationStep)
+        )
+        let opacity = Double(max(0.25, 1.0 - distance * 0.18))
+        let zIndex = Double(1000 - distance * 10)
+
+        return CardTransform(
+            x: x,
+            y: y,
+            scale: scale,
+            rotation: rotation,
+            opacity: opacity,
+            zIndex: zIndex
+        )
+    }
+
+    private func endDrag(_ value: DragGesture.Value, metrics: DeckMetrics) {
+        guard let safeIndex = safeFocusedIndex else {
+            dragX = 0
+            return
+        }
+
+        let predicted = value.predictedEndTranslation.width
+        let threshold = metrics.cardSpacing * 0.65
+        var newIndex = safeIndex
+
+        if predicted < -threshold {
+            newIndex = min(tabs.count - 1, safeIndex + 1)
+        } else if predicted > threshold {
+            newIndex = max(0, safeIndex - 1)
+        }
+
+        withAnimation(.interactiveSpring(response: 0.34, dampingFraction: 0.82)) {
+            focusedIndex = newIndex
+            dragX = 0
+        }
+    }
+
+    private func closeTab(at index: Int) {
+        guard index >= 0 && index < tabs.count else { return }
+        let tabId = tabs[index].id
+
+        if tabs.count == 1 {
+            focusedIndex = 0
+        } else if index == focusedIndex {
+            focusedIndex = min(index, tabs.count - 2)
+        } else if index < focusedIndex {
+            focusedIndex = max(0, focusedIndex - 1)
+        } else {
+            focusedIndex = min(focusedIndex, tabs.count - 2)
+        }
+
+        dragX = 0
+        onClose(tabId)
     }
 
     private func dismiss() {
@@ -211,77 +296,177 @@ struct TabSwitcher: View {
     }
 }
 
-private struct RuntimeTabCard: View {
+private struct DeckMetrics {
+    let cardWidth: CGFloat
+    let cardHeight: CGFloat
+    let cardSpacing: CGFloat
+    let maxSideOffset: CGFloat
+    let scaleStep: CGFloat
+    let minScale: CGFloat
+    let rotationStep: CGFloat
+    let maxRotation: CGFloat
+    let verticalStep: CGFloat
+    let visibleRadius: Int
+
+    static func make(
+        size: CGSize,
+        safeAreaInsets: EdgeInsets,
+        horizontalSizeClass: UserInterfaceSizeClass?
+    ) -> DeckMetrics {
+        let isPad = horizontalSizeClass == .regular
+        let shortest = min(size.width, size.height)
+        let usableHeight = max(280, size.height - safeAreaInsets.top - safeAreaInsets.bottom - 148)
+        let targetWidth = isPad ? min(size.width * 0.52, 520) : min(size.width * 0.78, 360)
+        let cardWidth = min(max(220, targetWidth), max(220, size.width - 40))
+        let targetHeight = isPad ? min(usableHeight * 0.86, 680) : min(usableHeight * 0.92, 620)
+
+        return DeckMetrics(
+            cardWidth: cardWidth,
+            cardHeight: cardHeight,
+            cardSpacing: max(56, min(shortest * 0.11, 96)),
+            maxSideOffset: max(220, min(size.width * 0.36, 420)),
+            scaleStep: isPad ? 0.045 : 0.055,
+            minScale: isPad ? 0.86 : 0.82,
+            rotationStep: isPad ? 3.0 : 4.0,
+            maxRotation: isPad ? 9.0 : 12.0,
+            verticalStep: isPad ? 8.0 : 10.0,
+            visibleRadius: isPad ? 5 : 4
+        )
+    }
+}
+
+private struct CardTransform {
+    let x: CGFloat
+    let y: CGFloat
+    let scale: CGFloat
+    let rotation: CGFloat
+    let opacity: Double
+    let zIndex: Double
+}
+
+private struct RuntimeSwitcherCard: View {
     @ObservedObject var tab: WebTab
-    let isSelected: Bool
+    let isFocused: Bool
     let onSelect: () -> Void
     let onClose: () -> Void
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack(spacing: 8) {
-                Image(systemName: "globe")
-                    .font(.system(size: 11, weight: .semibold))
-                    .foregroundStyle(.blue)
-                    .frame(width: 22, height: 22)
-                    .background(Circle().fill(Color.blue.opacity(0.16)))
+            HStack(spacing: 0) {
+                HStack {
+                    Image(systemName: "globe")
+                        .font(.system(size: 14))
+                        .foregroundStyle(.blue)
 
-                Text(tab.title)
-                    .font(.system(size: 12, weight: .semibold))
-                    .lineLimit(1)
-                    .foregroundStyle(.white)
+                    Text(tab.title.isEmpty ? "Tab không tên" : tab.title)
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundStyle(.white)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.75)
 
-                Spacer(minLength: 0)
+                    Spacer()
+                }
+                .contentShape(Rectangle())
+                .onTapGesture(perform: onSelect)
 
                 Button(action: onClose) {
                     Image(systemName: "xmark")
-                        .font(.system(size: 10, weight: .bold))
-                        .foregroundStyle(.white.opacity(0.7))
-                        .frame(width: 24, height: 24)
-                        .background(Circle().fill(Color.white.opacity(0.12)))
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundStyle(.white)
+                        .frame(width: 28, height: 28)
+                        .background(Circle().fill(Color.white.opacity(0.15)))
+                        .frame(width: 44, height: 44)
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel("Đóng tab \(tab.title.isEmpty ? "này" : tab.title)")
             }
-            .padding(.horizontal, 10)
-            .padding(.vertical, 9)
-            .background(Color.white.opacity(0.06))
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(Color.white.opacity(0.08))
 
             ZStack {
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(Color.white.opacity(0.08))
+                if let snapshot = tab.cachedSnapshot {
+                    Image(uiImage: snapshot)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .clipped()
+                } else {
+                    Color.white.opacity(0.04)
 
-                VStack(spacing: 8) {
-                    Image(systemName: statusIcon)
-                        .font(.system(size: 30, weight: .regular))
-                        .foregroundStyle(.white.opacity(0.38))
-
-                    Text(tab.url?.host ?? "Local Runtime")
-                        .font(.system(size: 10, weight: .medium))
-                        .foregroundStyle(.white.opacity(0.48))
-                        .lineLimit(1)
-                        .padding(.horizontal, 8)
+                    VStack(spacing: 12) {
+                        Image(systemName: statusIconName)
+                            .font(.system(size: 40))
+                            .foregroundStyle(.secondary)
+                        Text(statusText)
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
                 }
             }
-            .frame(height: 136)
-            .padding(8)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .contentShape(Rectangle())
+            .onTapGesture(perform: onSelect)
+
+            HStack {
+                Circle()
+                    .fill(statusColor)
+                    .frame(width: 6, height: 6)
+                Text(statusText)
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(.white.opacity(0.75))
+                Spacer()
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(Color.white.opacity(0.05))
+            .contentShape(Rectangle())
+            .onTapGesture(perform: onSelect)
         }
-        .background(Color.white.opacity(0.05))
-        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .background(Color(red: 0.1, green: 0.1, blue: 0.12))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .stroke(isSelected ? Color.blue : Color.white.opacity(0.12), lineWidth: isSelected ? 2 : 1)
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .stroke(isFocused ? Color.blue : Color.white.opacity(0.12), lineWidth: isFocused ? 2 : 1)
         )
-        .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-        .onTapGesture(perform: onSelect)
+        .shadow(color: Color.black.opacity(isFocused ? 0.35 : 0.15), radius: isFocused ? 12 : 6)
+        .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(tab.title.isEmpty ? "Tab runtime" : tab.title)
+        .accessibilityHint("Mở tab runtime")
+        .accessibilityAddTraits(isFocused ? AccessibilityTraits.isSelected : AccessibilityTraits())
+        .accessibilityAction {
+            onSelect()
+        }
     }
 
-    private var statusIcon: String {
+    private var statusIconName: String {
         switch tab.status {
         case .loading: return "hourglass"
         case .active: return "play.circle"
         case .paused: return "pause.circle"
         case .suspended: return "moon"
         case .closing, .closed: return "xmark.circle"
+        }
+    }
+
+    private var statusText: String {
+        switch tab.status {
+        case .loading: return "Đang tải..."
+        case .active: return "Đang chạy"
+        case .paused: return "Tạm dừng"
+        case .suspended: return "Đang ngủ"
+        case .closing, .closed: return "Đã đóng"
+        }
+    }
+
+    private var statusColor: Color {
+        switch tab.status {
+        case .loading: return .orange
+        case .active: return .green
+        case .paused: return .yellow
+        case .suspended: return .gray
+        case .closing, .closed: return .red
         }
     }
 }
