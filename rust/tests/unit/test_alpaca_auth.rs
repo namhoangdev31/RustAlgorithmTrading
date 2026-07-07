@@ -6,7 +6,6 @@
 /// - Credential format verification
 /// - Auth response parsing
 /// - Session management
-
 use serde_json::{json, Value};
 
 #[test]
@@ -92,7 +91,8 @@ fn test_auth_response_with_missing_fields() {
 
 #[test]
 fn test_auth_response_with_extra_fields() {
-    let response = r#"[{"T":"success","msg":"authenticated","extra":"field","timestamp":1234567890}]"#;
+    let response =
+        r#"[{"T":"success","msg":"authenticated","extra":"field","timestamp":1234567890}]"#;
     let parsed: Result<Value, _> = serde_json::from_str(response);
 
     assert!(parsed.is_ok());

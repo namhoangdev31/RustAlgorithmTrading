@@ -6,10 +6,10 @@
 //! - Thread safety
 //! - Order queue management
 
+use chrono::Utc;
+use common::types::{Order, OrderStatus, OrderType, Price, Quantity, Side, Symbol};
 use std::sync::{Arc, Mutex};
 use tokio::task::JoinSet;
-use common::types::{Order, OrderStatus, OrderType, Price, Quantity, Side, Symbol};
-use chrono::Utc;
 
 fn create_test_order(id: usize, symbol: &str) -> Order {
     Order {
@@ -26,8 +26,8 @@ fn create_test_order(id: usize, symbol: &str) -> Order {
         average_price: None,
         created_at: Utc::now(),
         updated_at: Utc::now(),
-    account_id: None,
-    external_proof: None,
+        account_id: None,
+        external_proof: None,
     }
 }
 
@@ -85,9 +85,7 @@ mod concurrent_order_tests {
 
         // Verify all symbols are present
         for symbol in symbols {
-            let count = final_orders.iter()
-                .filter(|o| o.symbol.0 == symbol)
-                .count();
+            let count = final_orders.iter().filter(|o| o.symbol.0 == symbol).count();
             assert_eq!(count, 20);
         }
     }

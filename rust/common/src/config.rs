@@ -117,22 +117,12 @@ impl RiskConfig {
 }
 
 /// Configuration for execution policy
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct ExecutionPolicy {
     pub live_trading_enabled: bool,
     pub allowlist_accounts: Vec<String>,
     #[serde(default)]
     pub kill_switch_enabled: bool,
-}
-
-impl Default for ExecutionPolicy {
-    fn default() -> Self {
-        Self {
-            live_trading_enabled: false,
-            allowlist_accounts: Vec::new(),
-            kill_switch_enabled: false,
-        }
-    }
 }
 
 /// Configuration for execution engine
@@ -225,9 +215,7 @@ impl ExecutionConfig {
     /// Load API credentials from environment variables
     pub fn load_credentials(&mut self) -> Result<()> {
         match self.trading_mode {
-            crate::types::TradingMode::Simulated => {
-                Ok(())
-            }
+            crate::types::TradingMode::Simulated => Ok(()),
             crate::types::TradingMode::Paper => {
                 if self.api_key.is_none() {
                     let key = std::env::var("ALPACA_PAPER_API_KEY")
@@ -263,12 +251,11 @@ impl ExecutionConfig {
             }
             crate::types::TradingMode::Live => {
                 if self.api_key.is_none() {
-                    let key = std::env::var("ALPACA_LIVE_API_KEY")
-                        .map_err(|_| {
-                            TradingError::Configuration(
-                                "API key credentials not found in ALPACA_LIVE_API_KEY".to_string(),
-                            )
-                        })?;
+                    let key = std::env::var("ALPACA_LIVE_API_KEY").map_err(|_| {
+                        TradingError::Configuration(
+                            "API key credentials not found in ALPACA_LIVE_API_KEY".to_string(),
+                        )
+                    })?;
                     if key.trim().is_empty() {
                         return Err(TradingError::Configuration(
                             "API key cannot be empty".to_string(),
@@ -277,12 +264,12 @@ impl ExecutionConfig {
                     self.api_key = Some(key);
                 }
                 if self.api_secret.is_none() {
-                    let secret = std::env::var("ALPACA_LIVE_SECRET_KEY")
-                        .map_err(|_| {
-                            TradingError::Configuration(
-                                "API secret credentials not found in ALPACA_LIVE_SECRET_KEY".to_string(),
-                            )
-                        })?;
+                    let secret = std::env::var("ALPACA_LIVE_SECRET_KEY").map_err(|_| {
+                        TradingError::Configuration(
+                            "API secret credentials not found in ALPACA_LIVE_SECRET_KEY"
+                                .to_string(),
+                        )
+                    })?;
                     if secret.trim().is_empty() {
                         return Err(TradingError::Configuration(
                             "API secret cannot be empty".to_string(),
@@ -298,9 +285,10 @@ impl ExecutionConfig {
     /// Validate that API credentials are configured and not empty
     pub fn validate_credentials(&self) -> Result<()> {
         if self.trading_mode != crate::types::TradingMode::Simulated {
-            let key = self.api_key.as_ref().ok_or_else(|| {
-                TradingError::Configuration("API key not configured".to_string())
-            })?;
+            let key = self
+                .api_key
+                .as_ref()
+                .ok_or_else(|| TradingError::Configuration("API key not configured".to_string()))?;
 
             if key.trim().is_empty() {
                 return Err(TradingError::Configuration(
@@ -309,9 +297,7 @@ impl ExecutionConfig {
             }
 
             let secret = self.api_secret.as_ref().ok_or_else(|| {
-                TradingError::Configuration(
-                    "API secret not configured".to_string(),
-                )
+                TradingError::Configuration("API secret not configured".to_string())
             })?;
 
             if secret.trim().is_empty() {
@@ -325,14 +311,14 @@ impl ExecutionConfig {
 
     /// Validate that the API URL uses HTTPS protocol
     pub fn validate_https(&self) -> Result<()> {
-        if self.trading_mode == crate::types::TradingMode::Live {
-            if !self.exchange_api_url.starts_with("https://") {
-                return Err(TradingError::Configuration(format!(
-                    "API URL must use HTTPS for live trading. Got: {}. \
-                        This is required to protect API credentials from interception.",
-                    self.exchange_api_url
-                )));
-            }
+        if self.trading_mode == crate::types::TradingMode::Live
+            && !self.exchange_api_url.starts_with("https://")
+        {
+            return Err(TradingError::Configuration(format!(
+                "API URL must use HTTPS for live trading. Got: {}. \
+                    This is required to protect API credentials from interception.",
+                self.exchange_api_url
+            )));
         }
         Ok(())
     }

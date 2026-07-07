@@ -9,10 +9,13 @@
 //! - Rate limiting
 //! - Authentication failures
 
-use common::{TradingError, Result, config::{ExecutionConfig, ExecutionPolicy}};
-use execution_engine::router::OrderRouter;
-use common::types::*;
 use chrono::Utc;
+use common::types::*;
+use common::{
+    config::{ExecutionConfig, ExecutionPolicy},
+    Result, TradingError,
+};
+use execution_engine::router::OrderRouter;
 use tokio;
 
 #[cfg(test)]
@@ -176,7 +179,7 @@ mod error_handling_tests {
     async fn test_network_error_handling() {
         // Test: Handle network failures gracefully
         use common::config::RiskConfig;
-        use risk_manager::stops::{StopManager, StopLossConfig};
+        use risk_manager::stops::{StopLossConfig, StopManager};
 
         let risk_config = RiskConfig {
             max_position_size: 10000.0,
@@ -312,10 +315,10 @@ mod error_handling_tests {
     async fn test_order_quantity_validation() {
         // Test: Validate order quantities
         let test_quantities = vec![
-            0.0,           // Zero quantity - invalid
-            -50.0,         // Negative quantity - invalid
-            0.000001,      // Very small quantity - might be below minimum
-            1000000000.0,  // Very large quantity - might exceed limits
+            0.0,          // Zero quantity - invalid
+            -50.0,        // Negative quantity - invalid
+            0.000001,     // Very small quantity - might be below minimum
+            1000000000.0, // Very large quantity - might exceed limits
         ];
 
         for qty_val in test_quantities {
@@ -333,10 +336,10 @@ mod error_handling_tests {
     async fn test_symbol_validation() {
         // Test: Symbol validation
         let invalid_symbols = vec![
-            "",              // Empty symbol
-            " ",             // Whitespace only
-            "AAPL MSFT",     // Space in symbol
-            "AAA/BBB/CCC",   // Too many slashes
+            "",            // Empty symbol
+            " ",           // Whitespace only
+            "AAPL MSFT",   // Space in symbol
+            "AAA/BBB/CCC", // Too many slashes
         ];
 
         for sym_str in invalid_symbols {
@@ -417,7 +420,10 @@ mod error_handling_tests {
         let duration = start.elapsed();
 
         // With rate limit of 2/sec and 5 orders, should take at least 2 seconds
-        assert!(duration.as_secs() >= 2, "Rate limiting should enforce delays");
+        assert!(
+            duration.as_secs() >= 2,
+            "Rate limiting should enforce delays"
+        );
     }
 
     #[tokio::test]

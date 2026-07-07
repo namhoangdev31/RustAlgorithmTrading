@@ -6,7 +6,6 @@
 /// - Bar/OHLCV data parsing
 /// - Timestamp parsing and validation
 /// - Field validation and edge cases
-
 use market_data::websocket::AlpacaMessage;
 use serde_json;
 
@@ -17,7 +16,12 @@ fn test_parse_trade_message() {
 
     assert!(message.is_ok());
     match message.unwrap() {
-        AlpacaMessage::Trade { symbol, price, size, .. } => {
+        AlpacaMessage::Trade {
+            symbol,
+            price,
+            size,
+            ..
+        } => {
             assert_eq!(symbol, "AAPL");
             assert_eq!(price, 150.25);
             assert_eq!(size, 100.0);
@@ -33,7 +37,12 @@ fn test_parse_quote_message() {
 
     assert!(message.is_ok());
     match message.unwrap() {
-        AlpacaMessage::Quote { symbol, bid_price, ask_price, .. } => {
+        AlpacaMessage::Quote {
+            symbol,
+            bid_price,
+            ask_price,
+            ..
+        } => {
             assert_eq!(symbol, "GOOGL");
             assert_eq!(bid_price, 2800.50);
             assert_eq!(ask_price, 2801.00);
@@ -49,7 +58,15 @@ fn test_parse_bar_message() {
 
     assert!(message.is_ok());
     match message.unwrap() {
-        AlpacaMessage::Bar { symbol, open, high, low, close, volume, .. } => {
+        AlpacaMessage::Bar {
+            symbol,
+            open,
+            high,
+            low,
+            close,
+            volume,
+            ..
+        } => {
             assert_eq!(symbol, "TSLA");
             assert_eq!(open, 700.00);
             assert_eq!(high, 705.50);
@@ -108,7 +125,8 @@ fn test_parse_trade_with_negative_price() {
 #[test]
 fn test_parse_quote_with_inverted_spread() {
     // Bid higher than ask (abnormal but possible in extreme conditions)
-    let json = r#"{"T":"q","S":"AAPL","bp":150.10,"bs":10,"ap":150.00,"as":5,"t":"2024-01-01T10:00:00Z"}"#;
+    let json =
+        r#"{"T":"q","S":"AAPL","bp":150.10,"bs":10,"ap":150.00,"as":5,"t":"2024-01-01T10:00:00Z"}"#;
     let message: Result<AlpacaMessage, _> = serde_json::from_str(json);
 
     assert!(message.is_ok());
@@ -145,7 +163,8 @@ mod timestamp_parsing {
 
     #[test]
     fn test_parse_iso8601_timestamp() {
-        let json = r#"{"T":"t","S":"AAPL","p":150.25,"s":100,"t":"2024-01-01T10:00:00Z","i":12345}"#;
+        let json =
+            r#"{"T":"t","S":"AAPL","p":150.25,"s":100,"t":"2024-01-01T10:00:00Z","i":12345}"#;
         let message: Result<AlpacaMessage, _> = serde_json::from_str(json);
 
         assert!(message.is_ok());
@@ -153,7 +172,8 @@ mod timestamp_parsing {
 
     #[test]
     fn test_parse_timestamp_with_milliseconds() {
-        let json = r#"{"T":"t","S":"AAPL","p":150.25,"s":100,"t":"2024-01-01T10:00:00.123Z","i":12345}"#;
+        let json =
+            r#"{"T":"t","S":"AAPL","p":150.25,"s":100,"t":"2024-01-01T10:00:00.123Z","i":12345}"#;
         let message: Result<AlpacaMessage, _> = serde_json::from_str(json);
 
         assert!(message.is_ok());
@@ -169,7 +189,8 @@ mod timestamp_parsing {
 
     #[test]
     fn test_parse_timestamp_with_timezone() {
-        let json = r#"{"T":"t","S":"AAPL","p":150.25,"s":100,"t":"2024-01-01T10:00:00-05:00","i":12345}"#;
+        let json =
+            r#"{"T":"t","S":"AAPL","p":150.25,"s":100,"t":"2024-01-01T10:00:00-05:00","i":12345}"#;
         let message: Result<AlpacaMessage, _> = serde_json::from_str(json);
 
         assert!(message.is_ok());
@@ -182,7 +203,8 @@ mod field_validation {
 
     #[test]
     fn test_parse_symbol_with_dots() {
-        let json = r#"{"T":"t","S":"BRK.A","p":500000.00,"s":1,"t":"2024-01-01T10:00:00Z","i":12345}"#;
+        let json =
+            r#"{"T":"t","S":"BRK.A","p":500000.00,"s":1,"t":"2024-01-01T10:00:00Z","i":12345}"#;
         let message: Result<AlpacaMessage, _> = serde_json::from_str(json);
 
         assert!(message.is_ok());
@@ -190,7 +212,8 @@ mod field_validation {
 
     #[test]
     fn test_parse_symbol_with_hyphens() {
-        let json = r#"{"T":"t","S":"SPY-USD","p":450.00,"s":100,"t":"2024-01-01T10:00:00Z","i":12345}"#;
+        let json =
+            r#"{"T":"t","S":"SPY-USD","p":450.00,"s":100,"t":"2024-01-01T10:00:00Z","i":12345}"#;
         let message: Result<AlpacaMessage, _> = serde_json::from_str(json);
 
         assert!(message.is_ok());
@@ -206,7 +229,8 @@ mod field_validation {
 
     #[test]
     fn test_parse_fractional_shares() {
-        let json = r#"{"T":"t","S":"AAPL","p":150.25,"s":0.5,"t":"2024-01-01T10:00:00Z","i":12345}"#;
+        let json =
+            r#"{"T":"t","S":"AAPL","p":150.25,"s":0.5,"t":"2024-01-01T10:00:00Z","i":12345}"#;
         let message: Result<AlpacaMessage, _> = serde_json::from_str(json);
 
         assert!(message.is_ok());
@@ -214,7 +238,8 @@ mod field_validation {
 
     #[test]
     fn test_parse_very_small_price() {
-        let json = r#"{"T":"t","S":"PENNY","p":0.0001,"s":100000,"t":"2024-01-01T10:00:00Z","i":12345}"#;
+        let json =
+            r#"{"T":"t","S":"PENNY","p":0.0001,"s":100000,"t":"2024-01-01T10:00:00Z","i":12345}"#;
         let message: Result<AlpacaMessage, _> = serde_json::from_str(json);
 
         assert!(message.is_ok());
@@ -222,7 +247,8 @@ mod field_validation {
 
     #[test]
     fn test_parse_very_large_price() {
-        let json = r#"{"T":"t","S":"BRK.A","p":500000.00,"s":1,"t":"2024-01-01T10:00:00Z","i":12345}"#;
+        let json =
+            r#"{"T":"t","S":"BRK.A","p":500000.00,"s":1,"t":"2024-01-01T10:00:00Z","i":12345}"#;
         let message: Result<AlpacaMessage, _> = serde_json::from_str(json);
 
         assert!(message.is_ok());
@@ -255,14 +281,15 @@ fn test_parse_null_json() {
 
 #[test]
 fn test_serialization_roundtrip() {
-    let original = r#"{"T":"t","S":"AAPL","p":150.25,"s":100.0,"t":"2024-01-01T10:00:00Z","i":12345}"#;
+    let original =
+        r#"{"T":"t","S":"AAPL","p":150.25,"s":100.0,"t":"2024-01-01T10:00:00Z","i":12345}"#;
     let message: AlpacaMessage = serde_json::from_str(original).unwrap();
     let serialized = serde_json::to_string(&message).unwrap();
     let deserialized: AlpacaMessage = serde_json::from_str(&serialized).unwrap();
 
     // Both deserializations should succeed
     match (message, deserialized) {
-        (AlpacaMessage::Trade { .. }, AlpacaMessage::Trade { .. }) => {},
+        (AlpacaMessage::Trade { .. }, AlpacaMessage::Trade { .. }) => {}
         _ => panic!("Serialization roundtrip failed"),
     }
 }

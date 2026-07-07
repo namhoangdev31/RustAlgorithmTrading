@@ -6,7 +6,10 @@ use serde::{Deserialize, Serialize};
 pub const SCHEMA_VERSION: &str = "v1.0.0";
 
 fn default_event_id() -> String {
-    format!("evt_legacy_{}", chrono::Utc::now().timestamp_nanos_opt().unwrap_or(0))
+    format!(
+        "evt_legacy_{}",
+        chrono::Utc::now().timestamp_nanos_opt().unwrap_or(0)
+    )
 }
 
 fn default_source() -> String {
@@ -25,7 +28,7 @@ pub struct Envelope {
     pub event_type: String,
     pub timestamp: DateTime<Utc>,
     pub payload: serde_json::Value,
-    
+
     // New metadata fields
     #[serde(default = "default_event_id")]
     pub event_id: String,
@@ -43,7 +46,7 @@ impl Envelope {
         static SEQUENCE: AtomicU64 = AtomicU64::new(1);
         let seq = SEQUENCE.fetch_add(1, Ordering::Relaxed);
         let event_id = format!("{}-{}", Utc::now().timestamp_nanos_opt().unwrap_or(0), seq);
-        
+
         Self {
             schema_version: SCHEMA_VERSION.to_string(),
             correlation_id: correlation_id.to_string(),
@@ -247,7 +250,9 @@ impl ZmqPublisher {
             }
         });
 
-        Ok(Self { sender: Some(sender) })
+        Ok(Self {
+            sender: Some(sender),
+        })
     }
 
     pub fn publish(&self, topic: &str, envelope: &Envelope) -> crate::Result<()> {

@@ -7,8 +7,7 @@
 /// - WebSocket protocol errors
 /// - Reconnection logic
 /// - Error recovery strategies
-
-use common::{TradingError, Result};
+use common::{Result, TradingError};
 
 #[test]
 fn test_configuration_error_creation() {
@@ -229,9 +228,11 @@ mod error_recovery {
         ];
 
         for error_msg in transient_errors {
-            assert!(error_msg.contains("timeout") ||
-                   error_msg.contains("Temporary") ||
-                   error_msg.contains("unavailable"));
+            assert!(
+                error_msg.contains("timeout")
+                    || error_msg.contains("Temporary")
+                    || error_msg.contains("unavailable")
+            );
         }
     }
 
@@ -244,9 +245,11 @@ mod error_recovery {
         ];
 
         for error_msg in permanent_errors {
-            assert!(error_msg.contains("Invalid") ||
-                   error_msg.contains("suspended") ||
-                   error_msg.contains("required"));
+            assert!(
+                error_msg.contains("Invalid")
+                    || error_msg.contains("suspended")
+                    || error_msg.contains("required")
+            );
         }
     }
 
@@ -269,9 +272,18 @@ mod error_recovery {
             }
         }
 
-        assert_eq!(select_strategy("Connection timeout"), RecoveryStrategy::Retry);
-        assert_eq!(select_strategy("Connection closed"), RecoveryStrategy::Reconnect);
-        assert_eq!(select_strategy("Invalid credentials"), RecoveryStrategy::Fail);
+        assert_eq!(
+            select_strategy("Connection timeout"),
+            RecoveryStrategy::Retry
+        );
+        assert_eq!(
+            select_strategy("Connection closed"),
+            RecoveryStrategy::Reconnect
+        );
+        assert_eq!(
+            select_strategy("Invalid credentials"),
+            RecoveryStrategy::Fail
+        );
     }
 
     #[test]
@@ -307,8 +319,7 @@ fn test_error_context_propagation() {
     }
 
     fn higher_level_operation() -> Result<()> {
-        operation_that_fails()
-            .map_err(|e| TradingError::Network(format!("Context: {}", e)))?;
+        operation_that_fails().map_err(|e| TradingError::Network(format!("Context: {}", e)))?;
         Ok(())
     }
 
@@ -361,8 +372,8 @@ fn test_error_rate_limiting() {
         error_count += 1;
     }
 
-    let should_rate_limit = error_count >= max_errors_per_window
-        && window_start.elapsed() < window_duration;
+    let should_rate_limit =
+        error_count >= max_errors_per_window && window_start.elapsed() < window_duration;
 
     assert!(!should_rate_limit); // Not rate limiting yet
 }

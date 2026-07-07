@@ -192,8 +192,6 @@ impl RiskManagerService {
         &self.pnl_tracker
     }
 
-    /// Expose snapshot methods
-
     /// Get current positions
     pub fn current_positions(&self) -> std::collections::HashMap<String, Position> {
         self.limit_checker.get_positions().clone()

@@ -3,8 +3,8 @@
 
 #[cfg(test)]
 mod duckdb_integration_tests {
-    use std::process::Command;
     use serde_json::Value;
+    use std::process::Command;
 
     #[test]
     fn test_duckdb_database_exists() {
@@ -14,12 +14,15 @@ mod duckdb_integration_tests {
         // Python script to check database
         let output = Command::new("python3")
             .arg("-c")
-            .arg(format!(r#"
+            .arg(format!(
+                r#"
 import os
 import sys
 db_exists = os.path.exists('{}')
 sys.exit(0 if db_exists else 1)
-"#, db_path))
+"#,
+                db_path
+            ))
             .output();
 
         // Database should exist after observability initialization
@@ -48,10 +51,7 @@ except Exception as e:
     sys.exit(1)
 "#;
 
-        let output = Command::new("python3")
-            .arg("-c")
-            .arg(python_code)
-            .output();
+        let output = Command::new("python3").arg("-c").arg(python_code).output();
 
         // Tables should be created
     }
@@ -84,10 +84,7 @@ except Exception as e:
     sys.exit(1)
 "#;
 
-        let output = Command::new("python3")
-            .arg("-c")
-            .arg(python_code)
-            .output();
+        let output = Command::new("python3").arg("-c").arg(python_code).output();
 
         // Insert should succeed
     }
@@ -120,10 +117,7 @@ except Exception as e:
     sys.exit(1)
 "#;
 
-        let output = Command::new("python3")
-            .arg("-c")
-            .arg(python_code)
-            .output();
+        let output = Command::new("python3").arg("-c").arg(python_code).output();
 
         // Query should succeed
     }
@@ -152,10 +146,7 @@ except Exception as e:
     sys.exit(1)
 "#;
 
-        let output = Command::new("python3")
-            .arg("-c")
-            .arg(python_code)
-            .output();
+        let output = Command::new("python3").arg("-c").arg(python_code).output();
 
         // SQLite should have required tables
     }
@@ -197,10 +188,7 @@ except Exception as e:
     sys.exit(1)
 "#;
 
-        let output = Command::new("python3")
-            .arg("-c")
-            .arg(python_code)
-            .output();
+        let output = Command::new("python3").arg("-c").arg(python_code).output();
 
         // Event insertion should succeed
     }
@@ -234,10 +222,7 @@ except Exception as e:
     sys.exit(1)
 "#;
 
-        let output = Command::new("python3")
-            .arg("-c")
-            .arg(python_code)
-            .output();
+        let output = Command::new("python3").arg("-c").arg(python_code).output();
 
         // Aggregation should work
     }
@@ -275,10 +260,7 @@ except Exception as e:
     sys.exit(0)
 "#;
 
-        let output = Command::new("python3")
-            .arg("-c")
-            .arg(python_code)
-            .output();
+        let output = Command::new("python3").arg("-c").arg(python_code).output();
 
         // Time-series queries should work
     }
@@ -320,10 +302,7 @@ except Exception as e:
     sys.exit(1)
 "#;
 
-        let output = Command::new("python3")
-            .arg("-c")
-            .arg(python_code)
-            .output();
+        let output = Command::new("python3").arg("-c").arg(python_code).output();
 
         // Concurrent access should work
     }
@@ -357,10 +336,7 @@ except Exception as e:
     sys.exit(1)
 "#;
 
-        let output = Command::new("python3")
-            .arg("-c")
-            .arg(python_code)
-            .output();
+        let output = Command::new("python3").arg("-c").arg(python_code).output();
 
         // Performance should be acceptable
     }

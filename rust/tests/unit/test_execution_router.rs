@@ -1,9 +1,9 @@
+use chrono::Utc;
+use common::config::ExecutionConfig;
+use common::types::{Order, OrderStatus, OrderType, Price, Quantity, Side, Symbol};
+use common::Result;
 /// Comprehensive tests for execution router
 use execution_engine::router::OrderRouter;
-use common::config::ExecutionConfig;
-use common::types::{Order, Side, OrderType, OrderStatus, Symbol, Price, Quantity};
-use common::Result;
-use chrono::Utc;
 
 #[cfg(test)]
 fn create_test_config() -> ExecutionConfig {

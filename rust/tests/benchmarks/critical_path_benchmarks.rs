@@ -1,10 +1,9 @@
+use chrono::Utc;
+use common::types::*;
 /// Performance benchmarks for critical trading paths
 /// Uses criterion for statistical analysis of performance
-
-use criterion::{black_box, criterion_group, criterion_main, Criterion, BenchmarkId};
-use common::types::*;
+use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
 use market_data::orderbook::OrderBookManager;
-use chrono::Utc;
 
 fn benchmark_order_creation(c: &mut Criterion) {
     c.bench_function("order_creation", |b| {
@@ -23,8 +22,8 @@ fn benchmark_order_creation(c: &mut Criterion) {
                 average_price: None,
                 created_at: Utc::now(),
                 updated_at: Utc::now(),
-            account_id: None,
-            external_proof: None,
+                account_id: None,
+                external_proof: None,
             };
             black_box(order);
         });
@@ -46,8 +45,8 @@ fn benchmark_order_serialization(c: &mut Criterion) {
         average_price: None,
         created_at: Utc::now(),
         updated_at: Utc::now(),
-    account_id: None,
-    external_proof: None,
+        account_id: None,
+        external_proof: None,
     };
 
     c.bench_function("order_serialization", |b| {
@@ -73,8 +72,8 @@ fn benchmark_order_deserialization(c: &mut Criterion) {
         average_price: Some(Price(450.00)),
         created_at: Utc::now(),
         updated_at: Utc::now(),
-    account_id: None,
-    external_proof: None,
+        account_id: None,
+        external_proof: None,
     };
 
     let json = serde_json::to_string(&order).unwrap();
@@ -91,20 +90,16 @@ fn benchmark_orderbook_updates(c: &mut Criterion) {
     let mut group = c.benchmark_group("orderbook_updates");
 
     for depth in [10, 100, 1000].iter() {
-        group.bench_with_input(
-            BenchmarkId::from_parameter(depth),
-            depth,
-            |b, &depth| {
-                let mut manager = OrderBookManager::new();
-                let symbol = "BENCH";
+        group.bench_with_input(BenchmarkId::from_parameter(depth), depth, |b, &depth| {
+            let mut manager = OrderBookManager::new();
+            let symbol = "BENCH";
 
-                b.iter(|| {
-                    for i in 0..depth {
-                        manager.update_bid(symbol, Price(100.00 + (i as f64 * 0.01)), Quantity(100.0));
-                    }
-                });
-            },
-        );
+            b.iter(|| {
+                for i in 0..depth {
+                    manager.update_bid(symbol, Price(100.00 + (i as f64 * 0.01)), Quantity(100.0));
+                }
+            });
+        });
     }
 
     group.finish();
@@ -154,8 +149,8 @@ fn benchmark_bar_creation(c: &mut Criterion) {
 }
 
 fn benchmark_concurrent_order_creation(c: &mut Criterion) {
-    use std::sync::Arc;
     use std::sync::atomic::{AtomicU64, Ordering};
+    use std::sync::Arc;
 
     c.bench_function("concurrent_orders", |b| {
         let counter = Arc::new(AtomicU64::new(0));
@@ -167,8 +162,14 @@ fn benchmark_concurrent_order_creation(c: &mut Criterion) {
                     std::thread::spawn(move || {
                         for _ in 0..100 {
                             let order = Order {
-                                order_id: format!("order-{}", counter_clone.fetch_add(1, Ordering::SeqCst)),
-                                client_order_id: format!("client-{}", counter_clone.load(Ordering::SeqCst)),
+                                order_id: format!(
+                                    "order-{}",
+                                    counter_clone.fetch_add(1, Ordering::SeqCst)
+                                ),
+                                client_order_id: format!(
+                                    "client-{}",
+                                    counter_clone.load(Ordering::SeqCst)
+                                ),
                                 symbol: Symbol("AAPL".to_string()),
                                 side: Side::Bid,
                                 order_type: OrderType::Market,
@@ -180,8 +181,8 @@ fn benchmark_concurrent_order_creation(c: &mut Criterion) {
                                 average_price: None,
                                 created_at: Utc::now(),
                                 updated_at: Utc::now(),
-                            account_id: None,
-                            external_proof: None,
+                                account_id: None,
+                                external_proof: None,
                             };
                             black_box(order);
                         }
@@ -223,16 +224,15 @@ fn benchmark_order_validation(c: &mut Criterion) {
         average_price: None,
         created_at: Utc::now(),
         updated_at: Utc::now(),
-    account_id: None,
-    external_proof: None,
+        account_id: None,
+        external_proof: None,
     };
 
     c.bench_function("order_validation", |b| {
         b.iter(|| {
             // Validation checks
-            let valid = order.quantity.0 > 0.0
-                && order.price.is_some()
-                && !order.symbol.0.is_empty();
+            let valid =
+                order.quantity.0 > 0.0 && order.price.is_some() && !order.symbol.0.is_empty();
             black_box(valid);
         });
     });
@@ -257,8 +257,8 @@ fn benchmark_memory_allocation(c: &mut Criterion) {
                     average_price: None,
                     created_at: Utc::now(),
                     updated_at: Utc::now(),
-                account_id: None,
-                external_proof: None,
+                    account_id: None,
+                    external_proof: None,
                 });
             }
             black_box(orders);

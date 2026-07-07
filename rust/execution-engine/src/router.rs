@@ -5,13 +5,13 @@ use governor::{
     state::{InMemoryState, NotKeyed},
     Quota, RateLimiter,
 };
-use reqwest::Client;
-use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 use std::num::NonZeroU32;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};
 use tokio::sync::mpsc;
+
+type RiskCheckHook = Arc<dyn Fn(&Order, &str) -> common::types::RiskReport + Send + Sync>;
 
 pub struct OrderRouter {
     config: ExecutionConfig,
@@ -83,10 +83,12 @@ impl OrderRouter {
                 }
             }
             common::types::TradingMode::Paper => {
-                if config.exchange_api_url.starts_with("https://api.alpaca.markets") {
+                if config
+                    .exchange_api_url
+                    .starts_with("https://api.alpaca.markets")
+                {
                     return Err(TradingError::Configuration(
-                        "startup fail-fast: paper config cannot use live API endpoint"
-                            .to_string(),
+                        "startup fail-fast: paper config cannot use live API endpoint".to_string(),
                     ));
                 }
 
@@ -158,7 +160,11 @@ impl OrderRouter {
         self.config.trading_mode
     }
 
-    pub fn publish_envelope(&self, topic: &str, envelope: &common::messaging::Envelope) -> common::Result<()> {
+    pub fn publish_envelope(
+        &self,
+        topic: &str,
+        envelope: &common::messaging::Envelope,
+    ) -> common::Result<()> {
         self.zmq_publisher.publish(topic, envelope)
     }
 
@@ -236,7 +242,7 @@ impl OrderRouter {
         order: Order,
         current_market_price: Option<f64>,
         cb_check_hook: Option<Arc<dyn Fn() -> bool + Send + Sync>>,
-        risk_check: Option<Arc<dyn Fn(&Order, &str) -> common::types::RiskReport + Send + Sync>>,
+        risk_check: Option<RiskCheckHook>,
     ) -> Result<common::types::BrokerOrderStatus> {
         let cid = order.client_order_id.clone();
 
@@ -252,16 +258,16 @@ impl OrderRouter {
         self.publish_event("order.received", &cid, recv_payload);
 
         // 2. Validate mode
-        if self.config.trading_mode == common::types::TradingMode::Live {
-            if !self.config.policy.live_trading_enabled {
-                return self.reject_order(
-                    &order,
-                    "Live trading is disabled in policy",
-                    "INVALID_MODE",
-                    Some(common::types::RiskReason::InvalidTradingMode),
-                    &cid,
-                );
-            }
+        if self.config.trading_mode == common::types::TradingMode::Live
+            && !self.config.policy.live_trading_enabled
+        {
+            return self.reject_order(
+                &order,
+                "Live trading is disabled in policy",
+                "INVALID_MODE",
+                Some(common::types::RiskReason::InvalidTradingMode),
+                &cid,
+            );
         }
 
         // 3. Validate order
@@ -339,7 +345,7 @@ impl OrderRouter {
             if report.decision == common::types::RiskDecision::Reject {
                 return self.reject_order(
                     &order,
-                    &format!("Risk check rejected order"),
+                    "Risk check rejected order",
                     "RISK_LIMIT_EXCEEDED",
                     report.reason_code,
                     &cid,
@@ -376,11 +382,15 @@ impl OrderRouter {
 
         // 7. Circuit breaker check
         if self.circuit_breaker_open.load(Ordering::SeqCst) {
-            return Err(TradingError::RiskCheck("Circuit breaker is OPEN".to_string()));
+            return Err(TradingError::RiskCheck(
+                "Circuit breaker is OPEN".to_string(),
+            ));
         }
         if let Some(cb_hook) = &cb_check_hook {
             if cb_hook() {
-                return Err(TradingError::RiskCheck("Circuit breaker is OPEN (callback)".to_string()));
+                return Err(TradingError::RiskCheck(
+                    "Circuit breaker is OPEN (callback)".to_string(),
+                ));
             }
         }
 
@@ -466,7 +476,10 @@ impl OrderRouter {
     }
 
     /// Exposes get_order_status
-    pub async fn get_order_status(&self, order_id: &str) -> Result<common::types::BrokerOrderStatus> {
+    pub async fn get_order_status(
+        &self,
+        order_id: &str,
+    ) -> Result<common::types::BrokerOrderStatus> {
         self.rate_limiter.until_ready().await;
         self.broker_client.get_order_status(order_id).await
     }
@@ -546,7 +559,9 @@ mod tests {
         let order = get_dummy_order();
         let hook: Arc<dyn Fn() -> bool + Send + Sync> = Arc::new(|| true);
 
-        let result = router.route_with_cb_hook(order, None, Some(hook), None).await;
+        let result = router
+            .route_with_cb_hook(order, None, Some(hook), None)
+            .await;
 
         assert!(result.is_err());
         match result {

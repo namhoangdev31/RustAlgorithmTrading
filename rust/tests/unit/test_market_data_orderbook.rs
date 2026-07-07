@@ -1,6 +1,6 @@
+use common::types::{Price, Quantity, Symbol};
 /// Comprehensive tests for OrderBook implementation
 use market_data::orderbook::OrderBookManager;
-use common::types::{Price, Quantity, Symbol};
 
 #[cfg(test)]
 mod orderbook_manager_tests {
@@ -20,7 +20,7 @@ mod orderbook_manager_tests {
 
         // Add bid level at $150.00 with 1000 shares
         manager.update_bid(symbol, Price(150.00), Quantity(1000.0));
-        
+
         let book = manager.get_snapshot(symbol, 1).unwrap();
         assert_eq!(book.bids.len(), 1);
         assert_eq!(book.bids[0].price, Price(150.00));
@@ -33,7 +33,7 @@ mod orderbook_manager_tests {
         let symbol = "TSLA";
 
         manager.update_ask(symbol, Price(250.50), Quantity(500.0));
-        
+
         let book = manager.get_snapshot(symbol, 1).unwrap();
         assert_eq!(book.asks.len(), 1);
         assert_eq!(book.asks[0].price, Price(250.50));
@@ -59,12 +59,20 @@ mod orderbook_manager_tests {
 
         // Add multiple bid levels
         for i in 0..10 {
-            manager.update_bid(symbol, Price(2500.00 - (i as f64 * 0.10)), Quantity(100.0 * (i + 1) as f64));
+            manager.update_bid(
+                symbol,
+                Price(2500.00 - (i as f64 * 0.10)),
+                Quantity(100.0 * (i + 1) as f64),
+            );
         }
 
         // Add multiple ask levels
         for i in 0..10 {
-            manager.update_ask(symbol, Price(2500.50 + (i as f64 * 0.10)), Quantity(100.0 * (i + 1) as f64));
+            manager.update_ask(
+                symbol,
+                Price(2500.50 + (i as f64 * 0.10)),
+                Quantity(100.0 * (i + 1) as f64),
+            );
         }
 
         let book = manager.get_snapshot(symbol, 10).unwrap();
@@ -112,7 +120,7 @@ mod orderbook_manager_tests {
 
         manager.update_ask(symbol, Price(347.00), Quantity(100.0));
         manager.update_ask(symbol, Price(346.50), Quantity(200.0));
-        
+
         {
             let book = manager.get_or_create(symbol);
             assert_eq!(book.best_ask(), Some(Price(346.50)));

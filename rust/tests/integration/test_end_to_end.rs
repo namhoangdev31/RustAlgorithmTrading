@@ -26,8 +26,8 @@ mod integration_tests {
             average_price: None,
             created_at: Utc::now(),
             updated_at: Utc::now(),
-        account_id: None,
-        external_proof: None,
+            account_id: None,
+            external_proof: None,
         };
 
         // Initial state
@@ -81,8 +81,8 @@ mod integration_tests {
             average_price: None,
             created_at: Utc::now(),
             updated_at: Utc::now(),
-        account_id: None,
-        external_proof: None,
+            account_id: None,
+            external_proof: None,
         };
 
         assert_eq!(order.symbol, signal.symbol);
@@ -108,8 +108,8 @@ mod integration_tests {
             average_price: Some(Price(150.0)),
             created_at: Utc::now(),
             updated_at: Utc::now(),
-        account_id: None,
-        external_proof: None,
+            account_id: None,
+            external_proof: None,
         };
 
         // 2. Create position from filled order
@@ -172,20 +172,16 @@ mod integration_tests {
         // 1. Get order book
         let orderbook = OrderBook {
             symbol: Symbol("AAPL".to_string()),
-            bids: vec![
-                Level {
-                    price: Price(100.0),
-                    quantity: Quantity(50.0),
-                    timestamp: Utc::now(),
-                },
-            ],
-            asks: vec![
-                Level {
-                    price: Price(100.5),
-                    quantity: Quantity(50.0),
-                    timestamp: Utc::now(),
-                },
-            ],
+            bids: vec![Level {
+                price: Price(100.0),
+                quantity: Quantity(50.0),
+                timestamp: Utc::now(),
+            }],
+            asks: vec![Level {
+                price: Price(100.5),
+                quantity: Quantity(50.0),
+                timestamp: Utc::now(),
+            }],
             timestamp: Utc::now(),
             sequence: 1,
         };
@@ -212,8 +208,8 @@ mod integration_tests {
             average_price: Some(best_ask),
             created_at: Utc::now(),
             updated_at: Utc::now(),
-        account_id: None,
-        external_proof: None,
+            account_id: None,
+            external_proof: None,
         };
 
         assert_eq!(order.average_price.unwrap(), best_ask);
@@ -242,8 +238,8 @@ mod integration_tests {
                 average_price: None,
                 created_at: Utc::now(),
                 updated_at: Utc::now(),
-            account_id: None,
-            external_proof: None,
+                account_id: None,
+                external_proof: None,
             };
             orders.push(order);
         }
@@ -313,8 +309,8 @@ mod integration_tests {
             average_price: None,
             created_at: Utc::now(),
             updated_at: Utc::now(),
-        account_id: None,
-        external_proof: None,
+            account_id: None,
+            external_proof: None,
         };
 
         // Cancel order
@@ -364,8 +360,8 @@ mod integration_tests {
                 average_price: None,
                 created_at: Utc::now(),
                 updated_at: Utc::now(),
-            account_id: None,
-            external_proof: None,
+                account_id: None,
+                external_proof: None,
             };
 
             assert_eq!(stop_order.side, Side::Ask);

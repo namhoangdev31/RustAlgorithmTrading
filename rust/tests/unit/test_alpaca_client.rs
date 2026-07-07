@@ -1,3 +1,4 @@
+use common::{Result, TradingError};
 /// Unit tests for Alpaca WebSocket client initialization and configuration
 ///
 /// Tests cover:
@@ -6,9 +7,7 @@
 /// - Configuration management
 /// - Symbol list handling
 /// - Reconnection logic setup
-
-use market_data::websocket::{WebSocketClient, AlpacaMessage};
-use common::{TradingError, Result};
+use market_data::websocket::{AlpacaMessage, WebSocketClient};
 
 #[test]
 fn test_client_new_with_valid_credentials() {
@@ -48,9 +47,7 @@ fn test_client_new_with_empty_symbols() {
 fn test_client_new_with_many_symbols() {
     let api_key = "test_api_key".to_string();
     let api_secret = "test_api_secret".to_string();
-    let symbols: Vec<String> = (0..100)
-        .map(|i| format!("SYM{}", i))
-        .collect();
+    let symbols: Vec<String> = (0..100).map(|i| format!("SYM{}", i)).collect();
 
     let client = WebSocketClient::new(api_key, api_secret, symbols);
 
@@ -61,11 +58,7 @@ fn test_client_new_with_many_symbols() {
 fn test_client_new_with_duplicate_symbols() {
     let api_key = "test_api_key".to_string();
     let api_secret = "test_api_secret".to_string();
-    let symbols = vec![
-        "AAPL".to_string(),
-        "AAPL".to_string(),
-        "GOOGL".to_string(),
-    ];
+    let symbols = vec!["AAPL".to_string(), "AAPL".to_string(), "GOOGL".to_string()];
 
     let client = WebSocketClient::new(api_key, api_secret, symbols);
 
@@ -180,9 +173,7 @@ mod boundary_tests {
     fn test_client_with_maximum_reasonable_symbols() {
         let api_key = "test_api_key".to_string();
         let api_secret = "test_api_secret".to_string();
-        let symbols: Vec<String> = (0..1000)
-            .map(|i| format!("SYMBOL{:04}", i))
-            .collect();
+        let symbols: Vec<String> = (0..1000).map(|i| format!("SYMBOL{:04}", i)).collect();
 
         let client = WebSocketClient::new(api_key, api_secret, symbols);
 
@@ -193,10 +184,7 @@ mod boundary_tests {
     fn test_client_with_extremely_long_symbol_names() {
         let api_key = "test_api_key".to_string();
         let api_secret = "test_api_secret".to_string();
-        let symbols = vec![
-            "A".repeat(100),
-            "B".repeat(100),
-        ];
+        let symbols = vec!["A".repeat(100), "B".repeat(100)];
 
         let client = WebSocketClient::new(api_key, api_secret, symbols);
 

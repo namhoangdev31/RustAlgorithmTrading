@@ -6,9 +6,11 @@
 //! - Risk checks
 //! - Message parsing
 
-use criterion::{black_box, criterion_group, criterion_main, Criterion, BenchmarkId};
 use chrono::Utc;
-use common::types::{OrderBook, Level, Symbol, Price, Quantity, Order, OrderStatus, OrderType, Side};
+use common::types::{
+    Level, Order, OrderBook, OrderStatus, OrderType, Price, Quantity, Side, Symbol,
+};
+use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
 use market_data::orderbook::OrderBookManager;
 
 fn create_orderbook(depth: usize) -> OrderBook {
@@ -52,8 +54,8 @@ fn create_order(quantity: f64) -> Order {
         average_price: None,
         created_at: Utc::now(),
         updated_at: Utc::now(),
-    account_id: None,
-    external_proof: None,
+        account_id: None,
+        external_proof: None,
     }
 }
 
@@ -109,9 +111,9 @@ fn bench_order_validation(c: &mut Criterion) {
         let order = create_order(100.0);
 
         b.iter(|| {
-            let _valid = black_box(order.quantity.0 > 0.0
-                && !order.symbol.0.is_empty()
-                && order.price.is_some());
+            let _valid = black_box(
+                order.quantity.0 > 0.0 && !order.symbol.0.is_empty() && order.price.is_some(),
+            );
         });
     });
 }
@@ -120,16 +122,20 @@ fn bench_multiple_orderbook_updates(c: &mut Criterion) {
     let mut group = c.benchmark_group("multi_symbol_update");
 
     for num_symbols in [5, 10, 20, 50].iter() {
-        group.bench_with_input(BenchmarkId::from_parameter(num_symbols), num_symbols, |b, &num_symbols| {
-            let mut manager = OrderBookManager::new();
-            let symbols: Vec<String> = (0..num_symbols).map(|i| format!("SYM{}", i)).collect();
+        group.bench_with_input(
+            BenchmarkId::from_parameter(num_symbols),
+            num_symbols,
+            |b, &num_symbols| {
+                let mut manager = OrderBookManager::new();
+                let symbols: Vec<String> = (0..num_symbols).map(|i| format!("SYM{}", i)).collect();
 
-            b.iter(|| {
-                for symbol in &symbols {
-                    manager.update_bid(symbol, Price(100.0), Quantity(10.0));
-                }
-            });
-        });
+                b.iter(|| {
+                    for symbol in &symbols {
+                        manager.update_bid(symbol, Price(100.0), Quantity(10.0));
+                    }
+                });
+            },
+        );
     }
 
     group.finish();

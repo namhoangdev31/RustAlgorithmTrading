@@ -54,10 +54,8 @@ impl MarketDataService {
         ];
         let bar_aggregator = BarAggregator::new(time_windows);
 
-        let publisher = MarketDataPublisher::new(
-            &config.zmq_publish_address,
-            &format!("{}", trading_mode),
-        )?;
+        let publisher =
+            MarketDataPublisher::new(&config.zmq_publish_address, &format!("{}", trading_mode))?;
 
         Ok(Self {
             ws_client,
@@ -126,7 +124,7 @@ impl MarketDataService {
                     bid_size,
                     ask_price,
                     ask_size,
-                    timestamp,
+                    timestamp: _,
                 } => {
                     self.orderbook_manager.update_bid(
                         &symbol,

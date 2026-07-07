@@ -1,10 +1,10 @@
+use crate::OrderRouter;
 use chrono::Utc;
 use common::{
     types::{Order, OrderStatus, OrderType, Price, Quantity, Side, Symbol},
     Result, TradingError,
 };
-use tracing::{info, warn};
-use crate::OrderRouter;
+use tracing::info;
 
 /// Handles execution of stop-loss triggered orders
 pub struct StopLossExecutor {

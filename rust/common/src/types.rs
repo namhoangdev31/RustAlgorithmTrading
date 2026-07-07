@@ -189,18 +189,13 @@ pub struct RiskReport {
 }
 
 /// Trading modes
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum TradingMode {
+    #[default]
     Simulated,
     Paper,
     Live,
-}
-
-impl Default for TradingMode {
-    fn default() -> Self {
-        TradingMode::Simulated
-    }
 }
 
 impl fmt::Display for TradingMode {

@@ -7,11 +7,11 @@
 //! - Multi-component coordination
 
 use chrono::Utc;
+use common::config::{ExecutionConfig, RiskConfig};
 use common::types::*;
-use common::config::{RiskConfig, ExecutionConfig};
-use database::{DatabaseManager, MetricRecord, TradeRecord, SystemEvent};
-use risk_manager::stops::{StopManager, StopLossConfig, StopLossType};
+use database::{DatabaseManager, MetricRecord, SystemEvent, TradeRecord};
 use execution_engine::router::OrderRouter;
+use risk_manager::stops::{StopLossConfig, StopLossType, StopManager};
 use tokio;
 use uuid::Uuid;
 
@@ -45,9 +45,12 @@ mod risk_execution_observability_tests {
         };
 
         let db_path = format!("test_integration_{}.duckdb", Uuid::new_v4());
-        let db = DatabaseManager::new(&db_path).await
+        let db = DatabaseManager::new(&db_path)
+            .await
             .expect("Failed to create database");
-        db.initialize().await.expect("Failed to initialize database");
+        db.initialize()
+            .await
+            .expect("Failed to initialize database");
 
         let stop_manager = StopManager::new(risk_config);
         let router = OrderRouter::new(exec_config).expect("Failed to create router");
@@ -72,14 +75,16 @@ mod risk_execution_observability_tests {
         };
 
         // Log signal reception
-        let signal_event = SystemEvent::info("Trading signal received")
-            .with_details(serde_json::json!({
+        let signal_event =
+            SystemEvent::info("Trading signal received").with_details(serde_json::json!({
                 "correlation_id": correlation_id,
                 "symbol": signal.symbol.0,
                 "direction": format!("{:?}", signal.direction),
                 "strength": signal.strength
             }));
-        db.insert_event(&signal_event).await.expect("Event insert failed");
+        db.insert_event(&signal_event)
+            .await
+            .expect("Event insert failed");
 
         // Step 2: Create order from signal
         let order = Order {
@@ -113,18 +118,26 @@ mod risk_execution_observability_tests {
         let response = result.unwrap();
 
         // Step 5: Record execution metrics
-        let latency_metric = MetricRecord::new("order_execution_latency_ms", exec_duration.as_millis() as f64)
-            .with_symbol("AAPL")
-            .add_label("correlation_id", &correlation_id)
-            .add_label("order_id", &order.order_id);
-        db.insert_metric(&latency_metric).await.expect("Metric insert failed");
+        let latency_metric = MetricRecord::new(
+            "order_execution_latency_ms",
+            exec_duration.as_millis() as f64,
+        )
+        .with_symbol("AAPL")
+        .add_label("correlation_id", &correlation_id)
+        .add_label("order_id", &order.order_id);
+        db.insert_metric(&latency_metric)
+            .await
+            .expect("Metric insert failed");
 
         // Step 6: Record trade
         let trade = TradeRecord {
             trade_id: response.broker_order_id.clone(),
             order_id: order.order_id.clone(),
             symbol: order.symbol.0.clone(),
-            side: match order.side { Side::Bid => "buy".to_string(), Side::Ask => "sell".to_string() },
+            side: match order.side {
+                Side::Bid => "buy".to_string(),
+                Side::Ask => "sell".to_string(),
+            },
             quantity: response.filled_qty.0,
             price: 150.0,
             timestamp: Utc::now(),
@@ -148,14 +161,21 @@ mod risk_execution_observability_tests {
         };
 
         let stop_config = StopLossConfig::static_stop(5.0).unwrap();
-        stop_manager.set_stop(&position, stop_config).expect("Set stop failed");
+        stop_manager
+            .set_stop(&position, stop_config)
+            .expect("Set stop failed");
 
         // Step 8: Record workflow completion metric
         let workflow_duration = workflow_start.elapsed();
-        let workflow_metric = MetricRecord::new("complete_workflow_duration_ms", workflow_duration.as_millis() as f64)
-            .with_symbol("AAPL")
-            .add_label("correlation_id", &correlation_id);
-        db.insert_metric(&workflow_metric).await.expect("Metric insert failed");
+        let workflow_metric = MetricRecord::new(
+            "complete_workflow_duration_ms",
+            workflow_duration.as_millis() as f64,
+        )
+        .with_symbol("AAPL")
+        .add_label("correlation_id", &correlation_id);
+        db.insert_metric(&workflow_metric)
+            .await
+            .expect("Metric insert failed");
 
         // Verify all components worked together
         assert_eq!(order.symbol.0, "AAPL");
@@ -183,17 +203,24 @@ mod risk_execution_observability_tests {
                 "max_size": max_position_size,
                 "symbol": "AAPL"
             }));
-        db.insert_event(&rejection_event).await.expect("Event insert failed");
+        db.insert_event(&rejection_event)
+            .await
+            .expect("Event insert failed");
 
         // Record rejection metric
         let rejection_metric = MetricRecord::new("order_rejection", 1.0)
             .with_symbol("AAPL")
             .add_label("correlation_id", &correlation_id)
             .add_label("reason", "position_limit_exceeded");
-        db.insert_metric(&rejection_metric).await.expect("Metric insert failed");
+        db.insert_metric(&rejection_metric)
+            .await
+            .expect("Metric insert failed");
 
         // Verify metrics were recorded
-        let metrics = db.get_metrics("order_rejection", None, None, 10).await.unwrap();
+        let metrics = db
+            .get_metrics("order_rejection", None, None, 10)
+            .await
+            .unwrap();
         assert_eq!(metrics.len(), 1);
 
         let events = db.get_events(None, 10).await.unwrap();
@@ -232,14 +259,19 @@ mod risk_execution_observability_tests {
             .with_symbol("AAPL")
             .add_label("correlation_id", &correlation_id)
             .add_label("order_id", &order.order_id);
-        db.insert_metric(&slippage_metric).await.expect("Metric insert failed");
+        db.insert_metric(&slippage_metric)
+            .await
+            .expect("Metric insert failed");
 
         // Attempt to execute - should fail due to high slippage
         let result = router.route(order, Some(market_price)).await;
         assert!(result.is_err());
 
         // Verify slippage metric was recorded
-        let metrics = db.get_metrics("slippage_bps", None, None, 10).await.unwrap();
+        let metrics = db
+            .get_metrics("slippage_bps", None, None, 10)
+            .await
+            .unwrap();
         assert_eq!(metrics.len(), 1);
         assert!(metrics[0].value > 50.0); // Exceeds 50 bps limit
     }
@@ -264,7 +296,9 @@ mod risk_execution_observability_tests {
         };
 
         let stop_config = StopLossConfig::static_stop(5.0).unwrap();
-        stop_manager.set_stop(&position, stop_config).expect("Set stop failed");
+        stop_manager
+            .set_stop(&position, stop_config)
+            .expect("Set stop failed");
 
         // Price drops, triggering stop-loss
         position.current_price = Price(142.0); // -5.3% loss
@@ -276,8 +310,8 @@ mod risk_execution_observability_tests {
         let trigger_event = trigger.unwrap();
 
         // Log stop-loss trigger
-        let stop_log = SystemEvent::warning("Stop-loss triggered")
-            .with_details(serde_json::json!({
+        let stop_log =
+            SystemEvent::warning("Stop-loss triggered").with_details(serde_json::json!({
                 "correlation_id": correlation_id,
                 "symbol": "AAPL",
                 "trigger_price": trigger_event.trigger_price.0,
@@ -287,7 +321,9 @@ mod risk_execution_observability_tests {
                 "reason_code": serde_json::to_value(trigger_event.reason_code).unwrap(),
                 "disposition": "STOP_TRIGGERED"
             }));
-        db.insert_event(&stop_log).await.expect("Event insert failed");
+        db.insert_event(&stop_log)
+            .await
+            .expect("Event insert failed");
 
         // Create closing order
         let closing_order = Order {
@@ -317,13 +353,18 @@ mod risk_execution_observability_tests {
             .with_symbol("AAPL")
             .add_label("correlation_id", &correlation_id)
             .add_label("reason", "stop_loss");
-        db.insert_metric(&pnl_metric).await.expect("Metric insert failed");
+        db.insert_metric(&pnl_metric)
+            .await
+            .expect("Metric insert failed");
 
         // Verify stop-loss was triggered and executed
         let events = db.get_events(None, 10).await.unwrap();
         assert!(events.iter().any(|e| e.message.contains("Stop-loss")));
 
-        let metrics = db.get_metrics("realized_pnl", None, None, 10).await.unwrap();
+        let metrics = db
+            .get_metrics("realized_pnl", None, None, 10)
+            .await
+            .unwrap();
         assert_eq!(metrics.len(), 1);
         assert!(metrics[0].value < 0.0); // Loss recorded
     }
@@ -348,7 +389,9 @@ mod risk_execution_observability_tests {
 
         // Set max loss stop
         let stop_config = StopLossConfig::max_loss_stop(1000.0).unwrap();
-        stop_manager.set_stop(&position, stop_config).expect("Set stop failed");
+        stop_manager
+            .set_stop(&position, stop_config)
+            .expect("Set stop failed");
 
         // Check trigger - should exceed $1000 threshold
         let trigger = stop_manager.check(&position, &correlation_id);
@@ -362,10 +405,15 @@ mod risk_execution_observability_tests {
         let pnl_metric = MetricRecord::new("max_loss_violation", position.unrealized_pnl)
             .with_symbol("BTC/USD")
             .add_label("correlation_id", &correlation_id);
-        db.insert_metric(&pnl_metric).await.expect("Metric insert failed");
+        db.insert_metric(&pnl_metric)
+            .await
+            .expect("Metric insert failed");
 
         // Verify metrics
-        let metrics = db.get_metrics("max_loss_violation", None, None, 10).await.unwrap();
+        let metrics = db
+            .get_metrics("max_loss_violation", None, None, 10)
+            .await
+            .unwrap();
         assert_eq!(metrics.len(), 1);
         assert_eq!(metrics[0].value, -1500.0);
     }

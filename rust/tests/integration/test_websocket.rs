@@ -14,7 +14,8 @@ mod websocket_message_tests {
 
     #[test]
     fn test_parse_trade_message() {
-        let json = r#"{"T":"t","S":"AAPL","p":150.25,"s":100.0,"t":"2024-01-01T10:00:00Z","i":12345}"#;
+        let json =
+            r#"{"T":"t","S":"AAPL","p":150.25,"s":100.0,"t":"2024-01-01T10:00:00Z","i":12345}"#;
 
         let parsed: serde_json::Value = serde_json::from_str(json).unwrap();
         assert_eq!(parsed["T"], "t");
@@ -111,7 +112,8 @@ mod websocket_message_tests {
 
     #[test]
     fn test_message_with_fractional_shares() {
-        let json = r#"{"T":"t","S":"AAPL","p":150.25,"s":0.5,"t":"2024-01-01T10:00:00Z","i":12345}"#;
+        let json =
+            r#"{"T":"t","S":"AAPL","p":150.25,"s":0.5,"t":"2024-01-01T10:00:00Z","i":12345}"#;
 
         let parsed: serde_json::Value = serde_json::from_str(json).unwrap();
         assert_eq!(parsed["s"], 0.5);
@@ -257,7 +259,10 @@ mod websocket_performance_tests {
         let mut processed = 0;
 
         for i in 0..1000 {
-            let msg = format!(r#"{{"T":"t","S":"AAPL","p":{},"s":100.0}}"#, 150.0 + i as f64);
+            let msg = format!(
+                r#"{{"T":"t","S":"AAPL","p":{},"s":100.0}}"#,
+                150.0 + i as f64
+            );
             let parsed: Result<serde_json::Value, _> = serde_json::from_str(&msg);
             if parsed.is_ok() {
                 processed += 1;
@@ -272,7 +277,10 @@ mod websocket_performance_tests {
         let mut batch = Vec::new();
 
         for i in 0..100 {
-            batch.push(format!(r#"{{"T":"t","S":"AAPL","p":{},"s":100.0}}"#, 150.0 + i as f64));
+            batch.push(format!(
+                r#"{{"T":"t","S":"AAPL","p":{},"s":100.0}}"#,
+                150.0 + i as f64
+            ));
         }
 
         assert_eq!(batch.len(), 100);

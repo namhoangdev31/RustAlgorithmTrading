@@ -1,8 +1,8 @@
+use chrono::Utc;
 /// Comprehensive unit tests for common::types module
 ///
 /// Tests all trading domain types including Order, Position, Trade, OrderBook, etc.
 use common::types::*;
-use chrono::Utc;
 use serde_json;
 
 #[cfg(test)]
@@ -25,8 +25,8 @@ mod order_tests {
             average_price: None,
             created_at: Utc::now(),
             updated_at: Utc::now(),
-        account_id: None,
-        external_proof: None,
+            account_id: None,
+            external_proof: None,
         };
 
         assert_eq!(order.symbol.0, "AAPL");
@@ -51,8 +51,8 @@ mod order_tests {
             average_price: Some(Price(250.0)),
             created_at: Utc::now(),
             updated_at: Utc::now(),
-        account_id: None,
-        external_proof: None,
+            account_id: None,
+            external_proof: None,
         };
 
         let json = serde_json::to_string(&order).expect("Serialization failed");
@@ -301,8 +301,8 @@ mod edge_cases {
             average_price: None,
             created_at: Utc::now(),
             updated_at: Utc::now(),
-        account_id: None,
-        external_proof: None,
+            account_id: None,
+            external_proof: None,
         };
 
         assert_eq!(order.quantity.0, 0.0);

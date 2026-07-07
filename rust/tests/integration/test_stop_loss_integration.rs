@@ -8,10 +8,10 @@
 //! - Performance under load
 
 use chrono::Utc;
+use common::config::{ExecutionConfig, RiskConfig};
 use common::types::*;
-use common::config::{RiskConfig, ExecutionConfig};
-use risk_manager::stops::StopManager;
 use execution_engine::router::OrderRouter;
+use risk_manager::stops::StopManager;
 use tokio;
 
 #[cfg(test)]
@@ -19,7 +19,12 @@ mod stop_loss_integration_tests {
     use super::*;
 
     // Helper function to create test position
-    fn create_test_position(symbol: &str, entry_price: f64, current_price: f64, quantity: f64) -> Position {
+    fn create_test_position(
+        symbol: &str,
+        entry_price: f64,
+        current_price: f64,
+        quantity: f64,
+    ) -> Position {
         Position {
             symbol: Symbol(symbol.to_string()),
             side: Side::Bid,
@@ -52,8 +57,8 @@ mod stop_loss_integration_tests {
             average_price: None,
             created_at: Utc::now(),
             updated_at: Utc::now(),
-        account_id: None,
-        external_proof: None,
+            account_id: None,
+            external_proof: None,
         }
     }
 
@@ -65,7 +70,10 @@ mod stop_loss_integration_tests {
 
         // Check if stop should trigger
         let should_trigger = position.current_price.0 <= stop_loss_price;
-        assert!(should_trigger, "Stop-loss should trigger when price drops below stop level");
+        assert!(
+            should_trigger,
+            "Stop-loss should trigger when price drops below stop level"
+        );
 
         // Create stop-loss order
         let stop_order = create_stop_order(&position, stop_loss_price);
@@ -125,7 +133,11 @@ mod stop_loss_integration_tests {
 
         assert_eq!(stop_order.symbol.0, "EUR/USD");
         // 50 pips loss on 100k units = $500
-        assert!((position.unrealized_pnl - -500.0).abs() < 1e-5, "Expected PnL to be close to -500.0, got {}", position.unrealized_pnl);
+        assert!(
+            (position.unrealized_pnl - -500.0).abs() < 1e-5,
+            "Expected PnL to be close to -500.0, got {}",
+            position.unrealized_pnl
+        );
     }
 
     #[tokio::test]
@@ -135,7 +147,10 @@ mod stop_loss_integration_tests {
         let stop_loss_price = 147.0;
 
         let should_trigger = position.current_price.0 <= stop_loss_price;
-        assert!(!should_trigger, "Stop-loss should NOT trigger when price is above stop");
+        assert!(
+            !should_trigger,
+            "Stop-loss should NOT trigger when price is above stop"
+        );
 
         assert_eq!(position.unrealized_pnl, 200.0); // Profit
     }
@@ -180,8 +195,8 @@ mod stop_loss_integration_tests {
     async fn test_multiple_concurrent_stop_losses() {
         // Test: Multiple positions with different stop-loss levels
         let positions = vec![
-            create_test_position("AAPL", 150.0, 145.0, 100.0),  // Should trigger (147)
-            create_test_position("MSFT", 300.0, 310.0, 50.0),   // Should NOT trigger (295)
+            create_test_position("AAPL", 150.0, 145.0, 100.0), // Should trigger (147)
+            create_test_position("MSFT", 300.0, 310.0, 50.0),  // Should NOT trigger (295)
             create_test_position("GOOGL", 2800.0, 2750.0, 10.0), // Should trigger (2780)
         ];
 
@@ -233,7 +248,10 @@ mod stop_loss_integration_tests {
         let stop_loss_price = 147.0;
 
         let should_trigger = position.current_price.0 <= stop_loss_price;
-        assert!(should_trigger, "Stop should trigger even if price gapped through it");
+        assert!(
+            should_trigger,
+            "Stop should trigger even if price gapped through it"
+        );
 
         let mut stop_order = create_stop_order(&position, stop_loss_price);
 
@@ -353,7 +371,10 @@ mod stop_loss_integration_tests {
         let stop_loss_price = 153.0; // Stop above entry for short
 
         let should_trigger = position.current_price.0 >= stop_loss_price;
-        assert!(should_trigger, "Short position stop should trigger when price rises");
+        assert!(
+            should_trigger,
+            "Short position stop should trigger when price rises"
+        );
 
         let stop_order = create_stop_order(&position, stop_loss_price);
 
@@ -392,7 +413,10 @@ mod stop_loss_integration_tests {
         let duration = start.elapsed();
 
         assert_eq!(triggered, 100); // All should trigger
-        assert!(duration.as_millis() < 10, "Stop-loss check should be fast (<10ms for 100 positions)");
+        assert!(
+            duration.as_millis() < 10,
+            "Stop-loss check should be fast (<10ms for 100 positions)"
+        );
     }
 
     #[tokio::test]

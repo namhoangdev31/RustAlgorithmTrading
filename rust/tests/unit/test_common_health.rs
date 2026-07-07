@@ -30,8 +30,7 @@ mod health_check_tests {
 
     #[test]
     fn test_health_check_creation() {
-        let health = HealthCheck::healthy("market-data")
-            .with_message("All systems operational");
+        let health = HealthCheck::healthy("market-data").with_message("All systems operational");
 
         assert!(matches!(health.status, HealthStatus::Healthy));
         assert_eq!(health.component, "market-data");
@@ -60,11 +59,9 @@ mod system_health_tests {
 
     #[test]
     fn test_system_health_all_healthy() {
-        let market_data = HealthCheck::healthy("market-data")
-            .with_message("WebSocket connected");
+        let market_data = HealthCheck::healthy("market-data").with_message("WebSocket connected");
 
-        let execution = HealthCheck::healthy("execution-engine")
-            .with_message("Router operational");
+        let execution = HealthCheck::healthy("execution-engine").with_message("Router operational");
 
         let system = SystemHealth::new()
             .add_component(market_data)
@@ -90,7 +87,10 @@ mod system_health_tests {
             .add_component(HealthCheck::unhealthy("execution-engine", "Critical error"));
 
         assert!(matches!(system.status, HealthStatus::Unhealthy));
-        assert!(system.components.iter().any(|c| matches!(c.status, HealthStatus::Unhealthy)));
+        assert!(system
+            .components
+            .iter()
+            .any(|c| matches!(c.status, HealthStatus::Unhealthy)));
     }
 
     #[test]
@@ -106,7 +106,9 @@ mod system_health_tests {
             .add_component(HealthCheck::degraded("risk-manager", "High memory"))
             .add_component(HealthCheck::degraded("execution-engine", "Network latency"));
 
-        let degraded_count = system.components.iter()
+        let degraded_count = system
+            .components
+            .iter()
             .filter(|c| matches!(c.status, HealthStatus::Degraded))
             .count();
 

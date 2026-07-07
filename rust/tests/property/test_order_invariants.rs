@@ -1,9 +1,10 @@
+use chrono::Utc;
+use common::types::{
+    Order, OrderStatus, OrderType, Position, Price, Quantity, Side, Symbol, Trade,
+};
 /// Property-based tests for order invariants using proptest
 /// Ensures data models maintain consistency under all conditions
-
 use proptest::prelude::*;
-use common::types::{Order, Side, OrderType, OrderStatus, Position, Trade, Symbol, Price, Quantity};
-use chrono::Utc;
 
 proptest! {
     #[test]

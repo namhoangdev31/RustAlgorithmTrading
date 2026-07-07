@@ -65,8 +65,8 @@ struct AlpacaClient {
 /// Circuit breaker states
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum CircuitState {
-    Closed,  // Normal operation
-    Open,    // Circuit tripped, reject requests
+    Closed,   // Normal operation
+    Open,     // Circuit tripped, reject requests
     HalfOpen, // Testing if service recovered
 }
 
@@ -219,10 +219,7 @@ impl AlpacaClient {
     /// Get authorization headers
     fn auth_headers(&self) -> reqwest::header::HeaderMap {
         let mut headers = reqwest::header::HeaderMap::new();
-        headers.insert(
-            "APCA-API-KEY-ID",
-            self.config.api_key.parse().unwrap(),
-        );
+        headers.insert("APCA-API-KEY-ID", self.config.api_key.parse().unwrap());
         headers.insert(
             "APCA-API-SECRET-KEY",
             self.config.api_secret.parse().unwrap(),
@@ -310,12 +307,8 @@ impl AlpacaClient {
         }
 
         let url = format!("{}/v2/account", self.config.base_url);
-        self.execute_with_retry(|| {
-            self.client
-                .get(&url)
-                .headers(self.auth_headers())
-        })
-        .await
+        self.execute_with_retry(|| self.client.get(&url).headers(self.auth_headers()))
+            .await
     }
 
     /// Get historical bars
@@ -333,14 +326,11 @@ impl AlpacaClient {
         let url = format!("{}/v2/stocks/{}/bars", self.config.data_url, symbol);
         let response: AlpacaBarsResponse = self
             .execute_with_retry(|| {
-                self.client
-                    .get(&url)
-                    .headers(self.auth_headers())
-                    .query(&[
-                        ("timeframe", timeframe),
-                        ("start", &start.to_rfc3339()),
-                        ("end", &end.to_rfc3339()),
-                    ])
+                self.client.get(&url).headers(self.auth_headers()).query(&[
+                    ("timeframe", timeframe),
+                    ("start", &start.to_rfc3339()),
+                    ("end", &end.to_rfc3339()),
+                ])
             })
             .await?;
 
@@ -367,33 +357,37 @@ impl AlpacaClient {
     }
 
     /// Get latest quote
-    async fn get_latest_quote(&self, symbol: &str) -> Result<AlpacaQuote, Box<dyn std::error::Error + Send + Sync>> {
+    async fn get_latest_quote(
+        &self,
+        symbol: &str,
+    ) -> Result<AlpacaQuote, Box<dyn std::error::Error + Send + Sync>> {
         if !self.should_allow_request() {
             return Err("Circuit breaker is open".into());
         }
 
-        let url = format!("{}/v2/stocks/{}/quotes/latest", self.config.data_url, symbol);
-        self.execute_with_retry(|| {
-            self.client
-                .get(&url)
-                .headers(self.auth_headers())
-        })
-        .await
+        let url = format!(
+            "{}/v2/stocks/{}/quotes/latest",
+            self.config.data_url, symbol
+        );
+        self.execute_with_retry(|| self.client.get(&url).headers(self.auth_headers()))
+            .await
     }
 
     /// Get latest trade
-    async fn get_latest_trade(&self, symbol: &str) -> Result<AlpacaTrade, Box<dyn std::error::Error + Send + Sync>> {
+    async fn get_latest_trade(
+        &self,
+        symbol: &str,
+    ) -> Result<AlpacaTrade, Box<dyn std::error::Error + Send + Sync>> {
         if !self.should_allow_request() {
             return Err("Circuit breaker is open".into());
         }
 
-        let url = format!("{}/v2/stocks/{}/trades/latest", self.config.data_url, symbol);
-        self.execute_with_retry(|| {
-            self.client
-                .get(&url)
-                .headers(self.auth_headers())
-        })
-        .await
+        let url = format!(
+            "{}/v2/stocks/{}/trades/latest",
+            self.config.data_url, symbol
+        );
+        self.execute_with_retry(|| self.client.get(&url).headers(self.auth_headers()))
+            .await
     }
 
     /// Place order
@@ -416,66 +410,61 @@ impl AlpacaClient {
     }
 
     /// Get order by ID
-    async fn get_order(&self, order_id: &str) -> Result<AlpacaOrderResponse, Box<dyn std::error::Error + Send + Sync>> {
+    async fn get_order(
+        &self,
+        order_id: &str,
+    ) -> Result<AlpacaOrderResponse, Box<dyn std::error::Error + Send + Sync>> {
         if !self.should_allow_request() {
             return Err("Circuit breaker is open".into());
         }
 
         let url = format!("{}/v2/orders/{}", self.config.base_url, order_id);
-        self.execute_with_retry(|| {
-            self.client
-                .get(&url)
-                .headers(self.auth_headers())
-        })
-        .await
+        self.execute_with_retry(|| self.client.get(&url).headers(self.auth_headers()))
+            .await
     }
 
     /// Cancel order
-    async fn cancel_order(&self, order_id: &str) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+    async fn cancel_order(
+        &self,
+        order_id: &str,
+    ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         if !self.should_allow_request() {
             return Err("Circuit breaker is open".into());
         }
 
         let url = format!("{}/v2/orders/{}", self.config.base_url, order_id);
         let _: serde_json::Value = self
-            .execute_with_retry(|| {
-                self.client
-                    .delete(&url)
-                    .headers(self.auth_headers())
-            })
+            .execute_with_retry(|| self.client.delete(&url).headers(self.auth_headers()))
             .await?;
 
         Ok(())
     }
 
     /// Get all positions
-    async fn get_positions(&self) -> Result<Vec<AlpacaPosition>, Box<dyn std::error::Error + Send + Sync>> {
+    async fn get_positions(
+        &self,
+    ) -> Result<Vec<AlpacaPosition>, Box<dyn std::error::Error + Send + Sync>> {
         if !self.should_allow_request() {
             return Err("Circuit breaker is open".into());
         }
 
         let url = format!("{}/v2/positions", self.config.base_url);
-        self.execute_with_retry(|| {
-            self.client
-                .get(&url)
-                .headers(self.auth_headers())
-        })
-        .await
+        self.execute_with_retry(|| self.client.get(&url).headers(self.auth_headers()))
+            .await
     }
 
     /// Get position for symbol
-    async fn get_position(&self, symbol: &str) -> Result<AlpacaPosition, Box<dyn std::error::Error + Send + Sync>> {
+    async fn get_position(
+        &self,
+        symbol: &str,
+    ) -> Result<AlpacaPosition, Box<dyn std::error::Error + Send + Sync>> {
         if !self.should_allow_request() {
             return Err("Circuit breaker is open".into());
         }
 
         let url = format!("{}/v2/positions/{}", self.config.base_url, symbol);
-        self.execute_with_retry(|| {
-            self.client
-                .get(&url)
-                .headers(self.auth_headers())
-        })
-        .await
+        self.execute_with_retry(|| self.client.get(&url).headers(self.auth_headers()))
+            .await
     }
 }
 
@@ -1225,7 +1214,7 @@ async fn test_timeout_handling() {
         .respond_with(
             ResponseTemplate::new(200)
                 .set_body_json(mock_account())
-                .set_delay(std::time::Duration::from_secs(5))
+                .set_delay(std::time::Duration::from_secs(5)),
         )
         .mount(&mock_server)
         .await;
@@ -1336,7 +1325,9 @@ async fn test_concurrent_bar_requests() {
         let end_clone = end;
 
         handles.push(tokio::spawn(async move {
-            client_clone.get_bars("AAPL", "1Min", start_clone, end_clone).await
+            client_clone
+                .get_bars("AAPL", "1Min", start_clone, end_clone)
+                .await
         }));
     }
 

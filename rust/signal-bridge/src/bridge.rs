@@ -1,3 +1,5 @@
+#![allow(clippy::too_many_arguments)]
+
 use crate::backtest_runtime::BacktestRuntime as RustBacktestRuntime;
 use crate::features::FeatureEngine;
 use crate::indicators::{calculate_momentum_simd, calculate_returns_simd, EMA, MACD, RSI, SMA};
@@ -316,7 +318,6 @@ impl FeatureComputer {
     }
 }
 
-
 #[pyclass]
 pub struct BacktestRuntime {
     inner: RustBacktestRuntime,
@@ -412,8 +413,9 @@ impl BacktestRuntime {
 
     pub fn get_new_fills(&mut self, py: Python) -> PyResult<PyObject> {
         let fills = self.inner.get_new_fills();
-        let json_str = serde_json::to_string(&fills).map_err(|e| PyValueError::new_err(e.to_string()))?;
-        
+        let json_str =
+            serde_json::to_string(&fills).map_err(|e| PyValueError::new_err(e.to_string()))?;
+
         let json_mod = py.import_bound("json")?;
         let dict = json_mod.call_method1("loads", (json_str,))?;
         Ok(dict.to_object(py))
@@ -432,7 +434,7 @@ impl BacktestRuntime {
     pub fn state_snapshot(&self, py: Python) -> PyResult<PyObject> {
         let snapshot = self.inner.state_snapshot();
         let json_str = snapshot.to_string();
-        
+
         // Convert JSON string to Python dict via json.loads
         let json_mod = py.import_bound("json")?;
         let dict = json_mod.call_method1("loads", (json_str,))?;
@@ -470,16 +472,30 @@ impl BacktestRuntime {
         close: PyReadonlyArray1<f64>,
         volume: PyReadonlyArray1<f64>,
     ) -> PyResult<()> {
-        let ts = timestamp.as_slice().map_err(|_| PyValueError::new_err("timestamp must be contiguous"))?;
-        let o = open.as_slice().map_err(|_| PyValueError::new_err("open must be contiguous"))?;
-        let h = high.as_slice().map_err(|_| PyValueError::new_err("high must be contiguous"))?;
-        let l = low.as_slice().map_err(|_| PyValueError::new_err("low must be contiguous"))?;
-        let c = close.as_slice().map_err(|_| PyValueError::new_err("close must be contiguous"))?;
-        let v = volume.as_slice().map_err(|_| PyValueError::new_err("volume must be contiguous"))?;
+        let ts = timestamp
+            .as_slice()
+            .map_err(|_| PyValueError::new_err("timestamp must be contiguous"))?;
+        let o = open
+            .as_slice()
+            .map_err(|_| PyValueError::new_err("open must be contiguous"))?;
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err("high must be contiguous"))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err("low must be contiguous"))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err("close must be contiguous"))?;
+        let v = volume
+            .as_slice()
+            .map_err(|_| PyValueError::new_err("volume must be contiguous"))?;
 
         let n = ts.len();
         if o.len() != n || h.len() != n || l.len() != n || c.len() != n || v.len() != n {
-            return Err(PyValueError::new_err("All arrays must have the same length"));
+            return Err(PyValueError::new_err(
+                "All arrays must have the same length",
+            ));
         }
 
         let mut bars = Vec::with_capacity(n);
@@ -507,12 +523,18 @@ impl BacktestRuntime {
         strategy_id: Vec<String>,
         signal_id: Option<Vec<String>>,
     ) -> PyResult<()> {
-        let ts = timestamp.as_slice().map_err(|_| PyValueError::new_err("timestamp must be contiguous"))?;
-        let s = strength.as_slice().map_err(|_| PyValueError::new_err("strength must be contiguous"))?;
+        let ts = timestamp
+            .as_slice()
+            .map_err(|_| PyValueError::new_err("timestamp must be contiguous"))?;
+        let s = strength
+            .as_slice()
+            .map_err(|_| PyValueError::new_err("strength must be contiguous"))?;
 
         let n = ts.len();
         if symbol.len() != n || signal_type.len() != n || s.len() != n || strategy_id.len() != n {
-            return Err(PyValueError::new_err("All arrays must have the same length"));
+            return Err(PyValueError::new_err(
+                "All arrays must have the same length",
+            ));
         }
         if let Some(ids) = &signal_id {
             if ids.len() != n {
@@ -583,7 +605,10 @@ mod tests {
                     );
                     true
                 } else {
-                    panic!("unexpected Python import error while checking numpy: {}", format_pyerr(py, err));
+                    panic!(
+                        "unexpected Python import error while checking numpy: {}",
+                        format_pyerr(py, err)
+                    );
                 }
             }
         }
@@ -690,7 +715,8 @@ mod tests {
             let open = PyArray1::from_vec_bound(py, vec![100.0, 101.0, 102.0, 103.0, 104.0, 105.0]);
             let high = PyArray1::from_vec_bound(py, vec![101.0, 102.0, 103.0, 104.0, 105.0, 106.0]);
             let low = PyArray1::from_vec_bound(py, vec![99.0, 100.0, 101.0, 102.0, 103.0, 104.0]);
-            let close = PyArray1::from_vec_bound(py, vec![100.0, 101.0, 102.0, 103.0, 104.0, 105.0]);
+            let close =
+                PyArray1::from_vec_bound(py, vec![100.0, 101.0, 102.0, 103.0, 104.0, 105.0]);
             let volume = PyArray1::from_vec_bound(py, vec![10.0, 11.0, 12.0, 13.0, 14.0, 15.0]);
 
             let (out, compute_ms) = computer

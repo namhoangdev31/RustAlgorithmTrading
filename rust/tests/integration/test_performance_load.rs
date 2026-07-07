@@ -9,11 +9,11 @@
 //! - System recovery
 
 use chrono::Utc;
+use common::config::{ExecutionConfig, RiskConfig};
 use common::types::*;
-use common::config::{RiskConfig, ExecutionConfig};
 use database::{DatabaseManager, MetricRecord};
-use risk_manager::stops::{StopManager, StopLossConfig};
 use execution_engine::router::OrderRouter;
+use risk_manager::stops::{StopLossConfig, StopManager};
 use std::sync::Arc;
 use tokio;
 
@@ -83,7 +83,10 @@ mod performance_load_tests {
         println!("Success rate: {}/{}", successes, order_count);
 
         assert!(throughput > 10.0, "Should achieve >10 orders/sec");
-        assert_eq!(successes, order_count, "All orders should succeed in paper trading");
+        assert_eq!(
+            successes, order_count,
+            "All orders should succeed in paper trading"
+        );
     }
 
     #[tokio::test]
@@ -152,9 +155,16 @@ mod performance_load_tests {
         let duration = start.elapsed();
 
         println!("Concurrent execution duration: {:?}", duration);
-        println!("Successful orders: {}/{}", results.iter().filter(|r| r.is_ok()).count(), concurrent_count);
+        println!(
+            "Successful orders: {}/{}",
+            results.iter().filter(|r| r.is_ok()).count(),
+            concurrent_count
+        );
 
-        assert!(duration.as_secs() < 30, "100 concurrent orders should complete in <30s");
+        assert!(
+            duration.as_secs() < 30,
+            "100 concurrent orders should complete in <30s"
+        );
         assert_eq!(results.len(), concurrent_count);
     }
 
@@ -168,10 +178,8 @@ mod performance_load_tests {
         let start = std::time::Instant::now();
 
         for i in 0..1000 {
-            let metric = MetricRecord::new(
-                "performance_test",
-                i as f64
-            ).with_symbol(&format!("SYM{}", i % 10));
+            let metric = MetricRecord::new("performance_test", i as f64)
+                .with_symbol(&format!("SYM{}", i % 10));
 
             db.insert_metric(&metric).await.expect("Insert failed");
         }
@@ -179,10 +187,16 @@ mod performance_load_tests {
         let duration = start.elapsed();
         let writes_per_sec = 1000.0 / duration.as_secs_f64();
 
-        println!("Database write performance: {:.0} writes/sec", writes_per_sec);
+        println!(
+            "Database write performance: {:.0} writes/sec",
+            writes_per_sec
+        );
 
         assert!(writes_per_sec > 100.0, "Should achieve >100 writes/sec");
-        assert!(duration.as_secs() < 20, "1000 writes should complete in <20s");
+        assert!(
+            duration.as_secs() < 20,
+            "1000 writes should complete in <20s"
+        );
     }
 
     #[tokio::test]
@@ -199,10 +213,8 @@ mod performance_load_tests {
         for i in 0..write_count {
             let db_clone = db.clone();
             let handle = tokio::spawn(async move {
-                let metric = MetricRecord::new(
-                    "concurrent_test",
-                    i as f64
-                ).with_symbol(&format!("SYM{}", i));
+                let metric = MetricRecord::new("concurrent_test", i as f64)
+                    .with_symbol(&format!("SYM{}", i));
 
                 db_clone.insert_metric(&metric).await
             });
@@ -216,10 +228,16 @@ mod performance_load_tests {
         let duration = start.elapsed();
 
         // Verify all writes completed
-        let metrics = db.get_metrics("concurrent_test", None, None, 1000).await.unwrap();
+        let metrics = db
+            .get_metrics("concurrent_test", None, None, 1000)
+            .await
+            .unwrap();
         assert_eq!(metrics.len(), write_count);
 
-        println!("Concurrent database writes: {} in {:?}", write_count, duration);
+        println!(
+            "Concurrent database writes: {} in {:?}",
+            write_count, duration
+        );
         assert!(duration.as_secs() < 10, "Concurrent writes should be fast");
     }
 
@@ -255,7 +273,9 @@ mod performance_load_tests {
             };
 
             let stop_config = StopLossConfig::static_stop(5.0).unwrap();
-            stop_manager.set_stop(&position, stop_config).expect("Set stop failed");
+            stop_manager
+                .set_stop(&position, stop_config)
+                .expect("Set stop failed");
             positions.push(position);
         }
 
@@ -272,11 +292,17 @@ mod performance_load_tests {
         let duration = start.elapsed();
         let checks_per_sec = 1000.0 / duration.as_secs_f64();
 
-        println!("Stop-loss check performance: {:.0} checks/sec", checks_per_sec);
+        println!(
+            "Stop-loss check performance: {:.0} checks/sec",
+            checks_per_sec
+        );
         println!("Triggered stops: {}", triggered);
 
         assert!(checks_per_sec > 1000.0, "Should check >1000 positions/sec");
-        assert!(duration.as_millis() < 1000, "1000 checks should complete in <1s");
+        assert!(
+            duration.as_millis() < 1000,
+            "1000 checks should complete in <1s"
+        );
     }
 
     #[tokio::test]
@@ -290,10 +316,12 @@ mod performance_load_tests {
         let start = std::time::Instant::now();
 
         for i in 0..update_count {
-            let price_update = MetricRecord::new("price", 150.0 + (i as f64 * 0.01))
-                .with_symbol("AAPL");
+            let price_update =
+                MetricRecord::new("price", 150.0 + (i as f64 * 0.01)).with_symbol("AAPL");
 
-            db.insert_metric(&price_update).await.expect("Insert failed");
+            db.insert_metric(&price_update)
+                .await
+                .expect("Insert failed");
         }
 
         let duration = start.elapsed();
@@ -339,8 +367,8 @@ mod performance_load_tests {
                 average_price: None,
                 created_at: Utc::now(),
                 updated_at: Utc::now(),
-            account_id: None,
-            external_proof: None,
+                account_id: None,
+                external_proof: None,
             };
 
             let start = std::time::Instant::now();
@@ -417,8 +445,10 @@ mod performance_load_tests {
         let actual_duration = start.elapsed();
         let avg_rate = order_count as f64 / actual_duration.as_secs_f64();
 
-        println!("Sustained load: {} orders in {:?} ({:.2} orders/sec)",
-                 order_count, actual_duration, avg_rate);
+        println!(
+            "Sustained load: {} orders in {:?} ({:.2} orders/sec)",
+            order_count, actual_duration, avg_rate
+        );
 
         assert!(order_count > 50, "Should process >50 orders in 10s");
     }
@@ -477,7 +507,10 @@ mod performance_load_tests {
 
         let duration = start.elapsed();
 
-        println!("Spike load handled {} orders in {:?}", spike_count, duration);
+        println!(
+            "Spike load handled {} orders in {:?}",
+            spike_count, duration
+        );
 
         assert!(duration.as_secs() < 10, "Spike should be handled in <10s");
     }
@@ -510,10 +543,16 @@ mod performance_load_tests {
         let final_memory = get_process_memory();
         let memory_increase = final_memory.saturating_sub(initial_memory);
 
-        println!("Memory increase: {} bytes for {} positions", memory_increase, position_count);
+        println!(
+            "Memory increase: {} bytes for {} positions",
+            memory_increase, position_count
+        );
 
         // Memory should not grow excessively
-        assert!(memory_increase < 100_000_000, "Memory growth should be <100MB");
+        assert!(
+            memory_increase < 100_000_000,
+            "Memory growth should be <100MB"
+        );
 
         // Helper function to get process memory (mock implementation)
         fn get_process_memory() -> usize {
@@ -531,19 +570,28 @@ mod performance_load_tests {
 
         // Insert 10,000 metrics
         for i in 0..10000 {
-            let metric = MetricRecord::new("large_dataset_test", i as f64)
-                .with_symbol("AAPL");
+            let metric = MetricRecord::new("large_dataset_test", i as f64).with_symbol("AAPL");
             db.insert_metric(&metric).await.expect("Insert failed");
         }
 
         // Time various queries
         let start = std::time::Instant::now();
-        let all_metrics = db.get_metrics("large_dataset_test", None, None, 100).await.unwrap();
+        let all_metrics = db
+            .get_metrics("large_dataset_test", None, None, 100)
+            .await
+            .unwrap();
         let query_duration = start.elapsed();
 
-        println!("Query retrieved {} records in {:?}", all_metrics.len(), query_duration);
+        println!(
+            "Query retrieved {} records in {:?}",
+            all_metrics.len(),
+            query_duration
+        );
 
         assert_eq!(all_metrics.len(), 100); // Limited to 100
-        assert!(query_duration.as_millis() < 500, "Query should complete in <500ms");
+        assert!(
+            query_duration.as_millis() < 500,
+            "Query should complete in <500ms"
+        );
     }
 }

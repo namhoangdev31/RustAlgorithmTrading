@@ -8,7 +8,7 @@ pub mod router;
 pub mod slippage;
 pub mod stop_loss_executor;
 
-pub use broker::{BrokerClient, SimulatedBrokerClient, AlpacaBrokerClient};
+pub use broker::{AlpacaBrokerClient, BrokerClient, SimulatedBrokerClient};
 pub use reconciliation::ReconciliationWorker;
 pub use retry::RetryPolicy;
 pub use router::OrderRouter;

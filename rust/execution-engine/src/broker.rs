@@ -25,6 +25,12 @@ impl SimulatedBrokerClient {
     }
 }
 
+impl Default for SimulatedBrokerClient {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[async_trait::async_trait]
 impl BrokerClient for SimulatedBrokerClient {
     async fn submit_order(&self, order: &Order) -> Result<BrokerOrderStatus> {
@@ -184,7 +190,8 @@ impl BrokerClient for AlpacaBrokerClient {
     async fn submit_order(&self, order: &Order) -> Result<BrokerOrderStatus> {
         let alpaca_order = self.build_alpaca_request(order)?;
         let url = format!("{}/v2/orders", self.api_url);
-        let response = self.http_client
+        let response = self
+            .http_client
             .post(&url)
             .header("APCA-API-KEY-ID", &self.api_key)
             .header("APCA-API-SECRET-KEY", &self.api_secret)
@@ -196,12 +203,17 @@ impl BrokerClient for AlpacaBrokerClient {
         if !response.status().is_success() {
             let status = response.status();
             let text = response.text().await.unwrap_or_default();
-            return Err(TradingError::Exchange(format!("Order rejected: {} - {}", status, text)));
+            return Err(TradingError::Exchange(format!(
+                "Order rejected: {} - {}",
+                status, text
+            )));
         }
 
-        let alpaca_resp = response.json::<AlpacaOrderResponse>().await
+        let alpaca_resp = response
+            .json::<AlpacaOrderResponse>()
+            .await
             .map_err(|e| TradingError::Parse(format!("Response parse error: {}", e)))?;
-        
+
         let mut status = alpaca_resp.to_broker_order_status();
         if status.client_order_id.is_empty() {
             status.client_order_id = order.client_order_id.clone();
@@ -211,7 +223,8 @@ impl BrokerClient for AlpacaBrokerClient {
 
     async fn cancel_order(&self, order_id: &str) -> Result<BrokerOrderStatus> {
         let url = format!("{}/v2/orders/{}", self.api_url, order_id);
-        let response = self.http_client
+        let response = self
+            .http_client
             .delete(&url)
             .header("APCA-API-KEY-ID", &self.api_key)
             .header("APCA-API-SECRET-KEY", &self.api_secret)
@@ -222,17 +235,23 @@ impl BrokerClient for AlpacaBrokerClient {
         if !response.status().is_success() {
             let status = response.status();
             let text = response.text().await.unwrap_or_default();
-            return Err(TradingError::Exchange(format!("Cancel failed: {} - {}", status, text)));
+            return Err(TradingError::Exchange(format!(
+                "Cancel failed: {} - {}",
+                status, text
+            )));
         }
 
-        let alpaca_resp = response.json::<AlpacaOrderResponse>().await
+        let alpaca_resp = response
+            .json::<AlpacaOrderResponse>()
+            .await
             .map_err(|e| TradingError::Parse(format!("Response parse error: {}", e)))?;
         Ok(alpaca_resp.to_broker_order_status())
     }
 
     async fn get_order_status(&self, order_id: &str) -> Result<BrokerOrderStatus> {
         let url = format!("{}/v2/orders/{}", self.api_url, order_id);
-        let response = self.http_client
+        let response = self
+            .http_client
             .get(&url)
             .header("APCA-API-KEY-ID", &self.api_key)
             .header("APCA-API-SECRET-KEY", &self.api_secret)
@@ -243,17 +262,23 @@ impl BrokerClient for AlpacaBrokerClient {
         if !response.status().is_success() {
             let status = response.status();
             let text = response.text().await.unwrap_or_default();
-            return Err(TradingError::Exchange(format!("Get order status failed: {} - {}", status, text)));
+            return Err(TradingError::Exchange(format!(
+                "Get order status failed: {} - {}",
+                status, text
+            )));
         }
 
-        let alpaca_resp = response.json::<AlpacaOrderResponse>().await
+        let alpaca_resp = response
+            .json::<AlpacaOrderResponse>()
+            .await
             .map_err(|e| TradingError::Parse(format!("Response parse error: {}", e)))?;
         Ok(alpaca_resp.to_broker_order_status())
     }
 
     async fn list_open_orders(&self) -> Result<Vec<BrokerOrderStatus>> {
         let url = format!("{}/v2/orders?status=open", self.api_url);
-        let response = self.http_client
+        let response = self
+            .http_client
             .get(&url)
             .header("APCA-API-KEY-ID", &self.api_key)
             .header("APCA-API-SECRET-KEY", &self.api_secret)
@@ -264,11 +289,19 @@ impl BrokerClient for AlpacaBrokerClient {
         if !response.status().is_success() {
             let status = response.status();
             let text = response.text().await.unwrap_or_default();
-            return Err(TradingError::Exchange(format!("List open orders failed: {} - {}", status, text)));
+            return Err(TradingError::Exchange(format!(
+                "List open orders failed: {} - {}",
+                status, text
+            )));
         }
 
-        let alpaca_resps = response.json::<Vec<AlpacaOrderResponse>>().await
+        let alpaca_resps = response
+            .json::<Vec<AlpacaOrderResponse>>()
+            .await
             .map_err(|e| TradingError::Parse(format!("Response parse error: {}", e)))?;
-        Ok(alpaca_resps.into_iter().map(|r| r.to_broker_order_status()).collect())
+        Ok(alpaca_resps
+            .into_iter()
+            .map(|r| r.to_broker_order_status())
+            .collect())
     }
 }

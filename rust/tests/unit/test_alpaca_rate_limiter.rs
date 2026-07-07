@@ -1,3 +1,4 @@
+use std::collections::VecDeque;
 /// Unit tests for Alpaca rate limiting logic
 ///
 /// Tests cover:
@@ -7,9 +8,7 @@
 /// - Burst handling
 /// - Rate limit recovery
 /// - Multi-tier rate limits
-
 use std::time::{Duration, Instant};
-use std::collections::VecDeque;
 
 /// Simple token bucket rate limiter for testing
 struct TokenBucket {

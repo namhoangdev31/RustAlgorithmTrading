@@ -62,18 +62,19 @@ async fn main() -> anyhow::Result<()> {
     let symbols_count = config.market_data.symbols.len();
 
     // Initialize service
-    let mut service = match MarketDataService::new(config.market_data, config.execution.trading_mode).await {
-        Ok(svc) => {
-            tracing::info!("✓ Market Data Service initialized successfully");
-            svc
-        }
-        Err(e) => {
-            tracing::error!("Failed to initialize service: {}", e);
-            let mut h = health.write().await;
-            *h = HealthCheck::unhealthy("market-data", format!("Initialization failed: {}", e));
-            return Err(anyhow::anyhow!("Service initialization error: {}", e));
-        }
-    };
+    let mut service =
+        match MarketDataService::new(config.market_data, config.execution.trading_mode).await {
+            Ok(svc) => {
+                tracing::info!("✓ Market Data Service initialized successfully");
+                svc
+            }
+            Err(e) => {
+                tracing::error!("Failed to initialize service: {}", e);
+                let mut h = health.write().await;
+                *h = HealthCheck::unhealthy("market-data", format!("Initialization failed: {}", e));
+                return Err(anyhow::anyhow!("Service initialization error: {}", e));
+            }
+        };
 
     // Update health status
     {
