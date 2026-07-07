@@ -47,7 +47,7 @@ public final class BrowserTabViewModel: NSObject, ObservableObject, Identifiable
         configuration.websiteDataStore = isPrivate ? .nonPersistent() : .default()
 
         if isPrivate {
-            let isProxyEnabled = UserDefaults.standard.bool(forKey: "browser_proxy_enabled")
+            let isProxyEnabled = true
             if isProxyEnabled,
                let savedData = UserDefaults.standard.data(forKey: "browser_proxy_config"),
                let config = try? JSONDecoder().decode(BrowserProxyConfig.self, from: savedData) {
@@ -425,7 +425,7 @@ extension BrowserTabViewModel: WKNavigationDelegate {
 
         let isMainFrame = navigationAction.targetFrame?.isMainFrame ?? true
         
-        let isAdBlockActive = UserDefaults.standard.object(forKey: "browser_adblock_enabled") as? Bool ?? true
+        let isAdBlockActive = true
         if isAdBlockActive && navigationAction.targetFrame == nil {
             if BrowserAdBlocker.shouldBlockProactively(requestURL: url, sourceURL: webView.url) {
                 decisionHandler(.cancel)
@@ -470,7 +470,7 @@ extension BrowserTabViewModel: WKUIDelegate {
         for navigationAction: WKNavigationAction,
         windowFeatures: WKWindowFeatures
     ) -> WKWebView? {
-        let isAdBlockActive = UserDefaults.standard.object(forKey: "browser_adblock_enabled") as? Bool ?? true
+        let isAdBlockActive = true
         
         if isAdBlockActive {
             // Block non-user-initiated popups (script-initiated)
@@ -494,12 +494,7 @@ extension BrowserTabViewModel: WKUIDelegate {
     }
     
     private func notifyPopupBlocked(url: URL?) {
-        Task { @MainActor in
-            if let cachedVM = AppDependencyContainer.cachedBrowserViewModel {
-                let host = url?.host ?? "quảng cáo"
-                cachedVM.lastPageActionMessage = "Đã chặn quảng cáo tự động từ: \(host)"
-            }
-        }
+        // Run silently in the background: do not notify the user.
     }
 
     public func webView(

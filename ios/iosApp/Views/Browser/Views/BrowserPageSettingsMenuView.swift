@@ -58,10 +58,6 @@ struct BrowserPageSettingsMenuView: View {
                 }
             }
             
-            Toggle(isOn: $viewModel.isAdBlockEnabled) {
-                Label("Chặn quảng cáo & Popups", systemImage: "shield.fill")
-            }
-            
             Button(action: {
                 viewModel.showPageDetailsMenu = true
             }) {

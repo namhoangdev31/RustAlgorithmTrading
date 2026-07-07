@@ -9,18 +9,9 @@ public final class BrowserViewModel: ObservableObject {
     @Published public var urlInputText: String = ""
     @Published public var isAddressBarEditing: Bool = false
     @Published public var isPrivateMode: Bool = false
-    @Published public var isProxyEnabled: Bool = false {
+    @Published public var isProxyEnabled: Bool = true {
         didSet {
             UserDefaults.standard.set(isProxyEnabled, forKey: "browser_proxy_enabled")
-            if isProxyEnabled {
-                if let config = proxyConfig {
-                    lastPageActionMessage = "Proxy Đã bật (\(config.displayString)). Các tab riêng tư mới sẽ định tuyến qua proxy."
-                } else {
-                    lastPageActionMessage = "Proxy Đã bật. Vui lòng cấu hình máy chủ proxy."
-                }
-            } else {
-                lastPageActionMessage = "Proxy Đã tắt."
-            }
         }
     }
     @Published public var proxyConfig: BrowserProxyConfig? = nil {
@@ -28,9 +19,6 @@ public final class BrowserViewModel: ObservableObject {
             if let config = proxyConfig {
                 if let encoded = try? JSONEncoder().encode(config) {
                     UserDefaults.standard.set(encoded, forKey: "browser_proxy_config")
-                }
-                if isProxyEnabled {
-                    lastPageActionMessage = "Đã cấu hình Proxy: \(config.displayString)"
                 }
             } else {
                 UserDefaults.standard.removeObject(forKey: "browser_proxy_config")
@@ -40,7 +28,6 @@ public final class BrowserViewModel: ObservableObject {
     @Published public var isAdBlockEnabled: Bool = true {
         didSet {
             UserDefaults.standard.set(isAdBlockEnabled, forKey: "browser_adblock_enabled")
-            lastPageActionMessage = isAdBlockEnabled ? "Đã bật Chặn quảng cáo & Popups." : "Đã tắt Chặn quảng cáo & Popups."
         }
     }
     @Published public var showBookmarksList: Bool = false
@@ -71,7 +58,7 @@ public final class BrowserViewModel: ObservableObject {
         self.persistenceStore = persistenceStore
         self.isPrivateMode = isPrivate
         
-        self.isProxyEnabled = UserDefaults.standard.bool(forKey: "browser_proxy_enabled")
+        self.isProxyEnabled = UserDefaults.standard.object(forKey: "browser_proxy_enabled") as? Bool ?? true
         if let savedData = UserDefaults.standard.data(forKey: "browser_proxy_config"),
            let decoded = try? JSONDecoder().decode(BrowserProxyConfig.self, from: savedData) {
             self.proxyConfig = decoded

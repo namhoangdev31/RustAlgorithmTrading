@@ -282,14 +282,14 @@ public struct BrowserView: View {
                         }
                         .disabled(true)
                     }
+//
+//                    Divider()
 
-                    Divider()
-
-                    Button(role: .destructive) {
-                        showClearDataConfirm = true
-                    } label: {
-                        Label("Xóa dữ liệu duyệt web", systemImage: "trash")
-                    }
+//                    Button(role: .destructive) {
+//                        showClearDataConfirm = true
+//                    } label: {
+//                        Label("Xóa dữ liệu duyệt web", systemImage: "trash")
+//                    }
                 } label: {
                     Image(systemName: "ellipsis")
                         .font(.system(size: 19, weight: .bold))

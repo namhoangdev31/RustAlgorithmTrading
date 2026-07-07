@@ -1,4 +1,5 @@
 import SwiftUI
+import ExploreSwiftUI
 import UIKit
 
 public struct BrowserTabSwitcherView: View {
@@ -182,16 +183,18 @@ public struct BrowserTabSwitcherView: View {
     }
 
     private var bottomBar: some View {
-        HStack(spacing: 10) {
-            Button {
-                navigation.createNewTabFromSwitcher(isPrivate: viewModel.isPrivateMode)
-                dismissSwitcher()
-            } label: {
-                Image(systemName: "plus")
-                    .font(.system(size: 18, weight: .semibold))
-                    .frame(width: 44, height: 44)
-            }
-            .buttonStyle(.plain)
+        HStack(spacing: 16) {
+            UniButton(
+                style: .glass,
+                action: {
+                    navigation.createNewTabFromSwitcher(isPrivate: viewModel.isPrivateMode)
+                    dismissSwitcher()
+                },
+                label: {
+                    Image(systemName: "plus")
+                        .font(.system(size: 15, weight: .semibold))
+                }
+            )
             .accessibilityIdentifier("browser.tabSwitcher.newTab")
 
             Picker("Chế độ tab", selection: isPrivateModeBinding) {
@@ -202,22 +205,18 @@ public struct BrowserTabSwitcherView: View {
             .frame(maxWidth: .infinity)
             .accessibilityIdentifier("browser.tabSwitcher.modePicker")
 
-            Button {
-                dismissSwitcher()
-            } label: {
-                Image(systemName: "checkmark")
-                    .font(.system(size: 15, weight: .bold))
-                    .foregroundStyle(.white)
-                    .frame(width: 34, height: 34)
-                    .background(Circle().fill(Color.accentColor))
-                    .frame(width: 44, height: 44)
-            }
-            .buttonStyle(.plain)
+            UniButton(
+                style: .glass,
+                action: { dismissSwitcher() },
+                label: {
+                    Image(systemName: "checkmark")
+                        .font(.system(size: 15, weight: .bold))
+                }
+            )
             .accessibilityIdentifier("browser.tabSwitcher.done")
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
-        .background(.regularMaterial)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 20)
     }
 
     private var gridColumns: [GridItem] {
