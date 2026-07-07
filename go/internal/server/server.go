@@ -13,9 +13,11 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"trading/observability-api/internal/alerts"
-	"trading/observability-api/internal/alpaca"
 	"trading/observability-api/internal/collector"
 	"trading/observability-api/internal/config"
+	deliveryHttp "trading/observability-api/internal/delivery/http"
+	"trading/observability-api/internal/delivery/http/handlers"
+	"trading/observability-api/internal/domain/repositories"
 	"trading/observability-api/internal/health"
 	"trading/observability-api/internal/middleware"
 	"trading/observability-api/internal/storage"
@@ -31,79 +33,59 @@ type Server struct {
 	metricsWorker    *worker.MetricsCollector
 	healthAggregator *health.Aggregator
 	incidentManager  *alerts.Manager
-	alpacaClient     *alpaca.Client
+	alpacaClient     repositories.AlpacaRepository
+	alertHandler     *handlers.AlertHandler
+	alpacaHandler    *handlers.AlpacaHandler
+	metricHandler    *handlers.MetricHandler
+	tradeHandler     *handlers.TradeHandler
+	systemHandler    *handlers.SystemHandler
 	httpServer       *http.Server
 }
 
-func NewServer(cfg *config.Config) *Server {
+func NewServer(
+	cfg *config.Config,
+	store *storage.Store,
+	wsManager *ws.Manager,
+	collectorMgr *collector.Manager,
+	metricsWorker *worker.MetricsCollector,
+	healthAggregator *health.Aggregator,
+	incidentManager *alerts.Manager,
+	alpacaClient repositories.AlpacaRepository,
+	alertHandler *handlers.AlertHandler,
+	alpacaHandler *handlers.AlpacaHandler,
+	metricHandler *handlers.MetricHandler,
+	tradeHandler *handlers.TradeHandler,
+	systemHandler *handlers.SystemHandler,
+) *Server {
 	return &Server{
-		cfg: cfg,
+		cfg:              cfg,
+		store:            store,
+		wsManager:        wsManager,
+		collectorMgr:     collectorMgr,
+		metricsWorker:    metricsWorker,
+		healthAggregator: healthAggregator,
+		incidentManager:  incidentManager,
+		alpacaClient:     alpacaClient,
+		alertHandler:     alertHandler,
+		alpacaHandler:    alpacaHandler,
+		metricHandler:    metricHandler,
+		tradeHandler:     tradeHandler,
+		systemHandler:    systemHandler,
 	}
 }
 
 func (s *Server) Run() error {
-	// Initialize Storage
-	duckReader, duckErr := storage.NewDuckDBReader(s.cfg.Storage.DuckDBPath)
-	if duckErr != nil {
-		slog.Warn("duckdb_unavailable", "path", s.cfg.Storage.DuckDBPath, "error", duckErr)
-	}
-
-	var postgresReader *storage.PostgresReader
-	if s.cfg.Storage.DatabaseURL != "" {
-		pgReader, pgErr := storage.NewPostgresReader(s.cfg.Storage.DatabaseURL)
-		if pgErr != nil {
-			slog.Warn("postgres_unavailable", "error", pgErr)
-		} else {
-			slog.Info("postgres_connected")
-			postgresReader = pgReader
-		}
-	}
-
-	s.store = storage.NewStore(duckReader, postgresReader)
-
-	// Initialize Websocket Manager
-	s.wsManager = ws.NewManager()
+	// Start Websocket Manager
 	go s.wsManager.Start()
 
-	// Initialize Go Metrics Collector (Shadow Run)
-	targets := map[string]string{
-		"market_data": s.cfg.Metrics.MarketDataURL,
-		"execution":   s.cfg.Metrics.ExecutionURL,
-		"risk":        s.cfg.Metrics.RiskURL,
-	}
-	s.collectorMgr = collector.NewManager(s.store, targets)
+	// Start Go Metrics Collector (Shadow Run)
 	go s.collectorMgr.Start(context.Background())
 
-	// Initialize Metrics Worker
-	s.metricsWorker = worker.NewMetricsCollector(s.store, s.wsManager, s.collectorMgr)
+	// Start Metrics Worker
 	go s.metricsWorker.Start()
 
-	// Initialize Health Aggregator & Incident Manager
-	s.healthAggregator = health.NewAggregator(s.store, s.wsManager)
-	s.incidentManager = alerts.NewManager()
-
-	// Initialize Alpaca Client
-	if client, err := alpaca.NewClient(alpaca.Config{
-		BaseURL:   s.cfg.Alpaca.BaseURL,
-		APIKey:    s.cfg.Alpaca.APIKey,
-		SecretKey: s.cfg.Alpaca.SecretKey,
-	}); err == nil {
-		s.alpacaClient = client
-	} else {
-		slog.Warn("alpaca_client_unavailable", "error", err)
-	}
-
-	// Setup Gin
-	r := gin.New()
-	r.Use(gin.Recovery())
-	r.Use(middleware.CorrelationID())
-	r.Use(middleware.Logger())
-	r.Use(middleware.SetupCors())
-
-	limiter := middleware.NewLimiter(10000, time.Minute)
-	r.Use(limiter.Middleware())
-
-	s.mapRoutes(r)
+	// Setup Gin & Wire Clean Architecture Layers
+	r := s.setupRouter()
 
 	// Start HTTP Server
 	s.httpServer = &http.Server{
@@ -144,4 +126,30 @@ func (s *Server) Run() error {
 
 	slog.Info("go_control_plane_exited")
 	return nil
+}
+
+// setupRouter registers HTTP endpoints on the Gin engine using injected handlers.
+func (s *Server) setupRouter() *gin.Engine {
+	r := gin.New()
+	r.Use(gin.Recovery())
+	r.Use(middleware.CorrelationID())
+	r.Use(middleware.Logger())
+	r.Use(middleware.SetupCors())
+
+	limiter := middleware.NewLimiter(10000, time.Minute)
+	r.Use(limiter.Middleware())
+
+	// Map Routes using pre-injected handlers
+	deliveryHttp.MapRoutes(deliveryHttp.RouterConfig{
+		Engine:           r,
+		HealthAggregator: s.healthAggregator,
+		WSManager:        s.wsManager,
+		AlertHandler:     s.alertHandler,
+		AlpacaHandler:    s.alpacaHandler,
+		MetricHandler:    s.metricHandler,
+		TradeHandler:     s.tradeHandler,
+		SystemHandler:    s.systemHandler,
+	})
+
+	return r
 }

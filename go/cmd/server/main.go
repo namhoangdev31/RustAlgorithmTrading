@@ -28,7 +28,12 @@ func main() {
 
 	cfg := config.LoadConfig()
 
-	s := server.NewServer(cfg)
+	s, err := server.InitializeServer(cfg)
+	if err != nil {
+		slog.Error("server_initialization_failed", "error", err)
+		os.Exit(1)
+	}
+
 	if err := s.Run(); err != nil {
 		slog.Error("server_run_failed", "error", err)
 		os.Exit(1)

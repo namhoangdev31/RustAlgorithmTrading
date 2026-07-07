@@ -3,11 +3,11 @@ package integrity
 import (
 	"fmt"
 
-	"trading/observability-api/internal/models"
+	"trading/observability-api/internal/domain/entities"
 )
 
-func DefaultThresholds() models.Thresholds {
-	return models.Thresholds{
+func DefaultThresholds() entities.Thresholds {
+	return entities.Thresholds{
 		MaxPnlDriftPct:              0.10,
 		MaxExposureDriftBps:         5.0,
 		MaxLatencyRegressionRatio:   1.50,
@@ -16,7 +16,7 @@ func DefaultThresholds() models.Thresholds {
 	}
 }
 
-func ValidateRunIntegrity(m models.Metrics, t models.Thresholds) models.Report {
+func ValidateRunIntegrity(m entities.Metrics, t entities.Thresholds) entities.Report {
 	reasons := make([]string, 0)
 	if m.PnlDriftPct > t.MaxPnlDriftPct {
 		reasons = append(reasons, fmt.Sprintf("PnL drift breach: %.4f%% > %.4f%%", m.PnlDriftPct, t.MaxPnlDriftPct))
@@ -48,5 +48,5 @@ func ValidateRunIntegrity(m models.Metrics, t models.Thresholds) models.Report {
 	if m.LatencyRegressionRatio > t.MaxLatencyRegressionRatio {
 		reasons = append(reasons, fmt.Sprintf("Latency regression: %.2fx > %.2fx", m.LatencyRegressionRatio, t.MaxLatencyRegressionRatio))
 	}
-	return models.Report{IsValid: len(reasons) == 0, Reasons: reasons, Metrics: m}
+	return entities.Report{IsValid: len(reasons) == 0, Reasons: reasons, Metrics: m}
 }

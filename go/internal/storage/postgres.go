@@ -8,10 +8,13 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	gormpg "gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 type PostgresReader struct {
-	pool *pgxpool.Pool
+	pool   *pgxpool.Pool
+	gormDB *gorm.DB
 }
 
 func NewPostgresReader(connString string) (*PostgresReader, error) {
@@ -29,10 +32,21 @@ func NewPostgresReader(connString string) (*PostgresReader, error) {
 	}
 
 	if err := pool.Ping(ctx); err != nil {
+		pool.Close()
 		return nil, fmt.Errorf("failed to ping postgres: %w", err)
 	}
 
-	return &PostgresReader{pool: pool}, nil
+	gormDB, err := gorm.Open(gormpg.Open(connString), &gorm.Config{})
+	if err != nil {
+		pool.Close()
+		return nil, fmt.Errorf("failed to connect gorm to postgres: %w", err)
+	}
+
+	return &PostgresReader{pool: pool, gormDB: gormDB}, nil
+}
+
+func (r *PostgresReader) GormDB() *gorm.DB {
+	return r.gormDB
 }
 
 func (r *PostgresReader) Close() error {

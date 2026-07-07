@@ -21,7 +21,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/redis/go-redis/v9"
 
-	"trading/observability-api/internal/models"
+	"trading/observability-api/internal/domain/entities"
 )
 
 type Config struct {
@@ -41,7 +41,7 @@ type Config struct {
 }
 
 type cachedRoute struct {
-	snapshot  *models.RouteSnapshot
+	snapshot  *entities.RouteSnapshot
 	expiresAt time.Time
 }
 
@@ -328,7 +328,7 @@ func (g *Gateway) subscribeToCacheInvalidation() {
 	}
 }
 
-func (g *Gateway) lookupRoute(r *http.Request) (*models.RouteSnapshot, error) {
+func (g *Gateway) lookupRoute(r *http.Request) (*entities.RouteSnapshot, error) {
 	host := strings.Split(r.Host, ":")[0]
 
 	g.cacheMu.RLock()
@@ -351,7 +351,7 @@ func (g *Gateway) lookupRoute(r *http.Request) (*models.RouteSnapshot, error) {
 		return nil, fmt.Errorf("redis get %s: %w", key, err)
 	}
 
-	var snapshot models.RouteSnapshot
+	var snapshot entities.RouteSnapshot
 	if err := json.Unmarshal([]byte(payload), &snapshot); err != nil {
 		return nil, fmt.Errorf("decode route snapshot: %w", err)
 	}
@@ -372,7 +372,7 @@ func (g *Gateway) lookupRoute(r *http.Request) (*models.RouteSnapshot, error) {
 	return &snapshot, nil
 }
 
-func chooseBestRegion(snapshot *models.RouteSnapshot, stickyRegion string) *models.RegionRoute {
+func chooseBestRegion(snapshot *entities.RouteSnapshot, stickyRegion string) *entities.RegionRoute {
 	if len(snapshot.Regions) == 0 {
 		return nil
 	}
@@ -386,7 +386,7 @@ func chooseBestRegion(snapshot *models.RouteSnapshot, stickyRegion string) *mode
 		}
 	}
 
-	var selected *models.RegionRoute
+	var selected *entities.RegionRoute
 	bestScore := 1 << 30
 	for i := range snapshot.Regions {
 		region := &snapshot.Regions[i]
@@ -428,11 +428,11 @@ func chooseBestRegion(snapshot *models.RouteSnapshot, stickyRegion string) *mode
 	return &snapshot.Regions[0]
 }
 
-func isRegionEligible(region *models.RegionRoute) bool {
+func isRegionEligible(region *entities.RegionRoute) bool {
 	return region != nil && region.DrainState != "drained" && region.HealthStatus != "unhealthy"
 }
 
-func findRegion(snapshot *models.RouteSnapshot, regionName string) *models.RegionRoute {
+func findRegion(snapshot *entities.RouteSnapshot, regionName string) *entities.RegionRoute {
 	for i := range snapshot.Regions {
 		if snapshot.Regions[i].Region == regionName {
 			return &snapshot.Regions[i]
@@ -449,7 +449,7 @@ func readStickyRegion(r *http.Request) string {
 	return cookie.Value
 }
 
-func writeStickyRegion(w http.ResponseWriter, snapshot *models.RouteSnapshot, region string) {
+func writeStickyRegion(w http.ResponseWriter, snapshot *entities.RouteSnapshot, region string) {
 	if !snapshot.RoutingPolicy.StickySessions || region == "" {
 		return
 	}
@@ -469,7 +469,7 @@ func writeStickyRegion(w http.ResponseWriter, snapshot *models.RouteSnapshot, re
 	})
 }
 
-func bundleURLForSnapshot(snapshot *models.RouteSnapshot, selectedRegion *models.RegionRoute) string {
+func bundleURLForSnapshot(snapshot *entities.RouteSnapshot, selectedRegion *entities.RegionRoute) string {
 	if selectedRegion != nil && selectedRegion.BundleURL != "" {
 		return selectedRegion.BundleURL
 	}
@@ -494,7 +494,7 @@ func (g *Gateway) resolveMirrorURL(locator string) string {
 	return ""
 }
 
-func (g *Gateway) preferredArtifactURL(snapshot *models.RouteSnapshot) string {
+func (g *Gateway) preferredArtifactURL(snapshot *entities.RouteSnapshot) string {
 	for _, mirror := range snapshot.ArtifactMirrors {
 		if mirror.Status != "published" && mirror.Status != "active" {
 			continue
@@ -542,7 +542,7 @@ func (g *Gateway) emitControlPlaneEvent(projectID string, kind string, summary m
 	}
 }
 
-func (g *Gateway) serveStatic(w http.ResponseWriter, r *http.Request, snapshot *models.RouteSnapshot, selectedRegion *models.RegionRoute) bool {
+func (g *Gateway) serveStatic(w http.ResponseWriter, r *http.Request, snapshot *entities.RouteSnapshot, selectedRegion *entities.RegionRoute) bool {
 	storagePath := snapshot.StoragePath
 	if selectedRegion != nil && selectedRegion.StoragePath != "" {
 		storagePath = selectedRegion.StoragePath

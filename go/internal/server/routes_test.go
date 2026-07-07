@@ -10,32 +10,19 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"trading/observability-api/internal/alerts"
 	"trading/observability-api/internal/config"
-	"trading/observability-api/internal/health"
-	"trading/observability-api/internal/middleware"
-	"trading/observability-api/internal/storage"
-	"trading/observability-api/internal/ws"
 )
 
 func buildTestRouter() http.Handler {
 	gin.SetMode(gin.TestMode)
 	cfg := &config.Config{}
 
-	s := NewServer(cfg)
-	s.store = storage.NewStore(nil, nil)
-	s.wsManager = ws.NewManager()
-	s.healthAggregator = health.NewAggregator(s.store, s.wsManager)
-	s.incidentManager = alerts.NewManager()
+	s, err := InitializeServer(cfg)
+	if err != nil {
+		panic("failed to initialize test server: " + err.Error())
+	}
 
-	r := gin.New()
-	r.Use(gin.Recovery())
-	r.Use(middleware.CorrelationID())
-	r.Use(middleware.Logger())
-	r.Use(middleware.SetupCors())
-
-	s.mapRoutes(r)
-	return r
+	return s.setupRouter()
 }
 
 func TestHealthEndpoint(t *testing.T) {

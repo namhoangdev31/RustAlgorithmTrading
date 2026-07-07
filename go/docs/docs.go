@@ -427,7 +427,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.MetricsHistoryRequest"
+                            "$ref": "#/definitions/entities.MetricsHistoryRequest"
                         }
                     }
                 ],
@@ -804,7 +804,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Metrics"
+                            "$ref": "#/definitions/entities.Metrics"
                         }
                     }
                 ],
@@ -1239,7 +1239,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Metrics": {
+        "entities.Metrics": {
             "type": "object",
             "properties": {
                 "blockedDelta": {
@@ -1277,7 +1277,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.MetricsHistoryRequest": {
+        "entities.MetricsHistoryRequest": {
             "type": "object",
             "properties": {
                 "end_time": {
