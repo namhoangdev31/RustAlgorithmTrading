@@ -28,7 +28,15 @@ func (h *MetricHandler) MapRoutes(group *gin.RouterGroup) {
 }
 
 func (h *MetricHandler) GetCurrent(c *gin.Context) {
-	payload, err := h.useCase.GetCurrentMetrics()
+	userID := c.Query("user_id")
+	if userID == "" {
+		userID = c.GetHeader("X-User-ID")
+	}
+	if userID == "" {
+		userID = "admin"
+	}
+
+	payload, err := h.useCase.GetCurrentMetrics(userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"detail": err.Error()})
 		return
@@ -42,7 +50,16 @@ func (h *MetricHandler) GetHistory(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"detail": "invalid request body"})
 		return
 	}
-	payload, err := h.useCase.GetMetricsHistory(req.TimeRange, req.StartTime, req.EndTime, req.Interval, req.MetricTypes)
+
+	userID := c.Query("user_id")
+	if userID == "" {
+		userID = c.GetHeader("X-User-ID")
+	}
+	if userID == "" {
+		userID = "admin"
+	}
+
+	payload, err := h.useCase.GetMetricsHistory(userID, req.TimeRange, req.StartTime, req.EndTime, req.Interval, req.MetricTypes)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"detail": err.Error()})
 		return
@@ -63,7 +80,15 @@ func (h *MetricHandler) GetSymbols(c *gin.Context) {
 }
 
 func (h *MetricHandler) GetSummary(c *gin.Context) {
-	summary, err := h.useCase.GetSummary()
+	userID := c.Query("user_id")
+	if userID == "" {
+		userID = c.GetHeader("X-User-ID")
+	}
+	if userID == "" {
+		userID = "admin"
+	}
+
+	summary, err := h.useCase.GetSummary(userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"detail": err.Error()})
 		return

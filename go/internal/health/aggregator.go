@@ -31,20 +31,20 @@ func (a *Aggregator) HealthCheckHandler(w http.ResponseWriter, r *http.Request) 
 }
 
 func (a *Aggregator) ReadinessCheckHandler(w http.ResponseWriter, r *http.Request) {
-	duckReady := a.store != nil && a.store.PingDuckDB() == nil
+	questReady := a.store != nil && a.store.PingQuestDB() == nil
 	postgresReady := a.store != nil && a.store.PingPostgres() == nil
 
 	collectors := map[string]interface{}{
-		"duckdb": map[string]interface{}{
-			"ready":  duckReady,
-			"status": readinessStatus(duckReady),
+		"questdb": map[string]interface{}{
+			"ready":  questReady,
+			"status": readinessStatus(questReady),
 		},
 		"postgres": map[string]interface{}{
 			"ready":  postgresReady,
 			"status": readinessStatus(postgresReady),
 		},
 	}
-	ready := duckReady || postgresReady
+	ready := questReady || postgresReady
 	code := http.StatusOK
 	if !ready {
 		code = http.StatusServiceUnavailable
@@ -65,9 +65,9 @@ func (a *Aggregator) LivenessCheckHandler(w http.ResponseWriter, r *http.Request
 }
 
 func (a *Aggregator) SystemHealthHandler(w http.ResponseWriter, r *http.Request) {
-	duckStatus := "error"
-	if a.store != nil && a.store.PingDuckDB() == nil {
-		duckStatus = "connected"
+	questStatus := "error"
+	if a.store != nil && a.store.PingQuestDB() == nil {
+		questStatus = "connected"
 	}
 	postgresStatus := "error"
 	if a.store != nil && a.store.PingPostgres() == nil {
@@ -82,7 +82,7 @@ func (a *Aggregator) SystemHealthHandler(w http.ResponseWriter, r *http.Request)
 		},
 		"resources": map[string]float64{},
 		"connections": map[string]interface{}{
-			"duckdb":   duckStatus,
+			"questdb":  questStatus,
 			"postgres": postgresStatus,
 		},
 	})
@@ -97,8 +97,8 @@ func (a *Aggregator) ComponentsSnapshot() map[string]interface{} {
 				"connections": a.wsManager.ConnectionCount(),
 				"stats":       a.wsManager.Stats(),
 			},
-			"duckdb": map[string]interface{}{
-				"status": readinessStatus(a.store != nil && a.store.PingDuckDB() == nil),
+			"questdb": map[string]interface{}{
+				"status": readinessStatus(a.store != nil && a.store.PingQuestDB() == nil),
 			},
 			"postgres": map[string]interface{}{
 				"status": readinessStatus(a.store != nil && a.store.PingPostgres() == nil),

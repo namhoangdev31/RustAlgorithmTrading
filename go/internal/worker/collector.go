@@ -48,8 +48,8 @@ func (m *MetricsCollector) Start() {
 				}
 			}
 
-			if m.store != nil && m.store.DuckDB() != nil && time.Now().Unix()%5 == 0 {
-				summary, err := m.store.DuckDB().QueryPerformanceSummary()
+			if m.store != nil && m.store.QuestDB() != nil && time.Now().Unix()%5 == 0 {
+				summary, err := m.store.QuestDB().QueryPerformanceSummary("admin")
 				if err == nil {
 					payload["strategy"] = summary
 				}
@@ -62,8 +62,8 @@ func (m *MetricsCollector) Start() {
 }
 
 func (m *MetricsCollector) latestMetricsSnapshot() map[string]interface{} {
-	if m.store != nil && m.store.DuckDB() != nil {
-		if latest, err := m.store.DuckDB().QueryCurrentMetricsSnapshot(); err == nil {
+	if m.store != nil && m.store.QuestDB() != nil {
+		if latest, err := m.store.QuestDB().QueryCurrentMetricsSnapshot("admin"); err == nil {
 			return latest
 		}
 	}

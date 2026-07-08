@@ -34,7 +34,15 @@ func (h *SystemHandler) GetHealth(c *gin.Context) {
 }
 
 func (h *SystemHandler) GetPerformance(c *gin.Context) {
-	history, err := h.useCase.GetPerformance()
+	userID := c.Query("user_id")
+	if userID == "" {
+		userID = c.GetHeader("X-User-ID")
+	}
+	if userID == "" {
+		userID = "admin"
+	}
+
+	history, err := h.useCase.GetPerformance(userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"detail": err.Error()})
 		return
@@ -50,12 +58,20 @@ func (h *SystemHandler) GetComponents(c *gin.Context) {
 }
 
 func (h *SystemHandler) GetLogs(c *gin.Context) {
+	userID := c.Query("user_id")
+	if userID == "" {
+		userID = c.GetHeader("X-User-ID")
+	}
+	if userID == "" {
+		userID = "admin"
+	}
+
 	level := c.Query("level")
 	if level == "" {
 		level = "INFO"
 	}
 	limit := parseIntWithDefault(c.Query("limit"), 100)
-	logs, err := h.useCase.GetLogs(level, limit)
+	logs, err := h.useCase.GetLogs(userID, level, limit)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"detail": err.Error()})
 		return

@@ -1,4 +1,3 @@
-use std::path::PathBuf;
 use std::time::Duration;
 
 use crate::integrity::Thresholds;
@@ -11,7 +10,7 @@ pub struct ScrapeTarget {
 
 #[derive(Debug, Clone)]
 pub struct ObservabilityConfig {
-    pub duckdb_path: PathBuf,
+    pub questdb_ilp_addr: String,
     pub scrape_interval: Duration,
     pub scrape_timeout: Duration,
     pub integrity_thresholds: Thresholds,
@@ -20,9 +19,9 @@ pub struct ObservabilityConfig {
 
 impl ObservabilityConfig {
     pub fn from_env() -> anyhow::Result<Self> {
-        let duckdb_path = env_or("TELEMETRY_DUCKDB_PATH", "data/telemetry.duckdb");
-        let scrape_interval = duration_from_ms_env("OBSERVABILITY_SCRAPE_INTERVAL_MS", 1000)?;
-        let scrape_timeout = duration_from_ms_env("OBSERVABILITY_SCRAPE_TIMEOUT_MS", 5000)?;
+        let questdb_ilp_addr = env_or("QUESTDB_ILP_ADDR", "127.0.0.1:9009");
+        let scrape_interval = duration_from_ms_env("TELEMETRY_SCRAPE_INTERVAL_MS", 1000)?;
+        let scrape_timeout = duration_from_ms_env("TELEMETRY_SCRAPE_TIMEOUT_MS", 5000)?;
         let integrity_thresholds = Thresholds::from_env()?;
 
         let targets = [
@@ -48,7 +47,7 @@ impl ObservabilityConfig {
         .collect();
 
         Ok(Self {
-            duckdb_path: PathBuf::from(duckdb_path),
+            questdb_ilp_addr,
             scrape_interval,
             scrape_timeout,
             integrity_thresholds,

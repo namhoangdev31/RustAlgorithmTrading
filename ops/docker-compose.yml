@@ -64,6 +64,43 @@ services:
           cpus: '0.05'
           memory: 32M
 
+  questdb:
+    image: questdb/questdb:9.4.3
+    restart: unless-stopped
+    networks:
+      - private
+    volumes:
+      - questdb-data:/var/lib/questdb
+      - type: bind
+        source: ./scripts/questdb/init.sql
+        target: /var/lib/questdb/init.sql
+        read_only: true
+    environment:
+      QDB_LOG_W_STDOUT_LEVEL: ERROR
+      QDB_PG_USER: admin
+      QDB_PG_PASSWORD: ${QUESTDB_PASSWORD:-quest}
+      QDB_TELEMETRY_ENABLED: "false"
+      QDB_LINE_TCP_NET_BIND_TO: 0.0.0.0:9009
+      QDB_PG_NET_BIND_TO: 0.0.0.0:8812
+      QDB_HTTP_BIND_TO: 0.0.0.0:9000
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -fsS http://127.0.0.1:9000/status >/dev/null || exit 1" ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 2048M
+        reservations:
+          cpus: '0.1'
+          memory: 512M
+    labels:
+      com.rustalgorithmtrading.role: private-timeseries-db
+      com.rustalgorithmtrading.audience: internal
+
   trading-core:
     <<: *rust-service
     profiles: [ "trading" ]
@@ -82,13 +119,12 @@ services:
         source: ./config/risk_limits.toml
         target: /workspace/ops/config/risk_limits.toml
         read_only: true
-      - telemetry-data:/data
     environment:
       <<: *rust-env
       SERVICE_NAME: trading-core
       TRADING_CORE_METRICS_HOST: 0.0.0.0
       TRADING_CORE_METRICS_PORT: 9090
-      TELEMETRY_DUCKDB_PATH: /data/telemetry.duckdb
+      QUESTDB_ILP_ADDR: questdb:9009
       HEALTHCHECK_URL: http://127.0.0.1:9090/metrics
       MARKET_DATA_METRICS_URL: http://127.0.0.1:9090/metrics
       EXECUTION_METRICS_URL: http://127.0.0.1:9090/metrics
@@ -141,7 +177,6 @@ services:
       - public
       - private
     volumes:
-      - telemetry-data:/data:ro
       - edge-artifact-data:/var/lib/lepos
     environment:
       <<: *saas-env
@@ -152,7 +187,7 @@ services:
       TLS_PORT: 8443
       HOST: 0.0.0.0
       DATABASE_URL: postgresql://noah_admin:noah_master@103.82.36.67:8048/noah_db
-      DUCKDB_PATH: /data/telemetry.duckdb
+      QUESTDB_PG_URL: postgresql://admin:${QUESTDB_PASSWORD:-quest}@questdb:8812/qdb
       REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
       MARKET_DATA_METRICS_URL: http://trading-core:9090/metrics
       EXECUTION_METRICS_URL: http://trading-core:9090/metrics
@@ -174,6 +209,8 @@ services:
     depends_on:
       redis:
         condition: service_healthy
+      questdb:
+        condition: service_healthy
       trading-core:
         condition: service_healthy
     healthcheck:
@@ -193,7 +230,6 @@ services:
     labels:
       com.rustalgorithmtrading.role: public-edge-gateway
       com.rustalgorithmtrading.audience: developer,trader,regular
-
 
   nextjs-frontend:
     image: ${TRADING_IMAGE_REGISTRY:-trading}/nextjs-frontend:${IMAGE_TAG:-development}
@@ -262,13 +298,11 @@ services:
       com.rustalgorithmtrading.role: public-saas-portal
       com.rustalgorithmtrading.audience: developer,trader,regular
 
-
-
 networks:
   public:
   private:
 
 volumes:
-  telemetry-data:
+  questdb-data:
   edge-artifact-data:
   redis-data:

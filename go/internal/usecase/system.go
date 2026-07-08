@@ -25,16 +25,16 @@ func NewSystemUseCase(repo repositories.SystemRepository, healthAggregator *heal
 	}
 }
 
-func (u *systemUseCase) GetPerformance() ([]map[string]interface{}, error) {
-	return u.repo.QueryPerformanceHistory(50)
+func (u *systemUseCase) GetPerformance(userID string) ([]map[string]interface{}, error) {
+	return u.repo.QueryPerformanceHistory(userID, 50)
 }
 
 func (u *systemUseCase) GetComponents() map[string]interface{} {
 	return u.healthAggregator.ComponentsSnapshot()
 }
 
-func (u *systemUseCase) GetLogs(level string, limit int) ([]map[string]interface{}, error) {
-	return u.repo.QueryLogs(level, limit)
+func (u *systemUseCase) GetLogs(userID string, level string, limit int) ([]map[string]interface{}, error) {
+	return u.repo.QueryLogs(userID, level, limit)
 }
 
 func (u *systemUseCase) GetStats() map[string]interface{} {
@@ -59,7 +59,8 @@ func (u *systemUseCase) GetStats() map[string]interface{} {
 }
 
 func (u *systemUseCase) ValidateIntegrity(metrics entities.Metrics) entities.Report {
-	raw, err := u.repo.QueryLatestIntegrityReport()
+	// Defaults to "admin" or global system user for backend validation
+	raw, err := u.repo.QueryLatestIntegrityReport("admin")
 	if err != nil {
 		return entities.Report{IsValid: true, Reasons: []string{}, Metrics: metrics}
 	}

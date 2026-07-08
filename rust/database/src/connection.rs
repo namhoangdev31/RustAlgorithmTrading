@@ -1,65 +1,31 @@
-//! Database connection management with pooling
+//! QuestDB database connection via ILP (InfluxDB Line Protocol)
+//!
+//! Writes time-series data to QuestDB using the high-performance ILP protocol.
+//! Read queries are handled by the Go gateway via PgWire (port 8812).
 
 use crate::error::{DatabaseError, Result};
 use crate::models::*;
-use crate::query::{QueryBuilder, TimeInterval};
-use crate::schema::Schema;
 
-use chrono::{DateTime, Utc};
-use duckdb::{Config, Connection};
-use r2d2::{Pool, PooledConnection};
-use std::path::{Path, PathBuf};
-use std::sync::Arc;
+use questdb::ingress::{Buffer, Sender, SenderBuilder, TimestampNanos};
+use std::sync::Mutex;
 use std::time::Instant;
 
-/// Type alias for connection pool
-pub type ConnectionPool = Pool<ConnectionManager>;
-
-/// Connection manager for r2d2 pooling
-pub struct ConnectionManager {
-    path: PathBuf,
+fn ilp_err(e: impl std::fmt::Display) -> DatabaseError {
+    DatabaseError::Ilp(e.to_string())
 }
 
-impl ConnectionManager {
-    /// Create a new connection manager
-    pub fn new<P: AsRef<Path>>(path: P) -> Self {
-        Self {
-            path: path.as_ref().to_path_buf(),
-        }
-    }
-}
-
-impl r2d2::ManageConnection for ConnectionManager {
-    type Connection = Connection;
-    type Error = duckdb::Error;
-
-    fn connect(&self) -> std::result::Result<Self::Connection, Self::Error> {
-        let config = Config::default()
-            .access_mode(duckdb::AccessMode::ReadWrite)?
-            .enable_object_cache(true)?;
-
-        Connection::open_with_flags(&self.path, config)
-    }
-
-    fn is_valid(&self, conn: &mut Self::Connection) -> std::result::Result<(), Self::Error> {
-        conn.execute_batch("SELECT 1")?;
-        Ok(())
-    }
-
-    fn has_broken(&self, _conn: &mut Self::Connection) -> bool {
-        false
-    }
-}
-
-/// High-level database manager with connection pooling
+/// High-level database manager using QuestDB ILP for writes.
+///
+/// Write path: Rust → ILP TCP → QuestDB:9009
+/// Read path:  Go   → PgWire  → QuestDB:8812 (not handled here)
 #[derive(Clone)]
 pub struct DatabaseManager {
-    pool: Arc<ConnectionPool>,
-    path: PathBuf,
+    inner: std::sync::Arc<Mutex<Sender>>,
+    addr: String,
 }
 
 impl DatabaseManager {
-    /// Create a new database manager
+    /// Create a new database manager connected to QuestDB via ILP.
     ///
     /// # Example
     ///
@@ -67,106 +33,69 @@ impl DatabaseManager {
     /// use database::DatabaseManager;
     ///
     /// # async fn example() -> anyhow::Result<()> {
-    /// let db = DatabaseManager::new("metrics.duckdb").await?;
+    /// let db = DatabaseManager::new("questdb:9009").await?;
     /// # Ok(())
     /// # }
     /// ```
-    pub async fn new<P: AsRef<Path>>(path: P) -> Result<Self> {
-        let path = path.as_ref().to_path_buf();
-        let manager = ConnectionManager::new(&path);
+    pub async fn new<S: AsRef<str>>(addr: S) -> Result<Self> {
+        let addr = addr.as_ref().to_string();
+        let (host, port) = addr.rsplit_once(':')
+            .ok_or_else(|| DatabaseError::Ilp(format!("invalid addr format '{}', expected host:port", addr)))?;
+        let port: u16 = port.parse()
+            .map_err(|e| DatabaseError::Ilp(format!("invalid port in '{}': {}", addr, e)))?;
 
-        let pool = Pool::builder()
-            .max_size(10) // Maximum 10 connections
-            .min_idle(Some(2)) // Keep at least 2 idle connections
-            .build(manager)?;
+        let sender = SenderBuilder::new(
+            questdb::ingress::Protocol::Tcp,
+            host,
+            port,
+        )
+        .build()
+        .map_err(|e| DatabaseError::Ilp(format!("failed to connect to QuestDB at {}: {}", addr, e)))?;
+
+        tracing::info!("Connected to QuestDB ILP at {}", addr);
 
         Ok(Self {
-            pool: Arc::new(pool),
-            path,
+            inner: std::sync::Arc::new(Mutex::new(sender)),
+            addr,
         })
     }
 
-    /// Initialize database schema
-    ///
-    /// This creates all necessary tables and indexes if they don't exist.
+    /// Initialize is a no-op for QuestDB — schema is created via init.sql.
     pub async fn initialize(&self) -> Result<()> {
-        let start = Instant::now();
-        tracing::info!("Initializing database schema...");
-
-        let conn = self.get_connection()?;
-        Schema::create_all(&conn)?;
-
-        let elapsed = start.elapsed();
-        tracing::info!("Database initialized in {:?}", elapsed);
-        metrics::counter!("database_initialized_total").increment(1);
-
+        tracing::info!("QuestDB schema managed externally via init.sql");
         Ok(())
     }
 
-    /// Get a pooled connection
-    pub fn get_connection(&self) -> Result<PooledConnection<ConnectionManager>> {
-        self.pool.get().map_err(DatabaseError::from)
+    /// Create a new buffer from the sender (inherits config).
+    fn new_buffer(&self) -> Result<Buffer> {
+        let sender = self.inner.lock().map_err(|e| {
+            DatabaseError::Ilp(format!("mutex poisoned: {}", e))
+        })?;
+        Ok(sender.new_buffer())
     }
 
-    /// Insert a single metric
-    ///
-    /// # Example
-    ///
-    /// ```no_run
-    /// use database::{DatabaseManager, MetricRecord};
-    /// use chrono::Utc;
-    ///
-    /// # async fn example(db: &DatabaseManager) -> anyhow::Result<()> {
-    /// let metric = MetricRecord {
-    ///     timestamp: Utc::now(),
-    ///     metric_name: "price".to_string(),
-    ///     value: 50000.0,
-    ///     symbol: Some("BTC/USD".to_string()),
-    ///     labels: None,
-    /// };
-    /// db.insert_metric(&metric).await?;
-    /// # Ok(())
-    /// # }
-    /// ```
+    /// Insert a single metric record.
     pub async fn insert_metric(&self, metric: &MetricRecord) -> Result<()> {
-        let conn = self.get_connection()?;
-        let labels_json = metric
-            .labels
-            .as_ref()
-            .map(serde_json::to_string)
-            .transpose()?;
-
-        conn.execute(
-            "INSERT INTO trading_metrics (timestamp, metric_name, value, symbol, labels) VALUES (?, ?, ?, ?, ?)",
-            duckdb::params![
-                metric.timestamp.to_rfc3339(),
-                &metric.metric_name,
-                metric.value,
-                &metric.symbol,
-                labels_json
-            ],
-        )?;
-
+        let mut buf = self.new_buffer()?;
+        {
+            let mut row = buf.table("trading_metrics").map_err(ilp_err)?;
+            row = row.symbol("metric_name", &metric.metric_name).map_err(ilp_err)?;
+            if let Some(ref sym) = metric.symbol {
+                row = row.symbol("symbol", sym).map_err(ilp_err)?;
+            }
+            row = row.column_f64("value", metric.value).map_err(ilp_err)?;
+            if let Some(ref labels) = metric.labels {
+                let json = serde_json::to_string(labels)?;
+                row = row.column_str("labels", &json).map_err(ilp_err)?;
+            }
+            row.at(TimestampNanos::from_datetime(metric.timestamp).map_err(ilp_err)?).map_err(ilp_err)?;
+        }
+        self.flush_buffer(&mut buf)?;
         metrics::counter!("database_metrics_inserted_total").increment(1);
         Ok(())
     }
 
-    /// Insert multiple metrics in a batch (high performance)
-    ///
-    /// # Example
-    ///
-    /// ```no_run
-    /// use database::{DatabaseManager, MetricRecord};
-    /// use chrono::Utc;
-    ///
-    /// # async fn example(db: &DatabaseManager) -> anyhow::Result<()> {
-    /// let metrics: Vec<MetricRecord> = (0..1000)
-    ///     .map(|i| MetricRecord::new("price", 50000.0 + i as f64))
-    ///     .collect();
-    /// db.insert_metrics(&metrics).await?;
-    /// # Ok(())
-    /// # }
-    /// ```
+    /// Insert multiple metrics in a batch (high performance via ILP).
     pub async fn insert_metrics(&self, metrics: &[MetricRecord]) -> Result<()> {
         self.insert_metrics_blocking(metrics)
     }
@@ -178,30 +107,23 @@ impl DatabaseManager {
         }
 
         let start = Instant::now();
-        let mut conn = self.get_connection()?;
-        let tx = conn.transaction()?;
+        let mut buf = self.new_buffer()?;
 
-        {
-            let mut appender = tx.appender("trading_metrics")?;
-            for metric in metrics {
-                let labels_json = metric
-                    .labels
-                    .as_ref()
-                    .map(serde_json::to_string)
-                    .transpose()?;
-
-                appender.append_row(duckdb::params![
-                    metric.timestamp.naive_utc(),
-                    &metric.metric_name,
-                    metric.value,
-                    &metric.symbol,
-                    labels_json
-                ])?;
+        for metric in metrics {
+            let mut row = buf.table("trading_metrics").map_err(ilp_err)?;
+            row = row.symbol("metric_name", &metric.metric_name).map_err(ilp_err)?;
+            if let Some(ref sym) = metric.symbol {
+                row = row.symbol("symbol", sym).map_err(ilp_err)?;
             }
-            appender.flush()?;
+            row = row.column_f64("value", metric.value).map_err(ilp_err)?;
+            if let Some(ref labels) = metric.labels {
+                let json = serde_json::to_string(labels)?;
+                row = row.column_str("labels", &json).map_err(ilp_err)?;
+            }
+            row.at(TimestampNanos::from_datetime(metric.timestamp).map_err(ilp_err)?).map_err(ilp_err)?;
         }
 
-        tx.commit()?;
+        self.flush_buffer(&mut buf)?;
 
         let elapsed = start.elapsed();
         metrics::counter!("database_metrics_inserted_total").increment(metrics.len() as u64);
@@ -213,11 +135,10 @@ impl DatabaseManager {
 
     /// Insert a strategy performance snapshot.
     pub async fn insert_performance_record(&self, record: &PerformanceRecord) -> Result<()> {
-        self.insert_performance_records(std::slice::from_ref(record))
-            .await
+        self.insert_performance_records(std::slice::from_ref(record)).await
     }
 
-    /// Insert multiple performance snapshots using DuckDB's appender.
+    /// Insert multiple performance snapshots.
     pub async fn insert_performance_records(&self, records: &[PerformanceRecord]) -> Result<()> {
         self.insert_performance_records_blocking(records)
     }
@@ -229,385 +150,122 @@ impl DatabaseManager {
         }
 
         let start = Instant::now();
-        let mut conn = self.get_connection()?;
-        let tx = conn.transaction()?;
+        let mut buf = self.new_buffer()?;
 
-        {
-            let mut appender = tx.appender("performance_history")?;
-            for record in records {
-                appender.append_row(duckdb::params![
-                    record.timestamp.naive_utc(),
-                    record.portfolio_value,
-                    record.pnl,
-                    record.sharpe_ratio,
-                    record.max_drawdown,
-                    record.win_rate,
-                    record.total_trades
-                ])?;
+        for record in records {
+            let mut row = buf.table("performance_history").map_err(ilp_err)?;
+            row = row.column_f64("portfolio_value", record.portfolio_value).map_err(ilp_err)?;
+            row = row.column_f64("pnl", record.pnl).map_err(ilp_err)?;
+            if let Some(sr) = record.sharpe_ratio {
+                row = row.column_f64("sharpe_ratio", sr).map_err(ilp_err)?;
             }
-            appender.flush()?;
+            if let Some(md) = record.max_drawdown {
+                row = row.column_f64("max_drawdown", md).map_err(ilp_err)?;
+            }
+            if let Some(wr) = record.win_rate {
+                row = row.column_f64("win_rate", wr).map_err(ilp_err)?;
+            }
+            row = row.column_i64("total_trades", record.total_trades as i64).map_err(ilp_err)?;
+            row.at(TimestampNanos::from_datetime(record.timestamp).map_err(ilp_err)?).map_err(ilp_err)?;
         }
 
-        tx.commit()?;
+        self.flush_buffer(&mut buf)?;
 
         let elapsed = start.elapsed();
-        metrics::counter!("database_performance_records_inserted_total")
-            .increment(records.len() as u64);
-        metrics::histogram!("database_performance_batch_insert_duration_ms")
-            .record(elapsed.as_millis() as f64);
+        metrics::counter!("database_performance_records_inserted_total").increment(records.len() as u64);
+        metrics::histogram!("database_performance_batch_insert_duration_ms").record(elapsed.as_millis() as f64);
 
-        tracing::debug!(
-            "Inserted {} performance records in {:?}",
-            records.len(),
-            elapsed
-        );
+        tracing::debug!("Inserted {} performance records in {:?}", records.len(), elapsed);
         Ok(())
     }
 
-    /// Get metrics with filtering
-    ///
-    /// # Arguments
-    ///
-    /// * `metric_name` - Name of the metric to retrieve
-    /// * `symbol` - Optional symbol filter
-    /// * `start_time` - Optional start time filter
-    /// * `limit` - Maximum number of records to return
-    pub async fn get_metrics(
-        &self,
-        metric_name: &str,
-        symbol: Option<&str>,
-        start_time: Option<DateTime<Utc>>,
-        limit: i64,
-    ) -> Result<Vec<MetricRecord>> {
-        let conn = self.get_connection()?;
-        let query = QueryBuilder::new().select_metrics(metric_name, symbol, start_time, limit);
-
-        let mut stmt = conn.prepare(&query)?;
-        let rows = stmt.query_map([], |row| {
-            let timestamp: DateTime<Utc> = row.get(0)?;
-
-            Ok(MetricRecord {
-                timestamp,
-                metric_name: row.get(1)?,
-                value: row.get(2)?,
-                symbol: row.get(3)?,
-                labels: row
-                    .get::<_, Option<String>>(4)?
-                    .and_then(|s| serde_json::from_str(&s).ok()),
-            })
-        })?;
-
-        rows.collect::<std::result::Result<Vec<_>, _>>()
-            .map_err(DatabaseError::from)
-    }
-    /// Get metrics for a specific symbol
-    pub async fn get_metrics_by_symbol(
-        &self,
-        metric_name: &str,
-        symbol: &str,
-        limit: i64,
-    ) -> Result<Vec<MetricRecord>> {
-        self.get_metrics(metric_name, Some(symbol), None, limit)
-            .await
-    }
-
-    /// Insert a candle record
+    /// Insert a candle record.
     pub async fn insert_candle(&self, candle: &CandleRecord) -> Result<()> {
-        let conn = self.get_connection()?;
-
-        conn.execute(
-            "INSERT INTO trading_candles (timestamp, symbol, open, high, low, close, volume, trade_count) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-            duckdb::params![
-                candle.timestamp.to_rfc3339(),
-                &candle.symbol,
-                candle.open,
-                candle.high,
-                candle.low,
-                candle.close,
-                candle.volume,
-                candle.trade_count
-            ],
-        )?;
-
+        let mut buf = self.new_buffer()?;
+        {
+            let mut row = buf.table("trading_candles").map_err(ilp_err)?;
+            row = row.symbol("symbol", &candle.symbol).map_err(ilp_err)?;
+            row = row.column_f64("open", candle.open).map_err(ilp_err)?;
+            row = row.column_f64("high", candle.high).map_err(ilp_err)?;
+            row = row.column_f64("low", candle.low).map_err(ilp_err)?;
+            row = row.column_f64("close", candle.close).map_err(ilp_err)?;
+            row = row.column_i64("volume", candle.volume).map_err(ilp_err)?;
+            if let Some(tc) = candle.trade_count {
+                row = row.column_i64("trade_count", tc as i64).map_err(ilp_err)?;
+            }
+            row.at(TimestampNanos::from_datetime(candle.timestamp).map_err(ilp_err)?).map_err(ilp_err)?;
+        }
+        self.flush_buffer(&mut buf)?;
         metrics::counter!("database_candles_inserted_total").increment(1);
         Ok(())
     }
 
-    /// Get candles with filtering
-    pub async fn get_candles(
-        &self,
-        symbol: &str,
-        interval: TimeInterval,
-        start_time: Option<DateTime<Utc>>,
-        limit: i64,
-    ) -> Result<Vec<CandleRecord>> {
-        let conn = self.get_connection()?;
-        let query = QueryBuilder::new().select_candles(symbol, interval, start_time, limit);
-
-        let mut stmt = conn.prepare(&query)?;
-        let rows = stmt.query_map([], |row| {
-            let timestamp: DateTime<Utc> = row.get(0)?;
-
-            Ok(CandleRecord {
-                timestamp,
-                symbol: row.get(1)?,
-                open: row.get(2)?,
-                high: row.get(3)?,
-                low: row.get(4)?,
-                close: row.get(5)?,
-                volume: row.get(6)?,
-                trade_count: row.get(7)?,
-            })
-        })?;
-
-        rows.collect::<std::result::Result<Vec<_>, _>>()
-            .map_err(DatabaseError::from)
-    }
-
-    /// Get aggregated metrics
-    pub async fn get_aggregated_metrics(
-        &self,
-        metric_name: &str,
-        interval: TimeInterval,
-        start_time: Option<DateTime<Utc>>,
-        aggregation: &str,
-    ) -> Result<Vec<AggregatedMetric>> {
-        let conn = self.get_connection()?;
-        let query =
-            QueryBuilder::new().aggregate_metrics(metric_name, interval, start_time, aggregation);
-
-        let mut stmt = conn.prepare(&query)?;
-        let rows = stmt.query_map([], |row| {
-            let time_bucket: DateTime<Utc> = row.get(0)?;
-
-            Ok(AggregatedMetric {
-                time_bucket,
-                metric_name: row.get(1)?,
-                symbol: row.get(2)?,
-                value: row.get(3)?,
-                count: row.get(4)?,
-            })
-        })?;
-
-        rows.collect::<std::result::Result<Vec<_>, _>>()
-            .map_err(DatabaseError::from)
-    }
-
-    /// Insert a trade record
+    /// Insert a trade record (analytics copy — canonical in PostgreSQL).
     pub async fn insert_trade(&self, trade: &TradeRecord) -> Result<()> {
-        let conn = self.get_connection()?;
-
-        conn.execute(
-            "INSERT INTO trading_trades (trade_id, order_id, symbol, side, quantity, price, timestamp, commission, trade_value, liquidity) \
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            duckdb::params![
-                &trade.trade_id,
-                &trade.order_id,
-                &trade.symbol,
-                &trade.side,
-                trade.quantity,
-                trade.price,
-                trade.timestamp.to_rfc3339(),
-                trade.commission,
-                trade.trade_value,
-                &trade.liquidity
-            ],
-        )?;
-
+        let mut buf = self.new_buffer()?;
+        {
+            let mut row = buf.table("trading_trades").map_err(ilp_err)?;
+            row = row.symbol("symbol", &trade.symbol).map_err(ilp_err)?;
+            row = row.symbol("side", &trade.side).map_err(ilp_err)?;
+            row = row.column_str("trade_id", &trade.trade_id).map_err(ilp_err)?;
+            row = row.column_str("order_id", &trade.order_id).map_err(ilp_err)?;
+            row = row.column_f64("quantity", trade.quantity).map_err(ilp_err)?;
+            row = row.column_f64("price", trade.price).map_err(ilp_err)?;
+            row = row.column_f64("commission", trade.commission).map_err(ilp_err)?;
+            row = row.column_f64("trade_value", trade.trade_value).map_err(ilp_err)?;
+            if let Some(ref liq) = trade.liquidity {
+                row = row.symbol("liquidity", liq).map_err(ilp_err)?;
+            }
+            row.at(TimestampNanos::from_datetime(trade.timestamp).map_err(ilp_err)?).map_err(ilp_err)?;
+        }
+        self.flush_buffer(&mut buf)?;
         metrics::counter!("database_trades_inserted_total").increment(1);
         Ok(())
     }
 
-    /// Get trades with filtering
-    pub async fn get_trades(
-        &self,
-        symbol: Option<&str>,
-        order_id: Option<&str>,
-        limit: i64,
-    ) -> Result<Vec<TradeRecord>> {
-        let conn = self.get_connection()?;
-        let mut query = "SELECT trade_id, order_id, symbol, side, quantity, price, timestamp, commission, trade_value, liquidity FROM trading_trades".to_string();
-        let mut filters = Vec::new();
-
-        if let Some(sym) = symbol {
-            filters.push(format!("symbol = '{}'", sym.replace('\'', "''")));
-        }
-        if let Some(oid) = order_id {
-            filters.push(format!("order_id = '{}'", oid.replace('\'', "''")));
-        }
-
-        if !filters.is_empty() {
-            query.push_str(" WHERE ");
-            query.push_str(&filters.join(" AND "));
-        }
-
-        query.push_str(&format!(" ORDER BY timestamp DESC LIMIT {}", limit));
-
-        let mut stmt = conn.prepare(&query)?;
-        let rows = stmt.query_map([], |row| {
-            Ok(TradeRecord {
-                trade_id: row.get(0)?,
-                order_id: row.get(1)?,
-                symbol: row.get(2)?,
-                side: row.get(3)?,
-                quantity: row.get(4)?,
-                price: row.get(5)?,
-                timestamp: row.get(6)?,
-                commission: row.get(7)?,
-                trade_value: row.get(8)?,
-                liquidity: row.get(9)?,
-            })
-        })?;
-
-        rows.collect::<std::result::Result<Vec<_>, _>>()
-            .map_err(DatabaseError::from)
-    }
-
-    /// Log a system event
+    /// Log a system event.
     pub async fn insert_event(&self, event: &SystemEvent) -> Result<()> {
         self.insert_event_blocking(event)
     }
 
     /// Log a system event from a blocking runtime.
     pub fn insert_event_blocking(&self, event: &SystemEvent) -> Result<()> {
-        let conn = self.get_connection()?;
-        let details_json = event
-            .details
-            .as_ref()
-            .map(serde_json::to_string)
-            .transpose()?;
-
-        conn.execute(
-            "INSERT INTO system_events (timestamp, event_type, severity, message, details) VALUES (?, ?, ?, ?, ?)",
-            duckdb::params![
-                event.timestamp.to_rfc3339(),
-                &event.event_type,
-                &event.severity,
-                &event.message,
-                details_json
-            ],
-        )?;
-
+        let mut buf = self.new_buffer()?;
+        {
+            let mut row = buf.table("system_events").map_err(ilp_err)?;
+            row = row.symbol("event_type", &event.event_type).map_err(ilp_err)?;
+            row = row.symbol("severity", &event.severity).map_err(ilp_err)?;
+            row = row.column_str("message", &event.message).map_err(ilp_err)?;
+            if let Some(ref details) = event.details {
+                let json = serde_json::to_string(details)?;
+                row = row.column_str("details", &json).map_err(ilp_err)?;
+            }
+            row.at(TimestampNanos::from_datetime(event.timestamp).map_err(ilp_err)?).map_err(ilp_err)?;
+        }
+        self.flush_buffer(&mut buf)?;
         metrics::counter!("database_events_logged_total").increment(1);
         Ok(())
     }
 
-    /// Alias for insert_event for backward compatibility or semantic logging
+    /// Alias for insert_event for backward compatibility
     pub async fn log_event(&self, event: &SystemEvent) -> Result<()> {
         self.insert_event(event).await
     }
 
-    /// Get system events with filtering
-    pub async fn get_events(&self, severity: Option<&str>, limit: i64) -> Result<Vec<SystemEvent>> {
-        let conn = self.get_connection()?;
-        let query = QueryBuilder::new().select_events(severity, limit);
-
-        let mut stmt = conn.prepare(&query)?;
-        let rows = stmt.query_map([], |row| {
-            Ok(SystemEvent {
-                id: None,
-                timestamp: row.get(0)?,
-                event_type: row.get(1)?,
-                severity: row.get(2)?,
-                message: row.get(3)?,
-                details: row
-                    .get::<_, Option<String>>(4)?
-                    .and_then(|s| serde_json::from_str(&s).ok()),
-            })
+    /// Flush a buffer to QuestDB. Graceful degradation: log warning but don't crash.
+    fn flush_buffer(&self, buf: &mut Buffer) -> Result<()> {
+        let mut sender = self.inner.lock().map_err(|e| {
+            DatabaseError::Ilp(format!("mutex poisoned: {}", e))
         })?;
-
-        rows.collect::<std::result::Result<Vec<_>, _>>()
-            .map_err(DatabaseError::from)
+        sender.flush(buf).map_err(|e| {
+            tracing::warn!("QuestDB flush failed (degraded mode): {}", e);
+            metrics::counter!("database_flush_failures_total").increment(1);
+            DatabaseError::Ilp(e.to_string())
+        })
     }
 
-    /// Get database statistics
-    pub async fn get_table_stats(&self) -> Result<Vec<TableStats>> {
-        let conn = self.get_connection()?;
-        let query = QueryBuilder::new().table_statistics();
-
-        let mut stmt = conn.prepare(&query)?;
-        let rows = stmt.query_map([], |row| {
-            Ok(TableStats {
-                table_name: row.get(0)?,
-                row_count: row.get(1)?,
-                min_timestamp: row
-                    .get::<_, Option<String>>(2)?
-                    .and_then(|s| s.parse().ok()),
-                max_timestamp: row
-                    .get::<_, Option<String>>(3)?
-                    .and_then(|s| s.parse().ok()),
-                size_bytes: row.get(4)?,
-            })
-        })?;
-
-        rows.collect::<std::result::Result<Vec<_>, _>>()
-            .map_err(DatabaseError::from)
-    }
-
-    /// Optimize database (run VACUUM and CHECKPOINT)
-    pub async fn optimize(&self) -> Result<()> {
-        let start = Instant::now();
-        tracing::info!("Optimizing database...");
-
-        let conn = self.get_connection()?;
-        conn.execute_batch("VACUUM; CHECKPOINT;")?;
-
-        let elapsed = start.elapsed();
-        tracing::info!("Database optimized in {:?}", elapsed);
-        metrics::counter!("database_optimizations_total").increment(1);
-
-        Ok(())
-    }
-
-    /// Get database file path
-    pub fn path(&self) -> &Path {
-        &self.path
-    }
-
-    /// Get connection pool statistics
-    pub fn pool_stats(&self) -> r2d2::State {
-        self.pool.state()
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use tempfile::tempdir;
-
-    #[tokio::test]
-    async fn test_database_initialization() {
-        let dir = tempdir().unwrap();
-        let db_path = dir.path().join("test.duckdb");
-        let db = DatabaseManager::new(db_path).await.unwrap();
-        assert!(db.initialize().await.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_metric_insertion() {
-        let dir = tempdir().unwrap();
-        let db_path = dir.path().join("test_metric.duckdb");
-        let db = DatabaseManager::new(db_path).await.unwrap();
-        db.initialize().await.unwrap();
-
-        let metric = MetricRecord::new("test_metric", 42.5);
-        assert!(db.insert_metric(&metric).await.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_batch_insertion() {
-        let dir = tempdir().unwrap();
-        let db_path = dir.path().join("test_batch.duckdb");
-        let db = DatabaseManager::new(db_path).await.unwrap();
-        db.initialize().await.unwrap();
-
-        let metrics: Vec<MetricRecord> = (0..100)
-            .map(|i| MetricRecord::new("test", i as f64))
-            .collect();
-
-        assert!(db.insert_metrics(&metrics).await.is_ok());
-
-        let retrieved = db.get_metrics("test", None, None, 1000).await.unwrap();
-        assert_eq!(retrieved.len(), 100);
+    /// Get the QuestDB ILP address.
+    pub fn addr(&self) -> &str {
+        &self.addr
     }
 }

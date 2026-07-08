@@ -14,8 +14,8 @@ import (
 	"trading/control-gateway/internal/domain/repositories"
 	"trading/control-gateway/internal/health"
 	"trading/control-gateway/internal/repository/alpaca"
-	"trading/control-gateway/internal/repository/duckdb"
 	"trading/control-gateway/internal/repository/postgres"
+	"trading/control-gateway/internal/repository/questdb"
 	"trading/control-gateway/internal/storage"
 	"trading/control-gateway/internal/usecase"
 	"trading/control-gateway/internal/worker"
@@ -26,7 +26,7 @@ import (
 
 // InitializeServer compiles and resolves the Server dependency graph.
 func InitializeServer(cfg *config.Config) (*Server, error) {
-	v := ProvideDuckDBReader(cfg)
+	v := ProvideQuestDBReader(cfg)
 	postgresReader := ProvidePostgresReader(cfg)
 	store := storage.NewStore(v, postgresReader)
 	manager := ws.NewManager()
@@ -39,13 +39,13 @@ func InitializeServer(cfg *config.Config) (*Server, error) {
 	alertHandler := handlers.NewAlertHandler(alertUseCase)
 	alpacaUseCase := usecase.NewAlpacaUseCase(alpacaRepository)
 	alpacaHandler := handlers.NewAlpacaHandler(alpacaUseCase)
-	metricRepository := duckdb.NewDuckDBMetricRepository(store)
+	metricRepository := questdb.NewQuestDBMetricRepository(store)
 	metricUseCase := usecase.NewMetricUseCase(metricRepository)
 	metricHandler := handlers.NewMetricHandler(metricUseCase)
 	tradeRepository := postgres.NewRawSQLTradeRepository(store)
 	tradeUseCase := usecase.NewTradeUseCase(tradeRepository)
 	tradeHandler := handlers.NewTradeHandler(tradeUseCase)
-	systemRepository := duckdb.NewHybridSystemRepository(store)
+	systemRepository := questdb.NewHybridSystemRepository(store)
 	systemUseCase := usecase.NewSystemUseCase(systemRepository, aggregator, manager)
 	systemHandler := handlers.NewSystemHandler(systemUseCase)
 	riskLimitsRepository := postgres.NewGormRiskLimitsRepository(store)
@@ -70,9 +70,9 @@ func ProvideRedisClient(cfg *config.Config) *redis.Client {
 	return redis.NewClient(options)
 }
 
-// ProvideDuckDBReader initializes DuckDB reader from config.
-func ProvideDuckDBReader(cfg *config.Config) *storage.DuckDBReader {
-	reader, err := storage.NewDuckDBReader(cfg.Storage.DuckDBPath)
+// ProvideQuestDBReader initializes QuestDB reader from config.
+func ProvideQuestDBReader(cfg *config.Config) *storage.QuestDBReader {
+	reader, err := storage.NewQuestDBReader(cfg.Storage.QuestDBPgURL)
 	if err != nil {
 		return nil
 	}

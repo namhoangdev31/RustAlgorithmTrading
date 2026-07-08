@@ -23,9 +23,9 @@ type AlertRepository interface {
 
 // MetricRepository defines the methods for retrieving metric summaries and historical data.
 type MetricRepository interface {
-	QueryPerformanceSummary() (map[string]interface{}, error)
-	QueryCurrentMetricsSnapshot() (map[string]interface{}, error)
-	QueryMetricsHistory(start, end string, metricTypes []string) ([]map[string]interface{}, error)
+	QueryPerformanceSummary(userID string) (map[string]interface{}, error)
+	QueryCurrentMetricsSnapshot(userID string) (map[string]interface{}, error)
+	QueryMetricsHistory(userID string, start, end string, metricTypes []string) ([]map[string]interface{}, error)
 }
 
 // AlpacaRepository defines direct trading methods interacting with Alpaca client.
@@ -43,9 +43,9 @@ type AlpacaRepository interface {
 
 // SystemRepository defines system status and log query methods.
 type SystemRepository interface {
-	QueryPerformanceHistory(limit int) ([]map[string]interface{}, error)
-	QueryLogs(level string, limit int) ([]map[string]interface{}, error)
-	QueryLatestIntegrityReport() (map[string]interface{}, error)
+	QueryPerformanceHistory(userID string, limit int) ([]map[string]interface{}, error)
+	QueryLogs(userID string, level string, limit int) ([]map[string]interface{}, error)
+	QueryLatestIntegrityReport(userID string) (map[string]interface{}, error)
 }
 
 // RiskLimitsRepository defines the data access methods for managing system risk thresholds.

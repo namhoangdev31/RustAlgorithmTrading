@@ -6,68 +6,70 @@ import (
 	"fmt"
 	"strings"
 
-	_ "github.com/marcboeker/go-duckdb"
+	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
-// DuckDB provides access to observability analytics data.
-type DuckDB struct {
+// QuestDB provides access to observability analytics data via PgWire.
+type QuestDB struct {
 	db *sql.DB
 }
 
-// DuckDBReader is a type alias for backward compatibility.
-type DuckDBReader = DuckDB
+// QuestDBReader is a type alias for backward compatibility.
+type QuestDBReader = QuestDB
 
-func NewDuckDBReader(dbPath string) (*DuckDB, error) {
-	db, err := sql.Open("duckdb", readOnlyDuckDBDSN(dbPath))
+func NewQuestDBReader(connStr string) (*QuestDB, error) {
+	// Standard QuestDB PgWire connection string: postgresql://admin:quest@questdb:8812/qdb
+	db, err := sql.Open("pgx", connStr)
 	if err != nil {
-		return nil, fmt.Errorf("failed to open duckdb: %w", err)
+		return nil, fmt.Errorf("failed to open questdb: %w", err)
 	}
 	if err := db.Ping(); err != nil {
-		return nil, fmt.Errorf("failed to ping duckdb: %w", err)
+		return nil, fmt.Errorf("failed to ping questdb: %w", err)
 	}
 
-	return &DuckDB{db: db}, nil
+	return &QuestDB{db: db}, nil
 }
 
-func readOnlyDuckDBDSN(dbPath string) string {
-	if strings.Contains(dbPath, "?") {
-		return dbPath + "&access_mode=read_only"
-	}
-	return dbPath + "?access_mode=read_only"
+func (r *QuestDB) Initialize() error {
+	return nil
 }
 
-func (r *DuckDB) Initialize() error {
-	return fmt.Errorf("duckdb schema is owned by telemetry-engine")
-}
-
-func (r *DuckDBReader) Close() error {
+func (r *QuestDBReader) Close() error {
 	if r.db != nil {
 		return r.db.Close()
 	}
 	return nil
 }
 
-func (r *DuckDBReader) Ping() error {
+func (r *QuestDBReader) Ping() error {
 	if r.db == nil {
-		return fmt.Errorf("duckdb connection is nil")
+		return fmt.Errorf("questdb connection is nil")
 	}
 	return r.db.Ping()
 }
 
-func (r *DuckDBReader) QueryMetricsHistory(startTime, endTime string, metricTypes []string) ([]map[string]interface{}, error) {
+func (r *QuestDBReader) QueryMetricsHistory(userID string, startTime, endTime string, metricTypes []string) ([]map[string]interface{}, error) {
 	if r.db == nil {
 		return nil, fmt.Errorf("database not connected")
 	}
+	if userID == "" {
+		userID = "admin"
+	}
+
+	// QuestDB uses standard PostgreSQL placeholders ($1, $2, etc.) via pgx/pgwire
 	query := `
 		SELECT timestamp, metric_name, value, symbol, labels
 		FROM trading_metrics
-		WHERE timestamp >= CAST(? AS TIMESTAMP) AND timestamp <= CAST(? AS TIMESTAMP)
+		WHERE user_id = $1 AND timestamp >= $2::timestamp AND timestamp <= $3::timestamp
 	`
-	args := []interface{}{startTime, endTime}
+	args := []interface{}{userID, startTime, endTime}
+	paramCount := 3
+
 	if len(metricTypes) > 0 {
 		placeholders := make([]string, 0, len(metricTypes))
 		for _, mt := range metricTypes {
-			placeholders = append(placeholders, "?")
+			paramCount++
+			placeholders = append(placeholders, fmt.Sprintf("$%d", paramCount))
 			args = append(args, mt)
 		}
 		query += fmt.Sprintf(" AND metric_name IN (%s)", strings.Join(placeholders, ","))
@@ -76,7 +78,6 @@ func (r *DuckDBReader) QueryMetricsHistory(startTime, endTime string, metricType
 
 	rows, err := r.db.Query(query, args...)
 	if err != nil {
-		// Return empty to keep parity behavior resilient.
 		return []map[string]interface{}{}, nil
 	}
 	defer rows.Close()
@@ -109,17 +110,22 @@ func (r *DuckDBReader) QueryMetricsHistory(startTime, endTime string, metricType
 	return results, nil
 }
 
-func (r *DuckDBReader) QueryCurrentMetricsSnapshot() (map[string]interface{}, error) {
+func (r *QuestDBReader) QueryCurrentMetricsSnapshot(userID string) (map[string]interface{}, error) {
 	if r.db == nil {
 		return nil, fmt.Errorf("database not connected")
 	}
+	if userID == "" {
+		userID = "admin"
+	}
+
 	query := `
 		SELECT metric_name, value, symbol, labels
 		FROM trading_metrics
+		WHERE user_id = $1
 		ORDER BY timestamp DESC
 		LIMIT 5000
 	`
-	rows, err := r.db.Query(query)
+	rows, err := r.db.Query(query, userID)
 	if err != nil {
 		return map[string]interface{}{}, nil
 	}
@@ -175,13 +181,18 @@ func parseMetricLabels(labels sql.NullString) map[string]string {
 	return parsed
 }
 
-func (r *DuckDBReader) QueryPerformanceSummary() (map[string]interface{}, error) {
+func (r *QuestDBReader) QueryPerformanceSummary(userID string) (map[string]interface{}, error) {
 	if r.db == nil {
 		return nil, fmt.Errorf("database not connected")
 	}
+	if userID == "" {
+		userID = "admin"
+	}
+
 	query := `
 		SELECT portfolio_value, pnl, total_trades
 		FROM performance_history
+		WHERE user_id = $1
 		ORDER BY timestamp DESC
 		LIMIT 1
 	`
@@ -190,7 +201,7 @@ func (r *DuckDBReader) QueryPerformanceSummary() (map[string]interface{}, error)
 		pnl            float64
 		totalTrades    int64
 	)
-	err := r.db.QueryRow(query).Scan(&portfolioValue, &pnl, &totalTrades)
+	err := r.db.QueryRow(query, userID).Scan(&portfolioValue, &pnl, &totalTrades)
 	if err != nil {
 		return map[string]interface{}{
 			"portfolio_value": 0.0,
@@ -205,20 +216,25 @@ func (r *DuckDBReader) QueryPerformanceSummary() (map[string]interface{}, error)
 	}, nil
 }
 
-func (r *DuckDBReader) QueryPerformanceHistory(limit int) ([]map[string]interface{}, error) {
+func (r *QuestDBReader) QueryPerformanceHistory(userID string, limit int) ([]map[string]interface{}, error) {
 	if r.db == nil {
 		return nil, fmt.Errorf("database not connected")
+	}
+	if userID == "" {
+		userID = "admin"
 	}
 	if limit <= 0 {
 		limit = 100
 	}
+
 	query := `
 		SELECT timestamp, portfolio_value, pnl, sharpe_ratio, max_drawdown
 		FROM performance_history
+		WHERE user_id = $1
 		ORDER BY timestamp DESC
-		LIMIT ?
+		LIMIT $2
 	`
-	rows, err := r.db.Query(query, limit)
+	rows, err := r.db.Query(query, userID, limit)
 	if err != nil {
 		return []map[string]interface{}{}, nil
 	}
@@ -252,9 +268,12 @@ func (r *DuckDBReader) QueryPerformanceHistory(limit int) ([]map[string]interfac
 	return results, nil
 }
 
-func (r *DuckDBReader) QueryLogs(level string, limit int) ([]map[string]interface{}, error) {
+func (r *QuestDBReader) QueryLogs(userID string, level string, limit int) ([]map[string]interface{}, error) {
 	if r.db == nil {
 		return nil, fmt.Errorf("database not connected")
+	}
+	if userID == "" {
+		userID = "admin"
 	}
 	if level == "" {
 		level = "INFO"
@@ -262,14 +281,15 @@ func (r *DuckDBReader) QueryLogs(level string, limit int) ([]map[string]interfac
 	if limit <= 0 {
 		limit = 100
 	}
+
 	query := `
 		SELECT timestamp, event_type, severity, message, details
 		FROM system_events
-		WHERE severity = ? OR ? = 'ALL'
+		WHERE user_id = $1 AND (severity = $2 OR $3 = 'ALL')
 		ORDER BY timestamp DESC
-		LIMIT ?
+		LIMIT $4
 	`
-	rows, err := r.db.Query(query, level, level, limit)
+	rows, err := r.db.Query(query, userID, level, level, limit)
 	if err != nil {
 		return []map[string]interface{}{}, nil
 	}
@@ -301,7 +321,7 @@ func (r *DuckDBReader) QueryLogs(level string, limit int) ([]map[string]interfac
 	return results, nil
 }
 
-func (r *DuckDBReader) QueryLatestIntegrityReport() (map[string]interface{}, error) {
+func (r *QuestDBReader) QueryLatestIntegrityReport(userID string) (map[string]interface{}, error) {
 	defaultReport := map[string]interface{}{
 		"is_valid": true,
 		"reasons":  []interface{}{},
@@ -310,18 +330,22 @@ func (r *DuckDBReader) QueryLatestIntegrityReport() (map[string]interface{}, err
 	if r.db == nil {
 		return defaultReport, fmt.Errorf("database not connected")
 	}
+	if userID == "" {
+		userID = "admin"
+	}
 
 	var (
 		ts      string
 		details sql.NullString
 	)
-	err := r.db.QueryRow(`
+	query := `
 		SELECT timestamp, details
 		FROM system_events
-		WHERE event_type = 'risk.kill_switch'
+		WHERE user_id = $1 AND event_type = 'risk.kill_switch'
 		ORDER BY timestamp DESC
 		LIMIT 1
-	`).Scan(&ts, &details)
+	`
+	err := r.db.QueryRow(query, userID).Scan(&ts, &details)
 	if err == sql.ErrNoRows {
 		return defaultReport, nil
 	}
@@ -339,12 +363,4 @@ func (r *DuckDBReader) QueryLatestIntegrityReport() (map[string]interface{}, err
 	}
 	report["timestamp"] = ts
 	return report, nil
-}
-
-func (r *DuckDB) InsertMetrics(_ []map[string]interface{}) error {
-	return fmt.Errorf("duckdb is read-only in Go; telemetry-engine owns writes")
-}
-
-func (r *DuckDB) InsertPerformanceRecord(_ map[string]interface{}) error {
-	return fmt.Errorf("duckdb is read-only in Go; telemetry-engine owns writes")
 }

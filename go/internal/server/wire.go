@@ -12,8 +12,8 @@ import (
 	"trading/control-gateway/internal/domain/repositories"
 	"trading/control-gateway/internal/health"
 	"trading/control-gateway/internal/repository/alpaca"
-	"trading/control-gateway/internal/repository/duckdb"
 	"trading/control-gateway/internal/repository/postgres"
+	"trading/control-gateway/internal/repository/questdb"
 	"trading/control-gateway/internal/storage"
 	"trading/control-gateway/internal/usecase"
 	"trading/control-gateway/internal/worker"
@@ -32,9 +32,9 @@ func ProvideRedisClient(cfg *config.Config) *redis.Client {
 	return redis.NewClient(options)
 }
 
-// ProvideDuckDBReader initializes DuckDB reader from config.
-func ProvideDuckDBReader(cfg *config.Config) *storage.DuckDBReader {
-	reader, err := storage.NewDuckDBReader(cfg.Storage.DuckDBPath)
+// ProvideQuestDBReader initializes QuestDB reader from config.
+func ProvideQuestDBReader(cfg *config.Config) *storage.QuestDBReader {
+	reader, err := storage.NewQuestDBReader(cfg.Storage.QuestDBPgURL)
 	if err != nil {
 		return nil
 	}
@@ -70,7 +70,7 @@ func ProvideAlpacaRepository(cfg *config.Config) repositories.AlpacaRepository {
 func InitializeServer(cfg *config.Config) (*Server, error) {
 	wire.Build(
 		// Core Infrastructure
-		ProvideDuckDBReader,
+		ProvideQuestDBReader,
 		ProvidePostgresReader,
 		ProvideRedisClient,
 		storage.NewStore,
@@ -84,8 +84,8 @@ func InitializeServer(cfg *config.Config) (*Server, error) {
 		postgres.NewRawSQLTradeRepository,
 		postgres.NewRawSQLAlertRepository,
 		postgres.NewGormRiskLimitsRepository,
-		duckdb.NewDuckDBMetricRepository,
-		duckdb.NewHybridSystemRepository,
+		questdb.NewQuestDBMetricRepository,
+		questdb.NewHybridSystemRepository,
 
 		// UseCases
 		usecase.NewTradeUseCase,

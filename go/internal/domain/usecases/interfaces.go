@@ -24,10 +24,10 @@ type AlertUseCase interface {
 
 // MetricUseCase defines application business rules for accessing telemetry and metrics.
 type MetricUseCase interface {
-	GetCurrentMetrics() (map[string]interface{}, error)
-	GetMetricsHistory(timeRange, startTime, endTime, interval string, metricTypes []string) (map[string]interface{}, error)
+	GetCurrentMetrics(userID string) (map[string]interface{}, error)
+	GetMetricsHistory(userID string, timeRange, startTime, endTime, interval string, metricTypes []string) (map[string]interface{}, error)
 	GetSymbols() ([]string, error)
-	GetSummary() (map[string]interface{}, error)
+	GetSummary(userID string) (map[string]interface{}, error)
 }
 
 // AlpacaUseCase defines application business rules for trading and market data feeds.
@@ -45,9 +45,9 @@ type AlpacaUseCase interface {
 
 // SystemUseCase defines application business rules for querying component status and performance.
 type SystemUseCase interface {
-	GetPerformance() ([]map[string]interface{}, error)
+	GetPerformance(userID string) ([]map[string]interface{}, error)
 	GetComponents() map[string]interface{}
-	GetLogs(level string, limit int) ([]map[string]interface{}, error)
+	GetLogs(userID string, level string, limit int) ([]map[string]interface{}, error)
 	GetStats() map[string]interface{}
 	ValidateIntegrity(metrics entities.Metrics) entities.Report
 }

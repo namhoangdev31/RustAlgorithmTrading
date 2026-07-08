@@ -1,15 +1,18 @@
-//! DuckDB Database Layer for Trading System
+//! QuestDB Database Layer for Trading System
 //!
-//! This module provides a high-performance, type-safe database layer using DuckDB
-//! for time-series analytics and observability data storage.
+//! This module provides a high-performance, type-safe database layer using QuestDB
+//! for time-series analytics data storage via ILP (InfluxDB Line Protocol).
+//!
+//! # Architecture
+//!
+//! - **Write path**: Rust → ILP TCP → QuestDB:9009 (this crate)
+//! - **Read path**:  Go   → PgWire  → QuestDB:8812 (gateway service)
 //!
 //! # Features
 //!
-//! - **Connection Pooling**: Efficient connection management with r2d2
-//! - **Type-Safe Queries**: Compile-time query validation
-//! - **Time-Series Optimized**: Columnar storage for fast aggregations
-//! - **Migration Support**: Schema versioning and upgrades
-//! - **Observability**: Metrics collection and performance tracking
+//! - **High-throughput writes**: ILP protocol (~4M rows/sec)
+//! - **Type-Safe Models**: Compile-time query validation
+//! - **Graceful Degradation**: QuestDB down → log warning, don't crash
 //!
 //! # Example
 //!
@@ -18,9 +21,8 @@
 //! use chrono::Utc;
 //!
 //! # async fn example() -> anyhow::Result<()> {
-//! // Initialize database
-//! let db = DatabaseManager::new("trading_metrics.duckdb").await?;
-//! db.initialize().await?;
+//! // Connect to QuestDB
+//! let db = DatabaseManager::new("questdb:9009").await?;
 //!
 //! // Insert metric
 //! let metric = MetricRecord {
@@ -31,9 +33,6 @@
 //!     labels: None,
 //! };
 //! db.insert_metric(&metric).await?;
-//!
-//! // Query metrics
-//! let metrics = db.get_metrics("order_latency_ms", None, None, 100).await?;
 //! # Ok(())
 //! # }
 //! ```
@@ -41,18 +40,8 @@
 pub mod connection;
 pub mod error;
 pub mod models;
-pub mod query;
-pub mod schema;
-
-#[cfg(feature = "migration-tools")]
-pub mod migrations;
 
 // Re-exports for convenience
-pub use connection::{ConnectionPool, DatabaseManager};
+pub use connection::DatabaseManager;
 pub use error::{DatabaseError, Result};
 pub use models::*;
-pub use query::{QueryBuilder, TimeInterval};
-pub use schema::Schema;
-
-#[cfg(test)]
-mod tests;

@@ -13,8 +13,8 @@ async fn main() -> anyhow::Result<()> {
 
     let config = ObservabilityConfig::from_env()?;
     tracing::info!(
-        "[cid:INIT] DuckDB path: {}; scrape_interval_ms: {}; targets: {}",
-        config.duckdb_path.display(),
+        "[cid:INIT] QuestDB ILP addr: {}; scrape_interval_ms: {}; targets: {}",
+        config.questdb_ilp_addr,
         config.scrape_interval.as_millis(),
         config.targets.len()
     );

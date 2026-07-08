@@ -15,7 +15,7 @@ func NewMetricUseCase(repo repositories.MetricRepository) usecases.MetricUseCase
 	return &metricUseCase{repo: repo}
 }
 
-func (u *metricUseCase) GetCurrentMetrics() (map[string]interface{}, error) {
+func (u *metricUseCase) GetCurrentMetrics(userID string) (map[string]interface{}, error) {
 	now := time.Now().UTC().Format(time.RFC3339)
 	payload := map[string]interface{}{
 		"timestamp":   now,
@@ -24,7 +24,7 @@ func (u *metricUseCase) GetCurrentMetrics() (map[string]interface{}, error) {
 		"execution":   map[string]interface{}{},
 		"system":      map[string]interface{}{},
 	}
-	snapshot, err := u.repo.QueryCurrentMetricsSnapshot()
+	snapshot, err := u.repo.QueryCurrentMetricsSnapshot(userID)
 	if err == nil {
 		if value, ok := snapshot["market_data"]; ok {
 			payload["market_data"] = value
@@ -39,14 +39,14 @@ func (u *metricUseCase) GetCurrentMetrics() (map[string]interface{}, error) {
 			payload["system"] = value
 		}
 	}
-	summary, err := u.repo.QueryPerformanceSummary()
+	summary, err := u.repo.QueryPerformanceSummary(userID)
 	if err == nil {
 		payload["strategy"] = summary
 	}
 	return payload, nil
 }
 
-func (u *metricUseCase) GetMetricsHistory(timeRange, startTime, endTime, interval string, metricTypes []string) (map[string]interface{}, error) {
+func (u *metricUseCase) GetMetricsHistory(userID string, timeRange, startTime, endTime, interval string, metricTypes []string) (map[string]interface{}, error) {
 	now := time.Now().UTC()
 	start := startTime
 	end := endTime
@@ -67,7 +67,7 @@ func (u *metricUseCase) GetMetricsHistory(timeRange, startTime, endTime, interva
 		}
 	}
 
-	data, err := u.repo.QueryMetricsHistory(start, end, metricTypes)
+	data, err := u.repo.QueryMetricsHistory(userID, start, end, metricTypes)
 	if err != nil {
 		return nil, err
 	}
@@ -85,6 +85,6 @@ func (u *metricUseCase) GetSymbols() ([]string, error) {
 	return []string{}, nil
 }
 
-func (u *metricUseCase) GetSummary() (map[string]interface{}, error) {
-	return u.repo.QueryPerformanceSummary()
+func (u *metricUseCase) GetSummary(userID string) (map[string]interface{}, error) {
+	return u.repo.QueryPerformanceSummary(userID)
 }

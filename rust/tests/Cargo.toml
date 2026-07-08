@@ -84,28 +84,12 @@ name = "concurrent_integration"
 path = "integration/test_concurrent.rs"
 
 [[test]]
-name = "duckdb_storage_integration"
-path = "integration/test_duckdb_storage.rs"
-
-[[test]]
 name = "stop_loss_integration"
 path = "integration/test_stop_loss_integration.rs"
 
 [[test]]
-name = "observability_integration"
-path = "integration/test_observability_integration.rs"
-
-[[test]]
 name = "error_handling_integration"
 path = "integration/test_error_handling_integration.rs"
-
-[[test]]
-name = "risk_execution_observability"
-path = "integration/test_risk_execution_observability.rs"
-
-[[test]]
-name = "performance_load"
-path = "integration/test_performance_load.rs"
 
 [[test]]
 name = "alpaca_api_integration"

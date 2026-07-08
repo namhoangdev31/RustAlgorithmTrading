@@ -8,21 +8,21 @@ import (
 // DuckDB is used for metrics/analytics (OLAP).
 // PostgreSQL is used for persistence/trades (OLTP) in production.
 type Store struct {
-	duckdb   *DuckDBReader
+	questdb  *QuestDBReader
 	postgres *PostgresReader
 }
 
-func NewStore(duckdb *DuckDBReader, postgres *PostgresReader) *Store {
+func NewStore(questdb *QuestDBReader, postgres *PostgresReader) *Store {
 	return &Store{
-		duckdb:   duckdb,
+		questdb:  questdb,
 		postgres: postgres,
 	}
 }
 
 func (s *Store) Close() error {
 	var errs []error
-	if s.duckdb != nil {
-		if err := s.duckdb.Close(); err != nil {
+	if s.questdb != nil {
+		if err := s.questdb.Close(); err != nil {
 			errs = append(errs, err)
 		}
 	}
@@ -34,11 +34,11 @@ func (s *Store) Close() error {
 	return errors.Join(errs...)
 }
 
-func (s *Store) PingDuckDB() error {
-	if s.duckdb == nil {
-		return errors.New("duckdb not configured")
+func (s *Store) PingQuestDB() error {
+	if s.questdb == nil {
+		return errors.New("questdb not configured")
 	}
-	return s.duckdb.Ping()
+	return s.questdb.Ping()
 }
 
 func (s *Store) PingPostgres() error {
@@ -48,8 +48,8 @@ func (s *Store) PingPostgres() error {
 	return s.postgres.Ping()
 }
 
-func (s *Store) DuckDB() *DuckDBReader {
-	return s.duckdb
+func (s *Store) QuestDB() *QuestDBReader {
+	return s.questdb
 }
 
 func (s *Store) Postgres() *PostgresReader {

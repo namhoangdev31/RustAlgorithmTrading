@@ -8,13 +8,9 @@ pub type Result<T> = std::result::Result<T, DatabaseError>;
 /// Database errors
 #[derive(Error, Debug)]
 pub enum DatabaseError {
-    /// DuckDB connection error
-    #[error("DuckDB connection error: {0}")]
-    Connection(#[from] duckdb::Error),
-
-    /// Pool error
-    #[error("Connection pool error: {0}")]
-    Pool(#[from] r2d2::Error),
+    /// QuestDB ILP sender error
+    #[error("QuestDB ILP error: {0}")]
+    Ilp(String),
 
     /// Serialization error
     #[error("Serialization error: {0}")]
@@ -75,7 +71,3 @@ impl DatabaseError {
         Self::NotFound(msg.into())
     }
 }
-
-// Note: No need for From<DatabaseError> for anyhow::Error
-// anyhow already provides a blanket implementation for all error types
-// that implement std::error::Error, which DatabaseError does via #[derive(Error)]

@@ -15,9 +15,9 @@ type Config struct {
 		TelemetryAPIKey string
 	}
 	Storage struct {
-		DuckDBPath  string
-		DatabaseURL string
-		RedisURL    string
+		QuestDBPgURL string
+		DatabaseURL  string
+		RedisURL     string
 	}
 	Alpaca struct {
 		BaseURL     string
@@ -43,12 +43,12 @@ func LoadConfig() *Config {
 	// Set defaults
 	v.SetDefault("PORT", "8081")
 	v.SetDefault("HOST", "127.0.0.1")
-	v.SetDefault("DUCKDB_PATH", "data/telemetry.duckdb")
+	v.SetDefault("QUESTDB_PG_URL", "postgresql://admin:quest@localhost:8812/qdb")
 	v.SetDefault("ALPACA_BASE_URL", "https://paper-api.alpaca.markets")
 	v.SetDefault("ALPACA_DATA_BASE_URL", "https://data.alpaca.markets")
-	v.SetDefault("MARKET_DATA_METRICS_URL", "http://127.0.0.1:9091/metrics")
-	v.SetDefault("EXECUTION_METRICS_URL", "http://127.0.0.1:9092/metrics")
-	v.SetDefault("RISK_METRICS_URL", "http://127.0.0.1:9093/metrics")
+	v.SetDefault("MARKET_DATA_METRICS_URL", "http://127.0.0.1:9090/metrics")
+	v.SetDefault("EXECUTION_METRICS_URL", "http://127.0.0.1:9090/metrics")
+	v.SetDefault("RISK_METRICS_URL", "http://127.0.0.1:9090/metrics")
 	v.SetDefault("REDIS_URL", "redis://127.0.0.1:6379/0")
 
 	// Read from .env file if it exists at the root path
@@ -66,7 +66,7 @@ func LoadConfig() *Config {
 	cfg.Server.Host = v.GetString("HOST")
 	cfg.Server.TelemetryAPIKey = v.GetString("TELEMETRY_API_KEY")
 
-	cfg.Storage.DuckDBPath = v.GetString("DUCKDB_PATH")
+	cfg.Storage.QuestDBPgURL = v.GetString("QUESTDB_PG_URL")
 	cfg.Storage.DatabaseURL = v.GetString("DATABASE_URL")
 	cfg.Storage.RedisURL = v.GetString("REDIS_URL")
 
