@@ -39,6 +39,7 @@ tungstenite.workspace = true
 
 # Data structures
 indexmap.workspace = true
+rand = "0.8"
 
 [dev-dependencies]
 mockall.workspace = true

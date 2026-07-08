@@ -18,6 +18,8 @@ pub struct MarketDataService {
     orderbook_manager: OrderBookManager,
     bar_aggregator: BarAggregator,
     publisher: MarketDataPublisher,
+    trading_mode: common::types::TradingMode,
+    symbols: Vec<String>,
 }
 
 impl MarketDataService {
@@ -31,15 +33,22 @@ impl MarketDataService {
         );
 
         // Load API credentials from environment
-        let api_key = std::env::var("ALPACA_API_KEY").map_err(|_| {
-            TradingError::Configuration("ALPACA_API_KEY environment variable not set".to_string())
-        })?;
-
-        let api_secret = std::env::var("ALPACA_SECRET_KEY").map_err(|_| {
-            TradingError::Configuration(
-                "ALPACA_SECRET_KEY environment variable not set".to_string(),
+        let (api_key, api_secret) = if trading_mode == common::types::TradingMode::Simulated {
+            (
+                std::env::var("ALPACA_API_KEY").unwrap_or_default(),
+                std::env::var("ALPACA_SECRET_KEY").unwrap_or_default(),
             )
-        })?;
+        } else {
+            let key = std::env::var("ALPACA_API_KEY").map_err(|_| {
+                TradingError::Configuration("ALPACA_API_KEY environment variable not set".to_string())
+            })?;
+            let secret = std::env::var("ALPACA_SECRET_KEY").map_err(|_| {
+                TradingError::Configuration(
+                    "ALPACA_SECRET_KEY environment variable not set".to_string(),
+                )
+            })?;
+            (key, secret)
+        };
 
         // Create WebSocket client with proper parameters
         let ws_client = WebSocketClient::new(api_key, api_secret, config.symbols.clone())?;
@@ -62,11 +71,112 @@ impl MarketDataService {
             orderbook_manager,
             bar_aggregator,
             publisher,
+            trading_mode,
+            symbols: config.symbols,
         })
     }
 
     pub async fn run(&mut self) -> Result<()> {
         info!("Starting Market Data Service");
+
+        if self.trading_mode == common::types::TradingMode::Simulated {
+            info!("Running in SIMULATED mode. Spawning mock market data feed.");
+            let publisher = self.publisher.clone();
+            let symbols = self.symbols.clone();
+
+            tokio::spawn(async move {
+                use rand::Rng;
+                // Store a starting price for each symbol
+                let mut prices: std::collections::HashMap<String, f64> = symbols
+                    .iter()
+                    .map(|s| {
+                        let base = match s.as_str() {
+                            "AAPL" => 180.0,
+                            "MSFT" => 420.0,
+                            "GOOGL" => 170.0,
+                            "AMZN" => 180.0,
+                            "TSLA" => 170.0,
+                            "NVDA" => 120.0,
+                            "META" => 480.0,
+                            "NFLX" => 600.0,
+                            _ => 100.0,
+                        };
+                        (s.clone(), base)
+                    })
+                    .collect();
+
+                let mut trade_id_counter = 0u64;
+
+                loop {
+                    tokio::time::sleep(tokio::time::Duration::from_millis(1000)).await;
+
+                    let mut rng = rand::thread_rng();
+                    for symbol in &symbols {
+                        // Generate a small price change
+                        let current_price = match prices.get_mut(symbol) {
+                            Some(p) => p,
+                            None => continue,
+                        };
+                        let change_pct = (rng.gen::<f64>() - 0.5) * 0.002; // max 0.1% change
+                        *current_price *= 1.0 + change_pct;
+
+                        let price = *current_price;
+                        let size = (rng.gen_range(1..10) * 10) as f64;
+                        let timestamp = chrono::Utc::now();
+                        trade_id_counter += 1;
+
+                        // Publish trade
+                        let trade = common::types::Trade {
+                            symbol: common::types::Symbol(symbol.clone()),
+                            price: common::types::Price(price),
+                            quantity: common::types::Quantity(size),
+                            side: if rng.gen::<bool>() { common::types::Side::Bid } else { common::types::Side::Ask },
+                            timestamp,
+                            trade_id: trade_id_counter.to_string(),
+                        };
+                        let md_msg = Message::TradeUpdate { data: trade };
+                        let _ = publisher.publish("market.trade", md_msg);
+
+                        // Publish quote (orderbook snapshot)
+                        let snapshot = common::types::OrderBook {
+                            symbol: common::types::Symbol(symbol.clone()),
+                            bids: vec![common::types::Level {
+                                price: common::types::Price(price - 0.05),
+                                quantity: common::types::Quantity(size * 1.5),
+                                timestamp,
+                            }],
+                            asks: vec![common::types::Level {
+                                price: common::types::Price(price + 0.05),
+                                quantity: common::types::Quantity(size * 1.5),
+                                timestamp,
+                            }],
+                            timestamp,
+                            sequence: trade_id_counter,
+                        };
+                        let md_msg2 = Message::OrderBookUpdate { data: snapshot };
+                        let _ = publisher.publish("market.quote", md_msg2);
+
+                        // Publish bar update
+                        let bar = common::types::Bar {
+                            symbol: common::types::Symbol(symbol.clone()),
+                            open: common::types::Price(price * (1.0 - 0.0005)),
+                            high: common::types::Price(price * (1.0 + 0.001)),
+                            low: common::types::Price(price * (1.0 - 0.001)),
+                            close: common::types::Price(price),
+                            volume: common::types::Quantity(size * 10.0),
+                            timestamp,
+                        };
+                        let bar_msg = Message::BarUpdate { data: bar };
+                        let _ = publisher.publish("market.bar", bar_msg);
+                    }
+                }
+            });
+
+            // Keep alive
+            loop {
+                tokio::time::sleep(tokio::time::Duration::from_secs(3600)).await;
+            }
+        }
 
         let (tx, mut rx) = tokio::sync::mpsc::unbounded_channel::<websocket::AlpacaMessage>();
         let ws_client = self.ws_client.clone();
