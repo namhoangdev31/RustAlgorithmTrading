@@ -6,7 +6,6 @@ package server
 import (
 	"github.com/google/wire"
 	"trading/observability-api/internal/alerts"
-	"trading/observability-api/internal/collector"
 	"trading/observability-api/internal/config"
 	"trading/observability-api/internal/delivery/http/handlers"
 	"trading/observability-api/internal/domain/repositories"
@@ -44,24 +43,14 @@ func ProvidePostgresReader(cfg *config.Config) *storage.PostgresReader {
 // ProvideAlpacaRepository initializes Alpaca client adapter matching repository contract.
 func ProvideAlpacaRepository(cfg *config.Config) repositories.AlpacaRepository {
 	client, err := alpaca.NewClient(alpaca.Config{
-		BaseURL:     cfg.Alpaca.BaseURL,
-		APIKey:      cfg.Alpaca.APIKey,
-		SecretKey:   cfg.Alpaca.SecretKey,
+		BaseURL:   cfg.Alpaca.BaseURL,
+		APIKey:    cfg.Alpaca.APIKey,
+		SecretKey: cfg.Alpaca.SecretKey,
 	})
 	if err != nil {
 		return nil
 	}
 	return client
-}
-
-// ProvideCollectorManager initializes Go Metrics collector manager.
-func ProvideCollectorManager(store *storage.Store, cfg *config.Config) *collector.Manager {
-	targets := map[string]string{
-		"market_data": cfg.Metrics.MarketDataURL,
-		"execution":   cfg.Metrics.ExecutionURL,
-		"risk":        cfg.Metrics.RiskURL,
-	}
-	return collector.NewManager(store, targets)
 }
 
 // InitializeServer compiles and resolves the Server dependency graph.
@@ -75,7 +64,6 @@ func InitializeServer(cfg *config.Config) (*Server, error) {
 		alerts.NewManager,
 		ProvideAlpacaRepository,
 		health.NewAggregator,
-		ProvideCollectorManager,
 		worker.NewMetricsCollector,
 
 		// Repositories

@@ -129,6 +129,40 @@ mod integration_tests {
         let stats = db.get_table_stats().await.unwrap();
         assert!(!stats.is_empty());
         assert!(stats.iter().any(|s| s.table_name == "trading_metrics"));
+        assert!(stats.iter().any(|s| s.table_name == "performance_history"));
+    }
+
+    #[tokio::test]
+    async fn test_performance_record_insertion() {
+        let dir = tempdir().unwrap();
+        let db_path = dir.path().join("test_performance.duckdb");
+        let db = DatabaseManager::new(db_path).await.unwrap();
+        db.initialize().await.unwrap();
+
+        let record = PerformanceRecord::new(100_000.0, 1_250.0, 42).with_ratios(
+            Some(1.4),
+            Some(-0.03),
+            Some(0.61),
+        );
+
+        db.insert_performance_record(&record).await.unwrap();
+
+        let conn = db.get_connection().unwrap();
+        let row = conn
+            .query_row(
+                "SELECT portfolio_value, pnl, total_trades FROM performance_history LIMIT 1",
+                [],
+                |row| {
+                    Ok((
+                        row.get::<_, f64>(0)?,
+                        row.get::<_, f64>(1)?,
+                        row.get::<_, i32>(2)?,
+                    ))
+                },
+            )
+            .unwrap();
+
+        assert_eq!(row, (100_000.0, 1_250.0, 42));
     }
 
     #[tokio::test]

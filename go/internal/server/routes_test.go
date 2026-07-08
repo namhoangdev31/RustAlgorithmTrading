@@ -124,7 +124,7 @@ func TestIntegrityValidateEndpoint(t *testing.T) {
 	}
 	var payload map[string]interface{}
 	_ = json.Unmarshal(rec.Body.Bytes(), &payload)
-	if valid, ok := payload["is_valid"].(bool); !ok || valid {
-		t.Fatalf("expected is_valid=false, got %v", payload["is_valid"])
+	if valid, ok := payload["is_valid"].(bool); !ok || !valid {
+		t.Fatalf("expected default is_valid=true without DuckDB event, got %v", payload["is_valid"])
 	}
 }

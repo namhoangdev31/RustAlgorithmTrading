@@ -34,3 +34,14 @@ func (r *HybridSystemRepository) QueryLogs(level string, limit int) ([]map[strin
 	}
 	return []map[string]interface{}{}, nil
 }
+
+func (r *HybridSystemRepository) QueryLatestIntegrityReport() (map[string]interface{}, error) {
+	if r.store == nil || r.store.DuckDB() == nil {
+		return map[string]interface{}{
+			"is_valid": true,
+			"reasons":  []interface{}{},
+			"metrics":  map[string]interface{}{},
+		}, nil
+	}
+	return r.store.DuckDB().QueryLatestIntegrityReport()
+}

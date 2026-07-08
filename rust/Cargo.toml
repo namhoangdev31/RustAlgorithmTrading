@@ -5,6 +5,7 @@ members = [
     "signal-bridge",
     "risk-manager",
     "execution-engine",
+    "observability-engine",
     "common",
     "database",
     "tests",

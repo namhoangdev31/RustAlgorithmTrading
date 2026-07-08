@@ -13,7 +13,6 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"trading/observability-api/internal/alerts"
-	"trading/observability-api/internal/collector"
 	"trading/observability-api/internal/config"
 	deliveryHttp "trading/observability-api/internal/delivery/http"
 	"trading/observability-api/internal/delivery/http/handlers"
@@ -29,7 +28,6 @@ type Server struct {
 	cfg              *config.Config
 	store            *storage.Store
 	wsManager        *ws.Manager
-	collectorMgr     *collector.Manager
 	metricsWorker    *worker.MetricsCollector
 	healthAggregator *health.Aggregator
 	incidentManager  *alerts.Manager
@@ -46,7 +44,6 @@ func NewServer(
 	cfg *config.Config,
 	store *storage.Store,
 	wsManager *ws.Manager,
-	collectorMgr *collector.Manager,
 	metricsWorker *worker.MetricsCollector,
 	healthAggregator *health.Aggregator,
 	incidentManager *alerts.Manager,
@@ -61,7 +58,6 @@ func NewServer(
 		cfg:              cfg,
 		store:            store,
 		wsManager:        wsManager,
-		collectorMgr:     collectorMgr,
 		metricsWorker:    metricsWorker,
 		healthAggregator: healthAggregator,
 		incidentManager:  incidentManager,
@@ -77,9 +73,6 @@ func NewServer(
 func (s *Server) Run() error {
 	// Start Websocket Manager
 	go s.wsManager.Start()
-
-	// Start Go Metrics Collector (Shadow Run)
-	go s.collectorMgr.Start(context.Background())
 
 	// Start Metrics Worker
 	go s.metricsWorker.Start()
@@ -111,7 +104,6 @@ func (s *Server) Run() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	s.collectorMgr.Stop()
 	s.metricsWorker.Stop()
 	s.wsManager.Stop()
 

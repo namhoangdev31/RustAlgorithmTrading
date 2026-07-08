@@ -218,8 +218,17 @@ pub fn get_builtin_migrations() -> Vec<Migration> {
                     metric_name VARCHAR NOT NULL,
                     value DOUBLE NOT NULL,
                     symbol VARCHAR,
-                    labels JSON,
-                    PRIMARY KEY (timestamp, metric_name, symbol)
+                    labels VARCHAR
+                );
+
+                CREATE TABLE IF NOT EXISTS performance_history (
+                    timestamp TIMESTAMP NOT NULL PRIMARY KEY,
+                    portfolio_value DOUBLE NOT NULL,
+                    pnl DOUBLE NOT NULL,
+                    sharpe_ratio DOUBLE,
+                    max_drawdown DOUBLE,
+                    win_rate DOUBLE,
+                    total_trades INTEGER
                 );
 
                 CREATE TABLE IF NOT EXISTS trading_candles (
@@ -234,21 +243,19 @@ pub fn get_builtin_migrations() -> Vec<Migration> {
                     PRIMARY KEY (timestamp, symbol)
                 );
 
-                CREATE SEQUENCE IF NOT EXISTS system_events_seq;
                 CREATE TABLE IF NOT EXISTS system_events (
-                    id BIGINT PRIMARY KEY DEFAULT nextval('system_events_seq'),
                     timestamp TIMESTAMP NOT NULL,
-                    event_type VARCHAR NOT NULL,
-                    severity VARCHAR NOT NULL,
-                    message TEXT NOT NULL,
-                    details JSON
+                    event_type VARCHAR,
+                    severity VARCHAR,
+                    message VARCHAR,
+                    details VARCHAR
                 );
             "#.to_string(),
             down_sql: Some(r#"
                 DROP TABLE IF EXISTS trading_metrics CASCADE;
+                DROP TABLE IF EXISTS performance_history CASCADE;
                 DROP TABLE IF EXISTS trading_candles CASCADE;
                 DROP TABLE IF EXISTS system_events CASCADE;
-                DROP SEQUENCE IF EXISTS system_events_seq CASCADE;
             "#.to_string()),
         },
         Migration {
@@ -257,12 +264,14 @@ pub fn get_builtin_migrations() -> Vec<Migration> {
             up_sql: r#"
                 CREATE INDEX IF NOT EXISTS idx_metrics_timestamp ON trading_metrics(timestamp DESC);
                 CREATE INDEX IF NOT EXISTS idx_metrics_name_symbol ON trading_metrics(metric_name, symbol);
+                CREATE INDEX IF NOT EXISTS idx_performance_timestamp ON performance_history(timestamp DESC);
                 CREATE INDEX IF NOT EXISTS idx_candles_symbol_time ON trading_candles(symbol, timestamp DESC);
                 CREATE INDEX IF NOT EXISTS idx_events_timestamp ON system_events(timestamp DESC);
             "#.to_string(),
             down_sql: Some(r#"
                 DROP INDEX IF EXISTS idx_metrics_timestamp;
                 DROP INDEX IF EXISTS idx_metrics_name_symbol;
+                DROP INDEX IF EXISTS idx_performance_timestamp;
                 DROP INDEX IF EXISTS idx_candles_symbol_time;
                 DROP INDEX IF EXISTS idx_events_timestamp;
             "#.to_string()),

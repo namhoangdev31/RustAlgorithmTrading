@@ -22,6 +22,13 @@ func (r *DuckDBMetricRepository) QueryPerformanceSummary() (map[string]interface
 	return r.store.DuckDB().QueryPerformanceSummary()
 }
 
+func (r *DuckDBMetricRepository) QueryCurrentMetricsSnapshot() (map[string]interface{}, error) {
+	if r.store == nil || r.store.DuckDB() == nil {
+		return map[string]interface{}{}, nil
+	}
+	return r.store.DuckDB().QueryCurrentMetricsSnapshot()
+}
+
 func (r *DuckDBMetricRepository) QueryMetricsHistory(start, end string, metricTypes []string) ([]map[string]interface{}, error) {
 	if r.store == nil || r.store.DuckDB() == nil {
 		return []map[string]interface{}{}, nil

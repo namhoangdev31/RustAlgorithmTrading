@@ -64,7 +64,7 @@
     "audiences": "developer,trader,regular",
     "billing_model": "subscription_and_usage",
     "public_entrypoints": "nextjs-frontend,edge-gateway",
-    "private_services": "market-data,signal-bridge,risk-manager,execution-engine,go-control-plane,managed-redis",
+    "private_services": "market-data,signal-bridge,risk-manager,execution-engine,observability-engine,go-control-plane,managed-redis",
     "config_owner": "platform"
   }
 }

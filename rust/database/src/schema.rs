@@ -10,6 +10,7 @@ impl Schema {
     /// Create all tables and indexes
     pub fn create_all(conn: &Connection) -> Result<()> {
         Self::create_metrics_table(conn)?;
+        Self::create_performance_table(conn)?;
         Self::create_candles_table(conn)?;
         Self::create_events_table(conn)?;
         Self::create_trades_table(conn)?;
@@ -22,18 +23,36 @@ impl Schema {
     /// Stores time-series metrics for market data, strategy performance, execution, and system metrics.
     fn create_metrics_table(conn: &Connection) -> Result<()> {
         conn.execute_batch(
-            "CREATE SEQUENCE IF NOT EXISTS metrics_seq;
-            CREATE TABLE IF NOT EXISTS trading_metrics (
-                id BIGINT PRIMARY KEY DEFAULT nextval('metrics_seq'),
+            "CREATE TABLE IF NOT EXISTS trading_metrics (
                 timestamp TIMESTAMP NOT NULL,
                 metric_name VARCHAR NOT NULL,
                 value DOUBLE NOT NULL,
                 symbol VARCHAR,
-                labels JSON
+                labels VARCHAR
             )",
         )?;
 
         tracing::debug!("Created trading_metrics table");
+        Ok(())
+    }
+
+    /// Create performance_history table
+    ///
+    /// Stores strategy portfolio snapshots used by the observability API summary views.
+    fn create_performance_table(conn: &Connection) -> Result<()> {
+        conn.execute_batch(
+            "CREATE TABLE IF NOT EXISTS performance_history (
+                timestamp TIMESTAMP NOT NULL PRIMARY KEY,
+                portfolio_value DOUBLE NOT NULL,
+                pnl DOUBLE NOT NULL,
+                sharpe_ratio DOUBLE,
+                max_drawdown DOUBLE,
+                win_rate DOUBLE,
+                total_trades INTEGER
+            )",
+        )?;
+
+        tracing::debug!("Created performance_history table");
         Ok(())
     }
 
@@ -64,14 +83,12 @@ impl Schema {
     /// Stores system events, alerts, and logs.
     fn create_events_table(conn: &Connection) -> Result<()> {
         conn.execute_batch(
-            "CREATE SEQUENCE IF NOT EXISTS system_events_seq;
-            CREATE TABLE IF NOT EXISTS system_events (
-                id BIGINT PRIMARY KEY DEFAULT nextval('system_events_seq'),
+            "CREATE TABLE IF NOT EXISTS system_events (
                 timestamp TIMESTAMP NOT NULL,
-                event_type VARCHAR NOT NULL,
-                severity VARCHAR NOT NULL,
-                message TEXT NOT NULL,
-                details JSON
+                event_type VARCHAR,
+                severity VARCHAR,
+                message VARCHAR,
+                details VARCHAR
             )",
         )?;
 
@@ -111,6 +128,10 @@ impl Schema {
             CREATE INDEX IF NOT EXISTS idx_metrics_symbol ON trading_metrics(symbol);",
         )?;
 
+        conn.execute_batch(
+            "CREATE INDEX IF NOT EXISTS idx_performance_timestamp ON performance_history(timestamp DESC);",
+        )?;
+
         // Candles indexes
         conn.execute_batch(
             "CREATE INDEX IF NOT EXISTS idx_candles_timestamp ON trading_candles(timestamp DESC);
@@ -139,6 +160,7 @@ impl Schema {
     pub fn drop_all(conn: &Connection) -> Result<()> {
         conn.execute_batch(
             "DROP TABLE IF EXISTS trading_metrics CASCADE;
+            DROP TABLE IF EXISTS performance_history CASCADE;
             DROP TABLE IF EXISTS trading_candles CASCADE;
             DROP TABLE IF EXISTS system_events CASCADE;
             DROP TABLE IF EXISTS trading_trades CASCADE;
@@ -155,6 +177,7 @@ impl Schema {
         // Check if all tables exist
         let tables = vec![
             "trading_metrics",
+            "performance_history",
             "trading_candles",
             "system_events",
             "trading_trades",

@@ -183,6 +183,8 @@ impl QueryBuilder {
             NULL AS size_bytes \
         FROM trading_metrics \
         UNION ALL \
+        SELECT 'performance_history', COUNT(*), MIN(timestamp), MAX(timestamp), NULL FROM performance_history \
+        UNION ALL \
         SELECT 'trading_candles', COUNT(*), MIN(timestamp), MAX(timestamp), NULL FROM trading_candles \
         UNION ALL \
         SELECT 'system_events', COUNT(*), MIN(timestamp), MAX(timestamp), NULL FROM system_events"
@@ -220,7 +222,7 @@ impl QueryBuilder {
     /// * `limit` - Maximum number of events
     pub fn select_events(&self, severity: Option<&str>, limit: i64) -> String {
         let mut query =
-            "SELECT id, timestamp, event_type, severity, message, details FROM system_events"
+            "SELECT timestamp, event_type, severity, message, details FROM system_events"
                 .to_string();
 
         if let Some(sev) = severity {

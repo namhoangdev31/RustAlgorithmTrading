@@ -52,7 +52,7 @@ RUN useradd --system --uid 10001 --gid nogroup appuser \
 
 USER appuser
 
-EXPOSE 5555 5556 9091 9092 9093 9094
+EXPOSE 5555 5556 9091 9092 9093 9094 9095
 HEALTHCHECK --interval=30s --timeout=5s --retries=5 --start-period=20s CMD ["sh", "-c", "if [ -n \"$HEALTHCHECK_URL\" ]; then curl -fsS \"$HEALTHCHECK_URL\" >/dev/null; else kill -0 1; fi"]
 
 ENTRYPOINT ["sh", "-c", "exec /usr/local/bin/${SERVICE_BIN}"]

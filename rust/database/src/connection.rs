@@ -168,33 +168,37 @@ impl DatabaseManager {
     /// # }
     /// ```
     pub async fn insert_metrics(&self, metrics: &[MetricRecord]) -> Result<()> {
+        self.insert_metrics_blocking(metrics)
+    }
+
+    /// Insert multiple metrics from a blocking runtime.
+    pub fn insert_metrics_blocking(&self, metrics: &[MetricRecord]) -> Result<()> {
         if metrics.is_empty() {
             return Ok(());
         }
 
         let start = Instant::now();
         let mut conn = self.get_connection()?;
-
-        // Use a transaction for better performance
         let tx = conn.transaction()?;
 
-        for metric in metrics {
-            let labels_json = metric
-                .labels
-                .as_ref()
-                .map(serde_json::to_string)
-                .transpose()?;
+        {
+            let mut appender = tx.appender("trading_metrics")?;
+            for metric in metrics {
+                let labels_json = metric
+                    .labels
+                    .as_ref()
+                    .map(serde_json::to_string)
+                    .transpose()?;
 
-            tx.execute(
-                "INSERT INTO trading_metrics (timestamp, metric_name, value, symbol, labels) VALUES (?, ?, ?, ?, ?)",
-                duckdb::params![
-                    metric.timestamp.to_rfc3339(),
+                appender.append_row(duckdb::params![
+                    metric.timestamp.naive_utc(),
                     &metric.metric_name,
                     metric.value,
                     &metric.symbol,
                     labels_json
-                ],
-            )?;
+                ])?;
+            }
+            appender.flush()?;
         }
 
         tx.commit()?;
@@ -204,6 +208,59 @@ impl DatabaseManager {
         metrics::histogram!("database_batch_insert_duration_ms").record(elapsed.as_millis() as f64);
 
         tracing::debug!("Inserted {} metrics in {:?}", metrics.len(), elapsed);
+        Ok(())
+    }
+
+    /// Insert a strategy performance snapshot.
+    pub async fn insert_performance_record(&self, record: &PerformanceRecord) -> Result<()> {
+        self.insert_performance_records(std::slice::from_ref(record))
+            .await
+    }
+
+    /// Insert multiple performance snapshots using DuckDB's appender.
+    pub async fn insert_performance_records(&self, records: &[PerformanceRecord]) -> Result<()> {
+        self.insert_performance_records_blocking(records)
+    }
+
+    /// Insert multiple performance snapshots from a blocking runtime.
+    pub fn insert_performance_records_blocking(&self, records: &[PerformanceRecord]) -> Result<()> {
+        if records.is_empty() {
+            return Ok(());
+        }
+
+        let start = Instant::now();
+        let mut conn = self.get_connection()?;
+        let tx = conn.transaction()?;
+
+        {
+            let mut appender = tx.appender("performance_history")?;
+            for record in records {
+                appender.append_row(duckdb::params![
+                    record.timestamp.naive_utc(),
+                    record.portfolio_value,
+                    record.pnl,
+                    record.sharpe_ratio,
+                    record.max_drawdown,
+                    record.win_rate,
+                    record.total_trades
+                ])?;
+            }
+            appender.flush()?;
+        }
+
+        tx.commit()?;
+
+        let elapsed = start.elapsed();
+        metrics::counter!("database_performance_records_inserted_total")
+            .increment(records.len() as u64);
+        metrics::histogram!("database_performance_batch_insert_duration_ms")
+            .record(elapsed.as_millis() as f64);
+
+        tracing::debug!(
+            "Inserted {} performance records in {:?}",
+            records.len(),
+            elapsed
+        );
         Ok(())
     }
 
@@ -408,6 +465,11 @@ impl DatabaseManager {
 
     /// Log a system event
     pub async fn insert_event(&self, event: &SystemEvent) -> Result<()> {
+        self.insert_event_blocking(event)
+    }
+
+    /// Log a system event from a blocking runtime.
+    pub fn insert_event_blocking(&self, event: &SystemEvent) -> Result<()> {
         let conn = self.get_connection()?;
         let details_json = event
             .details
@@ -443,13 +505,13 @@ impl DatabaseManager {
         let mut stmt = conn.prepare(&query)?;
         let rows = stmt.query_map([], |row| {
             Ok(SystemEvent {
-                id: Some(row.get(0)?),
-                timestamp: row.get(1)?,
-                event_type: row.get(2)?,
-                severity: row.get(3)?,
-                message: row.get(4)?,
+                id: None,
+                timestamp: row.get(0)?,
+                event_type: row.get(1)?,
+                severity: row.get(2)?,
+                message: row.get(3)?,
                 details: row
-                    .get::<_, Option<String>>(5)?
+                    .get::<_, Option<String>>(4)?
                     .and_then(|s| serde_json::from_str(&s).ok()),
             })
         })?;

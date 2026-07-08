@@ -2,9 +2,8 @@ package storage
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
-	"os"
-	"path/filepath"
 	"strings"
 
 	_ "github.com/marcboeker/go-duckdb"
@@ -19,15 +18,7 @@ type DuckDB struct {
 type DuckDBReader = DuckDB
 
 func NewDuckDBReader(dbPath string) (*DuckDB, error) {
-	dir := filepath.Dir(dbPath)
-	if dir != "" && dir != "." {
-		if err := os.MkdirAll(dir, 0755); err != nil {
-			return nil, fmt.Errorf("failed to create directory for duckdb: %w", err)
-		}
-	}
-
-	// Open in read-write mode (default) as Go is now the primary controller.
-	db, err := sql.Open("duckdb", dbPath)
+	db, err := sql.Open("duckdb", readOnlyDuckDBDSN(dbPath))
 	if err != nil {
 		return nil, fmt.Errorf("failed to open duckdb: %w", err)
 	}
@@ -35,48 +26,18 @@ func NewDuckDBReader(dbPath string) (*DuckDB, error) {
 		return nil, fmt.Errorf("failed to ping duckdb: %w", err)
 	}
 
-	s := &DuckDB{db: db}
-	if err := s.Initialize(); err != nil {
-		return nil, fmt.Errorf("failed to initialize duckdb schema: %w", err)
+	return &DuckDB{db: db}, nil
+}
+
+func readOnlyDuckDBDSN(dbPath string) string {
+	if strings.Contains(dbPath, "?") {
+		return dbPath + "&access_mode=read_only"
 	}
-	return s, nil
+	return dbPath + "?access_mode=read_only"
 }
 
 func (r *DuckDB) Initialize() error {
-	schemas := []string{
-		`CREATE TABLE IF NOT EXISTS trading_metrics (
-			timestamp TIMESTAMP NOT NULL,
-			metric_name VARCHAR NOT NULL,
-			value DOUBLE NOT NULL,
-			symbol VARCHAR,
-			labels VARCHAR
-		)`,
-		`CREATE INDEX IF NOT EXISTS idx_metrics_timestamp ON trading_metrics(timestamp)`,
-		`CREATE TABLE IF NOT EXISTS performance_history (
-			timestamp TIMESTAMP NOT NULL PRIMARY KEY,
-			portfolio_value DOUBLE NOT NULL,
-			pnl DOUBLE NOT NULL,
-			sharpe_ratio DOUBLE,
-			max_drawdown DOUBLE,
-			win_rate DOUBLE,
-			total_trades INTEGER
-		)`,
-		`CREATE INDEX IF NOT EXISTS idx_performance_timestamp ON performance_history(timestamp)`,
-		`CREATE TABLE IF NOT EXISTS system_events (
-			timestamp TIMESTAMP NOT NULL,
-			event_type VARCHAR,
-			severity VARCHAR,
-			message VARCHAR,
-			details VARCHAR
-		)`,
-	}
-
-	for _, schema := range schemas {
-		if _, err := r.db.Exec(schema); err != nil {
-			return fmt.Errorf("failed to execute schema [%s]: %w", schema, err)
-		}
-	}
-	return nil
+	return fmt.Errorf("duckdb schema is owned by observability-engine")
 }
 
 func (r *DuckDBReader) Close() error {
@@ -100,7 +61,7 @@ func (r *DuckDBReader) QueryMetricsHistory(startTime, endTime string, metricType
 	query := `
 		SELECT timestamp, metric_name, value, symbol, labels
 		FROM trading_metrics
-		WHERE timestamp >= ? AND timestamp <= ?
+		WHERE timestamp >= CAST(? AS TIMESTAMP) AND timestamp <= CAST(? AS TIMESTAMP)
 	`
 	args := []interface{}{startTime, endTime}
 	if len(metricTypes) > 0 {
@@ -146,6 +107,72 @@ func (r *DuckDBReader) QueryMetricsHistory(startTime, endTime string, metricType
 		results = append(results, record)
 	}
 	return results, nil
+}
+
+func (r *DuckDBReader) QueryCurrentMetricsSnapshot() (map[string]interface{}, error) {
+	if r.db == nil {
+		return nil, fmt.Errorf("database not connected")
+	}
+	query := `
+		SELECT metric_name, value, symbol, labels
+		FROM trading_metrics
+		ORDER BY timestamp DESC
+		LIMIT 5000
+	`
+	rows, err := r.db.Query(query)
+	if err != nil {
+		return map[string]interface{}{}, nil
+	}
+	defer rows.Close()
+
+	results := make(map[string]interface{})
+	seen := make(map[string]struct{})
+	for rows.Next() {
+		var (
+			metricName string
+			value      float64
+			symbol     sql.NullString
+			labels     sql.NullString
+		)
+		if err := rows.Scan(&metricName, &value, &symbol, &labels); err != nil {
+			continue
+		}
+		labelMap := parseMetricLabels(labels)
+		service := labelMap["service"]
+		if service == "" {
+			continue
+		}
+		key := service + "|" + metricName
+		if _, ok := seen[key]; ok {
+			continue
+		}
+		seen[key] = struct{}{}
+
+		serviceMetrics, ok := results[service].(map[string]interface{})
+		if !ok {
+			serviceMetrics = make(map[string]interface{})
+			results[service] = serviceMetrics
+		}
+		serviceMetrics[metricName] = value
+	}
+	return results, nil
+}
+
+func parseMetricLabels(labels sql.NullString) map[string]string {
+	if !labels.Valid || labels.String == "" {
+		return map[string]string{}
+	}
+	parsed := make(map[string]string)
+	if err := json.Unmarshal([]byte(labels.String), &parsed); err == nil {
+		return parsed
+	}
+	for _, pair := range strings.Split(labels.String, ",") {
+		kv := strings.SplitN(pair, "=", 2)
+		if len(kv) == 2 {
+			parsed[strings.TrimSpace(kv[0])] = strings.TrimSpace(kv[1])
+		}
+	}
+	return parsed
 }
 
 func (r *DuckDBReader) QueryPerformanceSummary() (map[string]interface{}, error) {
@@ -274,58 +301,50 @@ func (r *DuckDBReader) QueryLogs(level string, limit int) ([]map[string]interfac
 	return results, nil
 }
 
-func (r *DuckDB) InsertMetrics(metrics []map[string]interface{}) error {
+func (r *DuckDBReader) QueryLatestIntegrityReport() (map[string]interface{}, error) {
+	defaultReport := map[string]interface{}{
+		"is_valid": true,
+		"reasons":  []interface{}{},
+		"metrics":  map[string]interface{}{},
+	}
 	if r.db == nil {
-		return fmt.Errorf("database not connected")
-	}
-	if len(metrics) == 0 {
-		return nil
+		return defaultReport, fmt.Errorf("database not connected")
 	}
 
-	tx, err := r.db.Begin()
+	var (
+		ts      string
+		details sql.NullString
+	)
+	err := r.db.QueryRow(`
+		SELECT timestamp, details
+		FROM system_events
+		WHERE event_type = 'risk.kill_switch'
+		ORDER BY timestamp DESC
+		LIMIT 1
+	`).Scan(&ts, &details)
+	if err == sql.ErrNoRows {
+		return defaultReport, nil
+	}
 	if err != nil {
-		return err
+		return defaultReport, err
 	}
-	defer tx.Rollback()
-
-	stmt, err := tx.Prepare("INSERT INTO trading_metrics (timestamp, metric_name, value, symbol, labels) VALUES (?, ?, ?, ?, ?)")
-	if err != nil {
-		return err
-	}
-	defer stmt.Close()
-
-	for _, m := range metrics {
-		_, err := stmt.Exec(
-			m["timestamp"],
-			m["metric_name"],
-			m["value"],
-			m["symbol"],
-			m["labels"],
-		)
-		if err != nil {
-			return err
-		}
+	if !details.Valid || details.String == "" {
+		defaultReport["timestamp"] = ts
+		return defaultReport, nil
 	}
 
-	return tx.Commit()
+	var report map[string]interface{}
+	if err := json.Unmarshal([]byte(details.String), &report); err != nil {
+		return defaultReport, err
+	}
+	report["timestamp"] = ts
+	return report, nil
 }
 
-func (r *DuckDB) InsertPerformanceRecord(record map[string]interface{}) error {
-	if r.db == nil {
-		return fmt.Errorf("database not connected")
-	}
+func (r *DuckDB) InsertMetrics(_ []map[string]interface{}) error {
+	return fmt.Errorf("duckdb is read-only in Go; observability-engine owns writes")
+}
 
-	query := `
-		INSERT INTO performance_history (timestamp, portfolio_value, pnl, total_trades, sharpe_ratio, max_drawdown)
-		VALUES (?, ?, ?, ?, ?, ?)
-	`
-	_, err := r.db.Exec(query,
-		record["timestamp"],
-		record["portfolio_value"],
-		record["pnl"],
-		record["total_trades"],
-		record["sharpe_ratio"],
-		record["max_drawdown"],
-	)
-	return err
+func (r *DuckDB) InsertPerformanceRecord(_ map[string]interface{}) error {
+	return fmt.Errorf("duckdb is read-only in Go; observability-engine owns writes")
 }

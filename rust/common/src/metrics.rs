@@ -49,6 +49,14 @@ impl MetricsConfig {
             host: metrics_host("SIGNAL_BRIDGE_METRICS_HOST"),
         }
     }
+
+    /// Create default metrics config for observability-engine service
+    pub fn observability_engine() -> Self {
+        Self {
+            port: metrics_port("OBSERVABILITY_ENGINE_METRICS_PORT", 9095),
+            host: metrics_host("OBSERVABILITY_ENGINE_METRICS_HOST"),
+        }
+    }
 }
 
 fn metrics_host(service_env_key: &str) -> String {

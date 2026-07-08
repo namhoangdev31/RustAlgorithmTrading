@@ -24,6 +24,21 @@ func (u *metricUseCase) GetCurrentMetrics() (map[string]interface{}, error) {
 		"execution":   map[string]interface{}{},
 		"system":      map[string]interface{}{},
 	}
+	snapshot, err := u.repo.QueryCurrentMetricsSnapshot()
+	if err == nil {
+		if value, ok := snapshot["market_data"]; ok {
+			payload["market_data"] = value
+		}
+		if value, ok := snapshot["execution"]; ok {
+			payload["execution"] = value
+		}
+		if value, ok := snapshot["risk"]; ok {
+			payload["system"] = value
+		}
+		if value, ok := snapshot["system"]; ok {
+			payload["system"] = value
+		}
+	}
 	summary, err := u.repo.QueryPerformanceSummary()
 	if err == nil {
 		payload["strategy"] = summary

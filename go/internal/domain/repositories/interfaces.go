@@ -24,6 +24,7 @@ type AlertRepository interface {
 // MetricRepository defines the methods for retrieving metric summaries and historical data.
 type MetricRepository interface {
 	QueryPerformanceSummary() (map[string]interface{}, error)
+	QueryCurrentMetricsSnapshot() (map[string]interface{}, error)
 	QueryMetricsHistory(start, end string, metricTypes []string) ([]map[string]interface{}, error)
 }
 
@@ -44,4 +45,5 @@ type AlpacaRepository interface {
 type SystemRepository interface {
 	QueryPerformanceHistory(limit int) ([]map[string]interface{}, error)
 	QueryLogs(level string, limit int) ([]map[string]interface{}, error)
+	QueryLatestIntegrityReport() (map[string]interface{}, error)
 }

@@ -65,6 +65,25 @@ pub struct TradeRecord {
     pub liquidity: Option<String>,
 }
 
+/// Strategy performance snapshot for observability summaries.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PerformanceRecord {
+    /// Snapshot timestamp
+    pub timestamp: DateTime<Utc>,
+    /// Current portfolio value
+    pub portfolio_value: f64,
+    /// Profit and loss
+    pub pnl: f64,
+    /// Total executed trades at the snapshot
+    pub total_trades: i32,
+    /// Sharpe ratio, if available
+    pub sharpe_ratio: Option<f64>,
+    /// Maximum drawdown, if available
+    pub max_drawdown: Option<f64>,
+    /// Win rate, if available
+    pub win_rate: Option<f64>,
+}
+
 /// System event record
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SystemEvent {
@@ -191,6 +210,34 @@ impl CandleRecord {
     /// Set trade count
     pub fn with_trade_count(mut self, count: i32) -> Self {
         self.trade_count = Some(count);
+        self
+    }
+}
+
+impl PerformanceRecord {
+    /// Create a new performance snapshot with current timestamp.
+    pub fn new(portfolio_value: f64, pnl: f64, total_trades: i32) -> Self {
+        Self {
+            timestamp: Utc::now(),
+            portfolio_value,
+            pnl,
+            total_trades,
+            sharpe_ratio: None,
+            max_drawdown: None,
+            win_rate: None,
+        }
+    }
+
+    /// Set optional ratios for the snapshot.
+    pub fn with_ratios(
+        mut self,
+        sharpe_ratio: Option<f64>,
+        max_drawdown: Option<f64>,
+        win_rate: Option<f64>,
+    ) -> Self {
+        self.sharpe_ratio = sharpe_ratio;
+        self.max_drawdown = max_drawdown;
+        self.win_rate = win_rate;
         self
     }
 }

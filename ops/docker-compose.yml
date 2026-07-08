@@ -152,6 +152,52 @@ services:
       com.rustalgorithmtrading.role: private-order-routing
       com.rustalgorithmtrading.audience: trader
 
+  observability-engine:
+    <<: *rust-service
+    profiles: [ "trading" ]
+    image: ${TRADING_IMAGE_REGISTRY:-trading}/observability-engine:${IMAGE_TAG:-development}
+    build:
+      context: ..
+      dockerfile: ops/deployment/Dockerfile
+      args:
+        BIN: observability-engine
+    volumes:
+      - type: bind
+        source: ./config/${TRADING_CONFIG_PROFILE:-system.json}
+        target: /workspace/ops/config/system.json
+        read_only: true
+      - type: bind
+        source: ./config/risk_limits.toml
+        target: /workspace/ops/config/risk_limits.toml
+        read_only: true
+      - go-observability-data:/data
+    environment:
+      <<: *rust-env
+      SERVICE_NAME: observability-engine
+      OBSERVABILITY_DUCKDB_PATH: /data/observability.duckdb
+      OBSERVABILITY_ENGINE_METRICS_HOST: 0.0.0.0
+      HEALTHCHECK_URL: http://127.0.0.1:9095/metrics
+      MARKET_DATA_METRICS_URL: http://market-data:9091/metrics
+      EXECUTION_METRICS_URL: http://execution-engine:9092/metrics
+      RISK_METRICS_URL: http://risk-manager:9093/metrics
+      INTEGRITY_MAX_PNL_DRIFT_PCT: ${INTEGRITY_MAX_PNL_DRIFT_PCT:-0.10}
+      INTEGRITY_MAX_EXPOSURE_DRIFT_BPS: ${INTEGRITY_MAX_EXPOSURE_DRIFT_BPS:-5.0}
+      INTEGRITY_MAX_LATENCY_REGRESSION_RATIO: ${INTEGRITY_MAX_LATENCY_REGRESSION_RATIO:-1.50}
+      INTEGRITY_ALLOW_FALLBACKS: ${INTEGRITY_ALLOW_FALLBACKS:-false}
+      INTEGRITY_ALLOW_RECONCILIATION_FAILURES: ${INTEGRITY_ALLOW_RECONCILIATION_FAILURES:-false}
+    ports:
+      - "${OBSERVABILITY_ENGINE_METRICS_PORT:-9095}:9095"
+    depends_on:
+      market-data:
+        condition: service_healthy
+      execution-engine:
+        condition: service_healthy
+      risk-manager:
+        condition: service_healthy
+    labels:
+      com.rustalgorithmtrading.role: private-observability-writer
+      com.rustalgorithmtrading.audience: trader
+
   go-control-plane:
     image: ${TRADING_IMAGE_REGISTRY:-trading}/go-control-plane:${IMAGE_TAG:-development}
     build:
@@ -162,7 +208,7 @@ services:
     networks:
       - private
     volumes:
-      - go-observability-data:/data
+      - go-observability-data:/data:ro
       - ../go:/workspace/go
     environment:
       <<: *saas-env
@@ -179,6 +225,8 @@ services:
       - "${CONTROL_PLANE_PORT:-8081}:8081"
     depends_on:
       redis:
+        condition: service_healthy
+      observability-engine:
         condition: service_healthy
     healthcheck:
       test: [ "CMD-SHELL", "curl -fsS http://127.0.0.1:8081/health/ready >/dev/null || exit 1" ]

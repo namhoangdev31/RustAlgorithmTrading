@@ -1,11 +1,12 @@
 package usecase
 
 import (
+	"encoding/json"
+
 	"trading/observability-api/internal/domain/entities"
 	"trading/observability-api/internal/domain/repositories"
 	"trading/observability-api/internal/domain/usecases"
 	"trading/observability-api/internal/health"
-	"trading/observability-api/internal/integrity"
 	"trading/observability-api/internal/ws"
 )
 
@@ -58,5 +59,20 @@ func (u *systemUseCase) GetStats() map[string]interface{} {
 }
 
 func (u *systemUseCase) ValidateIntegrity(metrics entities.Metrics) entities.Report {
-	return integrity.ValidateRunIntegrity(metrics, integrity.DefaultThresholds())
+	raw, err := u.repo.QueryLatestIntegrityReport()
+	if err != nil {
+		return entities.Report{IsValid: true, Reasons: []string{}, Metrics: metrics}
+	}
+	payload, err := json.Marshal(raw)
+	if err != nil {
+		return entities.Report{IsValid: true, Reasons: []string{}, Metrics: metrics}
+	}
+	var report entities.Report
+	if err := json.Unmarshal(payload, &report); err != nil {
+		return entities.Report{IsValid: true, Reasons: []string{}, Metrics: metrics}
+	}
+	if report.Metrics == (entities.Metrics{}) {
+		report.Metrics = metrics
+	}
+	return report
 }
