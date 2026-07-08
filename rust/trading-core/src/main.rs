@@ -90,8 +90,8 @@ async fn main() -> anyhow::Result<()> {
     let risk_config = match initial_risk_config {
         Ok(cfg) => cfg,
         Err(err) => {
-            tracing::warn!("[cid:INIT] Failed to fetch or validate risk limits: {}. Using default configuration.", err);
-            common::config::RiskConfig::default()
+            tracing::warn!("[cid:INIT] Failed to fetch or validate risk limits: {}. Using system configuration fallback.", err);
+            config.risk.clone()
         }
     };
 
