@@ -84,7 +84,7 @@ services:
       QDB_PG_NET_BIND_TO: 0.0.0.0:8812
       QDB_HTTP_BIND_TO: 0.0.0.0:9000
     healthcheck:
-      test: [ "CMD-SHELL", "curl -fsS http://127.0.0.1:9000/status >/dev/null || exit 1" ]
+      test: [ "CMD-SHELL", "curl -fsS http://127.0.0.1:9003/status >/dev/null || exit 1" ]
       interval: 15s
       timeout: 5s
       retries: 5
@@ -101,9 +101,34 @@ services:
       com.rustalgorithmtrading.role: private-timeseries-db
       com.rustalgorithmtrading.audience: internal
 
+  questdb-schema-init:
+    image: postgres:alpine
+    networks:
+      - private
+    volumes:
+      - ./scripts/questdb/init.sql:/init.sql:ro
+    environment:
+      PGPASSWORD: ${QUESTDB_PASSWORD:-quest}
+    command: |
+      sh -c '
+      until pg_isready -h questdb -p 8812 -U admin; do
+        echo "Waiting for QuestDB PgWire port..."
+        sleep 1
+      done
+      echo "QuestDB PgWire is ready, running init.sql..."
+      psql -h questdb -p 8812 -U admin -d qdb -f /init.sql
+      '
+    depends_on:
+      questdb:
+        condition: service_healthy
+
   trading-core:
     <<: *rust-service
-    profiles: [ "trading" ]
+    depends_on:
+      redis:
+        condition: service_healthy
+      questdb-schema-init:
+        condition: service_completed_successfully
     image: ${TRADING_IMAGE_REGISTRY:-trading}/trading-core:${IMAGE_TAG:-development}
     build:
       context: ..
@@ -144,7 +169,6 @@ services:
 
   signal-bridge:
     <<: *rust-service
-    profiles: [ "trading" ]
     image: ${TRADING_IMAGE_REGISTRY:-trading}/signal-bridge:${IMAGE_TAG:-development}
     build:
       context: ..

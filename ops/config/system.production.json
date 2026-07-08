@@ -29,6 +29,7 @@
     "retry_attempts": 5,
     "retry_delay_ms": 500,
     "paper_trading": false,
+    "trading_mode": "LIVE",
     "max_slippage_bps": 25.0
   },
   "signal": {

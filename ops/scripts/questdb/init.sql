@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS trading_candles (
     volume LONG,
     trade_count INT
 ) TIMESTAMP(timestamp) PARTITION BY MONTH WAL
-  DEDUP KEYS(timestamp, symbol, user_id);
+  DEDUP UPSERT KEYS(timestamp, symbol, user_id);
 
 -- =============================================================================
 -- system_events: Alerts, logs, risk events
