@@ -1,6 +1,6 @@
 # Generic Rust service image. Build from repository root.
 # Example:
-# docker build -f ops/deployment/Dockerfile --build-arg BIN=market-data -t trading/market-data:local .
+# docker build -f ops/deployment/Dockerfile --build-arg BIN=trading-core -t trading/trading-core:local .
 
 FROM rust:1-slim-trixie AS builder
 
@@ -21,12 +21,12 @@ WORKDIR /workspace
 COPY rust ./rust
 WORKDIR /workspace/rust
 
-ARG BIN=market-data
+ARG BIN=trading-core
 RUN cargo build --release --bin ${BIN}
 
 FROM debian:trixie-slim AS runtime
 
-ARG BIN=market-data
+ARG BIN=trading-core
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     curl \
@@ -52,7 +52,7 @@ RUN useradd --system --uid 10001 --gid nogroup appuser \
 
 USER appuser
 
-EXPOSE 5555 5556 9091 9092 9093 9094 9095
+EXPOSE 5555 5556 9090 9091 9092 9093 9094 9095
 HEALTHCHECK --interval=30s --timeout=5s --retries=5 --start-period=20s CMD ["sh", "-c", "if [ -n \"$HEALTHCHECK_URL\" ]; then curl -fsS \"$HEALTHCHECK_URL\" >/dev/null; else kill -0 1; fi"]
 
 ENTRYPOINT ["sh", "-c", "exec /usr/local/bin/${SERVICE_BIN}"]

@@ -112,7 +112,10 @@ impl ReconciliationWorker {
                         self.emit_break(
                             "POSITION_QTY_MISMATCH",
                             &symbol_key,
-                            &format!("broker_qty={} internal_qty={}", bp.quantity.0, ip.quantity.0),
+                            &format!(
+                                "broker_qty={} internal_qty={}",
+                                bp.quantity.0, ip.quantity.0
+                            ),
                             severity,
                         );
                     }
@@ -208,7 +211,10 @@ impl ReconciliationWorker {
             payload,
         );
 
-        if let Err(e) = self.router.publish_envelope("reconciliation.break", &envelope) {
+        if let Err(e) = self
+            .router
+            .publish_envelope("reconciliation.break", &envelope)
+        {
             tracing::error!("Failed to publish reconciliation break event: {:?}", e);
         }
 
@@ -222,7 +228,9 @@ impl ReconciliationWorker {
             if let Ok(mut mgr) = self.risk_manager.write() {
                 mgr.trip_circuit_breaker(TripReason::RiskFailure, &corr_id);
             } else {
-                tracing::error!("Failed to acquire risk manager write lock to trip circuit breaker");
+                tracing::error!(
+                    "Failed to acquire risk manager write lock to trip circuit breaker"
+                );
             }
         }
     }

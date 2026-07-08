@@ -1,0 +1,23 @@
+[package]
+name = "trading-core"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+common = { path = "../common" }
+execution-engine = { path = "../execution-engine" }
+market-data = { path = "../market-data" }
+observability-engine = { path = "../observability-engine" }
+risk-manager = { path = "../risk-manager" }
+
+anyhow.workspace = true
+metrics.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+
+[[bin]]
+name = "trading-core"
+path = "src/main.rs"

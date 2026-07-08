@@ -26,8 +26,6 @@ pub struct OrderRouter {
     runtime_kill_switch: Arc<AtomicBool>,
 }
 
-
-
 impl OrderRouter {
     pub fn new(mut config: ExecutionConfig) -> Result<Self> {
         // Enforce fail-fast configuration policies
@@ -131,15 +129,17 @@ impl OrderRouter {
         let processed_orders = Arc::new(DashMap::new());
 
         // Async TTL reaper — cleans expired idempotency keys every 10s
-        let reaper_map = processed_orders.clone();
-        tokio::spawn(async move {
-            let mut ticker = tokio::time::interval(Duration::from_secs(10));
-            loop {
-                ticker.tick().await;
-                let cutoff = Instant::now() - Duration::from_secs(60);
-                reaper_map.retain(|_, v| *v > cutoff);
-            }
-        });
+        if tokio::runtime::Handle::try_current().is_ok() {
+            let reaper_map = processed_orders.clone();
+            tokio::spawn(async move {
+                let mut ticker = tokio::time::interval(Duration::from_secs(10));
+                loop {
+                    ticker.tick().await;
+                    let cutoff = Instant::now() - Duration::from_secs(60);
+                    reaper_map.retain(|_, v| *v > cutoff);
+                }
+            });
+        }
 
         Ok(Self {
             config,
@@ -184,7 +184,6 @@ impl OrderRouter {
             runtime_kill_switch: Arc::new(AtomicBool::new(false)),
         })
     }
-
 
     /// Exposes the current broker client for downstream reconciliation
     pub fn broker_client(&self) -> Arc<dyn crate::broker::BrokerClient> {

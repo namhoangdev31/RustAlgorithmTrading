@@ -55,18 +55,16 @@ impl ExecutionEngineService {
     /// Submit order — mandatory pre-trade risk check, no opt-out.
     /// Risk validation uses RwLock read guard (concurrent, non-blocking for reads).
     /// Circuit breaker rejection blocks new orders but cancel_order() always passes.
-    pub async fn submit_order(
-        &self,
-        order: Order,
-    ) -> Result<()> {
+    pub async fn submit_order(&self, order: Order) -> Result<()> {
         let _estimated_slippage = self.slippage_estimator.estimate(&order);
         let cid = order.client_order_id.clone();
 
         // 1. Mandatory pre-trade risk check (read lock — short scope, no .await)
         {
-            let mgr = self.risk_manager.read().map_err(|_| {
-                TradingError::RiskCheck("Risk manager RwLock poisoned".to_string())
-            })?;
+            let mgr = self
+                .risk_manager
+                .read()
+                .map_err(|_| TradingError::RiskCheck("Risk manager RwLock poisoned".to_string()))?;
             let report = mgr.validate_order_read(&order, &cid);
             if report.decision == common::types::RiskDecision::Reject {
                 return Err(TradingError::RiskCheck(format!(
@@ -85,10 +83,7 @@ impl ExecutionEngineService {
 
     /// Cancel order — always allowed, even when circuit breaker is open.
     /// This is a production safety rule: cancels must never be blocked.
-    pub async fn cancel_order(
-        &self,
-        order_id: &str,
-    ) -> Result<common::types::BrokerOrderStatus> {
+    pub async fn cancel_order(&self, order_id: &str) -> Result<common::types::BrokerOrderStatus> {
         self.router.cancel_order(order_id).await
     }
 
