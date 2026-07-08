@@ -91,6 +91,7 @@ services:
       MARKET_DATA_METRICS_URL: http://127.0.0.1:9090/metrics
       EXECUTION_METRICS_URL: http://127.0.0.1:9090/metrics
       RISK_METRICS_URL: http://127.0.0.1:9090/metrics
+      GO_CONTROL_PLANE_URL: http://gateway:8081
       INTEGRITY_MAX_PNL_DRIFT_PCT: ${INTEGRITY_MAX_PNL_DRIFT_PCT:-0.10}
       INTEGRITY_MAX_EXPOSURE_DRIFT_BPS: ${INTEGRITY_MAX_EXPOSURE_DRIFT_BPS:-5.0}
       INTEGRITY_MAX_LATENCY_REGRESSION_RATIO: ${INTEGRITY_MAX_LATENCY_REGRESSION_RATIO:-1.50}
@@ -127,22 +128,26 @@ services:
       com.rustalgorithmtrading.role: private-signal-engine
       com.rustalgorithmtrading.audience: trader
 
-  go-control-plane:
-    image: ${TRADING_IMAGE_REGISTRY:-trading}/go-control-plane:${IMAGE_TAG:-development}
+  gateway:
+    image: ${TRADING_IMAGE_REGISTRY:-trading}/gateway:${IMAGE_TAG:-development}
     build:
       context: ..
-      dockerfile: ops/deployment/go.dev.Dockerfile
+      dockerfile: ops/deployment/gateway.Dockerfile
     restart: unless-stopped
     init: true
     networks:
+      - public
       - private
     volumes:
       - go-observability-data:/data:ro
-      - ../go:/workspace/go
+      - edge-artifact-data:/var/lib/lepos
     environment:
       <<: *saas-env
-      SERVICE_NAME: go-control-plane
+      SERVICE_NAME: gateway
+      GATEWAY_RUN_MODE: both
       PORT: 8081
+      EDGE_PORT: 8088
+      TLS_PORT: 8443
       HOST: 0.0.0.0
       DATABASE_URL: postgresql://noah_admin:noah_master@103.82.36.67:8048/noah_db
       DUCKDB_PATH: /data/observability.duckdb
@@ -150,8 +155,20 @@ services:
       MARKET_DATA_METRICS_URL: http://trading-core:9090/metrics
       EXECUTION_METRICS_URL: http://trading-core:9090/metrics
       RISK_METRICS_URL: http://trading-core:9090/metrics
+      LEPOS_STORAGE_ROOT: /var/lib/lepos/artifacts
+      LEPOS_CONTROL_PLANE_URL: http://nextjs-frontend:3000
+      LEPOS_INTERNAL_API_KEY: ${LEPOS_INTERNAL_API_KEY:-internalapikey}
+      LEPOS_SERVICE_ID: ${LEPOS_SERVICE_ID:-edge-gateway}
+      LEPOS_SERVICE_SECRET: ${LEPOS_SERVICE_SECRET:-servicesecret}
+      LEPOS_IPFS_GATEWAY_URL: ${LEPOS_IPFS_GATEWAY_URL:-https://ipfs.io/ipfs}
+      LEPOS_ARWEAVE_GATEWAY_URL: ${LEPOS_ARWEAVE_GATEWAY_URL:-https://arweave.net}
+      LEPOS_CONTROL_PLANE_TLS_CERT: ${LEPOS_CONTROL_PLANE_TLS_CERT:-}
+      LEPOS_CONTROL_PLANE_TLS_KEY: ${LEPOS_CONTROL_PLANE_TLS_KEY:-}
+      LEPOS_CONTROL_PLANE_TLS_CA: ${LEPOS_CONTROL_PLANE_TLS_CA:-}
     ports:
       - "${CONTROL_PLANE_PORT:-8081}:8081"
+      - "${EDGE_HTTP_PORT:-8088}:8088"
+      - "${EDGE_TLS_PORT:-8443}:8443"
     depends_on:
       redis:
         condition: service_healthy
@@ -166,27 +183,22 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.5'
-          memory: 1024M
+          cpus: '0.6'
+          memory: 512M
         reservations:
           cpus: '0.1'
-          memory: 256M
+          memory: 128M
     labels:
-      com.rustalgorithmtrading.role: private-observability-api
-      com.rustalgorithmtrading.audience: developer,trader
+      com.rustalgorithmtrading.role: public-edge-gateway
+      com.rustalgorithmtrading.audience: developer,trader,regular
 
 
   nextjs-frontend:
-    image: ${TRADING_IMAGE_REGISTRY:-trading}/nextjs-frontend:development
+    image: ${TRADING_IMAGE_REGISTRY:-trading}/nextjs-frontend:${IMAGE_TAG:-development}
     build:
       context: ..
       dockerfile: ops/deployment/nextjs.Dockerfile
-      target: development
-    command: yarn dev
-    volumes:
-      - ../nextjs:/workspace/nextjs
-      - nextjs_node_modules:/workspace/nextjs/node_modules
-      - nextjs_cache:/workspace/nextjs/.next
+      target: runner
     restart: unless-stopped
     init: true
     networks:
@@ -195,11 +207,12 @@ services:
     environment:
       <<: *saas-env
       SERVICE_NAME: nextjs-frontend
-      NODE_ENV: development
+      NODE_ENV: production
       PORT: 3000
       NODE_OPTIONS: --max-old-space-size=1536
       DATABASE_URL: postgresql://noah_admin:noah_master@103.82.36.67:8048/noah_db
       REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      GO_CONTROL_PLANE_URL: http://gateway:8081
       NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
       AUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
       AUTH_SECRET: ${AUTH_SECRET:-supersecretsecretsecretsecretsecretsecretsecret}
@@ -247,60 +260,7 @@ services:
       com.rustalgorithmtrading.role: public-saas-portal
       com.rustalgorithmtrading.audience: developer,trader,regular
 
-  edge-gateway:
-    image: ${TRADING_IMAGE_REGISTRY:-trading}/edge-gateway:${IMAGE_TAG:-development}
-    build:
-      context: ..
-      dockerfile: ops/deployment/edge-gateway.Dockerfile
-    restart: unless-stopped
-    init: true
-    networks:
-      - public
-      - private
-    volumes:
-      - edge-artifact-data:/var/lib/lepos
-    environment:
-      <<: *saas-env
-      SERVICE_NAME: edge-gateway
-      PORT: 8088
-      TLS_PORT: 8443
-      HOST: 0.0.0.0
-      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
-      LEPOS_STORAGE_ROOT: /var/lib/lepos/artifacts
-      LEPOS_CONTROL_PLANE_URL: http://nextjs-frontend:3000
-      LEPOS_INTERNAL_API_KEY: ${LEPOS_INTERNAL_API_KEY:-internalapikey}
-      LEPOS_SERVICE_ID: ${LEPOS_SERVICE_ID:-edge-gateway}
-      LEPOS_SERVICE_SECRET: ${LEPOS_SERVICE_SECRET:-servicesecret}
-      LEPOS_IPFS_GATEWAY_URL: ${LEPOS_IPFS_GATEWAY_URL:-https://ipfs.io/ipfs}
-      LEPOS_ARWEAVE_GATEWAY_URL: ${LEPOS_ARWEAVE_GATEWAY_URL:-https://arweave.net}
-      LEPOS_CONTROL_PLANE_TLS_CERT: ${LEPOS_CONTROL_PLANE_TLS_CERT:-}
-      LEPOS_CONTROL_PLANE_TLS_KEY: ${LEPOS_CONTROL_PLANE_TLS_KEY:-}
-      LEPOS_CONTROL_PLANE_TLS_CA: ${LEPOS_CONTROL_PLANE_TLS_CA:-}
-    ports:
-      - "${EDGE_HTTP_PORT:-8088}:8088"
-      - "${EDGE_TLS_PORT:-8443}:8443"
-    depends_on:
-      redis:
-        condition: service_healthy
-      nextjs-frontend:
-        condition: service_healthy
-    healthcheck:
-      test: [ "CMD-SHELL", "wget -qO- http://127.0.0.1:8088/health >/dev/null || exit 1" ]
-      interval: 30s
-      timeout: 5s
-      retries: 5
-      start_period: 20s
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 256M
-        reservations:
-          cpus: '0.1'
-          memory: 64M
-    labels:
-      com.rustalgorithmtrading.role: public-edge-gateway
-      com.rustalgorithmtrading.audience: developer,trader,regular
+
 
 networks:
   public:
