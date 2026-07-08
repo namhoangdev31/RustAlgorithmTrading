@@ -33,11 +33,11 @@ x-rust-service: &rust-service
   deploy:
     resources:
       limits:
-        cpus: '0.25'
-        memory: 256M
+        cpus: '0.6'
+        memory: 512M
       reservations:
-        cpus: '0.05'
-        memory: 64M
+        cpus: '0.15'
+        memory: 320M
 
 services:
   redis:
@@ -58,11 +58,11 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.25'
-          memory: 128M
+          cpus: '0.3'
+          memory: 256M
         reservations:
-          cpus: '0.05'
-          memory: 32M
+          cpus: '0.1'
+          memory: 128M
 
   questdb:
     image: questdb/questdb:9.4.3
@@ -92,11 +92,11 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.5'
-          memory: 2048M
+          cpus: '1.5'
+          memory: 3072M
         reservations:
-          cpus: '0.1'
-          memory: 512M
+          cpus: '0.4'
+          memory: 1536M
     labels:
       com.rustalgorithmtrading.role: private-timeseries-db
       com.rustalgorithmtrading.audience: internal
@@ -222,11 +222,11 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.6'
-          memory: 512M
+          cpus: '1.0'
+          memory: 768M
         reservations:
-          cpus: '0.1'
-          memory: 128M
+          cpus: '0.2'
+          memory: 256M
     labels:
       com.rustalgorithmtrading.role: public-edge-gateway
       com.rustalgorithmtrading.audience: developer,trader,regular
@@ -289,11 +289,11 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '2.0'
-          memory: 2048M
+          cpus: '4.0'
+          memory: 3072M
         reservations:
-          cpus: '0.5'
-          memory: 512M
+          cpus: '1.0'
+          memory: 1536M
     labels:
       com.rustalgorithmtrading.role: public-saas-portal
       com.rustalgorithmtrading.audience: developer,trader,regular
