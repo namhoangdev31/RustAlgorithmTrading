@@ -32,6 +32,7 @@ metrics.workspace = true
 
 # Shared dependencies
 common = { path = "../common" }
+questdb-rs = "6.1.0"
 
 [dev-dependencies]
 mockall.workspace = true
