@@ -5,8 +5,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"trading/observability-api/internal/domain/entities"
-	"trading/observability-api/internal/domain/usecases"
+	"trading/control-gateway/internal/domain/entities"
+	"trading/control-gateway/internal/domain/usecases"
 )
 
 // SystemHandler handles HTTP requests relating to health and system status.

@@ -14,7 +14,7 @@ export async function GET() {
 
     // Call Go Control Plane to get the current risk limits
     const goUrl = process.env.GO_CONTROL_PLANE_URL || "http://go-control-plane:8081";
-    const apiKey = process.env.OBSERVABILITY_API_KEY || process.env.LEPOS_INTERNAL_API_KEY || "";
+    const apiKey = process.env.TELEMETRY_API_KEY || process.env.LEPOS_INTERNAL_API_KEY || "";
 
     const response = await fetch(`${goUrl}/api/system/risk-limits`, {
       headers: {
@@ -61,7 +61,7 @@ export async function POST(req: Request) {
 
     // Send the updated limits to Go Control Plane
     const goUrl = process.env.GO_CONTROL_PLANE_URL || "http://go-control-plane:8081";
-    const apiKey = process.env.OBSERVABILITY_API_KEY || process.env.LEPOS_INTERNAL_API_KEY || "";
+    const apiKey = process.env.TELEMETRY_API_KEY || process.env.LEPOS_INTERNAL_API_KEY || "";
 
     // GORM/Go REST API expects fields in snake_case format as verified in previously built Go structures.
     // Let's map camelCase to snake_case for Go compatibility.

@@ -1,4 +1,4 @@
-module trading/observability-api
+module trading/control-gateway
 
 go 1.25.0
 

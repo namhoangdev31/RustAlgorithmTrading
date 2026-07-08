@@ -6,7 +6,7 @@ members = [
     "signal-bridge",
     "risk-manager",
     "execution-engine",
-    "observability-engine",
+    "telemetry-engine",
     "common",
     "database",
     "tests",
@@ -31,7 +31,7 @@ serde_json = "1.0"
 # Messaging
 zmq = "0.10"
 
-# Observability
+# Telemetry
 metrics = "0.23"
 metrics-exporter-prometheus = "0.15"
 tracing = "0.1"

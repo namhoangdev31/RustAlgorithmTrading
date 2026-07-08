@@ -13,7 +13,7 @@ import (
 	"strings"
 	"time"
 
-	"trading/observability-api/internal/domain/entities"
+	"trading/control-gateway/internal/domain/entities"
 )
 
 type Config struct {

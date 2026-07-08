@@ -1,9 +1,9 @@
 package postgres
 
 import (
-	"trading/observability-api/internal/alerts"
-	"trading/observability-api/internal/domain/entities"
-	"trading/observability-api/internal/domain/repositories"
+	"trading/control-gateway/internal/alerts"
+	"trading/control-gateway/internal/domain/entities"
+	"trading/control-gateway/internal/domain/repositories"
 )
 
 // RawSQLAlertRepository implements repositories.AlertRepository.

@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"net/http"
-	"trading/observability-api/internal/domain/usecases"
+	"trading/control-gateway/internal/domain/usecases"
 
 	"github.com/gin-gonic/gin"
 )

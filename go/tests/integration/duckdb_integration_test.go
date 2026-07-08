@@ -4,7 +4,7 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
-	"trading/observability-api/internal/storage"
+	"trading/control-gateway/internal/storage"
 )
 
 // TestGoDuckDBIntegration tests that the Go DuckDB reader can successfully connect to a DuckDB instance

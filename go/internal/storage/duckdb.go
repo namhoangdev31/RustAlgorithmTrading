@@ -37,7 +37,7 @@ func readOnlyDuckDBDSN(dbPath string) string {
 }
 
 func (r *DuckDB) Initialize() error {
-	return fmt.Errorf("duckdb schema is owned by observability-engine")
+	return fmt.Errorf("duckdb schema is owned by telemetry-engine")
 }
 
 func (r *DuckDBReader) Close() error {
@@ -342,9 +342,9 @@ func (r *DuckDBReader) QueryLatestIntegrityReport() (map[string]interface{}, err
 }
 
 func (r *DuckDB) InsertMetrics(_ []map[string]interface{}) error {
-	return fmt.Errorf("duckdb is read-only in Go; observability-engine owns writes")
+	return fmt.Errorf("duckdb is read-only in Go; telemetry-engine owns writes")
 }
 
 func (r *DuckDB) InsertPerformanceRecord(_ map[string]interface{}) error {
-	return fmt.Errorf("duckdb is read-only in Go; observability-engine owns writes")
+	return fmt.Errorf("duckdb is read-only in Go; telemetry-engine owns writes")
 }

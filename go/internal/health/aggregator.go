@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"time"
 
-	"trading/observability-api/internal/storage"
-	"trading/observability-api/internal/ws"
+	"trading/control-gateway/internal/storage"
+	"trading/control-gateway/internal/ws"
 )
 
 type Aggregator struct {

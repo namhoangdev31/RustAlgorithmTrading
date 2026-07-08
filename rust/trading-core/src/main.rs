@@ -3,7 +3,7 @@ use common::metrics::{start_metrics_server, MetricsConfig};
 use execution_engine::ExecutionEngineService;
 use futures_util::StreamExt;
 use market_data::MarketDataService;
-use observability_engine::{ObservabilityConfig, ObservabilityEngine, ScrapeTarget};
+use telemetry_engine::{ObservabilityConfig, ObservabilityEngine, ScrapeTarget};
 use std::sync::Arc;
 use tracing_subscriber::{fmt, prelude::*, EnvFilter};
 
@@ -45,7 +45,7 @@ async fn main() -> anyhow::Result<()> {
         let control_plane_url = std::env::var("GO_CONTROL_PLANE_URL")
             .unwrap_or_else(|_| "http://go-control-plane:8081".to_string());
         let risk_limits_url = format!("{}/api/system/risk-limits", control_plane_url);
-        let api_key = std::env::var("OBSERVABILITY_API_KEY")
+        let api_key = std::env::var("TELEMETRY_API_KEY")
             .or_else(|_| std::env::var("LEPOS_INTERNAL_API_KEY"))
             .unwrap_or_default();
 
@@ -265,7 +265,7 @@ async fn run_observability(config: ObservabilityConfig) -> anyhow::Result<()> {
         ticker.tick().await;
         if let Err(err) = engine.run_once().await {
             tracing::error!("trading-core observability cycle failed: {}", err);
-            metrics::counter!("observability_engine_ingestion_failures_total").increment(1);
+            metrics::counter!("telemetry_engine_ingestion_failures_total").increment(1);
         }
     }
 }

@@ -1,8 +1,8 @@
 package postgres
 
 import (
-	"trading/observability-api/internal/domain/repositories"
-	"trading/observability-api/internal/storage"
+	"trading/control-gateway/internal/domain/repositories"
+	"trading/control-gateway/internal/storage"
 )
 
 // RawSQLTradeRepository implements the repositories.TradeRepository contract using pgx raw SQL.

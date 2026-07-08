@@ -89,7 +89,7 @@ func TestDuckDBReadOnlyRejectsWrites(t *testing.T) {
 func createDuckDBFixture(t *testing.T) string {
 	t.Helper()
 
-	dbPath := filepath.Join(t.TempDir(), "observability.duckdb")
+	dbPath := filepath.Join(t.TempDir(), "telemetry.duckdb")
 	db, err := sql.Open("duckdb", dbPath)
 	if err != nil {
 		t.Fatalf("open fixture duckdb: %v", err)
@@ -164,7 +164,7 @@ func createDuckDBFixture(t *testing.T) string {
 		"system",
 		"INFO",
 		"fixture ready",
-		`{"service":"observability-engine"}`,
+		`{"service":"telemetry-engine"}`,
 	)
 	if err != nil {
 		t.Fatalf("insert fixture event: %v", err)
@@ -176,7 +176,7 @@ func createDuckDBFixture(t *testing.T) string {
 		"risk.kill_switch",
 		"CRITICAL",
 		"Integrity validation failed; kill switch requested",
-		`{"is_valid":false,"reasons":["pnl drift too high"],"metrics":{"pnl_drift_pct":0.25},"source":"observability-engine"}`,
+		`{"is_valid":false,"reasons":["pnl drift too high"],"metrics":{"pnl_drift_pct":0.25},"source":"telemetry-engine"}`,
 	)
 	if err != nil {
 		t.Fatalf("insert fixture integrity event: %v", err)

@@ -1,5 +1,5 @@
 [package]
-name = "observability-engine"
+name = "telemetry-engine"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
@@ -25,9 +25,9 @@ reqwest = { version = "0.12", features = ["json", "rustls-tls"] }
 tempfile.workspace = true
 
 [[bin]]
-name = "observability-engine"
+name = "telemetry-engine"
 path = "src/main.rs"
 
 [lib]
-name = "observability_engine"
+name = "telemetry_engine"
 path = "src/lib.rs"

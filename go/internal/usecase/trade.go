@@ -1,8 +1,8 @@
 package usecase
 
 import (
-	"trading/observability-api/internal/domain/repositories"
-	"trading/observability-api/internal/domain/usecases"
+	"trading/control-gateway/internal/domain/repositories"
+	"trading/control-gateway/internal/domain/usecases"
 )
 
 type tradeUseCase struct {

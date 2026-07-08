@@ -9,7 +9,7 @@ license.workspace = true
 common = { path = "../common" }
 execution-engine = { path = "../execution-engine" }
 market-data = { path = "../market-data" }
-observability-engine = { path = "../observability-engine" }
+telemetry-engine = { path = "../telemetry-engine" }
 risk-manager = { path = "../risk-manager" }
 
 anyhow.workspace = true

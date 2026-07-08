@@ -1,5 +1,5 @@
 use common::metrics::{start_metrics_server, MetricsConfig};
-use observability_engine::{ObservabilityConfig, ObservabilityEngine};
+use telemetry_engine::{ObservabilityConfig, ObservabilityEngine};
 use tracing_subscriber::{fmt, prelude::*, EnvFilter};
 
 #[tokio::main]
@@ -19,7 +19,7 @@ async fn main() -> anyhow::Result<()> {
         config.targets.len()
     );
 
-    let metrics_handle = match start_metrics_server(MetricsConfig::observability_engine()) {
+    let metrics_handle = match start_metrics_server(MetricsConfig::telemetry_engine()) {
         Ok(handle) => {
             tracing::info!("[cid:INIT] Metrics server started on port 9095");
             Some(handle)

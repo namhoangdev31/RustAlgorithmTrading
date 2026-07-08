@@ -6,9 +6,9 @@ import (
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
-	"trading/observability-api/internal/domain/entities"
-	"trading/observability-api/internal/domain/repositories"
-	"trading/observability-api/internal/storage"
+	"trading/control-gateway/internal/domain/entities"
+	"trading/control-gateway/internal/domain/repositories"
+	"trading/control-gateway/internal/storage"
 )
 
 // GormTradeRepository implements repositories.TradeRepository using GORM DB.

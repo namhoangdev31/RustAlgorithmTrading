@@ -45,6 +45,8 @@ services:
     restart: unless-stopped
     ports:
       - "6379:6379"
+    volumes:
+      - redis-data:/data
     networks:
       - private
     healthcheck:
@@ -80,13 +82,13 @@ services:
         source: ./config/risk_limits.toml
         target: /workspace/ops/config/risk_limits.toml
         read_only: true
-      - go-observability-data:/data
+      - telemetry-data:/data
     environment:
       <<: *rust-env
       SERVICE_NAME: trading-core
       TRADING_CORE_METRICS_HOST: 0.0.0.0
       TRADING_CORE_METRICS_PORT: 9090
-      OBSERVABILITY_DUCKDB_PATH: /data/observability.duckdb
+      TELEMETRY_DUCKDB_PATH: /data/telemetry.duckdb
       HEALTHCHECK_URL: http://127.0.0.1:9090/metrics
       MARKET_DATA_METRICS_URL: http://127.0.0.1:9090/metrics
       EXECUTION_METRICS_URL: http://127.0.0.1:9090/metrics
@@ -139,7 +141,7 @@ services:
       - public
       - private
     volumes:
-      - go-observability-data:/data:ro
+      - telemetry-data:/data:ro
       - edge-artifact-data:/var/lib/lepos
     environment:
       <<: *saas-env
@@ -150,7 +152,7 @@ services:
       TLS_PORT: 8443
       HOST: 0.0.0.0
       DATABASE_URL: postgresql://noah_admin:noah_master@103.82.36.67:8048/noah_db
-      DUCKDB_PATH: /data/observability.duckdb
+      DUCKDB_PATH: /data/telemetry.duckdb
       REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
       MARKET_DATA_METRICS_URL: http://trading-core:9090/metrics
       EXECUTION_METRICS_URL: http://trading-core:9090/metrics
@@ -267,7 +269,6 @@ networks:
   private:
 
 volumes:
-  go-observability-data:
+  telemetry-data:
   edge-artifact-data:
-  nextjs_node_modules:
-  nextjs_cache:
+  redis-data:

@@ -2,7 +2,7 @@ package usecases
 
 import (
 	"context"
-	"trading/observability-api/internal/domain/entities"
+	"trading/control-gateway/internal/domain/entities"
 )
 
 // TradeUseCase defines application business rules for trades and execution.

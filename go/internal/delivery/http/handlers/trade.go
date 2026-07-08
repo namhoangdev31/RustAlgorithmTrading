@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"trading/observability-api/internal/domain/usecases"
+	"trading/control-gateway/internal/domain/usecases"
 )
 
 // TradeHandler handles HTTP requests relating to trades and executions.

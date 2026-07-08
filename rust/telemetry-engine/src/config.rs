@@ -20,7 +20,7 @@ pub struct ObservabilityConfig {
 
 impl ObservabilityConfig {
     pub fn from_env() -> anyhow::Result<Self> {
-        let duckdb_path = env_or("OBSERVABILITY_DUCKDB_PATH", "data/observability.duckdb");
+        let duckdb_path = env_or("TELEMETRY_DUCKDB_PATH", "data/telemetry.duckdb");
         let scrape_interval = duration_from_ms_env("OBSERVABILITY_SCRAPE_INTERVAL_MS", 1000)?;
         let scrape_timeout = duration_from_ms_env("OBSERVABILITY_SCRAPE_TIMEOUT_MS", 5000)?;
         let integrity_thresholds = Thresholds::from_env()?;

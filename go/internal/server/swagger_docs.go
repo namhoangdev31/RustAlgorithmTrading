@@ -1,7 +1,7 @@
 package server
 
 import (
-	"trading/observability-api/internal/domain/entities"
+	"trading/control-gateway/internal/domain/entities"
 )
 
 var _ = entities.Metrics{}

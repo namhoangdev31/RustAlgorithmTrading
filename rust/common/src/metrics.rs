@@ -50,8 +50,8 @@ impl MetricsConfig {
         }
     }
 
-    /// Create default metrics config for observability-engine service
-    pub fn observability_engine() -> Self {
+    /// Create default metrics config for telemetry-engine service
+    pub fn telemetry_engine() -> Self {
         Self {
             port: metrics_port("OBSERVABILITY_ENGINE_METRICS_PORT", 9095),
             host: metrics_host("OBSERVABILITY_ENGINE_METRICS_HOST"),

@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"trading/observability-api/internal/domain/usecases"
+	"trading/control-gateway/internal/domain/usecases"
 )
 
 // AlertHandler handles HTTP requests relating to alerts and incidents.

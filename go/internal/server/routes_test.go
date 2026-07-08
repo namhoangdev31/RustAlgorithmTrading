@@ -10,7 +10,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"trading/observability-api/internal/config"
+	"trading/control-gateway/internal/config"
 )
 
 func buildTestRouter() http.Handler {
@@ -36,7 +36,7 @@ func TestHealthEndpoint(t *testing.T) {
 }
 
 func TestAPIKeyAuthRequiredWhenConfigured(t *testing.T) {
-	t.Setenv("OBSERVABILITY_API_KEY", "phase3-key")
+	t.Setenv("TELEMETRY_API_KEY", "phase3-key")
 	r := buildTestRouter()
 
 	req := httptest.NewRequest(http.MethodGet, "/api/metrics/current", nil)
@@ -56,7 +56,7 @@ func TestAPIKeyAuthRequiredWhenConfigured(t *testing.T) {
 }
 
 func TestCORSHeadersPresent(t *testing.T) {
-	_ = os.Setenv("OBSERVABILITY_API_KEY", "")
+	_ = os.Setenv("TELEMETRY_API_KEY", "")
 	r := buildTestRouter()
 	req := httptest.NewRequest(http.MethodOptions, "/health", nil)
 	req.Header.Set("Origin", "http://localhost:3000")
@@ -73,7 +73,7 @@ func TestCORSHeadersPresent(t *testing.T) {
 }
 
 func TestIncidentLifecycleEndpoints(t *testing.T) {
-	t.Setenv("OBSERVABILITY_API_KEY", "")
+	t.Setenv("TELEMETRY_API_KEY", "")
 	r := buildTestRouter()
 
 	createBody := map[string]interface{}{
@@ -113,7 +113,7 @@ func TestIncidentLifecycleEndpoints(t *testing.T) {
 }
 
 func TestIntegrityValidateEndpoint(t *testing.T) {
-	t.Setenv("OBSERVABILITY_API_KEY", "")
+	t.Setenv("TELEMETRY_API_KEY", "")
 	r := buildTestRouter()
 	raw := []byte(`{"PnlDriftPct":0.25,"FalseAllowDelta":1}`)
 	req := httptest.NewRequest(http.MethodPost, "/api/system/integrity/validate", bytes.NewReader(raw))

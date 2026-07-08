@@ -7,11 +7,11 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
-	_ "trading/observability-api/docs"
-	"trading/observability-api/internal/delivery/http/handlers"
-	"trading/observability-api/internal/health"
-	"trading/observability-api/internal/middleware"
-	"trading/observability-api/internal/ws"
+	_ "trading/control-gateway/docs"
+	"trading/control-gateway/internal/delivery/http/handlers"
+	"trading/control-gateway/internal/health"
+	"trading/control-gateway/internal/middleware"
+	"trading/control-gateway/internal/ws"
 )
 
 // RouterConfig contains configurations and handlers for routing initialization.

@@ -3,11 +3,11 @@ package usecase
 import (
 	"encoding/json"
 
-	"trading/observability-api/internal/domain/entities"
-	"trading/observability-api/internal/domain/repositories"
-	"trading/observability-api/internal/domain/usecases"
-	"trading/observability-api/internal/health"
-	"trading/observability-api/internal/ws"
+	"trading/control-gateway/internal/domain/entities"
+	"trading/control-gateway/internal/domain/repositories"
+	"trading/control-gateway/internal/domain/usecases"
+	"trading/control-gateway/internal/health"
+	"trading/control-gateway/internal/ws"
 )
 
 type systemUseCase struct {

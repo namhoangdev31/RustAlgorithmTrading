@@ -2,7 +2,7 @@ package repositories
 
 import (
 	"context"
-	"trading/observability-api/internal/domain/entities"
+	"trading/control-gateway/internal/domain/entities"
 )
 
 // TradeRepository defines the data access methods for trades and executions.

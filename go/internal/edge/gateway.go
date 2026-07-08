@@ -21,7 +21,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/redis/go-redis/v9"
 
-	"trading/observability-api/internal/domain/entities"
+	"trading/control-gateway/internal/domain/entities"
 )
 
 type Config struct {

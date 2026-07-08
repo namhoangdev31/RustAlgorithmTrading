@@ -9,9 +9,9 @@ import (
 
 	"github.com/redis/go-redis/v9"
 
-	"trading/observability-api/internal/domain/entities"
-	"trading/observability-api/internal/domain/repositories"
-	"trading/observability-api/internal/domain/usecases"
+	"trading/control-gateway/internal/domain/entities"
+	"trading/control-gateway/internal/domain/repositories"
+	"trading/control-gateway/internal/domain/usecases"
 )
 
 type riskLimitsUseCase struct {

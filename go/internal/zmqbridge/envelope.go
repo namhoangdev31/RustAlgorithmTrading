@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"trading/observability-api/internal/domain/entities"
+	"trading/control-gateway/internal/domain/entities"
 )
 
 const SchemaVersion = "v1.0.0"

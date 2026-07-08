@@ -9,9 +9,9 @@ import (
 	"syscall"
 	"time"
 
-	"trading/observability-api/internal/config"
-	"trading/observability-api/internal/edge"
-	"trading/observability-api/internal/server"
+	"trading/control-gateway/internal/config"
+	"trading/control-gateway/internal/edge"
+	"trading/control-gateway/internal/server"
 )
 
 // @title Trading Gateway Service

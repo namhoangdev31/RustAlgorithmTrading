@@ -3,7 +3,7 @@ package alerts
 import (
 	"testing"
 
-	"trading/observability-api/internal/domain/entities"
+	"trading/control-gateway/internal/domain/entities"
 )
 
 func TestIncidentLifecycle(t *testing.T) {

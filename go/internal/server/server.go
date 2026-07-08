@@ -12,16 +12,16 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"trading/observability-api/internal/alerts"
-	"trading/observability-api/internal/config"
-	deliveryHttp "trading/observability-api/internal/delivery/http"
-	"trading/observability-api/internal/delivery/http/handlers"
-	"trading/observability-api/internal/domain/repositories"
-	"trading/observability-api/internal/health"
-	"trading/observability-api/internal/middleware"
-	"trading/observability-api/internal/storage"
-	"trading/observability-api/internal/worker"
-	"trading/observability-api/internal/ws"
+	"trading/control-gateway/internal/alerts"
+	"trading/control-gateway/internal/config"
+	deliveryHttp "trading/control-gateway/internal/delivery/http"
+	"trading/control-gateway/internal/delivery/http/handlers"
+	"trading/control-gateway/internal/domain/repositories"
+	"trading/control-gateway/internal/health"
+	"trading/control-gateway/internal/middleware"
+	"trading/control-gateway/internal/storage"
+	"trading/control-gateway/internal/worker"
+	"trading/control-gateway/internal/ws"
 )
 
 type Server struct {

@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"trading/observability-api/internal/domain/entities"
+	"trading/control-gateway/internal/domain/entities"
 )
 
 type Manager struct {

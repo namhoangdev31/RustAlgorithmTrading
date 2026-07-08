@@ -2,9 +2,9 @@ package usecase
 
 import (
 	"context"
-	"trading/observability-api/internal/domain/entities"
-	"trading/observability-api/internal/domain/repositories"
-	"trading/observability-api/internal/domain/usecases"
+	"trading/control-gateway/internal/domain/entities"
+	"trading/control-gateway/internal/domain/repositories"
+	"trading/control-gateway/internal/domain/usecases"
 )
 
 type alpacaUseCase struct {

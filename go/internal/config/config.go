@@ -12,7 +12,7 @@ type Config struct {
 	Server struct {
 		Port                string
 		Host                string
-		ObservabilityAPIKey string
+		TelemetryAPIKey string
 	}
 	Storage struct {
 		DuckDBPath  string
@@ -43,7 +43,7 @@ func LoadConfig() *Config {
 	// Set defaults
 	v.SetDefault("PORT", "8081")
 	v.SetDefault("HOST", "127.0.0.1")
-	v.SetDefault("DUCKDB_PATH", "data/observability.duckdb")
+	v.SetDefault("DUCKDB_PATH", "data/telemetry.duckdb")
 	v.SetDefault("ALPACA_BASE_URL", "https://paper-api.alpaca.markets")
 	v.SetDefault("ALPACA_DATA_BASE_URL", "https://data.alpaca.markets")
 	v.SetDefault("MARKET_DATA_METRICS_URL", "http://127.0.0.1:9091/metrics")
@@ -64,7 +64,7 @@ func LoadConfig() *Config {
 
 	cfg.Server.Port = v.GetString("PORT")
 	cfg.Server.Host = v.GetString("HOST")
-	cfg.Server.ObservabilityAPIKey = v.GetString("OBSERVABILITY_API_KEY")
+	cfg.Server.TelemetryAPIKey = v.GetString("TELEMETRY_API_KEY")
 
 	cfg.Storage.DuckDBPath = v.GetString("DUCKDB_PATH")
 	cfg.Storage.DatabaseURL = v.GetString("DATABASE_URL")

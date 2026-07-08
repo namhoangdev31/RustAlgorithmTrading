@@ -41,12 +41,12 @@ impl ObservabilityEngine {
                 _ = ticker.tick() => {
                     if let Err(err) = self.run_once().await {
                         tracing::error!("observability ingestion cycle failed: {}", err);
-                        metrics::counter!("observability_engine_ingestion_failures_total").increment(1);
+                        metrics::counter!("telemetry_engine_ingestion_failures_total").increment(1);
                     }
                 }
                 signal = tokio::signal::ctrl_c() => {
                     signal?;
-                    tracing::info!("observability-engine shutdown signal received");
+                    tracing::info!("telemetry-engine shutdown signal received");
                     break;
                 }
             }
@@ -87,19 +87,19 @@ impl ObservabilityEngine {
             .await??;
         }
 
-        metrics::counter!("observability_engine_scrape_targets_total")
+        metrics::counter!("telemetry_engine_scrape_targets_total")
             .increment(self.config.targets.len() as u64);
-        metrics::counter!("observability_engine_scrape_target_failures_total")
+        metrics::counter!("telemetry_engine_scrape_target_failures_total")
             .increment(failed_targets as u64);
-        metrics::counter!("observability_engine_metrics_inserted_total")
+        metrics::counter!("telemetry_engine_metrics_inserted_total")
             .increment(inserted_metrics as u64);
-        metrics::gauge!("observability_engine_integrity_valid").set(if report.is_valid {
+        metrics::gauge!("telemetry_engine_integrity_valid").set(if report.is_valid {
             1.0
         } else {
             0.0
         });
         if !report.is_valid {
-            metrics::counter!("observability_engine_kill_switch_requests_total").increment(1);
+            metrics::counter!("telemetry_engine_kill_switch_requests_total").increment(1);
             tracing::error!(
                 reasons = ?report.reasons,
                 "integrity validation failed; kill switch requested"
@@ -135,7 +135,7 @@ fn integrity_event(report: &IntegrityReport) -> SystemEvent {
         "is_valid": report.is_valid,
         "reasons": report.reasons,
         "metrics": report.metrics,
-        "source": "observability-engine"
+        "source": "telemetry-engine"
     }))
 }
 
@@ -164,7 +164,7 @@ mod tests {
         .await;
         let dir = tempfile::tempdir().unwrap();
         let config = ObservabilityConfig {
-            duckdb_path: dir.path().join("observability.duckdb"),
+            duckdb_path: dir.path().join("telemetry.duckdb"),
             scrape_interval: std::time::Duration::from_secs(60),
             scrape_timeout: std::time::Duration::from_secs(2),
             integrity_thresholds: crate::integrity::Thresholds::default(),
@@ -191,7 +191,7 @@ mod tests {
         let url = spawn_fixture_server("pnl_drift_pct 0.5\n").await;
         let dir = tempfile::tempdir().unwrap();
         let config = ObservabilityConfig {
-            duckdb_path: dir.path().join("observability.duckdb"),
+            duckdb_path: dir.path().join("telemetry.duckdb"),
             scrape_interval: std::time::Duration::from_secs(60),
             scrape_timeout: std::time::Duration::from_secs(2),
             integrity_thresholds: crate::integrity::Thresholds::default(),

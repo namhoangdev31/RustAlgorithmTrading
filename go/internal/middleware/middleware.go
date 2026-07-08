@@ -64,9 +64,9 @@ func Logger() gin.HandlerFunc {
 }
 
 // APIKeyAuth enforces internal API key policy.
-// If OBSERVABILITY_API_KEY is empty, auth is permissive for local/dev parity.
+// If TELEMETRY_API_KEY is empty, auth is permissive for local/dev parity.
 func APIKeyAuth(c *gin.Context) {
-	expected := os.Getenv("OBSERVABILITY_API_KEY")
+	expected := os.Getenv("TELEMETRY_API_KEY")
 	if expected == "" {
 		c.Next()
 		return
