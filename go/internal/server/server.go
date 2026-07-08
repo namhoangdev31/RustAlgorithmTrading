@@ -37,6 +37,7 @@ type Server struct {
 	metricHandler    *handlers.MetricHandler
 	tradeHandler     *handlers.TradeHandler
 	systemHandler    *handlers.SystemHandler
+	riskLimitsHandler *handlers.RiskLimitsHandler
 	httpServer       *http.Server
 }
 
@@ -53,20 +54,22 @@ func NewServer(
 	metricHandler *handlers.MetricHandler,
 	tradeHandler *handlers.TradeHandler,
 	systemHandler *handlers.SystemHandler,
+	riskLimitsHandler *handlers.RiskLimitsHandler,
 ) *Server {
 	return &Server{
-		cfg:              cfg,
-		store:            store,
-		wsManager:        wsManager,
-		metricsWorker:    metricsWorker,
-		healthAggregator: healthAggregator,
-		incidentManager:  incidentManager,
-		alpacaClient:     alpacaClient,
-		alertHandler:     alertHandler,
-		alpacaHandler:    alpacaHandler,
-		metricHandler:    metricHandler,
-		tradeHandler:     tradeHandler,
-		systemHandler:    systemHandler,
+		cfg:               cfg,
+		store:             store,
+		wsManager:         wsManager,
+		metricsWorker:     metricsWorker,
+		healthAggregator:  healthAggregator,
+		incidentManager:   incidentManager,
+		alpacaClient:      alpacaClient,
+		alertHandler:      alertHandler,
+		alpacaHandler:     alpacaHandler,
+		metricHandler:     metricHandler,
+		tradeHandler:      tradeHandler,
+		systemHandler:     systemHandler,
+		riskLimitsHandler: riskLimitsHandler,
 	}
 }
 
@@ -138,9 +141,10 @@ func (s *Server) setupRouter() *gin.Engine {
 		WSManager:        s.wsManager,
 		AlertHandler:     s.alertHandler,
 		AlpacaHandler:    s.alpacaHandler,
-		MetricHandler:    s.metricHandler,
-		TradeHandler:     s.tradeHandler,
-		SystemHandler:    s.systemHandler,
+		MetricHandler:     s.metricHandler,
+		TradeHandler:      s.tradeHandler,
+		SystemHandler:     s.systemHandler,
+		RiskLimitsHandler: s.riskLimitsHandler,
 	})
 
 	return r

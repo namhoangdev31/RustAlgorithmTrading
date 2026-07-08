@@ -17,6 +17,10 @@ metrics.workspace = true
 tokio.workspace = true
 tracing.workspace = true
 tracing-subscriber.workspace = true
+redis = { workspace = true }
+reqwest = { workspace = true }
+futures-util = { workspace = true }
+serde_json = { workspace = true }
 
 [[bin]]
 name = "trading-core"

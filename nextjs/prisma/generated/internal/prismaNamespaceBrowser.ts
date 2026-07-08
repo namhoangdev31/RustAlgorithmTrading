@@ -154,7 +154,8 @@ export const ModelName = {
   LepoShipLocalConfig: 'LepoShipLocalConfig',
   MarketplacePartnerAccount: 'MarketplacePartnerAccount',
   MarketplaceTransaction: 'MarketplaceTransaction',
-  MarketplaceInstallEvent: 'MarketplaceInstallEvent'
+  MarketplaceInstallEvent: 'MarketplaceInstallEvent',
+  RiskLimits: 'RiskLimits'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1836,6 +1837,64 @@ export const MarketplaceInstallEventScalarFieldEnum = {
 } as const
 
 export type MarketplaceInstallEventScalarFieldEnum = (typeof MarketplaceInstallEventScalarFieldEnum)[keyof typeof MarketplaceInstallEventScalarFieldEnum]
+
+
+export const RiskLimitsScalarFieldEnum = {
+  id: 'id',
+  accountId: 'accountId',
+  maxShares: 'maxShares',
+  maxNotionalPerPosition: 'maxNotionalPerPosition',
+  maxTotalExposure: 'maxTotalExposure',
+  maxOpenPositions: 'maxOpenPositions',
+  maxConcentrationPercent: 'maxConcentrationPercent',
+  maxLossPerTrade: 'maxLossPerTrade',
+  maxDailyLoss: 'maxDailyLoss',
+  maxWeeklyLoss: 'maxWeeklyLoss',
+  maxMonthlyLoss: 'maxMonthlyLoss',
+  drawdownThresholdPercent: 'drawdownThresholdPercent',
+  defaultStopLossPercent: 'defaultStopLossPercent',
+  minStopLossPercent: 'minStopLossPercent',
+  maxStopLossPercent: 'maxStopLossPercent',
+  enableTrailingStop: 'enableTrailingStop',
+  trailingStopPercent: 'trailingStopPercent',
+  trailingActivationPercent: 'trailingActivationPercent',
+  defaultTakeProfitPercent: 'defaultTakeProfitPercent',
+  minRiskRewardRatio: 'minRiskRewardRatio',
+  enablePartialProfit: 'enablePartialProfit',
+  partialProfitPercent: 'partialProfitPercent',
+  firstTargetPercent: 'firstTargetPercent',
+  secondTargetPercent: 'secondTargetPercent',
+  circuitBreakerEnabled: 'circuitBreakerEnabled',
+  dailyLossThreshold: 'dailyLossThreshold',
+  maxConsecutiveLosses: 'maxConsecutiveLosses',
+  maxTradesPerDay: 'maxTradesPerDay',
+  cooldownMinutes: 'cooldownMinutes',
+  autoResume: 'autoResume',
+  minOrderSize: 'minOrderSize',
+  maxOrderSize: 'maxOrderSize',
+  maxOrderValue: 'maxOrderValue',
+  minPrice: 'minPrice',
+  maxPrice: 'maxPrice',
+  maxSlippagePercent: 'maxSlippagePercent',
+  allowLeverage: 'allowLeverage',
+  maxLeverage: 'maxLeverage',
+  minMarginPercent: 'minMarginPercent',
+  maxAtrPercent: 'maxAtrPercent',
+  reduceOnHighVolatility: 'reduceOnHighVolatility',
+  enableVolatilityScaling: 'enableVolatilityScaling',
+  baseVolatilityPercent: 'baseVolatilityPercent',
+  enforceMarketHours: 'enforceMarketHours',
+  allowPremarket: 'allowPremarket',
+  allowAfterhours: 'allowAfterhours',
+  blackoutPeriods: 'blackoutPeriods',
+  maxPositionCorrelation: 'maxPositionCorrelation',
+  enforceCorrelationCheck: 'enforceCorrelationCheck',
+  correlationLookbackDays: 'correlationLookbackDays',
+  updatedAt: 'updatedAt',
+  updatedBy: 'updatedBy'
+} as const
+
+export type RiskLimitsScalarFieldEnum = (typeof RiskLimitsScalarFieldEnum)[keyof typeof RiskLimitsScalarFieldEnum]
 
 
 export const SortOrder = {

@@ -1,6 +1,7 @@
 use common::config::SystemConfig;
 use common::metrics::{start_metrics_server, MetricsConfig};
 use execution_engine::ExecutionEngineService;
+use futures_util::StreamExt;
 use market_data::MarketDataService;
 use observability_engine::{ObservabilityConfig, ObservabilityEngine, ScrapeTarget};
 use std::sync::Arc;
@@ -39,10 +40,136 @@ async fn main() -> anyhow::Result<()> {
         }
     };
 
+    // Fallback: Fetch initial risk config from Go Control Plane or TOML file
+    let initial_risk_config = async {
+        let control_plane_url = std::env::var("GO_CONTROL_PLANE_URL")
+            .unwrap_or_else(|_| "http://go-control-plane:8081".to_string());
+        let risk_limits_url = format!("{}/api/system/risk-limits", control_plane_url);
+        let api_key = std::env::var("OBSERVABILITY_API_KEY")
+            .or_else(|_| std::env::var("LEPOS_INTERNAL_API_KEY"))
+            .unwrap_or_default();
+
+        tracing::info!("[cid:INIT] Attempting to fetch initial risk config from Go Control Plane: {}", risk_limits_url);
+        let client = reqwest::Client::builder()
+            .timeout(std::time::Duration::from_secs(3))
+            .build();
+        
+        let response = match client {
+            Ok(c) => c.get(&risk_limits_url)
+                .header("X-API-Key", &api_key)
+                .send()
+                .await,
+            Err(err) => Err(err.into()),
+        };
+
+        match response {
+            Ok(resp) => {
+                let status = resp.status();
+                if status.is_success() {
+                    if let Ok(text) = resp.text().await {
+                        if let Ok(config) = serde_json::from_str::<common::config::RiskConfig>(&text) {
+                            if config.validate().is_ok() {
+                                tracing::info!("[cid:INIT] Successfully loaded initial risk config from Go Control Plane");
+                                return Ok(config);
+                            }
+                        }
+                    }
+                }
+                tracing::warn!("[cid:INIT] Go Control Plane returned status {}. Falling back to TOML.", status);
+            }
+            Err(err) => {
+                tracing::warn!("[cid:INIT] Failed to contact Go Control Plane ({}). Falling back to TOML.", err);
+            }
+        }
+
+        // Fallback to local TOML file
+        tracing::info!("[cid:INIT] Loading risk limits fallback from ops/config/risk_limits.toml");
+        risk_manager::reload::load_risk_config_from_toml("ops/config/risk_limits.toml")
+    }.await;
+
+    let risk_config = match initial_risk_config {
+        Ok(cfg) => cfg,
+        Err(err) => {
+            tracing::warn!("[cid:INIT] Failed to fetch or validate risk limits: {}. Using default configuration.", err);
+            common::config::RiskConfig::default()
+        }
+    };
+
     let execution = Arc::new(
-        ExecutionEngineService::new(config.execution.clone(), config.risk.clone()).await?,
+        ExecutionEngineService::new(config.execution.clone(), risk_config).await?,
     );
     tracing::info!("[cid:INIT] Execution and risk modules initialized in-process");
+
+    // Redis Pub/Sub Subscriber for Real-time Risk Limits Reload
+    {
+        let exec_clone = execution.clone();
+        tokio::spawn(async move {
+            let redis_url = std::env::var("REDIS_URL").unwrap_or_else(|_| "redis://redis:6379/0".to_string());
+            tracing::info!("[cid:CONFIG] Initializing Redis pubsub client for risk limits on {}", redis_url);
+            
+            let client = match redis::Client::open(redis_url) {
+                Ok(c) => c,
+                Err(err) => {
+                    tracing::error!("[cid:CONFIG] Failed to open Redis connection: {}", err);
+                    return;
+                }
+            };
+            
+            let conn = match client.get_async_connection().await {
+                Ok(c) => c,
+                Err(err) => {
+                    tracing::error!("[cid:CONFIG] Failed to get async Redis connection: {}", err);
+                    return;
+                }
+            };
+            
+            let mut pubsub = conn.into_pubsub();
+            if let Err(err) = pubsub.subscribe("channel:risk-limits").await {
+                tracing::error!("[cid:CONFIG] Failed to subscribe to channel:risk-limits: {}", err);
+                return;
+            }
+            
+            tracing::info!("[cid:CONFIG] Subscribed to Redis channel:risk-limits for real-time risk reloads");
+            
+            let mut stream = pubsub.on_message();
+            while let Some(msg) = stream.next().await {
+                let payload: Result<String, _> = msg.get_payload();
+                match payload {
+                    Ok(data) => {
+                        tracing::info!("[cid:CONFIG] Received risk limits update event via Redis PubSub");
+                        match serde_json::from_str::<common::config::RiskConfig>(&data) {
+                            Ok(new_limits) => {
+                                if let Err(err) = new_limits.validate() {
+                                    tracing::error!("[cid:CONFIG] Invalid risk limits received: {}", err);
+                                    common::metrics::risk::record_config_reload("failed", "VALIDATION_ERROR");
+                                    continue;
+                                }
+                                let risk_mgr = exec_clone.risk_manager();
+                                match risk_mgr.write() {
+                                    Ok(mut writer) => {
+                                        writer.reload_risk_config(new_limits);
+                                        common::metrics::risk::record_config_reload("success", "NONE");
+                                        tracing::info!("[cid:CONFIG] Real-time Risk limits hot-reload applied successfully");
+                                    }
+                                    Err(_) => {
+                                        common::metrics::risk::record_config_reload("failed", "VALIDATION_ERROR");
+                                        tracing::error!("[cid:CONFIG] Risk manager RwLock poisoned, cannot reload");
+                                    }
+                                };
+                            }
+                            Err(err) => {
+                                tracing::error!("[cid:CONFIG] Failed to deserialize risk limits JSON: {}", err);
+                                common::metrics::risk::record_config_reload("failed", "PARSE_ERROR");
+                            }
+                        }
+                    }
+                    Err(err) => {
+                        tracing::error!("[cid:CONFIG] Redis pubsub payload error: {}", err);
+                    }
+                }
+            }
+        });
+    }
 
     #[cfg(unix)]
     {
@@ -58,7 +185,7 @@ async fn main() -> anyhow::Result<()> {
             };
             loop {
                 sighup.recv().await;
-                tracing::info!("[cid:CONFIG] SIGHUP received, reloading risk limits from ops/config/risk_limits.toml");
+                tracing::info!("[cid:CONFIG] SIGHUP received, reloading risk limits fallback from ops/config/risk_limits.toml");
                 match risk_manager::reload::load_risk_config_from_toml("ops/config/risk_limits.toml") {
                     Ok(new_limits) => {
                         let risk_mgr = exec_clone.risk_manager();

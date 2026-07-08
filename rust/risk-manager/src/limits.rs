@@ -40,6 +40,16 @@ impl LimitChecker {
             };
         }
 
+        // Level 1b: Max shares check
+        if order.quantity.0 > self.config.max_shares as f64 {
+            return RiskReport {
+                decision: RiskDecision::Reject,
+                reason_code: Some(RiskReason::SymbolVolumeLimitExceeded),
+                limit_snapshot: Some(json!({"max_shares": self.config.max_shares})),
+                correlation_id: correlation_id.to_string(),
+            };
+        }
+
         // Level 2: Position size check
         if let Err(reason) = self.check_position_size(order) {
             return RiskReport {

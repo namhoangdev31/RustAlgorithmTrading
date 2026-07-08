@@ -16,14 +16,15 @@ import (
 
 // RouterConfig contains configurations and handlers for routing initialization.
 type RouterConfig struct {
-	Engine           *gin.Engine
-	HealthAggregator *health.Aggregator
-	WSManager        *ws.Manager
-	AlertHandler     *handlers.AlertHandler
-	AlpacaHandler    *handlers.AlpacaHandler
-	MetricHandler    *handlers.MetricHandler
-	TradeHandler     *handlers.TradeHandler
-	SystemHandler    *handlers.SystemHandler
+	Engine            *gin.Engine
+	HealthAggregator  *health.Aggregator
+	WSManager         *ws.Manager
+	AlertHandler      *handlers.AlertHandler
+	AlpacaHandler     *handlers.AlpacaHandler
+	MetricHandler     *handlers.MetricHandler
+	TradeHandler      *handlers.TradeHandler
+	SystemHandler     *handlers.SystemHandler
+	RiskLimitsHandler *handlers.RiskLimitsHandler
 }
 
 // MapRoutes configures all public, metrics, websocket, docs and API endpoints on the Gin engine.
@@ -73,5 +74,8 @@ func MapRoutes(cfg RouterConfig) {
 
 		// 5. System metrics/performance/integrity routes
 		cfg.SystemHandler.MapRoutes(api.Group("/system"))
+
+		// 6. Risk limits configuration routes (/api/system/risk-limits)
+		cfg.RiskLimitsHandler.MapRoutes(api.Group("/system"))
 	}
 }

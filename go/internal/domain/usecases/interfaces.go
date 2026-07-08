@@ -51,3 +51,9 @@ type SystemUseCase interface {
 	GetStats() map[string]interface{}
 	ValidateIntegrity(metrics entities.Metrics) entities.Report
 }
+
+// RiskLimitsUseCase defines the application business rules for managing risk limits.
+type RiskLimitsUseCase interface {
+	GetRiskLimits(ctx context.Context, accountID *string) (*entities.RiskLimits, error)
+	UpdateRiskLimits(ctx context.Context, limits *entities.RiskLimits, username string) error
+}

@@ -29,6 +29,7 @@ mod risk_execution_observability_tests {
             enable_circuit_breaker: true,
             max_loss_threshold: 1000.0,
             sizing_amount: 0.0,
+            ..Default::default()
         };
 
         let exec_config = ExecutionConfig {

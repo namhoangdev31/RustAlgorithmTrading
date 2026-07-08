@@ -537,3 +537,8 @@ export type MarketplaceTransaction = Prisma.MarketplaceTransactionModel
  * 
  */
 export type MarketplaceInstallEvent = Prisma.MarketplaceInstallEventModel
+/**
+ * Model RiskLimits
+ * 
+ */
+export type RiskLimits = Prisma.RiskLimitsModel

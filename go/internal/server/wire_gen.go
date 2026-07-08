@@ -7,6 +7,7 @@
 package server
 
 import (
+	"github.com/redis/go-redis/v9"
 	"trading/observability-api/internal/alerts"
 	"trading/observability-api/internal/config"
 	"trading/observability-api/internal/delivery/http/handlers"
@@ -25,9 +26,9 @@ import (
 
 // InitializeServer compiles and resolves the Server dependency graph.
 func InitializeServer(cfg *config.Config) (*Server, error) {
-	duckDB := ProvideDuckDBReader(cfg)
+	v := ProvideDuckDBReader(cfg)
 	postgresReader := ProvidePostgresReader(cfg)
-	store := storage.NewStore(duckDB, postgresReader)
+	store := storage.NewStore(v, postgresReader)
 	manager := ws.NewManager()
 	metricsCollector := worker.NewMetricsCollector(store, manager)
 	aggregator := health.NewAggregator(store, manager)
@@ -47,11 +48,27 @@ func InitializeServer(cfg *config.Config) (*Server, error) {
 	systemRepository := duckdb.NewHybridSystemRepository(store)
 	systemUseCase := usecase.NewSystemUseCase(systemRepository, aggregator, manager)
 	systemHandler := handlers.NewSystemHandler(systemUseCase)
-	server := NewServer(cfg, store, manager, metricsCollector, aggregator, alertsManager, alpacaRepository, alertHandler, alpacaHandler, metricHandler, tradeHandler, systemHandler)
+	riskLimitsRepository := postgres.NewGormRiskLimitsRepository(store)
+	client := ProvideRedisClient(cfg)
+	riskLimitsUseCase := usecase.NewRiskLimitsUseCase(riskLimitsRepository, client)
+	riskLimitsHandler := handlers.NewRiskLimitsHandler(riskLimitsUseCase)
+	server := NewServer(cfg, store, manager, metricsCollector, aggregator, alertsManager, alpacaRepository, alertHandler, alpacaHandler, metricHandler, tradeHandler, systemHandler, riskLimitsHandler)
 	return server, nil
 }
 
 // wire.go:
+
+// ProvideRedisClient initializes a Redis client from config.
+func ProvideRedisClient(cfg *config.Config) *redis.Client {
+	if cfg.Storage.RedisURL == "" {
+		return nil
+	}
+	options, err := redis.ParseURL(cfg.Storage.RedisURL)
+	if err != nil {
+		return nil
+	}
+	return redis.NewClient(options)
+}
 
 // ProvideDuckDBReader initializes DuckDB reader from config.
 func ProvideDuckDBReader(cfg *config.Config) *storage.DuckDBReader {

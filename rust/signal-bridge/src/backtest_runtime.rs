@@ -733,6 +733,7 @@ mod tests {
             enable_circuit_breaker: true,
             max_loss_threshold: 1_000_000.0,
             sizing_amount: 100_000.0,
+            ..Default::default()
         }
     }
 
@@ -812,6 +813,7 @@ mod tests {
             enable_circuit_breaker: true,
             max_loss_threshold: 1000.0,
             sizing_amount: 0.0,
+            ..Default::default()
         };
 
         let mut runtime =
@@ -849,6 +851,7 @@ mod tests {
             enable_circuit_breaker: true,
             max_loss_threshold: 1000.0,
             sizing_amount: 0.0,
+            ..Default::default()
         };
 
         let mut runtime =

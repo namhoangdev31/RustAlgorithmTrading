@@ -5,6 +5,7 @@ package server
 
 import (
 	"github.com/google/wire"
+	"github.com/redis/go-redis/v9"
 	"trading/observability-api/internal/alerts"
 	"trading/observability-api/internal/config"
 	"trading/observability-api/internal/delivery/http/handlers"
@@ -18,6 +19,18 @@ import (
 	"trading/observability-api/internal/worker"
 	"trading/observability-api/internal/ws"
 )
+
+// ProvideRedisClient initializes a Redis client from config.
+func ProvideRedisClient(cfg *config.Config) *redis.Client {
+	if cfg.Storage.RedisURL == "" {
+		return nil
+	}
+	options, err := redis.ParseURL(cfg.Storage.RedisURL)
+	if err != nil {
+		return nil
+	}
+	return redis.NewClient(options)
+}
 
 // ProvideDuckDBReader initializes DuckDB reader from config.
 func ProvideDuckDBReader(cfg *config.Config) *storage.DuckDBReader {
@@ -59,6 +72,7 @@ func InitializeServer(cfg *config.Config) (*Server, error) {
 		// Core Infrastructure
 		ProvideDuckDBReader,
 		ProvidePostgresReader,
+		ProvideRedisClient,
 		storage.NewStore,
 		ws.NewManager,
 		alerts.NewManager,
@@ -69,6 +83,7 @@ func InitializeServer(cfg *config.Config) (*Server, error) {
 		// Repositories
 		postgres.NewRawSQLTradeRepository,
 		postgres.NewRawSQLAlertRepository,
+		postgres.NewGormRiskLimitsRepository,
 		duckdb.NewDuckDBMetricRepository,
 		duckdb.NewHybridSystemRepository,
 
@@ -78,6 +93,7 @@ func InitializeServer(cfg *config.Config) (*Server, error) {
 		usecase.NewMetricUseCase,
 		usecase.NewAlpacaUseCase,
 		usecase.NewSystemUseCase,
+		usecase.NewRiskLimitsUseCase,
 
 		// HTTP Delivery Handlers
 		handlers.NewTradeHandler,
@@ -85,6 +101,7 @@ func InitializeServer(cfg *config.Config) (*Server, error) {
 		handlers.NewMetricHandler,
 		handlers.NewAlpacaHandler,
 		handlers.NewSystemHandler,
+		handlers.NewRiskLimitsHandler,
 
 		// Server
 		NewServer,

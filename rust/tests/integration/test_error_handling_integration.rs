@@ -190,6 +190,7 @@ mod error_handling_tests {
             enable_circuit_breaker: true,
             max_loss_threshold: 1000.0,
             sizing_amount: 0.0,
+            ..Default::default()
         };
 
         let mut stop_manager = StopManager::new(risk_config);
@@ -503,6 +504,7 @@ mod error_handling_tests {
             enable_circuit_breaker: true,
             max_loss_threshold: 1000.0,
             sizing_amount: 0.0,
+            ..Default::default()
         };
 
         assert!(config.enable_circuit_breaker);
@@ -527,6 +529,7 @@ mod error_handling_tests {
             enable_circuit_breaker: true,
             max_loss_threshold: 1000.0,
             sizing_amount: 0.0,
+            ..Default::default()
         };
 
         // Attempt to create position larger than limit

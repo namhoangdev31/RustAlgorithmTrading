@@ -59,6 +59,7 @@ pub fn parse_risk_config_toml(content: &str) -> Result<RiskConfig> {
         enable_circuit_breaker: parsed.circuit_breaker.enabled,
         max_loss_threshold: parsed.loss_limits.max_daily_loss,
         sizing_amount: 0.0,
+        ..Default::default()
     };
 
     cfg.validate()?;

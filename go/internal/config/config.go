@@ -17,6 +17,7 @@ type Config struct {
 	Storage struct {
 		DuckDBPath  string
 		DatabaseURL string
+		RedisURL    string
 	}
 	Alpaca struct {
 		BaseURL     string
@@ -48,6 +49,7 @@ func LoadConfig() *Config {
 	v.SetDefault("MARKET_DATA_METRICS_URL", "http://127.0.0.1:9091/metrics")
 	v.SetDefault("EXECUTION_METRICS_URL", "http://127.0.0.1:9092/metrics")
 	v.SetDefault("RISK_METRICS_URL", "http://127.0.0.1:9093/metrics")
+	v.SetDefault("REDIS_URL", "redis://127.0.0.1:6379/0")
 
 	// Read from .env file if it exists at the root path
 	v.SetConfigFile(".env")
@@ -66,6 +68,7 @@ func LoadConfig() *Config {
 
 	cfg.Storage.DuckDBPath = v.GetString("DUCKDB_PATH")
 	cfg.Storage.DatabaseURL = v.GetString("DATABASE_URL")
+	cfg.Storage.RedisURL = v.GetString("REDIS_URL")
 
 	cfg.Alpaca.BaseURL = v.GetString("ALPACA_BASE_URL")
 	cfg.Alpaca.DataBaseURL = v.GetString("ALPACA_DATA_BASE_URL")

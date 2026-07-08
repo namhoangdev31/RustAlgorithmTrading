@@ -487,7 +487,8 @@ export const ModelName = {
   LepoShipLocalConfig: 'LepoShipLocalConfig',
   MarketplacePartnerAccount: 'MarketplacePartnerAccount',
   MarketplaceTransaction: 'MarketplaceTransaction',
-  MarketplaceInstallEvent: 'MarketplaceInstallEvent'
+  MarketplaceInstallEvent: 'MarketplaceInstallEvent',
+  RiskLimits: 'RiskLimits'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -503,7 +504,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "order" | "riskEvent" | "file" | "user" | "organization" | "project" | "bundlePayouts" | "bundles" | "notifications" | "session" | "userDeviceToken" | "bundleAbTests" | "bundleAbuseSignals" | "bundleAdConfigurations" | "bundleAnalyticsEvents" | "bundleApiUsageStats" | "bundleAuditLog" | "bundleBetaTesters" | "bundleChangeLogs" | "bundleCollaborators" | "bundleContentRatings" | "bundleCountries" | "bundleDependencies" | "bundleDeveloperStrikes" | "bundleDeviceSupport" | "bundleExternalIntegrations" | "bundleFeaturedSlots" | "bundleInAppPurchases" | "bundleInstallEvents" | "bundleLanguages" | "bundleLocalizations" | "bundleMonetizationConfigs" | "bundleOrders" | "bundlePermissions" | "bundlePrivacyDeclarations" | "bundlePromotions" | "bundleRankingScores" | "bundleReleaseTracks" | "bundleRetentionStats" | "bundleReviews" | "bundleRuntimeConfig" | "bundleScreenshots" | "bundleSearchKeywords" | "bundleStateTransitions" | "bundleStats" | "bundleStoreFlags" | "bundleStoreListings" | "bundleSubscriptionPlans" | "bundleTags" | "bundleTrendingSnapshots" | "bundleUserReports" | "bundleVersionHistory" | "bundleWebhooks" | "bundleOrderItems" | "bundlePaymentLogs" | "bundleRefundRequests" | "bundleUserEntitlements" | "bundleRollouts" | "bundleReviewReports" | "bundleSubscriptionHistory" | "bundleCrashReports" | "bundleReviewHistory" | "bundleReviewQueue" | "bundleSecurityScanResults" | "bundleUpdatePhases" | "userSecrets" | "personalAccessToken" | "ssoConfig" | "deployHook" | "firewallRule" | "nativeDeployment" | "nativeDomainConfig" | "nativeEdgeFunction" | "nativeCacheEntry" | "nativeAnalyticsReplay" | "nativeCrashReport" | "nativeSourceMap" | "nativePlugin" | "nativePluginInstallation" | "nativeDebugSession" | "nativeConnectedDevice" | "nativeCloudTarget" | "nativeRoutingPolicy" | "nativeRegionReplica" | "nativeArtifactMirror" | "nativeWafEvent" | "nativeWafRule" | "nativeScimMapping" | "nativeAiDiagnostic" | "nativeRemediationRun" | "nativeSchedulingPolicy" | "nativeSchedulingSignal" | "nativeServiceIdentity" | "nativeServiceTrustPolicy" | "nativeTelemetryEnvelope" | "cronJob" | "form" | "formSubmission" | "formWebhookDelivery" | "previewComment" | "lepoShipLocalConfig" | "marketplacePartnerAccount" | "marketplaceTransaction" | "marketplaceInstallEvent"
+    modelProps: "order" | "riskEvent" | "file" | "user" | "organization" | "project" | "bundlePayouts" | "bundles" | "notifications" | "session" | "userDeviceToken" | "bundleAbTests" | "bundleAbuseSignals" | "bundleAdConfigurations" | "bundleAnalyticsEvents" | "bundleApiUsageStats" | "bundleAuditLog" | "bundleBetaTesters" | "bundleChangeLogs" | "bundleCollaborators" | "bundleContentRatings" | "bundleCountries" | "bundleDependencies" | "bundleDeveloperStrikes" | "bundleDeviceSupport" | "bundleExternalIntegrations" | "bundleFeaturedSlots" | "bundleInAppPurchases" | "bundleInstallEvents" | "bundleLanguages" | "bundleLocalizations" | "bundleMonetizationConfigs" | "bundleOrders" | "bundlePermissions" | "bundlePrivacyDeclarations" | "bundlePromotions" | "bundleRankingScores" | "bundleReleaseTracks" | "bundleRetentionStats" | "bundleReviews" | "bundleRuntimeConfig" | "bundleScreenshots" | "bundleSearchKeywords" | "bundleStateTransitions" | "bundleStats" | "bundleStoreFlags" | "bundleStoreListings" | "bundleSubscriptionPlans" | "bundleTags" | "bundleTrendingSnapshots" | "bundleUserReports" | "bundleVersionHistory" | "bundleWebhooks" | "bundleOrderItems" | "bundlePaymentLogs" | "bundleRefundRequests" | "bundleUserEntitlements" | "bundleRollouts" | "bundleReviewReports" | "bundleSubscriptionHistory" | "bundleCrashReports" | "bundleReviewHistory" | "bundleReviewQueue" | "bundleSecurityScanResults" | "bundleUpdatePhases" | "userSecrets" | "personalAccessToken" | "ssoConfig" | "deployHook" | "firewallRule" | "nativeDeployment" | "nativeDomainConfig" | "nativeEdgeFunction" | "nativeCacheEntry" | "nativeAnalyticsReplay" | "nativeCrashReport" | "nativeSourceMap" | "nativePlugin" | "nativePluginInstallation" | "nativeDebugSession" | "nativeConnectedDevice" | "nativeCloudTarget" | "nativeRoutingPolicy" | "nativeRegionReplica" | "nativeArtifactMirror" | "nativeWafEvent" | "nativeWafRule" | "nativeScimMapping" | "nativeAiDiagnostic" | "nativeRemediationRun" | "nativeSchedulingPolicy" | "nativeSchedulingSignal" | "nativeServiceIdentity" | "nativeServiceTrustPolicy" | "nativeTelemetryEnvelope" | "cronJob" | "form" | "formSubmission" | "formWebhookDelivery" | "previewComment" | "lepoShipLocalConfig" | "marketplacePartnerAccount" | "marketplaceTransaction" | "marketplaceInstallEvent" | "riskLimits"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -8203,6 +8204,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    RiskLimits: {
+      payload: Prisma.$RiskLimitsPayload<ExtArgs>
+      fields: Prisma.RiskLimitsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.RiskLimitsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RiskLimitsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.RiskLimitsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RiskLimitsPayload>
+        }
+        findFirst: {
+          args: Prisma.RiskLimitsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RiskLimitsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.RiskLimitsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RiskLimitsPayload>
+        }
+        findMany: {
+          args: Prisma.RiskLimitsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RiskLimitsPayload>[]
+        }
+        create: {
+          args: Prisma.RiskLimitsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RiskLimitsPayload>
+        }
+        createMany: {
+          args: Prisma.RiskLimitsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.RiskLimitsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RiskLimitsPayload>[]
+        }
+        delete: {
+          args: Prisma.RiskLimitsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RiskLimitsPayload>
+        }
+        update: {
+          args: Prisma.RiskLimitsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RiskLimitsPayload>
+        }
+        deleteMany: {
+          args: Prisma.RiskLimitsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.RiskLimitsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.RiskLimitsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RiskLimitsPayload>[]
+        }
+        upsert: {
+          args: Prisma.RiskLimitsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RiskLimitsPayload>
+        }
+        aggregate: {
+          args: Prisma.RiskLimitsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateRiskLimits>
+        }
+        groupBy: {
+          args: Prisma.RiskLimitsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RiskLimitsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.RiskLimitsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RiskLimitsCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -9907,6 +9982,64 @@ export const MarketplaceInstallEventScalarFieldEnum = {
 export type MarketplaceInstallEventScalarFieldEnum = (typeof MarketplaceInstallEventScalarFieldEnum)[keyof typeof MarketplaceInstallEventScalarFieldEnum]
 
 
+export const RiskLimitsScalarFieldEnum = {
+  id: 'id',
+  accountId: 'accountId',
+  maxShares: 'maxShares',
+  maxNotionalPerPosition: 'maxNotionalPerPosition',
+  maxTotalExposure: 'maxTotalExposure',
+  maxOpenPositions: 'maxOpenPositions',
+  maxConcentrationPercent: 'maxConcentrationPercent',
+  maxLossPerTrade: 'maxLossPerTrade',
+  maxDailyLoss: 'maxDailyLoss',
+  maxWeeklyLoss: 'maxWeeklyLoss',
+  maxMonthlyLoss: 'maxMonthlyLoss',
+  drawdownThresholdPercent: 'drawdownThresholdPercent',
+  defaultStopLossPercent: 'defaultStopLossPercent',
+  minStopLossPercent: 'minStopLossPercent',
+  maxStopLossPercent: 'maxStopLossPercent',
+  enableTrailingStop: 'enableTrailingStop',
+  trailingStopPercent: 'trailingStopPercent',
+  trailingActivationPercent: 'trailingActivationPercent',
+  defaultTakeProfitPercent: 'defaultTakeProfitPercent',
+  minRiskRewardRatio: 'minRiskRewardRatio',
+  enablePartialProfit: 'enablePartialProfit',
+  partialProfitPercent: 'partialProfitPercent',
+  firstTargetPercent: 'firstTargetPercent',
+  secondTargetPercent: 'secondTargetPercent',
+  circuitBreakerEnabled: 'circuitBreakerEnabled',
+  dailyLossThreshold: 'dailyLossThreshold',
+  maxConsecutiveLosses: 'maxConsecutiveLosses',
+  maxTradesPerDay: 'maxTradesPerDay',
+  cooldownMinutes: 'cooldownMinutes',
+  autoResume: 'autoResume',
+  minOrderSize: 'minOrderSize',
+  maxOrderSize: 'maxOrderSize',
+  maxOrderValue: 'maxOrderValue',
+  minPrice: 'minPrice',
+  maxPrice: 'maxPrice',
+  maxSlippagePercent: 'maxSlippagePercent',
+  allowLeverage: 'allowLeverage',
+  maxLeverage: 'maxLeverage',
+  minMarginPercent: 'minMarginPercent',
+  maxAtrPercent: 'maxAtrPercent',
+  reduceOnHighVolatility: 'reduceOnHighVolatility',
+  enableVolatilityScaling: 'enableVolatilityScaling',
+  baseVolatilityPercent: 'baseVolatilityPercent',
+  enforceMarketHours: 'enforceMarketHours',
+  allowPremarket: 'allowPremarket',
+  allowAfterhours: 'allowAfterhours',
+  blackoutPeriods: 'blackoutPeriods',
+  maxPositionCorrelation: 'maxPositionCorrelation',
+  enforceCorrelationCheck: 'enforceCorrelationCheck',
+  correlationLookbackDays: 'correlationLookbackDays',
+  updatedAt: 'updatedAt',
+  updatedBy: 'updatedBy'
+} as const
+
+export type RiskLimitsScalarFieldEnum = (typeof RiskLimitsScalarFieldEnum)[keyof typeof RiskLimitsScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -10264,6 +10397,7 @@ export type GlobalOmitConfig = {
   marketplacePartnerAccount?: Prisma.MarketplacePartnerAccountOmit
   marketplaceTransaction?: Prisma.MarketplaceTransactionOmit
   marketplaceInstallEvent?: Prisma.MarketplaceInstallEventOmit
+  riskLimits?: Prisma.RiskLimitsOmit
 }
 
 /* Types for Logging */

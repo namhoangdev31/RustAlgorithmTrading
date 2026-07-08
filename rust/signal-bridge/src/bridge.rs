@@ -347,6 +347,7 @@ impl BacktestRuntime {
             enable_circuit_breaker: true,
             max_loss_threshold,
             sizing_amount,
+            ..Default::default()
         };
 
         Self {
@@ -390,6 +391,7 @@ impl BacktestRuntime {
             enable_circuit_breaker: true,
             max_loss_threshold,
             sizing_amount,
+            ..Default::default()
         };
 
         self.inner

@@ -47,3 +47,9 @@ type SystemRepository interface {
 	QueryLogs(level string, limit int) ([]map[string]interface{}, error)
 	QueryLatestIntegrityReport() (map[string]interface{}, error)
 }
+
+// RiskLimitsRepository defines the data access methods for managing system risk thresholds.
+type RiskLimitsRepository interface {
+	GetRiskLimits(ctx context.Context, accountID *string) (*entities.RiskLimits, error)
+	SaveRiskLimits(ctx context.Context, limits *entities.RiskLimits) error
+}

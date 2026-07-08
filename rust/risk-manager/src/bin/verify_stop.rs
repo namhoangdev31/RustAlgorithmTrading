@@ -60,6 +60,7 @@ fn main() -> anyhow::Result<()> {
         enable_circuit_breaker: true,
         max_loss_threshold: 10_000.0,
         sizing_amount: 0.0,
+        ..Default::default()
     });
 
     let base_position = Position {

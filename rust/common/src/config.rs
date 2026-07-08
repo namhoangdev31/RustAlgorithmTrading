@@ -45,6 +45,13 @@ impl MarketDataConfig {
     }
 }
 
+fn default_max_shares() -> usize { 1000 }
+fn default_max_weekly_loss() -> f64 { 15000.0 }
+fn default_max_monthly_loss() -> f64 { 50000.0 }
+fn default_enforce_market_hours() -> bool { true }
+fn default_max_position_correlation() -> f64 { 0.7 }
+fn default_enforce_correlation_check() -> bool { true }
+
 /// Configuration for risk management
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RiskConfig {
@@ -56,6 +63,19 @@ pub struct RiskConfig {
     pub enable_circuit_breaker: bool,
     pub max_loss_threshold: f64,
     pub sizing_amount: f64,
+
+    #[serde(default = "default_max_shares")]
+    pub max_shares: usize,
+    #[serde(default = "default_max_weekly_loss")]
+    pub max_weekly_loss: f64,
+    #[serde(default = "default_max_monthly_loss")]
+    pub max_monthly_loss: f64,
+    #[serde(default = "default_enforce_market_hours")]
+    pub enforce_market_hours: bool,
+    #[serde(default = "default_max_position_correlation")]
+    pub max_position_correlation: f64,
+    #[serde(default = "default_enforce_correlation_check")]
+    pub enforce_correlation_check: bool,
 }
 
 impl Default for RiskConfig {
@@ -69,6 +89,12 @@ impl Default for RiskConfig {
             enable_circuit_breaker: true,
             max_loss_threshold: 500.0,
             sizing_amount: 0.0, // 0.0 means use % equity (legacy behavior)
+            max_shares: default_max_shares(),
+            max_weekly_loss: default_max_weekly_loss(),
+            max_monthly_loss: default_max_monthly_loss(),
+            enforce_market_hours: default_enforce_market_hours(),
+            max_position_correlation: default_max_position_correlation(),
+            enforce_correlation_check: default_enforce_correlation_check(),
         }
     }
 }
@@ -109,6 +135,24 @@ impl RiskConfig {
         if self.max_loss_threshold <= 0.0 {
             return Err(TradingError::Configuration(
                 "max_loss_threshold must be positive".to_string(),
+            ));
+        }
+
+        if self.max_shares == 0 {
+            return Err(TradingError::Configuration(
+                "max_shares must be at least 1".to_string(),
+            ));
+        }
+
+        if self.max_weekly_loss <= 0.0 {
+            return Err(TradingError::Configuration(
+                "max_weekly_loss must be positive".to_string(),
+            ));
+        }
+
+        if self.max_monthly_loss <= 0.0 {
+            return Err(TradingError::Configuration(
+                "max_monthly_loss must be positive".to_string(),
             ));
         }
 
