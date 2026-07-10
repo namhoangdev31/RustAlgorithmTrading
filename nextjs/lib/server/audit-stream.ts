@@ -282,9 +282,6 @@ async function sendToDatadog(
   );
 }
 
-/**
- * Simulates uploading/appending logs to an AWS S3 bucket with retry and DLQ fallback.
- */
 async function sendToS3(
   bundleId: string,
   bucket: string,
@@ -295,17 +292,17 @@ async function sendToS3(
   const mappedEvent = mapLogSchema(event, schemaMapping);
 
   const performSend = async (): Promise<boolean> => {
-    const dateStr = new Date().toISOString().split("T")[0];
-    const s3Dir = path.join(process.cwd(), "public", "bundles", "siem-s3", bundleId);
-    const s3File = path.join(s3Dir, `${dateStr}-audit-logs.jsonl`);
-
-    console.log(`[SIEM AWS S3] Simulating S3 upload to bucket: ${bucket} in region ${region}...`);
-
-    await fs.mkdir(s3Dir, { recursive: true });
-    const logLine = JSON.stringify({ ...mappedEvent, streamedAt: new Date().toISOString() }) + "\n";
-    await fs.appendFile(s3File, logLine, "utf-8");
-
-    console.log(`[SIEM AWS S3] Appended log to simulated S3 path: s3://${bucket}/${bundleId}/${dateStr}-audit-logs.jsonl`);
+    const endpoint = process.env.LEPOS_AUDIT_S3_ADAPTER_ENDPOINT;
+    if (!endpoint) throw new Error("AWS S3 audit adapter is not configured.");
+    const token = process.env.LEPOS_AUDIT_S3_ADAPTER_TOKEN;
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: { "content-type": "application/json", ...(token ? { authorization: `Bearer ${token}` } : {}) },
+      body: JSON.stringify({ bucket, region, bundleId, event: { ...mappedEvent, streamedAt: new Date().toISOString() } }),
+      cache: "no-store",
+      signal: AbortSignal.timeout(5000),
+    });
+    if (!response.ok) throw new Error(`AWS S3 audit adapter returned HTTP ${response.status}.`);
     return true;
   };
 

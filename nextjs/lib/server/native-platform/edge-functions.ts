@@ -1,7 +1,7 @@
 import { Worker } from "node:worker_threads";
 import crypto from "node:crypto";
 
-const WASM_MODULE_CACHE = new Map<string, WebAssembly.Module>();
+const WASM_MODULE_CACHE = new Map<string, Buffer>();
 
 type EdgeExecutionInput = {
   code: string; // Can be JS script, base64 Wasm bytecode, or Cloud Storage URL (s3://, gs://, http://, https://)
@@ -262,37 +262,30 @@ export async function runNativeEdgeFunction(input: EdgeExecutionInput) {
     logs.push(`[Cloud Storage] Fetching WebAssembly bytecode from: ${codePayload}`);
     const cacheKey = codePayload;
     
-    if (WASM_MODULE_CACHE.has(cacheKey)) {
+    const cachedWasm = WASM_MODULE_CACHE.get(cacheKey);
+    if (cachedWasm) {
       logs.push(`[Cloud Storage] Wasm module cache hit. Cold start bypassed.`);
       wasmCacheHit = true;
       isWasmRun = true;
-      // Get base64 bytes for pool task (usually cached or kept minimal)
-      wasmBytes = Buffer.from(
-        "0061736d010000000105016000017f03020100070b010768616e646c657200000a06010400412a0b",
-        "hex"
-      ).toString("base64");
+      wasmBytes = cachedWasm.toString("base64");
     } else {
       logs.push(`[Cloud Storage] Cache miss. Initiating download...`);
       let wasmBuffer: Buffer;
-      
-      if (codePayload.includes("mock") || codePayload.startsWith("s3://") || codePayload.startsWith("gs://")) {
-        // High fidelity mock bytecode of a simple Wasm module returning 42
-        wasmBuffer = Buffer.from(
-          "0061736d010000000105016000017f03020100070b010768616e646c657200000a06010400412a0b",
-          "hex"
-        );
-        logs.push(`[Cloud Storage] Mock storage download complete (<2ms).`);
-      } else {
-        // Real HTTP fetch
-        const res = await fetch(codePayload);
-        const arrayBuf = await res.arrayBuffer();
-        wasmBuffer = Buffer.from(arrayBuf);
-        logs.push(`[Cloud Storage] HTTP download complete (${wasmBuffer.length} bytes).`);
+
+      if (codePayload.startsWith("s3://") || codePayload.startsWith("gs://")) {
+        throw new Error("Object-storage Wasm loading is unavailable until a signed provider adapter is configured.");
       }
 
+      const res = await fetch(codePayload, { cache: "no-store", signal: AbortSignal.timeout(5000) });
+      if (!res.ok) throw new Error(`Wasm source returned HTTP ${res.status}.`);
+      const arrayBuf = await res.arrayBuffer();
+      wasmBuffer = Buffer.from(arrayBuf);
+      if (wasmBuffer.length > 10 * 1024 * 1024) throw new Error("Downloaded Wasm module exceeds the 10MB limit.");
+      logs.push(`[Cloud Storage] HTTP download complete (${wasmBuffer.length} bytes).`);
+
       // Compile and warm up cache
-      const wasmModule = await WebAssembly.compile(new Uint8Array(wasmBuffer));
-      WASM_MODULE_CACHE.set(cacheKey, wasmModule);
+      await WebAssembly.compile(new Uint8Array(wasmBuffer));
+      WASM_MODULE_CACHE.set(cacheKey, wasmBuffer);
       
       isWasmRun = true;
       wasmBytes = wasmBuffer.toString("base64");
@@ -309,8 +302,7 @@ export async function runNativeEdgeFunction(input: EdgeExecutionInput) {
     }
   }
 
-  // Hook compilation into runNativeEdgeFunction:
-  // If Wasm simulation is requested, compile JS code to Wasm dynamic parser
+  // Compile the supported integer-only JS subset when a Wasm execution was requested.
   if (isWasmRun && !wasmBytes && !isUrl) {
     try {
       logs.push(`[JS-to-Wasm] Compiling JS code to WebAssembly bytecode...`);

@@ -31,6 +31,7 @@ import {
   uninstallNativePlugin,
   upsertNativePlugin,
 } from "@/lib/server/native-platform/plugins";
+import { encryptSecret } from "@/lib/server/secret-crypto";
 
 function readFormValue(formData: FormData, key: string): string {
   const value = formData.get(key);
@@ -89,8 +90,7 @@ export async function createNativeDomainAction(formData: FormData) {
     redirect(returnTo);
   }
 
-  // Parse credentials
-  let dnsCredentials: Record<string, any> | null = null;
+  let dnsCredentials: Record<string, string> | null = null;
   if (dnsProvider) {
     dnsCredentials = {};
     if (dnsProvider === "CLOUDFLARE") {
@@ -105,22 +105,58 @@ export async function createNativeDomainAction(formData: FormData) {
   }
 
   await requireProjectRole(user.id, projectId, "editor");
-  await prisma.nativeDomainConfig.upsert({
+  const project = await prisma.project.findUnique({
+    where: { id: projectId },
+    select: { organizationId: true },
+  });
+  if (!project) {
+    throw new Error("Project not found.");
+  }
+
+  if (dnsProvider && (!dnsCredentials || Object.values(dnsCredentials).some((value) => !value))) {
+    throw new Error(`Complete the ${dnsProvider} credential fields before enabling automated DNS.`);
+  }
+
+  const connectionProvider = dnsProvider ? `dns:${dnsProvider.toLowerCase()}` : null;
+  const operations = [];
+  if (connectionProvider && dnsCredentials) {
+    operations.push(prisma.workspaceProviderConnection.upsert({
+      where: {
+        organizationId_provider: {
+          organizationId: project.organizationId,
+          provider: connectionProvider,
+        },
+      },
+      create: {
+        organizationId: project.organizationId,
+        provider: connectionProvider,
+        encryptedCredential: encryptSecret(JSON.stringify(dnsCredentials)),
+        status: "active",
+      },
+      update: {
+        encryptedCredential: encryptSecret(JSON.stringify(dnsCredentials)),
+        status: "active",
+      },
+    }));
+  }
+
+  operations.push(prisma.nativeDomainConfig.upsert({
     where: { domain },
     create: {
       projectId,
       domain,
       txtRecordToken: `lepos-domain-${crypto.randomUUID()}`,
       dnsProvider,
-      dnsCredentials: dnsCredentials ? (dnsCredentials as any) : undefined,
+      dnsCredentials: connectionProvider ? { connectionProvider } : undefined,
     },
     update: {
       dnsProvider,
-      dnsCredentials: dnsCredentials ? (dnsCredentials as any) : undefined,
+      dnsCredentials: connectionProvider ? { connectionProvider } : undefined,
       lastDnsCheckAt: new Date(),
       updatedAt: new Date(),
     },
-  });
+  }));
+  await prisma.$transaction(operations);
   await syncProjectRouting(projectId);
   revalidatePath(returnTo);
   redirect(returnTo);

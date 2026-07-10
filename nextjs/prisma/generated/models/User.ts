@@ -310,6 +310,9 @@ export type UserWhereInput = {
   userSecrets?: Prisma.UserSecretsListRelationFilter
   personalAccessTokens?: Prisma.PersonalAccessTokenListRelationFilter
   previewComments?: Prisma.PreviewCommentListRelationFilter
+  organizationMemberships?: Prisma.OrganizationMembershipListRelationFilter
+  projectMemberships?: Prisma.ProjectMembershipListRelationFilter
+  leposhipBuilds?: Prisma.LepoShipBuildListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -362,6 +365,9 @@ export type UserOrderByWithRelationInput = {
   userSecrets?: Prisma.UserSecretsOrderByRelationAggregateInput
   personalAccessTokens?: Prisma.PersonalAccessTokenOrderByRelationAggregateInput
   previewComments?: Prisma.PreviewCommentOrderByRelationAggregateInput
+  organizationMemberships?: Prisma.OrganizationMembershipOrderByRelationAggregateInput
+  projectMemberships?: Prisma.ProjectMembershipOrderByRelationAggregateInput
+  leposhipBuilds?: Prisma.LepoShipBuildOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -417,6 +423,9 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   userSecrets?: Prisma.UserSecretsListRelationFilter
   personalAccessTokens?: Prisma.PersonalAccessTokenListRelationFilter
   previewComments?: Prisma.PreviewCommentListRelationFilter
+  organizationMemberships?: Prisma.OrganizationMembershipListRelationFilter
+  projectMemberships?: Prisma.ProjectMembershipListRelationFilter
+  leposhipBuilds?: Prisma.LepoShipBuildListRelationFilter
 }, "id" | "email" | "phone">
 
 export type UserOrderByWithAggregationInput = {
@@ -514,6 +523,9 @@ export type UserCreateInput = {
   userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -565,6 +577,9 @@ export type UserUncheckedCreateInput = {
   userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserUpdateInput = {
@@ -616,6 +631,9 @@ export type UserUpdateInput = {
   userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -667,6 +685,9 @@ export type UserUncheckedUpdateInput = {
   userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -1312,6 +1333,48 @@ export type UserUpdateOneRequiredWithoutPreviewCommentsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPreviewCommentsInput, Prisma.UserUpdateWithoutPreviewCommentsInput>, Prisma.UserUncheckedUpdateWithoutPreviewCommentsInput>
 }
 
+export type UserCreateNestedOneWithoutOrganizationMembershipsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutOrganizationMembershipsInput, Prisma.UserUncheckedCreateWithoutOrganizationMembershipsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutOrganizationMembershipsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutOrganizationMembershipsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutOrganizationMembershipsInput, Prisma.UserUncheckedCreateWithoutOrganizationMembershipsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutOrganizationMembershipsInput
+  upsert?: Prisma.UserUpsertWithoutOrganizationMembershipsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutOrganizationMembershipsInput, Prisma.UserUpdateWithoutOrganizationMembershipsInput>, Prisma.UserUncheckedUpdateWithoutOrganizationMembershipsInput>
+}
+
+export type UserCreateNestedOneWithoutProjectMembershipsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutProjectMembershipsInput, Prisma.UserUncheckedCreateWithoutProjectMembershipsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutProjectMembershipsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutProjectMembershipsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutProjectMembershipsInput, Prisma.UserUncheckedCreateWithoutProjectMembershipsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutProjectMembershipsInput
+  upsert?: Prisma.UserUpsertWithoutProjectMembershipsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutProjectMembershipsInput, Prisma.UserUpdateWithoutProjectMembershipsInput>, Prisma.UserUncheckedUpdateWithoutProjectMembershipsInput>
+}
+
+export type UserCreateNestedOneWithoutLeposhipBuildsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutLeposhipBuildsInput, Prisma.UserUncheckedCreateWithoutLeposhipBuildsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutLeposhipBuildsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutLeposhipBuildsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutLeposhipBuildsInput, Prisma.UserUncheckedCreateWithoutLeposhipBuildsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutLeposhipBuildsInput
+  upsert?: Prisma.UserUpsertWithoutLeposhipBuildsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutLeposhipBuildsInput, Prisma.UserUpdateWithoutLeposhipBuildsInput>, Prisma.UserUncheckedUpdateWithoutLeposhipBuildsInput>
+}
+
 export type UserCreateWithoutPhotoInput = {
   id: string
   email?: string | null
@@ -1360,6 +1423,9 @@ export type UserCreateWithoutPhotoInput = {
   userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserUncheckedCreateWithoutPhotoInput = {
@@ -1410,6 +1476,9 @@ export type UserUncheckedCreateWithoutPhotoInput = {
   userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserCreateOrConnectWithoutPhotoInput = {
@@ -1509,6 +1578,9 @@ export type UserCreateWithoutOrganizationsInput = {
   userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserUncheckedCreateWithoutOrganizationsInput = {
@@ -1559,6 +1631,9 @@ export type UserUncheckedCreateWithoutOrganizationsInput = {
   userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserCreateOrConnectWithoutOrganizationsInput = {
@@ -1625,6 +1700,9 @@ export type UserUpdateWithoutOrganizationsInput = {
   userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOrganizationsInput = {
@@ -1675,6 +1753,9 @@ export type UserUncheckedUpdateWithoutOrganizationsInput = {
   userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserCreateWithoutPayoutsInput = {
@@ -1725,6 +1806,9 @@ export type UserCreateWithoutPayoutsInput = {
   userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserUncheckedCreateWithoutPayoutsInput = {
@@ -1775,6 +1859,9 @@ export type UserUncheckedCreateWithoutPayoutsInput = {
   userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserCreateOrConnectWithoutPayoutsInput = {
@@ -1841,6 +1928,9 @@ export type UserUpdateWithoutPayoutsInput = {
   userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPayoutsInput = {
@@ -1891,6 +1981,9 @@ export type UserUncheckedUpdateWithoutPayoutsInput = {
   userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserCreateWithoutNotificationsActorInput = {
@@ -1941,6 +2034,9 @@ export type UserCreateWithoutNotificationsActorInput = {
   userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsActorInput = {
@@ -1991,6 +2087,9 @@ export type UserUncheckedCreateWithoutNotificationsActorInput = {
   userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsActorInput = {
@@ -2046,6 +2145,9 @@ export type UserCreateWithoutNotificationsRecipientInput = {
   userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsRecipientInput = {
@@ -2096,6 +2198,9 @@ export type UserUncheckedCreateWithoutNotificationsRecipientInput = {
   userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsRecipientInput = {
@@ -2162,6 +2267,9 @@ export type UserUpdateWithoutNotificationsActorInput = {
   userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsActorInput = {
@@ -2212,6 +2320,9 @@ export type UserUncheckedUpdateWithoutNotificationsActorInput = {
   userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserUpsertWithoutNotificationsRecipientInput = {
@@ -2273,6 +2384,9 @@ export type UserUpdateWithoutNotificationsRecipientInput = {
   userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsRecipientInput = {
@@ -2323,6 +2437,9 @@ export type UserUncheckedUpdateWithoutNotificationsRecipientInput = {
   userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserCreateWithoutSessionsInput = {
@@ -2373,6 +2490,9 @@ export type UserCreateWithoutSessionsInput = {
   userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -2423,6 +2543,9 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -2489,6 +2612,9 @@ export type UserUpdateWithoutSessionsInput = {
   userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -2539,6 +2665,9 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserCreateWithoutDeviceTokensInput = {
@@ -2589,6 +2718,9 @@ export type UserCreateWithoutDeviceTokensInput = {
   userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserUncheckedCreateWithoutDeviceTokensInput = {
@@ -2639,6 +2771,9 @@ export type UserUncheckedCreateWithoutDeviceTokensInput = {
   userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserCreateOrConnectWithoutDeviceTokensInput = {
@@ -2705,6 +2840,9 @@ export type UserUpdateWithoutDeviceTokensInput = {
   userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDeviceTokensInput = {
@@ -2755,6 +2893,9 @@ export type UserUncheckedUpdateWithoutDeviceTokensInput = {
   userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserCreateWithoutAnalyticsInput = {
@@ -2805,6 +2946,9 @@ export type UserCreateWithoutAnalyticsInput = {
   userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserUncheckedCreateWithoutAnalyticsInput = {
@@ -2855,6 +2999,9 @@ export type UserUncheckedCreateWithoutAnalyticsInput = {
   userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserCreateOrConnectWithoutAnalyticsInput = {
@@ -2921,6 +3068,9 @@ export type UserUpdateWithoutAnalyticsInput = {
   userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAnalyticsInput = {
@@ -2971,6 +3121,9 @@ export type UserUncheckedUpdateWithoutAnalyticsInput = {
   userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserCreateWithoutAuditLogsInput = {
@@ -3021,6 +3174,9 @@ export type UserCreateWithoutAuditLogsInput = {
   userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserUncheckedCreateWithoutAuditLogsInput = {
@@ -3071,6 +3227,9 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserCreateOrConnectWithoutAuditLogsInput = {
@@ -3137,6 +3296,9 @@ export type UserUpdateWithoutAuditLogsInput = {
   userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAuditLogsInput = {
@@ -3187,6 +3349,9 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserCreateWithoutBetaTestersInput = {
@@ -3237,6 +3402,9 @@ export type UserCreateWithoutBetaTestersInput = {
   userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserUncheckedCreateWithoutBetaTestersInput = {
@@ -3287,6 +3455,9 @@ export type UserUncheckedCreateWithoutBetaTestersInput = {
   userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserCreateOrConnectWithoutBetaTestersInput = {
@@ -3353,6 +3524,9 @@ export type UserUpdateWithoutBetaTestersInput = {
   userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutBetaTestersInput = {
@@ -3403,6 +3577,9 @@ export type UserUncheckedUpdateWithoutBetaTestersInput = {
   userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserCreateWithoutChangedLogsInput = {
@@ -3453,6 +3630,9 @@ export type UserCreateWithoutChangedLogsInput = {
   userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserUncheckedCreateWithoutChangedLogsInput = {
@@ -3503,6 +3683,9 @@ export type UserUncheckedCreateWithoutChangedLogsInput = {
   userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserCreateOrConnectWithoutChangedLogsInput = {
@@ -3569,6 +3752,9 @@ export type UserUpdateWithoutChangedLogsInput = {
   userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutChangedLogsInput = {
@@ -3619,6 +3805,9 @@ export type UserUncheckedUpdateWithoutChangedLogsInput = {
   userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserCreateWithoutCollaboratorsInvitedInput = {
@@ -3669,6 +3858,9 @@ export type UserCreateWithoutCollaboratorsInvitedInput = {
   userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserUncheckedCreateWithoutCollaboratorsInvitedInput = {
@@ -3719,6 +3911,9 @@ export type UserUncheckedCreateWithoutCollaboratorsInvitedInput = {
   userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserCreateOrConnectWithoutCollaboratorsInvitedInput = {
@@ -3774,6 +3969,9 @@ export type UserCreateWithoutCollaboratorsInput = {
   userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserUncheckedCreateWithoutCollaboratorsInput = {
@@ -3824,6 +4022,9 @@ export type UserUncheckedCreateWithoutCollaboratorsInput = {
   userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserCreateOrConnectWithoutCollaboratorsInput = {
@@ -3890,6 +4091,9 @@ export type UserUpdateWithoutCollaboratorsInvitedInput = {
   userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCollaboratorsInvitedInput = {
@@ -3940,6 +4144,9 @@ export type UserUncheckedUpdateWithoutCollaboratorsInvitedInput = {
   userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserUpsertWithoutCollaboratorsInput = {
@@ -4001,6 +4208,9 @@ export type UserUpdateWithoutCollaboratorsInput = {
   userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCollaboratorsInput = {
@@ -4051,6 +4261,9 @@ export type UserUncheckedUpdateWithoutCollaboratorsInput = {
   userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserCreateWithoutDeveloperStrikesInput = {
@@ -4101,6 +4314,9 @@ export type UserCreateWithoutDeveloperStrikesInput = {
   userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserUncheckedCreateWithoutDeveloperStrikesInput = {
@@ -4151,6 +4367,9 @@ export type UserUncheckedCreateWithoutDeveloperStrikesInput = {
   userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserCreateOrConnectWithoutDeveloperStrikesInput = {
@@ -4206,6 +4425,9 @@ export type UserCreateWithoutDeveloperStrikesIssuedInput = {
   userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserUncheckedCreateWithoutDeveloperStrikesIssuedInput = {
@@ -4256,6 +4478,9 @@ export type UserUncheckedCreateWithoutDeveloperStrikesIssuedInput = {
   userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserCreateOrConnectWithoutDeveloperStrikesIssuedInput = {
@@ -4322,6 +4547,9 @@ export type UserUpdateWithoutDeveloperStrikesInput = {
   userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDeveloperStrikesInput = {
@@ -4372,6 +4600,9 @@ export type UserUncheckedUpdateWithoutDeveloperStrikesInput = {
   userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserUpsertWithoutDeveloperStrikesIssuedInput = {
@@ -4433,6 +4664,9 @@ export type UserUpdateWithoutDeveloperStrikesIssuedInput = {
   userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDeveloperStrikesIssuedInput = {
@@ -4483,6 +4717,9 @@ export type UserUncheckedUpdateWithoutDeveloperStrikesIssuedInput = {
   userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserCreateWithoutInstallEventsInput = {
@@ -4533,6 +4770,9 @@ export type UserCreateWithoutInstallEventsInput = {
   userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserUncheckedCreateWithoutInstallEventsInput = {
@@ -4583,6 +4823,9 @@ export type UserUncheckedCreateWithoutInstallEventsInput = {
   userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserCreateOrConnectWithoutInstallEventsInput = {
@@ -4649,6 +4892,9 @@ export type UserUpdateWithoutInstallEventsInput = {
   userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutInstallEventsInput = {
@@ -4699,6 +4945,9 @@ export type UserUncheckedUpdateWithoutInstallEventsInput = {
   userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserCreateWithoutOrdersInput = {
@@ -4749,6 +4998,9 @@ export type UserCreateWithoutOrdersInput = {
   userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserUncheckedCreateWithoutOrdersInput = {
@@ -4799,6 +5051,9 @@ export type UserUncheckedCreateWithoutOrdersInput = {
   userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserCreateOrConnectWithoutOrdersInput = {
@@ -4865,6 +5120,9 @@ export type UserUpdateWithoutOrdersInput = {
   userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOrdersInput = {
@@ -4915,6 +5173,9 @@ export type UserUncheckedUpdateWithoutOrdersInput = {
   userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserCreateWithoutReviewsInput = {
@@ -4965,6 +5226,9 @@ export type UserCreateWithoutReviewsInput = {
   userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserUncheckedCreateWithoutReviewsInput = {
@@ -5015,6 +5279,9 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserCreateOrConnectWithoutReviewsInput = {
@@ -5081,6 +5348,9 @@ export type UserUpdateWithoutReviewsInput = {
   userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReviewsInput = {
@@ -5131,6 +5401,9 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserCreateWithoutStateTransitionsInput = {
@@ -5181,6 +5454,9 @@ export type UserCreateWithoutStateTransitionsInput = {
   userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserUncheckedCreateWithoutStateTransitionsInput = {
@@ -5231,6 +5507,9 @@ export type UserUncheckedCreateWithoutStateTransitionsInput = {
   userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserCreateOrConnectWithoutStateTransitionsInput = {
@@ -5297,6 +5576,9 @@ export type UserUpdateWithoutStateTransitionsInput = {
   userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutStateTransitionsInput = {
@@ -5347,6 +5629,9 @@ export type UserUncheckedUpdateWithoutStateTransitionsInput = {
   userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserCreateWithoutUserReportsReportedInput = {
@@ -5397,6 +5682,9 @@ export type UserCreateWithoutUserReportsReportedInput = {
   userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserUncheckedCreateWithoutUserReportsReportedInput = {
@@ -5447,6 +5735,9 @@ export type UserUncheckedCreateWithoutUserReportsReportedInput = {
   userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserCreateOrConnectWithoutUserReportsReportedInput = {
@@ -5502,6 +5793,9 @@ export type UserCreateWithoutUserReportsReviewedInput = {
   userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserUncheckedCreateWithoutUserReportsReviewedInput = {
@@ -5552,6 +5846,9 @@ export type UserUncheckedCreateWithoutUserReportsReviewedInput = {
   userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserCreateOrConnectWithoutUserReportsReviewedInput = {
@@ -5618,6 +5915,9 @@ export type UserUpdateWithoutUserReportsReportedInput = {
   userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutUserReportsReportedInput = {
@@ -5668,6 +5968,9 @@ export type UserUncheckedUpdateWithoutUserReportsReportedInput = {
   userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserUpsertWithoutUserReportsReviewedInput = {
@@ -5729,6 +6032,9 @@ export type UserUpdateWithoutUserReportsReviewedInput = {
   userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutUserReportsReviewedInput = {
@@ -5779,6 +6085,9 @@ export type UserUncheckedUpdateWithoutUserReportsReviewedInput = {
   userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserCreateWithoutRefundRequestsReviewedInput = {
@@ -5829,6 +6138,9 @@ export type UserCreateWithoutRefundRequestsReviewedInput = {
   userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserUncheckedCreateWithoutRefundRequestsReviewedInput = {
@@ -5879,6 +6191,9 @@ export type UserUncheckedCreateWithoutRefundRequestsReviewedInput = {
   userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserCreateOrConnectWithoutRefundRequestsReviewedInput = {
@@ -5934,6 +6249,9 @@ export type UserCreateWithoutRefundRequestsInput = {
   userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserUncheckedCreateWithoutRefundRequestsInput = {
@@ -5984,6 +6302,9 @@ export type UserUncheckedCreateWithoutRefundRequestsInput = {
   userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserCreateOrConnectWithoutRefundRequestsInput = {
@@ -6050,6 +6371,9 @@ export type UserUpdateWithoutRefundRequestsReviewedInput = {
   userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRefundRequestsReviewedInput = {
@@ -6100,6 +6424,9 @@ export type UserUncheckedUpdateWithoutRefundRequestsReviewedInput = {
   userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserUpsertWithoutRefundRequestsInput = {
@@ -6161,6 +6488,9 @@ export type UserUpdateWithoutRefundRequestsInput = {
   userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRefundRequestsInput = {
@@ -6211,6 +6541,9 @@ export type UserUncheckedUpdateWithoutRefundRequestsInput = {
   userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserCreateWithoutUserEntitlementsInput = {
@@ -6261,6 +6594,9 @@ export type UserCreateWithoutUserEntitlementsInput = {
   userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserUncheckedCreateWithoutUserEntitlementsInput = {
@@ -6311,6 +6647,9 @@ export type UserUncheckedCreateWithoutUserEntitlementsInput = {
   userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserCreateOrConnectWithoutUserEntitlementsInput = {
@@ -6377,6 +6716,9 @@ export type UserUpdateWithoutUserEntitlementsInput = {
   userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutUserEntitlementsInput = {
@@ -6427,6 +6769,9 @@ export type UserUncheckedUpdateWithoutUserEntitlementsInput = {
   userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserCreateWithoutReviewReportsReportedInput = {
@@ -6477,6 +6822,9 @@ export type UserCreateWithoutReviewReportsReportedInput = {
   userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserUncheckedCreateWithoutReviewReportsReportedInput = {
@@ -6527,6 +6875,9 @@ export type UserUncheckedCreateWithoutReviewReportsReportedInput = {
   userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserCreateOrConnectWithoutReviewReportsReportedInput = {
@@ -6582,6 +6933,9 @@ export type UserCreateWithoutReviewReportsReviewedInput = {
   userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserUncheckedCreateWithoutReviewReportsReviewedInput = {
@@ -6632,6 +6986,9 @@ export type UserUncheckedCreateWithoutReviewReportsReviewedInput = {
   userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserCreateOrConnectWithoutReviewReportsReviewedInput = {
@@ -6698,6 +7055,9 @@ export type UserUpdateWithoutReviewReportsReportedInput = {
   userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReviewReportsReportedInput = {
@@ -6748,6 +7108,9 @@ export type UserUncheckedUpdateWithoutReviewReportsReportedInput = {
   userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserUpsertWithoutReviewReportsReviewedInput = {
@@ -6809,6 +7172,9 @@ export type UserUpdateWithoutReviewReportsReviewedInput = {
   userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReviewReportsReviewedInput = {
@@ -6859,6 +7225,9 @@ export type UserUncheckedUpdateWithoutReviewReportsReviewedInput = {
   userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserCreateWithoutSubscriptionHistoryInput = {
@@ -6909,6 +7278,9 @@ export type UserCreateWithoutSubscriptionHistoryInput = {
   userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserUncheckedCreateWithoutSubscriptionHistoryInput = {
@@ -6959,6 +7331,9 @@ export type UserUncheckedCreateWithoutSubscriptionHistoryInput = {
   userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserCreateOrConnectWithoutSubscriptionHistoryInput = {
@@ -7025,6 +7400,9 @@ export type UserUpdateWithoutSubscriptionHistoryInput = {
   userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSubscriptionHistoryInput = {
@@ -7075,6 +7453,9 @@ export type UserUncheckedUpdateWithoutSubscriptionHistoryInput = {
   userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserCreateWithoutReviewHistoryInput = {
@@ -7125,6 +7506,9 @@ export type UserCreateWithoutReviewHistoryInput = {
   userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserUncheckedCreateWithoutReviewHistoryInput = {
@@ -7175,6 +7559,9 @@ export type UserUncheckedCreateWithoutReviewHistoryInput = {
   userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserCreateOrConnectWithoutReviewHistoryInput = {
@@ -7241,6 +7628,9 @@ export type UserUpdateWithoutReviewHistoryInput = {
   userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReviewHistoryInput = {
@@ -7291,6 +7681,9 @@ export type UserUncheckedUpdateWithoutReviewHistoryInput = {
   userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserCreateWithoutReviewQueueReviewedInput = {
@@ -7341,6 +7734,9 @@ export type UserCreateWithoutReviewQueueReviewedInput = {
   userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserUncheckedCreateWithoutReviewQueueReviewedInput = {
@@ -7391,6 +7787,9 @@ export type UserUncheckedCreateWithoutReviewQueueReviewedInput = {
   userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserCreateOrConnectWithoutReviewQueueReviewedInput = {
@@ -7457,6 +7856,9 @@ export type UserUpdateWithoutReviewQueueReviewedInput = {
   userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReviewQueueReviewedInput = {
@@ -7507,6 +7909,9 @@ export type UserUncheckedUpdateWithoutReviewQueueReviewedInput = {
   userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserCreateWithoutUserSecretsInput = {
@@ -7557,6 +7962,9 @@ export type UserCreateWithoutUserSecretsInput = {
   reviewQueueReviewed?: Prisma.BundleReviewQueueCreateNestedManyWithoutReviewerInput
   personalAccessTokens?: Prisma.PersonalAccessTokenCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserUncheckedCreateWithoutUserSecretsInput = {
@@ -7607,6 +8015,9 @@ export type UserUncheckedCreateWithoutUserSecretsInput = {
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReviewerInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserCreateOrConnectWithoutUserSecretsInput = {
@@ -7673,6 +8084,9 @@ export type UserUpdateWithoutUserSecretsInput = {
   reviewQueueReviewed?: Prisma.BundleReviewQueueUpdateManyWithoutReviewerNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutUserSecretsInput = {
@@ -7723,6 +8137,9 @@ export type UserUncheckedUpdateWithoutUserSecretsInput = {
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReviewerNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserCreateWithoutPersonalAccessTokensInput = {
@@ -7773,6 +8190,9 @@ export type UserCreateWithoutPersonalAccessTokensInput = {
   reviewQueueReviewed?: Prisma.BundleReviewQueueCreateNestedManyWithoutReviewerInput
   userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserUncheckedCreateWithoutPersonalAccessTokensInput = {
@@ -7823,6 +8243,9 @@ export type UserUncheckedCreateWithoutPersonalAccessTokensInput = {
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReviewerInput
   userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserCreateOrConnectWithoutPersonalAccessTokensInput = {
@@ -7889,6 +8312,9 @@ export type UserUpdateWithoutPersonalAccessTokensInput = {
   reviewQueueReviewed?: Prisma.BundleReviewQueueUpdateManyWithoutReviewerNestedInput
   userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPersonalAccessTokensInput = {
@@ -7939,6 +8365,9 @@ export type UserUncheckedUpdateWithoutPersonalAccessTokensInput = {
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReviewerNestedInput
   userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserCreateWithoutPreviewCommentsInput = {
@@ -7989,6 +8418,9 @@ export type UserCreateWithoutPreviewCommentsInput = {
   reviewQueueReviewed?: Prisma.BundleReviewQueueCreateNestedManyWithoutReviewerInput
   userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserUncheckedCreateWithoutPreviewCommentsInput = {
@@ -8039,6 +8471,9 @@ export type UserUncheckedCreateWithoutPreviewCommentsInput = {
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReviewerInput
   userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
 }
 
 export type UserCreateOrConnectWithoutPreviewCommentsInput = {
@@ -8105,6 +8540,9 @@ export type UserUpdateWithoutPreviewCommentsInput = {
   reviewQueueReviewed?: Prisma.BundleReviewQueueUpdateManyWithoutReviewerNestedInput
   userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPreviewCommentsInput = {
@@ -8155,6 +8593,693 @@ export type UserUncheckedUpdateWithoutPreviewCommentsInput = {
   reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReviewerNestedInput
   userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
+}
+
+export type UserCreateWithoutOrganizationMembershipsInput = {
+  id: string
+  email?: string | null
+  password?: string | null
+  provider?: string
+  socialId?: string | null
+  firstName?: string | null
+  lastName?: string | null
+  fullName?: string | null
+  phone?: string | null
+  dateOfBirth?: Date | string | null
+  gender?: string | null
+  userType?: string
+  registerType?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  photo?: Prisma.FileCreateNestedOneWithoutUsersWithPhotoInput
+  payouts?: Prisma.BundlePayoutsCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationCreateNestedManyWithoutUserInput
+  notificationsActor?: Prisma.NotificationsCreateNestedManyWithoutActorInput
+  notificationsRecipient?: Prisma.NotificationsCreateNestedManyWithoutRecipientInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.UserDeviceTokenCreateNestedManyWithoutUserInput
+  analytics?: Prisma.BundleAnalyticsEventsCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.BundleAuditLogCreateNestedManyWithoutUserInput
+  betaTesters?: Prisma.BundleBetaTestersCreateNestedManyWithoutUserInput
+  changedLogs?: Prisma.BundleChangeLogsCreateNestedManyWithoutUserInput
+  collaboratorsInvited?: Prisma.BundleCollaboratorsCreateNestedManyWithoutInvitedUserInput
+  collaborators?: Prisma.BundleCollaboratorsCreateNestedManyWithoutUserInput
+  developerStrikes?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutDeveloperInput
+  developerStrikesIssued?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutIssuerInput
+  installEvents?: Prisma.BundleInstallEventsCreateNestedManyWithoutUserInput
+  orders?: Prisma.BundleOrdersCreateNestedManyWithoutUserInput
+  reviews?: Prisma.BundleReviewsCreateNestedManyWithoutUserInput
+  stateTransitions?: Prisma.BundleStateTransitionsCreateNestedManyWithoutUserInput
+  userReportsReported?: Prisma.BundleUserReportsCreateNestedManyWithoutReporterInput
+  userReportsReviewed?: Prisma.BundleUserReportsCreateNestedManyWithoutReviewerInput
+  refundRequestsReviewed?: Prisma.BundleRefundRequestsCreateNestedManyWithoutReviewerInput
+  refundRequests?: Prisma.BundleRefundRequestsCreateNestedManyWithoutUserInput
+  userEntitlements?: Prisma.BundleUserEntitlementsCreateNestedManyWithoutUserInput
+  reviewReportsReported?: Prisma.BundleReviewReportsCreateNestedManyWithoutReporterInput
+  reviewReportsReviewed?: Prisma.BundleReviewReportsCreateNestedManyWithoutReviewerInput
+  subscriptionHistory?: Prisma.BundleSubscriptionHistoryCreateNestedManyWithoutUserInput
+  reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutActorInput
+  reviewQueueReviewed?: Prisma.BundleReviewQueueCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
+  personalAccessTokens?: Prisma.PersonalAccessTokenCreateNestedManyWithoutUserInput
+  previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
+}
+
+export type UserUncheckedCreateWithoutOrganizationMembershipsInput = {
+  id: string
+  email?: string | null
+  password?: string | null
+  provider?: string
+  socialId?: string | null
+  firstName?: string | null
+  lastName?: string | null
+  fullName?: string | null
+  phone?: string | null
+  dateOfBirth?: Date | string | null
+  gender?: string | null
+  userType?: string
+  photoId?: string | null
+  registerType?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  payouts?: Prisma.BundlePayoutsUncheckedCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationUncheckedCreateNestedManyWithoutUserInput
+  notificationsActor?: Prisma.NotificationsUncheckedCreateNestedManyWithoutActorInput
+  notificationsRecipient?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRecipientInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.UserDeviceTokenUncheckedCreateNestedManyWithoutUserInput
+  analytics?: Prisma.BundleAnalyticsEventsUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.BundleAuditLogUncheckedCreateNestedManyWithoutUserInput
+  betaTesters?: Prisma.BundleBetaTestersUncheckedCreateNestedManyWithoutUserInput
+  changedLogs?: Prisma.BundleChangeLogsUncheckedCreateNestedManyWithoutUserInput
+  collaboratorsInvited?: Prisma.BundleCollaboratorsUncheckedCreateNestedManyWithoutInvitedUserInput
+  collaborators?: Prisma.BundleCollaboratorsUncheckedCreateNestedManyWithoutUserInput
+  developerStrikes?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutDeveloperInput
+  developerStrikesIssued?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutIssuerInput
+  installEvents?: Prisma.BundleInstallEventsUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.BundleOrdersUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.BundleReviewsUncheckedCreateNestedManyWithoutUserInput
+  stateTransitions?: Prisma.BundleStateTransitionsUncheckedCreateNestedManyWithoutUserInput
+  userReportsReported?: Prisma.BundleUserReportsUncheckedCreateNestedManyWithoutReporterInput
+  userReportsReviewed?: Prisma.BundleUserReportsUncheckedCreateNestedManyWithoutReviewerInput
+  refundRequestsReviewed?: Prisma.BundleRefundRequestsUncheckedCreateNestedManyWithoutReviewerInput
+  refundRequests?: Prisma.BundleRefundRequestsUncheckedCreateNestedManyWithoutUserInput
+  userEntitlements?: Prisma.BundleUserEntitlementsUncheckedCreateNestedManyWithoutUserInput
+  reviewReportsReported?: Prisma.BundleReviewReportsUncheckedCreateNestedManyWithoutReporterInput
+  reviewReportsReviewed?: Prisma.BundleReviewReportsUncheckedCreateNestedManyWithoutReviewerInput
+  subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedCreateNestedManyWithoutUserInput
+  reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutActorInput
+  reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
+  personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedCreateNestedManyWithoutUserInput
+  previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
+}
+
+export type UserCreateOrConnectWithoutOrganizationMembershipsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutOrganizationMembershipsInput, Prisma.UserUncheckedCreateWithoutOrganizationMembershipsInput>
+}
+
+export type UserUpsertWithoutOrganizationMembershipsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutOrganizationMembershipsInput, Prisma.UserUncheckedUpdateWithoutOrganizationMembershipsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutOrganizationMembershipsInput, Prisma.UserUncheckedCreateWithoutOrganizationMembershipsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutOrganizationMembershipsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutOrganizationMembershipsInput, Prisma.UserUncheckedUpdateWithoutOrganizationMembershipsInput>
+}
+
+export type UserUpdateWithoutOrganizationMembershipsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  provider?: Prisma.StringFieldUpdateOperationsInput | string
+  socialId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userType?: Prisma.StringFieldUpdateOperationsInput | string
+  registerType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  photo?: Prisma.FileUpdateOneWithoutUsersWithPhotoNestedInput
+  payouts?: Prisma.BundlePayoutsUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUpdateManyWithoutUserNestedInput
+  notificationsActor?: Prisma.NotificationsUpdateManyWithoutActorNestedInput
+  notificationsRecipient?: Prisma.NotificationsUpdateManyWithoutRecipientNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.UserDeviceTokenUpdateManyWithoutUserNestedInput
+  analytics?: Prisma.BundleAnalyticsEventsUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.BundleAuditLogUpdateManyWithoutUserNestedInput
+  betaTesters?: Prisma.BundleBetaTestersUpdateManyWithoutUserNestedInput
+  changedLogs?: Prisma.BundleChangeLogsUpdateManyWithoutUserNestedInput
+  collaboratorsInvited?: Prisma.BundleCollaboratorsUpdateManyWithoutInvitedUserNestedInput
+  collaborators?: Prisma.BundleCollaboratorsUpdateManyWithoutUserNestedInput
+  developerStrikes?: Prisma.BundleDeveloperStrikesUpdateManyWithoutDeveloperNestedInput
+  developerStrikesIssued?: Prisma.BundleDeveloperStrikesUpdateManyWithoutIssuerNestedInput
+  installEvents?: Prisma.BundleInstallEventsUpdateManyWithoutUserNestedInput
+  orders?: Prisma.BundleOrdersUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.BundleReviewsUpdateManyWithoutUserNestedInput
+  stateTransitions?: Prisma.BundleStateTransitionsUpdateManyWithoutUserNestedInput
+  userReportsReported?: Prisma.BundleUserReportsUpdateManyWithoutReporterNestedInput
+  userReportsReviewed?: Prisma.BundleUserReportsUpdateManyWithoutReviewerNestedInput
+  refundRequestsReviewed?: Prisma.BundleRefundRequestsUpdateManyWithoutReviewerNestedInput
+  refundRequests?: Prisma.BundleRefundRequestsUpdateManyWithoutUserNestedInput
+  userEntitlements?: Prisma.BundleUserEntitlementsUpdateManyWithoutUserNestedInput
+  reviewReportsReported?: Prisma.BundleReviewReportsUpdateManyWithoutReporterNestedInput
+  reviewReportsReviewed?: Prisma.BundleReviewReportsUpdateManyWithoutReviewerNestedInput
+  subscriptionHistory?: Prisma.BundleSubscriptionHistoryUpdateManyWithoutUserNestedInput
+  reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutActorNestedInput
+  reviewQueueReviewed?: Prisma.BundleReviewQueueUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
+  personalAccessTokens?: Prisma.PersonalAccessTokenUpdateManyWithoutUserNestedInput
+  previewComments?: Prisma.PreviewCommentUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutOrganizationMembershipsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  provider?: Prisma.StringFieldUpdateOperationsInput | string
+  socialId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userType?: Prisma.StringFieldUpdateOperationsInput | string
+  photoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registerType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  payouts?: Prisma.BundlePayoutsUncheckedUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUncheckedUpdateManyWithoutUserNestedInput
+  notificationsActor?: Prisma.NotificationsUncheckedUpdateManyWithoutActorNestedInput
+  notificationsRecipient?: Prisma.NotificationsUncheckedUpdateManyWithoutRecipientNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.UserDeviceTokenUncheckedUpdateManyWithoutUserNestedInput
+  analytics?: Prisma.BundleAnalyticsEventsUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.BundleAuditLogUncheckedUpdateManyWithoutUserNestedInput
+  betaTesters?: Prisma.BundleBetaTestersUncheckedUpdateManyWithoutUserNestedInput
+  changedLogs?: Prisma.BundleChangeLogsUncheckedUpdateManyWithoutUserNestedInput
+  collaboratorsInvited?: Prisma.BundleCollaboratorsUncheckedUpdateManyWithoutInvitedUserNestedInput
+  collaborators?: Prisma.BundleCollaboratorsUncheckedUpdateManyWithoutUserNestedInput
+  developerStrikes?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutDeveloperNestedInput
+  developerStrikesIssued?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutIssuerNestedInput
+  installEvents?: Prisma.BundleInstallEventsUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.BundleOrdersUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.BundleReviewsUncheckedUpdateManyWithoutUserNestedInput
+  stateTransitions?: Prisma.BundleStateTransitionsUncheckedUpdateManyWithoutUserNestedInput
+  userReportsReported?: Prisma.BundleUserReportsUncheckedUpdateManyWithoutReporterNestedInput
+  userReportsReviewed?: Prisma.BundleUserReportsUncheckedUpdateManyWithoutReviewerNestedInput
+  refundRequestsReviewed?: Prisma.BundleRefundRequestsUncheckedUpdateManyWithoutReviewerNestedInput
+  refundRequests?: Prisma.BundleRefundRequestsUncheckedUpdateManyWithoutUserNestedInput
+  userEntitlements?: Prisma.BundleUserEntitlementsUncheckedUpdateManyWithoutUserNestedInput
+  reviewReportsReported?: Prisma.BundleReviewReportsUncheckedUpdateManyWithoutReporterNestedInput
+  reviewReportsReviewed?: Prisma.BundleReviewReportsUncheckedUpdateManyWithoutReviewerNestedInput
+  subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedUpdateManyWithoutUserNestedInput
+  reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutActorNestedInput
+  reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
+  personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedUpdateManyWithoutUserNestedInput
+  previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
+}
+
+export type UserCreateWithoutProjectMembershipsInput = {
+  id: string
+  email?: string | null
+  password?: string | null
+  provider?: string
+  socialId?: string | null
+  firstName?: string | null
+  lastName?: string | null
+  fullName?: string | null
+  phone?: string | null
+  dateOfBirth?: Date | string | null
+  gender?: string | null
+  userType?: string
+  registerType?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  photo?: Prisma.FileCreateNestedOneWithoutUsersWithPhotoInput
+  payouts?: Prisma.BundlePayoutsCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationCreateNestedManyWithoutUserInput
+  notificationsActor?: Prisma.NotificationsCreateNestedManyWithoutActorInput
+  notificationsRecipient?: Prisma.NotificationsCreateNestedManyWithoutRecipientInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.UserDeviceTokenCreateNestedManyWithoutUserInput
+  analytics?: Prisma.BundleAnalyticsEventsCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.BundleAuditLogCreateNestedManyWithoutUserInput
+  betaTesters?: Prisma.BundleBetaTestersCreateNestedManyWithoutUserInput
+  changedLogs?: Prisma.BundleChangeLogsCreateNestedManyWithoutUserInput
+  collaboratorsInvited?: Prisma.BundleCollaboratorsCreateNestedManyWithoutInvitedUserInput
+  collaborators?: Prisma.BundleCollaboratorsCreateNestedManyWithoutUserInput
+  developerStrikes?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutDeveloperInput
+  developerStrikesIssued?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutIssuerInput
+  installEvents?: Prisma.BundleInstallEventsCreateNestedManyWithoutUserInput
+  orders?: Prisma.BundleOrdersCreateNestedManyWithoutUserInput
+  reviews?: Prisma.BundleReviewsCreateNestedManyWithoutUserInput
+  stateTransitions?: Prisma.BundleStateTransitionsCreateNestedManyWithoutUserInput
+  userReportsReported?: Prisma.BundleUserReportsCreateNestedManyWithoutReporterInput
+  userReportsReviewed?: Prisma.BundleUserReportsCreateNestedManyWithoutReviewerInput
+  refundRequestsReviewed?: Prisma.BundleRefundRequestsCreateNestedManyWithoutReviewerInput
+  refundRequests?: Prisma.BundleRefundRequestsCreateNestedManyWithoutUserInput
+  userEntitlements?: Prisma.BundleUserEntitlementsCreateNestedManyWithoutUserInput
+  reviewReportsReported?: Prisma.BundleReviewReportsCreateNestedManyWithoutReporterInput
+  reviewReportsReviewed?: Prisma.BundleReviewReportsCreateNestedManyWithoutReviewerInput
+  subscriptionHistory?: Prisma.BundleSubscriptionHistoryCreateNestedManyWithoutUserInput
+  reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutActorInput
+  reviewQueueReviewed?: Prisma.BundleReviewQueueCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
+  personalAccessTokens?: Prisma.PersonalAccessTokenCreateNestedManyWithoutUserInput
+  previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
+}
+
+export type UserUncheckedCreateWithoutProjectMembershipsInput = {
+  id: string
+  email?: string | null
+  password?: string | null
+  provider?: string
+  socialId?: string | null
+  firstName?: string | null
+  lastName?: string | null
+  fullName?: string | null
+  phone?: string | null
+  dateOfBirth?: Date | string | null
+  gender?: string | null
+  userType?: string
+  photoId?: string | null
+  registerType?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  payouts?: Prisma.BundlePayoutsUncheckedCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationUncheckedCreateNestedManyWithoutUserInput
+  notificationsActor?: Prisma.NotificationsUncheckedCreateNestedManyWithoutActorInput
+  notificationsRecipient?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRecipientInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.UserDeviceTokenUncheckedCreateNestedManyWithoutUserInput
+  analytics?: Prisma.BundleAnalyticsEventsUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.BundleAuditLogUncheckedCreateNestedManyWithoutUserInput
+  betaTesters?: Prisma.BundleBetaTestersUncheckedCreateNestedManyWithoutUserInput
+  changedLogs?: Prisma.BundleChangeLogsUncheckedCreateNestedManyWithoutUserInput
+  collaboratorsInvited?: Prisma.BundleCollaboratorsUncheckedCreateNestedManyWithoutInvitedUserInput
+  collaborators?: Prisma.BundleCollaboratorsUncheckedCreateNestedManyWithoutUserInput
+  developerStrikes?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutDeveloperInput
+  developerStrikesIssued?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutIssuerInput
+  installEvents?: Prisma.BundleInstallEventsUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.BundleOrdersUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.BundleReviewsUncheckedCreateNestedManyWithoutUserInput
+  stateTransitions?: Prisma.BundleStateTransitionsUncheckedCreateNestedManyWithoutUserInput
+  userReportsReported?: Prisma.BundleUserReportsUncheckedCreateNestedManyWithoutReporterInput
+  userReportsReviewed?: Prisma.BundleUserReportsUncheckedCreateNestedManyWithoutReviewerInput
+  refundRequestsReviewed?: Prisma.BundleRefundRequestsUncheckedCreateNestedManyWithoutReviewerInput
+  refundRequests?: Prisma.BundleRefundRequestsUncheckedCreateNestedManyWithoutUserInput
+  userEntitlements?: Prisma.BundleUserEntitlementsUncheckedCreateNestedManyWithoutUserInput
+  reviewReportsReported?: Prisma.BundleReviewReportsUncheckedCreateNestedManyWithoutReporterInput
+  reviewReportsReviewed?: Prisma.BundleReviewReportsUncheckedCreateNestedManyWithoutReviewerInput
+  subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedCreateNestedManyWithoutUserInput
+  reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutActorInput
+  reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
+  personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedCreateNestedManyWithoutUserInput
+  previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
+}
+
+export type UserCreateOrConnectWithoutProjectMembershipsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutProjectMembershipsInput, Prisma.UserUncheckedCreateWithoutProjectMembershipsInput>
+}
+
+export type UserUpsertWithoutProjectMembershipsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutProjectMembershipsInput, Prisma.UserUncheckedUpdateWithoutProjectMembershipsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutProjectMembershipsInput, Prisma.UserUncheckedCreateWithoutProjectMembershipsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutProjectMembershipsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutProjectMembershipsInput, Prisma.UserUncheckedUpdateWithoutProjectMembershipsInput>
+}
+
+export type UserUpdateWithoutProjectMembershipsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  provider?: Prisma.StringFieldUpdateOperationsInput | string
+  socialId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userType?: Prisma.StringFieldUpdateOperationsInput | string
+  registerType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  photo?: Prisma.FileUpdateOneWithoutUsersWithPhotoNestedInput
+  payouts?: Prisma.BundlePayoutsUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUpdateManyWithoutUserNestedInput
+  notificationsActor?: Prisma.NotificationsUpdateManyWithoutActorNestedInput
+  notificationsRecipient?: Prisma.NotificationsUpdateManyWithoutRecipientNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.UserDeviceTokenUpdateManyWithoutUserNestedInput
+  analytics?: Prisma.BundleAnalyticsEventsUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.BundleAuditLogUpdateManyWithoutUserNestedInput
+  betaTesters?: Prisma.BundleBetaTestersUpdateManyWithoutUserNestedInput
+  changedLogs?: Prisma.BundleChangeLogsUpdateManyWithoutUserNestedInput
+  collaboratorsInvited?: Prisma.BundleCollaboratorsUpdateManyWithoutInvitedUserNestedInput
+  collaborators?: Prisma.BundleCollaboratorsUpdateManyWithoutUserNestedInput
+  developerStrikes?: Prisma.BundleDeveloperStrikesUpdateManyWithoutDeveloperNestedInput
+  developerStrikesIssued?: Prisma.BundleDeveloperStrikesUpdateManyWithoutIssuerNestedInput
+  installEvents?: Prisma.BundleInstallEventsUpdateManyWithoutUserNestedInput
+  orders?: Prisma.BundleOrdersUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.BundleReviewsUpdateManyWithoutUserNestedInput
+  stateTransitions?: Prisma.BundleStateTransitionsUpdateManyWithoutUserNestedInput
+  userReportsReported?: Prisma.BundleUserReportsUpdateManyWithoutReporterNestedInput
+  userReportsReviewed?: Prisma.BundleUserReportsUpdateManyWithoutReviewerNestedInput
+  refundRequestsReviewed?: Prisma.BundleRefundRequestsUpdateManyWithoutReviewerNestedInput
+  refundRequests?: Prisma.BundleRefundRequestsUpdateManyWithoutUserNestedInput
+  userEntitlements?: Prisma.BundleUserEntitlementsUpdateManyWithoutUserNestedInput
+  reviewReportsReported?: Prisma.BundleReviewReportsUpdateManyWithoutReporterNestedInput
+  reviewReportsReviewed?: Prisma.BundleReviewReportsUpdateManyWithoutReviewerNestedInput
+  subscriptionHistory?: Prisma.BundleSubscriptionHistoryUpdateManyWithoutUserNestedInput
+  reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutActorNestedInput
+  reviewQueueReviewed?: Prisma.BundleReviewQueueUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
+  personalAccessTokens?: Prisma.PersonalAccessTokenUpdateManyWithoutUserNestedInput
+  previewComments?: Prisma.PreviewCommentUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutProjectMembershipsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  provider?: Prisma.StringFieldUpdateOperationsInput | string
+  socialId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userType?: Prisma.StringFieldUpdateOperationsInput | string
+  photoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registerType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  payouts?: Prisma.BundlePayoutsUncheckedUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUncheckedUpdateManyWithoutUserNestedInput
+  notificationsActor?: Prisma.NotificationsUncheckedUpdateManyWithoutActorNestedInput
+  notificationsRecipient?: Prisma.NotificationsUncheckedUpdateManyWithoutRecipientNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.UserDeviceTokenUncheckedUpdateManyWithoutUserNestedInput
+  analytics?: Prisma.BundleAnalyticsEventsUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.BundleAuditLogUncheckedUpdateManyWithoutUserNestedInput
+  betaTesters?: Prisma.BundleBetaTestersUncheckedUpdateManyWithoutUserNestedInput
+  changedLogs?: Prisma.BundleChangeLogsUncheckedUpdateManyWithoutUserNestedInput
+  collaboratorsInvited?: Prisma.BundleCollaboratorsUncheckedUpdateManyWithoutInvitedUserNestedInput
+  collaborators?: Prisma.BundleCollaboratorsUncheckedUpdateManyWithoutUserNestedInput
+  developerStrikes?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutDeveloperNestedInput
+  developerStrikesIssued?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutIssuerNestedInput
+  installEvents?: Prisma.BundleInstallEventsUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.BundleOrdersUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.BundleReviewsUncheckedUpdateManyWithoutUserNestedInput
+  stateTransitions?: Prisma.BundleStateTransitionsUncheckedUpdateManyWithoutUserNestedInput
+  userReportsReported?: Prisma.BundleUserReportsUncheckedUpdateManyWithoutReporterNestedInput
+  userReportsReviewed?: Prisma.BundleUserReportsUncheckedUpdateManyWithoutReviewerNestedInput
+  refundRequestsReviewed?: Prisma.BundleRefundRequestsUncheckedUpdateManyWithoutReviewerNestedInput
+  refundRequests?: Prisma.BundleRefundRequestsUncheckedUpdateManyWithoutUserNestedInput
+  userEntitlements?: Prisma.BundleUserEntitlementsUncheckedUpdateManyWithoutUserNestedInput
+  reviewReportsReported?: Prisma.BundleReviewReportsUncheckedUpdateManyWithoutReporterNestedInput
+  reviewReportsReviewed?: Prisma.BundleReviewReportsUncheckedUpdateManyWithoutReviewerNestedInput
+  subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedUpdateManyWithoutUserNestedInput
+  reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutActorNestedInput
+  reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
+  personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedUpdateManyWithoutUserNestedInput
+  previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
+}
+
+export type UserCreateWithoutLeposhipBuildsInput = {
+  id: string
+  email?: string | null
+  password?: string | null
+  provider?: string
+  socialId?: string | null
+  firstName?: string | null
+  lastName?: string | null
+  fullName?: string | null
+  phone?: string | null
+  dateOfBirth?: Date | string | null
+  gender?: string | null
+  userType?: string
+  registerType?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  photo?: Prisma.FileCreateNestedOneWithoutUsersWithPhotoInput
+  payouts?: Prisma.BundlePayoutsCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationCreateNestedManyWithoutUserInput
+  notificationsActor?: Prisma.NotificationsCreateNestedManyWithoutActorInput
+  notificationsRecipient?: Prisma.NotificationsCreateNestedManyWithoutRecipientInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.UserDeviceTokenCreateNestedManyWithoutUserInput
+  analytics?: Prisma.BundleAnalyticsEventsCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.BundleAuditLogCreateNestedManyWithoutUserInput
+  betaTesters?: Prisma.BundleBetaTestersCreateNestedManyWithoutUserInput
+  changedLogs?: Prisma.BundleChangeLogsCreateNestedManyWithoutUserInput
+  collaboratorsInvited?: Prisma.BundleCollaboratorsCreateNestedManyWithoutInvitedUserInput
+  collaborators?: Prisma.BundleCollaboratorsCreateNestedManyWithoutUserInput
+  developerStrikes?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutDeveloperInput
+  developerStrikesIssued?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutIssuerInput
+  installEvents?: Prisma.BundleInstallEventsCreateNestedManyWithoutUserInput
+  orders?: Prisma.BundleOrdersCreateNestedManyWithoutUserInput
+  reviews?: Prisma.BundleReviewsCreateNestedManyWithoutUserInput
+  stateTransitions?: Prisma.BundleStateTransitionsCreateNestedManyWithoutUserInput
+  userReportsReported?: Prisma.BundleUserReportsCreateNestedManyWithoutReporterInput
+  userReportsReviewed?: Prisma.BundleUserReportsCreateNestedManyWithoutReviewerInput
+  refundRequestsReviewed?: Prisma.BundleRefundRequestsCreateNestedManyWithoutReviewerInput
+  refundRequests?: Prisma.BundleRefundRequestsCreateNestedManyWithoutUserInput
+  userEntitlements?: Prisma.BundleUserEntitlementsCreateNestedManyWithoutUserInput
+  reviewReportsReported?: Prisma.BundleReviewReportsCreateNestedManyWithoutReporterInput
+  reviewReportsReviewed?: Prisma.BundleReviewReportsCreateNestedManyWithoutReviewerInput
+  subscriptionHistory?: Prisma.BundleSubscriptionHistoryCreateNestedManyWithoutUserInput
+  reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutActorInput
+  reviewQueueReviewed?: Prisma.BundleReviewQueueCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
+  personalAccessTokens?: Prisma.PersonalAccessTokenCreateNestedManyWithoutUserInput
+  previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutLeposhipBuildsInput = {
+  id: string
+  email?: string | null
+  password?: string | null
+  provider?: string
+  socialId?: string | null
+  firstName?: string | null
+  lastName?: string | null
+  fullName?: string | null
+  phone?: string | null
+  dateOfBirth?: Date | string | null
+  gender?: string | null
+  userType?: string
+  photoId?: string | null
+  registerType?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  payouts?: Prisma.BundlePayoutsUncheckedCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationUncheckedCreateNestedManyWithoutUserInput
+  notificationsActor?: Prisma.NotificationsUncheckedCreateNestedManyWithoutActorInput
+  notificationsRecipient?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRecipientInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.UserDeviceTokenUncheckedCreateNestedManyWithoutUserInput
+  analytics?: Prisma.BundleAnalyticsEventsUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.BundleAuditLogUncheckedCreateNestedManyWithoutUserInput
+  betaTesters?: Prisma.BundleBetaTestersUncheckedCreateNestedManyWithoutUserInput
+  changedLogs?: Prisma.BundleChangeLogsUncheckedCreateNestedManyWithoutUserInput
+  collaboratorsInvited?: Prisma.BundleCollaboratorsUncheckedCreateNestedManyWithoutInvitedUserInput
+  collaborators?: Prisma.BundleCollaboratorsUncheckedCreateNestedManyWithoutUserInput
+  developerStrikes?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutDeveloperInput
+  developerStrikesIssued?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutIssuerInput
+  installEvents?: Prisma.BundleInstallEventsUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.BundleOrdersUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.BundleReviewsUncheckedCreateNestedManyWithoutUserInput
+  stateTransitions?: Prisma.BundleStateTransitionsUncheckedCreateNestedManyWithoutUserInput
+  userReportsReported?: Prisma.BundleUserReportsUncheckedCreateNestedManyWithoutReporterInput
+  userReportsReviewed?: Prisma.BundleUserReportsUncheckedCreateNestedManyWithoutReviewerInput
+  refundRequestsReviewed?: Prisma.BundleRefundRequestsUncheckedCreateNestedManyWithoutReviewerInput
+  refundRequests?: Prisma.BundleRefundRequestsUncheckedCreateNestedManyWithoutUserInput
+  userEntitlements?: Prisma.BundleUserEntitlementsUncheckedCreateNestedManyWithoutUserInput
+  reviewReportsReported?: Prisma.BundleReviewReportsUncheckedCreateNestedManyWithoutReporterInput
+  reviewReportsReviewed?: Prisma.BundleReviewReportsUncheckedCreateNestedManyWithoutReviewerInput
+  subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedCreateNestedManyWithoutUserInput
+  reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutActorInput
+  reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
+  personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedCreateNestedManyWithoutUserInput
+  previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutLeposhipBuildsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutLeposhipBuildsInput, Prisma.UserUncheckedCreateWithoutLeposhipBuildsInput>
+}
+
+export type UserUpsertWithoutLeposhipBuildsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutLeposhipBuildsInput, Prisma.UserUncheckedUpdateWithoutLeposhipBuildsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutLeposhipBuildsInput, Prisma.UserUncheckedCreateWithoutLeposhipBuildsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutLeposhipBuildsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutLeposhipBuildsInput, Prisma.UserUncheckedUpdateWithoutLeposhipBuildsInput>
+}
+
+export type UserUpdateWithoutLeposhipBuildsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  provider?: Prisma.StringFieldUpdateOperationsInput | string
+  socialId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userType?: Prisma.StringFieldUpdateOperationsInput | string
+  registerType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  photo?: Prisma.FileUpdateOneWithoutUsersWithPhotoNestedInput
+  payouts?: Prisma.BundlePayoutsUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUpdateManyWithoutUserNestedInput
+  notificationsActor?: Prisma.NotificationsUpdateManyWithoutActorNestedInput
+  notificationsRecipient?: Prisma.NotificationsUpdateManyWithoutRecipientNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.UserDeviceTokenUpdateManyWithoutUserNestedInput
+  analytics?: Prisma.BundleAnalyticsEventsUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.BundleAuditLogUpdateManyWithoutUserNestedInput
+  betaTesters?: Prisma.BundleBetaTestersUpdateManyWithoutUserNestedInput
+  changedLogs?: Prisma.BundleChangeLogsUpdateManyWithoutUserNestedInput
+  collaboratorsInvited?: Prisma.BundleCollaboratorsUpdateManyWithoutInvitedUserNestedInput
+  collaborators?: Prisma.BundleCollaboratorsUpdateManyWithoutUserNestedInput
+  developerStrikes?: Prisma.BundleDeveloperStrikesUpdateManyWithoutDeveloperNestedInput
+  developerStrikesIssued?: Prisma.BundleDeveloperStrikesUpdateManyWithoutIssuerNestedInput
+  installEvents?: Prisma.BundleInstallEventsUpdateManyWithoutUserNestedInput
+  orders?: Prisma.BundleOrdersUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.BundleReviewsUpdateManyWithoutUserNestedInput
+  stateTransitions?: Prisma.BundleStateTransitionsUpdateManyWithoutUserNestedInput
+  userReportsReported?: Prisma.BundleUserReportsUpdateManyWithoutReporterNestedInput
+  userReportsReviewed?: Prisma.BundleUserReportsUpdateManyWithoutReviewerNestedInput
+  refundRequestsReviewed?: Prisma.BundleRefundRequestsUpdateManyWithoutReviewerNestedInput
+  refundRequests?: Prisma.BundleRefundRequestsUpdateManyWithoutUserNestedInput
+  userEntitlements?: Prisma.BundleUserEntitlementsUpdateManyWithoutUserNestedInput
+  reviewReportsReported?: Prisma.BundleReviewReportsUpdateManyWithoutReporterNestedInput
+  reviewReportsReviewed?: Prisma.BundleReviewReportsUpdateManyWithoutReviewerNestedInput
+  subscriptionHistory?: Prisma.BundleSubscriptionHistoryUpdateManyWithoutUserNestedInput
+  reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutActorNestedInput
+  reviewQueueReviewed?: Prisma.BundleReviewQueueUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
+  personalAccessTokens?: Prisma.PersonalAccessTokenUpdateManyWithoutUserNestedInput
+  previewComments?: Prisma.PreviewCommentUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutLeposhipBuildsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  provider?: Prisma.StringFieldUpdateOperationsInput | string
+  socialId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userType?: Prisma.StringFieldUpdateOperationsInput | string
+  photoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registerType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  payouts?: Prisma.BundlePayoutsUncheckedUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUncheckedUpdateManyWithoutUserNestedInput
+  notificationsActor?: Prisma.NotificationsUncheckedUpdateManyWithoutActorNestedInput
+  notificationsRecipient?: Prisma.NotificationsUncheckedUpdateManyWithoutRecipientNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.UserDeviceTokenUncheckedUpdateManyWithoutUserNestedInput
+  analytics?: Prisma.BundleAnalyticsEventsUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.BundleAuditLogUncheckedUpdateManyWithoutUserNestedInput
+  betaTesters?: Prisma.BundleBetaTestersUncheckedUpdateManyWithoutUserNestedInput
+  changedLogs?: Prisma.BundleChangeLogsUncheckedUpdateManyWithoutUserNestedInput
+  collaboratorsInvited?: Prisma.BundleCollaboratorsUncheckedUpdateManyWithoutInvitedUserNestedInput
+  collaborators?: Prisma.BundleCollaboratorsUncheckedUpdateManyWithoutUserNestedInput
+  developerStrikes?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutDeveloperNestedInput
+  developerStrikesIssued?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutIssuerNestedInput
+  installEvents?: Prisma.BundleInstallEventsUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.BundleOrdersUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.BundleReviewsUncheckedUpdateManyWithoutUserNestedInput
+  stateTransitions?: Prisma.BundleStateTransitionsUncheckedUpdateManyWithoutUserNestedInput
+  userReportsReported?: Prisma.BundleUserReportsUncheckedUpdateManyWithoutReporterNestedInput
+  userReportsReviewed?: Prisma.BundleUserReportsUncheckedUpdateManyWithoutReviewerNestedInput
+  refundRequestsReviewed?: Prisma.BundleRefundRequestsUncheckedUpdateManyWithoutReviewerNestedInput
+  refundRequests?: Prisma.BundleRefundRequestsUncheckedUpdateManyWithoutUserNestedInput
+  userEntitlements?: Prisma.BundleUserEntitlementsUncheckedUpdateManyWithoutUserNestedInput
+  reviewReportsReported?: Prisma.BundleReviewReportsUncheckedUpdateManyWithoutReporterNestedInput
+  reviewReportsReviewed?: Prisma.BundleReviewReportsUncheckedUpdateManyWithoutReviewerNestedInput
+  subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedUpdateManyWithoutUserNestedInput
+  reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutActorNestedInput
+  reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
+  personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedUpdateManyWithoutUserNestedInput
+  previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyPhotoInput = {
@@ -8224,6 +9349,9 @@ export type UserUpdateWithoutPhotoInput = {
   userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPhotoInput = {
@@ -8274,6 +9402,9 @@ export type UserUncheckedUpdateWithoutPhotoInput = {
   userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
   personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedUpdateManyWithoutUserNestedInput
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
 }
 
 export type UserUncheckedUpdateManyWithoutPhotoInput = {
@@ -8332,6 +9463,9 @@ export type UserCountOutputType = {
   userSecrets: number
   personalAccessTokens: number
   previewComments: number
+  organizationMemberships: number
+  projectMemberships: number
+  leposhipBuilds: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -8366,6 +9500,9 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   userSecrets?: boolean | UserCountOutputTypeCountUserSecretsArgs
   personalAccessTokens?: boolean | UserCountOutputTypeCountPersonalAccessTokensArgs
   previewComments?: boolean | UserCountOutputTypeCountPreviewCommentsArgs
+  organizationMemberships?: boolean | UserCountOutputTypeCountOrganizationMembershipsArgs
+  projectMemberships?: boolean | UserCountOutputTypeCountProjectMembershipsArgs
+  leposhipBuilds?: boolean | UserCountOutputTypeCountLeposhipBuildsArgs
 }
 
 /**
@@ -8595,6 +9732,27 @@ export type UserCountOutputTypeCountPreviewCommentsArgs<ExtArgs extends runtime.
   where?: Prisma.PreviewCommentWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountOrganizationMembershipsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.OrganizationMembershipWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountProjectMembershipsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ProjectMembershipWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountLeposhipBuildsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.LepoShipBuildWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -8646,6 +9804,9 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   userSecrets?: boolean | Prisma.User$userSecretsArgs<ExtArgs>
   personalAccessTokens?: boolean | Prisma.User$personalAccessTokensArgs<ExtArgs>
   previewComments?: boolean | Prisma.User$previewCommentsArgs<ExtArgs>
+  organizationMemberships?: boolean | Prisma.User$organizationMembershipsArgs<ExtArgs>
+  projectMemberships?: boolean | Prisma.User$projectMembershipsArgs<ExtArgs>
+  leposhipBuilds?: boolean | Prisma.User$leposhipBuildsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -8745,6 +9906,9 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   userSecrets?: boolean | Prisma.User$userSecretsArgs<ExtArgs>
   personalAccessTokens?: boolean | Prisma.User$personalAccessTokensArgs<ExtArgs>
   previewComments?: boolean | Prisma.User$previewCommentsArgs<ExtArgs>
+  organizationMemberships?: boolean | Prisma.User$organizationMembershipsArgs<ExtArgs>
+  projectMemberships?: boolean | Prisma.User$projectMembershipsArgs<ExtArgs>
+  leposhipBuilds?: boolean | Prisma.User$leposhipBuildsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -8789,6 +9953,9 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     userSecrets: Prisma.$UserSecretsPayload<ExtArgs>[]
     personalAccessTokens: Prisma.$PersonalAccessTokenPayload<ExtArgs>[]
     previewComments: Prisma.$PreviewCommentPayload<ExtArgs>[]
+    organizationMemberships: Prisma.$OrganizationMembershipPayload<ExtArgs>[]
+    projectMemberships: Prisma.$ProjectMembershipPayload<ExtArgs>[]
+    leposhipBuilds: Prisma.$LepoShipBuildPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -9234,6 +10401,9 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   userSecrets<T extends Prisma.User$userSecretsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$userSecretsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserSecretsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   personalAccessTokens<T extends Prisma.User$personalAccessTokensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$personalAccessTokensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PersonalAccessTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   previewComments<T extends Prisma.User$previewCommentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$previewCommentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PreviewCommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  organizationMemberships<T extends Prisma.User$organizationMembershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$organizationMembershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrganizationMembershipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  projectMemberships<T extends Prisma.User$projectMembershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$projectMembershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProjectMembershipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  leposhipBuilds<T extends Prisma.User$leposhipBuildsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$leposhipBuildsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LepoShipBuildPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -10441,6 +11611,78 @@ export type User$previewCommentsArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.PreviewCommentScalarFieldEnum | Prisma.PreviewCommentScalarFieldEnum[]
+}
+
+/**
+ * User.organizationMemberships
+ */
+export type User$organizationMembershipsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the OrganizationMembership
+   */
+  select?: Prisma.OrganizationMembershipSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the OrganizationMembership
+   */
+  omit?: Prisma.OrganizationMembershipOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OrganizationMembershipInclude<ExtArgs> | null
+  where?: Prisma.OrganizationMembershipWhereInput
+  orderBy?: Prisma.OrganizationMembershipOrderByWithRelationInput | Prisma.OrganizationMembershipOrderByWithRelationInput[]
+  cursor?: Prisma.OrganizationMembershipWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.OrganizationMembershipScalarFieldEnum | Prisma.OrganizationMembershipScalarFieldEnum[]
+}
+
+/**
+ * User.projectMemberships
+ */
+export type User$projectMembershipsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ProjectMembership
+   */
+  select?: Prisma.ProjectMembershipSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ProjectMembership
+   */
+  omit?: Prisma.ProjectMembershipOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProjectMembershipInclude<ExtArgs> | null
+  where?: Prisma.ProjectMembershipWhereInput
+  orderBy?: Prisma.ProjectMembershipOrderByWithRelationInput | Prisma.ProjectMembershipOrderByWithRelationInput[]
+  cursor?: Prisma.ProjectMembershipWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ProjectMembershipScalarFieldEnum | Prisma.ProjectMembershipScalarFieldEnum[]
+}
+
+/**
+ * User.leposhipBuilds
+ */
+export type User$leposhipBuildsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the LepoShipBuild
+   */
+  select?: Prisma.LepoShipBuildSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the LepoShipBuild
+   */
+  omit?: Prisma.LepoShipBuildOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LepoShipBuildInclude<ExtArgs> | null
+  where?: Prisma.LepoShipBuildWhereInput
+  orderBy?: Prisma.LepoShipBuildOrderByWithRelationInput | Prisma.LepoShipBuildOrderByWithRelationInput[]
+  cursor?: Prisma.LepoShipBuildWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.LepoShipBuildScalarFieldEnum | Prisma.LepoShipBuildScalarFieldEnum[]
 }
 
 /**

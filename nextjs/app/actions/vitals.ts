@@ -1,7 +1,4 @@
-"use server";
-
 import { prisma } from "@/lib/server/prisma";
-import { requireCurrentUser } from "@/lib/server/current-user";
 import { requireProjectRole } from "@/lib/server/permissions";
 import { analyseWebVitals, clusterPerformanceIssues } from "@/lib/server/vitals-ai-analyser";
 
@@ -21,9 +18,8 @@ export interface ReplaySession {
   events: any;
 }
 
-export async function getSpeedInsightsDataAction(projectId: string) {
-  const user = await requireCurrentUser();
-  await requireProjectRole(user.id, projectId, "viewer");
+export async function loadSpeedInsightsData(userId: string, projectId: string) {
+  await requireProjectRole(userId, projectId, "viewer");
 
   const bundle = await prisma.bundles.findFirst({
     where: { projectId },
@@ -95,9 +91,17 @@ export async function getSpeedInsightsDataAction(projectId: string) {
     };
   });
 
-  // If there are no real vitals in the database, return high-fidelity seed data
+  // An empty dataset is a real product state; never synthesize telemetry.
   if (records.length === 0) {
-    return getMockSpeedInsightsData(bundle.name);
+    return {
+      success: true,
+      analysis: { totalAnalysed: 0, healthScore: 0, suggestions: [] },
+      replays: [],
+      clusters: [],
+      bundleName: bundle.name,
+      isMock: false,
+      error: undefined,
+    };
   }
 
   const analysis = analyseWebVitals(records);
@@ -133,106 +137,6 @@ export async function getSpeedInsightsDataAction(projectId: string) {
     clusters: clusterPerformanceIssues(mappedReplays),
     bundleName: bundle.name,
     isMock: false,
-    error: undefined,
-  };
-}
-
-function getMockSpeedInsightsData(bundleName: string) {
-  const timestamp = new Date().toISOString();
-  
-  // Seed mock web vitals records
-  const mockRecords = [
-    { id: "v1", name: "LCP", value: 4200, rating: "poor" as const, pathname: "/shop/checkout", userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15" },
-    { id: "v2", name: "LCP", value: 3100, rating: "needs-improvement" as const, pathname: "/shop/checkout", userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15" },
-    { id: "v3", name: "INP", value: 680, rating: "poor" as const, pathname: "/products/gaming-keyboard", userAgent: "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36" },
-    { id: "v4", name: "INP", value: 240, rating: "needs-improvement" as const, pathname: "/products/gaming-keyboard", userAgent: "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36" },
-    { id: "v5", name: "CLS", value: 0.28, rating: "poor" as const, pathname: "/", userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" },
-    { id: "v6", name: "CLS", value: 0.12, rating: "needs-improvement" as const, pathname: "/", userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" },
-    { id: "v7", name: "LCP", value: 1200, rating: "good" as const, pathname: "/about", userAgent: "Chrome 120.0" },
-    { id: "v8", name: "INP", value: 95, rating: "good" as const, pathname: "/about", userAgent: "Chrome 120.0" },
-    { id: "v9", name: "CLS", value: 0.02, rating: "good" as const, pathname: "/about", userAgent: "Chrome 120.0" }
-  ];
-
-  const analysis = analyseWebVitals(mockRecords);
-
-  // High-fidelity mock session replays with event logs representing user interaction patterns
-  const mockReplays: ReplaySession[] = [
-    {
-      id: "mock-rep-1",
-      sessionId: "sess_lcp_checkout_01",
-      url: "/shop/checkout",
-      userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15",
-      ipAddress: "198.51.100.12",
-      createdAt: new Date(Date.now() - 3600000).toISOString(),
-      vitals: [
-        { name: "LCP", value: 4200, rating: "poor" },
-        { name: "CLS", value: 0.05, rating: "good" }
-      ],
-      hasIssues: true,
-      events: [
-        { type: "navigation", timestamp: 0, url: "/shop/checkout" },
-        { type: "dom-content-loaded", timestamp: 850 },
-        { type: "paint", timestamp: 1200, name: "FP" },
-        { type: "paint", timestamp: 1400, name: "FCP" },
-        { type: "scroll", timestamp: 2200, top: 150 },
-        { type: "scroll", timestamp: 3100, top: 400 },
-        { type: "paint", timestamp: 4200, name: "LCP", element: "img.hero-checkout-banner", sizeBytes: 1540000 },
-        { type: "click", timestamp: 5000, target: "button#submit-payment" }
-      ]
-    },
-    {
-      id: "mock-rep-2",
-      sessionId: "sess_inp_keyboard_02",
-      url: "/products/gaming-keyboard",
-      userAgent: "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36",
-      ipAddress: "203.0.113.88",
-      createdAt: new Date(Date.now() - 7200000).toISOString(),
-      vitals: [
-        { name: "INP", value: 680, rating: "poor" },
-        { name: "LCP", value: 1800, rating: "good" }
-      ],
-      hasIssues: true,
-      events: [
-        { type: "navigation", timestamp: 0, url: "/products/gaming-keyboard" },
-        { type: "dom-content-loaded", timestamp: 450 },
-        { type: "paint", timestamp: 600, name: "FCP" },
-        { type: "paint", timestamp: 1000, name: "LCP", element: "div.product-image" },
-        { type: "click", timestamp: 2500, target: "button#add-to-cart", delayMs: 680, description: "CPU Long Task: State mutation blocked UI thread" },
-        { type: "scroll", timestamp: 4000, top: 300 },
-        { type: "click", timestamp: 5500, target: "a#reviews-tab", delayMs: 120 }
-      ]
-    },
-    {
-      id: "mock-rep-3",
-      sessionId: "sess_cls_home_03",
-      url: "/",
-      userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-      ipAddress: "198.51.100.45",
-      createdAt: new Date(Date.now() - 10800000).toISOString(),
-      vitals: [
-        { name: "CLS", value: 0.28, rating: "poor" },
-        { name: "INP", value: 80, rating: "good" }
-      ],
-      hasIssues: true,
-      events: [
-        { type: "navigation", timestamp: 0, url: "/" },
-        { type: "dom-content-loaded", timestamp: 300 },
-        { type: "paint", timestamp: 450, name: "FCP" },
-        { type: "layout-shift", timestamp: 1200, score: 0.15, element: "div.ad-banner-top", description: "Banner loaded without reserved dimensions" },
-        { type: "scroll", timestamp: 2000, top: 200 },
-        { type: "layout-shift", timestamp: 2800, score: 0.13, element: "div.lazy-loaded-carousel", description: "Dynamic carousel popped into viewport" },
-        { type: "click", timestamp: 4500, target: "a#view-promo" }
-      ]
-    }
-  ];
-
-  return {
-    success: true,
-    analysis,
-    replays: mockReplays,
-    clusters: clusterPerformanceIssues(mockReplays),
-    bundleName,
-    isMock: true,
     error: undefined,
   };
 }

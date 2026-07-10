@@ -155,7 +155,14 @@ export const ModelName = {
   MarketplacePartnerAccount: 'MarketplacePartnerAccount',
   MarketplaceTransaction: 'MarketplaceTransaction',
   MarketplaceInstallEvent: 'MarketplaceInstallEvent',
-  RiskLimits: 'RiskLimits'
+  RiskLimits: 'RiskLimits',
+  OrganizationMembership: 'OrganizationMembership',
+  ProjectMembership: 'ProjectMembership',
+  WorkspaceProviderConnection: 'WorkspaceProviderConnection',
+  ProjectProviderBinding: 'ProjectProviderBinding',
+  WorkspaceAuditEvent: 'WorkspaceAuditEvent',
+  LepoShipBuild: 'LepoShipBuild',
+  MarketplaceCompatibilityRun: 'MarketplaceCompatibilityRun'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1735,7 +1742,9 @@ export const FormScalarFieldEnum = {
   salesforceSync: 'salesforceSync',
   webhookUrl: 'webhookUrl',
   webhookSecret: 'webhookSecret',
-  createdAt: 'createdAt'
+  definition: 'definition',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 } as const
 
 export type FormScalarFieldEnum = (typeof FormScalarFieldEnum)[keyof typeof FormScalarFieldEnum]
@@ -1790,6 +1799,10 @@ export const LepoShipLocalConfigScalarFieldEnum = {
   basePath: 'basePath',
   fallbackPath: 'fallbackPath',
   projectId: 'projectId',
+  repository: 'repository',
+  branch: 'branch',
+  framework: 'framework',
+  buildProfile: 'buildProfile',
   createdAt: 'createdAt'
 } as const
 
@@ -1895,6 +1908,102 @@ export const RiskLimitsScalarFieldEnum = {
 } as const
 
 export type RiskLimitsScalarFieldEnum = (typeof RiskLimitsScalarFieldEnum)[keyof typeof RiskLimitsScalarFieldEnum]
+
+
+export const OrganizationMembershipScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  userId: 'userId',
+  role: 'role',
+  inviteStatus: 'inviteStatus',
+  invitedById: 'invitedById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OrganizationMembershipScalarFieldEnum = (typeof OrganizationMembershipScalarFieldEnum)[keyof typeof OrganizationMembershipScalarFieldEnum]
+
+
+export const ProjectMembershipScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  userId: 'userId',
+  role: 'role',
+  inviteStatus: 'inviteStatus',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProjectMembershipScalarFieldEnum = (typeof ProjectMembershipScalarFieldEnum)[keyof typeof ProjectMembershipScalarFieldEnum]
+
+
+export const WorkspaceProviderConnectionScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  provider: 'provider',
+  encryptedCredential: 'encryptedCredential',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type WorkspaceProviderConnectionScalarFieldEnum = (typeof WorkspaceProviderConnectionScalarFieldEnum)[keyof typeof WorkspaceProviderConnectionScalarFieldEnum]
+
+
+export const ProjectProviderBindingScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  connectionId: 'connectionId',
+  externalId: 'externalId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProjectProviderBindingScalarFieldEnum = (typeof ProjectProviderBindingScalarFieldEnum)[keyof typeof ProjectProviderBindingScalarFieldEnum]
+
+
+export const WorkspaceAuditEventScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  actorId: 'actorId',
+  actorEmail: 'actorEmail',
+  action: 'action',
+  resourceType: 'resourceType',
+  resourceId: 'resourceId',
+  metadata: 'metadata',
+  timestamp: 'timestamp'
+} as const
+
+export type WorkspaceAuditEventScalarFieldEnum = (typeof WorkspaceAuditEventScalarFieldEnum)[keyof typeof WorkspaceAuditEventScalarFieldEnum]
+
+
+export const LepoShipBuildScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  status: 'status',
+  sourceCommit: 'sourceCommit',
+  platform: 'platform',
+  logs: 'logs',
+  artifactUrl: 'artifactUrl',
+  error: 'error',
+  triggeredById: 'triggeredById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LepoShipBuildScalarFieldEnum = (typeof LepoShipBuildScalarFieldEnum)[keyof typeof LepoShipBuildScalarFieldEnum]
+
+
+export const MarketplaceCompatibilityRunScalarFieldEnum = {
+  id: 'id',
+  integrationId: 'integrationId',
+  endpoint: 'endpoint',
+  checkResults: 'checkResults',
+  logs: 'logs',
+  createdAt: 'createdAt'
+} as const
+
+export type MarketplaceCompatibilityRunScalarFieldEnum = (typeof MarketplaceCompatibilityRunScalarFieldEnum)[keyof typeof MarketplaceCompatibilityRunScalarFieldEnum]
 
 
 export const SortOrder = {

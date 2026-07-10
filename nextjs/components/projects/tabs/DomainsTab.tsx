@@ -307,7 +307,7 @@ export function DomainsTab({
           </p>
 
           <Button asChild className="h-10 bg-primary hover:bg-primary-deep text-primary-foreground font-semibold px-6 rounded-sm shadow-light transition-all text-xs">
-            <Link href="/dashboard/settings">
+            <Link href="/settings/security">
               Configure Vercel API Key
             </Link>
           </Button>

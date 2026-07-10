@@ -5,55 +5,6 @@ import { requireCurrentUser } from "@/lib/server/current-user";
 import { requireProjectRole } from "@/lib/server/permissions";
 import { revalidatePath } from "next/cache";
 
-export async function getFormsAction(projectId: string) {
-  const user = await requireCurrentUser();
-  await requireProjectRole(user.id, projectId, "viewer");
-
-  const forms = await prisma.form.findMany({
-    where: { projectId },
-    include: {
-      submissions: {
-        orderBy: { createdAt: "desc" },
-      },
-      webhookDeliveries: {
-        orderBy: { createdAt: "desc" },
-        take: 20,
-      },
-    },
-    orderBy: { createdAt: "desc" },
-  });
-
-  return {
-    success: true,
-    forms: forms.map((f) => ({
-      id: f.id,
-      name: f.name,
-      projectId: f.projectId,
-      googleSheetsSync: f.googleSheetsSync,
-      salesforceSync: f.salesforceSync,
-      webhookUrl: f.webhookUrl,
-      webhookSecret: f.webhookSecret,
-      createdAt: f.createdAt.toISOString(),
-      submissions: f.submissions.map((sub) => ({
-        id: sub.id,
-        data: sub.data,
-        ipAddress: sub.ipAddress,
-        userAgent: sub.userAgent,
-        createdAt: sub.createdAt.toISOString(),
-      })),
-      webhookDeliveries: f.webhookDeliveries.map((delivery) => ({
-        id: delivery.id,
-        url: delivery.url,
-        status: delivery.status,
-        attempts: delivery.attempts,
-        lastError: delivery.lastError,
-        nextRetryAt: delivery.nextRetryAt?.toISOString() || null,
-        createdAt: delivery.createdAt.toISOString(),
-      })),
-    })),
-  };
-}
-
 export async function createFormAction(projectId: string, name: string) {
   const user = await requireCurrentUser();
   await requireProjectRole(user.id, projectId, "editor");
@@ -72,6 +23,7 @@ export async function createFormAction(projectId: string, name: string) {
       id: form.id,
       name: form.name,
       projectId: form.projectId,
+      definition: form.definition,
       createdAt: form.createdAt.toISOString(),
     },
   };
@@ -85,6 +37,7 @@ export async function updateFormSettingsAction(
     salesforceSync?: boolean;
     webhookUrl?: string | null;
     webhookSecret?: string | null;
+    definition?: unknown;
   }
 ) {
   const user = await requireCurrentUser();
@@ -107,6 +60,7 @@ export async function updateFormSettingsAction(
       salesforceSync: data.salesforceSync ?? undefined,
       webhookUrl: data.webhookUrl,
       webhookSecret: data.webhookSecret,
+      definition: data.definition === undefined ? undefined : (data.definition as any),
     },
   });
 
@@ -121,6 +75,7 @@ export async function updateFormSettingsAction(
       salesforceSync: updatedForm.salesforceSync,
       webhookUrl: updatedForm.webhookUrl,
       webhookSecret: updatedForm.webhookSecret,
+      definition: updatedForm.definition,
     },
   };
 }

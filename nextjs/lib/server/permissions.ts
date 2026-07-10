@@ -71,6 +71,11 @@ export async function getWorkspaceAccess(userId: string, organizationId: string)
       name: true,
       type: true,
       userId: true,
+      members: {
+        where: { userId, inviteStatus: "accepted" },
+        select: { role: true },
+        take: 1,
+      },
       projects: {
         where: { deletedAt: null },
         select: {
@@ -103,10 +108,11 @@ export async function getWorkspaceAccess(userId: string, organizationId: string)
     };
   }
 
+  const membershipRole = organization.members[0]?.role;
   const collaboratorRoles = organization.projects.flatMap((project) =>
     project.bundle?.collaborators.map((collaborator) => collaborator.role) ?? []
   );
-  const role = strongestRole(collaboratorRoles);
+  const role = strongestRole([membershipRole, ...collaboratorRoles]);
 
   if (!role) {
     return null;
@@ -146,6 +152,11 @@ export async function requireProjectRole(
       id: true,
       organizationId: true,
       vercelProjectId: true,
+      members: {
+        where: { userId, inviteStatus: "accepted" },
+        select: { role: true },
+        take: 1,
+      },
       bundle: {
         select: {
           id: true,
@@ -156,7 +167,14 @@ export async function requireProjectRole(
         },
       },
       organization: {
-        select: { userId: true },
+        select: {
+          userId: true,
+          members: {
+            where: { userId, inviteStatus: "accepted" },
+            select: { role: true },
+            take: 1,
+          },
+        },
       },
     },
   });
@@ -165,10 +183,13 @@ export async function requireProjectRole(
     throw new Error("Project not found.");
   }
 
-  const role =
-    project.organization.userId === userId
-      ? "owner"
-      : strongestRole(project.bundle?.collaborators.map((item) => item.role) ?? []);
+  const role = project.organization.userId === userId
+    ? "owner"
+    : strongestRole([
+        project.members[0]?.role,
+        project.organization.members[0]?.role,
+        ...(project.bundle?.collaborators.map((item) => item.role) ?? []),
+      ]);
 
   if (!role || !hasMinimumRole(role, minimum)) {
     throw new Error("Project access denied.");
@@ -219,7 +240,8 @@ export async function requireBundleRole(
 }
 
 export async function getWorkspaceMembers(organizationId: string) {
-  const organization = await prisma.organization.findFirst({
+  const [organization, persistedMemberships, collaborators] = await Promise.all([
+    prisma.organization.findFirst({
     where: { id: organizationId, deletedAt: null },
     select: {
       user: {
@@ -230,29 +252,36 @@ export async function getWorkspaceMembers(organizationId: string) {
         },
       },
     },
-  });
-
-  const collaborators = await prisma.bundleCollaborators.findMany({
-    where: {
-      bundle: {
-        project: {
-          organizationId,
-          deletedAt: null,
+    }),
+    prisma.organizationMembership.findMany({
+      where: { organizationId, inviteStatus: { in: ["accepted", "pending"] } },
+      select: {
+        role: true,
+        user: { select: { id: true, email: true, fullName: true } },
+      },
+    }),
+    prisma.bundleCollaborators.findMany({
+      where: {
+        bundle: {
+          project: {
+            organizationId,
+            deletedAt: null,
+          },
         },
       },
-    },
-    select: {
-      role: true,
-      user: {
-        select: {
-          id: true,
-          email: true,
-          fullName: true,
+      select: {
+        role: true,
+        user: {
+          select: {
+            id: true,
+            email: true,
+            fullName: true,
+          },
         },
+        bundleId: true,
       },
-      bundleId: true,
-    },
-  });
+    }),
+  ]);
 
   const members = new Map<
     string,
@@ -270,6 +299,22 @@ export async function getWorkspaceMembers(organizationId: string) {
       ...organization.user,
       role: "owner",
       projectCount: 0,
+    });
+  }
+
+  for (const membership of persistedMemberships) {
+    if (membership.user.id === organization?.user.id) continue;
+    const projectCount = await prisma.projectMembership.count({
+      where: {
+        userId: membership.user.id,
+        inviteStatus: "accepted",
+        project: { organizationId, deletedAt: null },
+      },
+    });
+    members.set(membership.user.id, {
+      ...membership.user,
+      role: normalizeRole(membership.role),
+      projectCount,
     });
   }
 

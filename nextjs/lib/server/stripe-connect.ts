@@ -3,18 +3,14 @@ import Stripe from "stripe";
 const stripeKey = process.env.STRIPE_SECRET_KEY;
 const stripe = stripeKey ? new Stripe(stripeKey, { apiVersion: "2022-11-15" as any }) : null;
 
-// Helper to determine if we are running in simulated/mock mode
-export const isStripeSimulated = () => !stripe;
+export const isStripeAvailable = () => Boolean(stripe);
 
 /**
  * Create a Stripe Connect Express account for a partner workspace.
  */
 export async function createConnectAccount(workspaceId: string, email: string) {
   if (!stripe) {
-    console.log(`[Stripe Connect Simulation] Creating Connect Account for workspace: ${workspaceId}`);
-    return {
-      stripeAccountId: `acct_sim_${Math.random().toString(36).substring(2, 12)}`,
-    };
+    throw new Error("Stripe Connect is unavailable because STRIPE_SECRET_KEY is not configured.");
   }
 
   try {
@@ -39,10 +35,7 @@ export async function createConnectAccount(workspaceId: string, email: string) {
  */
 export async function generateOnboardingLink(stripeAccountId: string, returnUrl: string, refreshUrl: string) {
   if (!stripe) {
-    console.log(`[Stripe Connect Simulation] Generating onboarding link for account: ${stripeAccountId}`);
-    return {
-      url: `${returnUrl}?stripe_status=success&simulated_acct=${stripeAccountId}`,
-    };
+    throw new Error("Stripe Connect onboarding is unavailable because STRIPE_SECRET_KEY is not configured.");
   }
 
   try {
@@ -77,14 +70,7 @@ export async function createPaymentWithSplit(params: {
   const transferAmount = amount - platformFeeAmount;
 
   if (!stripe) {
-    console.log(`[Stripe Connect Simulation] Creating payment with split for partner: ${partnerStripeAccountId}, amount: ${amount}`);
-    const simulatedPaymentIntentId = `pi_sim_${Math.random().toString(36).substring(2, 12)}`;
-    return {
-      clientSecret: `${simulatedPaymentIntentId}_secret_${Math.random().toString(36).substring(2, 10)}`,
-      paymentIntentId: simulatedPaymentIntentId,
-      transferAmount,
-      platformFeeAmount,
-    };
+    throw new Error("Stripe payments are unavailable because STRIPE_SECRET_KEY is not configured.");
   }
 
   try {
@@ -119,12 +105,7 @@ export async function createPaymentWithSplit(params: {
  * Fetch Connected Account Balance.
  */
 export async function getPartnerBalance(stripeAccountId: string) {
-  if (!stripe || stripeAccountId.startsWith("acct_sim_")) {
-    return {
-      available: [{ amount: 15420000, currency: "vnd" }],
-      pending: [{ amount: 4890000, currency: "vnd" }],
-    };
-  }
+  if (!stripe) throw new Error("Stripe balance is unavailable because STRIPE_SECRET_KEY is not configured.");
 
   try {
     const balance = await stripe.balance.retrieve({}, {
@@ -147,26 +128,7 @@ export async function getPartnerBalance(stripeAccountId: string) {
  * Fetch Connected Account Payout History.
  */
 export async function getPartnerPayouts(stripeAccountId: string) {
-  if (!stripe || stripeAccountId.startsWith("acct_sim_")) {
-    return [
-      {
-        id: "po_sim_1",
-        amount: 8500000,
-        currency: "vnd",
-        status: "paid",
-        arrivalDate: new Date(Date.now() - 3 * 24 * 3600 * 1000).toISOString(),
-        bankName: "Joint Stock Commercial Bank for Foreign Trade of Vietnam (Vietcombank)",
-      },
-      {
-        id: "po_sim_2",
-        amount: 6200000,
-        currency: "vnd",
-        status: "paid",
-        arrivalDate: new Date(Date.now() - 10 * 24 * 3600 * 1000).toISOString(),
-        bankName: "Joint Stock Commercial Bank for Foreign Trade of Vietnam (Vietcombank)",
-      },
-    ];
-  }
+  if (!stripe) throw new Error("Stripe payouts are unavailable because STRIPE_SECRET_KEY is not configured.");
 
   try {
     const payouts = await stripe.payouts.list(

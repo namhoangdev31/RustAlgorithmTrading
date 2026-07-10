@@ -40,6 +40,10 @@ export type LepoShipLocalConfigMinAggregateOutputType = {
   basePath: string | null
   fallbackPath: string | null
   projectId: string | null
+  repository: string | null
+  branch: string | null
+  framework: string | null
+  buildProfile: string | null
   createdAt: Date | null
 }
 
@@ -49,6 +53,10 @@ export type LepoShipLocalConfigMaxAggregateOutputType = {
   basePath: string | null
   fallbackPath: string | null
   projectId: string | null
+  repository: string | null
+  branch: string | null
+  framework: string | null
+  buildProfile: string | null
   createdAt: Date | null
 }
 
@@ -58,6 +66,10 @@ export type LepoShipLocalConfigCountAggregateOutputType = {
   basePath: number
   fallbackPath: number
   projectId: number
+  repository: number
+  branch: number
+  framework: number
+  buildProfile: number
   createdAt: number
   _all: number
 }
@@ -77,6 +89,10 @@ export type LepoShipLocalConfigMinAggregateInputType = {
   basePath?: true
   fallbackPath?: true
   projectId?: true
+  repository?: true
+  branch?: true
+  framework?: true
+  buildProfile?: true
   createdAt?: true
 }
 
@@ -86,6 +102,10 @@ export type LepoShipLocalConfigMaxAggregateInputType = {
   basePath?: true
   fallbackPath?: true
   projectId?: true
+  repository?: true
+  branch?: true
+  framework?: true
+  buildProfile?: true
   createdAt?: true
 }
 
@@ -95,6 +115,10 @@ export type LepoShipLocalConfigCountAggregateInputType = {
   basePath?: true
   fallbackPath?: true
   projectId?: true
+  repository?: true
+  branch?: true
+  framework?: true
+  buildProfile?: true
   createdAt?: true
   _all?: true
 }
@@ -191,6 +215,10 @@ export type LepoShipLocalConfigGroupByOutputType = {
   basePath: string
   fallbackPath: string
   projectId: string
+  repository: string
+  branch: string
+  framework: string
+  buildProfile: string
   createdAt: Date
   _count: LepoShipLocalConfigCountAggregateOutputType | null
   _avg: LepoShipLocalConfigAvgAggregateOutputType | null
@@ -223,6 +251,10 @@ export type LepoShipLocalConfigWhereInput = {
   basePath?: Prisma.StringFilter<"LepoShipLocalConfig"> | string
   fallbackPath?: Prisma.StringFilter<"LepoShipLocalConfig"> | string
   projectId?: Prisma.UuidFilter<"LepoShipLocalConfig"> | string
+  repository?: Prisma.StringFilter<"LepoShipLocalConfig"> | string
+  branch?: Prisma.StringFilter<"LepoShipLocalConfig"> | string
+  framework?: Prisma.StringFilter<"LepoShipLocalConfig"> | string
+  buildProfile?: Prisma.StringFilter<"LepoShipLocalConfig"> | string
   createdAt?: Prisma.DateTimeFilter<"LepoShipLocalConfig"> | Date | string
   project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
 }
@@ -233,6 +265,10 @@ export type LepoShipLocalConfigOrderByWithRelationInput = {
   basePath?: Prisma.SortOrder
   fallbackPath?: Prisma.SortOrder
   projectId?: Prisma.SortOrder
+  repository?: Prisma.SortOrder
+  branch?: Prisma.SortOrder
+  framework?: Prisma.SortOrder
+  buildProfile?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   project?: Prisma.ProjectOrderByWithRelationInput
 }
@@ -246,6 +282,10 @@ export type LepoShipLocalConfigWhereUniqueInput = Prisma.AtLeast<{
   localPort?: Prisma.IntFilter<"LepoShipLocalConfig"> | number
   basePath?: Prisma.StringFilter<"LepoShipLocalConfig"> | string
   fallbackPath?: Prisma.StringFilter<"LepoShipLocalConfig"> | string
+  repository?: Prisma.StringFilter<"LepoShipLocalConfig"> | string
+  branch?: Prisma.StringFilter<"LepoShipLocalConfig"> | string
+  framework?: Prisma.StringFilter<"LepoShipLocalConfig"> | string
+  buildProfile?: Prisma.StringFilter<"LepoShipLocalConfig"> | string
   createdAt?: Prisma.DateTimeFilter<"LepoShipLocalConfig"> | Date | string
   project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
 }, "id" | "projectId">
@@ -256,6 +296,10 @@ export type LepoShipLocalConfigOrderByWithAggregationInput = {
   basePath?: Prisma.SortOrder
   fallbackPath?: Prisma.SortOrder
   projectId?: Prisma.SortOrder
+  repository?: Prisma.SortOrder
+  branch?: Prisma.SortOrder
+  framework?: Prisma.SortOrder
+  buildProfile?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.LepoShipLocalConfigCountOrderByAggregateInput
   _avg?: Prisma.LepoShipLocalConfigAvgOrderByAggregateInput
@@ -273,6 +317,10 @@ export type LepoShipLocalConfigScalarWhereWithAggregatesInput = {
   basePath?: Prisma.StringWithAggregatesFilter<"LepoShipLocalConfig"> | string
   fallbackPath?: Prisma.StringWithAggregatesFilter<"LepoShipLocalConfig"> | string
   projectId?: Prisma.UuidWithAggregatesFilter<"LepoShipLocalConfig"> | string
+  repository?: Prisma.StringWithAggregatesFilter<"LepoShipLocalConfig"> | string
+  branch?: Prisma.StringWithAggregatesFilter<"LepoShipLocalConfig"> | string
+  framework?: Prisma.StringWithAggregatesFilter<"LepoShipLocalConfig"> | string
+  buildProfile?: Prisma.StringWithAggregatesFilter<"LepoShipLocalConfig"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"LepoShipLocalConfig"> | Date | string
 }
 
@@ -281,6 +329,10 @@ export type LepoShipLocalConfigCreateInput = {
   localPort?: number
   basePath?: string
   fallbackPath?: string
+  repository?: string
+  branch?: string
+  framework?: string
+  buildProfile?: string
   createdAt?: Date | string
   project: Prisma.ProjectCreateNestedOneWithoutLepoShipLocalConfigInput
 }
@@ -291,6 +343,10 @@ export type LepoShipLocalConfigUncheckedCreateInput = {
   basePath?: string
   fallbackPath?: string
   projectId: string
+  repository?: string
+  branch?: string
+  framework?: string
+  buildProfile?: string
   createdAt?: Date | string
 }
 
@@ -299,6 +355,10 @@ export type LepoShipLocalConfigUpdateInput = {
   localPort?: Prisma.IntFieldUpdateOperationsInput | number
   basePath?: Prisma.StringFieldUpdateOperationsInput | string
   fallbackPath?: Prisma.StringFieldUpdateOperationsInput | string
+  repository?: Prisma.StringFieldUpdateOperationsInput | string
+  branch?: Prisma.StringFieldUpdateOperationsInput | string
+  framework?: Prisma.StringFieldUpdateOperationsInput | string
+  buildProfile?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   project?: Prisma.ProjectUpdateOneRequiredWithoutLepoShipLocalConfigNestedInput
 }
@@ -309,6 +369,10 @@ export type LepoShipLocalConfigUncheckedUpdateInput = {
   basePath?: Prisma.StringFieldUpdateOperationsInput | string
   fallbackPath?: Prisma.StringFieldUpdateOperationsInput | string
   projectId?: Prisma.StringFieldUpdateOperationsInput | string
+  repository?: Prisma.StringFieldUpdateOperationsInput | string
+  branch?: Prisma.StringFieldUpdateOperationsInput | string
+  framework?: Prisma.StringFieldUpdateOperationsInput | string
+  buildProfile?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -318,6 +382,10 @@ export type LepoShipLocalConfigCreateManyInput = {
   basePath?: string
   fallbackPath?: string
   projectId: string
+  repository?: string
+  branch?: string
+  framework?: string
+  buildProfile?: string
   createdAt?: Date | string
 }
 
@@ -326,6 +394,10 @@ export type LepoShipLocalConfigUpdateManyMutationInput = {
   localPort?: Prisma.IntFieldUpdateOperationsInput | number
   basePath?: Prisma.StringFieldUpdateOperationsInput | string
   fallbackPath?: Prisma.StringFieldUpdateOperationsInput | string
+  repository?: Prisma.StringFieldUpdateOperationsInput | string
+  branch?: Prisma.StringFieldUpdateOperationsInput | string
+  framework?: Prisma.StringFieldUpdateOperationsInput | string
+  buildProfile?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -335,6 +407,10 @@ export type LepoShipLocalConfigUncheckedUpdateManyInput = {
   basePath?: Prisma.StringFieldUpdateOperationsInput | string
   fallbackPath?: Prisma.StringFieldUpdateOperationsInput | string
   projectId?: Prisma.StringFieldUpdateOperationsInput | string
+  repository?: Prisma.StringFieldUpdateOperationsInput | string
+  branch?: Prisma.StringFieldUpdateOperationsInput | string
+  framework?: Prisma.StringFieldUpdateOperationsInput | string
+  buildProfile?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -349,6 +425,10 @@ export type LepoShipLocalConfigCountOrderByAggregateInput = {
   basePath?: Prisma.SortOrder
   fallbackPath?: Prisma.SortOrder
   projectId?: Prisma.SortOrder
+  repository?: Prisma.SortOrder
+  branch?: Prisma.SortOrder
+  framework?: Prisma.SortOrder
+  buildProfile?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -362,6 +442,10 @@ export type LepoShipLocalConfigMaxOrderByAggregateInput = {
   basePath?: Prisma.SortOrder
   fallbackPath?: Prisma.SortOrder
   projectId?: Prisma.SortOrder
+  repository?: Prisma.SortOrder
+  branch?: Prisma.SortOrder
+  framework?: Prisma.SortOrder
+  buildProfile?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -371,6 +455,10 @@ export type LepoShipLocalConfigMinOrderByAggregateInput = {
   basePath?: Prisma.SortOrder
   fallbackPath?: Prisma.SortOrder
   projectId?: Prisma.SortOrder
+  repository?: Prisma.SortOrder
+  branch?: Prisma.SortOrder
+  framework?: Prisma.SortOrder
+  buildProfile?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -415,6 +503,10 @@ export type LepoShipLocalConfigCreateWithoutProjectInput = {
   localPort?: number
   basePath?: string
   fallbackPath?: string
+  repository?: string
+  branch?: string
+  framework?: string
+  buildProfile?: string
   createdAt?: Date | string
 }
 
@@ -423,6 +515,10 @@ export type LepoShipLocalConfigUncheckedCreateWithoutProjectInput = {
   localPort?: number
   basePath?: string
   fallbackPath?: string
+  repository?: string
+  branch?: string
+  framework?: string
+  buildProfile?: string
   createdAt?: Date | string
 }
 
@@ -447,6 +543,10 @@ export type LepoShipLocalConfigUpdateWithoutProjectInput = {
   localPort?: Prisma.IntFieldUpdateOperationsInput | number
   basePath?: Prisma.StringFieldUpdateOperationsInput | string
   fallbackPath?: Prisma.StringFieldUpdateOperationsInput | string
+  repository?: Prisma.StringFieldUpdateOperationsInput | string
+  branch?: Prisma.StringFieldUpdateOperationsInput | string
+  framework?: Prisma.StringFieldUpdateOperationsInput | string
+  buildProfile?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -455,6 +555,10 @@ export type LepoShipLocalConfigUncheckedUpdateWithoutProjectInput = {
   localPort?: Prisma.IntFieldUpdateOperationsInput | number
   basePath?: Prisma.StringFieldUpdateOperationsInput | string
   fallbackPath?: Prisma.StringFieldUpdateOperationsInput | string
+  repository?: Prisma.StringFieldUpdateOperationsInput | string
+  branch?: Prisma.StringFieldUpdateOperationsInput | string
+  framework?: Prisma.StringFieldUpdateOperationsInput | string
+  buildProfile?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -466,6 +570,10 @@ export type LepoShipLocalConfigSelect<ExtArgs extends runtime.Types.Extensions.I
   basePath?: boolean
   fallbackPath?: boolean
   projectId?: boolean
+  repository?: boolean
+  branch?: boolean
+  framework?: boolean
+  buildProfile?: boolean
   createdAt?: boolean
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["lepoShipLocalConfig"]>
@@ -476,6 +584,10 @@ export type LepoShipLocalConfigSelectCreateManyAndReturn<ExtArgs extends runtime
   basePath?: boolean
   fallbackPath?: boolean
   projectId?: boolean
+  repository?: boolean
+  branch?: boolean
+  framework?: boolean
+  buildProfile?: boolean
   createdAt?: boolean
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["lepoShipLocalConfig"]>
@@ -486,6 +598,10 @@ export type LepoShipLocalConfigSelectUpdateManyAndReturn<ExtArgs extends runtime
   basePath?: boolean
   fallbackPath?: boolean
   projectId?: boolean
+  repository?: boolean
+  branch?: boolean
+  framework?: boolean
+  buildProfile?: boolean
   createdAt?: boolean
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["lepoShipLocalConfig"]>
@@ -496,10 +612,14 @@ export type LepoShipLocalConfigSelectScalar = {
   basePath?: boolean
   fallbackPath?: boolean
   projectId?: boolean
+  repository?: boolean
+  branch?: boolean
+  framework?: boolean
+  buildProfile?: boolean
   createdAt?: boolean
 }
 
-export type LepoShipLocalConfigOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "localPort" | "basePath" | "fallbackPath" | "projectId" | "createdAt", ExtArgs["result"]["lepoShipLocalConfig"]>
+export type LepoShipLocalConfigOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "localPort" | "basePath" | "fallbackPath" | "projectId" | "repository" | "branch" | "framework" | "buildProfile" | "createdAt", ExtArgs["result"]["lepoShipLocalConfig"]>
 export type LepoShipLocalConfigInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
 }
@@ -521,6 +641,10 @@ export type $LepoShipLocalConfigPayload<ExtArgs extends runtime.Types.Extensions
     basePath: string
     fallbackPath: string
     projectId: string
+    repository: string
+    branch: string
+    framework: string
+    buildProfile: string
     createdAt: Date
   }, ExtArgs["result"]["lepoShipLocalConfig"]>
   composites: {}
@@ -951,6 +1075,10 @@ export interface LepoShipLocalConfigFieldRefs {
   readonly basePath: Prisma.FieldRef<"LepoShipLocalConfig", 'String'>
   readonly fallbackPath: Prisma.FieldRef<"LepoShipLocalConfig", 'String'>
   readonly projectId: Prisma.FieldRef<"LepoShipLocalConfig", 'String'>
+  readonly repository: Prisma.FieldRef<"LepoShipLocalConfig", 'String'>
+  readonly branch: Prisma.FieldRef<"LepoShipLocalConfig", 'String'>
+  readonly framework: Prisma.FieldRef<"LepoShipLocalConfig", 'String'>
+  readonly buildProfile: Prisma.FieldRef<"LepoShipLocalConfig", 'String'>
   readonly createdAt: Prisma.FieldRef<"LepoShipLocalConfig", 'DateTime'>
 }
     

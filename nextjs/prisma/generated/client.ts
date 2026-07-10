@@ -566,3 +566,38 @@ export type MarketplaceInstallEvent = Prisma.MarketplaceInstallEventModel
  * 
  */
 export type RiskLimits = Prisma.RiskLimitsModel
+/**
+ * Model OrganizationMembership
+ * 
+ */
+export type OrganizationMembership = Prisma.OrganizationMembershipModel
+/**
+ * Model ProjectMembership
+ * 
+ */
+export type ProjectMembership = Prisma.ProjectMembershipModel
+/**
+ * Model WorkspaceProviderConnection
+ * 
+ */
+export type WorkspaceProviderConnection = Prisma.WorkspaceProviderConnectionModel
+/**
+ * Model ProjectProviderBinding
+ * 
+ */
+export type ProjectProviderBinding = Prisma.ProjectProviderBindingModel
+/**
+ * Model WorkspaceAuditEvent
+ * 
+ */
+export type WorkspaceAuditEvent = Prisma.WorkspaceAuditEventModel
+/**
+ * Model LepoShipBuild
+ * 
+ */
+export type LepoShipBuild = Prisma.LepoShipBuildModel
+/**
+ * Model MarketplaceCompatibilityRun
+ * 
+ */
+export type MarketplaceCompatibilityRun = Prisma.MarketplaceCompatibilityRunModel

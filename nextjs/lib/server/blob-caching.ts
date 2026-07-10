@@ -3,33 +3,39 @@ import path from "path";
 import crypto from "crypto";
 import { resolveMasterKey } from "./secret-crypto";
 
-/**
- * Replicates the bundle blob file to mock cloud region storage directories
- * to simulate high-availability Cross-Region Replication (CRR).
- */
+function replicationConfig() {
+  const endpoint = process.env.LEPOS_REPLICATION_ADAPTER_ENDPOINT;
+  const regions = (process.env.LEPOS_REPLICA_REGIONS || "")
+    .split(",")
+    .map((region) => region.trim())
+    .filter(Boolean);
+  return { endpoint, regions, token: process.env.LEPOS_REPLICATION_ADAPTER_TOKEN };
+}
+
 export async function replicateBlobToRegions(
   projectId: string,
   safeFileName: string,
   sourceFilePath: string
 ): Promise<string[]> {
-  const targetRegions = ["us-east-1", "eu-central-1", "ap-southeast-1"];
+  const { endpoint, regions: targetRegions, token } = replicationConfig();
+  if (!endpoint || targetRegions.length === 0) return [];
   const replicated: string[] = [];
-
-  console.log(`[Cross-Region Replication] Starting CRR for project: ${projectId}, file: ${safeFileName}`);
+  const content = await fs.readFile(sourceFilePath);
+  const checksum = crypto.createHash("sha256").update(content).digest("hex");
 
   for (const region of targetRegions) {
     try {
-      // Simulate storage bucket structure for each region under public/bundles/regions
-      const destDir = path.join(process.cwd(), "public", "bundles", "regions", region, projectId);
-      await fs.mkdir(destDir, { recursive: true });
-
-      const destPath = path.join(destDir, safeFileName);
-      await fs.copyFile(sourceFilePath, destPath);
-
-      console.log(`[Cross-Region Replication] Replicated successfully to bucket region [${region}]`);
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "content-type": "application/json", ...(token ? { authorization: `Bearer ${token}` } : {}) },
+        body: JSON.stringify({ action: "replicate", projectId, fileName: safeFileName, region, checksum, content: content.toString("base64") }),
+        cache: "no-store",
+        signal: AbortSignal.timeout(15_000),
+      });
+      if (!response.ok) throw new Error(`Replication adapter returned HTTP ${response.status}.`);
       replicated.push(region);
-    } catch (error: any) {
-      console.error(`[Cross-Region Replication] Failed to replicate to region [${region}]:`, error.message);
+    } catch {
+      continue;
     }
   }
 
@@ -118,52 +124,26 @@ export async function verifyAndAutoHealReplicas(
   safeFileName: string,
   sourceFilePath: string
 ): Promise<RegionVerificationResult[]> {
-  const targetRegions = ["us-east-1", "eu-central-1", "ap-southeast-1"];
+  const { endpoint, regions: targetRegions, token } = replicationConfig();
+  if (!endpoint || targetRegions.length === 0) return [];
   const results: RegionVerificationResult[] = [];
-
-  try {
-    const sourceBuffer = await fs.readFile(sourceFilePath);
-    const sourceChecksum = crypto.createHash("sha256").update(sourceBuffer).digest("hex");
-
-    for (const region of targetRegions) {
-      const destDir = path.join(process.cwd(), "public", "bundles", "regions", region, projectId);
-      const destPath = path.join(destDir, safeFileName);
-
-      try {
-        let exists = false;
-        try {
-          await fs.access(destPath);
-          exists = true;
-        } catch {
-          exists = false;
-        }
-
-        if (!exists) {
-          console.log(`[Auto-Heal] Replica missing in region [${region}] for file: ${safeFileName}. Healing...`);
-          await fs.mkdir(destDir, { recursive: true });
-          await fs.copyFile(sourceFilePath, destPath);
-          results.push({ region, status: "healed" });
-          continue;
-        }
-
-        const replicaBuffer = await fs.readFile(destPath);
-        const replicaChecksum = crypto.createHash("sha256").update(replicaBuffer).digest("hex");
-
-        if (replicaChecksum === sourceChecksum) {
-          results.push({ region, status: "healthy" });
-        } else {
-          console.warn(`[Auto-Heal] Replica corrupted in region [${region}] for file: ${safeFileName}. Checksum mismatch! Healing...`);
-          await fs.copyFile(sourceFilePath, destPath);
-          results.push({ region, status: "healed" });
-        }
-      } catch (err: any) {
-        console.error(`[Auto-Heal] Failed to verify/heal region [${region}]:`, err.message);
-        results.push({ region, status: "failed", error: err.message });
-      }
+  const sourceBuffer = await fs.readFile(sourceFilePath);
+  const checksum = crypto.createHash("sha256").update(sourceBuffer).digest("hex");
+  for (const region of targetRegions) {
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "content-type": "application/json", ...(token ? { authorization: `Bearer ${token}` } : {}) },
+        body: JSON.stringify({ action: "verify-and-heal", projectId, fileName: safeFileName, region, checksum, content: sourceBuffer.toString("base64") }),
+        cache: "no-store",
+        signal: AbortSignal.timeout(15_000),
+      });
+      const payload = await response.json().catch(() => null);
+      if (!response.ok || !["healthy", "healed"].includes(payload?.status)) throw new Error(`Replication adapter returned HTTP ${response.status}.`);
+      results.push({ region, status: payload.status });
+    } catch (error) {
+      results.push({ region, status: "failed", error: error instanceof Error ? error.message : "Replica verification failed." });
     }
-  } catch (error: any) {
-    console.error(`[Auto-Heal] Error reading primary source file: ${sourceFilePath}`, error.message);
-    throw error;
   }
 
   return results;

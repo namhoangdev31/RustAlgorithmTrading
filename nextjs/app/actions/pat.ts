@@ -3,10 +3,13 @@
 import { prisma } from "@/lib/server/prisma";
 import { createHash, randomBytes } from "crypto";
 import { revalidatePath } from "next/cache";
+import { requireCurrentUser } from "@/lib/server/current-user";
+import type { ActionResult } from "@/lib/portal/action-result";
 
-export async function createPatAction(userId: string, name: string, scopes: string[] = ["project:read"]) {
+export async function createPatAction(name: string, scopes: string[] = ["project:read"]): Promise<ActionResult<{ rawToken: string }>> {
+  const user = await requireCurrentUser();
   if (!name.trim()) {
-    throw new Error("Token name is required.");
+    return { ok: false, code: "VALIDATION_ERROR", message: "Token name is required.", fieldErrors: { name: ["Token name is required."] } };
   }
 
   // Generate random secure token
@@ -18,35 +21,23 @@ export async function createPatAction(userId: string, name: string, scopes: stri
       name,
       tokenHash,
       scopes,
-      userId,
+      userId: user.id,
       expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // Expires in 1 year
     },
   });
 
-  revalidatePath("/dashboard/settings/tokens");
-  return { rawToken };
+  revalidatePath("/settings/tokens");
+  return { ok: true, code: "TOKEN_CREATED", message: "Token created.", data: { rawToken } };
 }
 
-export async function revokePatAction(patId: string) {
-  await prisma.personalAccessToken.delete({
-    where: { id: patId },
+export async function revokePatAction(patId: string): Promise<ActionResult> {
+  const user = await requireCurrentUser();
+  const result = await prisma.personalAccessToken.deleteMany({
+    where: { id: patId, userId: user.id },
   });
 
-  revalidatePath("/dashboard/settings/tokens");
-  return { success: true };
-}
-
-export async function getUserPatsAction(userId: string) {
-  return prisma.personalAccessToken.findMany({
-    where: { userId },
-    orderBy: { createdAt: "desc" },
-    select: {
-      id: true,
-      name: true,
-      scopes: true,
-      createdAt: true,
-      expiresAt: true,
-      lastUsedAt: true,
-    },
-  });
+  revalidatePath("/settings/tokens");
+  return result.count
+    ? { ok: true, code: "TOKEN_REVOKED", message: "Token revoked." }
+    : { ok: false, code: "NOT_FOUND", message: "Token not found." };
 }

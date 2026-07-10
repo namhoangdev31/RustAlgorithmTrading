@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/server/prisma";
-import { constructConnectWebhookEvent, isStripeSimulated } from "@/lib/server/stripe-connect";
+import { constructConnectWebhookEvent, isStripeAvailable } from "@/lib/server/stripe-connect";
 
 // GET handler acts as the "refresh" URL when onboarding fails or needs refresh
 export async function GET(req: NextRequest) {
@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
 
   // Redirect back to billing dashboard page (we can append error/refresh status)
   const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
-  const redirectUrl = new URL("/dashboard/marketplace/developer/billing", baseUrl);
+  const redirectUrl = new URL("/marketplace/billing", baseUrl);
   redirectUrl.searchParams.set("stripe_onboarding", "refreshed");
   if (orgId) redirectUrl.searchParams.set("orgId", orgId);
 
@@ -26,26 +26,18 @@ export async function POST(req: NextRequest) {
     const signature = req.headers.get("stripe-signature") || "";
     const webhookSecret = process.env.STRIPE_CONNECT_WEBHOOK_SECRET || "";
 
+    if (!isStripeAvailable()) {
+      return NextResponse.json({ error: "Stripe Connect is not configured" }, { status: 503 });
+    }
+    if (!signature || !webhookSecret) {
+      return NextResponse.json({ error: "Missing signature or webhook secret" }, { status: 400 });
+    }
     let event: any;
-
-    if (isStripeSimulated()) {
-      // Offline/Simulation Mode: parse JSON directly
-      console.log("[Stripe Webhook Web] Running in simulated mode. Constructing mock event.");
-      try {
-        event = JSON.parse(rawBody);
-      } catch {
-        return NextResponse.json({ error: "Invalid JSON body for mock event" }, { status: 400 });
-      }
-    } else {
-      if (!signature || !webhookSecret) {
-        return NextResponse.json({ error: "Missing signature or webhook secret" }, { status: 400 });
-      }
-      try {
-        event = constructConnectWebhookEvent(rawBody, signature, webhookSecret);
-      } catch (err: any) {
-        console.error(`[Stripe Webhook] Verification failed: ${err.message}`);
-        return NextResponse.json({ error: `Verification failed: ${err.message}` }, { status: 400 });
-      }
+    try {
+      event = constructConnectWebhookEvent(rawBody, signature, webhookSecret);
+    } catch (err: any) {
+      console.error(`[Stripe Webhook] Verification failed: ${err.message}`);
+      return NextResponse.json({ error: `Verification failed: ${err.message}` }, { status: 400 });
     }
 
     console.log(`[Stripe Webhook] Received event type: ${event.type}`);
@@ -55,7 +47,7 @@ export async function POST(req: NextRequest) {
         const account = event.data.object;
         const stripeAccountId = account.id;
         // In Stripe, details_submitted indicates onboarding complete
-        const active = account.details_submitted || account.charges_enabled || isStripeSimulated();
+        const active = account.details_submitted || account.charges_enabled;
 
         const partnerAccount = await prisma.marketplacePartnerAccount.findFirst({
           where: { stripeAccountId },

@@ -9,7 +9,7 @@ function getOrganizationId(request: NextRequest) {
 
 async function authenticateScim(request: NextRequest, scope: string) {
   const authHeader = request.headers.get("authorization");
-  const scimAuth = verifyScimBearerToken(authHeader);
+  const scimAuth = await verifyScimBearerToken(authHeader);
   if (scimAuth.valid) {
     return { organizationId: scimAuth.organizationId };
   }

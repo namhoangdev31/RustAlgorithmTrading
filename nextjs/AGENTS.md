@@ -38,7 +38,7 @@ Tech: Next.js App Router · TypeScript strict · Tailwind CSS · Auth.js + Fireb
 | Add page | Grep `app/` for similar route | Read all of `app/` |
 | Add component | Grep `components/` for similar | Read full tree |
 | Auth change | Grep `auth\|session` in `lib/` | Read Firebase docs inline |
-| Prisma change | Read `prisma/schema.prisma` only | Read Prisma node_modules |
+| Prisma change | Read `prisma/schema.prisma` only · Use `prisma db push` to apply schema updates | Read Prisma node_modules · Do NOT use migrations (`prisma migrate`) |
 | i18n string | Read specific `messages/<locale>.json` | Read all locales |
 | UI/styling | Read `DESIGN.md` + `tailwind.config.ts` | Guess tokens |
 

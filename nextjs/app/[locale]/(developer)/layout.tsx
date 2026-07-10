@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 
-import { AdminClientShell } from "@/components/dashboard/admin-client-shell";
+import { PortalShell } from "@/components/portal/PortalShell";
 import { requireCurrentUser } from "@/lib/server/current-user";
 import { getWorkspaceContext } from "@/lib/server/workspace";
 
@@ -17,7 +17,7 @@ export default async function DashboardLayout({
   const defaultOpen = cookieStore.get("sidebar_state")?.value !== "false";
 
   return (
-    <AdminClientShell
+    <PortalShell
       activeOrganizationId={workspace.activeOrganization?.id}
       defaultOpen={defaultOpen}
       organizations={workspace.organizations}
@@ -30,6 +30,7 @@ export default async function DashboardLayout({
       }}
     >
       {children}
-    </AdminClientShell>
+    </PortalShell>
   );
 }
+

@@ -124,7 +124,7 @@ export function WorkspaceGovernanceCard({
 
         <form action={inviteWorkspaceMemberAction}>
           <input type="hidden" name="organizationId" value={organizationId} />
-          <input type="hidden" name="returnTo" value="/dashboard/settings/account" />
+          <input type="hidden" name="returnTo" value="/settings/workspace" />
           <FieldGroup className="grid gap-3 md:grid-cols-[1fr_auto_auto]">
             <Field>
               <FieldLabel htmlFor="workspace-member-email">Member email</FieldLabel>
@@ -225,7 +225,7 @@ export function WorkspaceGovernanceCard({
 
         <form action={transferWorkspaceOwnershipAction}>
           <input type="hidden" name="organizationId" value={organizationId} />
-          <input type="hidden" name="returnTo" value="/dashboard/settings/account" />
+          <input type="hidden" name="returnTo" value="/settings/workspace" />
           <FieldGroup className="grid gap-3 md:grid-cols-[1fr_auto]">
             <Field>
               <FieldLabel htmlFor="workspace-transfer-email">New owner email</FieldLabel>

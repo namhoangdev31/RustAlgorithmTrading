@@ -245,13 +245,6 @@ export function SpeedInsightsClient({ projects, selectedProjectId, speedData }: 
         </div>
       </div>
 
-      {speedData.isMock && (
-        <div className="bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 rounded-xl px-4 py-2.5 text-xs flex items-center gap-2">
-          <Sparkles className="size-4 animate-pulse text-indigo-400 flex-shrink-0" />
-          <span>Showing simulated production telemetry diagnostics for <strong>{speedData.bundleName}</strong> because no active telemetry was recorded yet.</span>
-        </div>
-      )}
-
       {/* Overview Dashboard */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         

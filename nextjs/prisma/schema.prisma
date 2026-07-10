@@ -107,6 +107,9 @@ model User {
   userSecrets            UserSecrets[]
   personalAccessTokens   PersonalAccessToken[]
   previewComments        PreviewComment[]
+  organizationMemberships OrganizationMembership[]
+  projectMemberships     ProjectMembership[]
+  leposhipBuilds         LepoShipBuild[]
 
   @@map("users")
 }
@@ -129,6 +132,8 @@ model Organization {
   projects Project[]
   ssoConfig SsoConfig?
   nativeScimMappings NativeScimMapping[]
+  members  OrganizationMembership[]
+  providerConnections WorkspaceProviderConnection[]
 
   @@unique([userId, type])
   @@map("organizations")
@@ -178,6 +183,9 @@ model Project {
   nativeServiceIdentities NativeServiceIdentity[]
   nativeServiceTrustPolicies NativeServiceTrustPolicy[]
   nativeTelemetryEnvelopes NativeTelemetryEnvelope[]
+  members           ProjectMembership[]
+  providerBindings  ProjectProviderBinding[]
+  leposhipBuilds    LepoShipBuild[]
 
   @@map("projects")
 }
@@ -2000,7 +2008,9 @@ model Form {
   webhookUrl       String?                @map("webhook_url")
   webhookSecret    String?                @map("webhook_secret")
   webhookDeliveries FormWebhookDelivery[]
+  definition       Json                   @default("{}")
   createdAt        DateTime               @default(now())
+  updatedAt        DateTime               @default(now()) @updatedAt
 
   @@map("forms")
 }
@@ -2060,6 +2070,10 @@ model LepoShipLocalConfig {
   fallbackPath        String          @default("/index.html") // File fallback khi gặp 404 (Single Page App routing)
   projectId           String          @unique @db.Uuid
   project             Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  repository          String          @default("")
+  branch              String          @default("main")
+  framework           String          @default("nextjs")
+  buildProfile        String          @default("production")
   createdAt           DateTime        @default(now())
 
   @@map("lepoship_local_configs")
@@ -2160,4 +2174,115 @@ model RiskLimits {
   updatedBy               String?  @map("updated_by")
 
   @@map("risk_limits")
+}
+
+// ----------------------------------------------------
+// Phase 2 Workspace / Project RBAC and provider models
+// ----------------------------------------------------
+
+model OrganizationMembership {
+  id             String           @id @default(cuid())
+  organizationId String           @map("organization_id") @db.Uuid
+  userId         String           @map("user_id") @db.Uuid
+  role           String           @default("viewer") @db.VarChar(30) // owner, admin, editor, viewer
+  inviteStatus   String           @default("accepted") @map("invite_status") // accepted, pending, rejected
+  invitedById    String?          @map("invited_by_id") @db.Uuid
+  createdAt      DateTime         @default(now()) @map("created_at")
+  updatedAt      DateTime         @updatedAt @map("updated_at")
+
+  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, userId])
+  @@map("organization_memberships")
+}
+
+model ProjectMembership {
+  id           String             @id @default(cuid())
+  projectId    String             @map("project_id") @db.Uuid
+  userId       String             @map("user_id") @db.Uuid
+  role         String             @default("viewer") @db.VarChar(30) // admin, editor, viewer
+  inviteStatus String             @default("accepted") @map("invite_status") // accepted, pending, rejected
+  createdAt    DateTime           @default(now()) @map("created_at")
+  updatedAt    DateTime           @updatedAt @map("updated_at")
+
+  project      Project            @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user         User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, userId])
+  @@map("project_memberships")
+}
+
+model WorkspaceProviderConnection {
+  id                  String             @id @default(cuid())
+  organizationId      String             @map("organization_id") @db.Uuid
+  provider            String             @db.VarChar(64) // github, vercel, cloudflare, stripe
+  encryptedCredential String             @map("encrypted_credential")
+  status              String             @default("connected")
+  createdAt           DateTime           @default(now()) @map("created_at")
+  updatedAt           DateTime           @updatedAt @map("updated_at")
+
+  organization        Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  projectBindings     ProjectProviderBinding[]
+
+  @@unique([organizationId, provider])
+  @@map("workspace_provider_connections")
+}
+
+model ProjectProviderBinding {
+  id            String                      @id @default(cuid())
+  projectId     String                      @map("project_id") @db.Uuid
+  connectionId  String                      @map("connection_id")
+  externalId    String                      @map("external_id") // ID project/resource ở phía provider
+  createdAt     DateTime                    @default(now()) @map("created_at")
+  updatedAt     DateTime                    @updatedAt @map("updated_at")
+
+  project       Project                     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  connection    WorkspaceProviderConnection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, connectionId])
+  @@map("project_provider_bindings")
+}
+
+model WorkspaceAuditEvent {
+  id           String             @id @default(cuid())
+  workspaceId  String             @map("workspace_id") @db.Uuid
+  actorId      String             @map("actor_id") @db.Uuid
+  actorEmail   String             @map("actor_email")
+  action       String             @db.VarChar(128) // e.g., project.create, member.invite
+  resourceType String             @map("resource_type") @db.VarChar(64) // e.g., project, member
+  resourceId   String?            @map("resource_id") @db.VarChar(128)
+  metadata     Json?              @default("{}")
+  timestamp    DateTime           @default(now()) @map("timestamp")
+
+  @@map("workspace_audit_events")
+}
+
+model LepoShipBuild {
+  id          String              @id @default(cuid())
+  projectId   String              @map("project_id") @db.Uuid
+  status      String              @default("queued") // queued, building, success, failed
+  sourceCommit String             @map("source_commit") @db.VarChar(64)
+  platform    String              @db.VarChar(32) // ios, android, web
+  logs        String?             @db.Text
+  artifactUrl String?             @map("artifact_url")
+  error       String?             @db.Text
+  triggeredById String            @map("triggered_by_id") @db.Uuid
+  triggeredBy User                @relation(fields: [triggeredById], references: [id])
+  project     Project             @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt   DateTime            @default(now()) @map("created_at")
+  updatedAt   DateTime            @updatedAt @map("updated_at")
+
+  @@map("lepoship_builds")
+}
+
+model MarketplaceCompatibilityRun {
+  id           String             @id @default(cuid())
+  integrationId String            @map("integration_id")
+  endpoint     String
+  checkResults Json               @map("check_results")
+  logs         String?            @db.Text
+  createdAt    DateTime           @default(now()) @map("created_at")
+
+  @@map("marketplace_compatibility_runs")
 }

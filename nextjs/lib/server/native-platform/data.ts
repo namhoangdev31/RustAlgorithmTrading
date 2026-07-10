@@ -86,11 +86,7 @@ export async function getNativePlatformData(projectId: string) {
     listProjectSourceMaps(projectId),
   ]);
 
-  let cloudTargets = initialCloudTargets;
-  if (cloudTargets.length === 0) {
-    const { seedCloudTargets } = await import("./failover");
-    cloudTargets = await seedCloudTargets(projectId);
-  }
+  const cloudTargets = initialCloudTargets;
 
   const enrichedCrashes = await Promise.all(
     crashes.map(async (crash) => {

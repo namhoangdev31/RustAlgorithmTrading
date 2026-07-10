@@ -28,12 +28,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { formatRelativeTime } from "@/lib/shared/time";
 import { ErrorTrackerClient } from "@/components/dashboard/error-tracker-client";
 import { PluginHubClient } from "@/components/dashboard/plugin-hub-client";
-import { CloudFailoverClient } from "@/components/dashboard/cloud-failover-client";
 import { RemediationControlPanel } from "@/components/dashboard/remediation-control-panel";
 import { SourceMapsManager } from "@/components/dashboard/source-maps-manager";
 import { WafThreatMap } from "@/components/dashboard/waf-threat-map";
 import { ZeroTrustTelemetryPanel } from "@/components/dashboard/zero-trust-telemetry-panel";
-import { IncidentTimeline } from "@/components/dashboard/incident-timeline";
+import { ActivityFeed, type ActivityItem } from "@/components/portal/ActivityFeed";
 
 type NativePlatformTabProps = {
   project: any;
@@ -48,6 +47,34 @@ const metricIcons = [Zap, Globe2, Database, Activity, Bug, Plug, Shield, Cloud, 
 export function NativePlatformTab({ project, data, locale, returnTo, initialSection = "overview" }: NativePlatformTabProps) {
   const metricEntries = Object.entries(data.metrics || {});
   const [activeSection, setActiveSection] = useState<"overview" | "routing" | "mirrors" | "observability" | "security" | "operations">(initialSection);
+  const incidentItems: ActivityItem[] = [
+    ...(data.wafEvents || []).map((event: any) => ({
+      id: `waf:${event.id}`,
+      actorName: "WAF",
+      action: event.action || "processed",
+      resourceName: event.reason || event.fingerprint,
+      timestamp: event.createdAt,
+      metadata: event.ipAddress ? { ipAddress: event.ipAddress } : undefined,
+    })),
+    ...(data.crashes || []).map((crash: any) => ({
+      id: `crash:${crash.id}`,
+      actorName: crash.platform || "Runtime",
+      action: "reported",
+      resourceName: crash.errorMessage,
+      timestamp: crash.createdAt,
+      metadata: { release: crash.releaseVersion, environment: crash.environment },
+    })),
+    ...(data.remediationRuns || []).map((run: any) => ({
+      id: `remediation:${run.id}`,
+      actorName: "Remediation",
+      action: run.status,
+      resourceName: run.summary,
+      timestamp: run.createdAt,
+      metadata: { mode: run.mode, actionType: run.actionType },
+    })),
+  ]
+    .sort((first, second) => new Date(second.timestamp).getTime() - new Date(first.timestamp).getTime())
+    .slice(0, 20);
 
   return (
     <div className="space-y-6">
@@ -222,12 +249,25 @@ export function NativePlatformTab({ project, data, locale, returnTo, initialSect
                 locale={locale}
                 returnTo={returnTo}
               />
-              <CloudFailoverClient
-                projectId={project.id}
-                targets={data.cloudTargets}
-                locale={locale}
-                returnTo={returnTo}
-              />
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Cloud targets</CardTitle>
+                  <CardDescription>Targets appear only after provider sync or a persisted heartbeat.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <MiniTable
+                    empty="No cloud targets have reported a heartbeat."
+                    rows={data.cloudTargets || []}
+                    columns={["Provider", "Region", "Health", "Last check"]}
+                    render={(target) => [
+                      target.provider,
+                      target.region,
+                      target.healthStatus,
+                      target.lastHealthCheck ? formatRelativeTime(new Date(target.lastHealthCheck), locale) : "Never",
+                    ]}
+                  />
+                </CardContent>
+              </Card>
             </div>
           )}
 
@@ -336,7 +376,19 @@ export function NativePlatformTab({ project, data, locale, returnTo, initialSect
 
           {activeSection === "operations" && (
             <div className="space-y-6">
-              <IncidentTimeline locale={locale} />
+              <Card>
+                <CardHeader>
+                  <CardTitle>{locale === "vi" ? "Sự cố và vận hành" : "Incidents and operations"}</CardTitle>
+                  <CardDescription>
+                    {locale === "vi"
+                      ? "Dữ liệu WAF, crash và remediation đã được lưu cho dự án này."
+                      : "Persisted WAF, crash, and remediation events for this project."}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ActivityFeed items={incidentItems} />
+                </CardContent>
+              </Card>
               
               <PluginHubClient
                 projectId={project.id}

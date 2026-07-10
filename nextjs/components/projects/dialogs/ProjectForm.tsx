@@ -229,7 +229,7 @@ export function ProjectForm({
                 {!vercelConnected ? (
                   <p className="text-xs text-ink-mute-2 pl-7 leading-relaxed">
                     You need to connect your Vercel Account under{" "}
-                    <Link href="/projects?tab=settings" className="underline text-primary hover:text-primary-deep font-medium">
+                    <Link href="/settings/security" className="underline text-primary hover:text-primary-deep font-medium">
                       Settings &gt; Integrations
                     </Link>{" "}
                     to enable automatic deployments.
@@ -463,7 +463,7 @@ export function ProjectForm({
                 <div className="flex flex-col items-center gap-2">
                   <p className="text-xs text-ink-mute">{t("form.connect_first") || "Connect your GitHub account first in workspace settings to link."}</p>
                   <Button asChild variant="outline" className="h-8 text-[11px] font-semibold border-hairline-strong rounded-sm bg-canvas">
-                    <Link href="/projects?tab=settings">{t("form.go_to_settings") || "Go to settings"}</Link>
+                    <Link href="/settings/security">{t("form.go_to_settings") || "Go to settings"}</Link>
                   </Button>
                 </div>
               )}

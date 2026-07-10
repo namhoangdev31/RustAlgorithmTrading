@@ -30,8 +30,7 @@ export async function registerDeveloperProfileAction(formData: FormData) {
       throw new Error("Company Name is required.");
     }
 
-    // Save developer metadata onto the User table or simulated storage
-    // We update fullName and userType or registerType to represent developer
+    // Keep the current partner profile fields until the dedicated profile model is introduced.
     await prisma.user.update({
       where: { id: user.id },
       data: {
@@ -66,13 +65,19 @@ export async function registerIntegrationAction(formData: FormData) {
       throw new Error("Key and Display Name are required.");
     }
 
-    // Find first active bundle/project for user
-    const collaborator = await prisma.bundleCollaborators.findFirst({
-      where: { userId: user.id },
-      select: { bundleId: true },
+    const bundle = await prisma.bundles.findFirst({
+      where: {
+        deletedAt: null,
+        OR: [
+          { developerId: user.id },
+          { collaborators: { some: { userId: user.id } } },
+          { project: { members: { some: { userId: user.id, inviteStatus: "accepted" } } } },
+        ],
+      },
+      select: { id: true },
     });
 
-    if (!collaborator) {
+    if (!bundle) {
       throw new Error("You must belong to at least one project bundle to register an integration.");
     }
 
@@ -80,7 +85,7 @@ export async function registerIntegrationAction(formData: FormData) {
     await prisma.bundleExternalIntegrations.create({
       data: {
         id: crypto.randomUUID(),
-        bundleId: collaborator.bundleId,
+        bundleId: bundle.id,
         integrationType: integrationKey,
         displayName: displayName,
         config: JSON.stringify({
@@ -105,7 +110,7 @@ export async function registerIntegrationAction(formData: FormData) {
 }
 
 /**
- * Executes a simulated sandbox compliance test run for the integration endpoint.
+ * Executes a persisted compatibility check against the registered endpoint.
  */
 export async function runCompatibilityTestAction(formData: FormData) {
   const user = await requireCurrentUser();
@@ -114,21 +119,39 @@ export async function runCompatibilityTestAction(formData: FormData) {
   const returnTo = readFormValue(formData, "returnTo") || "/marketplace";
 
   try {
-    if (!webhookUrl) {
-      throw new Error("Webhook URL is required for testing.");
+    if (!integrationId || !webhookUrl) {
+      throw new Error("Integration and webhook URL are required for testing.");
     }
 
-    console.log(`[DeveloperPortal] Running compatibility sandbox check for URL: ${webhookUrl}`);
+    const endpoint = new URL(webhookUrl);
+    if (!['http:', 'https:'].includes(endpoint.protocol)) {
+      throw new Error("Webhook URL must use HTTP or HTTPS.");
+    }
+
+    const integration = await prisma.bundleExternalIntegrations.findFirst({
+      where: {
+        id: integrationId,
+        bundle: {
+          collaborators: {
+            some: { userId: user.id },
+          },
+        },
+      },
+    });
+
+    if (!integration) {
+      throw new Error("Integration not found or access denied.");
+    }
 
     const startTime = Date.now();
     let status200 = false;
     let schemaValid = false;
     let signatureHeaderValid = false;
     let latencyMs = 0;
+    let responseStatus: number | null = null;
+    let failureMessage: string | null = null;
 
-    // Simulate webhook ping request
     try {
-      // 1. Generate test payload and headers
       const payload = {
         event: "compatibility.test",
         timestamp: new Date().toISOString(),
@@ -142,72 +165,78 @@ export async function runCompatibilityTestAction(formData: FormData) {
         .digest("hex");
 
       const controller = new AbortController();
-      const id = setTimeout(() => controller.abort(), 3000); // 3 second timeout
+      const timeoutId = setTimeout(() => controller.abort(), 3000);
 
-      // Perform request
       const response = await fetch(webhookUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "X-LepoS-Signature": testSignature,
-          "User-Agent": "LepoS-Sandbox-Validator/1.0",
+          "User-Agent": "LepoS-Compatibility-Runner/1.0",
         },
         body: JSON.stringify(payload),
+        cache: "no-store",
         signal: controller.signal,
-      });
+      }).finally(() => clearTimeout(timeoutId));
 
-      clearTimeout(id);
       latencyMs = Date.now() - startTime;
-
+      responseStatus = response.status;
       status200 = response.ok;
-      signatureHeaderValid = true; // Simulating successful signature checks
-
-      const resBody = await response.json().catch(() => ({}));
-      schemaValid = typeof resBody === "object";
-    } catch (err: any) {
-      console.warn("[DeveloperPortal] Test request failed, running mock verification:", err.message);
-      // Fallback fallback simulation for offline/local endpoints to ensure good testing flow
-      latencyMs = Math.round(50 + Math.random() * 150);
-      status200 = true;
-      schemaValid = true;
-      signatureHeaderValid = true;
+      const responseBody = await response.json().catch(() => null);
+      schemaValid = Boolean(responseBody && typeof responseBody === "object" && !Array.isArray(responseBody));
+      signatureHeaderValid =
+        response.headers.get("x-lepos-signature-verified") === "true" ||
+        (schemaValid && (responseBody as Record<string, unknown>).signatureVerified === true);
+    } catch (error) {
+      latencyMs = Date.now() - startTime;
+      failureMessage = error instanceof Error ? error.message : "Compatibility request failed.";
     }
 
     const score = [status200, schemaValid, signatureHeaderValid, latencyMs < 500].filter(Boolean).length * 25;
+    const checkResults = {
+      score,
+      latencyMs,
+      responseStatus,
+      status200,
+      schemaValid,
+      signatureHeaderValid,
+      failureMessage,
+    };
+    const currentConfig = JSON.parse(integration.config);
 
-    // If we have an integration ID, update the integration's status in DB
-    if (integrationId) {
-      const integration = await prisma.bundleExternalIntegrations.findUnique({
+    await prisma.$transaction([
+      prisma.marketplaceCompatibilityRun.create({
+        data: {
+          integrationId,
+          endpoint: webhookUrl,
+          checkResults,
+          logs: failureMessage || `Endpoint responded with HTTP ${responseStatus}.`,
+        },
+      }),
+      prisma.bundleExternalIntegrations.update({
         where: { id: integrationId },
-      });
-
-      if (integration) {
-        const currentConfig = JSON.parse(integration.config);
-        await prisma.bundleExternalIntegrations.update({
-          where: { id: integrationId },
-          data: {
-            config: JSON.stringify({
-              ...currentConfig,
-              webhookUrl,
-              complianceScore: score,
-              status: score === 100 ? "verified" : "sandbox",
-              lastTestRun: {
-                timestamp: new Date().toISOString(),
-                score,
-                latencyMs,
-                status200,
-                schemaValid,
-                signatureHeaderValid,
-              },
-            }),
-            updatedAt: new Date(),
-          },
-        });
-      }
-    }
+        data: {
+          config: JSON.stringify({
+            ...currentConfig,
+            webhookUrl,
+            complianceScore: score,
+            status: score === 100 ? "verified" : "sandbox",
+            lastTestRun: {
+              timestamp: new Date().toISOString(),
+              ...checkResults,
+            },
+          }),
+          updatedAt: new Date(),
+        },
+      }),
+    ]);
 
     revalidatePath(returnTo);
-    redirect(withQueryParam(await localizedHref(returnTo), "dev_portal", `test_completed&score=${score}&latency=${latencyMs}`));
+    const resultHref = new URL(await localizedHref(returnTo), "https://portal.local");
+    resultHref.searchParams.set("dev_portal", "test_completed");
+    resultHref.searchParams.set("score", String(score));
+    resultHref.searchParams.set("latency", String(latencyMs));
+    redirect(`${resultHref.pathname}${resultHref.search}`);
   } catch (error: any) {
     redirect(withQueryParam(await localizedHref(returnTo), "dev_portal", error.message || "test_failed"));
   }
@@ -226,8 +255,17 @@ export async function publishMarketplaceIntegrationAction(formData: FormData) {
       throw new Error("Integration ID is required.");
     }
 
-    const integration = await prisma.bundleExternalIntegrations.findUnique({
-      where: { id: integrationId },
+    const integration = await prisma.bundleExternalIntegrations.findFirst({
+      where: {
+        id: integrationId,
+        bundle: {
+          OR: [
+            { developerId: user.id },
+            { collaborators: { some: { userId: user.id } } },
+            { project: { members: { some: { userId: user.id, inviteStatus: "accepted" } } } },
+          ],
+        },
+      },
     });
 
     if (!integration) {
@@ -261,7 +299,7 @@ export async function publishMarketplaceIntegrationAction(formData: FormData) {
 }
 
 export async function updateIntegrationReleaseAction(formData: FormData) {
-  await requireCurrentUser();
+  const user = await requireCurrentUser();
   const integrationId = readFormValue(formData, "integrationId");
   const version = readFormValue(formData, "version") || "0.1.0";
   const releaseNotes = readFormValue(formData, "releaseNotes");
@@ -272,8 +310,17 @@ export async function updateIntegrationReleaseAction(formData: FormData) {
       throw new Error("Integration ID is required.");
     }
 
-    const integration = await prisma.bundleExternalIntegrations.findUnique({
-      where: { id: integrationId },
+    const integration = await prisma.bundleExternalIntegrations.findFirst({
+      where: {
+        id: integrationId,
+        bundle: {
+          OR: [
+            { developerId: user.id },
+            { collaborators: { some: { userId: user.id } } },
+            { project: { members: { some: { userId: user.id, inviteStatus: "accepted" } } } },
+          ],
+        },
+      },
     });
 
     if (!integration) {

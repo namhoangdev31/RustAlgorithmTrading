@@ -258,7 +258,7 @@ export function VercelDeploymentsTab({
           </p>
 
           <Button asChild className="h-10 bg-primary hover:bg-primary-deep text-primary-foreground font-semibold px-6 rounded-sm shadow-light transition-all text-xs">
-            <Link href="/dashboard/settings">
+            <Link href="/settings/security">
               {t("vercel.configure")}
             </Link>
           </Button>

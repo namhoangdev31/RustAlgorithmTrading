@@ -16,17 +16,26 @@ export const VERCEL_RETRY_CONFIG = {
 };
 
 export async function getVercelClient(userId: string): Promise<Vercel> {
-  const rows = await prisma.$queryRawUnsafe<Array<{ encrypted_value: string }>>(
+  const connection = await prisma.workspaceProviderConnection.findFirst({
+    where: {
+      provider: "vercel",
+      status: "active",
+      organization: { OR: [{ userId }, { members: { some: { userId, inviteStatus: "accepted" } } }] },
+    },
+    select: { encryptedCredential: true },
+  });
+  const rows = connection ? [] : await prisma.$queryRawUnsafe<Array<{ encrypted_value: string }>>(
     "SELECT encrypted_value FROM user_secrets WHERE user_id = $1 AND provider = $2 LIMIT 1",
     userId,
     "vercel"
   );
+  const encryptedCredential = connection?.encryptedCredential || rows[0]?.encrypted_value;
 
-  if (!rows || rows.length === 0) {
+  if (!encryptedCredential) {
     throw new Error("Vercel API key is not configured. Please set it in Settings.");
   }
 
-  const apiKey = decryptSecret(rows[0].encrypted_value);
+  const apiKey = decryptSecret(encryptedCredential);
   return new Vercel({
     bearerToken: apiKey,
   });
@@ -34,6 +43,15 @@ export async function getVercelClient(userId: string): Promise<Vercel> {
 
 export async function hasVercelApiKey(userId: string): Promise<boolean> {
   try {
+    const connection = await prisma.workspaceProviderConnection.findFirst({
+      where: {
+        provider: "vercel",
+        status: "active",
+        organization: { OR: [{ userId }, { members: { some: { userId, inviteStatus: "accepted" } } }] },
+      },
+      select: { id: true },
+    });
+    if (connection) return true;
     const rows = await prisma.$queryRawUnsafe<Array<{ encrypted_value: string }>>(
       "SELECT encrypted_value FROM user_secrets WHERE user_id = $1 AND provider = $2 LIMIT 1",
       userId,
@@ -127,17 +145,31 @@ export async function getProviderClient(
   const { provider, accountId } = config;
   const providerKey = accountId ? `${provider}_${accountId}` : provider;
 
-  const rows = await prisma.$queryRawUnsafe<Array<{ encrypted_value: string }>>(
+  const workspaceConnection = await prisma.workspaceProviderConnection.findFirst({
+    where: {
+      provider: providerKey,
+      status: "active",
+      organization: {
+        OR: [
+          { userId },
+          { members: { some: { userId, inviteStatus: "accepted" } } },
+        ],
+      },
+    },
+    select: { encryptedCredential: true },
+  });
+  const legacyRows = workspaceConnection ? [] : await prisma.$queryRawUnsafe<Array<{ encrypted_value: string }>>(
     "SELECT encrypted_value FROM user_secrets WHERE user_id = $1 AND provider = $2 LIMIT 1",
     userId,
     providerKey
   );
+  const encryptedCredential = workspaceConnection?.encryptedCredential || legacyRows[0]?.encrypted_value;
 
-  if (!rows || rows.length === 0) {
+  if (!encryptedCredential) {
     throw new Error(`API key for provider ${providerKey} is not configured.`);
   }
 
-  const apiKey = decryptSecret(rows[0].encrypted_value);
+  const apiKey = decryptSecret(encryptedCredential);
   
   if (provider === "vercel") {
     return new Vercel({ bearerToken: apiKey });
@@ -160,8 +192,7 @@ export async function getProviderClient(
             if (!res.ok) throw new Error(`CF error status ${res.status}`);
             return await res.text();
           } catch (e: any) {
-            console.warn(`[Cloudflare Client] GET failed: ${e.message}. Simulating local success.`);
-            return "mock-value";
+            throw new Error(`Cloudflare KV read failed: ${e.message}`);
           }
         },
         putVal: async (namespaceId: string, key: string, value: string) => {
@@ -181,8 +212,7 @@ export async function getProviderClient(
             if (!res.ok) throw new Error(`CF error status ${res.status}`);
             return { success: true };
           } catch (e: any) {
-            console.warn(`[Cloudflare Client] PUT failed: ${e.message}. Simulating local success.`);
-            return { success: true, simulated: true };
+            throw new Error(`Cloudflare KV write failed: ${e.message}`);
           }
         },
         deleteVal: async (namespaceId: string, key: string) => {
@@ -200,36 +230,15 @@ export async function getProviderClient(
             if (!res.ok) throw new Error(`CF error status ${res.status}`);
             return { success: true };
           } catch (e: any) {
-            console.warn(`[Cloudflare Client] DELETE failed: ${e.message}. Simulating local success.`);
-            return { success: true, simulated: true };
+            throw new Error(`Cloudflare KV delete failed: ${e.message}`);
           }
         },
       },
     };
   } else if (provider === "netlify") {
-    // Mock Netlify API client
-    return {
-      sites: {
-        getSite: async (siteId: string) => ({ id: siteId, name: "mock-netlify-site" }),
-        updateSite: async (siteId: string, data: any) => ({ success: true }),
-      },
-      edgeConfig: {
-        sync: async (data: any) => {
-          console.log("[Netlify client] Synced Edge Config:", data);
-          return { success: true };
-        }
-      }
-    };
+    throw new Error("Netlify provider adapter is not implemented. No changes were applied.");
   } else {
-    // Generic / Fallback provider client
-    return {
-      provider,
-      apiKey: apiKey.substring(0, 8) + "...",
-      syncConfig: async (data: any) => {
-        console.log(`[${provider} client] Synced configuration:`, data);
-        return { success: true };
-      }
-    };
+    throw new Error(`${provider} provider adapter is not implemented. No changes were applied.`);
   }
 }
 

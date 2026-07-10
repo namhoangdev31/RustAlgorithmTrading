@@ -66,7 +66,7 @@ export async function executeAiCommandAction(
   }
 
   if (!parsedResult && (cleanQuery.includes("cài đặt security") || cleanQuery.includes("waf") || cleanQuery.includes("firewall") || cleanQuery.includes("bảo mật"))) {
-    parsedResult = { type: "navigate", path: "/dashboard/settings/security" };
+    parsedResult = { type: "navigate", path: "/settings/security" };
   }
 
   if (!parsedResult && (cleanQuery.includes("lepoship") || cleanQuery.includes("mobile builder") || cleanQuery.includes("webview"))) {
@@ -120,7 +120,7 @@ Supported commands:
    Result: { "type": "trigger_build", "projectName": "X" }
 5. navigate: go to a specific page on dashboard.
    Example query: "go to security settings" or "cấu hình firewall"
-   Result: { "type": "navigate", "path": "/dashboard/settings/security" }
+   Result: { "type": "navigate", "path": "/settings/security" }
    
 Respond ONLY with a valid JSON object matching one of the structures above. Do not include markdown code block formatting (e.g. \`\`\`json). If no command matches, return { "type": "unknown", "message": "Command not understood." }
 

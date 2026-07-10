@@ -1,7 +1,7 @@
 import { promises as fs } from "fs";
 import path from "path";
 import crypto from "crypto";
-import { exec } from "child_process";
+import { exec, execFile } from "child_process";
 import { prisma } from "@/lib/server/prisma";
 import { checkArtifactExists } from "@/lib/server/remote-cache-engine";
 import { analyzeMonorepo } from "@/lib/server/dependency-graph";
@@ -279,6 +279,15 @@ function runCmd(command: string, cwd: string): Promise<string> {
   });
 }
 
+function runExecutable(command: string, args: string[], cwd: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    execFile(command, args, { cwd, maxBuffer: 10 * 1024 * 1024 }, (error, stdout, stderr) => {
+      if (error) reject(new Error(stderr || error.message));
+      else resolve(stdout.trim());
+    });
+  });
+}
+
 async function getCacheKey(packageJsonPath: string): Promise<string> {
   try {
     const content = await fs.readFile(packageJsonPath, "utf-8");
@@ -452,14 +461,34 @@ export async function runLepoShipBuild(
       await writeLog(`Platform: ${config.platform.toUpperCase()}`);
       await writeLog(`Source Repository: ${config.gitRepoUrl}`);
       await writeLog(`Target Branch: ${config.gitBranch}`);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      
+      // Update build status to building
+      await prisma.lepoShipBuild.update({
+        where: { id: trackId },
+        data: { status: "building" }
+      }).catch(() => {});
 
       await writeLog("Cloning repository into temporary build context...");
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
       const buildCtxTempId = crypto.randomUUID();
       tempBuildDir = path.join(process.cwd(), "public", "bundles", projectId, `build-ctx-${buildCtxTempId}`);
-      await fs.mkdir(tempBuildDir, { recursive: true });
+      const repositoryUrl = new URL(config.gitRepoUrl);
+      if (!['https:', 'http:'].includes(repositoryUrl.protocol)) {
+        throw new Error("LepoShip repository must use an HTTP or HTTPS Git URL.");
+      }
+      if (!/^[A-Za-z0-9._\/-]+$/.test(config.gitBranch)) {
+        throw new Error("LepoShip branch contains unsupported characters.");
+      }
+      await runExecutable(
+        "git",
+        ["clone", "--depth", "1", "--single-branch", "--branch", config.gitBranch, config.gitRepoUrl, tempBuildDir],
+        process.cwd(),
+      );
+      const sourceCommit = await runExecutable("git", ["rev-parse", "HEAD"], tempBuildDir);
+      await prisma.lepoShipBuild.update({
+        where: { id: trackId },
+        data: { sourceCommit },
+      });
+      await writeLog(`Repository cloned at commit ${sourceCommit.slice(0, 12)}.`);
 
       await writeLog("[DOCKER] Spawning container to isolate build environment...");
       await writeLog("[DOCKER] Docker daemon active. Allocating memory limit = 2GB, CPU limit = 2 cores.");
@@ -467,24 +496,15 @@ export async function runLepoShipBuild(
 
       await writeLog("Checking and restoring node_modules cache for build agent...");
 
-      // Generate a mock package.json representing the cloned repository context
-      const samplePkgJson = {
-        name: `lepoship-${projectId}`,
-        version: version,
-        dependencies: {
-          "react": "19.0.0",
-          "react-dom": "19.0.0",
-          "@lepos/webview-sdk": "latest",
-          "lodash": "4.17.21"
-        }
-      };
-      
-      if (config.gitRepoUrl && config.gitRepoUrl.includes("vulnerable")) {
-        samplePkgJson.dependencies.lodash = "4.17.15"; // Triggers critical scan failure
-      }
-
       const pkgJsonPath = path.join(tempBuildDir, "package.json");
-      await fs.writeFile(pkgJsonPath, JSON.stringify(samplePkgJson, null, 2));
+      const packageManifestExists = await fs.access(pkgJsonPath).then(() => true).catch(() => false);
+      const flutterManifestExists = await fs.access(path.join(tempBuildDir, "pubspec.yaml")).then(() => true).catch(() => false);
+      if (config.platform === "expo" && !packageManifestExists) {
+        throw new Error("The cloned Expo repository does not contain package.json.");
+      }
+      if (config.platform === "flutter" && !flutterManifestExists) {
+        throw new Error("The cloned Flutter repository does not contain pubspec.yaml.");
+      }
 
       const cacheKey = await getCacheKey(pkgJsonPath);
       const tarballName = `${cacheKey}.tar.gz`;
@@ -535,51 +555,43 @@ export async function runLepoShipBuild(
             cacheRestored = true;
           } else {
             await writeLog(`[CACHE] Cache miss everywhere for key ${cacheKey}. Installing dependencies locally...`);
-            
-            // Build dependency node_modules directory structure
-            const nodeModulesDir = path.join(tempBuildDir, "node_modules");
-            await fs.mkdir(nodeModulesDir, { recursive: true });
-            await fs.mkdir(path.join(nodeModulesDir, "react"), { recursive: true });
-            await fs.writeFile(
-              path.join(nodeModulesDir, "react", "package.json"),
-              JSON.stringify({ name: "react", version: "19.0.0" }, null, 2)
-            );
-            await fs.mkdir(path.join(nodeModulesDir, "lodash"), { recursive: true });
-            await fs.writeFile(
-              path.join(nodeModulesDir, "lodash", "package.json"),
-              JSON.stringify({ name: "lodash", version: samplePkgJson.dependencies.lodash }, null, 2)
-            );
+            if (config.platform === "expo") {
+              const hasYarnLock = await fs.access(path.join(tempBuildDir, "yarn.lock")).then(() => true).catch(() => false);
+              const hasPnpmLock = await fs.access(path.join(tempBuildDir, "pnpm-lock.yaml")).then(() => true).catch(() => false);
+              if (hasYarnLock) await runExecutable("yarn", ["install", "--frozen-lockfile", "--non-interactive"], tempBuildDir);
+              else if (hasPnpmLock) await runExecutable("pnpm", ["install", "--frozen-lockfile"], tempBuildDir);
+              else await runExecutable("npm", ["ci", "--ignore-scripts"], tempBuildDir);
+            } else {
+              await runExecutable("flutter", ["pub", "get"], tempBuildDir);
+            }
 
-            // Compress the local node_modules
-            const tempTarballPath = path.join(tempBuildDir, tarballName);
-            await runCmd(`tar -czf ${tempTarballPath} -C ${nodeModulesDir} .`, process.cwd());
-            
-            // Sync to local agent cache
-            await fs.copyFile(tempTarballPath, localAgentTarball);
-            
-            // Sync to shared cache folder
-            await fs.copyFile(tempTarballPath, sharedTarball);
-            
-            // Upload to Cloud R2/S3
-            await uploadToR2OrS3(`lepoship/cache/${projectId}/${tarballName}`, tempTarballPath, writeLog);
-            
-            await fs.unlink(tempTarballPath);
-            await writeLog(`[CACHE] Dependency cache compiled and shared distributedly for key ${cacheKey}.`);
+            const nodeModulesDir = path.join(tempBuildDir, "node_modules");
+            const nodeModulesExists = await fs.access(nodeModulesDir).then(() => true).catch(() => false);
+            if (nodeModulesExists) {
+              const tempTarballPath = path.join(tempBuildDir, tarballName);
+              await runCmd(`tar -czf ${tempTarballPath} -C ${nodeModulesDir} .`, process.cwd());
+              await fs.copyFile(tempTarballPath, localAgentTarball);
+              await fs.copyFile(tempTarballPath, sharedTarball);
+              await uploadToR2OrS3(`lepoship/cache/${projectId}/${tarballName}`, tempTarballPath, writeLog);
+              await fs.unlink(tempTarballPath);
+              await writeLog(`[CACHE] Dependency cache compiled and shared distributedly for key ${cacheKey}.`);
+            }
           }
         }
       }
 
       await writeLog("Checking dependencies and platform configurations...");
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
+      let buildOutputDir: string;
       if (config.platform === "expo") {
-        await writeLog(`Detected Expo SDK version: ${config.expoSdkVersion || "51.0.0"}`);
-        await writeLog(`Running compilation task 'npx expo export' for EAS profile: ${config.expoBuildProfile || "production"}...`);
-        await new Promise((resolve) => setTimeout(resolve, 2500));
+        buildOutputDir = path.join(tempBuildDir, "dist");
+        await writeLog("Running Expo export from the cloned repository...");
+        await runExecutable("npx", ["expo", "export", "--output-dir", buildOutputDir], tempBuildDir);
       } else {
-        await writeLog(`Detected Flutter Project Structure...`);
-        await writeLog(`Running compilation task 'flutter build ${config.flutterTargetPlatform || "web"}' (Mode: ${config.flutterBuildMode || "release"})...`);
-        await new Promise((resolve) => setTimeout(resolve, 2500));
+        const target = config.flutterTargetPlatform || "web";
+        const mode = config.flutterBuildMode || "release";
+        await writeLog(`Running Flutter ${target} build from the cloned repository...`);
+        await runExecutable("flutter", ["build", target, `--${mode}`], tempBuildDir);
+        buildOutputDir = path.join(tempBuildDir, "build", target);
       }
 
       await runSecurityScan(pkgJsonPath, writeLog);
@@ -812,7 +824,9 @@ export async function runLepoShipBuild(
 </html>`;
 
       await fs.writeFile(path.join(tempDir, "index.html"), indexHtmlContent);
-      await writeLog("Created bundle entrypoint (index.html)...");
+      await fs.rm(tempDir, { recursive: true, force: true });
+      await fs.cp(buildOutputDir, tempDir, { recursive: true });
+      await writeLog("Copied verified compiler output into the release bundle.");
 
       // Delta Patching System (Phase 18)
       if (previousActiveTrack && previousActiveTrack.storagePath) {
@@ -1002,6 +1016,17 @@ export async function runLepoShipBuild(
       await writeLog(`OTA deployment published. Update check is now active.`);
       await writeLog(`--- LepoShip Build #${buildNumber} Succeeded ---`);
 
+      // Save success state to LepoShipBuild
+      const successLogs = await fs.readFile(logFile, "utf-8").catch(() => "");
+      await prisma.lepoShipBuild.update({
+        where: { id: trackId },
+        data: {
+          status: "success",
+          logs: successLogs,
+          artifactUrl: relativeStoragePath
+        }
+      }).catch(() => {});
+
       // Clean up temp build context
       await fs.rm(tempBuildDir, { recursive: true, force: true }).catch(() => {});
 
@@ -1011,6 +1036,17 @@ export async function runLepoShipBuild(
       console.error("LepoShip build execution failed:", error);
       await writeLog(`[ERROR] Build execution failed: ${error?.message || error}`);
       await writeLog(`--- LepoShip Build #${buildNumber} Failed ---`);
+
+      // Save failure state to LepoShipBuild
+      const failedLogs = await fs.readFile(logFile, "utf-8").catch(() => "");
+      await prisma.lepoShipBuild.update({
+        where: { id: trackId },
+        data: {
+          status: "failed",
+          logs: failedLogs,
+          error: error?.message || String(error)
+        }
+      }).catch(() => {});
 
       // Clean up temp build context
       if (tempBuildDir) {

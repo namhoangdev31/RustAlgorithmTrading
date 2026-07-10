@@ -37,7 +37,7 @@ export async function createFirewallRuleAction(
   // Sync to local memory WAF configuration (in a real production app, this writes to Upstash Redis)
   console.log(`[WAF Sync] Synced firewall rule ${rule.name} for project ${projectId} to Edge cache.`);
 
-  revalidatePath(`/dashboard/projects/${projectId}/settings/security`);
+  revalidatePath(`/projects/${projectId}/security`);
   return rule;
 }
 
@@ -48,7 +48,7 @@ export async function deleteFirewallRuleAction(projectId: string, ruleId: string
 
   console.log(`[WAF Sync] Removed firewall rule ${ruleId} from Edge cache.`);
 
-  revalidatePath(`/dashboard/projects/${projectId}/settings/security`);
+  revalidatePath(`/projects/${projectId}/security`);
   return { success: true };
 }
 
@@ -60,7 +60,7 @@ export async function toggleFirewallRuleAction(projectId: string, ruleId: string
 
   console.log(`[WAF Sync] Updated firewall rule ${ruleId} (active: ${active}) in Edge cache.`);
 
-  revalidatePath(`/dashboard/projects/${projectId}/settings/security`);
+  revalidatePath(`/projects/${projectId}/security`);
   return rule;
 }
 

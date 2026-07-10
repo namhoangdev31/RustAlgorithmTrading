@@ -488,7 +488,14 @@ export const ModelName = {
   MarketplacePartnerAccount: 'MarketplacePartnerAccount',
   MarketplaceTransaction: 'MarketplaceTransaction',
   MarketplaceInstallEvent: 'MarketplaceInstallEvent',
-  RiskLimits: 'RiskLimits'
+  RiskLimits: 'RiskLimits',
+  OrganizationMembership: 'OrganizationMembership',
+  ProjectMembership: 'ProjectMembership',
+  WorkspaceProviderConnection: 'WorkspaceProviderConnection',
+  ProjectProviderBinding: 'ProjectProviderBinding',
+  WorkspaceAuditEvent: 'WorkspaceAuditEvent',
+  LepoShipBuild: 'LepoShipBuild',
+  MarketplaceCompatibilityRun: 'MarketplaceCompatibilityRun'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -504,7 +511,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "order" | "riskEvent" | "file" | "user" | "organization" | "project" | "bundlePayouts" | "bundles" | "notifications" | "session" | "userDeviceToken" | "bundleAbTests" | "bundleAbuseSignals" | "bundleAdConfigurations" | "bundleAnalyticsEvents" | "bundleApiUsageStats" | "bundleAuditLog" | "bundleBetaTesters" | "bundleChangeLogs" | "bundleCollaborators" | "bundleContentRatings" | "bundleCountries" | "bundleDependencies" | "bundleDeveloperStrikes" | "bundleDeviceSupport" | "bundleExternalIntegrations" | "bundleFeaturedSlots" | "bundleInAppPurchases" | "bundleInstallEvents" | "bundleLanguages" | "bundleLocalizations" | "bundleMonetizationConfigs" | "bundleOrders" | "bundlePermissions" | "bundlePrivacyDeclarations" | "bundlePromotions" | "bundleRankingScores" | "bundleReleaseTracks" | "bundleRetentionStats" | "bundleReviews" | "bundleRuntimeConfig" | "bundleScreenshots" | "bundleSearchKeywords" | "bundleStateTransitions" | "bundleStats" | "bundleStoreFlags" | "bundleStoreListings" | "bundleSubscriptionPlans" | "bundleTags" | "bundleTrendingSnapshots" | "bundleUserReports" | "bundleVersionHistory" | "bundleWebhooks" | "bundleOrderItems" | "bundlePaymentLogs" | "bundleRefundRequests" | "bundleUserEntitlements" | "bundleRollouts" | "bundleReviewReports" | "bundleSubscriptionHistory" | "bundleCrashReports" | "bundleReviewHistory" | "bundleReviewQueue" | "bundleSecurityScanResults" | "bundleUpdatePhases" | "userSecrets" | "personalAccessToken" | "ssoConfig" | "deployHook" | "firewallRule" | "nativeDeployment" | "nativeDomainConfig" | "nativeEdgeFunction" | "nativeCacheEntry" | "nativeAnalyticsReplay" | "nativeCrashReport" | "nativeSourceMap" | "nativePlugin" | "nativePluginInstallation" | "nativeDebugSession" | "nativeConnectedDevice" | "nativeCloudTarget" | "nativeRoutingPolicy" | "nativeRegionReplica" | "nativeArtifactMirror" | "nativeWafEvent" | "nativeWafRule" | "nativeScimMapping" | "nativeAiDiagnostic" | "nativeRemediationRun" | "nativeSchedulingPolicy" | "nativeSchedulingSignal" | "nativeServiceIdentity" | "nativeServiceTrustPolicy" | "nativeTelemetryEnvelope" | "cronJob" | "form" | "formSubmission" | "formWebhookDelivery" | "previewComment" | "lepoShipLocalConfig" | "marketplacePartnerAccount" | "marketplaceTransaction" | "marketplaceInstallEvent" | "riskLimits"
+    modelProps: "order" | "riskEvent" | "file" | "user" | "organization" | "project" | "bundlePayouts" | "bundles" | "notifications" | "session" | "userDeviceToken" | "bundleAbTests" | "bundleAbuseSignals" | "bundleAdConfigurations" | "bundleAnalyticsEvents" | "bundleApiUsageStats" | "bundleAuditLog" | "bundleBetaTesters" | "bundleChangeLogs" | "bundleCollaborators" | "bundleContentRatings" | "bundleCountries" | "bundleDependencies" | "bundleDeveloperStrikes" | "bundleDeviceSupport" | "bundleExternalIntegrations" | "bundleFeaturedSlots" | "bundleInAppPurchases" | "bundleInstallEvents" | "bundleLanguages" | "bundleLocalizations" | "bundleMonetizationConfigs" | "bundleOrders" | "bundlePermissions" | "bundlePrivacyDeclarations" | "bundlePromotions" | "bundleRankingScores" | "bundleReleaseTracks" | "bundleRetentionStats" | "bundleReviews" | "bundleRuntimeConfig" | "bundleScreenshots" | "bundleSearchKeywords" | "bundleStateTransitions" | "bundleStats" | "bundleStoreFlags" | "bundleStoreListings" | "bundleSubscriptionPlans" | "bundleTags" | "bundleTrendingSnapshots" | "bundleUserReports" | "bundleVersionHistory" | "bundleWebhooks" | "bundleOrderItems" | "bundlePaymentLogs" | "bundleRefundRequests" | "bundleUserEntitlements" | "bundleRollouts" | "bundleReviewReports" | "bundleSubscriptionHistory" | "bundleCrashReports" | "bundleReviewHistory" | "bundleReviewQueue" | "bundleSecurityScanResults" | "bundleUpdatePhases" | "userSecrets" | "personalAccessToken" | "ssoConfig" | "deployHook" | "firewallRule" | "nativeDeployment" | "nativeDomainConfig" | "nativeEdgeFunction" | "nativeCacheEntry" | "nativeAnalyticsReplay" | "nativeCrashReport" | "nativeSourceMap" | "nativePlugin" | "nativePluginInstallation" | "nativeDebugSession" | "nativeConnectedDevice" | "nativeCloudTarget" | "nativeRoutingPolicy" | "nativeRegionReplica" | "nativeArtifactMirror" | "nativeWafEvent" | "nativeWafRule" | "nativeScimMapping" | "nativeAiDiagnostic" | "nativeRemediationRun" | "nativeSchedulingPolicy" | "nativeSchedulingSignal" | "nativeServiceIdentity" | "nativeServiceTrustPolicy" | "nativeTelemetryEnvelope" | "cronJob" | "form" | "formSubmission" | "formWebhookDelivery" | "previewComment" | "lepoShipLocalConfig" | "marketplacePartnerAccount" | "marketplaceTransaction" | "marketplaceInstallEvent" | "riskLimits" | "organizationMembership" | "projectMembership" | "workspaceProviderConnection" | "projectProviderBinding" | "workspaceAuditEvent" | "lepoShipBuild" | "marketplaceCompatibilityRun"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -8278,6 +8285,524 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    OrganizationMembership: {
+      payload: Prisma.$OrganizationMembershipPayload<ExtArgs>
+      fields: Prisma.OrganizationMembershipFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.OrganizationMembershipFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizationMembershipPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.OrganizationMembershipFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizationMembershipPayload>
+        }
+        findFirst: {
+          args: Prisma.OrganizationMembershipFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizationMembershipPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.OrganizationMembershipFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizationMembershipPayload>
+        }
+        findMany: {
+          args: Prisma.OrganizationMembershipFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizationMembershipPayload>[]
+        }
+        create: {
+          args: Prisma.OrganizationMembershipCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizationMembershipPayload>
+        }
+        createMany: {
+          args: Prisma.OrganizationMembershipCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.OrganizationMembershipCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizationMembershipPayload>[]
+        }
+        delete: {
+          args: Prisma.OrganizationMembershipDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizationMembershipPayload>
+        }
+        update: {
+          args: Prisma.OrganizationMembershipUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizationMembershipPayload>
+        }
+        deleteMany: {
+          args: Prisma.OrganizationMembershipDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.OrganizationMembershipUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.OrganizationMembershipUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizationMembershipPayload>[]
+        }
+        upsert: {
+          args: Prisma.OrganizationMembershipUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizationMembershipPayload>
+        }
+        aggregate: {
+          args: Prisma.OrganizationMembershipAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateOrganizationMembership>
+        }
+        groupBy: {
+          args: Prisma.OrganizationMembershipGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OrganizationMembershipGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.OrganizationMembershipCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OrganizationMembershipCountAggregateOutputType> | number
+        }
+      }
+    }
+    ProjectMembership: {
+      payload: Prisma.$ProjectMembershipPayload<ExtArgs>
+      fields: Prisma.ProjectMembershipFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ProjectMembershipFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectMembershipPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ProjectMembershipFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectMembershipPayload>
+        }
+        findFirst: {
+          args: Prisma.ProjectMembershipFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectMembershipPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ProjectMembershipFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectMembershipPayload>
+        }
+        findMany: {
+          args: Prisma.ProjectMembershipFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectMembershipPayload>[]
+        }
+        create: {
+          args: Prisma.ProjectMembershipCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectMembershipPayload>
+        }
+        createMany: {
+          args: Prisma.ProjectMembershipCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ProjectMembershipCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectMembershipPayload>[]
+        }
+        delete: {
+          args: Prisma.ProjectMembershipDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectMembershipPayload>
+        }
+        update: {
+          args: Prisma.ProjectMembershipUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectMembershipPayload>
+        }
+        deleteMany: {
+          args: Prisma.ProjectMembershipDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ProjectMembershipUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ProjectMembershipUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectMembershipPayload>[]
+        }
+        upsert: {
+          args: Prisma.ProjectMembershipUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectMembershipPayload>
+        }
+        aggregate: {
+          args: Prisma.ProjectMembershipAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateProjectMembership>
+        }
+        groupBy: {
+          args: Prisma.ProjectMembershipGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProjectMembershipGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ProjectMembershipCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProjectMembershipCountAggregateOutputType> | number
+        }
+      }
+    }
+    WorkspaceProviderConnection: {
+      payload: Prisma.$WorkspaceProviderConnectionPayload<ExtArgs>
+      fields: Prisma.WorkspaceProviderConnectionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.WorkspaceProviderConnectionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkspaceProviderConnectionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.WorkspaceProviderConnectionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkspaceProviderConnectionPayload>
+        }
+        findFirst: {
+          args: Prisma.WorkspaceProviderConnectionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkspaceProviderConnectionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.WorkspaceProviderConnectionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkspaceProviderConnectionPayload>
+        }
+        findMany: {
+          args: Prisma.WorkspaceProviderConnectionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkspaceProviderConnectionPayload>[]
+        }
+        create: {
+          args: Prisma.WorkspaceProviderConnectionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkspaceProviderConnectionPayload>
+        }
+        createMany: {
+          args: Prisma.WorkspaceProviderConnectionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.WorkspaceProviderConnectionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkspaceProviderConnectionPayload>[]
+        }
+        delete: {
+          args: Prisma.WorkspaceProviderConnectionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkspaceProviderConnectionPayload>
+        }
+        update: {
+          args: Prisma.WorkspaceProviderConnectionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkspaceProviderConnectionPayload>
+        }
+        deleteMany: {
+          args: Prisma.WorkspaceProviderConnectionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.WorkspaceProviderConnectionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.WorkspaceProviderConnectionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkspaceProviderConnectionPayload>[]
+        }
+        upsert: {
+          args: Prisma.WorkspaceProviderConnectionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkspaceProviderConnectionPayload>
+        }
+        aggregate: {
+          args: Prisma.WorkspaceProviderConnectionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateWorkspaceProviderConnection>
+        }
+        groupBy: {
+          args: Prisma.WorkspaceProviderConnectionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WorkspaceProviderConnectionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.WorkspaceProviderConnectionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WorkspaceProviderConnectionCountAggregateOutputType> | number
+        }
+      }
+    }
+    ProjectProviderBinding: {
+      payload: Prisma.$ProjectProviderBindingPayload<ExtArgs>
+      fields: Prisma.ProjectProviderBindingFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ProjectProviderBindingFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectProviderBindingPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ProjectProviderBindingFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectProviderBindingPayload>
+        }
+        findFirst: {
+          args: Prisma.ProjectProviderBindingFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectProviderBindingPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ProjectProviderBindingFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectProviderBindingPayload>
+        }
+        findMany: {
+          args: Prisma.ProjectProviderBindingFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectProviderBindingPayload>[]
+        }
+        create: {
+          args: Prisma.ProjectProviderBindingCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectProviderBindingPayload>
+        }
+        createMany: {
+          args: Prisma.ProjectProviderBindingCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ProjectProviderBindingCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectProviderBindingPayload>[]
+        }
+        delete: {
+          args: Prisma.ProjectProviderBindingDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectProviderBindingPayload>
+        }
+        update: {
+          args: Prisma.ProjectProviderBindingUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectProviderBindingPayload>
+        }
+        deleteMany: {
+          args: Prisma.ProjectProviderBindingDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ProjectProviderBindingUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ProjectProviderBindingUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectProviderBindingPayload>[]
+        }
+        upsert: {
+          args: Prisma.ProjectProviderBindingUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectProviderBindingPayload>
+        }
+        aggregate: {
+          args: Prisma.ProjectProviderBindingAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateProjectProviderBinding>
+        }
+        groupBy: {
+          args: Prisma.ProjectProviderBindingGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProjectProviderBindingGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ProjectProviderBindingCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProjectProviderBindingCountAggregateOutputType> | number
+        }
+      }
+    }
+    WorkspaceAuditEvent: {
+      payload: Prisma.$WorkspaceAuditEventPayload<ExtArgs>
+      fields: Prisma.WorkspaceAuditEventFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.WorkspaceAuditEventFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkspaceAuditEventPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.WorkspaceAuditEventFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkspaceAuditEventPayload>
+        }
+        findFirst: {
+          args: Prisma.WorkspaceAuditEventFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkspaceAuditEventPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.WorkspaceAuditEventFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkspaceAuditEventPayload>
+        }
+        findMany: {
+          args: Prisma.WorkspaceAuditEventFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkspaceAuditEventPayload>[]
+        }
+        create: {
+          args: Prisma.WorkspaceAuditEventCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkspaceAuditEventPayload>
+        }
+        createMany: {
+          args: Prisma.WorkspaceAuditEventCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.WorkspaceAuditEventCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkspaceAuditEventPayload>[]
+        }
+        delete: {
+          args: Prisma.WorkspaceAuditEventDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkspaceAuditEventPayload>
+        }
+        update: {
+          args: Prisma.WorkspaceAuditEventUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkspaceAuditEventPayload>
+        }
+        deleteMany: {
+          args: Prisma.WorkspaceAuditEventDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.WorkspaceAuditEventUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.WorkspaceAuditEventUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkspaceAuditEventPayload>[]
+        }
+        upsert: {
+          args: Prisma.WorkspaceAuditEventUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkspaceAuditEventPayload>
+        }
+        aggregate: {
+          args: Prisma.WorkspaceAuditEventAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateWorkspaceAuditEvent>
+        }
+        groupBy: {
+          args: Prisma.WorkspaceAuditEventGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WorkspaceAuditEventGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.WorkspaceAuditEventCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WorkspaceAuditEventCountAggregateOutputType> | number
+        }
+      }
+    }
+    LepoShipBuild: {
+      payload: Prisma.$LepoShipBuildPayload<ExtArgs>
+      fields: Prisma.LepoShipBuildFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.LepoShipBuildFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LepoShipBuildPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.LepoShipBuildFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LepoShipBuildPayload>
+        }
+        findFirst: {
+          args: Prisma.LepoShipBuildFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LepoShipBuildPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.LepoShipBuildFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LepoShipBuildPayload>
+        }
+        findMany: {
+          args: Prisma.LepoShipBuildFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LepoShipBuildPayload>[]
+        }
+        create: {
+          args: Prisma.LepoShipBuildCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LepoShipBuildPayload>
+        }
+        createMany: {
+          args: Prisma.LepoShipBuildCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.LepoShipBuildCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LepoShipBuildPayload>[]
+        }
+        delete: {
+          args: Prisma.LepoShipBuildDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LepoShipBuildPayload>
+        }
+        update: {
+          args: Prisma.LepoShipBuildUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LepoShipBuildPayload>
+        }
+        deleteMany: {
+          args: Prisma.LepoShipBuildDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.LepoShipBuildUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.LepoShipBuildUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LepoShipBuildPayload>[]
+        }
+        upsert: {
+          args: Prisma.LepoShipBuildUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LepoShipBuildPayload>
+        }
+        aggregate: {
+          args: Prisma.LepoShipBuildAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateLepoShipBuild>
+        }
+        groupBy: {
+          args: Prisma.LepoShipBuildGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LepoShipBuildGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.LepoShipBuildCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LepoShipBuildCountAggregateOutputType> | number
+        }
+      }
+    }
+    MarketplaceCompatibilityRun: {
+      payload: Prisma.$MarketplaceCompatibilityRunPayload<ExtArgs>
+      fields: Prisma.MarketplaceCompatibilityRunFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MarketplaceCompatibilityRunFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarketplaceCompatibilityRunPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MarketplaceCompatibilityRunFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarketplaceCompatibilityRunPayload>
+        }
+        findFirst: {
+          args: Prisma.MarketplaceCompatibilityRunFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarketplaceCompatibilityRunPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MarketplaceCompatibilityRunFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarketplaceCompatibilityRunPayload>
+        }
+        findMany: {
+          args: Prisma.MarketplaceCompatibilityRunFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarketplaceCompatibilityRunPayload>[]
+        }
+        create: {
+          args: Prisma.MarketplaceCompatibilityRunCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarketplaceCompatibilityRunPayload>
+        }
+        createMany: {
+          args: Prisma.MarketplaceCompatibilityRunCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MarketplaceCompatibilityRunCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarketplaceCompatibilityRunPayload>[]
+        }
+        delete: {
+          args: Prisma.MarketplaceCompatibilityRunDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarketplaceCompatibilityRunPayload>
+        }
+        update: {
+          args: Prisma.MarketplaceCompatibilityRunUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarketplaceCompatibilityRunPayload>
+        }
+        deleteMany: {
+          args: Prisma.MarketplaceCompatibilityRunDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MarketplaceCompatibilityRunUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MarketplaceCompatibilityRunUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarketplaceCompatibilityRunPayload>[]
+        }
+        upsert: {
+          args: Prisma.MarketplaceCompatibilityRunUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarketplaceCompatibilityRunPayload>
+        }
+        aggregate: {
+          args: Prisma.MarketplaceCompatibilityRunAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMarketplaceCompatibilityRun>
+        }
+        groupBy: {
+          args: Prisma.MarketplaceCompatibilityRunGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MarketplaceCompatibilityRunGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MarketplaceCompatibilityRunCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MarketplaceCompatibilityRunCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -9878,7 +10403,9 @@ export const FormScalarFieldEnum = {
   salesforceSync: 'salesforceSync',
   webhookUrl: 'webhookUrl',
   webhookSecret: 'webhookSecret',
-  createdAt: 'createdAt'
+  definition: 'definition',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 } as const
 
 export type FormScalarFieldEnum = (typeof FormScalarFieldEnum)[keyof typeof FormScalarFieldEnum]
@@ -9933,6 +10460,10 @@ export const LepoShipLocalConfigScalarFieldEnum = {
   basePath: 'basePath',
   fallbackPath: 'fallbackPath',
   projectId: 'projectId',
+  repository: 'repository',
+  branch: 'branch',
+  framework: 'framework',
+  buildProfile: 'buildProfile',
   createdAt: 'createdAt'
 } as const
 
@@ -10038,6 +10569,102 @@ export const RiskLimitsScalarFieldEnum = {
 } as const
 
 export type RiskLimitsScalarFieldEnum = (typeof RiskLimitsScalarFieldEnum)[keyof typeof RiskLimitsScalarFieldEnum]
+
+
+export const OrganizationMembershipScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  userId: 'userId',
+  role: 'role',
+  inviteStatus: 'inviteStatus',
+  invitedById: 'invitedById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OrganizationMembershipScalarFieldEnum = (typeof OrganizationMembershipScalarFieldEnum)[keyof typeof OrganizationMembershipScalarFieldEnum]
+
+
+export const ProjectMembershipScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  userId: 'userId',
+  role: 'role',
+  inviteStatus: 'inviteStatus',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProjectMembershipScalarFieldEnum = (typeof ProjectMembershipScalarFieldEnum)[keyof typeof ProjectMembershipScalarFieldEnum]
+
+
+export const WorkspaceProviderConnectionScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  provider: 'provider',
+  encryptedCredential: 'encryptedCredential',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type WorkspaceProviderConnectionScalarFieldEnum = (typeof WorkspaceProviderConnectionScalarFieldEnum)[keyof typeof WorkspaceProviderConnectionScalarFieldEnum]
+
+
+export const ProjectProviderBindingScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  connectionId: 'connectionId',
+  externalId: 'externalId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProjectProviderBindingScalarFieldEnum = (typeof ProjectProviderBindingScalarFieldEnum)[keyof typeof ProjectProviderBindingScalarFieldEnum]
+
+
+export const WorkspaceAuditEventScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  actorId: 'actorId',
+  actorEmail: 'actorEmail',
+  action: 'action',
+  resourceType: 'resourceType',
+  resourceId: 'resourceId',
+  metadata: 'metadata',
+  timestamp: 'timestamp'
+} as const
+
+export type WorkspaceAuditEventScalarFieldEnum = (typeof WorkspaceAuditEventScalarFieldEnum)[keyof typeof WorkspaceAuditEventScalarFieldEnum]
+
+
+export const LepoShipBuildScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  status: 'status',
+  sourceCommit: 'sourceCommit',
+  platform: 'platform',
+  logs: 'logs',
+  artifactUrl: 'artifactUrl',
+  error: 'error',
+  triggeredById: 'triggeredById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LepoShipBuildScalarFieldEnum = (typeof LepoShipBuildScalarFieldEnum)[keyof typeof LepoShipBuildScalarFieldEnum]
+
+
+export const MarketplaceCompatibilityRunScalarFieldEnum = {
+  id: 'id',
+  integrationId: 'integrationId',
+  endpoint: 'endpoint',
+  checkResults: 'checkResults',
+  logs: 'logs',
+  createdAt: 'createdAt'
+} as const
+
+export type MarketplaceCompatibilityRunScalarFieldEnum = (typeof MarketplaceCompatibilityRunScalarFieldEnum)[keyof typeof MarketplaceCompatibilityRunScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -10398,6 +11025,13 @@ export type GlobalOmitConfig = {
   marketplaceTransaction?: Prisma.MarketplaceTransactionOmit
   marketplaceInstallEvent?: Prisma.MarketplaceInstallEventOmit
   riskLimits?: Prisma.RiskLimitsOmit
+  organizationMembership?: Prisma.OrganizationMembershipOmit
+  projectMembership?: Prisma.ProjectMembershipOmit
+  workspaceProviderConnection?: Prisma.WorkspaceProviderConnectionOmit
+  projectProviderBinding?: Prisma.ProjectProviderBindingOmit
+  workspaceAuditEvent?: Prisma.WorkspaceAuditEventOmit
+  lepoShipBuild?: Prisma.LepoShipBuildOmit
+  marketplaceCompatibilityRun?: Prisma.MarketplaceCompatibilityRunOmit
 }
 
 /* Types for Logging */

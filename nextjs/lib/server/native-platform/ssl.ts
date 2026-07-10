@@ -1,171 +1,188 @@
 import { prisma } from "@/lib/server/prisma";
 import { syncProjectRouting } from "./deployments";
 import { redisPublish } from "./redis";
-import crypto from "crypto";
+import { createHash, X509Certificate } from "node:crypto";
+import * as acme from "acme-client";
+import { decryptSecret } from "@/lib/server/secret-crypto";
 
-/**
- * Simulates Let's Encrypt DNS-01 verification challenge using provider API.
- */
-async function verifyDnsChallenge(
-  domain: string,
-  provider: string,
-  credentials: any,
-  txtToken: string
-): Promise<boolean> {
-  console.log(`[ACME Client] Initiating DNS-01 challenge for wildcard domain: ${domain} using provider: ${provider}`);
-  const provUpper = provider.toUpperCase();
-  
-  if (provUpper === "CLOUDFLARE") {
-    const token = credentials?.cloudflareToken || "default-token";
-    console.log(`[Cloudflare API] Authenticating using token: ${token.substring(0, 4)}...`);
-    console.log(`[Cloudflare API] Adding TXT record _acme-challenge.${domain} -> ${txtToken}`);
-    try {
-      const zoneId = credentials?.cloudflareZoneId || "mock-zone-id";
-      await fetch(`https://api.cloudflare.com/client/v4/zones/${zoneId}/dns_records`, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          type: "TXT",
-          name: `_acme-challenge.${domain}`,
-          content: txtToken,
-          ttl: 60
-        })
-      });
-    } catch (err) {
-      // Ignore network errors in simulation
-    }
-  } else if (provUpper === "ROUTE53") {
-    const key = credentials?.awsAccessKeyId || "default-key";
-    console.log(`[AWS Route53 API] Authenticating using IAM Key: ${key.substring(0, 4)}...`);
-    console.log(`[AWS Route53 API] ChangeResourceRecordSets: Creating TXT _acme-challenge.${domain} -> ${txtToken}`);
-    try {
-      const hostedZoneId = credentials?.awsHostedZoneId || "mock-zone-id";
-      await fetch(`https://route53.amazonaws.com/2013-04-01/hostedzone/${hostedZoneId}/rrset`, {
-        method: "POST",
-        headers: {
-          "X-Amz-Target": "Route53.ChangeResourceRecordSets",
-          "Content-Type": "application/xml"
-        },
-        body: `<ChangeResourceRecordSetsRequest xmlns="https://route53.amazonaws.com/doc/2013-04-01/"><ChangeBatch><Changes><Change><Action>CREATE</Action><ResourceRecordSet><Name>_acme-challenge.${domain}</Name><Type>TXT</Type><TTL>60</TTL><ResourceRecords><ResourceRecord><Value>"${txtToken}"</Value></ResourceRecord></ResourceRecords></ResourceRecordSet></Change></Changes></ChangeBatch></ChangeResourceRecordSetsRequest>`
-      });
-    } catch (err) {
-      // Ignore network errors in simulation
-    }
-  } else if (provUpper === "GODADDY") {
-    const key = credentials?.godaddyApiKey || "default-key";
-    const secret = credentials?.godaddyApiSecret || "default-secret";
-    console.log(`[GoDaddy API] Authenticating using Key: ${key.substring(0, 4)}...`);
-    console.log(`[GoDaddy API] Updating DNS record TXT _acme-challenge.${domain} -> ${txtToken}`);
-    try {
-      await fetch(`https://api.godaddy.com/v1/domains/${domain}/records/TXT/_acme-challenge`, {
-        method: "PUT",
-        headers: {
-          "Authorization": `sso-key ${key}:${secret}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify([{ data: txtToken, ttl: 600 }])
-      });
-    } catch (err) {
-      // Ignore network errors in simulation
-    }
-  } else {
-    throw new Error(`Unsupported DNS provider: ${provider}`);
+type DnsCredentials = Record<string, string>;
+type DnsRecord = { id?: string; zoneId?: string; zoneName?: string; name: string };
+
+async function cloudflareZone(domain: string, token: string) {
+  const labels = domain.replace(/^\*\./, "").split(".");
+  for (let index = 0; index < labels.length - 1; index += 1) {
+    const zoneName = labels.slice(index).join(".");
+    const response = await fetch(`https://api.cloudflare.com/client/v4/zones?name=${encodeURIComponent(zoneName)}`, {
+      headers: { authorization: `Bearer ${token}` },
+      cache: "no-store",
+    });
+    const payload = await response.json().catch(() => null);
+    const zoneId = payload?.result?.[0]?.id;
+    if (response.ok && zoneId) return { zoneId: String(zoneId), zoneName };
+  }
+  throw new Error("Cloudflare zone was not found for this domain.");
+}
+
+async function createDnsRecord(provider: string, credentials: DnsCredentials, domain: string, value: string): Promise<DnsRecord> {
+  const recordName = `_acme-challenge.${domain.replace(/^\*\./, "")}`;
+
+  if (provider === "CLOUDFLARE") {
+    const token = credentials.cloudflareToken;
+    if (!token) throw new Error("Cloudflare API token is not configured.");
+    const zone = await cloudflareZone(domain, token);
+    const response = await fetch(`https://api.cloudflare.com/client/v4/zones/${zone.zoneId}/dns_records`, {
+      method: "POST",
+      headers: { authorization: `Bearer ${token}`, "content-type": "application/json" },
+      body: JSON.stringify({ type: "TXT", name: recordName, content: value, ttl: 60 }),
+      cache: "no-store",
+    });
+    const payload = await response.json().catch(() => null);
+    if (!response.ok || !payload?.result?.id) throw new Error("Cloudflare rejected the ACME TXT record.");
+    return { id: String(payload.result.id), zoneId: zone.zoneId, zoneName: zone.zoneName, name: recordName };
   }
 
-  // Simulate propagation wait
-  await new Promise((resolve) => setTimeout(resolve, 300));
-  console.log(`[ACME Client] DNS propagation complete. Challenge record verified.`);
-  return true;
+  if (provider === "GODADDY") {
+    const key = credentials.godaddyApiKey;
+    const secret = credentials.godaddyApiSecret;
+    if (!key || !secret) throw new Error("GoDaddy API credentials are not configured.");
+    const zoneName = domain.replace(/^\*\./, "");
+    const response = await fetch(`https://api.godaddy.com/v1/domains/${zoneName}/records/TXT/_acme-challenge`, {
+      method: "PUT",
+      headers: { authorization: `sso-key ${key}:${secret}`, "content-type": "application/json" },
+      body: JSON.stringify([{ data: value, ttl: 600 }]),
+      cache: "no-store",
+    });
+    if (!response.ok) throw new Error(`GoDaddy rejected the ACME TXT record (${response.status}).`);
+    return { zoneName, name: recordName };
+  }
+
+  if (provider === "ROUTE53") {
+    const endpoint = process.env.LEPOS_ROUTE53_DNS_ADAPTER_ENDPOINT;
+    if (!endpoint) throw new Error("Route 53 DNS adapter is not configured for this workspace.");
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ action: "create", domain, name: recordName, value, credentials }),
+      cache: "no-store",
+    });
+    const payload = await response.json().catch(() => null);
+    if (!response.ok) throw new Error(`Route 53 adapter rejected the ACME TXT record (${response.status}).`);
+    return { id: payload?.id ? String(payload.id) : undefined, zoneId: payload?.zoneId, name: recordName };
+  }
+
+  throw new Error(`Unsupported DNS provider: ${provider}`);
+}
+
+async function removeDnsRecord(provider: string, credentials: DnsCredentials, domain: string, record: DnsRecord) {
+  if (provider === "CLOUDFLARE" && record.id && record.zoneId) {
+    await fetch(`https://api.cloudflare.com/client/v4/zones/${record.zoneId}/dns_records/${record.id}`, {
+      method: "DELETE",
+      headers: { authorization: `Bearer ${credentials.cloudflareToken}` },
+      cache: "no-store",
+    });
+  } else if (provider === "GODADDY" && record.zoneName) {
+    await fetch(`https://api.godaddy.com/v1/domains/${record.zoneName}/records/TXT/_acme-challenge`, {
+      method: "DELETE",
+      headers: { authorization: `sso-key ${credentials.godaddyApiKey}:${credentials.godaddyApiSecret}` },
+      cache: "no-store",
+    });
+  } else if (provider === "ROUTE53" && process.env.LEPOS_ROUTE53_DNS_ADAPTER_ENDPOINT) {
+    await fetch(process.env.LEPOS_ROUTE53_DNS_ADAPTER_ENDPOINT, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ action: "delete", domain, record, credentials }),
+      cache: "no-store",
+    });
+  }
 }
 
 /**
- * Simulates Let's Encrypt ACME Client SSL Certificate Generation and Renewal.
+ * Issues a real ACME certificate after the configured DNS provider proves ownership.
  */
 export async function renewDomainSsl(domainId: string) {
   const domainConfig = await prisma.nativeDomainConfig.findUnique({
     where: { id: domainId },
+    include: { project: { select: { organizationId: true } } },
   });
 
   if (!domainConfig) {
     throw new Error("Domain configuration not found.");
   }
 
-  console.log(`[ACME Client] Initiating Let's Encrypt SSL renewal challenge for: ${domainConfig.domain}`);
+  try {
+    if (!domainConfig.dnsProvider) throw new Error("Select and configure a DNS provider before requesting a certificate.");
+    const connection = await prisma.workspaceProviderConnection.findUnique({
+      where: {
+        organizationId_provider: {
+          organizationId: domainConfig.project.organizationId,
+          provider: `dns:${domainConfig.dnsProvider.toLowerCase()}`,
+        },
+      },
+    });
+    if (!connection || connection.status !== "active") throw new Error(`${domainConfig.dnsProvider} credentials are unavailable.`);
 
-  // 1. Simulate DNS/HTTP validation challenge verification
-  let dnsVerificationSuccessful = true;
-  if (domainConfig.dnsProvider) {
-    try {
-      dnsVerificationSuccessful = await verifyDnsChallenge(
-        domainConfig.domain,
-        domainConfig.dnsProvider,
-        domainConfig.dnsCredentials,
-        domainConfig.txtRecordToken
-      );
-    } catch (err: any) {
-      console.error(`[ACME Client] DNS API challenge failed for ${domainConfig.domain}:`, err.message);
-      dnsVerificationSuccessful = false;
-    }
-  } else {
-    // Statically succeed for manual validation simulation
-    dnsVerificationSuccessful = true;
-  }
+    const credentials = JSON.parse(decryptSecret(connection.encryptedCredential)) as DnsCredentials;
+    const accountEmail = process.env.ACME_ACCOUNT_EMAIL;
+    if (!accountEmail) throw new Error("ACME_ACCOUNT_EMAIL is not configured.");
 
-  if (!dnsVerificationSuccessful) {
+    const accountKey = process.env.ACME_ACCOUNT_KEY
+      ? Buffer.from(process.env.ACME_ACCOUNT_KEY.replace(/\\n/g, "\n"))
+      : await acme.crypto.createPrivateKey();
+    const client = new acme.Client({
+      directoryUrl: process.env.ACME_DIRECTORY_URL || acme.directory.letsencrypt.production,
+      accountKey,
+    });
+    const [certificateKey, csr] = await acme.crypto.createCsr({
+      commonName: domainConfig.domain,
+      altNames: [domainConfig.domain],
+    });
+    const records = new Map<string, DnsRecord>();
+    const certificate = await client.auto({
+      csr,
+      email: accountEmail,
+      termsOfServiceAgreed: true,
+      challengePriority: ["dns-01"],
+      challengeCreateFn: async (_authorization, challenge, keyAuthorization) => {
+        const value = createHash("sha256").update(keyAuthorization).digest("base64url");
+        const record = await createDnsRecord(domainConfig.dnsProvider!, credentials, domainConfig.domain, value);
+        records.set(challenge.token, record);
+      },
+      challengeRemoveFn: async (_authorization, challenge) => {
+        const record = records.get(challenge.token);
+        if (record) await removeDnsRecord(domainConfig.dnsProvider!, credentials, domainConfig.domain, record);
+      },
+    });
+
+    const now = new Date();
+    const certExpiresAt = new Date(new X509Certificate(certificate).validTo);
+    await prisma.nativeDomainConfig.update({
+      where: { id: domainId },
+      data: {
+        dnsVerified: true,
+        sslStatus: "ISSUED",
+        certIssuedAt: now,
+        certExpiresAt,
+        certPemRef: `edge-certificate://${domainConfig.domain}/cert.pem`,
+        keyPemRef: `edge-certificate://${domainConfig.domain}/key.pem`,
+      },
+    });
+    await syncProjectRouting(domainConfig.projectId);
+    await redisPublish("lepos:reload-cert", {
+      domain: domainConfig.domain,
+      certPem: certificate,
+      keyPem: certificateKey.toString(),
+      issuedAt: now.toISOString(),
+      expiresAt: certExpiresAt.toISOString(),
+    });
+
+    return { success: true, domain: domainConfig.domain, certExpiresAt };
+  } catch (error) {
     await prisma.nativeDomainConfig.update({
       where: { id: domainId },
       data: { sslStatus: "FAILED" },
     });
-    throw new Error(`[ACME Client] ACME verification challenge failed for ${domainConfig.domain}`);
+    throw error;
   }
-
-  // 2. Generate mocked Let's Encrypt PEM Certificate & Private Key
-  const certId = crypto.randomUUID();
-  const isWildcard = domainConfig.domain.startsWith("*.");
-  const certSubject = domainConfig.domain;
-  
-  const mockCertPem = `-----BEGIN CERTIFICATE-----\nSubject: CN=${certSubject}\nIssuer: Let's Encrypt Authority X3\nMOCK_LETS_ENCRYPT_CERT_${certId}\n-----END CERTIFICATE-----`;
-  const mockKeyPem = `-----BEGIN PRIVATE KEY-----\nMOCK_LETS_ENCRYPT_KEY_${certId}\n-----END PRIVATE KEY-----`;
-
-  const now = new Date();
-  const certExpiresAt = new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000); // 90 days validity
-
-  // 3. Update database certificate references
-  const updated = await prisma.nativeDomainConfig.update({
-    where: { id: domainId },
-    data: {
-      dnsVerified: true,
-      sslStatus: "ISSUED",
-      certIssuedAt: now,
-      certExpiresAt: certExpiresAt,
-      certPemRef: `internal://certs/${domainConfig.domain}/cert.pem`,
-      keyPemRef: `internal://certs/${domainConfig.domain}/key.pem`,
-      updatedAt: now,
-    },
-  });
-
-  // 4. Update Redis routing config mapping
-  await syncProjectRouting(domainConfig.projectId);
-
-  // 5. Publish real-time SSL reload message to Go Edge Proxy
-  await redisPublish("lepos:reload-cert", {
-    domain: domainConfig.domain,
-    certPem: mockCertPem,
-    keyPem: mockKeyPem,
-    issuedAt: now.toISOString(),
-    expiresAt: certExpiresAt.toISOString(),
-  });
-
-  console.log(`[ACME Client] Successfully renewed Let's Encrypt SSL for ${domainConfig.domain}. Expires in 90 days.`);
-
-  return {
-    success: true,
-    domain: domainConfig.domain,
-    certExpiresAt,
-  };
 }
 
 /**

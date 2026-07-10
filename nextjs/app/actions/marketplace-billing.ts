@@ -9,7 +9,9 @@ import {
   generateOnboardingLink,
   getPartnerBalance,
   getPartnerPayouts,
+  isStripeAvailable,
 } from "@/lib/server/stripe-connect";
+import { requireWorkspaceRole } from "@/lib/server/permissions";
 
 function readFormValue(formData: FormData, key: string) {
   const value = formData.get(key);
@@ -32,6 +34,7 @@ export async function onboardPartnerAction(formData: FormData) {
     const target = await localizedHref(returnTo);
     redirect(withQueryParam(target, "error", "missing_organization"));
   }
+  await requireWorkspaceRole(user.id, organizationId, "admin");
 
   try {
     // Check if partner account already exists
@@ -65,15 +68,6 @@ export async function onboardPartnerAction(formData: FormData) {
 
     const linkRes = await generateOnboardingLink(stripeAccountId, returnUrl, refreshUrl);
 
-    // If it's a simulated flow, we redirect to returnUrl with success params
-    if (linkRes.url.includes("stripe_status=success") && partnerAccount) {
-      // Update partner account status to active for ease of manual verification
-      await prisma.marketplacePartnerAccount.update({
-        where: { id: partnerAccount.id },
-        data: { status: "active" },
-      });
-    }
-
     revalidatePath(returnTo);
     redirect(linkRes.url);
   } catch (error: any) {
@@ -88,6 +82,7 @@ export async function onboardPartnerAction(formData: FormData) {
  */
 export async function getPartnerBillingDashboardData(organizationId: string) {
   const user = await requireCurrentUser();
+  await requireWorkspaceRole(user.id, organizationId, "viewer");
 
   // Find partner account
   const partnerAccount = await prisma.marketplacePartnerAccount.findFirst({
@@ -97,6 +92,7 @@ export async function getPartnerBillingDashboardData(organizationId: string) {
   if (!partnerAccount) {
     return {
       connected: false,
+      providerUnavailable: !isStripeAvailable(),
       partnerAccount: null,
       balance: { available: [{ amount: 0, currency: "vnd" }], pending: [{ amount: 0, currency: "vnd" }] },
       payouts: [],
@@ -105,10 +101,17 @@ export async function getPartnerBillingDashboardData(organizationId: string) {
   }
 
   // Get balance & payouts from Stripe Connect engine
-  const [balance, payouts] = await Promise.all([
-    getPartnerBalance(partnerAccount.stripeAccountId),
-    getPartnerPayouts(partnerAccount.stripeAccountId),
-  ]);
+  let balance = { available: [] as Array<{ amount: number; currency: string }>, pending: [] as Array<{ amount: number; currency: string }> };
+  let payouts: Awaited<ReturnType<typeof getPartnerPayouts>> = [];
+  let providerUnavailable = false;
+  try {
+    [balance, payouts] = await Promise.all([
+      getPartnerBalance(partnerAccount.stripeAccountId),
+      getPartnerPayouts(partnerAccount.stripeAccountId),
+    ]);
+  } catch {
+    providerUnavailable = true;
+  }
 
   // Find related projects/bundles
   const projects = await prisma.project.findMany({
@@ -133,6 +136,7 @@ export async function getPartnerBillingDashboardData(organizationId: string) {
 
   return {
     connected: partnerAccount.status === "active",
+    providerUnavailable,
     partnerAccount,
     balance,
     payouts,

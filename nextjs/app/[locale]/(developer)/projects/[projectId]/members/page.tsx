@@ -1,7 +1,27 @@
-import ProjectDetailsPage from "../../[id]/page";
+import * as React from "react";
+import { getProjectBundleData } from "@/lib/server/admin-data";
+import { requireCurrentUser } from "@/lib/server/current-user";
+import { redirect } from "next/navigation";
+import { MembersTab } from "@/components/projects/tabs/MembersTab";
 
-type PageProps = { params: Promise<{ locale: string; projectId: string }>; searchParams: Promise<Record<string, string | undefined>>; };
+type PageProps = {
+  params: Promise<{ locale: string; projectId: string }>;
+};
 
-export default function ProjectMembersPage({ params, searchParams }: PageProps) {
-  return <ProjectDetailsPage params={params.then(({ locale, projectId }) => ({ locale, id: projectId }))} searchParams={searchParams.then((search) => ({ ...search, tab: "members" }))} />;
+export default async function ProjectMembersPage({ params }: PageProps) {
+  const { locale, projectId } = await params;
+  const user = await requireCurrentUser();
+  const data = await getProjectBundleData(user.id, {});
+  const project = data.projects.find((p) => p.id === projectId);
+
+  if (!project) {
+    redirect(`/${locale}/projects`);
+  }
+
+  return (
+    <MembersTab
+      project={project as any}
+      locale={locale}
+    />
+  );
 }

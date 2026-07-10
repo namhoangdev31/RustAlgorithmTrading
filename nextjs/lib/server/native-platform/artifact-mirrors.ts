@@ -21,14 +21,6 @@ function buildDigest(value: string) {
   return createHash("sha256").update(value).digest("hex");
 }
 
-function buildIpfsCid(seed: string) {
-  return `bafy${seed.slice(0, 48)}`;
-}
-
-function buildArweaveTx(seed: string) {
-  return seed.slice(0, 43);
-}
-
 export async function listArtifactMirrors(projectId: string) {
   return prisma.nativeArtifactMirror.findMany({
     where: { projectId },
@@ -141,10 +133,6 @@ export async function publishArtifactMirror(input: PublishArtifactMirrorInput) {
       },
     });
   } catch (error: any) {
-    const fallbackCid = input.provider === "ipfs" ? buildIpfsCid(digest) : null;
-    const fallbackTxId = input.provider === "arweave" ? buildArweaveTx(digest) : null;
-    const fallbackLocator = input.provider === "ipfs" ? `ipfs://${fallbackCid}` : `ar://${fallbackTxId}`;
-
     return prisma.nativeArtifactMirror.upsert({
       where: {
         deploymentId_provider: {
@@ -158,28 +146,26 @@ export async function publishArtifactMirror(input: PublishArtifactMirrorInput) {
         provider: input.provider,
         policy,
         status: "failed",
-        locator: fallbackLocator,
-        cid: fallbackCid,
-        txId: fallbackTxId,
+        locator: "",
+        cid: null,
+        txId: null,
         retryCount: attempt,
         lastError: error?.message || "Mirror publish failed.",
         proofManifest: proofManifest as any,
         metadata: {
-          fallbackLocator,
           requestedBy: input.requestedBy || null,
         },
       },
       update: {
         policy,
         status: "failed",
-        locator: fallbackLocator,
-        cid: fallbackCid,
-        txId: fallbackTxId,
+        locator: "",
+        cid: null,
+        txId: null,
         retryCount: attempt,
         lastError: error?.message || "Mirror publish failed.",
         proofManifest: proofManifest as any,
         metadata: {
-          fallbackLocator,
           requestedBy: input.requestedBy || null,
         },
         updatedAt: new Date(),

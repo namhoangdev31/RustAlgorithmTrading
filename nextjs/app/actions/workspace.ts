@@ -48,26 +48,30 @@ async function recordWorkspaceAudit(input: {
   metadata?: Record<string, string>;
 }) {
   const now = new Date();
-  const notificationId = crypto.randomUUID();
-
-  await prisma.notifications.create({
+  const actor = await prisma.user.findUnique({
+    where: { id: input.actorId },
+    select: { email: true },
+  });
+  const auditEvent = await prisma.workspaceAuditEvent.create({
     data: {
-      id: notificationId,
-      title: input.title,
-      body: input.body,
-      type: "workspace_audit",
-      recipientId: input.recipientId,
+      workspaceId: input.organizationId,
       actorId: input.actorId,
+      actorEmail: actor?.email ?? "unknown",
+      action: input.metadata?.action ?? "workspace.update",
+      resourceType: input.metadata?.resourceType ?? "workspace",
       resourceId: input.organizationId,
-      resourceType: "workspace",
-      metadata: input.metadata ? JSON.stringify(input.metadata) : null,
-      createdAt: now,
-      updatedAt: now,
+      metadata: {
+        ...input.metadata,
+        title: input.title,
+        body: input.body,
+        recipientId: input.recipientId,
+      },
+      timestamp: now,
     },
   });
 
   streamWorkspaceAudit(input.organizationId, {
-    id: notificationId,
+    id: auditEvent.id,
     title: input.title,
     body: input.body,
     actorId: input.actorId,
@@ -107,10 +111,32 @@ export async function inviteWorkspaceMemberAction(formData: FormData) {
   }
 
   const bundleIds = await getWorkspaceBundleIds(organizationId);
+  const projectIds = await prisma.project.findMany({
+    where: { organizationId, deletedAt: null },
+    select: { id: true },
+  });
   const now = new Date();
 
-  await prisma.$transaction(
-    bundleIds.map((bundleId) =>
+  await prisma.$transaction([
+    prisma.organizationMembership.upsert({
+      where: { organizationId_userId: { organizationId, userId: invitedUser.id } },
+      create: {
+        organizationId,
+        userId: invitedUser.id,
+        role,
+        inviteStatus: "accepted",
+        invitedById: user.id,
+      },
+      update: { role, inviteStatus: "accepted", invitedById: user.id },
+    }),
+    ...projectIds.map(({ id: projectId }) =>
+      prisma.projectMembership.upsert({
+        where: { projectId_userId: { projectId, userId: invitedUser.id } },
+        create: { projectId, userId: invitedUser.id, role, inviteStatus: "accepted" },
+        update: { role, inviteStatus: "accepted" },
+      })
+    ),
+    ...bundleIds.map((bundleId) =>
       prisma.bundleCollaborators.upsert({
         where: {
           bundleId_userId: {
@@ -133,8 +159,8 @@ export async function inviteWorkspaceMemberAction(formData: FormData) {
           acceptedAt: now,
         },
       })
-    )
-  );
+    ),
+  ]);
 
   await recordWorkspaceAudit({
     organizationId,
@@ -142,7 +168,7 @@ export async function inviteWorkspaceMemberAction(formData: FormData) {
     recipientId: access.organization.userId,
     title: "Workspace member invited",
     body: `${invitedUser.email ?? email} was added as ${role}.`,
-    metadata: { memberId: invitedUser.id, role },
+    metadata: { memberId: invitedUser.id, role, action: "member.invite", resourceType: "member" },
   });
 
   revalidatePath("/settings/workspace");
@@ -171,18 +197,23 @@ export async function updateWorkspaceMemberRoleAction(formData: FormData) {
     redirect(withQueryParam(returnTo, "workspace", "owner_role_locked"));
   }
 
-  await prisma.bundleCollaborators.updateMany({
-    where: {
-      userId: memberId,
-      bundle: {
-        project: {
-          organizationId,
-          deletedAt: null,
-        },
+  await prisma.$transaction([
+    prisma.organizationMembership.updateMany({
+      where: { organizationId, userId: memberId },
+      data: { role, inviteStatus: "accepted" },
+    }),
+    prisma.projectMembership.updateMany({
+      where: { userId: memberId, project: { organizationId, deletedAt: null } },
+      data: { role, inviteStatus: "accepted" },
+    }),
+    prisma.bundleCollaborators.updateMany({
+      where: {
+        userId: memberId,
+        bundle: { project: { organizationId, deletedAt: null } },
       },
-    },
-    data: { role },
-  });
+      data: { role },
+    }),
+  ]);
 
   await recordWorkspaceAudit({
     organizationId,
@@ -190,7 +221,7 @@ export async function updateWorkspaceMemberRoleAction(formData: FormData) {
     recipientId: access.organization.userId,
     title: "Workspace member role changed",
     body: `A workspace member role was changed to ${role}.`,
-    metadata: { memberId, role },
+    metadata: { memberId, role, action: "member.role.update", resourceType: "member" },
   });
 
   revalidatePath("/settings/workspace");
@@ -218,17 +249,18 @@ export async function removeWorkspaceMemberAction(formData: FormData) {
     redirect(withQueryParam(returnTo, "workspace", "owner_remove_locked"));
   }
 
-  await prisma.bundleCollaborators.deleteMany({
-    where: {
-      userId: memberId,
-      bundle: {
-        project: {
-          organizationId,
-          deletedAt: null,
-        },
+  await prisma.$transaction([
+    prisma.projectMembership.deleteMany({
+      where: { userId: memberId, project: { organizationId, deletedAt: null } },
+    }),
+    prisma.organizationMembership.deleteMany({ where: { organizationId, userId: memberId } }),
+    prisma.bundleCollaborators.deleteMany({
+      where: {
+        userId: memberId,
+        bundle: { project: { organizationId, deletedAt: null } },
       },
-    },
-  });
+    }),
+  ]);
 
   await recordWorkspaceAudit({
     organizationId,
@@ -236,7 +268,7 @@ export async function removeWorkspaceMemberAction(formData: FormData) {
     recipientId: access.organization.userId,
     title: "Workspace member removed",
     body: "A workspace member was removed from all projects.",
-    metadata: { memberId },
+    metadata: { memberId, action: "member.remove", resourceType: "member" },
   });
 
   revalidatePath("/settings/workspace");
@@ -298,6 +330,28 @@ export async function transferWorkspaceOwnershipAction(formData: FormData) {
         updatedAt: now,
       },
     }),
+    prisma.organizationMembership.upsert({
+      where: { organizationId_userId: { organizationId, userId: nextOwner.id } },
+      create: {
+        organizationId,
+        userId: nextOwner.id,
+        role: "owner",
+        inviteStatus: "accepted",
+        invitedById: user.id,
+      },
+      update: { role: "owner", inviteStatus: "accepted" },
+    }),
+    prisma.organizationMembership.upsert({
+      where: { organizationId_userId: { organizationId, userId: user.id } },
+      create: {
+        organizationId,
+        userId: user.id,
+        role: "admin",
+        inviteStatus: "accepted",
+        invitedById: nextOwner.id,
+      },
+      update: { role: "admin", inviteStatus: "accepted", invitedById: nextOwner.id },
+    }),
     ...bundleIds.map((bundleId) =>
       prisma.bundleCollaborators.upsert({
         where: {
@@ -329,7 +383,11 @@ export async function transferWorkspaceOwnershipAction(formData: FormData) {
     recipientId: nextOwner.id,
     title: "Workspace ownership transferred",
     body: "You are now the workspace owner.",
-    metadata: { previousOwnerId: user.id },
+    metadata: {
+      previousOwnerId: user.id,
+      action: "workspace.owner.transfer",
+      resourceType: "workspace",
+    },
   });
 
   revalidatePath("/overview");

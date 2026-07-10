@@ -135,7 +135,7 @@ export function clusterPerformanceIssues(replays: any[]): PerformanceCluster[] {
         const key = `${type}:${signature}`;
         if (!clusters[key]) {
           clusters[key] = {
-            id: `cluster-${type}-${Math.random().toString(36).substr(2, 9)}`,
+            id: `cluster-${type}-${randomUUID()}`,
             type,
             signature,
             occurrences: 0,
@@ -176,4 +176,4 @@ export function clusterPerformanceIssues(replays: any[]): PerformanceCluster[] {
   // Sort descending by impactScore
   return resultList.sort((a, b) => b.impactScore - a.impactScore);
 }
-
+import { randomUUID } from "node:crypto";

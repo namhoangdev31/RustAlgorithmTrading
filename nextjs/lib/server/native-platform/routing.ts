@@ -86,61 +86,7 @@ export async function listRegionReplicas(projectId: string) {
     orderBy: [{ isPrimary: "desc" }, { region: "asc" }],
   });
 
-  if (replicas.length > 0) {
-    return replicas;
-  }
-
-  return seedRegionReplicas(projectId);
-}
-
-export async function seedRegionReplicas(projectId: string) {
-  const [deployment, targets] = await Promise.all([
-    prisma.nativeDeployment.findFirst({
-      where: { projectId, status: { in: ["active", "ready", "completed", "published"] } },
-      orderBy: [{ status: "asc" }, { createdAt: "desc" }],
-    }),
-    prisma.nativeCloudTarget.findMany({
-      where: { projectId },
-      orderBy: { priority: "asc" },
-    }),
-  ]);
-
-  if (!deployment || targets.length === 0) {
-    return [];
-  }
-
-  await prisma.nativeRegionReplica.createMany({
-    data: targets.map((target, index) => ({
-      projectId,
-      deploymentId: deployment.id,
-      provider: target.provider,
-      region: target.region,
-      endpoint: target.endpoint,
-      bundleUrl: deployment.bundleUrl,
-      storagePath: deployment.storagePath,
-      healthStatus: normalizeHealthStatus(target.healthStatus),
-      drainState: "accepting",
-      latencyMs:
-        typeof (target.metadata as Record<string, unknown> | null)?.latency === "number"
-          ? Math.round((target.metadata as Record<string, number>).latency)
-          : null,
-      trafficPercent: index === 0 ? 100 : 0,
-      isPrimary: index === 0,
-      replicationVersion: deployment.version,
-      vectorClock: {
-        [target.region]: deployment.buildNumber || 1,
-      },
-      metadata: {
-        seededFromCloudTarget: true,
-      },
-    })),
-    skipDuplicates: true,
-  });
-
-  return prisma.nativeRegionReplica.findMany({
-    where: { projectId },
-    orderBy: [{ isPrimary: "desc" }, { region: "asc" }],
-  });
+  return replicas;
 }
 
 export async function upsertRegionReplica(input: RegionReplicaInput) {

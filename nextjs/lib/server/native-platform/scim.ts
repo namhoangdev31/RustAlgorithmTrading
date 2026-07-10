@@ -1,4 +1,6 @@
 import { prisma } from "@/lib/server/prisma";
+import { timingSafeEqual } from "node:crypto";
+import { decryptSecret } from "@/lib/server/secret-crypto";
 
 export async function listScimUsers(organizationId?: string) {
   const mappings = await prisma.nativeScimMapping.findMany({
@@ -379,7 +381,7 @@ export async function executeScimBulk(
   };
 }
 
-export function verifyScimBearerToken(authHeader: string | null): { valid: boolean; organizationId?: string } {
+export async function verifyScimBearerToken(authHeader: string | null): Promise<{ valid: boolean; organizationId?: string }> {
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return { valid: false };
   }
@@ -387,24 +389,43 @@ export function verifyScimBearerToken(authHeader: string | null): { valid: boole
   const token = authHeader.slice(7);
   const scimSecret = process.env.SCIM_BEARER_TOKEN;
 
-  if (!scimSecret) {
-    return { valid: false };
-  }
-
-  if (token === scimSecret) {
+  if (scimSecret && token === scimSecret) {
     return { valid: true };
   }
 
   try {
     const decoded = Buffer.from(token, "base64").toString("utf8");
-    const [orgId, secret] = decoded.split(":");
-    if (secret === scimSecret && orgId) {
+    const separatorIndex = decoded.indexOf(":");
+    const orgId = decoded.slice(0, separatorIndex);
+    const presentedSecret = decoded.slice(separatorIndex + 1);
+
+    if (!orgId || !presentedSecret) {
+      return { valid: false };
+    }
+
+    const connection = await prisma.workspaceProviderConnection.findUnique({
+      where: {
+        organizationId_provider: { organizationId: orgId, provider: "scim" },
+      },
+      select: { encryptedCredential: true, status: true },
+    });
+
+    if (connection?.status === "active") {
+      const expectedSecret = decryptSecret(connection.encryptedCredential);
+      const expected = Buffer.from(expectedSecret);
+      const presented = Buffer.from(presentedSecret);
+      if (expected.length === presented.length && timingSafeEqual(expected, presented)) {
+        return { valid: true, organizationId: orgId };
+      }
+    }
+
+    // One-release compatibility path for the legacy environment credential.
+    if (scimSecret && presentedSecret === scimSecret) {
       return { valid: true, organizationId: orgId };
     }
   } catch {
-    // Not valid base64
+    return { valid: false };
   }
 
   return { valid: false };
 }
-

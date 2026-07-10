@@ -556,42 +556,57 @@ export async function getChatsData(userId: string, params: SearchParamsInput) {
 }
 
 export async function getUsersData(userId: string, params: SearchParamsInput) {
-  const { workspace, projects, bundleIds } = await getWorkspaceProjects(userId);
+  const { workspace } = await getWorkspaceProjects(userId);
   const q = readParam(params, "q").toLowerCase();
+  const organization = workspace.activeOrganization;
 
-  const collaborators = await prisma.bundleCollaborators.findMany({
-    where: {
-      bundleId: { in: bundleIds },
-    },
-    orderBy: { createdAt: "desc" },
-    select: {
-      id: true,
-      role: true,
-      acceptedAt: true,
-      createdAt: true,
-      bundle: {
+  const memberships = organization
+    ? await prisma.organizationMembership.findMany({
+        where: { organizationId: organization.id },
+        orderBy: { createdAt: "desc" },
         select: {
           id: true,
-          name: true,
-        },
-      },
-      user: {
-        select: {
-          id: true,
-          email: true,
-          fullName: true,
-          provider: true,
+          role: true,
+          inviteStatus: true,
           createdAt: true,
+          user: {
+            select: {
+              id: true,
+              email: true,
+              fullName: true,
+              provider: true,
+              createdAt: true,
+            },
+          },
         },
+      })
+    : [];
+
+  const membershipByUserId = new Map(memberships.map((membership) => [membership.user.id, membership]));
+  const workspaceMembers = organization ? await getWorkspaceMembers(organization.id) : [];
+  const collaborators = workspaceMembers.map((member) => {
+    const membership = membershipByUserId.get(member.id);
+    const createdAt = membership?.createdAt ?? new Date(0);
+    return {
+      id: membership?.id ?? `legacy:${member.id}`,
+      role: member.role,
+      acceptedAt: membership?.inviteStatus === "pending" ? null : createdAt,
+      createdAt,
+      bundle: { id: organization?.id ?? "workspace", name: organization?.name ?? "Workspace" },
+      user: {
+        id: member.id,
+        email: member.email,
+        fullName: member.fullName,
+        provider: "workspace",
+        createdAt,
       },
-    },
+    };
   });
 
   return {
     workspace,
-    bundles: projects.flatMap((project) =>
-      project.bundle ? [{ id: project.bundle.id, name: project.bundle.name }] : []
-    ),
+    organizationId: organization?.id ?? null,
+    bundles: [],
     collaborators: q
       ? collaborators.filter((collaborator) =>
           [

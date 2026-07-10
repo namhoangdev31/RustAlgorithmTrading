@@ -12,7 +12,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:portal": "tsx --test --test-concurrency=1 tests/portal/**/*.test.ts"
   },
   "dependencies": {
     "@apollo/client": "4.1.6",

@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import {
   AudioWaveform,
   Activity,
@@ -12,14 +11,9 @@ import {
   HelpCircle,
   LayoutDashboard,
   LogOut,
-  Monitor,
-  Palette,
   Settings,
-  UserCog,
-  Wrench,
   CreditCard,
   Plus,
-  Key,
   type LucideIcon,
   FolderGit,
   Sparkles,
@@ -28,7 +22,6 @@ import {
   PlugZap,
   Rocket,
   ShieldAlert,
-  Users,
 } from "lucide-react";
 import { usePathname } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";

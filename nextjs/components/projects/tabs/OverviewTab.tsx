@@ -160,79 +160,6 @@ function EmptyOverview({ t }: { t: any }) {
   );
 }
 
-function renderSparkline(projectId: string) {
-  // Simple hash function to seed mock traffic data for 7 days
-  let hash = 0;
-  for (let i = 0; i < projectId.length; i++) {
-    hash = projectId.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  const points: number[] = [];
-  for (let i = 0; i < 7; i++) {
-    // Generate values between 30 and 100
-    const value = 30 + (Math.abs(hash + i * 37) % 71);
-    points.push(value);
-  }
-  
-  const max = Math.max(...points);
-  const min = Math.min(...points);
-  const range = max - min || 1;
-  const width = 80;
-  const height = 24;
-  const padding = 2;
-
-  // Map points to SVG coordinates
-  const coords = points.map((val, idx) => {
-    const x = (idx / 6) * (width - 2 * padding) + padding;
-    const y = height - padding - ((val - min) / range) * (height - 2 * padding);
-    return `${x},${y}`;
-  });
-
-  const polylinePoints = coords.join(" ");
-
-  // Create path data for the gradient fill under the line
-  const pathPoints = [
-    `M ${coords[0]}`,
-    ...coords.slice(1).map(c => `L ${c}`),
-    `L ${width - padding} ${height}`,
-    `L ${padding} ${height}`,
-    "Z"
-  ].join(" ");
-
-  const gradId = `sparkline-grad-${projectId.replace(/[^a-zA-Z0-9]/g, "")}`;
-  const lastX = (6 / 6) * (width - 2 * padding) + padding;
-  const lastY = height - padding - ((points[6] - min) / range) * (height - 2 * padding);
-
-  return (
-    <svg width={width} height={height} className="overflow-visible" viewBox={`0 0 ${width} ${height}`}>
-      <defs>
-        <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#3ecf8e" stopOpacity="0.25" />
-          <stop offset="100%" stopColor="#3ecf8e" stopOpacity="0.0" />
-        </linearGradient>
-      </defs>
-      <path
-        d={pathPoints}
-        fill={`url(#${gradId})`}
-      />
-      <polyline
-        fill="none"
-        stroke="#3ecf8e"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        points={polylinePoints}
-      />
-      <circle
-        cx={lastX}
-        cy={lastY}
-        r="2"
-        fill="#3ecf8e"
-        className="animate-pulse"
-      />
-    </svg>
-  );
-}
-
 export function OverviewTab({
   data,
   github,
@@ -341,10 +268,7 @@ export function OverviewTab({
                         )}
                       </div>
 
-                      <div className="flex items-center gap-1" title="7-day traffic trend">
-                        <span className="text-[9px] font-mono text-ink-mute-2 select-none">7d:</span>
-                        {renderSparkline(project.id)}
-                      </div>
+                      <span className="text-[9px] font-mono text-ink-mute-2">Traffic unavailable</span>
                     </div>
 
                     <p className="mt-3 text-xs text-ink-mute line-clamp-2 leading-relaxed">{project.description || bundle?.shortDescription || "No description provided."}</p>
@@ -432,10 +356,7 @@ export function OverviewTab({
                           )}
                         </div>
 
-                        <div className="flex items-center gap-1" title="7-day traffic trend">
-                          <span className="text-[9px] font-mono text-ink-mute-2 select-none">7d Traffic:</span>
-                          {renderSparkline(project.id)}
-                        </div>
+                        <span className="text-[9px] font-mono text-ink-mute-2">Traffic unavailable</span>
                       </div>
                     </div>
                   </div>

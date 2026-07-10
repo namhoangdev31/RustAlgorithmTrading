@@ -67,6 +67,7 @@ interface FormItem {
   salesforceSync: boolean;
   webhookUrl: string | null;
   webhookSecret: string | null;
+  definition: unknown;
   submissions: FormSubmission[];
   webhookDeliveries: WebhookDelivery[];
 }
@@ -86,11 +87,7 @@ export function FormBuilderClient({ projects, selectedProjectId, initialForms }:
 
   // Form Builder state
   const [newFormName, setNewFormName] = useState("");
-  const [formFields, setFormFields] = useState<FormField[]>([
-    { id: "f1", type: "text", label: "Full Name", placeholder: "John Doe", required: true },
-    { id: "f2", type: "email", label: "Email Address", placeholder: "john@example.com", required: true },
-    { id: "f3", type: "textarea", label: "Message / Feedback", placeholder: "Write your message here...", required: false }
-  ]);
+  const [formFields, setFormFields] = useState<FormField[]>([]);
   const [googleSheetsSync, setGoogleSheetsSync] = useState(true);
   const [salesforceSync, setSalesforceSync] = useState(false);
   const [webhookUrl, setWebhookUrl] = useState("");
@@ -99,7 +96,10 @@ export function FormBuilderClient({ projects, selectedProjectId, initialForms }:
   const [isRetryingWebhooks, setIsRetryingWebhooks] = useState(false);
   
   const [copied, setCopied] = useState(false);
-  const [spamBlockedCount, setSpamBlockedCount] = useState(14); // Simulated blocked spam submissions
+  const spamBlockedCount = selectedForm?.submissions.filter((submission) => {
+    const data = submission.data as Record<string, unknown> | null;
+    return data?.blocked === true || data?.spam === true;
+  }).length ?? 0;
 
   useEffect(() => {
     setForms(initialForms);
@@ -118,6 +118,9 @@ export function FormBuilderClient({ projects, selectedProjectId, initialForms }:
       setSalesforceSync(selectedForm.salesforceSync ?? false);
       setWebhookUrl(selectedForm.webhookUrl || "");
       setWebhookSecret(selectedForm.webhookSecret || "");
+      setFormFields(Array.isArray(selectedForm.definition) ? selectedForm.definition as FormField[] : []);
+    } else {
+      setFormFields([]);
     }
   }, [selectedForm?.id]);
 
@@ -130,6 +133,7 @@ export function FormBuilderClient({ projects, selectedProjectId, initialForms }:
         salesforceSync,
         webhookUrl: webhookUrl.trim() || null,
         webhookSecret: webhookSecret.trim() || null,
+        definition: formFields,
       });
       if (res.success) {
         toast.success("Settings and integrations saved successfully!");
@@ -187,7 +191,7 @@ export function FormBuilderClient({ projects, selectedProjectId, initialForms }:
   };
 
   const addField = (type: "text" | "email" | "textarea" | "checkbox") => {
-    const id = "field_" + Math.random().toString(36).substring(2, 9);
+    const id = `field_${crypto.randomUUID()}`;
     let label = "New Field";
     let placeholder = "";
 

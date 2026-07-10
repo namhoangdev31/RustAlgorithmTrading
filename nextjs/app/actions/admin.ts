@@ -1714,6 +1714,20 @@ export async function triggerMobileBuildAction(formData: FormData) {
         createdAt: now,
       },
     });
+
+    // Create LepoShipBuild entry
+    await tx.lepoShipBuild.create({
+      data: {
+        id: trackId,
+        projectId,
+        status: "queued",
+        sourceCommit: configData.gitBranch || "main",
+        platform: configData.platform || "expo",
+        triggeredById: user.id,
+        logs: `--- LepoShip Build #${newBuildNumber} Started ---\n`,
+        createdAt: now,
+      },
+    });
   });
 
   // Trigger background build compilation process

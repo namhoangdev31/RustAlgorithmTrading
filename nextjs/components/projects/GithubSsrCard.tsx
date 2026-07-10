@@ -46,7 +46,7 @@ export async function GithubSsrCard({ project, locale }: GithubSsrCardProps) {
             Link a GitHub repository to automatically track repository activities, commits, pull requests, and synchronize build details.
           </p>
           <Link
-            href={`/projects/${project.id}?tab=settings`}
+            href={`/projects/${project.id}/settings`}
             className="h-9 inline-flex items-center justify-center text-xs font-semibold bg-canvas hover:bg-canvas-soft border border-hairline-strong text-ink rounded-sm px-4 shadow-light transition-colors"
           >
             Configure GitHub in Settings
