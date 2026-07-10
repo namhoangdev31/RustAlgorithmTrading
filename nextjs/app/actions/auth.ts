@@ -35,7 +35,7 @@ export async function loginWithEmailAction(formData: FormData) {
     await signIn("credentials", {
       email,
       password,
-      redirectTo: await localizedHref("/dashboard"),
+      redirectTo: await localizedHref("/overview"),
     });
   } catch (error) {
     if (error instanceof AuthError) {
@@ -54,7 +54,7 @@ export async function loginWithFirebaseIdTokenAction(idToken: string) {
   try {
     await signIn("credentials", {
       idToken,
-      redirectTo: await localizedHref("/dashboard"),
+      redirectTo: await localizedHref("/overview"),
     });
   } catch (error) {
     if (error instanceof AuthError) {
@@ -74,7 +74,7 @@ export async function loginWithOAuthAction(formData: FormData) {
 
   try {
     await signIn(provider, {
-      redirectTo: await localizedHref("/dashboard"),
+      redirectTo: await localizedHref("/overview"),
     });
   } catch (error) {
     if (error instanceof AuthError) {
@@ -103,7 +103,7 @@ export async function registerWithEmailAction(formData: FormData) {
 
     await signIn("credentials", {
       idToken: firebaseUser.idToken,
-      redirectTo: await localizedHref("/dashboard"),
+      redirectTo: await localizedHref("/overview"),
     });
   } catch (error) {
     if (error instanceof AuthError || error instanceof FirebaseAuthError) {

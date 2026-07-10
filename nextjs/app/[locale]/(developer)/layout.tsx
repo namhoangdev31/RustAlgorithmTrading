@@ -26,6 +26,7 @@ export default async function DashboardLayout({
         fullName: user.fullName ?? null,
         provider: user.provider,
         photoUrl: user.photo?.path ?? null,
+        userType: user.userType,
       }}
     >
       {children}

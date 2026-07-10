@@ -30,7 +30,8 @@ export async function createRiskEventAction(formData: FormData) {
     },
   });
 
-  revalidatePath("/dashboard");
+  revalidatePath("/overview");
+  revalidatePath("/projects");
 }
 
 export async function updateRiskEventSeverityAction(formData: FormData) {
@@ -48,7 +49,8 @@ export async function updateRiskEventSeverityAction(formData: FormData) {
     data: { severity },
   });
 
-  revalidatePath("/dashboard");
+  revalidatePath("/overview");
+  revalidatePath("/projects");
 }
 
 export async function deleteRiskEventAction(formData: FormData) {
@@ -64,5 +66,6 @@ export async function deleteRiskEventAction(formData: FormData) {
     where: { id },
   });
 
-  revalidatePath("/dashboard");
+  revalidatePath("/overview");
+  revalidatePath("/projects");
 }

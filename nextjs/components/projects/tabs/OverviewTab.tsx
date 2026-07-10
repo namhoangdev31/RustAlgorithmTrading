@@ -276,7 +276,7 @@ export function OverviewTab({
                           {project.name.charAt(0).toUpperCase()}
                         </div>
                         <div className="min-w-0">
-                          <Link href={`/projects?dialog=edit&id=${project.id}`} className="font-bold text-base text-ink hover:text-ink-secondary transition-colors tracking-tight block truncate">
+                          <Link href={`/projects/${project.id}/overview`} className="font-bold text-base text-ink hover:text-ink-secondary transition-colors tracking-tight block truncate">
                             {project.name}
                           </Link>
                           <div className="flex items-center gap-1.5 mt-0.5 text-ink-mute">
@@ -391,7 +391,7 @@ export function OverviewTab({
                     <div className={`size-10 rounded-lg bg-gradient-to-br ${avatarStyles} border flex items-center justify-center text-sm font-bold shrink-0 shadow-inner select-none`}>{project.name.charAt(0).toUpperCase()}</div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2.5 flex-wrap">
-                        <Link href={`/projects?dialog=edit&id=${project.id}`} className="font-bold text-base tracking-tight text-ink hover:text-ink-secondary transition-colors truncate">{project.name}</Link>
+                        <Link href={`/projects/${project.id}/overview`} className="font-bold text-base tracking-tight text-ink hover:text-ink-secondary transition-colors truncate">{project.name}</Link>
                         <a href={`https://${projectSlug}.rustalgorithm.net`} target="_blank" rel="noopener noreferrer" className="text-xs font-mono font-medium text-ink-mute hover:text-ink-secondary transition-colors flex items-center gap-1 bg-canvas-soft border border-hairline px-2 py-0.5 rounded-md"><span>{`${projectSlug}.rustalgorithm.net`}</span><ExternalLink className="size-3 shrink-0 opacity-60" /></a>
                       </div>
                       <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 mt-1.5 text-xs text-ink-mute">

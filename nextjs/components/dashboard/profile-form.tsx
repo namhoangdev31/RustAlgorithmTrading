@@ -56,7 +56,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
         formData.append("lastName", user.lastName || "")
         formData.append("phone", user.phone || "")
         formData.append("gender", user.gender || "")
-        formData.append("returnTo", "/dashboard/settings")
+        formData.append("returnTo", "/settings/profile")
 
         await updateProfileAction(formData)
         toast.success(t("profile.success_msg"))

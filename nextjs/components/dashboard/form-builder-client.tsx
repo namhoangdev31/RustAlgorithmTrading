@@ -163,9 +163,7 @@ export function FormBuilderClient({ projects, selectedProjectId, initialForms }:
   const handleProjectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const nextId = e.target.value;
     setActiveProjectId(nextId);
-    const current = new URLSearchParams(Array.from(searchParams.entries()));
-    current.set("projectId", nextId);
-    router.push(`/dashboard/forms?${current.toString()}`);
+    router.push(`/projects/${nextId}/forms`);
   };
 
   const handleCreateForm = async (e: React.FormEvent) => {

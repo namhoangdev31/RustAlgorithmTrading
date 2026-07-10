@@ -224,11 +224,11 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             </CardDescription>
           </div>
           <Button asChild>
-            <Link href="/dashboard?dialog=create">{t("projects_and_bundles.new_project")}</Link>
+            <Link href="/overview?dialog=create">{t("projects_and_bundles.new_project")}</Link>
           </Button>
         </CardHeader>
         <CardContent>
-          <form action="/dashboard" className="mb-4 flex max-w-md gap-2" method="get">
+          <form action="/overview" className="mb-4 flex max-w-md gap-2" method="get">
             <Input name="q" placeholder={t("projects_and_bundles.search_placeholder")} />
             <Button type="submit" variant="outline">{t("projects_and_bundles.filter")}</Button>
           </form>
@@ -266,12 +266,12 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                     <TableCell>
                       <div className="flex justify-end gap-2">
                         <Button asChild size="sm" variant="outline">
-                          <Link href={`/dashboard?dialog=edit&id=${project.id}`}>
+                          <Link href={`/overview?dialog=edit&id=${project.id}`}>
                             {t("table.edit")}
                           </Link>
                         </Button>
                         <Button asChild size="sm" variant="destructive">
-                          <Link href={`/dashboard?dialog=delete&id=${project.id}`}>
+                          <Link href={`/overview?dialog=delete&id=${project.id}`}>
                             {t("table.delete")}
                           </Link>
                         </Button>
@@ -285,7 +285,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             <DashboardEmptyState
               action={
                 <Button asChild>
-                  <Link href="/dashboard?dialog=create">
+                  <Link href="/overview?dialog=create">
                     <FolderPlus data-icon="inline-start" />
                     {t("projects_and_bundles.new_project")}
                   </Link>
@@ -308,7 +308,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           <ProjectForm
             action={createProjectWithBundleAction}
             organizations={overview.workspace.organizations}
-            returnTo="/dashboard"
+            returnTo="/overview"
             vercelConnected={vercelConnected}
           />
         </DialogContent>
@@ -316,13 +316,13 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
       {dialog === "edit" && selectedProject ? (
         <div className="fixed inset-0 z-[120] overflow-y-auto bg-canvas-night/70 backdrop-blur-md transition-all duration-300 animate-in fade-in flex justify-center items-start p-4 md:py-12">
-          <Link href="/dashboard" className="fixed inset-0 cursor-default" aria-hidden="true" />
+          <Link href="/overview" className="fixed inset-0 cursor-default" aria-hidden="true" />
           <div className="w-full max-w-2xl animate-in fade-in zoom-in-95 duration-200 relative z-10">
             <ProjectForm
               action={updateProjectBundleAction}
               project={selectedProject}
               organizations={overview.workspace.organizations}
-              returnTo="/dashboard"
+              returnTo="/overview"
               title={t("form.edit_title")}
               vercelConnected={vercelConnected}
             />
@@ -341,11 +341,11 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           <CardContent className="flex gap-2">
             <form action={deleteProjectAction}>
               <Input type="hidden" name="projectId" value={selectedProject.id} />
-              <Input type="hidden" name="returnTo" value="/dashboard" />
+              <Input type="hidden" name="returnTo" value="/overview" />
               <Button type="submit" variant="destructive">{t("delete_dialog.delete_project")}</Button>
             </form>
             <Button asChild variant="outline">
-              <Link href="/dashboard">{t("delete_dialog.cancel")}</Link>
+              <Link href="/overview">{t("delete_dialog.cancel")}</Link>
             </Button>
           </CardContent>
         </Card>
@@ -414,7 +414,7 @@ function OnboardingFormCard({
       <CardContent>
         <form action={createOrganizationOnboardingAction} className="grid gap-4">
           <Input type="hidden" name="accountType" value={isCorporate ? "corporate" : "developer"} />
-          <Input type="hidden" name="returnTo" value="/dashboard" />
+          <Input type="hidden" name="returnTo" value="/overview" />
           <Label className="grid gap-2 text-sm">
             {t("onboarding.organization_name")}
             <Input name="organizationName" required />

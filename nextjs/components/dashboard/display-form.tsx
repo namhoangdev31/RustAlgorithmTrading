@@ -38,7 +38,7 @@ export function DisplayForm({ initialDensity = "comfortable", initialTheme = "li
         const formData = new FormData()
         formData.append("density", value.density)
         formData.append("theme", initialTheme)
-        formData.append("returnTo", "/dashboard/settings/display")
+        formData.append("returnTo", "/settings/appearance")
 
         await updateDisplayPreferenceAction(formData)
         toast.success(t("display.success_msg"))
@@ -81,4 +81,3 @@ export function DisplayForm({ initialDensity = "comfortable", initialTheme = "li
     </form>
   )
 }
-

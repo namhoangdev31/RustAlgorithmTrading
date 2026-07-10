@@ -204,7 +204,7 @@ export default async function DeveloperPortalPage({ searchParams }: DeveloperPor
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Status:</span>
-                <Badge variant="outline">Enterprise Ready</Badge>
+                <Badge variant="outline">Control-plane status</Badge>
               </div>
             </CardContent>
           </Card>

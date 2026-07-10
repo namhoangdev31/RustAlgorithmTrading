@@ -1,23 +1,7 @@
 "use client";
 
 import { useRouter } from "@/i18n/navigation";
-import {
-  AppWindow,
-  ChevronRight,
-  FileWarning,
-  HelpCircle,
-  Laptop,
-  LayoutDashboard,
-  ListTodo,
-  MessagesSquare,
-  Moon,
-  SearchIcon,
-  Settings,
-  ShieldCheck,
-  Sun,
-  UserCog,
-  Users,
-} from "lucide-react";
+import { Activity, ChevronRight, FolderGit, Globe2, HelpCircle, Laptop, LayoutDashboard, Moon, PlugZap, Rocket, SearchIcon, Settings, Sparkles, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useTranslations } from "next-intl";
 
@@ -46,7 +30,7 @@ export function Search({ className }: { className?: string }) {
   const { open, setOpen } = useSearch();
   const { setTheme } = useTheme();
   const t = useTranslations("Dashboard.shell.search");
-  const tn = useTranslations("Dashboard.shell.nav");
+  const tn = useTranslations("Portal.navigation");
 
   function runCommand(command: () => void) {
     setOpen(false);
@@ -55,33 +39,22 @@ export function Search({ className }: { className?: string }) {
 
   const commandLinks: { heading: string; items: CommandLink[] }[] = [
     {
-      heading: t("general"),
+      heading: tn("workspace"),
       items: [
-        { title: tn("dashboard"), href: "/dashboard", icon: LayoutDashboard },
-        { title: tn("projects"), href: "/projects", icon: ListTodo },
-        { title: tn("apps"), href: "/dashboard/apps", icon: AppWindow },
-        { title: tn("chats"), href: "/dashboard/chats", icon: MessagesSquare },
-        { title: tn("users"), href: "/dashboard/users", icon: Users },
+        { title: tn("overview"), href: "/overview", icon: LayoutDashboard },
+        { title: tn("projects"), href: "/projects", icon: FolderGit },
+        { title: tn("deployments"), href: "/deployments", icon: Rocket },
+        { title: tn("domains"), href: "/domains", icon: Globe2 },
+        { title: tn("observability"), href: "/observability", icon: Activity },
+        { title: tn("integrations"), href: "/integrations", icon: PlugZap },
+        { title: tn("marketplace"), href: "/marketplace", icon: Sparkles },
       ],
     },
     {
-      heading: t("pages"),
+      heading: tn("manage"),
       items: [
-        { title: t("auth"), href: "/login", icon: ShieldCheck, parent: t("sign_in") },
-        {
-          title: t("errors"),
-          href: "/dashboard/errors/not-found",
-          icon: FileWarning,
-          parent: t("not_found"),
-        },
-      ],
-    },
-    {
-      heading: t("other"),
-      items: [
-        { title: tn("settings"), href: "/dashboard/settings", icon: Settings },
-        { title: tn("account"), href: "/dashboard/settings/account", icon: UserCog },
-        { title: tn("help_center"), href: "/dashboard/help-center", icon: HelpCircle },
+        { title: tn("settings"), href: "/settings/profile", icon: Settings },
+        { title: tn("help"), href: "/help", icon: HelpCircle },
       ],
     },
   ];
@@ -153,14 +126,14 @@ export function Search({ className }: { className?: string }) {
               {t("pending_projects")}
             </CommandItem>
             <CommandItem
-              onSelect={() => runCommand(() => router.push("/dashboard/apps?active=true"))}
+              onSelect={() => runCommand(() => router.push("/integrations?active=true"))}
             >
               {t("active_integrations")}
             </CommandItem>
           </CommandGroup>
         </CommandList>
       </CommandDialog>
-      <Link className="sr-only" href="/dashboard">{tn("dashboard")}</Link>
+      <Link className="sr-only" href="/overview">{tn("overview")}</Link>
     </>
   );
 }

@@ -1211,5 +1211,23 @@
       "error_invalid_json": "The payload is not in valid JSON format.",
       "success_message": "Operation executed successfully!"
     }
+  },
+  "Portal": {
+    "navigation": {
+      "workspace": "Workspace",
+      "manage": "Manage",
+      "overview": "Overview",
+      "projects": "Projects",
+      "deployments": "Deployments",
+      "domains": "Domains",
+      "observability": "Observability",
+      "integrations": "Integrations",
+      "lepoship": "LepoShip",
+      "marketplace": "Marketplace",
+      "activity": "Activity",
+      "settings": "Settings",
+      "help": "Help",
+      "admin": "Admin"
+    }
   }
 }

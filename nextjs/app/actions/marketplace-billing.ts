@@ -26,7 +26,7 @@ function withQueryParam(href: string, key: string, value: string) {
 export async function onboardPartnerAction(formData: FormData) {
   const user = await requireCurrentUser();
   const organizationId = readFormValue(formData, "organizationId");
-  const returnTo = readFormValue(formData, "returnTo") || "/dashboard/marketplace/developer/billing";
+  const returnTo = readFormValue(formData, "returnTo") || "/marketplace/billing";
 
   if (!organizationId) {
     const target = await localizedHref(returnTo);

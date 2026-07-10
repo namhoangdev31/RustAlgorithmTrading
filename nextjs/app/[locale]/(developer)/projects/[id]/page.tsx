@@ -65,6 +65,24 @@ function buildDetailQueryString(search: any, newParams: Record<string, string | 
   return str ? `?${str}` : "";
 }
 
+function projectRoute(projectId: string, section: string, search: any) {
+  const segmentBySection: Record<string, string> = {
+    overview: "overview",
+    deployments: "deployments",
+    domains: "domains",
+    integrations: "integrations",
+    members: "members",
+    activity: "activity",
+    settings: "settings",
+    native: search.nativeView === "routing" ? "routing" : search.nativeView === "security" ? "security" : "delivery",
+  };
+  const query = new URLSearchParams();
+  if (search.dialog) query.set("dialog", search.dialog);
+  if (search.webhook_idx) query.set("webhook_idx", search.webhook_idx);
+  const suffix = query.toString();
+  return `/projects/${projectId}/${segmentBySection[section] ?? "overview"}${suffix ? `?${suffix}` : ""}`;
+}
+
 type ProjectDetailsPageProps = {
   params: Promise<{
     locale: string;
@@ -82,6 +100,7 @@ type ProjectDetailsPageProps = {
     dstatus?: string;
     dpage?: string;
     webhook_idx?: string;
+    nativeView?: "overview" | "routing" | "mirrors" | "observability" | "security" | "operations";
   }>;
 };
 
@@ -179,7 +198,7 @@ export default async function ProjectDetailsPage({ params, searchParams }: Proje
   const t = await getTranslations("Dashboard");
   const tProjects = await getTranslations("Projects");
   const activeTab = search.tab || "overview";
-  const returnTo = `/projects/${project.id}?tab=${activeTab}`;
+  const returnTo = projectRoute(project.id, activeTab, search);
 
   const bundle = project.bundle;
 
@@ -236,7 +255,7 @@ export default async function ProjectDetailsPage({ params, searchParams }: Proje
                 <DropdownMenuItem key={org.id} asChild className="cursor-pointer text-xs font-medium py-2 rounded-md focus:bg-canvas-soft">
                   <form action={switchOrganizationAction} className="w-full">
                     <input type="hidden" name="organizationId" value={org.id} />
-                    <input type="hidden" name="returnTo" value={`/projects/${project.id}`} />
+                    <input type="hidden" name="returnTo" value={`/projects/${project.id}/overview`} />
                     <button type="submit" className="w-full text-left flex items-center justify-between cursor-pointer">
                       <div className="flex items-center gap-2">
                         <div className="size-4.5 rounded bg-canvas-soft border border-hairline flex items-center justify-center text-[8px] font-bold text-ink-secondary">
@@ -272,7 +291,7 @@ export default async function ProjectDetailsPage({ params, searchParams }: Proje
               </div>
               {data.projects.map((p) => (
                 <DropdownMenuItem key={p.id} asChild className="cursor-pointer text-xs font-medium py-2 rounded-md focus:bg-canvas-soft">
-                  <Link href={`/projects/${p.id}`} className="w-full text-left flex items-center justify-between">
+                  <Link href={`/projects/${p.id}/overview`} className="w-full text-left flex items-center justify-between">
                     <span className="text-ink-secondary font-medium">{p.name}</span>
                     {p.id === project.id && (
                       <span className="size-1.5 rounded-full bg-primary" />
@@ -287,28 +306,34 @@ export default async function ProjectDetailsPage({ params, searchParams }: Proje
 
       {/* Sub-navigation tabs */}
       <div className="flex items-center gap-6 border-b border-hairline pb-px overflow-x-auto select-none no-scrollbar">
-        <Link href={`/projects/${project.id}${buildDetailQueryString(search, { tab: "overview" })}`} className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "overview" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
+        <Link href={projectRoute(project.id, "overview", search)} className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "overview" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
           Overview
         </Link>
-        <Link href={`/projects/${project.id}${buildDetailQueryString(search, { tab: "deployments" })}`} className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "deployments" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
+        <Link href={projectRoute(project.id, "deployments", search)} className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "deployments" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
           Deployments
         </Link>
-        <Link href={`/projects/${project.id}${buildDetailQueryString(search, { tab: "domains" })}`} className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "domains" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
+        <Link href={projectRoute(project.id, "domains", search)} className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "domains" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
           Domains
         </Link>
-        <Link href={`/projects/${project.id}${buildDetailQueryString(search, { tab: "native" })}`} className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "native" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
-          Native Platform
+        <Link href={`/projects/${project.id}/delivery`} className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "native" && (search.nativeView === "mirrors" || !search.nativeView) ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
+          Delivery
         </Link>
-        <Link href={`/projects/${project.id}${buildDetailQueryString(search, { tab: "integrations" })}`} className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "integrations" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
+        <Link href={`/projects/${project.id}/routing`} className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "native" && search.nativeView === "routing" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
+          Routing
+        </Link>
+        <Link href={`/projects/${project.id}/security`} className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "native" && search.nativeView === "security" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
+          Security
+        </Link>
+        <Link href={projectRoute(project.id, "integrations", search)} className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "integrations" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
           Integrations
         </Link>
-        <Link href={`/projects/${project.id}${buildDetailQueryString(search, { tab: "members" })}`} className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "members" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
+        <Link href={projectRoute(project.id, "members", search)} className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "members" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
           Members
         </Link>
-        <Link href={`/projects/${project.id}${buildDetailQueryString(search, { tab: "activity" })}`} className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "activity" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
+        <Link href={projectRoute(project.id, "activity", search)} className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "activity" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
           Activity
         </Link>
-        <Link href={`/projects/${project.id}${buildDetailQueryString(search, { tab: "settings" })}`} className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "settings" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
+        <Link href={projectRoute(project.id, "settings", search)} className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "settings" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
           Settings
         </Link>
         {vercelConnected && (
@@ -440,7 +465,7 @@ export default async function ProjectDetailsPage({ params, searchParams }: Proje
                     This project is not linked to a Vercel deployment pipeline. Connect a Vercel project ID in project settings.
                   </p>
                   <Button asChild variant="outline" className="mt-4 h-9 text-xs font-semibold px-4 rounded-sm border-hairline-strong hover:bg-canvas-soft transition-colors text-ink">
-                    <Link href={`/projects/${project.id}?tab=settings`}>
+                    <Link href={projectRoute(project.id, "settings", search)}>
                       Configure Settings
                     </Link>
                   </Button>
@@ -665,6 +690,7 @@ export default async function ProjectDetailsPage({ params, searchParams }: Proje
             data={nativePlatformData}
             locale={locale}
             returnTo={returnTo}
+            initialSection={search.nativeView}
           />
         )}
 
@@ -698,7 +724,7 @@ export default async function ProjectDetailsPage({ params, searchParams }: Proje
                 <CardContent className="px-0 pb-0">
                   <div className="flex items-center gap-3">
                     <Link
-                      href={`/projects/${project.id}?tab=settings&dialog=edit`}
+                      href={`${projectRoute(project.id, "settings", search)}${projectRoute(project.id, "settings", search).includes("?") ? "&" : "?"}dialog=edit`}
                       className="h-9 inline-flex items-center justify-center text-xs font-semibold bg-canvas hover:bg-canvas-soft border border-hairline-strong text-ink rounded-sm px-4 shadow-light transition-colors"
                     >
                       <Edit3 className="size-3.5 mr-1.5" />
@@ -891,7 +917,7 @@ export default async function ProjectDetailsPage({ params, searchParams }: Proje
                     Deleting this project will permanently remove its build configurations, linked release tracks, and historical integrations. This action cannot be undone.
                   </p>
                   <Link
-                    href={`/projects/${project.id}?tab=settings&dialog=delete`}
+                    href={`${projectRoute(project.id, "settings", search)}${projectRoute(project.id, "settings", search).includes("?") ? "&" : "?"}dialog=delete`}
                     className="h-9 inline-flex items-center justify-center text-xs font-semibold bg-destructive hover:bg-destructive-deep text-white rounded-sm px-4 shadow-light transition-colors"
                   >
                     <Trash2 className="size-3.5 mr-1.5" />
@@ -921,12 +947,12 @@ export default async function ProjectDetailsPage({ params, searchParams }: Proje
       {/* Modal Dialog Form for Edit */}
       {search.dialog === "edit" ? (
         <div className="fixed inset-0 z-[120] overflow-y-auto bg-canvas-night/70 backdrop-blur-md transition-all duration-300 animate-in fade-in flex justify-center items-start p-4 md:py-12">
-          <Link href={`/projects/${project.id}?tab=${activeTab}`} className="fixed inset-0 cursor-default" aria-hidden="true" />
+          <Link href={projectRoute(project.id, activeTab === "native" ? "delivery" : activeTab, search)} className="fixed inset-0 cursor-default" aria-hidden="true" />
           <div className="w-full max-w-2xl animate-in fade-in zoom-in-95 duration-200 relative z-10">
             <ProjectForm
               action={updateProjectBundleAction}
               project={project}
-              returnTo={`/projects/${project.id}?tab=${activeTab}`}
+              returnTo={projectRoute(project.id, activeTab === "native" ? "delivery" : activeTab, search)}
               title={t("form.edit_title") || "Edit Project"}
               vercelConnected={vercelConnected}
             />
@@ -937,7 +963,7 @@ export default async function ProjectDetailsPage({ params, searchParams }: Proje
       {/* Modal Dialog for Delete Confirmation */}
       {search.dialog === "delete" ? (
         <div className="fixed inset-0 z-[120] overflow-y-auto bg-canvas-night/70 backdrop-blur-md transition-all duration-300 animate-in fade-in flex justify-center items-start p-4 md:py-12">
-          <Link href={`/projects/${project.id}?tab=${activeTab}`} className="fixed inset-0 cursor-default" aria-hidden="true" />
+          <Link href={projectRoute(project.id, activeTab === "native" ? "delivery" : activeTab, search)} className="fixed inset-0 cursor-default" aria-hidden="true" />
           <div className="w-full max-w-md animate-in fade-in zoom-in-95 duration-200 relative z-10">
             <DeleteConfirmationDialog
               project={project}
@@ -961,7 +987,7 @@ export default async function ProjectDetailsPage({ params, searchParams }: Proje
               return (
                 <WebhookPayloadModal
                   log={selectedLog}
-                  returnTo={`/projects/${project.id}?tab=${activeTab}`}
+                  returnTo={projectRoute(project.id, activeTab === "native" ? "delivery" : activeTab, search)}
                   locale={locale}
                 />
               );

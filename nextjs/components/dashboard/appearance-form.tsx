@@ -40,7 +40,7 @@ export function AppearanceForm({ initialTheme = "light" }: AppearanceFormProps) 
         const formData = new FormData()
         formData.append("density", "comfortable")
         formData.append("theme", value.theme)
-        formData.append("returnTo", "/dashboard/settings/appearance")
+        formData.append("returnTo", "/settings/appearance")
 
         await updateDisplayPreferenceAction(formData)
         toast.success(t("appearance.success_msg"))
@@ -149,4 +149,3 @@ export function AppearanceForm({ initialTheme = "light" }: AppearanceFormProps) 
     </form>
   )
 }
-

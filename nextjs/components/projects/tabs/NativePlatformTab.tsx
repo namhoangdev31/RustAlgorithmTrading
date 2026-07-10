@@ -40,13 +40,14 @@ type NativePlatformTabProps = {
   data: any;
   locale: string;
   returnTo?: string;
+  initialSection?: "overview" | "routing" | "mirrors" | "observability" | "security" | "operations";
 };
 
 const metricIcons = [Zap, Globe2, Database, Activity, Bug, Plug, Shield, Cloud, Terminal, Bot];
 
-export function NativePlatformTab({ project, data, locale, returnTo }: NativePlatformTabProps) {
+export function NativePlatformTab({ project, data, locale, returnTo, initialSection = "overview" }: NativePlatformTabProps) {
   const metricEntries = Object.entries(data.metrics || {});
-  const [activeSection, setActiveSection] = useState<"overview" | "routing" | "mirrors" | "observability" | "security" | "operations">("overview");
+  const [activeSection, setActiveSection] = useState<"overview" | "routing" | "mirrors" | "observability" | "security" | "operations">(initialSection);
 
   return (
     <div className="space-y-6">

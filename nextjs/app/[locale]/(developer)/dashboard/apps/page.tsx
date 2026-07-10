@@ -225,7 +225,7 @@ export default async function AppsPage({ searchParams }: AppsPageProps) {
       </div>
 
       <div className="my-4 flex items-end justify-between gap-4 sm:my-0 sm:items-center">
-        <form action="/dashboard/apps" className="flex flex-col gap-4 sm:my-4 sm:flex-row" method="get">
+        <form action="/integrations" className="flex flex-col gap-4 sm:my-4 sm:flex-row" method="get">
           <Input
             className="h-9 w-40 lg:w-[15.625rem]"
             defaultValue={params.filter ?? params.q ?? ""}
@@ -248,7 +248,7 @@ export default async function AppsPage({ searchParams }: AppsPageProps) {
           </Button>
         </form>
 
-        <form action="/dashboard/apps" method="get">
+        <form action="/integrations" method="get">
           <Input name="filter" type="hidden" value={params.filter ?? params.q ?? ""} />
           <Input name="type" type="hidden" value={appType} />
           <Input name="sort" type="hidden" value={sort === "asc" ? "desc" : "asc"} />
@@ -276,7 +276,7 @@ export default async function AppsPage({ searchParams }: AppsPageProps) {
                 {app.integration ? (
                   <form action={toggleIntegrationAction}>
                     <Input name="integrationId" type="hidden" value={app.integration.id} />
-                    <Input name="returnTo" type="hidden" value="/dashboard/apps" />
+                    <Input name="returnTo" type="hidden" value="/integrations" />
                     <Button
                       className={cn(
                         app.connected &&
@@ -291,7 +291,7 @@ export default async function AppsPage({ searchParams }: AppsPageProps) {
                   </form>
                 ) : (
                   <form action={upsertIntegrationAction}>
-                    <Input name="returnTo" type="hidden" value="/dashboard/apps" />
+                    <Input name="returnTo" type="hidden" value="/integrations" />
                     <Input name="bundleId" type="hidden" value={firstBundle?.id ?? ""} />
                     <Input name="integrationType" type="hidden" value={app.key} />
                     <Input name="displayName" type="hidden" value={app.name} />
@@ -309,13 +309,13 @@ export default async function AppsPage({ searchParams }: AppsPageProps) {
               {app.integration ? (
                 <div className="mt-4 flex gap-2">
                   <Button asChild size="sm" variant="ghost">
-                    <Link href={`/dashboard/apps?dialog=edit&id=${app.integration.id}`}>
+                    <Link href={`/integrations?dialog=edit&id=${app.integration.id}`}>
                       {t("edit_btn")}
                     </Link>
                   </Button>
                   <form action={deleteIntegrationAction}>
                     <Input name="integrationId" type="hidden" value={app.integration.id} />
-                    <Input name="returnTo" type="hidden" value="/dashboard/apps" />
+                    <Input name="returnTo" type="hidden" value="/integrations" />
                     <Button size="sm" type="submit" variant="ghost">
                       {t("remove_btn")}
                     </Button>
@@ -331,7 +331,7 @@ export default async function AppsPage({ searchParams }: AppsPageProps) {
         <IntegrationForm
           action={upsertIntegrationAction}
           bundles={data.bundles}
-          returnTo="/dashboard/apps"
+          returnTo="/integrations"
           title={t("connect_app_title")}
           t={t}
         />
@@ -342,7 +342,7 @@ export default async function AppsPage({ searchParams }: AppsPageProps) {
           action={upsertIntegrationAction}
           bundles={data.bundles}
           integration={selectedIntegration}
-          returnTo="/dashboard/apps"
+          returnTo="/integrations"
           title={t("edit_integration_title")}
           t={t}
         />

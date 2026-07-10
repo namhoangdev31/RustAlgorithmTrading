@@ -59,7 +59,7 @@ export function OrganizationForm({ organization, canDelete }: OrganizationFormPr
         formData.append("organizationId", organization.id)
         formData.append("type", organization.type)
         formData.append("name", value.name)
-        formData.append("returnTo", "/dashboard/settings/account")
+        formData.append("returnTo", "/settings/workspace")
 
         await updateOrganizationAction(formData)
         toast.success(t("account.org_form.success_msg"))
@@ -76,7 +76,7 @@ export function OrganizationForm({ organization, canDelete }: OrganizationFormPr
       try {
         const formData = new FormData()
         formData.append("organizationId", organization.id)
-        formData.append("returnTo", "/dashboard/settings/account")
+        formData.append("returnTo", "/settings/workspace")
 
         await deleteOrganizationAction(formData)
         toast.success(t("account.org_form.delete_org_success_msg"))
@@ -158,4 +158,3 @@ export function OrganizationForm({ organization, canDelete }: OrganizationFormPr
     </div>
   )
 }
-

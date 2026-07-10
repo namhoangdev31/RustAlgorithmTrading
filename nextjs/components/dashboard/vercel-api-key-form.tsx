@@ -45,7 +45,7 @@ export function VercelApiKeyForm({
           </Alert>
         ) : null}
         <form action={saveVercelApiKeyAction} className="grid gap-4">
-          <input type="hidden" name="returnTo" value="/dashboard/settings" />
+          <input type="hidden" name="returnTo" value="/settings/profile" />
           <div className="grid gap-2">
             <div className="flex items-center gap-2">
               <Label htmlFor="vercelApiKey">API Key</Label>
@@ -84,11 +84,11 @@ export function VercelApiKeyForm({
         {hasSavedKey ? (
           <div className="mt-3 flex flex-wrap gap-2">
             <form action={testVercelApiKeyAction}>
-              <input type="hidden" name="returnTo" value="/dashboard/settings" />
+              <input type="hidden" name="returnTo" value="/settings/profile" />
               <Button type="submit" variant="outline">Test Connection</Button>
             </form>
             <form action={deleteVercelApiKeyAction}>
-              <input type="hidden" name="returnTo" value="/dashboard/settings" />
+              <input type="hidden" name="returnTo" value="/settings/profile" />
               <Button type="submit" variant="destructive">Delete Key</Button>
             </form>
           </div>

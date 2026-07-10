@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, Key, Monitor, Palette, UserCog, Wrench, Shield } from "lucide-react";
+import { Bell, Key, Palette, UserCog, Users, Wrench, Shield } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { Link, useRouter, usePathname } from "@/i18n/navigation";
@@ -20,14 +20,14 @@ export function SettingsNav() {
   const t = useTranslations("Settings.nav");
 
   const settingsLinks = [
-    { label: t("profile"), href: "/dashboard/settings", Icon: UserCog },
-    { label: t("account"), href: "/dashboard/settings/account", Icon: Wrench },
-    { label: t("appearance"), href: "/dashboard/settings/appearance", Icon: Palette },
-    { label: t("notifications"), href: "/dashboard/settings/notifications", Icon: Bell },
-    { label: t("display"), href: "/dashboard/settings/display", Icon: Monitor },
-    { label: t("vercel"), href: "/dashboard/settings?vercel=configure", Icon: Key },
-    { label: "Directory Sync (SCIM)", href: "/dashboard/settings/directory", Icon: Shield },
-    { label: "Workspace Audit", href: "/dashboard/settings/audit", Icon: Shield },
+    { label: t("profile"), href: "/settings/profile", Icon: UserCog },
+    { label: t("account"), href: "/settings/workspace", Icon: Wrench },
+    { label: "Members", href: "/settings/members", Icon: Users },
+    { label: t("appearance"), href: "/settings/appearance", Icon: Palette },
+    { label: t("notifications"), href: "/settings/notifications", Icon: Bell },
+    { label: t("vercel"), href: "/settings/profile?vercel=configure", Icon: Key },
+    { label: "Directory Sync (SCIM)", href: "/settings/directory", Icon: Shield },
+    { label: "Workspace Audit", href: "/settings/audit", Icon: Shield },
   ] as const;
 
   return (

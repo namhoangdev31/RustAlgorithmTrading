@@ -3,6 +3,7 @@
 import * as React from "react";
 import {
   AudioWaveform,
+  Activity,
   BadgeCheck,
   Bell,
   ChevronsUpDown,
@@ -23,6 +24,10 @@ import {
   FolderGit,
   Sparkles,
   Milestone,
+  Globe2,
+  PlugZap,
+  Rocket,
+  ShieldAlert,
   Users,
 } from "lucide-react";
 import { usePathname } from "@/i18n/navigation";
@@ -73,6 +78,7 @@ type AppSidebarProps = {
     fullName: string | null;
     provider: string;
     photoUrl: string | null;
+    userType?: string;
   };
   organizations: {
     id: string;
@@ -111,40 +117,31 @@ export function AppSidebar({
   collapsible = "icon",
   variant = "sidebar",
 }: AppSidebarProps) {
-  const t = useTranslations("Dashboard.shell");
+  const t = useTranslations("Portal");
 
   const navGroups: NavGroup[] = [
     {
-      title: t("nav.general"),
+      title: t("navigation.workspace"),
       items: [
-        { title: t("nav.dashboard"), url: "/dashboard", icon: LayoutDashboard },
-        {
-          title: t("nav.projects"),
-          icon: FolderGit,
-          items: [
-            { title: t("nav.vercel_projects"), url: "/projects", icon: FolderGit },
-            { title: t("nav.lepoship_projects"), url: "/lepoship", icon: FolderGit },
-          ],
-        },
-        { title: t("nav.users"), url: "/dashboard/users", icon: Users },
+        { title: t("navigation.overview"), url: "/overview", icon: LayoutDashboard },
+        { title: t("navigation.projects"), url: "/projects", icon: FolderGit },
+        { title: t("navigation.deployments"), url: "/deployments", icon: Rocket },
+        { title: t("navigation.domains"), url: "/domains", icon: Globe2 },
+        { title: t("navigation.observability"), url: "/observability", icon: Activity },
+        { title: t("navigation.integrations"), url: "/integrations", icon: PlugZap },
+        { title: t("navigation.lepoship"), url: "/lepoship", icon: Milestone },
+        { title: t("navigation.marketplace"), url: "/marketplace", icon: Sparkles },
+        { title: t("navigation.activity"), url: "/activity", icon: Activity },
       ],
     },
     {
-      title: t("nav.other"),
+      title: t("navigation.manage"),
       items: [
-        {
-          title: t("nav.settings"),
-          icon: Settings,
-          items: [
-            { title: t("nav.profile"), url: "/dashboard/settings", icon: UserCog },
-            { title: t("nav.account"), url: "/dashboard/settings/account", icon: Wrench },
-            { title: t("nav.appearance"), url: "/dashboard/settings/appearance", icon: Palette },
-            { title: t("nav.notifications"), url: "/dashboard/settings/notifications", icon: Bell },
-            { title: t("nav.display"), url: "/dashboard/settings/display", icon: Monitor },
-            { title: t("nav.vercel"), url: "/dashboard/settings?vercel=configure", icon: Key },
-          ],
-        },
-        { title: t("nav.help_center"), url: "/dashboard/help-center", icon: HelpCircle },
+        { title: t("navigation.settings"), url: "/settings/profile", icon: Settings },
+        { title: t("navigation.help"), url: "/help", icon: HelpCircle },
+        ...(user.userType === "admin"
+          ? [{ title: t("navigation.admin"), url: "/admin/risk-limits", icon: ShieldAlert }]
+          : []),
       ],
     },
   ];
@@ -403,19 +400,19 @@ function NavUser({ user }: Pick<AppSidebarProps, "user">) {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem asChild>
-                <Link href="/dashboard/settings/account">
+                <Link href="/settings/workspace">
                   <BadgeCheck data-icon="inline-start" />
                   {t("user_menu.account")}
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href="/dashboard/settings">
+                <Link href="/settings/profile">
                   <CreditCard data-icon="inline-start" />
                   {t("user_menu.billing")}
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href="/dashboard/settings/notifications">
+                <Link href="/settings/notifications">
                   <Bell data-icon="inline-start" />
                   {t("user_menu.notifications")}
                 </Link>

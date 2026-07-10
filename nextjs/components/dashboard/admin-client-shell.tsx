@@ -17,6 +17,7 @@ type AdminClientShellProps = {
     fullName: string | null;
     provider: string;
     photoUrl: string | null;
+    userType?: string;
   };
   organizations: {
     id: string;
@@ -44,16 +45,6 @@ export function AdminClientShell({
   defaultOpen,
   children,
 }: AdminClientShellProps) {
-  const [mounted, setMounted] = React.useState(false);
-
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return null;
-  }
-
   return (
     <LayoutPreferencesProvider>
       <SearchProvider>

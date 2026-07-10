@@ -63,19 +63,19 @@ export function ProfileDropdown({ user }: ProfileDropdownProps) {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
-            <Link href="/dashboard/settings">
+            <Link href="/settings/profile">
               {t("user_menu.profile")}
               <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link href="/dashboard/settings/account">
+            <Link href="/settings/workspace">
               {t("user_menu.billing")}
               <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link href="/dashboard/settings">
+            <Link href="/settings/profile">
               {t("user_menu.account")}
               <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
             </Link>

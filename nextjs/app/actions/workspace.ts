@@ -84,7 +84,7 @@ export async function inviteWorkspaceMemberAction(formData: FormData) {
   const organizationId = readFormValue(formData, "organizationId");
   const email = readFormValue(formData, "email").toLowerCase();
   const role = readMemberRole(formData);
-  const returnTo = await readReturnTo(formData, "/dashboard/settings/account");
+  const returnTo = await readReturnTo(formData, "/settings/workspace");
 
   if (!organizationId || !email) {
     redirect(withQueryParam(returnTo, "workspace", "missing_member"));
@@ -145,7 +145,7 @@ export async function inviteWorkspaceMemberAction(formData: FormData) {
     metadata: { memberId: invitedUser.id, role },
   });
 
-  revalidatePath("/dashboard/settings/account");
+  revalidatePath("/settings/workspace");
   redirect(withQueryParam(returnTo, "workspace", "member_invited"));
 }
 
@@ -154,7 +154,7 @@ export async function updateWorkspaceMemberRoleAction(formData: FormData) {
   const organizationId = readFormValue(formData, "organizationId");
   const memberId = readFormValue(formData, "memberId");
   const role = readMemberRole(formData);
-  const returnTo = await readReturnTo(formData, "/dashboard/settings/account");
+  const returnTo = await readReturnTo(formData, "/settings/workspace");
 
   if (!organizationId || !memberId) {
     redirect(withQueryParam(returnTo, "workspace", "missing_member"));
@@ -193,7 +193,7 @@ export async function updateWorkspaceMemberRoleAction(formData: FormData) {
     metadata: { memberId, role },
   });
 
-  revalidatePath("/dashboard/settings/account");
+  revalidatePath("/settings/workspace");
   redirect(withQueryParam(returnTo, "workspace", "role_updated"));
 }
 
@@ -201,7 +201,7 @@ export async function removeWorkspaceMemberAction(formData: FormData) {
   const user = await requireCurrentUser();
   const organizationId = readFormValue(formData, "organizationId");
   const memberId = readFormValue(formData, "memberId");
-  const returnTo = await readReturnTo(formData, "/dashboard/settings/account");
+  const returnTo = await readReturnTo(formData, "/settings/workspace");
 
   if (!organizationId || !memberId) {
     redirect(withQueryParam(returnTo, "workspace", "missing_member"));
@@ -239,7 +239,7 @@ export async function removeWorkspaceMemberAction(formData: FormData) {
     metadata: { memberId },
   });
 
-  revalidatePath("/dashboard/settings/account");
+  revalidatePath("/settings/workspace");
   redirect(withQueryParam(returnTo, "workspace", "member_removed"));
 }
 
@@ -247,7 +247,7 @@ export async function transferWorkspaceOwnershipAction(formData: FormData) {
   const user = await requireCurrentUser();
   const organizationId = readFormValue(formData, "organizationId");
   const email = readFormValue(formData, "email").toLowerCase();
-  const returnTo = await readReturnTo(formData, "/dashboard/settings/account");
+  const returnTo = await readReturnTo(formData, "/settings/workspace");
 
   if (!organizationId || !email) {
     redirect(withQueryParam(returnTo, "workspace", "missing_owner"));
@@ -332,7 +332,7 @@ export async function transferWorkspaceOwnershipAction(formData: FormData) {
     metadata: { previousOwnerId: user.id },
   });
 
-  revalidatePath("/dashboard");
-  revalidatePath("/dashboard/settings/account");
+  revalidatePath("/overview");
+  revalidatePath("/settings/workspace");
   redirect(withQueryParam(returnTo, "workspace", "ownership_transferred"));
 }

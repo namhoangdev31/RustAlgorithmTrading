@@ -1211,5 +1211,23 @@
       "error_invalid_json": "Dữ liệu payload không đúng định dạng JSON.",
       "success_message": "Thao tác thực hiện thành công!"
     }
+  },
+  "Portal": {
+    "navigation": {
+      "workspace": "Không gian làm việc",
+      "manage": "Quản lý",
+      "overview": "Tổng quan",
+      "projects": "Dự án",
+      "deployments": "Triển khai",
+      "domains": "Tên miền",
+      "observability": "Quan sát hệ thống",
+      "integrations": "Tích hợp",
+      "lepoship": "LepoShip",
+      "marketplace": "Chợ ứng dụng",
+      "activity": "Hoạt động",
+      "settings": "Cài đặt",
+      "help": "Trợ giúp",
+      "admin": "Quản trị"
+    }
   }
 }

@@ -113,10 +113,7 @@ export function SpeedInsightsClient({ projects, selectedProjectId, speedData }: 
     const nextId = e.target.value;
     setActiveProjectId(nextId);
     
-    // Build query params
-    const current = new URLSearchParams(Array.from(searchParams.entries()));
-    current.set("projectId", nextId);
-    router.push(`/dashboard/speed-insights?${current.toString()}`);
+    router.push(`/projects/${nextId}/observability`);
   };
 
   const getScoreColor = (score: number) => {

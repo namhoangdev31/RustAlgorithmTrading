@@ -65,7 +65,7 @@ export async function createFormAction(projectId: string, name: string) {
     },
   });
 
-  revalidatePath("/dashboard/forms");
+  revalidatePath(`/projects/${projectId}/forms`);
   return {
     success: true,
     form: {
@@ -110,7 +110,7 @@ export async function updateFormSettingsAction(
     },
   });
 
-  revalidatePath("/dashboard/forms");
+  revalidatePath(`/projects/${form.projectId}/forms`);
   return {
     success: true,
     form: {
@@ -142,6 +142,6 @@ export async function deleteFormAction(formId: string) {
     where: { id: formId },
   });
 
-  revalidatePath("/dashboard/forms");
+  revalidatePath(`/projects/${form.projectId}/forms`);
   return { success: true };
 }

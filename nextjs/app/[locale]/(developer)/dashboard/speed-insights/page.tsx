@@ -6,6 +6,7 @@ import { Link } from "@/i18n/navigation";
 import { AlertCircle, FolderPlus } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
 
 type PageProps = {
   searchParams: Promise<{
@@ -29,16 +30,14 @@ export default async function SpeedInsightsPage({ searchParams }: PageProps) {
 
   if (projects.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-center gap-4">
-        <FolderPlus className="size-16 text-slate-700 animate-pulse" />
-        <h2 className="text-xl font-bold text-slate-100">No Projects Found</h2>
-        <p className="text-xs text-slate-400 max-w-sm">
-          You need to create at least one project before you can view speed insights and observability metrics.
-        </p>
-        <Button asChild>
-          <Link href="/dashboard?dialog=create">Create Project</Link>
-        </Button>
-      </div>
+      <Empty>
+        <EmptyHeader>
+          <EmptyMedia variant="icon"><FolderPlus /></EmptyMedia>
+          <EmptyTitle>No projects found</EmptyTitle>
+          <EmptyDescription>Create a project before viewing performance and observability data.</EmptyDescription>
+        </EmptyHeader>
+        <EmptyContent><Button asChild><Link href="/overview?dialog=create">Create project</Link></Button></EmptyContent>
+      </Empty>
     );
   }
 
@@ -51,11 +50,11 @@ export default async function SpeedInsightsPage({ searchParams }: PageProps) {
     <div className="flex flex-col gap-4">
       {/* Page Title */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-100">Speed Insights</h1>
+        <h1 className="text-2xl font-medium tracking-tight">Observability</h1>
       </div>
 
       {speedData.error && (
-        <Alert variant="destructive" className="bg-destructive/5 border-destructive/20 text-destructive rounded-xl animate-in slide-in-from-top-2">
+        <Alert variant="destructive" className="border-destructive/20 bg-destructive/5">
           <AlertCircle className="size-4" />
           <AlertTitle className="font-bold text-xs uppercase tracking-wider">Error Loading Observability Data</AlertTitle>
           <AlertDescription className="text-xs font-semibold mt-1">{speedData.error}</AlertDescription>

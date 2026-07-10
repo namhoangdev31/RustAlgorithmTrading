@@ -42,8 +42,6 @@ import {
 import { getProjectBundleData } from "@/lib/server/admin-data";
 import { requireCurrentUser } from "@/lib/server/current-user";
 import { getTranslations } from "next-intl/server";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import { getGithubOverviewData } from "@/lib/server/github";
 import { IntegrationsTab } from "@/components/projects/tabs/IntegrationsTab";
 import { ActivityTab } from "@/components/projects/tabs/ActivityTab";
@@ -115,17 +113,6 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
   const user = await requireCurrentUser();
   const data = await getProjectBundleData(user.id, search);
   const github = await getGithubOverviewData();
-
-  // Auto-connect to GitHub if disconnected and not explicitly opted out
-  if (!github.connected) {
-    const cookieStore = await cookies();
-    const isDisconnected = cookieStore.get("github_disconnected")?.value === "true";
-    const hasGithubParam = search.github; // If github param is present (e.g. error, callback redirect)
-
-    if (!isDisconnected && !hasGithubParam) {
-      redirect(`/api/github/connect?returnTo=${encodeURIComponent("/projects?tab=overview")}`);
-    }
-  }
 
   // Check Vercel key connection
   const vercelConnected = await hasVercelApiKey(user.id);
@@ -233,22 +220,22 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
 
       {/* Sub-navigation tabs */}
       <div className="flex items-center gap-6 border-b border-hairline pb-px overflow-x-auto select-none no-scrollbar">
-        <Link href={`/projects${buildQueryString(search, { tab: "overview" })}`} className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "overview" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
+        <Link href="/projects" className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "overview" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
           Overview
         </Link>
-        <Link href={`/projects${buildQueryString(search, { tab: "deployments" })}`} className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "deployments" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
+        <Link href="/deployments" className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "deployments" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
           Deployments
         </Link>
-        <Link href={`/projects${buildQueryString(search, { tab: "domains" })}`} className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "domains" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
+        <Link href="/domains" className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "domains" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
           Domains
         </Link>
-        <Link href={`/projects${buildQueryString(search, { tab: "integrations" })}`} className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "integrations" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
+        <Link href="/integrations" className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "integrations" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
           Integrations
         </Link>
-        <Link href={`/projects${buildQueryString(search, { tab: "activity" })}`} className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "activity" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
+        <Link href="/activity" className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "activity" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
           Activity
         </Link>
-        <Link href={`/projects${buildQueryString(search, { tab: "settings" })}`} className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "settings" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
+        <Link href="/settings/profile" className={`pb-3 text-sm font-medium transition-all shrink-0 border-b ${activeTab === "settings" ? "border-ink text-ink" : "border-transparent text-ink-mute hover:text-ink-secondary hover:border-hairline"}`}>
           Settings
         </Link>
       </div>
@@ -302,7 +289,7 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
             </Button>
           ) : (
             <form action={connectGithubAction}>
-              <input type="hidden" name="returnTo" value={`${projectsPath}?tab=overview`} />
+              <input type="hidden" name="returnTo" value={projectsPath} />
               <Button type="submit" className="h-10 text-xs font-semibold bg-primary hover:bg-primary-deep text-primary-foreground transition-colors rounded-sm px-5 shadow-light cursor-pointer shrink-0">
                 <GithubIcon className="size-4 mr-1.5" />
                 Connect GitHub

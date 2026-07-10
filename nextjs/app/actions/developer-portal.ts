@@ -23,7 +23,7 @@ export async function registerDeveloperProfileAction(formData: FormData) {
   const companyName = readFormValue(formData, "companyName");
   const developerEmail = readFormValue(formData, "developerEmail") || user.email || "";
   const websiteUrl = readFormValue(formData, "websiteUrl");
-  const returnTo = readFormValue(formData, "returnTo") || "/dashboard/marketplace/developer";
+  const returnTo = readFormValue(formData, "returnTo") || "/marketplace";
 
   try {
     if (!companyName) {
@@ -59,7 +59,7 @@ export async function registerIntegrationAction(formData: FormData) {
   const description = readFormValue(formData, "description");
   const mode = readFormValue(formData, "mode") || "live";
   const webhookUrl = readFormValue(formData, "webhookUrl");
-  const returnTo = readFormValue(formData, "returnTo") || "/dashboard/marketplace/developer";
+  const returnTo = readFormValue(formData, "returnTo") || "/marketplace";
 
   try {
     if (!integrationKey || !displayName) {
@@ -111,7 +111,7 @@ export async function runCompatibilityTestAction(formData: FormData) {
   const user = await requireCurrentUser();
   const integrationId = readFormValue(formData, "integrationId");
   const webhookUrl = readFormValue(formData, "webhookUrl");
-  const returnTo = readFormValue(formData, "returnTo") || "/dashboard/marketplace/developer";
+  const returnTo = readFormValue(formData, "returnTo") || "/marketplace";
 
   try {
     if (!webhookUrl) {
@@ -219,7 +219,7 @@ export async function runCompatibilityTestAction(formData: FormData) {
 export async function publishMarketplaceIntegrationAction(formData: FormData) {
   const user = await requireCurrentUser();
   const integrationId = readFormValue(formData, "integrationId");
-  const returnTo = readFormValue(formData, "returnTo") || "/dashboard/marketplace/developer";
+  const returnTo = readFormValue(formData, "returnTo") || "/marketplace";
 
   try {
     if (!integrationId) {
@@ -265,7 +265,7 @@ export async function updateIntegrationReleaseAction(formData: FormData) {
   const integrationId = readFormValue(formData, "integrationId");
   const version = readFormValue(formData, "version") || "0.1.0";
   const releaseNotes = readFormValue(formData, "releaseNotes");
-  const returnTo = readFormValue(formData, "returnTo") || "/dashboard/marketplace/developer";
+  const returnTo = readFormValue(formData, "returnTo") || "/marketplace";
 
   try {
     if (!integrationId) {
