@@ -4,7 +4,6 @@ import { AlertCircle } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
 export function DeleteConfirmationDialog({
@@ -20,14 +19,14 @@ export function DeleteConfirmationDialog({
 }) {
   const t = useTranslations("Dashboard");
   return (
-    <Card className="border border-hairline shadow-dark bg-canvas overflow-hidden rounded-xl max-w-md w-full mx-auto animate-in fade-in zoom-in-95 duration-200 pb-2">
-      <CardHeader className="px-6 pt-6 pb-4 bg-canvas-soft/60 border-b border-hairline-cool">
-        <CardTitle className="text-lg font-bold text-destructive flex items-center gap-2">
+    <div className="flex min-h-0 flex-1 flex-col bg-canvas">
+      <div className="shrink-0 border-b border-hairline bg-canvas-soft/60 px-6 py-5">
+        <h2 className="flex items-center gap-2 pr-10 text-lg font-semibold text-destructive">
           <AlertCircle className="size-5 shrink-0" />
           <span className="truncate">{t("delete_dialog.title", { name: project.name }) || `Delete ${project.name}`}</span>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="pt-6 space-y-4">
+        </h2>
+      </div>
+      <div className="space-y-4 px-6 py-5">
         <p className="text-sm text-ink-mute leading-relaxed">
           {t("delete_dialog.description") || "Are you sure you want to delete this project? This action cannot be undone."}
         </p>
@@ -42,7 +41,7 @@ export function DeleteConfirmationDialog({
             {t("delete_dialog.delete_project") || "Delete Project"}
           </Button>
         </form>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

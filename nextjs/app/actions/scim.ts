@@ -31,7 +31,7 @@ export async function getScimConfigAction(organizationId: string) {
   return {
     success: true,
     configured: connection?.status === "active",
-    scimBaseUrl: connection ? `/api/scim/v2?organizationId=${organizationId}` : null,
+    scimBaseUrl: connection ? "/api/scim/v2" : null,
     scimToken: null,
     updatedAt: connection?.updatedAt.toISOString() || null,
     mappings: mappings.map((m) => ({
@@ -90,7 +90,7 @@ export async function generateScimCredentialsAction(organizationId: string) {
 
   return {
     success: true,
-    scimBaseUrl: `/api/scim/v2?organizationId=${organizationId}`,
+    scimBaseUrl: "/api/scim/v2",
     scimToken: rawToken,
   };
 }

@@ -32,6 +32,7 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import { Input } from "@/components/ui/input";
+import { PortalDialog } from "@/components/portal/PortalDialog";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -567,11 +568,8 @@ export function VercelDeploymentsTab({
 
       {/* Real-time Logs Terminal Overlay */}
       {isOpenLogs && (
-        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-canvas-night/70 backdrop-blur-md transition-all duration-300 animate-in fade-in">
-          {/* Backdrop click to close */}
-          <div className="absolute inset-0 cursor-default" onClick={() => setIsOpenLogs(false)} />
-          
-          <div className="w-full max-w-4xl bg-canvas border border-hairline rounded-lg shadow-dark relative z-10 overflow-hidden flex flex-col h-[600px] animate-in zoom-in-95 duration-200">
+        <PortalDialog open onOpenChange={setIsOpenLogs} className="max-w-4xl p-0">
+          <div className="flex h-[min(600px,calc(100dvh-4rem))] flex-col overflow-hidden bg-canvas">
             {/* Modal Header */}
             <div className="px-5 py-4 border-b border-hairline bg-canvas-soft/40 flex items-center justify-between">
               <div>
@@ -658,16 +656,13 @@ export function VercelDeploymentsTab({
               )}
             </div>
           </div>
-        </div>
+        </PortalDialog>
       )}
 
       {/* Checks Modal Overlay */}
       {isOpenChecks && (
-        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-canvas-night/70 backdrop-blur-md transition-all duration-300 animate-in fade-in">
-          {/* Backdrop click to close */}
-          <div className="absolute inset-0 cursor-default" onClick={() => setIsOpenChecks(false)} />
-          
-          <div className="w-full max-w-2xl bg-canvas border border-hairline rounded-lg shadow-dark relative z-10 overflow-hidden flex flex-col h-[500px] animate-in zoom-in-95 duration-200">
+        <PortalDialog open onOpenChange={setIsOpenChecks} className="max-w-2xl p-0">
+          <div className="flex h-[min(500px,calc(100dvh-4rem))] flex-col overflow-hidden bg-canvas">
             {/* Modal Header */}
             <div className="px-5 py-4 border-b border-hairline bg-canvas-soft/40 flex items-center justify-between">
               <div>
@@ -743,16 +738,13 @@ export function VercelDeploymentsTab({
               )}
             </div>
           </div>
-        </div>
+        </PortalDialog>
       )}
 
       {/* Custom Alert Dialog for canceling builds */}
       {confirmCancelDplId && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-canvas-night/70 backdrop-blur-md transition-all duration-300 animate-in fade-in">
-          {/* Backdrop click to close */}
-          <div className="absolute inset-0 cursor-default" onClick={() => setConfirmCancelDplId(null)} />
-          
-          <div className="w-full max-w-md bg-canvas border border-hairline rounded-lg shadow-dark relative z-10 overflow-hidden p-5 space-y-4 animate-in zoom-in-95 duration-200">
+        <PortalDialog open onOpenChange={(open) => !open && setConfirmCancelDplId(null)} className="max-w-md p-5">
+          <div className="space-y-4">
             <div className="flex items-center gap-3 text-destructive">
               <AlertCircle className="size-5 animate-bounce" />
               <h3 className="text-sm font-bold text-ink">
@@ -790,16 +782,13 @@ export function VercelDeploymentsTab({
               </form>
             </div>
           </div>
-        </div>
+        </PortalDialog>
       )}
 
       {/* Custom Prompt Dialog for promoting/rolling back deployments */}
       {promptPromoteDpl && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-canvas-night/70 backdrop-blur-md transition-all duration-300 animate-in fade-in">
-          {/* Backdrop click to close */}
-          <div className="absolute inset-0 cursor-default" onClick={() => setPromptPromoteDpl(null)} />
-          
-          <div className="w-full max-w-md bg-canvas border border-hairline rounded-lg shadow-dark relative z-10 overflow-hidden p-5 space-y-4 animate-in zoom-in-95 duration-200">
+        <PortalDialog open onOpenChange={(open) => !open && setPromptPromoteDpl(null)} className="max-w-md p-5">
+          <div className="space-y-4">
             <div className="flex items-center gap-3 text-amber-500">
               <RotateCcw className="size-5" />
               <h3 className="text-sm font-bold text-ink">
@@ -852,7 +841,7 @@ export function VercelDeploymentsTab({
               </Button>
             </div>
           </div>
-        </div>
+        </PortalDialog>
       )}
     </>
   );

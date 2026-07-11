@@ -15,6 +15,7 @@ import { getGithubOverviewData } from "@/lib/server/github";
 import { OverviewTab } from "@/components/projects/tabs/OverviewTab";
 import { ProjectForm } from "@/components/projects/dialogs/ProjectForm";
 import { DeleteConfirmationDialog } from "@/components/projects/dialogs/DeleteConfirmationDialog";
+import { RouteDialog } from "@/components/portal/RouteDialog";
 import { hasVercelApiKey } from "@/lib/server/vercel";
 
 type ProjectsPageProps = {
@@ -197,51 +198,42 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
 
       {/* Modal Dialog Form for Create */}
       {search.dialog === "create" ? (
-        <div className="fixed inset-0 z-[120] overflow-y-auto bg-canvas-night/70 backdrop-blur-md transition-all duration-300 animate-in fade-in flex justify-center items-start p-4 md:py-12">
-          <Link href={projectsPath} className="fixed inset-0 cursor-default" aria-hidden="true" />
-          <div className="w-full max-w-2xl animate-in fade-in zoom-in-95 duration-200 relative z-10">
-            <ProjectForm
-              action={createProjectWithBundleAction}
-              organizations={data.workspace.organizations}
-              activeOrganizationId={data.workspace.activeOrganization?.id}
-              returnTo={projectsPath}
-              title={t("form.create_title") || "Create Project"}
-              vercelConnected={vercelConnected}
-              initialName={search.repoName}
-              initialDescription={search.repoDescription}
-            />
-          </div>
-        </div>
+        <RouteDialog open returnTo={projectsPath}>
+          <ProjectForm
+            action={createProjectWithBundleAction}
+            organizations={data.workspace.organizations}
+            activeOrganizationId={data.workspace.activeOrganization?.id}
+            returnTo={projectsPath}
+            title={t("form.create_title") || "Create Project"}
+            vercelConnected={vercelConnected}
+            initialName={search.repoName}
+            initialDescription={search.repoDescription}
+          />
+        </RouteDialog>
       ) : null}
 
       {/* Modal Dialog Form for Edit */}
       {search.dialog === "edit" && selectedProject ? (
-        <div className="fixed inset-0 z-[120] overflow-y-auto bg-canvas-night/70 backdrop-blur-md transition-all duration-300 animate-in fade-in flex justify-center items-start p-4 md:py-12">
-          <Link href={projectsPath} className="fixed inset-0 cursor-default" aria-hidden="true" />
-          <div className="w-full max-w-2xl animate-in fade-in zoom-in-95 duration-200 relative z-10">
-            <ProjectForm
-              action={updateProjectBundleAction}
-              project={selectedProject}
-              returnTo={projectsPath}
-              title={t("form.edit_title") || "Edit Project"}
-              vercelConnected={vercelConnected}
-            />
-          </div>
-        </div>
+        <RouteDialog open returnTo={projectsPath}>
+          <ProjectForm
+            action={updateProjectBundleAction}
+            project={selectedProject}
+            returnTo={projectsPath}
+            title={t("form.edit_title") || "Edit Project"}
+            vercelConnected={vercelConnected}
+          />
+        </RouteDialog>
       ) : null}
 
       {/* Modal Dialog for Delete Confirmation */}
       {search.dialog === "delete" && selectedProject ? (
-        <div className="fixed inset-0 z-[120] overflow-y-auto bg-canvas-night/70 backdrop-blur-md transition-all duration-300 animate-in fade-in flex justify-center items-start p-4 md:py-12">
-          <Link href={projectsPath} className="fixed inset-0 cursor-default" aria-hidden="true" />
-          <div className="w-full max-w-md animate-in fade-in zoom-in-95 duration-200 relative z-10">
-            <DeleteConfirmationDialog
-              project={selectedProject}
-              action={deleteProjectAction}
-              returnTo={projectsPath}
-            />
-          </div>
-        </div>
+        <RouteDialog open returnTo={projectsPath} className="max-w-md">
+          <DeleteConfirmationDialog
+            project={selectedProject}
+            action={deleteProjectAction}
+            returnTo={projectsPath}
+          />
+        </RouteDialog>
       ) : null}
     </div>
   );

@@ -43,6 +43,7 @@ import {
 import { createNativeDomainAction, renewNativeDomainSslAction } from "@/app/actions/native-platform";
 import { formatRelativeTime } from "@/lib/shared/time";
 import { toast } from "sonner";
+import { PortalDialog } from "@/components/portal/PortalDialog";
 
 interface DomainsTabProps {
   vercelConnected: boolean;
@@ -631,9 +632,8 @@ export function DomainsTab({
 
       {/* Modal Dialog for Add Project Domain */}
       {isAddDomainOpen && (
-        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-canvas-night/75 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="absolute inset-0 cursor-default" onClick={() => setIsAddDomainOpen(false)} />
-          <Card className="w-full max-w-md border border-hairline shadow-dark bg-canvas overflow-hidden rounded-xl animate-in zoom-in-95 duration-200 relative z-10 py-0">
+        <PortalDialog open onOpenChange={setIsAddDomainOpen} className="max-w-md">
+          <div className="flex min-h-0 flex-1 flex-col bg-canvas">
             <CardHeader className="border-b border-hairline-cool pb-5 bg-canvas-soft/60">
               <CardTitle className="text-base font-bold text-ink">Add Project Domain</CardTitle>
               <CardDescription className="text-xs text-ink-mute mt-1">
@@ -695,15 +695,14 @@ export function DomainsTab({
                 </div>
               </form>
             </CardContent>
-          </Card>
-        </div>
+          </div>
+        </PortalDialog>
       )}
 
       {/* Modal Dialog for Assign Alias */}
       {isAssignOpen && (
-        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-canvas-night/75 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="absolute inset-0 cursor-default" onClick={() => setIsAssignOpen(false)} />
-          <Card className="w-full max-w-md border border-hairline shadow-dark bg-canvas overflow-hidden rounded-xl animate-in zoom-in-95 duration-200 relative z-10 py-0">
+        <PortalDialog open onOpenChange={setIsAssignOpen} className="max-w-md">
+          <div className="flex min-h-0 flex-1 flex-col bg-canvas">
             <CardHeader className="border-b border-hairline-cool pb-5 bg-canvas-soft/60">
               <CardTitle className="text-base font-bold text-ink">Assign Alias</CardTitle>
               <CardDescription className="text-xs text-ink-mute mt-1">
@@ -749,8 +748,8 @@ export function DomainsTab({
                 </div>
               </form>
             </CardContent>
-          </Card>
-        </div>
+          </div>
+        </PortalDialog>
       )}
     </div>
   );

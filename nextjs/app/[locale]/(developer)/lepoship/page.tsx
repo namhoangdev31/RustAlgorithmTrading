@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { getLepoShipData } from "@/lib/server/admin-data";
 import { requireCurrentUser } from "@/lib/server/current-user";
 import { ProjectForm } from "@/components/projects/dialogs/ProjectForm";
+import { RouteDialog } from "@/components/portal/RouteDialog";
 import { getGithubOverviewData } from "@/lib/server/github";
 import { triggerMobileBuildAction, createProjectWithBundleAction } from "@/app/actions/admin";
 
@@ -158,22 +159,19 @@ export default async function LeposhipPage({ searchParams }: LeposhipPageProps) 
       )}
 
       {search.dialog === "create" ? (
-        <div className="fixed inset-0 z-[120] overflow-y-auto bg-canvas-night/70 backdrop-blur-md transition-all duration-300 animate-in fade-in flex justify-center items-start p-4 md:py-12">
-          <Link href="/lepoship" className="fixed inset-0 cursor-default" aria-hidden="true" />
-          <div className="w-full max-w-2xl animate-in fade-in zoom-in-95 duration-200 relative z-10">
-            <ProjectForm
-              action={createProjectWithBundleAction}
-              organizations={data.workspace.organizations}
-              activeOrganizationId={data.workspace.activeOrganization?.id}
-              returnTo="/lepoship"
-              title="Create Mobile Project"
-              vercelConnected={vercelConnected}
-              initialName={search.repoName}
-              initialDescription={search.repoDescription}
-              github={githubOverview}
-            />
-          </div>
-        </div>
+        <RouteDialog open returnTo="/lepoship">
+          <ProjectForm
+            action={createProjectWithBundleAction}
+            organizations={data.workspace.organizations}
+            activeOrganizationId={data.workspace.activeOrganization?.id}
+            returnTo="/lepoship"
+            title="Create Mobile Project"
+            vercelConnected={vercelConnected}
+            initialName={search.repoName}
+            initialDescription={search.repoDescription}
+            github={githubOverview}
+          />
+        </RouteDialog>
       ) : null}
     </div>
   );

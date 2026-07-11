@@ -21,6 +21,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { rollbackNativeDeploymentAction } from "@/app/actions/native-platform";
+import { PortalDialog } from "@/components/portal/PortalDialog";
 
 interface NativeSubTabProps {
   nativeDeployments: any[];
@@ -124,9 +125,8 @@ export function NativeSubTab({
 
       {/* Custom Rollback Confirmation Modal Dialog */}
       {confirmRollbackDpl && (
-        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-canvas-night/70 backdrop-blur-md transition-all duration-300 animate-in fade-in animate-out fade-out">
-          <div className="absolute inset-0 cursor-default" onClick={() => setConfirmRollbackDpl(null)} />
-          <div className="w-full max-w-md bg-canvas border border-hairline rounded-lg shadow-dark relative z-10 overflow-hidden p-5 space-y-4 animate-in zoom-in-95 duration-200">
+        <PortalDialog open onOpenChange={(open) => !open && setConfirmRollbackDpl(null)} className="max-w-md p-5">
+          <div className="space-y-4">
             <div className="flex items-center gap-3 text-amber-500">
               <AlertCircle className="size-5 animate-pulse" />
               <h3 className="text-sm font-bold text-ink">
@@ -178,7 +178,7 @@ export function NativeSubTab({
               </Button>
             </div>
           </div>
-        </div>
+        </PortalDialog>
       )}
     </Card>
   );

@@ -5,7 +5,6 @@ import { Sparkles, Clipboard, Check, Calendar, AlertCircle, Trash2, GitBranch } 
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
@@ -94,8 +93,8 @@ export function ProjectForm({
   };
 
   const formContent = (
-    <div className="space-y-6">
-      <form action={action} className="grid gap-5 md:grid-cols-2">
+    <div className="space-y-5">
+      <form action={action} className="grid gap-x-5 gap-y-5 md:grid-cols-2">
         {project ? <input type="hidden" name="projectId" value={project.id} /> : null}
         <input type="hidden" name="returnTo" value={returnTo} />
 
@@ -309,7 +308,7 @@ export function ProjectForm({
           <Separator />
         </div>
 
-        <div className="flex items-center justify-end gap-3 md:col-span-2 pt-2">
+        <div className="sticky bottom-0 z-10 -mx-6 flex items-center justify-end gap-3 border-t border-hairline bg-canvas px-6 py-4 md:col-span-2 md:-mx-7 md:px-7">
           <Button asChild variant="outline" className="h-10 hover:bg-canvas-soft transition-colors border-hairline-strong rounded-sm text-xs font-semibold px-4 text-ink">
             <Link href={returnTo}>{t("form.cancel") || "Cancel"}</Link>
           </Button>
@@ -479,19 +478,19 @@ export function ProjectForm({
   }
 
   return (
-    <Card className="border border-hairline shadow-dark bg-canvas overflow-hidden rounded-xl animate-in fade-in zoom-in-95 duration-200 py-0">
-      <CardHeader className="border-b border-hairline-cool pb-5 bg-canvas-soft/60">
-        <CardTitle className="text-xl font-bold tracking-tight text-ink flex items-center gap-2">
+    <div className="flex min-h-0 flex-1 flex-col bg-canvas">
+      <div className="shrink-0 border-b border-hairline bg-canvas-soft/60 px-6 py-5 md:px-7">
+        <h2 className="flex items-center gap-2 pr-10 text-xl font-semibold tracking-tight text-ink">
           <Sparkles className="size-5 text-primary" />
           {title}
-        </CardTitle>
-        <CardDescription className="text-xs text-ink-mute mt-1 leading-relaxed">
+        </h2>
+        <p className="mt-1 text-xs leading-relaxed text-ink-mute">
           {t("form.description") || "Enter the details of your project below."}
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="pt-6">
+        </p>
+      </div>
+      <div className="min-h-0 flex-1 overflow-y-auto px-6 py-5 md:px-7">
         {formContent}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
