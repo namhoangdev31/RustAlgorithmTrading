@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { logoutAction } from "@/app/actions/auth";
 import { switchOrganizationAction } from "@/app/actions/admin";
+import { Button } from "@/components/ui/button";
 import {
   getWorkspaceNav,
   getProjectNav,
@@ -222,13 +223,13 @@ function TeamSwitcher({
                       value={organization.id}
                     />
                     <input type="hidden" name="returnTo" value={pathname} />
-                    <button className="flex w-full items-center gap-2" type="submit">
+                    <Button className="flex h-auto w-full items-center gap-2 p-0" variant="ghost" type="submit">
                       <div className="flex size-6 items-center justify-center rounded-sm border">
                         <Compass className="size-3.5" />
                       </div>
                       <span className="flex-1 text-start">{organization.name}</span>
                       <span className="text-xs text-muted-foreground">⌘{index + 1}</span>
-                    </button>
+                    </Button>
                   </form>
                 </DropdownMenuItem>
               ))}
@@ -320,11 +321,11 @@ function NavUser({ user }: Pick<PortalSidebarProps, "user">) {
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <form action={logoutAction}>
-                <button className="flex w-full items-center gap-2 text-destructive" type="submit">
+                <Button className="flex h-auto w-full items-center gap-2 p-0 text-destructive hover:text-destructive" variant="ghost" type="submit">
                   <LogOut className="size-4" />
                   Sign Out
                   <DropdownMenuShortcut>Status</DropdownMenuShortcut>
-                </button>
+                </Button>
               </form>
             </DropdownMenuItem>
           </DropdownMenuContent>

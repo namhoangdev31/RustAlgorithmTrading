@@ -82,7 +82,7 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
         <div className="flex items-center gap-2 select-none text-xs font-medium text-muted-foreground">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-2 px-2.5 py-1.5 -ml-2 rounded-md hover:bg-secondary/80 text-foreground transition-all cursor-pointer border border-transparent select-none">
+              <Button type="button" variant="ghost" className="flex h-auto items-center gap-2 px-2.5 py-1.5 -ml-2 text-foreground">
                 <div className="size-5 rounded bg-canvas-night flex items-center justify-center text-[10px] font-bold text-white shrink-0 shadow-sm">
                   {(data.workspace.activeOrganization?.name || "O").charAt(0).toUpperCase()}
                 </div>
@@ -90,7 +90,7 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
                   {data.workspace.activeOrganization?.name || "Organization"}
                 </span>
                 <ChevronDown className="size-3.5 text-muted-foreground" />
-              </button>
+              </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-[240px]">
               <div className="px-2.5 py-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
@@ -101,7 +101,7 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
                   <form action={switchOrganizationAction} className="w-full">
                     <input type="hidden" name="organizationId" value={org.id} />
                     <input type="hidden" name="returnTo" value={projectsPath} />
-                    <button type="submit" className="w-full text-left flex items-center justify-between cursor-pointer">
+                    <Button type="submit" variant="ghost" className="h-auto w-full justify-between p-0 text-left">
                       <div className="flex items-center gap-2">
                         <div className="size-4.5 rounded bg-secondary border border-hairline flex items-center justify-center text-[8px] font-bold">
                           {org.name.charAt(0).toUpperCase()}
@@ -111,7 +111,7 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
                       {org.id === data.workspace.activeOrganization?.id && (
                         <span className="size-1.5 rounded-full bg-primary" />
                       )}
-                    </button>
+                    </Button>
                   </form>
                 </DropdownMenuItem>
               ))}
