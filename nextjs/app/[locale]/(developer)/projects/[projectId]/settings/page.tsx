@@ -182,14 +182,14 @@ export default async function ProjectSettingsPage({ params, searchParams }: Page
         )}
 
         {/* Danger Zone */}
-        <form action={deleteProjectAction}>
+        <form id="delete-project-form" action={deleteProjectAction}>
           <input type="hidden" name="projectId" value={project.id} />
           <input type="hidden" name="returnTo" value={`/${locale}/projects`} />
           <DangerZone
             title="Delete Project"
             description="Permanently delete the project and all related logs and analytics. This action cannot be undone."
             actionLabel="Delete Project"
-            onConfirm={() => {}}
+            formId="delete-project-form"
           />
         </form>
       </div>

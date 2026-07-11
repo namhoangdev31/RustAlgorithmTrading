@@ -10,9 +10,6 @@ import {
   Clock, 
   Play, 
   Pause,
-  AlertTriangle,
-  Smartphone,
-  Monitor,
   RotateCcw,
   Sparkles,
   ArrowRight
@@ -39,10 +36,9 @@ interface ReplayEvent {
 interface SessionReplayTimelineProps {
   events: ReplayEvent[];
   sessionId: string;
-  userAgent?: string | null;
 }
 
-export function SessionReplayTimeline({ events, sessionId, userAgent }: SessionReplayTimelineProps) {
+export function SessionReplayTimeline({ events, sessionId }: SessionReplayTimelineProps) {
   const [decompressedEvents, setDecompressedEvents] = useState<ReplayEvent[]>([]);
 
   useEffect(() => {
@@ -99,10 +95,8 @@ export function SessionReplayTimeline({ events, sessionId, userAgent }: SessionR
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [playbackSpeed, setPlaybackSpeed] = useState(1);
-  const [clickRipples, setClickRipples] = useState<{ id: string; x: number; y: number }[]>([]);
 
   const duration = decompressedEvents.length > 0 ? Math.max(...decompressedEvents.map(e => e.timestamp), 1000) : 1000;
-  const isMobile = userAgent ? /Mobi|Android|iPhone/i.test(userAgent) : false;
 
   // Sync selected event when events change
   useEffect(() => {
@@ -135,25 +129,8 @@ export function SessionReplayTimeline({ events, sessionId, userAgent }: SessionR
     return () => cancelAnimationFrame(animationFrameId);
   }, [isPlaying, playbackSpeed, duration]);
 
-  // Handle Event Triggers & Click Ripples along the Timeline
+  // Select the last persisted event passed by playback.
   useEffect(() => {
-    const clickEvents = decompressedEvents.filter(e => e.type === "click");
-    clickEvents.forEach((c, idx) => {
-      if (currentTime >= c.timestamp && currentTime < c.timestamp + 100 * playbackSpeed) {
-        const rippleId = `${idx}-${c.timestamp}`;
-        if (!clickRipples.some(r => r.id === rippleId)) {
-          const x = c.left !== undefined ? c.left : (100 + (idx * 97) % 250);
-          const y = c.top !== undefined ? c.top : (80 + (idx * 63) % 180);
-          setClickRipples(prev => [...prev, { id: rippleId, x, y }]);
-          
-          setTimeout(() => {
-            setClickRipples(prev => prev.filter(r => r.id !== rippleId));
-          }, 800);
-        }
-      }
-    });
-
-    // Auto-select the last passed event for live diagnostics display
     const passedEvents = decompressedEvents.filter(e => e.timestamp <= currentTime);
     if (passedEvents.length > 0) {
       const lastPassed = passedEvents[passedEvents.length - 1];
@@ -161,55 +138,7 @@ export function SessionReplayTimeline({ events, sessionId, userAgent }: SessionR
         setSelectedEvent(lastPassed);
       }
     }
-  }, [currentTime, decompressedEvents, playbackSpeed]);
-
-  // Compute cursor coordinates using Linear Interpolation (LERP) between clicks
-  const clickEvents = decompressedEvents.filter(e => e.type === "click");
-  const getCursorAt = (t: number) => {
-    if (clickEvents.length === 0) return { x: 200, y: 150 };
-    let prev = { timestamp: 0, left: 150, top: 120 };
-    let next = { timestamp: duration, left: 250, top: 220 };
-
-    const getCoords = (e: any, idx: number) => {
-      const left = e.left !== undefined ? e.left : (100 + (idx * 97) % 250);
-      const top = e.top !== undefined ? e.top : (80 + (idx * 63) % 180);
-      return { timestamp: e.timestamp, left, top };
-    };
-
-    for (let i = 0; i < clickEvents.length; i++) {
-      const c = getCoords(clickEvents[i], i);
-      if (c.timestamp <= t) {
-        prev = c;
-      }
-      if (c.timestamp > t) {
-        next = c;
-        break;
-      }
-    }
-
-    const dt = next.timestamp - prev.timestamp;
-    if (dt <= 0) return { x: prev.left, y: prev.top };
-    const ratio = (t - prev.timestamp) / dt;
-
-    // Cubic ease-in-out LERP for organic mouse smoothing
-    const smoothRatio = ratio < 0.5 
-      ? 4 * ratio * ratio * ratio 
-      : 1 - Math.pow(-2 * ratio + 2, 3) / 2;
-
-    return {
-      x: prev.left + (next.left - prev.left) * smoothRatio,
-      y: prev.top + (next.top - prev.top) * smoothRatio,
-    };
-  };
-
-  const cursorPosition = getCursorAt(currentTime);
-
-  // Check if a layout shift warning should be rendered at the current playback timestamp
-  const getActiveLayoutShift = () => {
-    const shiftEvents = events.filter(e => e.type === "layout-shift");
-    return shiftEvents.find(e => currentTime >= e.timestamp && currentTime < e.timestamp + 1000);
-  };
-  const activeShift = getActiveLayoutShift();
+  }, [currentTime, decompressedEvents, selectedEvent]);
 
   const getEventIcon = (type: string) => {
     switch (type) {
@@ -247,105 +176,20 @@ export function SessionReplayTimeline({ events, sessionId, userAgent }: SessionR
   return (
     <Card className="border border-hairline bg-canvas-night/40 backdrop-blur-md shadow-lg overflow-hidden flex flex-col gap-5 p-0">
       
-      {/* 1. Browser Mockup Screen (Visual Viewport Player) */}
+      {/* Persisted event evidence only; visual DOM snapshots are not collected. */}
       <div className="bg-slate-950 p-4 border-b border-hairline/10 flex flex-col gap-3">
-        {/* Browser Header Bar */}
-        <div className="flex items-center justify-between gap-3 bg-slate-900 px-4 py-2 rounded-lg border border-slate-800 text-[11px] text-slate-400 font-mono">
-          <div className="flex items-center gap-1.5">
-            <span className="size-2.5 rounded-full bg-red-500/80" />
-            <span className="size-2.5 rounded-full bg-amber-500/80" />
-            <span className="size-2.5 rounded-full bg-emerald-500/80" />
+        <div className="grid grid-cols-1 gap-3 rounded-lg border border-slate-800 bg-slate-900/40 p-4 text-xs sm:grid-cols-3">
+          <div>
+            <p className="text-slate-500">Session</p>
+            <p className="mt-1 truncate font-mono text-slate-200">{sessionId}</p>
           </div>
-          <div className="flex-1 max-w-md bg-slate-950/60 rounded px-3 py-1 border border-slate-800/50 text-center truncate text-slate-300">
-            https://lepos.sh/project/dashboard/analytics
+          <div>
+            <p className="text-slate-500">Recorded events</p>
+            <p className="mt-1 font-semibold text-slate-200">{decompressedEvents.length}</p>
           </div>
-          <div className="flex items-center gap-2">
-            {isMobile ? <Smartphone className="size-3.5 text-indigo-400" /> : <Monitor className="size-3.5 text-indigo-400" />}
-            <span className="text-[10px] text-slate-500">{isMobile ? "Mobile Viewport" : "Desktop Viewport"}</span>
-          </div>
-        </div>
-
-        {/* Viewport Box Mock DOM */}
-        <div className="flex justify-center bg-slate-900/40 rounded-xl border border-slate-800/80 p-6 overflow-hidden relative min-h-[320px]">
-          <div 
-            className="bg-slate-950 rounded-lg border border-slate-800 shadow-2xl relative overflow-hidden transition-all duration-300 flex flex-col"
-            style={{ width: isMobile ? "340px" : "100%", height: "270px" }}
-          >
-            {/* Mock Header */}
-            <div className="h-10 bg-slate-900/60 border-b border-slate-800 px-4 flex items-center justify-between text-[10px] text-slate-400">
-              <span className="font-bold text-slate-300">LepoS Console</span>
-              <span className="size-5 rounded-full bg-slate-800" />
-            </div>
-
-            {/* Mock Body Grid */}
-            <div className="flex-1 p-4 grid grid-cols-3 gap-3 text-[10px]">
-              {/* Mock Sidebar */}
-              <div 
-                className={`col-span-1 bg-slate-900/30 border border-slate-800/60 rounded-md p-2 flex flex-col gap-1.5 transition-all duration-300 ${
-                  activeShift?.element?.includes("sidebar") ? "border-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)] animate-pulse" : ""
-                }`}
-              >
-                <div className="h-3 w-12 bg-slate-800 rounded" />
-                <div className="h-3 w-16 bg-slate-800 rounded" />
-                <div className="h-3 w-14 bg-slate-800 rounded" />
-              </div>
-
-              {/* Mock Content */}
-              <div className="col-span-2 flex flex-col gap-3">
-                {/* Mock Card 1 */}
-                <div 
-                  className={`bg-slate-900/30 border border-slate-800/60 rounded-md p-2 flex flex-col gap-1.5 transition-all duration-300 ${
-                    activeShift?.element?.includes("chart") ? "border-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)] animate-pulse" : ""
-                  }`}
-                >
-                  <div className="h-2 w-20 bg-slate-800 rounded" />
-                  <div className="h-8 bg-slate-900/80 rounded border border-slate-800/40 flex items-end justify-between p-1">
-                    <span className="w-2 h-4 bg-indigo-500/80 rounded-sm" />
-                    <span className="w-2 h-6 bg-indigo-500/80 rounded-sm" />
-                    <span className="w-2 h-5 bg-indigo-500/80 rounded-sm" />
-                    <span className="w-2 h-7 bg-indigo-500/80 rounded-sm" />
-                  </div>
-                </div>
-                {/* Mock Card 2 */}
-                <div 
-                  className={`bg-slate-900/30 border border-slate-800/60 rounded-md p-2 flex flex-col gap-1.5 transition-all duration-300 ${
-                    activeShift?.element?.includes("table") ? "border-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)] animate-pulse" : ""
-                  }`}
-                >
-                  <div className="h-2 w-16 bg-slate-800 rounded" />
-                  <div className="h-3 bg-slate-800/50 rounded" />
-                  <div className="h-3 bg-slate-800/30 rounded" />
-                </div>
-              </div>
-            </div>
-
-            {/* Mouse Cursor Simulation overlay */}
-            <div 
-              className="absolute pointer-events-none z-50 transition-all duration-75 ease-out"
-              style={{ left: `${cursorPosition.x}px`, top: `${cursorPosition.y}px` }}
-            >
-              <div className="size-3 bg-indigo-500 rounded-full border border-white shadow-[0_0_6px_#6366f1]" />
-              <div className="text-[8px] bg-slate-900/90 border border-slate-800 text-slate-300 px-1 rounded-sm ml-3 mt-1 font-mono">
-                {formatTime(currentTime)}
-              </div>
-            </div>
-
-            {/* Click Ripples Animation overlay */}
-            {clickRipples.map((ripple) => (
-              <div
-                key={ripple.id}
-                className="absolute pointer-events-none z-40 size-10 bg-indigo-500/30 border border-indigo-400 rounded-full animate-ping -translate-x-1/2 -translate-y-1/2"
-                style={{ left: `${ripple.x}px`, top: `${ripple.y}px`, animationDuration: "0.8s" }}
-              />
-            ))}
-
-            {/* Layout Shift Warning Overlay */}
-            {activeShift && (
-              <div className="absolute top-12 right-4 bg-red-500/90 text-white text-[9px] font-bold px-2 py-1 rounded shadow-lg flex items-center gap-1 z-30 animate-bounce">
-                <AlertTriangle className="size-3" />
-                <span>CLS Shift: {activeShift.score} ({activeShift.element})</span>
-              </div>
-            )}
+          <div>
+            <p className="text-slate-500">Current event</p>
+            <p className="mt-1 font-semibold capitalize text-slate-200">{selectedEvent?.type || "None"}</p>
           </div>
         </div>
 

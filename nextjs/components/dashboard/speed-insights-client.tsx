@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { 
   Gauge, 
   Sparkles, 
@@ -20,6 +20,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import { SessionReplayTimeline } from "./session-replay-timeline";
 
 interface Project {
@@ -77,14 +78,12 @@ interface SpeedInsightsClientProps {
     replays: ReplaySession[];
     clusters: PerformanceCluster[];
     bundleName: string;
-    isMock?: boolean;
     error?: string;
   };
 }
 
 export function SpeedInsightsClient({ projects, selectedProjectId, speedData }: SpeedInsightsClientProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [activeProjectId, setActiveProjectId] = useState(selectedProjectId);
   const [selectedClusterId, setSelectedClusterId] = useState<string | null>(null);
   const [selectedSession, setSelectedSession] = useState<ReplaySession | null>(
@@ -94,7 +93,6 @@ export function SpeedInsightsClient({ projects, selectedProjectId, speedData }: 
   const [filterDevice, setFilterDevice] = useState("all");
   const [filterBrowser, setFilterBrowser] = useState("all");
   const [filterOS, setFilterOS] = useState("all");
-  const [filterCountry, setFilterCountry] = useState("all");
   const [filterEventType, setFilterEventType] = useState("all");
 
   // Sync state if selected project changes
@@ -105,7 +103,6 @@ export function SpeedInsightsClient({ projects, selectedProjectId, speedData }: 
     setFilterDevice("all");
     setFilterBrowser("all");
     setFilterOS("all");
-    setFilterCountry("all");
     setFilterEventType("all");
   }, [selectedProjectId, speedData]);
 
@@ -161,15 +158,6 @@ export function SpeedInsightsClient({ projects, selectedProjectId, speedData }: 
     return "other";
   };
 
-  const getSessionCountry = (sessionId: string) => {
-    const countries = ["US", "VN", "SG", "DE", "JP"];
-    let hash = 0;
-    for (let i = 0; i < sessionId.length; i++) {
-      hash = sessionId.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    return countries[Math.abs(hash) % countries.length];
-  };
-
   const getSessionEvents = (events: any): any[] => {
     if (typeof events === "string") {
       try {
@@ -197,9 +185,6 @@ export function SpeedInsightsClient({ projects, selectedProjectId, speedData }: 
     if (filterOS !== "all" && getSessionOS(r.userAgent) !== filterOS) {
       return false;
     }
-    if (filterCountry !== "all" && getSessionCountry(r.sessionId) !== filterCountry) {
-      return false;
-    }
     if (filterEventType !== "all") {
       const evs = getSessionEvents(r.events);
       if (!evs.some((e: any) => e.type === filterEventType)) {
@@ -209,7 +194,8 @@ export function SpeedInsightsClient({ projects, selectedProjectId, speedData }: 
     return true;
   });
 
-  const healthScore = speedData.analysis?.healthScore || 0;
+  const hasTelemetry = speedData.analysis.totalAnalysed > 0;
+  const healthScore = hasTelemetry ? speedData.analysis.healthScore : 0;
   const ratingInfo = getScoreRating(healthScore);
 
   return (
@@ -230,18 +216,18 @@ export function SpeedInsightsClient({ projects, selectedProjectId, speedData }: 
           <label htmlFor="project-select" className="text-xs font-semibold text-slate-400">
             Project:
           </label>
-          <select
+          <NativeSelect
             id="project-select"
             value={activeProjectId}
             onChange={handleProjectChange}
-            className="h-9 px-3 rounded-lg bg-slate-800 border border-slate-700 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+            className="min-w-44"
           >
             {projects.map((p) => (
-              <option key={p.id} value={p.id}>
+              <NativeSelectOption key={p.id} value={p.id}>
                 {p.name}
-              </option>
+              </NativeSelectOption>
             ))}
-          </select>
+          </NativeSelect>
         </div>
       </div>
 
@@ -264,31 +250,33 @@ export function SpeedInsightsClient({ projects, selectedProjectId, speedData }: 
                   fill="none"
                   d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                 />
-                <path
-                  className={`transition-all duration-1000 ${getScoreColor(healthScore)}`}
-                  strokeDasharray={`${healthScore}, 100`}
-                  strokeWidth="3.2"
-                  strokeLinecap="round"
-                  fill="none"
-                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                />
+                {hasTelemetry && (
+                  <path
+                    className={`transition-all duration-1000 ${getScoreColor(healthScore)}`}
+                    strokeDasharray={`${healthScore}, 100`}
+                    strokeWidth="3.2"
+                    strokeLinecap="round"
+                    fill="none"
+                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  />
+                )}
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-3xl font-extrabold text-slate-100 tracking-tight">{healthScore}</span>
+                <span className="text-3xl font-extrabold text-slate-100 tracking-tight">{hasTelemetry ? healthScore : "—"}</span>
                 <span className="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Health Score</span>
               </div>
             </div>
             
             <div className="text-center flex flex-col gap-1 mt-2">
-              <Badge className={`mx-auto font-bold text-xs ${
-                healthScore >= 90 ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" :
-                healthScore >= 50 ? "bg-amber-500/10 text-amber-400 border-amber-500/20" :
-                "bg-red-500/10 text-red-400 border-red-500/20"
-              }`} variant="outline">
-                {ratingInfo.label}
+              <Badge className={`mx-auto font-bold text-xs ${hasTelemetry
+                ? healthScore >= 90 ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                  : healthScore >= 50 ? "bg-amber-500/10 text-amber-400 border-amber-500/20"
+                    : "bg-red-500/10 text-red-400 border-red-500/20"
+                : "border-border bg-muted text-muted-foreground"}`} variant="outline">
+                {hasTelemetry ? ratingInfo.label : "Awaiting telemetry"}
               </Badge>
               <p className="text-xs text-slate-300 leading-relaxed max-w-[240px] mt-1">
-                {ratingInfo.desc}
+                {hasTelemetry ? ratingInfo.desc : "Send Web Vitals events to calculate a performance health score."}
               </p>
             </div>
           </CardContent>
@@ -308,7 +296,12 @@ export function SpeedInsightsClient({ projects, selectedProjectId, speedData }: 
             </div>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
-            {speedData.analysis?.suggestions.length === 0 ? (
+            {!hasTelemetry ? (
+              <div className="flex flex-col items-center justify-center py-12 text-slate-400 text-xs gap-2">
+                <Activity className="size-8 text-muted-foreground" />
+                <p>No Web Vitals have been received for this project yet.</p>
+              </div>
+            ) : speedData.analysis.suggestions.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 text-slate-400 text-xs gap-2">
                 <TrendingUp className="size-8 text-emerald-400" />
                 <p>All Core Web Vitals are within normal thresholds. No anomalies detected!</p>
@@ -483,81 +476,69 @@ export function SpeedInsightsClient({ projects, selectedProjectId, speedData }: 
           </CardHeader>
           
           {/* Cohort Filters */}
-          <div className="grid grid-cols-5 gap-2 px-6 pb-4 border-b border-slate-800/40">
+          <div className="grid grid-cols-2 gap-2 px-6 pb-4 border-b border-slate-800/40 sm:grid-cols-4">
             <div>
               <label htmlFor="filter-device" className="text-[9px] uppercase tracking-wider text-slate-500 font-bold block mb-1">Device</label>
-              <select 
+              <NativeSelect
                 id="filter-device"
                 value={filterDevice} 
                 onChange={(e) => setFilterDevice(e.target.value)}
-                className="w-full text-[10px] bg-slate-900 border border-slate-800 rounded px-1.5 py-1 text-slate-300 focus:outline-none"
+                size="sm"
+                className="w-full"
               >
-                <option value="all">All</option>
-                <option value="desktop">Desktop</option>
-                <option value="mobile">Mobile</option>
-              </select>
+                <NativeSelectOption value="all">All</NativeSelectOption>
+                <NativeSelectOption value="desktop">Desktop</NativeSelectOption>
+                <NativeSelectOption value="mobile">Mobile</NativeSelectOption>
+              </NativeSelect>
             </div>
             <div>
               <label htmlFor="filter-browser" className="text-[9px] uppercase tracking-wider text-slate-500 font-bold block mb-1">Browser</label>
-              <select 
+              <NativeSelect
                 id="filter-browser"
                 value={filterBrowser} 
                 onChange={(e) => setFilterBrowser(e.target.value)}
-                className="w-full text-[10px] bg-slate-900 border border-slate-800 rounded px-1.5 py-1 text-slate-300 focus:outline-none"
+                size="sm"
+                className="w-full"
               >
-                <option value="all">All</option>
-                <option value="chrome">Chrome</option>
-                <option value="safari">Safari</option>
-                <option value="firefox">Firefox</option>
-                <option value="edge">Edge</option>
-              </select>
+                <NativeSelectOption value="all">All</NativeSelectOption>
+                <NativeSelectOption value="chrome">Chrome</NativeSelectOption>
+                <NativeSelectOption value="safari">Safari</NativeSelectOption>
+                <NativeSelectOption value="firefox">Firefox</NativeSelectOption>
+                <NativeSelectOption value="edge">Edge</NativeSelectOption>
+              </NativeSelect>
             </div>
             <div>
               <label htmlFor="filter-os" className="text-[9px] uppercase tracking-wider text-slate-500 font-bold block mb-1">OS</label>
-              <select 
+              <NativeSelect
                 id="filter-os"
                 value={filterOS} 
                 onChange={(e) => setFilterOS(e.target.value)}
-                className="w-full text-[10px] bg-slate-900 border border-slate-800 rounded px-1.5 py-1 text-slate-300 focus:outline-none"
+                size="sm"
+                className="w-full"
               >
-                <option value="all">All</option>
-                <option value="macos">macOS</option>
-                <option value="windows">Windows</option>
-                <option value="ios">iOS</option>
-                <option value="android">Android</option>
-                <option value="linux">Linux</option>
-              </select>
-            </div>
-            <div>
-              <label htmlFor="filter-country" className="text-[9px] uppercase tracking-wider text-slate-500 font-bold block mb-1">Country</label>
-              <select 
-                id="filter-country"
-                value={filterCountry} 
-                onChange={(e) => setFilterCountry(e.target.value)}
-                className="w-full text-[10px] bg-slate-900 border border-slate-800 rounded px-1.5 py-1 text-slate-300 focus:outline-none"
-              >
-                <option value="all">All</option>
-                <option value="US">US</option>
-                <option value="VN">VN</option>
-                <option value="SG">SG</option>
-                <option value="DE">DE</option>
-                <option value="JP">JP</option>
-              </select>
+                <NativeSelectOption value="all">All</NativeSelectOption>
+                <NativeSelectOption value="macos">macOS</NativeSelectOption>
+                <NativeSelectOption value="windows">Windows</NativeSelectOption>
+                <NativeSelectOption value="ios">iOS</NativeSelectOption>
+                <NativeSelectOption value="android">Android</NativeSelectOption>
+                <NativeSelectOption value="linux">Linux</NativeSelectOption>
+              </NativeSelect>
             </div>
             <div>
               <label htmlFor="filter-event" className="text-[9px] uppercase tracking-wider text-slate-500 font-bold block mb-1">Event</label>
-              <select 
+              <NativeSelect
                 id="filter-event"
                 value={filterEventType} 
                 onChange={(e) => setFilterEventType(e.target.value)}
-                className="w-full text-[10px] bg-slate-900 border border-slate-800 rounded px-1.5 py-1 text-slate-300 focus:outline-none"
+                size="sm"
+                className="w-full"
               >
-                <option value="all">All</option>
-                <option value="click">Click</option>
-                <option value="navigation">Navigation</option>
-                <option value="paint">Paint</option>
-                <option value="layout-shift">Layout Shift</option>
-              </select>
+                <NativeSelectOption value="all">All</NativeSelectOption>
+                <NativeSelectOption value="click">Click</NativeSelectOption>
+                <NativeSelectOption value="navigation">Navigation</NativeSelectOption>
+                <NativeSelectOption value="paint">Paint</NativeSelectOption>
+                <NativeSelectOption value="layout-shift">Layout Shift</NativeSelectOption>
+              </NativeSelect>
             </div>
           </div>
 
@@ -640,7 +621,6 @@ export function SpeedInsightsClient({ projects, selectedProjectId, speedData }: 
             <SessionReplayTimeline 
               events={selectedSession.events} 
               sessionId={selectedSession.sessionId} 
-              userAgent={selectedSession.userAgent}
             />
           ) : (
             <div className="h-full rounded-2xl border border-dashed border-slate-800 bg-slate-950/20 flex flex-col items-center justify-center p-8 text-center text-slate-400 text-xs">

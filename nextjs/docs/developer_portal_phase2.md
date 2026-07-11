@@ -45,6 +45,9 @@ Each project under `/projects/[projectId]` now maps to the following modular str
 - Workspace provider credentials are encrypted, validated against GitHub, Vercel, Cloudflare, or Stripe before connection, and are removed together with their bindings on disconnect.
 - SCIM credentials are workspace-scoped, encrypted, and returned only at creation/rotation. Directory resources are displayed only after a real SCIM request persists a mapping.
 - Stripe, ACME, artifact mirror, storage replication, staging, and unsupported provider paths return an honest unavailable or failed state when credentials/adapters are absent. They do not synthesize success, certificates, CIDs, balances, targets, or QA outcomes.
+- Observability reads through `lib/server/speed-insights.ts`; an empty event set displays an awaiting-telemetry state rather than a failing health score. Replay playback renders only persisted event evidence, never an invented browser DOM, cursor path, or geography.
+- A form may retain an enabled integration setting, but an unconfigured Google Sheets or Salesforce adapter is returned to submitters as `unavailableProviders`, never as a successful sync. Latency remediation likewise reports unavailable until a provider-backed scale action exists.
+- Zero-trust screens persist service identities, trust policies, and telemetry envelopes, but do not display certificate inventory, certificate rotation, or validity claims unless supplied by a real certificate authority integration.
 
 ## 5. Route and Component Matrix
 

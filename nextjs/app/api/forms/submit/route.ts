@@ -88,9 +88,15 @@ export async function POST(request: NextRequest) {
 
     const syncResults = await Promise.allSettled(syncPromises);
 
-    const succeededSyncs = syncResults
-      .filter((r) => r.status === "fulfilled")
-      .map((r: any) => r.value.provider);
+    const syncOutcomes = syncResults.flatMap((result) => (
+      result.status === "fulfilled" ? [result.value] : []
+    ));
+    const succeededSyncs = syncOutcomes
+      .filter((outcome) => outcome.success)
+      .map((outcome) => outcome.provider);
+    const unavailableProviders = syncOutcomes
+      .filter((outcome) => !outcome.success)
+      .map((outcome) => ({ provider: outcome.provider, code: outcome.code, message: outcome.message }));
 
     // 5. Trigger Webhook in background (non-blocking)
     if (form.webhookUrl) {
@@ -104,6 +110,7 @@ export async function POST(request: NextRequest) {
         success: true,
         submissionId: submission.id,
         syncedProviders: succeededSyncs,
+        unavailableProviders,
       },
       { status: 201 }
     );

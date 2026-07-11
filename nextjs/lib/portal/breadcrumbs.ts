@@ -10,7 +10,7 @@ export function resolveBreadcrumbs(
 ): BreadcrumbItem[] {
   const locale = params.locale || "en";
   const segments = pathname.split("/").filter(Boolean);
-  
+
   // Skip the locale segment if it matches the active locale
   const activeSegments = segments[0] === locale ? segments.slice(1) : segments;
   const items: BreadcrumbItem[] = [];
@@ -57,10 +57,18 @@ export function resolveBreadcrumbs(
     items.push({ label, path: currentPath });
   }
 
-  // Deduplicate and mark the last item as active
-  if (items.length > 0) {
-    items[items.length - 1].active = true;
+  const uniqueItems: BreadcrumbItem[] = [];
+  const seenPaths = new Set<string>();
+  for (const item of items) {
+    if (!seenPaths.has(item.path)) {
+      seenPaths.add(item.path);
+      uniqueItems.push(item);
+    }
   }
 
-  return items;
+  if (uniqueItems.length > 0) {
+    uniqueItems[uniqueItems.length - 1].active = true;
+  }
+
+  return uniqueItems;
 }

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { requireCurrentUser } from "@/lib/server/current-user";
 import { notFound } from "next/navigation";
-import { loadSpeedInsightsData } from "@/app/actions/vitals";
+import { loadSpeedInsightsData } from "@/lib/server/speed-insights";
 import { SpeedInsightsClient } from "@/components/dashboard/speed-insights-client";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";

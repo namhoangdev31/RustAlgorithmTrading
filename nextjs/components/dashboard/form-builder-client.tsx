@@ -22,6 +22,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import { createFormAction, deleteFormAction, updateFormSettingsAction } from "@/app/actions/forms";
 import { toast } from "sonner";
 import { RefreshCw } from "lucide-react";
@@ -257,18 +258,18 @@ export function FormBuilderClient({ projects, selectedProjectId, initialForms }:
           <label htmlFor="project-select" className="text-xs font-semibold text-slate-400">
             Project:
           </label>
-          <select
+          <NativeSelect
             id="project-select"
             value={activeProjectId}
             onChange={handleProjectChange}
-            className="h-9 px-3 rounded-lg bg-slate-800 border border-slate-700 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+            className="min-w-44"
           >
             {projects.map((p) => (
-              <option key={p.id} value={p.id}>
+              <NativeSelectOption key={p.id} value={p.id}>
                 {p.name}
-              </option>
+              </NativeSelectOption>
             ))}
-          </select>
+          </NativeSelect>
         </div>
       </div>
 

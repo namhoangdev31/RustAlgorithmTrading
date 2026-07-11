@@ -1,18 +1,23 @@
+export type ExternalSyncResult = {
+  success: false;
+  provider: "google-sheets" | "salesforce";
+  code: "provider_unavailable";
+  message: string;
+};
+
 /**
- * Helper to sync form submissions to third-party providers (Google Sheets & Salesforce).
+ * A provider adapter must be connected before submissions can leave the portal.
+ * This boundary deliberately never reports success for an unconfigured adapter.
  */
 export async function syncSubmissionToExternal(
-  data: Record<string, any>,
+  _data: Record<string, unknown>,
   target: "google-sheets" | "salesforce"
-): Promise<{ success: boolean; provider: string }> {
-  console.log(`[Form Sync] Synchronizing submission payload to third-party integration [${target}]`);
-  
-  // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 400));
-  
-  console.log(`[Form Sync] Successfully synchronized payload with [${target}].`);
+): Promise<ExternalSyncResult> {
+  console.warn(`[Form Sync] ${target} is enabled on the form but no provider adapter is configured.`);
   return {
-    success: true,
+    success: false,
     provider: target,
+    code: "provider_unavailable",
+    message: `Connect a ${target} provider before enabling submission sync.`,
   };
 }

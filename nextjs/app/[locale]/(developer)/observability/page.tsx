@@ -1,6 +1,6 @@
 import { requireCurrentUser } from "@/lib/server/current-user";
 import { prisma } from "@/lib/server/prisma";
-import { loadSpeedInsightsData } from "@/app/actions/vitals";
+import { loadSpeedInsightsData } from "@/lib/server/speed-insights";
 import { SpeedInsightsClient } from "@/components/dashboard/speed-insights-client";
 import { Link } from "@/i18n/navigation";
 import { AlertCircle, FolderPlus } from "lucide-react";

@@ -111,14 +111,13 @@ export async function executeAutoRemediation(
 
     // CASE C: API Latency Congestion (High Load) -> Scale out replicas
     if (anomalyType === "latency") {
-      // Simulate replica group scaling out
-      console.warn(`[Auto-Remediation] High load latency detected on project ${project.name}. Scaling out replication groups from 2 to 4 replicas.`);
+      console.warn(`[Auto-Remediation] High latency detected for ${project.name}; no provider-backed scale action is configured.`);
 
       return {
-        remediationTriggered: true,
-        actionTaken: "⚡ Scaling Out Cluster: Provisioned 2 additional worker node replicas to relieve resource exhaustion.",
-        proposedAction: "Review database connection pool sizes, Redis cache eviction rate, or slow query logs.",
-        details: `Anomaly: Latency of ${currentValue}ms exceeds P99 baseline threshold of ${baselineValue}ms.`,
+        remediationTriggered: false,
+        actionTaken: "No automatic scale action was executed.",
+        proposedAction: "Connect a provider-backed scaling adapter, then review connection pools, cache eviction, and slow queries.",
+        details: `Latency of ${currentValue}ms exceeds the P99 baseline of ${baselineValue}ms, but this workspace has no verified scaling adapter.`,
       };
     }
 

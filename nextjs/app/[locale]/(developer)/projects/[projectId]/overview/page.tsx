@@ -107,7 +107,7 @@ export default async function ProjectOverviewPage({ params, searchParams }: Page
                   </div>
                 </div>
 
-                {/* Mock Browser Preview */}
+                {/* Deployment preview link */}
                 <div className="w-full h-44 rounded-lg border border-hairline bg-secondary/30 relative overflow-hidden flex flex-col shadow-inner">
                   <div className="h-7 border-b border-hairline bg-secondary flex items-center px-3 gap-1.5 shrink-0 select-none">
                     <span className="size-2 rounded-full bg-red-500/40" />

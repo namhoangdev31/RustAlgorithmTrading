@@ -21,7 +21,8 @@ type DangerZoneProps = {
   actionLabel: string;
   dialogTitle?: string;
   dialogDescription?: string;
-  onConfirm: () => void;
+  onConfirm?: () => void;
+  formId?: string;
   loading?: boolean;
   className?: string;
 };
@@ -33,6 +34,7 @@ export function DangerZone({
   dialogTitle = "Are you absolutely sure?",
   dialogDescription = "This action cannot be undone. This will permanently delete the resource and all associated data.",
   onConfirm,
+  formId,
   loading,
   className,
 }: DangerZoneProps) {
@@ -68,6 +70,8 @@ export function DangerZone({
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
               <AlertDialogAction
+                type={formId ? "submit" : "button"}
+                form={formId}
                 onClick={onConfirm}
                 className="bg-red-600 hover:bg-red-700 text-white"
               >

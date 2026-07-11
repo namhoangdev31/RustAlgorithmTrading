@@ -76,7 +76,7 @@ export function BundlesSubTab({
   isPending,
   startTransition,
 }: BundlesSubTabProps) {
-  const t = useTranslations("VercelTab");
+  const t = useTranslations("Deployments");
   const router = useRouter();
 
   // Lepos Bundle subsystem states
