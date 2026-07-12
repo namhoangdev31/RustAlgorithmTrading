@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { retryFailedWebhooks } from "@/lib/server/webhooks";
+import { verifyCronAuth } from "@/lib/server/cron-auth";
 
 /**
  * Cron job endpoint to trigger failed form webhooks retries.
@@ -14,19 +15,10 @@ export async function POST(request: NextRequest) {
 }
 
 async function handleRetry(request: NextRequest) {
-  try {
-    const authHeader = request.headers.get("authorization") || "";
-    const cronSecret = process.env.CRON_SECRET || "lepos-cron-secret-token-2026";
-    const [scheme, token] = authHeader.split(" ");
-    
-    // Authorization validation
-    if (scheme?.toLowerCase() !== "bearer" || token !== cronSecret) {
-      // Permit local development testing without strict token checking
-      if (process.env.NODE_ENV === "production") {
-        return NextResponse.json({ error: "Unauthorized access." }, { status: 401 });
-      }
-    }
+  const authError = verifyCronAuth(request);
+  if (authError) return authError;
 
+  try {
     const result = await retryFailedWebhooks();
     return NextResponse.json({ success: true, ...result });
   } catch (error: any) {

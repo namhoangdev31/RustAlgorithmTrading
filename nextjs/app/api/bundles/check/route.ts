@@ -33,6 +33,22 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "No bundle found for this project." }, { status: 404 });
     }
 
+    // Retrieve active ad configuration
+    const adConfigRecord = await prisma.bundleAdConfigurations.findUnique({
+      where: { bundleId: bundle.id },
+      select: {
+        provider: true,
+        appId: true,
+        bannerId: true,
+        interstitialId: true,
+        rewardedId: true,
+        nativeId: true,
+        isTestMode: true,
+        isActive: true,
+      },
+    });
+    const adConfig = adConfigRecord?.isActive ? adConfigRecord : null;
+
     // ------------------------------------------------------------------
     // A/B experiment routing (only when deviceId is provided)
     // ------------------------------------------------------------------
@@ -102,6 +118,7 @@ export async function GET(request: NextRequest) {
                   isDelta: downloadInfo.isDelta,
                   releaseNotes: selectedTrack.releaseNotes || "",
                 },
+                adConfig,
               });
             }
 
@@ -113,6 +130,7 @@ export async function GET(request: NextRequest) {
                 variant: isExperiment ? "B" : "A",
                 bucket,
               },
+              adConfig,
             });
           }
           // Target track unavailable — fall through to legacy
@@ -134,7 +152,7 @@ export async function GET(request: NextRequest) {
     });
 
     if (!latestRelease) {
-      return NextResponse.json({ updateAvailable: false });
+      return NextResponse.json({ updateAvailable: false, adConfig });
     }
 
     const downloadInfo = await resolveDelta(bundle.id, currentBuildNumber, latestRelease);
@@ -149,6 +167,7 @@ export async function GET(request: NextRequest) {
         isDelta: downloadInfo.isDelta,
         releaseNotes: latestRelease.releaseNotes || "",
       },
+      adConfig,
     });
   } catch (error: any) {
     return NextResponse.json({ error: error.message || "Internal Server Error" }, { status: 500 });

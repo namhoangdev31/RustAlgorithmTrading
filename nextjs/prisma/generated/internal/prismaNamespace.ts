@@ -495,7 +495,9 @@ export const ModelName = {
   ProjectProviderBinding: 'ProjectProviderBinding',
   WorkspaceAuditEvent: 'WorkspaceAuditEvent',
   LepoShipBuild: 'LepoShipBuild',
-  MarketplaceCompatibilityRun: 'MarketplaceCompatibilityRun'
+  MarketplaceCompatibilityRun: 'MarketplaceCompatibilityRun',
+  BundleSdkTokens: 'BundleSdkTokens',
+  BundleWebhookDeliveries: 'BundleWebhookDeliveries'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -511,7 +513,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "order" | "riskEvent" | "file" | "user" | "organization" | "project" | "bundlePayouts" | "bundles" | "notifications" | "session" | "userDeviceToken" | "bundleAbTests" | "bundleAbuseSignals" | "bundleAdConfigurations" | "bundleAnalyticsEvents" | "bundleApiUsageStats" | "bundleAuditLog" | "bundleBetaTesters" | "bundleChangeLogs" | "bundleCollaborators" | "bundleContentRatings" | "bundleCountries" | "bundleDependencies" | "bundleDeveloperStrikes" | "bundleDeviceSupport" | "bundleExternalIntegrations" | "bundleFeaturedSlots" | "bundleInAppPurchases" | "bundleInstallEvents" | "bundleLanguages" | "bundleLocalizations" | "bundleMonetizationConfigs" | "bundleOrders" | "bundlePermissions" | "bundlePrivacyDeclarations" | "bundlePromotions" | "bundleRankingScores" | "bundleReleaseTracks" | "bundleRetentionStats" | "bundleReviews" | "bundleRuntimeConfig" | "bundleScreenshots" | "bundleSearchKeywords" | "bundleStateTransitions" | "bundleStats" | "bundleStoreFlags" | "bundleStoreListings" | "bundleSubscriptionPlans" | "bundleTags" | "bundleTrendingSnapshots" | "bundleUserReports" | "bundleVersionHistory" | "bundleWebhooks" | "bundleOrderItems" | "bundlePaymentLogs" | "bundleRefundRequests" | "bundleUserEntitlements" | "bundleRollouts" | "bundleReviewReports" | "bundleSubscriptionHistory" | "bundleCrashReports" | "bundleReviewHistory" | "bundleReviewQueue" | "bundleSecurityScanResults" | "bundleUpdatePhases" | "userSecrets" | "personalAccessToken" | "ssoConfig" | "deployHook" | "firewallRule" | "nativeDeployment" | "nativeDomainConfig" | "nativeEdgeFunction" | "nativeCacheEntry" | "nativeAnalyticsReplay" | "nativeCrashReport" | "nativeSourceMap" | "nativePlugin" | "nativePluginInstallation" | "nativeDebugSession" | "nativeConnectedDevice" | "nativeCloudTarget" | "nativeRoutingPolicy" | "nativeRegionReplica" | "nativeArtifactMirror" | "nativeWafEvent" | "nativeWafRule" | "nativeScimMapping" | "nativeAiDiagnostic" | "nativeRemediationRun" | "nativeSchedulingPolicy" | "nativeSchedulingSignal" | "nativeServiceIdentity" | "nativeServiceTrustPolicy" | "nativeTelemetryEnvelope" | "cronJob" | "form" | "formSubmission" | "formWebhookDelivery" | "previewComment" | "lepoShipLocalConfig" | "marketplacePartnerAccount" | "marketplaceTransaction" | "marketplaceInstallEvent" | "riskLimits" | "organizationMembership" | "projectMembership" | "workspaceProviderConnection" | "projectProviderBinding" | "workspaceAuditEvent" | "lepoShipBuild" | "marketplaceCompatibilityRun"
+    modelProps: "order" | "riskEvent" | "file" | "user" | "organization" | "project" | "bundlePayouts" | "bundles" | "notifications" | "session" | "userDeviceToken" | "bundleAbTests" | "bundleAbuseSignals" | "bundleAdConfigurations" | "bundleAnalyticsEvents" | "bundleApiUsageStats" | "bundleAuditLog" | "bundleBetaTesters" | "bundleChangeLogs" | "bundleCollaborators" | "bundleContentRatings" | "bundleCountries" | "bundleDependencies" | "bundleDeveloperStrikes" | "bundleDeviceSupport" | "bundleExternalIntegrations" | "bundleFeaturedSlots" | "bundleInAppPurchases" | "bundleInstallEvents" | "bundleLanguages" | "bundleLocalizations" | "bundleMonetizationConfigs" | "bundleOrders" | "bundlePermissions" | "bundlePrivacyDeclarations" | "bundlePromotions" | "bundleRankingScores" | "bundleReleaseTracks" | "bundleRetentionStats" | "bundleReviews" | "bundleRuntimeConfig" | "bundleScreenshots" | "bundleSearchKeywords" | "bundleStateTransitions" | "bundleStats" | "bundleStoreFlags" | "bundleStoreListings" | "bundleSubscriptionPlans" | "bundleTags" | "bundleTrendingSnapshots" | "bundleUserReports" | "bundleVersionHistory" | "bundleWebhooks" | "bundleOrderItems" | "bundlePaymentLogs" | "bundleRefundRequests" | "bundleUserEntitlements" | "bundleRollouts" | "bundleReviewReports" | "bundleSubscriptionHistory" | "bundleCrashReports" | "bundleReviewHistory" | "bundleReviewQueue" | "bundleSecurityScanResults" | "bundleUpdatePhases" | "userSecrets" | "personalAccessToken" | "ssoConfig" | "deployHook" | "firewallRule" | "nativeDeployment" | "nativeDomainConfig" | "nativeEdgeFunction" | "nativeCacheEntry" | "nativeAnalyticsReplay" | "nativeCrashReport" | "nativeSourceMap" | "nativePlugin" | "nativePluginInstallation" | "nativeDebugSession" | "nativeConnectedDevice" | "nativeCloudTarget" | "nativeRoutingPolicy" | "nativeRegionReplica" | "nativeArtifactMirror" | "nativeWafEvent" | "nativeWafRule" | "nativeScimMapping" | "nativeAiDiagnostic" | "nativeRemediationRun" | "nativeSchedulingPolicy" | "nativeSchedulingSignal" | "nativeServiceIdentity" | "nativeServiceTrustPolicy" | "nativeTelemetryEnvelope" | "cronJob" | "form" | "formSubmission" | "formWebhookDelivery" | "previewComment" | "lepoShipLocalConfig" | "marketplacePartnerAccount" | "marketplaceTransaction" | "marketplaceInstallEvent" | "riskLimits" | "organizationMembership" | "projectMembership" | "workspaceProviderConnection" | "projectProviderBinding" | "workspaceAuditEvent" | "lepoShipBuild" | "marketplaceCompatibilityRun" | "bundleSdkTokens" | "bundleWebhookDeliveries"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -8803,6 +8805,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    BundleSdkTokens: {
+      payload: Prisma.$BundleSdkTokensPayload<ExtArgs>
+      fields: Prisma.BundleSdkTokensFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BundleSdkTokensFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleSdkTokensPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BundleSdkTokensFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleSdkTokensPayload>
+        }
+        findFirst: {
+          args: Prisma.BundleSdkTokensFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleSdkTokensPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BundleSdkTokensFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleSdkTokensPayload>
+        }
+        findMany: {
+          args: Prisma.BundleSdkTokensFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleSdkTokensPayload>[]
+        }
+        create: {
+          args: Prisma.BundleSdkTokensCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleSdkTokensPayload>
+        }
+        createMany: {
+          args: Prisma.BundleSdkTokensCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BundleSdkTokensCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleSdkTokensPayload>[]
+        }
+        delete: {
+          args: Prisma.BundleSdkTokensDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleSdkTokensPayload>
+        }
+        update: {
+          args: Prisma.BundleSdkTokensUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleSdkTokensPayload>
+        }
+        deleteMany: {
+          args: Prisma.BundleSdkTokensDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BundleSdkTokensUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BundleSdkTokensUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleSdkTokensPayload>[]
+        }
+        upsert: {
+          args: Prisma.BundleSdkTokensUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleSdkTokensPayload>
+        }
+        aggregate: {
+          args: Prisma.BundleSdkTokensAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBundleSdkTokens>
+        }
+        groupBy: {
+          args: Prisma.BundleSdkTokensGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleSdkTokensGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BundleSdkTokensCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleSdkTokensCountAggregateOutputType> | number
+        }
+      }
+    }
+    BundleWebhookDeliveries: {
+      payload: Prisma.$BundleWebhookDeliveriesPayload<ExtArgs>
+      fields: Prisma.BundleWebhookDeliveriesFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BundleWebhookDeliveriesFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleWebhookDeliveriesPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BundleWebhookDeliveriesFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleWebhookDeliveriesPayload>
+        }
+        findFirst: {
+          args: Prisma.BundleWebhookDeliveriesFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleWebhookDeliveriesPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BundleWebhookDeliveriesFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleWebhookDeliveriesPayload>
+        }
+        findMany: {
+          args: Prisma.BundleWebhookDeliveriesFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleWebhookDeliveriesPayload>[]
+        }
+        create: {
+          args: Prisma.BundleWebhookDeliveriesCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleWebhookDeliveriesPayload>
+        }
+        createMany: {
+          args: Prisma.BundleWebhookDeliveriesCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BundleWebhookDeliveriesCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleWebhookDeliveriesPayload>[]
+        }
+        delete: {
+          args: Prisma.BundleWebhookDeliveriesDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleWebhookDeliveriesPayload>
+        }
+        update: {
+          args: Prisma.BundleWebhookDeliveriesUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleWebhookDeliveriesPayload>
+        }
+        deleteMany: {
+          args: Prisma.BundleWebhookDeliveriesDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BundleWebhookDeliveriesUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BundleWebhookDeliveriesUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleWebhookDeliveriesPayload>[]
+        }
+        upsert: {
+          args: Prisma.BundleWebhookDeliveriesUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleWebhookDeliveriesPayload>
+        }
+        aggregate: {
+          args: Prisma.BundleWebhookDeliveriesAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBundleWebhookDeliveries>
+        }
+        groupBy: {
+          args: Prisma.BundleWebhookDeliveriesGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleWebhookDeliveriesGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BundleWebhookDeliveriesCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleWebhookDeliveriesCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -8944,6 +9094,9 @@ export const BundlePayoutsScalarFieldEnum = {
   status: 'status',
   bankAccount: 'bankAccount',
   transactionRef: 'transactionRef',
+  workspaceId: 'workspaceId',
+  stripePayoutId: 'stripePayoutId',
+  stripeAccountId: 'stripeAccountId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -9110,6 +9263,8 @@ export const BundleAnalyticsEventsScalarFieldEnum = {
   platformVersion: 'platformVersion',
   bundleVersion: 'bundleVersion',
   ipAddress: 'ipAddress',
+  deviceFingerprint: 'deviceFingerprint',
+  clientEventId: 'clientEventId',
   createdAt: 'createdAt'
 } as const
 
@@ -9179,6 +9334,7 @@ export const BundleCollaboratorsScalarFieldEnum = {
   bundleId: 'bundleId',
   userId: 'userId',
   role: 'role',
+  permissionKeys: 'permissionKeys',
   invitedBy: 'invitedBy',
   acceptedAt: 'acceptedAt',
   createdAt: 'createdAt'
@@ -9234,6 +9390,10 @@ export const BundleDeveloperStrikesScalarFieldEnum = {
   description: 'description',
   issuedBy: 'issuedBy',
   expiresAt: 'expiresAt',
+  isActive: 'isActive',
+  revokedAt: 'revokedAt',
+  revokedBy: 'revokedBy',
+  revokeReason: 'revokeReason',
   createdAt: 'createdAt'
 } as const
 
@@ -9310,6 +9470,8 @@ export const BundleInstallEventsScalarFieldEnum = {
   userId: 'userId',
   eventType: 'eventType',
   deviceId: 'deviceId',
+  deviceFingerprint: 'deviceFingerprint',
+  clientEventId: 'clientEventId',
   platform: 'platform',
   osVersion: 'osVersion',
   bundleVersion: 'bundleVersion',
@@ -9635,6 +9797,8 @@ export const BundleUserReportsScalarFieldEnum = {
   id: 'id',
   bundleId: 'bundleId',
   reportedBy: 'reportedBy',
+  reporterFingerprint: 'reporterFingerprint',
+  clientReportId: 'clientReportId',
   reason: 'reason',
   description: 'description',
   evidenceUrls: 'evidenceUrls',
@@ -9672,6 +9836,7 @@ export const BundleWebhooksScalarFieldEnum = {
   events: 'events',
   isActive: 'isActive',
   failureCount: 'failureCount',
+  consecutiveFailures: 'consecutiveFailures',
   lastTriggeredAt: 'lastTriggeredAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -9716,6 +9881,8 @@ export const BundleRefundRequestsScalarFieldEnum = {
   status: 'status',
   reviewedBy: 'reviewedBy',
   reviewNote: 'reviewNote',
+  stripeRefundId: 'stripeRefundId',
+  stripePaymentIntentId: 'stripePaymentIntentId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -10673,6 +10840,38 @@ export const MarketplaceCompatibilityRunScalarFieldEnum = {
 export type MarketplaceCompatibilityRunScalarFieldEnum = (typeof MarketplaceCompatibilityRunScalarFieldEnum)[keyof typeof MarketplaceCompatibilityRunScalarFieldEnum]
 
 
+export const BundleSdkTokensScalarFieldEnum = {
+  id: 'id',
+  bundleId: 'bundleId',
+  tokenPrefix: 'tokenPrefix',
+  tokenHash: 'tokenHash',
+  label: 'label',
+  lastUsedAt: 'lastUsedAt',
+  isRevoked: 'isRevoked',
+  createdAt: 'createdAt'
+} as const
+
+export type BundleSdkTokensScalarFieldEnum = (typeof BundleSdkTokensScalarFieldEnum)[keyof typeof BundleSdkTokensScalarFieldEnum]
+
+
+export const BundleWebhookDeliveriesScalarFieldEnum = {
+  id: 'id',
+  webhookId: 'webhookId',
+  eventKey: 'eventKey',
+  eventType: 'eventType',
+  payload: 'payload',
+  httpStatus: 'httpStatus',
+  responseBody: 'responseBody',
+  attempt: 'attempt',
+  nextRetryAt: 'nextRetryAt',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BundleWebhookDeliveriesScalarFieldEnum = (typeof BundleWebhookDeliveriesScalarFieldEnum)[keyof typeof BundleWebhookDeliveriesScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -11038,6 +11237,8 @@ export type GlobalOmitConfig = {
   workspaceAuditEvent?: Prisma.WorkspaceAuditEventOmit
   lepoShipBuild?: Prisma.LepoShipBuildOmit
   marketplaceCompatibilityRun?: Prisma.MarketplaceCompatibilityRunOmit
+  bundleSdkTokens?: Prisma.BundleSdkTokensOmit
+  bundleWebhookDeliveries?: Prisma.BundleWebhookDeliveriesOmit
 }
 
 /* Types for Logging */

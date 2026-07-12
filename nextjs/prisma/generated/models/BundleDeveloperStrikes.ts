@@ -33,6 +33,10 @@ export type BundleDeveloperStrikesMinAggregateOutputType = {
   description: string | null
   issuedBy: string | null
   expiresAt: Date | null
+  isActive: boolean | null
+  revokedAt: Date | null
+  revokedBy: string | null
+  revokeReason: string | null
   createdAt: Date | null
 }
 
@@ -45,6 +49,10 @@ export type BundleDeveloperStrikesMaxAggregateOutputType = {
   description: string | null
   issuedBy: string | null
   expiresAt: Date | null
+  isActive: boolean | null
+  revokedAt: Date | null
+  revokedBy: string | null
+  revokeReason: string | null
   createdAt: Date | null
 }
 
@@ -57,6 +65,10 @@ export type BundleDeveloperStrikesCountAggregateOutputType = {
   description: number
   issuedBy: number
   expiresAt: number
+  isActive: number
+  revokedAt: number
+  revokedBy: number
+  revokeReason: number
   createdAt: number
   _all: number
 }
@@ -71,6 +83,10 @@ export type BundleDeveloperStrikesMinAggregateInputType = {
   description?: true
   issuedBy?: true
   expiresAt?: true
+  isActive?: true
+  revokedAt?: true
+  revokedBy?: true
+  revokeReason?: true
   createdAt?: true
 }
 
@@ -83,6 +99,10 @@ export type BundleDeveloperStrikesMaxAggregateInputType = {
   description?: true
   issuedBy?: true
   expiresAt?: true
+  isActive?: true
+  revokedAt?: true
+  revokedBy?: true
+  revokeReason?: true
   createdAt?: true
 }
 
@@ -95,6 +115,10 @@ export type BundleDeveloperStrikesCountAggregateInputType = {
   description?: true
   issuedBy?: true
   expiresAt?: true
+  isActive?: true
+  revokedAt?: true
+  revokedBy?: true
+  revokeReason?: true
   createdAt?: true
   _all?: true
 }
@@ -180,6 +204,10 @@ export type BundleDeveloperStrikesGroupByOutputType = {
   description: string
   issuedBy: string | null
   expiresAt: Date | null
+  isActive: boolean
+  revokedAt: Date | null
+  revokedBy: string | null
+  revokeReason: string | null
   createdAt: Date
   _count: BundleDeveloperStrikesCountAggregateOutputType | null
   _min: BundleDeveloperStrikesMinAggregateOutputType | null
@@ -213,10 +241,15 @@ export type BundleDeveloperStrikesWhereInput = {
   description?: Prisma.StringFilter<"BundleDeveloperStrikes"> | string
   issuedBy?: Prisma.UuidNullableFilter<"BundleDeveloperStrikes"> | string | null
   expiresAt?: Prisma.DateTimeNullableFilter<"BundleDeveloperStrikes"> | Date | string | null
+  isActive?: Prisma.BoolFilter<"BundleDeveloperStrikes"> | boolean
+  revokedAt?: Prisma.DateTimeNullableFilter<"BundleDeveloperStrikes"> | Date | string | null
+  revokedBy?: Prisma.UuidNullableFilter<"BundleDeveloperStrikes"> | string | null
+  revokeReason?: Prisma.StringNullableFilter<"BundleDeveloperStrikes"> | string | null
   createdAt?: Prisma.DateTimeFilter<"BundleDeveloperStrikes"> | Date | string
   bundle?: Prisma.XOR<Prisma.BundlesNullableScalarRelationFilter, Prisma.BundlesWhereInput> | null
   developer?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   issuer?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  revoker?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }
 
 export type BundleDeveloperStrikesOrderByWithRelationInput = {
@@ -228,10 +261,15 @@ export type BundleDeveloperStrikesOrderByWithRelationInput = {
   description?: Prisma.SortOrder
   issuedBy?: Prisma.SortOrderInput | Prisma.SortOrder
   expiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  isActive?: Prisma.SortOrder
+  revokedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  revokedBy?: Prisma.SortOrderInput | Prisma.SortOrder
+  revokeReason?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   bundle?: Prisma.BundlesOrderByWithRelationInput
   developer?: Prisma.UserOrderByWithRelationInput
   issuer?: Prisma.UserOrderByWithRelationInput
+  revoker?: Prisma.UserOrderByWithRelationInput
 }
 
 export type BundleDeveloperStrikesWhereUniqueInput = Prisma.AtLeast<{
@@ -246,10 +284,15 @@ export type BundleDeveloperStrikesWhereUniqueInput = Prisma.AtLeast<{
   description?: Prisma.StringFilter<"BundleDeveloperStrikes"> | string
   issuedBy?: Prisma.UuidNullableFilter<"BundleDeveloperStrikes"> | string | null
   expiresAt?: Prisma.DateTimeNullableFilter<"BundleDeveloperStrikes"> | Date | string | null
+  isActive?: Prisma.BoolFilter<"BundleDeveloperStrikes"> | boolean
+  revokedAt?: Prisma.DateTimeNullableFilter<"BundleDeveloperStrikes"> | Date | string | null
+  revokedBy?: Prisma.UuidNullableFilter<"BundleDeveloperStrikes"> | string | null
+  revokeReason?: Prisma.StringNullableFilter<"BundleDeveloperStrikes"> | string | null
   createdAt?: Prisma.DateTimeFilter<"BundleDeveloperStrikes"> | Date | string
   bundle?: Prisma.XOR<Prisma.BundlesNullableScalarRelationFilter, Prisma.BundlesWhereInput> | null
   developer?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   issuer?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  revoker?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }, "id">
 
 export type BundleDeveloperStrikesOrderByWithAggregationInput = {
@@ -261,6 +304,10 @@ export type BundleDeveloperStrikesOrderByWithAggregationInput = {
   description?: Prisma.SortOrder
   issuedBy?: Prisma.SortOrderInput | Prisma.SortOrder
   expiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  isActive?: Prisma.SortOrder
+  revokedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  revokedBy?: Prisma.SortOrderInput | Prisma.SortOrder
+  revokeReason?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.BundleDeveloperStrikesCountOrderByAggregateInput
   _max?: Prisma.BundleDeveloperStrikesMaxOrderByAggregateInput
@@ -279,6 +326,10 @@ export type BundleDeveloperStrikesScalarWhereWithAggregatesInput = {
   description?: Prisma.StringWithAggregatesFilter<"BundleDeveloperStrikes"> | string
   issuedBy?: Prisma.UuidNullableWithAggregatesFilter<"BundleDeveloperStrikes"> | string | null
   expiresAt?: Prisma.DateTimeNullableWithAggregatesFilter<"BundleDeveloperStrikes"> | Date | string | null
+  isActive?: Prisma.BoolWithAggregatesFilter<"BundleDeveloperStrikes"> | boolean
+  revokedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"BundleDeveloperStrikes"> | Date | string | null
+  revokedBy?: Prisma.UuidNullableWithAggregatesFilter<"BundleDeveloperStrikes"> | string | null
+  revokeReason?: Prisma.StringNullableWithAggregatesFilter<"BundleDeveloperStrikes"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"BundleDeveloperStrikes"> | Date | string
 }
 
@@ -288,10 +339,14 @@ export type BundleDeveloperStrikesCreateInput = {
   severity?: string
   description: string
   expiresAt?: Date | string | null
+  isActive?: boolean
+  revokedAt?: Date | string | null
+  revokeReason?: string | null
   createdAt: Date | string
   bundle?: Prisma.BundlesCreateNestedOneWithoutDeveloperStrikesInput
   developer: Prisma.UserCreateNestedOneWithoutDeveloperStrikesInput
   issuer?: Prisma.UserCreateNestedOneWithoutDeveloperStrikesIssuedInput
+  revoker?: Prisma.UserCreateNestedOneWithoutDeveloperStrikesRevokedInput
 }
 
 export type BundleDeveloperStrikesUncheckedCreateInput = {
@@ -303,6 +358,10 @@ export type BundleDeveloperStrikesUncheckedCreateInput = {
   description: string
   issuedBy?: string | null
   expiresAt?: Date | string | null
+  isActive?: boolean
+  revokedAt?: Date | string | null
+  revokedBy?: string | null
+  revokeReason?: string | null
   createdAt: Date | string
 }
 
@@ -312,10 +371,14 @@ export type BundleDeveloperStrikesUpdateInput = {
   severity?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  revokeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bundle?: Prisma.BundlesUpdateOneWithoutDeveloperStrikesNestedInput
   developer?: Prisma.UserUpdateOneRequiredWithoutDeveloperStrikesNestedInput
   issuer?: Prisma.UserUpdateOneWithoutDeveloperStrikesIssuedNestedInput
+  revoker?: Prisma.UserUpdateOneWithoutDeveloperStrikesRevokedNestedInput
 }
 
 export type BundleDeveloperStrikesUncheckedUpdateInput = {
@@ -327,6 +390,10 @@ export type BundleDeveloperStrikesUncheckedUpdateInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   issuedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  revokedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  revokeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -339,6 +406,10 @@ export type BundleDeveloperStrikesCreateManyInput = {
   description: string
   issuedBy?: string | null
   expiresAt?: Date | string | null
+  isActive?: boolean
+  revokedAt?: Date | string | null
+  revokedBy?: string | null
+  revokeReason?: string | null
   createdAt: Date | string
 }
 
@@ -348,6 +419,9 @@ export type BundleDeveloperStrikesUpdateManyMutationInput = {
   severity?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  revokeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -360,6 +434,10 @@ export type BundleDeveloperStrikesUncheckedUpdateManyInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   issuedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  revokedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  revokeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -382,6 +460,10 @@ export type BundleDeveloperStrikesCountOrderByAggregateInput = {
   description?: Prisma.SortOrder
   issuedBy?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
+  revokedAt?: Prisma.SortOrder
+  revokedBy?: Prisma.SortOrder
+  revokeReason?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -394,6 +476,10 @@ export type BundleDeveloperStrikesMaxOrderByAggregateInput = {
   description?: Prisma.SortOrder
   issuedBy?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
+  revokedAt?: Prisma.SortOrder
+  revokedBy?: Prisma.SortOrder
+  revokeReason?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -406,6 +492,10 @@ export type BundleDeveloperStrikesMinOrderByAggregateInput = {
   description?: Prisma.SortOrder
   issuedBy?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
+  revokedAt?: Prisma.SortOrder
+  revokedBy?: Prisma.SortOrder
+  revokeReason?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -423,6 +513,13 @@ export type BundleDeveloperStrikesCreateNestedManyWithoutIssuerInput = {
   connect?: Prisma.BundleDeveloperStrikesWhereUniqueInput | Prisma.BundleDeveloperStrikesWhereUniqueInput[]
 }
 
+export type BundleDeveloperStrikesCreateNestedManyWithoutRevokerInput = {
+  create?: Prisma.XOR<Prisma.BundleDeveloperStrikesCreateWithoutRevokerInput, Prisma.BundleDeveloperStrikesUncheckedCreateWithoutRevokerInput> | Prisma.BundleDeveloperStrikesCreateWithoutRevokerInput[] | Prisma.BundleDeveloperStrikesUncheckedCreateWithoutRevokerInput[]
+  connectOrCreate?: Prisma.BundleDeveloperStrikesCreateOrConnectWithoutRevokerInput | Prisma.BundleDeveloperStrikesCreateOrConnectWithoutRevokerInput[]
+  createMany?: Prisma.BundleDeveloperStrikesCreateManyRevokerInputEnvelope
+  connect?: Prisma.BundleDeveloperStrikesWhereUniqueInput | Prisma.BundleDeveloperStrikesWhereUniqueInput[]
+}
+
 export type BundleDeveloperStrikesUncheckedCreateNestedManyWithoutDeveloperInput = {
   create?: Prisma.XOR<Prisma.BundleDeveloperStrikesCreateWithoutDeveloperInput, Prisma.BundleDeveloperStrikesUncheckedCreateWithoutDeveloperInput> | Prisma.BundleDeveloperStrikesCreateWithoutDeveloperInput[] | Prisma.BundleDeveloperStrikesUncheckedCreateWithoutDeveloperInput[]
   connectOrCreate?: Prisma.BundleDeveloperStrikesCreateOrConnectWithoutDeveloperInput | Prisma.BundleDeveloperStrikesCreateOrConnectWithoutDeveloperInput[]
@@ -434,6 +531,13 @@ export type BundleDeveloperStrikesUncheckedCreateNestedManyWithoutIssuerInput = 
   create?: Prisma.XOR<Prisma.BundleDeveloperStrikesCreateWithoutIssuerInput, Prisma.BundleDeveloperStrikesUncheckedCreateWithoutIssuerInput> | Prisma.BundleDeveloperStrikesCreateWithoutIssuerInput[] | Prisma.BundleDeveloperStrikesUncheckedCreateWithoutIssuerInput[]
   connectOrCreate?: Prisma.BundleDeveloperStrikesCreateOrConnectWithoutIssuerInput | Prisma.BundleDeveloperStrikesCreateOrConnectWithoutIssuerInput[]
   createMany?: Prisma.BundleDeveloperStrikesCreateManyIssuerInputEnvelope
+  connect?: Prisma.BundleDeveloperStrikesWhereUniqueInput | Prisma.BundleDeveloperStrikesWhereUniqueInput[]
+}
+
+export type BundleDeveloperStrikesUncheckedCreateNestedManyWithoutRevokerInput = {
+  create?: Prisma.XOR<Prisma.BundleDeveloperStrikesCreateWithoutRevokerInput, Prisma.BundleDeveloperStrikesUncheckedCreateWithoutRevokerInput> | Prisma.BundleDeveloperStrikesCreateWithoutRevokerInput[] | Prisma.BundleDeveloperStrikesUncheckedCreateWithoutRevokerInput[]
+  connectOrCreate?: Prisma.BundleDeveloperStrikesCreateOrConnectWithoutRevokerInput | Prisma.BundleDeveloperStrikesCreateOrConnectWithoutRevokerInput[]
+  createMany?: Prisma.BundleDeveloperStrikesCreateManyRevokerInputEnvelope
   connect?: Prisma.BundleDeveloperStrikesWhereUniqueInput | Prisma.BundleDeveloperStrikesWhereUniqueInput[]
 }
 
@@ -465,6 +569,20 @@ export type BundleDeveloperStrikesUpdateManyWithoutIssuerNestedInput = {
   deleteMany?: Prisma.BundleDeveloperStrikesScalarWhereInput | Prisma.BundleDeveloperStrikesScalarWhereInput[]
 }
 
+export type BundleDeveloperStrikesUpdateManyWithoutRevokerNestedInput = {
+  create?: Prisma.XOR<Prisma.BundleDeveloperStrikesCreateWithoutRevokerInput, Prisma.BundleDeveloperStrikesUncheckedCreateWithoutRevokerInput> | Prisma.BundleDeveloperStrikesCreateWithoutRevokerInput[] | Prisma.BundleDeveloperStrikesUncheckedCreateWithoutRevokerInput[]
+  connectOrCreate?: Prisma.BundleDeveloperStrikesCreateOrConnectWithoutRevokerInput | Prisma.BundleDeveloperStrikesCreateOrConnectWithoutRevokerInput[]
+  upsert?: Prisma.BundleDeveloperStrikesUpsertWithWhereUniqueWithoutRevokerInput | Prisma.BundleDeveloperStrikesUpsertWithWhereUniqueWithoutRevokerInput[]
+  createMany?: Prisma.BundleDeveloperStrikesCreateManyRevokerInputEnvelope
+  set?: Prisma.BundleDeveloperStrikesWhereUniqueInput | Prisma.BundleDeveloperStrikesWhereUniqueInput[]
+  disconnect?: Prisma.BundleDeveloperStrikesWhereUniqueInput | Prisma.BundleDeveloperStrikesWhereUniqueInput[]
+  delete?: Prisma.BundleDeveloperStrikesWhereUniqueInput | Prisma.BundleDeveloperStrikesWhereUniqueInput[]
+  connect?: Prisma.BundleDeveloperStrikesWhereUniqueInput | Prisma.BundleDeveloperStrikesWhereUniqueInput[]
+  update?: Prisma.BundleDeveloperStrikesUpdateWithWhereUniqueWithoutRevokerInput | Prisma.BundleDeveloperStrikesUpdateWithWhereUniqueWithoutRevokerInput[]
+  updateMany?: Prisma.BundleDeveloperStrikesUpdateManyWithWhereWithoutRevokerInput | Prisma.BundleDeveloperStrikesUpdateManyWithWhereWithoutRevokerInput[]
+  deleteMany?: Prisma.BundleDeveloperStrikesScalarWhereInput | Prisma.BundleDeveloperStrikesScalarWhereInput[]
+}
+
 export type BundleDeveloperStrikesUncheckedUpdateManyWithoutDeveloperNestedInput = {
   create?: Prisma.XOR<Prisma.BundleDeveloperStrikesCreateWithoutDeveloperInput, Prisma.BundleDeveloperStrikesUncheckedCreateWithoutDeveloperInput> | Prisma.BundleDeveloperStrikesCreateWithoutDeveloperInput[] | Prisma.BundleDeveloperStrikesUncheckedCreateWithoutDeveloperInput[]
   connectOrCreate?: Prisma.BundleDeveloperStrikesCreateOrConnectWithoutDeveloperInput | Prisma.BundleDeveloperStrikesCreateOrConnectWithoutDeveloperInput[]
@@ -490,6 +608,20 @@ export type BundleDeveloperStrikesUncheckedUpdateManyWithoutIssuerNestedInput = 
   connect?: Prisma.BundleDeveloperStrikesWhereUniqueInput | Prisma.BundleDeveloperStrikesWhereUniqueInput[]
   update?: Prisma.BundleDeveloperStrikesUpdateWithWhereUniqueWithoutIssuerInput | Prisma.BundleDeveloperStrikesUpdateWithWhereUniqueWithoutIssuerInput[]
   updateMany?: Prisma.BundleDeveloperStrikesUpdateManyWithWhereWithoutIssuerInput | Prisma.BundleDeveloperStrikesUpdateManyWithWhereWithoutIssuerInput[]
+  deleteMany?: Prisma.BundleDeveloperStrikesScalarWhereInput | Prisma.BundleDeveloperStrikesScalarWhereInput[]
+}
+
+export type BundleDeveloperStrikesUncheckedUpdateManyWithoutRevokerNestedInput = {
+  create?: Prisma.XOR<Prisma.BundleDeveloperStrikesCreateWithoutRevokerInput, Prisma.BundleDeveloperStrikesUncheckedCreateWithoutRevokerInput> | Prisma.BundleDeveloperStrikesCreateWithoutRevokerInput[] | Prisma.BundleDeveloperStrikesUncheckedCreateWithoutRevokerInput[]
+  connectOrCreate?: Prisma.BundleDeveloperStrikesCreateOrConnectWithoutRevokerInput | Prisma.BundleDeveloperStrikesCreateOrConnectWithoutRevokerInput[]
+  upsert?: Prisma.BundleDeveloperStrikesUpsertWithWhereUniqueWithoutRevokerInput | Prisma.BundleDeveloperStrikesUpsertWithWhereUniqueWithoutRevokerInput[]
+  createMany?: Prisma.BundleDeveloperStrikesCreateManyRevokerInputEnvelope
+  set?: Prisma.BundleDeveloperStrikesWhereUniqueInput | Prisma.BundleDeveloperStrikesWhereUniqueInput[]
+  disconnect?: Prisma.BundleDeveloperStrikesWhereUniqueInput | Prisma.BundleDeveloperStrikesWhereUniqueInput[]
+  delete?: Prisma.BundleDeveloperStrikesWhereUniqueInput | Prisma.BundleDeveloperStrikesWhereUniqueInput[]
+  connect?: Prisma.BundleDeveloperStrikesWhereUniqueInput | Prisma.BundleDeveloperStrikesWhereUniqueInput[]
+  update?: Prisma.BundleDeveloperStrikesUpdateWithWhereUniqueWithoutRevokerInput | Prisma.BundleDeveloperStrikesUpdateWithWhereUniqueWithoutRevokerInput[]
+  updateMany?: Prisma.BundleDeveloperStrikesUpdateManyWithWhereWithoutRevokerInput | Prisma.BundleDeveloperStrikesUpdateManyWithWhereWithoutRevokerInput[]
   deleteMany?: Prisma.BundleDeveloperStrikesScalarWhereInput | Prisma.BundleDeveloperStrikesScalarWhereInput[]
 }
 
@@ -541,9 +673,13 @@ export type BundleDeveloperStrikesCreateWithoutDeveloperInput = {
   severity?: string
   description: string
   expiresAt?: Date | string | null
+  isActive?: boolean
+  revokedAt?: Date | string | null
+  revokeReason?: string | null
   createdAt: Date | string
   bundle?: Prisma.BundlesCreateNestedOneWithoutDeveloperStrikesInput
   issuer?: Prisma.UserCreateNestedOneWithoutDeveloperStrikesIssuedInput
+  revoker?: Prisma.UserCreateNestedOneWithoutDeveloperStrikesRevokedInput
 }
 
 export type BundleDeveloperStrikesUncheckedCreateWithoutDeveloperInput = {
@@ -554,6 +690,10 @@ export type BundleDeveloperStrikesUncheckedCreateWithoutDeveloperInput = {
   description: string
   issuedBy?: string | null
   expiresAt?: Date | string | null
+  isActive?: boolean
+  revokedAt?: Date | string | null
+  revokedBy?: string | null
+  revokeReason?: string | null
   createdAt: Date | string
 }
 
@@ -573,9 +713,13 @@ export type BundleDeveloperStrikesCreateWithoutIssuerInput = {
   severity?: string
   description: string
   expiresAt?: Date | string | null
+  isActive?: boolean
+  revokedAt?: Date | string | null
+  revokeReason?: string | null
   createdAt: Date | string
   bundle?: Prisma.BundlesCreateNestedOneWithoutDeveloperStrikesInput
   developer: Prisma.UserCreateNestedOneWithoutDeveloperStrikesInput
+  revoker?: Prisma.UserCreateNestedOneWithoutDeveloperStrikesRevokedInput
 }
 
 export type BundleDeveloperStrikesUncheckedCreateWithoutIssuerInput = {
@@ -586,6 +730,10 @@ export type BundleDeveloperStrikesUncheckedCreateWithoutIssuerInput = {
   severity?: string
   description: string
   expiresAt?: Date | string | null
+  isActive?: boolean
+  revokedAt?: Date | string | null
+  revokedBy?: string | null
+  revokeReason?: string | null
   createdAt: Date | string
 }
 
@@ -596,6 +744,46 @@ export type BundleDeveloperStrikesCreateOrConnectWithoutIssuerInput = {
 
 export type BundleDeveloperStrikesCreateManyIssuerInputEnvelope = {
   data: Prisma.BundleDeveloperStrikesCreateManyIssuerInput | Prisma.BundleDeveloperStrikesCreateManyIssuerInput[]
+  skipDuplicates?: boolean
+}
+
+export type BundleDeveloperStrikesCreateWithoutRevokerInput = {
+  id: string
+  strikeType: string
+  severity?: string
+  description: string
+  expiresAt?: Date | string | null
+  isActive?: boolean
+  revokedAt?: Date | string | null
+  revokeReason?: string | null
+  createdAt: Date | string
+  bundle?: Prisma.BundlesCreateNestedOneWithoutDeveloperStrikesInput
+  developer: Prisma.UserCreateNestedOneWithoutDeveloperStrikesInput
+  issuer?: Prisma.UserCreateNestedOneWithoutDeveloperStrikesIssuedInput
+}
+
+export type BundleDeveloperStrikesUncheckedCreateWithoutRevokerInput = {
+  id: string
+  developerId: string
+  bundleId?: string | null
+  strikeType: string
+  severity?: string
+  description: string
+  issuedBy?: string | null
+  expiresAt?: Date | string | null
+  isActive?: boolean
+  revokedAt?: Date | string | null
+  revokeReason?: string | null
+  createdAt: Date | string
+}
+
+export type BundleDeveloperStrikesCreateOrConnectWithoutRevokerInput = {
+  where: Prisma.BundleDeveloperStrikesWhereUniqueInput
+  create: Prisma.XOR<Prisma.BundleDeveloperStrikesCreateWithoutRevokerInput, Prisma.BundleDeveloperStrikesUncheckedCreateWithoutRevokerInput>
+}
+
+export type BundleDeveloperStrikesCreateManyRevokerInputEnvelope = {
+  data: Prisma.BundleDeveloperStrikesCreateManyRevokerInput | Prisma.BundleDeveloperStrikesCreateManyRevokerInput[]
   skipDuplicates?: boolean
 }
 
@@ -627,6 +815,10 @@ export type BundleDeveloperStrikesScalarWhereInput = {
   description?: Prisma.StringFilter<"BundleDeveloperStrikes"> | string
   issuedBy?: Prisma.UuidNullableFilter<"BundleDeveloperStrikes"> | string | null
   expiresAt?: Prisma.DateTimeNullableFilter<"BundleDeveloperStrikes"> | Date | string | null
+  isActive?: Prisma.BoolFilter<"BundleDeveloperStrikes"> | boolean
+  revokedAt?: Prisma.DateTimeNullableFilter<"BundleDeveloperStrikes"> | Date | string | null
+  revokedBy?: Prisma.UuidNullableFilter<"BundleDeveloperStrikes"> | string | null
+  revokeReason?: Prisma.StringNullableFilter<"BundleDeveloperStrikes"> | string | null
   createdAt?: Prisma.DateTimeFilter<"BundleDeveloperStrikes"> | Date | string
 }
 
@@ -646,15 +838,35 @@ export type BundleDeveloperStrikesUpdateManyWithWhereWithoutIssuerInput = {
   data: Prisma.XOR<Prisma.BundleDeveloperStrikesUpdateManyMutationInput, Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutIssuerInput>
 }
 
+export type BundleDeveloperStrikesUpsertWithWhereUniqueWithoutRevokerInput = {
+  where: Prisma.BundleDeveloperStrikesWhereUniqueInput
+  update: Prisma.XOR<Prisma.BundleDeveloperStrikesUpdateWithoutRevokerInput, Prisma.BundleDeveloperStrikesUncheckedUpdateWithoutRevokerInput>
+  create: Prisma.XOR<Prisma.BundleDeveloperStrikesCreateWithoutRevokerInput, Prisma.BundleDeveloperStrikesUncheckedCreateWithoutRevokerInput>
+}
+
+export type BundleDeveloperStrikesUpdateWithWhereUniqueWithoutRevokerInput = {
+  where: Prisma.BundleDeveloperStrikesWhereUniqueInput
+  data: Prisma.XOR<Prisma.BundleDeveloperStrikesUpdateWithoutRevokerInput, Prisma.BundleDeveloperStrikesUncheckedUpdateWithoutRevokerInput>
+}
+
+export type BundleDeveloperStrikesUpdateManyWithWhereWithoutRevokerInput = {
+  where: Prisma.BundleDeveloperStrikesScalarWhereInput
+  data: Prisma.XOR<Prisma.BundleDeveloperStrikesUpdateManyMutationInput, Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutRevokerInput>
+}
+
 export type BundleDeveloperStrikesCreateWithoutBundleInput = {
   id: string
   strikeType: string
   severity?: string
   description: string
   expiresAt?: Date | string | null
+  isActive?: boolean
+  revokedAt?: Date | string | null
+  revokeReason?: string | null
   createdAt: Date | string
   developer: Prisma.UserCreateNestedOneWithoutDeveloperStrikesInput
   issuer?: Prisma.UserCreateNestedOneWithoutDeveloperStrikesIssuedInput
+  revoker?: Prisma.UserCreateNestedOneWithoutDeveloperStrikesRevokedInput
 }
 
 export type BundleDeveloperStrikesUncheckedCreateWithoutBundleInput = {
@@ -665,6 +877,10 @@ export type BundleDeveloperStrikesUncheckedCreateWithoutBundleInput = {
   description: string
   issuedBy?: string | null
   expiresAt?: Date | string | null
+  isActive?: boolean
+  revokedAt?: Date | string | null
+  revokedBy?: string | null
+  revokeReason?: string | null
   createdAt: Date | string
 }
 
@@ -702,6 +918,10 @@ export type BundleDeveloperStrikesCreateManyDeveloperInput = {
   description: string
   issuedBy?: string | null
   expiresAt?: Date | string | null
+  isActive?: boolean
+  revokedAt?: Date | string | null
+  revokedBy?: string | null
+  revokeReason?: string | null
   createdAt: Date | string
 }
 
@@ -713,6 +933,25 @@ export type BundleDeveloperStrikesCreateManyIssuerInput = {
   severity?: string
   description: string
   expiresAt?: Date | string | null
+  isActive?: boolean
+  revokedAt?: Date | string | null
+  revokedBy?: string | null
+  revokeReason?: string | null
+  createdAt: Date | string
+}
+
+export type BundleDeveloperStrikesCreateManyRevokerInput = {
+  id: string
+  developerId: string
+  bundleId?: string | null
+  strikeType: string
+  severity?: string
+  description: string
+  issuedBy?: string | null
+  expiresAt?: Date | string | null
+  isActive?: boolean
+  revokedAt?: Date | string | null
+  revokeReason?: string | null
   createdAt: Date | string
 }
 
@@ -722,9 +961,13 @@ export type BundleDeveloperStrikesUpdateWithoutDeveloperInput = {
   severity?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  revokeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bundle?: Prisma.BundlesUpdateOneWithoutDeveloperStrikesNestedInput
   issuer?: Prisma.UserUpdateOneWithoutDeveloperStrikesIssuedNestedInput
+  revoker?: Prisma.UserUpdateOneWithoutDeveloperStrikesRevokedNestedInput
 }
 
 export type BundleDeveloperStrikesUncheckedUpdateWithoutDeveloperInput = {
@@ -735,6 +978,10 @@ export type BundleDeveloperStrikesUncheckedUpdateWithoutDeveloperInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   issuedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  revokedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  revokeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -746,6 +993,10 @@ export type BundleDeveloperStrikesUncheckedUpdateManyWithoutDeveloperInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   issuedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  revokedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  revokeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -755,9 +1006,13 @@ export type BundleDeveloperStrikesUpdateWithoutIssuerInput = {
   severity?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  revokeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bundle?: Prisma.BundlesUpdateOneWithoutDeveloperStrikesNestedInput
   developer?: Prisma.UserUpdateOneRequiredWithoutDeveloperStrikesNestedInput
+  revoker?: Prisma.UserUpdateOneWithoutDeveloperStrikesRevokedNestedInput
 }
 
 export type BundleDeveloperStrikesUncheckedUpdateWithoutIssuerInput = {
@@ -768,6 +1023,10 @@ export type BundleDeveloperStrikesUncheckedUpdateWithoutIssuerInput = {
   severity?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  revokedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  revokeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -779,6 +1038,55 @@ export type BundleDeveloperStrikesUncheckedUpdateManyWithoutIssuerInput = {
   severity?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  revokedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  revokeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type BundleDeveloperStrikesUpdateWithoutRevokerInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  strikeType?: Prisma.StringFieldUpdateOperationsInput | string
+  severity?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  revokeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bundle?: Prisma.BundlesUpdateOneWithoutDeveloperStrikesNestedInput
+  developer?: Prisma.UserUpdateOneRequiredWithoutDeveloperStrikesNestedInput
+  issuer?: Prisma.UserUpdateOneWithoutDeveloperStrikesIssuedNestedInput
+}
+
+export type BundleDeveloperStrikesUncheckedUpdateWithoutRevokerInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  developerId?: Prisma.StringFieldUpdateOperationsInput | string
+  bundleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  strikeType?: Prisma.StringFieldUpdateOperationsInput | string
+  severity?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  issuedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  revokeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type BundleDeveloperStrikesUncheckedUpdateManyWithoutRevokerInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  developerId?: Prisma.StringFieldUpdateOperationsInput | string
+  bundleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  strikeType?: Prisma.StringFieldUpdateOperationsInput | string
+  severity?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  issuedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  revokeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -790,6 +1098,10 @@ export type BundleDeveloperStrikesCreateManyBundleInput = {
   description: string
   issuedBy?: string | null
   expiresAt?: Date | string | null
+  isActive?: boolean
+  revokedAt?: Date | string | null
+  revokedBy?: string | null
+  revokeReason?: string | null
   createdAt: Date | string
 }
 
@@ -799,9 +1111,13 @@ export type BundleDeveloperStrikesUpdateWithoutBundleInput = {
   severity?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  revokeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   developer?: Prisma.UserUpdateOneRequiredWithoutDeveloperStrikesNestedInput
   issuer?: Prisma.UserUpdateOneWithoutDeveloperStrikesIssuedNestedInput
+  revoker?: Prisma.UserUpdateOneWithoutDeveloperStrikesRevokedNestedInput
 }
 
 export type BundleDeveloperStrikesUncheckedUpdateWithoutBundleInput = {
@@ -812,6 +1128,10 @@ export type BundleDeveloperStrikesUncheckedUpdateWithoutBundleInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   issuedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  revokedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  revokeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -823,6 +1143,10 @@ export type BundleDeveloperStrikesUncheckedUpdateManyWithoutBundleInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   issuedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  revokedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  revokeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -837,10 +1161,15 @@ export type BundleDeveloperStrikesSelect<ExtArgs extends runtime.Types.Extension
   description?: boolean
   issuedBy?: boolean
   expiresAt?: boolean
+  isActive?: boolean
+  revokedAt?: boolean
+  revokedBy?: boolean
+  revokeReason?: boolean
   createdAt?: boolean
   bundle?: boolean | Prisma.BundleDeveloperStrikes$bundleArgs<ExtArgs>
   developer?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   issuer?: boolean | Prisma.BundleDeveloperStrikes$issuerArgs<ExtArgs>
+  revoker?: boolean | Prisma.BundleDeveloperStrikes$revokerArgs<ExtArgs>
 }, ExtArgs["result"]["bundleDeveloperStrikes"]>
 
 export type BundleDeveloperStrikesSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -852,10 +1181,15 @@ export type BundleDeveloperStrikesSelectCreateManyAndReturn<ExtArgs extends runt
   description?: boolean
   issuedBy?: boolean
   expiresAt?: boolean
+  isActive?: boolean
+  revokedAt?: boolean
+  revokedBy?: boolean
+  revokeReason?: boolean
   createdAt?: boolean
   bundle?: boolean | Prisma.BundleDeveloperStrikes$bundleArgs<ExtArgs>
   developer?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   issuer?: boolean | Prisma.BundleDeveloperStrikes$issuerArgs<ExtArgs>
+  revoker?: boolean | Prisma.BundleDeveloperStrikes$revokerArgs<ExtArgs>
 }, ExtArgs["result"]["bundleDeveloperStrikes"]>
 
 export type BundleDeveloperStrikesSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -867,10 +1201,15 @@ export type BundleDeveloperStrikesSelectUpdateManyAndReturn<ExtArgs extends runt
   description?: boolean
   issuedBy?: boolean
   expiresAt?: boolean
+  isActive?: boolean
+  revokedAt?: boolean
+  revokedBy?: boolean
+  revokeReason?: boolean
   createdAt?: boolean
   bundle?: boolean | Prisma.BundleDeveloperStrikes$bundleArgs<ExtArgs>
   developer?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   issuer?: boolean | Prisma.BundleDeveloperStrikes$issuerArgs<ExtArgs>
+  revoker?: boolean | Prisma.BundleDeveloperStrikes$revokerArgs<ExtArgs>
 }, ExtArgs["result"]["bundleDeveloperStrikes"]>
 
 export type BundleDeveloperStrikesSelectScalar = {
@@ -882,24 +1221,31 @@ export type BundleDeveloperStrikesSelectScalar = {
   description?: boolean
   issuedBy?: boolean
   expiresAt?: boolean
+  isActive?: boolean
+  revokedAt?: boolean
+  revokedBy?: boolean
+  revokeReason?: boolean
   createdAt?: boolean
 }
 
-export type BundleDeveloperStrikesOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "developerId" | "bundleId" | "strikeType" | "severity" | "description" | "issuedBy" | "expiresAt" | "createdAt", ExtArgs["result"]["bundleDeveloperStrikes"]>
+export type BundleDeveloperStrikesOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "developerId" | "bundleId" | "strikeType" | "severity" | "description" | "issuedBy" | "expiresAt" | "isActive" | "revokedAt" | "revokedBy" | "revokeReason" | "createdAt", ExtArgs["result"]["bundleDeveloperStrikes"]>
 export type BundleDeveloperStrikesInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bundle?: boolean | Prisma.BundleDeveloperStrikes$bundleArgs<ExtArgs>
   developer?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   issuer?: boolean | Prisma.BundleDeveloperStrikes$issuerArgs<ExtArgs>
+  revoker?: boolean | Prisma.BundleDeveloperStrikes$revokerArgs<ExtArgs>
 }
 export type BundleDeveloperStrikesIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bundle?: boolean | Prisma.BundleDeveloperStrikes$bundleArgs<ExtArgs>
   developer?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   issuer?: boolean | Prisma.BundleDeveloperStrikes$issuerArgs<ExtArgs>
+  revoker?: boolean | Prisma.BundleDeveloperStrikes$revokerArgs<ExtArgs>
 }
 export type BundleDeveloperStrikesIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bundle?: boolean | Prisma.BundleDeveloperStrikes$bundleArgs<ExtArgs>
   developer?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   issuer?: boolean | Prisma.BundleDeveloperStrikes$issuerArgs<ExtArgs>
+  revoker?: boolean | Prisma.BundleDeveloperStrikes$revokerArgs<ExtArgs>
 }
 
 export type $BundleDeveloperStrikesPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -908,6 +1254,7 @@ export type $BundleDeveloperStrikesPayload<ExtArgs extends runtime.Types.Extensi
     bundle: Prisma.$BundlesPayload<ExtArgs> | null
     developer: Prisma.$UserPayload<ExtArgs>
     issuer: Prisma.$UserPayload<ExtArgs> | null
+    revoker: Prisma.$UserPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -918,6 +1265,10 @@ export type $BundleDeveloperStrikesPayload<ExtArgs extends runtime.Types.Extensi
     description: string
     issuedBy: string | null
     expiresAt: Date | null
+    isActive: boolean
+    revokedAt: Date | null
+    revokedBy: string | null
+    revokeReason: string | null
     createdAt: Date
   }, ExtArgs["result"]["bundleDeveloperStrikes"]>
   composites: {}
@@ -1316,6 +1667,7 @@ export interface Prisma__BundleDeveloperStrikesClient<T, Null = never, ExtArgs e
   bundle<T extends Prisma.BundleDeveloperStrikes$bundleArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleDeveloperStrikes$bundleArgs<ExtArgs>>): Prisma.Prisma__BundlesClient<runtime.Types.Result.GetResult<Prisma.$BundlesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   developer<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   issuer<T extends Prisma.BundleDeveloperStrikes$issuerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleDeveloperStrikes$issuerArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  revoker<T extends Prisma.BundleDeveloperStrikes$revokerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleDeveloperStrikes$revokerArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1353,6 +1705,10 @@ export interface BundleDeveloperStrikesFieldRefs {
   readonly description: Prisma.FieldRef<"BundleDeveloperStrikes", 'String'>
   readonly issuedBy: Prisma.FieldRef<"BundleDeveloperStrikes", 'String'>
   readonly expiresAt: Prisma.FieldRef<"BundleDeveloperStrikes", 'DateTime'>
+  readonly isActive: Prisma.FieldRef<"BundleDeveloperStrikes", 'Boolean'>
+  readonly revokedAt: Prisma.FieldRef<"BundleDeveloperStrikes", 'DateTime'>
+  readonly revokedBy: Prisma.FieldRef<"BundleDeveloperStrikes", 'String'>
+  readonly revokeReason: Prisma.FieldRef<"BundleDeveloperStrikes", 'String'>
   readonly createdAt: Prisma.FieldRef<"BundleDeveloperStrikes", 'DateTime'>
 }
     
@@ -1777,6 +2133,25 @@ export type BundleDeveloperStrikes$bundleArgs<ExtArgs extends runtime.Types.Exte
  * BundleDeveloperStrikes.issuer
  */
 export type BundleDeveloperStrikes$issuerArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the User
+   */
+  select?: Prisma.UserSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the User
+   */
+  omit?: Prisma.UserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  where?: Prisma.UserWhereInput
+}
+
+/**
+ * BundleDeveloperStrikes.revoker
+ */
+export type BundleDeveloperStrikes$revokerArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the User
    */

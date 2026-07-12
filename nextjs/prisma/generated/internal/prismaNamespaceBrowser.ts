@@ -162,7 +162,9 @@ export const ModelName = {
   ProjectProviderBinding: 'ProjectProviderBinding',
   WorkspaceAuditEvent: 'WorkspaceAuditEvent',
   LepoShipBuild: 'LepoShipBuild',
-  MarketplaceCompatibilityRun: 'MarketplaceCompatibilityRun'
+  MarketplaceCompatibilityRun: 'MarketplaceCompatibilityRun',
+  BundleSdkTokens: 'BundleSdkTokens',
+  BundleWebhookDeliveries: 'BundleWebhookDeliveries'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -283,6 +285,9 @@ export const BundlePayoutsScalarFieldEnum = {
   status: 'status',
   bankAccount: 'bankAccount',
   transactionRef: 'transactionRef',
+  workspaceId: 'workspaceId',
+  stripePayoutId: 'stripePayoutId',
+  stripeAccountId: 'stripeAccountId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -449,6 +454,8 @@ export const BundleAnalyticsEventsScalarFieldEnum = {
   platformVersion: 'platformVersion',
   bundleVersion: 'bundleVersion',
   ipAddress: 'ipAddress',
+  deviceFingerprint: 'deviceFingerprint',
+  clientEventId: 'clientEventId',
   createdAt: 'createdAt'
 } as const
 
@@ -518,6 +525,7 @@ export const BundleCollaboratorsScalarFieldEnum = {
   bundleId: 'bundleId',
   userId: 'userId',
   role: 'role',
+  permissionKeys: 'permissionKeys',
   invitedBy: 'invitedBy',
   acceptedAt: 'acceptedAt',
   createdAt: 'createdAt'
@@ -573,6 +581,10 @@ export const BundleDeveloperStrikesScalarFieldEnum = {
   description: 'description',
   issuedBy: 'issuedBy',
   expiresAt: 'expiresAt',
+  isActive: 'isActive',
+  revokedAt: 'revokedAt',
+  revokedBy: 'revokedBy',
+  revokeReason: 'revokeReason',
   createdAt: 'createdAt'
 } as const
 
@@ -649,6 +661,8 @@ export const BundleInstallEventsScalarFieldEnum = {
   userId: 'userId',
   eventType: 'eventType',
   deviceId: 'deviceId',
+  deviceFingerprint: 'deviceFingerprint',
+  clientEventId: 'clientEventId',
   platform: 'platform',
   osVersion: 'osVersion',
   bundleVersion: 'bundleVersion',
@@ -974,6 +988,8 @@ export const BundleUserReportsScalarFieldEnum = {
   id: 'id',
   bundleId: 'bundleId',
   reportedBy: 'reportedBy',
+  reporterFingerprint: 'reporterFingerprint',
+  clientReportId: 'clientReportId',
   reason: 'reason',
   description: 'description',
   evidenceUrls: 'evidenceUrls',
@@ -1011,6 +1027,7 @@ export const BundleWebhooksScalarFieldEnum = {
   events: 'events',
   isActive: 'isActive',
   failureCount: 'failureCount',
+  consecutiveFailures: 'consecutiveFailures',
   lastTriggeredAt: 'lastTriggeredAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -1055,6 +1072,8 @@ export const BundleRefundRequestsScalarFieldEnum = {
   status: 'status',
   reviewedBy: 'reviewedBy',
   reviewNote: 'reviewNote',
+  stripeRefundId: 'stripeRefundId',
+  stripePaymentIntentId: 'stripePaymentIntentId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -2010,6 +2029,38 @@ export const MarketplaceCompatibilityRunScalarFieldEnum = {
 } as const
 
 export type MarketplaceCompatibilityRunScalarFieldEnum = (typeof MarketplaceCompatibilityRunScalarFieldEnum)[keyof typeof MarketplaceCompatibilityRunScalarFieldEnum]
+
+
+export const BundleSdkTokensScalarFieldEnum = {
+  id: 'id',
+  bundleId: 'bundleId',
+  tokenPrefix: 'tokenPrefix',
+  tokenHash: 'tokenHash',
+  label: 'label',
+  lastUsedAt: 'lastUsedAt',
+  isRevoked: 'isRevoked',
+  createdAt: 'createdAt'
+} as const
+
+export type BundleSdkTokensScalarFieldEnum = (typeof BundleSdkTokensScalarFieldEnum)[keyof typeof BundleSdkTokensScalarFieldEnum]
+
+
+export const BundleWebhookDeliveriesScalarFieldEnum = {
+  id: 'id',
+  webhookId: 'webhookId',
+  eventKey: 'eventKey',
+  eventType: 'eventType',
+  payload: 'payload',
+  httpStatus: 'httpStatus',
+  responseBody: 'responseBody',
+  attempt: 'attempt',
+  nextRetryAt: 'nextRetryAt',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BundleWebhookDeliveriesScalarFieldEnum = (typeof BundleWebhookDeliveriesScalarFieldEnum)[keyof typeof BundleWebhookDeliveriesScalarFieldEnum]
 
 
 export const SortOrder = {

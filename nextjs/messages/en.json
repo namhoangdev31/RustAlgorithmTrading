@@ -18,6 +18,15 @@
       "media": "Media",
       "keywords": "Keywords & Tags",
       "privacy": "Privacy"
+    },
+    "compliance": {
+      "title": "Compliance & Strikes"
+    },
+    "featured": {
+      "title": "Featured Spotlight"
+    },
+    "finance": {
+      "title": "Finance Reconciliation"
     }
   },
   "Navbar": {

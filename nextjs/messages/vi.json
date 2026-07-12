@@ -18,6 +18,15 @@
       "media": "Hình ảnh",
       "keywords": "Từ khóa & Thẻ",
       "privacy": "Bảo mật"
+    },
+    "compliance": {
+      "title": "Tuân thủ & Cảnh cáo"
+    },
+    "featured": {
+      "title": "Tiêu điểm Nổi bật"
+    },
+    "finance": {
+      "title": "Đối soát Tài chính"
     }
   },
   "Navbar": {

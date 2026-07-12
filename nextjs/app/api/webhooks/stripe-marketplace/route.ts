@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/server/prisma";
 import { constructMarketplaceWebhookEvent, isStripeAvailable } from "@/lib/server/stripe-connect";
+import { queueWebhookEvent } from "@/lib/server/webhook-dispatcher";
 
 function fromStripeAmount(amountInMinor: number, currency: string): number {
   const zeroDecimal = ["bif", "djf", "gnf", "jpy", "kmf", "lrd", "mga", "pyg", "rwf", "ugx", "vnd", "vuv", "xaf", "xof", "xpf"];
@@ -158,6 +159,19 @@ export async function POST(req: NextRequest) {
                 createdAt: now,
               },
             });
+
+            // Dispatch order completed webhook
+            await queueWebhookEvent(
+              bundleId,
+              "order:completed",
+              `wh_evt_order_completed_${sessionId}`,
+              {
+                sessionId,
+                buyerUserId,
+                amount: totalAmount,
+                currency,
+              }
+            ).catch((err) => console.error("[Webhook Dispatch Error]", err.message));
           }
 
           console.log(`[Stripe Marketplace Webhook] Fulfilled one-time order for bundle ${bundleId}`);

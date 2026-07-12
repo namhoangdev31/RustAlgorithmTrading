@@ -43,6 +43,8 @@ export type BundleRefundRequestsMinAggregateOutputType = {
   status: string | null
   reviewedBy: string | null
   reviewNote: string | null
+  stripeRefundId: string | null
+  stripePaymentIntentId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -56,6 +58,8 @@ export type BundleRefundRequestsMaxAggregateOutputType = {
   status: string | null
   reviewedBy: string | null
   reviewNote: string | null
+  stripeRefundId: string | null
+  stripePaymentIntentId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -69,6 +73,8 @@ export type BundleRefundRequestsCountAggregateOutputType = {
   status: number
   reviewedBy: number
   reviewNote: number
+  stripeRefundId: number
+  stripePaymentIntentId: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -92,6 +98,8 @@ export type BundleRefundRequestsMinAggregateInputType = {
   status?: true
   reviewedBy?: true
   reviewNote?: true
+  stripeRefundId?: true
+  stripePaymentIntentId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -105,6 +113,8 @@ export type BundleRefundRequestsMaxAggregateInputType = {
   status?: true
   reviewedBy?: true
   reviewNote?: true
+  stripeRefundId?: true
+  stripePaymentIntentId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -118,6 +128,8 @@ export type BundleRefundRequestsCountAggregateInputType = {
   status?: true
   reviewedBy?: true
   reviewNote?: true
+  stripeRefundId?: true
+  stripePaymentIntentId?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -218,6 +230,8 @@ export type BundleRefundRequestsGroupByOutputType = {
   status: string
   reviewedBy: string | null
   reviewNote: string | null
+  stripeRefundId: string | null
+  stripePaymentIntentId: string | null
   createdAt: Date
   updatedAt: Date
   _count: BundleRefundRequestsCountAggregateOutputType | null
@@ -254,6 +268,8 @@ export type BundleRefundRequestsWhereInput = {
   status?: Prisma.StringFilter<"BundleRefundRequests"> | string
   reviewedBy?: Prisma.UuidNullableFilter<"BundleRefundRequests"> | string | null
   reviewNote?: Prisma.StringNullableFilter<"BundleRefundRequests"> | string | null
+  stripeRefundId?: Prisma.StringNullableFilter<"BundleRefundRequests"> | string | null
+  stripePaymentIntentId?: Prisma.StringNullableFilter<"BundleRefundRequests"> | string | null
   createdAt?: Prisma.DateTimeFilter<"BundleRefundRequests"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"BundleRefundRequests"> | Date | string
   order?: Prisma.XOR<Prisma.BundleOrdersScalarRelationFilter, Prisma.BundleOrdersWhereInput>
@@ -270,6 +286,8 @@ export type BundleRefundRequestsOrderByWithRelationInput = {
   status?: Prisma.SortOrder
   reviewedBy?: Prisma.SortOrderInput | Prisma.SortOrder
   reviewNote?: Prisma.SortOrderInput | Prisma.SortOrder
+  stripeRefundId?: Prisma.SortOrderInput | Prisma.SortOrder
+  stripePaymentIntentId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   order?: Prisma.BundleOrdersOrderByWithRelationInput
@@ -279,6 +297,7 @@ export type BundleRefundRequestsOrderByWithRelationInput = {
 
 export type BundleRefundRequestsWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  stripeRefundId?: string
   AND?: Prisma.BundleRefundRequestsWhereInput | Prisma.BundleRefundRequestsWhereInput[]
   OR?: Prisma.BundleRefundRequestsWhereInput[]
   NOT?: Prisma.BundleRefundRequestsWhereInput | Prisma.BundleRefundRequestsWhereInput[]
@@ -289,12 +308,13 @@ export type BundleRefundRequestsWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.StringFilter<"BundleRefundRequests"> | string
   reviewedBy?: Prisma.UuidNullableFilter<"BundleRefundRequests"> | string | null
   reviewNote?: Prisma.StringNullableFilter<"BundleRefundRequests"> | string | null
+  stripePaymentIntentId?: Prisma.StringNullableFilter<"BundleRefundRequests"> | string | null
   createdAt?: Prisma.DateTimeFilter<"BundleRefundRequests"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"BundleRefundRequests"> | Date | string
   order?: Prisma.XOR<Prisma.BundleOrdersScalarRelationFilter, Prisma.BundleOrdersWhereInput>
   reviewer?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-}, "id">
+}, "id" | "stripeRefundId">
 
 export type BundleRefundRequestsOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -305,6 +325,8 @@ export type BundleRefundRequestsOrderByWithAggregationInput = {
   status?: Prisma.SortOrder
   reviewedBy?: Prisma.SortOrderInput | Prisma.SortOrder
   reviewNote?: Prisma.SortOrderInput | Prisma.SortOrder
+  stripeRefundId?: Prisma.SortOrderInput | Prisma.SortOrder
+  stripePaymentIntentId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.BundleRefundRequestsCountOrderByAggregateInput
@@ -326,6 +348,8 @@ export type BundleRefundRequestsScalarWhereWithAggregatesInput = {
   status?: Prisma.StringWithAggregatesFilter<"BundleRefundRequests"> | string
   reviewedBy?: Prisma.UuidNullableWithAggregatesFilter<"BundleRefundRequests"> | string | null
   reviewNote?: Prisma.StringNullableWithAggregatesFilter<"BundleRefundRequests"> | string | null
+  stripeRefundId?: Prisma.StringNullableWithAggregatesFilter<"BundleRefundRequests"> | string | null
+  stripePaymentIntentId?: Prisma.StringNullableWithAggregatesFilter<"BundleRefundRequests"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"BundleRefundRequests"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"BundleRefundRequests"> | Date | string
 }
@@ -336,6 +360,8 @@ export type BundleRefundRequestsCreateInput = {
   amount: number
   status?: string
   reviewNote?: string | null
+  stripeRefundId?: string | null
+  stripePaymentIntentId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   order: Prisma.BundleOrdersCreateNestedOneWithoutRefundRequestsInput
@@ -352,6 +378,8 @@ export type BundleRefundRequestsUncheckedCreateInput = {
   status?: string
   reviewedBy?: string | null
   reviewNote?: string | null
+  stripeRefundId?: string | null
+  stripePaymentIntentId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
 }
@@ -362,6 +390,8 @@ export type BundleRefundRequestsUpdateInput = {
   amount?: Prisma.FloatFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
   reviewNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeRefundId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   order?: Prisma.BundleOrdersUpdateOneRequiredWithoutRefundRequestsNestedInput
@@ -378,6 +408,8 @@ export type BundleRefundRequestsUncheckedUpdateInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviewNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeRefundId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -391,6 +423,8 @@ export type BundleRefundRequestsCreateManyInput = {
   status?: string
   reviewedBy?: string | null
   reviewNote?: string | null
+  stripeRefundId?: string | null
+  stripePaymentIntentId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
 }
@@ -401,6 +435,8 @@ export type BundleRefundRequestsUpdateManyMutationInput = {
   amount?: Prisma.FloatFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
   reviewNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeRefundId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -414,6 +450,8 @@ export type BundleRefundRequestsUncheckedUpdateManyInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviewNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeRefundId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -437,6 +475,8 @@ export type BundleRefundRequestsCountOrderByAggregateInput = {
   status?: Prisma.SortOrder
   reviewedBy?: Prisma.SortOrder
   reviewNote?: Prisma.SortOrder
+  stripeRefundId?: Prisma.SortOrder
+  stripePaymentIntentId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -454,6 +494,8 @@ export type BundleRefundRequestsMaxOrderByAggregateInput = {
   status?: Prisma.SortOrder
   reviewedBy?: Prisma.SortOrder
   reviewNote?: Prisma.SortOrder
+  stripeRefundId?: Prisma.SortOrder
+  stripePaymentIntentId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -467,6 +509,8 @@ export type BundleRefundRequestsMinOrderByAggregateInput = {
   status?: Prisma.SortOrder
   reviewedBy?: Prisma.SortOrder
   reviewNote?: Prisma.SortOrder
+  stripeRefundId?: Prisma.SortOrder
+  stripePaymentIntentId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -607,6 +651,8 @@ export type BundleRefundRequestsCreateWithoutReviewerInput = {
   amount: number
   status?: string
   reviewNote?: string | null
+  stripeRefundId?: string | null
+  stripePaymentIntentId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   order: Prisma.BundleOrdersCreateNestedOneWithoutRefundRequestsInput
@@ -621,6 +667,8 @@ export type BundleRefundRequestsUncheckedCreateWithoutReviewerInput = {
   amount: number
   status?: string
   reviewNote?: string | null
+  stripeRefundId?: string | null
+  stripePaymentIntentId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
 }
@@ -641,6 +689,8 @@ export type BundleRefundRequestsCreateWithoutUserInput = {
   amount: number
   status?: string
   reviewNote?: string | null
+  stripeRefundId?: string | null
+  stripePaymentIntentId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   order: Prisma.BundleOrdersCreateNestedOneWithoutRefundRequestsInput
@@ -655,6 +705,8 @@ export type BundleRefundRequestsUncheckedCreateWithoutUserInput = {
   status?: string
   reviewedBy?: string | null
   reviewNote?: string | null
+  stripeRefundId?: string | null
+  stripePaymentIntentId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
 }
@@ -697,6 +749,8 @@ export type BundleRefundRequestsScalarWhereInput = {
   status?: Prisma.StringFilter<"BundleRefundRequests"> | string
   reviewedBy?: Prisma.UuidNullableFilter<"BundleRefundRequests"> | string | null
   reviewNote?: Prisma.StringNullableFilter<"BundleRefundRequests"> | string | null
+  stripeRefundId?: Prisma.StringNullableFilter<"BundleRefundRequests"> | string | null
+  stripePaymentIntentId?: Prisma.StringNullableFilter<"BundleRefundRequests"> | string | null
   createdAt?: Prisma.DateTimeFilter<"BundleRefundRequests"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"BundleRefundRequests"> | Date | string
 }
@@ -723,6 +777,8 @@ export type BundleRefundRequestsCreateWithoutOrderInput = {
   amount: number
   status?: string
   reviewNote?: string | null
+  stripeRefundId?: string | null
+  stripePaymentIntentId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   reviewer?: Prisma.UserCreateNestedOneWithoutRefundRequestsReviewedInput
@@ -737,6 +793,8 @@ export type BundleRefundRequestsUncheckedCreateWithoutOrderInput = {
   status?: string
   reviewedBy?: string | null
   reviewNote?: string | null
+  stripeRefundId?: string | null
+  stripePaymentIntentId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
 }
@@ -775,6 +833,8 @@ export type BundleRefundRequestsCreateManyReviewerInput = {
   amount: number
   status?: string
   reviewNote?: string | null
+  stripeRefundId?: string | null
+  stripePaymentIntentId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
 }
@@ -787,6 +847,8 @@ export type BundleRefundRequestsCreateManyUserInput = {
   status?: string
   reviewedBy?: string | null
   reviewNote?: string | null
+  stripeRefundId?: string | null
+  stripePaymentIntentId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
 }
@@ -797,6 +859,8 @@ export type BundleRefundRequestsUpdateWithoutReviewerInput = {
   amount?: Prisma.FloatFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
   reviewNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeRefundId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   order?: Prisma.BundleOrdersUpdateOneRequiredWithoutRefundRequestsNestedInput
@@ -811,6 +875,8 @@ export type BundleRefundRequestsUncheckedUpdateWithoutReviewerInput = {
   amount?: Prisma.FloatFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
   reviewNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeRefundId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -823,6 +889,8 @@ export type BundleRefundRequestsUncheckedUpdateManyWithoutReviewerInput = {
   amount?: Prisma.FloatFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
   reviewNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeRefundId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -833,6 +901,8 @@ export type BundleRefundRequestsUpdateWithoutUserInput = {
   amount?: Prisma.FloatFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
   reviewNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeRefundId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   order?: Prisma.BundleOrdersUpdateOneRequiredWithoutRefundRequestsNestedInput
@@ -847,6 +917,8 @@ export type BundleRefundRequestsUncheckedUpdateWithoutUserInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviewNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeRefundId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -859,6 +931,8 @@ export type BundleRefundRequestsUncheckedUpdateManyWithoutUserInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviewNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeRefundId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -871,6 +945,8 @@ export type BundleRefundRequestsCreateManyOrderInput = {
   status?: string
   reviewedBy?: string | null
   reviewNote?: string | null
+  stripeRefundId?: string | null
+  stripePaymentIntentId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
 }
@@ -881,6 +957,8 @@ export type BundleRefundRequestsUpdateWithoutOrderInput = {
   amount?: Prisma.FloatFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
   reviewNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeRefundId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviewer?: Prisma.UserUpdateOneWithoutRefundRequestsReviewedNestedInput
@@ -895,6 +973,8 @@ export type BundleRefundRequestsUncheckedUpdateWithoutOrderInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviewNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeRefundId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -907,6 +987,8 @@ export type BundleRefundRequestsUncheckedUpdateManyWithoutOrderInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviewNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeRefundId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -922,6 +1004,8 @@ export type BundleRefundRequestsSelect<ExtArgs extends runtime.Types.Extensions.
   status?: boolean
   reviewedBy?: boolean
   reviewNote?: boolean
+  stripeRefundId?: boolean
+  stripePaymentIntentId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   order?: boolean | Prisma.BundleOrdersDefaultArgs<ExtArgs>
@@ -938,6 +1022,8 @@ export type BundleRefundRequestsSelectCreateManyAndReturn<ExtArgs extends runtim
   status?: boolean
   reviewedBy?: boolean
   reviewNote?: boolean
+  stripeRefundId?: boolean
+  stripePaymentIntentId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   order?: boolean | Prisma.BundleOrdersDefaultArgs<ExtArgs>
@@ -954,6 +1040,8 @@ export type BundleRefundRequestsSelectUpdateManyAndReturn<ExtArgs extends runtim
   status?: boolean
   reviewedBy?: boolean
   reviewNote?: boolean
+  stripeRefundId?: boolean
+  stripePaymentIntentId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   order?: boolean | Prisma.BundleOrdersDefaultArgs<ExtArgs>
@@ -970,11 +1058,13 @@ export type BundleRefundRequestsSelectScalar = {
   status?: boolean
   reviewedBy?: boolean
   reviewNote?: boolean
+  stripeRefundId?: boolean
+  stripePaymentIntentId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type BundleRefundRequestsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderId" | "userId" | "reason" | "amount" | "status" | "reviewedBy" | "reviewNote" | "createdAt" | "updatedAt", ExtArgs["result"]["bundleRefundRequests"]>
+export type BundleRefundRequestsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderId" | "userId" | "reason" | "amount" | "status" | "reviewedBy" | "reviewNote" | "stripeRefundId" | "stripePaymentIntentId" | "createdAt" | "updatedAt", ExtArgs["result"]["bundleRefundRequests"]>
 export type BundleRefundRequestsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   order?: boolean | Prisma.BundleOrdersDefaultArgs<ExtArgs>
   reviewer?: boolean | Prisma.BundleRefundRequests$reviewerArgs<ExtArgs>
@@ -1007,6 +1097,8 @@ export type $BundleRefundRequestsPayload<ExtArgs extends runtime.Types.Extension
     status: string
     reviewedBy: string | null
     reviewNote: string | null
+    stripeRefundId: string | null
+    stripePaymentIntentId: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["bundleRefundRequests"]>
@@ -1443,6 +1535,8 @@ export interface BundleRefundRequestsFieldRefs {
   readonly status: Prisma.FieldRef<"BundleRefundRequests", 'String'>
   readonly reviewedBy: Prisma.FieldRef<"BundleRefundRequests", 'String'>
   readonly reviewNote: Prisma.FieldRef<"BundleRefundRequests", 'String'>
+  readonly stripeRefundId: Prisma.FieldRef<"BundleRefundRequests", 'String'>
+  readonly stripePaymentIntentId: Prisma.FieldRef<"BundleRefundRequests", 'String'>
   readonly createdAt: Prisma.FieldRef<"BundleRefundRequests", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"BundleRefundRequests", 'DateTime'>
 }

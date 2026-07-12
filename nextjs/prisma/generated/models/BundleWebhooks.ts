@@ -28,10 +28,12 @@ export type AggregateBundleWebhooks = {
 
 export type BundleWebhooksAvgAggregateOutputType = {
   failureCount: number | null
+  consecutiveFailures: number | null
 }
 
 export type BundleWebhooksSumAggregateOutputType = {
   failureCount: number | null
+  consecutiveFailures: number | null
 }
 
 export type BundleWebhooksMinAggregateOutputType = {
@@ -42,6 +44,7 @@ export type BundleWebhooksMinAggregateOutputType = {
   events: string | null
   isActive: boolean | null
   failureCount: number | null
+  consecutiveFailures: number | null
   lastTriggeredAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -55,6 +58,7 @@ export type BundleWebhooksMaxAggregateOutputType = {
   events: string | null
   isActive: boolean | null
   failureCount: number | null
+  consecutiveFailures: number | null
   lastTriggeredAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -68,6 +72,7 @@ export type BundleWebhooksCountAggregateOutputType = {
   events: number
   isActive: number
   failureCount: number
+  consecutiveFailures: number
   lastTriggeredAt: number
   createdAt: number
   updatedAt: number
@@ -77,10 +82,12 @@ export type BundleWebhooksCountAggregateOutputType = {
 
 export type BundleWebhooksAvgAggregateInputType = {
   failureCount?: true
+  consecutiveFailures?: true
 }
 
 export type BundleWebhooksSumAggregateInputType = {
   failureCount?: true
+  consecutiveFailures?: true
 }
 
 export type BundleWebhooksMinAggregateInputType = {
@@ -91,6 +98,7 @@ export type BundleWebhooksMinAggregateInputType = {
   events?: true
   isActive?: true
   failureCount?: true
+  consecutiveFailures?: true
   lastTriggeredAt?: true
   createdAt?: true
   updatedAt?: true
@@ -104,6 +112,7 @@ export type BundleWebhooksMaxAggregateInputType = {
   events?: true
   isActive?: true
   failureCount?: true
+  consecutiveFailures?: true
   lastTriggeredAt?: true
   createdAt?: true
   updatedAt?: true
@@ -117,6 +126,7 @@ export type BundleWebhooksCountAggregateInputType = {
   events?: true
   isActive?: true
   failureCount?: true
+  consecutiveFailures?: true
   lastTriggeredAt?: true
   createdAt?: true
   updatedAt?: true
@@ -217,6 +227,7 @@ export type BundleWebhooksGroupByOutputType = {
   events: string
   isActive: boolean
   failureCount: number
+  consecutiveFailures: number
   lastTriggeredAt: Date | null
   createdAt: Date
   updatedAt: Date
@@ -253,10 +264,12 @@ export type BundleWebhooksWhereInput = {
   events?: Prisma.StringFilter<"BundleWebhooks"> | string
   isActive?: Prisma.BoolFilter<"BundleWebhooks"> | boolean
   failureCount?: Prisma.IntFilter<"BundleWebhooks"> | number
+  consecutiveFailures?: Prisma.IntFilter<"BundleWebhooks"> | number
   lastTriggeredAt?: Prisma.DateTimeNullableFilter<"BundleWebhooks"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"BundleWebhooks"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"BundleWebhooks"> | Date | string
   bundle?: Prisma.XOR<Prisma.BundlesScalarRelationFilter, Prisma.BundlesWhereInput>
+  deliveries?: Prisma.BundleWebhookDeliveriesListRelationFilter
 }
 
 export type BundleWebhooksOrderByWithRelationInput = {
@@ -267,10 +280,12 @@ export type BundleWebhooksOrderByWithRelationInput = {
   events?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   failureCount?: Prisma.SortOrder
+  consecutiveFailures?: Prisma.SortOrder
   lastTriggeredAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   bundle?: Prisma.BundlesOrderByWithRelationInput
+  deliveries?: Prisma.BundleWebhookDeliveriesOrderByRelationAggregateInput
 }
 
 export type BundleWebhooksWhereUniqueInput = Prisma.AtLeast<{
@@ -284,10 +299,12 @@ export type BundleWebhooksWhereUniqueInput = Prisma.AtLeast<{
   events?: Prisma.StringFilter<"BundleWebhooks"> | string
   isActive?: Prisma.BoolFilter<"BundleWebhooks"> | boolean
   failureCount?: Prisma.IntFilter<"BundleWebhooks"> | number
+  consecutiveFailures?: Prisma.IntFilter<"BundleWebhooks"> | number
   lastTriggeredAt?: Prisma.DateTimeNullableFilter<"BundleWebhooks"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"BundleWebhooks"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"BundleWebhooks"> | Date | string
   bundle?: Prisma.XOR<Prisma.BundlesScalarRelationFilter, Prisma.BundlesWhereInput>
+  deliveries?: Prisma.BundleWebhookDeliveriesListRelationFilter
 }, "id">
 
 export type BundleWebhooksOrderByWithAggregationInput = {
@@ -298,6 +315,7 @@ export type BundleWebhooksOrderByWithAggregationInput = {
   events?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   failureCount?: Prisma.SortOrder
+  consecutiveFailures?: Prisma.SortOrder
   lastTriggeredAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -319,6 +337,7 @@ export type BundleWebhooksScalarWhereWithAggregatesInput = {
   events?: Prisma.StringWithAggregatesFilter<"BundleWebhooks"> | string
   isActive?: Prisma.BoolWithAggregatesFilter<"BundleWebhooks"> | boolean
   failureCount?: Prisma.IntWithAggregatesFilter<"BundleWebhooks"> | number
+  consecutiveFailures?: Prisma.IntWithAggregatesFilter<"BundleWebhooks"> | number
   lastTriggeredAt?: Prisma.DateTimeNullableWithAggregatesFilter<"BundleWebhooks"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"BundleWebhooks"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"BundleWebhooks"> | Date | string
@@ -331,10 +350,12 @@ export type BundleWebhooksCreateInput = {
   events: string
   isActive?: boolean
   failureCount?: number
+  consecutiveFailures?: number
   lastTriggeredAt?: Date | string | null
   createdAt: Date | string
   updatedAt: Date | string
   bundle: Prisma.BundlesCreateNestedOneWithoutWebhooksInput
+  deliveries?: Prisma.BundleWebhookDeliveriesCreateNestedManyWithoutWebhookInput
 }
 
 export type BundleWebhooksUncheckedCreateInput = {
@@ -345,9 +366,11 @@ export type BundleWebhooksUncheckedCreateInput = {
   events: string
   isActive?: boolean
   failureCount?: number
+  consecutiveFailures?: number
   lastTriggeredAt?: Date | string | null
   createdAt: Date | string
   updatedAt: Date | string
+  deliveries?: Prisma.BundleWebhookDeliveriesUncheckedCreateNestedManyWithoutWebhookInput
 }
 
 export type BundleWebhooksUpdateInput = {
@@ -357,10 +380,12 @@ export type BundleWebhooksUpdateInput = {
   events?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   failureCount?: Prisma.IntFieldUpdateOperationsInput | number
+  consecutiveFailures?: Prisma.IntFieldUpdateOperationsInput | number
   lastTriggeredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bundle?: Prisma.BundlesUpdateOneRequiredWithoutWebhooksNestedInput
+  deliveries?: Prisma.BundleWebhookDeliveriesUpdateManyWithoutWebhookNestedInput
 }
 
 export type BundleWebhooksUncheckedUpdateInput = {
@@ -371,9 +396,11 @@ export type BundleWebhooksUncheckedUpdateInput = {
   events?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   failureCount?: Prisma.IntFieldUpdateOperationsInput | number
+  consecutiveFailures?: Prisma.IntFieldUpdateOperationsInput | number
   lastTriggeredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deliveries?: Prisma.BundleWebhookDeliveriesUncheckedUpdateManyWithoutWebhookNestedInput
 }
 
 export type BundleWebhooksCreateManyInput = {
@@ -384,6 +411,7 @@ export type BundleWebhooksCreateManyInput = {
   events: string
   isActive?: boolean
   failureCount?: number
+  consecutiveFailures?: number
   lastTriggeredAt?: Date | string | null
   createdAt: Date | string
   updatedAt: Date | string
@@ -396,6 +424,7 @@ export type BundleWebhooksUpdateManyMutationInput = {
   events?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   failureCount?: Prisma.IntFieldUpdateOperationsInput | number
+  consecutiveFailures?: Prisma.IntFieldUpdateOperationsInput | number
   lastTriggeredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -409,6 +438,7 @@ export type BundleWebhooksUncheckedUpdateManyInput = {
   events?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   failureCount?: Prisma.IntFieldUpdateOperationsInput | number
+  consecutiveFailures?: Prisma.IntFieldUpdateOperationsInput | number
   lastTriggeredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -432,6 +462,7 @@ export type BundleWebhooksCountOrderByAggregateInput = {
   events?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   failureCount?: Prisma.SortOrder
+  consecutiveFailures?: Prisma.SortOrder
   lastTriggeredAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -439,6 +470,7 @@ export type BundleWebhooksCountOrderByAggregateInput = {
 
 export type BundleWebhooksAvgOrderByAggregateInput = {
   failureCount?: Prisma.SortOrder
+  consecutiveFailures?: Prisma.SortOrder
 }
 
 export type BundleWebhooksMaxOrderByAggregateInput = {
@@ -449,6 +481,7 @@ export type BundleWebhooksMaxOrderByAggregateInput = {
   events?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   failureCount?: Prisma.SortOrder
+  consecutiveFailures?: Prisma.SortOrder
   lastTriggeredAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -462,6 +495,7 @@ export type BundleWebhooksMinOrderByAggregateInput = {
   events?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   failureCount?: Prisma.SortOrder
+  consecutiveFailures?: Prisma.SortOrder
   lastTriggeredAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -469,6 +503,12 @@ export type BundleWebhooksMinOrderByAggregateInput = {
 
 export type BundleWebhooksSumOrderByAggregateInput = {
   failureCount?: Prisma.SortOrder
+  consecutiveFailures?: Prisma.SortOrder
+}
+
+export type BundleWebhooksScalarRelationFilter = {
+  is?: Prisma.BundleWebhooksWhereInput
+  isNot?: Prisma.BundleWebhooksWhereInput
 }
 
 export type BundleWebhooksCreateNestedManyWithoutBundleInput = {
@@ -513,6 +553,20 @@ export type BundleWebhooksUncheckedUpdateManyWithoutBundleNestedInput = {
   deleteMany?: Prisma.BundleWebhooksScalarWhereInput | Prisma.BundleWebhooksScalarWhereInput[]
 }
 
+export type BundleWebhooksCreateNestedOneWithoutDeliveriesInput = {
+  create?: Prisma.XOR<Prisma.BundleWebhooksCreateWithoutDeliveriesInput, Prisma.BundleWebhooksUncheckedCreateWithoutDeliveriesInput>
+  connectOrCreate?: Prisma.BundleWebhooksCreateOrConnectWithoutDeliveriesInput
+  connect?: Prisma.BundleWebhooksWhereUniqueInput
+}
+
+export type BundleWebhooksUpdateOneRequiredWithoutDeliveriesNestedInput = {
+  create?: Prisma.XOR<Prisma.BundleWebhooksCreateWithoutDeliveriesInput, Prisma.BundleWebhooksUncheckedCreateWithoutDeliveriesInput>
+  connectOrCreate?: Prisma.BundleWebhooksCreateOrConnectWithoutDeliveriesInput
+  upsert?: Prisma.BundleWebhooksUpsertWithoutDeliveriesInput
+  connect?: Prisma.BundleWebhooksWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BundleWebhooksUpdateToOneWithWhereWithoutDeliveriesInput, Prisma.BundleWebhooksUpdateWithoutDeliveriesInput>, Prisma.BundleWebhooksUncheckedUpdateWithoutDeliveriesInput>
+}
+
 export type BundleWebhooksCreateWithoutBundleInput = {
   id: string
   url: string
@@ -520,9 +574,11 @@ export type BundleWebhooksCreateWithoutBundleInput = {
   events: string
   isActive?: boolean
   failureCount?: number
+  consecutiveFailures?: number
   lastTriggeredAt?: Date | string | null
   createdAt: Date | string
   updatedAt: Date | string
+  deliveries?: Prisma.BundleWebhookDeliveriesCreateNestedManyWithoutWebhookInput
 }
 
 export type BundleWebhooksUncheckedCreateWithoutBundleInput = {
@@ -532,9 +588,11 @@ export type BundleWebhooksUncheckedCreateWithoutBundleInput = {
   events: string
   isActive?: boolean
   failureCount?: number
+  consecutiveFailures?: number
   lastTriggeredAt?: Date | string | null
   createdAt: Date | string
   updatedAt: Date | string
+  deliveries?: Prisma.BundleWebhookDeliveriesUncheckedCreateNestedManyWithoutWebhookInput
 }
 
 export type BundleWebhooksCreateOrConnectWithoutBundleInput = {
@@ -574,9 +632,82 @@ export type BundleWebhooksScalarWhereInput = {
   events?: Prisma.StringFilter<"BundleWebhooks"> | string
   isActive?: Prisma.BoolFilter<"BundleWebhooks"> | boolean
   failureCount?: Prisma.IntFilter<"BundleWebhooks"> | number
+  consecutiveFailures?: Prisma.IntFilter<"BundleWebhooks"> | number
   lastTriggeredAt?: Prisma.DateTimeNullableFilter<"BundleWebhooks"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"BundleWebhooks"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"BundleWebhooks"> | Date | string
+}
+
+export type BundleWebhooksCreateWithoutDeliveriesInput = {
+  id: string
+  url: string
+  secret?: string | null
+  events: string
+  isActive?: boolean
+  failureCount?: number
+  consecutiveFailures?: number
+  lastTriggeredAt?: Date | string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  bundle: Prisma.BundlesCreateNestedOneWithoutWebhooksInput
+}
+
+export type BundleWebhooksUncheckedCreateWithoutDeliveriesInput = {
+  id: string
+  bundleId: string
+  url: string
+  secret?: string | null
+  events: string
+  isActive?: boolean
+  failureCount?: number
+  consecutiveFailures?: number
+  lastTriggeredAt?: Date | string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+}
+
+export type BundleWebhooksCreateOrConnectWithoutDeliveriesInput = {
+  where: Prisma.BundleWebhooksWhereUniqueInput
+  create: Prisma.XOR<Prisma.BundleWebhooksCreateWithoutDeliveriesInput, Prisma.BundleWebhooksUncheckedCreateWithoutDeliveriesInput>
+}
+
+export type BundleWebhooksUpsertWithoutDeliveriesInput = {
+  update: Prisma.XOR<Prisma.BundleWebhooksUpdateWithoutDeliveriesInput, Prisma.BundleWebhooksUncheckedUpdateWithoutDeliveriesInput>
+  create: Prisma.XOR<Prisma.BundleWebhooksCreateWithoutDeliveriesInput, Prisma.BundleWebhooksUncheckedCreateWithoutDeliveriesInput>
+  where?: Prisma.BundleWebhooksWhereInput
+}
+
+export type BundleWebhooksUpdateToOneWithWhereWithoutDeliveriesInput = {
+  where?: Prisma.BundleWebhooksWhereInput
+  data: Prisma.XOR<Prisma.BundleWebhooksUpdateWithoutDeliveriesInput, Prisma.BundleWebhooksUncheckedUpdateWithoutDeliveriesInput>
+}
+
+export type BundleWebhooksUpdateWithoutDeliveriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
+  secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  events?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  failureCount?: Prisma.IntFieldUpdateOperationsInput | number
+  consecutiveFailures?: Prisma.IntFieldUpdateOperationsInput | number
+  lastTriggeredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bundle?: Prisma.BundlesUpdateOneRequiredWithoutWebhooksNestedInput
+}
+
+export type BundleWebhooksUncheckedUpdateWithoutDeliveriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  bundleId?: Prisma.StringFieldUpdateOperationsInput | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
+  secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  events?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  failureCount?: Prisma.IntFieldUpdateOperationsInput | number
+  consecutiveFailures?: Prisma.IntFieldUpdateOperationsInput | number
+  lastTriggeredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type BundleWebhooksCreateManyBundleInput = {
@@ -586,6 +717,7 @@ export type BundleWebhooksCreateManyBundleInput = {
   events: string
   isActive?: boolean
   failureCount?: number
+  consecutiveFailures?: number
   lastTriggeredAt?: Date | string | null
   createdAt: Date | string
   updatedAt: Date | string
@@ -598,9 +730,11 @@ export type BundleWebhooksUpdateWithoutBundleInput = {
   events?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   failureCount?: Prisma.IntFieldUpdateOperationsInput | number
+  consecutiveFailures?: Prisma.IntFieldUpdateOperationsInput | number
   lastTriggeredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deliveries?: Prisma.BundleWebhookDeliveriesUpdateManyWithoutWebhookNestedInput
 }
 
 export type BundleWebhooksUncheckedUpdateWithoutBundleInput = {
@@ -610,9 +744,11 @@ export type BundleWebhooksUncheckedUpdateWithoutBundleInput = {
   events?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   failureCount?: Prisma.IntFieldUpdateOperationsInput | number
+  consecutiveFailures?: Prisma.IntFieldUpdateOperationsInput | number
   lastTriggeredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deliveries?: Prisma.BundleWebhookDeliveriesUncheckedUpdateManyWithoutWebhookNestedInput
 }
 
 export type BundleWebhooksUncheckedUpdateManyWithoutBundleInput = {
@@ -622,11 +758,41 @@ export type BundleWebhooksUncheckedUpdateManyWithoutBundleInput = {
   events?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   failureCount?: Prisma.IntFieldUpdateOperationsInput | number
+  consecutiveFailures?: Prisma.IntFieldUpdateOperationsInput | number
   lastTriggeredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+
+/**
+ * Count Type BundleWebhooksCountOutputType
+ */
+
+export type BundleWebhooksCountOutputType = {
+  deliveries: number
+}
+
+export type BundleWebhooksCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  deliveries?: boolean | BundleWebhooksCountOutputTypeCountDeliveriesArgs
+}
+
+/**
+ * BundleWebhooksCountOutputType without action
+ */
+export type BundleWebhooksCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BundleWebhooksCountOutputType
+   */
+  select?: Prisma.BundleWebhooksCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * BundleWebhooksCountOutputType without action
+ */
+export type BundleWebhooksCountOutputTypeCountDeliveriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BundleWebhookDeliveriesWhereInput
+}
 
 
 export type BundleWebhooksSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -637,10 +803,13 @@ export type BundleWebhooksSelect<ExtArgs extends runtime.Types.Extensions.Intern
   events?: boolean
   isActive?: boolean
   failureCount?: boolean
+  consecutiveFailures?: boolean
   lastTriggeredAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
+  deliveries?: boolean | Prisma.BundleWebhooks$deliveriesArgs<ExtArgs>
+  _count?: boolean | Prisma.BundleWebhooksCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["bundleWebhooks"]>
 
 export type BundleWebhooksSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -651,6 +820,7 @@ export type BundleWebhooksSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   events?: boolean
   isActive?: boolean
   failureCount?: boolean
+  consecutiveFailures?: boolean
   lastTriggeredAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -665,6 +835,7 @@ export type BundleWebhooksSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   events?: boolean
   isActive?: boolean
   failureCount?: boolean
+  consecutiveFailures?: boolean
   lastTriggeredAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -679,14 +850,17 @@ export type BundleWebhooksSelectScalar = {
   events?: boolean
   isActive?: boolean
   failureCount?: boolean
+  consecutiveFailures?: boolean
   lastTriggeredAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type BundleWebhooksOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bundleId" | "url" | "secret" | "events" | "isActive" | "failureCount" | "lastTriggeredAt" | "createdAt" | "updatedAt", ExtArgs["result"]["bundleWebhooks"]>
+export type BundleWebhooksOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bundleId" | "url" | "secret" | "events" | "isActive" | "failureCount" | "consecutiveFailures" | "lastTriggeredAt" | "createdAt" | "updatedAt", ExtArgs["result"]["bundleWebhooks"]>
 export type BundleWebhooksInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
+  deliveries?: boolean | Prisma.BundleWebhooks$deliveriesArgs<ExtArgs>
+  _count?: boolean | Prisma.BundleWebhooksCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type BundleWebhooksIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
@@ -699,6 +873,7 @@ export type $BundleWebhooksPayload<ExtArgs extends runtime.Types.Extensions.Inte
   name: "BundleWebhooks"
   objects: {
     bundle: Prisma.$BundlesPayload<ExtArgs>
+    deliveries: Prisma.$BundleWebhookDeliveriesPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -708,6 +883,7 @@ export type $BundleWebhooksPayload<ExtArgs extends runtime.Types.Extensions.Inte
     events: string
     isActive: boolean
     failureCount: number
+    consecutiveFailures: number
     lastTriggeredAt: Date | null
     createdAt: Date
     updatedAt: Date
@@ -1106,6 +1282,7 @@ readonly fields: BundleWebhooksFieldRefs;
 export interface Prisma__BundleWebhooksClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   bundle<T extends Prisma.BundlesDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundlesDefaultArgs<ExtArgs>>): Prisma.Prisma__BundlesClient<runtime.Types.Result.GetResult<Prisma.$BundlesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  deliveries<T extends Prisma.BundleWebhooks$deliveriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleWebhooks$deliveriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BundleWebhookDeliveriesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1142,6 +1319,7 @@ export interface BundleWebhooksFieldRefs {
   readonly events: Prisma.FieldRef<"BundleWebhooks", 'String'>
   readonly isActive: Prisma.FieldRef<"BundleWebhooks", 'Boolean'>
   readonly failureCount: Prisma.FieldRef<"BundleWebhooks", 'Int'>
+  readonly consecutiveFailures: Prisma.FieldRef<"BundleWebhooks", 'Int'>
   readonly lastTriggeredAt: Prisma.FieldRef<"BundleWebhooks", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"BundleWebhooks", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"BundleWebhooks", 'DateTime'>
@@ -1543,6 +1721,30 @@ export type BundleWebhooksDeleteManyArgs<ExtArgs extends runtime.Types.Extension
    * Limit how many BundleWebhooks to delete.
    */
   limit?: number
+}
+
+/**
+ * BundleWebhooks.deliveries
+ */
+export type BundleWebhooks$deliveriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BundleWebhookDeliveries
+   */
+  select?: Prisma.BundleWebhookDeliveriesSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BundleWebhookDeliveries
+   */
+  omit?: Prisma.BundleWebhookDeliveriesOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BundleWebhookDeliveriesInclude<ExtArgs> | null
+  where?: Prisma.BundleWebhookDeliveriesWhereInput
+  orderBy?: Prisma.BundleWebhookDeliveriesOrderByWithRelationInput | Prisma.BundleWebhookDeliveriesOrderByWithRelationInput[]
+  cursor?: Prisma.BundleWebhookDeliveriesWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BundleWebhookDeliveriesScalarFieldEnum | Prisma.BundleWebhookDeliveriesScalarFieldEnum[]
 }
 
 /**

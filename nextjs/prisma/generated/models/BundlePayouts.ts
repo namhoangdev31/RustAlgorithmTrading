@@ -48,6 +48,9 @@ export type BundlePayoutsMinAggregateOutputType = {
   status: string | null
   bankAccount: string | null
   transactionRef: string | null
+  workspaceId: string | null
+  stripePayoutId: string | null
+  stripeAccountId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -62,6 +65,9 @@ export type BundlePayoutsMaxAggregateOutputType = {
   status: string | null
   bankAccount: string | null
   transactionRef: string | null
+  workspaceId: string | null
+  stripePayoutId: string | null
+  stripeAccountId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -76,6 +82,9 @@ export type BundlePayoutsCountAggregateOutputType = {
   status: number
   bankAccount: number
   transactionRef: number
+  workspaceId: number
+  stripePayoutId: number
+  stripeAccountId: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -104,6 +113,9 @@ export type BundlePayoutsMinAggregateInputType = {
   status?: true
   bankAccount?: true
   transactionRef?: true
+  workspaceId?: true
+  stripePayoutId?: true
+  stripeAccountId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -118,6 +130,9 @@ export type BundlePayoutsMaxAggregateInputType = {
   status?: true
   bankAccount?: true
   transactionRef?: true
+  workspaceId?: true
+  stripePayoutId?: true
+  stripeAccountId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -132,6 +147,9 @@ export type BundlePayoutsCountAggregateInputType = {
   status?: true
   bankAccount?: true
   transactionRef?: true
+  workspaceId?: true
+  stripePayoutId?: true
+  stripeAccountId?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -233,6 +251,9 @@ export type BundlePayoutsGroupByOutputType = {
   status: string
   bankAccount: string | null
   transactionRef: string | null
+  workspaceId: string | null
+  stripePayoutId: string | null
+  stripeAccountId: string | null
   createdAt: Date
   updatedAt: Date
   _count: BundlePayoutsCountAggregateOutputType | null
@@ -270,6 +291,9 @@ export type BundlePayoutsWhereInput = {
   status?: Prisma.StringFilter<"BundlePayouts"> | string
   bankAccount?: Prisma.StringNullableFilter<"BundlePayouts"> | string | null
   transactionRef?: Prisma.StringNullableFilter<"BundlePayouts"> | string | null
+  workspaceId?: Prisma.UuidNullableFilter<"BundlePayouts"> | string | null
+  stripePayoutId?: Prisma.StringNullableFilter<"BundlePayouts"> | string | null
+  stripeAccountId?: Prisma.StringNullableFilter<"BundlePayouts"> | string | null
   createdAt?: Prisma.DateTimeFilter<"BundlePayouts"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"BundlePayouts"> | Date | string
   developer?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -285,6 +309,9 @@ export type BundlePayoutsOrderByWithRelationInput = {
   status?: Prisma.SortOrder
   bankAccount?: Prisma.SortOrderInput | Prisma.SortOrder
   transactionRef?: Prisma.SortOrderInput | Prisma.SortOrder
+  workspaceId?: Prisma.SortOrderInput | Prisma.SortOrder
+  stripePayoutId?: Prisma.SortOrderInput | Prisma.SortOrder
+  stripeAccountId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   developer?: Prisma.UserOrderByWithRelationInput
@@ -292,6 +319,7 @@ export type BundlePayoutsOrderByWithRelationInput = {
 
 export type BundlePayoutsWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  stripePayoutId?: string
   AND?: Prisma.BundlePayoutsWhereInput | Prisma.BundlePayoutsWhereInput[]
   OR?: Prisma.BundlePayoutsWhereInput[]
   NOT?: Prisma.BundlePayoutsWhereInput | Prisma.BundlePayoutsWhereInput[]
@@ -303,10 +331,12 @@ export type BundlePayoutsWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.StringFilter<"BundlePayouts"> | string
   bankAccount?: Prisma.StringNullableFilter<"BundlePayouts"> | string | null
   transactionRef?: Prisma.StringNullableFilter<"BundlePayouts"> | string | null
+  workspaceId?: Prisma.UuidNullableFilter<"BundlePayouts"> | string | null
+  stripeAccountId?: Prisma.StringNullableFilter<"BundlePayouts"> | string | null
   createdAt?: Prisma.DateTimeFilter<"BundlePayouts"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"BundlePayouts"> | Date | string
   developer?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-}, "id">
+}, "id" | "stripePayoutId">
 
 export type BundlePayoutsOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -318,6 +348,9 @@ export type BundlePayoutsOrderByWithAggregationInput = {
   status?: Prisma.SortOrder
   bankAccount?: Prisma.SortOrderInput | Prisma.SortOrder
   transactionRef?: Prisma.SortOrderInput | Prisma.SortOrder
+  workspaceId?: Prisma.SortOrderInput | Prisma.SortOrder
+  stripePayoutId?: Prisma.SortOrderInput | Prisma.SortOrder
+  stripeAccountId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.BundlePayoutsCountOrderByAggregateInput
@@ -340,6 +373,9 @@ export type BundlePayoutsScalarWhereWithAggregatesInput = {
   status?: Prisma.StringWithAggregatesFilter<"BundlePayouts"> | string
   bankAccount?: Prisma.StringNullableWithAggregatesFilter<"BundlePayouts"> | string | null
   transactionRef?: Prisma.StringNullableWithAggregatesFilter<"BundlePayouts"> | string | null
+  workspaceId?: Prisma.UuidNullableWithAggregatesFilter<"BundlePayouts"> | string | null
+  stripePayoutId?: Prisma.StringNullableWithAggregatesFilter<"BundlePayouts"> | string | null
+  stripeAccountId?: Prisma.StringNullableWithAggregatesFilter<"BundlePayouts"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"BundlePayouts"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"BundlePayouts"> | Date | string
 }
@@ -353,6 +389,9 @@ export type BundlePayoutsCreateInput = {
   status?: string
   bankAccount?: string | null
   transactionRef?: string | null
+  workspaceId?: string | null
+  stripePayoutId?: string | null
+  stripeAccountId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   developer: Prisma.UserCreateNestedOneWithoutPayoutsInput
@@ -368,6 +407,9 @@ export type BundlePayoutsUncheckedCreateInput = {
   status?: string
   bankAccount?: string | null
   transactionRef?: string | null
+  workspaceId?: string | null
+  stripePayoutId?: string | null
+  stripeAccountId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
 }
@@ -381,6 +423,9 @@ export type BundlePayoutsUpdateInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   transactionRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workspaceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripePayoutId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   developer?: Prisma.UserUpdateOneRequiredWithoutPayoutsNestedInput
@@ -396,6 +441,9 @@ export type BundlePayoutsUncheckedUpdateInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   transactionRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workspaceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripePayoutId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -410,6 +458,9 @@ export type BundlePayoutsCreateManyInput = {
   status?: string
   bankAccount?: string | null
   transactionRef?: string | null
+  workspaceId?: string | null
+  stripePayoutId?: string | null
+  stripeAccountId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
 }
@@ -423,6 +474,9 @@ export type BundlePayoutsUpdateManyMutationInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   transactionRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workspaceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripePayoutId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -437,6 +491,9 @@ export type BundlePayoutsUncheckedUpdateManyInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   transactionRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workspaceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripePayoutId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -461,6 +518,9 @@ export type BundlePayoutsCountOrderByAggregateInput = {
   status?: Prisma.SortOrder
   bankAccount?: Prisma.SortOrder
   transactionRef?: Prisma.SortOrder
+  workspaceId?: Prisma.SortOrder
+  stripePayoutId?: Prisma.SortOrder
+  stripeAccountId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -481,6 +541,9 @@ export type BundlePayoutsMaxOrderByAggregateInput = {
   status?: Prisma.SortOrder
   bankAccount?: Prisma.SortOrder
   transactionRef?: Prisma.SortOrder
+  workspaceId?: Prisma.SortOrder
+  stripePayoutId?: Prisma.SortOrder
+  stripeAccountId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -495,6 +558,9 @@ export type BundlePayoutsMinOrderByAggregateInput = {
   status?: Prisma.SortOrder
   bankAccount?: Prisma.SortOrder
   transactionRef?: Prisma.SortOrder
+  workspaceId?: Prisma.SortOrder
+  stripePayoutId?: Prisma.SortOrder
+  stripeAccountId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -564,6 +630,9 @@ export type BundlePayoutsCreateWithoutDeveloperInput = {
   status?: string
   bankAccount?: string | null
   transactionRef?: string | null
+  workspaceId?: string | null
+  stripePayoutId?: string | null
+  stripeAccountId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
 }
@@ -577,6 +646,9 @@ export type BundlePayoutsUncheckedCreateWithoutDeveloperInput = {
   status?: string
   bankAccount?: string | null
   transactionRef?: string | null
+  workspaceId?: string | null
+  stripePayoutId?: string | null
+  stripeAccountId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
 }
@@ -620,6 +692,9 @@ export type BundlePayoutsScalarWhereInput = {
   status?: Prisma.StringFilter<"BundlePayouts"> | string
   bankAccount?: Prisma.StringNullableFilter<"BundlePayouts"> | string | null
   transactionRef?: Prisma.StringNullableFilter<"BundlePayouts"> | string | null
+  workspaceId?: Prisma.UuidNullableFilter<"BundlePayouts"> | string | null
+  stripePayoutId?: Prisma.StringNullableFilter<"BundlePayouts"> | string | null
+  stripeAccountId?: Prisma.StringNullableFilter<"BundlePayouts"> | string | null
   createdAt?: Prisma.DateTimeFilter<"BundlePayouts"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"BundlePayouts"> | Date | string
 }
@@ -633,6 +708,9 @@ export type BundlePayoutsCreateManyDeveloperInput = {
   status?: string
   bankAccount?: string | null
   transactionRef?: string | null
+  workspaceId?: string | null
+  stripePayoutId?: string | null
+  stripeAccountId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
 }
@@ -646,6 +724,9 @@ export type BundlePayoutsUpdateWithoutDeveloperInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   transactionRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workspaceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripePayoutId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -659,6 +740,9 @@ export type BundlePayoutsUncheckedUpdateWithoutDeveloperInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   transactionRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workspaceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripePayoutId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -672,6 +756,9 @@ export type BundlePayoutsUncheckedUpdateManyWithoutDeveloperInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   transactionRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workspaceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripePayoutId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -688,6 +775,9 @@ export type BundlePayoutsSelect<ExtArgs extends runtime.Types.Extensions.Interna
   status?: boolean
   bankAccount?: boolean
   transactionRef?: boolean
+  workspaceId?: boolean
+  stripePayoutId?: boolean
+  stripeAccountId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   developer?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -703,6 +793,9 @@ export type BundlePayoutsSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   status?: boolean
   bankAccount?: boolean
   transactionRef?: boolean
+  workspaceId?: boolean
+  stripePayoutId?: boolean
+  stripeAccountId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   developer?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -718,6 +811,9 @@ export type BundlePayoutsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   status?: boolean
   bankAccount?: boolean
   transactionRef?: boolean
+  workspaceId?: boolean
+  stripePayoutId?: boolean
+  stripeAccountId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   developer?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -733,11 +829,14 @@ export type BundlePayoutsSelectScalar = {
   status?: boolean
   bankAccount?: boolean
   transactionRef?: boolean
+  workspaceId?: boolean
+  stripePayoutId?: boolean
+  stripeAccountId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type BundlePayoutsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "developerId" | "amount" | "currency" | "periodStart" | "periodEnd" | "status" | "bankAccount" | "transactionRef" | "createdAt" | "updatedAt", ExtArgs["result"]["bundlePayouts"]>
+export type BundlePayoutsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "developerId" | "amount" | "currency" | "periodStart" | "periodEnd" | "status" | "bankAccount" | "transactionRef" | "workspaceId" | "stripePayoutId" | "stripeAccountId" | "createdAt" | "updatedAt", ExtArgs["result"]["bundlePayouts"]>
 export type BundlePayoutsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   developer?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -763,6 +862,9 @@ export type $BundlePayoutsPayload<ExtArgs extends runtime.Types.Extensions.Inter
     status: string
     bankAccount: string | null
     transactionRef: string | null
+    workspaceId: string | null
+    stripePayoutId: string | null
+    stripeAccountId: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["bundlePayouts"]>
@@ -1198,6 +1300,9 @@ export interface BundlePayoutsFieldRefs {
   readonly status: Prisma.FieldRef<"BundlePayouts", 'String'>
   readonly bankAccount: Prisma.FieldRef<"BundlePayouts", 'String'>
   readonly transactionRef: Prisma.FieldRef<"BundlePayouts", 'String'>
+  readonly workspaceId: Prisma.FieldRef<"BundlePayouts", 'String'>
+  readonly stripePayoutId: Prisma.FieldRef<"BundlePayouts", 'String'>
+  readonly stripeAccountId: Prisma.FieldRef<"BundlePayouts", 'String'>
   readonly createdAt: Prisma.FieldRef<"BundlePayouts", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"BundlePayouts", 'DateTime'>
 }

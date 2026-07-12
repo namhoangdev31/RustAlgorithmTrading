@@ -49,6 +49,7 @@ export type BundleCollaboratorsCountAggregateOutputType = {
   bundleId: number
   userId: number
   role: number
+  permissionKeys: number
   invitedBy: number
   acceptedAt: number
   createdAt: number
@@ -81,6 +82,7 @@ export type BundleCollaboratorsCountAggregateInputType = {
   bundleId?: true
   userId?: true
   role?: true
+  permissionKeys?: true
   invitedBy?: true
   acceptedAt?: true
   createdAt?: true
@@ -164,6 +166,7 @@ export type BundleCollaboratorsGroupByOutputType = {
   bundleId: string
   userId: string
   role: string
+  permissionKeys: string[]
   invitedBy: string | null
   acceptedAt: Date | null
   createdAt: Date
@@ -195,6 +198,7 @@ export type BundleCollaboratorsWhereInput = {
   bundleId?: Prisma.UuidFilter<"BundleCollaborators"> | string
   userId?: Prisma.UuidFilter<"BundleCollaborators"> | string
   role?: Prisma.StringFilter<"BundleCollaborators"> | string
+  permissionKeys?: Prisma.StringNullableListFilter<"BundleCollaborators">
   invitedBy?: Prisma.UuidNullableFilter<"BundleCollaborators"> | string | null
   acceptedAt?: Prisma.DateTimeNullableFilter<"BundleCollaborators"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"BundleCollaborators"> | Date | string
@@ -208,6 +212,7 @@ export type BundleCollaboratorsOrderByWithRelationInput = {
   bundleId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  permissionKeys?: Prisma.SortOrder
   invitedBy?: Prisma.SortOrderInput | Prisma.SortOrder
   acceptedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -225,6 +230,7 @@ export type BundleCollaboratorsWhereUniqueInput = Prisma.AtLeast<{
   bundleId?: Prisma.UuidFilter<"BundleCollaborators"> | string
   userId?: Prisma.UuidFilter<"BundleCollaborators"> | string
   role?: Prisma.StringFilter<"BundleCollaborators"> | string
+  permissionKeys?: Prisma.StringNullableListFilter<"BundleCollaborators">
   invitedBy?: Prisma.UuidNullableFilter<"BundleCollaborators"> | string | null
   acceptedAt?: Prisma.DateTimeNullableFilter<"BundleCollaborators"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"BundleCollaborators"> | Date | string
@@ -238,6 +244,7 @@ export type BundleCollaboratorsOrderByWithAggregationInput = {
   bundleId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  permissionKeys?: Prisma.SortOrder
   invitedBy?: Prisma.SortOrderInput | Prisma.SortOrder
   acceptedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -254,6 +261,7 @@ export type BundleCollaboratorsScalarWhereWithAggregatesInput = {
   bundleId?: Prisma.UuidWithAggregatesFilter<"BundleCollaborators"> | string
   userId?: Prisma.UuidWithAggregatesFilter<"BundleCollaborators"> | string
   role?: Prisma.StringWithAggregatesFilter<"BundleCollaborators"> | string
+  permissionKeys?: Prisma.StringNullableListFilter<"BundleCollaborators">
   invitedBy?: Prisma.UuidNullableWithAggregatesFilter<"BundleCollaborators"> | string | null
   acceptedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"BundleCollaborators"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"BundleCollaborators"> | Date | string
@@ -262,6 +270,7 @@ export type BundleCollaboratorsScalarWhereWithAggregatesInput = {
 export type BundleCollaboratorsCreateInput = {
   id: string
   role?: string
+  permissionKeys?: Prisma.BundleCollaboratorsCreatepermissionKeysInput | string[]
   acceptedAt?: Date | string | null
   createdAt: Date | string
   bundle: Prisma.BundlesCreateNestedOneWithoutCollaboratorsInput
@@ -274,6 +283,7 @@ export type BundleCollaboratorsUncheckedCreateInput = {
   bundleId: string
   userId: string
   role?: string
+  permissionKeys?: Prisma.BundleCollaboratorsCreatepermissionKeysInput | string[]
   invitedBy?: string | null
   acceptedAt?: Date | string | null
   createdAt: Date | string
@@ -282,6 +292,7 @@ export type BundleCollaboratorsUncheckedCreateInput = {
 export type BundleCollaboratorsUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
+  permissionKeys?: Prisma.BundleCollaboratorsUpdatepermissionKeysInput | string[]
   acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bundle?: Prisma.BundlesUpdateOneRequiredWithoutCollaboratorsNestedInput
@@ -294,6 +305,7 @@ export type BundleCollaboratorsUncheckedUpdateInput = {
   bundleId?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
+  permissionKeys?: Prisma.BundleCollaboratorsUpdatepermissionKeysInput | string[]
   invitedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -304,6 +316,7 @@ export type BundleCollaboratorsCreateManyInput = {
   bundleId: string
   userId: string
   role?: string
+  permissionKeys?: Prisma.BundleCollaboratorsCreatepermissionKeysInput | string[]
   invitedBy?: string | null
   acceptedAt?: Date | string | null
   createdAt: Date | string
@@ -312,6 +325,7 @@ export type BundleCollaboratorsCreateManyInput = {
 export type BundleCollaboratorsUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
+  permissionKeys?: Prisma.BundleCollaboratorsUpdatepermissionKeysInput | string[]
   acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -321,6 +335,7 @@ export type BundleCollaboratorsUncheckedUpdateManyInput = {
   bundleId?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
+  permissionKeys?: Prisma.BundleCollaboratorsUpdatepermissionKeysInput | string[]
   invitedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -336,6 +351,14 @@ export type BundleCollaboratorsOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
+export type StringNullableListFilter<$PrismaModel = never> = {
+  equals?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel> | null
+  has?: string | Prisma.StringFieldRefInput<$PrismaModel> | null
+  hasEvery?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  hasSome?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  isEmpty?: boolean
+}
+
 export type BundleCollaboratorsBundleIdUserIdCompoundUniqueInput = {
   bundleId: string
   userId: string
@@ -346,6 +369,7 @@ export type BundleCollaboratorsCountOrderByAggregateInput = {
   bundleId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  permissionKeys?: Prisma.SortOrder
   invitedBy?: Prisma.SortOrder
   acceptedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -497,9 +521,19 @@ export type BundleCollaboratorsUncheckedUpdateManyWithoutBundleNestedInput = {
   deleteMany?: Prisma.BundleCollaboratorsScalarWhereInput | Prisma.BundleCollaboratorsScalarWhereInput[]
 }
 
+export type BundleCollaboratorsCreatepermissionKeysInput = {
+  set: string[]
+}
+
+export type BundleCollaboratorsUpdatepermissionKeysInput = {
+  set?: string[]
+  push?: string | string[]
+}
+
 export type BundleCollaboratorsCreateWithoutInvitedUserInput = {
   id: string
   role?: string
+  permissionKeys?: Prisma.BundleCollaboratorsCreatepermissionKeysInput | string[]
   acceptedAt?: Date | string | null
   createdAt: Date | string
   bundle: Prisma.BundlesCreateNestedOneWithoutCollaboratorsInput
@@ -511,6 +545,7 @@ export type BundleCollaboratorsUncheckedCreateWithoutInvitedUserInput = {
   bundleId: string
   userId: string
   role?: string
+  permissionKeys?: Prisma.BundleCollaboratorsCreatepermissionKeysInput | string[]
   acceptedAt?: Date | string | null
   createdAt: Date | string
 }
@@ -528,6 +563,7 @@ export type BundleCollaboratorsCreateManyInvitedUserInputEnvelope = {
 export type BundleCollaboratorsCreateWithoutUserInput = {
   id: string
   role?: string
+  permissionKeys?: Prisma.BundleCollaboratorsCreatepermissionKeysInput | string[]
   acceptedAt?: Date | string | null
   createdAt: Date | string
   bundle: Prisma.BundlesCreateNestedOneWithoutCollaboratorsInput
@@ -538,6 +574,7 @@ export type BundleCollaboratorsUncheckedCreateWithoutUserInput = {
   id: string
   bundleId: string
   role?: string
+  permissionKeys?: Prisma.BundleCollaboratorsCreatepermissionKeysInput | string[]
   invitedBy?: string | null
   acceptedAt?: Date | string | null
   createdAt: Date | string
@@ -577,6 +614,7 @@ export type BundleCollaboratorsScalarWhereInput = {
   bundleId?: Prisma.UuidFilter<"BundleCollaborators"> | string
   userId?: Prisma.UuidFilter<"BundleCollaborators"> | string
   role?: Prisma.StringFilter<"BundleCollaborators"> | string
+  permissionKeys?: Prisma.StringNullableListFilter<"BundleCollaborators">
   invitedBy?: Prisma.UuidNullableFilter<"BundleCollaborators"> | string | null
   acceptedAt?: Prisma.DateTimeNullableFilter<"BundleCollaborators"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"BundleCollaborators"> | Date | string
@@ -601,6 +639,7 @@ export type BundleCollaboratorsUpdateManyWithWhereWithoutUserInput = {
 export type BundleCollaboratorsCreateWithoutBundleInput = {
   id: string
   role?: string
+  permissionKeys?: Prisma.BundleCollaboratorsCreatepermissionKeysInput | string[]
   acceptedAt?: Date | string | null
   createdAt: Date | string
   invitedUser?: Prisma.UserCreateNestedOneWithoutCollaboratorsInvitedInput
@@ -611,6 +650,7 @@ export type BundleCollaboratorsUncheckedCreateWithoutBundleInput = {
   id: string
   userId: string
   role?: string
+  permissionKeys?: Prisma.BundleCollaboratorsCreatepermissionKeysInput | string[]
   invitedBy?: string | null
   acceptedAt?: Date | string | null
   createdAt: Date | string
@@ -647,6 +687,7 @@ export type BundleCollaboratorsCreateManyInvitedUserInput = {
   bundleId: string
   userId: string
   role?: string
+  permissionKeys?: Prisma.BundleCollaboratorsCreatepermissionKeysInput | string[]
   acceptedAt?: Date | string | null
   createdAt: Date | string
 }
@@ -655,6 +696,7 @@ export type BundleCollaboratorsCreateManyUserInput = {
   id: string
   bundleId: string
   role?: string
+  permissionKeys?: Prisma.BundleCollaboratorsCreatepermissionKeysInput | string[]
   invitedBy?: string | null
   acceptedAt?: Date | string | null
   createdAt: Date | string
@@ -663,6 +705,7 @@ export type BundleCollaboratorsCreateManyUserInput = {
 export type BundleCollaboratorsUpdateWithoutInvitedUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
+  permissionKeys?: Prisma.BundleCollaboratorsUpdatepermissionKeysInput | string[]
   acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bundle?: Prisma.BundlesUpdateOneRequiredWithoutCollaboratorsNestedInput
@@ -674,6 +717,7 @@ export type BundleCollaboratorsUncheckedUpdateWithoutInvitedUserInput = {
   bundleId?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
+  permissionKeys?: Prisma.BundleCollaboratorsUpdatepermissionKeysInput | string[]
   acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -683,6 +727,7 @@ export type BundleCollaboratorsUncheckedUpdateManyWithoutInvitedUserInput = {
   bundleId?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
+  permissionKeys?: Prisma.BundleCollaboratorsUpdatepermissionKeysInput | string[]
   acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -690,6 +735,7 @@ export type BundleCollaboratorsUncheckedUpdateManyWithoutInvitedUserInput = {
 export type BundleCollaboratorsUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
+  permissionKeys?: Prisma.BundleCollaboratorsUpdatepermissionKeysInput | string[]
   acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bundle?: Prisma.BundlesUpdateOneRequiredWithoutCollaboratorsNestedInput
@@ -700,6 +746,7 @@ export type BundleCollaboratorsUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bundleId?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
+  permissionKeys?: Prisma.BundleCollaboratorsUpdatepermissionKeysInput | string[]
   invitedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -709,6 +756,7 @@ export type BundleCollaboratorsUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bundleId?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
+  permissionKeys?: Prisma.BundleCollaboratorsUpdatepermissionKeysInput | string[]
   invitedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -718,6 +766,7 @@ export type BundleCollaboratorsCreateManyBundleInput = {
   id: string
   userId: string
   role?: string
+  permissionKeys?: Prisma.BundleCollaboratorsCreatepermissionKeysInput | string[]
   invitedBy?: string | null
   acceptedAt?: Date | string | null
   createdAt: Date | string
@@ -726,6 +775,7 @@ export type BundleCollaboratorsCreateManyBundleInput = {
 export type BundleCollaboratorsUpdateWithoutBundleInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
+  permissionKeys?: Prisma.BundleCollaboratorsUpdatepermissionKeysInput | string[]
   acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   invitedUser?: Prisma.UserUpdateOneWithoutCollaboratorsInvitedNestedInput
@@ -736,6 +786,7 @@ export type BundleCollaboratorsUncheckedUpdateWithoutBundleInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
+  permissionKeys?: Prisma.BundleCollaboratorsUpdatepermissionKeysInput | string[]
   invitedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -745,6 +796,7 @@ export type BundleCollaboratorsUncheckedUpdateManyWithoutBundleInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
+  permissionKeys?: Prisma.BundleCollaboratorsUpdatepermissionKeysInput | string[]
   invitedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -757,6 +809,7 @@ export type BundleCollaboratorsSelect<ExtArgs extends runtime.Types.Extensions.I
   bundleId?: boolean
   userId?: boolean
   role?: boolean
+  permissionKeys?: boolean
   invitedBy?: boolean
   acceptedAt?: boolean
   createdAt?: boolean
@@ -770,6 +823,7 @@ export type BundleCollaboratorsSelectCreateManyAndReturn<ExtArgs extends runtime
   bundleId?: boolean
   userId?: boolean
   role?: boolean
+  permissionKeys?: boolean
   invitedBy?: boolean
   acceptedAt?: boolean
   createdAt?: boolean
@@ -783,6 +837,7 @@ export type BundleCollaboratorsSelectUpdateManyAndReturn<ExtArgs extends runtime
   bundleId?: boolean
   userId?: boolean
   role?: boolean
+  permissionKeys?: boolean
   invitedBy?: boolean
   acceptedAt?: boolean
   createdAt?: boolean
@@ -796,12 +851,13 @@ export type BundleCollaboratorsSelectScalar = {
   bundleId?: boolean
   userId?: boolean
   role?: boolean
+  permissionKeys?: boolean
   invitedBy?: boolean
   acceptedAt?: boolean
   createdAt?: boolean
 }
 
-export type BundleCollaboratorsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bundleId" | "userId" | "role" | "invitedBy" | "acceptedAt" | "createdAt", ExtArgs["result"]["bundleCollaborators"]>
+export type BundleCollaboratorsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bundleId" | "userId" | "role" | "permissionKeys" | "invitedBy" | "acceptedAt" | "createdAt", ExtArgs["result"]["bundleCollaborators"]>
 export type BundleCollaboratorsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
   invitedUser?: boolean | Prisma.BundleCollaborators$invitedUserArgs<ExtArgs>
@@ -830,6 +886,7 @@ export type $BundleCollaboratorsPayload<ExtArgs extends runtime.Types.Extensions
     bundleId: string
     userId: string
     role: string
+    permissionKeys: string[]
     invitedBy: string | null
     acceptedAt: Date | null
     createdAt: Date
@@ -1263,6 +1320,7 @@ export interface BundleCollaboratorsFieldRefs {
   readonly bundleId: Prisma.FieldRef<"BundleCollaborators", 'String'>
   readonly userId: Prisma.FieldRef<"BundleCollaborators", 'String'>
   readonly role: Prisma.FieldRef<"BundleCollaborators", 'String'>
+  readonly permissionKeys: Prisma.FieldRef<"BundleCollaborators", 'String[]'>
   readonly invitedBy: Prisma.FieldRef<"BundleCollaborators", 'String'>
   readonly acceptedAt: Prisma.FieldRef<"BundleCollaborators", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"BundleCollaborators", 'DateTime'>

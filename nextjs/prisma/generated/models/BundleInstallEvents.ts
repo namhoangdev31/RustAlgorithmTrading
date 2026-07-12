@@ -30,6 +30,8 @@ export type BundleInstallEventsMinAggregateOutputType = {
   userId: string | null
   eventType: string | null
   deviceId: string | null
+  deviceFingerprint: string | null
+  clientEventId: string | null
   platform: string | null
   osVersion: string | null
   bundleVersion: string | null
@@ -43,6 +45,8 @@ export type BundleInstallEventsMaxAggregateOutputType = {
   userId: string | null
   eventType: string | null
   deviceId: string | null
+  deviceFingerprint: string | null
+  clientEventId: string | null
   platform: string | null
   osVersion: string | null
   bundleVersion: string | null
@@ -56,6 +60,8 @@ export type BundleInstallEventsCountAggregateOutputType = {
   userId: number
   eventType: number
   deviceId: number
+  deviceFingerprint: number
+  clientEventId: number
   platform: number
   osVersion: number
   bundleVersion: number
@@ -71,6 +77,8 @@ export type BundleInstallEventsMinAggregateInputType = {
   userId?: true
   eventType?: true
   deviceId?: true
+  deviceFingerprint?: true
+  clientEventId?: true
   platform?: true
   osVersion?: true
   bundleVersion?: true
@@ -84,6 +92,8 @@ export type BundleInstallEventsMaxAggregateInputType = {
   userId?: true
   eventType?: true
   deviceId?: true
+  deviceFingerprint?: true
+  clientEventId?: true
   platform?: true
   osVersion?: true
   bundleVersion?: true
@@ -97,6 +107,8 @@ export type BundleInstallEventsCountAggregateInputType = {
   userId?: true
   eventType?: true
   deviceId?: true
+  deviceFingerprint?: true
+  clientEventId?: true
   platform?: true
   osVersion?: true
   bundleVersion?: true
@@ -180,9 +192,11 @@ export type BundleInstallEventsGroupByArgs<ExtArgs extends runtime.Types.Extensi
 export type BundleInstallEventsGroupByOutputType = {
   id: string
   bundleId: string
-  userId: string
+  userId: string | null
   eventType: string
   deviceId: string | null
+  deviceFingerprint: string | null
+  clientEventId: string | null
   platform: string | null
   osVersion: string | null
   bundleVersion: string | null
@@ -214,24 +228,28 @@ export type BundleInstallEventsWhereInput = {
   NOT?: Prisma.BundleInstallEventsWhereInput | Prisma.BundleInstallEventsWhereInput[]
   id?: Prisma.UuidFilter<"BundleInstallEvents"> | string
   bundleId?: Prisma.UuidFilter<"BundleInstallEvents"> | string
-  userId?: Prisma.UuidFilter<"BundleInstallEvents"> | string
+  userId?: Prisma.UuidNullableFilter<"BundleInstallEvents"> | string | null
   eventType?: Prisma.StringFilter<"BundleInstallEvents"> | string
   deviceId?: Prisma.StringNullableFilter<"BundleInstallEvents"> | string | null
+  deviceFingerprint?: Prisma.StringNullableFilter<"BundleInstallEvents"> | string | null
+  clientEventId?: Prisma.StringNullableFilter<"BundleInstallEvents"> | string | null
   platform?: Prisma.StringNullableFilter<"BundleInstallEvents"> | string | null
   osVersion?: Prisma.StringNullableFilter<"BundleInstallEvents"> | string | null
   bundleVersion?: Prisma.StringNullableFilter<"BundleInstallEvents"> | string | null
   countryCode?: Prisma.StringNullableFilter<"BundleInstallEvents"> | string | null
   createdAt?: Prisma.DateTimeFilter<"BundleInstallEvents"> | Date | string
   bundle?: Prisma.XOR<Prisma.BundlesScalarRelationFilter, Prisma.BundlesWhereInput>
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }
 
 export type BundleInstallEventsOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   bundleId?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  userId?: Prisma.SortOrderInput | Prisma.SortOrder
   eventType?: Prisma.SortOrder
   deviceId?: Prisma.SortOrderInput | Prisma.SortOrder
+  deviceFingerprint?: Prisma.SortOrderInput | Prisma.SortOrder
+  clientEventId?: Prisma.SortOrderInput | Prisma.SortOrder
   platform?: Prisma.SortOrderInput | Prisma.SortOrder
   osVersion?: Prisma.SortOrderInput | Prisma.SortOrder
   bundleVersion?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -243,28 +261,32 @@ export type BundleInstallEventsOrderByWithRelationInput = {
 
 export type BundleInstallEventsWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  clientEventId?: string
   AND?: Prisma.BundleInstallEventsWhereInput | Prisma.BundleInstallEventsWhereInput[]
   OR?: Prisma.BundleInstallEventsWhereInput[]
   NOT?: Prisma.BundleInstallEventsWhereInput | Prisma.BundleInstallEventsWhereInput[]
   bundleId?: Prisma.UuidFilter<"BundleInstallEvents"> | string
-  userId?: Prisma.UuidFilter<"BundleInstallEvents"> | string
+  userId?: Prisma.UuidNullableFilter<"BundleInstallEvents"> | string | null
   eventType?: Prisma.StringFilter<"BundleInstallEvents"> | string
   deviceId?: Prisma.StringNullableFilter<"BundleInstallEvents"> | string | null
+  deviceFingerprint?: Prisma.StringNullableFilter<"BundleInstallEvents"> | string | null
   platform?: Prisma.StringNullableFilter<"BundleInstallEvents"> | string | null
   osVersion?: Prisma.StringNullableFilter<"BundleInstallEvents"> | string | null
   bundleVersion?: Prisma.StringNullableFilter<"BundleInstallEvents"> | string | null
   countryCode?: Prisma.StringNullableFilter<"BundleInstallEvents"> | string | null
   createdAt?: Prisma.DateTimeFilter<"BundleInstallEvents"> | Date | string
   bundle?: Prisma.XOR<Prisma.BundlesScalarRelationFilter, Prisma.BundlesWhereInput>
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-}, "id">
+  user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+}, "id" | "clientEventId">
 
 export type BundleInstallEventsOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   bundleId?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  userId?: Prisma.SortOrderInput | Prisma.SortOrder
   eventType?: Prisma.SortOrder
   deviceId?: Prisma.SortOrderInput | Prisma.SortOrder
+  deviceFingerprint?: Prisma.SortOrderInput | Prisma.SortOrder
+  clientEventId?: Prisma.SortOrderInput | Prisma.SortOrder
   platform?: Prisma.SortOrderInput | Prisma.SortOrder
   osVersion?: Prisma.SortOrderInput | Prisma.SortOrder
   bundleVersion?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -281,9 +303,11 @@ export type BundleInstallEventsScalarWhereWithAggregatesInput = {
   NOT?: Prisma.BundleInstallEventsScalarWhereWithAggregatesInput | Prisma.BundleInstallEventsScalarWhereWithAggregatesInput[]
   id?: Prisma.UuidWithAggregatesFilter<"BundleInstallEvents"> | string
   bundleId?: Prisma.UuidWithAggregatesFilter<"BundleInstallEvents"> | string
-  userId?: Prisma.UuidWithAggregatesFilter<"BundleInstallEvents"> | string
+  userId?: Prisma.UuidNullableWithAggregatesFilter<"BundleInstallEvents"> | string | null
   eventType?: Prisma.StringWithAggregatesFilter<"BundleInstallEvents"> | string
   deviceId?: Prisma.StringNullableWithAggregatesFilter<"BundleInstallEvents"> | string | null
+  deviceFingerprint?: Prisma.StringNullableWithAggregatesFilter<"BundleInstallEvents"> | string | null
+  clientEventId?: Prisma.StringNullableWithAggregatesFilter<"BundleInstallEvents"> | string | null
   platform?: Prisma.StringNullableWithAggregatesFilter<"BundleInstallEvents"> | string | null
   osVersion?: Prisma.StringNullableWithAggregatesFilter<"BundleInstallEvents"> | string | null
   bundleVersion?: Prisma.StringNullableWithAggregatesFilter<"BundleInstallEvents"> | string | null
@@ -295,21 +319,25 @@ export type BundleInstallEventsCreateInput = {
   id: string
   eventType: string
   deviceId?: string | null
+  deviceFingerprint?: string | null
+  clientEventId?: string | null
   platform?: string | null
   osVersion?: string | null
   bundleVersion?: string | null
   countryCode?: string | null
   createdAt: Date | string
   bundle: Prisma.BundlesCreateNestedOneWithoutInstallEventsInput
-  user: Prisma.UserCreateNestedOneWithoutInstallEventsInput
+  user?: Prisma.UserCreateNestedOneWithoutInstallEventsInput
 }
 
 export type BundleInstallEventsUncheckedCreateInput = {
   id: string
   bundleId: string
-  userId: string
+  userId?: string | null
   eventType: string
   deviceId?: string | null
+  deviceFingerprint?: string | null
+  clientEventId?: string | null
   platform?: string | null
   osVersion?: string | null
   bundleVersion?: string | null
@@ -321,21 +349,25 @@ export type BundleInstallEventsUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   eventType?: Prisma.StringFieldUpdateOperationsInput | string
   deviceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deviceFingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clientEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   platform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   osVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bundleVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   countryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bundle?: Prisma.BundlesUpdateOneRequiredWithoutInstallEventsNestedInput
-  user?: Prisma.UserUpdateOneRequiredWithoutInstallEventsNestedInput
+  user?: Prisma.UserUpdateOneWithoutInstallEventsNestedInput
 }
 
 export type BundleInstallEventsUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bundleId?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   eventType?: Prisma.StringFieldUpdateOperationsInput | string
   deviceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deviceFingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clientEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   platform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   osVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bundleVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -346,9 +378,11 @@ export type BundleInstallEventsUncheckedUpdateInput = {
 export type BundleInstallEventsCreateManyInput = {
   id: string
   bundleId: string
-  userId: string
+  userId?: string | null
   eventType: string
   deviceId?: string | null
+  deviceFingerprint?: string | null
+  clientEventId?: string | null
   platform?: string | null
   osVersion?: string | null
   bundleVersion?: string | null
@@ -360,6 +394,8 @@ export type BundleInstallEventsUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   eventType?: Prisma.StringFieldUpdateOperationsInput | string
   deviceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deviceFingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clientEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   platform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   osVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bundleVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -370,9 +406,11 @@ export type BundleInstallEventsUpdateManyMutationInput = {
 export type BundleInstallEventsUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bundleId?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   eventType?: Prisma.StringFieldUpdateOperationsInput | string
   deviceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deviceFingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clientEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   platform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   osVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bundleVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -396,6 +434,8 @@ export type BundleInstallEventsCountOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   eventType?: Prisma.SortOrder
   deviceId?: Prisma.SortOrder
+  deviceFingerprint?: Prisma.SortOrder
+  clientEventId?: Prisma.SortOrder
   platform?: Prisma.SortOrder
   osVersion?: Prisma.SortOrder
   bundleVersion?: Prisma.SortOrder
@@ -409,6 +449,8 @@ export type BundleInstallEventsMaxOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   eventType?: Prisma.SortOrder
   deviceId?: Prisma.SortOrder
+  deviceFingerprint?: Prisma.SortOrder
+  clientEventId?: Prisma.SortOrder
   platform?: Prisma.SortOrder
   osVersion?: Prisma.SortOrder
   bundleVersion?: Prisma.SortOrder
@@ -422,6 +464,8 @@ export type BundleInstallEventsMinOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   eventType?: Prisma.SortOrder
   deviceId?: Prisma.SortOrder
+  deviceFingerprint?: Prisma.SortOrder
+  clientEventId?: Prisma.SortOrder
   platform?: Prisma.SortOrder
   osVersion?: Prisma.SortOrder
   bundleVersion?: Prisma.SortOrder
@@ -517,6 +561,8 @@ export type BundleInstallEventsCreateWithoutUserInput = {
   id: string
   eventType: string
   deviceId?: string | null
+  deviceFingerprint?: string | null
+  clientEventId?: string | null
   platform?: string | null
   osVersion?: string | null
   bundleVersion?: string | null
@@ -530,6 +576,8 @@ export type BundleInstallEventsUncheckedCreateWithoutUserInput = {
   bundleId: string
   eventType: string
   deviceId?: string | null
+  deviceFingerprint?: string | null
+  clientEventId?: string | null
   platform?: string | null
   osVersion?: string | null
   bundleVersion?: string | null
@@ -569,9 +617,11 @@ export type BundleInstallEventsScalarWhereInput = {
   NOT?: Prisma.BundleInstallEventsScalarWhereInput | Prisma.BundleInstallEventsScalarWhereInput[]
   id?: Prisma.UuidFilter<"BundleInstallEvents"> | string
   bundleId?: Prisma.UuidFilter<"BundleInstallEvents"> | string
-  userId?: Prisma.UuidFilter<"BundleInstallEvents"> | string
+  userId?: Prisma.UuidNullableFilter<"BundleInstallEvents"> | string | null
   eventType?: Prisma.StringFilter<"BundleInstallEvents"> | string
   deviceId?: Prisma.StringNullableFilter<"BundleInstallEvents"> | string | null
+  deviceFingerprint?: Prisma.StringNullableFilter<"BundleInstallEvents"> | string | null
+  clientEventId?: Prisma.StringNullableFilter<"BundleInstallEvents"> | string | null
   platform?: Prisma.StringNullableFilter<"BundleInstallEvents"> | string | null
   osVersion?: Prisma.StringNullableFilter<"BundleInstallEvents"> | string | null
   bundleVersion?: Prisma.StringNullableFilter<"BundleInstallEvents"> | string | null
@@ -583,19 +633,23 @@ export type BundleInstallEventsCreateWithoutBundleInput = {
   id: string
   eventType: string
   deviceId?: string | null
+  deviceFingerprint?: string | null
+  clientEventId?: string | null
   platform?: string | null
   osVersion?: string | null
   bundleVersion?: string | null
   countryCode?: string | null
   createdAt: Date | string
-  user: Prisma.UserCreateNestedOneWithoutInstallEventsInput
+  user?: Prisma.UserCreateNestedOneWithoutInstallEventsInput
 }
 
 export type BundleInstallEventsUncheckedCreateWithoutBundleInput = {
   id: string
-  userId: string
+  userId?: string | null
   eventType: string
   deviceId?: string | null
+  deviceFingerprint?: string | null
+  clientEventId?: string | null
   platform?: string | null
   osVersion?: string | null
   bundleVersion?: string | null
@@ -634,6 +688,8 @@ export type BundleInstallEventsCreateManyUserInput = {
   bundleId: string
   eventType: string
   deviceId?: string | null
+  deviceFingerprint?: string | null
+  clientEventId?: string | null
   platform?: string | null
   osVersion?: string | null
   bundleVersion?: string | null
@@ -645,6 +701,8 @@ export type BundleInstallEventsUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   eventType?: Prisma.StringFieldUpdateOperationsInput | string
   deviceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deviceFingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clientEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   platform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   osVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bundleVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -658,6 +716,8 @@ export type BundleInstallEventsUncheckedUpdateWithoutUserInput = {
   bundleId?: Prisma.StringFieldUpdateOperationsInput | string
   eventType?: Prisma.StringFieldUpdateOperationsInput | string
   deviceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deviceFingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clientEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   platform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   osVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bundleVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -670,6 +730,8 @@ export type BundleInstallEventsUncheckedUpdateManyWithoutUserInput = {
   bundleId?: Prisma.StringFieldUpdateOperationsInput | string
   eventType?: Prisma.StringFieldUpdateOperationsInput | string
   deviceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deviceFingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clientEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   platform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   osVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bundleVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -679,9 +741,11 @@ export type BundleInstallEventsUncheckedUpdateManyWithoutUserInput = {
 
 export type BundleInstallEventsCreateManyBundleInput = {
   id: string
-  userId: string
+  userId?: string | null
   eventType: string
   deviceId?: string | null
+  deviceFingerprint?: string | null
+  clientEventId?: string | null
   platform?: string | null
   osVersion?: string | null
   bundleVersion?: string | null
@@ -693,19 +757,23 @@ export type BundleInstallEventsUpdateWithoutBundleInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   eventType?: Prisma.StringFieldUpdateOperationsInput | string
   deviceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deviceFingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clientEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   platform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   osVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bundleVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   countryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutInstallEventsNestedInput
+  user?: Prisma.UserUpdateOneWithoutInstallEventsNestedInput
 }
 
 export type BundleInstallEventsUncheckedUpdateWithoutBundleInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   eventType?: Prisma.StringFieldUpdateOperationsInput | string
   deviceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deviceFingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clientEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   platform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   osVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bundleVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -715,9 +783,11 @@ export type BundleInstallEventsUncheckedUpdateWithoutBundleInput = {
 
 export type BundleInstallEventsUncheckedUpdateManyWithoutBundleInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   eventType?: Prisma.StringFieldUpdateOperationsInput | string
   deviceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deviceFingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clientEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   platform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   osVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bundleVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -733,13 +803,15 @@ export type BundleInstallEventsSelect<ExtArgs extends runtime.Types.Extensions.I
   userId?: boolean
   eventType?: boolean
   deviceId?: boolean
+  deviceFingerprint?: boolean
+  clientEventId?: boolean
   platform?: boolean
   osVersion?: boolean
   bundleVersion?: boolean
   countryCode?: boolean
   createdAt?: boolean
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.BundleInstallEvents$userArgs<ExtArgs>
 }, ExtArgs["result"]["bundleInstallEvents"]>
 
 export type BundleInstallEventsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -748,13 +820,15 @@ export type BundleInstallEventsSelectCreateManyAndReturn<ExtArgs extends runtime
   userId?: boolean
   eventType?: boolean
   deviceId?: boolean
+  deviceFingerprint?: boolean
+  clientEventId?: boolean
   platform?: boolean
   osVersion?: boolean
   bundleVersion?: boolean
   countryCode?: boolean
   createdAt?: boolean
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.BundleInstallEvents$userArgs<ExtArgs>
 }, ExtArgs["result"]["bundleInstallEvents"]>
 
 export type BundleInstallEventsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -763,13 +837,15 @@ export type BundleInstallEventsSelectUpdateManyAndReturn<ExtArgs extends runtime
   userId?: boolean
   eventType?: boolean
   deviceId?: boolean
+  deviceFingerprint?: boolean
+  clientEventId?: boolean
   platform?: boolean
   osVersion?: boolean
   bundleVersion?: boolean
   countryCode?: boolean
   createdAt?: boolean
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.BundleInstallEvents$userArgs<ExtArgs>
 }, ExtArgs["result"]["bundleInstallEvents"]>
 
 export type BundleInstallEventsSelectScalar = {
@@ -778,6 +854,8 @@ export type BundleInstallEventsSelectScalar = {
   userId?: boolean
   eventType?: boolean
   deviceId?: boolean
+  deviceFingerprint?: boolean
+  clientEventId?: boolean
   platform?: boolean
   osVersion?: boolean
   bundleVersion?: boolean
@@ -785,32 +863,34 @@ export type BundleInstallEventsSelectScalar = {
   createdAt?: boolean
 }
 
-export type BundleInstallEventsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bundleId" | "userId" | "eventType" | "deviceId" | "platform" | "osVersion" | "bundleVersion" | "countryCode" | "createdAt", ExtArgs["result"]["bundleInstallEvents"]>
+export type BundleInstallEventsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bundleId" | "userId" | "eventType" | "deviceId" | "deviceFingerprint" | "clientEventId" | "platform" | "osVersion" | "bundleVersion" | "countryCode" | "createdAt", ExtArgs["result"]["bundleInstallEvents"]>
 export type BundleInstallEventsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.BundleInstallEvents$userArgs<ExtArgs>
 }
 export type BundleInstallEventsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.BundleInstallEvents$userArgs<ExtArgs>
 }
 export type BundleInstallEventsIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.BundleInstallEvents$userArgs<ExtArgs>
 }
 
 export type $BundleInstallEventsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "BundleInstallEvents"
   objects: {
     bundle: Prisma.$BundlesPayload<ExtArgs>
-    user: Prisma.$UserPayload<ExtArgs>
+    user: Prisma.$UserPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     bundleId: string
-    userId: string
+    userId: string | null
     eventType: string
     deviceId: string | null
+    deviceFingerprint: string | null
+    clientEventId: string | null
     platform: string | null
     osVersion: string | null
     bundleVersion: string | null
@@ -1211,7 +1291,7 @@ readonly fields: BundleInstallEventsFieldRefs;
 export interface Prisma__BundleInstallEventsClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   bundle<T extends Prisma.BundlesDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundlesDefaultArgs<ExtArgs>>): Prisma.Prisma__BundlesClient<runtime.Types.Result.GetResult<Prisma.$BundlesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  user<T extends Prisma.BundleInstallEvents$userArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleInstallEvents$userArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1246,6 +1326,8 @@ export interface BundleInstallEventsFieldRefs {
   readonly userId: Prisma.FieldRef<"BundleInstallEvents", 'String'>
   readonly eventType: Prisma.FieldRef<"BundleInstallEvents", 'String'>
   readonly deviceId: Prisma.FieldRef<"BundleInstallEvents", 'String'>
+  readonly deviceFingerprint: Prisma.FieldRef<"BundleInstallEvents", 'String'>
+  readonly clientEventId: Prisma.FieldRef<"BundleInstallEvents", 'String'>
   readonly platform: Prisma.FieldRef<"BundleInstallEvents", 'String'>
   readonly osVersion: Prisma.FieldRef<"BundleInstallEvents", 'String'>
   readonly bundleVersion: Prisma.FieldRef<"BundleInstallEvents", 'String'>
@@ -1649,6 +1731,25 @@ export type BundleInstallEventsDeleteManyArgs<ExtArgs extends runtime.Types.Exte
    * Limit how many BundleInstallEvents to delete.
    */
   limit?: number
+}
+
+/**
+ * BundleInstallEvents.user
+ */
+export type BundleInstallEvents$userArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the User
+   */
+  select?: Prisma.UserSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the User
+   */
+  omit?: Prisma.UserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  where?: Prisma.UserWhereInput
 }
 
 /**

@@ -601,3 +601,13 @@ export type LepoShipBuild = Prisma.LepoShipBuildModel
  * 
  */
 export type MarketplaceCompatibilityRun = Prisma.MarketplaceCompatibilityRunModel
+/**
+ * Model BundleSdkTokens
+ * 
+ */
+export type BundleSdkTokens = Prisma.BundleSdkTokensModel
+/**
+ * Model BundleWebhookDeliveries
+ * 
+ */
+export type BundleWebhookDeliveries = Prisma.BundleWebhookDeliveriesModel

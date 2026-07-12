@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { runAutoRenewSslCron } from "@/lib/server/native-platform/ssl";
+import { verifyCronAuth } from "@/lib/server/cron-auth";
 
 /**
  * Cron job endpoint to trigger SSL certificates renewal check.
@@ -14,21 +15,12 @@ export async function POST(request: NextRequest) {
 }
 
 async function handleRenew(request: NextRequest) {
-  try {
-    const authHeader = request.headers.get("authorization") || "";
-    const cronSecret = process.env.CRON_SECRET || "lepos-cron-secret-token-2026";
-    const [scheme, token] = authHeader.split(" ");
-    
-    // Authorization validation
-    if (scheme?.toLowerCase() !== "bearer" || token !== cronSecret) {
-      // Permit local development testing without strict token checking
-      if (process.env.NODE_ENV === "production") {
-        return NextResponse.json({ error: "Unauthorized access." }, { status: 401 });
-      }
-    }
+  const authError = verifyCronAuth(request);
+  if (authError) return authError;
 
+  try {
     const report = await runAutoRenewSslCron();
-    return NextResponse.json({ success: true, report });
+    return NextResponse.json({ success: true, ...report });
   } catch (error: any) {
     return NextResponse.json({ error: error.message || "Internal Server Error" }, { status: 500 });
   }

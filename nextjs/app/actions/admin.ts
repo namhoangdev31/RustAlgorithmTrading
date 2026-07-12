@@ -21,6 +21,8 @@ import { hasVercelApiKey, getVercelClient } from "@/lib/server/vercel";
 import { buildIntegrationConfig } from "@/lib/server/platform-guardrails";
 import { Octokit } from "octokit";
 import { enqueueBuild } from "@/lib/server/build-queue";
+import { checkBundlePermission } from "./lepoship-permissions";
+
 
 
 function readFormValue(formData: FormData, key: string) {
@@ -1648,7 +1650,36 @@ export async function triggerMobileBuildAction(formData: FormData) {
   const projectId = readFormValue(formData, "projectId");
   const returnTo = await readReturnTo(formData, `/lepoship/${projectId}`);
 
-  const project = await requireOwnedProject(user.id, projectId);
+  let project = await requireOwnedProject(user.id, projectId);
+  if (!project) {
+    // Check if user is a collaborator with build:trigger permission
+    const bundle = await prisma.bundles.findFirst({
+      where: { projectId },
+      select: { id: true },
+    });
+    if (bundle) {
+      const hasPerm = await checkBundlePermission(user.id, bundle.id, "build:trigger");
+      if (hasPerm) {
+        project = await prisma.project.findUnique({
+          where: { id: projectId },
+          select: {
+            id: true,
+            name: true,
+            description: true,
+            organizationId: true,
+            bundle: {
+              select: {
+                id: true,
+                version: true,
+                buildNumber: true,
+              },
+            },
+          },
+        });
+      }
+    }
+  }
+
   if (!project || !project.bundle) {
     redirect(returnTo);
   }

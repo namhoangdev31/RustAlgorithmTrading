@@ -28,6 +28,8 @@ export type BundleUserReportsMinAggregateOutputType = {
   id: string | null
   bundleId: string | null
   reportedBy: string | null
+  reporterFingerprint: string | null
+  clientReportId: string | null
   reason: string | null
   description: string | null
   evidenceUrls: string | null
@@ -42,6 +44,8 @@ export type BundleUserReportsMaxAggregateOutputType = {
   id: string | null
   bundleId: string | null
   reportedBy: string | null
+  reporterFingerprint: string | null
+  clientReportId: string | null
   reason: string | null
   description: string | null
   evidenceUrls: string | null
@@ -56,6 +60,8 @@ export type BundleUserReportsCountAggregateOutputType = {
   id: number
   bundleId: number
   reportedBy: number
+  reporterFingerprint: number
+  clientReportId: number
   reason: number
   description: number
   evidenceUrls: number
@@ -72,6 +78,8 @@ export type BundleUserReportsMinAggregateInputType = {
   id?: true
   bundleId?: true
   reportedBy?: true
+  reporterFingerprint?: true
+  clientReportId?: true
   reason?: true
   description?: true
   evidenceUrls?: true
@@ -86,6 +94,8 @@ export type BundleUserReportsMaxAggregateInputType = {
   id?: true
   bundleId?: true
   reportedBy?: true
+  reporterFingerprint?: true
+  clientReportId?: true
   reason?: true
   description?: true
   evidenceUrls?: true
@@ -100,6 +110,8 @@ export type BundleUserReportsCountAggregateInputType = {
   id?: true
   bundleId?: true
   reportedBy?: true
+  reporterFingerprint?: true
+  clientReportId?: true
   reason?: true
   description?: true
   evidenceUrls?: true
@@ -186,7 +198,9 @@ export type BundleUserReportsGroupByArgs<ExtArgs extends runtime.Types.Extension
 export type BundleUserReportsGroupByOutputType = {
   id: string
   bundleId: string
-  reportedBy: string
+  reportedBy: string | null
+  reporterFingerprint: string | null
+  clientReportId: string | null
   reason: string
   description: string | null
   evidenceUrls: string | null
@@ -221,7 +235,9 @@ export type BundleUserReportsWhereInput = {
   NOT?: Prisma.BundleUserReportsWhereInput | Prisma.BundleUserReportsWhereInput[]
   id?: Prisma.UuidFilter<"BundleUserReports"> | string
   bundleId?: Prisma.UuidFilter<"BundleUserReports"> | string
-  reportedBy?: Prisma.UuidFilter<"BundleUserReports"> | string
+  reportedBy?: Prisma.UuidNullableFilter<"BundleUserReports"> | string | null
+  reporterFingerprint?: Prisma.StringNullableFilter<"BundleUserReports"> | string | null
+  clientReportId?: Prisma.StringNullableFilter<"BundleUserReports"> | string | null
   reason?: Prisma.StringFilter<"BundleUserReports"> | string
   description?: Prisma.StringNullableFilter<"BundleUserReports"> | string | null
   evidenceUrls?: Prisma.StringNullableFilter<"BundleUserReports"> | string | null
@@ -231,14 +247,16 @@ export type BundleUserReportsWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"BundleUserReports"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"BundleUserReports"> | Date | string
   bundle?: Prisma.XOR<Prisma.BundlesScalarRelationFilter, Prisma.BundlesWhereInput>
-  reporter?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  reporter?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   reviewer?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }
 
 export type BundleUserReportsOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   bundleId?: Prisma.SortOrder
-  reportedBy?: Prisma.SortOrder
+  reportedBy?: Prisma.SortOrderInput | Prisma.SortOrder
+  reporterFingerprint?: Prisma.SortOrderInput | Prisma.SortOrder
+  clientReportId?: Prisma.SortOrderInput | Prisma.SortOrder
   reason?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   evidenceUrls?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -254,11 +272,13 @@ export type BundleUserReportsOrderByWithRelationInput = {
 
 export type BundleUserReportsWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  clientReportId?: string
   AND?: Prisma.BundleUserReportsWhereInput | Prisma.BundleUserReportsWhereInput[]
   OR?: Prisma.BundleUserReportsWhereInput[]
   NOT?: Prisma.BundleUserReportsWhereInput | Prisma.BundleUserReportsWhereInput[]
   bundleId?: Prisma.UuidFilter<"BundleUserReports"> | string
-  reportedBy?: Prisma.UuidFilter<"BundleUserReports"> | string
+  reportedBy?: Prisma.UuidNullableFilter<"BundleUserReports"> | string | null
+  reporterFingerprint?: Prisma.StringNullableFilter<"BundleUserReports"> | string | null
   reason?: Prisma.StringFilter<"BundleUserReports"> | string
   description?: Prisma.StringNullableFilter<"BundleUserReports"> | string | null
   evidenceUrls?: Prisma.StringNullableFilter<"BundleUserReports"> | string | null
@@ -268,14 +288,16 @@ export type BundleUserReportsWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"BundleUserReports"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"BundleUserReports"> | Date | string
   bundle?: Prisma.XOR<Prisma.BundlesScalarRelationFilter, Prisma.BundlesWhereInput>
-  reporter?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  reporter?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   reviewer?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
-}, "id">
+}, "id" | "clientReportId">
 
 export type BundleUserReportsOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   bundleId?: Prisma.SortOrder
-  reportedBy?: Prisma.SortOrder
+  reportedBy?: Prisma.SortOrderInput | Prisma.SortOrder
+  reporterFingerprint?: Prisma.SortOrderInput | Prisma.SortOrder
+  clientReportId?: Prisma.SortOrderInput | Prisma.SortOrder
   reason?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   evidenceUrls?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -295,7 +317,9 @@ export type BundleUserReportsScalarWhereWithAggregatesInput = {
   NOT?: Prisma.BundleUserReportsScalarWhereWithAggregatesInput | Prisma.BundleUserReportsScalarWhereWithAggregatesInput[]
   id?: Prisma.UuidWithAggregatesFilter<"BundleUserReports"> | string
   bundleId?: Prisma.UuidWithAggregatesFilter<"BundleUserReports"> | string
-  reportedBy?: Prisma.UuidWithAggregatesFilter<"BundleUserReports"> | string
+  reportedBy?: Prisma.UuidNullableWithAggregatesFilter<"BundleUserReports"> | string | null
+  reporterFingerprint?: Prisma.StringNullableWithAggregatesFilter<"BundleUserReports"> | string | null
+  clientReportId?: Prisma.StringNullableWithAggregatesFilter<"BundleUserReports"> | string | null
   reason?: Prisma.StringWithAggregatesFilter<"BundleUserReports"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"BundleUserReports"> | string | null
   evidenceUrls?: Prisma.StringNullableWithAggregatesFilter<"BundleUserReports"> | string | null
@@ -308,6 +332,8 @@ export type BundleUserReportsScalarWhereWithAggregatesInput = {
 
 export type BundleUserReportsCreateInput = {
   id: string
+  reporterFingerprint?: string | null
+  clientReportId?: string | null
   reason: string
   description?: string | null
   evidenceUrls?: string | null
@@ -316,14 +342,16 @@ export type BundleUserReportsCreateInput = {
   createdAt: Date | string
   updatedAt: Date | string
   bundle: Prisma.BundlesCreateNestedOneWithoutUserReportsInput
-  reporter: Prisma.UserCreateNestedOneWithoutUserReportsReportedInput
+  reporter?: Prisma.UserCreateNestedOneWithoutUserReportsReportedInput
   reviewer?: Prisma.UserCreateNestedOneWithoutUserReportsReviewedInput
 }
 
 export type BundleUserReportsUncheckedCreateInput = {
   id: string
   bundleId: string
-  reportedBy: string
+  reportedBy?: string | null
+  reporterFingerprint?: string | null
+  clientReportId?: string | null
   reason: string
   description?: string | null
   evidenceUrls?: string | null
@@ -336,6 +364,8 @@ export type BundleUserReportsUncheckedCreateInput = {
 
 export type BundleUserReportsUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  reporterFingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clientReportId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reason?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   evidenceUrls?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -344,14 +374,16 @@ export type BundleUserReportsUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bundle?: Prisma.BundlesUpdateOneRequiredWithoutUserReportsNestedInput
-  reporter?: Prisma.UserUpdateOneRequiredWithoutUserReportsReportedNestedInput
+  reporter?: Prisma.UserUpdateOneWithoutUserReportsReportedNestedInput
   reviewer?: Prisma.UserUpdateOneWithoutUserReportsReviewedNestedInput
 }
 
 export type BundleUserReportsUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bundleId?: Prisma.StringFieldUpdateOperationsInput | string
-  reportedBy?: Prisma.StringFieldUpdateOperationsInput | string
+  reportedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reporterFingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clientReportId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reason?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   evidenceUrls?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -365,7 +397,9 @@ export type BundleUserReportsUncheckedUpdateInput = {
 export type BundleUserReportsCreateManyInput = {
   id: string
   bundleId: string
-  reportedBy: string
+  reportedBy?: string | null
+  reporterFingerprint?: string | null
+  clientReportId?: string | null
   reason: string
   description?: string | null
   evidenceUrls?: string | null
@@ -378,6 +412,8 @@ export type BundleUserReportsCreateManyInput = {
 
 export type BundleUserReportsUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  reporterFingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clientReportId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reason?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   evidenceUrls?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -390,7 +426,9 @@ export type BundleUserReportsUpdateManyMutationInput = {
 export type BundleUserReportsUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bundleId?: Prisma.StringFieldUpdateOperationsInput | string
-  reportedBy?: Prisma.StringFieldUpdateOperationsInput | string
+  reportedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reporterFingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clientReportId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reason?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   evidenceUrls?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -415,6 +453,8 @@ export type BundleUserReportsCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   bundleId?: Prisma.SortOrder
   reportedBy?: Prisma.SortOrder
+  reporterFingerprint?: Prisma.SortOrder
+  clientReportId?: Prisma.SortOrder
   reason?: Prisma.SortOrder
   description?: Prisma.SortOrder
   evidenceUrls?: Prisma.SortOrder
@@ -429,6 +469,8 @@ export type BundleUserReportsMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   bundleId?: Prisma.SortOrder
   reportedBy?: Prisma.SortOrder
+  reporterFingerprint?: Prisma.SortOrder
+  clientReportId?: Prisma.SortOrder
   reason?: Prisma.SortOrder
   description?: Prisma.SortOrder
   evidenceUrls?: Prisma.SortOrder
@@ -443,6 +485,8 @@ export type BundleUserReportsMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   bundleId?: Prisma.SortOrder
   reportedBy?: Prisma.SortOrder
+  reporterFingerprint?: Prisma.SortOrder
+  clientReportId?: Prisma.SortOrder
   reason?: Prisma.SortOrder
   description?: Prisma.SortOrder
   evidenceUrls?: Prisma.SortOrder
@@ -581,6 +625,8 @@ export type BundleUserReportsUncheckedUpdateManyWithoutBundleNestedInput = {
 
 export type BundleUserReportsCreateWithoutReporterInput = {
   id: string
+  reporterFingerprint?: string | null
+  clientReportId?: string | null
   reason: string
   description?: string | null
   evidenceUrls?: string | null
@@ -595,6 +641,8 @@ export type BundleUserReportsCreateWithoutReporterInput = {
 export type BundleUserReportsUncheckedCreateWithoutReporterInput = {
   id: string
   bundleId: string
+  reporterFingerprint?: string | null
+  clientReportId?: string | null
   reason: string
   description?: string | null
   evidenceUrls?: string | null
@@ -617,6 +665,8 @@ export type BundleUserReportsCreateManyReporterInputEnvelope = {
 
 export type BundleUserReportsCreateWithoutReviewerInput = {
   id: string
+  reporterFingerprint?: string | null
+  clientReportId?: string | null
   reason: string
   description?: string | null
   evidenceUrls?: string | null
@@ -625,13 +675,15 @@ export type BundleUserReportsCreateWithoutReviewerInput = {
   createdAt: Date | string
   updatedAt: Date | string
   bundle: Prisma.BundlesCreateNestedOneWithoutUserReportsInput
-  reporter: Prisma.UserCreateNestedOneWithoutUserReportsReportedInput
+  reporter?: Prisma.UserCreateNestedOneWithoutUserReportsReportedInput
 }
 
 export type BundleUserReportsUncheckedCreateWithoutReviewerInput = {
   id: string
   bundleId: string
-  reportedBy: string
+  reportedBy?: string | null
+  reporterFingerprint?: string | null
+  clientReportId?: string | null
   reason: string
   description?: string | null
   evidenceUrls?: string | null
@@ -673,7 +725,9 @@ export type BundleUserReportsScalarWhereInput = {
   NOT?: Prisma.BundleUserReportsScalarWhereInput | Prisma.BundleUserReportsScalarWhereInput[]
   id?: Prisma.UuidFilter<"BundleUserReports"> | string
   bundleId?: Prisma.UuidFilter<"BundleUserReports"> | string
-  reportedBy?: Prisma.UuidFilter<"BundleUserReports"> | string
+  reportedBy?: Prisma.UuidNullableFilter<"BundleUserReports"> | string | null
+  reporterFingerprint?: Prisma.StringNullableFilter<"BundleUserReports"> | string | null
+  clientReportId?: Prisma.StringNullableFilter<"BundleUserReports"> | string | null
   reason?: Prisma.StringFilter<"BundleUserReports"> | string
   description?: Prisma.StringNullableFilter<"BundleUserReports"> | string | null
   evidenceUrls?: Prisma.StringNullableFilter<"BundleUserReports"> | string | null
@@ -702,6 +756,8 @@ export type BundleUserReportsUpdateManyWithWhereWithoutReviewerInput = {
 
 export type BundleUserReportsCreateWithoutBundleInput = {
   id: string
+  reporterFingerprint?: string | null
+  clientReportId?: string | null
   reason: string
   description?: string | null
   evidenceUrls?: string | null
@@ -709,13 +765,15 @@ export type BundleUserReportsCreateWithoutBundleInput = {
   resolution?: string | null
   createdAt: Date | string
   updatedAt: Date | string
-  reporter: Prisma.UserCreateNestedOneWithoutUserReportsReportedInput
+  reporter?: Prisma.UserCreateNestedOneWithoutUserReportsReportedInput
   reviewer?: Prisma.UserCreateNestedOneWithoutUserReportsReviewedInput
 }
 
 export type BundleUserReportsUncheckedCreateWithoutBundleInput = {
   id: string
-  reportedBy: string
+  reportedBy?: string | null
+  reporterFingerprint?: string | null
+  clientReportId?: string | null
   reason: string
   description?: string | null
   evidenceUrls?: string | null
@@ -755,6 +813,8 @@ export type BundleUserReportsUpdateManyWithWhereWithoutBundleInput = {
 export type BundleUserReportsCreateManyReporterInput = {
   id: string
   bundleId: string
+  reporterFingerprint?: string | null
+  clientReportId?: string | null
   reason: string
   description?: string | null
   evidenceUrls?: string | null
@@ -768,7 +828,9 @@ export type BundleUserReportsCreateManyReporterInput = {
 export type BundleUserReportsCreateManyReviewerInput = {
   id: string
   bundleId: string
-  reportedBy: string
+  reportedBy?: string | null
+  reporterFingerprint?: string | null
+  clientReportId?: string | null
   reason: string
   description?: string | null
   evidenceUrls?: string | null
@@ -780,6 +842,8 @@ export type BundleUserReportsCreateManyReviewerInput = {
 
 export type BundleUserReportsUpdateWithoutReporterInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  reporterFingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clientReportId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reason?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   evidenceUrls?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -794,6 +858,8 @@ export type BundleUserReportsUpdateWithoutReporterInput = {
 export type BundleUserReportsUncheckedUpdateWithoutReporterInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bundleId?: Prisma.StringFieldUpdateOperationsInput | string
+  reporterFingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clientReportId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reason?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   evidenceUrls?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -807,6 +873,8 @@ export type BundleUserReportsUncheckedUpdateWithoutReporterInput = {
 export type BundleUserReportsUncheckedUpdateManyWithoutReporterInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bundleId?: Prisma.StringFieldUpdateOperationsInput | string
+  reporterFingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clientReportId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reason?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   evidenceUrls?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -819,6 +887,8 @@ export type BundleUserReportsUncheckedUpdateManyWithoutReporterInput = {
 
 export type BundleUserReportsUpdateWithoutReviewerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  reporterFingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clientReportId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reason?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   evidenceUrls?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -827,13 +897,15 @@ export type BundleUserReportsUpdateWithoutReviewerInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bundle?: Prisma.BundlesUpdateOneRequiredWithoutUserReportsNestedInput
-  reporter?: Prisma.UserUpdateOneRequiredWithoutUserReportsReportedNestedInput
+  reporter?: Prisma.UserUpdateOneWithoutUserReportsReportedNestedInput
 }
 
 export type BundleUserReportsUncheckedUpdateWithoutReviewerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bundleId?: Prisma.StringFieldUpdateOperationsInput | string
-  reportedBy?: Prisma.StringFieldUpdateOperationsInput | string
+  reportedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reporterFingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clientReportId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reason?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   evidenceUrls?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -846,7 +918,9 @@ export type BundleUserReportsUncheckedUpdateWithoutReviewerInput = {
 export type BundleUserReportsUncheckedUpdateManyWithoutReviewerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bundleId?: Prisma.StringFieldUpdateOperationsInput | string
-  reportedBy?: Prisma.StringFieldUpdateOperationsInput | string
+  reportedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reporterFingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clientReportId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reason?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   evidenceUrls?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -858,7 +932,9 @@ export type BundleUserReportsUncheckedUpdateManyWithoutReviewerInput = {
 
 export type BundleUserReportsCreateManyBundleInput = {
   id: string
-  reportedBy: string
+  reportedBy?: string | null
+  reporterFingerprint?: string | null
+  clientReportId?: string | null
   reason: string
   description?: string | null
   evidenceUrls?: string | null
@@ -871,6 +947,8 @@ export type BundleUserReportsCreateManyBundleInput = {
 
 export type BundleUserReportsUpdateWithoutBundleInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  reporterFingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clientReportId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reason?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   evidenceUrls?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -878,13 +956,15 @@ export type BundleUserReportsUpdateWithoutBundleInput = {
   resolution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reporter?: Prisma.UserUpdateOneRequiredWithoutUserReportsReportedNestedInput
+  reporter?: Prisma.UserUpdateOneWithoutUserReportsReportedNestedInput
   reviewer?: Prisma.UserUpdateOneWithoutUserReportsReviewedNestedInput
 }
 
 export type BundleUserReportsUncheckedUpdateWithoutBundleInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  reportedBy?: Prisma.StringFieldUpdateOperationsInput | string
+  reportedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reporterFingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clientReportId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reason?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   evidenceUrls?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -897,7 +977,9 @@ export type BundleUserReportsUncheckedUpdateWithoutBundleInput = {
 
 export type BundleUserReportsUncheckedUpdateManyWithoutBundleInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  reportedBy?: Prisma.StringFieldUpdateOperationsInput | string
+  reportedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reporterFingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clientReportId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reason?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   evidenceUrls?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -914,6 +996,8 @@ export type BundleUserReportsSelect<ExtArgs extends runtime.Types.Extensions.Int
   id?: boolean
   bundleId?: boolean
   reportedBy?: boolean
+  reporterFingerprint?: boolean
+  clientReportId?: boolean
   reason?: boolean
   description?: boolean
   evidenceUrls?: boolean
@@ -923,7 +1007,7 @@ export type BundleUserReportsSelect<ExtArgs extends runtime.Types.Extensions.Int
   createdAt?: boolean
   updatedAt?: boolean
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
-  reporter?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  reporter?: boolean | Prisma.BundleUserReports$reporterArgs<ExtArgs>
   reviewer?: boolean | Prisma.BundleUserReports$reviewerArgs<ExtArgs>
 }, ExtArgs["result"]["bundleUserReports"]>
 
@@ -931,6 +1015,8 @@ export type BundleUserReportsSelectCreateManyAndReturn<ExtArgs extends runtime.T
   id?: boolean
   bundleId?: boolean
   reportedBy?: boolean
+  reporterFingerprint?: boolean
+  clientReportId?: boolean
   reason?: boolean
   description?: boolean
   evidenceUrls?: boolean
@@ -940,7 +1026,7 @@ export type BundleUserReportsSelectCreateManyAndReturn<ExtArgs extends runtime.T
   createdAt?: boolean
   updatedAt?: boolean
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
-  reporter?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  reporter?: boolean | Prisma.BundleUserReports$reporterArgs<ExtArgs>
   reviewer?: boolean | Prisma.BundleUserReports$reviewerArgs<ExtArgs>
 }, ExtArgs["result"]["bundleUserReports"]>
 
@@ -948,6 +1034,8 @@ export type BundleUserReportsSelectUpdateManyAndReturn<ExtArgs extends runtime.T
   id?: boolean
   bundleId?: boolean
   reportedBy?: boolean
+  reporterFingerprint?: boolean
+  clientReportId?: boolean
   reason?: boolean
   description?: boolean
   evidenceUrls?: boolean
@@ -957,7 +1045,7 @@ export type BundleUserReportsSelectUpdateManyAndReturn<ExtArgs extends runtime.T
   createdAt?: boolean
   updatedAt?: boolean
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
-  reporter?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  reporter?: boolean | Prisma.BundleUserReports$reporterArgs<ExtArgs>
   reviewer?: boolean | Prisma.BundleUserReports$reviewerArgs<ExtArgs>
 }, ExtArgs["result"]["bundleUserReports"]>
 
@@ -965,6 +1053,8 @@ export type BundleUserReportsSelectScalar = {
   id?: boolean
   bundleId?: boolean
   reportedBy?: boolean
+  reporterFingerprint?: boolean
+  clientReportId?: boolean
   reason?: boolean
   description?: boolean
   evidenceUrls?: boolean
@@ -975,20 +1065,20 @@ export type BundleUserReportsSelectScalar = {
   updatedAt?: boolean
 }
 
-export type BundleUserReportsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bundleId" | "reportedBy" | "reason" | "description" | "evidenceUrls" | "status" | "reviewedBy" | "resolution" | "createdAt" | "updatedAt", ExtArgs["result"]["bundleUserReports"]>
+export type BundleUserReportsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bundleId" | "reportedBy" | "reporterFingerprint" | "clientReportId" | "reason" | "description" | "evidenceUrls" | "status" | "reviewedBy" | "resolution" | "createdAt" | "updatedAt", ExtArgs["result"]["bundleUserReports"]>
 export type BundleUserReportsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
-  reporter?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  reporter?: boolean | Prisma.BundleUserReports$reporterArgs<ExtArgs>
   reviewer?: boolean | Prisma.BundleUserReports$reviewerArgs<ExtArgs>
 }
 export type BundleUserReportsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
-  reporter?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  reporter?: boolean | Prisma.BundleUserReports$reporterArgs<ExtArgs>
   reviewer?: boolean | Prisma.BundleUserReports$reviewerArgs<ExtArgs>
 }
 export type BundleUserReportsIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
-  reporter?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  reporter?: boolean | Prisma.BundleUserReports$reporterArgs<ExtArgs>
   reviewer?: boolean | Prisma.BundleUserReports$reviewerArgs<ExtArgs>
 }
 
@@ -996,13 +1086,15 @@ export type $BundleUserReportsPayload<ExtArgs extends runtime.Types.Extensions.I
   name: "BundleUserReports"
   objects: {
     bundle: Prisma.$BundlesPayload<ExtArgs>
-    reporter: Prisma.$UserPayload<ExtArgs>
+    reporter: Prisma.$UserPayload<ExtArgs> | null
     reviewer: Prisma.$UserPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     bundleId: string
-    reportedBy: string
+    reportedBy: string | null
+    reporterFingerprint: string | null
+    clientReportId: string | null
     reason: string
     description: string | null
     evidenceUrls: string | null
@@ -1406,7 +1498,7 @@ readonly fields: BundleUserReportsFieldRefs;
 export interface Prisma__BundleUserReportsClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   bundle<T extends Prisma.BundlesDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundlesDefaultArgs<ExtArgs>>): Prisma.Prisma__BundlesClient<runtime.Types.Result.GetResult<Prisma.$BundlesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  reporter<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  reporter<T extends Prisma.BundleUserReports$reporterArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleUserReports$reporterArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   reviewer<T extends Prisma.BundleUserReports$reviewerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleUserReports$reviewerArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1440,6 +1532,8 @@ export interface BundleUserReportsFieldRefs {
   readonly id: Prisma.FieldRef<"BundleUserReports", 'String'>
   readonly bundleId: Prisma.FieldRef<"BundleUserReports", 'String'>
   readonly reportedBy: Prisma.FieldRef<"BundleUserReports", 'String'>
+  readonly reporterFingerprint: Prisma.FieldRef<"BundleUserReports", 'String'>
+  readonly clientReportId: Prisma.FieldRef<"BundleUserReports", 'String'>
   readonly reason: Prisma.FieldRef<"BundleUserReports", 'String'>
   readonly description: Prisma.FieldRef<"BundleUserReports", 'String'>
   readonly evidenceUrls: Prisma.FieldRef<"BundleUserReports", 'String'>
@@ -1846,6 +1940,25 @@ export type BundleUserReportsDeleteManyArgs<ExtArgs extends runtime.Types.Extens
    * Limit how many BundleUserReports to delete.
    */
   limit?: number
+}
+
+/**
+ * BundleUserReports.reporter
+ */
+export type BundleUserReports$reporterArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the User
+   */
+  select?: Prisma.UserSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the User
+   */
+  omit?: Prisma.UserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  where?: Prisma.UserWhereInput
 }
 
 /**

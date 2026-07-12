@@ -308,3 +308,6 @@ export function constructMarketplaceWebhookEvent(body: string, signature: string
   }
   return stripe.webhooks.constructEvent(body, signature, secret);
 }
+
+export const getStripe = () => stripe;
+

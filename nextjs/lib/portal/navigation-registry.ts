@@ -62,6 +62,25 @@ export function getWorkspaceNav(_locale?: string): NavItem[] {
       icon: ListTodo,
       requiredRole: "admin",
     },
+    {
+      path: "/admin/strikes",
+      label: "Compliance & Strikes (Admin)",
+      icon: ShieldAlert,
+      requiredRole: "admin",
+    },
+    {
+      path: "/admin/featured",
+      label: "Featured Spotlight (Admin)",
+      icon: Palette,
+      requiredRole: "admin",
+    },
+    {
+      path: "/admin/finance",
+      label: "Finance Reconcile (Admin)",
+      icon: DollarSign,
+      requiredRole: "admin",
+    },
+
   ];
 }
 

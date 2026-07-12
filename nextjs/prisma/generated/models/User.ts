@@ -313,6 +313,7 @@ export type UserWhereInput = {
   organizationMemberships?: Prisma.OrganizationMembershipListRelationFilter
   projectMemberships?: Prisma.ProjectMembershipListRelationFilter
   leposhipBuilds?: Prisma.LepoShipBuildListRelationFilter
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -368,6 +369,7 @@ export type UserOrderByWithRelationInput = {
   organizationMemberships?: Prisma.OrganizationMembershipOrderByRelationAggregateInput
   projectMemberships?: Prisma.ProjectMembershipOrderByRelationAggregateInput
   leposhipBuilds?: Prisma.LepoShipBuildOrderByRelationAggregateInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -426,6 +428,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   organizationMemberships?: Prisma.OrganizationMembershipListRelationFilter
   projectMemberships?: Prisma.ProjectMembershipListRelationFilter
   leposhipBuilds?: Prisma.LepoShipBuildListRelationFilter
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesListRelationFilter
 }, "id" | "email" | "phone">
 
 export type UserOrderByWithAggregationInput = {
@@ -526,6 +529,7 @@ export type UserCreateInput = {
   organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutRevokerInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -580,6 +584,7 @@ export type UserUncheckedCreateInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutRevokerInput
 }
 
 export type UserUpdateInput = {
@@ -634,6 +639,7 @@ export type UserUpdateInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -688,6 +694,7 @@ export type UserUncheckedUpdateInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -1067,6 +1074,12 @@ export type UserCreateNestedOneWithoutDeveloperStrikesIssuedInput = {
   connect?: Prisma.UserWhereUniqueInput
 }
 
+export type UserCreateNestedOneWithoutDeveloperStrikesRevokedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDeveloperStrikesRevokedInput, Prisma.UserUncheckedCreateWithoutDeveloperStrikesRevokedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDeveloperStrikesRevokedInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
 export type UserUpdateOneRequiredWithoutDeveloperStrikesNestedInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutDeveloperStrikesInput, Prisma.UserUncheckedCreateWithoutDeveloperStrikesInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutDeveloperStrikesInput
@@ -1085,16 +1098,28 @@ export type UserUpdateOneWithoutDeveloperStrikesIssuedNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutDeveloperStrikesIssuedInput, Prisma.UserUpdateWithoutDeveloperStrikesIssuedInput>, Prisma.UserUncheckedUpdateWithoutDeveloperStrikesIssuedInput>
 }
 
+export type UserUpdateOneWithoutDeveloperStrikesRevokedNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDeveloperStrikesRevokedInput, Prisma.UserUncheckedCreateWithoutDeveloperStrikesRevokedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDeveloperStrikesRevokedInput
+  upsert?: Prisma.UserUpsertWithoutDeveloperStrikesRevokedInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutDeveloperStrikesRevokedInput, Prisma.UserUpdateWithoutDeveloperStrikesRevokedInput>, Prisma.UserUncheckedUpdateWithoutDeveloperStrikesRevokedInput>
+}
+
 export type UserCreateNestedOneWithoutInstallEventsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutInstallEventsInput, Prisma.UserUncheckedCreateWithoutInstallEventsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutInstallEventsInput
   connect?: Prisma.UserWhereUniqueInput
 }
 
-export type UserUpdateOneRequiredWithoutInstallEventsNestedInput = {
+export type UserUpdateOneWithoutInstallEventsNestedInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutInstallEventsInput, Prisma.UserUncheckedCreateWithoutInstallEventsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutInstallEventsInput
   upsert?: Prisma.UserUpsertWithoutInstallEventsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
   connect?: Prisma.UserWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutInstallEventsInput, Prisma.UserUpdateWithoutInstallEventsInput>, Prisma.UserUncheckedUpdateWithoutInstallEventsInput>
 }
@@ -1155,10 +1180,12 @@ export type UserCreateNestedOneWithoutUserReportsReviewedInput = {
   connect?: Prisma.UserWhereUniqueInput
 }
 
-export type UserUpdateOneRequiredWithoutUserReportsReportedNestedInput = {
+export type UserUpdateOneWithoutUserReportsReportedNestedInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutUserReportsReportedInput, Prisma.UserUncheckedCreateWithoutUserReportsReportedInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutUserReportsReportedInput
   upsert?: Prisma.UserUpsertWithoutUserReportsReportedInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
   connect?: Prisma.UserWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutUserReportsReportedInput, Prisma.UserUpdateWithoutUserReportsReportedInput>, Prisma.UserUncheckedUpdateWithoutUserReportsReportedInput>
 }
@@ -1426,6 +1453,7 @@ export type UserCreateWithoutPhotoInput = {
   organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutRevokerInput
 }
 
 export type UserUncheckedCreateWithoutPhotoInput = {
@@ -1479,6 +1507,7 @@ export type UserUncheckedCreateWithoutPhotoInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutRevokerInput
 }
 
 export type UserCreateOrConnectWithoutPhotoInput = {
@@ -1581,6 +1610,7 @@ export type UserCreateWithoutOrganizationsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutRevokerInput
 }
 
 export type UserUncheckedCreateWithoutOrganizationsInput = {
@@ -1634,6 +1664,7 @@ export type UserUncheckedCreateWithoutOrganizationsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutRevokerInput
 }
 
 export type UserCreateOrConnectWithoutOrganizationsInput = {
@@ -1703,6 +1734,7 @@ export type UserUpdateWithoutOrganizationsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOrganizationsInput = {
@@ -1756,6 +1788,7 @@ export type UserUncheckedUpdateWithoutOrganizationsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserCreateWithoutPayoutsInput = {
@@ -1809,6 +1842,7 @@ export type UserCreateWithoutPayoutsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutRevokerInput
 }
 
 export type UserUncheckedCreateWithoutPayoutsInput = {
@@ -1862,6 +1896,7 @@ export type UserUncheckedCreateWithoutPayoutsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutRevokerInput
 }
 
 export type UserCreateOrConnectWithoutPayoutsInput = {
@@ -1931,6 +1966,7 @@ export type UserUpdateWithoutPayoutsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPayoutsInput = {
@@ -1984,6 +2020,7 @@ export type UserUncheckedUpdateWithoutPayoutsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserCreateWithoutNotificationsActorInput = {
@@ -2037,6 +2074,7 @@ export type UserCreateWithoutNotificationsActorInput = {
   organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutRevokerInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsActorInput = {
@@ -2090,6 +2128,7 @@ export type UserUncheckedCreateWithoutNotificationsActorInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutRevokerInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsActorInput = {
@@ -2148,6 +2187,7 @@ export type UserCreateWithoutNotificationsRecipientInput = {
   organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutRevokerInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsRecipientInput = {
@@ -2201,6 +2241,7 @@ export type UserUncheckedCreateWithoutNotificationsRecipientInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutRevokerInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsRecipientInput = {
@@ -2270,6 +2311,7 @@ export type UserUpdateWithoutNotificationsActorInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsActorInput = {
@@ -2323,6 +2365,7 @@ export type UserUncheckedUpdateWithoutNotificationsActorInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUpsertWithoutNotificationsRecipientInput = {
@@ -2387,6 +2430,7 @@ export type UserUpdateWithoutNotificationsRecipientInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsRecipientInput = {
@@ -2440,6 +2484,7 @@ export type UserUncheckedUpdateWithoutNotificationsRecipientInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserCreateWithoutSessionsInput = {
@@ -2493,6 +2538,7 @@ export type UserCreateWithoutSessionsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutRevokerInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -2546,6 +2592,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutRevokerInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -2615,6 +2662,7 @@ export type UserUpdateWithoutSessionsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -2668,6 +2716,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserCreateWithoutDeviceTokensInput = {
@@ -2721,6 +2770,7 @@ export type UserCreateWithoutDeviceTokensInput = {
   organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutRevokerInput
 }
 
 export type UserUncheckedCreateWithoutDeviceTokensInput = {
@@ -2774,6 +2824,7 @@ export type UserUncheckedCreateWithoutDeviceTokensInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutRevokerInput
 }
 
 export type UserCreateOrConnectWithoutDeviceTokensInput = {
@@ -2843,6 +2894,7 @@ export type UserUpdateWithoutDeviceTokensInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDeviceTokensInput = {
@@ -2896,6 +2948,7 @@ export type UserUncheckedUpdateWithoutDeviceTokensInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserCreateWithoutAnalyticsInput = {
@@ -2949,6 +3002,7 @@ export type UserCreateWithoutAnalyticsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutRevokerInput
 }
 
 export type UserUncheckedCreateWithoutAnalyticsInput = {
@@ -3002,6 +3056,7 @@ export type UserUncheckedCreateWithoutAnalyticsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutRevokerInput
 }
 
 export type UserCreateOrConnectWithoutAnalyticsInput = {
@@ -3071,6 +3126,7 @@ export type UserUpdateWithoutAnalyticsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAnalyticsInput = {
@@ -3124,6 +3180,7 @@ export type UserUncheckedUpdateWithoutAnalyticsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserCreateWithoutAuditLogsInput = {
@@ -3177,6 +3234,7 @@ export type UserCreateWithoutAuditLogsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutRevokerInput
 }
 
 export type UserUncheckedCreateWithoutAuditLogsInput = {
@@ -3230,6 +3288,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutRevokerInput
 }
 
 export type UserCreateOrConnectWithoutAuditLogsInput = {
@@ -3299,6 +3358,7 @@ export type UserUpdateWithoutAuditLogsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAuditLogsInput = {
@@ -3352,6 +3412,7 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserCreateWithoutBetaTestersInput = {
@@ -3405,6 +3466,7 @@ export type UserCreateWithoutBetaTestersInput = {
   organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutRevokerInput
 }
 
 export type UserUncheckedCreateWithoutBetaTestersInput = {
@@ -3458,6 +3520,7 @@ export type UserUncheckedCreateWithoutBetaTestersInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutRevokerInput
 }
 
 export type UserCreateOrConnectWithoutBetaTestersInput = {
@@ -3527,6 +3590,7 @@ export type UserUpdateWithoutBetaTestersInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutBetaTestersInput = {
@@ -3580,6 +3644,7 @@ export type UserUncheckedUpdateWithoutBetaTestersInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserCreateWithoutChangedLogsInput = {
@@ -3633,6 +3698,7 @@ export type UserCreateWithoutChangedLogsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutRevokerInput
 }
 
 export type UserUncheckedCreateWithoutChangedLogsInput = {
@@ -3686,6 +3752,7 @@ export type UserUncheckedCreateWithoutChangedLogsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutRevokerInput
 }
 
 export type UserCreateOrConnectWithoutChangedLogsInput = {
@@ -3755,6 +3822,7 @@ export type UserUpdateWithoutChangedLogsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutChangedLogsInput = {
@@ -3808,6 +3876,7 @@ export type UserUncheckedUpdateWithoutChangedLogsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserCreateWithoutCollaboratorsInvitedInput = {
@@ -3861,6 +3930,7 @@ export type UserCreateWithoutCollaboratorsInvitedInput = {
   organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutRevokerInput
 }
 
 export type UserUncheckedCreateWithoutCollaboratorsInvitedInput = {
@@ -3914,6 +3984,7 @@ export type UserUncheckedCreateWithoutCollaboratorsInvitedInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutRevokerInput
 }
 
 export type UserCreateOrConnectWithoutCollaboratorsInvitedInput = {
@@ -3972,6 +4043,7 @@ export type UserCreateWithoutCollaboratorsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutRevokerInput
 }
 
 export type UserUncheckedCreateWithoutCollaboratorsInput = {
@@ -4025,6 +4097,7 @@ export type UserUncheckedCreateWithoutCollaboratorsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutRevokerInput
 }
 
 export type UserCreateOrConnectWithoutCollaboratorsInput = {
@@ -4094,6 +4167,7 @@ export type UserUpdateWithoutCollaboratorsInvitedInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCollaboratorsInvitedInput = {
@@ -4147,6 +4221,7 @@ export type UserUncheckedUpdateWithoutCollaboratorsInvitedInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUpsertWithoutCollaboratorsInput = {
@@ -4211,6 +4286,7 @@ export type UserUpdateWithoutCollaboratorsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCollaboratorsInput = {
@@ -4264,6 +4340,7 @@ export type UserUncheckedUpdateWithoutCollaboratorsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserCreateWithoutDeveloperStrikesInput = {
@@ -4317,6 +4394,7 @@ export type UserCreateWithoutDeveloperStrikesInput = {
   organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutRevokerInput
 }
 
 export type UserUncheckedCreateWithoutDeveloperStrikesInput = {
@@ -4370,6 +4448,7 @@ export type UserUncheckedCreateWithoutDeveloperStrikesInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutRevokerInput
 }
 
 export type UserCreateOrConnectWithoutDeveloperStrikesInput = {
@@ -4428,6 +4507,7 @@ export type UserCreateWithoutDeveloperStrikesIssuedInput = {
   organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutRevokerInput
 }
 
 export type UserUncheckedCreateWithoutDeveloperStrikesIssuedInput = {
@@ -4481,11 +4561,125 @@ export type UserUncheckedCreateWithoutDeveloperStrikesIssuedInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutRevokerInput
 }
 
 export type UserCreateOrConnectWithoutDeveloperStrikesIssuedInput = {
   where: Prisma.UserWhereUniqueInput
   create: Prisma.XOR<Prisma.UserCreateWithoutDeveloperStrikesIssuedInput, Prisma.UserUncheckedCreateWithoutDeveloperStrikesIssuedInput>
+}
+
+export type UserCreateWithoutDeveloperStrikesRevokedInput = {
+  id: string
+  email?: string | null
+  password?: string | null
+  provider?: string
+  socialId?: string | null
+  firstName?: string | null
+  lastName?: string | null
+  fullName?: string | null
+  phone?: string | null
+  dateOfBirth?: Date | string | null
+  gender?: string | null
+  userType?: string
+  registerType?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  photo?: Prisma.FileCreateNestedOneWithoutUsersWithPhotoInput
+  payouts?: Prisma.BundlePayoutsCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationCreateNestedManyWithoutUserInput
+  notificationsActor?: Prisma.NotificationsCreateNestedManyWithoutActorInput
+  notificationsRecipient?: Prisma.NotificationsCreateNestedManyWithoutRecipientInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.UserDeviceTokenCreateNestedManyWithoutUserInput
+  analytics?: Prisma.BundleAnalyticsEventsCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.BundleAuditLogCreateNestedManyWithoutUserInput
+  betaTesters?: Prisma.BundleBetaTestersCreateNestedManyWithoutUserInput
+  changedLogs?: Prisma.BundleChangeLogsCreateNestedManyWithoutUserInput
+  collaboratorsInvited?: Prisma.BundleCollaboratorsCreateNestedManyWithoutInvitedUserInput
+  collaborators?: Prisma.BundleCollaboratorsCreateNestedManyWithoutUserInput
+  developerStrikes?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutDeveloperInput
+  developerStrikesIssued?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutIssuerInput
+  installEvents?: Prisma.BundleInstallEventsCreateNestedManyWithoutUserInput
+  orders?: Prisma.BundleOrdersCreateNestedManyWithoutUserInput
+  reviews?: Prisma.BundleReviewsCreateNestedManyWithoutUserInput
+  stateTransitions?: Prisma.BundleStateTransitionsCreateNestedManyWithoutUserInput
+  userReportsReported?: Prisma.BundleUserReportsCreateNestedManyWithoutReporterInput
+  userReportsReviewed?: Prisma.BundleUserReportsCreateNestedManyWithoutReviewerInput
+  refundRequestsReviewed?: Prisma.BundleRefundRequestsCreateNestedManyWithoutReviewerInput
+  refundRequests?: Prisma.BundleRefundRequestsCreateNestedManyWithoutUserInput
+  userEntitlements?: Prisma.BundleUserEntitlementsCreateNestedManyWithoutUserInput
+  reviewReportsReported?: Prisma.BundleReviewReportsCreateNestedManyWithoutReporterInput
+  reviewReportsReviewed?: Prisma.BundleReviewReportsCreateNestedManyWithoutReviewerInput
+  subscriptionHistory?: Prisma.BundleSubscriptionHistoryCreateNestedManyWithoutUserInput
+  reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutActorInput
+  reviewQueueReviewed?: Prisma.BundleReviewQueueCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsCreateNestedManyWithoutUserInput
+  personalAccessTokens?: Prisma.PersonalAccessTokenCreateNestedManyWithoutUserInput
+  previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
+}
+
+export type UserUncheckedCreateWithoutDeveloperStrikesRevokedInput = {
+  id: string
+  email?: string | null
+  password?: string | null
+  provider?: string
+  socialId?: string | null
+  firstName?: string | null
+  lastName?: string | null
+  fullName?: string | null
+  phone?: string | null
+  dateOfBirth?: Date | string | null
+  gender?: string | null
+  userType?: string
+  photoId?: string | null
+  registerType?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  payouts?: Prisma.BundlePayoutsUncheckedCreateNestedManyWithoutDeveloperInput
+  organizations?: Prisma.OrganizationUncheckedCreateNestedManyWithoutUserInput
+  notificationsActor?: Prisma.NotificationsUncheckedCreateNestedManyWithoutActorInput
+  notificationsRecipient?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRecipientInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.UserDeviceTokenUncheckedCreateNestedManyWithoutUserInput
+  analytics?: Prisma.BundleAnalyticsEventsUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.BundleAuditLogUncheckedCreateNestedManyWithoutUserInput
+  betaTesters?: Prisma.BundleBetaTestersUncheckedCreateNestedManyWithoutUserInput
+  changedLogs?: Prisma.BundleChangeLogsUncheckedCreateNestedManyWithoutUserInput
+  collaboratorsInvited?: Prisma.BundleCollaboratorsUncheckedCreateNestedManyWithoutInvitedUserInput
+  collaborators?: Prisma.BundleCollaboratorsUncheckedCreateNestedManyWithoutUserInput
+  developerStrikes?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutDeveloperInput
+  developerStrikesIssued?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutIssuerInput
+  installEvents?: Prisma.BundleInstallEventsUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.BundleOrdersUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.BundleReviewsUncheckedCreateNestedManyWithoutUserInput
+  stateTransitions?: Prisma.BundleStateTransitionsUncheckedCreateNestedManyWithoutUserInput
+  userReportsReported?: Prisma.BundleUserReportsUncheckedCreateNestedManyWithoutReporterInput
+  userReportsReviewed?: Prisma.BundleUserReportsUncheckedCreateNestedManyWithoutReviewerInput
+  refundRequestsReviewed?: Prisma.BundleRefundRequestsUncheckedCreateNestedManyWithoutReviewerInput
+  refundRequests?: Prisma.BundleRefundRequestsUncheckedCreateNestedManyWithoutUserInput
+  userEntitlements?: Prisma.BundleUserEntitlementsUncheckedCreateNestedManyWithoutUserInput
+  reviewReportsReported?: Prisma.BundleReviewReportsUncheckedCreateNestedManyWithoutReporterInput
+  reviewReportsReviewed?: Prisma.BundleReviewReportsUncheckedCreateNestedManyWithoutReviewerInput
+  subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedCreateNestedManyWithoutUserInput
+  reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutActorInput
+  reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReviewerInput
+  userSecrets?: Prisma.UserSecretsUncheckedCreateNestedManyWithoutUserInput
+  personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedCreateNestedManyWithoutUserInput
+  previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
+}
+
+export type UserCreateOrConnectWithoutDeveloperStrikesRevokedInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutDeveloperStrikesRevokedInput, Prisma.UserUncheckedCreateWithoutDeveloperStrikesRevokedInput>
 }
 
 export type UserUpsertWithoutDeveloperStrikesInput = {
@@ -4550,6 +4744,7 @@ export type UserUpdateWithoutDeveloperStrikesInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDeveloperStrikesInput = {
@@ -4603,6 +4798,7 @@ export type UserUncheckedUpdateWithoutDeveloperStrikesInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUpsertWithoutDeveloperStrikesIssuedInput = {
@@ -4667,6 +4863,7 @@ export type UserUpdateWithoutDeveloperStrikesIssuedInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDeveloperStrikesIssuedInput = {
@@ -4700,6 +4897,126 @@ export type UserUncheckedUpdateWithoutDeveloperStrikesIssuedInput = {
   collaboratorsInvited?: Prisma.BundleCollaboratorsUncheckedUpdateManyWithoutInvitedUserNestedInput
   collaborators?: Prisma.BundleCollaboratorsUncheckedUpdateManyWithoutUserNestedInput
   developerStrikes?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutDeveloperNestedInput
+  installEvents?: Prisma.BundleInstallEventsUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.BundleOrdersUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.BundleReviewsUncheckedUpdateManyWithoutUserNestedInput
+  stateTransitions?: Prisma.BundleStateTransitionsUncheckedUpdateManyWithoutUserNestedInput
+  userReportsReported?: Prisma.BundleUserReportsUncheckedUpdateManyWithoutReporterNestedInput
+  userReportsReviewed?: Prisma.BundleUserReportsUncheckedUpdateManyWithoutReviewerNestedInput
+  refundRequestsReviewed?: Prisma.BundleRefundRequestsUncheckedUpdateManyWithoutReviewerNestedInput
+  refundRequests?: Prisma.BundleRefundRequestsUncheckedUpdateManyWithoutUserNestedInput
+  userEntitlements?: Prisma.BundleUserEntitlementsUncheckedUpdateManyWithoutUserNestedInput
+  reviewReportsReported?: Prisma.BundleReviewReportsUncheckedUpdateManyWithoutReporterNestedInput
+  reviewReportsReviewed?: Prisma.BundleReviewReportsUncheckedUpdateManyWithoutReviewerNestedInput
+  subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedUpdateManyWithoutUserNestedInput
+  reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutActorNestedInput
+  reviewQueueReviewed?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUncheckedUpdateManyWithoutUserNestedInput
+  personalAccessTokens?: Prisma.PersonalAccessTokenUncheckedUpdateManyWithoutUserNestedInput
+  previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutRevokerNestedInput
+}
+
+export type UserUpsertWithoutDeveloperStrikesRevokedInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutDeveloperStrikesRevokedInput, Prisma.UserUncheckedUpdateWithoutDeveloperStrikesRevokedInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutDeveloperStrikesRevokedInput, Prisma.UserUncheckedCreateWithoutDeveloperStrikesRevokedInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutDeveloperStrikesRevokedInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutDeveloperStrikesRevokedInput, Prisma.UserUncheckedUpdateWithoutDeveloperStrikesRevokedInput>
+}
+
+export type UserUpdateWithoutDeveloperStrikesRevokedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  provider?: Prisma.StringFieldUpdateOperationsInput | string
+  socialId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userType?: Prisma.StringFieldUpdateOperationsInput | string
+  registerType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  photo?: Prisma.FileUpdateOneWithoutUsersWithPhotoNestedInput
+  payouts?: Prisma.BundlePayoutsUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUpdateManyWithoutUserNestedInput
+  notificationsActor?: Prisma.NotificationsUpdateManyWithoutActorNestedInput
+  notificationsRecipient?: Prisma.NotificationsUpdateManyWithoutRecipientNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.UserDeviceTokenUpdateManyWithoutUserNestedInput
+  analytics?: Prisma.BundleAnalyticsEventsUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.BundleAuditLogUpdateManyWithoutUserNestedInput
+  betaTesters?: Prisma.BundleBetaTestersUpdateManyWithoutUserNestedInput
+  changedLogs?: Prisma.BundleChangeLogsUpdateManyWithoutUserNestedInput
+  collaboratorsInvited?: Prisma.BundleCollaboratorsUpdateManyWithoutInvitedUserNestedInput
+  collaborators?: Prisma.BundleCollaboratorsUpdateManyWithoutUserNestedInput
+  developerStrikes?: Prisma.BundleDeveloperStrikesUpdateManyWithoutDeveloperNestedInput
+  developerStrikesIssued?: Prisma.BundleDeveloperStrikesUpdateManyWithoutIssuerNestedInput
+  installEvents?: Prisma.BundleInstallEventsUpdateManyWithoutUserNestedInput
+  orders?: Prisma.BundleOrdersUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.BundleReviewsUpdateManyWithoutUserNestedInput
+  stateTransitions?: Prisma.BundleStateTransitionsUpdateManyWithoutUserNestedInput
+  userReportsReported?: Prisma.BundleUserReportsUpdateManyWithoutReporterNestedInput
+  userReportsReviewed?: Prisma.BundleUserReportsUpdateManyWithoutReviewerNestedInput
+  refundRequestsReviewed?: Prisma.BundleRefundRequestsUpdateManyWithoutReviewerNestedInput
+  refundRequests?: Prisma.BundleRefundRequestsUpdateManyWithoutUserNestedInput
+  userEntitlements?: Prisma.BundleUserEntitlementsUpdateManyWithoutUserNestedInput
+  reviewReportsReported?: Prisma.BundleReviewReportsUpdateManyWithoutReporterNestedInput
+  reviewReportsReviewed?: Prisma.BundleReviewReportsUpdateManyWithoutReviewerNestedInput
+  subscriptionHistory?: Prisma.BundleSubscriptionHistoryUpdateManyWithoutUserNestedInput
+  reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutActorNestedInput
+  reviewQueueReviewed?: Prisma.BundleReviewQueueUpdateManyWithoutReviewerNestedInput
+  userSecrets?: Prisma.UserSecretsUpdateManyWithoutUserNestedInput
+  personalAccessTokens?: Prisma.PersonalAccessTokenUpdateManyWithoutUserNestedInput
+  previewComments?: Prisma.PreviewCommentUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutDeveloperStrikesRevokedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  provider?: Prisma.StringFieldUpdateOperationsInput | string
+  socialId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userType?: Prisma.StringFieldUpdateOperationsInput | string
+  photoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registerType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  payouts?: Prisma.BundlePayoutsUncheckedUpdateManyWithoutDeveloperNestedInput
+  organizations?: Prisma.OrganizationUncheckedUpdateManyWithoutUserNestedInput
+  notificationsActor?: Prisma.NotificationsUncheckedUpdateManyWithoutActorNestedInput
+  notificationsRecipient?: Prisma.NotificationsUncheckedUpdateManyWithoutRecipientNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.UserDeviceTokenUncheckedUpdateManyWithoutUserNestedInput
+  analytics?: Prisma.BundleAnalyticsEventsUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.BundleAuditLogUncheckedUpdateManyWithoutUserNestedInput
+  betaTesters?: Prisma.BundleBetaTestersUncheckedUpdateManyWithoutUserNestedInput
+  changedLogs?: Prisma.BundleChangeLogsUncheckedUpdateManyWithoutUserNestedInput
+  collaboratorsInvited?: Prisma.BundleCollaboratorsUncheckedUpdateManyWithoutInvitedUserNestedInput
+  collaborators?: Prisma.BundleCollaboratorsUncheckedUpdateManyWithoutUserNestedInput
+  developerStrikes?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutDeveloperNestedInput
+  developerStrikesIssued?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutIssuerNestedInput
   installEvents?: Prisma.BundleInstallEventsUncheckedUpdateManyWithoutUserNestedInput
   orders?: Prisma.BundleOrdersUncheckedUpdateManyWithoutUserNestedInput
   reviews?: Prisma.BundleReviewsUncheckedUpdateManyWithoutUserNestedInput
@@ -4773,6 +5090,7 @@ export type UserCreateWithoutInstallEventsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutRevokerInput
 }
 
 export type UserUncheckedCreateWithoutInstallEventsInput = {
@@ -4826,6 +5144,7 @@ export type UserUncheckedCreateWithoutInstallEventsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutRevokerInput
 }
 
 export type UserCreateOrConnectWithoutInstallEventsInput = {
@@ -4895,6 +5214,7 @@ export type UserUpdateWithoutInstallEventsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutInstallEventsInput = {
@@ -4948,6 +5268,7 @@ export type UserUncheckedUpdateWithoutInstallEventsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserCreateWithoutOrdersInput = {
@@ -5001,6 +5322,7 @@ export type UserCreateWithoutOrdersInput = {
   organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutRevokerInput
 }
 
 export type UserUncheckedCreateWithoutOrdersInput = {
@@ -5054,6 +5376,7 @@ export type UserUncheckedCreateWithoutOrdersInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutRevokerInput
 }
 
 export type UserCreateOrConnectWithoutOrdersInput = {
@@ -5123,6 +5446,7 @@ export type UserUpdateWithoutOrdersInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOrdersInput = {
@@ -5176,6 +5500,7 @@ export type UserUncheckedUpdateWithoutOrdersInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserCreateWithoutReviewsInput = {
@@ -5229,6 +5554,7 @@ export type UserCreateWithoutReviewsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutRevokerInput
 }
 
 export type UserUncheckedCreateWithoutReviewsInput = {
@@ -5282,6 +5608,7 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutRevokerInput
 }
 
 export type UserCreateOrConnectWithoutReviewsInput = {
@@ -5351,6 +5678,7 @@ export type UserUpdateWithoutReviewsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReviewsInput = {
@@ -5404,6 +5732,7 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserCreateWithoutStateTransitionsInput = {
@@ -5457,6 +5786,7 @@ export type UserCreateWithoutStateTransitionsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutRevokerInput
 }
 
 export type UserUncheckedCreateWithoutStateTransitionsInput = {
@@ -5510,6 +5840,7 @@ export type UserUncheckedCreateWithoutStateTransitionsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutRevokerInput
 }
 
 export type UserCreateOrConnectWithoutStateTransitionsInput = {
@@ -5579,6 +5910,7 @@ export type UserUpdateWithoutStateTransitionsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutStateTransitionsInput = {
@@ -5632,6 +5964,7 @@ export type UserUncheckedUpdateWithoutStateTransitionsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserCreateWithoutUserReportsReportedInput = {
@@ -5685,6 +6018,7 @@ export type UserCreateWithoutUserReportsReportedInput = {
   organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutRevokerInput
 }
 
 export type UserUncheckedCreateWithoutUserReportsReportedInput = {
@@ -5738,6 +6072,7 @@ export type UserUncheckedCreateWithoutUserReportsReportedInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutRevokerInput
 }
 
 export type UserCreateOrConnectWithoutUserReportsReportedInput = {
@@ -5796,6 +6131,7 @@ export type UserCreateWithoutUserReportsReviewedInput = {
   organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutRevokerInput
 }
 
 export type UserUncheckedCreateWithoutUserReportsReviewedInput = {
@@ -5849,6 +6185,7 @@ export type UserUncheckedCreateWithoutUserReportsReviewedInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutRevokerInput
 }
 
 export type UserCreateOrConnectWithoutUserReportsReviewedInput = {
@@ -5918,6 +6255,7 @@ export type UserUpdateWithoutUserReportsReportedInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutUserReportsReportedInput = {
@@ -5971,6 +6309,7 @@ export type UserUncheckedUpdateWithoutUserReportsReportedInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUpsertWithoutUserReportsReviewedInput = {
@@ -6035,6 +6374,7 @@ export type UserUpdateWithoutUserReportsReviewedInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutUserReportsReviewedInput = {
@@ -6088,6 +6428,7 @@ export type UserUncheckedUpdateWithoutUserReportsReviewedInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserCreateWithoutRefundRequestsReviewedInput = {
@@ -6141,6 +6482,7 @@ export type UserCreateWithoutRefundRequestsReviewedInput = {
   organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutRevokerInput
 }
 
 export type UserUncheckedCreateWithoutRefundRequestsReviewedInput = {
@@ -6194,6 +6536,7 @@ export type UserUncheckedCreateWithoutRefundRequestsReviewedInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutRevokerInput
 }
 
 export type UserCreateOrConnectWithoutRefundRequestsReviewedInput = {
@@ -6252,6 +6595,7 @@ export type UserCreateWithoutRefundRequestsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutRevokerInput
 }
 
 export type UserUncheckedCreateWithoutRefundRequestsInput = {
@@ -6305,6 +6649,7 @@ export type UserUncheckedCreateWithoutRefundRequestsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutRevokerInput
 }
 
 export type UserCreateOrConnectWithoutRefundRequestsInput = {
@@ -6374,6 +6719,7 @@ export type UserUpdateWithoutRefundRequestsReviewedInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRefundRequestsReviewedInput = {
@@ -6427,6 +6773,7 @@ export type UserUncheckedUpdateWithoutRefundRequestsReviewedInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUpsertWithoutRefundRequestsInput = {
@@ -6491,6 +6838,7 @@ export type UserUpdateWithoutRefundRequestsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRefundRequestsInput = {
@@ -6544,6 +6892,7 @@ export type UserUncheckedUpdateWithoutRefundRequestsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserCreateWithoutUserEntitlementsInput = {
@@ -6597,6 +6946,7 @@ export type UserCreateWithoutUserEntitlementsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutRevokerInput
 }
 
 export type UserUncheckedCreateWithoutUserEntitlementsInput = {
@@ -6650,6 +7000,7 @@ export type UserUncheckedCreateWithoutUserEntitlementsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutRevokerInput
 }
 
 export type UserCreateOrConnectWithoutUserEntitlementsInput = {
@@ -6719,6 +7070,7 @@ export type UserUpdateWithoutUserEntitlementsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutUserEntitlementsInput = {
@@ -6772,6 +7124,7 @@ export type UserUncheckedUpdateWithoutUserEntitlementsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserCreateWithoutReviewReportsReportedInput = {
@@ -6825,6 +7178,7 @@ export type UserCreateWithoutReviewReportsReportedInput = {
   organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutRevokerInput
 }
 
 export type UserUncheckedCreateWithoutReviewReportsReportedInput = {
@@ -6878,6 +7232,7 @@ export type UserUncheckedCreateWithoutReviewReportsReportedInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutRevokerInput
 }
 
 export type UserCreateOrConnectWithoutReviewReportsReportedInput = {
@@ -6936,6 +7291,7 @@ export type UserCreateWithoutReviewReportsReviewedInput = {
   organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutRevokerInput
 }
 
 export type UserUncheckedCreateWithoutReviewReportsReviewedInput = {
@@ -6989,6 +7345,7 @@ export type UserUncheckedCreateWithoutReviewReportsReviewedInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutRevokerInput
 }
 
 export type UserCreateOrConnectWithoutReviewReportsReviewedInput = {
@@ -7058,6 +7415,7 @@ export type UserUpdateWithoutReviewReportsReportedInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReviewReportsReportedInput = {
@@ -7111,6 +7469,7 @@ export type UserUncheckedUpdateWithoutReviewReportsReportedInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUpsertWithoutReviewReportsReviewedInput = {
@@ -7175,6 +7534,7 @@ export type UserUpdateWithoutReviewReportsReviewedInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReviewReportsReviewedInput = {
@@ -7228,6 +7588,7 @@ export type UserUncheckedUpdateWithoutReviewReportsReviewedInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserCreateWithoutSubscriptionHistoryInput = {
@@ -7281,6 +7642,7 @@ export type UserCreateWithoutSubscriptionHistoryInput = {
   organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutRevokerInput
 }
 
 export type UserUncheckedCreateWithoutSubscriptionHistoryInput = {
@@ -7334,6 +7696,7 @@ export type UserUncheckedCreateWithoutSubscriptionHistoryInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutRevokerInput
 }
 
 export type UserCreateOrConnectWithoutSubscriptionHistoryInput = {
@@ -7403,6 +7766,7 @@ export type UserUpdateWithoutSubscriptionHistoryInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSubscriptionHistoryInput = {
@@ -7456,6 +7820,7 @@ export type UserUncheckedUpdateWithoutSubscriptionHistoryInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserCreateWithoutReviewHistoryInput = {
@@ -7509,6 +7874,7 @@ export type UserCreateWithoutReviewHistoryInput = {
   organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutRevokerInput
 }
 
 export type UserUncheckedCreateWithoutReviewHistoryInput = {
@@ -7562,6 +7928,7 @@ export type UserUncheckedCreateWithoutReviewHistoryInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutRevokerInput
 }
 
 export type UserCreateOrConnectWithoutReviewHistoryInput = {
@@ -7631,6 +7998,7 @@ export type UserUpdateWithoutReviewHistoryInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReviewHistoryInput = {
@@ -7684,6 +8052,7 @@ export type UserUncheckedUpdateWithoutReviewHistoryInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserCreateWithoutReviewQueueReviewedInput = {
@@ -7737,6 +8106,7 @@ export type UserCreateWithoutReviewQueueReviewedInput = {
   organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutRevokerInput
 }
 
 export type UserUncheckedCreateWithoutReviewQueueReviewedInput = {
@@ -7790,6 +8160,7 @@ export type UserUncheckedCreateWithoutReviewQueueReviewedInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutRevokerInput
 }
 
 export type UserCreateOrConnectWithoutReviewQueueReviewedInput = {
@@ -7859,6 +8230,7 @@ export type UserUpdateWithoutReviewQueueReviewedInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReviewQueueReviewedInput = {
@@ -7912,6 +8284,7 @@ export type UserUncheckedUpdateWithoutReviewQueueReviewedInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserCreateWithoutUserSecretsInput = {
@@ -7965,6 +8338,7 @@ export type UserCreateWithoutUserSecretsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutRevokerInput
 }
 
 export type UserUncheckedCreateWithoutUserSecretsInput = {
@@ -8018,6 +8392,7 @@ export type UserUncheckedCreateWithoutUserSecretsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutRevokerInput
 }
 
 export type UserCreateOrConnectWithoutUserSecretsInput = {
@@ -8087,6 +8462,7 @@ export type UserUpdateWithoutUserSecretsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutUserSecretsInput = {
@@ -8140,6 +8516,7 @@ export type UserUncheckedUpdateWithoutUserSecretsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserCreateWithoutPersonalAccessTokensInput = {
@@ -8193,6 +8570,7 @@ export type UserCreateWithoutPersonalAccessTokensInput = {
   organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutRevokerInput
 }
 
 export type UserUncheckedCreateWithoutPersonalAccessTokensInput = {
@@ -8246,6 +8624,7 @@ export type UserUncheckedCreateWithoutPersonalAccessTokensInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutRevokerInput
 }
 
 export type UserCreateOrConnectWithoutPersonalAccessTokensInput = {
@@ -8315,6 +8694,7 @@ export type UserUpdateWithoutPersonalAccessTokensInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPersonalAccessTokensInput = {
@@ -8368,6 +8748,7 @@ export type UserUncheckedUpdateWithoutPersonalAccessTokensInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserCreateWithoutPreviewCommentsInput = {
@@ -8421,6 +8802,7 @@ export type UserCreateWithoutPreviewCommentsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutRevokerInput
 }
 
 export type UserUncheckedCreateWithoutPreviewCommentsInput = {
@@ -8474,6 +8856,7 @@ export type UserUncheckedCreateWithoutPreviewCommentsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutRevokerInput
 }
 
 export type UserCreateOrConnectWithoutPreviewCommentsInput = {
@@ -8543,6 +8926,7 @@ export type UserUpdateWithoutPreviewCommentsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPreviewCommentsInput = {
@@ -8596,6 +8980,7 @@ export type UserUncheckedUpdateWithoutPreviewCommentsInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserCreateWithoutOrganizationMembershipsInput = {
@@ -8649,6 +9034,7 @@ export type UserCreateWithoutOrganizationMembershipsInput = {
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutRevokerInput
 }
 
 export type UserUncheckedCreateWithoutOrganizationMembershipsInput = {
@@ -8702,6 +9088,7 @@ export type UserUncheckedCreateWithoutOrganizationMembershipsInput = {
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutRevokerInput
 }
 
 export type UserCreateOrConnectWithoutOrganizationMembershipsInput = {
@@ -8771,6 +9158,7 @@ export type UserUpdateWithoutOrganizationMembershipsInput = {
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOrganizationMembershipsInput = {
@@ -8824,6 +9212,7 @@ export type UserUncheckedUpdateWithoutOrganizationMembershipsInput = {
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserCreateWithoutProjectMembershipsInput = {
@@ -8877,6 +9266,7 @@ export type UserCreateWithoutProjectMembershipsInput = {
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutUserInput
   organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutRevokerInput
 }
 
 export type UserUncheckedCreateWithoutProjectMembershipsInput = {
@@ -8930,6 +9320,7 @@ export type UserUncheckedCreateWithoutProjectMembershipsInput = {
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutUserInput
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutTriggeredByInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutRevokerInput
 }
 
 export type UserCreateOrConnectWithoutProjectMembershipsInput = {
@@ -8999,6 +9390,7 @@ export type UserUpdateWithoutProjectMembershipsInput = {
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutUserNestedInput
   organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutProjectMembershipsInput = {
@@ -9052,6 +9444,7 @@ export type UserUncheckedUpdateWithoutProjectMembershipsInput = {
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutUserNestedInput
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserCreateWithoutLeposhipBuildsInput = {
@@ -9105,6 +9498,7 @@ export type UserCreateWithoutLeposhipBuildsInput = {
   previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutUserInput
   organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutUserInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutRevokerInput
 }
 
 export type UserUncheckedCreateWithoutLeposhipBuildsInput = {
@@ -9158,6 +9552,7 @@ export type UserUncheckedCreateWithoutLeposhipBuildsInput = {
   previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutUserInput
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutUserInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutRevokerInput
 }
 
 export type UserCreateOrConnectWithoutLeposhipBuildsInput = {
@@ -9227,6 +9622,7 @@ export type UserUpdateWithoutLeposhipBuildsInput = {
   previewComments?: Prisma.PreviewCommentUpdateManyWithoutUserNestedInput
   organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutLeposhipBuildsInput = {
@@ -9280,6 +9676,7 @@ export type UserUncheckedUpdateWithoutLeposhipBuildsInput = {
   previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutUserNestedInput
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserCreateManyPhotoInput = {
@@ -9352,6 +9749,7 @@ export type UserUpdateWithoutPhotoInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPhotoInput = {
@@ -9405,6 +9803,7 @@ export type UserUncheckedUpdateWithoutPhotoInput = {
   organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
   projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutUserNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutTriggeredByNestedInput
+  developerStrikesRevoked?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutRevokerNestedInput
 }
 
 export type UserUncheckedUpdateManyWithoutPhotoInput = {
@@ -9466,6 +9865,7 @@ export type UserCountOutputType = {
   organizationMemberships: number
   projectMemberships: number
   leposhipBuilds: number
+  developerStrikesRevoked: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -9503,6 +9903,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   organizationMemberships?: boolean | UserCountOutputTypeCountOrganizationMembershipsArgs
   projectMemberships?: boolean | UserCountOutputTypeCountProjectMembershipsArgs
   leposhipBuilds?: boolean | UserCountOutputTypeCountLeposhipBuildsArgs
+  developerStrikesRevoked?: boolean | UserCountOutputTypeCountDeveloperStrikesRevokedArgs
 }
 
 /**
@@ -9753,6 +10154,13 @@ export type UserCountOutputTypeCountLeposhipBuildsArgs<ExtArgs extends runtime.T
   where?: Prisma.LepoShipBuildWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountDeveloperStrikesRevokedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BundleDeveloperStrikesWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -9807,6 +10215,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   organizationMemberships?: boolean | Prisma.User$organizationMembershipsArgs<ExtArgs>
   projectMemberships?: boolean | Prisma.User$projectMembershipsArgs<ExtArgs>
   leposhipBuilds?: boolean | Prisma.User$leposhipBuildsArgs<ExtArgs>
+  developerStrikesRevoked?: boolean | Prisma.User$developerStrikesRevokedArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -9909,6 +10318,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   organizationMemberships?: boolean | Prisma.User$organizationMembershipsArgs<ExtArgs>
   projectMemberships?: boolean | Prisma.User$projectMembershipsArgs<ExtArgs>
   leposhipBuilds?: boolean | Prisma.User$leposhipBuildsArgs<ExtArgs>
+  developerStrikesRevoked?: boolean | Prisma.User$developerStrikesRevokedArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -9956,6 +10366,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     organizationMemberships: Prisma.$OrganizationMembershipPayload<ExtArgs>[]
     projectMemberships: Prisma.$ProjectMembershipPayload<ExtArgs>[]
     leposhipBuilds: Prisma.$LepoShipBuildPayload<ExtArgs>[]
+    developerStrikesRevoked: Prisma.$BundleDeveloperStrikesPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -10404,6 +10815,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   organizationMemberships<T extends Prisma.User$organizationMembershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$organizationMembershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrganizationMembershipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   projectMemberships<T extends Prisma.User$projectMembershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$projectMembershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProjectMembershipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   leposhipBuilds<T extends Prisma.User$leposhipBuildsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$leposhipBuildsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LepoShipBuildPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  developerStrikesRevoked<T extends Prisma.User$developerStrikesRevokedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$developerStrikesRevokedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BundleDeveloperStrikesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -11683,6 +12095,30 @@ export type User$leposhipBuildsArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   distinct?: Prisma.LepoShipBuildScalarFieldEnum | Prisma.LepoShipBuildScalarFieldEnum[]
+}
+
+/**
+ * User.developerStrikesRevoked
+ */
+export type User$developerStrikesRevokedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BundleDeveloperStrikes
+   */
+  select?: Prisma.BundleDeveloperStrikesSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BundleDeveloperStrikes
+   */
+  omit?: Prisma.BundleDeveloperStrikesOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BundleDeveloperStrikesInclude<ExtArgs> | null
+  where?: Prisma.BundleDeveloperStrikesWhereInput
+  orderBy?: Prisma.BundleDeveloperStrikesOrderByWithRelationInput | Prisma.BundleDeveloperStrikesOrderByWithRelationInput[]
+  cursor?: Prisma.BundleDeveloperStrikesWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BundleDeveloperStrikesScalarFieldEnum | Prisma.BundleDeveloperStrikesScalarFieldEnum[]
 }
 
 /**
