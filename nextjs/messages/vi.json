@@ -1,4 +1,25 @@
 {
+  "LepoShip": {
+    "moderation": {
+      "title": "Hàng đợi Duyệt",
+      "approve": "Duyệt",
+      "reject": "Từ chối",
+      "rejection_reason": "Lý do từ chối",
+      "reason_required": "Yêu cầu nhập lý do từ chối."
+    },
+    "ab_testing": {
+      "title": "Thử nghiệm A/B",
+      "create": "Tạo thử nghiệm",
+      "edit": "Sửa thử nghiệm"
+    },
+    "store_listing": {
+      "title": "Thông tin Cửa hàng",
+      "locales": "Bản địa hóa",
+      "media": "Hình ảnh",
+      "keywords": "Từ khóa & Thẻ",
+      "privacy": "Bảo mật"
+    }
+  },
   "Navbar": {
     "logo": "Lepos",
     "route_benefits": "Lợi ích",

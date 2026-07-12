@@ -41,6 +41,8 @@ export type MarketplaceTransactionSumAggregateOutputType = {
 export type MarketplaceTransactionMinAggregateOutputType = {
   id: string | null
   stripePaymentIntentId: string | null
+  stripeCheckoutSessionId: string | null
+  stripeInvoiceId: string | null
   bundleId: string | null
   buyerUserId: string | null
   amount: number | null
@@ -55,6 +57,8 @@ export type MarketplaceTransactionMinAggregateOutputType = {
 export type MarketplaceTransactionMaxAggregateOutputType = {
   id: string | null
   stripePaymentIntentId: string | null
+  stripeCheckoutSessionId: string | null
+  stripeInvoiceId: string | null
   bundleId: string | null
   buyerUserId: string | null
   amount: number | null
@@ -69,6 +73,8 @@ export type MarketplaceTransactionMaxAggregateOutputType = {
 export type MarketplaceTransactionCountAggregateOutputType = {
   id: number
   stripePaymentIntentId: number
+  stripeCheckoutSessionId: number
+  stripeInvoiceId: number
   bundleId: number
   buyerUserId: number
   amount: number
@@ -97,6 +103,8 @@ export type MarketplaceTransactionSumAggregateInputType = {
 export type MarketplaceTransactionMinAggregateInputType = {
   id?: true
   stripePaymentIntentId?: true
+  stripeCheckoutSessionId?: true
+  stripeInvoiceId?: true
   bundleId?: true
   buyerUserId?: true
   amount?: true
@@ -111,6 +119,8 @@ export type MarketplaceTransactionMinAggregateInputType = {
 export type MarketplaceTransactionMaxAggregateInputType = {
   id?: true
   stripePaymentIntentId?: true
+  stripeCheckoutSessionId?: true
+  stripeInvoiceId?: true
   bundleId?: true
   buyerUserId?: true
   amount?: true
@@ -125,6 +135,8 @@ export type MarketplaceTransactionMaxAggregateInputType = {
 export type MarketplaceTransactionCountAggregateInputType = {
   id?: true
   stripePaymentIntentId?: true
+  stripeCheckoutSessionId?: true
+  stripeInvoiceId?: true
   bundleId?: true
   buyerUserId?: true
   amount?: true
@@ -226,6 +238,8 @@ export type MarketplaceTransactionGroupByArgs<ExtArgs extends runtime.Types.Exte
 export type MarketplaceTransactionGroupByOutputType = {
   id: string
   stripePaymentIntentId: string
+  stripeCheckoutSessionId: string | null
+  stripeInvoiceId: string | null
   bundleId: string
   buyerUserId: string
   amount: number
@@ -263,6 +277,8 @@ export type MarketplaceTransactionWhereInput = {
   NOT?: Prisma.MarketplaceTransactionWhereInput | Prisma.MarketplaceTransactionWhereInput[]
   id?: Prisma.StringFilter<"MarketplaceTransaction"> | string
   stripePaymentIntentId?: Prisma.StringFilter<"MarketplaceTransaction"> | string
+  stripeCheckoutSessionId?: Prisma.StringNullableFilter<"MarketplaceTransaction"> | string | null
+  stripeInvoiceId?: Prisma.StringNullableFilter<"MarketplaceTransaction"> | string | null
   bundleId?: Prisma.StringFilter<"MarketplaceTransaction"> | string
   buyerUserId?: Prisma.StringFilter<"MarketplaceTransaction"> | string
   amount?: Prisma.FloatFilter<"MarketplaceTransaction"> | number
@@ -277,6 +293,8 @@ export type MarketplaceTransactionWhereInput = {
 export type MarketplaceTransactionOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   stripePaymentIntentId?: Prisma.SortOrder
+  stripeCheckoutSessionId?: Prisma.SortOrderInput | Prisma.SortOrder
+  stripeInvoiceId?: Prisma.SortOrderInput | Prisma.SortOrder
   bundleId?: Prisma.SortOrder
   buyerUserId?: Prisma.SortOrder
   amount?: Prisma.SortOrder
@@ -290,6 +308,8 @@ export type MarketplaceTransactionOrderByWithRelationInput = {
 
 export type MarketplaceTransactionWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  stripeCheckoutSessionId?: string
+  stripeInvoiceId?: string
   AND?: Prisma.MarketplaceTransactionWhereInput | Prisma.MarketplaceTransactionWhereInput[]
   OR?: Prisma.MarketplaceTransactionWhereInput[]
   NOT?: Prisma.MarketplaceTransactionWhereInput | Prisma.MarketplaceTransactionWhereInput[]
@@ -303,11 +323,13 @@ export type MarketplaceTransactionWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.StringFilter<"MarketplaceTransaction"> | string
   createdAt?: Prisma.DateTimeFilter<"MarketplaceTransaction"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"MarketplaceTransaction"> | Date | string
-}, "id">
+}, "id" | "stripeCheckoutSessionId" | "stripeInvoiceId">
 
 export type MarketplaceTransactionOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   stripePaymentIntentId?: Prisma.SortOrder
+  stripeCheckoutSessionId?: Prisma.SortOrderInput | Prisma.SortOrder
+  stripeInvoiceId?: Prisma.SortOrderInput | Prisma.SortOrder
   bundleId?: Prisma.SortOrder
   buyerUserId?: Prisma.SortOrder
   amount?: Prisma.SortOrder
@@ -330,6 +352,8 @@ export type MarketplaceTransactionScalarWhereWithAggregatesInput = {
   NOT?: Prisma.MarketplaceTransactionScalarWhereWithAggregatesInput | Prisma.MarketplaceTransactionScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"MarketplaceTransaction"> | string
   stripePaymentIntentId?: Prisma.StringWithAggregatesFilter<"MarketplaceTransaction"> | string
+  stripeCheckoutSessionId?: Prisma.StringNullableWithAggregatesFilter<"MarketplaceTransaction"> | string | null
+  stripeInvoiceId?: Prisma.StringNullableWithAggregatesFilter<"MarketplaceTransaction"> | string | null
   bundleId?: Prisma.StringWithAggregatesFilter<"MarketplaceTransaction"> | string
   buyerUserId?: Prisma.StringWithAggregatesFilter<"MarketplaceTransaction"> | string
   amount?: Prisma.FloatWithAggregatesFilter<"MarketplaceTransaction"> | number
@@ -344,6 +368,8 @@ export type MarketplaceTransactionScalarWhereWithAggregatesInput = {
 export type MarketplaceTransactionCreateInput = {
   id?: string
   stripePaymentIntentId: string
+  stripeCheckoutSessionId?: string | null
+  stripeInvoiceId?: string | null
   bundleId: string
   buyerUserId: string
   amount: number
@@ -358,6 +384,8 @@ export type MarketplaceTransactionCreateInput = {
 export type MarketplaceTransactionUncheckedCreateInput = {
   id?: string
   stripePaymentIntentId: string
+  stripeCheckoutSessionId?: string | null
+  stripeInvoiceId?: string | null
   bundleId: string
   buyerUserId: string
   amount: number
@@ -372,6 +400,8 @@ export type MarketplaceTransactionUncheckedCreateInput = {
 export type MarketplaceTransactionUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   stripePaymentIntentId?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeInvoiceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bundleId?: Prisma.StringFieldUpdateOperationsInput | string
   buyerUserId?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -386,6 +416,8 @@ export type MarketplaceTransactionUpdateInput = {
 export type MarketplaceTransactionUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   stripePaymentIntentId?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeInvoiceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bundleId?: Prisma.StringFieldUpdateOperationsInput | string
   buyerUserId?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -400,6 +432,8 @@ export type MarketplaceTransactionUncheckedUpdateInput = {
 export type MarketplaceTransactionCreateManyInput = {
   id?: string
   stripePaymentIntentId: string
+  stripeCheckoutSessionId?: string | null
+  stripeInvoiceId?: string | null
   bundleId: string
   buyerUserId: string
   amount: number
@@ -414,6 +448,8 @@ export type MarketplaceTransactionCreateManyInput = {
 export type MarketplaceTransactionUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   stripePaymentIntentId?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeInvoiceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bundleId?: Prisma.StringFieldUpdateOperationsInput | string
   buyerUserId?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -428,6 +464,8 @@ export type MarketplaceTransactionUpdateManyMutationInput = {
 export type MarketplaceTransactionUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   stripePaymentIntentId?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeInvoiceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bundleId?: Prisma.StringFieldUpdateOperationsInput | string
   buyerUserId?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -442,6 +480,8 @@ export type MarketplaceTransactionUncheckedUpdateManyInput = {
 export type MarketplaceTransactionCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   stripePaymentIntentId?: Prisma.SortOrder
+  stripeCheckoutSessionId?: Prisma.SortOrder
+  stripeInvoiceId?: Prisma.SortOrder
   bundleId?: Prisma.SortOrder
   buyerUserId?: Prisma.SortOrder
   amount?: Prisma.SortOrder
@@ -462,6 +502,8 @@ export type MarketplaceTransactionAvgOrderByAggregateInput = {
 export type MarketplaceTransactionMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   stripePaymentIntentId?: Prisma.SortOrder
+  stripeCheckoutSessionId?: Prisma.SortOrder
+  stripeInvoiceId?: Prisma.SortOrder
   bundleId?: Prisma.SortOrder
   buyerUserId?: Prisma.SortOrder
   amount?: Prisma.SortOrder
@@ -476,6 +518,8 @@ export type MarketplaceTransactionMaxOrderByAggregateInput = {
 export type MarketplaceTransactionMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   stripePaymentIntentId?: Prisma.SortOrder
+  stripeCheckoutSessionId?: Prisma.SortOrder
+  stripeInvoiceId?: Prisma.SortOrder
   bundleId?: Prisma.SortOrder
   buyerUserId?: Prisma.SortOrder
   amount?: Prisma.SortOrder
@@ -498,6 +542,8 @@ export type MarketplaceTransactionSumOrderByAggregateInput = {
 export type MarketplaceTransactionSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   stripePaymentIntentId?: boolean
+  stripeCheckoutSessionId?: boolean
+  stripeInvoiceId?: boolean
   bundleId?: boolean
   buyerUserId?: boolean
   amount?: boolean
@@ -512,6 +558,8 @@ export type MarketplaceTransactionSelect<ExtArgs extends runtime.Types.Extension
 export type MarketplaceTransactionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   stripePaymentIntentId?: boolean
+  stripeCheckoutSessionId?: boolean
+  stripeInvoiceId?: boolean
   bundleId?: boolean
   buyerUserId?: boolean
   amount?: boolean
@@ -526,6 +574,8 @@ export type MarketplaceTransactionSelectCreateManyAndReturn<ExtArgs extends runt
 export type MarketplaceTransactionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   stripePaymentIntentId?: boolean
+  stripeCheckoutSessionId?: boolean
+  stripeInvoiceId?: boolean
   bundleId?: boolean
   buyerUserId?: boolean
   amount?: boolean
@@ -540,6 +590,8 @@ export type MarketplaceTransactionSelectUpdateManyAndReturn<ExtArgs extends runt
 export type MarketplaceTransactionSelectScalar = {
   id?: boolean
   stripePaymentIntentId?: boolean
+  stripeCheckoutSessionId?: boolean
+  stripeInvoiceId?: boolean
   bundleId?: boolean
   buyerUserId?: boolean
   amount?: boolean
@@ -551,7 +603,7 @@ export type MarketplaceTransactionSelectScalar = {
   updatedAt?: boolean
 }
 
-export type MarketplaceTransactionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "stripePaymentIntentId" | "bundleId" | "buyerUserId" | "amount" | "currency" | "platformFee" | "partnerPayout" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["marketplaceTransaction"]>
+export type MarketplaceTransactionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "stripePaymentIntentId" | "stripeCheckoutSessionId" | "stripeInvoiceId" | "bundleId" | "buyerUserId" | "amount" | "currency" | "platformFee" | "partnerPayout" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["marketplaceTransaction"]>
 
 export type $MarketplaceTransactionPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "MarketplaceTransaction"
@@ -559,6 +611,8 @@ export type $MarketplaceTransactionPayload<ExtArgs extends runtime.Types.Extensi
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     stripePaymentIntentId: string
+    stripeCheckoutSessionId: string | null
+    stripeInvoiceId: string | null
     bundleId: string
     buyerUserId: string
     amount: number
@@ -993,6 +1047,8 @@ export interface Prisma__MarketplaceTransactionClient<T, Null = never, ExtArgs e
 export interface MarketplaceTransactionFieldRefs {
   readonly id: Prisma.FieldRef<"MarketplaceTransaction", 'String'>
   readonly stripePaymentIntentId: Prisma.FieldRef<"MarketplaceTransaction", 'String'>
+  readonly stripeCheckoutSessionId: Prisma.FieldRef<"MarketplaceTransaction", 'String'>
+  readonly stripeInvoiceId: Prisma.FieldRef<"MarketplaceTransaction", 'String'>
   readonly bundleId: Prisma.FieldRef<"MarketplaceTransaction", 'String'>
   readonly buyerUserId: Prisma.FieldRef<"MarketplaceTransaction", 'String'>
   readonly amount: Prisma.FieldRef<"MarketplaceTransaction", 'Float'>

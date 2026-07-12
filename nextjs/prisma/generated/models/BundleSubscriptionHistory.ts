@@ -33,6 +33,10 @@ export type BundleSubscriptionHistoryMinAggregateOutputType = {
   endAt: Date | null
   status: string | null
   cancelReason: string | null
+  stripeSubscriptionId: string | null
+  stripeCustomerId: string | null
+  currentPeriodEnd: Date | null
+  latestInvoiceId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -46,6 +50,10 @@ export type BundleSubscriptionHistoryMaxAggregateOutputType = {
   endAt: Date | null
   status: string | null
   cancelReason: string | null
+  stripeSubscriptionId: string | null
+  stripeCustomerId: string | null
+  currentPeriodEnd: Date | null
+  latestInvoiceId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -59,6 +67,10 @@ export type BundleSubscriptionHistoryCountAggregateOutputType = {
   endAt: number
   status: number
   cancelReason: number
+  stripeSubscriptionId: number
+  stripeCustomerId: number
+  currentPeriodEnd: number
+  latestInvoiceId: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -74,6 +86,10 @@ export type BundleSubscriptionHistoryMinAggregateInputType = {
   endAt?: true
   status?: true
   cancelReason?: true
+  stripeSubscriptionId?: true
+  stripeCustomerId?: true
+  currentPeriodEnd?: true
+  latestInvoiceId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -87,6 +103,10 @@ export type BundleSubscriptionHistoryMaxAggregateInputType = {
   endAt?: true
   status?: true
   cancelReason?: true
+  stripeSubscriptionId?: true
+  stripeCustomerId?: true
+  currentPeriodEnd?: true
+  latestInvoiceId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -100,6 +120,10 @@ export type BundleSubscriptionHistoryCountAggregateInputType = {
   endAt?: true
   status?: true
   cancelReason?: true
+  stripeSubscriptionId?: true
+  stripeCustomerId?: true
+  currentPeriodEnd?: true
+  latestInvoiceId?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -186,6 +210,10 @@ export type BundleSubscriptionHistoryGroupByOutputType = {
   endAt: Date | null
   status: string
   cancelReason: string | null
+  stripeSubscriptionId: string | null
+  stripeCustomerId: string | null
+  currentPeriodEnd: Date | null
+  latestInvoiceId: string | null
   createdAt: Date
   updatedAt: Date
   _count: BundleSubscriptionHistoryCountAggregateOutputType | null
@@ -220,6 +248,10 @@ export type BundleSubscriptionHistoryWhereInput = {
   endAt?: Prisma.DateTimeNullableFilter<"BundleSubscriptionHistory"> | Date | string | null
   status?: Prisma.StringFilter<"BundleSubscriptionHistory"> | string
   cancelReason?: Prisma.StringNullableFilter<"BundleSubscriptionHistory"> | string | null
+  stripeSubscriptionId?: Prisma.StringNullableFilter<"BundleSubscriptionHistory"> | string | null
+  stripeCustomerId?: Prisma.StringNullableFilter<"BundleSubscriptionHistory"> | string | null
+  currentPeriodEnd?: Prisma.DateTimeNullableFilter<"BundleSubscriptionHistory"> | Date | string | null
+  latestInvoiceId?: Prisma.StringNullableFilter<"BundleSubscriptionHistory"> | string | null
   createdAt?: Prisma.DateTimeFilter<"BundleSubscriptionHistory"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"BundleSubscriptionHistory"> | Date | string
   bundle?: Prisma.XOR<Prisma.BundlesScalarRelationFilter, Prisma.BundlesWhereInput>
@@ -236,6 +268,10 @@ export type BundleSubscriptionHistoryOrderByWithRelationInput = {
   endAt?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   cancelReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  stripeSubscriptionId?: Prisma.SortOrderInput | Prisma.SortOrder
+  stripeCustomerId?: Prisma.SortOrderInput | Prisma.SortOrder
+  currentPeriodEnd?: Prisma.SortOrderInput | Prisma.SortOrder
+  latestInvoiceId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   bundle?: Prisma.BundlesOrderByWithRelationInput
@@ -245,6 +281,7 @@ export type BundleSubscriptionHistoryOrderByWithRelationInput = {
 
 export type BundleSubscriptionHistoryWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  stripeSubscriptionId?: string
   AND?: Prisma.BundleSubscriptionHistoryWhereInput | Prisma.BundleSubscriptionHistoryWhereInput[]
   OR?: Prisma.BundleSubscriptionHistoryWhereInput[]
   NOT?: Prisma.BundleSubscriptionHistoryWhereInput | Prisma.BundleSubscriptionHistoryWhereInput[]
@@ -255,12 +292,15 @@ export type BundleSubscriptionHistoryWhereUniqueInput = Prisma.AtLeast<{
   endAt?: Prisma.DateTimeNullableFilter<"BundleSubscriptionHistory"> | Date | string | null
   status?: Prisma.StringFilter<"BundleSubscriptionHistory"> | string
   cancelReason?: Prisma.StringNullableFilter<"BundleSubscriptionHistory"> | string | null
+  stripeCustomerId?: Prisma.StringNullableFilter<"BundleSubscriptionHistory"> | string | null
+  currentPeriodEnd?: Prisma.DateTimeNullableFilter<"BundleSubscriptionHistory"> | Date | string | null
+  latestInvoiceId?: Prisma.StringNullableFilter<"BundleSubscriptionHistory"> | string | null
   createdAt?: Prisma.DateTimeFilter<"BundleSubscriptionHistory"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"BundleSubscriptionHistory"> | Date | string
   bundle?: Prisma.XOR<Prisma.BundlesScalarRelationFilter, Prisma.BundlesWhereInput>
   plan?: Prisma.XOR<Prisma.BundleSubscriptionPlansScalarRelationFilter, Prisma.BundleSubscriptionPlansWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-}, "id">
+}, "id" | "stripeSubscriptionId">
 
 export type BundleSubscriptionHistoryOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -271,6 +311,10 @@ export type BundleSubscriptionHistoryOrderByWithAggregationInput = {
   endAt?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   cancelReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  stripeSubscriptionId?: Prisma.SortOrderInput | Prisma.SortOrder
+  stripeCustomerId?: Prisma.SortOrderInput | Prisma.SortOrder
+  currentPeriodEnd?: Prisma.SortOrderInput | Prisma.SortOrder
+  latestInvoiceId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.BundleSubscriptionHistoryCountOrderByAggregateInput
@@ -290,6 +334,10 @@ export type BundleSubscriptionHistoryScalarWhereWithAggregatesInput = {
   endAt?: Prisma.DateTimeNullableWithAggregatesFilter<"BundleSubscriptionHistory"> | Date | string | null
   status?: Prisma.StringWithAggregatesFilter<"BundleSubscriptionHistory"> | string
   cancelReason?: Prisma.StringNullableWithAggregatesFilter<"BundleSubscriptionHistory"> | string | null
+  stripeSubscriptionId?: Prisma.StringNullableWithAggregatesFilter<"BundleSubscriptionHistory"> | string | null
+  stripeCustomerId?: Prisma.StringNullableWithAggregatesFilter<"BundleSubscriptionHistory"> | string | null
+  currentPeriodEnd?: Prisma.DateTimeNullableWithAggregatesFilter<"BundleSubscriptionHistory"> | Date | string | null
+  latestInvoiceId?: Prisma.StringNullableWithAggregatesFilter<"BundleSubscriptionHistory"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"BundleSubscriptionHistory"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"BundleSubscriptionHistory"> | Date | string
 }
@@ -300,6 +348,10 @@ export type BundleSubscriptionHistoryCreateInput = {
   endAt?: Date | string | null
   status?: string
   cancelReason?: string | null
+  stripeSubscriptionId?: string | null
+  stripeCustomerId?: string | null
+  currentPeriodEnd?: Date | string | null
+  latestInvoiceId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   bundle: Prisma.BundlesCreateNestedOneWithoutSubscriptionHistoryInput
@@ -316,6 +368,10 @@ export type BundleSubscriptionHistoryUncheckedCreateInput = {
   endAt?: Date | string | null
   status?: string
   cancelReason?: string | null
+  stripeSubscriptionId?: string | null
+  stripeCustomerId?: string | null
+  currentPeriodEnd?: Date | string | null
+  latestInvoiceId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
 }
@@ -326,6 +382,10 @@ export type BundleSubscriptionHistoryUpdateInput = {
   endAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   cancelReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  latestInvoiceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bundle?: Prisma.BundlesUpdateOneRequiredWithoutSubscriptionHistoryNestedInput
@@ -342,6 +402,10 @@ export type BundleSubscriptionHistoryUncheckedUpdateInput = {
   endAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   cancelReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  latestInvoiceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -355,6 +419,10 @@ export type BundleSubscriptionHistoryCreateManyInput = {
   endAt?: Date | string | null
   status?: string
   cancelReason?: string | null
+  stripeSubscriptionId?: string | null
+  stripeCustomerId?: string | null
+  currentPeriodEnd?: Date | string | null
+  latestInvoiceId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
 }
@@ -365,6 +433,10 @@ export type BundleSubscriptionHistoryUpdateManyMutationInput = {
   endAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   cancelReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  latestInvoiceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -378,6 +450,10 @@ export type BundleSubscriptionHistoryUncheckedUpdateManyInput = {
   endAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   cancelReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  latestInvoiceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -401,6 +477,10 @@ export type BundleSubscriptionHistoryCountOrderByAggregateInput = {
   endAt?: Prisma.SortOrder
   status?: Prisma.SortOrder
   cancelReason?: Prisma.SortOrder
+  stripeSubscriptionId?: Prisma.SortOrder
+  stripeCustomerId?: Prisma.SortOrder
+  currentPeriodEnd?: Prisma.SortOrder
+  latestInvoiceId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -414,6 +494,10 @@ export type BundleSubscriptionHistoryMaxOrderByAggregateInput = {
   endAt?: Prisma.SortOrder
   status?: Prisma.SortOrder
   cancelReason?: Prisma.SortOrder
+  stripeSubscriptionId?: Prisma.SortOrder
+  stripeCustomerId?: Prisma.SortOrder
+  currentPeriodEnd?: Prisma.SortOrder
+  latestInvoiceId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -427,6 +511,10 @@ export type BundleSubscriptionHistoryMinOrderByAggregateInput = {
   endAt?: Prisma.SortOrder
   status?: Prisma.SortOrder
   cancelReason?: Prisma.SortOrder
+  stripeSubscriptionId?: Prisma.SortOrder
+  stripeCustomerId?: Prisma.SortOrder
+  currentPeriodEnd?: Prisma.SortOrder
+  latestInvoiceId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -563,6 +651,10 @@ export type BundleSubscriptionHistoryCreateWithoutUserInput = {
   endAt?: Date | string | null
   status?: string
   cancelReason?: string | null
+  stripeSubscriptionId?: string | null
+  stripeCustomerId?: string | null
+  currentPeriodEnd?: Date | string | null
+  latestInvoiceId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   bundle: Prisma.BundlesCreateNestedOneWithoutSubscriptionHistoryInput
@@ -577,6 +669,10 @@ export type BundleSubscriptionHistoryUncheckedCreateWithoutUserInput = {
   endAt?: Date | string | null
   status?: string
   cancelReason?: string | null
+  stripeSubscriptionId?: string | null
+  stripeCustomerId?: string | null
+  currentPeriodEnd?: Date | string | null
+  latestInvoiceId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
 }
@@ -619,6 +715,10 @@ export type BundleSubscriptionHistoryScalarWhereInput = {
   endAt?: Prisma.DateTimeNullableFilter<"BundleSubscriptionHistory"> | Date | string | null
   status?: Prisma.StringFilter<"BundleSubscriptionHistory"> | string
   cancelReason?: Prisma.StringNullableFilter<"BundleSubscriptionHistory"> | string | null
+  stripeSubscriptionId?: Prisma.StringNullableFilter<"BundleSubscriptionHistory"> | string | null
+  stripeCustomerId?: Prisma.StringNullableFilter<"BundleSubscriptionHistory"> | string | null
+  currentPeriodEnd?: Prisma.DateTimeNullableFilter<"BundleSubscriptionHistory"> | Date | string | null
+  latestInvoiceId?: Prisma.StringNullableFilter<"BundleSubscriptionHistory"> | string | null
   createdAt?: Prisma.DateTimeFilter<"BundleSubscriptionHistory"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"BundleSubscriptionHistory"> | Date | string
 }
@@ -629,6 +729,10 @@ export type BundleSubscriptionHistoryCreateWithoutBundleInput = {
   endAt?: Date | string | null
   status?: string
   cancelReason?: string | null
+  stripeSubscriptionId?: string | null
+  stripeCustomerId?: string | null
+  currentPeriodEnd?: Date | string | null
+  latestInvoiceId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   plan: Prisma.BundleSubscriptionPlansCreateNestedOneWithoutSubscriptionsInput
@@ -643,6 +747,10 @@ export type BundleSubscriptionHistoryUncheckedCreateWithoutBundleInput = {
   endAt?: Date | string | null
   status?: string
   cancelReason?: string | null
+  stripeSubscriptionId?: string | null
+  stripeCustomerId?: string | null
+  currentPeriodEnd?: Date | string | null
+  latestInvoiceId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
 }
@@ -679,6 +787,10 @@ export type BundleSubscriptionHistoryCreateWithoutPlanInput = {
   endAt?: Date | string | null
   status?: string
   cancelReason?: string | null
+  stripeSubscriptionId?: string | null
+  stripeCustomerId?: string | null
+  currentPeriodEnd?: Date | string | null
+  latestInvoiceId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   bundle: Prisma.BundlesCreateNestedOneWithoutSubscriptionHistoryInput
@@ -693,6 +805,10 @@ export type BundleSubscriptionHistoryUncheckedCreateWithoutPlanInput = {
   endAt?: Date | string | null
   status?: string
   cancelReason?: string | null
+  stripeSubscriptionId?: string | null
+  stripeCustomerId?: string | null
+  currentPeriodEnd?: Date | string | null
+  latestInvoiceId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
 }
@@ -731,6 +847,10 @@ export type BundleSubscriptionHistoryCreateManyUserInput = {
   endAt?: Date | string | null
   status?: string
   cancelReason?: string | null
+  stripeSubscriptionId?: string | null
+  stripeCustomerId?: string | null
+  currentPeriodEnd?: Date | string | null
+  latestInvoiceId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
 }
@@ -741,6 +861,10 @@ export type BundleSubscriptionHistoryUpdateWithoutUserInput = {
   endAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   cancelReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  latestInvoiceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bundle?: Prisma.BundlesUpdateOneRequiredWithoutSubscriptionHistoryNestedInput
@@ -755,6 +879,10 @@ export type BundleSubscriptionHistoryUncheckedUpdateWithoutUserInput = {
   endAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   cancelReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  latestInvoiceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -767,6 +895,10 @@ export type BundleSubscriptionHistoryUncheckedUpdateManyWithoutUserInput = {
   endAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   cancelReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  latestInvoiceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -779,6 +911,10 @@ export type BundleSubscriptionHistoryCreateManyBundleInput = {
   endAt?: Date | string | null
   status?: string
   cancelReason?: string | null
+  stripeSubscriptionId?: string | null
+  stripeCustomerId?: string | null
+  currentPeriodEnd?: Date | string | null
+  latestInvoiceId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
 }
@@ -789,6 +925,10 @@ export type BundleSubscriptionHistoryUpdateWithoutBundleInput = {
   endAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   cancelReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  latestInvoiceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   plan?: Prisma.BundleSubscriptionPlansUpdateOneRequiredWithoutSubscriptionsNestedInput
@@ -803,6 +943,10 @@ export type BundleSubscriptionHistoryUncheckedUpdateWithoutBundleInput = {
   endAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   cancelReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  latestInvoiceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -815,6 +959,10 @@ export type BundleSubscriptionHistoryUncheckedUpdateManyWithoutBundleInput = {
   endAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   cancelReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  latestInvoiceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -827,6 +975,10 @@ export type BundleSubscriptionHistoryCreateManyPlanInput = {
   endAt?: Date | string | null
   status?: string
   cancelReason?: string | null
+  stripeSubscriptionId?: string | null
+  stripeCustomerId?: string | null
+  currentPeriodEnd?: Date | string | null
+  latestInvoiceId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
 }
@@ -837,6 +989,10 @@ export type BundleSubscriptionHistoryUpdateWithoutPlanInput = {
   endAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   cancelReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  latestInvoiceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bundle?: Prisma.BundlesUpdateOneRequiredWithoutSubscriptionHistoryNestedInput
@@ -851,6 +1007,10 @@ export type BundleSubscriptionHistoryUncheckedUpdateWithoutPlanInput = {
   endAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   cancelReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  latestInvoiceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -863,6 +1023,10 @@ export type BundleSubscriptionHistoryUncheckedUpdateManyWithoutPlanInput = {
   endAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   cancelReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  latestInvoiceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -878,6 +1042,10 @@ export type BundleSubscriptionHistorySelect<ExtArgs extends runtime.Types.Extens
   endAt?: boolean
   status?: boolean
   cancelReason?: boolean
+  stripeSubscriptionId?: boolean
+  stripeCustomerId?: boolean
+  currentPeriodEnd?: boolean
+  latestInvoiceId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
@@ -894,6 +1062,10 @@ export type BundleSubscriptionHistorySelectCreateManyAndReturn<ExtArgs extends r
   endAt?: boolean
   status?: boolean
   cancelReason?: boolean
+  stripeSubscriptionId?: boolean
+  stripeCustomerId?: boolean
+  currentPeriodEnd?: boolean
+  latestInvoiceId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
@@ -910,6 +1082,10 @@ export type BundleSubscriptionHistorySelectUpdateManyAndReturn<ExtArgs extends r
   endAt?: boolean
   status?: boolean
   cancelReason?: boolean
+  stripeSubscriptionId?: boolean
+  stripeCustomerId?: boolean
+  currentPeriodEnd?: boolean
+  latestInvoiceId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
@@ -926,11 +1102,15 @@ export type BundleSubscriptionHistorySelectScalar = {
   endAt?: boolean
   status?: boolean
   cancelReason?: boolean
+  stripeSubscriptionId?: boolean
+  stripeCustomerId?: boolean
+  currentPeriodEnd?: boolean
+  latestInvoiceId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type BundleSubscriptionHistoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "planId" | "bundleId" | "startAt" | "endAt" | "status" | "cancelReason" | "createdAt" | "updatedAt", ExtArgs["result"]["bundleSubscriptionHistory"]>
+export type BundleSubscriptionHistoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "planId" | "bundleId" | "startAt" | "endAt" | "status" | "cancelReason" | "stripeSubscriptionId" | "stripeCustomerId" | "currentPeriodEnd" | "latestInvoiceId" | "createdAt" | "updatedAt", ExtArgs["result"]["bundleSubscriptionHistory"]>
 export type BundleSubscriptionHistoryInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
   plan?: boolean | Prisma.BundleSubscriptionPlansDefaultArgs<ExtArgs>
@@ -963,6 +1143,10 @@ export type $BundleSubscriptionHistoryPayload<ExtArgs extends runtime.Types.Exte
     endAt: Date | null
     status: string
     cancelReason: string | null
+    stripeSubscriptionId: string | null
+    stripeCustomerId: string | null
+    currentPeriodEnd: Date | null
+    latestInvoiceId: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["bundleSubscriptionHistory"]>
@@ -1399,6 +1583,10 @@ export interface BundleSubscriptionHistoryFieldRefs {
   readonly endAt: Prisma.FieldRef<"BundleSubscriptionHistory", 'DateTime'>
   readonly status: Prisma.FieldRef<"BundleSubscriptionHistory", 'String'>
   readonly cancelReason: Prisma.FieldRef<"BundleSubscriptionHistory", 'String'>
+  readonly stripeSubscriptionId: Prisma.FieldRef<"BundleSubscriptionHistory", 'String'>
+  readonly stripeCustomerId: Prisma.FieldRef<"BundleSubscriptionHistory", 'String'>
+  readonly currentPeriodEnd: Prisma.FieldRef<"BundleSubscriptionHistory", 'DateTime'>
+  readonly latestInvoiceId: Prisma.FieldRef<"BundleSubscriptionHistory", 'String'>
   readonly createdAt: Prisma.FieldRef<"BundleSubscriptionHistory", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"BundleSubscriptionHistory", 'DateTime'>
 }

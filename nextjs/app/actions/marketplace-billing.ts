@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { localizedHref, redirect } from "@/i18n/navigation";
+import { unstable_rethrow } from "next/navigation";
 import { requireCurrentUser } from "@/lib/server/current-user";
 import { prisma } from "@/lib/server/prisma";
 import {
@@ -10,6 +11,7 @@ import {
   getPartnerBalance,
   getPartnerPayouts,
   isStripeAvailable,
+  createMarketplaceCheckoutSession,
 } from "@/lib/server/stripe-connect";
 import { requireWorkspaceRole } from "@/lib/server/permissions";
 
@@ -71,6 +73,7 @@ export async function onboardPartnerAction(formData: FormData) {
     revalidatePath(returnTo);
     redirect(linkRes.url);
   } catch (error: any) {
+    unstable_rethrow(error);
     console.error("Partner onboarding failed:", error);
     const target = await localizedHref(returnTo);
     redirect(withQueryParam(target, "error", error.message || "onboarding_failed"));
@@ -147,4 +150,190 @@ export async function getPartnerBillingDashboardData(organizationId: string) {
       errors: installEvents.filter((event) => event.eventType === "error").length,
     },
   };
+}
+
+/**
+ * Checkout Server Action for one-time product purchase.
+ */
+export async function createOneTimeCheckoutAction(formData: FormData) {
+  const user = await requireCurrentUser();
+  const bundleId = readFormValue(formData, "bundleId");
+  const returnTo = readFormValue(formData, "returnTo") || "/marketplace";
+
+  if (!bundleId) {
+    const target = await localizedHref(returnTo);
+    redirect(withQueryParam(target, "checkout", "missing_bundle"));
+  }
+
+  // 1. Fetch published bundle
+  const bundle = await prisma.bundles.findUnique({
+    where: { id: bundleId },
+    select: {
+      id: true,
+      name: true,
+      price: true,
+      currency: true,
+      status: true,
+      projectId: true,
+    },
+  });
+
+  if (!bundle || bundle.status !== "published" || !bundle.price || bundle.price <= 0) {
+    const target = await localizedHref(returnTo);
+    redirect(withQueryParam(target, "checkout", "bundle_unavailable"));
+  }
+
+  // 2. Fetch active MarketplacePartnerAccount of the seller
+  // The seller is the project owner of the bundle's project.
+  const project = await prisma.project.findUnique({
+    where: { id: bundle.projectId || "" },
+    select: { organizationId: true },
+  });
+
+  if (!project) {
+    const target = await localizedHref(returnTo);
+    redirect(withQueryParam(target, "checkout", "project_not_found"));
+  }
+
+  const partnerAccount = await prisma.marketplacePartnerAccount.findFirst({
+    where: { workspaceId: project.organizationId, status: "active" },
+  });
+
+  if (!partnerAccount) {
+    const target = await localizedHref(returnTo);
+    redirect(withQueryParam(target, "checkout", "seller_not_onboarded"));
+  }
+
+  // 3. Initiate stripe session
+  const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+  const successUrl = `${baseUrl}/marketplace/checkout/success?session_id={CHECKOUT_SESSION_ID}`;
+  const cancelUrl = `${baseUrl}/marketplace/checkout/cancel`;
+
+  try {
+    const session = await createMarketplaceCheckoutSession({
+      mode: "payment",
+      priceAmount: bundle.price,
+      currency: bundle.currency || "VND",
+      sellerStripeAccountId: partnerAccount.stripeAccountId,
+      platformFeePercent: 100 - partnerAccount.revenueSharePercent,
+      buyerEmail: user.email || "buyer@lepos.dev",
+      successUrl,
+      cancelUrl,
+      metadata: {
+        bundleId: bundle.id,
+        bundleName: bundle.name,
+        buyerUserId: user.id,
+        platformFeePercent: String(100 - partnerAccount.revenueSharePercent),
+      },
+    });
+
+    if (!session.url) {
+      throw new Error("Failed to generate Stripe checkout URL.");
+    }
+
+    redirect(session.url);
+  } catch (error: any) {
+    unstable_rethrow(error);
+    console.error("One-time Checkout failed:", error);
+    const target = await localizedHref(returnTo);
+    redirect(withQueryParam(target, "checkout", error.message || "checkout_failed"));
+  }
+}
+
+/**
+ * Checkout Server Action for subscription plan subscription.
+ */
+export async function createSubscriptionCheckoutAction(formData: FormData) {
+  const user = await requireCurrentUser();
+  const planId = readFormValue(formData, "planId");
+  const returnTo = readFormValue(formData, "returnTo") || "/marketplace";
+
+  if (!planId) {
+    const target = await localizedHref(returnTo);
+    redirect(withQueryParam(target, "checkout", "missing_plan"));
+  }
+
+  // 1. Fetch active subscription plan
+  const plan = await prisma.bundleSubscriptionPlans.findUnique({
+    where: { id: planId },
+    select: {
+      id: true,
+      bundleId: true,
+      planKey: true,
+      name: true,
+      price: true,
+      currency: true,
+      billingPeriod: true,
+      isActive: true,
+      bundle: {
+        select: {
+          status: true,
+          projectId: true,
+        },
+      },
+    },
+  });
+
+  if (!plan || !plan.isActive || plan.bundle.status !== "published" || !plan.price || plan.price <= 0) {
+    const target = await localizedHref(returnTo);
+    redirect(withQueryParam(target, "checkout", "plan_unavailable"));
+  }
+
+  // 2. Fetch active seller partner account
+  const project = await prisma.project.findUnique({
+    where: { id: plan.bundle.projectId || "" },
+    select: { organizationId: true },
+  });
+
+  if (!project) {
+    const target = await localizedHref(returnTo);
+    redirect(withQueryParam(target, "checkout", "project_not_found"));
+  }
+
+  const partnerAccount = await prisma.marketplacePartnerAccount.findFirst({
+    where: { workspaceId: project.organizationId, status: "active" },
+  });
+
+  if (!partnerAccount) {
+    const target = await localizedHref(returnTo);
+    redirect(withQueryParam(target, "checkout", "seller_not_onboarded"));
+  }
+
+  // 3. Initiate stripe session
+  const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+  const successUrl = `${baseUrl}/marketplace/checkout/success?session_id={CHECKOUT_SESSION_ID}`;
+  const cancelUrl = `${baseUrl}/marketplace/checkout/cancel`;
+
+  try {
+    const session = await createMarketplaceCheckoutSession({
+      mode: "subscription",
+      priceAmount: plan.price,
+      currency: plan.currency || "VND",
+      sellerStripeAccountId: partnerAccount.stripeAccountId,
+      platformFeePercent: 100 - partnerAccount.revenueSharePercent,
+      buyerEmail: user.email || "buyer@lepos.dev",
+      successUrl,
+      cancelUrl,
+      billingPeriod: plan.billingPeriod,
+      metadata: {
+        bundleId: plan.bundleId,
+        planId: plan.id,
+        planKey: plan.planKey,
+        planName: plan.name,
+        buyerUserId: user.id,
+        platformFeePercent: String(100 - partnerAccount.revenueSharePercent),
+      },
+    });
+
+    if (!session.url) {
+      throw new Error("Failed to generate Stripe checkout URL.");
+    }
+
+    redirect(session.url);
+  } catch (error: any) {
+    unstable_rethrow(error);
+    console.error("Subscription Checkout failed:", error);
+    const target = await localizedHref(returnTo);
+    redirect(withQueryParam(target, "checkout", error.message || "checkout_failed"));
+  }
 }

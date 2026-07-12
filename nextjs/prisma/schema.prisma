@@ -76,40 +76,40 @@ model User {
   // Relations
   photo File? @relation("UserPhoto", fields: [photoId], references: [id], onDelete: Restrict, onUpdate: Restrict)
 
-  payouts                BundlePayouts[]
-  organizations          Organization[]
-  notificationsActor     Notifications[]             @relation("NotificationActor")
-  notificationsRecipient Notifications[]             @relation("NotificationRecipient")
-  sessions               Session[]
-  deviceTokens           UserDeviceToken[]
-  analytics              BundleAnalyticsEvents[]
-  auditLogs              BundleAuditLog[]
-  betaTesters            BundleBetaTesters[]
-  changedLogs            BundleChangeLogs[]
-  collaboratorsInvited   BundleCollaborators[]       @relation("CollaboratorInvitedBy")
-  collaborators          BundleCollaborators[]       @relation("CollaboratorUser")
-  developerStrikes       BundleDeveloperStrikes[]    @relation("StrikeDeveloper")
-  developerStrikesIssued BundleDeveloperStrikes[]    @relation("StrikeIssuedBy")
-  installEvents          BundleInstallEvents[]
-  orders                 BundleOrders[]
-  reviews                BundleReviews[]
-  stateTransitions       BundleStateTransitions[]
-  userReportsReported    BundleUserReports[]         @relation("ReportReportedBy")
-  userReportsReviewed    BundleUserReports[]         @relation("ReportReviewedBy")
-  refundRequestsReviewed BundleRefundRequests[]      @relation("RefundReviewedBy")
-  refundRequests         BundleRefundRequests[]      @relation("RefundUser")
-  userEntitlements       BundleUserEntitlements[]
-  reviewReportsReported  BundleReviewReports[]       @relation("ReviewReportReportedBy")
-  reviewReportsReviewed  BundleReviewReports[]       @relation("ReviewReportReviewedBy")
-  subscriptionHistory    BundleSubscriptionHistory[]
-  reviewHistory          BundleReviewHistory[]
-  reviewQueueReviewed    BundleReviewQueue[]         @relation("ReviewQueueReviewer")
-  userSecrets            UserSecrets[]
-  personalAccessTokens   PersonalAccessToken[]
-  previewComments        PreviewComment[]
+  payouts                 BundlePayouts[]
+  organizations           Organization[]
+  notificationsActor      Notifications[]             @relation("NotificationActor")
+  notificationsRecipient  Notifications[]             @relation("NotificationRecipient")
+  sessions                Session[]
+  deviceTokens            UserDeviceToken[]
+  analytics               BundleAnalyticsEvents[]
+  auditLogs               BundleAuditLog[]
+  betaTesters             BundleBetaTesters[]
+  changedLogs             BundleChangeLogs[]
+  collaboratorsInvited    BundleCollaborators[]       @relation("CollaboratorInvitedBy")
+  collaborators           BundleCollaborators[]       @relation("CollaboratorUser")
+  developerStrikes        BundleDeveloperStrikes[]    @relation("StrikeDeveloper")
+  developerStrikesIssued  BundleDeveloperStrikes[]    @relation("StrikeIssuedBy")
+  installEvents           BundleInstallEvents[]
+  orders                  BundleOrders[]
+  reviews                 BundleReviews[]
+  stateTransitions        BundleStateTransitions[]
+  userReportsReported     BundleUserReports[]         @relation("ReportReportedBy")
+  userReportsReviewed     BundleUserReports[]         @relation("ReportReviewedBy")
+  refundRequestsReviewed  BundleRefundRequests[]      @relation("RefundReviewedBy")
+  refundRequests          BundleRefundRequests[]      @relation("RefundUser")
+  userEntitlements        BundleUserEntitlements[]
+  reviewReportsReported   BundleReviewReports[]       @relation("ReviewReportReportedBy")
+  reviewReportsReviewed   BundleReviewReports[]       @relation("ReviewReportReviewedBy")
+  subscriptionHistory     BundleSubscriptionHistory[]
+  reviewHistory           BundleReviewHistory[]
+  reviewQueueReviewed     BundleReviewQueue[]         @relation("ReviewQueueReviewer")
+  userSecrets             UserSecrets[]
+  personalAccessTokens    PersonalAccessToken[]
+  previewComments         PreviewComment[]
   organizationMemberships OrganizationMembership[]
-  projectMemberships     ProjectMembership[]
-  leposhipBuilds         LepoShipBuild[]
+  projectMemberships      ProjectMembership[]
+  leposhipBuilds          LepoShipBuild[]
 
   @@map("users")
 }
@@ -128,11 +128,11 @@ model Organization {
   updatedAt DateTime         @map("updated_at") @db.Timestamp(6)
   deletedAt DateTime?        @map("deleted_at") @db.Timestamp(6)
 
-  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  projects Project[]
-  ssoConfig SsoConfig?
-  nativeScimMappings NativeScimMapping[]
-  members  OrganizationMembership[]
+  user                User                          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projects            Project[]
+  ssoConfig           SsoConfig?
+  nativeScimMappings  NativeScimMapping[]
+  members             OrganizationMembership[]
   providerConnections WorkspaceProviderConnection[]
 
   @@unique([userId, type])
@@ -140,52 +140,52 @@ model Organization {
 }
 
 model Project {
-  id                String    @id @db.Uuid
-  name              String    @db.VarChar(255)
-  description       String?
-  organizationId    String    @map("organization_id") @db.Uuid
-  vercelProjectId   String?   @map("vercel_project_id") @db.VarChar(255)
-  vercelProjectName String?   @map("vercel_project_name") @db.VarChar(255)
-  activeNativeDeploymentId String? @map("active_native_deployment_id")
-  createdAt         DateTime  @map("created_at") @db.Timestamp(6)
-  updatedAt         DateTime  @map("updated_at") @db.Timestamp(6)
-  deletedAt         DateTime? @map("deleted_at") @db.Timestamp(6)
+  id                       String    @id @db.Uuid
+  name                     String    @db.VarChar(255)
+  description              String?
+  organizationId           String    @map("organization_id") @db.Uuid
+  vercelProjectId          String?   @map("vercel_project_id") @db.VarChar(255)
+  vercelProjectName        String?   @map("vercel_project_name") @db.VarChar(255)
+  activeNativeDeploymentId String?   @map("active_native_deployment_id")
+  createdAt                DateTime  @map("created_at") @db.Timestamp(6)
+  updatedAt                DateTime  @map("updated_at") @db.Timestamp(6)
+  deletedAt                DateTime? @map("deleted_at") @db.Timestamp(6)
 
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  activeNativeDeployment NativeDeployment? @relation("ProjectActiveNativeDeployment", fields: [activeNativeDeploymentId], references: [id], onDelete: SetNull)
-  bundle       Bundles?
-  deployHooks         DeployHook[]
-  firewallRules       FirewallRule[]
-  cronJobs            CronJob[]
-  forms               Form[]
-  previewComments     PreviewComment[]
-  lepoShipLocalConfig LepoShipLocalConfig?
-  nativeDeployments   NativeDeployment[] @relation("ProjectNativeDeployments")
-  nativeDomainConfigs NativeDomainConfig[]
-  nativeEdgeFunctions NativeEdgeFunction[]
-  nativeCacheEntries  NativeCacheEntry[]
-  nativeReplaySessions NativeAnalyticsReplay[]
-  nativeCrashReports  NativeCrashReport[]
-  nativeSourceMaps    NativeSourceMap[]
-  nativePluginInstalls NativePluginInstallation[]
-  nativeDebugSessions NativeDebugSession[]
-  nativeConnectedDevices NativeConnectedDevice[]
-  nativeCloudTargets  NativeCloudTarget[]
-  nativeRoutingPolicy NativeRoutingPolicy?
-  nativeRegionReplicas NativeRegionReplica[]
-  nativeArtifactMirrors NativeArtifactMirror[]
-  nativeWafEvents     NativeWafEvent[]
-  nativeWafRules      NativeWafRule[]
-  nativeAiDiagnostics NativeAiDiagnostic[]
-  nativeRemediationRuns NativeRemediationRun[]
-  nativeSchedulingPolicy NativeSchedulingPolicy?
-  nativeSchedulingSignals NativeSchedulingSignal[]
-  nativeServiceIdentities NativeServiceIdentity[]
+  organization               Organization               @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  activeNativeDeployment     NativeDeployment?          @relation("ProjectActiveNativeDeployment", fields: [activeNativeDeploymentId], references: [id], onDelete: SetNull)
+  bundle                     Bundles?
+  deployHooks                DeployHook[]
+  firewallRules              FirewallRule[]
+  cronJobs                   CronJob[]
+  forms                      Form[]
+  previewComments            PreviewComment[]
+  lepoShipLocalConfig        LepoShipLocalConfig?
+  nativeDeployments          NativeDeployment[]         @relation("ProjectNativeDeployments")
+  nativeDomainConfigs        NativeDomainConfig[]
+  nativeEdgeFunctions        NativeEdgeFunction[]
+  nativeCacheEntries         NativeCacheEntry[]
+  nativeReplaySessions       NativeAnalyticsReplay[]
+  nativeCrashReports         NativeCrashReport[]
+  nativeSourceMaps           NativeSourceMap[]
+  nativePluginInstalls       NativePluginInstallation[]
+  nativeDebugSessions        NativeDebugSession[]
+  nativeConnectedDevices     NativeConnectedDevice[]
+  nativeCloudTargets         NativeCloudTarget[]
+  nativeRoutingPolicy        NativeRoutingPolicy?
+  nativeRegionReplicas       NativeRegionReplica[]
+  nativeArtifactMirrors      NativeArtifactMirror[]
+  nativeWafEvents            NativeWafEvent[]
+  nativeWafRules             NativeWafRule[]
+  nativeAiDiagnostics        NativeAiDiagnostic[]
+  nativeRemediationRuns      NativeRemediationRun[]
+  nativeSchedulingPolicy     NativeSchedulingPolicy?
+  nativeSchedulingSignals    NativeSchedulingSignal[]
+  nativeServiceIdentities    NativeServiceIdentity[]
   nativeServiceTrustPolicies NativeServiceTrustPolicy[]
-  nativeTelemetryEnvelopes NativeTelemetryEnvelope[]
-  members           ProjectMembership[]
-  providerBindings  ProjectProviderBinding[]
-  leposhipBuilds    LepoShipBuild[]
+  nativeTelemetryEnvelopes   NativeTelemetryEnvelope[]
+  members                    ProjectMembership[]
+  providerBindings           ProjectProviderBinding[]
+  leposhipBuilds             LepoShipBuild[]
 
   @@map("projects")
 }
@@ -1266,16 +1266,20 @@ model BundleReviewReports {
 }
 
 model BundleSubscriptionHistory {
-  id           String    @id @db.Uuid
-  userId       String    @map("user_id") @db.Uuid
-  planId       String    @map("plan_id") @db.Uuid
-  bundleId     String    @map("bundle_id") @db.Uuid
-  startAt      DateTime  @map("start_at") @db.Timestamp(6)
-  endAt        DateTime? @map("end_at") @db.Timestamp(6)
-  status       String    @default("active") @db.VarChar(30)
-  cancelReason String?   @map("cancel_reason")
-  createdAt    DateTime  @map("created_at") @db.Timestamp(6)
-  updatedAt    DateTime  @map("updated_at") @db.Timestamp(6)
+  id                   String    @id @db.Uuid
+  userId               String    @map("user_id") @db.Uuid
+  planId               String    @map("plan_id") @db.Uuid
+  bundleId             String    @map("bundle_id") @db.Uuid
+  startAt              DateTime  @map("start_at") @db.Timestamp(6)
+  endAt                DateTime? @map("end_at") @db.Timestamp(6)
+  status               String    @default("active") @db.VarChar(30)
+  cancelReason         String?   @map("cancel_reason")
+  stripeSubscriptionId String?   @unique @map("stripe_subscription_id")
+  stripeCustomerId     String?   @map("stripe_customer_id")
+  currentPeriodEnd     DateTime? @map("current_period_end") @db.Timestamp(6)
+  latestInvoiceId      String?   @map("latest_invoice_id")
+  createdAt            DateTime  @map("created_at") @db.Timestamp(6)
+  updatedAt            DateTime  @map("updated_at") @db.Timestamp(6)
 
   bundle Bundles                 @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
   plan   BundleSubscriptionPlans @relation(fields: [planId], references: [id], onDelete: Restrict, onUpdate: Restrict)
@@ -1418,15 +1422,15 @@ model UserSecrets {
 // ----------------------------------------------------
 
 model PersonalAccessToken {
-  id          String    @id @default(cuid())
-  name        String
-  tokenHash   String    @unique
-  scopes      String[]  // e.g., ["project:read", "project:write", "deployment:trigger"]
-  userId      String    @db.Uuid
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt   DateTime  @default(now())
-  expiresAt   DateTime?
-  lastUsedAt  DateTime?
+  id         String    @id @default(cuid())
+  name       String
+  tokenHash  String    @unique
+  scopes     String[] // e.g., ["project:read", "project:write", "deployment:trigger"]
+  userId     String    @db.Uuid
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt  DateTime  @default(now())
+  expiresAt  DateTime?
+  lastUsedAt DateTime?
 
   @@map("personal_access_tokens")
 }
@@ -1434,12 +1438,12 @@ model PersonalAccessToken {
 model SsoConfig {
   id             String       @id @default(cuid())
   domain         String       @unique // e.g., "company.com"
-  provider       String       // "saml" hoặc "oidc"
+  provider       String // "saml" hoặc "oidc"
   clientId       String
-  clientSecret   String?      // Mã hóa
-  entryPoint     String       // SAML SSO URL
-  issuer         String       // Identity Provider Entity ID
-  cert           String       // Public Certificate PEM
+  clientSecret   String? // Mã hóa
+  entryPoint     String // SAML SSO URL
+  issuer         String // Identity Provider Entity ID
+  cert           String // Public Certificate PEM
   organizationId String       @unique @db.Uuid
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   createdAt      DateTime     @default(now())
@@ -1448,28 +1452,28 @@ model SsoConfig {
 }
 
 model DeployHook {
-  id          String    @id @default(cuid())
-  name        String
-  token       String    @unique // Random secure string
-  branch      String    // Branch để build (e.g., "main")
-  projectId   String    @db.Uuid
-  project     Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  createdAt   DateTime  @default(now())
-  lastUsedAt  DateTime?
+  id         String    @id @default(cuid())
+  name       String
+  token      String    @unique // Random secure string
+  branch     String // Branch để build (e.g., "main")
+  projectId  String    @db.Uuid
+  project    Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt  DateTime  @default(now())
+  lastUsedAt DateTime?
 
   @@map("deploy_hooks")
 }
 
 model FirewallRule {
-  id          String    @id @default(cuid())
-  name        String
-  action      String    // "block" (chặn), "allow" (cho phép), "challenge" (JS challenge)
-  type        String    // "ip", "country", "path", "header"
-  value       String    // e.g., "192.168.1.1", "CN", "/admin/*", "User-Agent:BadBot"
-  active      Boolean   @default(true)
-  projectId   String    @db.Uuid
-  project     Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  createdAt   DateTime  @default(now())
+  id        String   @id @default(cuid())
+  name      String
+  action    String // "block" (chặn), "allow" (cho phép), "challenge" (JS challenge)
+  type      String // "ip", "country", "path", "header"
+  value     String // e.g., "192.168.1.1", "CN", "/admin/*", "User-Agent:BadBot"
+  active    Boolean  @default(true)
+  projectId String   @db.Uuid
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
 
   @@map("firewall_rules")
 }
@@ -1491,8 +1495,8 @@ model NativeDeployment {
   createdAt       DateTime  @default(now()) @map("created_at")
   activatedAt     DateTime? @map("activated_at")
 
-  sourceMaps NativeSourceMap[]
-  regionReplicas NativeRegionReplica[]
+  sourceMaps      NativeSourceMap[]
+  regionReplicas  NativeRegionReplica[]
   artifactMirrors NativeArtifactMirror[]
 
   @@index([projectId, status], map: "native_deployments_project_status")
@@ -1570,16 +1574,16 @@ model NativeCacheEntry {
 }
 
 model NativeAnalyticsReplay {
-  id          String   @id @default(cuid())
-  projectId   String   @db.Uuid
-  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  sessionId   String   @map("session_id") @db.VarChar(120)
-  userId      String?  @map("user_id") @db.Uuid
-  url         String?  @db.VarChar(500)
-  userAgent   String?  @map("user_agent")
-  ipAddress   String?  @map("ip_address") @db.VarChar(45)
-  events      Json
-  createdAt   DateTime @default(now()) @map("created_at")
+  id        String   @id @default(cuid())
+  projectId String   @db.Uuid
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  sessionId String   @map("session_id") @db.VarChar(120)
+  userId    String?  @map("user_id") @db.Uuid
+  url       String?  @db.VarChar(500)
+  userAgent String?  @map("user_agent")
+  ipAddress String?  @map("ip_address") @db.VarChar(45)
+  events    Json
+  createdAt DateTime @default(now()) @map("created_at")
 
   @@unique([projectId, sessionId])
   @@index([projectId, createdAt], map: "native_analytics_replay_project_created")
@@ -1714,20 +1718,20 @@ model NativeCloudTarget {
 }
 
 model NativeRoutingPolicy {
-  id                           String   @id @default(cuid())
-  projectId                    String   @unique @db.Uuid
-  project                      Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  strategy                     String   @default("latency") @db.VarChar(30)
-  consistency                  String   @default("eventual") @db.VarChar(30)
-  stickySessions               Boolean  @default(true) @map("sticky_sessions")
-  manualFailback               Boolean  @default(false) @map("manual_failback")
-  snapshotTtlSeconds           Int      @default(30) @map("snapshot_ttl_seconds")
-  failoverThresholdMs          Int      @default(250) @map("failover_threshold_ms")
-  latencyProbeIntervalSeconds  Int      @default(30) @map("latency_probe_interval_seconds")
-  preferredRegions             String[] @default([]) @map("preferred_regions")
-  metadata                     Json?
-  createdAt                    DateTime @default(now()) @map("created_at")
-  updatedAt                    DateTime @updatedAt @map("updated_at")
+  id                          String   @id @default(cuid())
+  projectId                   String   @unique @db.Uuid
+  project                     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  strategy                    String   @default("latency") @db.VarChar(30)
+  consistency                 String   @default("eventual") @db.VarChar(30)
+  stickySessions              Boolean  @default(true) @map("sticky_sessions")
+  manualFailback              Boolean  @default(false) @map("manual_failback")
+  snapshotTtlSeconds          Int      @default(30) @map("snapshot_ttl_seconds")
+  failoverThresholdMs         Int      @default(250) @map("failover_threshold_ms")
+  latencyProbeIntervalSeconds Int      @default(30) @map("latency_probe_interval_seconds")
+  preferredRegions            String[] @default([]) @map("preferred_regions")
+  metadata                    Json?
+  createdAt                   DateTime @default(now()) @map("created_at")
+  updatedAt                   DateTime @updatedAt @map("updated_at")
 
   @@map("native_routing_policies")
 }
@@ -1819,7 +1823,6 @@ model NativeWafRule {
   @@index([projectId], map: "native_waf_rules_project_idx")
   @@map("native_waf_rules")
 }
-
 
 model NativeScimMapping {
   id             String       @id @default(cuid())
@@ -1923,20 +1926,20 @@ model NativeSchedulingSignal {
 }
 
 model NativeServiceIdentity {
-  id                     String   @id @default(cuid())
-  projectId              String   @db.Uuid
-  project                Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  serviceName            String   @map("service_name") @db.VarChar(120)
-  role                   String   @default("internal") @db.VarChar(40)
-  scopes                 String[] @default([])
-  status                 String   @default("active") @db.VarChar(30)
-  mtlsMode               String   @default("optional") @map("mtls_mode") @db.VarChar(30)
-  sharedSecretHash       String?  @map("shared_secret_hash") @db.VarChar(255)
-  certificateFingerprint String?  @map("certificate_fingerprint") @db.VarChar(255)
+  id                     String    @id @default(cuid())
+  projectId              String    @db.Uuid
+  project                Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  serviceName            String    @map("service_name") @db.VarChar(120)
+  role                   String    @default("internal") @db.VarChar(40)
+  scopes                 String[]  @default([])
+  status                 String    @default("active") @db.VarChar(30)
+  mtlsMode               String    @default("optional") @map("mtls_mode") @db.VarChar(30)
+  sharedSecretHash       String?   @map("shared_secret_hash") @db.VarChar(255)
+  certificateFingerprint String?   @map("certificate_fingerprint") @db.VarChar(255)
   metadata               Json?
   lastUsedAt             DateTime? @map("last_used_at")
-  createdAt              DateTime @default(now()) @map("created_at")
-  updatedAt              DateTime @updatedAt @map("updated_at")
+  createdAt              DateTime  @default(now()) @map("created_at")
+  updatedAt              DateTime  @updatedAt @map("updated_at")
 
   @@unique([projectId, serviceName])
   @@index([projectId, status], map: "native_service_identities_project_status")
@@ -1963,20 +1966,20 @@ model NativeServiceTrustPolicy {
 }
 
 model NativeTelemetryEnvelope {
-  id               String    @id @default(cuid())
-  projectId        String    @db.Uuid
-  project          Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  serviceName      String?   @map("service_name") @db.VarChar(120)
-  kind             String    @db.VarChar(60)
-  encryptionMode   String    @default("aggregate") @map("encryption_mode") @db.VarChar(40)
-  payloadDigest    String?   @map("payload_digest") @db.VarChar(255)
-  aggregateKey     String?   @map("aggregate_key") @db.VarChar(255)
-  ciphertext       String?
-  nonce            String?   @db.VarChar(120)
-  keyVersion       String?   @map("key_version") @db.VarChar(80)
-  redactedSummary  Json?     @map("redacted_summary")
-  metadata         Json?
-  createdAt        DateTime  @default(now()) @map("created_at")
+  id              String   @id @default(cuid())
+  projectId       String   @db.Uuid
+  project         Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  serviceName     String?  @map("service_name") @db.VarChar(120)
+  kind            String   @db.VarChar(60)
+  encryptionMode  String   @default("aggregate") @map("encryption_mode") @db.VarChar(40)
+  payloadDigest   String?  @map("payload_digest") @db.VarChar(255)
+  aggregateKey    String?  @map("aggregate_key") @db.VarChar(255)
+  ciphertext      String?
+  nonce           String?  @db.VarChar(120)
+  keyVersion      String?  @map("key_version") @db.VarChar(80)
+  redactedSummary Json?    @map("redacted_summary")
+  metadata        Json?
+  createdAt       DateTime @default(now()) @map("created_at")
 
   @@index([projectId, kind], map: "native_telemetry_envelopes_project_kind")
   @@index([projectId, createdAt], map: "native_telemetry_envelopes_project_created")
@@ -1984,46 +1987,46 @@ model NativeTelemetryEnvelope {
 }
 
 model CronJob {
-  id          String    @id @default(cuid())
-  name        String
-  schedule    String    // Standard cron expression (e.g., "*/5 * * * *")
-  path        String    // Endpoint để gọi (e.g., "/api/cron/sync")
-  projectId   String    @db.Uuid
-  project     Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  createdAt   DateTime  @default(now())
-  lastRun     DateTime?
-  lastStatus  String?   // "success" hoặc "failed"
+  id         String    @id @default(cuid())
+  name       String
+  schedule   String // Standard cron expression (e.g., "*/5 * * * *")
+  path       String // Endpoint để gọi (e.g., "/api/cron/sync")
+  projectId  String    @db.Uuid
+  project    Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt  DateTime  @default(now())
+  lastRun    DateTime?
+  lastStatus String? // "success" hoặc "failed"
 
   @@map("cron_jobs")
 }
 
 model Form {
-  id               String                 @id @default(cuid())
-  name             String                 // Tên form
-  projectId        String                 @db.Uuid
-  project          Project                @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  submissions      FormSubmission[]
-  googleSheetsSync Boolean                @default(true) @map("google_sheets_sync")
-  salesforceSync   Boolean                @default(false) @map("salesforce_sync")
-  webhookUrl       String?                @map("webhook_url")
-  webhookSecret    String?                @map("webhook_secret")
+  id                String                @id @default(cuid())
+  name              String // Tên form
+  projectId         String                @db.Uuid
+  project           Project               @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  submissions       FormSubmission[]
+  googleSheetsSync  Boolean               @default(true) @map("google_sheets_sync")
+  salesforceSync    Boolean               @default(false) @map("salesforce_sync")
+  webhookUrl        String?               @map("webhook_url")
+  webhookSecret     String?               @map("webhook_secret")
   webhookDeliveries FormWebhookDelivery[]
-  definition       Json                   @default("{}")
-  createdAt        DateTime               @default(now())
-  updatedAt        DateTime               @default(now()) @updatedAt
+  definition        Json                  @default("{}")
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @default(now()) @updatedAt
 
   @@map("forms")
 }
 
 model FormSubmission {
-  id                String                 @id @default(cuid())
-  data              Json                   // Lưu payload gửi lên dưới dạng key-value JSON
+  id                String                @id @default(cuid())
+  data              Json // Lưu payload gửi lên dưới dạng key-value JSON
   ipAddress         String?
   userAgent         String?
   formId            String
-  form              Form                   @relation(fields: [formId], references: [id], onDelete: Cascade)
+  form              Form                  @relation(fields: [formId], references: [id], onDelete: Cascade)
   webhookDeliveries FormWebhookDelivery[]
-  createdAt         DateTime               @default(now())
+  createdAt         DateTime              @default(now())
 
   @@map("form_submissions")
 }
@@ -2035,7 +2038,7 @@ model FormWebhookDelivery {
   submissionId String         @map("submission_id")
   submission   FormSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
   url          String
-  status       String         // "SUCCESS" | "FAILED" | "PENDING"
+  status       String // "SUCCESS" | "FAILED" | "PENDING"
   attempts     Int            @default(0)
   lastError    String?        @map("last_error")
   nextRetryAt  DateTime?      @map("next_retry_at")
@@ -2048,33 +2051,33 @@ model FormWebhookDelivery {
 }
 
 model PreviewComment {
-  id           String     @id @default(cuid())
-  content      String
-  x            Float      // Tọa độ phần trăm ngang trên màn hình
-  y            Float      // Tọa độ phần trăm dọc trên màn hình
-  pathname     String     // Route lúc bình luận (e.g., "/about")
-  resolved     Boolean    @default(false)
-  projectId    String     @db.Uuid
-  project      Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  userId       String     @db.Uuid
-  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt    DateTime   @default(now())
+  id        String   @id @default(cuid())
+  content   String
+  x         Float // Tọa độ phần trăm ngang trên màn hình
+  y         Float // Tọa độ phần trăm dọc trên màn hình
+  pathname  String // Route lúc bình luận (e.g., "/about")
+  resolved  Boolean  @default(false)
+  projectId String   @db.Uuid
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  userId    String   @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
 
   @@map("preview_comments")
 }
 
 model LepoShipLocalConfig {
-  id                  String          @id @default(cuid())
-  localPort           Int             @default(8080)  // Port chạy GCDWebServer / Android server
-  basePath            String          @default("/")   // Đường dẫn cơ sở phục vụ file tĩnh
-  fallbackPath        String          @default("/index.html") // File fallback khi gặp 404 (Single Page App routing)
-  projectId           String          @unique @db.Uuid
-  project             Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  repository          String          @default("")
-  branch              String          @default("main")
-  framework           String          @default("nextjs")
-  buildProfile        String          @default("production")
-  createdAt           DateTime        @default(now())
+  id           String   @id @default(cuid())
+  localPort    Int      @default(8080) // Port chạy GCDWebServer / Android server
+  basePath     String   @default("/") // Đường dẫn cơ sở phục vụ file tĩnh
+  fallbackPath String   @default("/index.html") // File fallback khi gặp 404 (Single Page App routing)
+  projectId    String   @unique @db.Uuid
+  project      Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  repository   String   @default("")
+  branch       String   @default("main")
+  framework    String   @default("nextjs")
+  buildProfile String   @default("production")
+  createdAt    DateTime @default(now())
 
   @@map("lepoship_local_configs")
 }
@@ -2092,17 +2095,19 @@ model MarketplacePartnerAccount {
 }
 
 model MarketplaceTransaction {
-  id                    String   @id @default(cuid())
-  stripePaymentIntentId String   @map("stripe_payment_intent_id")
-  bundleId              String   @map("bundle_id")
-  buyerUserId           String   @map("buyer_user_id")
-  amount                Float
-  currency              String   @default("VND")
-  platformFee           Float    @map("platform_fee")
-  partnerPayout         Float    @map("partner_payout")
-  status                String   @default("pending") // pending, completed, failed, refunded
-  createdAt             DateTime @default(now()) @map("created_at")
-  updatedAt             DateTime @updatedAt @map("updated_at")
+  id                      String   @id @default(cuid())
+  stripePaymentIntentId   String   @map("stripe_payment_intent_id")
+  stripeCheckoutSessionId String?  @unique @map("stripe_checkout_session_id")
+  stripeInvoiceId         String?  @unique @map("stripe_invoice_id")
+  bundleId                String   @map("bundle_id")
+  buyerUserId             String   @map("buyer_user_id")
+  amount                  Float
+  currency                String   @default("VND")
+  platformFee             Float    @map("platform_fee")
+  partnerPayout           Float    @map("partner_payout")
+  status                  String   @default("pending") // pending, completed, failed, refunded
+  createdAt               DateTime @default(now()) @map("created_at")
+  updatedAt               DateTime @updatedAt @map("updated_at")
 
   @@map("marketplace_transactions")
 }
@@ -2120,58 +2125,58 @@ model MarketplaceInstallEvent {
 }
 
 model RiskLimits {
-  id                      Int      @id @default(autoincrement())
-  accountId               String?  @unique @map("account_id")
-  maxShares               Int      @default(1000) @map("max_shares")
-  maxNotionalPerPosition  Float    @default(250.0) @map("max_notional_per_position")
-  maxTotalExposure        Float    @default(10000.0) @map("max_total_exposure")
-  maxOpenPositions        Int      @default(2) @map("max_open_positions")
-  maxConcentrationPercent Float    @default(25.0) @map("max_concentration_percent")
-  maxLossPerTrade         Float    @default(500.0) @map("max_loss_per_trade")
-  maxDailyLoss            Float    @default(1000.0) @map("max_daily_loss")
-  maxWeeklyLoss           Float    @default(15000.0) @map("max_weekly_loss")
-  maxMonthlyLoss          Float    @default(50000.0) @map("max_monthly_loss")
-  drawdownThresholdPercent Float   @default(10.0) @map("drawdown_threshold_percent")
-  defaultStopLossPercent  Float    @default(1.0) @map("default_stop_loss_percent")
-  minStopLossPercent      Float    @default(0.5) @map("min_stop_loss_percent")
-  maxStopLossPercent      Float    @default(10.0) @map("max_stop_loss_percent")
-  enableTrailingStop      Boolean  @default(true) @map("enable_trailing_stop")
-  trailingStopPercent     Float    @default(0.75) @map("trailing_stop_percent")
-  trailingActivationPercent Float  @default(2.0) @map("trailing_activation_percent")
-  defaultTakeProfitPercent Float   @default(5.0) @map("default_take_profit_percent")
-  minRiskRewardRatio      Float    @default(2.0) @map("min_risk_reward_ratio")
-  enablePartialProfit     Boolean  @default(true) @map("enable_partial_profit")
-  partialProfitPercent    Float    @default(50.0) @map("partial_profit_percent")
-  firstTargetPercent      Float    @default(3.0) @map("first_target_percent")
-  secondTargetPercent     Float    @default(5.0) @map("second_target_percent")
-  circuitBreakerEnabled   Boolean  @default(true) @map("circuit_breaker_enabled")
-  dailyLossThreshold      Float    @default(1000.0) @map("daily_loss_threshold")
-  maxConsecutiveLosses    Int      @default(5) @map("max_consecutive_losses")
-  maxTradesPerDay         Int      @default(50) @map("max_trades_per_day")
-  cooldownMinutes         Int      @default(60) @map("cooldown_minutes")
-  autoResume              Boolean  @default(false) @map("auto_resume")
-  minOrderSize            Int      @default(1) @map("min_order_size")
-  maxOrderSize            Int      @default(1000) @map("max_order_size")
-  maxOrderValue           Float    @default(10000.0) @map("max_order_value")
-  minPrice                Float    @default(0.01) @map("min_price")
-  maxPrice                Float    @map("max_price")
-  maxSlippagePercent      Float    @default(0.5) @map("max_slippage_percent")
-  allowLeverage           Boolean  @default(false) @map("allow_leverage")
-  maxLeverage             Float    @default(1.0) @map("max_leverage")
-  minMarginPercent        Float    @default(100.0) @map("min_margin_percent")
-  maxAtrPercent           Float    @default(5.0) @map("max_atr_percent")
-  reduceOnHighVolatility  Boolean  @default(true) @map("reduce_on_high_volatility")
-  enableVolatilityScaling Boolean  @default(true) @map("enable_volatility_scaling")
-  baseVolatilityPercent   Float    @default(2.0) @map("base_volatility_percent")
-  enforceMarketHours      Boolean  @default(true) @map("enforce_market_hours")
-  allowPremarket          Boolean  @default(false) @map("allow_premarket")
-  allowAfterhours         Boolean  @default(false) @map("allow_afterhours")
-  blackoutPeriods         Json?    @map("blackout_periods")
-  maxPositionCorrelation  Float    @default(0.7) @map("max_position_correlation")
-  enforceCorrelationCheck Boolean  @default(true) @map("enforce_correlation_check")
-  correlationLookbackDays Int      @default(30) @map("correlation_lookback_days")
-  updatedAt               DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
-  updatedBy               String?  @map("updated_by")
+  id                        Int      @id @default(autoincrement())
+  accountId                 String?  @unique @map("account_id")
+  maxShares                 Int      @default(1000) @map("max_shares")
+  maxNotionalPerPosition    Float    @default(250.0) @map("max_notional_per_position")
+  maxTotalExposure          Float    @default(10000.0) @map("max_total_exposure")
+  maxOpenPositions          Int      @default(2) @map("max_open_positions")
+  maxConcentrationPercent   Float    @default(25.0) @map("max_concentration_percent")
+  maxLossPerTrade           Float    @default(500.0) @map("max_loss_per_trade")
+  maxDailyLoss              Float    @default(1000.0) @map("max_daily_loss")
+  maxWeeklyLoss             Float    @default(15000.0) @map("max_weekly_loss")
+  maxMonthlyLoss            Float    @default(50000.0) @map("max_monthly_loss")
+  drawdownThresholdPercent  Float    @default(10.0) @map("drawdown_threshold_percent")
+  defaultStopLossPercent    Float    @default(1.0) @map("default_stop_loss_percent")
+  minStopLossPercent        Float    @default(0.5) @map("min_stop_loss_percent")
+  maxStopLossPercent        Float    @default(10.0) @map("max_stop_loss_percent")
+  enableTrailingStop        Boolean  @default(true) @map("enable_trailing_stop")
+  trailingStopPercent       Float    @default(0.75) @map("trailing_stop_percent")
+  trailingActivationPercent Float    @default(2.0) @map("trailing_activation_percent")
+  defaultTakeProfitPercent  Float    @default(5.0) @map("default_take_profit_percent")
+  minRiskRewardRatio        Float    @default(2.0) @map("min_risk_reward_ratio")
+  enablePartialProfit       Boolean  @default(true) @map("enable_partial_profit")
+  partialProfitPercent      Float    @default(50.0) @map("partial_profit_percent")
+  firstTargetPercent        Float    @default(3.0) @map("first_target_percent")
+  secondTargetPercent       Float    @default(5.0) @map("second_target_percent")
+  circuitBreakerEnabled     Boolean  @default(true) @map("circuit_breaker_enabled")
+  dailyLossThreshold        Float    @default(1000.0) @map("daily_loss_threshold")
+  maxConsecutiveLosses      Int      @default(5) @map("max_consecutive_losses")
+  maxTradesPerDay           Int      @default(50) @map("max_trades_per_day")
+  cooldownMinutes           Int      @default(60) @map("cooldown_minutes")
+  autoResume                Boolean  @default(false) @map("auto_resume")
+  minOrderSize              Int      @default(1) @map("min_order_size")
+  maxOrderSize              Int      @default(1000) @map("max_order_size")
+  maxOrderValue             Float    @default(10000.0) @map("max_order_value")
+  minPrice                  Float    @default(0.01) @map("min_price")
+  maxPrice                  Float    @map("max_price")
+  maxSlippagePercent        Float    @default(0.5) @map("max_slippage_percent")
+  allowLeverage             Boolean  @default(false) @map("allow_leverage")
+  maxLeverage               Float    @default(1.0) @map("max_leverage")
+  minMarginPercent          Float    @default(100.0) @map("min_margin_percent")
+  maxAtrPercent             Float    @default(5.0) @map("max_atr_percent")
+  reduceOnHighVolatility    Boolean  @default(true) @map("reduce_on_high_volatility")
+  enableVolatilityScaling   Boolean  @default(true) @map("enable_volatility_scaling")
+  baseVolatilityPercent     Float    @default(2.0) @map("base_volatility_percent")
+  enforceMarketHours        Boolean  @default(true) @map("enforce_market_hours")
+  allowPremarket            Boolean  @default(false) @map("allow_premarket")
+  allowAfterhours           Boolean  @default(false) @map("allow_afterhours")
+  blackoutPeriods           Json?    @map("blackout_periods")
+  maxPositionCorrelation    Float    @default(0.7) @map("max_position_correlation")
+  enforceCorrelationCheck   Boolean  @default(true) @map("enforce_correlation_check")
+  correlationLookbackDays   Int      @default(30) @map("correlation_lookback_days")
+  updatedAt                 DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+  updatedBy                 String?  @map("updated_by")
 
   @@map("risk_limits")
 }
@@ -2181,108 +2186,108 @@ model RiskLimits {
 // ----------------------------------------------------
 
 model OrganizationMembership {
-  id             String           @id @default(cuid())
-  organizationId String           @map("organization_id") @db.Uuid
-  userId         String           @map("user_id") @db.Uuid
-  role           String           @default("viewer") @db.VarChar(30) // owner, admin, editor, viewer
-  inviteStatus   String           @default("accepted") @map("invite_status") // accepted, pending, rejected
-  invitedById    String?          @map("invited_by_id") @db.Uuid
-  createdAt      DateTime         @default(now()) @map("created_at")
-  updatedAt      DateTime         @updatedAt @map("updated_at")
+  id             String   @id @default(cuid())
+  organizationId String   @map("organization_id") @db.Uuid
+  userId         String   @map("user_id") @db.Uuid
+  role           String   @default("viewer") @db.VarChar(30) // owner, admin, editor, viewer
+  inviteStatus   String   @default("accepted") @map("invite_status") // accepted, pending, rejected
+  invitedById    String?  @map("invited_by_id") @db.Uuid
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
 
-  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([organizationId, userId])
   @@map("organization_memberships")
 }
 
 model ProjectMembership {
-  id           String             @id @default(cuid())
-  projectId    String             @map("project_id") @db.Uuid
-  userId       String             @map("user_id") @db.Uuid
-  role         String             @default("viewer") @db.VarChar(30) // admin, editor, viewer
-  inviteStatus String             @default("accepted") @map("invite_status") // accepted, pending, rejected
-  createdAt    DateTime           @default(now()) @map("created_at")
-  updatedAt    DateTime           @updatedAt @map("updated_at")
+  id           String   @id @default(cuid())
+  projectId    String   @map("project_id") @db.Uuid
+  userId       String   @map("user_id") @db.Uuid
+  role         String   @default("viewer") @db.VarChar(30) // admin, editor, viewer
+  inviteStatus String   @default("accepted") @map("invite_status") // accepted, pending, rejected
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
 
-  project      Project            @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  user         User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([projectId, userId])
   @@map("project_memberships")
 }
 
 model WorkspaceProviderConnection {
-  id                  String             @id @default(cuid())
-  organizationId      String             @map("organization_id") @db.Uuid
-  provider            String             @db.VarChar(64) // github, vercel, cloudflare, stripe
-  encryptedCredential String             @map("encrypted_credential")
-  status              String             @default("connected")
-  createdAt           DateTime           @default(now()) @map("created_at")
-  updatedAt           DateTime           @updatedAt @map("updated_at")
+  id                  String   @id @default(cuid())
+  organizationId      String   @map("organization_id") @db.Uuid
+  provider            String   @db.VarChar(64) // github, vercel, cloudflare, stripe
+  encryptedCredential String   @map("encrypted_credential")
+  status              String   @default("connected")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
 
-  organization        Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  projectBindings     ProjectProviderBinding[]
+  organization    Organization             @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  projectBindings ProjectProviderBinding[]
 
   @@unique([organizationId, provider])
   @@map("workspace_provider_connections")
 }
 
 model ProjectProviderBinding {
-  id            String                      @id @default(cuid())
-  projectId     String                      @map("project_id") @db.Uuid
-  connectionId  String                      @map("connection_id")
-  externalId    String                      @map("external_id") // ID project/resource ở phía provider
-  createdAt     DateTime                    @default(now()) @map("created_at")
-  updatedAt     DateTime                    @updatedAt @map("updated_at")
+  id           String   @id @default(cuid())
+  projectId    String   @map("project_id") @db.Uuid
+  connectionId String   @map("connection_id")
+  externalId   String   @map("external_id") // ID project/resource ở phía provider
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
 
-  project       Project                     @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  connection    WorkspaceProviderConnection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+  project    Project                     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  connection WorkspaceProviderConnection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
 
   @@unique([projectId, connectionId])
   @@map("project_provider_bindings")
 }
 
 model WorkspaceAuditEvent {
-  id           String             @id @default(cuid())
-  workspaceId  String             @map("workspace_id") @db.Uuid
-  actorId      String             @map("actor_id") @db.Uuid
-  actorEmail   String             @map("actor_email")
-  action       String             @db.VarChar(128) // e.g., project.create, member.invite
-  resourceType String             @map("resource_type") @db.VarChar(64) // e.g., project, member
-  resourceId   String?            @map("resource_id") @db.VarChar(128)
-  metadata     Json?              @default("{}")
-  timestamp    DateTime           @default(now()) @map("timestamp")
+  id           String   @id @default(cuid())
+  workspaceId  String   @map("workspace_id") @db.Uuid
+  actorId      String   @map("actor_id") @db.Uuid
+  actorEmail   String   @map("actor_email")
+  action       String   @db.VarChar(128) // e.g., project.create, member.invite
+  resourceType String   @map("resource_type") @db.VarChar(64) // e.g., project, member
+  resourceId   String?  @map("resource_id") @db.VarChar(128)
+  metadata     Json?    @default("{}")
+  timestamp    DateTime @default(now()) @map("timestamp")
 
   @@map("workspace_audit_events")
 }
 
 model LepoShipBuild {
-  id          String              @id @default(cuid())
-  projectId   String              @map("project_id") @db.Uuid
-  status      String              @default("queued") // queued, building, success, failed
-  sourceCommit String             @map("source_commit") @db.VarChar(64)
-  platform    String              @db.VarChar(32) // ios, android, web
-  logs        String?             @db.Text
-  artifactUrl String?             @map("artifact_url")
-  error       String?             @db.Text
-  triggeredById String            @map("triggered_by_id") @db.Uuid
-  triggeredBy User                @relation(fields: [triggeredById], references: [id])
-  project     Project             @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  createdAt   DateTime            @default(now()) @map("created_at")
-  updatedAt   DateTime            @updatedAt @map("updated_at")
+  id            String   @id @default(cuid())
+  projectId     String   @map("project_id") @db.Uuid
+  status        String   @default("queued") // queued, building, success, failed
+  sourceCommit  String   @map("source_commit") @db.VarChar(64)
+  platform      String   @db.VarChar(32) // ios, android, web
+  logs          String?  @db.Text
+  artifactUrl   String?  @map("artifact_url")
+  error         String?  @db.Text
+  triggeredById String   @map("triggered_by_id") @db.Uuid
+  triggeredBy   User     @relation(fields: [triggeredById], references: [id])
+  project       Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
 
   @@map("lepoship_builds")
 }
 
 model MarketplaceCompatibilityRun {
-  id           String             @id @default(cuid())
-  integrationId String            @map("integration_id")
-  endpoint     String
-  checkResults Json               @map("check_results")
-  logs         String?            @db.Text
-  createdAt    DateTime           @default(now()) @map("created_at")
+  id            String   @id @default(cuid())
+  integrationId String   @map("integration_id")
+  endpoint      String
+  checkResults  Json     @map("check_results")
+  logs          String?  @db.Text
+  createdAt     DateTime @default(now()) @map("created_at")
 
   @@map("marketplace_compatibility_runs")
 }

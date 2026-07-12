@@ -1,4 +1,25 @@
 {
+  "LepoShip": {
+    "moderation": {
+      "title": "Review Queue",
+      "approve": "Approve",
+      "reject": "Reject",
+      "rejection_reason": "Rejection Reason",
+      "reason_required": "A rejection reason is required."
+    },
+    "ab_testing": {
+      "title": "A/B Tests",
+      "create": "Create Test",
+      "edit": "Edit Test"
+    },
+    "store_listing": {
+      "title": "Store Listing",
+      "locales": "Locales",
+      "media": "Media",
+      "keywords": "Keywords & Tags",
+      "privacy": "Privacy"
+    }
+  },
   "Navbar": {
     "logo": "Lepos",
     "route_benefits": "Benefits",

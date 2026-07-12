@@ -1115,6 +1115,10 @@ export const BundleSubscriptionHistoryScalarFieldEnum = {
   endAt: 'endAt',
   status: 'status',
   cancelReason: 'cancelReason',
+  stripeSubscriptionId: 'stripeSubscriptionId',
+  stripeCustomerId: 'stripeCustomerId',
+  currentPeriodEnd: 'currentPeriodEnd',
+  latestInvoiceId: 'latestInvoiceId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1825,6 +1829,8 @@ export type MarketplacePartnerAccountScalarFieldEnum = (typeof MarketplacePartne
 export const MarketplaceTransactionScalarFieldEnum = {
   id: 'id',
   stripePaymentIntentId: 'stripePaymentIntentId',
+  stripeCheckoutSessionId: 'stripeCheckoutSessionId',
+  stripeInvoiceId: 'stripeInvoiceId',
   bundleId: 'bundleId',
   buyerUserId: 'buyerUserId',
   amount: 'amount',

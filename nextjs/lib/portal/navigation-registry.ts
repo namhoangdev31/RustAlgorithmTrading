@@ -56,6 +56,12 @@ export function getWorkspaceNav(_locale?: string): NavItem[] {
       icon: ShieldAlert,
       requiredRole: "admin",
     },
+    {
+      path: "/admin/reviews",
+      label: "Review Queue (Admin)",
+      icon: ListTodo,
+      requiredRole: "admin",
+    },
   ];
 }
 
@@ -85,6 +91,8 @@ export function getLepoShipNav(_locale: string, projectId: string): NavItem[] {
     { path: `${base}/overview`, label: "Overview", icon: LayoutDashboard },
     { path: `${base}/builds`, label: "Builds", icon: Terminal },
     { path: `${base}/ota`, label: "OTA Rollouts", icon: Cpu },
+    { path: `${base}/ab-testing`, label: "A/B Tests", icon: Activity },
+    { path: `${base}/listing`, label: "Store Listing", icon: Store },
     { path: `${base}/settings`, label: "Build Settings", icon: Settings },
   ];
 }
